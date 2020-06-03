@@ -1,0 +1,15 @@
+{
+  "files.exclude": {
+    "**/__pycache__/": true,
+    ".venv": true
+  },
+  "python.pythonPath": "/Users/n/Projects/Opennem/nemweb-mysql/.venv/bin/python3",
+  "python.linting.pylintPath": "pylint",
+  "python.formatting.provider": "black",
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
+  "python.linting.pylintEnabled": true
+}
