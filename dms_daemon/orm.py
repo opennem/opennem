@@ -1,41 +1,23 @@
 import datetime
 import glob
 from time import time
+from zipfile import BadZipFile
 
 from sqlalchemy import create_engine, update
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session, sessionmaker
 
 from dms_daemon import CONFIG, nemweb_reader
-
-# from zipfile import BadZipFile
+from dms_daemon.settings import get_mysql_host
 
 # Initialises connections to databases
-engine = create_engine(
-    "mysql://{username}:{password}@{hostname}/nemweb?unix_socket={unix_socket}".format(
-        **CONFIG["mysql"]
-    )
-)
-engine2 = create_engine(
-    "mysql://{username}:{password}@{hostname}/nemweb_live?unix_socket={unix_socket}".format(
-        **CONFIG["mysql"]
-    )
-)
-engine3 = create_engine(
-    "mysql://{username}:{password}@{hostname}/nemweb_causer_pays?unix_socket={unix_socket}".format(
-        **CONFIG["mysql"]
-    )
-)
-engine_meta = create_engine(
-    "mysql://{username}:{password}@{hostname}/nemweb_meta?unix_socket={unix_socket}".format(
-        **CONFIG["mysql"]
-    )
-)
-engine_derived = create_engine(
-    "mysql://{username}:{password}@{hostname}/nemweb_derived?unix_socket={unix_socket}".format(
-        **CONFIG["mysql"]
-    )
-)
+engine = create_engine(get_mysql_host())
+engine2 = create_engine(get_mysql_host("nemweb_live"))
+engine3 = create_engine(get_mysql_host("nemweb_causer_pays"))
+engine_meta = create_engine(get_mysql_host("nemweb_meta"))
+engine_derived = create_engine(get_mysql_host("nemweb_derived"))
+
+
 Session = sessionmaker(bind=engine)
 
 Base = automap_base()
@@ -60,9 +42,9 @@ keys["DUID"] = AttrDict(
     engine_meta.execute("SELECT {0},ID FROM {0}".format("DUID")).fetchall()
 )
 
-region_dict = keys.REGIONID
-duid_dict = keys.DUID
-interconnector_dict = keys.INTERCONNECTORID
+region_dict = keys["REGIONID"]
+duid_dict = keys["DUID"]
+interconnector_dict = keys["INTERCONNECTORID"]
 
 q = engine_meta.execute("SELECT ID,STATION_NAME FROM STATION_NAMES")
 station_dict = dict(q.fetchall())
