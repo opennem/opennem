@@ -2,18 +2,12 @@ import datetime
 import os
 import re
 import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 import requests
 
 from dms_daemon import CONFIG
-
-try:
-    from email.mime.multipart import MIMEMultipart
-    from email.mime.text import MIMEText
-
-except ImportError:
-    from email.MIMEText import MIMEText
-    from email.MIMEMultipart import MIMEMultipart
 
 
 def notice_list():
