@@ -11,7 +11,7 @@ from dms_daemon import CONFIG
 
 
 def notice_list():
-    for root, dirs, files in os.walk("/data/marble/nemweb/MARKET_NOTICES/"):
+    for root, _, files in os.walk("/data/marble/nemweb/MARKET_NOTICES/"):
         for f in files:
             yield os.path.join(root, f)
 
@@ -22,7 +22,7 @@ def read_notice(fn="/data/marble/nemweb/MARKET_NOTICES/2017-12-21/60425.txt"):
 
 
 def check_notice_list():
-    for root, dirs, files in os.walk("/data/marble/nemweb/MARKET_NOTICES/"):
+    for _, _, files in os.walk("/data/marble/nemweb/MARKET_NOTICES/"):
         for f in files:
             None
             # check_notice(fn=os.path.join(root,f))
@@ -64,7 +64,7 @@ def slack_alert(market_notice):
     message_type = market_notice[11].split(":")[1].strip()
     message = "*Market Notice: {0}*\n\n{1}".format(message_type, mn_text)
 
-    r = requests.post(
+    requests.post(
         "https://hooks.slack.com/services/{0}".format(
             CONFIG["slack_hooks"]["market_notice"]
         ),
