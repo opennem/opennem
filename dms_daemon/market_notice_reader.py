@@ -163,7 +163,7 @@ def reserve_available(market_notice):
 
 def reserve_required(market_notice):
     reserve_requirement_pattern = re.compile(
-        "reserve requirement is (\d{3,4}|\d{1},\d{3}) MW"
+        r"reserve requirement is (\d{3,4}|\d{1},\d{3}) MW"
     )
     reserve_requirement_match = re.search(
         reserve_requirement_pattern, "".join(market_notice)
@@ -209,7 +209,7 @@ def lor_template(
 def lor_cancellation_template(level, region, category):
     colors = {1: "#36a64f", 2: "#ffc100", 3: "#ff7400"}
     title = "LOR{0} {2} for {1}".format(level, region, category.lower())
-    r = requests.post(
+    requests.post(
         "https://hooks.slack.com/services/{0}".format(
             CONFIG["slack_hooks"]["reserve_notice"]
         ),
@@ -219,7 +219,7 @@ def lor_cancellation_template(level, region, category):
 
 def time_parse(string, start="(F|f)rom"):
     time_pattern = re.compile(
-        "{0} (\d{{2}})(\d{{2}}) hrs (\d{{2}})/(\d{{2}})/(\d{{4}})".format(start)
+        r"{0} (\d{{2}})(\d{{2}}) hrs (\d{{2}})/(\d{{2}})/(\d{{4}})".format(start)
     )
     time_match = re.search(time_pattern, string)
     _, H, M, d, m, y = time_match.groups()
@@ -228,7 +228,7 @@ def time_parse(string, start="(F|f)rom"):
 
 def time_parse2(string):
     time_pattern = re.compile(
-        "(F|f)rom (\d{2})(\d{2}) hrs (T|t)o (\d{2})(\d{2}) hrs (\d{2})/(\d{2})/(\d{4})"
+        r"(F|f)rom (\d{2})(\d{2}) hrs (T|t)o (\d{2})(\d{2}) hrs (\d{2})/(\d{2})/(\d{4})"
     )
     time_match = re.search(time_pattern, string)
     _, H1, M1, _, H2, M2, d, m, y = time_match.groups()
@@ -240,7 +240,7 @@ def time_parse2(string):
 
 def time_parse3(string):
     time_pattern = re.compile(
-        "(F|f)rom (\d{2})(\d{2}) hrs (T|t)o (\d{2})(\d{2}) hrs on (\d{2})/(\d{2})/(\d{4})"
+        r"(F|f)rom (\d{2})(\d{2}) hrs (T|t)o (\d{2})(\d{2}) hrs on (\d{2})/(\d{2})/(\d{4})"
     )
     time_match = re.search(time_pattern, string)
     _, H1, M1, _, H2, M2, d, m, y = time_match.groups()
@@ -252,7 +252,7 @@ def time_parse3(string):
 
 def multi_time_parse(string):
     time_pattern = re.compile(
-        "(F|f)rom (\d{2})(\d{2}) hrs (T|t)o (\d{2})(\d{2}) hrs and (\d{2})(\d{2}) hrs (T|t)o (\d{2})(\d{2}) hrs (\d{2})/(\d{2})/(\d{4})"
+        r"(F|f)rom (\d{2})(\d{2}) hrs (T|t)o (\d{2})(\d{2}) hrs and (\d{2})(\d{2}) hrs (T|t)o (\d{2})(\d{2}) hrs (\d{2})/(\d{2})/(\d{4})"
     )
     time_match = re.search(time_pattern, string)
     _, H1, M1, _, H2, M2, H3, M3, _, H4, M4, d, m, y = time_match.groups()
@@ -324,4 +324,3 @@ line_11 = [
     "RECLASSIFY CONTINGENCY",
     "RESERVE NOTICE",
 ]
-
