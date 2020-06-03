@@ -1,0 +1,17 @@
+version: "3.3"
+services:
+  mysql:
+    image: mariadb:10
+    restart: always
+    env_file: ./.env
+    environment:
+      - TZ
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE
+    ports:
+      - ${HOST:-127.0.0.1}:13306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data: {}
