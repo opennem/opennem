@@ -1,0 +1,15 @@
+mysql:
+  username: 
+  password: 
+  hostname: 
+  unix_socket: 
+  
+slack_hooks:
+  market_notice: 
+  error_message: 
+  reserve_notice: 
+    
+gmail:
+  username: 
+  password: 
+  send_to: 
