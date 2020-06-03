@@ -85,12 +85,12 @@ def reserve_notice(market_notice):
 
 
 def lor_notice(market_notice, lor_match):
-    region_pattern = re.compile("the (.{2,15}) \w{1}egion")
+    region_pattern = re.compile(r"the (.{2,15}) \w{1}egion")
     region_match = re.search(region_pattern, market_notice[14])
     if region_match == None:
         raise Exception("No region in external reference")
 
-    lor_category_pattern = re.compile("(\w{1}orecast|\w{1}ctual|\w{1}ancellation)")
+    lor_category_pattern = re.compile(r"(\w{1}orecast|\w{1}ctual|\w{1}ancellation)")
     lor_category_match = re.search(lor_category_pattern, market_notice[14])
     if lor_category_match == None:
         raise Exception("No LOR type (not Forecast or Actual)")
@@ -148,7 +148,7 @@ def lor_update(market_notice, lor_match, region_match, lor_category_match):
 
 
 def reserve_available(market_notice):
-    reserve_available_pattern = re.compile("reserve available is (\d{3,4}) MW")
+    reserve_available_pattern = re.compile(r"reserve available is (\d{3,4}) MW")
     reserve_available_match = re.search(reserve_available_pattern, "".join(market_notice))
     if reserve_available_match == None:
         raise Exception("Bad reserve requirement format")
