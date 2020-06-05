@@ -7,8 +7,14 @@ import pytz
 import requests
 from datadog import statsd
 
+import sentry_sdk
 from dms_daemon import orm
 from dms_daemon.nemweb_reader import NemFile, ZipFileStreamer
+
+sentry_sdk.init(
+    "https://7bdb0e977ab94a1c83db9b927b6dfd29@o402615.ingest.sentry.io/5264004"
+)
+
 
 meta_cols = "DUID, STATION_NAME, PARTICIPANT, REGIONID, FUEL_TECH"
 sql = "SELECT DUID,{0} FROM nemweb_meta.FULL_REGISTER"
