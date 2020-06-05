@@ -59,6 +59,6 @@ def replace_database_in_url(db_url, db_name):
     """
 
     db_url_parsed = urlparse(db_url)
-    db_url_parsed._replace(path=f"/{db_name}")
+    db_url_parsed = db_url_parsed._replace(path=f"/{db_name}")
 
     return db_url_parsed.geturl()
