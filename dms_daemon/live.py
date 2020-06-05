@@ -17,7 +17,7 @@ sentry_sdk.init(
 
 
 meta_cols = "DUID, STATION_NAME, PARTICIPANT, REGIONID, FUEL_TECH"
-sql = "SELECT DUID,{0} FROM nemweb_meta.FULL_REGISTER"
+sql = "SELECT {0} FROM nemweb_meta.FULL_REGISTER".format(meta_cols)
 cursor = orm.engine_meta.execute(sql)
 meta_data = {i[0]: i[1:] for i in cursor.fetchall()}
 
