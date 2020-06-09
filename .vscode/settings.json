@@ -3,7 +3,7 @@
     "**/__pycache__/": true,
     ".venv": true
   },
-  "python.pythonPath": "/Users/n/Projects/Opennem/nemweb-mysql/.venv/bin/python3",
+  "python.pythonPath": ".venv/bin/python3",
   "python.linting.pylintPath": "pylint",
   "python.linting.pylintArgs": ["--load-plugins pylint_sqlalchemy"],
   "python.formatting.provider": "black",
