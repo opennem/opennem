@@ -15,41 +15,19 @@ from opennem.db.models import nemweb, nemweb_meta, opennem  # isort:skip
 USE_TWOPHASE = False
 
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
 config = context.config
-
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
 fileConfig(config.config_file_name)
 logger = logging.getLogger("alembic.env")
 
-# gather section names referring to different
-# databases.  These are named "engine1", "engine2"
-# in the sample .ini file.
 db_names = config.get_main_option("databases")
 
-# add your model's MetaData objects here
-# for 'autogenerate' support.  These must be set
-# up to hold just those tables targeting a
-# particular database. table.tometadata() may be
-# helpful here in case a "copy" of
-# a MetaData is needed.
-# from myapp import mymodel
-# target_metadata = {
-#       'engine1':mymodel.metadata1,
-#       'engine2':mymodel.metadata2
-# }
 target_metadata = {
     "nemweb": nemweb.metadata,
     "nemweb_meta": nemweb_meta.metadata,
     "opennem": opennem.metadata,
 }
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
-# ... etc.
 
 
 def run_migrations_offline():

@@ -6,10 +6,17 @@ from scrapy.utils.python import garbage_collect
 logger = logging.getLogger(__name__)
 
 
-@click.command()
+@click.group()
 def main():
     click.echo("cli @todo")
 
+
+@click.command()
+def crawl():
+    print("crawl")
+
+
+cli.add_command(initdb)
 
 if __name__ == "__main__":
     try:

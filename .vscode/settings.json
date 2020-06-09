@@ -3,7 +3,7 @@
     "**/__pycache__/": true,
     ".venv": true
   },
-  "python.pythonPath": ".venv/bin/python3",
+  "python.pythonPath": ".venv/bin/python",
   "python.linting.pylintPath": "pylint",
   "python.linting.pylintArgs": ["--load-plugins pylint_sqlalchemy"],
   "python.formatting.provider": "black",

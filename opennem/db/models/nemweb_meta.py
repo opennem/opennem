@@ -1,5 +1,20 @@
-from sqlalchemy import DECIMAL, Column, Date, ForeignKey, Index, String, Table, text
-from sqlalchemy.dialects.mysql import INTEGER, MEDIUMINT, SMALLINT, TINYINT, VARCHAR
+from sqlalchemy import (
+    DECIMAL,
+    Column,
+    Date,
+    ForeignKey,
+    Index,
+    String,
+    Table,
+    text,
+)
+from sqlalchemy.dialects.mysql import (
+    INTEGER,
+    MEDIUMINT,
+    SMALLINT,
+    TINYINT,
+    VARCHAR,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -43,7 +58,9 @@ t_CURRENT_REGISTER = Table(
 )
 
 
-t_CURRENT_REGISTER_DATE = Table("CURRENT_REGISTER_DATE", metadata, Column("DATE", Date))
+t_CURRENT_REGISTER_DATE = Table(
+    "CURRENT_REGISTER_DATE", metadata, Column("DATE", Date)
+)
 
 
 class DISPATCHTYPE(Base):
@@ -266,7 +283,9 @@ class FUELTECHMAPPING(Base):
 
     ID = Column(TINYINT(4), primary_key=True)
     FUEL_CATEGORY_ID = Column(ForeignKey("FUEL_CATEGORY.ID"), index=True)
-    TECHNOLOGY_CATEGORY_ID = Column(ForeignKey("TECHNOLOGY_CATEGORY.ID"), index=True)
+    TECHNOLOGY_CATEGORY_ID = Column(
+        ForeignKey("TECHNOLOGY_CATEGORY.ID"), index=True
+    )
     FUEL_TECH_ID = Column(ForeignKey("FUEL_TECHS.ID"), index=True)
 
     FUEL_CATEGORY = relationship("FUELCATEGORY")
@@ -333,26 +352,38 @@ class TECHNOLOGYTYPE(Base):
 
     ID = Column(TINYINT(4), primary_key=True)
     TECHNOLOGY_TYPE = Column(String(60, "utf8_bin"), unique=True)
-    TECHNOLOGY_CATEGORY_ID = Column(ForeignKey("TECHNOLOGY_CATEGORY.ID"), index=True)
+    TECHNOLOGY_CATEGORY_ID = Column(
+        ForeignKey("TECHNOLOGY_CATEGORY.ID"), index=True
+    )
 
     TECHNOLOGY_CATEGORY = relationship("TECHNOLOGYCATEGORY")
 
 
 class REGISTER(Base):
     __tablename__ = "REGISTER"
-    __table_args__ = (Index("uniq", "DATE", "DUID", "UNIT_SIZE", "UNIT_NO", unique=True),)
+    __table_args__ = (
+        Index("uniq", "DATE", "DUID", "UNIT_SIZE", "UNIT_NO", unique=True),
+    )
 
     ID = Column(INTEGER(11), primary_key=True, unique=True)
     DUID = Column(ForeignKey("DUID.ID"), nullable=False, index=True)
-    PARTICIPANT_ID = Column(ForeignKey("PARTICIPANTS.ID"), nullable=False, index=True)
-    STATION_NAME_ID = Column(ForeignKey("STATION_NAMES.ID"), nullable=False, index=True)
+    PARTICIPANT_ID = Column(
+        ForeignKey("PARTICIPANTS.ID"), nullable=False, index=True
+    )
+    STATION_NAME_ID = Column(
+        ForeignKey("STATION_NAMES.ID"), nullable=False, index=True
+    )
     REGIONID = Column(ForeignKey("REGIONID.id"), nullable=False, index=True)
-    DISPATCH_TYPE_ID = Column(ForeignKey("DISPATCH_TYPE.ID"), nullable=False, index=True)
+    DISPATCH_TYPE_ID = Column(
+        ForeignKey("DISPATCH_TYPE.ID"), nullable=False, index=True
+    )
     CATEGORY_ID = Column(ForeignKey("CATEGORY.ID"), nullable=False, index=True)
     CLASSIFICATION_ID = Column(
         ForeignKey("CLASSIFICATION.ID"), nullable=False, index=True
     )
-    FUEL_SOURCE_ID = Column(ForeignKey("FUEL_SOURCES.ID"), nullable=False, index=True)
+    FUEL_SOURCE_ID = Column(
+        ForeignKey("FUEL_SOURCES.ID"), nullable=False, index=True
+    )
     TECHNOLOGY_TYPE_ID = Column(
         ForeignKey("TECHNOLOGY_TYPES.ID"), nullable=False, index=True
     )

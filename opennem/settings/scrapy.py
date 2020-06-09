@@ -34,7 +34,9 @@ AUTOTHROTTLE_MAX_DELAY = 60
 # 3xx series -
 # 4xx series - database processes
 ITEM_PIPELINES = {
-    "opennem.pipelines.nemweb.NemwebMirror": 400,
+    "opennem.pipelines.files.LinkExtract": 101,
+    "opennem.pipelines.nem.ExtractCSV": 301,
+    "opennem.pipelines.nem.DatabaseStore": 401,
 }
 
 # @TODO if DEBUG

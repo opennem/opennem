@@ -147,7 +147,9 @@ class CO2EIIPUBLISHING(Base):
 class DISPATCHPRICE(Base):
     __tablename__ = "DISPATCH_PRICE"
     __table_args__ = (
-        Index("uniq", "SETTLEMENTDATE", "REGIONID", "INTERVENTION", unique=True),
+        Index(
+            "uniq", "SETTLEMENTDATE", "REGIONID", "INTERVENTION", unique=True
+        ),
     )
 
     id = Column(INTEGER(11), primary_key=True)
@@ -192,7 +194,9 @@ class DISPATCHPRICE(Base):
 class DISPATCHREGIONSUM(Base):
     __tablename__ = "DISPATCH_REGIONSUM"
     __table_args__ = (
-        Index("uniq", "REGIONID", "SETTLEMENTDATE", "INTERVENTION", unique=True),
+        Index(
+            "uniq", "REGIONID", "SETTLEMENTDATE", "INTERVENTION", unique=True
+        ),
     )
 
     id = Column(INTEGER(11), primary_key=True)
@@ -245,18 +249,26 @@ class DISPATCHUNITSCADA(Base):
     id = Column(INTEGER(11), primary_key=True)
     SETTLEMENTDATE = Column(DateTime, index=True)
     DUID = Column(
-        ForeignKey("nemweb_meta.DUID.ID"), ForeignKey("nemweb_meta.DUID.ID"), index=True
+        ForeignKey("nemweb_meta.DUID.ID"),
+        ForeignKey("nemweb_meta.DUID.ID"),
+        index=True,
     )
     SCADAVALUE = Column(DECIMAL(10, 6))
 
-    DUID1 = relationship("DUID", primaryjoin="DISPATCHUNITSCADA.DUID == DUID.ID")
-    DUID2 = relationship("DUID", primaryjoin="DISPATCHUNITSCADA.DUID == DUID.ID")
+    DUID1 = relationship(
+        "DUID", primaryjoin="DISPATCHUNITSCADA.DUID == DUID.ID"
+    )
+    DUID2 = relationship(
+        "DUID", primaryjoin="DISPATCHUNITSCADA.DUID == DUID.ID"
+    )
 
 
 class DISPATCHUNITSOLUTION(Base):
     __tablename__ = "DISPATCH_UNIT_SOLUTION"
     __table_args__ = (
-        Index("uniq_idx", "DUID", "SETTLEMENTDATE", "INTERVENTION", unique=True),
+        Index(
+            "uniq_idx", "DUID", "SETTLEMENTDATE", "INTERVENTION", unique=True
+        ),
     )
 
     ID = Column(INTEGER(11), primary_key=True)
@@ -300,7 +312,9 @@ class DISPATCHUNITSOLUTIONOLD(Base):
 
 class METERDATAGENDUID(Base):
     __tablename__ = "METER_DATA_GEN_DUID"
-    __table_args__ = (Index("DUID_2", "DUID", "INTERVAL_DATETIME", unique=True),)
+    __table_args__ = (
+        Index("DUID_2", "DUID", "INTERVAL_DATETIME", unique=True),
+    )
 
     ID = Column(INTEGER(11), primary_key=True)
     INTERVAL_DATETIME = Column(DateTime, index=True)
@@ -314,7 +328,13 @@ class MTPASAREGIONSOLUTION(Base):
     __tablename__ = "MTPASA_REGIONSOLUTION"
     __table_args__ = (
         Index(
-            "uniq", "RUN_DATETIME", "RUN_NO", "DAY", "REGIONID", "RUNTYPE", unique=True
+            "uniq",
+            "RUN_DATETIME",
+            "RUN_NO",
+            "DAY",
+            "REGIONID",
+            "RUNTYPE",
+            unique=True,
         ),
     )
 
@@ -386,7 +406,9 @@ class NEMPriceSetter(Base):
     Market1 = relationship("Market")
     REGIONID1 = relationship("REGIONID")
     Unit1 = relationship("Unit", primaryjoin="NEMPriceSetter.Unit == Unit.ID")
-    Unit2 = relationship("Unit", primaryjoin="NEMPriceSetter.Unit_2 == Unit.ID")
+    Unit2 = relationship(
+        "Unit", primaryjoin="NEMPriceSetter.Unit_2 == Unit.ID"
+    )
 
 
 class OFFERBIDDAYOFFER(Base):
@@ -453,7 +475,13 @@ class OFFERBIDPEROFFER(Base):
 class P5MINREGIONSOLUTION(Base):
     __tablename__ = "P5MIN_REGIONSOLUTION"
     __table_args__ = (
-        Index("uniq", "RUN_DATETIME", "INTERVAL_DATETIME", "REGIONID", unique=True),
+        Index(
+            "uniq",
+            "RUN_DATETIME",
+            "INTERVAL_DATETIME",
+            "REGIONID",
+            unique=True,
+        ),
     )
 
     ID = Column(INTEGER(11), primary_key=True)
@@ -637,7 +665,9 @@ class PREDISPATCHREGIONSOLUTION(Base):
 
 class ROOFTOPACTUAL(Base):
     __tablename__ = "ROOFTOP_ACTUAL"
-    __table_args__ = (Index("uniq_idx", "INTERVAL_DATETIME", "REGIONID", unique=True),)
+    __table_args__ = (
+        Index("uniq_idx", "INTERVAL_DATETIME", "REGIONID", unique=True),
+    )
 
     ID = Column(INTEGER(11), primary_key=True)
     INTERVAL_DATETIME = Column(DateTime, index=True)
@@ -651,7 +681,11 @@ class ROOFTOPFORECAST(Base):
     __tablename__ = "ROOFTOP_FORECAST"
     __table_args__ = (
         Index(
-            "uniq_idx", "VERSION_DATETIME", "INTERVAL_DATETIME", "REGIONID", unique=True
+            "uniq_idx",
+            "VERSION_DATETIME",
+            "INTERVAL_DATETIME",
+            "REGIONID",
+            unique=True,
         ),
     )
 
@@ -669,7 +703,9 @@ class ROOFTOPFORECAST(Base):
 
 class TRADINGPRICE(Base):
     __tablename__ = "TRADING_PRICE"
-    __table_args__ = (Index("uniq", "SETTLEMENTDATE", "REGIONID", unique=True),)
+    __table_args__ = (
+        Index("uniq", "SETTLEMENTDATE", "REGIONID", unique=True),
+    )
 
     id = Column(INTEGER(11), primary_key=True)
     SETTLEMENTDATE = Column(DateTime, nullable=False, index=True)
@@ -698,7 +734,9 @@ class TRADINGPRICE(Base):
 
 class TRADINGREGIONSUM(Base):
     __tablename__ = "TRADING_REGIONSUM"
-    __table_args__ = (Index("uniq", "SETTLEMENTDATE", "REGIONID", unique=True),)
+    __table_args__ = (
+        Index("uniq", "SETTLEMENTDATE", "REGIONID", unique=True),
+    )
 
     id = Column(INTEGER(11), primary_key=True)
     SETTLEMENTDATE = Column(DateTime, index=True)
@@ -731,7 +769,14 @@ class TRADINGREGIONSUM(Base):
 class YESTBIDBIDDAYOFFER(Base):
     __tablename__ = "YESTBID_BIDDAYOFFER"
     __table_args__ = (
-        Index("uniq", "DUID", "LASTCHANGED", "BIDOFFERDATE", "BIDTYPE", unique=True),
+        Index(
+            "uniq",
+            "DUID",
+            "LASTCHANGED",
+            "BIDOFFERDATE",
+            "BIDTYPE",
+            unique=True,
+        ),
     )
 
     id = Column(INTEGER(11), primary_key=True)
@@ -763,7 +808,14 @@ class YESTBIDBIDDAYOFFER(Base):
 class YESTBIDBIDPEROFFER(Base):
     __tablename__ = "YESTBID_BIDPEROFFER"
     __table_args__ = (
-        Index("uniq", "DUID", "TRADINGPERIOD", "LASTCHANGED", "BIDTYPE", unique=True),
+        Index(
+            "uniq",
+            "DUID",
+            "TRADINGPERIOD",
+            "LASTCHANGED",
+            "BIDTYPE",
+            unique=True,
+        ),
     )
 
     id = Column(INTEGER(11), primary_key=True)
@@ -820,12 +872,20 @@ class INTERCONNECTORID(Base):
 class DISPATCHINTERCONNECTORRE(Base):
     __tablename__ = "DISPATCH_INTERCONNECTORRES"
     __table_args__ = (
-        Index("uniq", "INTERCONNECTORID", "SETTLEMENTDATE", "INTERVENTION", unique=True),
+        Index(
+            "uniq",
+            "INTERCONNECTORID",
+            "SETTLEMENTDATE",
+            "INTERVENTION",
+            unique=True,
+        ),
     )
 
     id = Column(INTEGER(11), primary_key=True)
     SETTLEMENTDATE = Column(DateTime, index=True)
-    INTERCONNECTORID = Column(ForeignKey("nemweb_meta.INTERCONNECTORID.id"), index=True)
+    INTERCONNECTORID = Column(
+        ForeignKey("nemweb_meta.INTERCONNECTORID.id"), index=True
+    )
     METEREDMWFLOW = Column(DECIMAL(10, 5))
     MWLOSSES = Column(DECIMAL(8, 5))
     EXPORTLIMIT = Column(DECIMAL(10, 5))
@@ -859,7 +919,9 @@ class MTPASAINTERCONNECTORSOLUTION(Base):
     RUN_NO = Column(INTEGER(11), index=True)
     RUNTYPE = Column(ForeignKey("RUNTYPE.ID"), index=True)
     DAY = Column(DateTime, index=True)
-    INTERCONNECTORID = Column(ForeignKey("nemweb_meta.INTERCONNECTORID.id"), index=True)
+    INTERCONNECTORID = Column(
+        ForeignKey("nemweb_meta.INTERCONNECTORID.id"), index=True
+    )
     CAPACITYMWFLOW = Column(DECIMAL(12, 2))
     CALCULATEDEXPORTLIMIT = Column(DECIMAL(12, 2))
     CALCULATEDIMPORTLIMIT = Column(DECIMAL(12, 2))
@@ -872,13 +934,19 @@ class P5MININTERCONNECTORSOLN(Base):
     __tablename__ = "P5MIN_INTERCONNECTORSOLN"
     __table_args__ = (
         Index(
-            "uniq", "RUN_DATETIME", "INTERCONNECTORID", "INTERVAL_DATETIME", unique=True
+            "uniq",
+            "RUN_DATETIME",
+            "INTERCONNECTORID",
+            "INTERVAL_DATETIME",
+            unique=True,
         ),
     )
 
     ID = Column(INTEGER(11), primary_key=True)
     RUN_DATETIME = Column(DateTime, index=True)
-    INTERCONNECTORID = Column(ForeignKey("nemweb_meta.INTERCONNECTORID.id"), index=True)
+    INTERCONNECTORID = Column(
+        ForeignKey("nemweb_meta.INTERCONNECTORID.id"), index=True
+    )
     INTERVAL_DATETIME = Column(DateTime, index=True)
     METEREDMWFLOW = Column(DECIMAL(10, 5))
     MWFLOW = Column(DECIMAL(10, 5))
@@ -907,7 +975,9 @@ class PREDISPATCHINTERCONNECTORSOLN(Base):
 
     id = Column(INTEGER(11), primary_key=True)
     PREDISPATCHSEQNO = Column(INTEGER(11), index=True)
-    INTERCONNECTORID = Column(ForeignKey("nemweb_meta.INTERCONNECTORID.id"), index=True)
+    INTERCONNECTORID = Column(
+        ForeignKey("nemweb_meta.INTERCONNECTORID.id"), index=True
+    )
     PERIODID = Column(TINYINT(4), index=True)
     METEREDMWFLOW = Column(DECIMAL(10, 5))
     MWFLOW = Column(DECIMAL(10, 5))
@@ -923,14 +993,17 @@ class PREDISPATCHINTERCONNECTORSOLN(Base):
 
 class TRADINGINTERCONNECTORRE(Base):
     __tablename__ = "TRADING_INTERCONNECTORRES"
-    __table_args__ = (Index("uniq", "SETTLEMENTDATE", "INTERCONNECTORID", unique=True),)
+    __table_args__ = (
+        Index("uniq", "SETTLEMENTDATE", "INTERCONNECTORID", unique=True),
+    )
 
     id = Column(INTEGER(11), primary_key=True)
     SETTLEMENTDATE = Column(DateTime, index=True)
-    INTERCONNECTORID = Column(ForeignKey("nemweb_meta.INTERCONNECTORID.id"), index=True)
+    INTERCONNECTORID = Column(
+        ForeignKey("nemweb_meta.INTERCONNECTORID.id"), index=True
+    )
     METEREDMWFLOW = Column(DECIMAL(6, 2))
     MWFLOW = Column(DECIMAL(6, 2))
     MWLOSSES = Column(DECIMAL(6, 2))
 
     INTERCONNECTORID1 = relationship("INTERCONNECTORID")
-

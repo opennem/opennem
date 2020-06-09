@@ -17,7 +17,7 @@ def db_connect(db_name=None, debug=False):
     Performs database connection using database settings from settings.py.
     Returns sqlalchemy engine instance
     """
-    db_conn_str = get_database_host(db_name)
+    db_conn_str = get_database_host()
 
     logger.info("Connecting with {}".format(db_conn_str))
 
