@@ -19,7 +19,7 @@ services:
     environment:
       - TZ
     ports:
-      - ${HOST-127.0.0.1}:15432:5432
+      - ${HOST:-127.0.0.1}:15432:5432
     volumes:
       - pg_data:/var/lib/postgresql/data
 
