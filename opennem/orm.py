@@ -11,17 +11,18 @@ from dms_daemon import CONFIG, nemweb_reader
 from dms_daemon.settings import get_mysql_host
 
 # Initialises connections to databases
-engine = create_engine(get_mysql_host())
+engine = create_engine(get_mysql_host("nemweb"))
 engine2 = create_engine(get_mysql_host("nemweb_live"))
 engine3 = create_engine(get_mysql_host("nemweb_causer_pays"))
 engine_meta = create_engine(get_mysql_host("nemweb_meta"))
 engine_derived = create_engine(get_mysql_host("nemweb_derived"))
 
+print("meta host", get_mysql_host(db_name="nemweb_meta"))
 
 Session = sessionmaker(bind=engine)
 
 Base = automap_base()
-Base.prepare(engine, reflect=True)
+Base.prepare(engine, reflect=False)
 
 
 class AttrDict(dict):
@@ -116,6 +117,8 @@ class ArchiveInserter(Archive):
 
 class ArchiveUpdater(Archive):
     """Archive subclass, with methods update tables from the archive"""
+
+    csv_table = None
 
     def __init__(self, archive_name="DispatchIS_Reports"):
         super.__init__(self, archive_name)

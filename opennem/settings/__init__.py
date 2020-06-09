@@ -18,6 +18,8 @@ MODULE_DIR = os.path.dirname(__file__)
 
 MYSQL_HOST_URL = os.getenv("MYSQL_HOST_URL", default=False)
 
+DATABASE_HOST_URL = os.getenv("DATABASE_HOST_URL", default=False)
+
 
 def load_config_yaml():
     config_file = os.path.join(MODULE_DIR, "config.yml")
@@ -49,6 +51,12 @@ def get_mysql_host(db_name=None):
     db_url = replace_database_in_url(db_url, db_name)
 
     return db_url
+
+
+def get_database_host():
+    if DATABASE_HOST_URL:
+        return DATABASE_HOST_URL
+    raise Exception("DATABASE_HOST_URL not defined")
 
 
 def replace_database_in_url(db_url, db_name):

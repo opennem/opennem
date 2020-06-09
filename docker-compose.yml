@@ -12,6 +12,17 @@ services:
       - ${HOST:-127.0.0.1}:13306:3306
     volumes:
       - db_data:/var/lib/mysql
+  postgres:
+    image: postgres:12-alpine
+    restart: always
+    env_file: ./.env
+    environment:
+      - TZ
+    ports:
+      - ${HOST-127.0.0.1}:15432:5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
 
 volumes:
   db_data: {}
+  pg_data: {}
