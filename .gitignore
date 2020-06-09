@@ -44,3 +44,4 @@ coverage.xml
 config.yml
 .DS_Store
 .scrapy/
+.venv-test/
