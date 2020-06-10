@@ -7,20 +7,8 @@
     - WEM
 """
 
-from sqlalchemy import (
-    NUMERIC,
-    Column,
-    Date,
-    DateTime,
-    ForeignKey,
-    Index,
-    Integer,
-    Sequence,
-    String,
-    Table,
-    Text,
-    Time,
-)
+from sqlalchemy import (NUMERIC, Column, Date, DateTime, ForeignKey, Index,
+                        Integer, Numeric, Sequence, String, Table, Text, Time)
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -101,10 +89,51 @@ class NemDispatchUnitScada(Base, NemModel):
         ),
     )
 
+    # @TODO id columns are all being removed and replaced with composite primaries
+    # only used in dev
     id = Column(Integer, primary_key=True)
+
     SETTLEMENTDATE = Column(DateTime, index=True)
     DUID = Column(Text, index=True,)
     SCADAVALUE = Column(NUMERIC(10, 6))
+
+
+class NemDispatchCaseSolution(Base, NemModel):
+    __tablename__ = "nem_dispatch_case_solution"
+    __table_args__ = (
+        Index(
+            "nem_dispatch_case_solution_uniq",
+            "SETTLEMENTDATE",
+            "DUID",
+            unique=True,
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    SETTLEMENTDATE = Column(DateTime, index=True)
+    RUNO = Column(Integer, nullable=False)
+    INTERVENTION = Column(Integer)
+    CASESUBTYPE = Column(Integer)
+    SOLUTIONSTATUS = Column(Integer)
+    SPDVERSION = Column(Integer)
+    NONPHYSICALLOSSES = Column(Integer)
+    TOTALOBJECTIVE = Column(Numeric)
+    TOTALAREAGENVIOLATION = Column(Integer)
+    TOTALINTERCONNECTORVIOLATION = Column(Integer)
+    TOTALGENERICVIOLATION = Column(Integer)
+    TOTALRAMPRATEVIOLATION = Column(Integer)
+    TOTALUNITMWCAPACITYVIOLATION = Column(Integer)
+    TOTAL5MINVIOLATION = Column(Integer)
+    TOTALREGVIOLATION = Column(Integer)
+    TOTAL6SECVIOLATION = Column(Integer)
+    TOTAL60SECVIOLATION = Column(Integer)
+    TOTALASPROFILEVIOLATION = Column(Integer)
+    TOTALFASTSTARTVIOLATION = Column(Integer)
+    TOTALENERGYOFFERVIOLATION = Column(Integer)
+    LASTCHANGED = Column(Integer)
+    SWITCHRUNINITIALSTATUS = Column(Integer)
+    SWITCHRUNBESTSTATUS = Column(Integer)
+    SWITCHRUNBESTSTATUS_INT = Column(Integer)
 
 
 class NemDispatchPrice(Base, NemModel):
@@ -124,113 +153,97 @@ class NemDispatchPrice(Base, NemModel):
     RUNO = Column(Integer, nullable=False)
 
     DISPATCHINTERVAL = Column(Integer, nullable=False)
-
     INTERVENTION = Column(Integer, nullable=False)
-
     RRP = Column(Integer, nullable=False)
-
     EEP = Column(Integer, nullable=False)
-
     ROP = Column(Integer, nullable=False)
-
     APCFLAG = Column(Integer, nullable=False)
-
     MARKETSUSPENDEDFLAG = Column(Integer, nullable=False)
-
     LASTCHANGED = Column(Integer, nullable=False)
-
     RAISE6SECRRP = Column(Integer, nullable=False)
-
     RAISE6SECROP = Column(Integer, nullable=False)
-
     RAISE6SECAPCFLAG = Column(Integer, nullable=False)
-
     RAISE60SECRRP = Column(Integer, nullable=False)
-
     RAISE60SECROP = Column(Integer, nullable=False)
-
     RAISE60SECAPCFLAG = Column(Integer, nullable=False)
-
     RAISE5MINRRP = Column(Integer, nullable=False)
-
     RAISE5MINROP = Column(Integer, nullable=False)
-
     RAISE5MINAPCFLAG = Column(Integer, nullable=False)
-
     RAISEREGRRP = Column(Integer, nullable=False)
-
     RAISEREGROP = Column(Integer, nullable=False)
-
     RAISEREGAPCFLAG = Column(Integer, nullable=False)
-
     LOWER6SECRRP = Column(Integer, nullable=False)
-
     LOWER6SECROP = Column(Integer, nullable=False)
-
     LOWER6SECAPCFLAG = Column(Integer, nullable=False)
-
     LOWER60SECRRP = Column(Integer, nullable=False)
-
     LOWER60SECROP = Column(Integer, nullable=False)
-
     LOWER60SECAPCFLAG = Column(Integer, nullable=False)
-
     LOWER5MINRRP = Column(Integer, nullable=False)
-
     LOWER5MINROP = Column(Integer, nullable=False)
-
     LOWER5MINAPCFLAG = Column(Integer, nullable=False)
-
     LOWERREGRRP = Column(Integer, nullable=False)
-
     LOWERREGROP = Column(Integer, nullable=False)
-
     LOWERREGAPCFLAG = Column(Integer, nullable=False)
-
     PRICE_STATUS = Column(Integer, nullable=False)
-
     PRE_AP_ENERGY_PRICE = Column(Integer, nullable=False)
-
     PRE_AP_RAISE6_PRICE = Column(Integer, nullable=False)
-
     PRE_AP_RAISE60_PRICE = Column(Integer, nullable=False)
-
     PRE_AP_RAISE5MIN_PRICE = Column(Integer, nullable=False)
-
     PRE_AP_RAISEREG_PRICE = Column(Integer, nullable=False)
-
     PRE_AP_LOWER6_PRICE = Column(Integer, nullable=False)
-
     PRE_AP_LOWER60_PRICE = Column(Integer, nullable=False)
-
     PRE_AP_LOWER5MIN_PRICE = Column(Integer, nullable=False)
-
     PRE_AP_LOWERREG_PRICE = Column(Integer, nullable=False)
-
     CUMUL_PRE_AP_ENERGY_PRICE = Column(Integer, nullable=False)
-
     CUMUL_PRE_AP_RAISE6_PRICE = Column(Integer, nullable=False)
-
     CUMUL_PRE_AP_RAISE60_PRICE = Column(Integer, nullable=False)
-
     CUMUL_PRE_AP_RAISE5MIN_PRICE = Column(Integer, nullable=False)
-
     CUMUL_PRE_AP_RAISEREG_PRICE = Column(Integer, nullable=False)
-
     CUMUL_PRE_AP_LOWER6_PRICE = Column(Integer, nullable=False)
-
     CUMUL_PRE_AP_LOWER60_PRICE = Column(Integer, nullable=False)
-
     CUMUL_PRE_AP_LOWER5MIN_PRICE = Column(Integer, nullable=False)
-
     CUMUL_PRE_AP_LOWERREG_PRICE = Column(Integer, nullable=False)
-
     OCD_STATUS = Column(Integer, nullable=False)
-
     MII_STATUS = Column(Integer, nullable=False)
 
 
+class WemFacility(Base, NemModel):
+    __tablename__ = "web_facility"
+    __table_args__ = (
+        Index(
+            "wem_facility_uniq",
+            "TRADING_INTERVAL",
+            "FACILITY_CODE",
+            unique=True,
+        ),
+    )
+
+    PARTICIPANT_CODE = Column(Text, index=True,)
+
+    PARTICIPANT_NAME = Column(Text, index=False,)
+    FACILITY_CODE = Column(Text, index=False,)
+
+    # @TODO make this an ENUM
+    FACILITY_TYPE = Column(Text, index=False,)
+
+    # @TODO make this an ENUM - active / non-active
+    BALANCING_STATUS = Column(Text, index=False,)
+
+    CAPACITY_CREDITS = Column(Numeric)
+    MAXIMUM_CAPACITY = Column(Numeric)
+
+    REGISTERED_FROM = Column(Date)
+    EXTRACTED_AT = Column(DateTime(timezone=True))
+
+
 class WemFacilityScada(Base, NemModel):
+    """
+        WEM Facility
+
+        http://data.wa.aemo.com.au/#facilities
+
+    """
+
     __tablename__ = "wem_facility_scada"
     __table_args__ = (
         Index(
@@ -243,7 +256,6 @@ class WemFacilityScada(Base, NemModel):
 
     id = Column(Integer, primary_key=True)
     TRADING_INTERVAL = Column(DateTime, index=True)
-    PARTICIPANT_CODE = Column(Text, index=True,)
-    FACILITY_CODE = Column(Text, index=True,)
-    ENERGY_GENERATED = Column(NUMERIC(10, 6))
-    EOI_QUANTITY = Column(NUMERIC(10, 6))
+-   FACILITY_CODE = Column(Text, index=True,)
+-   ENERGY_GENERATED = Column(NUMERIC(10, 6))
+-   EOI_QUANTITY = Column(NUMERIC(10, 6))
