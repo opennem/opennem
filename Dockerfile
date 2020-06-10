@@ -1,4 +1,4 @@
-FROM python:3.8-alpine3.11 as poetry
+FROM python:3.8 as poetry
 
 ENV PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \
