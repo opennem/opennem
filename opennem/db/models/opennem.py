@@ -7,8 +7,21 @@
     - WEM
 """
 
-from sqlalchemy import (NUMERIC, Column, Date, DateTime, ForeignKey, Index,
-                        Integer, Numeric, Sequence, String, Table, Text, Time)
+from sqlalchemy import (
+    NUMERIC,
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    Sequence,
+    String,
+    Table,
+    Text,
+    Time,
+)
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -102,10 +115,7 @@ class NemDispatchCaseSolution(Base, NemModel):
     __tablename__ = "nem_dispatch_case_solution"
     __table_args__ = (
         Index(
-            "nem_dispatch_case_solution_uniq",
-            "SETTLEMENTDATE",
-            "DUID",
-            unique=True,
+            "nem_dispatch_case_solution_uniq", "SETTLEMENTDATE", unique=True,
         ),
     )
 
@@ -208,20 +218,20 @@ class NemDispatchPrice(Base, NemModel):
 
 
 class WemFacility(Base, NemModel):
-    __tablename__ = "web_facility"
+    __tablename__ = "wem_facility"
     __table_args__ = (
         Index(
             "wem_facility_uniq",
-            "TRADING_INTERVAL",
+            "PARTICIPANT_CODE",
             "FACILITY_CODE",
             unique=True,
         ),
     )
 
-    PARTICIPANT_CODE = Column(Text, index=True,)
+    PARTICIPANT_CODE = Column(Text, index=True, primary_key=True)
 
     PARTICIPANT_NAME = Column(Text, index=False,)
-    FACILITY_CODE = Column(Text, index=False,)
+    FACILITY_CODE = Column(Text, index=False, primary_key=True)
 
     # @TODO make this an ENUM
     FACILITY_TYPE = Column(Text, index=False,)
@@ -256,6 +266,6 @@ class WemFacilityScada(Base, NemModel):
 
     id = Column(Integer, primary_key=True)
     TRADING_INTERVAL = Column(DateTime, index=True)
--   FACILITY_CODE = Column(Text, index=True,)
--   ENERGY_GENERATED = Column(NUMERIC(10, 6))
--   EOI_QUANTITY = Column(NUMERIC(10, 6))
+    FACILITY_CODE = Column(Text, index=True,)
+    ENERGY_GENERATED = Column(NUMERIC(10, 6))
+    EOI_QUANTITY = Column(NUMERIC(10, 6))
