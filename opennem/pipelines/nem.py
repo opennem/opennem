@@ -107,6 +107,8 @@ class DatabaseStore(object):
                 try:
                     s.add(i)
                     s.commit()
+                except IntegrityError:
+                    pass
                 except Exception as e:
                     s.rollback()
                     logger.error("Database error: {}".format(e))
