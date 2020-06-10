@@ -3,7 +3,7 @@ from scrapy import Spider
 from opennem.pipelines.nem import DatabaseStore, ExtractCSV
 
 
-def WemFacilities(Spider):
+class WemFacilities(Spider):
     name = "au.wem.facilities"
     start_urls = [
         "http://data.wa.aemo.com.au/datafiles/facilities/facilities.csv"
