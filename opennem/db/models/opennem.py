@@ -373,6 +373,18 @@ class NemDispatchConstraint(Base, NemModel):
     SETTLEMENTDATE = Column(Integer, nullable=False, primary_key=True)
     RUNNO = Column(Integer, nullable=False)
 
+    CONSTRAINTID = Column(Text)
+    DISPATCHINTERVAL = Column(DateTime(timezone=True), primary_key=True)
+    INTERVENTION = Column(Numeric)
+    RHS = Column(Numeric)
+    MARGINALVALUE = Column(Integer)
+    VIOLATIONDEGREE = Column(Integer)
+    LASTCHANGED = Column(DateTime(timezone=True))
+    DUID = Column(Text)
+    GENCONID_EFFECTIVEDATE = Column(DateTime(timezone=True), nullable=True)
+    GENCONID_VERSIONNO = Column(Integer, nullable=False)
+    LHS = Column(Numeric, nullable=True)
+
 
 class NemDispatchInterconnection(Base, NemModel):
     __tablename__ = "nem_dispatch_interconnection"
