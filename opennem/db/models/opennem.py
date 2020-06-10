@@ -169,7 +169,7 @@ class NemDispatchPrice(Base, NemModel):
     ROP = Column(Integer, nullable=False)
     APCFLAG = Column(Integer, nullable=False)
     MARKETSUSPENDEDFLAG = Column(Integer, nullable=False)
-    LASTCHANGED = Column(Integer, nullable=False)
+    LASTCHANGED = Column(DateTime(timezone=True), nullable=False)
     RAISE6SECRRP = Column(Integer, nullable=False)
     RAISE6SECROP = Column(Integer, nullable=False)
     RAISE6SECAPCFLAG = Column(Integer, nullable=False)
@@ -213,20 +213,24 @@ class NemDispatchPrice(Base, NemModel):
     CUMUL_PRE_AP_LOWER60_PRICE = Column(Integer, nullable=False)
     CUMUL_PRE_AP_LOWER5MIN_PRICE = Column(Integer, nullable=False)
     CUMUL_PRE_AP_LOWERREG_PRICE = Column(Integer, nullable=False)
-    OCD_STATUS = Column(Integer, nullable=False)
-    MII_STATUS = Column(Integer, nullable=False)
+
+    # @TODO make enum
+    OCD_STATUS = Column(Text, nullable=False)
+    MII_STATUS = Column(Text, nullable=False)
 
 
 class NemDispatchRegionSum(Base, NemModel):
     __tablename__ = "nem_dispatch_region_sum"
     __table_args__ = (
-        Index("nem_dispatch_region_sum_uniq", "SETTLEMENTDATE", unique=True,),
+        # Index("nem_dispatch_region_sum_uniq", "SETTLEMENTDATE", unique=True,),
     )
 
     SETTLEMENTDATE = Column(Integer, nullable=False, primary_key=True)
     RUNNO = Column(Integer, nullable=False)
-    REGIONID = Column(Integer, nullable=False, primary_key=True)
-    DISPATCHINTERVAL = Column(Integer, nullable=False, primary_key=True)
+    REGIONID = Column(Text, nullable=False, primary_key=True)
+    DISPATCHINTERVAL = Column(
+        DateTime(timezone=True), nullable=False, primary_key=True
+    )
     INTERVENTION = Column(Integer, nullable=False)
     TOTALDEMAND = Column(Numeric, nullable=False)
     AVAILABLEGENERATION = Column(Numeric, nullable=True)
@@ -328,6 +332,56 @@ class NemDispatchRegionSum(Base, NemModel):
     UIGF = Column(Numeric, nullable=True)
     SEMISCHEDULE_CLEAREDMW = Column(Numeric, nullable=True)
     SEMISCHEDULE_COMPLIANCEMW = Column(Numeric, nullable=True)
+
+
+class NemDispatchInterconnectorRes(Base, NemModel):
+    __tablename__ = "nem_dispatch_interconnector_res"
+    __table_args__ = (
+        # Index("nem_dispatch_interconnector_res_uniq", "SETTLEMENTDATE", unique=True,),
+    )
+
+    SETTLEMENTDATE = Column(Integer, nullable=False, primary_key=True)
+    RUNNO = Column(Integer, nullable=False)
+    INTERCONNECTORID = Column(Text, primary_key=True)
+    DISPATCHINTERVAL = Column(DateTime(timezone=True), primary_key=True)
+    INTERVENTION = Column(Numeric, nullable=True)
+    METEREDMWFLOW = Column(Numeric, nullable=True)
+    MWFLOW = Column(Numeric, nullable=True)
+    MWLOSSES = Column(Numeric, nullable=True)
+    MARGINALVALUE = Column(Numeric, nullable=True)
+    VIOLATIONDEGREE = Column(Numeric, nullable=True)
+    LASTCHANGED = Column(DateTime(timezone=True), nullable=False)
+    EXPORTLIMIT = Column(Numeric, nullable=True)
+    IMPORTLIMIT = Column(Numeric, nullable=True)
+    MARGINALLOSS = Column(Numeric, nullable=True)
+    EXPORTGENCONID = Column(Text, nullable=False)
+    IMPORTGENCONID = Column(Text, nullable=False)
+    FCASEXPORTLIMIT = Column(Numeric, nullable=True)
+    FCASIMPORTLIMIT = Column(Numeric, nullable=True)
+    LOCAL_PRICE_ADJUSTMENT_EXPORT = Column(Numeric, nullable=True)
+    LOCALLY_CONSTRAINED_EXPORT = Column(Numeric, nullable=True)
+    LOCAL_PRICE_ADJUSTMENT_IMPORT = Column(Numeric, nullable=True)
+    LOCALLY_CONSTRAINED_IMPORT = Column(Numeric, nullable=True)
+
+
+class NemDispatchConstraint(Base, NemModel):
+    __tablename__ = "nem_dispatch_constraint"
+    __table_args__ = (
+        # Index("nem_dispatch_constraint_uniq", "SETTLEMENTDATE", unique=True,),
+    )
+
+    SETTLEMENTDATE = Column(Integer, nullable=False, primary_key=True)
+    RUNNO = Column(Integer, nullable=False)
+
+
+class NemDispatchInterconnection(Base, NemModel):
+    __tablename__ = "nem_dispatch_interconnection"
+    __table_args__ = (
+        # Index("nem_dispatch_region_sum_uniq", "SETTLEMENTDATE", unique=True,),
+    )
+
+    SETTLEMENTDATE = Column(Integer, nullable=False, primary_key=True)
+    RUNNO = Column(Integer, nullable=False)
 
 
 class WemFacility(Base, NemModel):
