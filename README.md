@@ -6,10 +6,13 @@ This toolkit enables downloading, mirroring and accessing energy data from vario
 
 Project homepage at https://opennem.org.au
 
+Available on Docker at https://hub.docker.com/r/opennem/opennem
+
 Currently supports:
 
 - Australian NEM: https://www.nemweb.com.au/
 - West Australia Energy Market: http://data.wa.aemo.com.au/
+
 
 ## Install
 
@@ -17,6 +20,20 @@ You can install this project with python `pip`:
 
 ```sh
 $ pip install opennem
+```
+
+Or alternatively with docker:
+
+```
+$ docker pull opennem/opennem
+```
+
+Bundled with sqlite support. Other database drivers are optional and not installed by default. Install a supported database driver:
+
+Postgres:
+
+```sh
+$ pip install psycopg2
 ```
 
 ## Usage
