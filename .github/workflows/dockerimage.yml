@@ -1,0 +1,19 @@
+name: Docker Image CI
+on:
+  push:
+    branches: [master]
+    tags:
+      - "*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: opennem/opennem/opennem
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          tag_semver: true
