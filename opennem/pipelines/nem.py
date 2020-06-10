@@ -6,12 +6,15 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from opennem.db import db_connect
-from opennem.db.models.opennem import NemDispatchUnitScada
+from opennem.db.models.opennem import NemDispatchPrice, NemDispatchUnitScada
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
 
-TABLE_MAP = {"DISPATCH_UNIT_SCADA": NemDispatchUnitScada}
+TABLE_MAP = {
+    "DISPATCH_UNIT_SCADA": NemDispatchUnitScada,
+    "DISPATCH_PRICE": NemDispatchPrice,
+}
 
 
 class ExtractCSV(object):

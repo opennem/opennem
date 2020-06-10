@@ -105,3 +105,145 @@ class NemDispatchUnitScada(Base, NemModel):
     SETTLEMENTDATE = Column(DateTime, index=True)
     DUID = Column(Text, index=True,)
     SCADAVALUE = Column(NUMERIC(10, 6))
+
+
+class NemDispatchPrice(Base, NemModel):
+    __tablename__ = "nem_dispatch_price"
+    __table_args__ = (
+        Index(
+            "nem_dispatch_price_uniq", "SETTLEMENTDATE", "DUID", unique=True,
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    SETTLEMENTDATE = Column(DateTime, index=True)
+    DUID = Column(Text, index=True,)
+    SCADAVALUE = Column(NUMERIC(10, 6))
+
+    REGIONID = Column(Text, index=True,)
+    RUNO = Column(Integer, nullable=False)
+
+    DISPATCHINTERVAL = Column(Integer, nullable=False)
+
+    INTERVENTION = Column(Integer, nullable=False)
+
+    RRP = Column(Integer, nullable=False)
+
+    EEP = Column(Integer, nullable=False)
+
+    ROP = Column(Integer, nullable=False)
+
+    APCFLAG = Column(Integer, nullable=False)
+
+    MARKETSUSPENDEDFLAG = Column(Integer, nullable=False)
+
+    LASTCHANGED = Column(Integer, nullable=False)
+
+    RAISE6SECRRP = Column(Integer, nullable=False)
+
+    RAISE6SECROP = Column(Integer, nullable=False)
+
+    RAISE6SECAPCFLAG = Column(Integer, nullable=False)
+
+    RAISE60SECRRP = Column(Integer, nullable=False)
+
+    RAISE60SECROP = Column(Integer, nullable=False)
+
+    RAISE60SECAPCFLAG = Column(Integer, nullable=False)
+
+    RAISE5MINRRP = Column(Integer, nullable=False)
+
+    RAISE5MINROP = Column(Integer, nullable=False)
+
+    RAISE5MINAPCFLAG = Column(Integer, nullable=False)
+
+    RAISEREGRRP = Column(Integer, nullable=False)
+
+    RAISEREGROP = Column(Integer, nullable=False)
+
+    RAISEREGAPCFLAG = Column(Integer, nullable=False)
+
+    LOWER6SECRRP = Column(Integer, nullable=False)
+
+    LOWER6SECROP = Column(Integer, nullable=False)
+
+    LOWER6SECAPCFLAG = Column(Integer, nullable=False)
+
+    LOWER60SECRRP = Column(Integer, nullable=False)
+
+    LOWER60SECROP = Column(Integer, nullable=False)
+
+    LOWER60SECAPCFLAG = Column(Integer, nullable=False)
+
+    LOWER5MINRRP = Column(Integer, nullable=False)
+
+    LOWER5MINROP = Column(Integer, nullable=False)
+
+    LOWER5MINAPCFLAG = Column(Integer, nullable=False)
+
+    LOWERREGRRP = Column(Integer, nullable=False)
+
+    LOWERREGROP = Column(Integer, nullable=False)
+
+    LOWERREGAPCFLAG = Column(Integer, nullable=False)
+
+    PRICE_STATUS = Column(Integer, nullable=False)
+
+    PRE_AP_ENERGY_PRICE = Column(Integer, nullable=False)
+
+    PRE_AP_RAISE6_PRICE = Column(Integer, nullable=False)
+
+    PRE_AP_RAISE60_PRICE = Column(Integer, nullable=False)
+
+    PRE_AP_RAISE5MIN_PRICE = Column(Integer, nullable=False)
+
+    PRE_AP_RAISEREG_PRICE = Column(Integer, nullable=False)
+
+    PRE_AP_LOWER6_PRICE = Column(Integer, nullable=False)
+
+    PRE_AP_LOWER60_PRICE = Column(Integer, nullable=False)
+
+    PRE_AP_LOWER5MIN_PRICE = Column(Integer, nullable=False)
+
+    PRE_AP_LOWERREG_PRICE = Column(Integer, nullable=False)
+
+    CUMUL_PRE_AP_ENERGY_PRICE = Column(Integer, nullable=False)
+
+    CUMUL_PRE_AP_RAISE6_PRICE = Column(Integer, nullable=False)
+
+    CUMUL_PRE_AP_RAISE60_PRICE = Column(Integer, nullable=False)
+
+    CUMUL_PRE_AP_RAISE5MIN_PRICE = Column(Integer, nullable=False)
+
+    CUMUL_PRE_AP_RAISEREG_PRICE = Column(Integer, nullable=False)
+
+    CUMUL_PRE_AP_LOWER6_PRICE = Column(Integer, nullable=False)
+
+    CUMUL_PRE_AP_LOWER60_PRICE = Column(Integer, nullable=False)
+
+    CUMUL_PRE_AP_LOWER5MIN_PRICE = Column(Integer, nullable=False)
+
+    CUMUL_PRE_AP_LOWERREG_PRICE = Column(Integer, nullable=False)
+
+    OCD_STATUS = Column(Integer, nullable=False)
+
+    MII_STATUS = Column(Integer, nullable=False)
+
+
+class WemFacilityScada(Base, NemModel):
+    __tablename__ = "wem_facility_scada"
+    __table_args__ = (
+        Index(
+            "wem_facility_scada_uniq",
+            "TRADING_INTERVAL",
+            "FACILITY_CODE",
+            unique=True,
+        ),
+    )
+
+    id = Column(Integer, primary_key=True)
+    TRADING_INTERVAL = Column(DateTime, index=True)
+    PARTICIPANT_CODE = Column(Text, index=True,)
+    FACILITY_CODE = Column(Text, index=True,)
+    ENERGY_GENERATED = Column(NUMERIC(10, 6))
+    EOI_QUANTITY = Column(NUMERIC(10, 6))

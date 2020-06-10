@@ -16,7 +16,7 @@ def crawl():
     print("crawl")
 
 
-cli.add_command(initdb)
+main.add_command(crawl)
 
 if __name__ == "__main__":
     try:
