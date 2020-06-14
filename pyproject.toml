@@ -36,6 +36,7 @@ pydantic = "^1.5.1"
 alembic = "^1.4.2"
 click = "^7.1.2"
 psycopg2 = {version = "^2.8.5", optional = true}
+huey = "^2.2.0"
 
 [tool.poetry.dev-dependencies]
 black = "19.10b0"

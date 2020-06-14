@@ -12,6 +12,16 @@ services:
       - ${HOST:-127.0.0.1}:13306:3306
     volumes:
       - db_data:/var/lib/mysql
+
+  redis:
+    image: redis:3.2
+    hostname: redis
+    ports:
+      - 6379:6379
+    env_file:
+      - ./.env
+    restart: on-failure
+
   postgres:
     image: postgres:12-alpine
     restart: always
