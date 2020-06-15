@@ -45,3 +45,4 @@ config.yml
 .DS_Store
 .scrapy/
 .venv-test/
+test.json
