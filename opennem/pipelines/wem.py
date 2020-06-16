@@ -1,12 +1,13 @@
 import csv
 import logging
+from datetime import datetime
 
 from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from opennem.db import db_connect
-from opennem.db.models.opennem import WemFacility, WemFacilityScada
+from opennem.db.models.wem import WemFacility, WemFacilityScada, WemParticipant
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
@@ -43,10 +44,69 @@ class ExtractCSV(object):
         return item
 
 
+FACILITY_MAP = {
+    "Balancing Status": "active",
+}
+
+
 class DatabaseStore(object):
     def __init__(self):
         engine = db_connect()
         self.session = sessionmaker(bind=engine)
+
+    def facility(self, row):
+        pass
+
+        s = self.session()
+        from pprint import pprint
+
+        if not "Participant Code" in row:
+            print("invlid row")
+            return row
+
+        participant = None
+
+        participant_code = row["Participant Code"]
+        participant = s.query(WemParticipant).get(participant_code)
+
+        if not participant:
+            print("Participant not found: {}".format(participant_code))
+            participant = WemParticipant(
+                code=participant_code, name=row["Participant Name"]
+            )
+            s.add(participant)
+            s.commit()
+
+        facility = None
+
+        facility_code = row["Facility Code"]
+        facility = s.query(WemFacility).get(facility_code)
+
+        if not facility:
+            facility = WemFacility(
+                code=facility_code, participant=participant,
+            )
+
+        facility.active = (
+            False if row["Balancing Status"] == "Non-Active" else True
+        )
+
+        if row["Capacity Credits (MW)"]:
+            facility.capacity_credits = row["Capacity Credits (MW)"]
+
+        if row["Maximum Capacity (MW)"]:
+            facility.capacity_maximum = row["Maximum Capacity (MW)"]
+
+        registered_date = row["Registered From"]
+
+        if registered_date:
+            registered_date_dt = datetime.strptime(
+                registered_date, "%Y-%m-%d %H:%M:%S"
+            )
+            facility.registered = registered_date_dt
+
+        s.add(facility)
+        s.commit()
 
     @check_spider_pipeline
     def process_item(self, item, spider):
