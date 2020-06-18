@@ -74,7 +74,15 @@ registerDateHandler(_parse_date_iso8601)
 registerDateHandler(_parse_date_rfc822)
 registerDateHandler(_parse_date_w3dtf)
 
-__DATE_FORMATS = ["%d %B %Y", "%d %b %Y", "%d %b. %y", "%d/%m/%Y", "%d %b %y", "%d %b %y"]
+__DATE_FORMATS = [
+    "%d %B %Y",
+    "%d %b %Y",
+    "%d %b. %y",
+    "%d/%m/%Y",
+    "%d %b %y",
+    "%d %b %y",
+    "%Y-%m-%d %H:%M:%S",
+]
 
 
 def _parse_datestrings(date_string):
