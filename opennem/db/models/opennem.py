@@ -9,6 +9,7 @@
 
 from sqlalchemy import (
     NUMERIC,
+    Boolean,
     Column,
     Date,
     DateTime,
@@ -394,6 +395,24 @@ class NemDispatchInterconnection(Base, NemModel):
 
     SETTLEMENTDATE = Column(Integer, nullable=False, primary_key=True)
     RUNNO = Column(Integer, nullable=False)
+
+
+class FuelTech(Base, NemModel):
+    __tablename__ = "fueltech"
+    code = Column(Text, primary_key=True)
+    label = Column(Text, nullable=True)
+
+
+class WemParticipant(Base, NemModel):
+    """
+
+        wem participants
+
+    """
+
+    __tablename__ = "wem_participant"
+    code = Column(Text, index=True, primary_key=True)
+    name = Column(Text, index=True)
 
 
 class WemFacility(Base, NemModel):
