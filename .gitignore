@@ -46,3 +46,4 @@ config.yml
 .scrapy/
 .venv-test/
 test.json
+db_test.py
