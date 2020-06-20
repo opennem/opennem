@@ -438,7 +438,7 @@ class WemFacility(Base, NemModel):
         ForeignKey("fueltech.code", name="fk_wem_facility_fueltech_id"),
         nullable=True,
     )
-    fueldtech = relationship("FuelTech")
+    fueltech = relationship("FuelTech")
 
     active = Column(Boolean, default=True)
     capacity_credits = Column(Numeric, nullable=True)
@@ -454,16 +454,15 @@ class WemFacilityScada(Base, NemModel):
     """
 
     __tablename__ = "wem_facility_scada"
-    __table_args__ = (
-        Index(
-            "wem_facility_scada_uniq",
-            "TRADING_INTERVAL",
-            "FACILITY_CODE",
-            unique=True,
-        ),
-    )
 
-    TRADING_INTERVAL = Column(DateTime, index=True, primary_key=True)
-    FACILITY_CODE = Column(Text, index=True, primary_key=True)
-    ENERGY_GENERATED = Column(NUMERIC(10, 6))
-    EOI_QUANTITY = Column(NUMERIC(10, 6))
+    trading_interval = Column(DateTime, index=True, primary_key=True)
+
+    facility_id = Column(
+        Text,
+        ForeignKey("wem_facility.code", name="fk_facility_scada_facility_id"),
+        primary_key=True,
+    )
+    facility = relationship("WemFacility")
+
+    generated = Column(Numeric, nullable=True)
+    quantity = Column(Numeric, nullable=True)

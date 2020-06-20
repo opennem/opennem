@@ -49,16 +49,46 @@ FACILITY_MAP = {
 }
 
 
+class DatabaseStoreBase(object):
+    def __init__(self):
+        engine = db_connect()
+        self.session = sessionmaker(bind=engine)
+
+
+class PipelineWemFacilityScada(DatabaseStoreBase):
+    # @check_spider_pipeline
+    def process_item(self, item, spider=None):
+
+        s = self.session()
+
+        if not "Participant Code" in item:
+            print("invlid row")
+            return item
+
+        trading_interval = item["Trading Interval"]
+
+        trading_interval_dt = datetime.strptime(
+            trading_interval, "%Y-%m-%d %H:%M:%S"
+        )
+
+        facility_scada = WemFacilityScada(
+            trading_interval=trading_interval_dt,
+            facility_id=item["Facility Code"],
+            generated=item["Energy Generated (MWh)"],
+            quantity=item["EOI Quantity (MW)"],
+        )
+
+        s.add(facility_scada)
+        s.commit()
+
+
 class DatabaseStore(object):
     def __init__(self):
         engine = db_connect()
         self.session = sessionmaker(bind=engine)
 
     def facility(self, row):
-        pass
-
         s = self.session()
-        from pprint import pprint
 
         if not "Participant Code" in row:
             print("invlid row")
