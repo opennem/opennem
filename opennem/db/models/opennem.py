@@ -434,7 +434,9 @@ class WemFacility(Base, NemModel):
     participant = relationship("WemParticipant")
 
     fueltech_id = Column(
-        Text, ForeignKey("fueltech.code", name="fk_wem_facility_fueltech_id")
+        Text,
+        ForeignKey("fueltech.code", name="fk_wem_facility_fueltech_id"),
+        nullable=True,
     )
     fueldtech = relationship("FuelTech")
 
