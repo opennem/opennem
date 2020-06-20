@@ -416,39 +416,38 @@ class WemParticipant(Base, NemModel):
 
 
 class WemFacility(Base, NemModel):
+    """
+
+        wem facility
+
+        http://data.wa.aemo.com.au/#facilities
+
+    """
+
     __tablename__ = "wem_facility"
-    __table_args__ = (
-        Index(
-            "wem_facility_uniq",
-            "PARTICIPANT_CODE",
-            "FACILITY_CODE",
-            unique=True,
-        ),
+
+    code = Column(Text, primary_key=True)
+    participant_id = Column(
+        Text,
+        ForeignKey("wem_participant.code", name="fk_facility_participant_id"),
     )
+    participant = relationship("WemParticipant")
 
-    PARTICIPANT_CODE = Column(Text, index=True, primary_key=True)
+    fueltech_id = Column(
+        Text, ForeignKey("fueltech.code", name="fk_wem_facility_fueltech_id")
+    )
+    fueldtech = relationship("FuelTech")
 
-    PARTICIPANT_NAME = Column(Text, index=False,)
-    FACILITY_CODE = Column(Text, index=False, primary_key=True)
-
-    # @TODO make this an ENUM
-    FACILITY_TYPE = Column(Text, index=False,)
-
-    # @TODO make this an ENUM - active / non-active
-    BALANCING_STATUS = Column(Text, index=False,)
-
-    CAPACITY_CREDITS = Column(Numeric)
-    MAXIMUM_CAPACITY = Column(Numeric)
-
-    REGISTERED_FROM = Column(Date)
-    EXTRACTED_AT = Column(DateTime(timezone=True))
+    active = Column(Boolean, default=True)
+    capacity_credits = Column(Numeric, nullable=True)
+    capacity_maximum = Column(Numeric, nullable=True)
+    registered = Column(DateTime)
 
 
 class WemFacilityScada(Base, NemModel):
     """
-        WEM Facility
+        WEM Facility Scada
 
-        http://data.wa.aemo.com.au/#facilities
 
     """
 
