@@ -47,3 +47,4 @@ config.yml
 .venv-test/
 test.json
 db_test.py
+.envrc
