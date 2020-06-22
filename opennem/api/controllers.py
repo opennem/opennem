@@ -63,17 +63,22 @@ def wem_7_days():
                     "type": "energy",
                     "units": "mwh",
                     "history": {
-                        "interval": "5m",
+                        "interval": "30m",
+                        "start": "",
                         "last": row[3],
-                        "start": row[4].isoformat(),
                         "data": [],
                     },
                 }
 
             json_obj["history"]["data"].append(row[2])
+            json_obj["history"]["start"] = row[3]
 
     with open("wa1.json", "w") as fh:
         json.dump(json_envelope, fh, cls=NemEncoder)
+
+    from pprint import pprint
+
+    # pprint(json_envelope)
 
 
 if __name__ == "__main__":
