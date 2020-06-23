@@ -13,7 +13,7 @@ NEWSPIDER_MODULE = "opennem.spiders"
 
 
 USER_AGENT = "opennem (+https://opennem.org.au)"
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 CONCURRENT_REQUESTS = 16
 COOKIES_ENABLED = False
 TELNETCONSOLE_ENABLED = False
@@ -39,6 +39,7 @@ ITEM_PIPELINES = {
     "opennem.pipelines.wem.ExtractCSV": 302,
     "opennem.pipelines.nem.DatabaseStore": 401,
     "opennem.pipelines.wem.DatabaseStore": 402,
+    "opennem.pipelines.bom.StoreBomObservation": 403,
 }
 
 # @TODO if DEBUG

@@ -1,0 +1,505 @@
+015590  NT  15B   ALICE SPRINGS AIRPORT                    19400101..      -23.7951 133.889   
+014272  NT  14GA  BATCHELOR AIRPORT                        19920813..      -13.0544 131.0252  
+014723  NT  14DE  BORROLOOLA AIRPORT                       19871107..      -16.0755 136.3041  
+014954  NT  14F   BRADSHAW                                 19980529..      -14.9408 130.8091  
+014808  NT  14F   BRADSHAW - ANGALLARI VALLEY (DEFENCE)    20171206..      -15.4397 130.5731  
+014981  NT  14F   BRADSHAW - KOOLENDONG VALLEY (DEFENCE)   20180821..      -15.1853 130.1169  
+014627  NT  14DE  BULMAN                                   20021010..      -13.6715 134.3415  
+014909  NT  14GA  CENTRAL ARNHEM PLATEAU                   20030731..      -13.3275 133.0861  
+014703  NT  14DE  CENTRE ISLAND                            19680101..      -15.7426 136.8192  
+014308  NT  14GA  CROKER ISLAND AIRPORT                    20120921..      -11.1629 132.4813  
+014626  NT  14DE  DALY WATERS AIRSTRIP                     19390101..      -16.2637 133.3782  
+014015  NT  14GA  DARWIN AIRPORT                           19410101..      -12.4239 130.8925  
+014072  NT  14GA  DARWIN NTC AWS                           19900519..      -12.4719 130.8458  
+014949  NT  14GA  DELAMERE WEAPONS RANGE                   19970306..      -15.7441 131.9181  
+014901  NT  14GA  DOUGLAS RIVER RESEARCH FARM              19680801..      -13.8345 131.1872  
+014277  NT  14GA  DUM IN MIRRIE AIRSTRIP                   19940427..      -12.635  130.3725  
+014508  NT  14BC  GOVE AIRPORT                             19440101..      -12.2741 136.8201  
+014518  NT  14BC  GROOTE EYLANDT AIRPORT                   19990424..      -13.9746 136.463   
+014198  NT  14GA  JABIRU AIRPORT                           19840319..      -12.6592 132.894   
+015602  NT  15B   JERVOIS                                  19660101..      -22.9494 136.1442  
+014982  NT  14GA  KANGAROO FLATS (DEFENCE)                 20170925..      -12.7934 130.8542  
+014829  NT  14F   LAJAMANU AIRPORT                         19520101..      -18.3324 130.6361  
+014405  NT  14BC  MANINGRIDA AIRPORT                       20031023..      -12.0569 134.2339  
+014704  NT  14DE  MCARTHUR RIVER MINE AIRPORT              19680314..      -16.4423 136.076   
+014274  NT  14GA  MCCLUER ISLAND                           19930817..      -11.0468 132.9791  
+014041  NT  14GA  MIDDLE POINT                             20010801..      -12.605  131.2988  
+014404  NT  14BC  MILINGIMBI AIRPORT                       20030306..      -12.0932 134.8919  
+014983  NT  14GA  MOUNT BUNDEY NORTH (DEFENCE)             20170925..      -12.9141 131.8663  
+014984  NT  14GA  MOUNT BUNDEY SOUTH (DEFENCE)             20170925..      -13.0889 131.8478  
+014309  NT  14GA  MURGANELLA AIRSTRIP                      20121005..      -11.5485 132.9266  
+014299  NT  14DE  NGUKURR AIRPORT                          20120628..      -14.7236 134.7456  
+014314  NT  14GA  NOONAMAH AIRSTRIP                        20130605..      -12.6099 131.0474  
+014310  NT  14GA  OENPELLI AIRPORT                         20120921..      -12.3272 133.0069  
+014142  NT  14GA  PIRLANGIMPI AIRPORT                      19630101..      -11.4021 130.4217  
+014948  NT  14GA  PORT KEATS AIRPORT                       19961128..      -14.2494 129.5282  
+015666  NT  15B   RABBIT FLAT                              19960627..      -20.1823 130.0148  
+015135  NT  15A   TENNANT CREEK AIRPORT                    19690101..      -19.6423 134.1833  
+015643  NT  15B   TERRITORY GRAPE FARM                     19870527..      -22.4518 133.6377  
+014932  NT  14GA  TINDAL RAAF                              19690101..      -14.5229 132.3826  
+014825  NT  14F   VICTORIA RIVER DOWNS                     18850101..      -16.403  131.0145  
+015664  NT  15B   WALUNGURRU AIRPORT                       20010922..      -23.2656 129.3844  
+014401  NT  14BC  WARRUWI AIRPORT                          19160101..      -11.65   133.3797  
+015635  NT  15B   YULARA AIRPORT                           19830621..      -25.1896 130.9737  
+023090  SA  23A   ADELAIDE (KENT TOWN)                     19770101..      -34.9211 138.6216  
+023000  SA  23A   ADELAIDE (WEST TERRACE / NGAYIRDAPIRA)   18390101..      -34.9257 138.5832  
+023034  SA  23A   ADELAIDE AIRPORT                         19550216..      -34.9524 138.5196  
+022823  SA  22B   CAPE BORDA                               20020909..      -35.7549 136.5959  
+026095  SA  26    CAPE JAFFA (THE LIMESTONE)               19910327..      -36.9655 139.7164  
+022803  SA  22B   CAPE WILLOUGHBY                          18810101..      -35.8426 138.1327  
+018012  SA  18    CEDUNA AMO                               19390101..      -32.1297 133.6976  
+021131  SA  21    CLARE HIGH SCHOOL                        19930924..      -33.8226 138.5933  
+018116  SA  18    CLEVE AERODROME                          19630101..      -33.7081 136.5026  
+018230  SA  18    COFFIN BAY (POINT AVOID)                 20170607..      -34.675  135.3362  
+016090  SA  16    COOBER PEDY AIRPORT                      19940628..      -29.0347 134.7222  
+026091  SA  26    COONAWARRA                               19850926..      -37.2906 140.8254  
+018229  SA  18    CULTANA (DEFENCE)                        20171109..      -32.6845 137.3689  
+018217  SA  18    CUMMINS AERO                             20070628..      -34.2524 135.7135  
+023083  SA  23A   EDINBURGH RAAF                           19720101..      -34.7111 138.6222  
+022046  SA  22A   EDITHBURGH                               19840706..      -35.1121 137.7395  
+016097  SA  16    ERNABELLA (PUKATJA)                      19970715..      -26.2635 132.1771  
+023894  SA  23C   HINDMARSH ISLAND AWS                     20030124..      -35.5194 138.8177  
+022050  SA  22A   KADINA AWS                               20050720..      -33.9703 137.6628  
+025557  SA  25B   KEITH (MUNKORA)                          20010704..      -36.1058 140.3273  
+022841  SA  22B   KINGSCOTE AERO                           19940307..      -35.7114 137.5231  
+023887  SA  23C   KUITPO FOREST RESERVE                    19980306..      -35.1712 138.6783  
+025562  SA  25B   LAMEROO (AUSTIN PLAINS)                  20040625..      -35.3778 140.5378  
+017110  SA  17    LEIGH CREEK AIRPORT                      19820101..      -30.5963 138.4219  
+024024  SA  24A   LOXTON RESEARCH CENTRE                   19840601..      -34.439  140.5978  
+017126  SA  17    MARREE AERO                              19980722..      -29.6587 138.0684  
+022031  SA  22A   MINLATON AERO                            20010329..      -34.748  137.5276  
+018195  SA  18    MINNIPA PIRSA                            19960611..      -32.8427 135.1515  
+017123  SA  17    MOOMBA AIRPORT                           19950626..      -28.0997 140.1956  
+023878  SA  23C   MOUNT CRAWFORD AWS                       19940419..      -34.7253 138.9278  
+026021  SA  26    MOUNT GAMBIER AERO                       19410101..      -37.7473 140.7739  
+023842  SA  23C   MOUNT LOFTY                              19850201..      -34.9784 138.7088  
+024584  SA  24B   MURRAY BRIDGE (PALLAMANA AERODROME)      20060213..      -35.065  139.2273  
+026099  SA  26    NARACOORTE AERODROME                     19980603..      -36.9813 140.727   
+023885  SA  23C   NOARLUNGA                                20000904..      -35.1586 138.5057  
+018192  SA  18    NORTH SHIELDS (PORT LINCOLN AWS)         19920402..      -34.5993 135.8784  
+018106  SA  18    NULLARBOR                                18880101..      -31.4492 130.8976  
+023373  SA  23B   NURIOOTPA PIRSA                          19960828..      -34.4761 139.0056  
+017043  SA  17    OODNADATTA AIRPORT                       19390101..      -27.5553 135.4456  
+026100  SA  26    PADTHAWAY SOUTH                          20000519..      -36.6539 140.5212  
+023013  SA  23A   PARAFIELD AIRPORT                        19290101..      -34.7977 138.6281  
+023875  SA  23C   PARAWA (SECOND VALLEY FOREST AWS)        19940309..      -35.5695 138.2864  
+022843  SA  22B   PARNDANA CFS AWS                         20110907..      -35.7916 137.2496  
+018201  SA  18    PORT AUGUSTA AERO                        20010702..      -32.5073 137.7169  
+024048  SA  24A   RENMARK AERO                             19950626..      -34.1983 140.6766  
+026105  SA  26    ROBE AIRFIELD                            20030702..      -37.1776 139.8054  
+023122  SA  23A   ROSEWORTHY AWS                           19970715..      -34.5106 138.6763  
+016096  SA  16    ROXBY DOWNS (OLYMPIC DAM AERODROME)      19971114..      -30.4829 136.8772  
+021133  SA  21    SNOWTOWN (RAYVILLE PARK)                 19980722..      -33.7676 138.2182  
+022049  SA  22A   STENHOUSE BAY                            19951120..      -35.2795 136.9392  
+024580  SA  24B   STRATHALBYN RACECOURSE                   19960401..      -35.2836 138.8934  
+016098  SA  16    TARCOOLA AERO                            19970930..      -30.7051 134.5786  
+018120  SA  18    WHYALLA AERO                             19450101..      -33.0539 137.5206  
+016001  SA  16    WOOMERA AERODROME                        19490101..      -31.1558 136.8054  
+018083  SA  18    WUDINNA AERO                             19990420..      -33.043  135.4519  
+020062  SA  20    YUNTA AIRSTRIP                           19980630..      -32.5707 139.5645  
+090180  VIC 90    AIREYS INLET                             19900727..      -38.4583 144.0883  
+087113  VIC 87    AVALON AIRPORT                           19650101..      -38.0288 144.4783  
+085279  VIC 85    BAIRNSDALE AIRPORT                       19420701..      -37.8818 147.5669  
+089002  VIC 89    BALLARAT AERODROME                       19080301..      -37.5127 143.7911  
+081123  VIC 81    BENDIGO AIRPORT                          19911029..      -36.7411 144.3275  
+087184  VIC 87    BREAKWATER (GEELONG RACECOURSE)          20110602..      -38.1737 144.3765  
+090015  VIC 90    CAPE OTWAY LIGHTHOUSE                    18610101..      -38.8556 143.5128  
+090182  VIC 90    CASTERTON                                20050207..      -37.5831 141.334   
+086361  VIC 86    CERBERUS                                 19860820..      -38.3646 145.1785  
+080128  VIC 80    CHARLTON                                 20040714..      -36.2846 143.3341  
+090035  VIC 90    COLAC (MOUNT GELLIBRAND)                 20000707..      -38.2333 143.7925  
+086383  VIC 86    COLDSTREAM                               19941020..      -37.7239 145.4092  
+086320  VIC 86    COLDSTREAM COMPARISON                    20090722..      -37.7239 145.4092  
+084143  VIC 84    COMBIENBAR AWS                           19940624..      -37.3416 149.0227  
+085301  VIC 85    CORNER INLET (YANAKIE)                   20130117..      -38.8051 146.1936  
+090194  VIC 90    DARTMOOR                                 20090305..      -37.9222 141.2614  
+083055  VIC 83    DINNER PLAIN (MOUNT HOTHAM AIRPORT)      20000601..      -37.0491 147.3347  
+085314  VIC 85    EAST SALE AIRPORT                        20170905..      -38.1017 147.1399  
+079099  VIC 79    EDENHOPE AIRPORT                         20050309..      -37.0222 141.2657  
+088164  VIC 88    EILDON FIRE TOWER                        19951130..      -37.2091 145.8423  
+086038  VIC 86    ESSENDON AIRPORT                         19290101..      -37.7276 144.9066  
+083084  VIC 83    FALLS CREEK                              19900910..      -36.8708 147.2755  
+086266  VIC 86    FERNY CREEK                              20110316..      -37.8748 145.3496  
+084016  VIC 84    GABO ISLAND LIGHTHOUSE                   18590610..      -37.5679 149.9158  
+084142  VIC 84    GELANTIPY                                19920522..      -37.22   148.2626  
+079103  VIC 79    GRAMPIANS (MOUNT WILLIAM)                20051213..      -37.295  142.6039  
+090173  VIC 90    HAMILTON AIRPORT                         19830701..      -37.6486 142.0636  
+077010  VIC 77    HOPETOUN AIRPORT                         20040617..      -35.7151 142.3569  
+079100  VIC 79    HORSHAM AERODROME                        19901016..      -36.6697 142.1731  
+082139  VIC 82    HUNTERS HILL                             19930401..      -36.2136 147.5394  
+079097  VIC 79    KANAGULK                                 20040520..      -37.1169 141.8031  
+078018  VIC 78    KELLALAC (WARRACKNABEAL AIRPORT)         20161208..      -36.3204 142.4161  
+080091  VIC 80    KYABRAM                                  19640101..      -36.335  145.0638  
+087031  VIC 87    LAVERTON RAAF                            19410101..      -37.8565 144.7566  
+079028  VIC 79    LONGERENONG                              18600101..      -36.6722 142.2991  
+084084  VIC 84    MALLACOOTA                               19740101..      -37.5976 149.7289  
+088109  VIC 88    MANGALORE AIRPORT                        19570101..      -36.8886 145.1859  
+086338  VIC 86    MELBOURNE (OLYMPIC PARK)                 20130531..      -37.8255 144.9816  
+086282  VIC 86    MELBOURNE AIRPORT                        19700618..      -37.6655 144.8321  
+076031  VIC 76    MILDURA AIRPORT                          19460801..      -34.2358 142.0867  
+086077  VIC 86    MOORABBIN AIRPORT                        19500704..      -37.98   145.0962  
+090176  VIC 90    MORTLAKE RACECOURSE                      19900111..      -38.0737 142.7744  
+085280  VIC 85    MORWELL (LATROBE VALLEY AIRPORT)         19840113..      -38.2094 146.4746  
+085291  VIC 85    MOUNT BAW BAW                            19910916..      -37.8384 146.2747  
+083024  VIC 83    MOUNT BULLER                             19480601..      -37.145  146.4394  
+085296  VIC 85    MOUNT MOORNAPA                           19931215..      -37.7481 147.1428  
+084144  VIC 84    MOUNT NOWA NOWA                          19951006..      -37.6924 148.0908  
+078015  VIC 78    NHILL AERODROME                          20030611..      -36.3092 141.6486  
+083090  VIC 83    OMEO                                     20040811..      -37.1017 147.6008  
+084145  VIC 84    ORBOST                                   20001123..      -37.6922 148.4667  
+090175  VIC 90    PORT FAIRY AWS                           19901026..      -38.3906 142.2347  
+090171  VIC 90    PORTLAND (CASHMORE AIRPORT)              19820607..      -38.3148 141.4705  
+085099  VIC 85    POUND CREEK                              20070418..      -38.6297 145.8107  
+088167  VIC 88    PUCKAPUNYAL LYON HILL (DEFENCE)          20181022..      -36.9381 145.0539  
+088166  VIC 88    PUCKAPUNYAL WEST (DEFENCE)               20181022..      -37.0177 144.8546  
+079101  VIC 79    PYRENEES (BEN NEVIS)                     20070209..      -37.2281 143.2006  
+088051  VIC 88    REDESDALE                                19030101..      -37.0194 144.5203  
+086373  VIC 86    RHYLL                                    19900629..      -38.4612 145.3101  
+082039  VIC 82    RUTHERGLEN RESEARCH                      19130101..      -36.1048 146.5094  
+086104  VIC 86    SCORESBY RESEARCH INSTITUTE              19480101..      -37.871  145.2561  
+087168  VIC 87    SHEOAKS                                  19900619..      -37.9075 144.1303  
+081125  VIC 81    SHEPPARTON AIRPORT                       19960523..      -36.4288 145.3949  
+079105  VIC 79    STAWELL AERODROME                        19960212..      -37.072  142.7402  
+077094  VIC 77    SWAN HILL AERODROME                      19961216..      -35.3766 143.5416  
+081049  VIC 81    TATURA INST SUSTAINABLE AG               19420101..      -36.4378 145.2672  
+086068  VIC 86    VIEWBANK                                 19990901..      -37.7408 145.0972  
+088162  VIC 88    WALLAN (KILMORE GAP)                     19931220..      -37.3807 144.9654  
+076064  VIC 76    WALPEUP RESEARCH                         19390101..      -35.1201 142.004   
+082138  VIC 82    WANGARATTA AERO                          19870513..      -36.4205 146.3056  
+090186  VIC 90    WARRNAMBOOL AIRPORT NDB                  19980902..      -38.2867 142.4522  
+089112  VIC 89    WESTMERE                                 20060208..      -37.7067 142.9378  
+085096  VIC 85    WILSONS PROMONTORY LIGHTHOUSE            18720101..      -39.1297 146.4246  
+085151  VIC 85    YARRAM AIRPORT                           20071018..      -38.5647 146.7479  
+081124  VIC 81    YARRAWONGA                               19930525..      -36.0294 146.0305  
+033295  QLD 33    ALVA BEACH                               19970205..      -19.4569 147.4833  
+040004  QLD 40    AMBERLEY AMO                             19410101..      -27.6297 152.7111  
+041175  QLD 41    APPLETHORPE                              19651101..      -28.6217 151.9533  
+040211  QLD 40    ARCHERFIELD AIRPORT                      19290401..      -27.5716 153.0071  
+033002  QLD 33    AYR DPI RESEARCH STN                     19510101..      -19.6169 147.3758  
+045009  QLD 45    BALLERA GAS FIELD                        19980806..      -27.4008 141.8114  
+040983  QLD 40    BEAUDESERT DRUMLEY STREET                20070813..      -27.9707 152.9898  
+040284  QLD 40    BEERBURRUM FOREST STATION                18980101..      -26.9586 152.9619  
+038026  QLD 38    BIRDSVILLE AIRPORT                       20000627..      -25.8975 139.3472  
+036034  QLD 36    BLACKALL AIRPORT                         20010309..      -24.4303 145.4306  
+035134  QLD 35    BLACKWATER AIRPORT                       20130509..      -23.6015 148.8074  
+033327  QLD 33    BOWEN AIRPORT AWS                        20150319..      -20.0154 148.2138  
+040913  QLD 40    BRISBANE                                 19991210..      -27.4808 153.0389  
+040842  QLD 40    BRISBANE AERO                            19921210..      -27.3917 153.1292  
+039128  QLD 39    BUNDABERG AERO                           19420101..      -24.9069 152.323   
+029077  QLD 29    BURKETOWN AIRPORT                        20011010..      -17.7483 139.5356  
+031011  QLD 31    CAIRNS AERO                              19410505..      -16.8736 145.7458  
+031222  QLD 31    CAIRNS RACECOURSE                        20130802..      -16.9463 145.7474  
+037010  QLD 37    CAMOOWEAL TOWNSHIP                       18910101..      -19.9225 138.1214  
+140008  QLD 40    CANUNGRA (DEFENCE)                       20180321..      -28.0437 153.1871  
+031213  QLD 31    CAPE FLATTERY                            20030618..      -14.9672 145.3106  
+040043  QLD 40    CAPE MORETON LIGHTHOUSE                  18690101..      -27.0314 153.4661  
+037053  QLD 37    CARTERS BORE                             20140729..      -20.9358 139.2964  
+029167  QLD 29    CENTURY MINE                             20030404..      -18.7569 138.7056  
+044021  QLD 44    CHARLEVILLE AERO                         19420101..      -26.4139 146.2558  
+035124  QLD 35    CLERMONT AIRPORT                         20100414..      -22.7756 147.6217  
+029141  QLD 29    CLONCURRY AIRPORT                        19781201..      -20.6664 140.505   
+027073  QLD 27    COEN AIRPORT                             20020604..      -13.7606 143.1183  
+031209  QLD 31    COOKTOWN AIRPORT                         20000630..      -15.4461 145.1861  
+040717  QLD 40    COOLANGATTA                              19820101..      -28.1681 153.5053  
+041522  QLD 41    DALBY AIRPORT                            19920115..      -27.1605 151.2634  
+040068  QLD 40    DOUBLE ISLAND POINT LIGHTHOUSE           18910101..      -25.9319 153.1906  
+035264  QLD 35    EMERALD AIRPORT                          19810101..      -23.5694 148.1756  
+039066  QLD 39    GAYNDAH AIRPORT                          20030124..      -25.6167 151.6156  
+030124  QLD 30    GEORGETOWN AIRPORT                       20040531..      -18.3039 143.5306  
+039326  QLD 39    GLADSTONE AIRPORT                        19931022..      -23.8697 151.2214  
+040764  QLD 40    GOLD COAST SEAWAY                        19870101..      -27.939  153.4283  
+140009  QLD 40    GREENBANK (DEFENCE)                      20180321..      -27.6932 152.9935  
+040093  QLD 40    GYMPIE                                   18700101..      -26.1831 152.6414  
+033106  QLD 33    HAMILTON ISLAND AIRPORT                  20020315..      -20.3658 148.9536  
+040405  QLD 40    HERVEY BAY AIRPORT                       19990312..      -25.322  152.8817  
+027058  QLD 27    HORN ISLAND                              19950110..      -10.5844 142.29    
+030022  QLD 30    HUGHENDEN AIRPORT                        20010221..      -20.8192 144.2333  
+032197  QLD 32    INNISFAIL AERODROME                      20160620..      -17.5581 146.0119  
+029058  QLD 29    JULIA CREEK AIRPORT                      20010831..      -20.6672 141.7214  
+040922  QLD 40    KINGAROY AIRPORT                         20010119..      -26.5737 151.8398  
+029038  QLD 29    KOWANYAMA AIRPORT                        19120101..      -15.4818 141.7483  
+039059  QLD 39    LADY ELLIOT ISLAND                       19390101..      -24.1116 152.7161  
+029181  QLD 29    LAKE JULIUS AWS                          20130731..      -20.1167 139.7256  
+035139  QLD 35    LOCHINGTON                               20101021..      -23.9424 147.525   
+028008  QLD 28    LOCKHART RIVER AIRPORT                   19560101..      -12.785  143.3047  
+036031  QLD 36    LONGREACH AERO                           19490101..      -23.4397 144.2828  
+031037  QLD 31    LOW ISLES LIGHTHOUSE                     18870101..      -16.3842 145.5592  
+032141  QLD 32    LUCINDA POINT                            19800101..      -18.5203 146.3861  
+033045  QLD 33    MACKAY AERO                              19500101..      -21.1706 149.1794  
+033119  QLD 33    MACKAY M.O                               19590101..      -21.1172 149.2169  
+031210  QLD 31    MAREEBA AIRPORT                          20000609..      -17.0704 145.4293  
+040126  QLD 40    MARYBOROUGH                              18700101..      -25.5132 152.7152  
+042112  QLD 42    MILES CONSTANCE STREET                   19970704..      -26.6569 150.1819  
+034035  QLD 34    MORANBAH AIRPORT                         20120227..      -22.0644 148.0758  
+029182  QLD 29    MORNINGTON ISLAND AIRPORT                20131024..      -16.662  139.1655  
+029127  QLD 29    MOUNT ISA AERO                           19661201..      -20.6778 139.4875  
+032195  QLD 32    MOUNT STUART (DEFENCE)                   20170925..      -19.4082 146.762   
+040988  QLD 40    NAMBOUR DAFF - HILLSIDE                  20071218..      -26.6442 152.9383  
+037059  QLD 37    NEW MAY DOWNS                            20130803..      -20.59   139.3411  
+029063  QLD 29    NORMANTON AIRPORT                        20010410..      -17.6872 141.0733  
+041359  QLD 41    OAKEY AERO                               19700101..      -27.4034 151.7413  
+033329  QLD 33    OORALEA RACECOURSE (MACKAY TURF CLUB)    20160623..      -21.17   149.1515  
+028004  QLD 28    PALMERVILLE                              18890101..      -15.9999 144.0754  
+033247  QLD 33    PROSERPINE AIRPORT                       19780101..      -20.4925 148.555   
+040958  QLD 40    REDCLIFFE                                20030216..      -27.2169 153.0922  
+140007  QLD 40    REDLAND (ALEXANDRA HILLS)                20150818..      -27.5433 153.2394  
+030161  QLD 30    RICHMOND AIRPORT                         19980219..      -20.7017 143.1167  
+039083  QLD 39    ROCKHAMPTON AERO                         19390101..      -23.3753 150.4775  
+035129  QLD 35    ROLLESTON AIRPORT                        20100708..      -24.4617 148.6264  
+043091  QLD 43    ROMA AIRPORT                             19850101..      -26.5477 148.771   
+033308  QLD 33    SAMUEL HILL AERO                         19970201..      -22.7433 150.6578  
+027075  QLD 27    SCHERGER RAAF                            20051210..      -12.6167 142.0869  
+032037  QLD 32    SOUTH JOHNSTONE EXP STN                  19200101..      -17.6053 145.9972  
+043109  QLD 43    ST GEORGE AIRPORT                        19970501..      -28.0489 148.5942  
+033210  QLD 33    ST LAWRENCE                              20040809..      -22.3472 149.5242  
+040861  QLD 40    SUNSHINE COAST AIRPORT                   19940617..      -26.599  153.0912  
+040908  QLD 40    TEWANTIN RSL PARK                        19951213..      -26.3911 153.0403  
+039089  QLD 39    THANGOOL AIRPORT                         19290101..      -24.4935 150.5709  
+045025  QLD 45    THARGOMINDAH AIRPORT                     19990721..      -27.9867 143.815   
+037034  QLD 37    THE MONUMENT AIRPORT                     20001214..      -21.8125 139.9267  
+140010  QLD 40    TIN CAN BAY (DEFENCE)                    20180321..      -25.9351 152.9647  
+041529  QLD 41    TOOWOOMBA AIRPORT                        19960620..      -27.5425 151.9134  
+032040  QLD 32    TOWNSVILLE AERO                          19400101..      -19.2483 146.7661  
+032196  QLD 32    TOWNSVILLE- AIR WEAPONS RANGE (DEFENCE)  20170817..      -19.3048 146.2438  
+033328  QLD 33    TOWNSVILLE- FANNING RIVER (DEFENCE)      20170811..      -19.783  146.5     
+037036  QLD 37    TREPELL AIRPORT                          20010820..      -21.84   140.8925  
+040082  QLD 40    UNIVERSITY OF QUEENSLAND GATTON          18970101..      -27.5436 152.3375  
+037058  QLD 37    URANDANGI AERODROME                      20120906..      -21.5979 138.3665  
+041525  QLD 41    WARWICK                                  19940131..      -28.2061 152.1003  
+027045  QLD 27    WEIPA AERO                               19720301..      -12.6778 141.9208  
+033195  QLD 33    WILLIAMSON                               20050531..      -22.4703 150.1786  
+038076  QLD 38    WINDORAH AIRPORT                         20160804..      -25.4117 142.6647  
+037039  QLD 37    WINTON AIRPORT                           20021017..      -22.3617 143.0836  
+033307  QLD 33    WOOLSHED                                 19980611..      -19.4168 146.5362  
+033294  QLD 33    YEPPOON THE ESPLANADE                    19931123..      -23.1364 150.7506  
+095003  TAS 95    BUSHY PARK (BUSHY PARK ESTATES)          18740101..      -42.7097 146.8983  
+096003  TAS 96    BUTLERS GORGE                            19410101..      -42.2753 146.2758  
+094212  TAS 94    CAMPANIA (KINCORA)                       20000406..      -42.6867 147.4258  
+094198  TAS 94    CAPE BRUNY (CAPE BRUNY)                  19970516..      -43.4886 147.1444  
+091331  TAS 91    CAPE GRIM                                20101216..      -40.6764 144.6922  
+091245  TAS 91    CAPE GRIM BAPS (COMPARISON)              19850807..      -40.6828 144.69    
+097000  TAS 97    CAPE SORELL                              18990101..      -42.1986 145.17    
+091306  TAS 91    CRESSY RESEARCH STATION                  19990330..      -41.7256 147.0794  
+094255  TAS 94    DENNES POINT                             20120926..      -43.0639 147.3567  
+091126  TAS 91    DEVONPORT AIRPORT                        19620601..      -41.1701 146.4289  
+094254  TAS 94    DUNALLEY (STROUD POINT)                  20120307..      -42.9017 147.7894  
+092012  TAS 92    FINGAL (LEGGE STREET)                    18820101..      -41.6428 147.9664  
+099005  TAS 99    FLINDERS ISLAND AIRPORT                  19420101..      -40.0911 148.0024  
+092114  TAS 92    FRIENDLY BEACHES                         19970220..      -41.9953 148.2794  
+094220  TAS 94    GROVE (RESEARCH STATION)                 20040611..      -42.9858 147.0742  
+094191  TAS 97    HARTZ MOUNTAIN (KEOGHS PIMPLE)           19940101..      -43.2006 146.7683  
+094029  TAS 94    HOBART (ELLERSLIE ROAD)                  18820101..      -42.8897 147.3278  
+094008  TAS 94    HOBART AIRPORT                           19580101..      -42.8339 147.5033  
+098017  TAS 98    KING ISLAND AIRPORT                      19620101..      -39.8804 143.8857  
+094087  TAS 94    KUNANYI (MOUNT WELLINGTON PINNACLE)      19610101..      -42.895  147.2358  
+091237  TAS 91    LAUNCESTON (TI TREE BEND)                19800507..      -41.4194 147.1219  
+091311  TAS 91    LAUNCESTON AIRPORT                       20040614..      -41.5476 147.2156  
+096033  TAS 96    LIAWENEE                                 20010109..      -41.8997 146.6694  
+091293  TAS 91    LOW HEAD                                 19971106..      -41.0547 146.7874  
+097080  TAS 97    LOW ROCKY POINT                          19920316..      -42.9831 145.5025  
+091259  TAS 91    LUNCHEON HILL (FORESTRY)                 19890101..      -41.1492 145.1517  
+094041  TAS 94    MAATSUYKER ISLAND LIGHTHOUSE             18911001..      -43.6578 146.2711  
+092124  TAS 92    MARIA ISLAND (POINT LESUEUR)             20040527..      -42.6621 148.0179  
+097085  TAS 97    MOUNT READ                               19960910..      -41.8444 145.5417  
+095048  TAS 95    OUSE FIRE STATION                        19731009..      -42.4842 146.7106  
+097083  TAS 97    SCOTTS PEAK DAM                          19920101..      -43.0425 146.2722  
+091219  TAS 91    SCOTTSDALE (WEST MINSTONE ROAD)          19710303..      -41.1708 147.4883  
+091291  TAS 91    SHEFFIELD SCHOOL FARM                    19961213..      -41.3886 146.3219  
+091292  TAS 91    SMITHTON AERODROME                       19961114..      -40.8347 145.0847  
+092120  TAS 92    ST HELENS AERODROME                      20010110..      -41.3381 148.2792  
+097072  TAS 97    STRAHAN AERODROME                        19760101..      -42.155  145.2908  
+092123  TAS 92    SWAN ISLAND                              20011022..      -40.7292 148.125   
+094155  TAS 94    TASMAN ISLAND                            19770101..      -43.2397 148.0025  
+094195  TAS 94    TUNNACK FIRE STATION                     19970813..      -42.4543 147.4612  
+097024  TAS 97    WARRA                                    20040928..      -43.0609 146.704   
+091107  TAS 91    WYNYARD AIRPORT                          19470101..      -40.9964 145.7311  
+068241  NSW 68    ALBION PARK (SHELLHARBOUR AIRPORT)       19990604..      -34.5638 150.79    
+072160  NSW 72    ALBURY AIRPORT AWS                       19930401..      -36.069  146.9509  
+056238  NSW 56    ARMIDALE AIRPORT AWS                     19930101..      -30.5273 151.6158  
+067108  NSW 67    BADGERYS CREEK AWS                       19951023..      -33.8969 150.7281  
+058198  NSW 58    BALLINA AIRPORT AWS                      19921118..      -28.8353 153.5585  
+066137  NSW 66    BANKSTOWN AIRPORT AWS                    19680101..      -33.9176 150.9837  
+063291  NSW 63    BATHURST AIRPORT AWS                     19880101..      -33.4119 149.654   
+069139  NSW 69    BEGA AWS                                 19920318..      -36.6722 149.8191  
+068228  NSW 68    BELLAMBI AWS                             19881115..      -34.3691 150.9291  
+070328  NSW 70    BOMBALA AWS                              19880101..      -37.0016 149.2336  
+048245  NSW 48    BOURKE AIRPORT AWS                       19981203..      -30.0362 145.9521  
+069132  NSW 69    BRAIDWOOD RACECOURSE AWS                 19850101..      -35.4253 149.7835  
+047048  NSW 47    BROKEN HILL AIRPORT AWS                  19470101..      -32.0012 141.4694  
+058216  NSW 58    BYRON BAY (CAPE BYRON AWS)               19940101..      -28.6399 153.6358  
+072161  NSW 72    CABRAMURRA SMHEA AWS                     19961210..      -35.9371 148.3779  
+068192  NSW 68    CAMDEN AIRPORT AWS                       19430101..      -34.039  150.689   
+068257  NSW 68    CAMPBELLTOWN (MOUNT ANNAN)               20061114..      -34.0615 150.7735  
+070351  NSW 70    CANBERRA AIRPORT                         20080917..      -35.3088 149.2004  
+066194  NSW 66    CANTERBURY RACECOURSE AWS                19951004..      -33.9057 151.1134  
+058208  NSW 58    CASINO AIRPORT AWS                       19941208..      -28.8824 153.0618  
+061260  NSW 61    CESSNOCK AIRPORT AWS                     19680601..      -32.7886 151.3377  
+048237  NSW 48    COBAR AIRPORT AWS                        19930611..      -31.5388 145.7964  
+048027  NSW 48    COBAR MO                                 19620101..      -31.484  145.8294  
+059151  NSW 59    COFFS HARBOUR AIRPORT                    20130802..      -30.3189 153.1162  
+050137  NSW 50    CONDOBOLIN AIRPORT AWS                   19930521..      -33.0682 147.2133  
+070217  NSW 70    COOMA AIRPORT AWS                        19670101..      -36.2939 148.9725  
+064017  NSW 64    COONABARABRAN AIRPORT AWS                20010702..      -31.333  149.2699  
+051161  NSW 51    COONAMBLE AIRPORT AWS                    19970917..      -30.9776 148.3798  
+061412  NSW 61    COORANBONG (LAKE MACQUARIE AWS)          20080731..      -33.0887 151.4636  
+065111  NSW 65    COWRA AIRPORT AWS                        20040705..      -33.8382 148.654   
+074258  NSW 74    DENILIQUIN AIRPORT AWS                   19970523..      -35.5575 144.9458  
+065070  NSW 65    DUBBO AIRPORT AWS                        19460101..      -32.2206 148.5753  
+058212  NSW 58    EVANS HEAD RAAF BOMBING RANGE AWS        19980219..      -29.183  153.3964  
+065103  NSW 65    FORBES AIRPORT AWS                       19951206..      -33.3627 147.9205  
+046128  NSW 46    FOWLERS GAP AWS                          20041026..      -31.0863 141.7008  
+056243  NSW 56    GLEN INNES AIRPORT AWS                   19961017..      -29.678  151.694   
+061425  NSW 61    GOSFORD AWS                              20130531..      -33.4351 151.3614  
+070330  NSW 70    GOULBURN AIRPORT AWS                     19881107..      -34.8085 149.7311  
+058161  NSW 58    GRAFTON AIRPORT AWS                      19730101..      -29.7583 153.0297  
+058077  NSW 58    GRAFTON RESEARCH STN                     19170101..      -29.6224 152.9605  
+069137  NSW 69    GREEN CAPE AWS                           19910101..      -37.2622 150.0504  
+075041  NSW 75    GRIFFITH AIRPORT AWS                     19600101..      -34.2487 146.0695  
+055202  NSW 55    GUNNEDAH AIRPORT AWS                     20010914..      -30.9537 150.2494  
+075019  NSW 75    HAY AIRPORT AWS                          20070625..      -34.5412 144.8345  
+066161  NSW 66    HOLSWORTHY AERODROME AWS                 20120903..      -33.9925 150.9489  
+068263  NSW 68    HOLSWORTHY DEFENCE AWS                   20171212..      -34.081  150.9009  
+067119  NSW 67    HORSLEY PARK EQUESTRIAN CENTRE AWS       19970904..      -33.851  150.8567  
+056018  NSW 56    INVERELL RESEARCH CENTRE                 19490101..      -29.7752 151.082   
+049000  NSW 49    IVANHOE AERODROME AWS                    20000203..      -32.8833 144.3092  
+068151  NSW 68    JERVIS BAY (POINT PERPENDICULAR AWS)     20010521..      -35.0936 150.8049  
+068264  NSW 68    JERVIS BAY NSW (JERVIS BAY AIRFIELD AWS) 20181012..      -35.144  150.6974  
+074272  NSW 74    KAPOOKA (DEFENCE)                        20170925..      -35.1327 147.2512  
+059007  NSW 59    KEMPSEY AIRPORT AWS                      20010216..      -31.0711 152.7717  
+072162  NSW 72    KHANCOBAN AWS                            19961218..      -36.2304 148.1405  
+068242  NSW 68    KIAMA (BOMBO HEADLAND)                   20011213..      -34.6532 150.8609  
+058214  NSW 58    LISMORE AIRPORT AWS                      20020222..      -28.8305 153.2601  
+061428  NSW 61    MAITLAND AIRPORT AWS                     20160707..      -32.7023 151.4881  
+061375  NSW 61    MANGROVE MOUNTAIN AWS                    19940610..      -33.2894 151.2107  
+063308  NSW 63    MARRANGAROO (DEFENCE)                    20171206..      -33.4346 150.135   
+069147  NSW 69    MERIMBULA AIRPORT AWS                    19980204..      -36.9077 149.8989  
+061287  NSW 61    MERRIWA (ROSCOMMON)                      19690227..      -32.1852 150.1737  
+069017  NSW 69    MONTAGUE ISLAND LIGHTHOUSE               19490101..      -36.2519 150.2275  
+053115  NSW 53    MOREE AERO                               19950410..      -29.4898 149.8471  
+069148  NSW 69    MORUYA AIRPORT AWS                       19990930..      -35.9004 150.1437  
+068239  NSW 68    MOSS VALE AWS                            20010223..      -34.5253 150.4217  
+063292  NSW 63    MOUNT BOYCE AWS                          19890101..      -33.6185 150.2741  
+070349  NSW 70    MOUNT GININI AWS                         20040617..      -35.5293 148.7721  
+062101  NSW 62    MUDGEE AIRPORT AWS                       19881101..      -32.5628 149.6149  
+061392  NSW 61    MURRURUNDI GAP AWS                       20030616..      -31.7416 150.7937  
+054038  NSW 54    NARRABRI AIRPORT AWS                     20010713..      -30.3154 149.8302  
+074148  NSW 74    NARRANDERA AIRPORT AWS                   19670101..      -34.705  146.514   
+069128  NSW 69    NERRIGA AWS                              20130620..      -35.1103 150.0826  
+061055  NSW 61    NEWCASTLE NOBBYS SIGNAL STATION AWS      18620101..      -32.9184 151.7985  
+061366  NSW 61    NORAH HEAD AWS                           19890101..      -33.2814 151.5766  
+068072  NSW 68    NOWRA RAN AIR STATION AWS                20001128..      -34.9469 150.5353  
+062100  NSW 62    NULLO MOUNTAIN AWS                       19881107..      -32.7244 150.229   
+063303  NSW 63    ORANGE AIRPORT AWS                       19960315..      -33.3768 149.1263  
+065068  NSW 65    PARKES AIRPORT AWS                       19410101..      -33.1281 148.2428  
+061250  NSW 61    PATERSON (TOCAL AWS)                     19671110..      -32.6296 151.5919  
+067113  NSW 67    PENRITH LAKES AWS                        19950831..      -33.7195 150.6783  
+071075  NSW 71    PERISHER VALLEY AWS                      20100521..      -36.4069 148.4055  
+060139  NSW 60    PORT MACQUARIE AIRPORT AWS               19950605..      -31.4335 152.8655  
+067105  NSW 67    RICHMOND RAAF                            19930901..      -33.6004 150.7761  
+061363  NSW 61    SCONE AIRPORT AWS                        19881130..      -32.0335 150.8264  
+066037  NSW 66    SYDNEY AIRPORT AMO                       19290101..      -33.9465 151.1731  
+066212  NSW 66    SYDNEY OLYMPIC PARK AWS (ARCHERY CENTRE) 20110831..      -33.8338 151.0718  
+055325  NSW 55    TAMWORTH AIRPORT AWS                     19920131..      -31.0742 150.8362  
+060141  NSW 60    TAREE AIRPORT AWS                        19970619..      -31.8895 152.512   
+073151  NSW 73    TEMORA AIRPORT                           20050131..      -34.4277 147.5117  
+066059  NSW 66    TERREY HILLS AWS                         20040922..      -33.6908 151.2253  
+071032  NSW 71    THREDBO AWS                              19661126..      -36.4917 148.2859  
+046126  NSW 46    TIBOOBURRA AIRPORT                       19970922..      -29.4448 142.0567  
+051049  NSW 51    TRANGIE RESEARCH STATION AWS             19220101..      -31.9861 147.9489  
+070339  NSW 70    TUGGERANONG (ISABELLA PLAINS) AWS        19960501..      -35.4184 149.0937  
+069138  NSW 69    ULLADULLA AWS                            19890101..      -35.3635 150.4828  
+072150  NSW 72    WAGGA WAGGA AMO                          19410101..      -35.1583 147.4575  
+052088  NSW 52    WALGETT AIRPORT AWS                      19930601..      -30.0372 148.1223  
+046136  NSW 46    WANAARING (BORRONA DOWNS AWS)            20170719..      -29.7614 143.1135  
+050017  NSW 50    WEST WYALONG AIRPORT AWS                 19990408..      -33.9382 147.1962  
+046129  NSW 46    WHITE CLIFFS AWS                         20050705..      -30.8522 143.0743  
+046012  NSW 46    WILCANNIA AERODROME AWS                  20000119..      -31.5194 143.385   
+061078  NSW 61    WILLIAMTOWN RAAF                         19420101..      -32.7939 151.8364  
+058012  NSW 58    YAMBA PILOT STATION                      18770101..      -29.4325 153.3632  
+074037  NSW 74    YANCO AGRICULTURAL INSTITUTE             19570101..      -34.6222 146.4326  
+073138  NSW 73    YOUNG AIRPORT                            19881201..      -34.2493 148.2475  
+009999  WA  09A   ALBANY AIRPORT                           20120113..      -34.9411 117.8158  
+002064  WA  02    ARGYLE AERODROME                         19860124..      -16.638  128.4516  
+009037  WA  09    BADGINGARRA RESEARCH STN                 19620101..      -30.3381 115.5394  
+005094  WA  05    BARROW ISLAND AIRPORT                    19981120..      -20.874  115.4066  
+004100  WA  04    BEDOUT ISLAND                            19930610..      -19.5894 119.1     
+009240  WA  09    BICKLEY                                  19690101..      -32.0072 116.1369  
+009617  WA  09A   BRIDGETOWN                               19971217..      -33.9486 116.1311  
+003003  WA  03    BROOME AIRPORT                           19390101..      -17.9475 122.2352  
+009965  WA  09A   BUNBURY                                  19951122..      -33.3567 115.6447  
+009603  WA  09A   BUSSELTON AERO                           19971001..      -33.6818 115.4026  
+009518  WA  09A   CAPE LEEUWIN                             18970101..      -34.3728 115.1358  
+009519  WA  09A   CAPE NATURALISTE                         19030101..      -33.5372 115.0189  
+006011  WA  06    CARNARVON AIRPORT                        19450101..      -24.8878 113.67    
+009994  WA  09A   COLLIE EAST                              20021211..      -33.3608 116.1717  
+010286  WA  10    CUNDERDIN AIRFIELD                       19420101..      -31.6219 117.2217  
+003080  WA  03    CURTIN AERO                              19890728..      -17.5768 123.8297  
+008297  WA  08    DALWALLINU                               19970423..      -30.2761 116.6714  
+003032  WA  03    DERBY AERO                               19510101..      -17.3706 123.6611  
+009538  WA  09A   DWELLINGUP                               19340101..      -32.7103 116.0594  
+009789  WA  09A   ESPERANCE                                19690628..      -33.83   121.8925  
+009542  WA  09A   ESPERANCE AERO                           19500101..      -33.6825 121.8275  
+011003  WA  11    EUCLA                                    18760101..      -31.6797 128.8958  
+003093  WA  03    FITZROY CROSSING AERO                    19970808..      -18.1814 125.5619  
+011052  WA  11    FORREST                                  19930315..      -30.8453 128.1092  
+009256  WA  09    GARDEN ISLAND HSF                        20011114..      -32.2433 115.6839  
+008315  WA  08    GERALDTON AIRPORT                        20110720..      -28.8047 114.6989  
+013017  WA  13    GILES METEOROLOGICAL OFFICE              19560801..      -25.0341 128.301   
+009178  WA  09    GINGIN AERO                              19680101..      -31.4628 115.8642  
+009204  WA  09    GOOSEBERRY HILL                          19890811..      -31.9414 116.0506  
+002079  WA  02    HALLS CREEK AIRPORT                      20150916..      -18.2337 127.6666  
+009961  WA  09A   HOPETOUN NORTH                           19951207..      -33.9306 120.1283  
+010905  WA  10A   JACUP                                    19930101..      -33.8878 119.1092  
+009172  WA  09    JANDAKOT AERO                            19720809..      -32.1011 115.8794  
+012038  WA  12    KALGOORLIE-BOULDER AIRPORT               19390223..      -30.7847 121.4533  
+001019  WA  01    KALUMBURU                                19971130..      -14.2964 126.6453  
+005098  WA  05    KARIJINI NORTH                           20180830..      -22.2999 118.4498  
+004083  WA  04    KARRATHA AERO                            19711214..      -20.7097 116.7742  
+010916  WA  10A   KATANNING                                19990106..      -33.6856 117.6064  
+002056  WA  02    KUNUNURRA AERO                           19710921..      -15.7814 128.71    
+010911  WA  10A   LAKE GRACE                               19970613..      -33.1006 118.4647  
+009280  WA  9     LANCELIN (DEFENCE)                       20180612..      -30.8392 115.2283  
+012305  WA  12    LAVERTON AERO                            19910802..      -28.6133 122.4236  
+005007  WA  05    LEARMONTH AIRPORT                        19450101..      -22.2406 114.0967  
+004095  WA  04    LEGENDRE ISLAND                          19920217..      -20.3583 116.8431  
+012314  WA  12    LEINSTER AERO                            19940527..      -27.8386 120.7031  
+012241  WA  12    LEONORA AERO                             20070226..      -28.8789 121.3186  
+004019  WA  04    MANDORA                                  19130101..      -19.7419 120.8433  
+009977  WA  09A   MANDURAH                                 20011025..      -32.5219 115.7119  
+004106  WA  04    MARBLE BAR                               20000925..      -21.1756 119.7497  
+005008  WA  05    MARDIE                                   18850101..      -21.1906 115.9797  
+007045  WA  07A   MEEKATHARRA AIRPORT                      19440101..      -26.6136 118.5372  
+009281  WA  09    MILLENDON (SWAN VALLEY)                  20170428..      -31.8108 116.0225  
+008296  WA  08    MORAWA AIRPORT                           19970225..      -29.2039 116.0247  
+007600  WA  07A   MOUNT MAGNET AERO                        19950404..      -28.1156 117.8425  
+012044  WA  12    MUNGLINUP WEST                           20020430..      -33.5547 120.6997  
+010692  WA  10A   NEWDEGATE RESEARCH STATION               19541101..      -33.1129 118.84    
+007176  WA  07    NEWMAN AERO                              19710101..      -23.4167 119.7992  
+012009  WA  12    NORSEMAN AERO                            19991207..      -32.2147 121.7547  
+008290  WA  08    NORTH ISLAND                             19900517..      -28.3009 113.5937  
+009998  WA  09A   NORTH WALPOLE                            20040116..      -34.9469 116.7222  
+005017  WA  05    ONSLOW AIRPORT                           19400801..      -21.6689 115.1092  
+007185  WA  07    PARABURDOO AERO                          19740515..      -23.1726 117.7493  
+009053  WA  09    PEARCE RAAF                              19370101..      -31.6669 116.0189  
+009021  WA  09    PERTH AIRPORT                            19440101..      -31.9275 115.9764  
+009225  WA  09    PERTH METRO                              19930205..      -31.9192 115.8728  
+004032  WA  04    PORT HEDLAND AIRPORT                     19420717..      -20.3725 118.6317  
+011053  WA  11    RED ROCKS POINT                          19991203..      -32.2028 127.5297  
+009964  WA  09A   ROCKY GULLY                              19951128..      -34.5714 117.0106  
+004090  WA  04    ROEBOURNE AERO                           20010607..      -20.7594 117.1583  
+009193  WA  09    ROTTNEST ISLAND                          19830505..      -32.0069 115.5022  
+012071  WA  12    SALMON GUMS RES.STN.                     19320501..      -32.9869 121.6239  
+009968  WA  09A   SHANNON                                  19961127..      -34.5683 116.3367  
+006105  WA  06    SHARK BAY AIRPORT                        20000528..      -25.8925 113.5772  
+012320  WA  12    SOUTHERN CROSS AIRFIELD                  19961003..      -31.2353 119.3564  
+009215  WA  09    SWANBOURNE                               19851113..      -31.9558 115.7619  
+013030  WA  13    TELFER AERO                              19740101..      -21.7125 122.2281  
+005084  WA  05    THEVENARD ISLAND                         19891210..      -21.4609 115.0188  
+001007  WA  01    TROUGHTON ISLAND                         19560901..      -13.7542 126.1485  
+001020  WA  01    TRUSCOTT                                 19440101..      -14.09   126.3867  
+010917  WA  10A   WANDERING                                19981214..      -32.6722 116.6706  
+013011  WA  13    WARBURTON AIRFIELD                       19400101..      -26.1317 126.5839  
+013044  WA  13    WILUNA AERO                              20171102..      -26.6274 120.2194  
+009746  WA  09A   WITCHCLIFFE                              19990414..      -34.0281 115.1042  
+001006  WA  01    WYNDHAM AERO                             19510101..      -15.51   128.1503  
+003108  WA  03    YAMPI SOUND (DEFENCE)                    20180821..      -16.7671 123.981   
