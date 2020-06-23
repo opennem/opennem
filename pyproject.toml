@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem"
-version = "0.3.1"
+version = "0.4.0"
 description = "opennem engine agent"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>"]
 license = "MIT"
@@ -51,7 +51,7 @@ twine = "^3.1.1"
 ipython = "^7.15.0"
 
 [tool.poetry.scripts]
-bluestoned = 'opennem.cli:main'
+opennem = 'opennem.cli:main'
 
 [tool.black]
 line-length = 79
