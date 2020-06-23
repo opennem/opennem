@@ -80,5 +80,5 @@ def load_bom_stations():
 
 
 if __name__ == "__main__":
-    # load_fueltechs()
+    load_fueltechs()
     load_bom_stations()
