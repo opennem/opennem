@@ -1,8 +1,8 @@
+from opennem.spiders.wem_base import WemHistoricSpider
 
-from opennem.spiders.wem_base import WemSpider
 
+class WemHistoricBalancingSummary(WemHistoricSpider):
+    name = "au.wem.historic.balancing_summary"
+    start_url = "http://data.wa.aemo.com.au/public/public-data/datafiles/balancing-summary/"
 
-class WemCurrentBalancingSummary(WemSpider):
-    name = "au.wem.current.balancing_summary"
-    start_urls = ["http://data.wa.aemo.com.au/public/public-data/datafiles/balancing-summary/"]
     limit = 0

@@ -1,8 +1,9 @@
+from opennem.spiders.wem_base import WemHistoricSpider
 
-from opennem.spiders.wem_base import WemSpider
 
-
-class WemCurrentLoadSummary(WemSpider):
-    name = "au.wem.current.balancing_summary"
-    start_urls = ["http://data.wa.aemo.com.au/public/public-data/datafiles/load-summary/"]
+class WemHistoricLoadSummary(WemHistoricSpider):
+    name = "au.wem.historic.load_summary"
+    start_urls = (
+        "http://data.wa.aemo.com.au/public/public-data/datafiles/load-summary/"
+    )
     limit = 0

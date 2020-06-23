@@ -38,8 +38,9 @@ ITEM_PIPELINES = {
     "opennem.pipelines.nem.ExtractCSV": 301,
     "opennem.pipelines.wem.ExtractCSV": 302,
     "opennem.pipelines.nem.DatabaseStore": 401,
-    "opennem.pipelines.wem.DatabaseStore": 402,
-    "opennem.pipelines.bom.StoreBomObservation": 403,
+    "opennem.pipelines.wem.WemStoreFacility": 410,
+    "opennem.pipelines.wem.WemStoreFacilityScada": 411,
+    "opennem.pipelines.bom.StoreBomObservation": 430,
 }
 
 # @TODO if DEBUG
