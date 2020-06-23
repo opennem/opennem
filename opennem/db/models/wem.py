@@ -1,5 +1,6 @@
 from opennem.db.models.opennem import (
     Base,
+    WemBalancingSummary,
     WemFacility,
     WemFacilityScada,
     WemParticipant,

@@ -466,3 +466,15 @@ class WemFacilityScada(Base, NemModel):
 
     generated = Column(Numeric, nullable=True)
     quantity = Column(Numeric, nullable=True)
+
+
+class WemBalancingSummary(Base, NemModel):
+
+    __tablename__ = "wem_balancing_summary"
+
+    trading_interval = Column(DateTime, index=True, primary_key=True)
+    forecast_load = Column(Numeric, nullable=True)
+    generation_scheduled = Column(Numeric, nullable=True)
+    generation_non_scheduled = Column(Numeric, nullable=True)
+    generation_total = Column(Numeric, nullable=True)
+    price = Column(Numeric, nullable=True)
