@@ -34,8 +34,8 @@ def wem_7_days():
         from wem_facility_scada wfs
         left join wem_facility wf on wfs.facility_id = wf.code
         where wf.fueltech_id is not NULL
+        and wfs.trading_interval > now() - interval '7 days'
         group by wfs.trading_interval, wf.fueltech_id
-        having wfs.trading_interval > max(wfs.trading_interval) - interval '7 days'
         order by fueltech_id asc, wfs.trading_interval desc
         """
 
