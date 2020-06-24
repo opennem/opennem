@@ -1,5 +1,13 @@
 version: "3.3"
 services:
+  grafana:
+    image: grafana/grafana
+    restart: on-failure
+    environment:
+      - TZ
+    ports:
+      - ${HOST:-127.0.0.1}:3000:3000
+
   mysql:
     image: mariadb:10
     restart: always
