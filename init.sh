@@ -11,10 +11,10 @@ scrapy crawl au.wem.facilities
 python db_test.py
 
 # bom data
-scray crawl bom.capitals.perth
-scray crawl bom.capitals.sydney
-scray crawl bom.capitals.melbourne
-scray crawl bom.capitals.brisbane
+scrapy crawl bom.capitals.perth
+scrapy crawl bom.capitals.sydney
+scrapy crawl bom.capitals.melbourne
+scrapy crawl bom.capitals.brisbane
 
 # wem current data
 scrapy crawl au.wem.current.balancing_summary
