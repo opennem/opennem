@@ -438,7 +438,9 @@ class WemFacility(Base, NemModel):
         ForeignKey("fueltech.code", name="fk_wem_facility_fueltech_id"),
         nullable=True,
     )
-    fueltech = relationship("FuelTech")
+    fueltech = relationship(
+        "FuelTech", backref=backref("facilities", cascade="all,delete")
+    )
 
     active = Column(Boolean, default=True)
     capacity_credits = Column(Numeric, nullable=True)
