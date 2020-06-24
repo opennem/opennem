@@ -9,7 +9,9 @@ from opennem.spiders.wem_base import WemHistoricSpider
 class WemCurrentFacilityScada(scrapy.Spider):
     name = "au.wem.current.facility_scada"
     start_urls = [
-        "http://data.wa.aemo.com.au/public/public-data/datafiles/facility-scada/facility-scada-2020-06.csv"
+        "http://data.wa.aemo.com.au/public/public-data/datafiles/facility-scada/facility-scada-2019-09.csv",
+        "http://data.wa.aemo.com.au/public/public-data/datafiles/facility-scada/facility-scada-2019-10.csv",
+        "http://data.wa.aemo.com.au/public/public-data/datafiles/facility-scada/facility-scada-2019-11.csv",
     ]
     pipelines_extra = set([WemStoreFacilityScada])
 

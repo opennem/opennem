@@ -9,7 +9,7 @@ from opennem.spiders.wem_base import WemHistoricSpider
 class WemCurrentBalancingSummary(scrapy.Spider):
     name = "au.wem.current.balancing_summary"
     start_urls = [
-        "http://data.wa.aemo.com.au/public/public-data/datafiles/balancing-summary/balancing-summary-2020.csv"
+        "http://data.wa.aemo.com.au/public/public-data/datafiles/balancing-summary/balancing-summary-2019.csv"
     ]
     pipelines_extra = set([WemStoreBalancingSummary])
 
