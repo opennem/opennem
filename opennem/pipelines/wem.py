@@ -103,9 +103,12 @@ class WemStoreFacilityScada(DatabaseStoreBase):
             trading_interval, "%Y-%m-%d %H:%M:%S"
         )
 
+        # @TODO we possibly need to shift eoi_quantity back a time period
+
         facility_scada = WemFacilityScada(
             trading_interval=trading_interval_dt,
             facility_id=item["Facility Code"],
+            eoi_quantity=item["EOI Quantity (MW)"],
             generated=item["Energy Generated (MWh)"],
             quantity=item["EOI Quantity (MW)"],
         )
