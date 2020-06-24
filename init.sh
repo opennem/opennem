@@ -1,3 +1,33 @@
+# init db
 python -m opennem.db.initdb
+
+# load required fixtures
 python -m opennem.db.load_fixtures
-# python -m opennem.db.load_fixtures:load_bom_stations
+
+# load facilities from wem and nem
+scrapy crawl au.wem.facilities
+
+# merge with current facility mapping data (will import nem)
+python db_test.py
+
+# bom data
+scray crawl bom.capitals.perth
+scray crawl bom.capitals.sydney
+scray crawl bom.capitals.melbourne
+scray crawl bom.capitals.brisbane
+
+# wem current data
+scrapy crawl au.wem.current.balancing_summary
+scrapy crawl au.wem.current.facility_scada
+
+# wem archive data
+scrapy crawl au.wem.archive.balancing_summary
+scrapy crawl au.wem.archive.facility_scada
+
+# nem current data
+scrapy crawl au.nem.current.dispatch_is
+scrapy crawl au.nem.current.dispatch_scada
+
+# nem archive data
+scrapy crawl au.nem.archive.dispatch_is
+scrapy crawl au.nem.archive.dispatch_scada
