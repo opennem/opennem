@@ -468,7 +468,6 @@ class WemFacilityScada(Base, NemModel):
 
     generated = Column(Numeric, nullable=True)
     eoi_quantity = Column(Numeric, nullable=True)
-    quantity = Column(Numeric, nullable=True)
 
 
 class WemBalancingSummary(Base, NemModel):

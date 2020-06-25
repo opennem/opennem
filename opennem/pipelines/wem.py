@@ -110,7 +110,6 @@ class WemStoreFacilityScada(DatabaseStoreBase):
             facility_id=item["Facility Code"],
             eoi_quantity=item["EOI Quantity (MW)"],
             generated=item["Energy Generated (MWh)"],
-            quantity=item["EOI Quantity (MW)"],
         )
 
         try:
