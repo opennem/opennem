@@ -4,6 +4,7 @@ import os
 from datetime import date, datetime
 from decimal import Decimal
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from opennem.db import db_connect
@@ -37,10 +38,13 @@ def load_fueltechs():
     s = session()
 
     for fueltech in fixture:
-        ft = FuelTech(**fueltech)
-        s.add(ft)
+        ft = FuelTech(code=fueltech)
 
-    s.commit()
+        try:
+            s.add(ft)
+            s.commit()
+        except Exception:
+            print("Have {}".format(ft.code))
 
 
 def parse_date(date_str):
@@ -74,9 +78,12 @@ def load_bom_stations():
                 lat=lat,
                 lng=lng,
             )
-            s.add(station)
 
-    s.commit()
+            try:
+                s.add(station)
+                s.commit()
+            except Exception:
+                print("Have {}".format(station.code))
 
 
 if __name__ == "__main__":
