@@ -209,7 +209,7 @@ def wem_power_groups():
                     "region": "wa",
                     "network": "wem",
                     "type": "power",
-                    "units": "mwh",
+                    "units": "MWh",
                     "history": {
                         "interval": "30m",
                         "start": "",
