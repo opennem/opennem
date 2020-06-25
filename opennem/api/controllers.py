@@ -57,13 +57,13 @@ def bom_observation(station_id, region="wa"):
 
             if (
                 json_object["history"]["start"] == None
-                or row[0] > json_object["history"]["start"]
+                or row[0] < json_object["history"]["start"]
             ):
                 json_object["history"]["start"] = row[0]
 
             if (
                 json_object["history"]["last"] == None
-                or row[0] < json_object["history"]["last"]
+                or row[0] > json_object["history"]["last"]
             ):
                 json_object["history"]["last"] = row[0]
 
@@ -106,13 +106,13 @@ def wem_price(region="wa"):
 
             if (
                 json_object["history"]["start"] == None
-                or row[0] > json_object["history"]["start"]
+                or row[0] < json_object["history"]["start"]
             ):
                 json_object["history"]["start"] = row[0]
 
             if (
                 json_object["history"]["last"] == None
-                or row[0] < json_object["history"]["last"]
+                or row[0] > json_object["history"]["last"]
             ):
                 json_object["history"]["last"] = row[0]
 
@@ -155,13 +155,13 @@ def wem_demand(region="wa"):
 
             if (
                 json_object["history"]["start"] == None
-                or row[0] > json_object["history"]["start"]
+                or row[0] < json_object["history"]["start"]
             ):
                 json_object["history"]["start"] = row[0]
 
             if (
                 json_object["history"]["last"] == None
-                or row[0] < json_object["history"]["last"]
+                or row[0] > json_object["history"]["last"]
             ):
                 json_object["history"]["last"] = row[0]
 
@@ -212,14 +212,25 @@ def wem_power_groups():
                     "units": "MWh",
                     "history": {
                         "interval": "30m",
-                        "start": "",
-                        "last": row[3],
+                        "start": None,
+                        "last": None,
                         "data": [],
                     },
                 }
 
+            if (
+                json_obj["history"]["start"] == None
+                or row[0] < json_obj["history"]["start"]
+            ):
+                json_obj["history"]["start"] = row[0]
+
+            if (
+                json_obj["history"]["last"] == None
+                or row[0] > json_obj["history"]["last"]
+            ):
+                json_obj["history"]["last"] = row[0]
+
             json_obj["history"]["data"].append(row[2])
-            json_obj["history"]["start"] = row[3]
 
     return json_envelope
 
@@ -275,13 +286,13 @@ def wem_energy_year(year="2020"):
 
             if (
                 json_envelope[current_tech]["history"]["start"] == None
-                or row[0] > json_envelope[current_tech]["history"]["start"]
+                or row[0] < json_envelope[current_tech]["history"]["start"]
             ):
                 json_envelope[current_tech]["history"]["start"] = row[0]
 
             if (
                 json_envelope[current_tech]["history"]["last"] == None
-                or row[0] < json_envelope[current_tech]["history"]["last"]
+                or row[0] > json_envelope[current_tech]["history"]["last"]
             ):
                 json_envelope[current_tech]["history"]["last"] = row[0]
 
@@ -340,13 +351,13 @@ def wem_market_value_year(year="2020"):
 
             if (
                 json_envelope[current_tech]["history"]["start"] == None
-                or row[0] > json_envelope[current_tech]["history"]["start"]
+                or row[0] < json_envelope[current_tech]["history"]["start"]
             ):
                 json_envelope[current_tech]["history"]["start"] = row[0]
 
             if (
                 json_envelope[current_tech]["history"]["last"] == None
-                or row[0] < json_envelope[current_tech]["history"]["last"]
+                or row[0] > json_envelope[current_tech]["history"]["last"]
             ):
                 json_envelope[current_tech]["history"]["last"] = row[0]
 
@@ -403,13 +414,13 @@ def wem_energy_all():
 
             if (
                 json_envelope[current_tech]["history"]["start"] == None
-                or row[0] > json_envelope[current_tech]["history"]["start"]
+                or row[0] < json_envelope[current_tech]["history"]["start"]
             ):
                 json_envelope[current_tech]["history"]["start"] = row[0]
 
             if (
                 json_envelope[current_tech]["history"]["last"] == None
-                or row[0] < json_envelope[current_tech]["history"]["last"]
+                or row[0] > json_envelope[current_tech]["history"]["last"]
             ):
                 json_envelope[current_tech]["history"]["last"] = row[0]
 
@@ -467,13 +478,13 @@ def wem_market_value_all():
 
             if (
                 json_envelope[current_tech]["history"]["start"] == None
-                or row[0] > json_envelope[current_tech]["history"]["start"]
+                or row[0] < json_envelope[current_tech]["history"]["start"]
             ):
                 json_envelope[current_tech]["history"]["start"] = row[0]
 
             if (
                 json_envelope[current_tech]["history"]["last"] == None
-                or row[0] < json_envelope[current_tech]["history"]["last"]
+                or row[0] > json_envelope[current_tech]["history"]["last"]
             ):
                 json_envelope[current_tech]["history"]["last"] = row[0]
 
