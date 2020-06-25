@@ -33,6 +33,11 @@ class NemEncoder(json.JSONEncoder):
         return super(NemEncoder, self).default(o)
 
 
+UPLOAD_ARGS = {
+    "ContentType": "application/json",
+}
+
+
 def wem_export_power():
     json_data = wem_power_groups()
 
@@ -46,7 +51,11 @@ def wem_export_power():
 
     power_path = BASE_EXPORT + "/power/wem.json"
 
-    with open(power_path, "w") as fh:
+    with open(
+        power_path,
+        "w",
+        transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
+    ) as fh:
         json.dump(json_data, fh, cls=NemEncoder)
 
 
@@ -62,7 +71,11 @@ def wem_export_years():
 
         year_path = BASE_EXPORT + f"/wem/energy/daily/{year}.json"
 
-        with open(year_path, "w") as fh:
+        with open(
+            year_path,
+            "w",
+            transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
+        ) as fh:
             json.dump(json_envelope, fh, cls=NemEncoder)
 
 
@@ -75,7 +88,11 @@ def wem_export_all():
 
     all_path = BASE_EXPORT + f"/wem/energy/monthly/all.json"
 
-    with open(all_path, "w") as fh:
+    with open(
+        all_path,
+        "w",
+        transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
+    ) as fh:
         json.dump(json_envelope, fh, cls=NemEncoder)
 
 
