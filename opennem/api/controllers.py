@@ -275,7 +275,7 @@ def wem_energy_year(year="2020"):
                     "fuel_tech": current_tech,
                     "region": "wa",
                     "type": "energy",
-                    "units": "mwh",
+                    "units": "Mwh",
                     "history": {
                         "interval": "1d",
                         "start": None,
