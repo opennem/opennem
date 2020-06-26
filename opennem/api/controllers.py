@@ -144,7 +144,7 @@ def wem_demand(region="wa"):
         },
         "region": region,
         "type": "demand",
-        "units": "Mw",
+        "units": "MW",
     }
 
     with engine.connect() as c:
