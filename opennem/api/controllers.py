@@ -232,6 +232,8 @@ def wem_power_groups():
 
             json_obj["history"]["data"].append(row[2])
 
+    json_envelope.append(json_obj)
+
     return json_envelope
 
 
