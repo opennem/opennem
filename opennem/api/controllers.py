@@ -471,7 +471,7 @@ def wem_market_value_all():
                     "type": "market_value",
                     "units": "AUD",
                     "history": {
-                        "interval": "1m",
+                        "interval": "1M",
                         "start": None,
                         "last": None,
                         "data": [],
