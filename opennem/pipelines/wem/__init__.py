@@ -132,8 +132,10 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
         s = self.session()
 
         if not "Trading Date" in item:
-            print("invlid row")
-            return item
+            raise Exception("Invalid balancing_summary: no trading date")
+
+        if not "Final Price ($/MWh)" in item:
+            raise Exception("Could not find price data")
 
         trading_interval = item["Trading Interval"]
 
