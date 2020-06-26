@@ -4,24 +4,17 @@ from datetime import datetime
 
 from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import sessionmaker
 
-from opennem.db import db_connect
 from opennem.db.models.wem import (
     WemBalancingSummary,
     WemFacility,
     WemFacilityScada,
     WemParticipant,
 )
+from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
-
-
-class DatabaseStoreBase(object):
-    def __init__(self):
-        engine = db_connect()
-        self.session = sessionmaker(bind=engine)
 
 
 class WemStoreFacility(DatabaseStoreBase):
@@ -114,46 +107,6 @@ class WemStoreFacilityScada(DatabaseStoreBase):
 
         try:
             s.add(facility_scada)
-            s.commit()
-        except IntegrityError as e:
-            pass
-        except Exception as e:
-            logger.error("Error: {}".format(e))
-        finally:
-            s.close()
-
-        return item
-
-
-class WemStoreBalancingSummary(DatabaseStoreBase):
-    @check_spider_pipeline
-    def process_item(self, item, spider=None):
-
-        s = self.session()
-
-        if not "Trading Date" in item:
-            raise Exception("Invalid balancing_summary: no trading date")
-
-        if not "Final Price ($/MWh)" in item:
-            raise Exception("Could not find price data")
-
-        trading_interval = item["Trading Interval"]
-
-        trading_interval_dt = datetime.strptime(
-            trading_interval, "%Y-%m-%d %H:%M:%S"
-        )
-
-        balancing_summary = WemBalancingSummary(
-            trading_interval=trading_interval_dt,
-            forecast_load=item["Load Forecast (MW)"],
-            generation_scheduled=item["Scheduled Generation (MW)"],
-            generation_non_scheduled=item["Non-Scheduled Generation (MW)"],
-            generation_total=item["Total Generation (MW)"],
-            price=item["Final Price ($/MWh)"],
-        )
-
-        try:
-            s.add(balancing_summary)
             s.commit()
         except IntegrityError as e:
             pass
