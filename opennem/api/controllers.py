@@ -405,7 +405,7 @@ def wem_energy_all():
                     "type": "energy",
                     "units": "mwh",
                     "history": {
-                        "interval": "1m",
+                        "interval": "1M",
                         "start": None,
                         "last": None,
                         "data": [],
