@@ -28,7 +28,7 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
             text("select max(trading_interval) from wem_balancing_summary")
         )
 
-        interval_max = q.fetchone()[0]
+        interval_max = q.fetchone()[0] or datetime(1900, 1, 1, 0, 0, 0)
 
         objects = [
             WemBalancingSummary(
@@ -46,8 +46,6 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
         try:
             s.bulk_save_objects(objects)
             s.commit()
-        # except IntegrityError as e:
-        # print(e)
         except Exception as e:
             logger.error("Error: {}".format(e))
             raise e
