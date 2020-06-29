@@ -170,7 +170,7 @@ def wem_demand(region="wa"):
     return json_object
 
 
-def wem_power_groups():
+def wem_power_groups(intervals_per_hour=2):
     __query = """
         select
             wfs.trading_interval,
@@ -230,7 +230,7 @@ def wem_power_groups():
             ):
                 json_obj["history"]["last"] = row[0]
 
-            json_obj["history"]["data"].append(row[2])
+            json_obj["history"]["data"].append(row[2] * intervals_per_hour)
 
     json_envelope.append(json_obj)
 
