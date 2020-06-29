@@ -1,4 +1,4 @@
-from opennem.spiders.wem_base import WemHistoricSpider
+from opennem.spiders.wem import WemHistoricSpider
 
 
 class WemHistoricLoadSummary(WemHistoricSpider):
