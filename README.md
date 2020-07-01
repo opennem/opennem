@@ -100,3 +100,19 @@ Overview of scrapy architecture:
 * Spider definitions in `opennem/spiders`
 * Processing pipelines for crawls in `opennem/pipelines`
 * Database models for supported energy markets are stored in `opennem/db/models`
+
+## Deploy Crawlers
+
+You can deploy the crawlers to the scrapyd server with:
+
+```sh
+$ scrapyd-deploy
+```
+
+If you don't have that command and it isn't available install it with:
+
+```sh
+$ pip install scrapyd-client
+```
+
+Which installs the [scrapyd-client](https://github.com/scrapy/scrapyd-client) tools. Project settings are read from `scrapy.cfg`
