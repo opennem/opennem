@@ -16,7 +16,7 @@ COPY poetry.lock pyproject.toml /code/
 
 # Project initialization:
 RUN poetry config virtualenvs.in-project true && \
-  poetry install --no-dev --no-interaction --no-ansi
+  poetry install --no-dev --no-interaction --no-ansi -E postgres -E server
 
 # Creating folders, and files for a project:
 FROM base
