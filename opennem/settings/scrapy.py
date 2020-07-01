@@ -39,7 +39,7 @@ ITEM_PIPELINES = {
     # "opennem.pipelines.wem.ExtractCSV": 302,
     "opennem.pipelines.nem.DatabaseStore": 401,
     "opennem.pipelines.wem.WemStoreFacility": 410,
-    "opennem.pipelines.wem.WemStoreFacilityScada": 411,
+    "opennem.pipelines.wem.facility_scada.WemStoreFacilityScada": 411,
     "opennem.pipelines.wem.balancing_summary.WemStoreBalancingSummary": 412,
     "opennem.pipelines.bom.StoreBomObservation": 430,
 }
