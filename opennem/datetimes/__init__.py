@@ -82,6 +82,7 @@ __DATE_FORMATS = [
     "%d %b %y",
     "%d %b %y",
     "%Y-%m-%d %H:%M:%S",
+    "%m/%d/%Y %H:%M %p",
 ]
 
 
