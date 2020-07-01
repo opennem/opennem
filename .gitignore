@@ -49,3 +49,4 @@ test.json
 db_test.py
 .envrc
 TODO.md
+setup.py
