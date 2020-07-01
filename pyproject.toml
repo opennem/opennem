@@ -53,6 +53,10 @@ ipython = "^7.15.0"
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
 
+[tool.poetry.extras]
+postgres = ["psycopg2"]
+server = ["fastapi"]
+
 [tool.black]
 line-length = 79
 target_version = ['py37', 'py38']
