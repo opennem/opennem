@@ -1,10 +1,9 @@
 import logging
 import os
 
-from requests import RequestException
-
 from opennem.utils.handlers import open
 from opennem.utils.pipelines import check_spider_pipeline
+from requests import RequestException
 
 logger = logging.getLogger(__name__)
 

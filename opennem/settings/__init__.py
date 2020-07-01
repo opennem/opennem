@@ -9,10 +9,10 @@
 import os
 from urllib.parse import urlparse
 
-import yaml
+# import yaml
 from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 MODULE_DIR = os.path.dirname(__file__)
 
@@ -21,16 +21,16 @@ MYSQL_HOST_URL = os.getenv("MYSQL_HOST_URL", default=False)
 DATABASE_HOST_URL = os.getenv("DATABASE_HOST_URL", default=False)
 
 
-def load_config_yaml():
-    config_file = os.path.join(MODULE_DIR, "config.yml")
+# def load_config_yaml():
+#     config_file = os.path.join(MODULE_DIR, "config.yml")
 
-    if not os.path.isfile(config_file):
-        raise Exception(f"No config file found at {config_file}")
+#     if not os.path.isfile(config_file):
+#         raise Exception(f"No config file found at {config_file}")
 
-    with open(config_file, "r") as ymlfile:
-        config = yaml.safe_load(ymlfile)
+#     with open(config_file, "r") as ymlfile:
+#         config = yaml.safe_load(ymlfile)
 
-    return config
+#     return config
 
 
 def get_mysql_host(db_name=None):
