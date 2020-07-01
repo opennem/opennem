@@ -91,7 +91,4 @@ class DirlistingSpider(Spider):
 
                 parsed += 1
 
-                yield from self.parse_entry({"link": link, **entry})
-
-    def parse_entry(self, entry):
-        yield entry
+                yield {"link": link, **entry}
