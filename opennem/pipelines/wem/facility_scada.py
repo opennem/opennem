@@ -48,7 +48,6 @@ class WemStoreFacilityScada(DatabaseStoreBase):
             s.commit()
         except Exception as e:
             logger.error("Error: {}".format(e))
-            raise e
         finally:
             s.close()
 
