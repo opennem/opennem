@@ -1,0 +1,6 @@
+.venv
+.git
+.venv
+.pylintrc
+.vscode
+.env*
