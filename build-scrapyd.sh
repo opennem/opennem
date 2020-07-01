@@ -1,6 +1,8 @@
 
 # This builds the scrapyd container at opennem/scrapyd
 
+poetry update
+
 poetry export --without-hashes -f requirements.txt -E postgres > requirements.txt
 
 docker build -t opennem/scrapyd -f Dockerfile.scrapyd .
