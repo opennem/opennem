@@ -100,6 +100,12 @@ $ opennem -h
 
 Settings for Visual Studio Code are stored in `.vscode`. Code is kept formatted and linted using `pylint`, `black` and `isort` with settings defined in `pyproject.toml`
 
+## Build Release
+
+The script `build-release.sh` will tag a new release, build the docker image, tag the git version, push to GitHub and push the latest
+release to PyPi
+
+
 ## Architecture overview
 
 This project uses [Scrapy](https://scrapy.org/) to obtain data from supported energy markets and [SQLAlchemy](https://www.sqlalchemy.org/) to store data, and [Alembic](https://alembic.sqlalchemy.org/en/latest/) for database migrations. Database storage has been tested with sqlite, postgres and mysql.
