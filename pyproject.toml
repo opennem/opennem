@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem"
-version = "0.4.1"
+version = "0.4.2"
 description = "opennem engine agent"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>"]
 license = "MIT"
