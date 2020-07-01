@@ -34,12 +34,13 @@ class WemStoreFacilityScada(DatabaseStoreBase):
             WemFacilityScada(
                 trading_interval=self.parse_interval(row["Trading Interval"]),
                 facility_id=row["Facility Code"],
-                eoi_quantity=row["EOI Quantity (MW)"],
-                generated=row["Energy Generated (MWh)"],
+                eoi_quantity=row["EOI Quantity (MW)"] or 0,
+                generated=row["Energy Generated (MWh)"] or 0,
             )
             for row in csvreader
             if self.parse_interval(row["Trading Interval"])
             not in all_intervals
+            and row["Energy Generated (MWh)"] != ""
         ]
 
         try:
