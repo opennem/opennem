@@ -36,6 +36,19 @@ Postgres:
 $ pip install psycopg2
 ```
 
+## Install Extras
+
+The package contains extra modules that can be installed:
+
+```sh
+$ poetry install -E postgres
+```
+
+The list of extras are:
+
+ * `postgres` - Postgres database drivers
+ * `server` - API server
+
 ## Usage
 
 List the crawlers
