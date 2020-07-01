@@ -1,0 +1,25 @@
+FROM python:3.6-slim
+
+
+RUN apt-get update && \
+  apt-get install -y git && \
+  pip3 install -U scrapy && \
+  pip3 install -U scrapyd && \
+  pip3 install -U logparser && \
+  apt-get remove -y git
+
+WORKDIR /app
+
+ADD scrapyd.conf /etc/scrapyd/
+
+#RUN mkdir /app
+ADD requirements.txt /app/
+
+RUN pip install -r requirements.txt
+
+ADD scrapyd-entrypoint.sh /app
+
+EXPOSE 6800
+ENTRYPOINT ["./scrapyd-entrypoint.sh"]
+
+CMD scrapyd
