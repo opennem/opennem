@@ -1,13 +1,13 @@
-
 import logging
 import re
+from datetime import datetime
 
 import scrapy
 from scrapy import Spider
 
 from opennem.datetimes import parse_date
 
-PADDING_WIDTH = 7
+PADDING_WIDTH = 2
 
 __is_number = re.compile(r"^\d+$")
 
@@ -32,13 +32,31 @@ def parse_dirlisting(raw_string):
 
     _ltype = "dir"
 
+    if not components or len(components) < 2:
+        logging.debug(components)
+        raise Exception(
+            "Invalid line string: {}. Components are: {}".format(
+                raw_string, components
+            )
+        )
+
     if is_number(components[1]):
         _ltype = "file"
 
+    dt = parse_date(components[0])
+
+    if type(dt) is not datetime:
+        raise Exception(
+            "{} is not a valid datetime. Original value was {}".format(
+                dt, components[0]
+            )
+        )
+
     return {
-        "date": parse_date(components[0]).isoformat(),
+        "date": dt.isoformat(),
         "type": _ltype,
     }
+
 
 class DirlistingSpider(Spider):
     """
@@ -46,11 +64,18 @@ class DirlistingSpider(Spider):
 
 
     """
+
     limit = 0
 
     def parse(self, response):
-        links = [i.get() for i in response.xpath("//body/pre/br/following-sibling::a/@href")]
-        metadata = [parse_dirlisting(i.get()) for i in response.xpath("//body/pre/br/following-sibling::text()")]
+        links = [
+            i.get()
+            for i in response.xpath("//body/pre/br/following-sibling::a/@href")
+        ]
+        metadata = [
+            parse_dirlisting(i.get())
+            for i in response.xpath("//body/pre/br/following-sibling::text()")
+        ]
 
         parsed = 0
 
@@ -66,10 +91,7 @@ class DirlistingSpider(Spider):
 
                 parsed += 1
 
-                yield from self.parse_entry({
-                    "link": link,
-                    **entry
-                })
+                yield from self.parse_entry({"link": link, **entry})
 
     def parse_entry(self, entry):
         yield entry
