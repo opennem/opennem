@@ -96,6 +96,12 @@ def wem_export_all():
         json.dump(json_envelope, fh, cls=NemEncoder)
 
 
+def wem_run_all():
+    wem_export_power()
+    wem_export_years()
+    wem_export_all()
+
+
 if __name__ == "__main__":
     # j = wem_market_value_year()
     # pprint(json.dumps(j, cls=NemEncoder))

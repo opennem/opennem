@@ -20,17 +20,7 @@ MYSQL_HOST_URL = os.getenv("MYSQL_HOST_URL", default=False)
 
 DATABASE_HOST_URL = os.getenv("DATABASE_HOST_URL", default=False)
 
-
-# def load_config_yaml():
-#     config_file = os.path.join(MODULE_DIR, "config.yml")
-
-#     if not os.path.isfile(config_file):
-#         raise Exception(f"No config file found at {config_file}")
-
-#     with open(config_file, "r") as ymlfile:
-#         config = yaml.safe_load(ymlfile)
-
-#     return config
+REDIS_HOST_URL = os.getenv("REDIS_HOST_URL", default=False)
 
 
 def get_mysql_host(db_name=None):
@@ -57,6 +47,12 @@ def get_database_host():
     if DATABASE_HOST_URL:
         return DATABASE_HOST_URL
     raise Exception("DATABASE_HOST_URL not defined")
+
+
+def get_redis_host():
+    if REDIS_HOST_URL:
+        return REDIS_HOST_URL
+    raise Exception("REDIS_HOST_URL not defined")
 
 
 def replace_database_in_url(db_url, db_name):
