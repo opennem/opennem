@@ -9,11 +9,6 @@
 import os
 from urllib.parse import urlparse
 
-# import yaml
-from dotenv import load_dotenv
-
-# load_dotenv()
-
 MODULE_DIR = os.path.dirname(__file__)
 
 MYSQL_HOST_URL = os.getenv("MYSQL_HOST_URL", default=False)
