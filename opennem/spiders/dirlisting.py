@@ -7,7 +7,7 @@ from scrapy import Spider
 
 from opennem.datetimes import parse_date
 
-PADDING_WIDTH = 2
+PADDING_WIDTH = 3
 
 __is_number = re.compile(r"^\d+$")
 
