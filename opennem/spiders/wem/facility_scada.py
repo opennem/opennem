@@ -15,6 +15,6 @@ class WemCurrentFacilityScada(WemCurrentSpider):
 
 class WemHistoricFacilityScada(WemHistoricSpider):
     name = "au.wem.historic.facility_scada"
-    start_urls = ["http://data.wa.aemo.com.au/datafiles/facility-scada/"]
+    start_url = "http://data.wa.aemo.com.au/datafiles/facility-scada/"
 
     pipelines_extra = set([WemStoreFacilityScada])

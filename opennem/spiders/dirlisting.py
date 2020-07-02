@@ -67,6 +67,29 @@ class DirlistingSpider(Spider):
 
     limit = 0
 
+    def start_requests(self):
+        if self.custom_settings is None:
+            self.custom_settings = {}
+
+        starts = None
+
+        if (
+            hasattr(self, "start_url")
+            and self.start_url
+            and type(self.start_url) is str
+        ):
+            starts = [self.start_url]
+
+        if (
+            hasattr(self, "start_urls")
+            and self.start_urls
+            and type(self.start_urls) is list
+        ):
+            starts = [self.start_urls]
+
+        for url in starts:
+            yield scrapy.Request(url)
+
     def parse(self, response):
         links = list(
             reversed(
