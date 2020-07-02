@@ -24,11 +24,19 @@ class WemStoreFacilityScada(DatabaseStoreBase):
 
         csvreader = csv.DictReader(item["content"].split("\n"))
 
+        # Get all intervals
+
         q = self.engine.execute(
             text("select distinct trading_interval from wem_balancing_summary")
         )
 
         all_intervals = list(set([i[0] for i in q.fetchall()]))
+
+        # Get all facility codes
+
+        q = self.engine.execute(text("select code from wem_facility"))
+
+        all_facilities = list(set([i[0] for i in q.fetchall()]))
 
         objects = [
             WemFacilityScada(
@@ -41,6 +49,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
             if self.parse_interval(row["Trading Interval"])
             not in all_intervals
             and row["Energy Generated (MWh)"] != ""
+            and row["Facility Code"] in all_facilities
         ]
 
         try:
