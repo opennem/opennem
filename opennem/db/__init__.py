@@ -44,8 +44,6 @@ def db_connect(db_name=None, debug=False):
     """
     db_conn_str = get_database_host()
 
-    logger.info("Connecting with {}".format(db_conn_str))
-
     try:
         e = create_engine(db_conn_str, echo=debug)
         return e
