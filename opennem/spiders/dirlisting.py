@@ -68,14 +68,27 @@ class DirlistingSpider(Spider):
     limit = 0
 
     def parse(self, response):
-        links = [
-            i.get()
-            for i in response.xpath("//body/pre/br/following-sibling::a/@href")
-        ]
-        metadata = [
-            parse_dirlisting(i.get())
-            for i in response.xpath("//body/pre/br/following-sibling::text()")
-        ]
+        links = list(
+            reversed(
+                [
+                    i.get()
+                    for i in response.xpath(
+                        "//body/pre/br/following-sibling::a/@href"
+                    )
+                ]
+            )
+        )
+
+        metadata = list(
+            reversed(
+                [
+                    parse_dirlisting(i.get())
+                    for i in response.xpath(
+                        "//body/pre/br/following-sibling::text()"
+                    )
+                ]
+            )
+        )
 
         parsed = 0
 
