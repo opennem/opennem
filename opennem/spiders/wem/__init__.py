@@ -33,3 +33,10 @@ class WemCurrentSpider(scrapy.Spider):
 class WemHistoricSpider(DirlistingSpider):
     allowed_domains = ["wa.nemweb.com.au"]
     pipelines = set([LinkExtract,])
+
+    # Archives tend to contain large zips of embedded zips so throttle
+    # to limit memory use
+    custom_settings = {
+        "CONCURRENT_REQUESTS": 4,
+        "CONCURRENT_ITEMS": 4,
+    }
