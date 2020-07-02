@@ -38,5 +38,5 @@ class WemHistoricSpider(DirlistingSpider):
     # to limit memory use
     custom_settings = {
         "CONCURRENT_REQUESTS": 4,
-        "CONCURRENT_ITEMS": 4,
+        "CONCURRENT_ITEMS": 8,
     }
