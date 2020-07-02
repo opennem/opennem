@@ -1,4 +1,3 @@
-
 from opennem.spiders.nemweb import NemwebSpider
 
 
@@ -16,6 +15,6 @@ class NemwebArchiveDispatchScada(NemwebSpider):
     # Archives tend to contain large zips of embedded zips so throttle
     # to limit memory use
     custom_settings = {
-        'CONCURRENT_REQUESTS': 1,
-        'CONCURRENT_ITEMS': 1,
+        "CONCURRENT_REQUESTS": 1,
+        "CONCURRENT_ITEMS": 1,
     }
