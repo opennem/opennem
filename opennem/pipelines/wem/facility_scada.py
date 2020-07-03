@@ -32,16 +32,27 @@ class WemStoreFacilityScada(DatabaseStoreBase):
 
         all_facilities = list(set([i[0] for i in q.fetchall()]))
 
-        objects = [
-            WemFacilityScada(
+        objects = []
+        keys = []
+
+        for row in csvreader:
+            if not row["Facility Code"] in all_facilities:
+                continue
+
+            row_key = "{}_{}".format(
+                row["Trading Interval"], row["Facility Code"]
+            )
+
+            item = WemFacilityScada(
                 trading_interval=self.parse_interval(row["Trading Interval"]),
                 facility_id=row["Facility Code"],
                 eoi_quantity=row["EOI Quantity (MW)"] or None,
                 generated=row["Energy Generated (MWh)"] or None,
             )
-            for row in csvreader
-            if row["Facility Code"] in all_facilities
-        ]
+
+            if row_key not in keys:
+                objects.append(item)
+                keys.append(row_key)
 
         try:
             s.bulk_save_objects(objects)
