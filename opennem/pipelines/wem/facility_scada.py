@@ -130,18 +130,27 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
                 row_key = "{}_{}".format(interval, row["FACILITY_CODE"])
 
+                val = None
+
+                try:
+                    val = float(row[column]) / 2 or None
+                except ValueError:
+                    pass
+
                 item = WemFacilityScada(
                     trading_interval=interval,
                     facility_id=row["FACILITY_CODE"],
-                    generated=row[column] or None,
+                    generated=val,
                 )
 
                 if row_key not in keys:
-                    objects.append(item)
+                    # objects.append(item)
+                    s.add(item)
+                    # s.save()
                     keys.append(row_key)
 
         try:
-            s.bulk_save_objects(objects)
+            # s.bulk_save_objects(objects)
             s.commit()
         except Exception as e:
             logger.error("Error: {}".format(e))
