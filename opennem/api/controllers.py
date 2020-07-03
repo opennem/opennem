@@ -74,13 +74,22 @@ def bom_observation(station_id, region="wa"):
 
 def wem_price(region="wa"):
     __query = """
+        with intervals as (
+        select generate_series(
+            date_trunc('hour', now()) - '7 day'::interval,
+            date_trunc('hour', now()),
+            '30 minutes'::interval
+        ) as interval
+        )
+
         select
-            wbs.trading_interval,
+            i.interval,
             wbs.price,
+            case when wbs.price is null then 0 else wbs.price end as price_cast,
             wbs.generation_total
-        from wem_balancing_summary wbs
-        where wbs.trading_interval > now() - interval '7 days'
-        order by 1 desc
+        from intervals i
+        left join wem_balancing_summary wbs on wbs.trading_interval = interval
+        order by i.interval desc
     """
 
     query = __query.format()
@@ -123,13 +132,21 @@ def wem_price(region="wa"):
 
 def wem_demand(region="wa"):
     __query = """
+        with intervals as (
+            select generate_series(
+                date_trunc('hour', now()) - '7 day'::interval,
+                date_trunc('hour', now()),
+                '30 minutes'::interval
+            ) as interval
+        )
+
         select
-            wbs.trading_interval,
+            i.interval,
             wbs.price,
             wbs.generation_total
-        from wem_balancing_summary wbs
-        where wbs.trading_interval > now() - interval '7 days'
-        order by 1 desc
+        from intervals i
+        left join wem_balancing_summary wbs on wbs.trading_interval = interval
+        order by i.interval desc
     """
 
     query = __query.format()
@@ -172,25 +189,31 @@ def wem_demand(region="wa"):
 
 def wem_power_groups(intervals_per_hour=2):
     __query = """
+        with intervals as (
+            select generate_series(
+                date_trunc('hour', now()) - '7 day'::interval,
+                date_trunc('hour', now()),
+                '30 minutes'::interval
+            ) as interval
+        )
         select
-            wfs.trading_interval,
-            wf.fueltech_id,
-            sum(wfs.generated) as gen,
-            max(wfs.trading_interval) as latest_date,
-            min(wfs.trading_interval)
-        from wem_facility_scada wfs
-        left join wem_facility wf on wfs.facility_id = wf.code
-        where wf.fueltech_id is not NULL
-        and wfs.trading_interval > now() - interval '7 days'
-        group by wfs.trading_interval, wf.fueltech_id
-        order by fueltech_id asc, wfs.trading_interval desc
+            i.interval,
+            coalesce(wf.fueltech_id, 'Unknown') as fueltech,
+            sum(wfs.generated) * {intervals_per_hour} as val
+        from intervals i
+        left join wem_facility_scada wfs on i.interval = wfs.trading_interval
+        left join wem_facility wf on wf.code = wfs.facility_id
+        group by 1, 2
+        order by 2 asc, 1 desc
         """
+
+    query = __query.format(intervals_per_hour=intervals_per_hour)
 
     json_envelope = []
     json_obj = None
 
     with engine.connect() as c:
-        rows = c.execute(__query)
+        rows = c.execute(query)
 
         current_tech = None
 
@@ -230,7 +253,9 @@ def wem_power_groups(intervals_per_hour=2):
             ):
                 json_obj["history"]["last"] = row[0]
 
-            json_obj["history"]["data"].append(row[2] * intervals_per_hour)
+            value = row[2]
+
+            json_obj["history"]["data"].append(value)
 
     json_envelope.append(json_obj)
 
@@ -255,8 +280,6 @@ def wem_energy_year(year="2020"):
         group by 1, wf.fueltech_id
         order by 1 desc, 2 asc
         """
-
-    # now() - interval '1 year'
 
     query = __query.format(year=year)
 
