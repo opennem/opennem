@@ -42,6 +42,7 @@ ITEM_PIPELINES = {
     "opennem.pipelines.wem.facility_scada.WemStoreFacilityScada": 411,
     "opennem.pipelines.wem.balancing_summary.WemStoreBalancingSummary": 412,
     "opennem.pipelines.wem.balancing_summary.WemStoreBalancingSummaryArchive": 413,
+    "opennem.pipelines.wem.pulse.WemStorePulse": 414,
     "opennem.pipelines.bom.StoreBomObservation": 430,
 }
 
