@@ -71,6 +71,7 @@ class WemStoreFacility(DatabaseStoreBase):
             s.add(facility)
             s.commit()
         except IntegrityError as e:
+            logger.error(e)
             pass
         except Exception as e:
             logger.error("Error: {}".format(e))
