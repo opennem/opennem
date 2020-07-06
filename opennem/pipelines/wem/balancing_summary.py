@@ -66,12 +66,6 @@ class WemStoreBalancingSummaryArchive(DatabaseStoreBase):
 
         csvreader = csv.DictReader(item["content"].split("\n"))
 
-        q = self.engine.execute(
-            text("select distinct trading_interval from wem_balancing_summary")
-        )
-
-        intervals_all = [i[0] for i in q.fetchall()]
-
         objects = [
             WemBalancingSummary(
                 trading_interval=self.parse_interval(row["Trading Interval"]),
@@ -82,8 +76,6 @@ class WemStoreBalancingSummaryArchive(DatabaseStoreBase):
                 price=row["Final Price ($/MWh)"],
             )
             for row in csvreader
-            if self.parse_interval(row["Trading Interval"])
-            not in intervals_all
         ]
 
         try:
