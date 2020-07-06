@@ -14,7 +14,7 @@ DeclarativeBase = declarative_base()
 logger = logging.getLogger(__name__)
 
 
-# @compiles(Insert, "postgresql")
+@compiles(Insert, "postgresql")
 def compile_upsert(insert_stmt, compiler, **kwargs):
     """
     converts every SQL insert to an upsert  i.e;
@@ -22,6 +22,8 @@ def compile_upsert(insert_stmt, compiler, **kwargs):
     becomes:
     INSERT INTO test (foo, bar) VALUES (1, 'a') ON CONFLICT(foo) DO UPDATE SET (bar = EXCLUDED.bar)
     (assuming foo is a primary key)
+
+
     :param insert_stmt: Original insert statement
     :param compiler: SQL Compiler
     :param kwargs: optional arguments
