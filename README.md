@@ -65,10 +65,37 @@ $ scrapy crawl au.nem.current.dispatch_scada
 
 ## Development
 
+This project uses the new `pyproject.toml` project and build specification file. To make use of it use the `poetry` tool which can be installed on Windows, MacOS and Linux:
+
+https://python-poetry.org/docs/
+
+Installation instructions for Poetry are at:
+
+https://python-poetry.org/docs/#installation
+
+By default poetry will install virtual environments in your home metadata directory. A good alternative is to install the `venv` locally for each project with the following setting:
+
+```sh
+$ poetry config virtualenvs.in-project true
+```
+
+This will create the virtual environment within the project folder in a folder called `.venv`. This folder is ignored by git by default.
+
 Setting up a virtual environment and installing requiements using Poetry:
 
 ```sh
 $ poetry install
+```
+
+To activate the virtual environment either run:
+
+```sh
+$ poetry shell
+```
+
+Or you can just activate the standard `venv`
+
+```sh
 $ source .venv/bin/activate
 ```
 
