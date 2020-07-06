@@ -1,8 +1,8 @@
 """Schema v0.4.12
 
-Revision ID: 52917cba6ecb
+Revision ID: c043b29e085b
 Revises: 
-Create Date: 2020-07-07 12:13:14.337018
+Create Date: 2020-07-07 12:14:57.318843
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "52917cba6ecb"
+revision = "c043b29e085b"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -513,6 +513,7 @@ def upgrade_opennem():
         sa.Column("facility_id", sa.Text(), nullable=False),
         sa.Column("generated", sa.Numeric(), nullable=True),
         sa.Column("eoi_quantity", sa.Numeric(), nullable=True),
+        sa.Column("quantity", sa.Numeric(), nullable=True),
         sa.ForeignKeyConstraint(
             ["facility_id"],
             ["wem_facility.code"],
