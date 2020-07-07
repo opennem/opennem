@@ -2,8 +2,18 @@ import csv
 
 import scrapy
 
-from opennem.pipelines.wem.facility_scada import WemStoreFacilityScada
+from opennem.pipelines.wem.facility_scada import (
+    WemStoreFacilityScada,
+    WemStoreLiveFacilityScada,
+)
 from opennem.spiders.wem import WemCurrentSpider, WemHistoricSpider
+
+
+class WemLiveFacilityScada(WemCurrentSpider):
+    name = "au.wem.live.facility_scada"
+    pipelines_extra = set([WemStoreLiveFacilityScada])
+
+    start_url = "https://aemo.com.au/aemo/data/wa/infographic/generation.csv"
 
 
 class WemCurrentFacilityScada(WemCurrentSpider):
