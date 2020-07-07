@@ -3,6 +3,18 @@ import csv
 from scrapy import Spider
 
 from opennem.pipelines.wem import WemStoreFacility
+from opennem.pipelines.wem.facilities import WemStoreLiveFacilities
+from opennem.spiders.wem import WemCurrentSpider
+
+
+class WemLiveFacilities(WemCurrentSpider):
+    name = "au.wem.live.facilities"
+
+    pipelines_extra = set([WemStoreLiveFacilities])
+
+    start_url = (
+        "https://aemo.com.au/aemo/data/wa/infographic/facility-meta.csv"
+    )
 
 
 class WemFacilities(Spider):
