@@ -401,6 +401,7 @@ class FuelTech(Base, NemModel):
     __tablename__ = "fueltech"
     code = Column(Text, primary_key=True)
     label = Column(Text, nullable=True)
+    renewable = Column(Boolean, default=False)
 
 
 class WemParticipant(Base, NemModel):
