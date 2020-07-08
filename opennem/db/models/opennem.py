@@ -424,6 +424,42 @@ class WemParticipant(Base, NemModel):
     name = Column(Text, index=True)
 
 
+class NemParticipant(Base, NemModel):
+    __tablename__ = "nem_participant"
+
+    id = Column(Integer, primary_key=True)
+
+    code = Column(Text, index=True, primary_key=True)
+    name = Column(Text, index=True)
+
+
+class NemFacility(Base, NemModel):
+    __tablename__ = "nem_facility"
+
+    id = Column(Integer, primary_key=True)
+    participant_id = Column(
+        Text,
+        ForeignKey(
+            "nem_participant.code", name="fk_nem_facility_participant_id"
+        ),
+    )
+    participant = relationship("WemParticipant")
+
+    fueltech_id = Column(
+        Text,
+        ForeignKey("fueltech.code", name="fk_nem_facility_fueltech_id"),
+        nullable=True,
+    )
+    fueltech = relationship(
+        "FuelTech", backref=backref("facilities", cascade="all,delete")
+    )
+
+    active = Column(Boolean, default=True)
+    capacity_credits = Column(Numeric, nullable=True)
+    capacity_maximum = Column(Numeric, nullable=True)
+    registered = Column(DateTime)
+
+
 class WemFacility(Base, NemModel):
     """
 
