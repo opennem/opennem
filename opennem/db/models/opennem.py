@@ -404,6 +404,14 @@ class FuelTech(Base, NemModel):
     renewable = Column(Boolean, default=False)
 
 
+class Network(Base, NemModel):
+    __tablename__ = "network"
+
+    code = Column(Text, primary_key=True)
+    country = Column(Text, nullable=False)
+    label = Column(Text, nullable=True)
+
+
 class WemParticipant(Base, NemModel):
     """
 
