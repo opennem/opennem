@@ -412,16 +412,7 @@ class Network(Base, NemModel):
     label = Column(Text, nullable=True)
 
 
-class WemParticipant(Base, NemModel):
-    """
-
-        wem participants
-
-    """
-
-    __tablename__ = "wem_participant"
-    code = Column(Text, index=True, primary_key=True)
-    name = Column(Text, index=True)
+# NEM
 
 
 class NemParticipant(Base, NemModel):
@@ -429,8 +420,8 @@ class NemParticipant(Base, NemModel):
 
     id = Column(Integer, primary_key=True)
 
-    code = Column(Text, index=True, primary_key=True)
-    name = Column(Text, index=True)
+    code = Column(Text, index=True)
+    name = Column(Text)
 
 
 class NemFacility(Base, NemModel):
@@ -438,12 +429,12 @@ class NemFacility(Base, NemModel):
 
     id = Column(Integer, primary_key=True)
     participant_id = Column(
-        Text,
+        Integer,
         ForeignKey(
-            "nem_participant.code", name="fk_nem_facility_participant_id"
+            "nem_participant.id", name="fk_nem_facility_participant_id"
         ),
     )
-    participant = relationship("WemParticipant")
+    participant = relationship("NemParticipant")
 
     fueltech_id = Column(
         Text,
@@ -458,6 +449,24 @@ class NemFacility(Base, NemModel):
     capacity_credits = Column(Numeric, nullable=True)
     capacity_maximum = Column(Numeric, nullable=True)
     registered = Column(DateTime)
+
+
+# WEM
+
+
+class WemParticipant(Base, NemModel):
+    """
+
+        wem participants
+
+    """
+
+    __tablename__ = "wem_participant"
+
+    id = Column(Integer, primary_key=True)
+
+    code = Column(Text, index=True)
+    name = Column(Text)
 
 
 class WemFacility(Base, NemModel):
@@ -476,8 +485,10 @@ class WemFacility(Base, NemModel):
     code = Column(Text, nullable=True)
 
     participant_id = Column(
-        Text,
-        ForeignKey("wem_participant.code", name="fk_facility_participant_id"),
+        Integer,
+        ForeignKey(
+            "wem_participant.id", name="fk_wem_facility_participant_id"
+        ),
     )
     participant = relationship("WemParticipant")
 
@@ -508,8 +519,10 @@ class WemFacilityScada(Base, NemModel):
     trading_interval = Column(DateTime, index=True, primary_key=True)
 
     facility_id = Column(
-        Text,
-        ForeignKey("wem_facility.code", name="fk_facility_scada_facility_id"),
+        Integer,
+        ForeignKey(
+            "wem_facility.id", name="fk_wem_facility_scada_facility_id"
+        ),
         primary_key=True,
     )
     facility = relationship("WemFacility")
