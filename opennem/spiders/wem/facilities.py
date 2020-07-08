@@ -17,15 +17,10 @@ class WemLiveFacilities(WemCurrentSpider):
     )
 
 
-class WemFacilities(Spider):
+class WemFacilities(WemCurrentSpider):
     name = "au.wem.facilities"
-    start_urls = [
+    start_url = (
         "http://data.wa.aemo.com.au/datafiles/facilities/facilities.csv"
-    ]
-    # allowed_domains = ["wa.nemweb.com.au"]
-    pipelines = set([WemStoreFacility,])
+    )
 
-    def parse(self, response):
-        csvreader = csv.DictReader(response.text.split("\n"))
-        for row in csvreader:
-            yield row
+    pipelines_extra = set([WemStoreFacility,])

@@ -22,53 +22,58 @@ class WemStoreFacility(DatabaseStoreBase):
     def process_item(self, item, spider):
         s = self.session()
 
-        if not "Participant Code" in item:
-            print("invlid row")
-            return item
+        csvreader = csv.DictReader(item["content"].split("\n"))
 
-        participant = None
+        for row in csvreader:
 
-        participant_code = item["Participant Code"]
-        participant = s.query(WemParticipant).get(participant_code)
+            if not "Participant Code" in row:
+                logger.error("Invalid row")
+                continue
 
-        if not participant:
-            print("Participant not found: {}".format(participant_code))
-            participant = WemParticipant(
-                code=participant_code, name=item["Participant Name"]
+            participant = None
+
+            participant_code = row["Participant Code"]
+            participant = s.query(WemParticipant).get(participant_code)
+
+            if not participant:
+                print("Participant not found: {}".format(participant_code))
+                participant = WemParticipant(
+                    code=participant_code, name=row["Participant Name"]
+                )
+                s.add(participant)
+                s.commit()
+
+            facility = None
+
+            facility_code = row["Facility Code"]
+            facility = s.query(WemFacility).get(facility_code)
+
+            if not facility:
+                facility = WemFacility(
+                    code=facility_code, participant=participant,
+                )
+
+            facility.active = (
+                False if row["Balancing Status"] == "Non-Active" else True
             )
-            s.add(participant)
-            s.commit()
 
-        facility = None
+            if row["Capacity Credits (MW)"]:
+                facility.capacity_credits = row["Capacity Credits (MW)"]
 
-        facility_code = item["Facility Code"]
-        facility = s.query(WemFacility).get(facility_code)
+            if row["Maximum Capacity (MW)"]:
+                facility.capacity_maximum = row["Maximum Capacity (MW)"]
 
-        if not facility:
-            facility = WemFacility(
-                code=facility_code, participant=participant,
-            )
+            registered_date = row["Registered From"]
 
-        facility.active = (
-            False if item["Balancing Status"] == "Non-Active" else True
-        )
+            if registered_date:
+                registered_date_dt = datetime.strptime(
+                    registered_date, "%Y-%m-%d %H:%M:%S"
+                )
+                facility.registered = registered_date_dt
 
-        if item["Capacity Credits (MW)"]:
-            facility.capacity_credits = item["Capacity Credits (MW)"]
-
-        if item["Maximum Capacity (MW)"]:
-            facility.capacity_maximum = item["Maximum Capacity (MW)"]
-
-        registered_date = item["Registered From"]
-
-        if registered_date:
-            registered_date_dt = datetime.strptime(
-                registered_date, "%Y-%m-%d %H:%M:%S"
-            )
-            facility.registered = registered_date_dt
+            s.add(facility)
 
         try:
-            s.add(facility)
             s.commit()
         except IntegrityError as e:
             logger.error(e)
