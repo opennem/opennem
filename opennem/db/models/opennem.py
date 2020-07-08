@@ -471,7 +471,10 @@ class WemFacility(Base, NemModel):
 
     __tablename__ = "wem_facility"
 
-    code = Column(Text, primary_key=True)
+    id = Column(Integer, primary_key=True)
+
+    code = Column(Text, nullable=True)
+
     participant_id = Column(
         Text,
         ForeignKey("wem_participant.code", name="fk_facility_participant_id"),
