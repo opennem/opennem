@@ -242,20 +242,18 @@ class NemStoreREL(DatabaseStoreBase):
                 generator_data["tech_primary_descriptor"],
             )
 
-            # handle fueltechs and conflicts
-            if not facility.fueltech_id:
-                facility.fueltech_id = fueltech
-            else:
-                # Log that we have a new fueltech
-                if fueltech and fueltech != facility.fueltech_id:
-                    logger.error(
-                        "Fueltech mismatch for {} {}: prev {} new {}".format(
-                            facility.name_clean,
-                            facility.code,
-                            facility.fueltech_id,
-                            fueltech,
-                        )
+            # Log that we have a new fueltech
+            if fueltech and fueltech != facility.fueltech_id:
+                logger.warn(
+                    "Fueltech mismatch for {} {}: prev {} new {}".format(
+                        facility.name_clean,
+                        facility.code,
+                        facility.fueltech_id,
+                        fueltech,
                     )
+                )
+
+            facility.fueltech_id = fueltech
 
             s.add(facility)
             s.commit()
