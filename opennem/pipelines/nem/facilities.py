@@ -373,7 +373,9 @@ class NemStoreGI(DatabaseStoreBase):
                     .one_or_none()
                 )
             except MultipleResultsFound:
-                logger.warn("Multiple results found for duid : {}".forat(duid))
+                logger.warn(
+                    "Multiple results found for duid : {}".format(duid)
+                )
 
             if facility:
                 if not facility.station:
