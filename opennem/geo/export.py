@@ -215,9 +215,9 @@ if __name__ == "__main__":
     with open("data/facility_diff/au_facilities.json", "w",) as fh:
         fh.write(dumps(geoj, indent=4))
 
-    # with open(
-    #     "s3://data.opennem.org.au/v3/geo/au_facilities.json",
-    #     "w",
-    #     transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
-    # ) as fh:
-    #     fh.write(dumps(geoj))
+    with open(
+        "s3://data.opennem.org.au/v3/geo/au_facilities.json",
+        "w",
+        transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
+    ) as fh:
+        fh.write(dumps(geoj))
