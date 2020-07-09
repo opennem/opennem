@@ -170,11 +170,14 @@ class NemStoreREL(DatabaseStoreBase):
                 generator_data["reg_cap"]
             )
             generator.region = generator_data["region"]
-            generator.fueltech_id = lookup_fueltech(
-                generator_data["fuel_source_primary"],
-                generator_data["tech_primary_descriptor"],
-                generator_data["fuel_source_descriptor"],
-            )
+
+            if not generator.fueltech_id:
+                generator.fueltech_id = lookup_fueltech(
+                    generator_data["fuel_source_primary"],
+                    generator_data["tech_primary_descriptor"],
+                    generator_data["fuel_source_descriptor"],
+                )
+
             generator.status_id = "operating"
             generator.unit_size = clean_capacity(generator_data["unit_size"])
             generator.unit_number = generator_data["unit_no"]
