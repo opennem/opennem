@@ -1,4 +1,4 @@
-poetry version patch
+poetry version $@
 
 VERSION=$(poetry version | sed 's/[^0-9\.]*//g')
 
