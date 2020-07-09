@@ -91,6 +91,7 @@ ACRONYMS = [
     "sa",
     "vpp",
     "fpc",
+    "cd",
 ]
 
 
