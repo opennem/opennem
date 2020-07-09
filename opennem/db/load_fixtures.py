@@ -195,6 +195,11 @@ def parse_facilities_json():
 
             db_facility.station = station
             db_facility.status_id = map_v3_states(facility["status"]["state"])
+            print(
+                "Added facility {} with station id {}".format(
+                    facility["display_name"], station.code
+                )
+            )
             s.add(db_facility)
             s.commit()
 

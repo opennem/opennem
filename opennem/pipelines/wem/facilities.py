@@ -59,6 +59,7 @@ class WemStoreFacility(DatabaseStoreBase):
             )
 
             if not facility:
+                print("Adding WEM facility: {}".format(facility_code))
                 facility = WemFacility(
                     code=facility_code, participant=participant,
                 )
