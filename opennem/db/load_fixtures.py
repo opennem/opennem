@@ -1,5 +1,6 @@
 import csv
 import json
+import logging
 import os
 from datetime import date, datetime
 from decimal import Decimal
@@ -27,6 +28,9 @@ FIXTURE_PATH = os.path.join(os.path.dirname(__file__), "fixtures")
 
 engine = db_connect()
 session = sessionmaker(bind=engine)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def fueltech_map(fueltech):
@@ -71,7 +75,7 @@ def load_fueltechs():
             s.add(ft)
             s.commit()
         except Exception:
-            print("Have {}".format(ft.code))
+            logger.error("Have {}".format(ft.code))
 
 
 def load_facilitystatus():
@@ -86,7 +90,7 @@ def load_facilitystatus():
             s.add(ft)
             s.commit()
         except Exception:
-            print("Have {}".format(ft.code))
+            logger.error("Have {}".format(ft.code))
 
 
 def parse_date(date_str):
@@ -125,7 +129,7 @@ def load_bom_stations():
                 s.add(station)
                 s.commit()
             except Exception:
-                print("Have {}".format(station.code))
+                logger.error("Have {}".format(station.code))
 
 
 def parse_facilities_json():
@@ -150,14 +154,16 @@ def parse_facilities_json():
 
         station = (
             s.query(WemStation)
-            .filter(WemStation.code == facility["station_id"])
+            .filter(WemStation.code == facility["name"])
             .one_or_none()
         )
 
         if not station:
-            print("Station not found: {}".format(facility["station_id"]))
+            logger.info("Station not found: {}".format(facility["name"]))
+            print("Station not found: {}".format(facility["name"]))
+
             station = WemStation(
-                code=facility["station_id"],
+                code=facility["name"],
                 name=station_name_cleaner(facility["display_name"]),
                 state=facility["location"]["state"],
                 postcode=facility["location"]["postcode"],
@@ -204,7 +210,7 @@ def parse_facilities_json():
         if not station:
             first_facility_duid = list(facility["duid_data"].keys()).pop()
 
-            print("Looking up {}".format(first_facility_duid))
+            logger.info("Looking up {}".format(first_facility_duid))
 
             station_first_facility = (
                 s.query(NemFacility)
@@ -217,7 +223,9 @@ def parse_facilities_json():
                 station = station_first_facility.station
 
         if not station:
-            print("Station not found: {}".format(facility["station_id"]))
+            logger.info(
+                "NEM Station not found: {}".format(facility["station_id"])
+            )
             station = NemStation(code=facility["station_id"],)
 
         station.name_clean = station_name_cleaner(facility["display_name"])
@@ -259,9 +267,7 @@ def parse_facilities_json():
 
             db_facility.region = facility["region_id"]
             db_facility.station = station
-            db_facility.status_id = normalize_states(
-                facility["status"]["state"]
-            )
+            db_facility.status_id = map_v3_states(facility["status"]["state"])
 
             s.add(db_facility)
             s.commit()
