@@ -19,6 +19,9 @@ def clean_fueltech(ft):
     if not type(ft) is str:
         return None
 
+    if ft == "-":
+        return None
+
     ft = ft.lower().strip()
 
     if ft == "":
