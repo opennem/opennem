@@ -53,8 +53,6 @@ class NemStoreREL(DatabaseStoreBase):
         participants = item["participants"]
         participant_keys = {}
 
-        from pprint import pprint
-
         for participant_data in participants:
             participant_name = participant_data["name"].strip()
 
@@ -91,8 +89,6 @@ class NemStoreREL(DatabaseStoreBase):
             participant_name = name_normalizer(generator_data["participant"])
             nem_region = name_normalizer(generator_data["region"])
             duid = normalize_duid(generator_data["duid"])
-
-            # pprint(generator_data)
 
             if station_name != station_current:
                 station = (
@@ -142,20 +138,6 @@ class NemStoreREL(DatabaseStoreBase):
                     )
                 )
 
-            # generator = (
-            # s.query(NemFacility)
-            # .filter(NemFacility.code == duid)
-            # .one_or_none()
-            # )
-
-            # if not generator:
-            # generator = (
-            # s.query(NemFacility)
-            # .filter(NemFacility.code == duid)
-            # .one_or_none()
-            # )
-
-            # if not generator:
             generator = NemFacility(code=duid, station=station)
 
             if not generator.participant_id:
