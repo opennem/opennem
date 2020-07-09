@@ -57,7 +57,7 @@ FUELTECH_MAP = load_fueltech_map("aemo_fueltech_map.csv")
 
 
 def lookup_fueltech(
-    fueltype, techtype=None, fueltype_desc=None, techtype_desc=None
+    fueltype, fueltype_desc=None, techtype=None, techtype_desc=None
 ):
     ft = clean_fueltech(fueltype)
     tt = clean_fueltech(techtype)
@@ -75,7 +75,7 @@ def lookup_fueltech(
 
     logger.warn(
         "Found fueltech {}, {}, {}, {} with no mapping".format(
-            ft, ftd, tt, ttd
+            ft, tt, ftd, ttd
         )
     )
 
