@@ -442,7 +442,7 @@ class NemFacility(Base, NemModel):
         nullable=True,
     )
     fueltech = relationship(
-        "FuelTech", backref=backref("facilities", cascade="all,delete")
+        "FuelTech", backref=backref("nem_facilities", cascade="all,delete")
     )
 
     active = Column(Boolean, default=True)
@@ -498,7 +498,7 @@ class WemFacility(Base, NemModel):
         nullable=True,
     )
     fueltech = relationship(
-        "FuelTech", backref=backref("facilities", cascade="all,delete")
+        "FuelTech", backref=backref("wem_facilities", cascade="all,delete")
     )
 
     active = Column(Boolean, default=True)
