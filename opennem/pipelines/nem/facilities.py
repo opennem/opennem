@@ -237,9 +237,9 @@ class NemStoreREL(DatabaseStoreBase):
 
             fueltech = lookup_fueltech(
                 generator_data["fuel_source_primary"],
+                generator_data["fuel_source_descriptor"],
                 generator_data["tech_primary"],
                 generator_data["tech_primary_descriptor"],
-                generator_data["fuel_source_descriptor"],
             )
 
             # handle fueltechs and conflicts
@@ -352,7 +352,7 @@ class NemStoreGI(DatabaseStoreBase):
         facility_status = lookup_facility_status(item["UnitStatus"])
         facility_region = item["Region"]
         facility_fueltech = (
-            lookup_fueltech(item["FuelType"], item["TechType"])
+            lookup_fueltech(item["FuelType"], techtype=item["TechType"])
             if ("FuelType" in item and item["FuelType"])
             else None
         )
