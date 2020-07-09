@@ -487,7 +487,7 @@ class WemFacility(Base, NemModel):
 
     id = Column(Integer, primary_key=True)
 
-    code = Column(Text, nullable=True)
+    code = Column(Text, unique=True, index=True, nullable=True)
 
     participant_id = Column(
         Integer,
