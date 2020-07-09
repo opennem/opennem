@@ -316,7 +316,11 @@ class NemStoreFacility(DatabaseStoreBase):
 
         facility.unit_number = item["Units"]
 
-        if "FuelType" in item and item["FuelType"]:
+        if (
+            "FuelType" in item
+            and item["FuelType"]
+            and not facility.fueltech_id
+        ):
             facility.fueltech_id = lookup_fueltech(
                 item["FuelType"], item["TechType"]
             )
