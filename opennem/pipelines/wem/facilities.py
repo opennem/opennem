@@ -174,7 +174,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
             if registered_date:
                 registered_date_dt = None
 
-                date_fmt = "%d/%m/%Y %H:%M"
+                date_fmt = "%Y-%m-%d %H:%M:%S"
 
                 try:
                     registered_date_dt = datetime.strptime(
