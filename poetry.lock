@@ -294,13 +294,13 @@ version = "*"
 [[package]]
 category = "main"
 description = "Using SQLAlchemy with Spatial Databases"
-name = "geoalchemy"
+name = "geoalchemy2"
 optional = false
 python-versions = "*"
-version = "0.7.2"
+version = "0.8.4"
 
 [package.dependencies]
-SQLAlchemy = ">=0.6.1"
+SQLAlchemy = ">=0.8"
 
 [[package]]
 category = "main"
@@ -1305,7 +1305,7 @@ postgres = ["psycopg2-binary"]
 server = ["fastapi"]
 
 [metadata]
-content-hash = "d2b386440f60beaeb7d94eb402c3f615e11a26240bbb8ab6babc159c71391b7f"
+content-hash = "0b05620ccb3bc22ce43c4b692358c439662531b48073b112a50b210a175b539a"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -1451,9 +1451,9 @@ flake8 = [
     {file = "flake8-3.8.3-py2.py3-none-any.whl", hash = "sha256:15e351d19611c887e482fb960eae4d44845013cc142d42896e9862f775d8cf5c"},
     {file = "flake8-3.8.3.tar.gz", hash = "sha256:f04b9fcbac03b0a3e58c0ab3a0ecc462e023a9faf046d57794184028123aa208"},
 ]
-geoalchemy = [
-    {file = "GeoAlchemy-0.7.2-py2.7.egg", hash = "sha256:282d63d4497ed2c7b59751fe1987d8d15a8215c5024de5d2fc79e0e631b59771"},
-    {file = "GeoAlchemy-0.7.2.tar.gz", hash = "sha256:78ce2f57a7982051030ccc9a59eb589bf6e0b3fad93875add4c1f7ef65f91863"},
+geoalchemy2 = [
+    {file = "GeoAlchemy2-0.8.4-py2.py3-none-any.whl", hash = "sha256:3b83654db15ed807a7bdb2e7dd1c787a47cfc3e4fb92a0558685001fbb7342da"},
+    {file = "GeoAlchemy2-0.8.4.tar.gz", hash = "sha256:d9336f17df3e7a10f94d1ea2488dcfb97a8bc23fe7f5edea425ddab553534b0a"},
 ]
 huey = [
     {file = "huey-2.2.0.tar.gz", hash = "sha256:15cef4225f7ae200fbecf89a0fed13e389fd751d6c8e1d3b26562b7df953de0e"},

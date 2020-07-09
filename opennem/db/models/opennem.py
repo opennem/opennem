@@ -28,6 +28,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy.sql import func
 
+from geoalchemy2 import Geometry
+
 Base = declarative_base()
 metadata = Base.metadata
 
@@ -446,10 +448,14 @@ class NemFacility(Base, NemModel):
         "FuelTech", backref=backref("nem_facilities", cascade="all,delete")
     )
 
+    name = Column(Text)
+
     active = Column(Boolean, default=True)
     capacity_credits = Column(Numeric, nullable=True)
     capacity_maximum = Column(Numeric, nullable=True)
     registered = Column(DateTime)
+
+    geom = Column(Geometry("POINT"))
 
 
 # WEM
@@ -506,10 +512,14 @@ class WemFacility(Base, NemModel):
         "FuelTech", backref=backref("wem_facilities", cascade="all,delete")
     )
 
+    name = Column(Text)
+
     active = Column(Boolean, default=True)
     capacity_credits = Column(Numeric, nullable=True)
     capacity_maximum = Column(Numeric, nullable=True)
     registered = Column(DateTime)
+
+    geom = Column(Geometry("POINT"))
 
 
 class WemFacilityScada(Base, NemModel):
