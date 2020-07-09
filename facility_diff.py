@@ -11,17 +11,7 @@ from datetime import timedelta
 from operator import itemgetter
 from pprint import pprint
 
-import requests
-import requests_cache
-
 logging.basicConfig(level=logging.INFO)
-
-
-REQUESTS_CACHE_PATH = ".requests"
-FACILITIES_CURRENT = (
-    "https://data.opennem.org.au/facility/facility_registry.json"
-)
-FACILITIES_V3 = "https://s3-ap-southeast-2.amazonaws.com/data.opennem.org.au/v3/geo/au_facilities.json"
 
 
 def normalize_states(state):
@@ -44,7 +34,8 @@ def normalize_regions(region):
 
 
 def main():
-    fac_current = requests.get(FACILITIES_CURRENT).json()
+    with open("opennem/db/fixtures/facility_registry.json") as fh:
+        fac_current = json.load(fh)
 
     remapped = []
 
@@ -70,7 +61,8 @@ def main():
         for line in remapped:
             csvwriter.writerow(line)
 
-    fac_v3 = requests.get(FACILITIES_V3).json()
+    with open("data/facility_diff/au_facilities.json") as fh:
+        fac_v3 = json.load(fh)
 
     fac_v3 = fac_v3["features"]
     remapped = []
