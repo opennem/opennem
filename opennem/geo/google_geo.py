@@ -1,6 +1,12 @@
 """
 
-encode business names to geolocation using Google Places API
+Google Places API
+
+Methods to use and access the Google Places API
+
+    * encode place names to geolocation using Google Places API
+    * find a place id
+    * autocomplete
 
 """
 import logging
@@ -10,11 +16,9 @@ import time
 from datetime import timedelta
 
 import requests
-
 import requests_cache
-from opennem.settings import GOOGLE_PLACES_API_KEY, REQUESTS_CACHE_PATH
 
-from .settings import CACHE_PATH
+from opennem.settings import GOOGLE_PLACES_API_KEY, REQUESTS_CACHE_PATH
 
 logging.basicConfig(level=logging.INFO)
 
