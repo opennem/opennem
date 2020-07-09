@@ -31,10 +31,16 @@ def compile_upsert(insert_stmt, compiler, **kwargs):
     """
     pk = insert_stmt.table.primary_key
 
+    from pprint import pprint
+
+    # @TODO support unique columns in UPSERT
+
     insert = compiler.visit_insert(insert_stmt, **kwargs)
     ondup = f'ON CONFLICT ({",".join(c.name for c in pk)}) DO UPDATE SET'
     updates = ", ".join(
-        f"{c.name}=EXCLUDED.{c.name}" for c in insert_stmt.table.columns
+        f"{c.name}=EXCLUDED.{c.name}"
+        for c in insert_stmt.table.columns
+        if c.name not in ["created_at"]
     )
 
     # @TODO Improve this - currently works for all of our queries
