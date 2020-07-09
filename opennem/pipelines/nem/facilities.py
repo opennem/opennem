@@ -4,6 +4,7 @@ from datetime import datetime
 
 from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.sql import text
 
 from opennem.core.facilitystations import facility_station_join_by_name
@@ -363,13 +364,16 @@ class NemStoreGI(DatabaseStoreBase):
             )
 
         if duid:
-            facility = (
-                s.query(NemFacility)
-                .filter(NemFacility.code == duid)
-                .filter(NemFacility.region == facility_region)
-                # .filter(NemFacility.nameplate_capacity != None)
-                .one_or_none()
-            )
+            try:
+                facility = (
+                    s.query(NemFacility)
+                    .filter(NemFacility.code == duid)
+                    .filter(NemFacility.region == facility_region)
+                    # .filter(NemFacility.nameplate_capacity != None)
+                    .one_or_none()
+                )
+            except MultipleResultsFound:
+                logger.warn("Multiple results found for duid : {}".forat(duid))
 
             if facility:
                 if not facility.station:
