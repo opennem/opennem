@@ -8,8 +8,16 @@
     "label": "Permitted"
   },
   {
+    "code": "committed",
+    "label": "Committed"
+  },
+  {
     "code": "construction",
     "label": "Construction"
+  },
+  {
+    "code": "comissioning",
+    "label": "Comissioning"
   },
   {
     "code": "shelved",
