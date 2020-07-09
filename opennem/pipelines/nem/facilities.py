@@ -25,6 +25,11 @@ NEM_FUELTECH_MAP = {
     "biomass": "bioenergy_biomass",
     "coal": "coal_black",
     "distillate": "distillate",
+    "black coal": "coal_black",
+    "brown coal": "coal_brown",
+    "water": "hydro",
+    "diesel": "distillate",
+    "landfill methane / landfill": "bioenergy_biomass",
 }
 
 
