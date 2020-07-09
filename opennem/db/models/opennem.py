@@ -399,6 +399,7 @@ class NemDispatchInterconnection(Base, NemModel):
 
 class FuelTech(Base, NemModel):
     __tablename__ = "fueltech"
+
     code = Column(Text, primary_key=True)
     label = Column(Text, nullable=True)
     renewable = Column(Boolean, default=False)
@@ -467,6 +468,10 @@ class WemParticipant(Base, NemModel):
 
     code = Column(Text, index=True)
     name = Column(Text)
+    address = Column(Text)
+    city = Column(Text)
+    state = Column(Text)
+    postcode = Column(Text)
 
 
 class WemFacility(Base, NemModel):
