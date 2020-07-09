@@ -531,6 +531,13 @@ class WemFacility(Base, NemModel):
         "FuelTech", backref=backref("wem_facilities", cascade="all,delete")
     )
 
+    status_id = Column(
+        Text,
+        ForeignKey("facility_status.code", name="fk_nem_facility_status_code"),
+        default="operating",
+    )
+    status = relationship("FacilityStatus")
+
     name = Column(Text)
 
     active = Column(Boolean, default=True)
