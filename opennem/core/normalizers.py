@@ -92,6 +92,7 @@ ACRONYMS = [
     "vpp",
     "fpc",
     "cd",
+    "ab",
 ]
 
 
