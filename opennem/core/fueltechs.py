@@ -37,7 +37,7 @@ def load_facility_stations(fixture_name):
     with open(fixture_path) as fh:
         csvreader = csv.reader(fh)
         for line in csvreader:
-            key = frozenset(map(line[:4], clean_fueltech))
+            key = frozenset(map(clean_fueltech, line[:4]))
             val = line[5]
 
             fueltech_map[key] = val
