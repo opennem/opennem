@@ -421,7 +421,7 @@ class NemParticipant(Base, NemModel):
 
     id = Column(Integer, primary_key=True)
 
-    code = Column(Text, index=True)
+    code = Column(Text, unique=True, index=True)
     name = Column(Text)
 
 
@@ -466,7 +466,7 @@ class WemParticipant(Base, NemModel):
 
     id = Column(Integer, primary_key=True)
 
-    code = Column(Text, index=True)
+    code = Column(Text, unique=True)
     name = Column(Text)
     address = Column(Text)
     city = Column(Text)
