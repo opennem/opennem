@@ -40,6 +40,7 @@ redis = "^3.5.3"
 psycopg2-binary = {version = "^2.8.5", optional = true}
 geoalchemy = "^0.7.2"
 openpyxl = "^3.0.4"
+requests_cache = "^0.5.2"
 
 [tool.poetry.dev-dependencies]
 black = "19.10b0"

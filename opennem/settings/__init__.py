@@ -17,6 +17,10 @@ DATABASE_HOST_URL = os.getenv("DATABASE_HOST_URL", default=False)
 
 REDIS_HOST_URL = os.getenv("REDIS_HOST_URL", default=False)
 
+GOOGLE_PLACES_API_KEY = os.getenv("GOOGLE_PLACES_API_KEY", default=False)
+
+REQUESTS_CACHE_PATH = os.getenv("REQUESTS_CACHE_PATH", default=".requests")
+
 
 def get_mysql_host(db_name=None):
     """
