@@ -2,8 +2,10 @@ import csv
 
 from scrapy import Spider
 
-from opennem.pipelines.wem import WemStoreFacility
-from opennem.pipelines.wem.facilities import WemStoreLiveFacilities
+from opennem.pipelines.wem.facilities import (
+    WemStoreFacility,
+    WemStoreLiveFacilities,
+)
 from opennem.spiders.wem import WemCurrentSpider
 
 

@@ -7,6 +7,7 @@
     - WEM
 """
 
+from geoalchemy2 import Geometry
 from sqlalchemy import (
     NUMERIC,
     Boolean,
@@ -27,8 +28,6 @@ from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy.sql import func
-
-from geoalchemy2 import Geometry
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -518,8 +517,8 @@ class WemFacility(Base, NemModel):
     capacity_credits = Column(Numeric, nullable=True)
     capacity_maximum = Column(Numeric, nullable=True)
     registered = Column(DateTime)
-
-    geom = Column(Geometry("POINT"))
+    comissioned = Column(Date, nullable=True)
+    geom = Column(Geometry("POINT", srid=4326))
 
 
 class WemFacilityScada(Base, NemModel):
