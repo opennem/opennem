@@ -18,7 +18,8 @@ def nem_geocode(limit=None):
     session = sessionmaker(bind=engine)
     s = session()
 
-    records = s.query(NemFacility).filter(NemFacility.geom == None)
+    records = s.query(NemFacility)
+    # .filter(NemFacility.geom == None)
 
     count = 0
     skipped = 0
@@ -44,7 +45,7 @@ def nem_geocode(limit=None):
 
             lat = result["geometry"]["location"]["lat"]
             lng = result["geometry"]["location"]["lng"]
-            r.geom = "SRID=4326;POINT({} {})".format(lat, lng)
+            r.geom = "SRID=4326;POINT({} {})".format(lng, lat)
 
             try:
                 s.add(r)
@@ -76,7 +77,8 @@ def wem_geocode(limit=None):
     session = sessionmaker(bind=engine)
     s = session()
 
-    records = s.query(WemFacility).filter(WemFacility.geom == None)
+    records = s.query(WemFacility)
+    # .filter(WemFacility.geom == None)
 
     count = 0
     skipped = 0
@@ -102,7 +104,7 @@ def wem_geocode(limit=None):
 
             lat = result["geometry"]["location"]["lat"]
             lng = result["geometry"]["location"]["lng"]
-            r.geom = "SRID=4326;POINT({} {})".format(lat, lng)
+            r.geom = "SRID=4326;POINT({} {})".format(lng, lat)
 
             try:
                 s.add(r)
