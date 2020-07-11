@@ -429,7 +429,7 @@ class NemParticipant(Base, NemModel):
 
     id = Column(Integer, primary_key=True)
 
-    code = Column(Text, unique=True, index=True)
+    # code = Column(Text, unique=True, index=True)
     name = Column(Text)
 
 
@@ -437,11 +437,13 @@ class NemFacility(Base, NemModel):
     __tablename__ = "nem_facility"
 
     id = Column(Integer, primary_key=True)
+
     participant_id = Column(
         Integer,
         ForeignKey(
             "nem_participant.id", name="fk_nem_facility_participant_id"
         ),
+        nullable=True,
     )
     participant = relationship("NemParticipant")
 
@@ -454,11 +456,20 @@ class NemFacility(Base, NemModel):
         "FuelTech", backref=backref("nem_facilities", cascade="all,delete")
     )
 
+    status_id = Column(
+        Text,
+        ForeignKey("facility_status.code", name="fk_nem_facility_status_code"),
+    )
+    status = relationship("FacilityStatus")
+
     name = Column(Text)
 
+    # DUID
+    code = Column(Text, nullable=True, index=True)
+    region = Column(Text, index=True)
+
     active = Column(Boolean, default=True)
-    capacity_credits = Column(Numeric, nullable=True)
-    capacity_maximum = Column(Numeric, nullable=True)
+    nameplate_capacity = Column(Numeric, nullable=True)
     registered = Column(DateTime)
 
     geom = Column(Geometry("POINT"))

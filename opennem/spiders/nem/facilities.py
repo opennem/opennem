@@ -3,6 +3,8 @@ from io import BytesIO
 import scrapy
 from openpyxl import load_workbook
 
+from opennem.pipelines.nem.facilities import NemStoreFacility
+
 
 class NemFacilitySpider(scrapy.Spider):
     name = "au.nem.facilities"
@@ -31,12 +33,14 @@ class NemFacilitySpider(scrapy.Spider):
         "SurveyEffective",
     ]
 
+    pipelines_extra = set([NemStoreFacility,])
+
     def parse(self, response):
         wb = load_workbook(BytesIO(response.body), data_only=True)
 
         ws = wb.get_sheet_by_name("ExistingGeneration&NewDevs")
 
-        for row in ws.iter_rows(min_row=3, max_row=13, values_only=True):
+        for row in ws.iter_rows(min_row=3, values_only=True):
 
             # pick out the columns we want
             # lots of hidden columns in the sheet
