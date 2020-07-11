@@ -50,3 +50,4 @@ db_test.py
 .envrc
 TODO.md
 setup.py
+.requests.sqlite
