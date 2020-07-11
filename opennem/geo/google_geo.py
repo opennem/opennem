@@ -185,3 +185,52 @@ def place_autocomplete(
 
     cand = results["predictions"]
     return cand
+
+
+def place_search(query, api_key=None, return_full_response=False):
+
+    GOOGLE_PLACES_URL = (
+        "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
+    )
+
+    query_params = {}
+
+    query_components = {}
+
+    url_params = {
+        "key": GOOGLE_PLACES_API_KEY,
+        "input": query,
+        "inputtype": "textquery",
+        "language": "en-AU",
+        # "fields": "basic"
+        "fields": "name,geometry,place_id",
+    }
+
+    results = requests.get(GOOGLE_PLACES_URL, params=url_params).json()
+
+    logging.debug(results)
+
+    if not "status" in results:
+        raise Exception("Invalid response")
+
+    if results["status"] == "REQUEST_DENIED":
+        raise Exception("API Key or other request denied error")
+
+    if results["status"] == "OVER_QUERY_LIMIT":
+        logging.warn("Hit Query Limit! Backing off for a bit.")
+        time.sleep(5)  # sleep for 30 minutes
+        return place_search(query)
+
+    if results["status"] == "ZERO_RESULTS":
+        return None
+
+    if not results["status"] == "OK":
+        logging.error("Error results for %s", query)
+        raise Exception("No results: {}".format(results["status"]))
+
+    if len(results["candidates"]) == 0:
+        logging.error("No results for %s", query)
+        return None
+
+    cand = results["candidates"]
+    return cand
