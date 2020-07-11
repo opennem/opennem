@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 
 from opennem.db import db_connect
 from opennem.db.models.bom import BomStation
-from opennem.db.models.opennem import FuelTech
+from opennem.db.models.opennem import FacilityStatus, FuelTech
 from opennem.db.models.wem import metadata
 
 FIXTURE_PATH = os.path.join(os.path.dirname(__file__), "fixtures")
@@ -39,6 +39,21 @@ def load_fueltechs():
 
     for fueltech in fixture:
         ft = FuelTech(code=fueltech)
+
+        try:
+            s.add(ft)
+            s.commit()
+        except Exception:
+            print("Have {}".format(ft.code))
+
+
+def load_facilitystatus():
+    fixture = load_fixture("facility_status.json")
+
+    s = session()
+
+    for status in fixture:
+        ft = FacilityStatus(code=status["code"], label=status["label"])
 
         try:
             s.add(ft)
@@ -88,4 +103,5 @@ def load_bom_stations():
 
 if __name__ == "__main__":
     load_fueltechs()
+    load_facilitystatus()
     load_bom_stations()

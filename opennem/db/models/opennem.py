@@ -414,6 +414,13 @@ class Network(Base, NemModel):
     label = Column(Text, nullable=True)
 
 
+class FacilityStatus(Base):
+    __tablename__ = "facility_status"
+
+    code = Column(Text, primary_key=True)
+    label = Column(Text)
+
+
 # NEM
 
 

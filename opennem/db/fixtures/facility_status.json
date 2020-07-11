@@ -1,0 +1,34 @@
+[
+  {
+    "code": "announced",
+    "label": "Announced"
+  },
+  {
+    "code": "permitted",
+    "label": "Permitted"
+  },
+  {
+    "code": "construction",
+    "label": "Construction"
+  },
+  {
+    "code": "shelved",
+    "label": "Shelved"
+  },
+  {
+    "code": "cancelled",
+    "label": "Cancelled"
+  },
+  {
+    "code": "operating",
+    "label": "Operating"
+  },
+  {
+    "code": "mothballed",
+    "label": "Mothballed"
+  },
+  {
+    "code": "retired",
+    "label": "Retired"
+  }
+]
