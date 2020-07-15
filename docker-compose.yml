@@ -51,9 +51,9 @@ services:
     ports:
       - ${HOST:-127.0.0.1}:15433:5432
     volumes:
-      - psotgis_data:/var/lib/postgresql/data
+      - postgis_data:/var/lib/postgresql/data
 
 volumes:
   db_data: {}
   pg_data: {}
-  psotgis_data: {}
+  postgis_data: {}
