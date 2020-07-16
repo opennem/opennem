@@ -511,6 +511,9 @@ class NemFacility(Base, NemModel):
     nameplate_capacity = Column(Numeric, nullable=True)
     registered = Column(DateTime)
 
+    unit_size = Column(Integer, nullable=True)
+    unit_number = Column(Text, nullable=True)
+
     place_id = Column(Text, nullable=True, index=True)
 
     geom = Column(Geometry("POINT"))
