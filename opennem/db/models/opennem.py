@@ -493,7 +493,15 @@ class NemFacility(Base, NemModel):
     )
     status = relationship("FacilityStatus")
 
+    station_id = Column(
+        Integer,
+        ForeignKey("nem_station.id", name="fk_nem_station_status_code"),
+        nullable=True,
+    )
+    station = relationship("NemStation")
+
     name = Column(Text)
+    name_clean = Column(Text)
 
     # DUID
     code = Column(Text, nullable=True, index=True)
