@@ -29,10 +29,27 @@ FUELTECH_MAP = {
     "coal": "coal_black",
     "distillate": "distillate",
     "waste coal mine gas": "gas_wcmg",
+    "battery storage": "battery_discharging",
     "landfill methane / landfill": "bioenergy_biomass",
     "landfill methane / landfill gas": "bioenergy_biogas",
     "bagasse": "bioenergy_biomass",
     "coal seam methane": "bioenergy_biogas",
+    # "Natural Gas / Fuel Oil": "",
+    "renewable/ biomass / waste": "bioenergy_biomass",
+    "fossil": {
+        "open cycle gas turbines (ocgt)": "gas_ocgt",
+        "compression reciprocating engine": "gas_wcmg",
+        "combined cycle gas turbine (ccgt)": "gas_ccgt",
+    },
+    "other": {
+        "solar pv - fixed": "solar_utility",
+        # "Reciprocating Engine - Compression ignition": "",
+        # "Reciprocating Engine - Spark ignition": "",
+        "storage - battery": "battery_discharging",
+        # "Storage - Virtual Power Plant": "",
+        # "Turbine - Steam Sub Critical": "",
+        "wind turbine - onshore": "wind",
+    },
 }
 
 
@@ -47,30 +64,40 @@ FUELTECH_MAP_FROM_TECHS = {
 }
 
 
-def lookup_fueltech(fueltype, techtype=None):
-    ft = fueltype.lower()
-    tt = techtype.lower()
+def lookup_fueltech(fueltype, techtype=None, fueltype_desc=None):
+    ft = fueltype.lower().strip().replace("-", "")
+    tt = techtype.lower().strip() if techtype else None
+    ftd = fueltype_desc.lower().strip() if fueltype_desc else None
 
+    # Lookup legacy fuel tech types and map them
     if ft in LEGACY_FUELTECH_MAP.keys():
         return LEGACY_FUELTECH_MAP[ft]
 
-    if ft == "other":
-        if not techtype:
-            logger.error(
-                "Missing mapping for other fueltech with techtype: {}".format(
-                    techtype
-                )
-            )
-            return None
+    if ftd and ftd in FUELTECH_MAP.keys():
+        return FUELTECH_MAP[ftd]
 
-        if not tt in FUELTECH_MAP_FROM_TECHS.keys():
-            logger.error(
-                "Found fueltech other with tech type {}  that doesn't map "
-            )
-            return None
-
+    # Lookup others
     if not ft in FUELTECH_MAP.keys():
         logger.error("Found fueltech {} with no mapping".format(ft))
         return None
 
-    return FUELTECH_MAP[ft]
+    lookup = FUELTECH_MAP[ft]
+
+    if type(lookup) is dict:
+        if not tt:
+            raise Exception(
+                "Require tech type for lookup key {}".format(fueltype)
+            )
+
+        if tt in lookup.keys():
+            return lookup[tt]
+
+        logger.error(
+            "Fueltech lookup failure: No tech type {} for fuel type {}".format(
+                techtype, fueltype
+            )
+        )
+
+        return None
+
+    return lookup
