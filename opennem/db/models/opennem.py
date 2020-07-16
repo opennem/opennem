@@ -431,6 +431,37 @@ class NemParticipant(Base, NemModel):
 
     # code = Column(Text, unique=True, index=True)
     name = Column(Text)
+    name_clean = Column(Text)
+    abn = Column(Text)
+
+
+class NemStation(Base, NemModel):
+    __tablename__ = "nem_station"
+
+    id = Column(Integer, primary_key=True)
+
+    participant_id = Column(
+        Integer,
+        ForeignKey("nem_participant.id", name="fk_nem_station_participant_id"),
+        nullable=True,
+    )
+    participant = relationship("NemParticipant")
+
+    code = Column(Text, unique=True, index=True, nullable=True)
+
+    name = Column(Text)
+
+    name_clean = Column(Text)
+
+    nem_region = Column(Text)
+
+    state = Column(Text)
+
+    postcode = Column(Text, nullable=True)
+
+    geom = Column(Geometry("POINT", srid=4326))
+
+    boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
 
 
 class NemFacility(Base, NemModel):
