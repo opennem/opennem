@@ -12,14 +12,14 @@ SPIDER_MODULES = ["opennem.spiders"]
 NEWSPIDER_MODULE = "opennem.spiders"
 
 
-USER_AGENT = "opennem (+https://opennem.org.au)"
+USER_AGENT = "opennem/0.5.0 (+https://opennem.org.au)"
 ROBOTSTXT_OBEY = False
 CONCURRENT_REQUESTS = 16
 COOKIES_ENABLED = True
 TELNETCONSOLE_ENABLED = False
 
 DEFAULT_REQUEST_HEADERS = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept": "*/*",
     "Accept-Language": "en",
 }
 
@@ -38,6 +38,7 @@ ITEM_PIPELINES = {
     "opennem.pipelines.nem.ExtractCSV": 301,
     "opennem.pipelines.nem.DatabaseStore": 401,
     "opennem.pipelines.nem.facilities.NemStoreFacility": 401,
+    "opennem.pipelines.nem.facilities.NemStoreREL": 402,
     "opennem.pipelines.wem.facilities.WemStoreFacility": 410,
     "opennem.pipelines.wem.facility_scada.WemStoreFacilityScada": 411,
     "opennem.pipelines.wem.balancing_summary.WemStoreBalancingSummary": 412,

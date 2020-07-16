@@ -6,31 +6,12 @@ from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
 
+from opennem.core.fueltechs import lookup_fueltech
 from opennem.db.models.opennem import WemFacility, WemParticipant
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
-
-WEM_FUELTECH_MAP = {
-    "wind": "wind",
-    "solar": "solar_utility",
-    "gas": "gas_ccgt",
-    "landfill gas": "bioenergy_biogas",
-    "biomass": "bioenergy_biomass",
-    "coal": "coal_black",
-    "distillate": "distillate",
-}
-
-
-def get_wem_fueltech(wem_fueltype):
-    ft = wem_fueltype.lower()
-
-    if not ft in WEM_FUELTECH_MAP.keys():
-        logger.error("Found fueltech {} with no mapping".format(ft))
-        return None
-
-    return WEM_FUELTECH_MAP[ft]
 
 
 class WemStoreFacility(DatabaseStoreBase):
@@ -57,7 +38,11 @@ class WemStoreFacility(DatabaseStoreBase):
             )
 
             if not participant:
-                print("Participant not found: {}".format(participant_code))
+                print(
+                    "Participant not found creating new database entry: {}".format(
+                        participant_code
+                    )
+                )
                 participant = WemParticipant(
                     code=participant_code, name=row["Participant Name"]
                 )
@@ -190,7 +175,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                 if registered_date_dt:
                     facility.registered = registered_date_dt
 
-            fueltech = get_wem_fueltech(row["PRIMARY_FUEL"])
+            fueltech = lookup_fueltech(row["PRIMARY_FUEL"])
 
             if fueltech and not facility.fueltech:
                 facility.fueltech_id = fueltech
