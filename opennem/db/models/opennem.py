@@ -541,6 +541,26 @@ class WemParticipant(Base, NemModel):
     postcode = Column(Text)
 
 
+class WemStation(Base, NemModel):
+    __tablename__ = "wem_station"
+
+    id = Column(Integer, primary_key=True)
+
+    participant_id = Column(
+        Integer,
+        ForeignKey("wem_participant.id", name="fk_wem_station_participant_id"),
+        nullable=True,
+    )
+    participant = relationship("WemParticipant")
+
+    state = Column(Text)
+    postcode = Column(Text, nullable=True)
+    code = Column(Text, unique=True, index=True, nullable=True)
+    name = Column(Text)
+    geom = Column(Geometry("POINT", srid=4326))
+    boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
+
+
 class WemFacility(Base, NemModel):
     """
 
@@ -575,10 +595,17 @@ class WemFacility(Base, NemModel):
 
     status_id = Column(
         Text,
-        ForeignKey("facility_status.code", name="fk_nem_facility_status_code"),
+        ForeignKey("facility_status.code", name="fk_wem_facility_status_code"),
         default="operating",
     )
     status = relationship("FacilityStatus")
+
+    station_id = Column(
+        Integer,
+        ForeignKey("wem_station.id", name="fk_wem_station_status_code"),
+        nullable=True,
+    )
+    station = relationship("WemStation")
 
     name = Column(Text)
 
