@@ -32,6 +32,14 @@
     "label": "Operating"
   },
   {
+    "code": "maturing",
+    "label": "Maturing"
+  },
+  {
+    "code": "emerging",
+    "label": "Emerging"
+  },
+  {
     "code": "mothballed",
     "label": "Mothballed"
   },
