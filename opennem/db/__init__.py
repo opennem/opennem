@@ -66,7 +66,9 @@ def db_connect(db_name=None, debug=False):
     db_conn_str = get_database_host()
 
     try:
-        e = create_engine(db_conn_str, echo=debug)
+        e = create_engine(
+            db_conn_str, echo=debug, pool_size=10, pool_timeout=60
+        )
         return e
     except Exception as e:
         logger.error("Could not connect to database: {}".format(e))
