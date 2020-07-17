@@ -74,6 +74,8 @@ def wem_export():
                 f.properties = {
                     "station_id": row[0],
                     "station_code": row[9],
+                    "network": "WEM",
+                    "network_region": "WA",
                     "state": row[12],
                     "postcode": row[13],
                     "name": row[4],
@@ -121,7 +123,8 @@ def nem_export():
             ST_Y(ws.geom),
             ST_AsText(ws.geom),
             ws.name_clean,
-            ws.id
+            ws.id,
+            wf.region
         from nem_station ws
         join nem_facility wf on wf.station_id = ws.id
         join fueltech f on f.code = wf.fueltech_id
@@ -153,6 +156,8 @@ def nem_export():
                 f.properties = {
                     "station_id": row[0],
                     "station_code": row[9],
+                    "network": "NEM",
+                    "network_region": row[19],
                     "state": row[12],
                     "postcode": row[13],
                     "name": row[17] or row[4],
