@@ -23,7 +23,7 @@ UPLOAD_ARGS = {
 def wem_export():
 
     __sql = """
-            select
+        select
             wf.code as duid,
             wf.capacity_maximum,
             wf.comissioned,
@@ -60,13 +60,15 @@ def wem_export():
         rows = c.execute(query)
 
         for row in rows:
-            if current_station_code != row[9]:
+            name = row[4] or row[3]
 
-                if f:
+            if current_station_code != name:
+
+                if f is not None:
                     features.append(f)
 
                 f = Feature()
-                current_station_code = row[9]
+                current_station_code = name
 
                 if row[11]:
                     f.geometry = Point((row[15], row[14]))
