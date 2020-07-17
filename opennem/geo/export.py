@@ -158,7 +158,7 @@ def nem_export():
                     "station_code": row[9],
                     "network": "NEM",
                     "network_region": row[19],
-                    "state": row[12],
+                    "state": row[12] or row[19][:-1],
                     "postcode": row[13],
                     "name": row[17] or row[4],
                     "duid_data": [],
