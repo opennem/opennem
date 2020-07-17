@@ -80,7 +80,7 @@ def wem_export():
                     "network_region": "WA",
                     "state": row[12],
                     "postcode": row[13],
-                    "name": row[4],
+                    "name": name,
                     "duid_data": [],
                 }
 
