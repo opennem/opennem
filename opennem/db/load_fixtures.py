@@ -7,6 +7,7 @@ from decimal import Decimal
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
+from opennem.core.normalizers import station_name_cleaner
 from opennem.db import db_connect
 from opennem.db.models.bom import BomStation
 from opennem.db.models.opennem import (
@@ -156,7 +157,7 @@ def parse_facilities_json():
             print("Station not found: {}".format(facility["station_id"]))
             station = WemStation(
                 code=facility["station_id"],
-                name=facility["display_name"],
+                name=station_name_cleaner(facility["display_name"]),
                 state=facility["location"]["state"],
                 postcode=facility["location"]["postcode"],
                 geom="SRID=4326;POINT({} {})".format(
@@ -212,7 +213,7 @@ def parse_facilities_json():
             print("Station not found: {}".format(facility["station_id"]))
             station = NemStation(code=facility["station_id"],)
 
-        station.name_clean = facility["display_name"]
+        station.name_clean = station_name_cleaner(facility["display_name"])
         station.state = facility["location"]["state"]
         station.postcode = facility["location"]["postcode"]
 
