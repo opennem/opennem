@@ -126,7 +126,10 @@ def nem_export():
             ST_AsText(ws.geom),
             ws.name_clean,
             ws.id,
-            wf.region
+            wf.region,
+            wf.unit_number,
+            wf.unit_size,
+            ws.id
         from nem_station ws
         join nem_facility wf on wf.station_id = ws.id
         join fueltech f on f.code = wf.fueltech_id
@@ -146,7 +149,7 @@ def nem_export():
         for row in rows:
             if current_station_code != row[18]:
 
-                if f:
+                if f is not None:
                     features.append(f)
 
                 f = Feature()
@@ -156,6 +159,7 @@ def nem_export():
                     f.geometry = Point((row[15], row[14]))
 
                 f.properties = {
+                    "oid": str(row[22]),
                     "station_id": row[0],
                     "station_code": row[9],
                     "network": "NEM",
@@ -163,6 +167,7 @@ def nem_export():
                     "state": row[12] or row[19][:-1],
                     "postcode": row[13],
                     "name": row[17] or row[4],
+                    "registered_capacity": float(row[1]) if row[1] else None,
                     "duid_data": [],
                 }
 
@@ -176,6 +181,8 @@ def nem_export():
                     "fuel_tech_label": row[6],
                     "status": row[7],
                     "status_label": row[8],
+                    "unit_number": row[20],
+                    "unit_size": str(row[21]),
                     "registered_capacity": float(row[1]) if row[1] else None,
                 }
             )
