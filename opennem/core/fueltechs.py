@@ -25,17 +25,21 @@ FUELTECH_MAP = {
     "solar": "solar_utility",
     "gas": "gas_ccgt",
     "landfill gas": "bioenergy_biogas",
+    "biogas": "bioenergy_biogas",
     "biomass": "bioenergy_biomass",
     "coal": "coal_black",
     "distillate": "distillate",
     "waste coal mine gas": "gas_wcmg",
     "battery storage": "battery_discharging",
     "landfill methane / landfill": "bioenergy_biomass",
+    "municipal solid waste": "bioenergy_biomass",
     "landfill methane / landfill gas": "bioenergy_biogas",
     "bagasse": "bioenergy_biomass",
     "coal seam methane": "bioenergy_biogas",
-    # "Natural Gas / Fuel Oil": "",
+    "green and air dried wood": "bioenergy_biogas",
     "renewable/ biomass / waste": "bioenergy_biomass",
+    "fuel oil": {"turbine - ocgt": "distillate"},
+    "kerosene": "distillate",
     "fossil": {
         "open cycle gas turbines (ocgt)": "gas_ocgt",
         "compression reciprocating engine": "gas_wcmg",
@@ -43,24 +47,9 @@ FUELTECH_MAP = {
     },
     "other": {
         "solar pv - fixed": "solar_utility",
-        # "Reciprocating Engine - Compression ignition": "",
-        # "Reciprocating Engine - Spark ignition": "",
         "storage - battery": "battery_discharging",
-        # "Storage - Virtual Power Plant": "",
-        # "Turbine - Steam Sub Critical": "",
         "wind turbine - onshore": "wind",
     },
-}
-
-
-FUELTECH_MAP_FROM_TECHS = {
-    "solar pv - fixed": "solar",
-    # "Reciprocating Engine - Compression ignition": "",
-    # "Reciprocating Engine - Spark ignition": "",
-    "storage - battery": "battery_discharging",
-    # "Storage - Virtual Power Plant": "",
-    # "Turbine - Steam Sub Critical": "",
-    "wind turbine - onshore": "wind",
 }
 
 
