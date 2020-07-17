@@ -224,6 +224,8 @@ class NemStoreFacility(DatabaseStoreBase):
 
         participant_name = name_normalizer(item["Owner"])
 
+        # Funky case of Todae solar where they put their name in the
+
         participant = (
             s.query(NemParticipant)
             .filter(NemParticipant.name == participant_name)
@@ -231,7 +233,10 @@ class NemStoreFacility(DatabaseStoreBase):
         )
 
         if not participant:
-            participant = NemParticipant(name=participant_name)
+            participant = NemParticipant(
+                name=participant_name,
+                name_clean=participant_name_filter(participant_name),
+            )
 
             s.add(participant)
             s.commit()
@@ -256,37 +261,47 @@ class NemStoreFacility(DatabaseStoreBase):
             )
 
             if facility:
-                facility_station = facility.station_id
+                facility_station = facility.station
 
         if not duid:
             facility = (
                 s.query(NemFacility)
                 .filter(NemFacility.region == item["Region"])
-                .filter(NemFacility.name == item["Name"])
+                .filter(
+                    NemFacility.name_clean
+                    == station_name_cleaner(item["Name"])
+                )
                 .filter(NemFacility.nameplate_capacity != None)
                 .first()
             )
 
-        if not facility:
-            facility = NemFacility()
+            if facility:
+                facility_station = facility.station
 
-            if facility_station:
-                facility.station_id = facility_station
+        station_name = station_name_cleaner(item["Name"])
+        nem_region = item["Region"]
 
-        if not facility.station:
-            station_name = item["Name"]
-            nem_region = item["Region"]
+        if not facility_station:
+            facility_station = (
+                s.query(NemStation)
+                .filter(NemStation.name_clean == station_name)
+                .filter(NemStation.nem_region == nem_region)
+                .one_or_none()
+            )
 
-            station = NemStation(
-                name=station_name,
-                name_clean=station_name_cleaner(station_name),
+        if not facility_station:
+            facility_station = NemStation(
+                name=item["Name"],
+                name_clean=station_name,
                 nem_region=nem_region,
             )
 
-            s.add(station)
+            s.add(facility_station)
             s.commit()
 
-            facility.station = station
+        if not facility:
+            facility = NemFacility()
+            facility.station = facility_station
 
         if duid:
             facility.code = duid
