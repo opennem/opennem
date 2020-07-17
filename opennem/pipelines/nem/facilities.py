@@ -300,6 +300,9 @@ class NemStoreFacility(DatabaseStoreBase):
                 item["FuelType"], item["TechType"]
             )
 
+        if facility.fueltech_id is None:
+            logger.error("Could not find fueltech for: {}".format(item))
+
         if not facility.nameplate_capacity:
             facility.nameplate_capacity = clean_capacity(
                 item["UpperCapacity"] or item["NameCapacity"]
