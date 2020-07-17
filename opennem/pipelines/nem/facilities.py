@@ -211,7 +211,13 @@ class NemStoreFacility(DatabaseStoreBase):
 
         if (
             item["UnitStatus"]
-            in ["Publically Announced", "Upgrade", "Emerging", "Expansion",]
+            in [
+                "Publically Announced",
+                "Upgrade",
+                "Emerging",
+                "Expansion",
+                "Maturing",
+            ]
             or not item["UnitStatus"]
         ):
             return {}
