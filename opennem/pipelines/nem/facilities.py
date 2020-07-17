@@ -286,8 +286,13 @@ class NemStoreFacility(DatabaseStoreBase):
             facility.code = duid
 
         facility.participant = participant
-        facility.region = item["Region"]
-        facility.name = name_normalizer(item["Name"])
+
+        if not facility.region:
+            facility.region = item["Region"]
+
+        if not facility.name:
+            facility.name = name_normalizer(item["Name"])
+
         facility.unit_number = item["Units"]
 
         if "FuelType" in item and item["FuelType"]:
@@ -295,9 +300,11 @@ class NemStoreFacility(DatabaseStoreBase):
                 item["FuelType"], item["TechType"]
             )
 
-        facility.nameplate_capacity = clean_capacity(
-            item["UpperCapacity"] or item["NameCapacity"]
-        )
+        if not facility.nameplate_capacity:
+            facility.nameplate_capacity = clean_capacity(
+                item["UpperCapacity"] or item["NameCapacity"]
+            )
+
         facility.status_id = facility_status
 
         if facility.status_id is None:
