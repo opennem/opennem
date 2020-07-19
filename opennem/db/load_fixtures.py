@@ -178,10 +178,15 @@ def parse_facilities_json():
             )
 
             if not db_facility:
-                print("Could not find facility {} in database".format(duid))
-                continue
+                db_facility = WemFacility(
+                    code=duid,
+                    capacity_maximum=v["registered_capacity"],
+                    name=facility["display_name"],
+                )
 
             db_facility.fueltech_id = fueltech_map(v["fuel_tech"])
+            db_facility.region = facility["region_id"]
+
             db_facility.station = station
             db_facility.status_id = map_v3_states(facility["status"]["state"])
             s.add(db_facility)
@@ -241,13 +246,23 @@ def parse_facilities_json():
             )
 
             if not db_facility:
-                print("Could not find facility {} in database".format(duid))
-                continue
+                db_facility = NemFacility(
+                    code=duid,
+                    nameplate_capacity=v["registered_capacity"]
+                    if "registered_capacity" in v
+                    else None,
+                    name=facility["display_name"],
+                )
 
             if "fuel_tech" in v:
                 db_facility.fueltech_id = fueltech_map(v["fuel_tech"])
 
+            db_facility.region = facility["region_id"]
             db_facility.station = station
+            db_facility.status_id = normalize_states(
+                facility["status"]["state"]
+            )
+
             s.add(db_facility)
             s.commit()
 
