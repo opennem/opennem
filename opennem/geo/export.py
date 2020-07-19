@@ -40,7 +40,9 @@ def wem_export():
             ws.postcode,
             ST_X(ws.geom),
             ST_Y(ws.geom),
-            ST_AsText(ws.geom)
+            ST_AsText(ws.geom),
+            wf.id,
+            ws.id
         from wem_station ws
         right join wem_facility wf on wf.station_id = ws.id
         join fueltech f on f.code = wf.fueltech_id
@@ -61,21 +63,24 @@ def wem_export():
 
         for row in rows:
             name = row[4] or row[3]
+            station_id = row[17]
 
-            if current_station_code != name:
+            if current_station_code != station_id:
 
                 if f is not None:
                     features.append(f)
 
                 f = Feature()
-                current_station_code = name
+                current_station_code = station_id
 
                 if row[11]:
                     f.geometry = Point((row[15], row[14]))
 
                 f.properties = {
+                    "oid": "wem_{}".format(row[17]),
                     "station_id": row[0],
                     "station_code": row[9],
+                    "facility_id": row[0],
                     "network": "WEM",
                     "network_region": "WA",
                     "state": row[12],
