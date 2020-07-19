@@ -33,9 +33,19 @@ def normalize_states(state):
     state = state.lower()
 
     if state == "commissioned":
-        return "comissioning"
+        return "operating"
+
+    if state == "decommissioned":
+        return "retired"
 
     return state
+
+
+def normalize_regions(region):
+    if region == "WA":
+        return "WA1"
+
+    return region
 
 
 def main():
@@ -47,8 +57,8 @@ def main():
         for duid, fac in v["duid_data"].items():
             i = [
                 v["display_name"],
-                k,
-                v["region_id"],
+                # k,
+                normalize_regions(v["region_id"]),
                 normalize_states(v["status"]["state"]),
                 duid,
                 fac["fuel_tech"] if "fuel_tech" in fac else None,
@@ -58,7 +68,7 @@ def main():
             ]
             remapped.append(i)
 
-    remapped = sorted(remapped, key=itemgetter(0))
+    remapped = sorted(remapped, key=itemgetter(1, 0))
 
     with open("data/facility_diff/facilities_current.csv", "w") as fh:
         csvwriter = csv.writer(fh)
@@ -74,8 +84,8 @@ def main():
         for fac in f["properties"]["duid_data"]:
             i = [
                 f["properties"]["name"],
-                fac["duid"],
-                f["properties"]["network_region"],
+                # fac["duid"],
+                normalize_regions(f["properties"]["network_region"]),
                 fac["status"].lower(),
                 fac["duid"],
                 fac["fuel_tech"] if "fuel_tech" in fac else None,
@@ -85,7 +95,7 @@ def main():
             ]
             remapped.append(i)
 
-    remapped = sorted(remapped, key=itemgetter(0))
+    remapped = sorted(remapped, key=itemgetter(1, 0))
 
     with open("data/facility_diff/facilities_v3.csv", "w") as fh:
         csvwriter = csv.writer(fh)

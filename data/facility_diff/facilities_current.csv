@@ -1,568 +1,568 @@
-Albany,WA1,comissioning,ALBANY_WF1,wind,21.6
-Amcor Glass,SA1,decommissioned,AMCORGR,distillate,4.0
-Angaston,SA1,comissioning,ANGAS1,distillate,30.0
-Angaston,SA1,comissioning,ANGAS2,distillate,20.0
-Angaston,SA1,comissioning,ANGAST1,distillate,50.0
-Angelsea,VIC1,decommissioned,APS,brown_coal,165.0
-Appin,NSW1,comissioning,APPIN,gas_wcmg,55.0
-Ararat,VIC1,comissioning,ARWF1,wind,241.59
-Awaba,NSW1,decommissioned,AWABAREF,bioenergy_biogas,1.0
-Badgingarra,WA1,comissioning,BADGINGARRA_WF1,wind,130.0
-Bairnsdale,VIC1,comissioning,BDL01,gas_ocgt,46.0
-Bairnsdale,VIC1,comissioning,BDL02,gas_ocgt,46.0
-Baking Board,QLD1,comissioning,BAKING1,solar,17.0
-Bald Hills,VIC1,comissioning,BALDHWF1,wind,59.0
-Ballarat Battery,VIC1,comissioning,BALBG1,battery_discharging,30.0
-Ballarat Battery,VIC1,comissioning,BALBL1,battery_charging,30.0
-Ballarat Hospital,VIC1,comissioning,BBASEHOS,gas_recip,1.0
-Banimboola,VIC1,comissioning,BAPS,hydro,12.0
-Bankstown Sports Club,NSW1,decommissioned,BANKSPT1,distillate,1.0
-Bannerton,VIC1,comissioning,BANN1,solar,50.0
-Barcaldine,QLD1,comissioning,BARCALDN,gas_ccgt,37.0
-Barcaldine,QLD1,comissioning,BARCSF1,solar,10.0
-Barker Inlet,SA1,comissioning,BARKIPS1,gas_recip,211.0
-Barron Gorge,QLD1,comissioning,BARRON-1,hydro,30.0
-Barron Gorge,QLD1,comissioning,BARRON-2,hydro,30.0
-Bastyan,TAS1,comissioning,BASTYAN,hydro,80.0
-Bayswater,NSW1,comissioning,BW01,black_coal,660.0
-Bayswater,NSW1,comissioning,BW02,black_coal,660.0
-Bayswater,NSW1,comissioning,BW03,black_coal,660.0
-Bayswater,NSW1,comissioning,BW04,black_coal,660.0
-Bell Bay,TAS1,decommissioned,BBDISEL1,distillate,75.0
-Bell Bay,TAS1,decommissioned,BELLBAY1,gas_steam,120.0
-Bell Bay,TAS1,decommissioned,BELLBAY2,gas_steam,120.0
-Bell Bay Three,TAS1,comissioning,BBTHREE1,gas_ocgt,35.0
-Bell Bay Three,TAS1,comissioning,BBTHREE2,gas_ocgt,35.0
-Bell Bay Three,TAS1,comissioning,BBTHREE3,gas_ocgt,35.0
-Bell Bay Three,TAS1,comissioning,TVPP104,gas_ocgt,58.0
-Berwick,VIC1,comissioning,BERWICK,bioenergy_biogas,7.0
-Beryl,NSW1,comissioning,BERYLSF1,solar,98.0
-Blayney,NSW1,comissioning,BLAYNEY,wind,9.9
-Blowering,NSW1,comissioning,BLOWERNG,hydro,80.0
-Blue Lake Milling,SA1,decommissioned,BLULAKE1,distillate,1.0
-Bluewaters,WA1,comissioning,BW2_BLUEWATERS_G1,black_coal,217.0
-Bluewaters,WA1,comissioning,BW1_BLUEWATERS_G2,black_coal,217.0
-Boco Rock,NSW1,comissioning,BOCORWF1,wind,113.0
-Bodangora,NSW1,comissioning,BODWF1,wind,113.0
-Bogong/Mackay,VIC1,comissioning,MCKAY1,hydro,53.0
-Bogong/Mackay,VIC1,comissioning,MCKAY2,hydro,53.0
-Bolivar Waste Water Treatment,SA1,comissioning,BOLIVAR1,bioenergy_biogas,10.0
-Bomen,NSW1,comissioning,BOMENSF1,solar,121.0
-Braemar,QLD1,comissioning,BRAEMAR1,gas_ocgt,168.0
-Braemar,QLD1,comissioning,BRAEMAR2,gas_ocgt,168.0
-Braemar,QLD1,comissioning,BRAEMAR3,gas_ocgt,168.0
-Braemar 2,QLD1,comissioning,BRAEMAR5,gas_ocgt,173.0
-Braemar 2,QLD1,comissioning,BRAEMAR6,gas_ocgt,173.0
-Braemar 2,QLD1,comissioning,BRAEMAR7,gas_ocgt,173.0
-Bremer Bay,WA1,comissioning,BREMER_BAY_WF1,wind,0.6
-Broadmeadows,VIC1,comissioning,BROADMDW,bioenergy_biogas,5.0
-Broadwater,NSW1,comissioning,BWTR1,bioenergy_biogas,38.0
-Broken Hill,NSW1,comissioning,GB01,distillate,50.0
-Broken Hill,NSW1,comissioning,BROKENH1,solar,54.0
-Brooklyn,VIC1,comissioning,BROOKLYN,bioenergy_biogas,3.0
-Brown Mountain,NSW1,comissioning,BROWNMT,hydro,5.0
-Browns Plains,QLD1,comissioning,BPLANDF1,bioenergy_biogas,2.0
-Bulgana Green  Hub,VIC1,comissioning,BULGANA1,wind,182.0
-Bungala One,SA1,comissioning,BNGSF1,solar,135.0
-Bungala Two,SA1,comissioning,BNGSF2,solar,135.0
-Burrendong,NSW1,comissioning,BDONGHYD,hydro,19.0
-Burrinjuck,NSW1,comissioning,BURRIN,hydro,27.0
-Butlers Gorge,TAS1,comissioning,BUTLERSG,hydro,15.0
-Callide A,QLD1,decommissioned,CALL_A_2,black_coal,30.0
-Callide A,QLD1,decommissioned,CALL_A_4,black_coal,30.0
-Callide B,QLD1,comissioning,CALL_B_1,black_coal,350.0
-Callide B,QLD1,comissioning,CALL_B_2,black_coal,350.0
-Callide C,QLD1,comissioning,CPP_3,black_coal,420
-Callide C,QLD1,comissioning,CPP_4,black_coal,420
-Canunda,SA1,comissioning,CNUNDAWF,wind,46.0
-Capital,NSW1,comissioning,CAPTL_WF,wind,140.0
-Capital East,NSW1,comissioning,CESF1,solar,1.0
-Catagunya/Liapootah/Wayatinah,TAS1,comissioning,CATAGUN1,distillate,24.0
-Catagunya/Liapootah/Wayatinah,TAS1,comissioning,LI_WY_CA,hydro,173.0
-Cathedral Rocks,SA1,comissioning,CATHROCK,wind,66.0
-Cattle Hill,TAS1,comissioning,CTHLWF1,wind,148.0
-Cethana,TAS1,comissioning,CETHANA,hydro,85.0
-Challicum Hills,VIC1,comissioning,CHALLHWF,wind,52.0
-Chepstowe,VIC1,comissioning,CHPSTWF1,wind,6.0
-Cherry Tree,VIC1,comissioning,CHYTWF1,wind,57.0
-Childers,QLD1,comissioning,CHILDSF1,solar,64.0
-Clare,QLD1,comissioning,CLARESF1,solar,110.0
-Clayton,VIC1,comissioning,CLAYTON,bioenergy_biogas,11.0
-Clements Gap,SA1,comissioning,CLEMGPWF,wind,57.0
-Clermont,QLD1,comissioning,CLERMSF1,solar,92.0
-Clover,VIC1,comissioning,CLOVER,hydro,29.0
-Cluny,TAS1,comissioning,CLUNY,hydro,19.0
-Cockburn,WA1,comissioning,COCKBURN_CCG1,gas_ccgt,249.7
-Codrington,VIC1,comissioning,CODRNGTON,wind,18.0
-Coleambally,NSW1,comissioning,COLEASF1,solar,180.0
-Collgar,WA1,comissioning,INVESTEC_COLLGAR_WF1,wind,206.0
-Collie,WA1,comissioning,COLLIE_G1,black_coal,318.3
-Collinsville,QLD1,decommissioned,COLNSV_1,black_coal,30.0
-Collinsville,QLD1,decommissioned,COLNSV_2,black_coal,30.0
-Collinsville,QLD1,decommissioned,COLNSV_3,black_coal,30.0
-Collinsville,QLD1,decommissioned,COLNSV_4,black_coal,30.0
-Collinsville,QLD1,decommissioned,COLNSV_5,black_coal,66.0
-Collinsville,QLD1,comissioning,CSPVPS1,solar,42.0
-Colongra,NSW1,comissioning,CG1,gas_ocgt,181.0
-Colongra,NSW1,comissioning,CG2,gas_ocgt,181.0
-Colongra,NSW1,comissioning,CG3,gas_ocgt,181.0
-Colongra,NSW1,comissioning,CG4,gas_ocgt,181.0
-Condamine  A,QLD1,comissioning,CPSA,gas_ccgt,143.0
-Condong,NSW1,comissioning,CONDONG1,bioenergy_biogas,30.0
-Coonoer Bridge,VIC1,comissioning,CBWF1,wind,19.8
-Coopers Gap,QLD1,comissioning,COOPGWF1,wind,452
-Copeton,NSW1,comissioning,COPTNHYD,hydro,22.5
-Corio,VIC1,comissioning,CORIO1,bioenergy_biogas,1.0
-Crookwell,NSW1,comissioning,CROOKWEL,wind,4.8
-Crookwell 2,NSW1,comissioning,CROOKWF2,wind,96.0
-Crowlands,VIC1,comissioning,CROWLWF1,wind,79.0
-Cullerin Range,NSW1,comissioning,CULLRGWF,wind,30.0
-Daandine,QLD1,comissioning,DAANDINE,gas_recip,33.0
-Dalrymple North Battery,SA1,comissioning,DALNTH01,battery_discharging,30.0
-Dalrymple North Battery,SA1,comissioning,DALNTHL1,battery_charging,30.0
-Darling Downs,QLD1,comissioning,DDPS1,gas_ccgt,121.0
-Darling Downs,QLD1,comissioning,DDSF1,solar,121.0
-Dartmouth,VIC1,comissioning,DARTM1,hydro,150.0
-Daydream,QLD1,comissioning,DAYDSF1,solar,79.0
-Denmark,WA1,comissioning,DCWL_DENMARK_WF1,wind,1.44
-Devils Gate,TAS1,comissioning,DEVILS_G,hydro,60.0
-Dry Creek,SA1,comissioning,DRYCGT1,gas_ocgt,52.0
-Dry Creek,SA1,comissioning,DRYCGT2,gas_ocgt,52.0
-Dry Creek,SA1,comissioning,DRYCGT3,gas_ocgt,52.0
-Dundonnell,VIC1,comissioning,DUNDWF1,wind,168.0
-Dundonnell,VIC1,comissioning,DUNDWF2,wind,46.0
-Dundonnell,VIC1,comissioning,DUNDWF3,wind,121.0
-Earthpower Biomass,NSW1,decommissioned,PMATTAEP,gas_recip,4.0
-Eastern Creek,NSW1,comissioning,EASTCRK,bioenergy_biogas,5.0
-Eastern Creek 2,NSW1,comissioning,EASTCRK2,bioenergy_biogas,8.984
-Eildon,VIC1,comissioning,EILDON1,hydro,60.0
-Eildon,VIC1,comissioning,EILDON2,hydro,60.0
-Eildon (Run of River),VIC1,comissioning,EILDON3,hydro,5.0
-Elaine,VIC1,comissioning,ELAINWF1,wind,83.0
-Emerald,QLD1,comissioning,EMERASF1,solar,88.0
-Emu Downs,WA1,comissioning,EDWFMAN_WF1,wind,80.0
-Energy Brix,VIC1,decommissioned,MOR1,brown_coal,90.0
-Energy Brix,VIC1,decommissioned,MOR2,brown_coal,30.0
-Energy Brix,VIC1,decommissioned,MOR3,brown_coal,75.0
-Eraring,NSW1,comissioning,ER01,black_coal,720.0
-Eraring,NSW1,comissioning,ER02,black_coal,720.0
-Eraring,NSW1,comissioning,ER03,black_coal,720.0
-Eraring,NSW1,comissioning,ER04,black_coal,720.0
-Eraring,NSW1,comissioning,ERGT01,distillate,42.0
-Finley,NSW1,comissioning,FINLYSF1,solar,162.0
-Fisher,TAS1,comissioning,FISHER,hydro,43.0
-Gannawarra,VIC1,comissioning,GANNSF1,solar,55.0
-Gannawarra Battery,VIC1,comissioning,GANNBG1,battery_discharging,30.0
-Gannawarra Battery,VIC1,comissioning,GANNBL1,battery_charging,30.0
-George Town,TAS1,decommissioned,GEORGTN1,distillate,30.0
-Geraldton diesel,WA1,comissioning,TESLA_GERALDTON_G1,distillate,9.9
-German Creek,QLD1,comissioning,GERMCRK,gas_wcmg,45.0
-Gladstone,QLD1,comissioning,GSTONE1,black_coal,280.0
-Gladstone,QLD1,comissioning,GSTONE2,black_coal,280.0
-Gladstone,QLD1,comissioning,GSTONE3,black_coal,280.0
-Gladstone,QLD1,comissioning,GSTONE4,black_coal,280.0
-Gladstone,QLD1,comissioning,GSTONE5,black_coal,280.0
-Gladstone,QLD1,comissioning,GSTONE6,black_coal,280.0
-Glenbawn,NSW1,comissioning,GLBWNHYD,hydro,5.5
-Glenmaggie,VIC1,comissioning,GLENMAG1,hydro,4.0
-Glennies Creek,NSW1,comissioning,GLENNCRK,gas_wcmg,12.0
-Goonumbla,NSW1,comissioning,GOONSF1,solar,85.0
-Goonumbla,NSW1,comissioning,GOONSF1,solar,85.0
-Gordon,TAS1,comissioning,GORDON,hydro,432.0
-Gordon,TAS1,comissioning,GOVILLB1,hydro,25.0
-Gosnells,WA1,comissioning,GOSNELLS,bioenergy_biogas,1.0
-Grange Avenue,NSW1,comissioning,GRANGEAV,bioenergy_biogas,2.0
-Granville Harbour,TAS1,comissioning,GRANWF1,wind,111.0
-Grasmere,WA1,comissioning,GRASMERE_WF1,wind,13.8
-Greenough River,WA1,comissioning,GREENOUGH_RIVER_PV1,solar,10.0
-Griffith,NSW1,comissioning,GRIFSF1,solar,27.0
-Grosvenor 1,QLD1,comissioning,GROSV1,gas_wcmg,21.0
-Grosvenor 2,QLD1,comissioning,GROSV2,gas_wcmg,15.0
-Gullen Range,NSW1,comissioning,GULLRSF1,solar,10.0
-Gullen Range,NSW1,comissioning,GULLRWF1,wind,165.0
-Gullen Range,NSW1,comissioning,GULLRWF2,wind,110.0
-Gunning,NSW1,comissioning,GUNNING1,wind,47.0
-Guthega,NSW1,comissioning,GUTHEGA,hydro,60.0
-Hallam,VIC1,comissioning,HLMSEW01,hydro,1.0
-Hallam Road,VIC1,comissioning,HALAMRD1,bioenergy_biogas,9.0
-Hallett,SA1,comissioning,AGLHAL,gas_ocgt,217.0
-Hallett 1,SA1,comissioning,HALLWF1,wind,95.0
-Hallett 2,SA1,comissioning,HALLWF2,wind,71.0
-Hamilton,QLD1,comissioning,HAMISF1,solar,57.0
-Hampton,NSW1,comissioning,HAMPTON,wind,1.32
-Haughton,QLD1,comissioning,HAUGHT11,solar,132.0
-Hayman,QLD1,comissioning,HAYMSF1,solar,57.0
-Hazelwood,VIC1,decommissioned,HWPS1,brown_coal,220.0
-Hazelwood,VIC1,decommissioned,HWPS2,brown_coal,220.0
-Hazelwood,VIC1,decommissioned,HWPS3,brown_coal,200.0
-Hazelwood,VIC1,decommissioned,HWPS4,brown_coal,200.0
-Hazelwood,VIC1,decommissioned,HWPS5,brown_coal,200.0
-Hazelwood,VIC1,decommissioned,HWPS6,brown_coal,200.0
-Hazelwood,VIC1,decommissioned,HWPS7,brown_coal,200.0
-Hazelwood,VIC1,decommissioned,HWPS8,brown_coal,200.0
-Henderson,WA1,comissioning,HENDERSON_RENEWABLE_IG1,bioenergy_biogas,3.0
-Hepburn Wind,VIC1,comissioning,HEPWIND1,wind,4.0
-Highbury,SA1,decommissioned,HIGHBRY1,bioenergy_biogas,2.0
-Hornsdale,SA1,comissioning,HDWF1,wind,102.0
-Hornsdale  2,SA1,comissioning,HDWF2,wind,102.0
-Hornsdale  3,SA1,comissioning,HDWF3,wind,112.0
-Hornsdale Power Reserve,SA1,comissioning,HPRG1,battery_discharging,100.0
-Hornsdale Power Reserve,SA1,comissioning,HPRL1,battery_charging,120.0
-Hughenden,QLD1,comissioning,HUGSF1,solar,10.0
-Hume (NSW),NSW1,comissioning,HUMENSW,hydro,29.0
-Hume (VIC),VIC1,comissioning,HUMEV,hydro,29.0
-Hunter Economic Zone,NSW1,decommissioned,HEZ,distillate,29.0
-Hunter Valley,NSW1,comissioning,HVGTS,distillate,50.0
-Invicta Sugar Mill,QLD1,comissioning,INVICTA,bioenergy_biomass,50.0
-Isis Central Sugar Mill,QLD1,comissioning,ICSM,bioenergy_biomass,25.0
-Jacks Gully,NSW1,comissioning,JACKSGUL,bioenergy_biogas,2.0
-Jeeralang A,VIC1,comissioning,JLA01,gas_ocgt,51.0
-Jeeralang A,VIC1,comissioning,JLA02,gas_ocgt,51.0
-Jeeralang A,VIC1,comissioning,JLA03,gas_ocgt,51.0
-Jeeralang A,VIC1,comissioning,JLA04,gas_ocgt,51.0
-Jeeralang B,VIC1,comissioning,JLB01,gas_ocgt,76.0
-Jeeralang B,VIC1,comissioning,JLB02,gas_ocgt,76.0
-Jeeralang B,VIC1,comissioning,JLB03,gas_ocgt,76.0
-Jindabyne (Mini Hydro),NSW1,comissioning,JNDABNE1,hydro,1.0
-Jindabyne Pump,VIC1,comissioning,SNWYGJP2,pumps,70.0
-John Butters,TAS1,comissioning,JBUTTERS,hydro,144.0
-Jounama (Mini Hydro),NSW1,comissioning,JOUNAMA1,hydro,14.0
-KRC Co-gen,QLD1,decommissioned,KRCCOGEN,gas_ocgt,5.0
-Kalamunda,WA1,comissioning,KALAMUNDA_SG,bioenergy_biogas,1.3
-Kalbarri,WA1,comissioning,KALBARRI_WF1,wind,1.6
-Kambalda,WA1,comissioning,STHRNCRS_EG,gas_ocgt,23.0
-Karadoc,VIC1,comissioning,KARSF1,solar,104.0
-Karakin,WA1,comissioning,BLAIRFOX_KARAKIN_WF1,wind,5.0
-Kareeya,QLD1,comissioning,KAREEYA1,hydro,21.0
-Kareeya,QLD1,comissioning,KAREEYA2,hydro,21.0
-Kareeya,QLD1,comissioning,KAREEYA3,hydro,21.0
-Kareeya,QLD1,comissioning,KAREEYA4,hydro,21.0
-Kareeya,QLD1,comissioning,KAREEYA5,hydro,7.0
-Keepit,NSW1,comissioning,KEEPIT,hydro,6.0
-Kemerton,WA1,comissioning,KEMERTON_GT11,gas_ocgt,154.7
-Kemerton,WA1,comissioning,KEMERTON_GT12,gas_ocgt,154.7
-Kemerton diesel,WA1,comissioning,TESLA_KEMERTON_G1,distillate,9.9
-Kemps Creek,NSW1,comissioning,AGLSITA1,bioenergy_biogas,1.0
-Kiata,VIC1,comissioning,KIATAWF1,wind,31.0
-Kidston,QLD1,comissioning,KSP1,solar,50.0
-Kincumber,NSW1,comissioning,KINCUM1,bioenergy_biogas,1.0
-Kogan Creek,QLD1,comissioning,KPP_1,black_coal,744.0
-Kwinana,WA1,comissioning,KWINANA_GT2,gas_ocgt,103.2
-Kwinana,WA1,comissioning,KWINANA_GT3,gas_ocgt,103.2
-Kwinana,WA1,comissioning,PPP_KCP_EG1,gas_ocgt,85.7
-Kwinana,WA1,decommissioned,KWINANA_C5,black_coal,200.0
-Kwinana,WA1,decommissioned,KWINANA_C6,black_coal,200.0
-Kwinana Swift,WA1,comissioning,PERTHENERGY_KWINANA_GT1,gas_ocgt,116.0
-Kwinana cogen,WA1,comissioning,TIWEST_COG1,gas_ocgt,42.1
-Ladbroke Grove,SA1,comissioning,LADBROK1,gas_ocgt,40.0
-Ladbroke Grove,SA1,comissioning,LADBROK2,gas_ocgt,40.0
-Lake Bonney  1,SA1,comissioning,LKBONNY1,wind,81.0
-Lake Bonney 2,SA1,comissioning,LKBONNY2,wind,159.0
-Lake Bonney 3,SA1,comissioning,LKBONNY3,wind,39.0
-Lake Bonney Bess1,SA1,comissioning,LBBG1,battery_discharging,25.0
-Lake Bonney Bess1,SA1,comissioning,LBBL1,,
-Lake Echo,TAS1,comissioning,LK_ECHO,hydro,32.0
-Laverton North,VIC1,comissioning,LNGS1,gas_ocgt,156.0
-Laverton North,VIC1,comissioning,LNGS2,gas_ocgt,156.0
-Lemonthyme/Wilmot,TAS1,comissioning,LEM_WIL,hydro,82.0
-Liddell,NSW1,comissioning,LD01,black_coal,500.0
-Liddell,NSW1,comissioning,LD02,black_coal,500.0
-Liddell,NSW1,comissioning,LD03,black_coal,500.0
-Liddell,NSW1,comissioning,LD04,black_coal,500.0
-Lilyvale,QLD1,comissioning,LILYSF1,solar,118.0
-Limondale  2,NSW1,comissioning,LIMOSF21,solar,38.0
-Limondale SF,NSW1,comissioning,LIMOSF11,solar,275.0
-Lincoln Gap,SA1,comissioning,LGAPWF1,wind,212.4
-Longford,VIC1,comissioning,LONGFORD,gas_ocgt,44.0
-Longreach,QLD1,comissioning,LRSF1,solar,17.0
-Lonsdale,SA1,comissioning,LONSDALE,distillate,21.0
-Loy Yang A,VIC1,comissioning,LYA1,brown_coal,560.0
-Loy Yang A,VIC1,comissioning,LYA2,brown_coal,530.0
-Loy Yang A,VIC1,comissioning,LYA3,brown_coal,560.0
-Loy Yang A,VIC1,comissioning,LYA4,brown_coal,560.0
-Loy Yang B,VIC1,comissioning,LOYYB1,brown_coal,500.0
-Loy Yang B,VIC1,comissioning,LOYYB2,brown_coal,500.0
-Lucas Heights 2,NSW1,comissioning,LUCAS2S2,bioenergy_biogas,5.0
-Lucas Heights 2,NSW1,decommissioned,LUCASHGT,bioenergy_biogas,12.65
-Macarthur,VIC1,comissioning,MACARTH1,wind,420.0
-Mackay,QLD1,comissioning,MACKAYGT,distillate,30.0
-Mackintosh,TAS1,comissioning,MACKNTSH,hydro,80.0
-Manildra,NSW1,comissioning,MANSLR1,solar,25.0
-Manjimup,WA1,comissioning,BRIDGETOWN_BIOMASS_PLANT,bioenergy_biomass,40.0
-Maroona,VIC1,comissioning,MAROOWF1,wind,6.0
-Maryrorough,QLD1,comissioning,MARYRSF1,solar,33.0
-Meadowbank,TAS1,comissioning,MEADOWB2,distillate,24.0
-Meadowbank,TAS1,comissioning,MEADOWBK,hydro,40.0
-Merredin,WA1,comissioning,NAMKKN_MERR_SG1,gas_ocgt,92.6
-Metro,WA1,comissioning,AMBRISOLAR_PV1,solar,0.96
-Midlands,TAS1,comissioning,MIDLDPS1,hydro,6.0
-Millmerran,QLD1,comissioning,MPP_1,black_coal,426.0
-Millmerran,QLD1,comissioning,MPP_2,black_coal,426.0
-Mintaro,SA1,comissioning,MINTARO,gas_ocgt,90.0
-Mintaro,SA1,comissioning,MINTNL1,gas_ocgt,25.0
-Mirrabooka,WA1,comissioning,ATLAS,bioenergy_biogas,1.23
-Moranbah,QLD1,comissioning,MORANBAH,gas_recip,13.0
-Moranbah North,QLD1,comissioning,MBAHNTH,gas_wcmg,63.0
-Moree,NSW1,comissioning,MOREESF1,solar,57.0
-Mornington Waste Disposal,VIC1,decommissioned,MORNW,bioenergy_biogas,1.0
-Mortlake,VIC1,comissioning,MORTLK11,gas_ocgt,283.0
-Mortlake,VIC1,comissioning,MORTLK12,gas_ocgt,283.0
-Mortons Lane,VIC1,comissioning,MLWF1,wind,20.0
-Mount Barker,WA1,comissioning,SKYFRM_MTBARKER_WF1,wind,2.43
-Mt Emerald,QLD1,comissioning,MEWF1,wind,180.0
-Mt Gellibrand,VIC1,comissioning,MTGELWF1,wind,137.984
-Mt Mercer,VIC1,comissioning,MERCER01,wind,131.0
-Mt Millar,SA1,comissioning,MTMILLAR,wind,70.0
-Mt Piper,NSW1,comissioning,MP1,black_coal,700.0
-Mt Piper,NSW1,comissioning,MP2,black_coal,700.0
-Mt Stuart,QLD1,comissioning,MSTUART1,distillate,144.0
-Mt Stuart,QLD1,comissioning,MSTUART2,distillate,144.0
-Mt Stuart,QLD1,comissioning,MSTUART3,distillate,131.0
-Mugga Lane,NSW1,comissioning,MLSP1,solar,12.0
-Muja AB,WA1,decommissioned,MUJA_M1,black_coal,60.0
-Muja AB,WA1,decommissioned,MUJA_M2,black_coal,60.0
-Muja AB,WA1,decommissioned,MUJA_M3,black_coal,60.0
-Muja AB,WA1,decommissioned,MUJA_M4,black_coal,60.0
-Muja CD,WA1,comissioning,MUJA_G5,black_coal,195.8
-Muja CD,WA1,comissioning,MUJA_G6,black_coal,193.6
-Muja CD,WA1,comissioning,MUJA_G7,black_coal,212.6
-Muja CD,WA1,comissioning,MUJA_G8,black_coal,212.6
-Mumbida,WA1,comissioning,MWF_MUMBIDA_WF1,wind,55.0
-Mungarra,WA1,comissioning,MUNGARRA_GT1,gas_ocgt,39.5
-Mungarra,WA1,comissioning,MUNGARRA_GT2,gas_ocgt,39.5
-Mungarra,WA1,comissioning,MUNGARRA_GT3,gas_ocgt,38.0
-Munmorah,NSW1,decommissioned,MM3,black_coal,300.0
-Munmorah,NSW1,decommissioned,MM4,black_coal,300.0
-Murra Warra,VIC1,comissioning,MUWAWF1,wind,231.0
-Murray,VIC1,comissioning,MURRAY,hydro,1500.0
-Musselroe,TAS1,comissioning,MUSSELR1,wind,168.0
-Narromine,NSW1,comissioning,NASF1,solar,10.0
-Neerabup,WA1,comissioning,NEWGEN_NEERABUP_GT1,gas_ocgt,342.0
-Nevertire,NSW1,comissioning,NEVERSF1,solar,132.0
-Newgen Kwinana,WA1,comissioning,NEWGEN_KWINANA_CCG1,gas_ccgt,335.0
-Newport,VIC1,comissioning,NPS,gas_steam,500.0
-North Brown Hill,SA1,comissioning,NBHWF1,wind,132.0
-Northam,WA1,comissioning,NORTHAM_SF_PV1,solar,7.752999999999999
-Northam diesel,WA1,comissioning,TESLA_NORTHAM_G1,distillate,9.9
-Northern,SA1,decommissioned,NPS1,brown_coal,265.0
-Northern,SA1,decommissioned,NPS2,brown_coal,265.0
-Northern,SA1,decommissioned,NPSNL1,brown_coal,100.0
-Northern,SA1,decommissioned,NPSNL2,brown_coal,100.0
-Numurkah,VIC1,comissioning,NUMURSF1,solar,74.0
-Nyngan,NSW1,comissioning,NYNGAN1,solar,102.0
-Oakey,QLD1,comissioning,OAKEY1,gas_ocgt,141.0
-Oakey,QLD1,comissioning,OAKEY2,gas_ocgt,141.0
-Oakey 1,QLD1,comissioning,OAKEY1SF,solar,30.0
-Oakey 2,QLD1,comissioning,OAKEY2SF,solar,65.0
-Oaklands Hill,VIC1,comissioning,OAKLAND1,wind,67.0
-Oaky Creek,QLD1,comissioning,OAKYCREK,gas_recip,20.0
-Oaky Creek 2,QLD1,comissioning,OAKY2,gas_wcmg,15.0
-Osborne,SA1,comissioning,OSB-AG,gas_ccgt,180.0
-Paloona,TAS1,comissioning,PALOONA,hydro,33.0
-Parkes,NSW1,comissioning,PARSF1,solar,55.0
-Parkeston,WA1,comissioning,PRK_AG,gas_ocgt,68.0
-Pedler Creek,SA1,decommissioned,PEDLER1,bioenergy_biogas,3.0
-Pelican Point,SA1,comissioning,PPCCGT,gas_ccgt,478.0
-Picton diesel,WA1,comissioning,TESLA_PICTON_G1,distillate,9.9
-Pindari,NSW1,comissioning,PINDARI,hydro,6.0
-Pinjar,WA1,comissioning,PINJAR_GT1,gas_ocgt,38.5
-Pinjar,WA1,comissioning,PINJAR_GT10,gas_ocgt,118.2
-Pinjar,WA1,comissioning,PINJAR_GT11,gas_ocgt,130.0
-Pinjar,WA1,comissioning,PINJAR_GT2,gas_ocgt,38.5
-Pinjar,WA1,comissioning,PINJAR_GT3,gas_ocgt,39.3
-Pinjar,WA1,comissioning,PINJAR_GT4,gas_ocgt,39.3
-Pinjar,WA1,comissioning,PINJAR_GT5,gas_ocgt,39.3
-Pinjar,WA1,comissioning,PINJAR_GT7,gas_ocgt,39.3
-Pinjar,WA1,comissioning,PINJAR_GT9,gas_ocgt,118.2
-Pinjara,WA1,comissioning,ALINTA_PNJ_U1,gas_ocgt,143.0
-Pinjara,WA1,comissioning,ALINTA_PNJ_U2,gas_ocgt,143.0
-Pioneer Sugar Mill,QLD1,comissioning,PIONEER,bioenergy_biomass,68.0
-Playford B,SA1,decommissioned,PLAYB-AG,brown_coal,240.0
-Playford B,SA1,decommissioned,PLAYFB1,brown_coal,60.0
-Playford B,SA1,decommissioned,PLAYFB2,brown_coal,60.0
-Playford B,SA1,decommissioned,PLAYFB3,brown_coal,60.0
-Playford B,SA1,decommissioned,PLAYFB4,brown_coal,60.0
-Poatina,TAS1,comissioning,PO110NL1,hydro,25.0
-Poatina,TAS1,comissioning,POAT110,hydro,100.0
-Poatina,TAS1,comissioning,POAT220,hydro,200.0
-Port Latta,TAS1,decommissioned,PORTLAT1,distillate,11.0
-Port Lincoln,SA1,comissioning,POR01,distillate,50.0
-Port Lincoln,SA1,comissioning,POR03,distillate,23.0
-Port Stanvac,SA1,comissioning,PTSTAN1,distillate,57.6
-Port Stanvac,SA1,comissioning,STANV1,distillate,58.0
-Port Stanvac,SA1,comissioning,STANV2,distillate,58.0
-Portland,VIC1,comissioning,PORTWF,wind,148.0
-Quarantine,SA1,comissioning,QPS1,gas_ocgt,29.0
-Quarantine,SA1,comissioning,QPS2,gas_ocgt,24.0
-Quarantine,SA1,comissioning,QPS3,gas_ocgt,24.0
-Quarantine,SA1,comissioning,QPS4,gas_ocgt,24.0
-Quarantine,SA1,comissioning,QPS5,gas_ocgt,128.0
-Que River,TAS1,decommissioned,QUERIVE1,distillate,24.0
-Racecourse Mill,QLD1,comissioning,RACOMIL1,bioenergy_biomass,48.5
-Red Hill,WA1,comissioning,RED_HILL,bioenergy_biogas,3.64
-Redbank,NSW1,decommissioned,REDBANK1,black_coal,150.0
-Reece,TAS1,comissioning,REECE1,hydro,116.0
-Reece,TAS1,comissioning,REECE2,hydro,116.0
-Remount,TAS1,comissioning,REMOUNT,bioenergy_biogas,2.0
-Repulse,TAS1,comissioning,REPULSE,hydro,28.0
-Richgro,WA1,comissioning,BIOGAS01,bioenergy_biogas,2.0
-Rochedale,QLD1,decommissioned,ROCHEDAL,bioenergy_biogas,4.0
-Rockingham,WA1,comissioning,ROCKINGHAM,bioenergy_biogas,4.0
-Rocky Point Co-gen,QLD1,comissioning,RPCG,bioenergy_biomass,30.0
-Roghan Road,QLD1,decommissioned,EDLRGNRD,bioenergy_biogas,2.0
-Roma,QLD1,comissioning,ROMA_7,gas_ocgt,40.0
-Roma,QLD1,comissioning,ROMA_8,gas_ocgt,40.0
-Ross River,QLD1,comissioning,RRSF1,solar,128.0
-Rowallan,TAS1,comissioning,ROWALLAN,hydro,11.0
-Royalla,NSW1,comissioning,ROYALLA1,solar,20.0
-Rubicon,VIC1,comissioning,RUBICON,hydro,13.0
-Rugby Run,QLD1,comissioning,RUGBYR1,solar,83.0
-Salt Creek,VIC1,comissioning,SALTCRK1,wind,54.0
-Sapphire,NSW1,comissioning,SAPHWF1,wind,270.0
-Shepparton Wastewater Treatment,VIC1,comissioning,SHEP1,bioenergy_biogas,1.0
-Shoalhaven,NSW1,comissioning,SHGEN,hydro,240.0
-Shoalhaven,NSW1,comissioning,SHPUMP,pumps,240.0
-Silverton,NSW1,comissioning,STWF1,wind,198.0
-Smithfield,NSW1,comissioning,SITHE01,gas_ccgt,39.0
-Snowtown,SA1,comissioning,SNOWTWN1,wind,99.0
-Snowtown North,SA1,comissioning,SNOWNTH1,wind,144.0
-Snowtown South,SA1,comissioning,SNOWSTH1,wind,126.0
-Snuggery,SA1,comissioning,SNUG1,distillate,21.0
-Snuggery,SA1,comissioning,SNUG2,distillate,21.0
-Snuggery,SA1,comissioning,SNUG3,distillate,21.0
-Snuggery,SA1,comissioning,SNUGNL1,distillate,25.0
-Somerton,VIC1,comissioning,AGLSOM,gas_ocgt,170.0
-South Cardup,WA1,comissioning,SOUTH_CARDUP,bioenergy_biogas,4.158
-South Keswick,NSW1,comissioning,SKSF1,solar,15.0
-Southbank Institute Of Technology,QLD1,decommissioned,STHBKTEC,distillate,1.0
-Springvale,VIC1,comissioning,SVALE1,bioenergy_biogas,5.0
-St George Leagues Club,NSW1,comissioning,STGEORG1,distillate,1.0
-Stanwell,QLD1,comissioning,STAN-1,black_coal,365.0
-Stanwell,QLD1,comissioning,STAN-2,black_coal,365.0
-Stanwell,QLD1,comissioning,STAN-3,black_coal,365.0
-Stanwell,QLD1,comissioning,STAN-4,black_coal,365.0
-Stapylton,QLD1,comissioning,STAPYLTON1,bioenergy_biogas,3.0
-Starfish Hill,SA1,comissioning,STARHLWF,wind,35.0
-Sun Metals,QLD1,comissioning,SMCSF1,solar,117.0
-Suncoast Gold Macadamias,QLD1,decommissioned,SUNCOAST,bioenergy_biomass,1.0
-Sunshine Coast,QLD1,comissioning,VALDORA1,solar,15.0
-Susan River,QLD1,comissioning,SRSF1,solar,85.0
-Swanbank B,QLD1,decommissioned,SWAN_B_1,black_coal,125.0
-Swanbank B,QLD1,decommissioned,SWAN_B_2,black_coal,125.0
-Swanbank B,QLD1,decommissioned,SWAN_B_3,black_coal,125.0
-Swanbank B,QLD1,decommissioned,SWAN_B_4,black_coal,125.0
-Swanbank E,QLD1,comissioning,SWAN_E,gas_ccgt,385.0
-Tableland Mill,QLD1,comissioning,TABMILL2,biomass,24.0
-Tahmoor,NSW1,comissioning,TAHMOOR1,gas_wcmg,7.0
-Tailem Bend  1,SA1,comissioning,TBSF1,solar,108.0
-Tallawarra,NSW1,comissioning,TALWA1,gas_ccgt,440.0
-Tamala Park,WA1,comissioning,TAMALA_PARK,bioenergy_biogas,4.8
-Tamar Valley,TAS1,comissioning,TVCC201,gas_ccgt,208.6
-Taralga,NSW1,comissioning,TARALGA1,wind,106.0
-Tarong,QLD1,comissioning,TARONG#1,black_coal,350.0
-Tarong,QLD1,comissioning,TARONG#2,black_coal,350.0
-Tarong,QLD1,comissioning,TARONG#3,black_coal,350.0
-Tarong,QLD1,comissioning,TARONG#4,black_coal,350.0
-Tarong North,QLD1,comissioning,TNPS1,black_coal,443.0
-Tarraleah,TAS1,comissioning,TARRALEA,hydro,90.0
-Tataria Bordertown,SA1,comissioning,TATIARA1,distillate,1.0
-Tatura Biomass,VIC1,comissioning,TATURA01,bioenergy_biogas,1.0
-Tea Tree Gully,SA1,decommissioned,TEATREE1,bioenergy_biogas,1.0
-Temporary Generation North,SA1,comissioning,SATGN1,distillate,154.0
-Temporary Generation South,SA1,comissioning,SATGS1,distillate,123.0
-Teralba,NSW1,comissioning,TERALBA,gas_wcmg,3.0
-Terminal Storage (Mini Hydro),SA1,decommissioned,TERMSTOR,hydro,2.0
-The Bluff,SA1,comissioning,BLUFF1,wind,52.5
-The Drop,NSW1,comissioning,THEDROP1,hydro,3.0
-Timboon West,VIC1,comissioning,TIMWEST,wind,7.0
-Toora,VIC1,comissioning,TOORAWF,wind,21.0
-Torrens Island,SA1,comissioning,TORRA1,gas_steam,120.0
-Torrens Island,SA1,comissioning,TORRA2,gas_steam,120.0
-Torrens Island,SA1,comissioning,TORRA3,gas_steam,120.0
-Torrens Island,SA1,comissioning,TORRA4,gas_steam,120.0
-Torrens Island,SA1,comissioning,TORRB1,gas_steam,200.0
-Torrens Island,SA1,comissioning,TORRB2,gas_steam,200.0
-Torrens Island,SA1,comissioning,TORRB3,gas_steam,200.0
-Torrens Island,SA1,comissioning,TORRB4,gas_steam,200.0
-Tower,NSW1,comissioning,TOWER,gas_wcmg,41.0
-Townsville,QLD1,comissioning,YABULU,gas_ccgt,160.0
-Townsville,QLD1,comissioning,YABULU2,gas_ccgt,82.0
-Traralgon Network Support,VIC1,comissioning,TGNSS1,gas_recip,10.0
-Trevallyn,TAS1,comissioning,TREVALLN,hydro,93.0
-Tribute,TAS1,comissioning,TRIBNL1,hydro,25.0
-Tribute,TAS1,comissioning,TRIBUTE,hydro,83.0
-Tumut,NSW1,comissioning,UPPTUMUT,hydro,616.0
-Tumut 3,NSW1,comissioning,TUMUT3,hydro,1500.0
-Tumut 3,NSW1,comissioning,SNOWYP,pumps,600.0
-Tungatinah,TAS1,comissioning,TUNGATIN,hydro,125.0
-Uranquinty,NSW1,comissioning,URANQ11,gas_ocgt,166.0
-Uranquinty,NSW1,comissioning,URANQ12,gas_ocgt,166.0
-Uranquinty,NSW1,comissioning,URANQ13,gas_ocgt,166.0
-Uranquinty,NSW1,comissioning,URANQ14,gas_ocgt,166.0
-Vales Point B,NSW1,comissioning,VP5,black_coal,660.0
-Vales Point B,NSW1,comissioning,VP6,black_coal,660.0
-Valley  Peaking,VIC1,comissioning,VPGS1,gas_ocgt,50.0
-Valley  Peaking,VIC1,comissioning,VPGS2,gas_ocgt,50.0
-Valley  Peaking,VIC1,comissioning,VPGS3,gas_ocgt,50.0
-Valley  Peaking,VIC1,comissioning,VPGS4,gas_ocgt,50.0
-Valley  Peaking,VIC1,comissioning,VPGS5,gas_ocgt,50.0
-Valley  Peaking,VIC1,comissioning,VPGS6,gas_ocgt,50.0
-Veolia Ti Tree Bio Reactor,QLD1,comissioning,TITREE,bioenergy_biogas,2.0
-Victoria Mill,QLD1,comissioning,VICMILL1,bioenergy_biomass,24.0
-Wagerup,WA1,comissioning,ALCOA_WGP,gas_ocgt,26.0
-Wagerup,WA1,comissioning,ALINTA_WGP_GT,gas_ocgt,195.15200000000002
-Wagerup,WA1,comissioning,ALINTA_WGP_U2,gas_ocgt,196.84799999999998
-Walkaway,WA1,comissioning,ALINTA_WWF,wind,89.1
-Wallerawang,NSW1,decommissioned,WW7,black_coal,500.0
-Wallerawang,NSW1,decommissioned,WW8,black_coal,500.0
-Warragamba,NSW1,decommissioned,WG01,hydro,50.0
-Waterloo,SA1,comissioning,WATERLWF,wind,130.0
-Wattle Point,SA1,comissioning,WPWF,wind,91.0
-Waubra,VIC1,comissioning,WAUBRAWF,wind,192.0
-Wemen,VIC1,comissioning,WEMENSF1,solar,97.0
-West Hills,WA1,comissioning,BLAIRFOX_WESTHILLS_WF3,wind,5.0
-West Illawarra Leagues Club,NSW1,comissioning,WESTILL1,distillate,1.0
-West Kalgoorlie,WA1,comissioning,WEST_KALGOORLIE_GT2,distillate,41.2
-West Kalgoorlie,WA1,comissioning,WEST_KALGOORLIE_GT3,distillate,23.3
-West Kiewa,VIC1,comissioning,WKIEWA1,hydro,31.0
-West Kiewa,VIC1,comissioning,WKIEWA2,hydro,31.0
-West Nowra,NSW1,comissioning,AGLNOW1,bioenergy_biogas,1.0
-Western Suburbs League Club,NSW1,comissioning,WESTCBT1,distillate,1.0
-White Rock,NSW1,comissioning,WRSF1,solar,22.0
-White Rock,NSW1,comissioning,WRWF1,wind,175.0
-White Rock Wind and,NSW1,comissioning,WRSF1,solar,22.0
-White Rock Wind and,NSW1,comissioning,WRWF1,wind,175.0
-Whitsunday,QLD1,comissioning,WHITSF1,solar,57.0
-Whitwood Road,QLD1,decommissioned,WHIT1,bioenergy_biogas,1.0
-Wilga Park,NSW1,comissioning,WILGAPK,gas_recip,10.0
-Wilga Park B,NSW1,comissioning,WILGB01,gas_recip,12.0
-Willogoleche,SA1,comissioning,WGWF1,wind,119.0
-Willoughby,NSW1,comissioning,NINEWIL1,distillate,3.0
-Windy Hill,QLD1,comissioning,WHILL1,wind,12.0
-Wingfield 1,SA1,comissioning,WINGF1_1,bioenergy_biogas,5.0
-Wingfield 2,SA1,comissioning,WINGF2_1,bioenergy_biogas,5.0
-Wivenhoe,QLD1,comissioning,PUMP1,pumps,240.0
-Wivenhoe,QLD1,comissioning,PUMP2,pumps,240.0
-Wivenhoe,QLD1,comissioning,W/HOE#1,hydro,285.0
-Wivenhoe,QLD1,comissioning,W/HOE#2,hydro,285.0
-Wivenhoe (Mini Hydro),QLD1,comissioning,WIVENSH,hydro,5.0
-Wollert,VIC1,comissioning,WOLLERT1,bioenergy_biogas,7.0
-Wonthaggi,VIC1,comissioning,WONWP,wind,12.0
-Woodlawn,NSW1,comissioning,WOODLWN1,wind,48.0
-Woodlawn Bioreactor,NSW1,comissioning,WDLNGN01,bioenergy_biogas,7.0
-Woolnorth,TAS1,comissioning,WOOLNTH1,wind,140.0
-Woy Woy,NSW1,comissioning,WOYWOY1,bioenergy_biogas,1.0
-Wyangala A,NSW1,comissioning,WYANGALA,hydro,20.0
-Wyangala B,NSW1,comissioning,WYANGALB,hydro,4.0
-Wyndham,VIC1,decommissioned,WYNDW,bioenergy_biogas,1.0
-Yallourn W,VIC1,comissioning,YWPS1,brown_coal,360.0
-Yallourn W,VIC1,comissioning,YWPS2,brown_coal,360.0
-Yallourn W,VIC1,comissioning,YWPS3,brown_coal,380.0
-Yallourn W,VIC1,comissioning,YWPS4,brown_coal,380.0
-Yaloak South,VIC1,comissioning,YSWF1,wind,28.0
-Yambuk,VIC1,comissioning,YAMBUKWF,wind,30.0
-Yarranlea,QLD1,comissioning,YARANSF1,solar,121.0
-Yarrawonga,VIC1,comissioning,YWNGAHYD,hydro,9.0
-Yarwun,QLD1,comissioning,YARWUN_1,gas_ccgt,154.0
-Yawong,VIC1,comissioning,YAWWF1,wind,7.2
-Yendon,VIC1,comissioning,YENDWF1,wind,144.0
+Appin,NSW1,operating,APPIN,gas_wcmg,55.0
+Awaba,NSW1,retired,AWABAREF,bioenergy_biogas,1.0
+Bankstown Sports Club,NSW1,retired,BANKSPT1,distillate,1.0
+Bayswater,NSW1,operating,BW01,black_coal,660.0
+Bayswater,NSW1,operating,BW02,black_coal,660.0
+Bayswater,NSW1,operating,BW03,black_coal,660.0
+Bayswater,NSW1,operating,BW04,black_coal,660.0
+Beryl,NSW1,operating,BERYLSF1,solar,98.0
+Blayney,NSW1,operating,BLAYNEY,wind,9.9
+Blowering,NSW1,operating,BLOWERNG,hydro,80.0
+Boco Rock,NSW1,operating,BOCORWF1,wind,113.0
+Bodangora,NSW1,operating,BODWF1,wind,113.0
+Bomen,NSW1,operating,BOMENSF1,solar,121.0
+Broadwater,NSW1,operating,BWTR1,bioenergy_biogas,38.0
+Broken Hill,NSW1,operating,GB01,distillate,50.0
+Broken Hill,NSW1,operating,BROKENH1,solar,54.0
+Brown Mountain,NSW1,operating,BROWNMT,hydro,5.0
+Burrendong,NSW1,operating,BDONGHYD,hydro,19.0
+Burrinjuck,NSW1,operating,BURRIN,hydro,27.0
+Capital,NSW1,operating,CAPTL_WF,wind,140.0
+Capital East,NSW1,operating,CESF1,solar,1.0
+Coleambally,NSW1,operating,COLEASF1,solar,180.0
+Colongra,NSW1,operating,CG1,gas_ocgt,181.0
+Colongra,NSW1,operating,CG2,gas_ocgt,181.0
+Colongra,NSW1,operating,CG3,gas_ocgt,181.0
+Colongra,NSW1,operating,CG4,gas_ocgt,181.0
+Condong,NSW1,operating,CONDONG1,bioenergy_biogas,30.0
+Copeton,NSW1,operating,COPTNHYD,hydro,22.5
+Crookwell,NSW1,operating,CROOKWEL,wind,4.8
+Crookwell 2,NSW1,operating,CROOKWF2,wind,96.0
+Cullerin Range,NSW1,operating,CULLRGWF,wind,30.0
+Earthpower Biomass,NSW1,retired,PMATTAEP,gas_recip,4.0
+Eastern Creek,NSW1,operating,EASTCRK,bioenergy_biogas,5.0
+Eastern Creek 2,NSW1,operating,EASTCRK2,bioenergy_biogas,8.984
+Eraring,NSW1,operating,ER01,black_coal,720.0
+Eraring,NSW1,operating,ER02,black_coal,720.0
+Eraring,NSW1,operating,ER03,black_coal,720.0
+Eraring,NSW1,operating,ER04,black_coal,720.0
+Eraring,NSW1,operating,ERGT01,distillate,42.0
+Finley,NSW1,operating,FINLYSF1,solar,162.0
+Glenbawn,NSW1,operating,GLBWNHYD,hydro,5.5
+Glennies Creek,NSW1,operating,GLENNCRK,gas_wcmg,12.0
+Goonumbla,NSW1,operating,GOONSF1,solar,85.0
+Goonumbla,NSW1,operating,GOONSF1,solar,85.0
+Grange Avenue,NSW1,operating,GRANGEAV,bioenergy_biogas,2.0
+Griffith,NSW1,operating,GRIFSF1,solar,27.0
+Gullen Range,NSW1,operating,GULLRSF1,solar,10.0
+Gullen Range,NSW1,operating,GULLRWF1,wind,165.0
+Gullen Range,NSW1,operating,GULLRWF2,wind,110.0
+Gunning,NSW1,operating,GUNNING1,wind,47.0
+Guthega,NSW1,operating,GUTHEGA,hydro,60.0
+Hampton,NSW1,operating,HAMPTON,wind,1.32
+Hume (NSW),NSW1,operating,HUMENSW,hydro,29.0
+Hunter Economic Zone,NSW1,retired,HEZ,distillate,29.0
+Hunter Valley,NSW1,operating,HVGTS,distillate,50.0
+Jacks Gully,NSW1,operating,JACKSGUL,bioenergy_biogas,2.0
+Jindabyne (Mini Hydro),NSW1,operating,JNDABNE1,hydro,1.0
+Jounama (Mini Hydro),NSW1,operating,JOUNAMA1,hydro,14.0
+Keepit,NSW1,operating,KEEPIT,hydro,6.0
+Kemps Creek,NSW1,operating,AGLSITA1,bioenergy_biogas,1.0
+Kincumber,NSW1,operating,KINCUM1,bioenergy_biogas,1.0
+Liddell,NSW1,operating,LD01,black_coal,500.0
+Liddell,NSW1,operating,LD02,black_coal,500.0
+Liddell,NSW1,operating,LD03,black_coal,500.0
+Liddell,NSW1,operating,LD04,black_coal,500.0
+Limondale  2,NSW1,operating,LIMOSF21,solar,38.0
+Limondale SF,NSW1,operating,LIMOSF11,solar,275.0
+Lucas Heights 2,NSW1,operating,LUCAS2S2,bioenergy_biogas,5.0
+Lucas Heights 2,NSW1,retired,LUCASHGT,bioenergy_biogas,12.65
+Manildra,NSW1,operating,MANSLR1,solar,25.0
+Moree,NSW1,operating,MOREESF1,solar,57.0
+Mt Piper,NSW1,operating,MP1,black_coal,700.0
+Mt Piper,NSW1,operating,MP2,black_coal,700.0
+Mugga Lane,NSW1,operating,MLSP1,solar,12.0
+Munmorah,NSW1,retired,MM3,black_coal,300.0
+Munmorah,NSW1,retired,MM4,black_coal,300.0
+Narromine,NSW1,operating,NASF1,solar,10.0
+Nevertire,NSW1,operating,NEVERSF1,solar,132.0
+Nyngan,NSW1,operating,NYNGAN1,solar,102.0
+Parkes,NSW1,operating,PARSF1,solar,55.0
+Pindari,NSW1,operating,PINDARI,hydro,6.0
+Redbank,NSW1,retired,REDBANK1,black_coal,150.0
+Royalla,NSW1,operating,ROYALLA1,solar,20.0
+Sapphire,NSW1,operating,SAPHWF1,wind,270.0
+Shoalhaven,NSW1,operating,SHGEN,hydro,240.0
+Shoalhaven,NSW1,operating,SHPUMP,pumps,240.0
+Silverton,NSW1,operating,STWF1,wind,198.0
+Smithfield,NSW1,operating,SITHE01,gas_ccgt,39.0
+South Keswick,NSW1,operating,SKSF1,solar,15.0
+St George Leagues Club,NSW1,operating,STGEORG1,distillate,1.0
+Tahmoor,NSW1,operating,TAHMOOR1,gas_wcmg,7.0
+Tallawarra,NSW1,operating,TALWA1,gas_ccgt,440.0
+Taralga,NSW1,operating,TARALGA1,wind,106.0
+Teralba,NSW1,operating,TERALBA,gas_wcmg,3.0
+The Drop,NSW1,operating,THEDROP1,hydro,3.0
+Tower,NSW1,operating,TOWER,gas_wcmg,41.0
+Tumut,NSW1,operating,UPPTUMUT,hydro,616.0
+Tumut 3,NSW1,operating,TUMUT3,hydro,1500.0
+Tumut 3,NSW1,operating,SNOWYP,pumps,600.0
+Uranquinty,NSW1,operating,URANQ11,gas_ocgt,166.0
+Uranquinty,NSW1,operating,URANQ12,gas_ocgt,166.0
+Uranquinty,NSW1,operating,URANQ13,gas_ocgt,166.0
+Uranquinty,NSW1,operating,URANQ14,gas_ocgt,166.0
+Vales Point B,NSW1,operating,VP5,black_coal,660.0
+Vales Point B,NSW1,operating,VP6,black_coal,660.0
+Wallerawang,NSW1,retired,WW7,black_coal,500.0
+Wallerawang,NSW1,retired,WW8,black_coal,500.0
+Warragamba,NSW1,retired,WG01,hydro,50.0
+West Illawarra Leagues Club,NSW1,operating,WESTILL1,distillate,1.0
+West Nowra,NSW1,operating,AGLNOW1,bioenergy_biogas,1.0
+Western Suburbs League Club,NSW1,operating,WESTCBT1,distillate,1.0
+White Rock,NSW1,operating,WRSF1,solar,22.0
+White Rock,NSW1,operating,WRWF1,wind,175.0
+White Rock Wind and,NSW1,operating,WRSF1,solar,22.0
+White Rock Wind and,NSW1,operating,WRWF1,wind,175.0
+Wilga Park,NSW1,operating,WILGAPK,gas_recip,10.0
+Wilga Park B,NSW1,operating,WILGB01,gas_recip,12.0
+Willoughby,NSW1,operating,NINEWIL1,distillate,3.0
+Woodlawn,NSW1,operating,WOODLWN1,wind,48.0
+Woodlawn Bioreactor,NSW1,operating,WDLNGN01,bioenergy_biogas,7.0
+Woy Woy,NSW1,operating,WOYWOY1,bioenergy_biogas,1.0
+Wyangala A,NSW1,operating,WYANGALA,hydro,20.0
+Wyangala B,NSW1,operating,WYANGALB,hydro,4.0
+Baking Board,QLD1,operating,BAKING1,solar,17.0
+Barcaldine,QLD1,operating,BARCALDN,gas_ccgt,37.0
+Barcaldine,QLD1,operating,BARCSF1,solar,10.0
+Barron Gorge,QLD1,operating,BARRON-1,hydro,30.0
+Barron Gorge,QLD1,operating,BARRON-2,hydro,30.0
+Braemar,QLD1,operating,BRAEMAR1,gas_ocgt,168.0
+Braemar,QLD1,operating,BRAEMAR2,gas_ocgt,168.0
+Braemar,QLD1,operating,BRAEMAR3,gas_ocgt,168.0
+Braemar 2,QLD1,operating,BRAEMAR5,gas_ocgt,173.0
+Braemar 2,QLD1,operating,BRAEMAR6,gas_ocgt,173.0
+Braemar 2,QLD1,operating,BRAEMAR7,gas_ocgt,173.0
+Browns Plains,QLD1,operating,BPLANDF1,bioenergy_biogas,2.0
+Callide A,QLD1,retired,CALL_A_2,black_coal,30.0
+Callide A,QLD1,retired,CALL_A_4,black_coal,30.0
+Callide B,QLD1,operating,CALL_B_1,black_coal,350.0
+Callide B,QLD1,operating,CALL_B_2,black_coal,350.0
+Callide C,QLD1,operating,CPP_3,black_coal,420
+Callide C,QLD1,operating,CPP_4,black_coal,420
+Childers,QLD1,operating,CHILDSF1,solar,64.0
+Clare,QLD1,operating,CLARESF1,solar,110.0
+Clermont,QLD1,operating,CLERMSF1,solar,92.0
+Collinsville,QLD1,retired,COLNSV_1,black_coal,30.0
+Collinsville,QLD1,retired,COLNSV_2,black_coal,30.0
+Collinsville,QLD1,retired,COLNSV_3,black_coal,30.0
+Collinsville,QLD1,retired,COLNSV_4,black_coal,30.0
+Collinsville,QLD1,retired,COLNSV_5,black_coal,66.0
+Collinsville,QLD1,operating,CSPVPS1,solar,42.0
+Condamine  A,QLD1,operating,CPSA,gas_ccgt,143.0
+Coopers Gap,QLD1,operating,COOPGWF1,wind,452
+Daandine,QLD1,operating,DAANDINE,gas_recip,33.0
+Darling Downs,QLD1,operating,DDPS1,gas_ccgt,121.0
+Darling Downs,QLD1,operating,DDSF1,solar,121.0
+Daydream,QLD1,operating,DAYDSF1,solar,79.0
+Emerald,QLD1,operating,EMERASF1,solar,88.0
+German Creek,QLD1,operating,GERMCRK,gas_wcmg,45.0
+Gladstone,QLD1,operating,GSTONE1,black_coal,280.0
+Gladstone,QLD1,operating,GSTONE2,black_coal,280.0
+Gladstone,QLD1,operating,GSTONE3,black_coal,280.0
+Gladstone,QLD1,operating,GSTONE4,black_coal,280.0
+Gladstone,QLD1,operating,GSTONE5,black_coal,280.0
+Gladstone,QLD1,operating,GSTONE6,black_coal,280.0
+Grosvenor 1,QLD1,operating,GROSV1,gas_wcmg,21.0
+Grosvenor 2,QLD1,operating,GROSV2,gas_wcmg,15.0
+Hamilton,QLD1,operating,HAMISF1,solar,57.0
+Haughton,QLD1,operating,HAUGHT11,solar,132.0
+Hayman,QLD1,operating,HAYMSF1,solar,57.0
+Hughenden,QLD1,operating,HUGSF1,solar,10.0
+Invicta Sugar Mill,QLD1,operating,INVICTA,bioenergy_biomass,50.0
+Isis Central Sugar Mill,QLD1,operating,ICSM,bioenergy_biomass,25.0
+KRC Co-gen,QLD1,retired,KRCCOGEN,gas_ocgt,5.0
+Kareeya,QLD1,operating,KAREEYA1,hydro,21.0
+Kareeya,QLD1,operating,KAREEYA2,hydro,21.0
+Kareeya,QLD1,operating,KAREEYA3,hydro,21.0
+Kareeya,QLD1,operating,KAREEYA4,hydro,21.0
+Kareeya,QLD1,operating,KAREEYA5,hydro,7.0
+Kidston,QLD1,operating,KSP1,solar,50.0
+Kogan Creek,QLD1,operating,KPP_1,black_coal,744.0
+Lilyvale,QLD1,operating,LILYSF1,solar,118.0
+Longreach,QLD1,operating,LRSF1,solar,17.0
+Mackay,QLD1,operating,MACKAYGT,distillate,30.0
+Maryrorough,QLD1,operating,MARYRSF1,solar,33.0
+Millmerran,QLD1,operating,MPP_1,black_coal,426.0
+Millmerran,QLD1,operating,MPP_2,black_coal,426.0
+Moranbah,QLD1,operating,MORANBAH,gas_recip,13.0
+Moranbah North,QLD1,operating,MBAHNTH,gas_wcmg,63.0
+Mt Emerald,QLD1,operating,MEWF1,wind,180.0
+Mt Stuart,QLD1,operating,MSTUART1,distillate,144.0
+Mt Stuart,QLD1,operating,MSTUART2,distillate,144.0
+Mt Stuart,QLD1,operating,MSTUART3,distillate,131.0
+Oakey,QLD1,operating,OAKEY1,gas_ocgt,141.0
+Oakey,QLD1,operating,OAKEY2,gas_ocgt,141.0
+Oakey 1,QLD1,operating,OAKEY1SF,solar,30.0
+Oakey 2,QLD1,operating,OAKEY2SF,solar,65.0
+Oaky Creek,QLD1,operating,OAKYCREK,gas_recip,20.0
+Oaky Creek 2,QLD1,operating,OAKY2,gas_wcmg,15.0
+Pioneer Sugar Mill,QLD1,operating,PIONEER,bioenergy_biomass,68.0
+Racecourse Mill,QLD1,operating,RACOMIL1,bioenergy_biomass,48.5
+Rochedale,QLD1,retired,ROCHEDAL,bioenergy_biogas,4.0
+Rocky Point Co-gen,QLD1,operating,RPCG,bioenergy_biomass,30.0
+Roghan Road,QLD1,retired,EDLRGNRD,bioenergy_biogas,2.0
+Roma,QLD1,operating,ROMA_7,gas_ocgt,40.0
+Roma,QLD1,operating,ROMA_8,gas_ocgt,40.0
+Ross River,QLD1,operating,RRSF1,solar,128.0
+Rugby Run,QLD1,operating,RUGBYR1,solar,83.0
+Southbank Institute Of Technology,QLD1,retired,STHBKTEC,distillate,1.0
+Stanwell,QLD1,operating,STAN-1,black_coal,365.0
+Stanwell,QLD1,operating,STAN-2,black_coal,365.0
+Stanwell,QLD1,operating,STAN-3,black_coal,365.0
+Stanwell,QLD1,operating,STAN-4,black_coal,365.0
+Stapylton,QLD1,operating,STAPYLTON1,bioenergy_biogas,3.0
+Sun Metals,QLD1,operating,SMCSF1,solar,117.0
+Suncoast Gold Macadamias,QLD1,retired,SUNCOAST,bioenergy_biomass,1.0
+Sunshine Coast,QLD1,operating,VALDORA1,solar,15.0
+Susan River,QLD1,operating,SRSF1,solar,85.0
+Swanbank B,QLD1,retired,SWAN_B_1,black_coal,125.0
+Swanbank B,QLD1,retired,SWAN_B_2,black_coal,125.0
+Swanbank B,QLD1,retired,SWAN_B_3,black_coal,125.0
+Swanbank B,QLD1,retired,SWAN_B_4,black_coal,125.0
+Swanbank E,QLD1,operating,SWAN_E,gas_ccgt,385.0
+Tableland Mill,QLD1,operating,TABMILL2,biomass,24.0
+Tarong,QLD1,operating,TARONG#1,black_coal,350.0
+Tarong,QLD1,operating,TARONG#2,black_coal,350.0
+Tarong,QLD1,operating,TARONG#3,black_coal,350.0
+Tarong,QLD1,operating,TARONG#4,black_coal,350.0
+Tarong North,QLD1,operating,TNPS1,black_coal,443.0
+Townsville,QLD1,operating,YABULU,gas_ccgt,160.0
+Townsville,QLD1,operating,YABULU2,gas_ccgt,82.0
+Veolia Ti Tree Bio Reactor,QLD1,operating,TITREE,bioenergy_biogas,2.0
+Victoria Mill,QLD1,operating,VICMILL1,bioenergy_biomass,24.0
+Whitsunday,QLD1,operating,WHITSF1,solar,57.0
+Whitwood Road,QLD1,retired,WHIT1,bioenergy_biogas,1.0
+Windy Hill,QLD1,operating,WHILL1,wind,12.0
+Wivenhoe,QLD1,operating,PUMP1,pumps,240.0
+Wivenhoe,QLD1,operating,PUMP2,pumps,240.0
+Wivenhoe,QLD1,operating,W/HOE#1,hydro,285.0
+Wivenhoe,QLD1,operating,W/HOE#2,hydro,285.0
+Wivenhoe (Mini Hydro),QLD1,operating,WIVENSH,hydro,5.0
+Yarranlea,QLD1,operating,YARANSF1,solar,121.0
+Yarwun,QLD1,operating,YARWUN_1,gas_ccgt,154.0
+Amcor Glass,SA1,retired,AMCORGR,distillate,4.0
+Angaston,SA1,operating,ANGAS1,distillate,30.0
+Angaston,SA1,operating,ANGAS2,distillate,20.0
+Angaston,SA1,operating,ANGAST1,distillate,50.0
+Barker Inlet,SA1,operating,BARKIPS1,gas_recip,211.0
+Blue Lake Milling,SA1,retired,BLULAKE1,distillate,1.0
+Bolivar Waste Water Treatment,SA1,operating,BOLIVAR1,bioenergy_biogas,10.0
+Bungala One,SA1,operating,BNGSF1,solar,135.0
+Bungala Two,SA1,operating,BNGSF2,solar,135.0
+Canunda,SA1,operating,CNUNDAWF,wind,46.0
+Cathedral Rocks,SA1,operating,CATHROCK,wind,66.0
+Clements Gap,SA1,operating,CLEMGPWF,wind,57.0
+Dalrymple North Battery,SA1,operating,DALNTH01,battery_discharging,30.0
+Dalrymple North Battery,SA1,operating,DALNTHL1,battery_charging,30.0
+Dry Creek,SA1,operating,DRYCGT1,gas_ocgt,52.0
+Dry Creek,SA1,operating,DRYCGT2,gas_ocgt,52.0
+Dry Creek,SA1,operating,DRYCGT3,gas_ocgt,52.0
+Hallett,SA1,operating,AGLHAL,gas_ocgt,217.0
+Hallett 1,SA1,operating,HALLWF1,wind,95.0
+Hallett 2,SA1,operating,HALLWF2,wind,71.0
+Highbury,SA1,retired,HIGHBRY1,bioenergy_biogas,2.0
+Hornsdale,SA1,operating,HDWF1,wind,102.0
+Hornsdale  2,SA1,operating,HDWF2,wind,102.0
+Hornsdale  3,SA1,operating,HDWF3,wind,112.0
+Hornsdale Power Reserve,SA1,operating,HPRG1,battery_discharging,100.0
+Hornsdale Power Reserve,SA1,operating,HPRL1,battery_charging,120.0
+Ladbroke Grove,SA1,operating,LADBROK1,gas_ocgt,40.0
+Ladbroke Grove,SA1,operating,LADBROK2,gas_ocgt,40.0
+Lake Bonney  1,SA1,operating,LKBONNY1,wind,81.0
+Lake Bonney 2,SA1,operating,LKBONNY2,wind,159.0
+Lake Bonney 3,SA1,operating,LKBONNY3,wind,39.0
+Lake Bonney Bess1,SA1,operating,LBBG1,battery_discharging,25.0
+Lake Bonney Bess1,SA1,operating,LBBL1,,
+Lincoln Gap,SA1,operating,LGAPWF1,wind,212.4
+Lonsdale,SA1,operating,LONSDALE,distillate,21.0
+Mintaro,SA1,operating,MINTARO,gas_ocgt,90.0
+Mintaro,SA1,operating,MINTNL1,gas_ocgt,25.0
+Mt Millar,SA1,operating,MTMILLAR,wind,70.0
+North Brown Hill,SA1,operating,NBHWF1,wind,132.0
+Northern,SA1,retired,NPS1,brown_coal,265.0
+Northern,SA1,retired,NPS2,brown_coal,265.0
+Northern,SA1,retired,NPSNL1,brown_coal,100.0
+Northern,SA1,retired,NPSNL2,brown_coal,100.0
+Osborne,SA1,operating,OSB-AG,gas_ccgt,180.0
+Pedler Creek,SA1,retired,PEDLER1,bioenergy_biogas,3.0
+Pelican Point,SA1,operating,PPCCGT,gas_ccgt,478.0
+Playford B,SA1,retired,PLAYB-AG,brown_coal,240.0
+Playford B,SA1,retired,PLAYFB1,brown_coal,60.0
+Playford B,SA1,retired,PLAYFB2,brown_coal,60.0
+Playford B,SA1,retired,PLAYFB3,brown_coal,60.0
+Playford B,SA1,retired,PLAYFB4,brown_coal,60.0
+Port Lincoln,SA1,operating,POR01,distillate,50.0
+Port Lincoln,SA1,operating,POR03,distillate,23.0
+Port Stanvac,SA1,operating,PTSTAN1,distillate,57.6
+Port Stanvac,SA1,operating,STANV1,distillate,58.0
+Port Stanvac,SA1,operating,STANV2,distillate,58.0
+Quarantine,SA1,operating,QPS1,gas_ocgt,29.0
+Quarantine,SA1,operating,QPS2,gas_ocgt,24.0
+Quarantine,SA1,operating,QPS3,gas_ocgt,24.0
+Quarantine,SA1,operating,QPS4,gas_ocgt,24.0
+Quarantine,SA1,operating,QPS5,gas_ocgt,128.0
+Snowtown,SA1,operating,SNOWTWN1,wind,99.0
+Snowtown North,SA1,operating,SNOWNTH1,wind,144.0
+Snowtown South,SA1,operating,SNOWSTH1,wind,126.0
+Snuggery,SA1,operating,SNUG1,distillate,21.0
+Snuggery,SA1,operating,SNUG2,distillate,21.0
+Snuggery,SA1,operating,SNUG3,distillate,21.0
+Snuggery,SA1,operating,SNUGNL1,distillate,25.0
+Starfish Hill,SA1,operating,STARHLWF,wind,35.0
+Tailem Bend  1,SA1,operating,TBSF1,solar,108.0
+Tataria Bordertown,SA1,operating,TATIARA1,distillate,1.0
+Tea Tree Gully,SA1,retired,TEATREE1,bioenergy_biogas,1.0
+Temporary Generation North,SA1,operating,SATGN1,distillate,154.0
+Temporary Generation South,SA1,operating,SATGS1,distillate,123.0
+Terminal Storage (Mini Hydro),SA1,retired,TERMSTOR,hydro,2.0
+The Bluff,SA1,operating,BLUFF1,wind,52.5
+Torrens Island,SA1,operating,TORRA1,gas_steam,120.0
+Torrens Island,SA1,operating,TORRA2,gas_steam,120.0
+Torrens Island,SA1,operating,TORRA3,gas_steam,120.0
+Torrens Island,SA1,operating,TORRA4,gas_steam,120.0
+Torrens Island,SA1,operating,TORRB1,gas_steam,200.0
+Torrens Island,SA1,operating,TORRB2,gas_steam,200.0
+Torrens Island,SA1,operating,TORRB3,gas_steam,200.0
+Torrens Island,SA1,operating,TORRB4,gas_steam,200.0
+Waterloo,SA1,operating,WATERLWF,wind,130.0
+Wattle Point,SA1,operating,WPWF,wind,91.0
+Willogoleche,SA1,operating,WGWF1,wind,119.0
+Wingfield 1,SA1,operating,WINGF1_1,bioenergy_biogas,5.0
+Wingfield 2,SA1,operating,WINGF2_1,bioenergy_biogas,5.0
+Bastyan,TAS1,operating,BASTYAN,hydro,80.0
+Bell Bay,TAS1,retired,BBDISEL1,distillate,75.0
+Bell Bay,TAS1,retired,BELLBAY1,gas_steam,120.0
+Bell Bay,TAS1,retired,BELLBAY2,gas_steam,120.0
+Bell Bay Three,TAS1,operating,BBTHREE1,gas_ocgt,35.0
+Bell Bay Three,TAS1,operating,BBTHREE2,gas_ocgt,35.0
+Bell Bay Three,TAS1,operating,BBTHREE3,gas_ocgt,35.0
+Bell Bay Three,TAS1,operating,TVPP104,gas_ocgt,58.0
+Butlers Gorge,TAS1,operating,BUTLERSG,hydro,15.0
+Catagunya/Liapootah/Wayatinah,TAS1,operating,CATAGUN1,distillate,24.0
+Catagunya/Liapootah/Wayatinah,TAS1,operating,LI_WY_CA,hydro,173.0
+Cattle Hill,TAS1,operating,CTHLWF1,wind,148.0
+Cethana,TAS1,operating,CETHANA,hydro,85.0
+Cluny,TAS1,operating,CLUNY,hydro,19.0
+Devils Gate,TAS1,operating,DEVILS_G,hydro,60.0
+Fisher,TAS1,operating,FISHER,hydro,43.0
+George Town,TAS1,retired,GEORGTN1,distillate,30.0
+Gordon,TAS1,operating,GORDON,hydro,432.0
+Gordon,TAS1,operating,GOVILLB1,hydro,25.0
+Granville Harbour,TAS1,operating,GRANWF1,wind,111.0
+John Butters,TAS1,operating,JBUTTERS,hydro,144.0
+Lake Echo,TAS1,operating,LK_ECHO,hydro,32.0
+Lemonthyme/Wilmot,TAS1,operating,LEM_WIL,hydro,82.0
+Mackintosh,TAS1,operating,MACKNTSH,hydro,80.0
+Meadowbank,TAS1,operating,MEADOWB2,distillate,24.0
+Meadowbank,TAS1,operating,MEADOWBK,hydro,40.0
+Midlands,TAS1,operating,MIDLDPS1,hydro,6.0
+Musselroe,TAS1,operating,MUSSELR1,wind,168.0
+Paloona,TAS1,operating,PALOONA,hydro,33.0
+Poatina,TAS1,operating,PO110NL1,hydro,25.0
+Poatina,TAS1,operating,POAT110,hydro,100.0
+Poatina,TAS1,operating,POAT220,hydro,200.0
+Port Latta,TAS1,retired,PORTLAT1,distillate,11.0
+Que River,TAS1,retired,QUERIVE1,distillate,24.0
+Reece,TAS1,operating,REECE1,hydro,116.0
+Reece,TAS1,operating,REECE2,hydro,116.0
+Remount,TAS1,operating,REMOUNT,bioenergy_biogas,2.0
+Repulse,TAS1,operating,REPULSE,hydro,28.0
+Rowallan,TAS1,operating,ROWALLAN,hydro,11.0
+Tamar Valley,TAS1,operating,TVCC201,gas_ccgt,208.6
+Tarraleah,TAS1,operating,TARRALEA,hydro,90.0
+Trevallyn,TAS1,operating,TREVALLN,hydro,93.0
+Tribute,TAS1,operating,TRIBNL1,hydro,25.0
+Tribute,TAS1,operating,TRIBUTE,hydro,83.0
+Tungatinah,TAS1,operating,TUNGATIN,hydro,125.0
+Woolnorth,TAS1,operating,WOOLNTH1,wind,140.0
+Angelsea,VIC1,retired,APS,brown_coal,165.0
+Ararat,VIC1,operating,ARWF1,wind,241.59
+Bairnsdale,VIC1,operating,BDL01,gas_ocgt,46.0
+Bairnsdale,VIC1,operating,BDL02,gas_ocgt,46.0
+Bald Hills,VIC1,operating,BALDHWF1,wind,59.0
+Ballarat Battery,VIC1,operating,BALBG1,battery_discharging,30.0
+Ballarat Battery,VIC1,operating,BALBL1,battery_charging,30.0
+Ballarat Hospital,VIC1,operating,BBASEHOS,gas_recip,1.0
+Banimboola,VIC1,operating,BAPS,hydro,12.0
+Bannerton,VIC1,operating,BANN1,solar,50.0
+Berwick,VIC1,operating,BERWICK,bioenergy_biogas,7.0
+Bogong/Mackay,VIC1,operating,MCKAY1,hydro,53.0
+Bogong/Mackay,VIC1,operating,MCKAY2,hydro,53.0
+Broadmeadows,VIC1,operating,BROADMDW,bioenergy_biogas,5.0
+Brooklyn,VIC1,operating,BROOKLYN,bioenergy_biogas,3.0
+Bulgana Green  Hub,VIC1,operating,BULGANA1,wind,182.0
+Challicum Hills,VIC1,operating,CHALLHWF,wind,52.0
+Chepstowe,VIC1,operating,CHPSTWF1,wind,6.0
+Cherry Tree,VIC1,operating,CHYTWF1,wind,57.0
+Clayton,VIC1,operating,CLAYTON,bioenergy_biogas,11.0
+Clover,VIC1,operating,CLOVER,hydro,29.0
+Codrington,VIC1,operating,CODRNGTON,wind,18.0
+Coonoer Bridge,VIC1,operating,CBWF1,wind,19.8
+Corio,VIC1,operating,CORIO1,bioenergy_biogas,1.0
+Crowlands,VIC1,operating,CROWLWF1,wind,79.0
+Dartmouth,VIC1,operating,DARTM1,hydro,150.0
+Dundonnell,VIC1,operating,DUNDWF1,wind,168.0
+Dundonnell,VIC1,operating,DUNDWF2,wind,46.0
+Dundonnell,VIC1,operating,DUNDWF3,wind,121.0
+Eildon,VIC1,operating,EILDON1,hydro,60.0
+Eildon,VIC1,operating,EILDON2,hydro,60.0
+Eildon (Run of River),VIC1,operating,EILDON3,hydro,5.0
+Elaine,VIC1,operating,ELAINWF1,wind,83.0
+Energy Brix,VIC1,retired,MOR1,brown_coal,90.0
+Energy Brix,VIC1,retired,MOR2,brown_coal,30.0
+Energy Brix,VIC1,retired,MOR3,brown_coal,75.0
+Gannawarra,VIC1,operating,GANNSF1,solar,55.0
+Gannawarra Battery,VIC1,operating,GANNBG1,battery_discharging,30.0
+Gannawarra Battery,VIC1,operating,GANNBL1,battery_charging,30.0
+Glenmaggie,VIC1,operating,GLENMAG1,hydro,4.0
+Hallam,VIC1,operating,HLMSEW01,hydro,1.0
+Hallam Road,VIC1,operating,HALAMRD1,bioenergy_biogas,9.0
+Hazelwood,VIC1,retired,HWPS1,brown_coal,220.0
+Hazelwood,VIC1,retired,HWPS2,brown_coal,220.0
+Hazelwood,VIC1,retired,HWPS3,brown_coal,200.0
+Hazelwood,VIC1,retired,HWPS4,brown_coal,200.0
+Hazelwood,VIC1,retired,HWPS5,brown_coal,200.0
+Hazelwood,VIC1,retired,HWPS6,brown_coal,200.0
+Hazelwood,VIC1,retired,HWPS7,brown_coal,200.0
+Hazelwood,VIC1,retired,HWPS8,brown_coal,200.0
+Hepburn Wind,VIC1,operating,HEPWIND1,wind,4.0
+Hume (VIC),VIC1,operating,HUMEV,hydro,29.0
+Jeeralang A,VIC1,operating,JLA01,gas_ocgt,51.0
+Jeeralang A,VIC1,operating,JLA02,gas_ocgt,51.0
+Jeeralang A,VIC1,operating,JLA03,gas_ocgt,51.0
+Jeeralang A,VIC1,operating,JLA04,gas_ocgt,51.0
+Jeeralang B,VIC1,operating,JLB01,gas_ocgt,76.0
+Jeeralang B,VIC1,operating,JLB02,gas_ocgt,76.0
+Jeeralang B,VIC1,operating,JLB03,gas_ocgt,76.0
+Jindabyne Pump,VIC1,operating,SNWYGJP2,pumps,70.0
+Karadoc,VIC1,operating,KARSF1,solar,104.0
+Kiata,VIC1,operating,KIATAWF1,wind,31.0
+Laverton North,VIC1,operating,LNGS1,gas_ocgt,156.0
+Laverton North,VIC1,operating,LNGS2,gas_ocgt,156.0
+Longford,VIC1,operating,LONGFORD,gas_ocgt,44.0
+Loy Yang A,VIC1,operating,LYA1,brown_coal,560.0
+Loy Yang A,VIC1,operating,LYA2,brown_coal,530.0
+Loy Yang A,VIC1,operating,LYA3,brown_coal,560.0
+Loy Yang A,VIC1,operating,LYA4,brown_coal,560.0
+Loy Yang B,VIC1,operating,LOYYB1,brown_coal,500.0
+Loy Yang B,VIC1,operating,LOYYB2,brown_coal,500.0
+Macarthur,VIC1,operating,MACARTH1,wind,420.0
+Maroona,VIC1,operating,MAROOWF1,wind,6.0
+Mornington Waste Disposal,VIC1,retired,MORNW,bioenergy_biogas,1.0
+Mortlake,VIC1,operating,MORTLK11,gas_ocgt,283.0
+Mortlake,VIC1,operating,MORTLK12,gas_ocgt,283.0
+Mortons Lane,VIC1,operating,MLWF1,wind,20.0
+Mt Gellibrand,VIC1,operating,MTGELWF1,wind,137.984
+Mt Mercer,VIC1,operating,MERCER01,wind,131.0
+Murra Warra,VIC1,operating,MUWAWF1,wind,231.0
+Murray,VIC1,operating,MURRAY,hydro,1500.0
+Newport,VIC1,operating,NPS,gas_steam,500.0
+Numurkah,VIC1,operating,NUMURSF1,solar,74.0
+Oaklands Hill,VIC1,operating,OAKLAND1,wind,67.0
+Portland,VIC1,operating,PORTWF,wind,148.0
+Rubicon,VIC1,operating,RUBICON,hydro,13.0
+Salt Creek,VIC1,operating,SALTCRK1,wind,54.0
+Shepparton Wastewater Treatment,VIC1,operating,SHEP1,bioenergy_biogas,1.0
+Somerton,VIC1,operating,AGLSOM,gas_ocgt,170.0
+Springvale,VIC1,operating,SVALE1,bioenergy_biogas,5.0
+Tatura Biomass,VIC1,operating,TATURA01,bioenergy_biogas,1.0
+Timboon West,VIC1,operating,TIMWEST,wind,7.0
+Toora,VIC1,operating,TOORAWF,wind,21.0
+Traralgon Network Support,VIC1,operating,TGNSS1,gas_recip,10.0
+Valley  Peaking,VIC1,operating,VPGS1,gas_ocgt,50.0
+Valley  Peaking,VIC1,operating,VPGS2,gas_ocgt,50.0
+Valley  Peaking,VIC1,operating,VPGS3,gas_ocgt,50.0
+Valley  Peaking,VIC1,operating,VPGS4,gas_ocgt,50.0
+Valley  Peaking,VIC1,operating,VPGS5,gas_ocgt,50.0
+Valley  Peaking,VIC1,operating,VPGS6,gas_ocgt,50.0
+Waubra,VIC1,operating,WAUBRAWF,wind,192.0
+Wemen,VIC1,operating,WEMENSF1,solar,97.0
+West Kiewa,VIC1,operating,WKIEWA1,hydro,31.0
+West Kiewa,VIC1,operating,WKIEWA2,hydro,31.0
+Wollert,VIC1,operating,WOLLERT1,bioenergy_biogas,7.0
+Wonthaggi,VIC1,operating,WONWP,wind,12.0
+Wyndham,VIC1,retired,WYNDW,bioenergy_biogas,1.0
+Yallourn W,VIC1,operating,YWPS1,brown_coal,360.0
+Yallourn W,VIC1,operating,YWPS2,brown_coal,360.0
+Yallourn W,VIC1,operating,YWPS3,brown_coal,380.0
+Yallourn W,VIC1,operating,YWPS4,brown_coal,380.0
+Yaloak South,VIC1,operating,YSWF1,wind,28.0
+Yambuk,VIC1,operating,YAMBUKWF,wind,30.0
+Yarrawonga,VIC1,operating,YWNGAHYD,hydro,9.0
+Yawong,VIC1,operating,YAWWF1,wind,7.2
+Yendon,VIC1,operating,YENDWF1,wind,144.0
+Albany,WA1,operating,ALBANY_WF1,wind,21.6
+Badgingarra,WA1,operating,BADGINGARRA_WF1,wind,130.0
+Bluewaters,WA1,operating,BW2_BLUEWATERS_G1,black_coal,217.0
+Bluewaters,WA1,operating,BW1_BLUEWATERS_G2,black_coal,217.0
+Bremer Bay,WA1,operating,BREMER_BAY_WF1,wind,0.6
+Cockburn,WA1,operating,COCKBURN_CCG1,gas_ccgt,249.7
+Collgar,WA1,operating,INVESTEC_COLLGAR_WF1,wind,206.0
+Collie,WA1,operating,COLLIE_G1,black_coal,318.3
+Denmark,WA1,operating,DCWL_DENMARK_WF1,wind,1.44
+Emu Downs,WA1,operating,EDWFMAN_WF1,wind,80.0
+Geraldton diesel,WA1,operating,TESLA_GERALDTON_G1,distillate,9.9
+Gosnells,WA1,operating,GOSNELLS,bioenergy_biogas,1.0
+Grasmere,WA1,operating,GRASMERE_WF1,wind,13.8
+Greenough River,WA1,operating,GREENOUGH_RIVER_PV1,solar,10.0
+Henderson,WA1,operating,HENDERSON_RENEWABLE_IG1,bioenergy_biogas,3.0
+Kalamunda,WA1,operating,KALAMUNDA_SG,bioenergy_biogas,1.3
+Kalbarri,WA1,operating,KALBARRI_WF1,wind,1.6
+Kambalda,WA1,operating,STHRNCRS_EG,gas_ocgt,23.0
+Karakin,WA1,operating,BLAIRFOX_KARAKIN_WF1,wind,5.0
+Kemerton,WA1,operating,KEMERTON_GT11,gas_ocgt,154.7
+Kemerton,WA1,operating,KEMERTON_GT12,gas_ocgt,154.7
+Kemerton diesel,WA1,operating,TESLA_KEMERTON_G1,distillate,9.9
+Kwinana,WA1,operating,KWINANA_GT2,gas_ocgt,103.2
+Kwinana,WA1,operating,KWINANA_GT3,gas_ocgt,103.2
+Kwinana,WA1,operating,PPP_KCP_EG1,gas_ocgt,85.7
+Kwinana,WA1,retired,KWINANA_C5,black_coal,200.0
+Kwinana,WA1,retired,KWINANA_C6,black_coal,200.0
+Kwinana Swift,WA1,operating,PERTHENERGY_KWINANA_GT1,gas_ocgt,116.0
+Kwinana cogen,WA1,operating,TIWEST_COG1,gas_ocgt,42.1
+Manjimup,WA1,operating,BRIDGETOWN_BIOMASS_PLANT,bioenergy_biomass,40.0
+Merredin,WA1,operating,NAMKKN_MERR_SG1,gas_ocgt,92.6
+Metro,WA1,operating,AMBRISOLAR_PV1,solar,0.96
+Mirrabooka,WA1,operating,ATLAS,bioenergy_biogas,1.23
+Mount Barker,WA1,operating,SKYFRM_MTBARKER_WF1,wind,2.43
+Muja AB,WA1,retired,MUJA_M1,black_coal,60.0
+Muja AB,WA1,retired,MUJA_M2,black_coal,60.0
+Muja AB,WA1,retired,MUJA_M3,black_coal,60.0
+Muja AB,WA1,retired,MUJA_M4,black_coal,60.0
+Muja CD,WA1,operating,MUJA_G5,black_coal,195.8
+Muja CD,WA1,operating,MUJA_G6,black_coal,193.6
+Muja CD,WA1,operating,MUJA_G7,black_coal,212.6
+Muja CD,WA1,operating,MUJA_G8,black_coal,212.6
+Mumbida,WA1,operating,MWF_MUMBIDA_WF1,wind,55.0
+Mungarra,WA1,operating,MUNGARRA_GT1,gas_ocgt,39.5
+Mungarra,WA1,operating,MUNGARRA_GT2,gas_ocgt,39.5
+Mungarra,WA1,operating,MUNGARRA_GT3,gas_ocgt,38.0
+Neerabup,WA1,operating,NEWGEN_NEERABUP_GT1,gas_ocgt,342.0
+Newgen Kwinana,WA1,operating,NEWGEN_KWINANA_CCG1,gas_ccgt,335.0
+Northam,WA1,operating,NORTHAM_SF_PV1,solar,7.752999999999999
+Northam diesel,WA1,operating,TESLA_NORTHAM_G1,distillate,9.9
+Parkeston,WA1,operating,PRK_AG,gas_ocgt,68.0
+Picton diesel,WA1,operating,TESLA_PICTON_G1,distillate,9.9
+Pinjar,WA1,operating,PINJAR_GT1,gas_ocgt,38.5
+Pinjar,WA1,operating,PINJAR_GT10,gas_ocgt,118.2
+Pinjar,WA1,operating,PINJAR_GT11,gas_ocgt,130.0
+Pinjar,WA1,operating,PINJAR_GT2,gas_ocgt,38.5
+Pinjar,WA1,operating,PINJAR_GT3,gas_ocgt,39.3
+Pinjar,WA1,operating,PINJAR_GT4,gas_ocgt,39.3
+Pinjar,WA1,operating,PINJAR_GT5,gas_ocgt,39.3
+Pinjar,WA1,operating,PINJAR_GT7,gas_ocgt,39.3
+Pinjar,WA1,operating,PINJAR_GT9,gas_ocgt,118.2
+Pinjara,WA1,operating,ALINTA_PNJ_U1,gas_ocgt,143.0
+Pinjara,WA1,operating,ALINTA_PNJ_U2,gas_ocgt,143.0
+Red Hill,WA1,operating,RED_HILL,bioenergy_biogas,3.64
+Richgro,WA1,operating,BIOGAS01,bioenergy_biogas,2.0
+Rockingham,WA1,operating,ROCKINGHAM,bioenergy_biogas,4.0
+South Cardup,WA1,operating,SOUTH_CARDUP,bioenergy_biogas,4.158
+Tamala Park,WA1,operating,TAMALA_PARK,bioenergy_biogas,4.8
+Wagerup,WA1,operating,ALCOA_WGP,gas_ocgt,26.0
+Wagerup,WA1,operating,ALINTA_WGP_GT,gas_ocgt,195.15200000000002
+Wagerup,WA1,operating,ALINTA_WGP_U2,gas_ocgt,196.84799999999998
+Walkaway,WA1,operating,ALINTA_WWF,wind,89.1
+West Hills,WA1,operating,BLAIRFOX_WESTHILLS_WF3,wind,5.0
+West Kalgoorlie,WA1,operating,WEST_KALGOORLIE_GT2,distillate,41.2
+West Kalgoorlie,WA1,operating,WEST_KALGOORLIE_GT3,distillate,23.3
