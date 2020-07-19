@@ -57,7 +57,7 @@ def main():
         for duid, fac in v["duid_data"].items():
             i = [
                 v["display_name"],
-                # k,
+                k,
                 normalize_regions(v["region_id"]),
                 normalize_states(v["status"]["state"]),
                 duid,
@@ -68,7 +68,7 @@ def main():
             ]
             remapped.append(i)
 
-    remapped = sorted(remapped, key=itemgetter(1, 0))
+    remapped = sorted(remapped, key=itemgetter(2, 0))
 
     with open("data/facility_diff/facilities_current.csv", "w") as fh:
         csvwriter = csv.writer(fh)
@@ -85,6 +85,7 @@ def main():
             i = [
                 f["properties"]["name"],
                 # fac["duid"],
+                f["properties"]["station_id"],
                 normalize_regions(f["properties"]["network_region"]),
                 fac["status"].lower(),
                 fac["duid"],
@@ -95,7 +96,7 @@ def main():
             ]
             remapped.append(i)
 
-    remapped = sorted(remapped, key=itemgetter(1, 0))
+    remapped = sorted(remapped, key=itemgetter(2, 0))
 
     with open("data/facility_diff/facilities_v3.csv", "w") as fh:
         csvwriter = csv.writer(fh)
