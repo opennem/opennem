@@ -213,8 +213,8 @@ if __name__ == "__main__":
     geoj["name"] = "nem_facilities"
     geoj["crs"] = crs
 
-    with open("au_facilities.json", "w",) as fh:
-        fh.write(dumps(geoj))
+    with open("data/facility_diff/au_facilities.json", "w",) as fh:
+        fh.write(dumps(geoj, indent=4))
 
     with open(
         "s3://data.opennem.org.au/v3/geo/au_facilities.json",
