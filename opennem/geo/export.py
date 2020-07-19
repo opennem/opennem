@@ -164,9 +164,10 @@ def nem_export():
                     f.geometry = Point((row[15], row[14]))
 
                 f.properties = {
-                    "oid": str(row[22]),
-                    "station_id": row[0],
-                    "station_code": row[9],
+                    "oid": "nem_{}".format(row[22]),
+                    "station_id": row[18],
+                    "station_code": row[9] or row[0],
+                    "facility_id": row[0],
                     "network": "NEM",
                     "network_region": row[19],
                     "state": row[12] or row[19][:-1],
