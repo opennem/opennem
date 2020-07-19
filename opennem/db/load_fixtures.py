@@ -7,6 +7,7 @@ from decimal import Decimal
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
+from opennem.core.facilitystatus import map_v3_states
 from opennem.core.normalizers import station_name_cleaner
 from opennem.db import db_connect
 from opennem.db.models.bom import BomStation
@@ -182,6 +183,7 @@ def parse_facilities_json():
 
             db_facility.fueltech_id = fueltech_map(v["fuel_tech"])
             db_facility.station = station
+            db_facility.status_id = map_v3_states(facility["status"]["state"])
             s.add(db_facility)
             s.commit()
 

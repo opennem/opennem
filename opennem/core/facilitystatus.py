@@ -3,6 +3,23 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def map_v3_states(state):
+    """
+        Maps a current v1 version opennem facility_registry.json state
+        to a v3 state
+
+    """
+    state = state.lower()
+
+    if state == "commissioned":
+        return "operating"
+
+    if state == "decommissioned":
+        return "retired"
+
+    return state
+
+
 def lookup_facility_status(unit_status):
 
     unit_status = unit_status or ""
