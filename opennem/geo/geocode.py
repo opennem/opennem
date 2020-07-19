@@ -25,7 +25,10 @@ def nem_geocode(limit=None):
     records_added = 0
 
     for r in records:
-        geo_str = "{}, {}, Australia".format(r.name, r.region[:-1])
+        if r.region:
+            geo_str = "{}, {}, Australia".format(r.name, r.region[:-1])
+        else:
+            geo_str = "{}, Australia".format(r.name)
 
         logger.info("Encoding: {}".format(geo_str))
 
