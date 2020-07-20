@@ -176,6 +176,9 @@ def station_name_cleaner(facility_name):
 
     name_clean = name_clean.replace("\u00a0", " ")
 
+    if name_clean.startswith("hornsdale power reserve"):
+        return "Hornsdale Power Reserve"
+
     if name_clean.startswith("swan hill solar farm"):
         return "Swan Hill Solar Farm"
 
