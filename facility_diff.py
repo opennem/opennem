@@ -73,6 +73,7 @@ def main():
                 f["properties"]["name"] or "",
                 # fac["duid"],
                 f["properties"]["oid"],
+                f["properties"]["station_code"] or "",
                 normalize_regions(f["properties"]["network_region"]) or "",
                 fac["status"].lower(),
                 fac["duid"],
