@@ -63,10 +63,9 @@ def wem_export():
 
         for row in rows:
             name = row[4] or row[3]
-            station_id = row[17]
+            station_id = row[18]
 
             if current_station_code != station_id:
-
                 if f is not None:
                     features.append(f)
 
@@ -216,9 +215,9 @@ if __name__ == "__main__":
     with open("data/facility_diff/au_facilities.json", "w",) as fh:
         fh.write(dumps(geoj, indent=4))
 
-    with open(
-        "s3://data.opennem.org.au/v3/geo/au_facilities.json",
-        "w",
-        transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
-    ) as fh:
-        fh.write(dumps(geoj))
+    # with open(
+    #     "s3://data.opennem.org.au/v3/geo/au_facilities.json",
+    #     "w",
+    #     transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
+    # ) as fh:
+    #     fh.write(dumps(geoj))
