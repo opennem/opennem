@@ -84,7 +84,7 @@ def main():
             ]
             remapped.append(i)
 
-    remapped = sorted(remapped, key=itemgetter(2, 0))
+    remapped = sorted(remapped, key=itemgetter(3, 0))
 
     with open("data/facility_diff/facilities_v3.csv", "w") as fh:
         csvwriter = csv.writer(fh)
