@@ -92,6 +92,7 @@ ACRONYMS = [
     "cd",
     "ab",
     "stp",
+    "krc",
 ]
 
 
