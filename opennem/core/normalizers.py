@@ -217,6 +217,8 @@ def station_name_cleaner(facility_name):
 
         if comp in ACRONYMS:
             comp = comp.upper()
+        elif comp.startswith("mc"):
+            comp = "Mc" + comp[2:].capitalize()
         elif type(comp) is str and comp != "":
             comp = comp.capitalize()
 
