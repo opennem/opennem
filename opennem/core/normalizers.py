@@ -218,7 +218,7 @@ def station_name_cleaner(facility_name):
         if comp in ACRONYMS:
             comp = comp.upper()
         elif type(comp) is str and comp != "":
-            comp = comp.title()
+            comp = comp.capitalize()
 
         # strip numbers greater than 5
         comp = clean_numbers(comp)
