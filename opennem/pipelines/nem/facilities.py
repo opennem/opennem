@@ -180,7 +180,7 @@ class NemStoreREL(DatabaseStoreBase):
         return 0
 
 
-class NemStoreFacility(DatabaseStoreBase):
+class NemStoreGI(DatabaseStoreBase):
     def parse_interval(self, date_str):
         return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
 
@@ -342,3 +342,15 @@ class NemStoreFacility(DatabaseStoreBase):
             "status": item["UnitStatus"],
             "status_id": lookup_facility_status(item["UnitStatus"]),
         }
+
+
+class NemStoreMMS(DatabaseStoreBase):
+    def parse_interval(self, date_str):
+        return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+
+    @check_spider_pipeline
+    def process_item(self, item, spider=None):
+
+        s = self.session()
+
+        print(item)

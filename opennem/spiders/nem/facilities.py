@@ -3,11 +3,15 @@ from io import BytesIO
 import scrapy
 from openpyxl import load_workbook
 
-from opennem.pipelines.nem.facilities import NemStoreFacility, NemStoreREL
+from opennem.pipelines.nem.facilities import (
+    NemStoreGI,
+    NemStoreMMS,
+    NemStoreREL,
+)
 
 
 class NemFacilitySpider(scrapy.Spider):
-    name = "au.nem.facilities_gi"
+    name = "au.nem.facilities.gi"
 
     start_urls = [
         "https://aemo.com.au/-/media/files/electricity/nem/planning_and_forecasting/generation_information/nem-generation-information-april-2020.xlsx?la=en"
@@ -34,7 +38,7 @@ class NemFacilitySpider(scrapy.Spider):
         "SurveyEffective",
     ]
 
-    pipelines_extra = set([NemStoreFacility,])
+    pipelines_extra = set([NemStoreGI,])
 
     def parse(self, response):
         wb = load_workbook(BytesIO(response.body), data_only=True)
@@ -56,7 +60,7 @@ class NemFacilitySpider(scrapy.Spider):
 
 
 class NemParticipantSpider(scrapy.Spider):
-    name = "au.nem.facilities"
+    name = "au.nem.facilities.rel"
 
     start_urls = [
         "https://data.opennem.org.au/v3/data/NEM+Registration+and+Exemption+List.xlsx"
@@ -118,3 +122,16 @@ class NemParticipantSpider(scrapy.Spider):
             )
 
         yield {"generators": generators, "participants": participants}
+
+
+class NemFacilityMMSSpider(scrapy.Spider):
+    name = "au.nem.facility.mms"
+
+    start_urls = [
+        "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_DUDETAILSUMMARY_202006010000.zip"
+    ]
+
+    pipelines_extra = set([NemStoreREL,])
+
+    def parse(self, response):
+        yield response

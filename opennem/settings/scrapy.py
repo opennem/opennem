@@ -36,9 +36,10 @@ AUTOTHROTTLE_MAX_DELAY = 60
 ITEM_PIPELINES = {
     "opennem.pipelines.files.LinkExtract": 101,
     "opennem.pipelines.nem.ExtractCSV": 301,
-    "opennem.pipelines.nem.DatabaseStore": 401,
-    "opennem.pipelines.nem.facilities.NemStoreFacility": 401,
-    "opennem.pipelines.nem.facilities.NemStoreREL": 402,
+    "opennem.pipelines.nem.DatabaseStore": 400,
+    "opennem.pipelines.nem.facilities.NemStoreMMS": 401,
+    "opennem.pipelines.nem.facilities.NemStoreGI": 402,
+    "opennem.pipelines.nem.facilities.NemStoreREL": 403,
     "opennem.pipelines.wem.facilities.WemStoreFacility": 410,
     "opennem.pipelines.wem.facility_scada.WemStoreFacilityScada": 411,
     "opennem.pipelines.wem.balancing_summary.WemStoreBalancingSummary": 412,
