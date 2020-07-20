@@ -64,8 +64,6 @@ STRIP_WORDS = [
     "and",
     "bess",
     "bess1",
-    "stp",
-    "wtp",
     "gen",
     "e",
     "jv",
@@ -93,6 +91,7 @@ ACRONYMS = [
     "fpc",
     "cd",
     "ab",
+    "stp",
 ]
 
 
