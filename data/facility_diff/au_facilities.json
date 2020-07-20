@@ -380,8 +380,8 @@
             "properties": {
                 "oid": "nem_11",
                 "station_id": 11,
-                "station_code": "EILDON1",
-                "facility_id": "EILDON1",
+                "station_code": "EILDON2",
+                "facility_id": "EILDON2",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
@@ -389,6 +389,28 @@
                 "name": "Eildon",
                 "registered_capacity": null,
                 "duid_data": [
+                    {
+                        "duid": "EILDON2",
+                        "fuel_tech": "hydro",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2b",
+                        "unit_size": "7.5",
+                        "registered_capacity": null
+                    },
+                    {
+                        "duid": "EILDON1",
+                        "fuel_tech": "hydro",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "60.0",
+                        "registered_capacity": 60.0
+                    },
                     {
                         "duid": "EILDON1",
                         "fuel_tech": "hydro",
@@ -410,28 +432,6 @@
                         "unit_number": "1",
                         "unit_size": "60.0",
                         "registered_capacity": 60.0
-                    },
-                    {
-                        "duid": "EILDON1",
-                        "fuel_tech": "hydro",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "60.0",
-                        "registered_capacity": 60.0
-                    },
-                    {
-                        "duid": "EILDON2",
-                        "fuel_tech": "hydro",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "2b",
-                        "unit_size": "7.5",
-                        "registered_capacity": null
                     },
                     {
                         "duid": "EILDON3",
@@ -777,9 +777,9 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "RFPS1",
-                        "unit_size": "0.3",
-                        "registered_capacity": 0.3
+                        "unit_number": "RPS1-2",
+                        "unit_size": "4.7",
+                        "registered_capacity": 9.4
                     },
                     {
                         "duid": "RUBICON",
@@ -788,9 +788,9 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "RPS1-2",
-                        "unit_size": "4.7",
-                        "registered_capacity": 9.4
+                        "unit_number": "RFPS1",
+                        "unit_size": "0.3",
+                        "registered_capacity": 0.3
                     }
                 ]
             }
@@ -842,26 +842,15 @@
             "properties": {
                 "oid": "nem_22",
                 "station_id": 22,
-                "station_code": "YABULU",
-                "facility_id": "YABULU",
+                "station_code": "YABULU2",
+                "facility_id": "YABULU2",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
                 "postcode": "4000",
                 "name": "Townsville",
-                "registered_capacity": 160.0,
+                "registered_capacity": 82.0,
                 "duid_data": [
-                    {
-                        "duid": "YABULU",
-                        "fuel_tech": "gas_ccgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "160.0",
-                        "registered_capacity": 160.0
-                    },
                     {
                         "duid": "YABULU2",
                         "fuel_tech": "gas_ccgt",
@@ -872,6 +861,17 @@
                         "unit_number": "2",
                         "unit_size": "82.0",
                         "registered_capacity": 82.0
+                    },
+                    {
+                        "duid": "YABULU",
+                        "fuel_tech": "gas_ccgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "160.0",
+                        "registered_capacity": 160.0
                     }
                 ]
             }
@@ -1039,8 +1039,8 @@
             "properties": {
                 "oid": "nem_27",
                 "station_id": 27,
-                "station_code": "LYA3",
-                "facility_id": "LYA3",
+                "station_code": "LYA4",
+                "facility_id": "LYA4",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
@@ -1049,7 +1049,7 @@
                 "registered_capacity": 560.0,
                 "duid_data": [
                     {
-                        "duid": "LYA3",
+                        "duid": "LYA4",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -1071,7 +1071,7 @@
                         "registered_capacity": 530.0
                     },
                     {
-                        "duid": "LYA4",
+                        "duid": "LYA3",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -1107,8 +1107,8 @@
             "properties": {
                 "oid": "nem_28",
                 "station_id": 28,
-                "station_code": "BW01",
-                "facility_id": "BW01",
+                "station_code": "BW02",
+                "facility_id": "BW02",
                 "network": "NEM",
                 "network_region": "NSW1",
                 "state": "NSW",
@@ -1116,28 +1116,6 @@
                 "name": "Bayswater",
                 "registered_capacity": 660.0,
                 "duid_data": [
-                    {
-                        "duid": "BW01",
-                        "fuel_tech": "coal_black",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "660.0",
-                        "registered_capacity": 660.0
-                    },
-                    {
-                        "duid": "BW04",
-                        "fuel_tech": "coal_black",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "660.0",
-                        "registered_capacity": 660.0
-                    },
                     {
                         "duid": "BW02",
                         "fuel_tech": "coal_black",
@@ -1150,7 +1128,29 @@
                         "registered_capacity": 660.0
                     },
                     {
+                        "duid": "BW01",
+                        "fuel_tech": "coal_black",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "660.0",
+                        "registered_capacity": 660.0
+                    },
+                    {
                         "duid": "BW03",
+                        "fuel_tech": "coal_black",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "660.0",
+                        "registered_capacity": 660.0
+                    },
+                    {
+                        "duid": "BW04",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -1210,8 +1210,8 @@
             "properties": {
                 "oid": "nem_30",
                 "station_id": 30,
-                "station_code": "LD04",
-                "facility_id": "LD04",
+                "station_code": "LD02",
+                "facility_id": "LD02",
                 "network": "NEM",
                 "network_region": "NSW1",
                 "state": "NSW",
@@ -1220,7 +1220,7 @@
                 "registered_capacity": 500.0,
                 "duid_data": [
                     {
-                        "duid": "LD04",
+                        "duid": "LD02",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -1242,7 +1242,7 @@
                         "registered_capacity": 500.0
                     },
                     {
-                        "duid": "LD03",
+                        "duid": "LD04",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -1253,7 +1253,7 @@
                         "registered_capacity": 500.0
                     },
                     {
-                        "duid": "LD02",
+                        "duid": "LD03",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -1320,18 +1320,18 @@
                 "state": "QLD",
                 "postcode": "4610",
                 "name": "Coopers Gap",
-                "registered_capacity": 174.0,
+                "registered_capacity": 53.0,
                 "duid_data": [
                     {
                         "duid": "COOPGWF1",
                         "fuel_tech": "wind",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
-                        "status": "commissioning",
-                        "status_label": "Commissioning",
-                        "unit_number": "91",
-                        "unit_size": "3.52",
-                        "registered_capacity": 174.0
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "32",
+                        "unit_size": "3.71",
+                        "registered_capacity": 53.0
                     },
                     {
                         "duid": "COOPGWF1",
@@ -1349,11 +1349,11 @@
                         "fuel_tech": "wind",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "32",
-                        "unit_size": "3.71",
-                        "registered_capacity": 53.0
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
+                        "unit_number": "91",
+                        "unit_size": "3.52",
+                        "registered_capacity": 174.0
                     },
                     {
                         "duid": "COOPGWF1",
@@ -1556,26 +1556,15 @@
             "properties": {
                 "oid": "nem_38",
                 "station_id": 38,
-                "station_code": "TORRB4",
-                "facility_id": "TORRB4",
+                "station_code": "TORRA3",
+                "facility_id": "TORRA3",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
                 "postcode": "5015",
                 "name": "Torrens Island",
-                "registered_capacity": 200.0,
+                "registered_capacity": 120.0,
                 "duid_data": [
-                    {
-                        "duid": "TORRB4",
-                        "fuel_tech": "gas_steam",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "4",
-                        "unit_size": "200.0",
-                        "registered_capacity": 200.0
-                    },
                     {
                         "duid": "TORRA3",
                         "fuel_tech": "gas_steam",
@@ -1632,13 +1621,13 @@
                         "registered_capacity": 200.0
                     },
                     {
-                        "duid": "TORRB2",
+                        "duid": "TORRB4",
                         "fuel_tech": "gas_steam",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "2",
+                        "unit_number": "4",
                         "unit_size": "200.0",
                         "registered_capacity": 200.0
                     },
@@ -1650,6 +1639,17 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "3",
+                        "unit_size": "200.0",
+                        "registered_capacity": 200.0
+                    },
+                    {
+                        "duid": "TORRB2",
+                        "fuel_tech": "gas_steam",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2",
                         "unit_size": "200.0",
                         "registered_capacity": 200.0
                     }
@@ -1960,7 +1960,7 @@
                 "state": "VIC",
                 "postcode": "3377",
                 "name": "Ararat",
-                "registered_capacity": null,
+                "registered_capacity": 241.59,
                 "duid_data": [
                     {
                         "duid": "ARWF1",
@@ -1969,9 +1969,9 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "33-75",
+                        "unit_number": "75",
                         "unit_size": "3.23",
-                        "registered_capacity": null
+                        "registered_capacity": 241.59
                     },
                     {
                         "duid": "ARWF1",
@@ -1991,9 +1991,9 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "75",
+                        "unit_number": "33-75",
                         "unit_size": "3.23",
-                        "registered_capacity": 241.59
+                        "registered_capacity": null
                     }
                 ]
             }
@@ -2066,7 +2066,7 @@
                         "registered_capacity": 173.0
                     },
                     {
-                        "duid": "BRAEMAR7",
+                        "duid": "BRAEMAR6",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -2077,7 +2077,7 @@
                         "registered_capacity": 173.0
                     },
                     {
-                        "duid": "BRAEMAR6",
+                        "duid": "BRAEMAR7",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -2109,19 +2109,8 @@
                 "state": "NSW",
                 "postcode": "2630",
                 "name": "Boco Rock",
-                "registered_capacity": null,
+                "registered_capacity": 113.18,
                 "duid_data": [
-                    {
-                        "duid": "BOCORWF1",
-                        "fuel_tech": "wind",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "59-67",
-                        "unit_size": "1.62",
-                        "registered_capacity": null
-                    },
                     {
                         "duid": "BOCORWF1",
                         "fuel_tech": "wind",
@@ -2132,6 +2121,17 @@
                         "unit_number": "9",
                         "unit_size": "1.7",
                         "registered_capacity": 113.18
+                    },
+                    {
+                        "duid": "BOCORWF1",
+                        "fuel_tech": "wind",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "59-67",
+                        "unit_size": "1.62",
+                        "registered_capacity": null
                     }
                 ]
             }
@@ -2233,7 +2233,7 @@
                         "registered_capacity": 168.0
                     },
                     {
-                        "duid": "BRAEMAR2",
+                        "duid": "BRAEMAR1",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -2244,7 +2244,7 @@
                         "registered_capacity": 168.0
                     },
                     {
-                        "duid": "BRAEMAR1",
+                        "duid": "BRAEMAR2",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -2456,19 +2456,8 @@
                 "state": "NSW",
                 "postcode": "2472",
                 "name": "Broadwater",
-                "registered_capacity": 38.0,
+                "registered_capacity": null,
                 "duid_data": [
-                    {
-                        "duid": "BWTR1",
-                        "fuel_tech": "bioenergy_biogas",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "30.0",
-                        "registered_capacity": 38.0
-                    },
                     {
                         "duid": "BWTR1",
                         "fuel_tech": "bioenergy_biomass",
@@ -2479,6 +2468,17 @@
                         "unit_number": "2",
                         "unit_size": "8.0",
                         "registered_capacity": null
+                    },
+                    {
+                        "duid": "BWTR1",
+                        "fuel_tech": "bioenergy_biogas",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "30.0",
+                        "registered_capacity": 38.0
                     }
                 ]
             }
@@ -2664,8 +2664,8 @@
             "properties": {
                 "oid": "nem_67",
                 "station_id": 67,
-                "station_code": "BARRON-2",
-                "facility_id": "BARRON-2",
+                "station_code": "BARRON-1",
+                "facility_id": "BARRON-1",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
@@ -2674,7 +2674,7 @@
                 "registered_capacity": 30.0,
                 "duid_data": [
                     {
-                        "duid": "BARRON-2",
+                        "duid": "BARRON-1",
                         "fuel_tech": "hydro",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -2685,7 +2685,7 @@
                         "registered_capacity": 30.0
                     },
                     {
-                        "duid": "BARRON-1",
+                        "duid": "BARRON-2",
                         "fuel_tech": "hydro",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -2710,8 +2710,8 @@
             "properties": {
                 "oid": "nem_68",
                 "station_id": 68,
-                "station_code": "KAREEYA2",
-                "facility_id": "KAREEYA2",
+                "station_code": "KAREEYA3",
+                "facility_id": "KAREEYA3",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
@@ -2720,7 +2720,7 @@
                 "registered_capacity": 21.0,
                 "duid_data": [
                     {
-                        "duid": "KAREEYA2",
+                        "duid": "KAREEYA3",
                         "fuel_tech": "hydro",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -2731,7 +2731,18 @@
                         "registered_capacity": 21.0
                     },
                     {
-                        "duid": "KAREEYA3",
+                        "duid": "KAREEYA4",
+                        "fuel_tech": "hydro",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "21.0",
+                        "registered_capacity": 21.0
+                    },
+                    {
+                        "duid": "KAREEYA2",
                         "fuel_tech": "hydro",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -2751,17 +2762,6 @@
                         "unit_number": "1",
                         "unit_size": "7.0",
                         "registered_capacity": 7.0
-                    },
-                    {
-                        "duid": "KAREEYA4",
-                        "fuel_tech": "hydro",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "21.0",
-                        "registered_capacity": 21.0
                     },
                     {
                         "duid": "KAREEYA1",
@@ -2845,13 +2845,13 @@
                         "registered_capacity": 285.0
                     },
                     {
-                        "duid": "PUMP1",
+                        "duid": "PUMP2",
                         "fuel_tech": "pumps",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "1",
+                        "unit_number": "2",
                         "unit_size": "240.0",
                         "registered_capacity": 240.0
                     },
@@ -2867,13 +2867,13 @@
                         "registered_capacity": 285.0
                     },
                     {
-                        "duid": "PUMP2",
+                        "duid": "PUMP1",
                         "fuel_tech": "pumps",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "2",
+                        "unit_number": "1",
                         "unit_size": "240.0",
                         "registered_capacity": 240.0
                     }
@@ -3032,15 +3032,26 @@
             "properties": {
                 "oid": "nem_75",
                 "station_id": 75,
-                "station_code": "CALL_B_2",
-                "facility_id": "CALL_B_2",
+                "station_code": "CALL_A_4",
+                "facility_id": "CALL_A_4",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
                 "postcode": "4715",
                 "name": "Callide B",
-                "registered_capacity": 350.0,
+                "registered_capacity": 30.0,
                 "duid_data": [
+                    {
+                        "duid": "CALL_A_4",
+                        "fuel_tech": "coal_black",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_number": "2",
+                        "unit_size": "30.0",
+                        "registered_capacity": 30.0
+                    },
                     {
                         "duid": "CALL_B_2",
                         "fuel_tech": "coal_black",
@@ -3051,6 +3062,17 @@
                         "unit_number": "1",
                         "unit_size": "350.0",
                         "registered_capacity": 350.0
+                    },
+                    {
+                        "duid": "CALL_A_2",
+                        "fuel_tech": "coal_black",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 30.0
                     },
                     {
                         "duid": "CALL_B_1",
@@ -3064,17 +3086,6 @@
                         "registered_capacity": 350.0
                     },
                     {
-                        "duid": "CALL_A_4",
-                        "fuel_tech": "coal_black",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_number": "2",
-                        "unit_size": "30.0",
-                        "registered_capacity": 30.0
-                    },
-                    {
                         "duid": null,
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
@@ -3083,17 +3094,6 @@
                         "status_label": "Operating",
                         "unit_number": "2",
                         "unit_size": "30",
-                        "registered_capacity": 30.0
-                    },
-                    {
-                        "duid": "CALL_A_2",
-                        "fuel_tech": "coal_black",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_number": null,
-                        "unit_size": "None",
                         "registered_capacity": 30.0
                     }
                 ]
@@ -3111,8 +3111,8 @@
             "properties": {
                 "oid": "nem_76",
                 "station_id": 76,
-                "station_code": "GSTONE1",
-                "facility_id": "GSTONE1",
+                "station_code": "GSTONE5",
+                "facility_id": "GSTONE5",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
@@ -3121,7 +3121,7 @@
                 "registered_capacity": 280.0,
                 "duid_data": [
                     {
-                        "duid": "GSTONE1",
+                        "duid": "GSTONE5",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -3132,7 +3132,7 @@
                         "registered_capacity": 280.0
                     },
                     {
-                        "duid": "GSTONE5",
+                        "duid": "GSTONE1",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -3165,7 +3165,7 @@
                         "registered_capacity": 280.0
                     },
                     {
-                        "duid": "GSTONE3",
+                        "duid": "GSTONE6",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -3176,7 +3176,7 @@
                         "registered_capacity": 280.0
                     },
                     {
-                        "duid": "GSTONE6",
+                        "duid": "GSTONE3",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -3352,8 +3352,8 @@
             "properties": {
                 "oid": "nem_81",
                 "station_id": 81,
-                "station_code": "VP5",
-                "facility_id": "VP5",
+                "station_code": "VP6",
+                "facility_id": "VP6",
                 "network": "NEM",
                 "network_region": "NSW1",
                 "state": "NSW",
@@ -3362,7 +3362,7 @@
                 "registered_capacity": 660.0,
                 "duid_data": [
                     {
-                        "duid": "VP5",
+                        "duid": "VP6",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -3373,7 +3373,7 @@
                         "registered_capacity": 660.0
                     },
                     {
-                        "duid": "VP6",
+                        "duid": "VP5",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -3834,8 +3834,8 @@
             "properties": {
                 "oid": "nem_94",
                 "station_id": 94,
-                "station_code": "JLA03",
-                "facility_id": "JLA03",
+                "station_code": "JLA01",
+                "facility_id": "JLA01",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
@@ -3844,13 +3844,13 @@
                 "registered_capacity": 51.0,
                 "duid_data": [
                     {
-                        "duid": "JLA03",
+                        "duid": "JLA01",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "3",
+                        "unit_number": "1",
                         "unit_size": "51.0",
                         "registered_capacity": 51.0
                     },
@@ -3866,17 +3866,6 @@
                         "registered_capacity": 51.0
                     },
                     {
-                        "duid": "JLA01",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "51.0",
-                        "registered_capacity": 51.0
-                    },
-                    {
                         "duid": "JLA04",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
@@ -3884,6 +3873,17 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "4",
+                        "unit_size": "51.0",
+                        "registered_capacity": 51.0
+                    },
+                    {
+                        "duid": "JLA03",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "3",
                         "unit_size": "51.0",
                         "registered_capacity": 51.0
                     }
@@ -3923,17 +3923,6 @@
                         "registered_capacity": 76.0
                     },
                     {
-                        "duid": "JLB03",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "3",
-                        "unit_size": "76.0",
-                        "registered_capacity": 76.0
-                    },
-                    {
                         "duid": "JLB01",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
@@ -3941,6 +3930,17 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "1",
+                        "unit_size": "76.0",
+                        "registered_capacity": 76.0
+                    },
+                    {
+                        "duid": "JLB03",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "3",
                         "unit_size": "76.0",
                         "registered_capacity": 76.0
                     }
@@ -4430,26 +4430,15 @@
             "properties": {
                 "oid": "nem_109",
                 "station_id": 109,
-                "station_code": "LUCAS2S2",
-                "facility_id": "LUCAS2S2",
+                "station_code": "LUCASHGT",
+                "facility_id": "LUCASHGT",
                 "network": "NEM",
                 "network_region": "NSW1",
                 "state": "NSW",
                 "postcode": "2234",
                 "name": "Lucas Heights 2",
-                "registered_capacity": 4.6,
+                "registered_capacity": 12.65,
                 "duid_data": [
-                    {
-                        "duid": "LUCAS2S2",
-                        "fuel_tech": "bioenergy_biogas",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "4",
-                        "unit_size": "1.15",
-                        "registered_capacity": 4.6
-                    },
                     {
                         "duid": "LUCASHGT",
                         "fuel_tech": "bioenergy_biogas",
@@ -4460,6 +4449,17 @@
                         "unit_number": "11",
                         "unit_size": "1.15",
                         "registered_capacity": 12.65
+                    },
+                    {
+                        "duid": "LUCAS2S2",
+                        "fuel_tech": "bioenergy_biogas",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "4",
+                        "unit_size": "1.15",
+                        "registered_capacity": 4.6
                     }
                 ]
             }
@@ -4658,19 +4658,8 @@
                 "state": "VIC",
                 "postcode": "3025",
                 "name": "Brooklyn",
-                "registered_capacity": null,
+                "registered_capacity": 2.83,
                 "duid_data": [
-                    {
-                        "duid": "BROOKLYN",
-                        "fuel_tech": "bioenergy_biogas",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "2",
-                        "unit_size": "1.03",
-                        "registered_capacity": null
-                    },
                     {
                         "duid": "BROOKLYN",
                         "fuel_tech": "bioenergy_biogas",
@@ -4691,6 +4680,17 @@
                         "status_label": "Operating",
                         "unit_number": "3",
                         "unit_size": "0.65",
+                        "registered_capacity": null
+                    },
+                    {
+                        "duid": "BROOKLYN",
+                        "fuel_tech": "bioenergy_biogas",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2",
+                        "unit_size": "1.03",
                         "registered_capacity": null
                     }
                 ]
@@ -4948,19 +4948,8 @@
                 "state": "VIC",
                 "postcode": "3350",
                 "name": "Ballarat Hospital",
-                "registered_capacity": null,
+                "registered_capacity": 3.0,
                 "duid_data": [
-                    {
-                        "duid": "BBASEHOS",
-                        "fuel_tech": "distillate",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "3",
-                        "unit_size": "1.0",
-                        "registered_capacity": null
-                    },
                     {
                         "duid": "BBASEHOS",
                         "fuel_tech": "gas_recip",
@@ -4971,6 +4960,17 @@
                         "unit_number": "2",
                         "unit_size": "1.0",
                         "registered_capacity": 3.0
+                    },
+                    {
+                        "duid": "BBASEHOS",
+                        "fuel_tech": "distillate",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "3",
+                        "unit_size": "1.0",
+                        "registered_capacity": null
                     }
                 ]
             }
@@ -5208,8 +5208,8 @@
             "properties": {
                 "oid": "nem_130",
                 "station_id": 130,
-                "station_code": "BALBG1",
-                "facility_id": "BALBG1",
+                "station_code": "BALBL1",
+                "facility_id": "BALBL1",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
@@ -5218,17 +5218,6 @@
                 "registered_capacity": 30.0,
                 "duid_data": [
                     {
-                        "duid": "BALBG1",
-                        "fuel_tech": "battery_discharging",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "1.764",
-                        "registered_capacity": 30.0
-                    },
-                    {
                         "duid": "BALBL1",
                         "fuel_tech": "battery_charging",
                         "commissioned_date": "None",
@@ -5236,6 +5225,17 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "1-17",
+                        "unit_size": "1.764",
+                        "registered_capacity": 30.0
+                    },
+                    {
+                        "duid": "BALBG1",
+                        "fuel_tech": "battery_discharging",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
                         "unit_size": "1.764",
                         "registered_capacity": 30.0
                     }
@@ -5254,8 +5254,8 @@
             "properties": {
                 "oid": "nem_131",
                 "station_id": 131,
-                "station_code": "GANNBL1",
-                "facility_id": "GANNBL1",
+                "station_code": "GANNBG1",
+                "facility_id": "GANNBG1",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
@@ -5264,17 +5264,6 @@
                 "registered_capacity": 30.875,
                 "duid_data": [
                     {
-                        "duid": "GANNBL1",
-                        "fuel_tech": "battery_charging",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1-50",
-                        "unit_size": "0.6175",
-                        "registered_capacity": 30.875
-                    },
-                    {
                         "duid": "GANNBG1",
                         "fuel_tech": "battery_discharging",
                         "commissioned_date": "None",
@@ -5282,6 +5271,17 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "1",
+                        "unit_size": "0.6175",
+                        "registered_capacity": 30.875
+                    },
+                    {
+                        "duid": "GANNBL1",
+                        "fuel_tech": "battery_charging",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1-50",
                         "unit_size": "0.6175",
                         "registered_capacity": 30.875
                     }
@@ -5335,8 +5335,8 @@
             "properties": {
                 "oid": "nem_133",
                 "station_id": 133,
-                "station_code": "MP2",
-                "facility_id": "MP2",
+                "station_code": "MP1",
+                "facility_id": "MP1",
                 "network": "NEM",
                 "network_region": "NSW1",
                 "state": "NSW",
@@ -5345,7 +5345,7 @@
                 "registered_capacity": 700.0,
                 "duid_data": [
                     {
-                        "duid": "MP2",
+                        "duid": "MP1",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -5356,7 +5356,7 @@
                         "registered_capacity": 700.0
                     },
                     {
-                        "duid": "MP1",
+                        "duid": "MP2",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -5423,7 +5423,7 @@
                 "state": "NSW",
                 "postcode": "2580",
                 "name": "Woodlawn",
-                "registered_capacity": 7.0,
+                "registered_capacity": null,
                 "duid_data": [
                     {
                         "duid": "WDLNGN01",
@@ -5434,7 +5434,7 @@
                         "status_label": "Operating",
                         "unit_number": "7",
                         "unit_size": "1.065",
-                        "registered_capacity": 7.0
+                        "registered_capacity": null
                     },
                     {
                         "duid": "WDLNGN01",
@@ -5445,7 +5445,7 @@
                         "status_label": "Operating",
                         "unit_number": "7",
                         "unit_size": "1.065",
-                        "registered_capacity": null
+                        "registered_capacity": 7.0
                     }
                 ]
             }
@@ -5513,63 +5513,8 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "GT 1-3",
-                        "unit_size": "37",
-                        "registered_capacity": null
-                    },
-                    {
-                        "duid": "AGLHAL",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "GT 2-1",
-                        "unit_size": "15.5",
-                        "registered_capacity": null
-                    },
-                    {
-                        "duid": "AGLHAL",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "GT 2-2",
-                        "unit_size": "22.5",
-                        "registered_capacity": null
-                    },
-                    {
-                        "duid": "AGLHAL",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "GT 2-4",
-                        "unit_size": "23.4",
-                        "registered_capacity": null
-                    },
-                    {
-                        "duid": "AGLHAL",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "GT 3-1",
-                        "unit_size": "15.0",
-                        "registered_capacity": null
-                    },
-                    {
-                        "duid": "AGLHAL",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "GT 3-3",
-                        "unit_size": "15.5",
+                        "unit_number": "GT 4-2",
+                        "unit_size": "14.6",
                         "registered_capacity": null
                     },
                     {
@@ -5590,9 +5535,9 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "GT 1-2,GT 1-4",
-                        "unit_size": "14.0",
-                        "registered_capacity": 217.0
+                        "unit_number": "GT 3-3",
+                        "unit_size": "15.5",
+                        "registered_capacity": null
                     },
                     {
                         "duid": "AGLHAL",
@@ -5601,8 +5546,8 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "GT 4-2",
-                        "unit_size": "14.6",
+                        "unit_number": "GT 2-3",
+                        "unit_size": "25.0",
                         "registered_capacity": null
                     },
                     {
@@ -5634,9 +5579,64 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "GT 2-3",
-                        "unit_size": "25.0",
+                        "unit_number": "GT 3-1",
+                        "unit_size": "15.0",
                         "registered_capacity": null
+                    },
+                    {
+                        "duid": "AGLHAL",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "GT 2-4",
+                        "unit_size": "23.4",
+                        "registered_capacity": null
+                    },
+                    {
+                        "duid": "AGLHAL",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "GT 2-2",
+                        "unit_size": "22.5",
+                        "registered_capacity": null
+                    },
+                    {
+                        "duid": "AGLHAL",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "GT 2-1",
+                        "unit_size": "15.5",
+                        "registered_capacity": null
+                    },
+                    {
+                        "duid": "AGLHAL",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "GT 1-3",
+                        "unit_size": "37",
+                        "registered_capacity": null
+                    },
+                    {
+                        "duid": "AGLHAL",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "GT 1-2,GT 1-4",
+                        "unit_size": "14.0",
+                        "registered_capacity": 217.0
                     }
                 ]
             }
@@ -5653,25 +5653,25 @@
             "properties": {
                 "oid": "nem_138",
                 "station_id": 138,
-                "station_code": "YWPS2",
-                "facility_id": "YWPS2",
+                "station_code": "YWPS3",
+                "facility_id": "YWPS3",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
                 "postcode": "3825",
                 "name": "Yallourn W",
-                "registered_capacity": 360.0,
+                "registered_capacity": 380.0,
                 "duid_data": [
                     {
-                        "duid": "YWPS2",
+                        "duid": "YWPS3",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "1",
-                        "unit_size": "360.0",
-                        "registered_capacity": 360.0
+                        "unit_size": "380.0",
+                        "registered_capacity": 380.0
                     },
                     {
                         "duid": "YWPS1",
@@ -5685,15 +5685,15 @@
                         "registered_capacity": 360.0
                     },
                     {
-                        "duid": "YWPS3",
+                        "duid": "YWPS2",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "1",
-                        "unit_size": "380.0",
-                        "registered_capacity": 380.0
+                        "unit_size": "360.0",
+                        "registered_capacity": 360.0
                     },
                     {
                         "duid": "YWPS4",
@@ -6122,8 +6122,8 @@
             "properties": {
                 "oid": "nem_150",
                 "station_id": 150,
-                "station_code": "DALNTHL1",
-                "facility_id": "DALNTHL1",
+                "station_code": "DALNTH01",
+                "facility_id": "DALNTH01",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
@@ -6132,17 +6132,6 @@
                 "registered_capacity": 30.0,
                 "duid_data": [
                     {
-                        "duid": "DALNTHL1",
-                        "fuel_tech": "battery_charging",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1-12",
-                        "unit_size": "2.5",
-                        "registered_capacity": 30.0
-                    },
-                    {
                         "duid": "DALNTH01",
                         "fuel_tech": "battery_discharging",
                         "commissioned_date": "None",
@@ -6150,6 +6139,17 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "12",
+                        "unit_size": "2.5",
+                        "registered_capacity": 30.0
+                    },
+                    {
+                        "duid": "DALNTHL1",
+                        "fuel_tech": "battery_charging",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1-12",
                         "unit_size": "2.5",
                         "registered_capacity": 30.0
                     }
@@ -6459,26 +6459,15 @@
             "properties": {
                 "oid": "nem_159",
                 "station_id": 159,
-                "station_code": "HPRG1",
-                "facility_id": "HPRG1",
+                "station_code": "HPRL1",
+                "facility_id": "HPRL1",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
                 "postcode": "5490",
                 "name": "Hornsdale Reserve",
-                "registered_capacity": 150.0,
+                "registered_capacity": 120.0,
                 "duid_data": [
-                    {
-                        "duid": "HPRG1",
-                        "fuel_tech": "battery_discharging",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "0.5102",
-                        "registered_capacity": 150.0
-                    },
                     {
                         "duid": "HPRL1",
                         "fuel_tech": "battery_charging",
@@ -6489,6 +6478,17 @@
                         "unit_number": "1-294",
                         "unit_size": "0.4081",
                         "registered_capacity": 120.0
+                    },
+                    {
+                        "duid": "HPRG1",
+                        "fuel_tech": "battery_discharging",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "0.5102",
+                        "registered_capacity": 150.0
                     }
                 ]
             }
@@ -6661,17 +6661,6 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "4-5",
-                        "unit_size": "1.0",
-                        "registered_capacity": null
-                    },
-                    {
-                        "duid": "BROWNMT",
-                        "fuel_tech": "hydro",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
                         "unit_number": "6",
                         "unit_size": "4.2",
                         "registered_capacity": null
@@ -6697,6 +6686,17 @@
                         "unit_number": "1",
                         "unit_size": "0.5",
                         "registered_capacity": 5.0
+                    },
+                    {
+                        "duid": "BROWNMT",
+                        "fuel_tech": "hydro",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "4-5",
+                        "unit_size": "1.0",
+                        "registered_capacity": null
                     }
                 ]
             }
@@ -6818,26 +6818,15 @@
             "properties": {
                 "oid": "nem_168",
                 "station_id": 168,
-                "station_code": "BBTHREE3",
-                "facility_id": "BBTHREE3",
+                "station_code": "TVPP104",
+                "facility_id": "TVPP104",
                 "network": "NEM",
                 "network_region": "TAS1",
                 "state": "TAS",
                 "postcode": "7253",
                 "name": "Bell Bay Three",
-                "registered_capacity": 35.0,
+                "registered_capacity": 58.0,
                 "duid_data": [
-                    {
-                        "duid": "BBTHREE3",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "3",
-                        "unit_size": "35.0",
-                        "registered_capacity": 35.0
-                    },
                     {
                         "duid": "TVPP104",
                         "fuel_tech": "gas_ocgt",
@@ -6848,6 +6837,17 @@
                         "unit_number": "1",
                         "unit_size": "58.0",
                         "registered_capacity": 58.0
+                    },
+                    {
+                        "duid": "BBTHREE2",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2",
+                        "unit_size": "35.0",
+                        "registered_capacity": 35.0
                     },
                     {
                         "duid": "BBTHREE1",
@@ -6861,13 +6861,13 @@
                         "registered_capacity": 35.0
                     },
                     {
-                        "duid": "BBTHREE2",
+                        "duid": "BBTHREE3",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "2",
+                        "unit_number": "3",
                         "unit_size": "35.0",
                         "registered_capacity": 35.0
                     }
@@ -6937,31 +6937,9 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "W 1-3",
-                        "unit_size": "12.8",
-                        "registered_capacity": null
-                    },
-                    {
-                        "duid": "LI_WY_CA",
-                        "fuel_tech": "hydro",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
                         "unit_number": "L 2",
                         "unit_size": "27.9",
                         "registered_capacity": null
-                    },
-                    {
-                        "duid": "CATAGUN1",
-                        "fuel_tech": "distillate",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 24.0
                     },
                     {
                         "duid": "LI_WY_CA",
@@ -6981,8 +6959,8 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "L 3",
-                        "unit_size": "31.5",
+                        "unit_number": "W 1-3",
+                        "unit_size": "12.8",
                         "registered_capacity": null
                     },
                     {
@@ -6995,6 +6973,28 @@
                         "unit_number": "2",
                         "unit_size": "24.0",
                         "registered_capacity": 173.7
+                    },
+                    {
+                        "duid": "LI_WY_CA",
+                        "fuel_tech": "hydro",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "L 3",
+                        "unit_size": "31.5",
+                        "registered_capacity": null
+                    },
+                    {
+                        "duid": "CATAGUN1",
+                        "fuel_tech": "distillate",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 24.0
                     }
                 ]
             }
@@ -7228,19 +7228,8 @@
                 "state": "TAS",
                 "postcode": null,
                 "name": "Lemonthyme/Wilmot",
-                "registered_capacity": 81.6,
+                "registered_capacity": null,
                 "duid_data": [
-                    {
-                        "duid": "LEM_WIL",
-                        "fuel_tech": "hydro",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "51.0",
-                        "registered_capacity": 81.6
-                    },
                     {
                         "duid": "LEM_WIL",
                         "fuel_tech": "hydro",
@@ -7251,6 +7240,17 @@
                         "unit_number": "W 1",
                         "unit_size": "30.6",
                         "registered_capacity": null
+                    },
+                    {
+                        "duid": "LEM_WIL",
+                        "fuel_tech": "hydro",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "51.0",
+                        "registered_capacity": 81.6
                     }
                 ]
             }
@@ -7302,26 +7302,15 @@
             "properties": {
                 "oid": "nem_180",
                 "station_id": 180,
-                "station_code": "MEADOWBK",
-                "facility_id": "MEADOWBK",
+                "station_code": "MEADOWB2",
+                "facility_id": "MEADOWB2",
                 "network": "NEM",
                 "network_region": "TAS1",
                 "state": "TAS",
                 "postcode": null,
                 "name": "Meadowbank",
-                "registered_capacity": 40.0,
+                "registered_capacity": 24.0,
                 "duid_data": [
-                    {
-                        "duid": "MEADOWBK",
-                        "fuel_tech": "hydro",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "40.0",
-                        "registered_capacity": 40.0
-                    },
                     {
                         "duid": "MEADOWB2",
                         "fuel_tech": "distillate",
@@ -7332,6 +7321,17 @@
                         "unit_number": null,
                         "unit_size": "None",
                         "registered_capacity": 24.0
+                    },
+                    {
+                        "duid": "MEADOWBK",
+                        "fuel_tech": "hydro",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "40.0",
+                        "registered_capacity": 40.0
                     }
                 ]
             }
@@ -7598,19 +7598,8 @@
                 "state": "TAS",
                 "postcode": "7253",
                 "name": "Tamar Valley",
-                "registered_capacity": 208.6,
+                "registered_capacity": null,
                 "duid_data": [
-                    {
-                        "duid": "TVCC201",
-                        "fuel_tech": "gas_ccgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "140.6",
-                        "registered_capacity": 208.6
-                    },
                     {
                         "duid": "TVCC201",
                         "fuel_tech": "gas_ccgt",
@@ -7621,6 +7610,17 @@
                         "unit_number": "2",
                         "unit_size": "68.0",
                         "registered_capacity": null
+                    },
+                    {
+                        "duid": "TVCC201",
+                        "fuel_tech": "gas_ccgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "140.6",
+                        "registered_capacity": 208.6
                     }
                 ]
             }
@@ -7718,26 +7718,15 @@
             "properties": {
                 "oid": "nem_190",
                 "station_id": 190,
-                "station_code": "TRIBNL1",
-                "facility_id": "TRIBNL1",
+                "station_code": "TRIBUTE",
+                "facility_id": "TRIBUTE",
                 "network": "NEM",
                 "network_region": "TAS1",
                 "state": "TAS",
                 "postcode": null,
                 "name": "Tribute",
-                "registered_capacity": 25.0,
+                "registered_capacity": 82.8,
                 "duid_data": [
-                    {
-                        "duid": "TRIBNL1",
-                        "fuel_tech": "hydro",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 25.0
-                    },
                     {
                         "duid": "TRIBUTE",
                         "fuel_tech": "hydro",
@@ -7748,6 +7737,17 @@
                         "unit_number": "1",
                         "unit_size": "82.8",
                         "registered_capacity": 82.8
+                    },
+                    {
+                        "duid": "TRIBNL1",
+                        "fuel_tech": "hydro",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 25.0
                     }
                 ]
             }
@@ -7852,8 +7852,19 @@
                 "state": "NSW",
                 "postcode": "2621",
                 "name": "Capital East",
-                "registered_capacity": null,
+                "registered_capacity": 0.205,
                 "duid_data": [
+                    {
+                        "duid": "CESF1",
+                        "fuel_tech": "solar_utility",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": null,
+                        "unit_size": "0.013",
+                        "registered_capacity": 0.205
+                    },
                     {
                         "duid": "CESF1",
                         "fuel_tech": "solar_utility",
@@ -7875,17 +7886,6 @@
                         "unit_number": "4",
                         "unit_size": "0.168",
                         "registered_capacity": null
-                    },
-                    {
-                        "duid": "CESF1",
-                        "fuel_tech": "solar_utility",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": null,
-                        "unit_size": "0.013",
-                        "registered_capacity": 0.205
                     }
                 ]
             }
@@ -8451,19 +8451,8 @@
                 "state": "QLD",
                 "postcode": "4207",
                 "name": "Stapylton",
-                "registered_capacity": 0.765,
+                "registered_capacity": 0.46,
                 "duid_data": [
-                    {
-                        "duid": "STAPYLTON1",
-                        "fuel_tech": "bioenergy_biogas",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "3",
-                        "unit_size": "0.765",
-                        "registered_capacity": 0.765
-                    },
                     {
                         "duid": "STAPYLTON1",
                         "fuel_tech": "bioenergy_biogas",
@@ -8485,6 +8474,17 @@
                         "unit_number": "2",
                         "unit_size": "1.07",
                         "registered_capacity": 2.14
+                    },
+                    {
+                        "duid": "STAPYLTON1",
+                        "fuel_tech": "bioenergy_biogas",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "3",
+                        "unit_size": "0.765",
+                        "registered_capacity": 0.765
                     }
                 ]
             }
@@ -8543,8 +8543,19 @@
                 "state": "QLD",
                 "postcode": "4740",
                 "name": "Racecourse Mill",
-                "registered_capacity": 38.0,
+                "registered_capacity": 7.0,
                 "duid_data": [
+                    {
+                        "duid": "RACOMIL1",
+                        "fuel_tech": "bioenergy_biomass",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2",
+                        "unit_size": "7.0",
+                        "registered_capacity": 7.0
+                    },
                     {
                         "duid": "RACOMIL1",
                         "fuel_tech": "bioenergy_biomass",
@@ -8566,17 +8577,6 @@
                         "unit_number": "1",
                         "unit_size": "3.5",
                         "registered_capacity": 3.5
-                    },
-                    {
-                        "duid": "RACOMIL1",
-                        "fuel_tech": "bioenergy_biomass",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "2",
-                        "unit_size": "7.0",
-                        "registered_capacity": 7.0
                     }
                 ]
             }
@@ -8639,8 +8639,8 @@
             "properties": {
                 "oid": "nem_214",
                 "station_id": 214,
-                "station_code": "MPP_2",
-                "facility_id": "MPP_2",
+                "station_code": "MPP_1",
+                "facility_id": "MPP_1",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
@@ -8649,7 +8649,7 @@
                 "registered_capacity": 426.0,
                 "duid_data": [
                     {
-                        "duid": "MPP_2",
+                        "duid": "MPP_1",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -8660,7 +8660,7 @@
                         "registered_capacity": 426.0
                     },
                     {
-                        "duid": "MPP_1",
+                        "duid": "MPP_2",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -8797,7 +8797,7 @@
                 "state": "VIC",
                 "postcode": "3241",
                 "name": "Mt Gellibrand",
-                "registered_capacity": 9.408,
+                "registered_capacity": 25.088,
                 "duid_data": [
                     {
                         "duid": "MTGELWF1",
@@ -8806,20 +8806,9 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": " 38-40",
+                        "unit_number": " 19-26",
                         "unit_size": "3.136",
-                        "registered_capacity": 9.408
-                    },
-                    {
-                        "duid": "MTGELWF1",
-                        "fuel_tech": "wind",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": " 27-35",
-                        "unit_size": "3.136",
-                        "registered_capacity": 28.224
+                        "registered_capacity": 25.088
                     },
                     {
                         "duid": "MTGELWF1",
@@ -8839,9 +8828,9 @@
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": " 19-26",
+                        "unit_number": " 27-35",
                         "unit_size": "3.136",
-                        "registered_capacity": 25.088
+                        "registered_capacity": 28.224
                     },
                     {
                         "duid": "MTGELWF1",
@@ -8864,6 +8853,17 @@
                         "unit_number": "22",
                         "unit_size": "3.136",
                         "registered_capacity": 43.904
+                    },
+                    {
+                        "duid": "MTGELWF1",
+                        "fuel_tech": "wind",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": " 38-40",
+                        "unit_size": "3.136",
+                        "registered_capacity": 9.408
                     }
                 ]
             }
@@ -9187,8 +9187,8 @@
             "properties": {
                 "oid": "nem_228",
                 "station_id": 228,
-                "station_code": "ER01",
-                "facility_id": "ER01",
+                "station_code": "ER02",
+                "facility_id": "ER02",
                 "network": "NEM",
                 "network_region": "NSW1",
                 "state": "NSW",
@@ -9197,18 +9197,7 @@
                 "registered_capacity": 720.0,
                 "duid_data": [
                     {
-                        "duid": "ER01",
-                        "fuel_tech": "coal_black",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "720.0",
-                        "registered_capacity": 720.0
-                    },
-                    {
-                        "duid": "ER04",
+                        "duid": "ER02",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -9230,6 +9219,17 @@
                         "registered_capacity": 720.0
                     },
                     {
+                        "duid": "ER04",
+                        "fuel_tech": "coal_black",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "720.0",
+                        "registered_capacity": 720.0
+                    },
+                    {
                         "duid": "ERGT01",
                         "fuel_tech": "distillate",
                         "commissioned_date": "None",
@@ -9241,7 +9241,7 @@
                         "registered_capacity": 41.5
                     },
                     {
-                        "duid": "ER02",
+                        "duid": "ER01",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -9312,8 +9312,8 @@
             "properties": {
                 "oid": "nem_230",
                 "station_id": 230,
-                "station_code": "MORTLK11",
-                "facility_id": "MORTLK11",
+                "station_code": "MORTLK12",
+                "facility_id": "MORTLK12",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
@@ -9322,7 +9322,7 @@
                 "registered_capacity": 283.0,
                 "duid_data": [
                     {
-                        "duid": "MORTLK11",
+                        "duid": "MORTLK12",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -9333,7 +9333,7 @@
                         "registered_capacity": 283.0
                     },
                     {
-                        "duid": "MORTLK12",
+                        "duid": "MORTLK11",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -9358,15 +9358,26 @@
             "properties": {
                 "oid": "nem_231",
                 "station_id": 231,
-                "station_code": "MSTUART2",
-                "facility_id": "MSTUART2",
+                "station_code": "MSTUART3",
+                "facility_id": "MSTUART3",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
                 "postcode": "4002",
                 "name": "Mt Stuart",
-                "registered_capacity": 144.0,
+                "registered_capacity": 131.0,
                 "duid_data": [
+                    {
+                        "duid": "MSTUART3",
+                        "fuel_tech": "distillate",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "131.0",
+                        "registered_capacity": 131.0
+                    },
                     {
                         "duid": "MSTUART2",
                         "fuel_tech": "distillate",
@@ -9388,17 +9399,6 @@
                         "unit_number": "1",
                         "unit_size": "144.0",
                         "registered_capacity": 144.0
-                    },
-                    {
-                        "duid": "MSTUART3",
-                        "fuel_tech": "distillate",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "131.0",
-                        "registered_capacity": 131.0
                     }
                 ]
             }
@@ -9461,34 +9461,23 @@
             "properties": {
                 "oid": "nem_233",
                 "station_id": 233,
-                "station_code": "QPS1",
-                "facility_id": "QPS1",
+                "station_code": "QPS3",
+                "facility_id": "QPS3",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
                 "postcode": "5015",
                 "name": "Quarantine",
-                "registered_capacity": 29.0,
+                "registered_capacity": 24.0,
                 "duid_data": [
                     {
-                        "duid": "QPS1",
+                        "duid": "QPS3",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "29",
-                        "registered_capacity": 29.0
-                    },
-                    {
-                        "duid": "QPS4",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "4",
+                        "unit_number": "3",
                         "unit_size": "24.0",
                         "registered_capacity": 24.0
                     },
@@ -9504,15 +9493,15 @@
                         "registered_capacity": 128.0
                     },
                     {
-                        "duid": "QPS3",
+                        "duid": "QPS1",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "3",
-                        "unit_size": "24.0",
-                        "registered_capacity": 24.0
+                        "unit_number": "1",
+                        "unit_size": "29",
+                        "registered_capacity": 29.0
                     },
                     {
                         "duid": "QPS2",
@@ -9522,6 +9511,17 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "2",
+                        "unit_size": "24.0",
+                        "registered_capacity": 24.0
+                    },
+                    {
+                        "duid": "QPS4",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "4",
                         "unit_size": "24.0",
                         "registered_capacity": 24.0
                     }
@@ -9540,8 +9540,8 @@
             "properties": {
                 "oid": "nem_234",
                 "station_id": 234,
-                "station_code": "ROMA_8",
-                "facility_id": "ROMA_8",
+                "station_code": "ROMA_7",
+                "facility_id": "ROMA_7",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
@@ -9550,6 +9550,28 @@
                 "registered_capacity": 40.0,
                 "duid_data": [
                     {
+                        "duid": "ROMA_7",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "7",
+                        "unit_size": "40.0",
+                        "registered_capacity": 40.0
+                    },
+                    {
+                        "duid": "ROMA_7",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "7",
+                        "unit_size": "40.0",
+                        "registered_capacity": 40.0
+                    },
+                    {
                         "duid": "ROMA_8",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
@@ -9557,28 +9579,6 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "8",
-                        "unit_size": "40.0",
-                        "registered_capacity": 40.0
-                    },
-                    {
-                        "duid": "ROMA_7",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "7",
-                        "unit_size": "40.0",
-                        "registered_capacity": 40.0
-                    },
-                    {
-                        "duid": "ROMA_7",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "7",
                         "unit_size": "40.0",
                         "registered_capacity": 40.0
                     }
@@ -9654,8 +9654,8 @@
             "properties": {
                 "oid": "nem_236",
                 "station_id": 236,
-                "station_code": "URANQ12",
-                "facility_id": "URANQ12",
+                "station_code": "URANQ11",
+                "facility_id": "URANQ11",
                 "network": "NEM",
                 "network_region": "NSW1",
                 "state": "NSW",
@@ -9664,13 +9664,13 @@
                 "registered_capacity": 166.0,
                 "duid_data": [
                     {
-                        "duid": "URANQ12",
+                        "duid": "URANQ11",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "2",
+                        "unit_number": "1",
                         "unit_size": "166.0",
                         "registered_capacity": 166.0
                     },
@@ -9686,13 +9686,13 @@
                         "registered_capacity": 166.0
                     },
                     {
-                        "duid": "URANQ11",
+                        "duid": "URANQ12",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "1",
+                        "unit_number": "2",
                         "unit_size": "166.0",
                         "registered_capacity": 166.0
                     },
@@ -10212,19 +10212,8 @@
                 "state": "QLD",
                 "postcode": null,
                 "name": "Pioneer Sugar Mill",
-                "registered_capacity": null,
+                "registered_capacity": 67.78,
                 "duid_data": [
-                    {
-                        "duid": null,
-                        "fuel_tech": "bioenergy_biomass",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "2",
-                        "unit_size": "36.92",
-                        "registered_capacity": null
-                    },
                     {
                         "duid": null,
                         "fuel_tech": "bioenergy_biomass",
@@ -10235,6 +10224,17 @@
                         "unit_number": "1",
                         "unit_size": "30.86",
                         "registered_capacity": 67.78
+                    },
+                    {
+                        "duid": null,
+                        "fuel_tech": "bioenergy_biomass",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2",
+                        "unit_size": "36.92",
+                        "registered_capacity": null
                     }
                 ]
             }
@@ -10658,23 +10658,23 @@
                 "duid_data": [
                     {
                         "duid": "WILGB01",
-                        "fuel_tech": "gas_recip",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "2",
-                        "unit_size": "3.0",
-                        "registered_capacity": 6.0
-                    },
-                    {
-                        "duid": "WILGB01",
                         "fuel_tech": "bioenergy_biogas",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "3-4",
+                        "unit_size": "3.0",
+                        "registered_capacity": 6.0
+                    },
+                    {
+                        "duid": "WILGB01",
+                        "fuel_tech": "gas_recip",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2",
                         "unit_size": "3.0",
                         "registered_capacity": 6.0
                     }
@@ -10890,17 +10890,17 @@
             "properties": {
                 "oid": "nem_269",
                 "station_id": 269,
-                "station_code": "ANGAS2",
-                "facility_id": "ANGAS2",
+                "station_code": "ANGAS1",
+                "facility_id": "ANGAS1",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
                 "postcode": "5353",
                 "name": "Angaston",
-                "registered_capacity": 20.0,
+                "registered_capacity": 30.0,
                 "duid_data": [
                     {
-                        "duid": "ANGAS2",
+                        "duid": "ANGAS1",
                         "fuel_tech": "distillate",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -10908,7 +10908,7 @@
                         "status_label": "Operating",
                         "unit_number": null,
                         "unit_size": "None",
-                        "registered_capacity": 20.0
+                        "registered_capacity": 30.0
                     },
                     {
                         "duid": "ANGAST1",
@@ -10922,7 +10922,7 @@
                         "registered_capacity": 50.0
                     },
                     {
-                        "duid": "ANGAS1",
+                        "duid": "ANGAS2",
                         "fuel_tech": "distillate",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -10930,7 +10930,7 @@
                         "status_label": "Operating",
                         "unit_number": null,
                         "unit_size": "None",
-                        "registered_capacity": 30.0
+                        "registered_capacity": 20.0
                     }
                 ]
             }
@@ -10982,8 +10982,8 @@
             "properties": {
                 "oid": "nem_271",
                 "station_id": 271,
-                "station_code": "CG4",
-                "facility_id": "CG4",
+                "station_code": "CG1",
+                "facility_id": "CG1",
                 "network": "NEM",
                 "network_region": "NSW1",
                 "state": "NSW",
@@ -10991,17 +10991,6 @@
                 "name": "Colongra",
                 "registered_capacity": 181.0,
                 "duid_data": [
-                    {
-                        "duid": "CG4",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "4",
-                        "unit_size": "181.0",
-                        "registered_capacity": 181.0
-                    },
                     {
                         "duid": "CG1",
                         "fuel_tech": "gas_ocgt",
@@ -11032,6 +11021,17 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "3",
+                        "unit_size": "181.0",
+                        "registered_capacity": 181.0
+                    },
+                    {
+                        "duid": "CG4",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "4",
                         "unit_size": "181.0",
                         "registered_capacity": 181.0
                     }
@@ -11335,19 +11335,8 @@
                 "state": "NSW",
                 "postcode": "2630",
                 "name": "Tumut",
-                "registered_capacity": 616.0,
+                "registered_capacity": null,
                 "duid_data": [
-                    {
-                        "duid": "UPPTUMUT",
-                        "fuel_tech": "hydro",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "4",
-                        "unit_size": "82.0",
-                        "registered_capacity": 616.0
-                    },
                     {
                         "duid": "UPPTUMUT",
                         "fuel_tech": "hydro",
@@ -11358,6 +11347,17 @@
                         "unit_number": "5-8",
                         "unit_size": "72.0",
                         "registered_capacity": null
+                    },
+                    {
+                        "duid": "UPPTUMUT",
+                        "fuel_tech": "hydro",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "4",
+                        "unit_size": "82.0",
+                        "registered_capacity": 616.0
                     }
                 ]
             }
@@ -11374,8 +11374,8 @@
             "properties": {
                 "oid": "nem_283",
                 "station_id": 283,
-                "station_code": "VPGS1",
-                "facility_id": "VPGS1",
+                "station_code": "VPGS6",
+                "facility_id": "VPGS6",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
@@ -11384,24 +11384,13 @@
                 "registered_capacity": 50.0,
                 "duid_data": [
                     {
-                        "duid": "VPGS1",
+                        "duid": "VPGS6",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "1-6",
-                        "unit_size": "50.0",
-                        "registered_capacity": 50.0
-                    },
-                    {
-                        "duid": "VPGS2",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "2-6",
+                        "unit_number": "6-6",
                         "unit_size": "50.0",
                         "registered_capacity": 50.0
                     },
@@ -11413,17 +11402,6 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "5-6",
-                        "unit_size": "50.0",
-                        "registered_capacity": 50.0
-                    },
-                    {
-                        "duid": "VPGS6",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "6-6",
                         "unit_size": "50.0",
                         "registered_capacity": 50.0
                     },
@@ -11446,6 +11424,28 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "3-6",
+                        "unit_size": "50.0",
+                        "registered_capacity": 50.0
+                    },
+                    {
+                        "duid": "VPGS1",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1-6",
+                        "unit_size": "50.0",
+                        "registered_capacity": 50.0
+                    },
+                    {
+                        "duid": "VPGS2",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2-6",
                         "unit_size": "50.0",
                         "registered_capacity": 50.0
                     }
@@ -11471,19 +11471,8 @@
                 "state": "SA",
                 "postcode": "5110",
                 "name": "Bolivar Waste",
-                "registered_capacity": null,
+                "registered_capacity": 9.9,
                 "duid_data": [
-                    {
-                        "duid": "BOLIVAR1",
-                        "fuel_tech": "bioenergy_biomass",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1-3",
-                        "unit_size": "2.4",
-                        "registered_capacity": null
-                    },
                     {
                         "duid": "BOLIVAR1",
                         "fuel_tech": "bioenergy_biogas",
@@ -11494,6 +11483,17 @@
                         "unit_number": "4",
                         "unit_size": "2.7",
                         "registered_capacity": 9.9
+                    },
+                    {
+                        "duid": "BOLIVAR1",
+                        "fuel_tech": "bioenergy_biomass",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1-3",
+                        "unit_size": "2.4",
+                        "registered_capacity": null
                     }
                 ]
             }
@@ -11517,19 +11517,8 @@
                 "state": "QLD",
                 "postcode": "4809",
                 "name": "Invicta Sugar Mill",
-                "registered_capacity": null,
+                "registered_capacity": 50.3,
                 "duid_data": [
-                    {
-                        "duid": "INVICTA",
-                        "fuel_tech": "bioenergy_biomass",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "3",
-                        "unit_size": "2.5",
-                        "registered_capacity": null
-                    },
                     {
                         "duid": "INVICTA",
                         "fuel_tech": "bioenergy_biomass",
@@ -11540,6 +11529,17 @@
                         "unit_number": "1",
                         "unit_size": "38.8",
                         "registered_capacity": 50.3
+                    },
+                    {
+                        "duid": "INVICTA",
+                        "fuel_tech": "bioenergy_biomass",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "3",
+                        "unit_size": "2.5",
+                        "registered_capacity": null
                     },
                     {
                         "duid": "INVICTA",
@@ -11602,8 +11602,8 @@
             "properties": {
                 "oid": "nem_287",
                 "station_id": 287,
-                "station_code": "STAN-2",
-                "facility_id": "STAN-2",
+                "station_code": "STAN-1",
+                "facility_id": "STAN-1",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
@@ -11612,7 +11612,7 @@
                 "registered_capacity": 365.0,
                 "duid_data": [
                     {
-                        "duid": "STAN-2",
+                        "duid": "STAN-1",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -11623,7 +11623,7 @@
                         "registered_capacity": 365.0
                     },
                     {
-                        "duid": "STAN-1",
+                        "duid": "STAN-4",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -11645,7 +11645,7 @@
                         "registered_capacity": 365.0
                     },
                     {
-                        "duid": "STAN-4",
+                        "duid": "STAN-2",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -11705,8 +11705,8 @@
             "properties": {
                 "oid": "nem_289",
                 "station_id": 289,
-                "station_code": "TARONG#1",
-                "facility_id": "TARONG#1",
+                "station_code": "TARONG#2",
+                "facility_id": "TARONG#2",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
@@ -11714,17 +11714,6 @@
                 "name": "Tarong",
                 "registered_capacity": 350.0,
                 "duid_data": [
-                    {
-                        "duid": "TARONG#1",
-                        "fuel_tech": "coal_black",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "350.0",
-                        "registered_capacity": 350.0
-                    },
                     {
                         "duid": "TARONG#2",
                         "fuel_tech": "coal_black",
@@ -11737,7 +11726,7 @@
                         "registered_capacity": 350.0
                     },
                     {
-                        "duid": "TARONG#3",
+                        "duid": "TARONG#4",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -11748,7 +11737,18 @@
                         "registered_capacity": 350.0
                     },
                     {
-                        "duid": "TARONG#4",
+                        "duid": "TARONG#1",
+                        "fuel_tech": "coal_black",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "350.0",
+                        "registered_capacity": 350.0
+                    },
+                    {
+                        "duid": "TARONG#3",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -11945,17 +11945,6 @@
                         "registered_capacity": 52.0
                     },
                     {
-                        "duid": "DRYCGT3",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "3",
-                        "unit_size": "52.0",
-                        "registered_capacity": 52.0
-                    },
-                    {
                         "duid": "DRYCGT2",
                         "fuel_tech": "gas_ocgt",
                         "commissioned_date": "None",
@@ -11963,6 +11952,17 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": "2",
+                        "unit_size": "52.0",
+                        "registered_capacity": 52.0
+                    },
+                    {
+                        "duid": "DRYCGT3",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "3",
                         "unit_size": "52.0",
                         "registered_capacity": 52.0
                     }
@@ -11981,26 +11981,15 @@
             "properties": {
                 "oid": "nem_296",
                 "station_id": 296,
-                "station_code": "POR03",
-                "facility_id": "POR03",
+                "station_code": "POR01",
+                "facility_id": "POR01",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
                 "postcode": "5000",
                 "name": "Port Lincoln",
-                "registered_capacity": 23.5,
+                "registered_capacity": 50.0,
                 "duid_data": [
-                    {
-                        "duid": "POR03",
-                        "fuel_tech": "distillate",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "23.5",
-                        "registered_capacity": 23.5
-                    },
                     {
                         "duid": "POR01",
                         "fuel_tech": "distillate",
@@ -12011,6 +12000,17 @@
                         "unit_number": "2",
                         "unit_size": "25.0",
                         "registered_capacity": 50.0
+                    },
+                    {
+                        "duid": "POR03",
+                        "fuel_tech": "distillate",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "23.5",
+                        "registered_capacity": 23.5
                     }
                 ]
             }
@@ -12027,37 +12027,15 @@
             "properties": {
                 "oid": "nem_297",
                 "station_id": 297,
-                "station_code": "SNUG1",
-                "facility_id": "SNUG1",
+                "station_code": "SNUG3",
+                "facility_id": "SNUG3",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
                 "postcode": "5000",
                 "name": "Snuggery",
-                "registered_capacity": 63.0,
+                "registered_capacity": 21.0,
                 "duid_data": [
-                    {
-                        "duid": "SNUG1",
-                        "fuel_tech": "distillate",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "3",
-                        "unit_size": "21.0",
-                        "registered_capacity": 63.0
-                    },
-                    {
-                        "duid": "SNUGNL1",
-                        "fuel_tech": "distillate",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "None",
-                        "registered_capacity": 21.0
-                    },
                     {
                         "duid": "SNUG3",
                         "fuel_tech": "distillate",
@@ -12077,6 +12055,28 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 21.0
+                    },
+                    {
+                        "duid": "SNUG1",
+                        "fuel_tech": "distillate",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "3",
+                        "unit_size": "21.0",
+                        "registered_capacity": 63.0
+                    },
+                    {
+                        "duid": "SNUGNL1",
+                        "fuel_tech": "distillate",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
                         "unit_size": "None",
                         "registered_capacity": 21.0
                     }
@@ -12102,19 +12102,8 @@
                 "state": "NSW",
                 "postcode": "2580",
                 "name": "Taralga",
-                "registered_capacity": 106.8,
+                "registered_capacity": null,
                 "duid_data": [
-                    {
-                        "duid": "TARALGA1",
-                        "fuel_tech": "wind",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "9",
-                        "unit_size": "1.8",
-                        "registered_capacity": 106.8
-                    },
                     {
                         "duid": "TARALGA1",
                         "fuel_tech": "wind",
@@ -12125,6 +12114,17 @@
                         "unit_number": "22-42",
                         "unit_size": "2.0",
                         "registered_capacity": null
+                    },
+                    {
+                        "duid": "TARALGA1",
+                        "fuel_tech": "wind",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "9",
+                        "unit_size": "1.8",
+                        "registered_capacity": 106.8
                     },
                     {
                         "duid": "TARALGA1",
@@ -12398,19 +12398,8 @@
                 "state": "TAS",
                 "postcode": null,
                 "name": "Waterloo",
-                "registered_capacity": null,
+                "registered_capacity": 130.8,
                 "duid_data": [
-                    {
-                        "duid": "WATERLWF",
-                        "fuel_tech": "wind",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "38-43",
-                        "unit_size": "3.3",
-                        "registered_capacity": null
-                    },
                     {
                         "duid": "WATERLWF",
                         "fuel_tech": "wind",
@@ -12421,6 +12410,17 @@
                         "unit_number": "6",
                         "unit_size": "3.0",
                         "registered_capacity": 130.8
+                    },
+                    {
+                        "duid": "WATERLWF",
+                        "fuel_tech": "wind",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "38-43",
+                        "unit_size": "3.3",
+                        "registered_capacity": null
                     }
                 ]
             }
@@ -12472,26 +12472,15 @@
             "properties": {
                 "oid": "nem_308",
                 "station_id": 308,
-                "station_code": "WRSF1",
-                "facility_id": "WRSF1",
+                "station_code": "WRWF1",
+                "facility_id": "WRWF1",
                 "network": "NEM",
                 "network_region": "NSW1",
                 "state": "NSW",
                 "postcode": null,
                 "name": "White Rock",
-                "registered_capacity": 22.0,
+                "registered_capacity": 175.0,
                 "duid_data": [
-                    {
-                        "duid": "WRSF1",
-                        "fuel_tech": "solar_utility",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "8",
-                        "unit_size": "2.75",
-                        "registered_capacity": 22.0
-                    },
                     {
                         "duid": "WRWF1",
                         "fuel_tech": "wind",
@@ -12502,6 +12491,17 @@
                         "unit_number": "70",
                         "unit_size": "2.5",
                         "registered_capacity": 175.0
+                    },
+                    {
+                        "duid": "WRSF1",
+                        "fuel_tech": "solar_utility",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "8",
+                        "unit_size": "2.75",
+                        "registered_capacity": 22.0
                     }
                 ]
             }
@@ -12595,19 +12595,8 @@
                 "state": "SA",
                 "postcode": "5419",
                 "name": "Willogoleche",
-                "registered_capacity": 27.44,
+                "registered_capacity": 91.92,
                 "duid_data": [
-                    {
-                        "duid": "WGWF1",
-                        "fuel_tech": "wind",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "25-32",
-                        "unit_size": "3.43",
-                        "registered_capacity": 27.44
-                    },
                     {
                         "duid": "WGWF1",
                         "fuel_tech": "wind",
@@ -12618,6 +12607,17 @@
                         "unit_number": "8",
                         "unit_size": "3.83",
                         "registered_capacity": 91.92
+                    },
+                    {
+                        "duid": "WGWF1",
+                        "fuel_tech": "wind",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "25-32",
+                        "unit_size": "3.43",
+                        "registered_capacity": 27.44
                     }
                 ]
             }
@@ -12774,19 +12774,8 @@
                 "state": "SA",
                 "postcode": null,
                 "name": "Adelaide Airport",
-                "registered_capacity": 0.04,
+                "registered_capacity": 0.96,
                 "duid_data": [
-                    {
-                        "duid": null,
-                        "fuel_tech": "solar_utility",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "2",
-                        "unit_size": "None",
-                        "registered_capacity": 0.04
-                    },
                     {
                         "duid": null,
                         "fuel_tech": "solar_utility",
@@ -12797,6 +12786,17 @@
                         "unit_number": "16",
                         "unit_size": "None",
                         "registered_capacity": 0.96
+                    },
+                    {
+                        "duid": null,
+                        "fuel_tech": "solar_utility",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2",
+                        "unit_size": "None",
+                        "registered_capacity": 0.04
                     }
                 ]
             }
@@ -14297,8 +14297,19 @@
                 "state": "QLD",
                 "postcode": null,
                 "name": "Kennedy Energy Park",
-                "registered_capacity": 15.0,
+                "registered_capacity": 43.2,
                 "duid_data": [
+                    {
+                        "duid": null,
+                        "fuel_tech": "wind",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "committed",
+                        "status_label": "Committed",
+                        "unit_number": "12",
+                        "unit_size": "None",
+                        "registered_capacity": 43.2
+                    },
                     {
                         "duid": null,
                         "fuel_tech": "solar_utility",
@@ -14320,17 +14331,6 @@
                         "unit_number": "1",
                         "unit_size": "None",
                         "registered_capacity": 2.0
-                    },
-                    {
-                        "duid": null,
-                        "fuel_tech": "wind",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "committed",
-                        "status_label": "Committed",
-                        "unit_number": "12",
-                        "unit_size": "None",
-                        "registered_capacity": 43.2
                     }
                 ]
             }
@@ -14620,7 +14620,7 @@
                 "state": "QLD",
                 "postcode": null,
                 "name": "Macknade Mill",
-                "registered_capacity": 3.0,
+                "registered_capacity": 5.0,
                 "duid_data": [
                     {
                         "duid": null,
@@ -14631,7 +14631,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 3.0
+                        "registered_capacity": 5.0
                     },
                     {
                         "duid": null,
@@ -14642,7 +14642,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 5.0
+                        "registered_capacity": 3.0
                     }
                 ]
             }
@@ -14660,19 +14660,8 @@
                 "state": "QLD",
                 "postcode": null,
                 "name": "Maryborough Mill",
-                "registered_capacity": 4.0,
+                "registered_capacity": 3.5,
                 "duid_data": [
-                    {
-                        "duid": null,
-                        "fuel_tech": "bioenergy_biomass",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "2",
-                        "unit_size": "None",
-                        "registered_capacity": 4.0
-                    },
                     {
                         "duid": null,
                         "fuel_tech": "bioenergy_biomass",
@@ -14683,6 +14672,17 @@
                         "unit_number": "1",
                         "unit_size": "None",
                         "registered_capacity": 3.5
+                    },
+                    {
+                        "duid": null,
+                        "fuel_tech": "bioenergy_biomass",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2",
+                        "unit_size": "None",
+                        "registered_capacity": 4.0
                     }
                 ]
             }
@@ -15233,7 +15233,7 @@
                 "state": "QLD",
                 "postcode": null,
                 "name": "Plane Creek Mill",
-                "registered_capacity": 10.0,
+                "registered_capacity": 4.0,
                 "duid_data": [
                     {
                         "duid": null,
@@ -15244,7 +15244,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 10.0
+                        "registered_capacity": 4.0
                     },
                     {
                         "duid": null,
@@ -15255,7 +15255,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 4.0
+                        "registered_capacity": 10.0
                     }
                 ]
             }
@@ -15273,7 +15273,7 @@
                 "state": "QLD",
                 "postcode": null,
                 "name": "Proserpine",
-                "registered_capacity": 11.0,
+                "registered_capacity": 6.0,
                 "duid_data": [
                     {
                         "duid": null,
@@ -15284,7 +15284,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 11.0
+                        "registered_capacity": 6.0
                     },
                     {
                         "duid": null,
@@ -15295,7 +15295,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 6.0
+                        "registered_capacity": 11.0
                     }
                 ]
             }
@@ -15313,7 +15313,7 @@
                 "state": "NSW",
                 "postcode": null,
                 "name": "Proten",
-                "registered_capacity": 0.2499,
+                "registered_capacity": 1.211,
                 "duid_data": [
                     {
                         "duid": null,
@@ -15324,7 +15324,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 0.2499
+                        "registered_capacity": 1.211
                     },
                     {
                         "duid": null,
@@ -15335,7 +15335,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 1.211
+                        "registered_capacity": 0.2499
                     },
                     {
                         "duid": null,
@@ -15397,62 +15397,62 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
+                        "registered_capacity": 0.212
+                    },
+                    {
+                        "duid": null,
+                        "fuel_tech": "solar_utility",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "None",
+                        "registered_capacity": 0.212
+                    },
+                    {
+                        "duid": null,
+                        "fuel_tech": "solar_utility",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "None",
+                        "registered_capacity": 0.212
+                    },
+                    {
+                        "duid": null,
+                        "fuel_tech": "solar_utility",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "None",
+                        "registered_capacity": 0.212
+                    },
+                    {
+                        "duid": null,
+                        "fuel_tech": "solar_utility",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "None",
+                        "registered_capacity": 0.212
+                    },
+                    {
+                        "duid": null,
+                        "fuel_tech": "solar_utility",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "None",
                         "registered_capacity": 0.6
-                    },
-                    {
-                        "duid": null,
-                        "fuel_tech": "solar_utility",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "None",
-                        "registered_capacity": 0.212
-                    },
-                    {
-                        "duid": null,
-                        "fuel_tech": "solar_utility",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "None",
-                        "registered_capacity": 0.212
-                    },
-                    {
-                        "duid": null,
-                        "fuel_tech": "solar_utility",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "None",
-                        "registered_capacity": 0.212
-                    },
-                    {
-                        "duid": null,
-                        "fuel_tech": "solar_utility",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "None",
-                        "registered_capacity": 0.212
-                    },
-                    {
-                        "duid": null,
-                        "fuel_tech": "solar_utility",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "None",
-                        "registered_capacity": 0.212
                     },
                     {
                         "duid": null,
@@ -15647,19 +15647,8 @@
                 "state": "SA",
                 "postcode": null,
                 "name": "Government Virtual",
-                "registered_capacity": 0.5,
+                "registered_capacity": 5.0,
                 "duid_data": [
-                    {
-                        "duid": null,
-                        "fuel_tech": "battery_discharging",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "1",
-                        "unit_size": "None",
-                        "registered_capacity": 0.5
-                    },
                     {
                         "duid": null,
                         "fuel_tech": "battery_discharging",
@@ -15670,6 +15659,17 @@
                         "unit_number": "1",
                         "unit_size": "None",
                         "registered_capacity": 5.0
+                    },
+                    {
+                        "duid": null,
+                        "fuel_tech": "battery_discharging",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "1",
+                        "unit_size": "None",
+                        "registered_capacity": 0.5
                     }
                 ]
             }
@@ -16005,7 +16005,7 @@
                 "state": "NSW",
                 "postcode": null,
                 "name": "St George Leagues Club Kogarah",
-                "registered_capacity": 0.8,
+                "registered_capacity": 1.34,
                 "duid_data": [
                     {
                         "duid": null,
@@ -16016,7 +16016,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 0.8
+                        "registered_capacity": 1.34
                     },
                     {
                         "duid": null,
@@ -16027,7 +16027,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 1.34
+                        "registered_capacity": 0.8
                     }
                 ]
             }
@@ -16299,7 +16299,7 @@
                 "state": "QLD",
                 "postcode": null,
                 "name": "Swanbank",
-                "registered_capacity": 0.364,
+                "registered_capacity": 1.123,
                 "duid_data": [
                     {
                         "duid": null,
@@ -16310,7 +16310,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 0.364
+                        "registered_capacity": 1.123
                     },
                     {
                         "duid": null,
@@ -16321,7 +16321,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 1.123
+                        "registered_capacity": 0.364
                     }
                 ]
             }
@@ -17122,7 +17122,7 @@
                 "state": "SA",
                 "postcode": null,
                 "name": "Vibe Energy",
-                "registered_capacity": 1.34,
+                "registered_capacity": 0.8,
                 "duid_data": [
                     {
                         "duid": null,
@@ -17133,7 +17133,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 1.34
+                        "registered_capacity": 0.8
                     },
                     {
                         "duid": null,
@@ -17144,7 +17144,7 @@
                         "status_label": "Operating",
                         "unit_number": "1",
                         "unit_size": "None",
-                        "registered_capacity": 0.8
+                        "registered_capacity": 1.34
                     }
                 ]
             }
@@ -17823,14 +17823,25 @@
                 "oid": "nem_479",
                 "station_id": 479,
                 "station_code": "COLNSV",
-                "facility_id": "COLNSV_5",
+                "facility_id": "COLNSV_1",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
                 "postcode": "4804",
                 "name": "Collinsville",
-                "registered_capacity": 66.0,
+                "registered_capacity": 30.0,
                 "duid_data": [
+                    {
+                        "duid": "COLNSV_1",
+                        "fuel_tech": "coal_black",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 30.0
+                    },
                     {
                         "duid": "COLNSV_5",
                         "fuel_tech": "coal_black",
@@ -17874,17 +17885,6 @@
                         "unit_number": null,
                         "unit_size": "None",
                         "registered_capacity": 30.0
-                    },
-                    {
-                        "duid": "COLNSV_1",
-                        "fuel_tech": "coal_black",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 30.0
                     }
                 ]
             }
@@ -17902,16 +17902,16 @@
                 "oid": "nem_480",
                 "station_id": 480,
                 "station_code": "ENERGYB",
-                "facility_id": "MOR1",
+                "facility_id": "MOR3",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
                 "postcode": "3840",
                 "name": "Energy Brix",
-                "registered_capacity": 90.0,
+                "registered_capacity": 75.0,
                 "duid_data": [
                     {
-                        "duid": "MOR1",
+                        "duid": "MOR3",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -17919,7 +17919,7 @@
                         "status_label": "Retired",
                         "unit_number": null,
                         "unit_size": "None",
-                        "registered_capacity": 90.0
+                        "registered_capacity": 75.0
                     },
                     {
                         "duid": "MOR2",
@@ -17933,7 +17933,7 @@
                         "registered_capacity": 30.0
                     },
                     {
-                        "duid": "MOR3",
+                        "duid": "MOR1",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -17941,7 +17941,7 @@
                         "status_label": "Retired",
                         "unit_number": null,
                         "unit_size": "None",
-                        "registered_capacity": 75.0
+                        "registered_capacity": 90.0
                     }
                 ]
             }
@@ -18060,17 +18060,6 @@
                         "registered_capacity": 275.5
                     },
                     {
-                        "duid": "GULLRWF2",
-                        "fuel_tech": "wind",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 110.0
-                    },
-                    {
                         "duid": "GULLRSF1",
                         "fuel_tech": "solar_utility",
                         "commissioned_date": "None",
@@ -18080,6 +18069,17 @@
                         "unit_number": "4",
                         "unit_size": "2.5",
                         "registered_capacity": 10.0
+                    },
+                    {
+                        "duid": "GULLRWF2",
+                        "fuel_tech": "wind",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 110.0
                     }
                 ]
             }
@@ -18097,7 +18097,7 @@
                 "oid": "nem_484",
                 "station_id": 484,
                 "station_code": "HAZEL",
-                "facility_id": "HWPS3",
+                "facility_id": "HWPS6",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
@@ -18105,17 +18105,6 @@
                 "name": "Hazelwood",
                 "registered_capacity": 200.0,
                 "duid_data": [
-                    {
-                        "duid": "HWPS3",
-                        "fuel_tech": "coal_brown",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 200.0
-                    },
                     {
                         "duid": "HWPS6",
                         "fuel_tech": "coal_brown",
@@ -18128,18 +18117,7 @@
                         "registered_capacity": 200.0
                     },
                     {
-                        "duid": "HWPS7",
-                        "fuel_tech": "coal_brown",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 200.0
-                    },
-                    {
-                        "duid": "HWPS8",
+                        "duid": "HWPS3",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -18172,7 +18150,7 @@
                         "registered_capacity": 200.0
                     },
                     {
-                        "duid": "HWPS2",
+                        "duid": "HWPS8",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -18180,7 +18158,7 @@
                         "status_label": "Retired",
                         "unit_number": null,
                         "unit_size": "None",
-                        "registered_capacity": 220.0
+                        "registered_capacity": 200.0
                     },
                     {
                         "duid": "HWPS4",
@@ -18192,6 +18170,28 @@
                         "unit_number": null,
                         "unit_size": "None",
                         "registered_capacity": 200.0
+                    },
+                    {
+                        "duid": "HWPS7",
+                        "fuel_tech": "coal_brown",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 200.0
+                    },
+                    {
+                        "duid": "HWPS2",
+                        "fuel_tech": "coal_brown",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 220.0
                     }
                 ]
             }
@@ -18343,25 +18343,14 @@
                 "oid": "nem_489",
                 "station_id": 489,
                 "station_code": "MCKAY",
-                "facility_id": "MCKAY1",
+                "facility_id": "MCKAY2",
                 "network": "NEM",
                 "network_region": "VIC1",
                 "state": "VIC",
                 "postcode": "3699",
                 "name": "Bogong/Mackay",
-                "registered_capacity": 300.0,
+                "registered_capacity": 53.0,
                 "duid_data": [
-                    {
-                        "duid": "MCKAY1",
-                        "fuel_tech": "hydro",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": "2",
-                        "unit_size": "74.0",
-                        "registered_capacity": 300.0
-                    },
                     {
                         "duid": "MCKAY2",
                         "fuel_tech": "hydro",
@@ -18372,6 +18361,17 @@
                         "unit_number": null,
                         "unit_size": "None",
                         "registered_capacity": 53.0
+                    },
+                    {
+                        "duid": "MCKAY1",
+                        "fuel_tech": "hydro",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": "2",
+                        "unit_size": "74.0",
+                        "registered_capacity": 300.0
                     }
                 ]
             }
@@ -18424,25 +18424,14 @@
                 "oid": "nem_491",
                 "station_id": 491,
                 "station_code": "MINTARO",
-                "facility_id": "MINTNL1",
+                "facility_id": "MINTARO",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
                 "postcode": "5415",
                 "name": "Mintaro",
-                "registered_capacity": 25.0,
+                "registered_capacity": 90.0,
                 "duid_data": [
-                    {
-                        "duid": "MINTNL1",
-                        "fuel_tech": "gas_ocgt",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 25.0
-                    },
                     {
                         "duid": "MINTARO",
                         "fuel_tech": "gas_ocgt",
@@ -18453,6 +18442,17 @@
                         "unit_number": "1",
                         "unit_size": "90.0",
                         "registered_capacity": 90.0
+                    },
+                    {
+                        "duid": "MINTNL1",
+                        "fuel_tech": "gas_ocgt",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 25.0
                     }
                 ]
             }
@@ -18516,7 +18516,7 @@
                 "oid": "nem_493",
                 "station_id": 493,
                 "station_code": "NORTHP",
-                "facility_id": "NPSNL1",
+                "facility_id": "NPSNL2",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
@@ -18524,17 +18524,6 @@
                 "name": "Northern",
                 "registered_capacity": 100.0,
                 "duid_data": [
-                    {
-                        "duid": "NPSNL1",
-                        "fuel_tech": "coal_brown",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 100.0
-                    },
                     {
                         "duid": "NPSNL2",
                         "fuel_tech": "coal_brown",
@@ -18547,7 +18536,18 @@
                         "registered_capacity": 100.0
                     },
                     {
-                        "duid": "NPS1",
+                        "duid": "NPSNL1",
+                        "fuel_tech": "coal_brown",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 100.0
+                    },
+                    {
+                        "duid": "NPS2",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -18558,7 +18558,7 @@
                         "registered_capacity": 265.0
                     },
                     {
-                        "duid": "NPS2",
+                        "duid": "NPS1",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -18654,7 +18654,7 @@
                 "oid": "nem_496",
                 "station_id": 496,
                 "station_code": "PLAYF",
-                "facility_id": "PLAYFB3",
+                "facility_id": "PLAYFB2",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
@@ -18662,6 +18662,17 @@
                 "name": "Playford B",
                 "registered_capacity": 60.0,
                 "duid_data": [
+                    {
+                        "duid": "PLAYFB2",
+                        "fuel_tech": "coal_brown",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 60.0
+                    },
                     {
                         "duid": "PLAYFB3",
                         "fuel_tech": "coal_brown",
@@ -18685,29 +18696,18 @@
                         "registered_capacity": 240.0
                     },
                     {
-                        "duid": "PLAYFB1",
-                        "fuel_tech": "coal_brown",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 60.0
-                    },
-                    {
-                        "duid": "PLAYFB2",
-                        "fuel_tech": "coal_brown",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 60.0
-                    },
-                    {
                         "duid": "PLAYFB4",
+                        "fuel_tech": "coal_brown",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 60.0
+                    },
+                    {
+                        "duid": "PLAYFB1",
                         "fuel_tech": "coal_brown",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -18943,24 +18943,24 @@
                 "oid": "nem_503",
                 "station_id": 503,
                 "station_code": "STANVAC",
-                "facility_id": "PTSTAN1",
+                "facility_id": "STANV1",
                 "network": "NEM",
                 "network_region": "SA1",
                 "state": "SA",
                 "postcode": "5160",
                 "name": "Port Stanvac",
-                "registered_capacity": 57.6,
+                "registered_capacity": 58.0,
                 "duid_data": [
                     {
-                        "duid": "PTSTAN1",
+                        "duid": "STANV1",
                         "fuel_tech": "distillate",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": "36",
-                        "unit_size": "1.6",
-                        "registered_capacity": 57.6
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 58.0
                     },
                     {
                         "duid": "STANV2",
@@ -18974,15 +18974,15 @@
                         "registered_capacity": 58.0
                     },
                     {
-                        "duid": "STANV1",
+                        "duid": "PTSTAN1",
                         "fuel_tech": "distillate",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 58.0
+                        "unit_number": "36",
+                        "unit_size": "1.6",
+                        "registered_capacity": 57.6
                     }
                 ]
             }
@@ -19244,7 +19244,7 @@
                 "oid": "nem_511",
                 "station_id": 511,
                 "station_code": "SWAN_B",
-                "facility_id": "SWAN_B_3",
+                "facility_id": "SWAN_B_4",
                 "network": "NEM",
                 "network_region": "QLD1",
                 "state": "QLD",
@@ -19252,6 +19252,17 @@
                 "name": "Swanbank B",
                 "registered_capacity": 125.0,
                 "duid_data": [
+                    {
+                        "duid": "SWAN_B_4",
+                        "fuel_tech": "coal_black",
+                        "commissioned_date": "None",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_number": null,
+                        "unit_size": "None",
+                        "registered_capacity": 125.0
+                    },
                     {
                         "duid": "SWAN_B_3",
                         "fuel_tech": "coal_black",
@@ -19276,17 +19287,6 @@
                     },
                     {
                         "duid": "SWAN_B_2",
-                        "fuel_tech": "coal_black",
-                        "commissioned_date": "None",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_number": null,
-                        "unit_size": "None",
-                        "registered_capacity": 125.0
-                    },
-                    {
-                        "duid": "SWAN_B_4",
                         "fuel_tech": "coal_black",
                         "commissioned_date": "None",
                         "fuel_tech_label": null,
@@ -20374,38 +20374,6 @@
                 ]
             },
             "properties": {
-                "oid": "wem_117",
-                "station_id": "KWINANA_C5",
-                "station_code": "KWINANA",
-                "facility_id": "KWINANA_C5",
-                "network": "WEM",
-                "network_region": "WA",
-                "state": "WA",
-                "postcode": "6165",
-                "name": "Kwinana",
-                "duid_data": [
-                    {
-                        "duid": "KWINANA_C5",
-                        "comissioned_date": "None",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "registered_capacity": 200.0
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    115.775445,
-                    -32.197245
-                ]
-            },
-            "properties": {
                 "oid": "wem_103",
                 "station_id": "PPP_KCP_EG1",
                 "station_code": "KWINANA",
@@ -20504,7 +20472,7 @@
             "properties": {
                 "oid": "wem_118",
                 "station_id": "KWINANA_C6",
-                "station_code": "KWINANA",
+                "station_code": "KWINANA_OLD",
                 "facility_id": "KWINANA_C6",
                 "network": "WEM",
                 "network_region": "WA",
@@ -20514,6 +20482,38 @@
                 "duid_data": [
                     {
                         "duid": "KWINANA_C6",
+                        "comissioned_date": "None",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "registered_capacity": 200.0
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    115.775445,
+                    -32.197245
+                ]
+            },
+            "properties": {
+                "oid": "wem_117",
+                "station_id": "KWINANA_C5",
+                "station_code": "KWINANA_OLD",
+                "facility_id": "KWINANA_C5",
+                "network": "WEM",
+                "network_region": "WA",
+                "state": "WA",
+                "postcode": "6165",
+                "name": "Kwinana",
+                "duid_data": [
+                    {
+                        "duid": "KWINANA_C5",
                         "comissioned_date": "None",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": null,
@@ -20542,7 +20542,7 @@
                 "network_region": "WA",
                 "state": "WA",
                 "postcode": "6225",
-                "name": "Muja Cd",
+                "name": "Muja CD",
                 "duid_data": [
                     {
                         "duid": "MUJA_G6",
@@ -20566,102 +20566,6 @@
                 ]
             },
             "properties": {
-                "oid": "wem_120",
-                "station_id": "MUJA_M2",
-                "station_code": "MUJA",
-                "facility_id": "MUJA_M2",
-                "network": "WEM",
-                "network_region": "WA",
-                "state": "WA",
-                "postcode": "6225",
-                "name": "Muja Cd",
-                "duid_data": [
-                    {
-                        "duid": "MUJA_M2",
-                        "comissioned_date": "None",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "registered_capacity": 60.0
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    116.306655,
-                    -33.445811
-                ]
-            },
-            "properties": {
-                "oid": "wem_121",
-                "station_id": "MUJA_M3",
-                "station_code": "MUJA",
-                "facility_id": "MUJA_M3",
-                "network": "WEM",
-                "network_region": "WA",
-                "state": "WA",
-                "postcode": "6225",
-                "name": "Muja Cd",
-                "duid_data": [
-                    {
-                        "duid": "MUJA_M3",
-                        "comissioned_date": "None",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "registered_capacity": 60.0
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    116.306655,
-                    -33.445811
-                ]
-            },
-            "properties": {
-                "oid": "wem_122",
-                "station_id": "MUJA_M4",
-                "station_code": "MUJA",
-                "facility_id": "MUJA_M4",
-                "network": "WEM",
-                "network_region": "WA",
-                "state": "WA",
-                "postcode": "6225",
-                "name": "Muja Cd",
-                "duid_data": [
-                    {
-                        "duid": "MUJA_M4",
-                        "comissioned_date": "None",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "registered_capacity": 60.0
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    116.306655,
-                    -33.445811
-                ]
-            },
-            "properties": {
                 "oid": "wem_88",
                 "station_id": "MUJA_G5",
                 "station_code": "MUJA",
@@ -20670,7 +20574,7 @@
                 "network_region": "WA",
                 "state": "WA",
                 "postcode": "6225",
-                "name": "Muja Cd",
+                "name": "Muja CD",
                 "duid_data": [
                     {
                         "duid": "MUJA_G5",
@@ -20694,38 +20598,6 @@
                 ]
             },
             "properties": {
-                "oid": "wem_119",
-                "station_id": "MUJA_M1",
-                "station_code": "MUJA",
-                "facility_id": "MUJA_M1",
-                "network": "WEM",
-                "network_region": "WA",
-                "state": "WA",
-                "postcode": "6225",
-                "name": "Muja Cd",
-                "duid_data": [
-                    {
-                        "duid": "MUJA_M1",
-                        "comissioned_date": "None",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "registered_capacity": 60.0
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    116.306655,
-                    -33.445811
-                ]
-            },
-            "properties": {
                 "oid": "wem_90",
                 "station_id": "MUJA_G7",
                 "station_code": "MUJA",
@@ -20734,7 +20606,7 @@
                 "network_region": "WA",
                 "state": "WA",
                 "postcode": "6225",
-                "name": "Muja Cd",
+                "name": "Muja CD",
                 "duid_data": [
                     {
                         "duid": "MUJA_G7",
@@ -20766,7 +20638,7 @@
                 "network_region": "WA",
                 "state": "WA",
                 "postcode": "6225",
-                "name": "Muja Cd",
+                "name": "Muja CD",
                 "duid_data": [
                     {
                         "duid": "MUJA_G8",
@@ -20785,29 +20657,125 @@
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    115.115999,
-                    -28.887899
+                    116.306655,
+                    -33.445811
                 ]
             },
             "properties": {
-                "oid": "wem_116",
-                "station_id": "MUNGARRA_GT2",
-                "station_code": "MUNGARRA",
-                "facility_id": "MUNGARRA_GT2",
+                "oid": "wem_122",
+                "station_id": "MUJA_M4",
+                "station_code": "MUJA_AB",
+                "facility_id": "MUJA_M4",
                 "network": "WEM",
                 "network_region": "WA",
                 "state": "WA",
-                "postcode": "6630",
-                "name": "Mungarra",
+                "postcode": "6225",
+                "name": "Muja Ab",
                 "duid_data": [
                     {
-                        "duid": "MUNGARRA_GT2",
+                        "duid": "MUJA_M4",
                         "comissioned_date": "None",
-                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech": "coal_black",
                         "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "registered_capacity": 39.5
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "registered_capacity": 60.0
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    116.306655,
+                    -33.445811
+                ]
+            },
+            "properties": {
+                "oid": "wem_120",
+                "station_id": "MUJA_M2",
+                "station_code": "MUJA_AB",
+                "facility_id": "MUJA_M2",
+                "network": "WEM",
+                "network_region": "WA",
+                "state": "WA",
+                "postcode": "6225",
+                "name": "Muja Ab",
+                "duid_data": [
+                    {
+                        "duid": "MUJA_M2",
+                        "comissioned_date": "None",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "registered_capacity": 60.0
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    116.306655,
+                    -33.445811
+                ]
+            },
+            "properties": {
+                "oid": "wem_121",
+                "station_id": "MUJA_M3",
+                "station_code": "MUJA_AB",
+                "facility_id": "MUJA_M3",
+                "network": "WEM",
+                "network_region": "WA",
+                "state": "WA",
+                "postcode": "6225",
+                "name": "Muja Ab",
+                "duid_data": [
+                    {
+                        "duid": "MUJA_M3",
+                        "comissioned_date": "None",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "registered_capacity": 60.0
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    116.306655,
+                    -33.445811
+                ]
+            },
+            "properties": {
+                "oid": "wem_119",
+                "station_id": "MUJA_M1",
+                "station_code": "MUJA_AB",
+                "facility_id": "MUJA_M1",
+                "network": "WEM",
+                "network_region": "WA",
+                "state": "WA",
+                "postcode": "6225",
+                "name": "Muja Ab",
+                "duid_data": [
+                    {
+                        "duid": "MUJA_M1",
+                        "comissioned_date": "None",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": null,
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "registered_capacity": 60.0
                     }
                 ]
             }
@@ -20835,6 +20803,38 @@
                     {
                         "duid": "MUNGARRA_GT1",
                         "comissioned_date": "1991-01-01",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "registered_capacity": 39.5
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    115.115999,
+                    -28.887899
+                ]
+            },
+            "properties": {
+                "oid": "wem_116",
+                "station_id": "MUNGARRA_GT2",
+                "station_code": "MUNGARRA",
+                "facility_id": "MUNGARRA_GT2",
+                "network": "WEM",
+                "network_region": "WA",
+                "state": "WA",
+                "postcode": "6630",
+                "name": "Mungarra",
+                "duid_data": [
+                    {
+                        "duid": "MUNGARRA_GT2",
+                        "comissioned_date": "None",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": null,
                         "status": "operating",
@@ -21064,6 +21064,38 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "registered_capacity": 116.0
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    115.818512,
+                    -31.558545
+                ]
+            },
+            "properties": {
+                "oid": "wem_102",
+                "station_id": "PINJAR_GT9",
+                "station_code": "PINJAR",
+                "facility_id": "PINJAR_GT9",
+                "network": "WEM",
+                "network_region": "WA",
+                "state": "WA",
+                "postcode": "6078",
+                "name": "Pinjar",
+                "duid_data": [
+                    {
+                        "duid": "PINJAR_GT9",
+                        "comissioned_date": "1996-01-01",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "registered_capacity": 118.15
                     }
                 ]
             }
@@ -21320,38 +21352,6 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "registered_capacity": 39.3
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    115.818512,
-                    -31.558545
-                ]
-            },
-            "properties": {
-                "oid": "wem_102",
-                "station_id": "PINJAR_GT9",
-                "station_code": "PINJAR",
-                "facility_id": "PINJAR_GT9",
-                "network": "WEM",
-                "network_region": "WA",
-                "state": "WA",
-                "postcode": "6078",
-                "name": "Pinjar",
-                "duid_data": [
-                    {
-                        "duid": "PINJAR_GT9",
-                        "comissioned_date": "1996-01-01",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "registered_capacity": 118.15
                     }
                 ]
             }
@@ -21750,38 +21750,6 @@
                 ]
             },
             "properties": {
-                "oid": "wem_112",
-                "station_id": "WEST_KALGOORLIE_GT2",
-                "station_code": "WEST_KALGOORLIE",
-                "facility_id": "WEST_KALGOORLIE_GT2",
-                "network": "WEM",
-                "network_region": "WA",
-                "state": "WA",
-                "postcode": "6430",
-                "name": "West Kalgoorlie",
-                "duid_data": [
-                    {
-                        "duid": "WEST_KALGOORLIE_GT2",
-                        "comissioned_date": "1984-01-01",
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "registered_capacity": 41.2
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    121.421519,
-                    -30.780403
-                ]
-            },
-            "properties": {
                 "oid": "wem_113",
                 "station_id": "WEST_KALGOORLIE_GT3",
                 "station_code": "WEST_KALGOORLIE",
@@ -21806,26 +21774,32 @@
         },
         {
             "type": "Feature",
-            "geometry": null,
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    121.421519,
+                    -30.780403
+                ]
+            },
             "properties": {
-                "oid": "wem_47",
-                "station_id": "MERSOLAR_PV1",
-                "station_code": null,
-                "facility_id": "MERSOLAR_PV1",
+                "oid": "wem_112",
+                "station_id": "WEST_KALGOORLIE_GT2",
+                "station_code": "WEST_KALGOORLIE",
+                "facility_id": "WEST_KALGOORLIE_GT2",
                 "network": "WEM",
                 "network_region": "WA",
-                "state": null,
-                "postcode": null,
-                "name": "Merredin Solar Farm",
+                "state": "WA",
+                "postcode": "6430",
+                "name": "West Kalgoorlie",
                 "duid_data": [
                     {
-                        "duid": "MERSOLAR_PV1",
-                        "comissioned_date": "2020-01-01",
-                        "fuel_tech": "solar_utility",
+                        "duid": "WEST_KALGOORLIE_GT2",
+                        "comissioned_date": "1984-01-01",
+                        "fuel_tech": "distillate",
                         "fuel_tech_label": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "registered_capacity": 100.0
+                        "registered_capacity": 41.2
                     }
                 ]
             }
@@ -21852,6 +21826,32 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "registered_capacity": 9.252
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "oid": "wem_47",
+                "station_id": "MERSOLAR_PV1",
+                "station_code": null,
+                "facility_id": "MERSOLAR_PV1",
+                "network": "WEM",
+                "network_region": "WA",
+                "state": null,
+                "postcode": null,
+                "name": "Merredin Solar Farm",
+                "duid_data": [
+                    {
+                        "duid": "MERSOLAR_PV1",
+                        "comissioned_date": "2020-01-01",
+                        "fuel_tech": "solar_utility",
+                        "fuel_tech_label": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "registered_capacity": 100.0
                     }
                 ]
             }
