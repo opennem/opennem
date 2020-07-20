@@ -6,16 +6,16 @@ Awaba,nem_10,NSW1,retired,AWABAREF,bioenergy_biogas,1.0
 Awaba,nem_670,NSW1,operating,,bioenergy_biogas,1.123
 Bakers Maison,nem_671,NSW1,operating,,solar_utility,0.2246
 Bankstown Sports Club,nem_14,NSW1,retired,BANKSPT1,distillate,1.0
-Bankstown Sports Club,nem_673,NSW1,operating,,distillate,1.34
 Bankstown Sports Club,nem_673,NSW1,operating,,distillate,0.8
+Bankstown Sports Club,nem_673,NSW1,operating,,distillate,1.34
 Bayswater,nem_22,NSW1,operating,BW02,coal_black,660.0
-Bayswater,nem_22,NSW1,operating,BW04,coal_black,660.0
 Bayswater,nem_22,NSW1,operating,BW03,coal_black,660.0
+Bayswater,nem_22,NSW1,operating,BW04,coal_black,660.0
 Bayswater,nem_22,NSW1,operating,BW01,coal_black,660.0
-Bayswater,nem_377,NSW1,operating,BW03,coal_black,660.0
 Bayswater,nem_377,NSW1,operating,BW01,coal_black,660.0
 Bayswater,nem_377,NSW1,operating,BW02,coal_black,660.0
 Bayswater,nem_377,NSW1,operating,BW04,coal_black,660.0
+Bayswater,nem_377,NSW1,operating,BW03,coal_black,660.0
 Belconnen,nem_676,NSW1,operating,,bioenergy_biogas,1.03
 Belrose,nem_677,NSW1,operating,,bioenergy_biogas,1.03
 Beryl,nem_29,NSW1,operating,BERYLSF1,solar_utility,98.0
@@ -32,7 +32,7 @@ Bodangora,nem_37,NSW1,operating,BODWF1,wind,113.0
 Bodangora,nem_402,NSW1,operating,BODWF1,wind,113.19
 Bomen,nem_39,NSW1,operating,BOMENSF1,solar_utility,121.0
 Bomen,nem_403,NSW1,committed,BOMENSF1,solar_utility,121.0
-Broadwater,nem_49,NSW1,operating,BWTR1,bioenergy_biomass,38.0
+Broadwater,nem_49,NSW1,operating,BWTR1,bioenergy_biogas,38.0
 Broadwater,nem_410,NSW1,operating,BWTR1,bioenergy_biomass,38.0
 Broadwater,nem_410,NSW1,operating,BWTR1,bioenergy_biomass,
 Broken Hill,nem_30,NSW1,operating,GB01,distillate,50.0
@@ -40,15 +40,15 @@ Broken Hill,nem_43,NSW1,operating,BROKENH1,solar_utility,27.0
 Broken Hill,nem_355,NSW1,operating,BROKENH1,solar_utility,53.76
 Broken Hill,nem_492,NSW1,operating,GB01,distillate,50.0
 Brown Mountain,nem_45,NSW1,operating,BROWNMT,hydro,5.0
-Brown Mountain,nem_513,NSW1,operating,BROWNMT,hydro,
-Brown Mountain,nem_513,NSW1,operating,BROWNMT,hydro,
-Brown Mountain,nem_513,NSW1,operating,BROWNMT,hydro,
 Brown Mountain,nem_513,NSW1,operating,BROWNMT,hydro,5.0
+Brown Mountain,nem_513,NSW1,operating,BROWNMT,hydro,
+Brown Mountain,nem_513,NSW1,operating,BROWNMT,hydro,
+Brown Mountain,nem_513,NSW1,operating,BROWNMT,hydro,
 Burrendong,nem_26,NSW1,operating,BDONGHYD,hydro,19.0
 Burrendong,nem_356,NSW1,operating,BDONGHYD,hydro,19.0
 Burrinjuck,nem_47,NSW1,operating,BURRIN,hydro,27.0
-Burrinjuck,nem_501,NSW1,operating,BURRIN,hydro,27.0
 Burrinjuck,nem_501,NSW1,operating,BURRIN,hydro,
+Burrinjuck,nem_501,NSW1,operating,BURRIN,hydro,27.0
 Capital,nem_52,NSW1,operating,CAPTL_WF,wind,140.0
 Capital,nem_543,NSW1,operating,CAPTL_WF,wind,140.0
 Capital East,nem_55,NSW1,operating,CESF1,solar_utility,1.0
@@ -61,14 +61,14 @@ Coleambally,nem_68,NSW1,operating,COLEASF1,solar_utility,180.0
 Coleambally,nem_421,NSW1,operating,COLEASF1,solar_utility,180.0
 Collector,nem_697,NSW1,committed,,wind,226.8
 Colongra,nem_70,NSW1,operating,CG4,gas_ocgt,181.0
-Colongra,nem_70,NSW1,operating,CG1,gas_ocgt,181.0
 Colongra,nem_70,NSW1,operating,CG2,gas_ocgt,181.0
+Colongra,nem_70,NSW1,operating,CG1,gas_ocgt,181.0
 Colongra,nem_70,NSW1,operating,CG3,gas_ocgt,181.0
 Colongra,nem_620,NSW1,operating,CG1,gas_ocgt,181.0
 Colongra,nem_620,NSW1,operating,CG2,gas_ocgt,181.0
-Colongra,nem_620,NSW1,operating,CG3,gas_ocgt,181.0
 Colongra,nem_620,NSW1,operating,CG4,gas_ocgt,181.0
-Condong,nem_71,NSW1,operating,CONDONG1,bioenergy_biomass,30.0
+Colongra,nem_620,NSW1,operating,CG3,gas_ocgt,181.0
+Condong,nem_71,NSW1,operating,CONDONG1,bioenergy_biogas,30.0
 Condong,nem_411,NSW1,operating,CONDONG1,bioenergy_biomass,30.0
 Copeton,nem_73,NSW1,operating,COPTNHYD,hydro,22.5
 Copeton,nem_358,NSW1,operating,COPTNHYD,hydro,22.5
@@ -87,16 +87,16 @@ Eastern Creek,nem_91,NSW1,operating,EASTCRK,bioenergy_biogas,5.0
 Eastern Creek 2,nem_92,NSW1,operating,EASTCRK2,bioenergy_biogas,8.984
 Eastern Creek 2 Utilisation Facility,nem_556,NSW1,operating,EASTCRK2,bioenergy_biogas,8.984
 Eastern Creek Ps,nem_455,NSW1,operating,EASTCRK,bioenergy_biogas,5.056
-Eraring,nem_99,NSW1,operating,ER04,coal_black,720.0
-Eraring,nem_99,NSW1,operating,ER02,coal_black,720.0
-Eraring,nem_99,NSW1,operating,ER03,coal_black,720.0
 Eraring,nem_99,NSW1,operating,ER01,coal_black,720.0
+Eraring,nem_99,NSW1,operating,ER03,coal_black,720.0
+Eraring,nem_99,NSW1,operating,ER02,coal_black,720.0
+Eraring,nem_99,NSW1,operating,ER04,coal_black,720.0
 Eraring,nem_100,NSW1,operating,ERGT01,distillate,42.0
+Eraring,nem_577,NSW1,operating,ER04,coal_black,720.0
+Eraring,nem_577,NSW1,operating,ER01,coal_black,720.0
 Eraring,nem_577,NSW1,operating,ER03,coal_black,720.0
 Eraring,nem_577,NSW1,operating,ERGT01,distillate,41.5
-Eraring,nem_577,NSW1,operating,ER04,coal_black,720.0
 Eraring,nem_577,NSW1,operating,ER02,coal_black,720.0
-Eraring,nem_577,NSW1,operating,ER01,coal_black,720.0
 Finley,nem_101,NSW1,operating,FINLYSF1,solar_utility,162.0
 Finley,nem_493,NSW1,operating,FINLYSF1,solar_utility,162.36
 Glenbawn,nem_108,NSW1,operating,GLBWNHYD,hydro,5.5
@@ -109,13 +109,13 @@ Grange Avenue,nem_113,NSW1,operating,GRANGEAV,bioenergy_biogas,2.0
 Grange Avenue Landfill,nem_456,NSW1,operating,GRANGEAV,bioenergy_biogas,2.0
 Griffith,nem_115,NSW1,operating,GRIFSF1,solar_utility,27.0
 Griffith,nem_500,NSW1,operating,GRIFSF1,solar_utility,27.2
-Gullen Range,nem_118,NSW1,operating,GULLRWF2,wind,110.0
 Gullen Range,nem_118,NSW1,operating,GULLRWF1,wind,165.0
 Gullen Range,nem_118,NSW1,operating,GULLRSF1,solar_utility,10.0
+Gullen Range,nem_118,NSW1,operating,GULLRWF2,wind,110.0
 Gullen Range,nem_572,NSW1,operating,GULLRSF1,solar_utility,10.0
-Gullen Range,nem_573,NSW1,operating,GULLRWF1,wind,
-Gullen Range,nem_573,NSW1,operating,GULLRWF2,wind,
 Gullen Range,nem_573,NSW1,operating,GULLRWF1,wind,275.5
+Gullen Range,nem_573,NSW1,operating,GULLRWF2,wind,
+Gullen Range,nem_573,NSW1,operating,GULLRWF1,wind,
 Gunning,nem_119,NSW1,operating,GUNNING1,wind,47.0
 Gunning,nem_505,NSW1,operating,GUNNING1,wind,46.5
 Guthega,nem_260,NSW1,operating,GUTHEGA,hydro,60.0
@@ -139,22 +139,22 @@ Kemps Creek,nem_3,NSW1,operating,AGLSITA1,bioenergy_biogas,1.0
 Kincumber,nem_151,NSW1,operating,KINCUM1,bioenergy_biogas,1.0
 Kincumber Landfill Site,nem_363,NSW1,operating,KINCUM1,bioenergy_biogas,1.064
 Lake Macquarie Community,nem_724,NSW1,operating,,solar_utility,0.0788
+Liddell,nem_159,NSW1,operating,LD01,coal_black,500.0
 Liddell,nem_159,NSW1,operating,LD03,coal_black,500.0
 Liddell,nem_159,NSW1,operating,LD04,coal_black,500.0
 Liddell,nem_159,NSW1,operating,LD02,coal_black,500.0
-Liddell,nem_159,NSW1,operating,LD01,coal_black,500.0
 Liddell,nem_379,NSW1,operating,LD02,coal_black,500.0
-Liddell,nem_379,NSW1,operating,LD03,coal_black,500.0
-Liddell,nem_379,NSW1,operating,LD01,coal_black,500.0
 Liddell,nem_379,NSW1,operating,LD04,coal_black,500.0
+Liddell,nem_379,NSW1,operating,LD01,coal_black,500.0
+Liddell,nem_379,NSW1,operating,LD03,coal_black,500.0
 Limondale,nem_349,NSW1,operating,LIMOSF11,solar_utility,275.0
 Limondale,nem_553,NSW1,operating,LIMOSF11,solar_utility,275.0
 Limondale 2,nem_161,NSW1,operating,LIMOSF21,solar_utility,38.0
 Limondale 2,nem_554,NSW1,operating,LIMOSF21,solar_utility,38.0
 Lucas Heights 2,nem_173,NSW1,operating,LUCAS2S2,bioenergy_biogas,5.0
 Lucas Heights 2,nem_174,NSW1,operating,LUCASHGT,bioenergy_biogas,12.65
-Lucas Heights 2,nem_458,NSW1,operating,LUCASHGT,bioenergy_biogas,12.65
 Lucas Heights 2,nem_458,NSW1,operating,LUCAS2S2,bioenergy_biogas,4.6
+Lucas Heights 2,nem_458,NSW1,operating,LUCASHGT,bioenergy_biogas,12.65
 Lucas Heights I,nem_726,NSW1,operating,,bioenergy_biogas,3.09
 Lucas Heights I,nem_726,NSW1,operating,,bioenergy_biogas,2.3
 Manildra,nem_178,NSW1,operating,MANSLR1,solar_utility,25.0
@@ -164,12 +164,12 @@ Molong,nem_732,NSW1,committed,,solar_utility,36.08
 Moree,nem_192,NSW1,operating,MOREESF1,solar_utility,57.0
 Moree,nem_564,NSW1,operating,MOREESF1,solar_utility,57.064
 Mount Majura,nem_735,NSW1,operating,,solar_utility,2.3
-Mt Piper,nem_195,NSW1,operating,MP2,coal_black,700.0
 Mt Piper,nem_195,NSW1,operating,MP1,coal_black,700.0
-Mt Piper,nem_482,NSW1,operating,MP1,coal_black,700.0
+Mt Piper,nem_195,NSW1,operating,MP2,coal_black,700.0
 Mt Piper,nem_482,NSW1,operating,MP2,coal_black,700.0
+Mt Piper,nem_482,NSW1,operating,MP1,coal_black,700.0
 Mugga Lane,nem_188,NSW1,operating,MLSP1,solar_utility,12.0
-Mugga Lane,nem_571,NSW1,operating,MLSP1,bioenergy_biogas,12.0
+Mugga Lane,nem_571,NSW1,operating,MLSP1,solar_utility,12.0
 Munmorah,nem_190,NSW1,retired,MM4,coal_black,300.0
 Munmorah,nem_190,NSW1,retired,MM3,coal_black,300.0
 Narromine,nem_203,NSW1,operating,NASF1,solar_utility,10.0
@@ -188,10 +188,10 @@ Parkes Shire Council,nem_745,NSW1,operating,,solar_utility,0.1074
 Penrith RSL,nem_747,NSW1,operating,,solar_utility,0.1999
 Pindari,nem_221,NSW1,operating,PINDARI,hydro,6.0
 Pindari,nem_368,NSW1,operating,PINDARI,hydro,6.7
-Proten,nem_751,NSW1,operating,,solar_utility,1.211
 Proten,nem_751,NSW1,operating,,solar_utility,0.3588
-Proten,nem_751,NSW1,operating,,solar_utility,0.2499
 Proten,nem_751,NSW1,operating,,solar_utility,0.3567
+Proten,nem_751,NSW1,operating,,solar_utility,1.211
+Proten,nem_751,NSW1,operating,,solar_utility,0.2499
 Redbank,nem_234,NSW1,retired,REDBANK1,coal_black,150.0
 Revesby Workers Club,nem_753,NSW1,operating,,distillate,
 Royalla,nem_241,NSW1,operating,ROYALLA1,solar_utility,20.0
@@ -205,14 +205,14 @@ Shoalhaven Bendeela Kangaroo Valley Pumps,nem_584,NSW1,operating,SHGEN,hydro,240
 Silverton,nem_271,NSW1,operating,STWF1,wind,198.0
 Silverton,nem_380,NSW1,operating,STWF1,wind,198.94
 Smithfield,nem_252,NSW1,operating,SITHE01,gas_ccgt,39.0
-Smithfield Energy Facility,nem_614,NSW1,operating,SITHE04,gas_ccgt,
 Smithfield Energy Facility,nem_614,NSW1,operating,SITHE01,gas_ccgt,185.0
+Smithfield Energy Facility,nem_614,NSW1,operating,SITHE04,gas_ccgt,
 Snowy 2.0,nem_765,NSW1,committed,,hydro,2040.0
 South Keswick,nem_253,NSW1,operating,SKSF1,solar_utility,15.0
 South Keswick,nem_441,NSW1,operating,SKSF1,solar_utility,15.0
 St George Leagues Club,nem_269,NSW1,operating,STGEORG1,distillate,1.0
-St George Leagues Club Kogarah,nem_768,NSW1,operating,,distillate,1.34
 St George Leagues Club Kogarah,nem_768,NSW1,operating,,distillate,0.8
+St George Leagues Club Kogarah,nem_768,NSW1,operating,,distillate,1.34
 Summer Hill,nem_773,NSW1,operating,,bioenergy_biogas,2.246
 Sunraysia,nem_774,NSW1,committed,,solar_utility,228.8
 Tahmoor,nem_275,NSW1,operating,TAHMOOR1,gas_wcmg,7.0
@@ -220,9 +220,9 @@ Tahmoor Waste Coal Mine,nem_449,NSW1,operating,TAHMOOR1,gas_wcmg,7.042
 Tallawarra,nem_276,NSW1,operating,TALWA1,gas_ccgt,440.0
 Tallawarra,nem_483,NSW1,operating,TALWA1,gas_ccgt,440.0
 Taralga,nem_277,NSW1,operating,TARALGA1,wind,106.0
-Taralga,nem_647,NSW1,operating,TARALGA1,wind,
-Taralga,nem_647,NSW1,operating,TARALGA1,wind,
 Taralga,nem_647,NSW1,operating,TARALGA1,wind,106.8
+Taralga,nem_647,NSW1,operating,TARALGA1,wind,
+Taralga,nem_647,NSW1,operating,TARALGA1,wind,
 Taronga Western Plains Zoo,nem_779,NSW1,operating,,solar_utility,0.9976
 Teralba,nem_285,NSW1,operating,TERALBA,gas_wcmg,3.0
 Teralba,nem_450,NSW1,operating,TERALBA,gas_wcmg,3.0
@@ -236,23 +236,23 @@ Todae Minchinbury,nem_787,NSW1,operating,,solar_utility,0.3204
 Tower,nem_293,NSW1,operating,TOWER,gas_wcmg,41.0
 Tower,nem_454,NSW1,operating,TOWER,gas_wcmg,41.2
 Tumut,nem_259,NSW1,operating,UPPTUMUT,hydro,616.0
-Tumut,nem_631,NSW1,operating,UPPTUMUT,hydro,
 Tumut,nem_631,NSW1,operating,UPPTUMUT,hydro,616.0
+Tumut,nem_631,NSW1,operating,UPPTUMUT,hydro,
 Tumut 3,nem_258,NSW1,operating,SNOWYP,pumps,600.0
 Tumut 3,nem_258,NSW1,operating,TUMUT3,hydro,1500.0
 Tumut 3,nem_629,NSW1,operating,TUMUT3,hydro,1500.0
-Uranquinty,nem_298,NSW1,operating,URANQ11,gas_ocgt,166.0
 Uranquinty,nem_298,NSW1,operating,URANQ14,gas_ocgt,166.0
+Uranquinty,nem_298,NSW1,operating,URANQ11,gas_ocgt,166.0
 Uranquinty,nem_298,NSW1,operating,URANQ13,gas_ocgt,166.0
 Uranquinty,nem_298,NSW1,operating,URANQ12,gas_ocgt,166.0
-Uranquinty,nem_585,NSW1,operating,URANQ12,gas_ocgt,166.0
 Uranquinty,nem_585,NSW1,operating,URANQ11,gas_ocgt,166.0
-Uranquinty,nem_585,NSW1,operating,URANQ14,gas_ocgt,166.0
 Uranquinty,nem_585,NSW1,operating,URANQ13,gas_ocgt,166.0
+Uranquinty,nem_585,NSW1,operating,URANQ12,gas_ocgt,166.0
+Uranquinty,nem_585,NSW1,operating,URANQ14,gas_ocgt,166.0
 "Vales Point ""B""",nem_430,NSW1,operating,VP6,coal_black,660.0
 "Vales Point ""B""",nem_430,NSW1,operating,VP5,coal_black,660.0
-Vales Point B,nem_301,NSW1,operating,VP5,coal_black,660.0
 Vales Point B,nem_301,NSW1,operating,VP6,coal_black,660.0
+Vales Point B,nem_301,NSW1,operating,VP5,coal_black,660.0
 Wallerawang,nem_329,NSW1,retired,WW8,coal_black,500.0
 Wallerawang,nem_329,NSW1,retired,WW7,coal_black,500.0
 Warragamba,nem_309,NSW1,retired,WG01,hydro,50.0
@@ -264,14 +264,14 @@ West Nowra Landfill Generation Facility,nem_373,NSW1,operating,AGLNOW1,bioenergy
 Western Suburbs League Club,nem_307,NSW1,operating,WESTCBT1,distillate,1.0
 Western Suburbs League Club Campbelltown,nem_476,NSW1,operating,WESTCBT1,distillate,1.0
 Wetherill Park,nem_771,NSW1,operating,,solar_utility,0.9248
-White Rock,nem_328,NSW1,operating,WRWF1,wind,175.0
 White Rock,nem_328,NSW1,operating,WRSF1,solar_utility,22.0
-White Rock,nem_657,NSW1,operating,WRWF1,wind,175.0
+White Rock,nem_328,NSW1,operating,WRWF1,wind,175.0
 White Rock,nem_657,NSW1,operating,WRSF1,solar_utility,22.0
-Wilga Park,nem_313,NSW1,operating,WILGAPK,bioenergy_biogas,10.0
+White Rock,nem_657,NSW1,operating,WRWF1,wind,175.0
+Wilga Park,nem_313,NSW1,operating,WILGAPK,gas_recip,10.0
 Wilga Park,nem_613,NSW1,operating,WILGAPK,bioenergy_biogas,
 Wilga Park,nem_613,NSW1,operating,WILGAPK,bioenergy_biogas,10.0
-Wilga Park B,nem_314,NSW1,operating,WILGB01,bioenergy_biogas,12.0
+Wilga Park B,nem_314,NSW1,operating,WILGB01,gas_recip,12.0
 Wilga Park B,nem_612,NSW1,operating,WILGB01,bioenergy_biogas,6.0
 Wilga Park B,nem_612,NSW1,operating,WILGB01,bioenergy_biogas,6.0
 Williamsdale,nem_810,NSW1,operating,,solar_utility,7.566
@@ -295,34 +295,34 @@ Barcaldine,nem_17,QLD1,operating,BARCALDN,gas_ccgt,37.0
 Barcaldine,nem_18,QLD1,operating,BARCSF1,solar_utility,10.0
 Barcaldine,nem_432,QLD1,operating,BARCSF1,solar_utility,20.0
 Barcaldine,nem_488,QLD1,operating,BARCALDN,gas_ccgt,37.0
-Barron Gorge,nem_20,QLD1,operating,BARRON-1,hydro,30.0
 Barron Gorge,nem_20,QLD1,operating,BARRON-2,hydro,30.0
-Barron Gorge,nem_416,QLD1,operating,BARRON-1,hydro,30.0
+Barron Gorge,nem_20,QLD1,operating,BARRON-1,hydro,30.0
 Barron Gorge,nem_416,QLD1,operating,BARRON-2,hydro,30.0
+Barron Gorge,nem_416,QLD1,operating,BARRON-1,hydro,30.0
 Birkdale,nem_681,QLD1,operating,,bioenergy_biogas,0.789
-Braemar,nem_41,QLD1,operating,BRAEMAR2,bioenergy_biogas,168.0
-Braemar,nem_41,QLD1,operating,BRAEMAR1,bioenergy_biogas,168.0
-Braemar,nem_41,QLD1,operating,BRAEMAR3,bioenergy_biogas,168.0
+Braemar,nem_41,QLD1,operating,BRAEMAR2,gas_ocgt,168.0
+Braemar,nem_41,QLD1,operating,BRAEMAR1,gas_ocgt,168.0
+Braemar,nem_41,QLD1,operating,BRAEMAR3,gas_ocgt,168.0
+Braemar,nem_404,QLD1,operating,BRAEMAR3,bioenergy_biogas,168.0
 Braemar,nem_404,QLD1,operating,BRAEMAR1,bioenergy_biogas,168.0
 Braemar,nem_404,QLD1,operating,BRAEMAR2,bioenergy_biogas,168.0
-Braemar,nem_404,QLD1,operating,BRAEMAR3,bioenergy_biogas,168.0
-Braemar 2,nem_11,QLD1,operating,BRAEMAR5,bioenergy_biogas,173.0
-Braemar 2,nem_11,QLD1,operating,BRAEMAR7,bioenergy_biogas,173.0
-Braemar 2,nem_11,QLD1,operating,BRAEMAR6,bioenergy_biogas,173.0
-Braemar 2,nem_398,QLD1,operating,BRAEMAR5,bioenergy_biogas,173.0
-Braemar 2,nem_398,QLD1,operating,BRAEMAR7,bioenergy_biogas,173.0
+Braemar 2,nem_11,QLD1,operating,BRAEMAR7,gas_ocgt,173.0
+Braemar 2,nem_11,QLD1,operating,BRAEMAR5,gas_ocgt,173.0
+Braemar 2,nem_11,QLD1,operating,BRAEMAR6,gas_ocgt,173.0
 Braemar 2,nem_398,QLD1,operating,BRAEMAR6,bioenergy_biogas,173.0
+Braemar 2,nem_398,QLD1,operating,BRAEMAR7,bioenergy_biogas,173.0
+Braemar 2,nem_398,QLD1,operating,BRAEMAR5,bioenergy_biogas,173.0
 Browns Plains,nem_40,QLD1,operating,BPLANDF1,bioenergy_biogas,2.0
 Browns Plains,nem_686,QLD1,operating,,bioenergy_biogas,1.15
 Browns Plains Landfill Ps,nem_459,QLD1,operating,BPLANDF1,bioenergy_biogas,2.0
-Callide,nem_424,QLD1,operating,CALL_A_4,coal_black,30.0
-Callide,nem_424,QLD1,operating,CALL_B_2,coal_black,350.0
 Callide,nem_424,QLD1,operating,CALL_B_1,coal_black,350.0
+Callide,nem_424,QLD1,operating,CALL_A_4,coal_black,30.0
 Callide,nem_424,QLD1,operating,,coal_black,30.0
+Callide,nem_424,QLD1,operating,CALL_B_2,coal_black,350.0
 Callide A,nem_344,QLD1,retired,CALL_A_2,coal_black,30.0
 Callide A,nem_344,QLD1,retired,CALL_A_4,coal_black,30.0
-Callide B,nem_345,QLD1,operating,CALL_B_2,coal_black,350.0
 Callide B,nem_345,QLD1,operating,CALL_B_1,coal_black,350.0
+Callide B,nem_345,QLD1,operating,CALL_B_2,coal_black,350.0
 Callide C,nem_50,QLD1,operating,CPP_4,coal_black,420.0
 Callide C,nem_50,QLD1,operating,CPP_3,coal_black,420.0
 Callide C Nett Off,nem_408,QLD1,operating,CPP_4,coal_black,420.0
@@ -335,28 +335,28 @@ Clare,nem_61,QLD1,operating,CLARESF1,solar_utility,110.0
 Clare,nem_415,QLD1,operating,CLARESF1,solar_utility,110.262
 Clermont,nem_64,QLD1,operating,CLERMSF1,solar_utility,92.0
 Clermont,nem_420,QLD1,operating,CLERMSF1,solar_utility,92.5
-Collinsville,nem_69,QLD1,retired,COLNSV_1,coal_black,30.0
 Collinsville,nem_69,QLD1,retired,COLNSV_3,coal_black,30.0
-Collinsville,nem_69,QLD1,retired,COLNSV_5,coal_black,66.0
+Collinsville,nem_69,QLD1,retired,COLNSV_1,coal_black,30.0
 Collinsville,nem_69,QLD1,retired,COLNSV_2,coal_black,30.0
 Collinsville,nem_69,QLD1,retired,COLNSV_4,coal_black,30.0
+Collinsville,nem_69,QLD1,retired,COLNSV_5,coal_black,66.0
 Collinsville,nem_78,QLD1,operating,CSPVPS1,solar_utility,42.0
 Collinsville,nem_406,QLD1,operating,CSPVPS1,solar_utility,42.0
-Condamine A,nem_75,QLD1,operating,CPSA,bioenergy_biogas,143.0
+Condamine A,nem_75,QLD1,operating,CPSA,gas_ccgt,143.0
 Condamine A,nem_604,QLD1,operating,CPSA,gas_ccgt,143.0
 Condamine A,nem_604,QLD1,operating,CPSA,gas_ccgt,
 Coopers Gap,nem_72,QLD1,commissioning,COOPGWF1,wind,452.0
-Coopers Gap,nem_381,QLD1,operating,COOPGWF1,wind,69.0
-Coopers Gap,nem_381,QLD1,operating,COOPGWF1,wind,174.0
 Coopers Gap,nem_381,QLD1,operating,COOPGWF1,wind,156.0
+Coopers Gap,nem_381,QLD1,operating,COOPGWF1,wind,174.0
+Coopers Gap,nem_381,QLD1,operating,COOPGWF1,wind,69.0
 Coopers Gap,nem_381,QLD1,operating,COOPGWF1,wind,53.0
-Daandine,nem_81,QLD1,operating,DAANDINE,bioenergy_biogas,33.0
+Daandine,nem_81,QLD1,operating,DAANDINE,gas_recip,33.0
 Daandine,nem_397,QLD1,operating,DAANDINE,bioenergy_biogas,33.0
-Darling Downs,nem_85,QLD1,operating,DDPS1,bioenergy_biogas,121.0
+Darling Downs,nem_85,QLD1,operating,DDPS1,gas_ccgt,121.0
 Darling Downs,nem_86,QLD1,operating,DDSF1,solar_utility,121.0
 Darling Downs,nem_428,QLD1,operating,DDSF1,solar_utility,121.0
-Darling Downs,nem_576,QLD1,operating,DDPS1,gas_ccgt,280.0
 Darling Downs,nem_576,QLD1,operating,DDPS1,gas_ccgt,363.0
+Darling Downs,nem_576,QLD1,operating,DDPS1,gas_ccgt,280.0
 Daydream,nem_84,QLD1,operating,DAYDSF1,solar_utility,79.0
 Daydream,nem_429,QLD1,operating,DAYDSF2,solar_utility,88.0
 Daydream,nem_429,QLD1,operating,DAYDSF1,solar_utility,79.75
@@ -369,16 +369,16 @@ Gangarri,nem_709,QLD1,committed,,solar_utility,120.0
 German Creek,nem_107,QLD1,operating,GERMCRK,gas_wcmg,45.0
 German Creek,nem_451,QLD1,operating,GERMCRK,gas_wcmg,44.976
 German Creek,nem_451,QLD1,operating,GERMCRK,gas_wcmg,
-Gladstone,nem_103,QLD1,operating,GSTONE3,coal_black,280.0
 Gladstone,nem_103,QLD1,operating,GSTONE2,coal_black,280.0
+Gladstone,nem_103,QLD1,operating,GSTONE4,coal_black,280.0
+Gladstone,nem_103,QLD1,operating,GSTONE3,coal_black,280.0
+Gladstone,nem_103,QLD1,operating,GSTONE1,coal_black,280.0
 Gladstone,nem_103,QLD1,operating,GSTONE6,coal_black,280.0
 Gladstone,nem_103,QLD1,operating,GSTONE5,coal_black,280.0
-Gladstone,nem_103,QLD1,operating,GSTONE4,coal_black,280.0
-Gladstone,nem_103,QLD1,operating,GSTONE1,coal_black,280.0
-Gladstone,nem_425,QLD1,operating,GSTONE3,coal_black,280.0
-Gladstone,nem_425,QLD1,operating,GSTONE1,coal_black,280.0
-Gladstone,nem_425,QLD1,operating,GSTONE4,coal_black,280.0
 Gladstone,nem_425,QLD1,operating,GSTONE2,coal_black,280.0
+Gladstone,nem_425,QLD1,operating,GSTONE4,coal_black,280.0
+Gladstone,nem_425,QLD1,operating,GSTONE1,coal_black,280.0
+Gladstone,nem_425,QLD1,operating,GSTONE3,coal_black,280.0
 Gladstone,nem_425,QLD1,operating,GSTONE5,coal_black,280.0
 Gladstone,nem_425,QLD1,operating,GSTONE6,coal_black,280.0
 Grosvenor,nem_116,QLD1,operating,GROSV1,gas_wcmg,21.0
@@ -397,24 +397,24 @@ Inkerman Mill,nem_713,QLD1,operating,,bioenergy_biomass,10.0
 Inkerman Mill,nem_713,QLD1,operating,,bioenergy_biomass,2.5
 Invicta Sugar Mill,nem_140,QLD1,operating,INVICTA,bioenergy_biomass,50.0
 Invicta Sugar Mill,nem_634,QLD1,operating,INVICTA,bioenergy_biomass,
-Invicta Sugar Mill,nem_634,QLD1,operating,INVICTA,bioenergy_biomass,
 Invicta Sugar Mill,nem_634,QLD1,operating,INVICTA,bioenergy_biomass,50.3
+Invicta Sugar Mill,nem_634,QLD1,operating,INVICTA,bioenergy_biomass,
 Isis Central Sugar Mill,nem_139,QLD1,operating,ICSM,bioenergy_biomass,25.0
 Isis Central Sugar Mill Cogeneration,nem_362,QLD1,operating,ICSM,bioenergy_biomass,25.0
 Kalamia Mill,nem_716,QLD1,operating,,bioenergy_biomass,9.0
-Kareeya,nem_147,QLD1,operating,KAREEYA5,hydro,7.0
-Kareeya,nem_147,QLD1,operating,KAREEYA1,hydro,21.0
 Kareeya,nem_147,QLD1,operating,KAREEYA4,hydro,21.0
 Kareeya,nem_147,QLD1,operating,KAREEYA3,hydro,21.0
+Kareeya,nem_147,QLD1,operating,KAREEYA1,hydro,21.0
 Kareeya,nem_147,QLD1,operating,KAREEYA2,hydro,21.0
-Kareeya,nem_417,QLD1,operating,KAREEYA4,hydro,21.0
-Kareeya,nem_417,QLD1,operating,KAREEYA3,hydro,21.0
+Kareeya,nem_147,QLD1,operating,KAREEYA5,hydro,7.0
+Kareeya,nem_417,QLD1,operating,KAREEYA1,hydro,21.0
 Kareeya,nem_417,QLD1,operating,KAREEYA2,hydro,21.0
 Kareeya,nem_417,QLD1,operating,KAREEYA5,hydro,7.0
-Kareeya,nem_417,QLD1,operating,KAREEYA1,hydro,21.0
+Kareeya,nem_417,QLD1,operating,KAREEYA4,hydro,21.0
+Kareeya,nem_417,QLD1,operating,KAREEYA3,hydro,21.0
+Kennedy Energy Park,nem_717,QLD1,committed,,solar_utility,15.0
 Kennedy Energy Park,nem_717,QLD1,committed,,wind,43.2
 Kennedy Energy Park,nem_717,QLD1,committed,,battery_discharging,2.0
-Kennedy Energy Park,nem_717,QLD1,committed,,solar_utility,15.0
 Kidston,nem_154,QLD1,operating,KSP1,solar_utility,50.0
 Kidston Project,nem_496,QLD1,operating,KSP1,solar_utility,50.0
 Kogan Creek,nem_152,QLD1,operating,KPP_1,coal_black,744.0
@@ -436,26 +436,26 @@ Maryborough Mill,nem_728,QLD1,operating,,bioenergy_biomass,4.0
 Maryrorough,nem_180,QLD1,committed,MARYRSF1,solar_utility,33.0
 Maryrorough,nem_434,QLD1,operating,MARYRSF1,solar_utility,33.0
 Mcnamee Partners,nem_729,QLD1,operating,,solar_utility,0.256
-Millmerran,nem_186,QLD1,operating,MPP_1,coal_black,426.0
 Millmerran,nem_186,QLD1,operating,MPP_2,coal_black,426.0
+Millmerran,nem_186,QLD1,operating,MPP_1,coal_black,426.0
 Millmerran,nem_563,QLD1,operating,MPP_1,coal_black,426.0
 Millmerran,nem_563,QLD1,operating,MPP_2,coal_black,426.0
 Molendinar,nem_731,QLD1,operating,,bioenergy_biogas,0.48
-Moranbah,nem_191,QLD1,operating,MORANBAH,gas_wcmg,13.0
+Moranbah,nem_191,QLD1,operating,MORANBAH,gas_recip,13.0
 Moranbah Generation Project,nem_365,QLD1,operating,MORANBAH,bioenergy_biogas,12.56
 Moranbah North,nem_181,QLD1,operating,MBAHNTH,gas_wcmg,63.0
 Moranbah North Waste Coal Mine,nem_470,QLD1,operating,MBAHNTH,gas_wcmg,63.42
 Moranbah Workers,nem_734,QLD1,operating,,solar_utility,0.2138
-Mount Emerald,nem_490,QLD1,operating,MEWF1,wind,127.65
 Mount Emerald,nem_490,QLD1,operating,MEWF1,wind,52.8
+Mount Emerald,nem_490,QLD1,operating,MEWF1,wind,127.65
 Mount Sheridan Plaza,nem_736,QLD1,operating,,solar_utility,0.2995
 Mt Emerald,nem_184,QLD1,operating,MEWF1,wind,180.0
-Mt Stuart,nem_196,QLD1,operating,MSTUART1,distillate,144.0
 Mt Stuart,nem_196,QLD1,operating,MSTUART2,distillate,144.0
+Mt Stuart,nem_196,QLD1,operating,MSTUART1,distillate,144.0
 Mt Stuart,nem_196,QLD1,operating,MSTUART3,distillate,131.0
-Mt Stuart,nem_580,QLD1,operating,MSTUART2,distillate,144.0
-Mt Stuart,nem_580,QLD1,operating,MSTUART3,distillate,131.0
 Mt Stuart,nem_580,QLD1,operating,MSTUART1,distillate,144.0
+Mt Stuart,nem_580,QLD1,operating,MSTUART3,distillate,131.0
+Mt Stuart,nem_580,QLD1,operating,MSTUART2,distillate,144.0
 Mulgrave Central Mill,nem_738,QLD1,operating,,bioenergy_biomass,9.0
 Normanton,nem_742,QLD1,operating,,solar_utility,4.96
 Oakey,nem_212,QLD1,operating,OAKEY2,gas_ocgt,141.0
@@ -466,7 +466,7 @@ Oakey,nem_491,QLD1,operating,OAKEY2,gas_ocgt,141.0
 Oakey,nem_491,QLD1,operating,OAKEY1,gas_ocgt,141.0
 Oakey 2,nem_214,QLD1,operating,OAKEY2SF,solar_utility,65.0
 Oakey 2,nem_436,QLD1,committed,OAKEY2SF,solar_utility,65.0
-Oaky Creek,nem_217,QLD1,operating,OAKYCREK,gas_wcmg,20.0
+Oaky Creek,nem_217,QLD1,operating,OAKYCREK,gas_recip,20.0
 Oaky Creek,nem_448,QLD1,operating,OAKYCREK,bioenergy_biogas,20.0
 Oaky Creek,nem_448,QLD1,operating,OAKYCREK,bioenergy_biogas,
 Oaky Creek 2,nem_216,QLD1,operating,OAKY2,gas_wcmg,15.0
@@ -476,73 +476,73 @@ Pioneer Sugar Mill,nem_600,QLD1,operating,,bioenergy_biomass,67.78
 Pioneer Sugar Mill,nem_600,QLD1,operating,,bioenergy_biomass,
 Plane Creek Mill,nem_749,QLD1,operating,,bioenergy_biomass,4.0
 Plane Creek Mill,nem_749,QLD1,operating,,bioenergy_biomass,10.0
-Proserpine,nem_750,QLD1,operating,,bioenergy_biomass,11.0
 Proserpine,nem_750,QLD1,operating,,bioenergy_biomass,6.0
+Proserpine,nem_750,QLD1,operating,,bioenergy_biomass,11.0
 Racecourse Mill,nem_233,QLD1,operating,RACOMIL1,bioenergy_biomass,48.5
-Racecourse Mill,nem_561,QLD1,operating,RACOMIL1,bioenergy_biomass,7.0
 Racecourse Mill,nem_561,QLD1,operating,RACOMIL1,bioenergy_biomass,3.5
+Racecourse Mill,nem_561,QLD1,operating,RACOMIL1,bioenergy_biomass,7.0
 Racecourse Mill,nem_561,QLD1,operating,RACOMIL1,bioenergy_biomass,38.0
 Rochedale,nem_238,QLD1,operating,ROCHEDAL,bioenergy_biogas,4.0
 Rochedale,nem_755,QLD1,operating,,bioenergy_biogas,4.492
-Rocky Point Cogen,nem_242,QLD1,operating,RPCG,bioenergy_biogas,30.0
+Rocky Point Cogen,nem_242,QLD1,operating,RPCG,bioenergy_biomass,30.0
 Rocky Point Cogeneration,nem_605,QLD1,operating,RPCG,bioenergy_biomass,30.0
 Roghan Road,nem_93,QLD1,operating,EDLRGNRD,bioenergy_biogas,2.0
 Roghan Road,nem_460,QLD1,operating,EDLRGNRD,bioenergy_biomass,2.0
 Roma,nem_239,QLD1,operating,ROMA_7,gas_ocgt,40.0
 Roma,nem_239,QLD1,operating,ROMA_8,gas_ocgt,40.0
-Roma Station,nem_583,QLD1,operating,ROMA_7,gas_ocgt,40.0
-Roma Station,nem_583,QLD1,operating,ROMA_7,gas_ocgt,40.0
 Roma Station,nem_583,QLD1,operating,ROMA_8,gas_ocgt,40.0
+Roma Station,nem_583,QLD1,operating,ROMA_7,gas_ocgt,40.0
+Roma Station,nem_583,QLD1,operating,ROMA_7,gas_ocgt,40.0
 Ross River,nem_243,QLD1,operating,RRSF1,solar_utility,128.0
 Ross River,nem_606,QLD1,operating,RRSF1,solar_utility,128.0
 Rugby Run,nem_245,QLD1,operating,RUGBYR1,solar_utility,83.0
 Rugby Run,nem_405,QLD1,operating,RUGBYR1,solar_utility,83.0
 SIPS Staypylton Industrial,nem_764,QLD1,operating,,solar_utility,0.15
 Somerset Dam,nem_766,QLD1,operating,,solar_utility,3.2
-South Johnstone Mill,nem_767,QLD1,operating,,bioenergy_biomass,9.5
-South Johnstone Mill,nem_767,QLD1,operating,,bioenergy_biomass,7.8
 South Johnstone Mill,nem_767,QLD1,operating,,bioenergy_biomass,2.0
+South Johnstone Mill,nem_767,QLD1,operating,,bioenergy_biomass,7.8
+South Johnstone Mill,nem_767,QLD1,operating,,bioenergy_biomass,9.5
 Southbank Institute Of Technology,nem_270,QLD1,operating,STHBKTEC,distillate,1.0
 St Ursula'S College Yeppoon,nem_770,QLD1,operating,,solar_utility,0.1738
-Stanwell,nem_266,QLD1,operating,STAN-3,coal_black,365.0
 Stanwell,nem_266,QLD1,operating,STAN-2,coal_black,365.0
+Stanwell,nem_266,QLD1,operating,STAN-3,coal_black,365.0
 Stanwell,nem_266,QLD1,operating,STAN-4,coal_black,365.0
 Stanwell,nem_266,QLD1,operating,STAN-1,coal_black,365.0
 Stanwell,nem_636,QLD1,operating,STAN-2,coal_black,365.0
-Stanwell,nem_636,QLD1,operating,STAN-3,coal_black,365.0
 Stanwell,nem_636,QLD1,operating,STAN-1,coal_black,365.0
 Stanwell,nem_636,QLD1,operating,STAN-4,coal_black,365.0
+Stanwell,nem_636,QLD1,operating,STAN-3,coal_black,365.0
 Stapylton,nem_267,QLD1,operating,STAPYLTON1,bioenergy_biogas,3.0
+Stapylton,nem_559,QLD1,operating,STAPYLTON1,bioenergy_biogas,2.14
 Stapylton,nem_559,QLD1,operating,STAPYLTON1,bioenergy_biogas,0.765
 Stapylton,nem_559,QLD1,operating,STAPYLTON1,bioenergy_biogas,0.46
-Stapylton,nem_559,QLD1,operating,STAPYLTON1,bioenergy_biogas,2.14
 Sun Metals,nem_254,QLD1,operating,SMCSF1,solar_utility,117.0
-Sun Metals,nem_641,QLD1,operating,SMCSF1,solar_utility,118.0
 Sun Metals,nem_641,QLD1,operating,SMCSF1,solar_utility,6.0
+Sun Metals,nem_641,QLD1,operating,SMCSF1,solar_utility,118.0
 Suncoast Gold Macadamias,nem_272,QLD1,retired,SUNCOAST,bioenergy_biomass,1.0
 Sunshine Coast,nem_299,QLD1,operating,VALDORA1,solar_utility,15.0
 Suntown,nem_775,QLD1,operating,,bioenergy_biogas,1.025
 Suntown,nem_775,QLD1,operating,,bioenergy_biogas,0.77
 Susan River,nem_264,QLD1,operating,SRSF1,solar_utility,85.0
 Susan River,nem_642,QLD1,operating,SRSF1,solar_utility,85.26
-Swanbank,nem_342,QLD1,operating,SWAN_E,bioenergy_biogas,385.0
-Swanbank,nem_777,QLD1,operating,,bioenergy_biogas,0.364
+Swanbank,nem_342,QLD1,operating,SWAN_E,gas_ccgt,385.0
 Swanbank,nem_777,QLD1,operating,,bioenergy_biogas,1.123
-Swanbank B,nem_343,QLD1,retired,SWAN_B_3,coal_black,125.0
-Swanbank B,nem_343,QLD1,retired,SWAN_B_4,coal_black,125.0
+Swanbank,nem_777,QLD1,operating,,bioenergy_biogas,0.364
 Swanbank B,nem_343,QLD1,retired,SWAN_B_1,coal_black,125.0
+Swanbank B,nem_343,QLD1,retired,SWAN_B_4,coal_black,125.0
 Swanbank B,nem_343,QLD1,retired,SWAN_B_2,coal_black,125.0
+Swanbank B,nem_343,QLD1,retired,SWAN_B_3,coal_black,125.0
 Swanbank B & Swanbank,nem_418,QLD1,operating,SWAN_E,gas_ccgt,385.0
 Tableland Mill,nem_274,QLD1,operating,TABMILL2,bioenergy_biomass,24.0
 Tableland Mill 2,nem_566,QLD1,operating,TABMILL2,bioenergy_biomass,24.0
-Tarong,nem_278,QLD1,operating,TARONG#4,coal_black,350.0
-Tarong,nem_278,QLD1,operating,TARONG#3,coal_black,350.0
 Tarong,nem_278,QLD1,operating,TARONG#2,coal_black,350.0
 Tarong,nem_278,QLD1,operating,TARONG#1,coal_black,350.0
-Tarong,nem_638,QLD1,operating,TARONG#1,distillate,350.0
-Tarong,nem_638,QLD1,operating,TARONG#4,coal_black,350.0
+Tarong,nem_278,QLD1,operating,TARONG#4,coal_black,350.0
+Tarong,nem_278,QLD1,operating,TARONG#3,coal_black,350.0
 Tarong,nem_638,QLD1,operating,TARONG#3,coal_black,350.0
 Tarong,nem_638,QLD1,operating,TARONG#2,coal_black,350.0
+Tarong,nem_638,QLD1,operating,TARONG#4,coal_black,350.0
+Tarong,nem_638,QLD1,operating,TARONG#1,coal_black,350.0
 Tarong North,nem_279,QLD1,operating,TNPS1,coal_black,443.0
 Tarong North,nem_637,QLD1,operating,TNPS1,coal_black,443.0
 Todae DHP,nem_781,QLD1,operating,,solar_utility,0.9541
@@ -552,17 +552,17 @@ Todae Mitchelton,nem_792,QLD1,operating,,solar_utility,0.1746
 Todae Private Brisbane,nem_793,QLD1,operating,,solar_utility,0.1705
 Todae Toowoomba,nem_794,QLD1,operating,,solar_utility,0.2601
 Tong Park Agricultural Waste,nem_797,QLD1,operating,,bioenergy_biomass,1.228
-Townsville,nem_333,QLD1,operating,YABULU2,gas_ccgt,82.0
 Townsville,nem_333,QLD1,operating,YABULU,gas_ccgt,160.0
+Townsville,nem_333,QLD1,operating,YABULU2,gas_ccgt,82.0
 Townsville,nem_371,QLD1,operating,YABULU2,gas_ccgt,82.0
 Townsville,nem_371,QLD1,operating,YABULU,gas_ccgt,160.0
 University Of Southern Queensland Toowoomba,nem_804,QLD1,operating,,solar_utility,1.09
 Valdora,nem_439,QLD1,operating,VALDORA1,solar_utility,15.0
-Veolia Ti Tree,nem_290,QLD1,operating,TITREE,bioenergy_biomass,2.0
-Veolia Ti Tree,nem_654,QLD1,operating,TITREE,bioenergy_biomass,2.0
+Veolia Ti Tree,nem_290,QLD1,operating,TITREE,bioenergy_biogas,2.0
+Veolia Ti Tree,nem_654,QLD1,operating,TITREE,bioenergy_biogas,2.0
 Victoria Mill,nem_300,QLD1,operating,VICMILL1,bioenergy_biomass,24.0
-Victoria Mill,nem_661,QLD1,operating,,bioenergy_biomass,24.0
 Victoria Mill,nem_661,QLD1,operating,,bioenergy_biomass,
+Victoria Mill,nem_661,QLD1,operating,,bioenergy_biomass,24.0
 Vulcan Yatala,nem_807,QLD1,operating,,solar_utility,0.1966
 Warwick,nem_809,QLD1,committed,,solar_utility,32.104
 Warwick,nem_809,QLD1,committed,,solar_utility,32.104
@@ -572,10 +572,10 @@ Whitwood Road,nem_311,QLD1,operating,WHIT1,bioenergy_biogas,1.0
 Whitwood Road,nem_586,QLD1,operating,WHIT1,bioenergy_biogas,1.0
 Windy Hill,nem_315,QLD1,operating,WHILL1,wind,12.0
 Windy Hill,nem_662,QLD1,operating,WHILL1,wind,12.0
-Wivenhoe,nem_318,QLD1,operating,W/HOE#1,hydro,285.0
 Wivenhoe,nem_318,QLD1,operating,PUMP1,pumps,240.0
 Wivenhoe,nem_318,QLD1,operating,W/HOE#2,hydro,285.0
 Wivenhoe,nem_318,QLD1,operating,PUMP2,pumps,240.0
+Wivenhoe,nem_318,QLD1,operating,W/HOE#1,hydro,285.0
 Wivenhoe,nem_319,QLD1,operating,WIVENSH,hydro,5.0
 Wivenhoe,nem_419,QLD1,operating,W/HOE#1,hydro,285.0
 Wivenhoe,nem_419,QLD1,operating,W/HOE#2,hydro,285.0
@@ -585,13 +585,13 @@ Yarranlea,nem_336,QLD1,commissioning,YARANSF1,solar_utility,121.0
 Yarranlea,nem_664,QLD1,operating,YARANSF1,solar_utility,121.0
 Yarwun,nem_337,QLD1,operating,YARWUN_1,gas_ccgt,154.0
 Yarwun,nem_608,QLD1,operating,YARWUN_1,gas_ccgt,154.0
-Adelaide Airport,nem_665,SA1,operating,,solar_utility,0.96
 Adelaide Airport,nem_665,SA1,operating,,solar_utility,0.04
+Adelaide Airport,nem_665,SA1,operating,,solar_utility,0.96
 Adelaide Zoo,nem_666,SA1,operating,,solar_utility,0.1508
 Amcor Glass,nem_5,SA1,retired,AMCORGR,distillate,4.0
 Angaston,nem_6,SA1,operating,ANGAS2,distillate,20.0
-Angaston,nem_6,SA1,operating,ANGAST1,distillate,50.0
 Angaston,nem_6,SA1,operating,ANGAS1,distillate,30.0
+Angaston,nem_6,SA1,operating,ANGAST1,distillate,50.0
 Angaston,nem_618,SA1,operating,ANGAST1,distillate,50.0
 Aquatic & Leasure Centre,nem_756,SA1,operating,,solar_utility,0.512
 BHP Olympic Dam,nem_679,SA1,operating,,distillate,30.0
@@ -599,7 +599,7 @@ Barker Inlet,nem_19,SA1,operating,BARKIPS1,gas_recip,211.0
 Barker Inlet,nem_382,SA1,operating,BARKIPS1,gas_wcmg,211.0
 Blue Lake Milling,nem_33,SA1,retired,BLULAKE1,distillate,1.0
 Blue Lake Milling,nem_683,SA1,operating,,distillate,0.505
-Bolivar Waste,nem_38,SA1,operating,BOLIVAR1,bioenergy_biomass,10.0
+Bolivar Waste,nem_38,SA1,operating,BOLIVAR1,bioenergy_biogas,10.0
 Bungala One,nem_34,SA1,operating,BNGSF1,solar_utility,135.0
 Bungala One,nem_587,SA1,operating,BNGSF1,solar_utility,135.0
 Bungala Two,nem_35,SA1,committed,BNGSF2,solar_utility,135.0
@@ -610,12 +610,12 @@ Cathedral Rocks,nem_53,SA1,operating,CATHROCK,wind,66.0
 Cathedral Rocks,nem_412,SA1,operating,CATHROCK,wind,66.0
 Clements Gap,nem_63,SA1,operating,CLEMGPWF,wind,57.0
 Clements Gap,nem_590,SA1,operating,CLEMGPWF,wind,57.0
-Dalrymple North,nem_82,SA1,operating,DALNTH01,battery_discharging,30.0
 Dalrymple North,nem_82,SA1,operating,DALNTHL1,battery_charging,30.0
+Dalrymple North,nem_82,SA1,operating,DALNTH01,battery_discharging,30.0
 Dalrymple North Energy,nem_499,SA1,operating,DALNTH01,battery_discharging,30.0
-Dry Creek,nem_89,SA1,operating,DRYCGT1,gas_ocgt,52.0
 Dry Creek,nem_89,SA1,operating,DRYCGT3,gas_ocgt,52.0
 Dry Creek,nem_89,SA1,operating,DRYCGT2,gas_ocgt,52.0
+Dry Creek,nem_89,SA1,operating,DRYCGT1,gas_ocgt,52.0
 Dry Creek Station,nem_643,SA1,operating,DRYCGT3,gas_ocgt,52.0
 Dry Creek Station,nem_643,SA1,operating,DRYCGT1,gas_ocgt,52.0
 Dry Creek Station,nem_643,SA1,operating,DRYCGT2,gas_ocgt,52.0
@@ -625,16 +625,16 @@ Hallett,nem_1,SA1,operating,AGLHAL,gas_ocgt,217.0
 Hallett,nem_121,SA1,operating,HALLWF1,wind,95.0
 Hallett,nem_383,SA1,operating,HALLWF1,wind,94.5
 Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
+Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
+Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
+Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
+Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
+Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
+Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
+Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
+Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
+Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
 Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,217.0
-Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
-Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
-Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
-Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
-Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
-Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
-Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
-Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
-Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
 Hallett,nem_486,SA1,operating,AGLHAL,gas_ocgt,
 Hallett 2,nem_122,SA1,operating,HALLWF2,wind,71.0
 Hallett 2,nem_384,SA1,operating,HALLWF2,wind,71.4
@@ -645,12 +645,12 @@ Hornsdale 2,nem_132,SA1,operating,HDWF2,wind,102.0
 Hornsdale 2,nem_511,SA1,operating,HDWF2,wind,102.4
 Hornsdale 3,nem_133,SA1,operating,HDWF3,wind,112.0
 Hornsdale 3,nem_512,SA1,operating,HDWF3,wind,112.0
-Hornsdale Reserve,nem_134,SA1,operating,HPRG1,battery_discharging,100.0
 Hornsdale Reserve,nem_134,SA1,operating,HPRL1,battery_charging,120.0
+Hornsdale Reserve,nem_134,SA1,operating,HPRG1,battery_discharging,100.0
 Hornsdale Reserve,nem_508,SA1,operating,HPRG1,wind,150.0
 Kingscote,nem_719,SA1,operating,,distillate,10.0
-Ladbroke Grove,nem_155,SA1,operating,LADBROK1,gas_ocgt,40.0
 Ladbroke Grove,nem_155,SA1,operating,LADBROK2,gas_ocgt,40.0
+Ladbroke Grove,nem_155,SA1,operating,LADBROK1,gas_ocgt,40.0
 Ladbroke Grove,nem_578,SA1,operating,LADBROK2,gas_ocgt,40.0
 Ladbroke Grove,nem_578,SA1,operating,LADBROK1,gas_ocgt,40.0
 Lake Bonney,nem_156,SA1,operating,LBBG1,battery_discharging,25.0
@@ -665,59 +665,59 @@ Lincoln Gap,nem_158,SA1,committed,LGAPWF1,wind,212.4
 Lincoln Gap,nem_555,SA1,operating,LGAPWF1,wind,212.4
 Lonsdale,nem_169,SA1,operating,LONSDALE,distillate,21.0
 Lonsdale,nem_626,SA1,operating,LONSDALE,distillate,20.0
-Mintaro,nem_187,SA1,operating,MINTARO,gas_ocgt,90.0
 Mintaro,nem_187,SA1,operating,MINTNL1,gas_ocgt,25.0
+Mintaro,nem_187,SA1,operating,MINTARO,gas_ocgt,90.0
 Mintaro Station,nem_644,SA1,operating,MINTARO,gas_ocgt,90.0
 Mt Millar,nem_199,SA1,operating,MTMILLAR,wind,70.0
 Mt Millar,nem_570,SA1,operating,MTMILLAR,wind,70.0
 Nawma Balefill Site Uleybury,nem_740,SA1,operating,,solar_utility,1.15
 North Brown Hill,nem_204,SA1,operating,NBHWF1,wind,132.0
 North Brown Hill,nem_385,SA1,operating,NBHWF1,wind,132.3
-Northern,nem_208,SA1,retired,NPSNL2,coal_brown,100.0
 Northern,nem_208,SA1,retired,NPSNL1,coal_brown,100.0
 Northern,nem_208,SA1,retired,NPS2,coal_brown,265.0
+Northern,nem_208,SA1,retired,NPSNL2,coal_brown,100.0
 Northern,nem_208,SA1,retired,NPS1,coal_brown,265.0
 Osborne,nem_218,SA1,operating,OSB-AG,gas_ccgt,180.0
 Osborne,nem_581,SA1,operating,OSB-AG,gas_ccgt,
 Osborne,nem_581,SA1,operating,OSB-AG,gas_ccgt,180.0
 Pedler Creek,nem_220,SA1,retired,PEDLER1,bioenergy_biogas,3.0
 Pelican Point,nem_209,SA1,operating,PPCCGT,gas_ccgt,478.0
-Pelican Point,nem_599,SA1,operating,PPCCGT,gas_ccgt,
 Pelican Point,nem_599,SA1,operating,PPCCGT,gas_ccgt,478.0
+Pelican Point,nem_599,SA1,operating,PPCCGT,gas_ccgt,
 Peterborough,nem_748,SA1,operating,,solar_utility,4.9
+Playford B,nem_223,SA1,retired,PLAYB-AG,coal_brown,240.0
 Playford B,nem_223,SA1,retired,PLAYFB4,coal_brown,60.0
 Playford B,nem_223,SA1,retired,PLAYFB3,coal_brown,60.0
-Playford B,nem_223,SA1,retired,PLAYFB2,coal_brown,60.0
 Playford B,nem_223,SA1,retired,PLAYFB1,coal_brown,60.0
-Playford B,nem_223,SA1,retired,PLAYB-AG,coal_brown,240.0
+Playford B,nem_223,SA1,retired,PLAYFB2,coal_brown,60.0
 Port Lincoln,nem_226,SA1,operating,POR03,distillate,23.0
 Port Lincoln,nem_226,SA1,operating,POR01,distillate,50.0
 Port Lincoln,nem_645,SA1,operating,POR01,distillate,50.0
 Port Lincoln,nem_645,SA1,operating,POR03,distillate,23.5
 Port Stanvac,nem_265,SA1,operating,STANV2,distillate,58.0
-Port Stanvac,nem_265,SA1,operating,STANV1,distillate,58.0
 Port Stanvac,nem_265,SA1,operating,PTSTAN1,distillate,57.6
+Port Stanvac,nem_265,SA1,operating,STANV1,distillate,58.0
 Pt Stanvac,nem_628,SA1,operating,PTSTAN1,distillate,57.6
-Quarantine,nem_231,SA1,operating,QPS1,gas_ocgt,29.0
 Quarantine,nem_231,SA1,operating,QPS5,gas_ocgt,128.0
-Quarantine,nem_231,SA1,operating,QPS3,gas_ocgt,24.0
-Quarantine,nem_231,SA1,operating,QPS2,gas_ocgt,24.0
 Quarantine,nem_231,SA1,operating,QPS4,gas_ocgt,24.0
+Quarantine,nem_231,SA1,operating,QPS2,gas_ocgt,24.0
+Quarantine,nem_231,SA1,operating,QPS1,gas_ocgt,29.0
+Quarantine,nem_231,SA1,operating,QPS3,gas_ocgt,24.0
+Quarantine,nem_582,SA1,operating,QPS4,gas_ocgt,24.0
 Quarantine,nem_582,SA1,operating,QPS3,gas_ocgt,24.0
 Quarantine,nem_582,SA1,operating,QPS1,gas_ocgt,29.0
 Quarantine,nem_582,SA1,operating,QPS2,gas_ocgt,24.0
-Quarantine,nem_582,SA1,operating,QPS4,gas_ocgt,24.0
 Quarantine,nem_582,SA1,operating,QPS5,gas_ocgt,128.0
 Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
 Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
-Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
-Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
-Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
-Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
-Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
-Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
-Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
 Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.6
+Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
+Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
+Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
+Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
+Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
+Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
+Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
 Redmud Green Energy,nem_752,SA1,operating,,solar_utility,0.212
 Seacliff,nem_760,SA1,operating,,hydro,1.35
 Snowtown,nem_257,SA1,operating,SNOWTWN1,wind,99.0
@@ -726,10 +726,10 @@ Snowtown North,nem_255,SA1,operating,SNOWNTH1,wind,144.0
 Snowtown North,nem_617,SA1,operating,SNOWNTH1,wind,144.0
 Snowtown South,nem_256,SA1,operating,SNOWSTH1,wind,126.0
 Snowtown South,nem_616,SA1,operating,SNOWSTH1,wind,126.0
+Snuggery,nem_262,SA1,operating,SNUG3,distillate,21.0
+Snuggery,nem_262,SA1,operating,SNUGNL1,distillate,25.0
 Snuggery,nem_262,SA1,operating,SNUG2,distillate,21.0
 Snuggery,nem_262,SA1,operating,SNUG1,distillate,21.0
-Snuggery,nem_262,SA1,operating,SNUGNL1,distillate,25.0
-Snuggery,nem_262,SA1,operating,SNUG3,distillate,21.0
 Snuggery,nem_646,SA1,operating,SNUG1,distillate,63.0
 Starfish Hill,nem_268,SA1,operating,STARHLWF,wind,35.0
 Starfish Hill,nem_640,SA1,operating,STARHLWF,wind,34.5
@@ -746,16 +746,16 @@ Terminal,nem_286,SA1,retired,TERMSTOR,hydro,2.0
 Terminal,nem_780,SA1,operating,,hydro,1.86
 The Bluff,nem_32,SA1,operating,BLUFF1,wind,52.5
 The Bluff,nem_386,SA1,operating,BLUFF1,wind,52.5
-Torrens Island,nem_292,SA1,operating,TORRB2,gas_steam,200.0
 Torrens Island,nem_292,SA1,operating,TORRA1,gas_steam,120.0
-Torrens Island,nem_292,SA1,operating,TORRA2,gas_steam,120.0
-Torrens Island,nem_292,SA1,operating,TORRA4,gas_steam,120.0
-Torrens Island,nem_292,SA1,operating,TORRB1,gas_steam,200.0
 Torrens Island,nem_292,SA1,operating,TORRB3,gas_steam,200.0
 Torrens Island,nem_292,SA1,operating,TORRA3,gas_steam,120.0
+Torrens Island,nem_292,SA1,operating,TORRB2,gas_steam,200.0
 Torrens Island,nem_292,SA1,operating,TORRB4,gas_steam,200.0
-Vibe Energy,nem_806,SA1,operating,,distillate,0.8
+Torrens Island,nem_292,SA1,operating,TORRA4,gas_steam,120.0
+Torrens Island,nem_292,SA1,operating,TORRB1,gas_steam,200.0
+Torrens Island,nem_292,SA1,operating,TORRA2,gas_steam,120.0
 Vibe Energy,nem_806,SA1,operating,,distillate,1.34
+Vibe Energy,nem_806,SA1,operating,,distillate,0.8
 Water Bolivar Waste Wwt,nem_633,SA1,operating,BOLIVAR1,bioenergy_biomass,9.9
 Water Bolivar Waste Wwt,nem_633,SA1,operating,BOLIVAR1,bioenergy_biomass,
 Waterloo,nem_303,SA1,operating,WATERLWF,wind,130.0
@@ -764,8 +764,8 @@ Waterloo,nem_655,SA1,operating,WATERLWF,wind,
 Wattle Point,nem_326,SA1,operating,WPWF,wind,91.0
 Wattle Point,nem_388,SA1,operating,WPWF,wind,90.75
 Willogoleche,nem_310,SA1,operating,WGWF1,wind,119.0
-Willogoleche,nem_660,SA1,operating,WGWF1,wind,27.44
 Willogoleche,nem_660,SA1,operating,WGWF1,wind,91.92
+Willogoleche,nem_660,SA1,operating,WGWF1,wind,27.44
 Wingfield,nem_316,SA1,operating,WINGF1_1,bioenergy_biogas,5.0
 Wingfield 2,nem_317,SA1,operating,WINGF2_1,bioenergy_biogas,5.0
 Wingfield 2 Landfill,nem_462,SA1,operating,WINGF2_1,bioenergy_biogas,4.12
@@ -778,20 +778,20 @@ Bastyan,nem_516,TAS1,operating,BASTYAN,hydro,79.9
 Bell Bay,nem_24,TAS1,retired,BBDISEL1,distillate,75.0
 Bell Bay,nem_27,TAS1,retired,BELLBAY1,gas_steam,120.0
 Bell Bay,nem_27,TAS1,retired,BELLBAY2,gas_steam,120.0
-Bell Bay Three,nem_25,TAS1,operating,BBTHREE3,gas_ocgt,35.0
 Bell Bay Three,nem_25,TAS1,operating,BBTHREE2,gas_ocgt,35.0
 Bell Bay Three,nem_25,TAS1,operating,BBTHREE1,gas_ocgt,35.0
 Bell Bay Three,nem_25,TAS1,operating,TVPP104,gas_ocgt,58.0
+Bell Bay Three,nem_25,TAS1,operating,BBTHREE3,gas_ocgt,35.0
 Bell Bay Three,nem_517,TAS1,operating,TVPP104,gas_ocgt,58.0
 Bell Bay Three,nem_517,TAS1,operating,BBTHREE2,gas_ocgt,35.0
-Bell Bay Three,nem_517,TAS1,operating,BBTHREE1,gas_ocgt,35.0
 Bell Bay Three,nem_517,TAS1,operating,BBTHREE3,gas_ocgt,35.0
+Bell Bay Three,nem_517,TAS1,operating,BBTHREE1,gas_ocgt,35.0
 Butlers Gorge,nem_48,TAS1,operating,BUTLERSG,hydro,15.0
 Butlers Gorge,nem_518,TAS1,operating,BUTLERSG,hydro,14.4
-Catagunya / Liapootah / Wayatinah,nem_519,TAS1,operating,LI_WY_CA,hydro,
-Catagunya / Liapootah / Wayatinah,nem_519,TAS1,operating,LI_WY_CA,hydro,
-Catagunya / Liapootah / Wayatinah,nem_519,TAS1,operating,LI_WY_CA,hydro,
 Catagunya / Liapootah / Wayatinah,nem_519,TAS1,operating,LI_WY_CA,hydro,173.7
+Catagunya / Liapootah / Wayatinah,nem_519,TAS1,operating,LI_WY_CA,hydro,
+Catagunya / Liapootah / Wayatinah,nem_519,TAS1,operating,LI_WY_CA,hydro,
+Catagunya / Liapootah / Wayatinah,nem_519,TAS1,operating,LI_WY_CA,hydro,
 Catagunya / Liapootah / Wayatinah,nem_519,TAS1,operating,LI_WY_CA,hydro,
 Catagunya/Liapootah/Wayatinah,nem_162,TAS1,operating,CATAGUN1,distillate,24.0
 Catagunya/Liapootah/Wayatinah,nem_162,TAS1,operating,LI_WY_CA,hydro,173.0
@@ -807,8 +807,8 @@ Fisher,nem_102,TAS1,operating,FISHER,hydro,43.0
 Fisher,nem_523,TAS1,operating,FISHER,hydro,43.2
 George Town,nem_106,TAS1,retired,GEORGTN1,distillate,30.0
 Glenorchy,nem_710,TAS1,operating,,bioenergy_biogas,3.38
-Gordon,nem_112,TAS1,operating,GOVILLB1,hydro,25.0
 Gordon,nem_112,TAS1,operating,GORDON,hydro,432.0
+Gordon,nem_112,TAS1,operating,GOVILLB1,hydro,25.0
 Gordon,nem_524,TAS1,operating,GORDON,hydro,432.0
 Granville Harbour,nem_114,TAS1,committed,GRANWF1,wind,111.0
 Granville Harbour,nem_498,TAS1,operating,GRANWF1,wind,110.0
@@ -824,8 +824,8 @@ Lemonthyme/Wilmot,nem_157,TAS1,operating,LEM_WIL,hydro,82.0
 Lower Lake Margaret,nem_725,TAS1,operating,,hydro,3.2
 Mackintosh,nem_177,TAS1,operating,MACKNTSH,hydro,80.0
 Mackintosh,nem_528,TAS1,operating,MACKNTSH,hydro,79.9
-Meadowbank,nem_183,TAS1,operating,MEADOWBK,hydro,40.0
 Meadowbank,nem_183,TAS1,operating,MEADOWB2,distillate,24.0
+Meadowbank,nem_183,TAS1,operating,MEADOWBK,hydro,40.0
 Meadowbank,nem_529,TAS1,operating,MEADOWBK,hydro,40.0
 Midlands,nem_185,TAS1,operating,MIDLDPS1,hydro,6.0
 Midlands,nem_648,TAS1,operating,,hydro,6.078
@@ -833,17 +833,17 @@ Musselroe,nem_201,TAS1,operating,MUSSELR1,wind,168.0
 Musselroe,nem_530,TAS1,operating,MUSSELR1,wind,168.0
 Paloona,nem_219,TAS1,operating,PALOONA,hydro,33.0
 Paloona,nem_531,TAS1,operating,PALOONA,hydro,28.0
-Poatina,nem_229,TAS1,operating,POAT110,hydro,100.0
 Poatina,nem_229,TAS1,operating,PO110NL1,hydro,25.0
+Poatina,nem_229,TAS1,operating,POAT110,hydro,100.0
 Poatina,nem_230,TAS1,operating,POAT220,hydro,200.0
-Poatina,nem_532,TAS1,operating,POAT110,hydro,100.0
 Poatina,nem_532,TAS1,operating,POAT220,hydro,200.0
+Poatina,nem_532,TAS1,operating,POAT110,hydro,100.0
 Port Latta,nem_225,TAS1,retired,PORTLAT1,distillate,11.0
 Que River,nem_232,TAS1,retired,QUERIVE1,distillate,24.0
 Reece,nem_235,TAS1,operating,REECE2,hydro,116.0
 Reece,nem_235,TAS1,operating,REECE1,hydro,116.0
-Reece,nem_533,TAS1,operating,REECE2,hydro,115.6
 Reece,nem_533,TAS1,operating,REECE1,hydro,115.6
+Reece,nem_533,TAS1,operating,REECE2,hydro,115.6
 Remount,nem_236,TAS1,operating,REMOUNT,bioenergy_biogas,2.0
 Remount,nem_558,TAS1,operating,REMOUNT,bioenergy_biogas,2.0
 Repulse,nem_237,TAS1,operating,REPULSE,hydro,28.0
@@ -858,8 +858,8 @@ Tarraleah,nem_280,TAS1,operating,TARRALEA,hydro,90.0
 Tarraleah,nem_537,TAS1,operating,TARRALEA,hydro,90.0
 Tods Corner,nem_796,TAS1,operating,,hydro,1.2
 Trevallyn,nem_294,TAS1,operating,TREVALLN,hydro,93.0
-Trevallyn,nem_538,TAS1,operating,TREVALLN,hydro,
 Trevallyn,nem_538,TAS1,operating,TREVALLN,hydro,93.0
+Trevallyn,nem_538,TAS1,operating,TREVALLN,hydro,
 Tribute,nem_295,TAS1,operating,TRIBUTE,hydro,83.0
 Tribute,nem_295,TAS1,operating,TRIBNL1,hydro,25.0
 Tribute,nem_539,TAS1,operating,TRIBUTE,hydro,82.8
@@ -876,8 +876,8 @@ Ararat,nem_396,VIC1,operating,ARWF1,wind,
 Ararat,nem_396,VIC1,operating,ARWF1,wind,241.59
 Bairnsdale,nem_87,VIC1,operating,BDL01,gas_ocgt,46.0
 Bairnsdale,nem_87,VIC1,operating,BDL02,gas_ocgt,46.0
-Bairnsdale,nem_350,VIC1,operating,BDL02,gas_ocgt,47.0
 Bairnsdale,nem_350,VIC1,operating,BDL01,gas_ocgt,47.0
+Bairnsdale,nem_350,VIC1,operating,BDL02,gas_ocgt,47.0
 Bald Hills,nem_31,VIC1,operating,BALDHWF1,wind,59.0
 Bald Hills,nem_390,VIC1,operating,BALDHWF1,wind,106.6
 Ballarat,nem_13,VIC1,operating,BALBL1,battery_charging,30.0
@@ -886,10 +886,10 @@ Ballarat,nem_672,VIC1,operating,,bioenergy_biogas,0.789
 Ballarat Base Hospital,nem_472,VIC1,operating,BBASEHOS,distillate,
 Ballarat Base Hospital,nem_472,VIC1,operating,BBASEHOS,gas_wcmg,3.0
 Ballarat Energy,nem_479,VIC1,operating,BALBG1,battery_discharging,30.0
-Ballarat Hospital,nem_23,VIC1,operating,BBASEHOS,distillate,1.0
+Ballarat Hospital,nem_23,VIC1,operating,BBASEHOS,gas_recip,1.0
 Banimboola,nem_16,VIC1,operating,BAPS,hydro,12.0
-Banimboola,nem_353,VIC1,operating,BAPS,hydro,12.85
 Banimboola,nem_353,VIC1,operating,BAPS,hydro,
+Banimboola,nem_353,VIC1,operating,BAPS,hydro,12.85
 Bannerton,nem_15,VIC1,operating,BANN1,solar_utility,50.0
 Bannerton,nem_391,VIC1,operating,BANN1,solar_utility,100.0
 Bayswood Timber Hallam,nem_674,VIC1,operating,,solar_utility,0.1502
@@ -897,10 +897,10 @@ Beaconhills College Berwick,nem_675,VIC1,operating,,solar_utility,0.2002
 Bendigo,nem_678,VIC1,operating,,bioenergy_biogas,0.5
 Berwick,nem_28,VIC1,operating,BERWICK,bioenergy_biogas,7.0
 Berwick,nem_453,VIC1,operating,,bioenergy_biogas,7.2
-Bogong/Mackay,nem_182,VIC1,operating,MCKAY2,hydro,53.0
 Bogong/Mackay,nem_182,VIC1,operating,MCKAY1,hydro,53.0
-Bogong/Mackay,nem_354,VIC1,operating,MCKAY1,hydro,300.0
+Bogong/Mackay,nem_182,VIC1,operating,MCKAY2,hydro,53.0
 Bogong/Mackay,nem_354,VIC1,operating,MCKAY1,hydro,
+Bogong/Mackay,nem_354,VIC1,operating,MCKAY1,hydro,300.0
 Boronia,nem_684,VIC1,operating,,hydro,0.11
 Bridgewater,nem_685,VIC1,operating,,solar_utility,1.3
 Broadmeadows,nem_42,VIC1,operating,BROADMDW,bioenergy_biogas,5.0
@@ -911,8 +911,8 @@ Brooklyn U13,nem_464,VIC1,operating,BROOKLYN,bioenergy_biogas,
 Brooklyn U13,nem_464,VIC1,operating,BROOKLYN,bioenergy_biogas,
 Bulgana,nem_46,VIC1,operating,BULGANA1,wind,87.0
 Bulgana,nem_407,VIC1,operating,BULGANA1,wind,182.0
-Bulgana Green,nem_687,VIC1,committed,,battery_discharging,20.0
 Bulgana Green,nem_687,VIC1,committed,,wind,204.4
+Bulgana Green,nem_687,VIC1,committed,,battery_discharging,20.0
 Bunurong Bangholme,nem_688,VIC1,operating,,solar_utility,0.26
 Cardinia Creek Minihydro,nem_689,VIC1,operating,,hydro,0.09
 Carina West H2E,nem_690,VIC1,operating,,bioenergy_biomass,3.1
@@ -938,19 +938,19 @@ Crowlands,nem_77,VIC1,commissioning,CROWLWF1,wind,79.0
 Crowlands,nem_591,VIC1,operating,CROWLWF1,wind,79.95
 Dartmouth,nem_83,VIC1,operating,DARTM1,hydro,150.0
 Dartmouth,nem_359,VIC1,operating,DARTM1,hydro,185.0
+Dundonnell,nem_90,VIC1,operating,DUNDWF1,wind,168.0
 Dundonnell,nem_90,VIC1,operating,DUNDWF2,wind,46.0
 Dundonnell,nem_90,VIC1,operating,DUNDWF3,wind,121.0
-Dundonnell,nem_90,VIC1,operating,DUNDWF1,wind,168.0
-Dundonnell,nem_442,VIC1,operating,DUNDWF3,wind,121.0
 Dundonnell,nem_442,VIC1,committed,DUNDWF1,wind,168.0
+Dundonnell,nem_442,VIC1,operating,DUNDWF3,wind,121.0
 Dundonnell,nem_442,VIC1,operating,DUNDWF2,wind,46.0
-Eildon,nem_94,VIC1,operating,EILDON2,hydro,60.0
 Eildon,nem_94,VIC1,operating,EILDON1,hydro,60.0
+Eildon,nem_94,VIC1,operating,EILDON2,hydro,60.0
 Eildon,nem_95,VIC1,operating,EILDON3,hydro,5.0
-Eildon,nem_360,VIC1,operating,EILDON2,hydro,
-Eildon,nem_360,VIC1,operating,EILDON3,hydro,4.5
 Eildon,nem_360,VIC1,operating,EILDON1,hydro,60.0
 Eildon,nem_360,VIC1,operating,EILDON2,hydro,60.0
+Eildon,nem_360,VIC1,operating,EILDON3,hydro,4.5
+Eildon,nem_360,VIC1,operating,EILDON2,hydro,
 Eildon,nem_360,VIC1,operating,EILDON1,hydro,
 Elaine,nem_96,VIC1,operating,ELAINWF1,wind,83.0
 Elaine,nem_550,VIC1,committed,ELAINWF1,wind,83.6
@@ -969,10 +969,10 @@ Glenrowan West Sun,nem_711,VIC1,committed,,solar_utility,132.0
 Hallam,nem_130,VIC1,operating,HLMSEW01,hydro,1.0
 Hallam Road,nem_120,VIC1,operating,HALAMRD1,bioenergy_biogas,9.0
 Hallam Road,nem_557,VIC1,operating,HALAMRD1,bioenergy_biogas,8.984
-Hazelwood,nem_126,VIC1,retired,HWPS8,coal_brown,200.0
-Hazelwood,nem_126,VIC1,retired,HWPS5,coal_brown,200.0
-Hazelwood,nem_126,VIC1,retired,HWPS3,coal_brown,200.0
 Hazelwood,nem_126,VIC1,retired,HWPS7,coal_brown,200.0
+Hazelwood,nem_126,VIC1,retired,HWPS3,coal_brown,200.0
+Hazelwood,nem_126,VIC1,retired,HWPS5,coal_brown,200.0
+Hazelwood,nem_126,VIC1,retired,HWPS8,coal_brown,200.0
 Hazelwood,nem_126,VIC1,retired,HWPS6,coal_brown,200.0
 Hazelwood,nem_126,VIC1,retired,HWPS1,coal_brown,220.0
 Hazelwood,nem_126,VIC1,retired,HWPS2,coal_brown,220.0
@@ -981,20 +981,20 @@ Hepburn,nem_127,VIC1,operating,HEPWIND1,wind,4.0
 Hepburn Community,nem_568,VIC1,operating,HEPWIND1,wind,4.1
 Hume,nem_137,VIC1,operating,HUMEV,hydro,29.0
 Hume,nem_503,VIC1,operating,HUMEV,hydro,29.0
-"Jeeralang ""A""",nem_443,VIC1,operating,JLA04,gas_ocgt,51.0
-"Jeeralang ""A""",nem_443,VIC1,operating,JLA03,gas_ocgt,51.0
 "Jeeralang ""A""",nem_443,VIC1,operating,JLA02,gas_ocgt,51.0
+"Jeeralang ""A""",nem_443,VIC1,operating,JLA04,gas_ocgt,51.0
 "Jeeralang ""A""",nem_443,VIC1,operating,JLA01,gas_ocgt,51.0
+"Jeeralang ""A""",nem_443,VIC1,operating,JLA03,gas_ocgt,51.0
 "Jeeralang ""B""",nem_444,VIC1,operating,JLB03,gas_ocgt,76.0
-"Jeeralang ""B""",nem_444,VIC1,operating,JLB02,gas_ocgt,76.0
 "Jeeralang ""B""",nem_444,VIC1,operating,JLB01,gas_ocgt,76.0
+"Jeeralang ""B""",nem_444,VIC1,operating,JLB02,gas_ocgt,76.0
+Jeeralang A,nem_143,VIC1,operating,JLA03,gas_ocgt,51.0
 Jeeralang A,nem_143,VIC1,operating,JLA01,gas_ocgt,51.0
 Jeeralang A,nem_143,VIC1,operating,JLA04,gas_ocgt,51.0
 Jeeralang A,nem_143,VIC1,operating,JLA02,gas_ocgt,51.0
-Jeeralang A,nem_143,VIC1,operating,JLA03,gas_ocgt,51.0
 Jeeralang B,nem_144,VIC1,operating,JLB02,gas_ocgt,76.0
-Jeeralang B,nem_144,VIC1,operating,JLB03,gas_ocgt,76.0
 Jeeralang B,nem_144,VIC1,operating,JLB01,gas_ocgt,76.0
+Jeeralang B,nem_144,VIC1,operating,JLB03,gas_ocgt,76.0
 Jessica Way Truganina,nem_714,VIC1,operating,,solar_utility,0.365
 Jindabyne Pump,nem_263,VIC1,operating,SNWYGJP2,pumps,70.0
 Jl King & Co,nem_715,VIC1,operating,,solar_utility,0.15
@@ -1003,23 +1003,23 @@ Karadoc,nem_544,VIC1,operating,KARSF1,solar_utility,104.0
 Kiamal,nem_718,VIC1,committed,,solar_utility,199.95
 Kiata,nem_150,VIC1,operating,KIATAWF1,wind,31.0
 Kiata,nem_545,VIC1,operating,KIATAWF1,wind,31.05
-Laverton North,nem_167,VIC1,operating,LNGS1,gas_ocgt,156.0
 Laverton North,nem_167,VIC1,operating,LNGS2,gas_ocgt,156.0
-Laverton North,nem_625,VIC1,operating,LNGS2,gas_ocgt,156.0
+Laverton North,nem_167,VIC1,operating,LNGS1,gas_ocgt,156.0
 Laverton North,nem_625,VIC1,operating,LNGS1,gas_ocgt,156.0
+Laverton North,nem_625,VIC1,operating,LNGS2,gas_ocgt,156.0
 Longford,nem_168,VIC1,operating,LONGFORD,gas_ocgt,44.0
 Loy Yang A,nem_170,VIC1,operating,LYA4,coal_brown,560.0
+Loy Yang A,nem_170,VIC1,operating,LYA2,coal_brown,530.0
 Loy Yang A,nem_170,VIC1,operating,LYA3,coal_brown,560.0
 Loy Yang A,nem_170,VIC1,operating,LYA1,coal_brown,560.0
-Loy Yang A,nem_170,VIC1,operating,LYA2,coal_brown,530.0
-Loy Yang A,nem_376,VIC1,operating,LYA4,coal_brown,560.0
-Loy Yang A,nem_376,VIC1,operating,LYA2,coal_brown,530.0
-Loy Yang A,nem_376,VIC1,operating,LYA1,coal_brown,560.0
 Loy Yang A,nem_376,VIC1,operating,LYA3,coal_brown,560.0
-Loy Yang B,nem_171,VIC1,operating,LOYYB2,coal_brown,500.0
+Loy Yang A,nem_376,VIC1,operating,LYA4,coal_brown,560.0
+Loy Yang A,nem_376,VIC1,operating,LYA1,coal_brown,560.0
+Loy Yang A,nem_376,VIC1,operating,LYA2,coal_brown,530.0
 Loy Yang B,nem_171,VIC1,operating,LOYYB1,coal_brown,500.0
-Loy Yang B,nem_392,VIC1,operating,LOYYB1,coal_brown,500.0
+Loy Yang B,nem_171,VIC1,operating,LOYYB2,coal_brown,500.0
 Loy Yang B,nem_392,VIC1,operating,LOYYB2,coal_brown,500.0
+Loy Yang B,nem_392,VIC1,operating,LOYYB1,coal_brown,500.0
 Macarthur,nem_175,VIC1,operating,MACARTH1,wind,420.0
 Macarthur,nem_364,VIC1,operating,MACARTH1,wind,420.0
 Maroona,nem_179,VIC1,operating,MAROOWF1,wind,6.0
@@ -1037,11 +1037,11 @@ Mortons Lane,nem_189,VIC1,operating,MLWF1,wind,20.0
 Mortons Lane,nem_565,VIC1,operating,MLWF1,wind,19.5
 Mount Waverley,nem_737,VIC1,operating,,hydro,0.355
 Mt Gellibrand,nem_197,VIC1,operating,MTGELWF1,wind,137.984
-Mt Gellibrand,nem_567,VIC1,operating,MTGELWF1,wind,25.088
-Mt Gellibrand,nem_567,VIC1,operating,MTGELWF1,wind,12.544
-Mt Gellibrand,nem_567,VIC1,operating,MTGELWF1,wind,28.224
 Mt Gellibrand,nem_567,VIC1,operating,MTGELWF1,wind,9.408
+Mt Gellibrand,nem_567,VIC1,operating,MTGELWF1,wind,12.544
 Mt Gellibrand,nem_567,VIC1,operating,MTGELWF1,wind,18.816
+Mt Gellibrand,nem_567,VIC1,operating,MTGELWF1,wind,28.224
+Mt Gellibrand,nem_567,VIC1,operating,MTGELWF1,wind,25.088
 Mt Gellibrand,nem_567,VIC1,operating,MTGELWF1,wind,43.904
 Mt Mercer,nem_198,VIC1,operating,MERCER01,wind,131.0
 Mt Mercer,nem_569,VIC1,operating,MERCER01,wind,131.2
@@ -1062,9 +1062,9 @@ Portland,nem_389,VIC1,operating,,wind,450.0
 Portland,nem_596,VIC1,operating,,wind,148.0
 Rewaste Wollert,nem_754,VIC1,operating,,bioenergy_biogas,1.06
 Rubicon,nem_244,VIC1,operating,RUBICON,hydro,13.0
+Rubicon Mountain Streams Station,nem_369,VIC1,operating,RUBICON,hydro,2.7
 Rubicon Mountain Streams Station,nem_369,VIC1,operating,RUBICON,hydro,9.4
 Rubicon Mountain Streams Station,nem_369,VIC1,operating,RUBICON,hydro,0.3
-Rubicon Mountain Streams Station,nem_369,VIC1,operating,RUBICON,hydro,2.7
 Rubicon Mountain Streams Station,nem_369,VIC1,operating,RUBICON,hydro,0.8
 SCS Shepparton,nem_759,VIC1,operating,,solar_utility,0.3
 Sale Hospital,nem_758,VIC1,operating,,solar_utility,0.2636
@@ -1099,28 +1099,28 @@ University Of Melbourne Performing Arts Centre Southbank,nem_800,VIC1,operating,
 University Of Melbourne Peter Hall Parkville,nem_801,VIC1,operating,,solar_utility,0.0478
 University Of Melbourne Sports Centre Parkville,nem_802,VIC1,operating,,solar_utility,0.1608
 University Of Melbourne The Spot Carlton,nem_803,VIC1,operating,,solar_utility,0.0588
-Valley Peaking,nem_302,VIC1,operating,VPGS4,gas_ocgt,50.0
-Valley Peaking,nem_302,VIC1,operating,VPGS1,gas_ocgt,50.0
-Valley Peaking,nem_302,VIC1,operating,VPGS2,gas_ocgt,50.0
 Valley Peaking,nem_302,VIC1,operating,VPGS6,gas_ocgt,50.0
-Valley Peaking,nem_302,VIC1,operating,VPGS3,gas_ocgt,50.0
+Valley Peaking,nem_302,VIC1,operating,VPGS2,gas_ocgt,50.0
+Valley Peaking,nem_302,VIC1,operating,VPGS4,gas_ocgt,50.0
 Valley Peaking,nem_302,VIC1,operating,VPGS5,gas_ocgt,50.0
-Valley Peaking Facility,nem_632,VIC1,operating,VPGS2,gas_ocgt,50.0
+Valley Peaking,nem_302,VIC1,operating,VPGS1,gas_ocgt,50.0
+Valley Peaking,nem_302,VIC1,operating,VPGS3,gas_ocgt,50.0
+Valley Peaking Facility,nem_632,VIC1,operating,VPGS6,gas_ocgt,50.0
+Valley Peaking Facility,nem_632,VIC1,operating,VPGS5,gas_ocgt,50.0
 Valley Peaking Facility,nem_632,VIC1,operating,VPGS3,gas_ocgt,50.0
 Valley Peaking Facility,nem_632,VIC1,operating,VPGS4,gas_ocgt,50.0
-Valley Peaking Facility,nem_632,VIC1,operating,VPGS6,gas_ocgt,50.0
+Valley Peaking Facility,nem_632,VIC1,operating,VPGS2,gas_ocgt,50.0
 Valley Peaking Facility,nem_632,VIC1,operating,VPGS1,gas_ocgt,50.0
-Valley Peaking Facility,nem_632,VIC1,operating,VPGS5,gas_ocgt,50.0
 Vawdrey Manufacturing,nem_805,VIC1,operating,,solar_utility,0.7526
 Wantirna,nem_808,VIC1,operating,,hydro,0.132
 Waubra,nem_304,VIC1,operating,WAUBRAWF,wind,192.0
 Waubra,nem_603,VIC1,operating,WAUBRAWF,wind,192.0
 Wemen,nem_306,VIC1,operating,WEMENSF1,solar_utility,97.0
 Wemen,nem_656,VIC1,operating,WEMENSF1,solar_utility,97.5
-West Kiewa,nem_320,VIC1,operating,WKIEWA2,hydro,31.0
 West Kiewa,nem_320,VIC1,operating,WKIEWA1,hydro,31.0
-West Kiewa,nem_372,VIC1,operating,WKIEWA2,hydro,31.0
+West Kiewa,nem_320,VIC1,operating,WKIEWA2,hydro,31.0
 West Kiewa,nem_372,VIC1,operating,WKIEWA1,hydro,31.0
+West Kiewa,nem_372,VIC1,operating,WKIEWA2,hydro,31.0
 William Hovell,nem_595,VIC1,operating,WILLHOV1,hydro,1.5
 Winton,nem_811,VIC1,committed,,solar_utility,85.0
 Wollert,nem_321,VIC1,operating,WOLLERT1,bioenergy_biogas,7.0
@@ -1129,13 +1129,13 @@ Wonthaggi,nem_322,VIC1,operating,WONWP,wind,12.0
 Wonthaggi,nem_602,VIC1,operating,WONWP,wind,12.0
 Wyndham,nem_332,VIC1,operating,WYNDW,bioenergy_biogas,1.0
 Wyndham Waste Disposal Facility,nem_485,VIC1,operating,WYNDW,bioenergy_biogas,1.0
-Yallourn 'W',nem_487,VIC1,operating,YWPS2,coal_brown,360.0
-Yallourn 'W',nem_487,VIC1,operating,YWPS1,coal_brown,360.0
 Yallourn 'W',nem_487,VIC1,operating,YWPS3,coal_brown,380.0
+Yallourn 'W',nem_487,VIC1,operating,YWPS1,coal_brown,360.0
+Yallourn 'W',nem_487,VIC1,operating,YWPS2,coal_brown,360.0
 Yallourn 'W',nem_487,VIC1,operating,YWPS4,coal_brown,380.0
-Yallourn W,nem_334,VIC1,operating,YWPS1,coal_brown,360.0
 Yallourn W,nem_334,VIC1,operating,YWPS4,coal_brown,380.0
 Yallourn W,nem_334,VIC1,operating,YWPS3,coal_brown,380.0
+Yallourn W,nem_334,VIC1,operating,YWPS1,coal_brown,360.0
 Yallourn W,nem_334,VIC1,operating,YWPS2,coal_brown,360.0
 Yaloak South,nem_340,VIC1,operating,YSWF1,wind,28.0
 Yaloak South,nem_597,VIC1,operating,YSWF1,wind,28.7
