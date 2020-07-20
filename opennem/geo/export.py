@@ -220,4 +220,4 @@ if __name__ == "__main__":
         "w",
         transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
     ) as fh:
-        fh.write(dumps(geoj))
+        fh.write(dumps(geoj, indent=4))

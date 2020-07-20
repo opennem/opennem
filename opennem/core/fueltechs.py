@@ -24,6 +24,7 @@ FUELTECH_MAP = {
     "wind": "wind",
     "solar": "solar_utility",
     "gas": "gas_ccgt",
+    "coal seam methane": "gas_wcmg",
     "landfill gas": "bioenergy_biogas",
     "biogas": "bioenergy_biogas",
     "biomass": "bioenergy_biomass",
@@ -53,10 +54,24 @@ FUELTECH_MAP = {
 }
 
 
-def lookup_fueltech(fueltype, techtype=None, fueltype_desc=None):
-    ft = fueltype.lower().strip().replace("-", "")
-    tt = techtype.lower().strip() if techtype else None
-    ftd = fueltype_desc.lower().strip() if fueltype_desc else None
+def clean_fueltech(ft):
+    ft = str(ft)
+
+    ft = ft.lower().strip().replace("-", "")
+
+    if ft == "":
+        return None
+
+    return ft
+
+
+def lookup_fueltech(
+    fueltype, techtype=None, fueltype_desc=None, techtype_desc=None
+):
+    ft = clean_fueltech(fueltype)
+    tt = clean_fueltech(techtype)
+    ftd = clean_fueltech(fueltype_desc)
+    ttd = clean_fueltech(techtype_desc)
 
     # Lookup legacy fuel tech types and map them
     if ft in LEGACY_FUELTECH_MAP.keys():
@@ -65,9 +80,17 @@ def lookup_fueltech(fueltype, techtype=None, fueltype_desc=None):
     if ftd and ftd in FUELTECH_MAP.keys():
         return FUELTECH_MAP[ftd]
 
+    if ttd and ttd in FUELTECH_MAP.keys():
+        if type(FUELTECH_MAP[ttd]) is str:
+            return FUELTECH_MAP[ttd]
+
     # Lookup others
     if not ft in FUELTECH_MAP.keys():
-        logger.error("Found fueltech {} with no mapping".format(ft))
+        logger.error(
+            "Found fueltech {} {} {} {} with no mapping".format(
+                ft, tt, ftd, ttd
+            )
+        )
         return None
 
     lookup = FUELTECH_MAP[ft]
@@ -82,11 +105,18 @@ def lookup_fueltech(fueltype, techtype=None, fueltype_desc=None):
             return lookup[tt]
 
         logger.error(
-            "Fueltech lookup failure: No tech type {} for fuel type {}".format(
-                techtype, fueltype
+            "Found fueltech {} {} {} {} with no mapping".format(
+                ft, tt, ftd, ttd
             )
         )
 
         return None
 
     return lookup
+
+
+def nemri_fueltech_lookup():
+    """
+        NEM RI fueltech lookup method
+    """
+    pass

@@ -156,6 +156,7 @@ class NemStoreREL(DatabaseStoreBase):
             if not generator.fueltech_id:
                 generator.fueltech_id = lookup_fueltech(
                     generator_data["fuel_source_primary"],
+                    generator_data["tech_primary"],
                     generator_data["tech_primary_descriptor"],
                     generator_data["fuel_source_descriptor"],
                 )
