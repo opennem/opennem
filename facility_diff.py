@@ -50,11 +50,11 @@ def main():
                 fac["fuel_tech"] if "fuel_tech" in fac else "",
                 fac["registered_capacity"]
                 if "registered_capacity" in fac
-                else None,
+                else 0,
             ]
             remapped.append(i)
 
-    remapped = sorted(remapped, key=itemgetter(2, 0, 4))
+    remapped = sorted(remapped, key=itemgetter(2, 0, 4, 6))
 
     with open("data/facility_diff/facilities_current.csv", "w") as fh:
         csvwriter = csv.writer(fh)
@@ -80,11 +80,11 @@ def main():
                 fac["fuel_tech"] if "fuel_tech" in fac else "",
                 fac["registered_capacity"]
                 if "registered_capacity" in fac
-                else None,
+                else 0,
             ]
             remapped.append(i)
 
-    remapped = sorted(remapped, key=itemgetter(3, 0, 5))
+    remapped = sorted(remapped, key=itemgetter(3, 0, 5, 7))
 
     with open("data/facility_diff/facilities_v3.csv", "w") as fh:
         csvwriter = csv.writer(fh)
