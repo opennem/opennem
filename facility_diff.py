@@ -46,7 +46,7 @@ def main():
                 k,
                 normalize_regions(v["region_id"]) or "",
                 normalize_states(v["status"]["state"]),
-                duid,
+                duid or "",
                 fac["fuel_tech"] if "fuel_tech" in fac else "",
                 fac["registered_capacity"]
                 if "registered_capacity" in fac
@@ -76,7 +76,7 @@ def main():
                 f["properties"]["station_code"] or "",
                 normalize_regions(f["properties"]["network_region"]) or "",
                 fac["status"].lower(),
-                fac["duid"],
+                fac["duid"] or "",
                 fac["fuel_tech"] if "fuel_tech" in fac else "",
                 fac["registered_capacity"]
                 if "registered_capacity" in fac
