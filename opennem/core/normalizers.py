@@ -98,6 +98,7 @@ ACRONYMS = [
     "krc",
     "h2e",
     "jl",
+    "uom",
 ]
 
 
@@ -203,6 +204,7 @@ def station_name_cleaner(facility_name):
     name_clean = re.sub(" +", " ", name_clean)
 
     name_clean = name_clean.replace("yalumba winery", "yalumba")
+    name_clean = name_clean.replace("university of melbourne", "uom")
 
     # @TODO remove these hard codes
     if not name_clean in ["barcaldine solar farm", "Darling Downs Solar Farm"]:
@@ -241,6 +243,9 @@ def station_name_cleaner(facility_name):
         comp = clean_numbers(comp)
 
         name_components_parsed.append(comp)
+
+    if name_components_parsed[0] == "UOM":
+        name_components_parsed = name_components_parsed[:-1]
 
     name_clean = " ".join(
         [str(i) for i in name_components_parsed if i is not None]
