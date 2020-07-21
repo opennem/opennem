@@ -212,15 +212,22 @@ def station_name_cleaner(facility_name):
     name_components_parsed = []
 
     for comp in name_components:
+        comp = str(comp)
         comp = comp.strip()
         comp = re.sub(r",|-|\(|\)|\–", "", comp)
+
+        if type(comp) is not str:
+            comp = None
+
+        if comp == "":
+            comp = None
 
         if comp in STRIP_WORDS:
             comp = None
 
         if comp in ACRONYMS:
             comp = comp.upper()
-        elif comp.startswith("mc"):
+        elif type(comp) is str and comp.startswith("mc"):
             comp = "Mc" + comp[2:].capitalize()
         elif type(comp) is str and comp != "":
             comp = comp.capitalize()
