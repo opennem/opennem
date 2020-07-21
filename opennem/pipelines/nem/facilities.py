@@ -158,12 +158,12 @@ class NemStoreREL(DatabaseStoreBase):
                     .one_or_none()
                 )
 
-                if not facility_station:
-                    raise Exception(
-                        "Trying to join {} by name but record not found".format(
-                            station_name
-                        )
-                    )
+                # if not facility_station:
+                #     raise Exception(
+                #         "Trying to join {} by name but record not found".format(
+                #             station_name
+                #         )
+                #     )
 
             # Done trying to find existing
 
