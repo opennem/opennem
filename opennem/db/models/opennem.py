@@ -558,6 +558,7 @@ class WemStation(Base, NemModel):
     postcode = Column(Text, nullable=True)
     code = Column(Text, unique=True, index=True, nullable=True)
     name = Column(Text)
+    name_clean = Column(Text)
     geom = Column(Geometry("POINT", srid=4326))
     boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
 
