@@ -39,6 +39,7 @@ FUELTECH_MAP = {
     "coal seam methane": "bioenergy_biogas",
     "green and air dried wood": "bioenergy_biogas",
     "renewable/ biomass / waste": "bioenergy_biomass",
+    "storage battery": "battery_discharging",
     "fuel oil": {"turbine - ocgt": "distillate"},
     "kerosene": "distillate",
     "storage": {"battery": "battery_discharging"},
@@ -53,9 +54,9 @@ FUELTECH_MAP = {
         "combined cycle gas turbine (ccgt)": "gas_ccgt",
     },
     "other": {
-        "solar pv - fixed": "solar_utility",
-        "storage - battery": "battery_discharging",
-        "wind turbine - onshore": "wind",
+        "solar pv fixed": "solar_utility",
+        "storage battery": "battery_discharging",
+        "wind turbine onshore": "wind",
     },
 }
 
@@ -63,7 +64,7 @@ FUELTECH_MAP = {
 def clean_fueltech(ft):
     ft = str(ft)
 
-    ft = ft.lower().strip().replace("-", "")
+    ft = ft.lower().strip().replace("-", "").replace("  ", " ")
 
     if ft == "":
         return None
@@ -87,6 +88,9 @@ def lookup_fueltech(
         return FUELTECH_MAP[ftd]
 
     if tt and tt in FUELTECH_MAP.keys():
+        if type(FUELTECH_MAP[tt]) is str:
+            return FUELTECH_MAP[tt]
+
         if type(FUELTECH_MAP[tt]) is dict and ftd in FUELTECH_MAP[tt]:
             return FUELTECH_MAP[tt][ftd]
 
@@ -99,7 +103,7 @@ def lookup_fueltech(
 
     # Lookup others
     if not ft in FUELTECH_MAP.keys():
-        logger.error(
+        logger.warn(
             "Found fueltech {}, {}, {}, {} with no mapping".format(
                 ft, tt, ftd, ttd
             )
@@ -117,7 +121,7 @@ def lookup_fueltech(
         if tt in lookup.keys():
             return lookup[tt]
 
-        logger.error(
+        logger.warn(
             "Found fueltech {}, {}, {}, {} with no mapping".format(
                 ft, tt, ftd, ttd
             )
