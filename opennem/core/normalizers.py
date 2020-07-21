@@ -257,7 +257,7 @@ def station_name_cleaner(facility_name):
         return "Lake Macquarie Community"
 
     if "/" in name_clean:
-        name_clean = "/".join([i.capitalize() for i in t.split("/")])
+        name_clean = "/".join([i.capitalize() for i in name_clean.split("/")])
 
     return name_clean
 
