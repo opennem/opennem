@@ -84,6 +84,8 @@ class NemStoreREL(DatabaseStoreBase):
         participant = None
         station_current = None
 
+        join_key = None
+
         stations_updated = 0
         stations_added = 0
         generators_updated = 0
@@ -91,9 +93,11 @@ class NemStoreREL(DatabaseStoreBase):
 
         for generator_data in generators:
             facility = None
-            facility_station = None
 
             station_name = name_normalizer(generator_data["station_name"])
+            station_name_clean = station_name_cleaner(
+                generator_data["station_name"]
+            )
             participant_name = name_normalizer(generator_data["participant"])
             facility_region = name_normalizer(generator_data["region"])
             duid = normalize_duid(generator_data["duid"])
@@ -104,6 +108,10 @@ class NemStoreREL(DatabaseStoreBase):
                 else str(generator_data["unit_no"])
             )
 
+            if join_key != station_name_clean:
+                facility_station = None
+                join_key = station_name_clean
+
             if not reg_cap:
                 continue
 
@@ -112,7 +120,7 @@ class NemStoreREL(DatabaseStoreBase):
                 s.query(NemFacility)
                 .filter(NemFacility.region == facility_region)
                 .filter(NemFacility.code == duid)
-                .filter(NemFacility.unit_number == unit_no)
+                .filter(NemFacility.unit_number == None)
                 .one_or_none()
             )
 
@@ -122,6 +130,7 @@ class NemStoreREL(DatabaseStoreBase):
                     s.query(NemFacility)
                     .filter(NemFacility.region == facility_region)
                     .filter(NemFacility.code == duid)
+                    .filter(NemFacility.unit_number == unit_no)
                     .one_or_none()
                 )
 
@@ -142,10 +151,10 @@ class NemStoreREL(DatabaseStoreBase):
                         )
                     )
 
-            if facility_station_join_by_name(station_name):
+            if facility_station_join_by_name(station_name_clean):
                 facility_station = (
                     s.query(NemStation)
-                    .filter(NemStation.name_clean == station_name)
+                    .filter(NemStation.name_clean == station_name_clean)
                     .one_or_none()
                 )
 
@@ -163,10 +172,8 @@ class NemStoreREL(DatabaseStoreBase):
 
             if not facility_station:
                 facility_station = NemStation(
-                    name=name_normalizer(item["Name"])
-                    if "Name" in item
-                    else "",
-                    name_clean=station_name,
+                    name=station_name,
+                    name_clean=station_name_clean,
                     nem_region=facility_region,
                     created_by="pipeline.nemstorerel",
                 )
@@ -180,7 +187,7 @@ class NemStoreREL(DatabaseStoreBase):
                 facility = NemFacility(
                     name=station_name,
                     code=duid,
-                    name_clean=station_name_cleaner(station_name),
+                    name_clean=station_name_clean,
                     region=facility_region,
                     created_by="pipeline.nemstorerel",
                 )
@@ -225,9 +232,7 @@ class NemStoreREL(DatabaseStoreBase):
             facility.unit_number = unit_no
             facility.region = facility_region
             facility.name = station_name
-            facility.name_clean = station_name_cleaner(
-                generator_data["station_name"]
-            )
+            facility.name_clean = station_name_clean
             facility.nameplate_capacity = reg_cap
 
             fueltech = lookup_fueltech(
@@ -356,7 +361,7 @@ class NemStoreGI(DatabaseStoreBase):
             facility_station = (
                 s.query(NemStation)
                 .filter(NemStation.name_clean == facility_name_clean)
-                .one_or_none()
+                .first()
             )
 
         if duid:
