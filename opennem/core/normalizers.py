@@ -93,6 +93,8 @@ ACRONYMS = [
     "ab",
     "stp",
     "krc",
+    "h2e",
+    "jl",
 ]
 
 
