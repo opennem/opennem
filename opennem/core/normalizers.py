@@ -1,5 +1,7 @@
 import re
 
+from opennem.core.station_names import station_map_name
+
 __id_unit_regex = re.compile(r"^(Y|C)[0-9]{1,3}")
 
 __id_duid_regex = re.compile(r"[A-Z0-9]{1,6}")
@@ -165,6 +167,14 @@ def clean_numbers(part):
 
 
 def station_name_cleaner(facility_name):
+    """"
+        This cleans station names from their messy as hell AEMO names to something
+        we can plug into name_clean and humans can actually read
+
+        It's a bit of a mess and could use a refactor
+
+
+    """
     name_clean = facility_name or ""
 
     if type(facility_name) is str:
@@ -176,16 +186,11 @@ def station_name_cleaner(facility_name):
 
     name_clean = name_clean.lower()
 
+    # @TODO replace with the re character stripped - this is unicode junk
     name_clean = name_clean.replace("\u00a0", " ")
 
-    if name_clean.startswith("hornsdale power reserve"):
-        return "Hornsdale Power Reserve"
-
-    if name_clean.startswith("swan hill solar farm"):
-        return "Swan Hill Solar Farm"
-
-    if name_clean.startswith("redmud green energy"):
-        return "Redmud Green Energy"
+    if station_map_name(name_clean) != name_clean:
+        return station_map_name(name_clean)
 
     # strip units from name
     name_clean = re.sub(r"\d+\ ?(mw|kw|MW|KW)", "", name_clean)
@@ -196,9 +201,7 @@ def station_name_cleaner(facility_name):
 
     name_clean = re.sub(" +", " ", name_clean)
 
-    if name_clean == "Darling Downs Solar Farm, Units 144":
-        name_clean = "darling downs solar farm"
-
+    # @TODO remove these hard codes
     if not name_clean in ["barcaldine solar farm", "Darling Downs Solar Farm"]:
         for w in STRIP_WORDS:
             if name_clean.startswith("todae solar") and w in ["solar"]:
@@ -206,9 +209,6 @@ def station_name_cleaner(facility_name):
 
             if " " in w:
                 name_clean = name_clean.replace(w, "")
-
-    if name_clean.startswith("government virtual power"):
-        name_clean = name_clean.replace("government virtual power", "SA VPP")
 
     name_components = [str(i) for i in name_clean.strip().split(" ")]
     name_components_parsed = []
@@ -246,15 +246,6 @@ def station_name_cleaner(facility_name):
     name_clean = re.sub(" +", " ", name_clean)
 
     name_clean = name_clean.strip()
-
-    if name_clean.startswith("Bogong / Mackay"):
-        name_clean = "Bogong/Mackay"
-
-    if name_clean.startswith("Churchill Abattoir"):
-        return "Churchill Abattoir"
-
-    if name_clean.startswith("LMCC Works Depot"):
-        return "Lake Macquarie Community"
 
     if "/" in name_clean:
         name_clean = "/".join([i.capitalize() for i in name_clean.split("/")])
