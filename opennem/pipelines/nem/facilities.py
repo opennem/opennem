@@ -331,11 +331,18 @@ class NemStoreGI(DatabaseStoreBase):
         station_name = station_name_cleaner(item["Name"])
 
         if facility_station_join_by_name(station_name):
-            facility_Station = (
+            facility_station = (
                 s.query(NemStation)
                 .filter(NemStation.name_clean == station_name)
                 .one_or_none()
             )
+
+            if not facility_station:
+                raise Exception(
+                    "Trying to join {} by name but record not found".format(
+                        station_name
+                    )
+                )
 
         if not facility_station:
             facility_station = (
