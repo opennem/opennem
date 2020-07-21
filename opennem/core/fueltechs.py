@@ -16,7 +16,8 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
 
 
 def clean_fueltech(ft):
-    ft = str(ft)
+    if not type(ft) is str:
+        return None
 
     ft = ft.lower().strip()
 
@@ -40,7 +41,10 @@ def load_fueltech_map(fixture_name):
             if line[2] == "tech":
                 continue
 
-            key = frozenset(map(clean_fueltech, line[:4]))
+            if len(line) < 4:
+                line[3] = None
+
+            key = tuple(map(clean_fueltech, line[:4]))
 
             val = line[4]
 
@@ -60,7 +64,7 @@ def lookup_fueltech(
     ftd = clean_fueltech(fueltype_desc)
     ttd = clean_fueltech(techtype_desc)
 
-    lookup_set = frozenset([ft, ftd, tt, ttd])
+    lookup_set = tuple([ft, ftd, tt, ttd])
 
     # Lookup legacy fuel tech types and map them
     if ft in LEGACY_FUELTECH_MAP.keys():
