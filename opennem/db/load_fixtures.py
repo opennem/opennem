@@ -9,7 +9,11 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from opennem.core.facilitystatus import map_v3_states
-from opennem.core.normalizers import station_name_cleaner
+from opennem.core.normalizers import (
+    clean_capacity,
+    name_normalizer,
+    station_name_cleaner,
+)
 from opennem.db import db_connect
 from opennem.db.models.bom import BomStation
 from opennem.db.models.opennem import (
@@ -29,7 +33,8 @@ FIXTURE_PATH = os.path.join(os.path.dirname(__file__), "fixtures")
 engine = db_connect()
 session = sessionmaker(bind=engine)
 
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("opennem.fixtureloader")
 logger.setLevel(logging.INFO)
 
 
@@ -136,13 +141,13 @@ def parse_facilities_json():
     facilities = load_fixture("facility_registry.json")
 
     wa_facilities = [
-        {"name": k, **v}
+        {"station_code": k, **v}
         for k, v in facilities.items()
         if v["location"]["state"] == "WA"
     ]
 
     nem_facilities = [
-        {"name": k, **v}
+        {"station_code": k, **v}
         for k, v in facilities.items()
         if v["location"]["state"] != "WA"
     ]
@@ -154,17 +159,16 @@ def parse_facilities_json():
 
         station = (
             s.query(WemStation)
-            .filter(WemStation.code == facility["name"])
+            .filter(WemStation.code == facility["station_code"])
             .one_or_none()
         )
 
         if not station:
-            logger.info("Station not found: {}".format(facility["name"]))
-            print("Station not found: {}".format(facility["name"]))
 
             station = WemStation(
-                code=facility["name"],
-                name=station_name_cleaner(facility["display_name"]),
+                code=facility["station_code"],
+                name=name_normalizer(facility["display_name"]),
+                name_clean=station_name_cleaner(facility["display_name"]),
                 state=facility["location"]["state"],
                 postcode=facility["location"]["postcode"],
                 geom="SRID=4326;POINT({} {})".format(
@@ -175,7 +179,14 @@ def parse_facilities_json():
             s.add(station)
             s.commit()
 
+            logger.info(
+                "WEM Station not found so created with {} ({})".format(
+                    station.name, station.code, station.id
+                )
+            )
+
         for duid, v in facility["duid_data"].items():
+            created = False
 
             db_facility = (
                 s.query(WemFacility)
@@ -186,70 +197,88 @@ def parse_facilities_json():
             if not db_facility:
                 db_facility = WemFacility(
                     code=duid,
-                    capacity_maximum=v["registered_capacity"],
-                    name=facility["display_name"],
+                    capacity_maximum=clean_capacity(
+                        v["registered_capacity"]
+                        if "registered_capacity" in v
+                        else None
+                    ),
+                    name=name_normalizer(facility["display_name"]),
                 )
+                created = True
 
             db_facility.fueltech_id = fueltech_map(v["fuel_tech"])
             db_facility.region = facility["region_id"]
 
             db_facility.station = station
             db_facility.status_id = map_v3_states(facility["status"]["state"])
-            print(
-                "Added facility {} with station id {}".format(
-                    facility["display_name"], station.code
+
+            logger.info(
+                "{} facility {} ({}) to station {} ({})".format(
+                    "Created" if created else "Updated",
+                    facility["display_name"],
+                    duid,
+                    station.name,
+                    station.id,
                 )
             )
+
             s.add(db_facility)
             s.commit()
 
     for facility in nem_facilities:
         station = None
+        created = False
 
         station = (
             s.query(NemStation)
-            .filter(NemStation.code == facility["station_id"])
+            .filter(NemStation.code == facility["station_code"])
             .one_or_none()
         )
 
+        # if not station:
+        #     first_facility_duid = list(facility["duid_data"].keys()).pop()
+
+        #     logger.info("Looking up {}".format(first_facility_duid))
+
+        #     station_first_facility = (
+        #         s.query(NemFacility)
+        #         .filter(NemFacility.code == first_facility_duid)
+        #         .filter(NemFacility.nameplate_capacity != None)
+        #         .first()
+        #     )
+
+        #     if station_first_facility:
+        #         station = station_first_facility.station
+
         if not station:
-            first_facility_duid = list(facility["duid_data"].keys()).pop()
-
-            logger.info("Looking up {}".format(first_facility_duid))
-
-            station_first_facility = (
-                s.query(NemFacility)
-                .filter(NemFacility.code == first_facility_duid)
-                .filter(NemFacility.nameplate_capacity != None)
-                .first()
+            station = NemStation(
+                code=facility["station_code"],
+                name=name_normalizer(facility["display_name"]),
+                name_clean=station_name_cleaner(facility["display_name"]),
+                state=facility["location"]["state"],
+                postcode=facility["location"]["postcode"],
             )
 
-            if station_first_facility:
-                station = station_first_facility.station
+            if (
+                "latitude" in facility["location"]
+                and facility["location"]["latitude"] is not None
+            ):
+                station.geom = "SRID=4326;POINT({} {})".format(
+                    facility["location"]["latitude"],
+                    facility["location"]["longitude"],
+                )
 
-        if not station:
+            s.add(station)
+            s.commit()
+
             logger.info(
-                "NEM Station not found: {}".format(facility["station_id"])
+                "NEM Station not found so created with {} ({})".format(
+                    station.name, station.code, station.id
+                )
             )
-            station = NemStation(code=facility["station_id"],)
-
-        station.name_clean = station_name_cleaner(facility["display_name"])
-        station.state = facility["location"]["state"]
-        station.postcode = facility["location"]["postcode"]
-
-        if (
-            "latitude" in facility["location"]
-            and facility["location"]["latitude"] is not None
-        ):
-            station.geom = "SRID=4326;POINT({} {})".format(
-                facility["location"]["latitude"],
-                facility["location"]["longitude"],
-            )
-
-        s.add(station)
-        s.commit()
 
         for duid, v in facility["duid_data"].items():
+            created = False
 
             db_facility = (
                 s.query(NemFacility)
@@ -261,11 +290,15 @@ def parse_facilities_json():
             if not db_facility:
                 db_facility = NemFacility(
                     code=duid,
-                    nameplate_capacity=v["registered_capacity"]
-                    if "registered_capacity" in v
-                    else None,
-                    name=facility["display_name"],
+                    nameplate_capacity=clean_capacity(
+                        v["registered_capacity"]
+                        if "registered_capacity" in v
+                        else None
+                    ),
+                    name=name_normalizer(facility["display_name"]),
+                    name_clean=station_name_cleaner(facility["display_name"]),
                 )
+                created = True
 
             if "fuel_tech" in v:
                 db_facility.fueltech_id = fueltech_map(v["fuel_tech"])
@@ -276,6 +309,16 @@ def parse_facilities_json():
 
             s.add(db_facility)
             s.commit()
+
+            logger.info(
+                "{} facility {} ({}) to station {} ({})".format(
+                    "Created" if created else "Updated",
+                    facility["display_name"],
+                    duid,
+                    station.name,
+                    station.id,
+                )
+            )
 
 
 if __name__ == "__main__":
