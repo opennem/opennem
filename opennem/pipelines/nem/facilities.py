@@ -230,9 +230,6 @@ class NemStoreGI(DatabaseStoreBase):
 
         s = self.session()
 
-        # if item["Status"] not in ["Existing Plant", "Project"]:
-        # return item
-
         if item["FuelType"] in ["Natural Gas Pipeline"]:
             return {}
 
@@ -268,7 +265,7 @@ class NemStoreGI(DatabaseStoreBase):
             s.add(participant)
             s.commit()
             logger.info(
-                "Added new partipant to NEM database: {}".format(
+                "GI: Added new partipant to NEM database: {}".format(
                     participant_name
                 )
             )
@@ -276,24 +273,37 @@ class NemStoreGI(DatabaseStoreBase):
         facility = None
         duid = normalize_duid(item["DUID"])
         facility_status = lookup_facility_status(item["UnitStatus"])
+        facility_region = item["Region"]
         facility_station = None
 
         if duid:
             facility = (
                 s.query(NemFacility)
                 .filter(NemFacility.code == duid)
-                .filter(NemFacility.region == item["Region"])
+                .filter(NemFacility.region == facility_region)
                 .filter(NemFacility.nameplate_capacity != None)
                 .first()
             )
 
-            if facility:
-                facility_station = facility.station
+            if not facility.station:
+                raise Exception(
+                    "Existing facility {} {} with no station .. unpossible.".format(
+                        facility.id, facility.name
+                    )
+                )
+
+            facility_station = facility.station
+
+            logger.info(
+                "RI: Found facility by DUID: {} {} {}".format(
+                    facility.id, facility.name, facility_station.id
+                )
+            )
 
         if not duid:
             facility = (
                 s.query(NemFacility)
-                .filter(NemFacility.region == item["Region"])
+                .filter(NemFacility.region == facility_region)
                 .filter(
                     NemFacility.name_clean
                     == station_name_cleaner(item["Name"])
@@ -302,33 +312,68 @@ class NemStoreGI(DatabaseStoreBase):
                 .first()
             )
 
-            if facility:
-                facility_station = facility.station
+            if not facility.station:
+                raise Exception(
+                    "Existing facility {} {} with no station .. unpossible.".format(
+                        facility.id, facility.name
+                    )
+                )
+
+            facility_station = facility.station
+
+            logger.info(
+                "RI: Found facility by name and no nameplate: {} {} {}".format(
+                    facility.id, facility.name, facility_station.id
+                )
+            )
 
         station_name = station_name_cleaner(item["Name"])
-        nem_region = item["Region"]
 
         if not facility_station:
             facility_station = (
                 s.query(NemStation)
                 .filter(NemStation.name_clean == station_name)
-                .filter(NemStation.nem_region == nem_region)
+                .filter(NemStation.nem_region == facility_region)
                 .one_or_none()
             )
+
+            if not facility.station:
+                raise Exception(
+                    "Existing facility {} {} with no station .. unpossible.".format(
+                        facility.id, facility.name
+                    )
+                )
+
+            facility_station = facility.station
+
+            logger.info(
+                "RI: Found facility by name: {} {} {}".format(
+                    facility.id, facility.name, facility_station.id
+                )
+            )
+
+        # Done trying to find existing
+
+        created_station = False
+        created_facility = False
 
         if not facility_station:
             facility_station = NemStation(
                 name=item["Name"],
                 name_clean=station_name,
-                nem_region=nem_region,
+                nem_region=facility_region,
             )
 
             s.add(facility_station)
             s.commit()
 
+            created_station = True
+
         if not facility:
             facility = NemFacility()
             facility.station = facility_station
+
+            created_facility = True
 
         if duid:
             facility.code = duid
@@ -336,11 +381,15 @@ class NemStoreGI(DatabaseStoreBase):
         facility.participant = participant
 
         if not facility.region:
-            facility.region = item["Region"]
+            facility.region = facility_region
 
         if not facility.name:
             facility.name = name_normalizer(item["Name"])
 
+        if not facility.name_clean:
+            facility.name_clean = station_name_cleaner(item["Name"])
+
+        # @TODO parse units into ints
         facility.unit_number = item["Units"]
 
         if (
@@ -377,6 +426,22 @@ class NemStoreGI(DatabaseStoreBase):
             raise e
         finally:
             s.close()
+
+        logger.error(
+            "{} station with name {} and id {}".format(
+                "Created" if created_station else "Updated",
+                facility_station.name_clean,
+                facility_station.id,
+            )
+        )
+        logger.error(
+            "{} facility with name {} and duid {} and id {}".format(
+                "Created" if craeted_facility else "Updated",
+                station.name_clean,
+                station.code,
+                station.id,
+            )
+        )
 
         return {
             "name": name_normalizer(item["Name"]),
