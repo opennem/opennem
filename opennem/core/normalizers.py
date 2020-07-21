@@ -201,6 +201,8 @@ def station_name_cleaner(facility_name):
 
     name_clean = re.sub(" +", " ", name_clean)
 
+    name_clean = name_clean.replace("yalumba winery", "yalumba")
+
     # @TODO remove these hard codes
     if not name_clean in ["barcaldine solar farm", "Darling Downs Solar Farm"]:
         for w in STRIP_WORDS:
