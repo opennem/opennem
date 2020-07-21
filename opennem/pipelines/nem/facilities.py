@@ -6,6 +6,7 @@ from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
 
+from opennem.core.facilitystations import facility_station_join_by_name
 from opennem.core.facilitystatus import lookup_facility_status
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
@@ -328,6 +329,13 @@ class NemStoreGI(DatabaseStoreBase):
             )
 
         station_name = station_name_cleaner(item["Name"])
+
+        if facility_station_join_by_name(station_name):
+            facility_Station = (
+                s.query(NemStation)
+                .filter(NemStation.name_clean == station_name)
+                .one_or_none()
+            )
 
         if not facility_station:
             facility_station = (
