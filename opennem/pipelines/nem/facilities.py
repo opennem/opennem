@@ -82,101 +82,142 @@ class NemStoreREL(DatabaseStoreBase):
         station = None
         participant = None
         station_current = None
+
+        stations_updated = 0
+        stations_added = 0
         generators_updated = 0
+        generators_added = 0
 
         for generator_data in generators:
             station_name = name_normalizer(generator_data["station_name"])
             participant_name = name_normalizer(generator_data["participant"])
             nem_region = name_normalizer(generator_data["region"])
             duid = normalize_duid(generator_data["duid"])
+            reg_cap = clean_capacity(generator_data["reg_cap"])
+            unit_no = (
+                generator_data["unit_no"].strip()
+                if type(generator_data["unit_no"]) is str
+                else str(generator_data["unit_no"])
+            )
 
-            if station_name != station_current:
-                station = (
-                    s.query(NemStation)
-                    .filter(NemStation.name == station_name)
-                    .filter(NemStation.nem_region == nem_region)
+            if not reg_cap:
+                continue
+
+            # See if we have the facility and unit
+            facility = (
+                s.query(NemFacility)
+                .filter(NemFacility.region == nem_region)
+                .filter(NemFacility.code == duid)
+                .filter(NemFacility.unit_number == unit_no)
+                .one_or_none()
+            )
+
+            # Now try and find it without the unit number
+            if not facility:
+                facility = (
+                    s.query(NemFacility)
+                    .filter(NemFacility.region == nem_region)
+                    .filter(NemFacility.code == duid)
                     .one_or_none()
                 )
 
-                if not station:
-                    logger.debug(
-                        "Could not find station {} adding to database".format(
-                            station_name
-                        )
-                    )
-                    station = NemStation(
-                        name=station_name,
-                        name_clean=station_name_cleaner(station_name),
-                        nem_region=nem_region,
-                    )
-
-                if not station.participant:
-                    if participant_name in participant_keys:
-                        participant = participant_keys[participant_name]
-
-                    if not participant:
-                        participant = (
-                            s.query(NemParticipant)
-                            .filter(NemParticipant.name == participant_name)
-                            .one_or_none()
-                        )
-
-                    if not participant:
-                        raise Exception(
-                            "Could not locate existing participant '{}' for station {}".format(
-                                participant_name, station_name
-                            )
-                        )
-
-                    station.participant = participant
-
-                s.add(station)
-                s.commit()
+            # If we still don't have it .. create it and the station
+            if not facility:
                 logger.info(
-                    "Added new NEM station to database: {}".format(
+                    "Could not find station {} adding to database".format(
                         station_name
                     )
                 )
+                facility = NemFacility(
+                    name=station_name,
+                    code=duid,
+                    name_clean=station_name_cleaner(station_name),
+                    region=nem_region,
+                )
+                station = NemStation(
+                    name=station_name,
+                    name_clean=station_name_cleaner(station_name),
+                )
+                facility.station = station
 
-            generator = NemFacility(code=duid, station=station)
+            station = facility.station
 
-            if not generator.participant_id:
-                generator.participant = station.participant
+            if not station.participant:
+                if participant_name in participant_keys:
+                    participant = participant_keys[participant_name]
 
-            generator.region = generator_data["region"]
-            generator.name = generator_data["station_name"].strip()
-            generator.name_clean = station_name_cleaner(
+                if not participant:
+                    participant = (
+                        s.query(NemParticipant)
+                        .filter(NemParticipant.name == participant_name)
+                        .one_or_none()
+                    )
+
+                if not participant:
+                    raise Exception(
+                        "Could not locate existing participant '{}' for station {}".format(
+                            participant_name, station_name
+                        )
+                    )
+
+                station.participant = participant
+
+            s.add(facility)
+            s.commit()
+
+            if not facility.participant_id:
+                facility.participant = station.participant
+
+            # Assume all REL's are operating if we don't have a status
+            if not facility.status_id:
+                facility.status_id = "operating"
+
+            facility.unit_size = clean_capacity(generator_data["unit_size"])
+            facility.unit_number = unit_no
+            facility.region = nem_region
+            facility.name = station_name
+            facility.name_clean = station_name_cleaner(
                 generator_data["station_name"]
             )
-            generator.nameplate_capacity = clean_capacity(
-                generator_data["reg_cap"]
+            facility.nameplate_capacity = reg_cap
+
+            fueltech = lookup_fueltech(
+                generator_data["fuel_source_primary"],
+                generator_data["tech_primary"],
+                generator_data["tech_primary_descriptor"],
+                generator_data["fuel_source_descriptor"],
             )
-            generator.region = generator_data["region"]
 
-            if not generator.fueltech_id:
-                generator.fueltech_id = lookup_fueltech(
-                    generator_data["fuel_source_primary"],
-                    generator_data["tech_primary"],
-                    generator_data["tech_primary_descriptor"],
-                    generator_data["fuel_source_descriptor"],
-                )
+            # handle fueltechs and conflicts
+            if not facility.fueltech_id:
+                facility.fueltech_id = fueltech
+            else:
+                # Log that we have a new fueltech
+                if fueltech and fueltech != facility.fueltech_id:
+                    logger.error(
+                        "Fueltech mismatch for {} {}: prev {} new {}".format(
+                            facility.name_clean,
+                            facility.code,
+                            facility.fueltech_id,
+                            fueltech,
+                        )
+                    )
 
-            generator.status_id = "operating"
-            generator.unit_size = clean_capacity(generator_data["unit_size"])
-            generator.unit_number = generator_data["unit_no"]
-
-            s.add(generator)
+            s.add(facility)
             s.commit()
+
             generators_updated += 1
-            logger.info(
-                "Added generator to database: {}".format(generator.name)
-            )
 
         print(
-            "Added {} of {} generators".format(
-                generators_updated, len(generators)
+            "NEM REL Pipeline: Added {} stations, updated {} stations. Added {}, updated {} generators of {} total".format(
+                stations_added,
+                stations_updated,
+                generators_added,
+                generators_updated,
+                len(generators),
             )
         )
+
         return 0
 
 
