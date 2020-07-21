@@ -12,8 +12,8 @@ Boco Rock,BOCOROCK,NSW1,operating,BOCORWF1,wind,113
 Bodangora,BODWF,NSW1,operating,BODWF1,wind,113
 Bomen,BOMENSF,NSW1,operating,BOMENSF1,solar,121
 Broadwater,BWTR1,NSW1,operating,BWTR1,bioenergy_biogas,38
-Broken Hill,BHILLGT,NSW1,operating,GB01,distillate,50
 Broken Hill,BROKENH,NSW1,operating,BROKENH1,solar,27
+Broken Hill,BHILLGT,NSW1,operating,GB01,distillate,50
 Brown Mountain,BROWNMT,NSW1,operating,BROWNMT,hydro,5
 Burrendong,BDONGHYD,NSW1,operating,BDONGHYD,hydro,19
 Burrinjuck,BURRIN,NSW1,operating,BURRIN,hydro,27
@@ -95,8 +95,8 @@ Teralba,TERALBA,NSW1,operating,TERALBA,gas_wcmg,3
 The Drop,THEDROP,NSW1,operating,THEDROP1,hydro,3
 Tower,TOWER,NSW1,operating,TOWER,gas_wcmg,41
 Tumut,SNOWY2,NSW1,operating,UPPTUMUT,hydro,616
-Tumut 3,SNOWY1,NSW1,operating,TUMUT3,hydro,1500
 Tumut 3,SNOWY1,NSW1,operating,SNOWYP,pumps,600
+Tumut 3,SNOWY1,NSW1,operating,TUMUT3,hydro,1500
 Uranquinty,URANQ,NSW1,operating,URANQ11,gas_ocgt,166
 Uranquinty,URANQ,NSW1,operating,URANQ12,gas_ocgt,166
 Uranquinty,URANQ,NSW1,operating,URANQ13,gas_ocgt,166
@@ -272,7 +272,7 @@ Lake Bonney  1,LKBONNY1,SA1,operating,LKBONNY1,wind,81
 Lake Bonney 2,LKBONNY_2,SA1,operating,LKBONNY2,wind,159
 Lake Bonney 3,LKBONNY3,SA1,operating,LKBONNY3,wind,39
 Lake Bonney Bess1,LBBESS,SA1,operating,LBBG1,battery_discharging,25
-Lake Bonney Bess1,LBBESS,SA1,operating,LBBL1,,
+Lake Bonney Bess1,LBBESS,SA1,operating,LBBL1,,0
 Lincoln Gap,LGAPWF1,SA1,operating,LGAPWF1,wind,212.4
 Lonsdale,LONSDALE,SA1,operating,LONSDALE,distillate,21
 Mintaro,MINTARO,SA1,operating,MINTARO,gas_ocgt,90
@@ -494,8 +494,8 @@ Yawong,YAWWF,VIC1,operating,YAWWF1,wind,7.2
 Yendon,YENDONWF,VIC1,operating,YENDWF1,wind,144
 Albany,ALBANY,WA1,operating,ALBANY_WF1,wind,21.6
 Badgingarra,BADGINGARRA,WA1,operating,BADGINGARRA_WF1,wind,130
-Bluewaters,BLUEWATERS,WA1,operating,BW2_BLUEWATERS_G1,black_coal,217
 Bluewaters,BLUEWATERS,WA1,operating,BW1_BLUEWATERS_G2,black_coal,217
+Bluewaters,BLUEWATERS,WA1,operating,BW2_BLUEWATERS_G1,black_coal,217
 Bremer Bay,BREMER_BAY,WA1,operating,BREMER_BAY_WF1,wind,0.6
 Cockburn,COCKBURN,WA1,operating,COCKBURN_CCG1,gas_ccgt,249.7
 Collgar,INVESTEC_COLLGAR,WA1,operating,INVESTEC_COLLGAR_WF1,wind,206
@@ -514,11 +514,11 @@ Karakin,BLAIRFOX_KARAKIN,WA1,operating,BLAIRFOX_KARAKIN_WF1,wind,5
 Kemerton,KEMERTON,WA1,operating,KEMERTON_GT11,gas_ocgt,154.7
 Kemerton,KEMERTON,WA1,operating,KEMERTON_GT12,gas_ocgt,154.7
 Kemerton diesel,TESLA_KEMERTON,WA1,operating,TESLA_KEMERTON_G1,distillate,9.9
+Kwinana,KWINANA_OLD,WA1,retired,KWINANA_C5,black_coal,200
+Kwinana,KWINANA_OLD,WA1,retired,KWINANA_C6,black_coal,200
 Kwinana,KWINANA,WA1,operating,KWINANA_GT2,gas_ocgt,103.2
 Kwinana,KWINANA,WA1,operating,KWINANA_GT3,gas_ocgt,103.2
 Kwinana,KWINANA,WA1,operating,PPP_KCP_EG1,gas_ocgt,85.7
-Kwinana,KWINANA_OLD,WA1,retired,KWINANA_C5,black_coal,200
-Kwinana,KWINANA_OLD,WA1,retired,KWINANA_C6,black_coal,200
 Kwinana Swift,PERTHENERGY_KWINANA,WA1,operating,PERTHENERGY_KWINANA_GT1,gas_ocgt,116
 Kwinana cogen,TIWEST_COG1,WA1,operating,TIWEST_COG1,gas_ocgt,42.1
 Manjimup,BRIDGETOWN_BIOMASS_PLANT,WA1,operating,BRIDGETOWN_BIOMASS_PLANT,bioenergy_biomass,40
