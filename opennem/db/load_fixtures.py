@@ -8,6 +8,7 @@ from decimal import Decimal
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
+from opennem.core.facilitystations import facility_station_join_by_name
 from opennem.core.facilitystatus import map_v3_states
 from opennem.core.normalizers import (
     clean_capacity,
@@ -157,11 +158,21 @@ def parse_facilities_json():
     for facility in wa_facilities:
         station = None
 
-        station = (
-            s.query(WemStation)
-            .filter(WemStation.code == facility["station_code"])
-            .one_or_none()
-        )
+        station_name = station_name_cleaner(facility["display_name"])
+
+        if facility_station_join_by_name(station_name):
+            station = (
+                s.query(WemStation)
+                .filter(WemStation.name_clean == station_name)
+                .one_or_none()
+            )
+
+        if not station:
+            station = (
+                s.query(WemStation)
+                .filter(WemStation.code == facility["station_code"])
+                .one_or_none()
+            )
 
         if not station:
 
@@ -175,6 +186,7 @@ def parse_facilities_json():
                     facility["location"]["latitude"],
                     facility["location"]["longitude"],
                 ),
+                created_by="fixture.registry",
             )
             s.add(station)
             s.commit()
@@ -203,6 +215,7 @@ def parse_facilities_json():
                         else None
                     ),
                     name=name_normalizer(facility["display_name"]),
+                    created_by="fixture.registry",
                 )
                 created = True
 
@@ -229,34 +242,30 @@ def parse_facilities_json():
         station = None
         created = False
 
-        station = (
-            s.query(NemStation)
-            .filter(NemStation.code == facility["station_code"])
-            .one_or_none()
-        )
+        station_name = station_name_cleaner(facility["display_name"])
 
-        # if not station:
-        #     first_facility_duid = list(facility["duid_data"].keys()).pop()
+        if facility_station_join_by_name(station_name):
+            station = (
+                s.query(NemStation)
+                .filter(NemStation.name_clean == station_name)
+                .one_or_none()
+            )
 
-        #     logger.info("Looking up {}".format(first_facility_duid))
-
-        #     station_first_facility = (
-        #         s.query(NemFacility)
-        #         .filter(NemFacility.code == first_facility_duid)
-        #         .filter(NemFacility.nameplate_capacity != None)
-        #         .first()
-        #     )
-
-        #     if station_first_facility:
-        #         station = station_first_facility.station
+        if not station:
+            station = (
+                s.query(NemStation)
+                .filter(NemStation.code == facility["station_code"])
+                .one_or_none()
+            )
 
         if not station:
             station = NemStation(
                 code=facility["station_code"],
                 name=name_normalizer(facility["display_name"]),
-                name_clean=station_name_cleaner(facility["display_name"]),
+                name_clean=station_name,
                 state=facility["location"]["state"],
                 postcode=facility["location"]["postcode"],
+                created_by="fixture.registry",
             )
 
             if (
@@ -297,6 +306,7 @@ def parse_facilities_json():
                     ),
                     name=name_normalizer(facility["display_name"]),
                     name_clean=station_name_cleaner(facility["display_name"]),
+                    created_by="fixture.registry",
                 )
                 created = True
 
