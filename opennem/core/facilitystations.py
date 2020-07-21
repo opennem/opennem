@@ -34,4 +34,4 @@ def facility_station_join_by_name(station_name):
     if not type(FACILITY_STATIONS) is list:
         raise Exception("Error loading facility station map: not a list")
 
-    return station_name in FACILITY_STATIONS
+    return station_name not in FACILITY_STATIONS
