@@ -19,7 +19,7 @@ def patches():
         "update wem_facility set capacity_credits = 1.1 where code = 'ATLAS'",
         "update nem_facility set station_id = null where code = 'GULLRWF2'",
         "update nem_facility set code = 'GULLRWF2' where name_clean = 'Biala'",
-        "update nem_facility set station_id = (select id from nem_station where name_clean = 'Wivenhoe Small') where code ='WIVENSH'",
+        "update nem_facility set station_id = (select id from nem_station where name = 'Wivenhoe Small Hydro') where code ='WIVENSH'",
         "update nem_station set name_clean = 'Wivenhoe Mini' where name_clean = 'Wivenhoe Small'",
         "update nem_facility set fueltech_id = 'pumps' where code in ('PUMP2', 'PUMP1')",
     ]
