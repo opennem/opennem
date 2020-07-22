@@ -258,6 +258,9 @@ def station_name_cleaner(facility_name):
     if "/" in name_clean:
         name_clean = "/".join([i.capitalize() for i in name_clean.split("/")])
 
+    if station_map_name(name_clean) != name_clean:
+        return station_map_name(name_clean)
+
     return name_clean
 
 
