@@ -81,3 +81,4 @@ Water,,Hydro - Other,,hydro,
 Water,,Hydro - Run of River,,hydro,
 Water,,Storage - Pumped hydro,,pumps,
 Wind,,Wind Turbine - Onshore,,wind,
+,,storage,battery,battery_discharging
