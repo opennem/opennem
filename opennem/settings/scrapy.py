@@ -36,8 +36,8 @@ AUTOTHROTTLE_MAX_DELAY = 60
 ITEM_PIPELINES = {
     "opennem.pipelines.files.LinkExtract": 101,
     "opennem.pipelines.nem.UnzipSingleFilePipeline": 302,
-    "opennem.pipelines.nem.ExtractCSV": 310,
-    "opennem.pipelines.nem.ReadStringHandle": 320,
+    "opennem.pipelines.nem.ReadStringHandle": 310,
+    "opennem.pipelines.nem.ExtractCSV": 390,
     "opennem.pipelines.nem.DatabaseStore": 400,
     "opennem.pipelines.nem.facilities.NemStoreMMS": 401,
     "opennem.pipelines.nem.facilities.NemStoreGI": 402,
@@ -52,6 +52,8 @@ ITEM_PIPELINES = {
     "opennem.pipelines.wem.participant.WemStoreParticipant": 417,
     "opennem.pipelines.wem.participant.WemStoreLiveParticipant": 418,
     "opennem.pipelines.bom.StoreBomObservation": 430,
+    "opennem.pipelines.nem.stations.NemStoreMMSStations": 501,
+    "opennem.pipelines.nem.stations.NemStoreMMSStationStatus": 502,
 }
 
 # @TODO if DEBUG
