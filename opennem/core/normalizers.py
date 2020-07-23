@@ -290,6 +290,6 @@ def clean_capacity(capacity):
         # funky values in spreadsheet
         cap_clean = cap_clean.replace(",", ".")
 
-        cap_clean = float(cap_clean)
+        cap_clean = round(float(cap_clean), 6)
 
     return cap_clean
