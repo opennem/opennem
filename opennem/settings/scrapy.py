@@ -54,6 +54,9 @@ ITEM_PIPELINES = {
     "opennem.pipelines.bom.StoreBomObservation": 430,
     "opennem.pipelines.nem.stations.NemStoreMMSStations": 501,
     "opennem.pipelines.nem.stations.NemStoreMMSStationStatus": 502,
+    "opennem.pipelines.nem.stations.NemStoreMMSDudetail": 503,
+    "opennem.pipelines.nem.stations.NemStoreMMSDudetailSummary": 504,
+    "opennem.pipelines.nem.stations.NemStoreMMSParticipant": 505,
 }
 
 # @TODO if DEBUG

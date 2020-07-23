@@ -174,3 +174,211 @@ class NemStoreMMSStationStatus(NemMMSSingle):
                 s.commit()
             except Exception as e:
                 logger.error(e)
+
+
+class NemStoreMMSParticipant(NemMMSSingle):
+    """
+
+    """
+
+    table = "PARTICIPANT_REGISTRATION_PARTICIPANT"
+
+    @check_spider_pipeline
+    def process_item(self, item, spider=None):
+
+        s = self.session()
+
+        table = self.get_table(item)
+
+        if not table:
+            return item
+
+        records_updated = 0
+        records_created = 0
+
+        records = table["records"]
+        for record in records:
+            created = False
+
+            pid = normalize_duid(record["PARTICIPANTID"])
+            name = normalize_string(record["NAME"])
+            name_clean = participant_name_filter(record["NAME"])
+
+            participant = (
+                s.query(NemParticipant)
+                .filter(NemStation.code == pid)
+                .one_or_none()
+            )
+
+            if not participant:
+                participant = NemParticipant(
+                    code=pid, created_by="au.nem.mms.participant"
+                )
+
+                records_created += 1
+                created = True
+            else:
+                records_updated += 1
+
+            participant.name = name
+            participant.name_clean = name_clean
+
+            try:
+                s.add(participant)
+                s.commit()
+            except Exception as e:
+                logger.error(e)
+
+            logger.debug(
+                "{} participant record with id {}".format(
+                    "Created" if created else "Updated", pid
+                )
+            )
+
+        logger.info(
+            "Created {} records and updated {}".format(
+                records_created, records_updated
+            )
+        )
+
+
+class NemStoreMMSDudetail(NemMMSSingle):
+    """
+
+    """
+
+    table = "PARTICIPANT_REGISTRATION_DUDETAIL"
+
+    @check_spider_pipeline
+    def process_item(self, item, spider=None):
+
+        s = self.session()
+
+        table = self.get_table(item)
+
+        if not table:
+            return item
+
+        records_updated = 0
+        records_created = 0
+
+        records = table["records"]
+        for record in records:
+            created = False
+
+            duid = normalize_duid(record["DUID"])
+            capacity_registered = clean_capacity(record["REGISTEREDCAPACITY"])
+            capacity_max = clean_capacity(record["MAXCAPACITY"])
+
+            facility = (
+                s.query(NemFacility)
+                .filter(NemStation.code == duid)
+                .one_or_none()
+            )
+
+            if not facility:
+                station = NemStation(
+                    code=duid, created_by="au.nem.mms.dudetail"
+                )
+
+                records_created += 1
+                created = True
+            else:
+                records_updated += 1
+
+            facility.capacity_registered = capacity_registered
+            facility.capacity_max = capacity_max
+
+            try:
+                s.add(station)
+                s.commit()
+            except Exception as e:
+                logger.error(e)
+
+            logger.debug(
+                "{} facility record with id {}".format(
+                    "Created" if created else "Updated", duid
+                )
+            )
+
+        logger.info(
+            "Created {} facility records and updated {}".format(
+                records_created, records_updated
+            )
+        )
+
+
+class NemStoreMMSDudetailSummary(NemMMSSingle):
+    """
+
+    """
+
+    table = "PARTICIPANT_DUDETAILSUMMARY"
+
+    @check_spider_pipeline
+    def process_item(self, item, spider=None):
+
+        s = self.session()
+
+        table = self.get_table(item)
+
+        if not table:
+            return item
+
+        records_updated = 0
+        records_created = 0
+
+        records = table["records"]
+        for record in records:
+            created = False
+
+            end_date = record["END_DATE"].strip()
+            dispatch_type = record["DISPATCHTYPE"].strip()
+
+            if dispatch_type != "DISPATCHTYPE":
+                continue
+
+            if end_date != "31/12/2999  12:00:00 am":
+                continue
+
+            sid = normalize_duid(record["STATIONID"])
+            pid = normalize_duid(record["PARTICIPANTID"])
+            capacity_registered = clean_capacity(record["REGISTEREDCAPACITY"])
+            capacity_max = clean_capacity(record["MAXCAPACITY"])
+            network_region = normalize_string(record["REGIONID"])
+
+            station = (
+                s.query(NemStation)
+                .filter(NemStation.code == sid)
+                .one_or_none()
+            )
+
+            if not station:
+                station = NemStation(
+                    code=sid, created_by="au.nem.mms.dudetail_summary"
+                )
+
+                records_created += 1
+                created = True
+            else:
+                records_updated += 1
+
+            facility.capacity_registered = capacity_registered
+
+            try:
+                s.add(station)
+                s.commit()
+            except Exception as e:
+                logger.error(e)
+
+            logger.debug(
+                "{} facility record with id {}".format(
+                    "Created" if created else "Updated", sid
+                )
+            )
+
+        logger.info(
+            "Created {} facility records and updated {}".format(
+                records_created, records_updated
+            )
+        )

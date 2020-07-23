@@ -1,6 +1,9 @@
 import scrapy
 
 from opennem.pipelines.nem.stations import (
+    NemStoreMMSDudetail,
+    NemStoreMMSDudetailSummary,
+    NemStoreMMSParticipant,
     NemStoreMMSStations,
     NemStoreMMSStationStatus,
 )
@@ -28,3 +31,24 @@ class NemMMSStationStatusSpider(NemSingleMMSSpider):
 
     pipelines_extra = set([NemStoreMMSStationStatus])
     url = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_STATIONOPERATINGSTATUS_202006010000.zip"
+
+
+class NemMMSStationStatusSpider(NemSingleMMSSpider):
+    name = "au.nem.mms.participant"
+
+    pipelines_extra = set([NemStoreMMSParticipant])
+    url = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_PARTICIPANT_202006010000.zip"
+
+
+class NemMMSDudeTailSpider(NemSingleMMSSpider):
+    name = "au.nem.mms.dudetail"
+
+    pipelines_extra = set([NemStoreMMSDudetail])
+    url = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_DUDETAIL_202006010000.zip"
+
+
+class NemMMSDudeTailSummarySpider(NemSingleMMSSpider):
+    name = "au.nem.mms.dudetail_summary"
+
+    pipelines_extra = set([NemStoreMMSDudetailSummary])
+    url = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_DUDETAILSUMMARY_202006010000.zip"
