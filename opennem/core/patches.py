@@ -23,6 +23,7 @@ def patches():
         "update nem_station set name_clean = 'Wivenhoe Mini' where name_clean = 'Wivenhoe Small'",
         "update nem_facility set fueltech_id = 'pumps' where code in ('PUMP2', 'PUMP1')",
         "update nem_facility set station_id = null where name='Crookwell' and code is null",
+        "update nem_facility set station_id = null where name='Pioneer Sugar Mill' and code is null",
     ]
 
     with engine.connect() as c:
