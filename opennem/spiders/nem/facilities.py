@@ -14,7 +14,9 @@ class NemFacilitySpider(scrapy.Spider):
     name = "au.nem.facilities.gi"
 
     start_urls = [
-        "https://aemo.com.au/-/media/files/electricity/nem/planning_and_forecasting/generation_information/nem-generation-information-april-2020.xlsx?la=en"
+        # "https://aemo.com.au/-/media/files/electricity/nem/planning_and_forecasting/generation_information/nem-generation-information-april-2020.xlsx?la=en",
+        # "https://data.opennem.org.au/v3/data/NEM+Generation+Information+April+2020.xlsx",
+        "https://data.opennem.org.au/v3/data/NEM+Generation+Information+July+2020.xlsx"
     ]
 
     keys = [
