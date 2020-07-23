@@ -21,6 +21,7 @@ STRIP_WORDS = [
     "renewable energy facility",
     "green power hub units",
     "wind and solar",
+    "streams station",
     "utilisation facility",
     "gas turbines",
     "stockland development",
