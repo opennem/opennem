@@ -457,11 +457,22 @@ class NemStation(Base, NemModel):
 
     nem_region = Column(Text)
 
+    network_region = Column(Text)
+
+    network_name = Column(Text)
+
+    address1 = Column(Text)
+
+    address2 = Column(Text)
+
+    locality = Column(Text)
+
     state = Column(Text)
 
     postcode = Column(Text, nullable=True)
 
     place_id = Column(Text, nullable=True, index=True)
+
     geom = Column(Geometry("POINT", srid=4326))
 
     boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
