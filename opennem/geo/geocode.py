@@ -30,7 +30,7 @@ def nem_geocode(limit=None):
         else:
             geo_str = "{}, Australia".format(r.name)
 
-        logger.info("Encoding: {}".format(geo_str))
+        # logger.info("Encoding: {}".format(geo_str))
 
         google_result = place_search(geo_str)
 
@@ -88,7 +88,7 @@ def wem_geocode(limit=None):
     for r in records:
         geo_str = "{}, WA, Australia".format(r.name)
 
-        logger.info("Encoding: {}".format(geo_str))
+        # logger.info("Encoding: {}".format(geo_str))
 
         google_result = place_search(geo_str)
 
