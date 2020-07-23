@@ -146,6 +146,15 @@ def normalize_duid(duid):
     return duid
 
 
+def normalize_string(csv_string):
+    if not type(csv_string) is str:
+        csv_string = str(csv_string)
+
+    csv_string = csv_string.strip()
+
+    return csv_string
+
+
 def name_normalizer(name):
     name_normalized = None
 
