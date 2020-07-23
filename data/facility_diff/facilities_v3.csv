@@ -37,7 +37,6 @@ Colongra,nem_68,COLONGRA,NSW1,operating,CG3,gas_ocgt,181.0
 Colongra,nem_68,COLONGRA,NSW1,operating,CG4,gas_ocgt,181.0
 Condong,nem_69,CONDONG1,NSW1,operating,CONDONG1,bioenergy_biomass,30.0
 Copeton,nem_71,COPTNHYD,NSW1,operating,COPTNHYD,hydro,22.5
-Crookwell,nem_329,CROOKWEL,NSW1,operating,,wind,4.8
 Crookwell,nem_329,CROOKWEL,NSW1,operating,CROOKWEL,wind,4.8
 Crookwell 2,nem_74,CROOKWF2,NSW1,operating,CROOKWF2,wind,96.04
 Crudine Ridge,nem_431,,NSW1,committed,,wind,138.01
@@ -741,8 +740,8 @@ Yendon,nem_322,YENDONWF,VIC1,commissioning,YENDWF1,wind,144.4
 Zilzie Winery,nem_547,,VIC1,operating,,solar_utility,0.1134
 Albany,wem_1,ALBANY,WA1,operating,ALBANY_WF1,wind,21.6
 Badgingarra,wem_2,BADGINGARRA,WA1,operating,BADGINGARRA_WF1,wind,130.0
-Bluewaters,wem_3,BLUEWATERS,WA1,operating,BW1_BLUEWATERS_G2,coal_black,217.0
-Bluewaters,wem_3,BLUEWATERS,WA1,operating,BW2_BLUEWATERS_G1,coal_black,217.0
+Bluewaters,wem_4,BLUEWATERS,WA1,operating,BW1_BLUEWATERS_G2,coal_black,217.0
+Bluewaters,wem_4,BLUEWATERS,WA1,operating,BW2_BLUEWATERS_G1,coal_black,217.0
 Bremer Bay,wem_5,BREMER_BAY,WA1,operating,BREMER_BAY_WF1,wind,0.6
 Cockburn,wem_6,COCKBURN,WA1,operating,COCKBURN_CCG1,gas_ccgt,249.7
 Collgar,wem_7,INVESTEC_COLLGAR,WA1,operating,INVESTEC_COLLGAR_WF1,wind,206.0
@@ -750,7 +749,7 @@ Collie,wem_8,COLLIE,WA1,operating,COLLIE_G1,coal_black,318.3
 Denmark,wem_9,DCWL_DENMARK,WA1,operating,DCWL_DENMARK_WF1,wind,1.44
 Emu Downs,wem_10,EDWFMAN,WA1,operating,EDWFMAN_WF1,wind,80.0
 Geraldton diesel,wem_11,TESLA_GERALDTON,WA1,operating,TESLA_GERALDTON_G1,distillate,9.9
-Gosnells,wem_12,GOSNELLS,WA1,operating,GOSNELLS,bioenergy_biogas,0.0
+Gosnells,wem_12,GOSNELLS,WA1,operating,GOSNELLS,bioenergy_biogas,2.0
 Grasmere,wem_13,GRASMERE,WA1,operating,GRASMERE_WF1,wind,13.8
 Greenough River,wem_14,GREENOUGH_RIVER,WA1,operating,GREENOUGH_RIVER_PV1,solar_utility,40.0
 Henderson,wem_15,HENDERSON_RENEWABLE,WA1,operating,HENDERSON_RENEWABLE_IG1,bioenergy_biogas,3.0
@@ -772,7 +771,7 @@ Manjimup,wem_28,BRIDGETOWN_BIOMASS_PLANT,WA1,operating,BRIDGETOWN_BIOMASS_PLANT,
 Merredin,wem_29,NAMKKN_MERR,WA1,operating,NAMKKN_MERR_SG1,gas_ocgt,92.6
 Merredin Solar Farm,wem_98,,WA1,operating,MERSOLAR_PV1,solar_utility,100.0
 Metro,wem_30,AMBRISOLAR,WA1,operating,AMBRISOLAR_PV1,solar_utility,0.96
-Mirrabooka,wem_31,ATLAS,WA1,operating,ATLAS,bioenergy_biogas,0.0
+Mirrabooka,wem_31,ATLAS,WA1,operating,ATLAS,bioenergy_biogas,1.1
 Mount Barker,wem_32,SKYFRM_MTBARKER,WA1,operating,SKYFRM_MTBARKER_WF1,wind,2.43
 Muja AB,wem_73,MUJA_AB,WA1,retired,MUJA_M1,coal_black,60.0
 Muja AB,wem_73,MUJA_AB,WA1,retired,MUJA_M2,coal_black,60.0
@@ -808,9 +807,9 @@ Richgro,wem_59,BIOGAS01,WA1,operating,BIOGAS01,bioenergy_biogas,2.0
 Rockingham,wem_60,ROCKINGHAM,WA1,operating,ROCKINGHAM,bioenergy_biogas,4.0
 South Cardup,wem_61,SOUTH_CARDUP,WA1,operating,SOUTH_CARDUP,bioenergy_biogas,4.158
 Tamala Park,wem_62,TAMALA_PARK,WA1,operating,TAMALA_PARK,bioenergy_biogas,4.8
-Wagerup,wem_65,ALCOA_WGP,WA1,operating,ALCOA_WGP,gas_ocgt,26.0
-Wagerup,wem_65,ALCOA_WGP,WA1,operating,ALINTA_WGP_GT,gas_ocgt,196.0
-Wagerup,wem_65,ALCOA_WGP,WA1,operating,ALINTA_WGP_U2,gas_ocgt,196.0
+Wagerup,wem_64,ALCOA_WGP,WA1,operating,ALCOA_WGP,gas_ocgt,26.0
+Wagerup,wem_64,ALCOA_WGP,WA1,operating,ALINTA_WGP_GT,gas_ocgt,196.0
+Wagerup,wem_64,ALCOA_WGP,WA1,operating,ALINTA_WGP_U2,gas_ocgt,196.0
 Walkaway,wem_66,ALINTA_WWF,WA1,operating,ALINTA_WWF,wind,89.1
 West Hills,wem_67,BLAIRFOX_WESTHILLS,WA1,operating,BLAIRFOX_WESTHILLS_WF3,wind,5.0
 West Kalgoorlie,wem_69,WEST_KALGOORLIE,WA1,operating,WEST_KALGOORLIE_GT2,distillate,41.2
