@@ -432,7 +432,7 @@ class NemParticipant(Base, NemModel):
 
     id = Column(Integer, primary_key=True)
 
-    # code = Column(Text, unique=True, index=True)
+    code = Column(Text, unique=True, index=True)
     name = Column(Text)
     name_clean = Column(Text)
     abn = Column(Text)
@@ -523,7 +523,13 @@ class NemFacility(Base, NemModel):
     region = Column(Text, index=True)
 
     active = Column(Boolean, default=True)
+
+    # @TODO remove when ref count is 0
     nameplate_capacity = Column(Numeric, nullable=True)
+
+    capacity_registered = Column(Numeric, nullable=True)
+    capacity_maximum = Column(Numeric, nullable=True)
+
     registered = Column(DateTime)
 
     unit_size = Column(Numeric, nullable=True)
