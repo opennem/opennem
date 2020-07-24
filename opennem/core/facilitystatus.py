@@ -9,7 +9,7 @@ def map_v3_states(state):
         to a v3 state
 
     """
-    state = state.lower()
+    state = state.lower().strip()
 
     if state == "commissioned":
         return "operating"
