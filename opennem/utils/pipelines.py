@@ -21,10 +21,12 @@ def check_spider_pipeline(process_item_method):
         pipelines = set([])
 
         if hasattr(spider, "pipelines"):
-            pipelines |= spider.pipelines
+            if type(spider.pipelines) is set:
+                pipelines |= spider.pipelines
 
         if hasattr(spider, "pipelines_extra"):
-            pipelines |= spider.pipelines_extra
+            if type(spider.pipelines) is set:
+                pipelines |= spider.pipelines_extra
 
         if self.__class__ in pipelines:
             spider.log(msg % "executing", level=logging.DEBUG)
