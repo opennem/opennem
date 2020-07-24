@@ -1,5 +1,6 @@
 import csv
 import logging
+import zipfile
 
 from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
@@ -15,6 +16,44 @@ TABLE_MAP = {
     "DISPATCH_UNIT_SCADA": NemDispatchUnitScada,
     "DISPATCH_PRICE": NemDispatchPrice,
 }
+
+
+class UnzipSingleFilePipeline(object):
+    @check_spider_pipeline
+    def process_item(self, item, spider):
+
+        if not "body_stream" in item:
+            return item
+
+        rs = item["body_stream"]
+        content = ""
+
+        with zipfile.ZipFile(rs) as zf:
+            zip_files = zf.namelist()
+
+            if len(zip_files) == 1:
+                content = zf.open(zip_files[0])
+                return {"file_handle": content, **item}
+
+            if len(zip_files) != 1:
+                raise Exception(
+                    "Zero or more than one file in zip file. Have {}".format(
+                        len(zip_files)
+                    )
+                )
+
+
+class ReadStringHandle(object):
+    @check_spider_pipeline
+    def process_item(self, item, spider):
+        if not "file_handle" in item:
+            return item
+
+        fh = item["file_handle"]
+
+        content = fh.read()
+
+        return {"content": content, **item}
 
 
 class ExtractCSV(object):
