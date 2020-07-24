@@ -53,6 +53,9 @@ class ReadStringHandle(object):
 
         content = fh.read()
 
+        if type(content) is bytes:
+            content = content.decode("utf-8")
+
         return {"content": content, **item}
 
 
@@ -61,6 +64,7 @@ class ExtractCSV(object):
     def process_item(self, item, spider):
 
         if not "content" in item:
+            logger.error("No content in item to parse")
             return item
 
         content = item["content"]
@@ -69,7 +73,9 @@ class ExtractCSV(object):
         item["tables"] = []
         table = {"name": None}
 
-        datacsv = csv.reader(content.split("\n"))
+        content_split = content.splitlines()
+
+        datacsv = csv.reader(content_split)
 
         for row in datacsv:
             if not row or type(row) is not list or len(row) < 1:
