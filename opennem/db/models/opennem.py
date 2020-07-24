@@ -90,6 +90,7 @@ class NemModel(object):
         session.execute(on_conflict_stmt)
 
     created_by = Column(Text, nullable=True)
+    updated_by = Column(Text, nullable=True)
     processed_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
