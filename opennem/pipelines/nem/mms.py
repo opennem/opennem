@@ -19,10 +19,10 @@ from opennem.core.normalizers import (
     station_name_cleaner,
 )
 from opennem.db.models.opennem import (
+    Facility,
     FacilityStatus,
-    NemFacility,
-    NemParticipant,
-    NemStation,
+    Participant,
+    Station,
 )
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
@@ -94,13 +94,11 @@ class NemStoreMMSStations(NemMMSSingle):
             postcode = normalize_string(record["POSTCODE"])
 
             station = (
-                s.query(NemStation)
-                .filter(NemStation.code == duid)
-                .one_or_none()
+                s.query(Station).filter(Station.code == duid).one_or_none()
             )
 
             if not station:
-                station = NemStation(code=duid,)
+                station = Station(code=duid,)
 
                 records_created += 1
                 created = True
@@ -158,9 +156,7 @@ class NemStoreMMSStationStatus(NemMMSSingle):
             status = map_v3_states(record["STATUS"])
 
             station = (
-                s.query(NemStation)
-                .filter(NemStation.code == duid)
-                .one_or_none()
+                s.query(Station).filter(Station.code == duid).one_or_none()
             )
 
             if not station:
@@ -205,13 +201,11 @@ class NemStoreMMSParticipant(NemMMSSingle):
             name_clean = participant_name_filter(record["NAME"])
 
             participant = (
-                s.query(NemParticipant)
-                .filter(NemStation.code == pid)
-                .one_or_none()
+                s.query(Participant).filter(Station.code == pid).one_or_none()
             )
 
             if not participant:
-                participant = NemParticipant(
+                participant = Participant(
                     code=pid, created_by="au.nem.mms.participant"
                 )
 
@@ -271,15 +265,11 @@ class NemStoreMMSDudetail(NemMMSSingle):
             capacity_max = clean_capacity(record["MAXCAPACITY"])
 
             facility = (
-                s.query(NemFacility)
-                .filter(NemStation.code == duid)
-                .one_or_none()
+                s.query(Facility).filter(Station.code == duid).one_or_none()
             )
 
             if not facility:
-                station = NemStation(
-                    code=duid, created_by="au.nem.mms.dudetail"
-                )
+                station = Station(code=duid, created_by="au.nem.mms.dudetail")
 
                 records_created += 1
                 created = True
@@ -348,13 +338,11 @@ class NemStoreMMSDudetailSummary(NemMMSSingle):
             network_region = normalize_string(record["REGIONID"])
 
             station = (
-                s.query(NemStation)
-                .filter(NemStation.code == sid)
-                .one_or_none()
+                s.query(Station).filter(Station.code == sid).one_or_none()
             )
 
             if not station:
-                station = NemStation(
+                station = Station(
                     code=sid, created_by="au.nem.mms.dudetail_summary"
                 )
 

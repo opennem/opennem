@@ -18,10 +18,10 @@ from opennem.core.normalizers import (
     station_name_cleaner,
 )
 from opennem.db.models.opennem import (
+    Facility,
     FacilityStatus,
-    NemFacility,
-    NemParticipant,
-    NemStation,
+    Participant,
+    Station,
 )
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
@@ -59,13 +59,13 @@ class NemStoreREL(DatabaseStoreBase):
             participant_name = participant_data["name"].strip()
 
             participant = (
-                s.query(NemParticipant)
-                .filter(NemParticipant.name == participant_name)
+                s.query(Participant)
+                .filter(Participant.name == participant_name)
                 .one_or_none()
             )
 
             if not participant:
-                participant = NemParticipant(name=participant_name)
+                participant = Participant(name=participant_name)
 
             participant.name_clean = participant_name_filter(participant_name)
             participant.abn = participant_data["abn"]
@@ -118,20 +118,20 @@ class NemStoreREL(DatabaseStoreBase):
 
             # See if we have the facility and unit
             facility = (
-                s.query(NemFacility)
-                .filter(NemFacility.region == facility_region)
-                .filter(NemFacility.code == duid)
-                .filter(NemFacility.unit_number == None)
+                s.query(Facility)
+                .filter(Facility.region == facility_region)
+                .filter(Facility.code == duid)
+                .filter(Facility.unit_number == None)
                 .one_or_none()
             )
 
             # Now try and find it without the unit number
             if not facility:
                 facility = (
-                    s.query(NemFacility)
-                    .filter(NemFacility.region == facility_region)
-                    .filter(NemFacility.code == duid)
-                    .filter(NemFacility.unit_number == unit_no)
+                    s.query(Facility)
+                    .filter(Facility.region == facility_region)
+                    .filter(Facility.code == duid)
+                    .filter(Facility.unit_number == unit_no)
                     .one_or_none()
                 )
 
@@ -154,8 +154,8 @@ class NemStoreREL(DatabaseStoreBase):
 
             if facility_station_join_by_name(station_name_clean):
                 facility_station = (
-                    s.query(NemStation)
-                    .filter(NemStation.name_clean == station_name_clean)
+                    s.query(Station)
+                    .filter(Station.name_clean == station_name_clean)
                     .one_or_none()
                 )
 
@@ -172,7 +172,7 @@ class NemStoreREL(DatabaseStoreBase):
             created_facility = False
 
             if not facility_station:
-                facility_station = NemStation(
+                facility_station = Station(
                     name=station_name,
                     name_clean=station_name_clean,
                     nem_region=facility_region,
@@ -185,7 +185,7 @@ class NemStoreREL(DatabaseStoreBase):
                 created_station = True
 
             if not facility:
-                facility = NemFacility(
+                facility = Facility(
                     name=station_name,
                     code=duid,
                     name_clean=station_name_clean,
@@ -205,8 +205,8 @@ class NemStoreREL(DatabaseStoreBase):
 
                 if not participant:
                     participant = (
-                        s.query(NemParticipant)
-                        .filter(NemParticipant.name == participant_name)
+                        s.query(Participant)
+                        .filter(Participant.name == participant_name)
                         .one_or_none()
                     )
 
@@ -323,13 +323,13 @@ class NemStoreGI(DatabaseStoreBase):
         # Funky case of Todae solar where they put their name in the
 
         participant = (
-            s.query(NemParticipant)
-            .filter(NemParticipant.name == participant_name)
+            s.query(Participant)
+            .filter(Participant.name == participant_name)
             .one_or_none()
         )
 
         if not participant:
-            participant = NemParticipant(
+            participant = Participant(
                 name=participant_name,
                 name_clean=participant_name_filter(participant_name),
             )
@@ -358,18 +358,18 @@ class NemStoreGI(DatabaseStoreBase):
 
         if facility_station_join_by_name(facility_name_clean):
             facility_station = (
-                s.query(NemStation)
-                .filter(NemStation.name_clean == facility_name_clean)
+                s.query(Station)
+                .filter(Station.name_clean == facility_name_clean)
                 .first()
             )
 
         if duid:
             try:
                 facility = (
-                    s.query(NemFacility)
-                    .filter(NemFacility.code == duid)
-                    .filter(NemFacility.region == facility_region)
-                    # .filter(NemFacility.nameplate_capacity != None)
+                    s.query(Facility)
+                    .filter(Facility.code == duid)
+                    .filter(Facility.region == facility_region)
+                    # .filter(Facility.nameplate_capacity != None)
                     .one_or_none()
                 )
             except MultipleResultsFound:
@@ -396,11 +396,11 @@ class NemStoreGI(DatabaseStoreBase):
 
         if not duid:
             facility_lookup = (
-                s.query(NemFacility)
-                .filter(NemFacility.region == facility_region)
-                .filter(NemFacility.name_clean == facility_name_clean)
-                # .filter(NemFacility.fueltech_id == facility_fueltech)
-                .filter(NemFacility.code == None)
+                s.query(Facility)
+                .filter(Facility.region == facility_region)
+                .filter(Facility.name_clean == facility_name_clean)
+                # .filter(Facility.fueltech_id == facility_fueltech)
+                .filter(Facility.code == None)
                 .first()
             )
 
@@ -427,7 +427,7 @@ class NemStoreGI(DatabaseStoreBase):
         created_facility = False
 
         if not facility_station:
-            facility_station = NemStation(
+            facility_station = Station(
                 name=item["Name"],
                 name_clean=facility_name_clean,
                 nem_region=facility_region,
@@ -439,7 +439,7 @@ class NemStoreGI(DatabaseStoreBase):
             created_station = True
 
         if not facility:
-            facility = NemFacility(created_by="pipeline.nem.facility.gi")
+            facility = Facility(created_by="pipeline.nem.facility.gi")
             facility.station = facility_station
 
             created_facility = True

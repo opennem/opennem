@@ -6,7 +6,7 @@ from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
 
-from opennem.db.models.wem import WemBalancingSummary
+from opennem.db.models.opennem import BalancingSummary
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -25,7 +25,7 @@ class WemStorePulse(DatabaseStoreBase):
         csvreader = csv.DictReader(item["content"].split("\n"))
 
         objects = [
-            WemBalancingSummary(
+            BalancingSummary(
                 trading_interval=self.parse_interval(
                     row["TRADING_DAY_INTERVAL"]
                 ),

@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
 
 from opennem.core.fueltechs import lookup_fueltech
-from opennem.db.models.opennem import WemFacility, WemParticipant
+from opennem.db.models.opennem import Facility, Participant
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -32,8 +32,8 @@ class WemStoreFacility(DatabaseStoreBase):
 
             participant_code = row["Participant Code"]
             participant = (
-                s.query(WemParticipant)
-                .filter(WemParticipant.code == participant_code)
+                s.query(Participant)
+                .filter(Participant.code == participant_code)
                 .one_or_none()
             )
 
@@ -43,7 +43,7 @@ class WemStoreFacility(DatabaseStoreBase):
                         participant_code
                     )
                 )
-                participant = WemParticipant(
+                participant = Participant(
                     code=participant_code, name=row["Participant Name"]
                 )
                 s.add(participant)
@@ -53,14 +53,14 @@ class WemStoreFacility(DatabaseStoreBase):
 
             facility_code = row["Facility Code"]
             facility = (
-                s.query(WemFacility)
-                .filter(WemFacility.code == facility_code)
+                s.query(Facility)
+                .filter(Facility.code == facility_code)
                 .one_or_none()
             )
 
             if not facility:
                 print("Adding WEM facility: {}".format(facility_code))
-                facility = WemFacility(
+                facility = Facility(
                     code=facility_code, participant=participant,
                 )
 
@@ -120,14 +120,14 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             participant_code = row["PARTICIPANT_CODE"]
             participant = (
-                s.query(WemParticipant)
-                .filter(WemParticipant.code == participant_code)
+                s.query(Participant)
+                .filter(Participant.code == participant_code)
                 .one_or_none()
             )
 
             if not participant:
                 print("Participant not found: {}".format(participant_code))
-                participant = WemParticipant(code=participant_code,)
+                participant = Participant(code=participant_code,)
                 s.add(participant)
                 s.commit()
 
@@ -135,13 +135,13 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             facility_code = row["FACILITY_CODE"]
             facility = (
-                s.query(WemFacility)
-                .filter(WemFacility.code == facility_code)
+                s.query(Facility)
+                .filter(Facility.code == facility_code)
                 .one_or_none()
             )
 
             if not facility:
-                facility = WemFacility(
+                facility = Facility(
                     code=facility_code, participant=participant,
                 )
 

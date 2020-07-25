@@ -6,7 +6,7 @@ from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
 
-from opennem.db.models.wem import WemFacilityScada
+from opennem.db.models.opennem import FacilityScada
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -43,7 +43,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
                 row["Trading Interval"], row["Facility Code"]
             )
 
-            item = WemFacilityScada(
+            item = FacilityScada(
                 trading_interval=self.parse_interval(row["Trading Interval"]),
                 facility_id=row["Facility Code"],
                 eoi_quantity=row["EOI Quantity (MW)"] or None,
@@ -137,7 +137,7 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
                 except ValueError:
                     pass
 
-                item = WemFacilityScada(
+                item = FacilityScada(
                     trading_interval=interval,
                     facility_id=row["FACILITY_CODE"],
                     generated=val,

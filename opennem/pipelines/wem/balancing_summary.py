@@ -6,7 +6,7 @@ from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
 
-from opennem.db.models.wem import WemBalancingSummary
+from opennem.db.models.opennem import BalancingSummary
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -31,7 +31,7 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
         interval_max = q.fetchone()[0] or datetime(1900, 1, 1, 0, 0, 0)
 
         objects = [
-            WemBalancingSummary(
+            BalancingSummary(
                 trading_interval=self.parse_interval(row["Trading Interval"]),
                 forecast_load=row["Load Forecast (MW)"],
                 generation_scheduled=row["Scheduled Generation (MW)"],
@@ -67,7 +67,7 @@ class WemStoreBalancingSummaryArchive(DatabaseStoreBase):
         csvreader = csv.DictReader(item["content"].split("\n"))
 
         objects = [
-            WemBalancingSummary(
+            BalancingSummary(
                 trading_interval=self.parse_interval(row["Trading Interval"]),
                 forecast_load=row["Load Forecast (MW)"],
                 generation_scheduled=row["Scheduled Generation (MW)"],

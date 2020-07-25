@@ -6,7 +6,7 @@ from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
 
-from opennem.db.models.wem import WemParticipant
+from opennem.db.models.opennem import Participant
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -33,14 +33,14 @@ class WemStoreParticipant(DatabaseStoreBase):
 
             participant_code = row["Participant Code"]
             participant = (
-                s.query(WemParticipant)
-                .filter(WemParticipant.code == participant_code)
+                s.query(Participant)
+                .filter(Participant.code == participant_code)
                 .one_or_none()
             )
 
             if not participant:
                 print("Participant not found: {}".format(participant_code))
-                participant = WemParticipant(
+                participant = Participant(
                     code=row["Participant Code"],
                     name=row["Participant Name"],
                     address=row["Address"],
@@ -86,14 +86,14 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
 
             participant_code = row["PARTICIPANT_CODE"]
             participant = (
-                s.query(WemParticipant)
-                .filter(WemParticipant.code == participant_code)
+                s.query(Participant)
+                .filter(Participant.code == participant_code)
                 .one_or_none()
             )
 
             if not participant:
                 print("Participant not found: {}".format(participant_code))
-                participant = WemParticipant(
+                participant = Participant(
                     code=participant_code,
                     name=row["PARTICIPANT_DISPLAY_NAME"],
                 )

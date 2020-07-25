@@ -52,11 +52,11 @@ ITEM_PIPELINES = {
     "opennem.pipelines.wem.participant.WemStoreParticipant": 417,
     "opennem.pipelines.wem.participant.WemStoreLiveParticipant": 418,
     "opennem.pipelines.bom.StoreBomObservation": 430,
-    "opennem.pipelines.nem.stations.NemStoreMMSStations": 501,
-    "opennem.pipelines.nem.stations.NemStoreMMSStationStatus": 502,
-    "opennem.pipelines.nem.stations.NemStoreMMSDudetail": 503,
-    "opennem.pipelines.nem.stations.NemStoreMMSDudetailSummary": 504,
-    "opennem.pipelines.nem.stations.NemStoreMMSParticipant": 505,
+    "opennem.pipelines.nem.mms.NemStoreMMSStations": 501,
+    "opennem.pipelines.nem.mms.NemStoreMMSStationStatus": 502,
+    "opennem.pipelines.nem.mms.NemStoreMMSDudetail": 503,
+    "opennem.pipelines.nem.mms.NemStoreMMSDudetailSummary": 504,
+    "opennem.pipelines.nem.mms.NemStoreMMSParticipant": 505,
 }
 
 # @TODO if DEBUG

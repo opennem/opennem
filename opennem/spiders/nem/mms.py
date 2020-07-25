@@ -1,6 +1,6 @@
 import scrapy
 
-from opennem.pipelines.nem.stations import (
+from opennem.pipelines.nem.mms import (
     NemStoreMMSDudetail,
     NemStoreMMSDudetailSummary,
     NemStoreMMSParticipant,
