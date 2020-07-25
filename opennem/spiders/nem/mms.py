@@ -43,12 +43,12 @@ class NemMMSStationStatusSpider(NemSingleMMSSpider):
 class NemMMSDudeTailSpider(NemSingleMMSSpider):
     name = "au.nem.mms.dudetail"
 
-    pipelines_extra = set([NemStoreMMSDudetail])
+    pipelines_extra = set([NemStoreMMSDudetail,])
     url = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_DUDETAIL_202006010000.zip"
 
 
 class NemMMSDudeTailSummarySpider(NemSingleMMSSpider):
     name = "au.nem.mms.dudetail_summary"
 
-    pipelines_extra = set([NemStoreMMSDudetailSummary])
+    pipelines_extra = set([NemStoreMMSDudetailSummary,])
     url = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_DUDETAILSUMMARY_202006010000.zip"

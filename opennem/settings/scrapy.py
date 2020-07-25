@@ -38,6 +38,7 @@ ITEM_PIPELINES = {
     "opennem.pipelines.nem.UnzipSingleFilePipeline": 302,
     "opennem.pipelines.nem.ReadStringHandle": 310,
     "opennem.pipelines.nem.ExtractCSV": 390,
+    "opennem.pipelines.nem.TableRecordSplitter": 395,
     "opennem.pipelines.nem.DatabaseStore": 400,
     "opennem.pipelines.nem.facilities.NemStoreMMS": 401,
     "opennem.pipelines.nem.facilities.NemStoreGI": 402,

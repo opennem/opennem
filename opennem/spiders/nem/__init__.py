@@ -8,6 +8,7 @@ from opennem.pipelines.files import LinkExtract
 from opennem.pipelines.nem import (
     ExtractCSV,
     ReadStringHandle,
+    TableRecordSplitter,
     UnzipSingleFilePipeline,
 )
 from opennem.pipelines.wem.balancing_summary import WemStoreBalancingSummary
@@ -38,7 +39,14 @@ class NemXLSSpider(scrapy.Spider):
 
 class NemSingleMMSSpider(scrapy.Spider):
 
-    pipelines = set([UnzipSingleFilePipeline, ReadStringHandle, ExtractCSV,])
+    pipelines = set(
+        [
+            UnzipSingleFilePipeline,
+            ReadStringHandle,
+            ExtractCSV,
+            TableRecordSplitter,
+        ]
+    )
 
     def start_requests(self):
         if not hasattr(self, "url"):

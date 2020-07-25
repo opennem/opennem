@@ -57,28 +57,20 @@ class NemMMSSingle(DatabaseStoreBase):
         return table.pop() if len(table) else None
 
 
-class NemStoreMMSStations(NemMMSSingle):
+class NemStoreMMSStations(DatabaseStoreBase):
     """
 
     """
-
-    table = "PARTICIPANT_REGISTRATION_STATION"
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
         s = self.session()
 
-        table = self.get_table(item)
-
-        if not table:
-            return item
-
         records_updated = 0
         records_created = 0
 
-        records = table["records"]
-        for record in records:
+        for record in item:
             created = False
 
             duid = normalize_duid(record["STATIONID"])
@@ -130,25 +122,17 @@ class NemStoreMMSStations(NemMMSSingle):
         )
 
 
-class NemStoreMMSStationStatus(NemMMSSingle):
+class NemStoreMMSStationStatus(DatabaseStoreBase):
     """
 
     """
-
-    table = "PARTICIPANT_REGISTRATION_STATIONOPERATINGSTATUS"
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
         s = self.session()
 
-        table = self.get_table(item)
-
-        if not table:
-            return item
-
-        records = table["records"]
-        for record in records:
+        for record in item:
             duid = normalize_duid(record["STATIONID"])
             # authorized_date = name_normalizer(record["AUTHORISEDDATE"])
             status = map_v3_states(record["STATUS"])
@@ -170,22 +154,16 @@ class NemStoreMMSStationStatus(NemMMSSingle):
                 logger.error(e)
 
 
-class NemStoreMMSParticipant(NemMMSSingle):
+class NemStoreMMSParticipant(DatabaseStoreBase):
     """
 
+        @NOTE This pipeline has been converted to use pydantic models
     """
-
-    table = "PARTICIPANT_REGISTRATION_PARTICIPANT"
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
         s = self.session()
-
-        table = self.get_table(item)
-
-        if not table:
-            return item
 
         records_updated = 0
         records_created = 0
@@ -194,7 +172,7 @@ class NemStoreMMSParticipant(NemMMSSingle):
 
         participant_codes = list(set([i[0] for i in q.fetchall()]))
 
-        records = table["records"]
+        records = item
         for record in records:
             created = False
 
@@ -214,14 +192,6 @@ class NemStoreMMSParticipant(NemMMSSingle):
                 s.query(ParticipantModel)
                 .filter(ParticipantModel.code == participant_schema.code)
                 .one_or_none()
-            )
-
-            print(
-                "Participant {} found as {} {}".format(
-                    record["PARTICIPANTID"],
-                    participant,
-                    participant_schema.code,
-                )
             )
 
             if not participant:
@@ -259,28 +229,20 @@ class NemStoreMMSParticipant(NemMMSSingle):
         )
 
 
-class NemStoreMMSDudetail(NemMMSSingle):
+class NemStoreMMSDudetail(DatabaseStoreBase):
     """
 
     """
-
-    table = "PARTICIPANT_REGISTRATION_DUDETAIL"
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
         s = self.session()
 
-        table = self.get_table(item)
-
-        if not table:
-            return item
-
         records_updated = 0
         records_created = 0
 
-        records = table["records"]
-        for record in records:
+        for record in item:
             created = False
 
             duid = normalize_duid(record["DUID"])
@@ -321,28 +283,20 @@ class NemStoreMMSDudetail(NemMMSSingle):
         )
 
 
-class NemStoreMMSDudetailSummary(NemMMSSingle):
+class NemStoreMMSDudetailSummary(DatabaseStoreBase):
     """
 
     """
-
-    table = "PARTICIPANT_DUDETAILSUMMARY"
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
         s = self.session()
 
-        table = self.get_table(item)
-
-        if not table:
-            return item
-
         records_updated = 0
         records_created = 0
 
-        records = table["records"]
-        for record in records:
+        for record in item:
             created = False
 
             end_date = record["END_DATE"].strip()
