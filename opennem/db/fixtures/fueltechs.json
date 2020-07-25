@@ -1,18 +1,97 @@
 [
-    "battery_charging",
-    "battery_discharging",
-    "bioenergy_biogas",
-    "bioenergy_biomass",
-    "coal_black",
-    "coal_brown",
-    "distillate",
-    "gas_ccgt",
-    "gas_ocgt",
-    "gas_recip",
-    "gas_steam",
-    "gas_wcmg",
-    "hydro",
-    "pumps",
-    "solar_utility",
-    "wind"
+  {
+    "code": "battery_charging",
+    "label": "Battery (Charging)",
+    "renewable": true
+  },
+  {
+    "code": "battery_discharging",
+    "label": "Battery (Discharging)",
+    "renewable": true
+  },
+  {
+    "code": "bioenergy_biogas",
+    "label": "Biogas",
+    "renewable": true
+  },
+  {
+    "code": "bioenergy_biomass",
+    "label": "Biomass",
+    "renewable": true
+  },
+  {
+    "code": "coal_black",
+    "label": "Coal (Black)",
+    "renewable": false
+  },
+  {
+    "code": "coal_brown",
+    "label": "Coal (Brown)",
+    "renewable": false
+  },
+  {
+    "code": "distillate",
+    "label": "Distillate",
+    "renewable": false
+  },
+  {
+    "code": "gas_ccgt",
+    "label": "Gas (CCGT)",
+    "renewable": false
+  },
+  {
+    "code": "gas_ocgt",
+    "label": "Gas (OCGT)",
+    "renewable": false
+  },
+  {
+    "code": "gas_recip",
+    "label": "Gas (Reciprocating)",
+    "renewable": false
+  },
+  {
+    "code": "gas_steam",
+    "label": "Gas (Steam)",
+    "renewable": false
+  },
+  {
+    "code": "gas_wcmg",
+    "label": "Gas (Coal Seam)",
+    "renewable": true
+  },
+  {
+    "code": "hydro",
+    "label": "Hyrdo",
+    "renewable": true
+  },
+  {
+    "code": "pumps",
+    "label": "Pumps",
+    "renewable": true
+  },
+  {
+    "code": "solar_utility",
+    "label": "Solar (Utility)",
+    "renewable": true
+  },
+  {
+    "code": "solar_rooftop",
+    "label": "Solar (Rooftop)",
+    "renewable": true
+  },
+  {
+    "code": "wind",
+    "label": "Wind",
+    "renewable": true
+  },
+  {
+    "code": "aggregator_vpp",
+    "label": "Aggregator (VPP)",
+    "renewable": true
+  },
+  {
+    "code": "aggregator_dr",
+    "label": "Aggregator (Demand / Response)",
+    "renewable": true
+  }
 ]

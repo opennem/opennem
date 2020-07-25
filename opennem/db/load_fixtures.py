@@ -72,7 +72,12 @@ def load_fueltechs():
     s = session()
 
     for fueltech in fixture:
-        ft = FuelTech(code=fueltech)
+        ft = FuelTech(
+            created_by="opennem.fixture",
+            code=fueltech["code"],
+            label=fueltech["label"],
+            renewable=fueltech["renewable"],
+        )
 
         try:
             s.add(ft)
@@ -87,7 +92,11 @@ def load_facilitystatus():
     s = session()
 
     for status in fixture:
-        ft = FacilityStatus(code=status["code"], label=status["label"])
+        ft = FacilityStatus(
+            created_by="opennem.fixture",
+            code=status["code"],
+            label=status["label"],
+        )
 
         try:
             s.add(ft)
@@ -103,6 +112,7 @@ def load_networks():
 
     for network in fixture:
         ft = Network(
+            created_by="opennem.fixture",
             code=network["code"],
             label=network["label"],
             country=network["country"],
