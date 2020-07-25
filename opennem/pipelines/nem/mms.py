@@ -18,13 +18,11 @@ from opennem.core.normalizers import (
     participant_name_filter,
     station_name_cleaner,
 )
-from opennem.db.models.opennem import (
-    Facility,
-    FacilityStatus,
-    Participant,
-    Station,
-)
+from opennem.db.models.opennem import Facility, FacilityStatus
+from opennem.db.models.opennem import Participant as ParticipantModel
+from opennem.db.models.opennem import Station
 from opennem.pipelines import DatabaseStoreBase
+from opennem.schema.opennem import Participant as ParticipantSchema
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
@@ -192,30 +190,54 @@ class NemStoreMMSParticipant(NemMMSSingle):
         records_updated = 0
         records_created = 0
 
+        q = self.engine.execute(text("select code from participant"))
+
+        participant_codes = list(set([i[0] for i in q.fetchall()]))
+
         records = table["records"]
         for record in records:
             created = False
 
-            pid = normalize_duid(record["PARTICIPANTID"])
-            name = normalize_string(record["NAME"])
-            name_clean = participant_name_filter(record["NAME"])
+            participant_schema = ParticipantSchema(
+                **{
+                    "code": record["PARTICIPANTID"],
+                    "name": record["NAME"],
+                    "network_name": record["NAME"],
+                }
+            )
+
+            # pid = normalize_duid(record["PARTICIPANTID"])
+            # name = normalize_string(record["NAME"])
+            # name_clean = participant_name_filter(record["NAME"])
 
             participant = (
-                s.query(Participant).filter(Station.code == pid).one_or_none()
+                s.query(ParticipantModel)
+                .filter(ParticipantModel.code == participant_schema.code)
+                .one_or_none()
+            )
+
+            print(
+                "Participant {} found as {} {}".format(
+                    record["PARTICIPANTID"],
+                    participant,
+                    participant_schema.code,
+                )
             )
 
             if not participant:
-                participant = Participant(
-                    code=pid, created_by="au.nem.mms.participant"
+                participant = ParticipantModel(
+                    **{
+                        **participant_schema.dict(),
+                        "created_by": "au.nem.mms.participant",
+                    }
                 )
 
                 records_created += 1
                 created = True
             else:
+                participant.name = participant_schema.name
+                participant.network_name = participant_schema.network_name
                 records_updated += 1
-
-            participant.name = name
-            participant.name_clean = name_clean
 
             try:
                 s.add(participant)
@@ -225,7 +247,8 @@ class NemStoreMMSParticipant(NemMMSSingle):
 
             logger.debug(
                 "{} participant record with id {}".format(
-                    "Created" if created else "Updated", pid
+                    "Created" if created else "Updated",
+                    participant_schema.code,
                 )
             )
 

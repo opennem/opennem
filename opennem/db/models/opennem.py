@@ -111,7 +111,7 @@ class Network(Base, BaseModel):
     label = Column(Text, nullable=True)
 
 
-class FacilityStatus(Base):
+class FacilityStatus(Base, BaseModel):
     __tablename__ = "facility_status"
 
     code = Column(Text, primary_key=True)
