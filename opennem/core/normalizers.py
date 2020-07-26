@@ -208,7 +208,7 @@ def station_name_cleaner(facility_name):
     name_clean = re.sub(r"\d+\ ?(mw|kw|MW|KW)", "", name_clean)
 
     # strip other chars
-    name_clean = re.sub(r",|-|\(|\)|\–|\"", "", name_clean)
+    name_clean = re.sub(r",|-|\(|\)|\–|\"|\'", "", name_clean)
     # name_clean = re.sub(r"(\W|\ )+", "", name_clean)
 
     name_clean = re.sub(" +", " ", name_clean)
