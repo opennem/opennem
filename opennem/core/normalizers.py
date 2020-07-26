@@ -266,7 +266,10 @@ def station_name_cleaner(facility_name):
     name_clean = name_clean.strip()
 
     if "/" in name_clean:
-        name_clean = "/".join([i.capitalize() for i in name_clean.split("/")])
+        print(name_clean)
+        name_clean = " / ".join(
+            [i.strip().capitalize() for i in name_clean.split("/")]
+        )
 
     if station_map_name(name_clean) != name_clean:
         return station_map_name(name_clean)
