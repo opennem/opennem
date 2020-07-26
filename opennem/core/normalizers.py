@@ -150,7 +150,7 @@ def normalize_string(csv_string):
     if not type(csv_string) is str:
         csv_string = str(csv_string)
 
-    csv_string = csv_string.strip()
+    csv_string = csv_string.strip().title()
 
     return csv_string
 
@@ -208,7 +208,7 @@ def station_name_cleaner(facility_name):
     name_clean = re.sub(r"\d+\ ?(mw|kw|MW|KW)", "", name_clean)
 
     # strip other chars
-    name_clean = re.sub(r",|-|\(|\)|\–", "", name_clean)
+    name_clean = re.sub(r",|-|\(|\)|\–|\"", "", name_clean)
     # name_clean = re.sub(r"(\W|\ )+", "", name_clean)
 
     name_clean = re.sub(" +", " ", name_clean)
