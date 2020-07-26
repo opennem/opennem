@@ -266,7 +266,6 @@ def station_name_cleaner(facility_name):
     name_clean = name_clean.strip()
 
     if "/" in name_clean:
-        print(name_clean)
         name_clean = " / ".join(
             [i.strip().capitalize() for i in name_clean.split("/")]
         )
