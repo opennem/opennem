@@ -74,13 +74,12 @@ class NemStoreMMSStations(DatabaseStoreBase):
             created = False
 
             duid = normalize_duid(record["STATIONID"])
-            name = name_normalizer(record["STATIONNAME"])
-            name_clean = station_name_cleaner(record["STATIONNAME"])
+            name = station_name_cleaner(record["STATIONNAME"])
             network_name = normalize_string(record["STATIONNAME"])
             address1 = normalize_string(record["ADDRESS1"])
             address2 = normalize_string(record["ADDRESS2"])
             city = normalize_string(record["CITY"])
-            state = normalize_string(record["STATE"])
+            state = normalize_string(record["STATE"]).capitalize()
             postcode = normalize_string(record["POSTCODE"])
 
             station = (
@@ -88,20 +87,23 @@ class NemStoreMMSStations(DatabaseStoreBase):
             )
 
             if not station:
-                station = Station(code=duid,)
+                station = Station(
+                    code=duid, created_by="au.nem.mms.participant",
+                )
 
                 records_created += 1
                 created = True
             else:
+                station.updated_by = "au.nem.mms.participant"
                 records_updated += 1
 
             station.name = name
-            station.name_clean = name_clean
             station.network_name = network_name
             station.address1 = address1
             station.address2 = address2
             station.locality = city
             station.state = state
+            station.postcode = postcode
 
             try:
                 s.add(station)
@@ -250,22 +252,25 @@ class NemStoreMMSDudetail(DatabaseStoreBase):
             capacity_max = clean_capacity(record["MAXCAPACITY"])
 
             facility = (
-                s.query(Facility).filter(Station.code == duid).one_or_none()
+                s.query(Facility).filter(Facility.code == duid).one_or_none()
             )
 
             if not facility:
-                station = Station(code=duid, created_by="au.nem.mms.dudetail")
+                facility = Facility(
+                    code=duid, created_by="au.nem.mms.dudetail"
+                )
 
                 records_created += 1
                 created = True
             else:
+                facility.updated_by = "au.nem.mms.dudetail"
                 records_updated += 1
 
             facility.capacity_registered = capacity_registered
             facility.capacity_max = capacity_max
 
             try:
-                s.add(station)
+                s.add(facility)
                 s.commit()
             except Exception as e:
                 logger.error(e)
@@ -302,43 +307,130 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
             end_date = record["END_DATE"].strip()
             dispatch_type = record["DISPATCHTYPE"].strip()
 
-            if dispatch_type != "DISPATCHTYPE":
+            if dispatch_type != "GENERATOR":
                 continue
 
-            if end_date != "31/12/2999  12:00:00 am":
+            # @NOTE silly AEMO hack where they set end date to 2999 for currents
+            if not end_date.startswith("2999"):
                 continue
 
-            sid = normalize_duid(record["STATIONID"])
-            pid = normalize_duid(record["PARTICIPANTID"])
-            capacity_registered = clean_capacity(record["REGISTEREDCAPACITY"])
-            capacity_max = clean_capacity(record["MAXCAPACITY"])
+            duid = normalize_duid(record["DUID"])
             network_region = normalize_string(record["REGIONID"])
+            station_code = normalize_duid(record["STATIONID"])
+            participant_code = normalize_duid(record["PARTICIPANTID"])
+
+            participant = (
+                s.query(ParticipantModel)
+                .filter(ParticipantModel.code == participant_code)
+                .one_or_none()
+            )
 
             station = (
-                s.query(Station).filter(Station.code == sid).one_or_none()
+                s.query(Station)
+                .filter(Station.code == station_code)
+                .one_or_none()
+            )
+
+            facility = (
+                s.query(Facility).filter(Facility.code == duid).one_or_none()
             )
 
             if not station:
                 station = Station(
-                    code=sid, created_by="au.nem.mms.dudetail_summary"
+                    code=station_code, created_by="au.nem.mms.dudetail_summary"
+                )
+
+            if not facility:
+                facility = Facility(
+                    code=duid, created_by="au.nem.mms.dudetail_summary"
                 )
 
                 records_created += 1
                 created = True
             else:
+                facility.updated_by = "au.nem.mms.dudetail_summary"
                 records_updated += 1
 
-            facility.capacity_registered = capacity_registered
+            facility.station = station
+            facility.participant = participant
 
             try:
-                s.add(station)
+                s.add(facility)
                 s.commit()
             except Exception as e:
                 logger.error(e)
 
             logger.debug(
                 "{} facility record with id {}".format(
-                    "Created" if created else "Updated", sid
+                    "Created" if created else "Updated", duid
+                )
+            )
+
+        logger.info(
+            "Created {} facility records and updated {}".format(
+                records_created, records_updated
+            )
+        )
+
+
+class NemStoreMMSStatdualloc(DatabaseStoreBase):
+    """
+        AEMO MMS associates all duids with station ids
+    """
+
+    @check_spider_pipeline
+    def process_item(self, item, spider=None):
+
+        s = self.session()
+
+        records_updated = 0
+        records_created = 0
+
+        for record in item:
+            created = False
+
+            duid = normalize_duid(record["DUID"])
+            station_code = normalize_duid(record["STATIONID"])
+
+            station = (
+                s.query(Station)
+                .filter(Station.code == station_code)
+                .one_or_none()
+            )
+
+            facility = (
+                s.query(Facility).filter(Facility.code == duid).one_or_none()
+            )
+
+            if not station:
+                station = Station(
+                    code=station_code, created_by="au.nem.mms.statdualloc"
+                )
+
+            if not facility:
+                facility = Facility(
+                    code=duid,
+                    status_id="retired",
+                    created_by="au.nem.mms.statdualloc",
+                )
+
+                records_created += 1
+                created = True
+            else:
+                facility.updated_by = "au.nem.mms.statdualloc"
+                records_updated += 1
+
+            facility.station = station
+
+            try:
+                s.add(facility)
+                s.commit()
+            except Exception as e:
+                logger.error(e)
+
+            logger.debug(
+                "{} facility record with id {}".format(
+                    "Created" if created else "Updated", duid
                 )
             )
 

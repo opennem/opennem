@@ -4,6 +4,7 @@ from opennem.pipelines.nem.mms import (
     NemStoreMMSDudetail,
     NemStoreMMSDudetailSummary,
     NemStoreMMSParticipant,
+    NemStoreMMSStatdualloc,
     NemStoreMMSStations,
     NemStoreMMSStationStatus,
 )
@@ -52,3 +53,10 @@ class NemMMSDudeTailSummarySpider(NemSingleMMSSpider):
 
     pipelines_extra = set([NemStoreMMSDudetailSummary,])
     url = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_DUDETAILSUMMARY_202006010000.zip"
+
+
+class NemMMSStaduAlloc(NemSingleMMSSpider):
+    name = "au.nem.mms.statdualloc"
+
+    pipelines_extra = set([NemStoreMMSStatdualloc,])
+    url = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_STADUALLOC_202006010000.zip"
