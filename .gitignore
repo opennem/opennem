@@ -51,3 +51,4 @@ db_test.py
 TODO.md
 setup.py
 .requests.sqlite
+db_misc.py

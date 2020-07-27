@@ -127,6 +127,22 @@ $ opennem -h
 
 Settings for Visual Studio Code are stored in `.vscode`. Code is kept formatted and linted using `pylint`, `black` and `isort` with settings defined in `pyproject.toml`
 
+## Testing
+
+Tests are in `tests/`
+
+Run tests with:
+
+```sh
+$ pytest
+```
+
+Run background test watcher with
+
+```sh
+$ ptw
+```
+
 ## Build Release
 
 The script `build-release.sh` will tag a new release, build the docker image, tag the git version, push to GitHub and push the latest
