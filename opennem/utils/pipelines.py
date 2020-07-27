@@ -25,7 +25,7 @@ def check_spider_pipeline(process_item_method):
                 pipelines |= spider.pipelines
 
         if hasattr(spider, "pipelines_extra"):
-            if type(spider.pipelines) is set:
+            if type(spider.pipelines_extra) is set:
                 pipelines |= spider.pipelines_extra
 
         if self.__class__ in pipelines:
