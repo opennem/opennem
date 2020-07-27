@@ -7,32 +7,44 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 
 from opennem.db import db_connect
-from opennem.db.models.opennem import NemFacility, WemFacility
+from opennem.db.load_fixtures import update_existing_geos
+from opennem.db.models.opennem import Facility, Station
 from opennem.geo.google_geo import place_search
 
 logger = logging.getLogger(__name__)
 
 
-def nem_geocode(limit=None):
+def build_address_string(station_record):
+    l = [
+        station_record.network_name,
+        station_record.locality,
+        station_record.state,
+        "Australia",
+    ]
+
+    address_string = ", ".join(str(i) for i in l if i)
+
+    return address_string
+
+
+def opennem_geocode(limit=None):
     engine = db_connect()
     session = sessionmaker(bind=engine)
     s = session()
 
-    records = s.query(NemFacility).filter(NemFacility.geom == None)
+    records = s.query(Station).filter(Station.geom == None)
 
     count = 0
     skipped = 0
     records_added = 0
 
     for r in records:
-        if r.region:
-            geo_str = "{}, {}, Australia".format(r.name, r.region[:-1])
-        else:
-            geo_str = "{}, Australia".format(r.name)
+        geo_address_string = build_address_string(r)
 
-        # logger.info("Encoding: {}".format(geo_str))
+        logger.info("Geocoding record: {}".format(geo_address_string))
+        continue
 
-        google_result = place_search(geo_str)
+        google_result = place_search(geo_address_string)
 
         pprint(google_result)
 
@@ -68,70 +80,12 @@ def nem_geocode(limit=None):
             break
 
     print(
-        "NEM Done. Added {} records. Couldn't match {}".format(
-            records_added, skipped
-        )
-    )
-
-
-def wem_geocode(limit=None):
-    engine = db_connect()
-    session = sessionmaker(bind=engine)
-    s = session()
-
-    records = s.query(WemFacility).filter(WemFacility.geom == None)
-
-    count = 0
-    skipped = 0
-    records_added = 0
-
-    for r in records:
-        geo_str = "{}, WA, Australia".format(r.name)
-
-        # logger.info("Encoding: {}".format(geo_str))
-
-        google_result = place_search(geo_str)
-
-        pprint(google_result)
-
-        if (
-            google_result
-            and type(google_result) is list
-            and len(google_result) > 0
-        ):
-            result = google_result[0]
-
-            # r.place_id = result["place_id"]
-
-            lat = result["geometry"]["location"]["lat"]
-            lng = result["geometry"]["location"]["lng"]
-            r.geom = "SRID=4326;POINT({} {})".format(lng, lat)
-
-            try:
-                s.add(r)
-                s.commit()
-                records_added += 1
-            except IntegrityError as e:
-                logger.error(e)
-                skipped += 1
-                pass
-            except Exception as e:
-                skipped += 1
-                logger.error("Error: {}".format(e))
-        else:
-            skipped += 1
-
-        count += 1
-        if limit and count >= limit:
-            break
-
-    print(
-        "WEM Done. Added {} records. Couldn't match {}".format(
+        "Geocode of opennem records done. Added {} records. Couldn't match {}".format(
             records_added, skipped
         )
     )
 
 
 if __name__ == "__main__":
-    nem_geocode()
-    wem_geocode()
+    update_existing_geos()
+    opennem_geocode()

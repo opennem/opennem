@@ -247,9 +247,7 @@ def update_existing_geos():
 
 
 if __name__ == "__main__":
-    # load_fueltechs()
-    # load_facilitystatus()
-    # load_networks()
-    # load_bom_stations()
-    update_existing_geos()
-    # parse_facilities_json()
+    load_fueltechs()
+    load_facilitystatus()
+    load_networks()
+    load_bom_stations()
