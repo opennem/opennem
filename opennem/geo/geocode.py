@@ -32,7 +32,11 @@ def opennem_geocode(limit=None):
     session = sessionmaker(bind=engine)
     s = session()
 
-    records = s.query(Station).filter(Station.geom == None)
+    records = (
+        s.query(Station)
+        .filter(Station.geom == None)
+        .filter(Station.geocode_skip == False)
+    )
 
     count = 0
     skipped = 0
@@ -60,6 +64,9 @@ def opennem_geocode(limit=None):
             lat = result["geometry"]["location"]["lat"]
             lng = result["geometry"]["location"]["lng"]
             r.geom = "SRID=4326;POINT({} {})".format(lng, lat)
+
+            r.geocode_processed_at = datetime.now()
+            r.geocode_approved = False
 
             try:
                 s.add(r)

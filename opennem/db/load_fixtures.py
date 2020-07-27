@@ -198,6 +198,8 @@ def update_existing_geos():
                     station_data["location"]["longitude"],
                 ),
             )
+            station.geocode_processed_at = datetime.now()
+            station.geocode_approved = True
 
             station.updated_by = "fixture.registry"
 
