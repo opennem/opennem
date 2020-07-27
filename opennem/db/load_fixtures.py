@@ -13,6 +13,7 @@ from opennem.core.facilitystatus import map_v3_states
 from opennem.core.normalizers import (
     clean_capacity,
     name_normalizer,
+    normalize_duid,
     station_name_cleaner,
 )
 from opennem.db import db_connect
@@ -164,202 +165,91 @@ def load_bom_stations():
                 logger.error("Have {}".format(station.code))
 
 
-# def parse_facilities_json():
-#     facilities = load_fixture("facility_registry.json")
+def update_existing_geos():
+    station_fixture = load_fixture("facility_registry.json")
 
-#     wa_facilities = [
-#         {"station_code": k, **v}
-#         for k, v in facilities.items()
-#         if v["location"]["state"] == "WA"
-#     ]
+    stations = [{"station_code": k, **v} for k, v in station_fixture.items()]
 
-#     nem_facilities = [
-#         {"station_code": k, **v}
-#         for k, v in facilities.items()
-#         if v["location"]["state"] != "WA"
-#     ]
+    s = session()
 
-#     s = session()
+    for station_data in stations:
+        station = None
 
-#     for facility in wa_facilities:
-#         station = None
+        station_name = station_name_cleaner(station_data["display_name"])
+        station_code = normalize_duid(station_data["station_code"])
+        station_state = map_v3_states(station_data["status"]["state"])
 
-#         station_name = station_name_cleaner(facility["display_name"])
+        station = (
+            s.query(Station).filter(Station.code == station_code).one_or_none()
+        )
 
-#         if facility_station_join_by_name(station_name):
-#             station = (
-#                 s.query(Station)
-#                 .filter(WemStation.name_clean == station_name)
-#                 .one_or_none()
-#             )
+        if not station:
+            logger.info("Could not find station {}".format(station_code))
+            continue
 
-#         if not station:
-#             station = (
-#                 s.query(WemStation)
-#                 .filter(WemStation.code == facility["station_code"])
-#                 .one_or_none()
-#             )
+        if (
+            "location" in station_data
+            and "latitude" in station_data["location"]
+            and station_data["location"]["latitude"]
+        ):
+            station.geom = (
+                "SRID=4326;POINT({} {})".format(
+                    station_data["location"]["latitude"],
+                    station_data["location"]["longitude"],
+                ),
+            )
 
-#         if not station:
+            station.updated_by = "fixture.registry"
 
-#             station = WemStation(
-#                 code=facility["station_code"],
-#                 name=name_normalizer(facility["display_name"]),
-#                 name_clean=station_name_cleaner(facility["display_name"]),
-#                 state=facility["location"]["state"],
-#                 postcode=facility["location"]["postcode"],
-#                 geom="SRID=4326;POINT({} {})".format(
-#                     facility["location"]["latitude"],
-#                     facility["location"]["longitude"],
-#                 ),
-#                 created_by="fixture.registry",
-#             )
-#             s.add(station)
-#             s.commit()
+        s.add(station)
 
-#             logger.info(
-#                 "WEM Station not found so created with {} ({})".format(
-#                     station.name, station.code, station.id
-#                 )
-#             )
+        logger.info(
+            "Updated station geo location {} ({})".format(
+                station.code, station.name,
+            )
+        )
 
-#         for duid, v in facility["duid_data"].items():
-#             created = False
+        facilities = [
+            {"code": k, **v} for k, v in stations[0]["duid_data"].items()
+        ]
 
-#             db_facility = (
-#                 s.query(WemFacility)
-#                 .filter(WemFacility.code == duid)
-#                 .one_or_none()
-#             )
+        for facility_data in facilities:
+            facility_duid = facility_data["code"]
+            facility_fueltech = fueltech_map(facility_data["fuel_tech"])
 
-#             if not db_facility:
-#                 db_facility = WemFacility(
-#                     code=duid,
-#                     capacity_maximum=clean_capacity(
-#                         v["registered_capacity"]
-#                         if "registered_capacity" in v
-#                         else None
-#                     ),
-#                     name=name_normalizer(facility["display_name"]),
-#                     created_by="fixture.registry",
-#                 )
-#                 created = True
+            facility = (
+                s.query(Facility)
+                .filter(Facility.code == facility_duid)
+                .one_or_none()
+            )
 
-#             db_facility.fueltech_id = fueltech_map(v["fuel_tech"])
-#             db_facility.region = facility["region_id"]
+            if not facility:
+                logger.error(
+                    "Could not find existing facility {} for station {}".format(
+                        facility_duid, station_code
+                    )
+                )
+                continue
 
-#             db_facility.station = station
-#             db_facility.status_id = map_v3_states(facility["status"]["state"])
+            if not facility.fueltech_id:
+                facility.fueltech_id = facility_fueltech
 
-#             logger.info(
-#                 "{} facility {} ({}) to station {} ({})".format(
-#                     "Created" if created else "Updated",
-#                     facility["display_name"],
-#                     duid,
-#                     station.name,
-#                     station.id,
-#                 )
-#             )
+            if facility.fueltech_id != facility_fueltech:
+                logger.error(
+                    "Fueltech mismatch for {}. Old is {} and new is {}".format(
+                        station_code, facility_fueltech, station.fueltech_id
+                    )
+                )
 
-#             s.add(db_facility)
-#             s.commit()
+            s.add(facility)
 
-#     for facility in nem_facilities:
-#         station = None
-#         created = False
-
-#         station_name = station_name_cleaner(facility["display_name"])
-
-#         if facility_station_join_by_name(station_name):
-#             station = (
-#                 s.query(NemStation)
-#                 .filter(NemStation.name_clean == station_name)
-#                 .one_or_none()
-#             )
-
-#         if not station:
-#             station = (
-#                 s.query(NemStation)
-#                 .filter(NemStation.code == facility["station_code"])
-#                 .one_or_none()
-#             )
-
-#         if not station:
-#             station = NemStation(
-#                 code=facility["station_code"],
-#                 name=name_normalizer(facility["display_name"]),
-#                 name_clean=station_name,
-#                 state=facility["location"]["state"],
-#                 postcode=facility["location"]["postcode"],
-#                 created_by="fixture.registry",
-#             )
-
-#             if (
-#                 "latitude" in facility["location"]
-#                 and facility["location"]["latitude"] is not None
-#             ):
-#                 station.geom = "SRID=4326;POINT({} {})".format(
-#                     facility["location"]["latitude"],
-#                     facility["location"]["longitude"],
-#                 )
-
-#             s.add(station)
-#             s.commit()
-
-#             logger.info(
-#                 "NEM Station not found so created with {} ({})".format(
-#                     station.name, station.code, station.id
-#                 )
-#             )
-
-#         for duid, v in facility["duid_data"].items():
-#             created = False
-
-#             db_facility = (
-#                 s.query(NemFacility)
-#                 .filter(NemFacility.code == duid)
-#                 .filter(NemFacility.nameplate_capacity != None)
-#                 .first()
-#             )
-
-#             if not db_facility:
-#                 db_facility = NemFacility(
-#                     code=duid,
-#                     nameplate_capacity=clean_capacity(
-#                         v["registered_capacity"]
-#                         if "registered_capacity" in v
-#                         else None
-#                     ),
-#                     name=name_normalizer(facility["display_name"]),
-#                     name_clean=station_name_cleaner(facility["display_name"]),
-#                     created_by="fixture.registry",
-#                 )
-#                 created = True
-
-#             if "fuel_tech" in v:
-#                 db_facility.fueltech_id = fueltech_map(v["fuel_tech"])
-
-#             db_facility.region = facility["region_id"]
-#             db_facility.station = station
-#             db_facility.status_id = map_v3_states(facility["status"]["state"])
-
-#             s.add(db_facility)
-#             s.commit()
-
-#             logger.info(
-#                 "{} facility {} ({}) to station {} ({})".format(
-#                     "Created" if created else "Updated",
-#                     facility["display_name"],
-#                     duid,
-#                     station.name,
-#                     station.id,
-#                 )
-#             )
+        s.commit()
 
 
 if __name__ == "__main__":
-    load_fueltechs()
-    load_facilitystatus()
-    load_networks()
+    # load_fueltechs()
+    # load_facilitystatus()
+    # load_networks()
     # load_bom_stations()
+    update_existing_geos()
     # parse_facilities_json()
