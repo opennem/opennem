@@ -66,6 +66,7 @@ def opennem_geocode(limit=None):
             r.geom = "SRID=4326;POINT({} {})".format(lng, lat)
 
             r.geocode_processed_at = datetime.now()
+            r.geocode_by = "google"
             r.geocode_approved = False
 
             try:

@@ -178,6 +178,7 @@ class Station(Base, BaseModel):
     geocode_approved = Column(Boolean, default=False)
     geocode_skip = Column(Boolean, default=False)
     geocode_processed_at = Column(DateTime, nullable=True)
+    geocode_by = Column(Text, nullable=True)
     geom = Column(Geometry("POINT", srid=4326))
     boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
 

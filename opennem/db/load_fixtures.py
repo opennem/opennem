@@ -199,6 +199,7 @@ def update_existing_geos():
                 ),
             )
             station.geocode_processed_at = datetime.now()
+            station.geocode_by = "opennem"
             station.geocode_approved = True
 
             station.updated_by = "fixture.registry"
