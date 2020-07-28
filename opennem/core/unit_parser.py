@@ -29,6 +29,8 @@ class UnitSchema(BaseModel):
     # The number of units
     number: int = 1
 
+    capacity: Optional[int]
+
 
 is_number = lambda v: bool(re.match(__is_number, v))
 
