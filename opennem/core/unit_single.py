@@ -23,12 +23,9 @@ SINGLE_UNITS = load_single_units("single_units.json")
 
 def facility_unit_numbers_are_single(facility_duid):
     """
-        This is a bit of a hack where we join facilities to stations by name only
-        where there is no duid or other data we can join on.
+        These units have unit numbers that are single units rather than ranges.
 
-        Used a lot in updating AEMO data.
-
-        The list of station names to do this based on is stored in data/facility_stations.json
+        ex. GT 1-2 means unit of alias GT1 and id 2 rather than alias GT and range 1-2
 
     """
     if not type(SINGLE_UNITS) is list:
