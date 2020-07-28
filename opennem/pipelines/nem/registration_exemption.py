@@ -34,7 +34,7 @@ class RegistrationExemptionGrouperPipeline(object):
         for k, v in groupby(
             generators, key=lambda v: (v["name"], v["name_join"])
         ):
-            key = k
+            key = k[0]
             if not key in generators_grouped:
                 generators_grouped[key] = []
 
