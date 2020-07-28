@@ -41,12 +41,12 @@ ITEM_PIPELINES = {
     "opennem.pipelines.nem.ExtractCSV": 320,
     "opennem.pipelines.nem.TableRecordSplitter": 330,
     # AEMO XLS Parsers
-    "opennem.pipelines.nem.registration_exemption.RegistrationExemptionGrouperPipeline": 350,
+    "opennem.pipelines.aemo.registration_exemption.RegistrationExemptionGrouperPipeline": 350,
+    "opennem.pipelines.aemo.registration_exemption.RegistrationExemptionStorePipeline": 355,
     # Opennem storers
     "opennem.pipelines.nem.DatabaseStore": 400,
     "opennem.pipelines.nem.facilities.NemStoreMMS": 401,
     "opennem.pipelines.nem.facilities.NemStoreGI": 402,
-    "opennem.pipelines.nem.facilities.NemStoreREL": 403,
     "opennem.pipelines.wem.facilities.WemStoreFacility": 410,
     "opennem.pipelines.wem.facility_scada.WemStoreFacilityScada": 411,
     "opennem.pipelines.wem.balancing_summary.WemStoreBalancingSummary": 412,

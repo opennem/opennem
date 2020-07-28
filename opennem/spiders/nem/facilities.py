@@ -11,6 +11,7 @@ from opennem.pipelines.nem.facilities import (
 )
 from opennem.pipelines.nem.registration_exemption import (
     RegistrationExemptionGrouperPipeline,
+    RegistrationExemptionStorePipeline,
 )
 
 
@@ -94,7 +95,13 @@ class AEMORegistrationExemptionListSpider(scrapy.Spider):
         "max_roc",
     ]
 
-    pipelines_extra = set([NemStoreREL, RegistrationExemptionGrouperPipeline])
+    pipelines_extra = set(
+        [
+            NemStoreREL,
+            RegistrationExemptionGrouperPipeline,
+            RegistrationExemptionStorePipeline,
+        ]
+    )
 
     def parse(self, response):
 
