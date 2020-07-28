@@ -123,6 +123,9 @@ class NemParticipantSpider(scrapy.Spider):
                 )
             )
 
+        generators = sorted(generators, key=lambda k: k["station_name"])
+        participants = sorted(generators, key=lambda k: k["name"])
+
         yield {"generators": generators, "participants": participants}
 
 
