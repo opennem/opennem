@@ -1,4 +1,5 @@
 from io import BytesIO
+from itertools import groupby
 
 import scrapy
 from openpyxl import load_workbook
@@ -7,6 +8,9 @@ from opennem.pipelines.nem.facilities import (
     NemStoreGI,
     NemStoreMMS,
     NemStoreREL,
+)
+from opennem.pipelines.nem.registration_exemption import (
+    RegistrationExemptionGrouperPipeline,
 )
 
 
@@ -61,7 +65,7 @@ class NemFacilitySpider(scrapy.Spider):
             yield return_dict
 
 
-class NemParticipantSpider(scrapy.Spider):
+class AEMORegistrationExemptionListSpider(scrapy.Spider):
     name = "au.nem.facilities.rel"
 
     start_urls = [
@@ -90,7 +94,7 @@ class NemParticipantSpider(scrapy.Spider):
         "max_roc",
     ]
 
-    pipelines_extra = set([NemStoreREL,])
+    pipelines_extra = set([NemStoreREL, RegistrationExemptionGrouperPipeline])
 
     def parse(self, response):
 
@@ -124,9 +128,12 @@ class NemParticipantSpider(scrapy.Spider):
             )
 
         generators = sorted(generators, key=lambda k: k["station_name"])
-        participants = sorted(generators, key=lambda k: k["name"])
+        participants = sorted(participants, key=lambda k: k["name"])
 
-        yield {"generators": generators, "participants": participants}
+        yield {
+            "generators": generators,
+            "participants": participants,
+        }
 
 
 class NemFacilityMMSSpider(scrapy.Spider):

@@ -34,11 +34,15 @@ AUTOTHROTTLE_MAX_DELAY = 60
 # 3xx series -
 # 4xx series - database processes
 ITEM_PIPELINES = {
+    # Generic Pipelines
     "opennem.pipelines.files.LinkExtract": 101,
     "opennem.pipelines.nem.UnzipSingleFilePipeline": 302,
     "opennem.pipelines.nem.ReadStringHandle": 310,
-    "opennem.pipelines.nem.ExtractCSV": 390,
-    "opennem.pipelines.nem.TableRecordSplitter": 395,
+    "opennem.pipelines.nem.ExtractCSV": 320,
+    "opennem.pipelines.nem.TableRecordSplitter": 330,
+    # AEMO XLS Parsers
+    "opennem.pipelines.nem.registration_exemption.RegistrationExemptionGrouperPipeline": 350,
+    # Opennem storers
     "opennem.pipelines.nem.DatabaseStore": 400,
     "opennem.pipelines.nem.facilities.NemStoreMMS": 401,
     "opennem.pipelines.nem.facilities.NemStoreGI": 402,
@@ -52,7 +56,9 @@ ITEM_PIPELINES = {
     "opennem.pipelines.wem.facilities.WemStoreLiveFacilities": 416,
     "opennem.pipelines.wem.participant.WemStoreParticipant": 417,
     "opennem.pipelines.wem.participant.WemStoreLiveParticipant": 418,
+    # BOM Storers
     "opennem.pipelines.bom.StoreBomObservation": 430,
+    # MMS Parsers and Storers
     "opennem.pipelines.nem.mms.NemStoreMMSStations": 501,
     "opennem.pipelines.nem.mms.NemStoreMMSStationStatus": 502,
     "opennem.pipelines.nem.mms.NemStoreMMSDudetail": 503,
