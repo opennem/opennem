@@ -42,13 +42,13 @@ unit_has_alias_forced = lambda v: bool(re.search(__is_unit_alias_forced, v))
 strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
 
 
-def parse_unit_duid(unit_input, unit_duid):
+def parse_unit_duid(unit_input: str, unit_duid: str):
     return parse_unit_number(
         unit_input, facility_unit_numbers_are_single(unit_duid)
     )
 
 
-def parse_unit_number(unit_input, force_single=False):
+def parse_unit_number(unit_input: str, force_single: bool = False):
     """
         Parses unit number string into a UnitSchema model
 
