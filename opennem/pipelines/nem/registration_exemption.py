@@ -1,5 +1,6 @@
 from itertools import groupby
 
+from opennem.core.facilitystations import facility_station_join_by_name
 from opennem.core.normalizers import station_name_cleaner
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -12,21 +13,31 @@ class RegistrationExemptionGrouperPipeline(object):
 
         generators = item["generators"]
 
-        # Add clean station names
+        # Add clean station names and if group_by name
         generators = [
-            {**i, "name": station_name_cleaner(i["station_name"])}
+            {
+                **i,
+                "name": station_name_cleaner(i["station_name"]),
+                "name_join": False
+                if facility_station_join_by_name(
+                    station_name_cleaner(i["station_name"])
+                )
+                else i["duid"],
+            }
             for i in generators
         ]
 
         # sort by name
-        generators = sorted(generators, key=lambda k: k["name"])
 
         generators_grouped = {}
 
-        for k, v in groupby(generators, key=lambda v: v["name"]):
-            if not k in generators_grouped:
-                generators_grouped[k] = []
+        for k, v in groupby(
+            generators, key=lambda v: (v["name"], v["name_join"])
+        ):
+            key = k
+            if not key in generators_grouped:
+                generators_grouped[key] = []
 
-            generators_grouped[k] += list(v)
+            generators_grouped[key] += list(v)
 
         return {**item, "generators": generators_grouped}

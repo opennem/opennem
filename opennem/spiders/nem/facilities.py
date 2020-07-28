@@ -127,7 +127,6 @@ class AEMORegistrationExemptionListSpider(scrapy.Spider):
                 )
             )
 
-        generators = sorted(generators, key=lambda k: k["station_name"])
         participants = sorted(participants, key=lambda k: k["name"])
 
         yield {
