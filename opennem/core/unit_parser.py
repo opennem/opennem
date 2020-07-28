@@ -4,6 +4,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from opennem.core.unit_single import facility_unit_numbers_are_single
+
 logger = logging.getLogger(__name__)
 
 __is_number = re.compile(r"^\d+$")
@@ -38,6 +40,12 @@ unit_has_alias = lambda v: bool(re.search(__is_unit_alias, v))
 unit_has_alias_forced = lambda v: bool(re.search(__is_unit_alias_forced, v))
 
 strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
+
+
+def parse_unit_duid(unit_input, unit_duid):
+    return parse_unit_number(
+        unit_input, facility_unit_numbers_are_single(unit_duid)
+    )
 
 
 def parse_unit_number(unit_input, force_single=False):

@@ -1,6 +1,6 @@
 import pytest
 
-from opennem.core.unit_parser import parse_unit_number
+from opennem.core.unit_parser import parse_unit_duid, parse_unit_number
 
 
 class TestUnitParser(object):
@@ -92,6 +92,20 @@ class TestUnitParser(object):
 
     def test_force_single(self):
         subj = parse_unit_number("GT 1-2", force_single=True)
+        assert subj.id == 2, "Unit has an id of 2"
+        assert subj.number == 1, "Unit has 1 unit"
+        assert subj.alias == "GT1", "Unit has alias of GT1"
+
+
+class TestUnitDuidParser(object):
+    def test_unit_duid(self):
+        subj = parse_unit_duid("WT1-2", "NONE")
+        assert subj.id == 1, "Unit has an id of 1"
+        assert subj.number == 2, "Unit has 2 unit"
+        assert subj.alias == "WT", "Unit has alias of WT"
+
+    def test_unit_duid_single(self):
+        subj = parse_unit_duid("GT 1-2", "AGLHAL")
         assert subj.id == 2, "Unit has an id of 2"
         assert subj.number == 1, "Unit has 1 unit"
         assert subj.alias == "GT1", "Unit has alias of GT1"
