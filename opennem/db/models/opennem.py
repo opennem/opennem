@@ -165,7 +165,7 @@ class Station(Base, BaseModel):
     postcode = Column(Text, nullable=True)
 
     # Original network fields
-    network_code = Column(Text)
+    network_code = Column(Text, index=True)
     network_name = Column(Text)
     network_region = Column(Text)
 
