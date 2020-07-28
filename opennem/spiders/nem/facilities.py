@@ -4,15 +4,11 @@ from itertools import groupby
 import scrapy
 from openpyxl import load_workbook
 
-from opennem.pipelines.nem.facilities import (
-    NemStoreGI,
-    NemStoreMMS,
-    NemStoreREL,
-)
-from opennem.pipelines.nem.registration_exemption import (
+from opennem.pipelines.aemo.registration_exemption import (
     RegistrationExemptionGrouperPipeline,
     RegistrationExemptionStorePipeline,
 )
+from opennem.pipelines.nem.facilities import NemStoreGI, NemStoreMMS
 
 
 class NemFacilitySpider(scrapy.Spider):
@@ -97,7 +93,6 @@ class AEMORegistrationExemptionListSpider(scrapy.Spider):
 
     pipelines_extra = set(
         [
-            NemStoreREL,
             RegistrationExemptionGrouperPipeline,
             RegistrationExemptionStorePipeline,
         ]
@@ -149,7 +144,7 @@ class NemFacilityMMSSpider(scrapy.Spider):
         "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_DUDETAILSUMMARY_202006010000.zip"
     ]
 
-    pipelines_extra = set([NemStoreREL,])
+    pipelines_extra = set([])
 
     def parse(self, response):
         yield response
