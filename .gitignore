@@ -52,3 +52,5 @@ TODO.md
 setup.py
 .requests.sqlite
 db_misc.py
+init-dev.sh
+init.sh
