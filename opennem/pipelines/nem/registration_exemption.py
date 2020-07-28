@@ -1,8 +1,11 @@
 from itertools import groupby
 
+from opennem.utils.pipelines import check_spider_pipeline
+
 
 class RegistrationExemptionGrouperPipeline(object):
-    def parse_item(self, item, spider):
+    @check_spider_pipeline
+    def parse_item(self, item, spider=None):
         if not "generators" in item:
             raise Exception("No generators found in item pipeline failed")
 
