@@ -83,12 +83,14 @@ class NemStoreMMSStations(DatabaseStoreBase):
             postcode = normalize_string(record["POSTCODE"])
 
             station = (
-                s.query(Station).filter(Station.code == duid).one_or_none()
+                s.query(Station)
+                .filter(Station.network_code == duid)
+                .one_or_none()
             )
 
             if not station:
                 station = Station(
-                    code=duid, created_by="au.nem.mms.participant",
+                    network_code=duid, created_by="au.nem.mms.participant",
                 )
 
                 records_created += 1
@@ -140,7 +142,9 @@ class NemStoreMMSStationStatus(DatabaseStoreBase):
             status = map_v3_states(record["STATUS"])
 
             station = (
-                s.query(Station).filter(Station.code == duid).one_or_none()
+                s.query(Station)
+                .filter(Station.network_code == duid)
+                .one_or_none()
             )
 
             if not station:
@@ -252,12 +256,14 @@ class NemStoreMMSDudetail(DatabaseStoreBase):
             capacity_max = clean_capacity(record["MAXCAPACITY"])
 
             facility = (
-                s.query(Facility).filter(Facility.code == duid).one_or_none()
+                s.query(Facility)
+                .filter(Facility.network_code == duid)
+                .one_or_none()
             )
 
             if not facility:
                 facility = Facility(
-                    code=duid, created_by="au.nem.mms.dudetail"
+                    network_code=duid, created_by="au.nem.mms.dudetail"
                 )
 
                 records_created += 1
@@ -327,22 +333,25 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
 
             station = (
                 s.query(Station)
-                .filter(Station.code == station_code)
+                .filter(Station.network_code == station_code)
                 .one_or_none()
             )
 
             facility = (
-                s.query(Facility).filter(Facility.code == duid).one_or_none()
+                s.query(Facility)
+                .filter(Facility.network_code == duid)
+                .one_or_none()
             )
 
             if not station:
                 station = Station(
-                    code=station_code, created_by="au.nem.mms.dudetail_summary"
+                    network_code=station_code,
+                    created_by="au.nem.mms.dudetail_summary",
                 )
 
             if not facility:
                 facility = Facility(
-                    code=duid, created_by="au.nem.mms.dudetail_summary"
+                    network_code=duid, created_by="au.nem.mms.dudetail_summary"
                 )
 
                 records_created += 1
@@ -394,22 +403,25 @@ class NemStoreMMSStatdualloc(DatabaseStoreBase):
 
             station = (
                 s.query(Station)
-                .filter(Station.code == station_code)
+                .filter(Station.network_code == station_code)
                 .one_or_none()
             )
 
             facility = (
-                s.query(Facility).filter(Facility.code == duid).one_or_none()
+                s.query(Facility)
+                .filter(Facility.network_code == duid)
+                .one_or_none()
             )
 
             if not station:
                 station = Station(
-                    code=station_code, created_by="au.nem.mms.statdualloc"
+                    network_code=station_code,
+                    created_by="au.nem.mms.statdualloc",
                 )
 
             if not facility:
                 facility = Facility(
-                    code=duid,
+                    network_code=duid,
                     status_id="retired",
                     created_by="au.nem.mms.statdualloc",
                 )
