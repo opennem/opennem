@@ -222,11 +222,16 @@ class Facility(Base, BaseModel):
     station = relationship("Station")
 
     name = Column(Text)
+
+    # @TODO remove this
     name_clean = Column(Text)
 
-    # DUID
+    # DUID but modified by opennem as an identifier
     code = Column(Text, nullable=True, index=True)
-    region = Column(Text, index=True)
+
+    # Network details
+    network_code = Column(Text, nullable=True, index=True)
+    network_region = Column(Text, index=True)
 
     active = Column(Boolean, default=True)
 
@@ -235,11 +240,14 @@ class Facility(Base, BaseModel):
     capacity_registered = Column(Numeric, nullable=True)
     capacity_maximum = Column(Numeric, nullable=True)
     capacity_minimum = Column(Numeric, nullable=True)
+    capacity_aggregate = Column(Numeric, nullable=True)
 
     registered = Column(DateTime)
 
-    unit_size = Column(Numeric, nullable=True)
-    unit_number = Column(Text, nullable=True)
+    unit_id = Column(Numeric, nullable=True)
+    unit_number = Column(Numeric, nullable=True)
+    unit_alias = Column(Text, nullable=True)
+    # unit_number_max = Column(Numeric, nullable=True)
 
 
 class FacilityScada(Base, BaseModel):
