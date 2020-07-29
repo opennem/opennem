@@ -66,7 +66,8 @@ class AEMORegistrationExemptionListSpider(scrapy.Spider):
     name = "au.nem.facilities.rel"
 
     start_urls = [
-        "https://data.opennem.org.au/v3/data/NEM+Registration+and+Exemption+List.xlsx"
+        # "https://data.opennem.org.au/v3/data/NEM+Registration+and+Exemption+List.xlsx"
+        "https://data.opennem.org.au/v3/data/NEM+Registration+and+Exemption+List+July.xlsx"
     ]
 
     participant_keys = ["name", "abn"]
