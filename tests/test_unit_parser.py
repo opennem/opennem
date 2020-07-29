@@ -96,6 +96,32 @@ class TestUnitParser(object):
         assert subj.number == 1, "Unit has 1 unit"
         assert subj.alias == "GT1", "Unit has alias of GT1"
 
+    # Multi units in one line
+
+    def test_ampersand(self):
+        subj = parse_unit_number("1 & 2")
+        assert subj.id == 1, "Unit has an id of 1"
+        assert subj.number == 2, "Unit has 2 units"
+        assert subj.alias == None, "Unit has no alias"
+
+    def test_ampersand_three(self):
+        subj = parse_unit_number("1 & 2 & 3")
+        assert subj.id == 1, "Unit has an id of 1"
+        assert subj.number == 3, "Unit has 3 units"
+        assert subj.alias == None, "Unit has no alias"
+
+    def test_comma_separated(self):
+        subj = parse_unit_number("1,2")
+        assert subj.id == 1, "Unit has an id of 1"
+        assert subj.number == 2, "Unit has 2 units"
+        assert subj.alias == None, "Unit has no alias"
+
+    def test_comma_separated_single(self):
+        subj = parse_unit_number("GT 1-2,GT 1-4", force_single=True)
+
+    def test_comma_and_ampersand_separated(self):
+        subj = parse_unit_number("1, 2 & 5,3 & 4")
+
 
 class TestUnitDuidParser(object):
     def test_unit_duid(self):

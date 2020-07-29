@@ -58,7 +58,7 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
         unit alias GT2-4 rather than alias GT with id 2 and 2 units
     """
     unit_id = 1
-    unit_no = 1
+    unit_no = 0
     unit_alias = None
 
     has_alias = False
@@ -74,6 +74,20 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
     # @TODO handle the silly multi unit lines
     if "," in unit_input:
         uc = unit_input.split(",")
+
+        # This is a bit of a hack - we use the first unit and
+        # count the additionals as extra unit numbers. It works
+        # for now
+        unit_input = uc[0]
+        uc = uc[1:]
+        unit_no += len(uc)
+
+        for unit_component in uc:
+            if "&" in unit_component:
+                unit_no += 1
+
+    if "&" in unit_input:
+        unit_no += len(unit_input.split("&"))
 
     if force_single and unit_has_alias_forced(unit_input):
         has_alias = True
@@ -116,6 +130,7 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
     # Simple single number matches
     if is_number(unit_input):
         unit_id = int(unit_input)
+        unit_no += 1
 
     # Range matches (ex. 1-50)
     unit_range_match = re.search(__unit_range_parse, unit_input)
@@ -131,7 +146,7 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
                 )
             )
 
-        unit_no = unit_max - unit_id + 1
+        unit_no += unit_max - unit_id + 1
 
     unit = UnitSchema(id=unit_id, number=unit_no, alias=unit_alias,)
 
