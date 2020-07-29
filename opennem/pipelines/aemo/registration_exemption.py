@@ -421,28 +421,28 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     facility_record["tech_primary_descriptor"],
                 )
 
+                # check if we have it by ocode first
+                facility = (
+                    s.query(Facility)
+                    .filter(Facility.code == unit_code)
+                    .one_or_none()
+                )
+
                 # If the duid is unique then we have no issues on which to join/create
-                if duid_unique:
+                if duid_unique and not facility:
                     facility = (
                         s.query(Facility)
                         .filter(Facility.network_code == duid)
                         .one_or_none()
                     )
 
-                    if not facility:
-                        facility = Facility(
-                            network_code=duid,
-                            created_by="pipeline.aemo.registration_exemption",
-                        )
-                        created_facility = True
-
                 # If the duid is not unique then we need to figure things out ..
-                if not duid_unique:
+                if not duid_unique and not facility:
                     facility_lookup = (
                         s.query(Facility)
                         .filter(Facility.network_code == duid)
                         # Not having a code means we haven't written to this record yet so we'll use it
-                        .filter(Facility.code != None)
+                        .filter(Facility.code == None)
                         .all()
                     )
 
@@ -460,17 +460,12 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     if len(facility_lookup) > 0:
                         facility = facility_lookup.pop()
 
-                    if not facility:
-                        facility = s.query(Facility).filter(
-                            Facility.code == unit_code
-                        )
-
-                    if not facility:
-                        facility = Facility(
-                            network_code=duid,
-                            created_by="pipeline.aemo.registration_exemption",
-                        )
-                        created_facility = True
+                if not facility:
+                    facility = Facility(
+                        network_code=duid,
+                        created_by="pipeline.aemo.registration_exemption",
+                    )
+                    created_facility = True
 
                 #
                 facility.code = unit_code
