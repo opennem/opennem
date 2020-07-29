@@ -423,7 +423,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 unit = parse_unit_duid(facility_record["unit_no"], duid)
                 unit_size = clean_capacity(facility_record["unit_size"])
                 unit_code = get_unit_code(
-                    duid, unit, facility_station_record["station_name"]
+                    unit, duid, facility_station_record["station_name"]
                 )
                 facility_status = "operating"
                 fueltech = lookup_fueltech(
