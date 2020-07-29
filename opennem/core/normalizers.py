@@ -100,6 +100,7 @@ ACRONYMS = [
     "h2e",
     "jl",
     "uom",
+    "agl",
 ]
 
 
