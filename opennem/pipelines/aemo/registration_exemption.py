@@ -339,38 +339,172 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
         generators_updated = 0
         generators_added = 0
 
-        for facility_name, facility_record in generators.items():
+        from pprint import pprint
+
+        for station_name, facilities in generators.items():
             facility = None
             facility_station = None
             created_station = False
             created_facility = False
 
-            station_name = name_normalizer(facility_record["station_name"])
+            duid_unique = has_unique_duid(facilities)
+            facility_count = len(facilities)
 
-            participant_name = name_normalizer(facility_record["participant"])
-            facility_region = name_normalizer(facility_record["region"])
-            duid = normalize_duid(facility_record["duid"])
-            reg_cap = clean_capacity(facility_record["reg_cap"])
-            unit_no = parse_unit_duid(facility_record["unit_no"], duid)
+            logger.debug(station_name)
+            logger.debug(facilities)
 
-            if has_unique_duid(facility_record):
-                facility = (
+            # Step 1. Find the station
+            # First by duid if it's unique
+
+            if duid_unique and facility_count == 1:
+                duid = get_unique_duid(facilities)
+
+                facility_lookup = (
                     s.query(Facility)
                     .filter(Facility.network_code == duid)
                     .one_or_none()
                 )
 
-                if not facility:
-                    facility = Facility(network_code=duid,)
-
-                if facility:
+                if facility_lookup.station:
                     facility_station = facility.station
+
+            if (duid_unique and facility_count > 1) or not duid_unique:
+                duid = get_unique_duid(facilities)
+
+                facility_lookup = (
+                    s.query(Facility)
+                    .filter(Facility.network_code == duid)
+                    .first()
+                )
+
+                if facility_lookup and facility_lookup.station:
+                    facility_station = facility.station
+
+            # Create one as it doesm't exist
+            if not facility_station:
+                facility_station_record = get_station_record_from_facilities(
+                    facilities
+                )
+
+                facility_station = Station(
+                    name=station_name,
+                    network_name=name_normalizer(
+                        facility_station_record["station_name"]
+                    ),
+                    network_id="NEM",
+                    created_by="pipeline.aemo.registration_exemption",
+                )
+
+                s.add(facility_station)
+                created_station = True
+
+            # Step 2. Add the facilities/units to the station
+            # Now that we have a station or created one ..
+
+            # Step go through the facility records we got ..
+            for facility_record in facilities:
+                network_name = name_normalizer(facility_record["station_name"])
+                participant_name = name_normalizer(
+                    facility_record["participant"]
+                )
+                facility_region = name_normalizer(facility_record["region"])
+                duid = normalize_duid(facility_record["duid"])
+                reg_cap = clean_capacity(facility_record["reg_cap"])
+                unit = parse_unit_duid(facility_record["unit_no"], duid)
+                unit_size = clean_capacity(facility_record["unit_size"])
+                unit_code = get_unit_code(duid, unit)
+                facility_status = "operating"
+                fueltech = lookup_fueltech(
+                    facility_record["fuel_source_primary"],
+                    facility_record["fuel_source_descriptor"],
+                    facility_record["tech_primary"],
+                    facility_record["tech_primary_descriptor"],
+                )
+
+                # If the duid is unique then we have no issues on which to join/create
+                if duid_unique:
+                    facility = (
+                        s.query(Facility)
+                        .filter(Facility.network_code == duid)
+                        .one_or_none()
+                    )
+
+                    if not facility:
+                        facility = s.query(Facility).filter(
+                            Facility.network_code == duid
+                        )
+                        created_facility = True
+
+                # If the duid is not unique then we need to figure things out ..
+                if not duid_unique:
+                    facility_lookup = (
+                        s.query(Facility)
+                        .filter(Facility.network_code == duid)
+                        .filter(Facility.code != None)
+                        .all()
+                    )
+
+                    facility_db_count = len(facility_lookup)
+
+                    logging.debug(
+                        "Non unique duid: {} with {} in database and {} in facility duid is {}".format(
+                            station_name,
+                            facility_db_count,
+                            facility_count,
+                            duid,
+                        )
+                    )
+
+                    if len(facility_lookup) > 0:
+                        facility = facility_lookup.pop()
+
+                    if not facility:
+                        facility = s.query(Facility).filter(
+                            Facility.code == unit_code
+                        )
+
+                    if not facility:
+                        facility = s.query(Facility).filter(
+                            Facility.network_code == duid
+                        )
+                        created_facility = True
+
+                #
+                facility.code = unit_code
+                facility.fueltech_id = fueltech
+                facility.network_code = duid
+                facility.network_region = facility_region
+
+                facility.capacity_registered = reg_cap
+
+                facility.unit_id = unit.id
+                facility.unit_number = unit.number
+                facility.unit_size = unit_size
+
+                # Assume all REL's are operating if we don't have a status
+                facility.status_id = "operating"
+
+                facility.station = facility.station
+
+                # Log that we have a new fueltech
+                if fueltech and fueltech != facility.fueltech_id:
+                    logger.warn(
+                        "Fueltech mismatch for {} {}: prev {} new {}".format(
+                            facility.name_clean,
+                            facility.code,
+                            facility.fueltech_id,
+                            fueltech,
+                        )
+                    )
+
+                s.add(facility)
+                s.commit()
 
             if created_station:
                 logger.info(
                     "{} station with name {} and id {}".format(
                         "Created" if created_station else "Updated",
-                        facility_station.name_clean,
+                        facility_station.name,
                         facility_station.id,
                     )
                 )
@@ -379,7 +513,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 logger.info(
                     "{} facility with name {} and duid {} and id {}".format(
                         "Created" if created_facility else "Updated",
-                        facility.name_clean,
+                        facility.name,
                         facility.code,
                         facility.id,
                     )
