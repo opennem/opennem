@@ -36,6 +36,23 @@ def has_unique_duid(units: list) -> bool:
     return len(duids) == len(units)
 
 
+def get_unique_duid(units: list) -> str:
+    first_record = units.pop()
+    return first_record["duid"] if "duid" in first_record else None
+
+def get_station_record_from_facilities(units: list):
+    if len(units) == 1:
+        return units[0]
+
+    for u in units:
+        cap = clean_capacity(u["reg_cap"])
+        duid = normalize_duid(u["duid"])
+
+        if cap:
+            return u
+
+    return u[0]
+
 class RegistrationExemptionGrouperPipeline(object):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
