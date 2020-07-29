@@ -430,8 +430,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     )
 
                     if not facility:
-                        facility = s.query(Facility).filter(
-                            Facility.network_code == duid
+                        facility = Facility(
+                            network_code=duid,
+                            created_by="pipeline.aemo.registration_exemption",
                         )
                         created_facility = True
 
@@ -465,8 +466,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                         )
 
                     if not facility:
-                        facility = s.query(Facility).filter(
-                            Facility.network_code == duid
+                        facility = Facility(
+                            network_code=duid,
+                            created_by="pipeline.aemo.registration_exemption",
                         )
                         created_facility = True
 
@@ -496,6 +498,11 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                             facility.fueltech_id,
                             fueltech,
                         )
+                    )
+
+                if not created_facility:
+                    facility.updated_by = (
+                        "pipeline.aemo.registration_exemption"
                     )
 
                 s.add(facility)
