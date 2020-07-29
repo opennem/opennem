@@ -365,8 +365,8 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     .one_or_none()
                 )
 
-                if facility_lookup.station:
-                    facility_station = facility.station
+                if facility_lookup and facility_lookup.station:
+                    facility_station = facility_lookup.station
 
             if (duid_unique and facility_count > 1) or not duid_unique:
                 duid = get_unique_duid(facilities)
@@ -378,7 +378,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 )
 
                 if facility_lookup and facility_lookup.station:
-                    facility_station = facility.station
+                    facility_station = facility_lookup.station
 
             # Create one as it doesm't exist
             if not facility_station:
