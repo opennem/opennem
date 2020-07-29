@@ -360,9 +360,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             # Step 1. Find the station
             # First by duid if it's unique
+            duid = get_unique_duid(facilities)
 
-            if duid_unique and facility_count == 1:
-                duid = get_unique_duid(facilities)
+            if duid and duid_unique and facility_count == 1:
 
                 facility_lookup = (
                     s.query(Facility)
@@ -373,8 +373,11 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 if facility_lookup and facility_lookup.station:
                     facility_station = facility_lookup.station
 
-            if (duid_unique and facility_count > 1) or not duid_unique:
-                duid = get_unique_duid(facilities)
+            if (
+                duid
+                and (duid_unique and facility_count > 1)
+                or not duid_unique
+            ):
 
                 facility_lookup = (
                     s.query(Facility)
@@ -417,7 +420,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 reg_cap = clean_capacity(facility_record["reg_cap"])
                 unit = parse_unit_duid(facility_record["unit_no"], duid)
                 unit_size = clean_capacity(facility_record["unit_size"])
-                unit_code = get_unit_code(duid, unit)
+                unit_code = get_unit_code(duid, unit, facility_station_record["station_name"])
                 facility_status = "operating"
                 fueltech = lookup_fueltech(
                     facility_record["fuel_source_primary"],
@@ -434,7 +437,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 )
 
                 # If the duid is unique then we have no issues on which to join/create
-                if duid_unique and not facility:
+                if duid and duid_unique and not facility:
                     facility = (
                         s.query(Facility)
                         .filter(Facility.network_code == duid)
@@ -442,7 +445,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     )
 
                 # If the duid is not unique then we need to figure things out ..
-                if not duid_unique and not facility:
+                if duid and not duid_unique and not facility:
                     facility_lookup = (
                         s.query(Facility)
                         .filter(Facility.network_code == duid)
