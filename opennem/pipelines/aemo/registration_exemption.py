@@ -480,7 +480,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     created_facility = True
 
                 # Sanity checking
-                if len(unit_code) < 4:
+                if len(unit_code) < 3:
                     raise Exception(
                         "Unit code {} is invalid. For station {} with duid {}".format(
                             unit_code, station_name, duid
