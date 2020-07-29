@@ -291,7 +291,7 @@ def participant_name_filter(participant_name):
     return _p.strip()
 
 
-def clean_capacity(capacity):
+def clean_capacity(capacity: str) -> float:
     cap_clean = capacity
 
     if type(capacity) is str:
