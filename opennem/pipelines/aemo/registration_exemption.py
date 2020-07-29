@@ -362,6 +362,12 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
             # First by duid if it's unique
             duid = get_unique_duid(facilities)
 
+            # This is the most suitable unit record to use for the station
+            # see helper above
+            facility_station_record = get_station_record_from_facilities(
+                facilities
+            )
+
             if duid and duid_unique and facility_count == 1:
 
                 facility_lookup = (
@@ -390,10 +396,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             # Create one as it doesm't exist
             if not facility_station:
-                facility_station_record = get_station_record_from_facilities(
-                    facilities
-                )
-
                 facility_station = Station(
                     name=station_name,
                     network_name=name_normalizer(
@@ -420,7 +422,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 reg_cap = clean_capacity(facility_record["reg_cap"])
                 unit = parse_unit_duid(facility_record["unit_no"], duid)
                 unit_size = clean_capacity(facility_record["unit_size"])
-                unit_code = get_unit_code(duid, unit, facility_station_record["station_name"])
+                unit_code = get_unit_code(
+                    duid, unit, facility_station_record["station_name"]
+                )
                 facility_status = "operating"
                 fueltech = lookup_fueltech(
                     facility_record["fuel_source_primary"],
