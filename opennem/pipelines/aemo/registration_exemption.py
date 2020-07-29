@@ -37,7 +37,10 @@ def has_unique_duid(units: list) -> bool:
 
 
 def get_unique_duid(units: list) -> str:
-    first_record = units.pop()
+    if not type(units) is list or len(units) < 1:
+        return None
+
+    first_record = units[0]
     return first_record["duid"] if "duid" in first_record else None
 
 def get_station_record_from_facilities(units: list):
