@@ -227,7 +227,7 @@ class Facility(Base, BaseModel):
     name_clean = Column(Text)
 
     # DUID but modified by opennem as an identifier
-    code = Column(Text, nullable=True, index=True)
+    code = Column(Text, nullable=True, index=True, unique=True)
 
     # Network details
     network_code = Column(Text, nullable=True, index=True)
