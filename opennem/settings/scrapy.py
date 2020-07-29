@@ -42,7 +42,9 @@ ITEM_PIPELINES = {
     "opennem.pipelines.nem.TableRecordSplitter": 330,
     # AEMO XLS Parsers
     "opennem.pipelines.aemo.registration_exemption.RegistrationExemptionGrouperPipeline": 350,
+    "opennem.pipelines.aemo.general_information.GeneralInformationGrouperPipeline": 351,
     "opennem.pipelines.aemo.registration_exemption.RegistrationExemptionStorePipeline": 355,
+    "opennem.pipelines.aemo.general_information.GeneralInformationStoragePipeline": 356,
     # Opennem storers
     "opennem.pipelines.nem.DatabaseStore": 400,
     "opennem.pipelines.nem.facilities.NemStoreMMS": 401,

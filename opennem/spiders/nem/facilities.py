@@ -4,6 +4,10 @@ from itertools import groupby
 import scrapy
 from openpyxl import load_workbook
 
+from opennem.pipelines.aemo.general_information import (
+    GeneralInformationGrouperPipeline,
+    GeneralInformationStoragePipeline,
+)
 from opennem.pipelines.aemo.registration_exemption import (
     RegistrationExemptionGrouperPipeline,
     RegistrationExemptionStorePipeline,
@@ -23,7 +27,7 @@ class NemFacilitySpider(scrapy.Spider):
     keys = [
         "Region",
         "Status",
-        "Name",
+        "station_name",
         "Owner",
         "TechType",
         "FuelType",
@@ -41,12 +45,16 @@ class NemFacilitySpider(scrapy.Spider):
         "SurveyEffective",
     ]
 
-    pipelines_extra = set([NemStoreGI,])
+    pipelines_extra = set(
+        [GeneralInformationGrouperPipeline, GeneralInformationStoragePipeline]
+    )
 
     def parse(self, response):
         wb = load_workbook(BytesIO(response.body), data_only=True)
 
         ws = wb.get_sheet_by_name("ExistingGeneration&NewDevs")
+
+        records = []
 
         for row in ws.iter_rows(min_row=3, values_only=True):
 
@@ -59,7 +67,9 @@ class NemFacilitySpider(scrapy.Spider):
             if return_dict is None:
                 raise Exception("Failed on row: {}".format(row))
 
-            yield return_dict
+            records.append(return_dict)
+
+        yield {"records": records}
 
 
 class AEMORegistrationExemptionListSpider(scrapy.Spider):
