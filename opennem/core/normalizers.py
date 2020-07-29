@@ -1,4 +1,5 @@
 import re
+from typing import Union
 
 from opennem.core.station_names import station_map_name
 
@@ -105,8 +106,8 @@ ACRONYMS = [
 ]
 
 
-__is_number = re.compile("^\d+$")
-__is_single_number = re.compile("^\d$")
+__is_number = re.compile(r"^\d+$")
+__is_single_number = re.compile(r"^\d$")
 
 
 def is_number(value):
@@ -291,10 +292,15 @@ def participant_name_filter(participant_name):
     return _p.strip()
 
 
-def clean_capacity(capacity: str) -> float:
+strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
+
+
+def clean_capacity(capacity: Union[str, int, float]) -> float:
     cap_clean = capacity
 
     if type(capacity) is str:
+        cap_clean = strip_whitespace(capacity)
+
         cap_clean = capacity.replace("-", "")
 
         if cap_clean == "":
@@ -302,7 +308,18 @@ def clean_capacity(capacity: str) -> float:
 
         # funky values in spreadsheet
         cap_clean = cap_clean.replace(",", ".")
+        cap_clean = float(cap_clean)
 
-        cap_clean = round(float(cap_clean), 6)
+    elif type(capacity) is int:
+        cap_clean = float(cap_clean)
+
+    elif type(capacity) is not float:
+        raise Exception(
+            "Capacity clean of type {} not supported: {}".format(
+                type(capacity), capacity
+            )
+        )
+
+    cap_clean = round(cap_clean, 6)
 
     return cap_clean
