@@ -43,7 +43,11 @@ def get_unique_duid(units: list) -> str:
     first_record = units[0]
     return first_record["duid"] if "duid" in first_record else None
 
+
 def get_station_record_from_facilities(units: list):
+    if not type(units) is list or len(units) < 1:
+        raise Exception("Passed units list with no units ..")
+
     if len(units) == 1:
         return units[0]
 
