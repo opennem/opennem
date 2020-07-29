@@ -478,6 +478,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 facility.unit_id = unit.id
                 facility.unit_number = unit.number
                 facility.unit_size = unit_size
+                facility.unit_alias = unit.alias
 
                 # Assume all REL's are operating if we don't have a status
                 facility.status_id = "operating"
