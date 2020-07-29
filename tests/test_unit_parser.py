@@ -118,9 +118,15 @@ class TestUnitParser(object):
 
     def test_comma_separated_single(self):
         subj = parse_unit_number("GT 1-2,GT 1-4", force_single=True)
+        assert subj.id == 2, "Unit has an id of 1"
+        assert subj.number == 2, "Unit has 2 units"
+        assert subj.alias == "GT1", "Unit has GT1 alias"
 
     def test_comma_and_ampersand_separated(self):
         subj = parse_unit_number("1, 2 & 5,3 & 4")
+        assert subj.id == 1, "Unit has an id of 1"
+        assert subj.number == 5, "Unit has 5 units"
+        assert subj.alias == None, "Unit has no alias"
 
 
 class TestUnitDuidParser(object):
