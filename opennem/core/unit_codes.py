@@ -14,10 +14,10 @@ def get_unit_code(duid: str, unit: UnitSchema) -> str:
 
     # @TODO - check if we can strip, probably not a good idea
 
-    components = [
-        duid_clean,
-        unit.alias,
-    ]
+    # if not duid_clean.endswith(unit.id):
+    # duid_clean += str(unit.id)
+
+    components = [duid_clean, unit.alias, unit.id]
 
     # empty out None's
     components = [i for i in components if i]
