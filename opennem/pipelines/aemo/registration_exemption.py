@@ -59,9 +59,17 @@ def get_station_record_from_facilities(units: list):
         if cap:
             return u
 
-    return u[0]
+    return units[0]
+
 
 class RegistrationExemptionGrouperPipeline(object):
+    """
+        This is the first-pass pipeline of the AEMO Registration and Exemptions list
+
+        It groups by clean station name
+
+    """
+
     @check_spider_pipeline
     def process_item(self, item, spider=None):
         if not "generators" in item:
@@ -101,9 +109,9 @@ class RegistrationExemptionGrouperPipeline(object):
 
 class RegistrationExemptionStorePipeline(DatabaseStoreBase):
     """
-        This pipeline stores items from the NEM REL spreadsheet.
+        This pipeline is the second pass of the AEMO NEM REL List
 
-        It sends in the entire sheet of participants and generators in a dict item
+        It sorts out whats new, what is updated, units and updating the database
 
     """
 
@@ -152,7 +160,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
         s.commit()
 
-    def process_facilities_old(self, generators):
+    def process_facilities(self, generators):
         s = self.session()
 
         station = None
@@ -209,47 +217,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             facility_station = facility.station
 
-            # # Now try and find it without the unit number
-            # if not facility:
-            #     facility = (
-            #         s.query(Facility)
-            #         .filter(Facility.region == facility_region)
-            #         .filter(Facility.code == duid)
-            #         .filter(Facility.unit_number == unit_no)
-            #         .one_or_none()
-            #     )
-
-            #     if facility:
-
-            #         if not facility.station:
-            #             raise Exception(
-            #                 "Existing facility {} {} with no station .. unpossible.".format(
-            #                     facility.id, facility.name
-            #                 )
-            #             )
-
-            #         facility_station = facility.station
-
-            #         logger.info(
-            #             "REL: Found facility by DUID: {} {} {}".format(
-            #                 facility.id, facility.name, facility_station.id
-            #             )
-            #         )
-
-            # if facility_station_join_by_name(station_name_clean):
-            #     facility_station = (
-            #         s.query(Station)
-            #         .filter(Station.name_clean == station_name_clean)
-            #         .one_or_none()
-            #     )
-
-            # if not facility_station:
-            #     raise Exception(
-            #         "Trying to join {} by name but record not found".format(
-            #             station_name
-            #         )
-            #     )
-
             # Done trying to find existing
 
             created_station = False
@@ -283,29 +250,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
             if duid:
                 facility.code = duid
 
-            # if not facility_station.participant:
-            #     if participant_name in participant_keys:
-            #         participant = participant_keys[participant_name]
-
-            #     if not participant:
-            #         participant = (
-            #             s.query(Participant)
-            #             .filter(Participant.name == participant_name)
-            #             .one_or_none()
-            #         )
-
-            #     if not participant:
-            #         raise Exception(
-            #             "Could not locate existing participant '{}' for station {}".format(
-            #                 participant_name, station_name
-            #             )
-            #         )
-
-            #     facility_station.participant = participant
-
-            # s.add(facility)
-            # s.commit()
-
             if not facility.participant_id:
                 facility.participant = facility_station.participant
 
@@ -326,17 +270,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 generator_data["tech_primary"],
                 generator_data["tech_primary_descriptor"],
             )
-
-            # Log that we have a new fueltech
-            if fueltech and fueltech != facility.fueltech_id:
-                logger.warn(
-                    "Fueltech mismatch for {} {}: prev {} new {}".format(
-                        facility.name_clean,
-                        facility.code,
-                        facility.fueltech_id,
-                        fueltech,
-                    )
-                )
 
             facility.fueltech_id = fueltech
 
