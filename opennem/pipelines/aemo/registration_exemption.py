@@ -42,7 +42,12 @@ def get_unique_duid(units: list) -> str:
         return None
 
     first_record = units[0]
-    return first_record["duid"] if "duid" in first_record else None
+
+    return (
+        normalize_duid(first_record["duid"])
+        if "duid" in first_record
+        else None
+    )
 
 
 def get_station_record_from_facilities(units: list):
