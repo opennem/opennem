@@ -1,4 +1,4 @@
-from opennem.core.unit_codes import get_unit_code
+from opennem.core.unit_codes import get_basecode, get_unit_code
 from opennem.core.unit_parser import UnitSchema
 
 
@@ -20,3 +20,9 @@ class TestUnitCodes(object):
         unit_code = get_unit_code(duid, unit)
 
         assert unit_code == "TEST1_GT1", "Unit with GT1 alias"
+
+    def test_basecode(self):
+        station_name = "Pioneer Sugar Mill"
+        subject = get_basecode(station_name)
+
+        assert subject == "0NPSM", "Pioneer sugar mill becomes 0NPSM"
