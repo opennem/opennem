@@ -100,7 +100,7 @@ class NemStoreMMSStations(DatabaseStoreBase):
                 records_updated += 1
 
             station.name = name
-            station.network_id = "nem"
+            station.network_id = "NEM"
             station.network_name = network_name
             station.address1 = address1
             station.address2 = address2
@@ -347,7 +347,7 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
             if not station:
                 station = Station(
                     network_code=station_code,
-                    network_id="nem",
+                    network_id="NEM",
                     created_by="au.nem.mms.dudetail_summary",
                 )
 
@@ -418,14 +418,14 @@ class NemStoreMMSStatdualloc(DatabaseStoreBase):
             if not station:
                 station = Station(
                     network_code=station_code,
-                    network_id="nem",
+                    network_id="NEM",
                     created_by="au.nem.mms.statdualloc",
                 )
 
             if not facility:
                 facility = Facility(
                     network_code=duid,
-                    network_id="nem",
+                    network_id="NEM",
                     status_id="retired",
                     created_by="au.nem.mms.statdualloc",
                 )
