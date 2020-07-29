@@ -109,8 +109,12 @@ ACRONYMS = [
 __is_number = re.compile(r"^\d+$")
 __is_single_number = re.compile(r"^\d$")
 
+# @TODO put all these helpers in utils/
 
-def is_number(value):
+strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
+
+
+def is_number(value: Union[str, int]) -> bool:
     if type(value) is not str:
         value = str(value)
 
@@ -120,25 +124,27 @@ def is_number(value):
     return False
 
 
-def is_single_number(value):
+def is_single_number(value: Union[str, int]) -> bool:
     if re.match(__is_single_number, value):
         return True
     return False
 
 
+# @TODO not yet implemented
 def id_unit(facility_name):
     __n = facility_name
 
     return __n
 
 
+# @TODO not yet implement
 def id_duid(facility_name):
     __n = facility_name
 
     return __n
 
 
-def normalize_duid(duid):
+def normalize_duid(duid: str) -> str:
     duid = duid or ""
 
     duid = duid.strip()
@@ -149,7 +155,7 @@ def normalize_duid(duid):
     return duid
 
 
-def normalize_string(csv_string):
+def normalize_string(csv_string) -> str:
     if not type(csv_string) is str:
         csv_string = str(csv_string)
 
@@ -158,7 +164,7 @@ def normalize_string(csv_string):
     return csv_string
 
 
-def name_normalizer(name):
+def name_normalizer(name: str) -> str:
     name_normalized = None
 
     if name and type(name) is str:
@@ -169,7 +175,7 @@ def name_normalizer(name):
     return str(name_normalized)
 
 
-def clean_numbers(part):
+def clean_numbers(part) -> int:
     if not is_number(part):
         return part
 
@@ -181,7 +187,7 @@ def clean_numbers(part):
     return None
 
 
-def station_name_cleaner(facility_name):
+def station_name_cleaner(facility_name: str) -> str:
     """"
         This cleans station names from their messy as hell AEMO names to something
         we can plug into name_clean and humans can actually read
@@ -277,9 +283,6 @@ def station_name_cleaner(facility_name):
         return station_map_name(name_clean)
 
     return name_clean
-
-
-strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
 
 
 def participant_name_filter(participant_name: str) -> str:
