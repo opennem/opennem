@@ -51,9 +51,20 @@ def get_basecode(station_name: str) -> str:
     if not type(station_name) is str or not station_name:
         raise Exception("Expected to generate a code with no station name")
 
+    MIN_DUID_LENGTH = 3
+    MAX_DUID_LENGTH = 4
+
     comps = station_name.strip().split(" ")
 
-    comps = [i[0] for i in comps]
+    num_words = len(comps)
+
+    if num_words > MAX_DUID_LENGTH:
+        comps = comps[:MAX_DUID_LENGTH]
+
+    if num_words > MIN_DUID_LENGTH:
+        num_words = MIN_DUID_LENGTH
+
+    comps = [i[0 : MIN_DUID_LENGTH + 1 - num_words] for i in comps]
 
     comps.insert(0, OPENNEM_CODE_PREFIX)
 

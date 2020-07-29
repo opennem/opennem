@@ -1,4 +1,4 @@
-from opennem.core.unit_codes import get_basecode, get_unit_code
+from opennem.core.unit_codes import duid_is_ocode, get_basecode, get_unit_code
 from opennem.core.unit_parser import UnitSchema
 
 
@@ -26,3 +26,21 @@ class TestUnitCodes(object):
         subject = get_basecode(station_name)
 
         assert subject == "0NPSM", "Pioneer sugar mill becomes 0NPSM"
+
+    def test_basecode_single_word(self):
+        station_name = "Portland"
+        subject = get_basecode(station_name)
+
+        assert subject == "0NPOR", "Portland becomes 0NPOR"
+
+    def test_basecode_five_words(self):
+        station_name = "Portland Portland Portland Portland Portland"
+        subject = get_basecode(station_name)
+
+        assert subject == "0NPPPP", "Portland becomes 0NPPPP"
+
+    def test_is_temp_ocode(self):
+        ocode = "0NPSM"
+        subject = duid_is_ocode(ocode)
+
+        assert subject == True, "0NPSM is an ocode"
