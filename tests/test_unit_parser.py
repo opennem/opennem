@@ -27,6 +27,16 @@ class TestUnitParser(object):
         assert subj.id == 1, "Returns string 1 as unit number 1"
         assert subj.number == 1, "Unit has one unit"
 
+    def test_blank_unit_number(self):
+        subj = parse_unit_number("")
+        assert subj.id == 1, "Returns string 1 as unit number 1"
+        assert subj.number == 1, "Unit has one unit"
+
+    def test_none_unit_number(self):
+        subj = parse_unit_number(None)
+        assert subj.id == 1, "Returns string 1 as unit number 1"
+        assert subj.number == 1, "Unit has one unit"
+
     # Ranges
 
     def test_simple_range(self):

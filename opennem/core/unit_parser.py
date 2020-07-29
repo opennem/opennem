@@ -63,6 +63,9 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
 
     has_alias = False
 
+    if unit_input == None:
+        unit_input = ""
+
     # Normalize to string
     if type(unit_input) is not str:
         unit_input = str(unit_input)
@@ -70,6 +73,9 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
     # Strip whitespace and capitalize
     unit_input = strip_whitespace(unit_input)
     unit_input = unit_input.upper()
+
+    if unit_input == "":
+        unit_input = "1"
 
     # @TODO handle the silly multi unit lines
     if "," in unit_input:
