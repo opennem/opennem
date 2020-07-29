@@ -440,6 +440,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     facility_lookup = (
                         s.query(Facility)
                         .filter(Facility.network_code == duid)
+                        # Not having a code means we haven't written to this record yet so we'll use it
                         .filter(Facility.code != None)
                         .all()
                     )
@@ -484,7 +485,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 # Assume all REL's are operating if we don't have a status
                 facility.status_id = "operating"
 
-                facility.station = facility.station
+                facility.station = facility_station
 
                 # Log that we have a new fueltech
                 if fueltech and fueltech != facility.fueltech_id:
