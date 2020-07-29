@@ -18,6 +18,7 @@ from opennem.core.normalizers import (
     participant_name_filter,
     station_name_cleaner,
 )
+from opennem.core.unit_codes import get_unit_code
 from opennem.core.unit_parser import parse_unit_duid
 from opennem.db.models.opennem import (
     Facility,
