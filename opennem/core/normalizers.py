@@ -193,7 +193,7 @@ def station_name_cleaner(facility_name):
     if type(facility_name) is str:
         name_clean = facility_name.strip()
     else:
-        name_clean = str(facility_name)
+        name_clean = str(facility_name).strip()
 
     # @todo check has duid / unit other
 
