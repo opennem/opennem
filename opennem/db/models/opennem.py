@@ -247,6 +247,7 @@ class Facility(Base, BaseModel):
     unit_id = Column(Numeric, nullable=True)
     unit_number = Column(Numeric, nullable=True)
     unit_alias = Column(Text, nullable=True)
+    unit_capacity = Column(Numeric, nullable=True)
     # unit_number_max = Column(Numeric, nullable=True)
 
 
