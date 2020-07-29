@@ -479,6 +479,14 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     )
                     created_facility = True
 
+                # Sanity checking
+                if len(unit_code) < 5:
+                    raise Exception(
+                        "Unit code {} is invalid. For station {} with duid {}".format(
+                            unit_code, station_name, duid
+                        )
+                    )
+
                 #
                 facility.code = unit_code
                 facility.fueltech_id = fueltech
