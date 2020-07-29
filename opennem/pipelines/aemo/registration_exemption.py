@@ -31,9 +31,9 @@ from opennem.utils.pipelines import check_spider_pipeline
 logger = logging.getLogger(__name__)
 
 
-def has_unique_duid(unit):
-    duids = set([i["duid"] for i in unit])
-    return len(duids) == len(unit)
+def has_unique_duid(units: list) -> bool:
+    duids = set([i["duid"] for i in units])
+    return len(duids) == len(units)
 
 
 class RegistrationExemptionGrouperPipeline(object):
