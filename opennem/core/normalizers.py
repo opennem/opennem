@@ -279,7 +279,12 @@ def station_name_cleaner(facility_name):
     return name_clean
 
 
-def participant_name_filter(participant_name):
+strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
+
+
+def participant_name_filter(participant_name: str) -> str:
+    participant_name = strip_whitespace(participant_name)
+
     _p = (
         participant_name.strip()
         .replace("Pty Ltd", "")
@@ -290,9 +295,6 @@ def participant_name_filter(participant_name):
     _p = re.sub(" +", " ", _p).strip()
 
     return _p.strip()
-
-
-strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
 
 
 def clean_capacity(capacity: Union[str, int, float]) -> float:
