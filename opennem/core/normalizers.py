@@ -147,9 +147,10 @@ def id_duid(facility_name):
 def normalize_duid(duid: str) -> str:
     duid = duid or ""
 
-    duid = duid.strip()
+    # @TODO replace with regexp that removes junk
+    duid = duid.strip().replace("-", "")
 
-    if duid == "-":
+    if duid == "":
         return None
 
     return duid
