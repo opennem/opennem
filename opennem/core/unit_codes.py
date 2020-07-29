@@ -1,9 +1,13 @@
+from typing import Optional
+
 from opennem.core.normalizers import normalize_duid
 from opennem.core.unit_parser import UnitSchema
 
 
 def get_unit_code(
-    duid: str, unit: UnitSchema, station_name: str = None
+    unit: UnitSchema,
+    duid: Optional[str] = None,
+    station_name: Optional[str] = None,
 ) -> str:
     """
         This takes the duid from the network and the unit info and creates a unique
@@ -12,7 +16,6 @@ def get_unit_code(
         This should be unique across all units for a network
     """
 
-    duid_clean = normalize_duid(duid)
     unit_id = None
     # @TODO - check if we can strip, probably not a good idea
 
@@ -24,6 +27,8 @@ def get_unit_code(
             )
 
         duid = get_basecode(station_name)
+
+    duid_clean = normalize_duid(duid)
 
     if not duid_clean.endswith(str(unit.id)):
         unit_id = str(unit.id)

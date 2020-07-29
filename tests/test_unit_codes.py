@@ -7,7 +7,7 @@ class TestUnitCodes(object):
         duid = "TEST1"
         unit = UnitSchema(id=1, number=1)
 
-        unit_code = get_unit_code(duid, unit)
+        unit_code = get_unit_code(unit, duid)
 
         assert (
             unit_code == "TEST1"
@@ -17,9 +17,17 @@ class TestUnitCodes(object):
         duid = "TEST1"
         unit = UnitSchema(id=1, number=1, alias="GT1")
 
-        unit_code = get_unit_code(duid, unit)
+        unit_code = get_unit_code(unit, duid)
 
         assert unit_code == "TEST1_GT1", "Unit with GT1 alias"
+
+    def test_with_basecode(self):
+        duid = None
+        unit = UnitSchema(id=1, number=1, alias=None)
+        station_name = "Portland"
+
+        unit_code = get_unit_code(unit, duid, station_name)
+        assert unit_code == "0NPOR_1", "Unit code is right with no duid"
 
     def test_basecode(self):
         station_name = "Pioneer Sugar Mill"
