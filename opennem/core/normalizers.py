@@ -55,6 +55,7 @@ STRIP_WORDS = [
     "pe",
     "pf",
     "pv",
+    "ps",
     "solar",
     "storage",
     "wind",
@@ -173,7 +174,7 @@ def clean_numbers(part):
 
     part_parsed = int(part)
 
-    if part_parsed < 6 and part_parsed != 1:
+    if part_parsed < 6:
         return part_parsed
 
     return None
