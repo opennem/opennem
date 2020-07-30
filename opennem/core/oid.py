@@ -4,10 +4,11 @@
 """
 
 from opennem.core import base24
-from opennem.db.models.opennem import Station
+
+# from opennem.db.models.opennem import Station
 
 
-def get_oid(station: Station) -> str:
+def get_oid(station) -> str:
     _id = station.id
 
     if not station.id:
@@ -16,7 +17,7 @@ def get_oid(station: Station) -> str:
     return base24.dumps(_id)
 
 
-def get_ocode(station: Station) -> str:
+def get_ocode(station) -> str:
     """
 
         format: {country}_{network}_{region}_{station}_{id}
