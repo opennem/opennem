@@ -18,7 +18,7 @@ def stations_geojson_records():
 
         f.properties = {
             "oid": station.oid,
-            "oid": station.ocode,
+            "ocode": station.ocode,
             "station_id": station.id,
             "station_code": station.code,
             "facility_id": station.code,
