@@ -170,7 +170,6 @@ class Station(Base, BaseModel):
     network_region = Column(Text)
 
     # Capacity fields
-    capacity_nameplate = Column(Numeric, nullable=True)
     capacity_registered = Column(Numeric, nullable=True)
 
     # Geo fields
@@ -221,26 +220,18 @@ class Facility(Base, BaseModel):
     )
     station = relationship("Station")
 
-    name = Column(Text)
-
-    # @TODO remove this
-    name_clean = Column(Text)
-
     # DUID but modified by opennem as an identifier
     code = Column(Text, nullable=True, index=True, unique=True)
 
     # Network details
     network_code = Column(Text, nullable=True, index=True)
     network_region = Column(Text, index=True)
+    network_name = Column(Text)
 
     active = Column(Boolean, default=True)
 
     # @TODO remove when ref count is 0
-    capacity_nameplate = Column(Numeric, nullable=True)
     capacity_registered = Column(Numeric, nullable=True)
-    capacity_maximum = Column(Numeric, nullable=True)
-    capacity_minimum = Column(Numeric, nullable=True)
-    capacity_aggregate = Column(Numeric, nullable=True)
 
     registered = Column(DateTime)
 
