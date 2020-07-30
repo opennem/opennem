@@ -4,6 +4,8 @@ from geojson import Feature, FeatureCollection, Point, dumps
 from opennem.api.stations import get_stations
 from opennem.exporter.encoders import OpenNEMGeoJSONEncoder
 
+__all__ = ["stations_geojson_serialize"]
+
 
 def stations_geojson_records():
     stations = get_stations()
@@ -70,7 +72,8 @@ def stations_geojson_serialize():
     geoj["crs"] = crs
 
     geoj_string = dumps(geoj, indent=4, cls=OpenNEMGeoJSONEncoder)
-    print(geoj_string)
+
+    return geoj_string
 
 
 if __name__ == "__main__":
