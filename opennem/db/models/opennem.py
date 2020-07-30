@@ -189,11 +189,11 @@ class Station(Base, BaseModel):
     boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
 
     @hybrid_property
-    def oid(self):
+    def oid(self) -> str:
         return get_oid(self)
 
     @hybrid_property
-    def ocode(self):
+    def ocode(self) -> str:
         return get_ocode(self)
 
 
@@ -248,9 +248,6 @@ class Facility(Base, BaseModel):
     # @TODO remove when ref count is 0
     capacity_registered = Column(Numeric, nullable=True)
 
-    # This is unit_no * unit_capacity and can differ from registered
-    capacity_aggregate = Column(Numeric, nullable=True)
-
     registered = Column(DateTime)
 
     unit_id = Column(Integer, nullable=True)
@@ -259,8 +256,12 @@ class Facility(Base, BaseModel):
     unit_capacity = Column(Numeric, nullable=True)
     # unit_number_max = Column(Numeric, nullable=True)
 
-    @hybrid_propery
+    @hybrid_property
     def capacity_aggregate(self) -> Optional[int]:
+        """
+            This is unit_no * unit_capacity and can differ from registered
+
+        """
         num_units = 1
         cap_aggr = None
 
@@ -273,11 +274,11 @@ class Facility(Base, BaseModel):
         return cap_aggr
 
     @hybrid_property
-    def oid(self):
+    def oid(self) -> str:
         return get_oid(self)
 
     @hybrid_property
-    def ocode(self):
+    def ocode(self) -> str:
         return get_ocode(self)
 
 
