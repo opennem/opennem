@@ -4,6 +4,7 @@ import logging
 from datetime import date, datetime
 from decimal import Decimal
 from pprint import pprint
+from typing import List
 
 from geojson import Feature, FeatureCollection, Point, dumps
 from smart_open import open
@@ -28,7 +29,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def get_stations():
+def get_stations() -> List[Station]:
     s = session()
 
     logger.info("Running query")
