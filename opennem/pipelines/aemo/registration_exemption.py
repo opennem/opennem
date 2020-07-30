@@ -492,6 +492,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 facility.fueltech_id = fueltech
                 facility.network_code = duid
                 facility.network_region = facility_region
+                facility.network_name = network_name
 
                 facility.capacity_registered = reg_cap
 
@@ -538,9 +539,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 logger.info(
                     "{} facility with name {} and duid {} and id {}".format(
                         "Created" if created_facility else "Updated",
-                        facility.name,
+                        facility.network_name,
                         facility.code,
-                        facility.id,
+                        facility.network_code,
                     )
                 )
 
