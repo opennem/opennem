@@ -23,16 +23,11 @@ from opennem.db.models.opennem import (
 engine = db_connect()
 session = sessionmaker(bind=engine)
 
-
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 
 def get_stations() -> List[Station]:
     s = session()
-
-    logger.info("Running query")
 
     stations = (
         s.query(Station)
@@ -45,9 +40,6 @@ def get_stations() -> List[Station]:
     )
 
     logger.info("Got {} stations".format(len(stations)))
-
-    # for station in stations:
-    # print(station.id, station.code, station.name)
 
     return stations
 
