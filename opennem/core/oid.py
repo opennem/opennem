@@ -26,10 +26,12 @@ def get_ocode(station) -> str:
         station.network.country or "au",
         station.network.code or None,
         station.network_region or None,
+        station.state or None,
         station.code or None,
+        station.id,
     ]
 
-    values = [i for i in values if i is not None]
+    values = [str(i).lower() for i in values if i is not None]
 
     ocode = "_".join(values)
 
