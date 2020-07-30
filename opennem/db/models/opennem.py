@@ -324,6 +324,10 @@ class Facility(Base, BaseModel):
         return cap_aggr
 
     @hybrid_property
+    def duid(self) -> str:
+        return self.network_code or self.code
+
+    @hybrid_property
     def status_label(self) -> Optional[str]:
         return self.status.label if self.status else None
 
