@@ -7,6 +7,8 @@
     - WEM
 """
 
+from typing import Optional
+
 from geoalchemy2 import Geometry
 from sqlalchemy import (
     Boolean,
@@ -246,6 +248,9 @@ class Facility(Base, BaseModel):
     # @TODO remove when ref count is 0
     capacity_registered = Column(Numeric, nullable=True)
 
+    # This is unit_no * unit_capacity and can differ from registered
+    capacity_aggregate = Column(Numeric, nullable=True)
+
     registered = Column(DateTime)
 
     unit_id = Column(Integer, nullable=True)
@@ -253,6 +258,19 @@ class Facility(Base, BaseModel):
     unit_alias = Column(Text, nullable=True)
     unit_capacity = Column(Numeric, nullable=True)
     # unit_number_max = Column(Numeric, nullable=True)
+
+    @hybrid_propery
+    def capacity_aggregate(self) -> Optional[int]:
+        num_units = 1
+        cap_aggr = None
+
+        if self.unit_number and type(self.unit_number) is int:
+            num_units = self.unit_number
+
+        if self.unit_capacity and type(self.unit_capacity) is int:
+            cap_aggr = num_units * self.unit_capacity
+
+        return cap_aggr
 
     @hybrid_property
     def oid(self):
