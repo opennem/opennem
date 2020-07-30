@@ -254,6 +254,14 @@ class Facility(Base, BaseModel):
     unit_capacity = Column(Numeric, nullable=True)
     # unit_number_max = Column(Numeric, nullable=True)
 
+    @hybrid_property
+    def oid(self):
+        return get_oid(self)
+
+    @hybrid_property
+    def ocode(self):
+        return get_ocode(self)
+
 
 class FacilityScada(Base, BaseModel):
     """
