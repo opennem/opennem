@@ -7,6 +7,7 @@
     - WEM
 """
 
+from decimal import Decimal
 from typing import Optional
 
 from geoalchemy2 import Geometry
@@ -268,8 +269,11 @@ class Facility(Base, BaseModel):
         if self.unit_number and type(self.unit_number) is int:
             num_units = self.unit_number
 
-        if self.unit_capacity and type(self.unit_capacity) is int:
+        if self.unit_capacity and type(self.unit_capacity) is Decimal:
             cap_aggr = num_units * self.unit_capacity
+
+        if type(cap_aggr) is Decimal:
+            cap_aggr = round(cap_aggr, 2)
 
         return cap_aggr
 

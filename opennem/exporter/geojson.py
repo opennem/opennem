@@ -44,7 +44,10 @@ def stations_geojson_records():
                     "unit_number": facility.unit_number,
                     "unit_size": facility.unit_capacity,
                     "unit_alias": facility.unit_alias,
+                    # backwards compat field
                     "registered_capacity": facility.capacity_registered,
+                    "capacity_registered": facility.capacity_registered,
+                    "capacity_aggregate": facility.capacity_aggregate,
                 }
             )
 
