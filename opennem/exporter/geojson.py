@@ -36,7 +36,7 @@ def stations_geojson_records():
             f.properties["duid_data"].append(
                 {
                     "oid": facility.oid,
-                    "duid": facility.network_code,
+                    "duid": facility.duid,
                     "fuel_tech": facility.fueltech_id,
                     "fuel_tech_label": facility.fueltech_label,
                     "commissioned_date": facility.registered,
