@@ -35,7 +35,6 @@ alembic = "^1.4.2"
 click = "^7.1.2"
 psycopg2 = {version = "^2.8.5", optional = true}
 huey = "^2.2.0"
-fastapi = {version = "^0.58.0"}
 redis = "^3.5.3"
 psycopg2-binary = {version = "^2.8.5", optional = true}
 openpyxl = "^3.0.4"
@@ -43,6 +42,7 @@ requests_cache = "^0.5.2"
 geoalchemy2 = "^0.8.4"
 geojson = "^2.5.0"
 uvicorn = {version = "^0.11.7"}
+fastapi = {extras = ["all"], version = "^0.60.1"}
 
 [tool.poetry.dev-dependencies]
 black = "19.10b0"
