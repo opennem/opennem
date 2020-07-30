@@ -25,8 +25,11 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy.sql import func
+
+from opennem.core.oid import get_ocode, get_oid
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -180,6 +183,14 @@ class Station(Base, BaseModel):
     geocode_by = Column(Text, nullable=True)
     geom = Column(Geometry("POINT", srid=4326))
     boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
+
+    @hybrid_property
+    def oid(self):
+        return get_oid(self)
+
+    @hybrid_property
+    def ocode(self):
+        return get_ocode(self)
 
 
 class Facility(Base, BaseModel):
