@@ -8,13 +8,27 @@ from opennem.core import base24
 # from opennem.db.models.opennem import Station
 
 
-def get_oid(station) -> str:
-    _id = station.id
+def get_oid(model) -> str:
+    _id = model.id
 
-    if not station.id:
+    if not model.id:
         return None
 
-    return base24.dumps(_id)
+    parent_oid = None
+
+    if hasattr(model, "station"):
+        parent_oid = get_oid(model.station)
+
+    item_oid = base24.dumps(_id)
+
+    oid_components = [
+        parent_oid,
+        item_oid,
+    ]
+
+    oid_string = "_".join([str(i) for i in oid_components if i])
+
+    return oid_string
 
 
 def get_ocode(station) -> str:
