@@ -27,6 +27,8 @@ def stations_geojson_records():
             "postcode": station.postcode,
             "name": station.name,
             "registered_capacity": station.capacity_registered,
+            "capacity_registered": station.capacity_registered,
+            "capacity_aggregate": station.capacity_aggregate,
             "duid_data": [],
         }
 

@@ -177,9 +177,6 @@ class Station(Base, BaseModel):
     network_name = Column(Text)
     network_region = Column(Text)
 
-    # Capacity fields
-    capacity_registered = Column(Numeric, nullable=True)
-
     # Geo fields
     place_id = Column(Text, nullable=True, index=True)
     geocode_approved = Column(Boolean, default=False)
@@ -188,6 +185,55 @@ class Station(Base, BaseModel):
     geocode_by = Column(Text, nullable=True)
     geom = Column(Geometry("POINT", srid=4326))
     boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
+
+    @hybrid_property
+    def capacity_registered(self) -> Optional[int]:
+        """
+            This is the sum of registered capacities for all units for
+            this station
+
+        """
+        cap_reg = None
+
+        for fac in self.facilities:
+            if fac.capacity_registered and type(fac.capacity_registered) in [
+                int,
+                float,
+                Decimal,
+            ]:
+                if not cap_reg:
+                    cap_reg = 0
+
+                cap_reg += fac.capacity_registered
+
+        if cap_reg:
+            cap_reg = round(cap_reg, 2)
+
+        return cap_reg
+
+    @hybrid_property
+    def capacity_aggregate(self) -> Optional[int]:
+        """
+            This is the sum of aggregate capacities for all units
+
+        """
+        cap_agg = None
+
+        for fac in self.facilities:
+            if fac.capacity_aggregate and type(fac.capacity_aggregate) in [
+                int,
+                float,
+                Decimal,
+            ]:
+                if not cap_agg:
+                    cap_agg = 0
+
+                cap_agg += fac.capacity_aggregate
+
+        if cap_agg:
+            cap_agg = round(cap_agg, 2)
+
+        return cap_agg
 
     @hybrid_property
     def oid(self) -> str:
