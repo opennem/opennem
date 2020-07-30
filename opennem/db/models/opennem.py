@@ -274,6 +274,14 @@ class Facility(Base, BaseModel):
         return cap_aggr
 
     @hybrid_property
+    def status_label(self) -> Optional[str]:
+        return self.status.label if self.status else None
+
+    @hybrid_property
+    def fueltech_label(self) -> Optional[str]:
+        return self.fueltech.label if self.fueltech else None
+
+    @hybrid_property
     def oid(self) -> str:
         return get_oid(self)
 

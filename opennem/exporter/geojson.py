@@ -36,14 +36,10 @@ def stations_geojson_records():
                     "oid": facility.oid,
                     "duid": facility.network_code,
                     "fuel_tech": facility.fueltech_id,
-                    "fuel_tech_label": facility.fueltech.label
-                    if facility.fueltech
-                    else None,
+                    "fuel_tech_label": facility.fueltech_label,
                     "commissioned_date": facility.registered,
                     "status": facility.status_id,
-                    "status_label": facility.status.label
-                    if facility.status
-                    else None,
+                    "status_label": facility.status_label,
                     "unit_id": facility.unit_id,
                     "unit_number": facility.unit_number,
                     "unit_size": facility.unit_capacity,

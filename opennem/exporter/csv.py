@@ -17,8 +17,8 @@ def stations_csv_serialize():
                     station.name,
                     facility.network_code,
                     facility.network_region,
-                    facility.status.label if facility.status else None,
-                    facility.fueltech.label if facility.fueltech else None,
+                    facility.status_label,
+                    facility.fueltech_label,
                 ]
             )
 
