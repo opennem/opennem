@@ -158,6 +158,8 @@ class Station(Base, BaseModel):
     )
     participant = relationship("Participant")
 
+    facilities = relationship("Facility")
+
     code = Column(Text, unique=True, index=True, nullable=True)
     name = Column(Text)
 
@@ -229,7 +231,7 @@ class Facility(Base, BaseModel):
         ForeignKey("station.id", name="fk_station_status_code"),
         nullable=True,
     )
-    station = relationship("Station")
+    station = relationship("Station", back_populates="facilities")
 
     # DUID but modified by opennem as an identifier
     code = Column(Text, nullable=True, index=True, unique=True)
