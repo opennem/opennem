@@ -248,8 +248,8 @@ class Facility(Base, BaseModel):
 
     registered = Column(DateTime)
 
-    unit_id = Column(Numeric, nullable=True)
-    unit_number = Column(Numeric, nullable=True)
+    unit_id = Column(Integer, nullable=True)
+    unit_number = Column(Integer, nullable=True)
     unit_alias = Column(Text, nullable=True)
     unit_capacity = Column(Numeric, nullable=True)
     # unit_number_max = Column(Numeric, nullable=True)
