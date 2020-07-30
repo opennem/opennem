@@ -180,7 +180,9 @@ def update_existing_geos():
         station_state = map_v3_states(station_data["status"]["state"])
 
         station = (
-            s.query(Station).filter(Station.code == station_code).one_or_none()
+            s.query(Station)
+            .filter(Station.network_code == station_code)
+            .one_or_none()
         )
 
         if not station:
@@ -216,14 +218,15 @@ def update_existing_geos():
             {"code": k, **v} for k, v in stations[0]["duid_data"].items()
         ]
 
+        # update fueltechs
         for facility_data in facilities:
             facility_duid = facility_data["code"]
             facility_fueltech = fueltech_map(facility_data["fuel_tech"])
 
             facility = (
                 s.query(Facility)
-                .filter(Facility.code == facility_duid)
-                .one_or_none()
+                .filter(Facility.network_code == facility_duid)
+                .first()
             )
 
             if not facility:
