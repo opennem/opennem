@@ -84,3 +84,11 @@ Water,,Storage - Pumped hydro,,pumps,generator
 Wind,,Wind Turbine - Onshore,,wind,generator
 ,,storage,battery,battery_discharging,generator
 ,,storage,battery,battery_charging,load
+Wind,,Wind,,wind,generator
+Gas,,Gas,,gas_ocgt,generator
+Gas,,Dual (Gas / Distillate),,gas_ocgt,generator
+Solar,,Solar,,solar_utility,generator
+Landfill Gas,,Landfill Gas,,bioenergy_biogas,generator
+Biomass,,Biomass,,bioenergy_biomass,generator
+Coal,,Coal,,coal_black,generator
+Distillate,,Distillate,,distillate,generator
