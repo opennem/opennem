@@ -64,16 +64,8 @@ class WemStoreFacility(DatabaseStoreBase):
                     code=facility_code, participant=participant,
                 )
 
-            facility.active = (
-                False if row["Balancing Status"] == "Non-Active" else True
-            )
-
-            if row["Capacity Credits (MW)"]:
-                facility.capacity_credits = row["Capacity Credits (MW)"]
-
-            if row["Maximum Capacity (MW)"]:
-                facility.capacity_maximum = row["Maximum Capacity (MW)"]
-
+            capacity_registered = clean_capacity(row["Maximum Capacity (MW)"])
+            capacity_unit = clean_capacity(row["Maximum Capacity (MW)"])
             registered_date = row["Registered From"]
 
             if registered_date:
