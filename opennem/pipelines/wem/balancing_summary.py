@@ -32,6 +32,7 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
 
         objects = [
             BalancingSummary(
+                network_id="WEM",
                 trading_interval=self.parse_interval(row["Trading Interval"]),
                 forecast_load=row["Load Forecast (MW)"],
                 generation_scheduled=row["Scheduled Generation (MW)"],
@@ -68,6 +69,7 @@ class WemStoreBalancingSummaryArchive(DatabaseStoreBase):
 
         objects = [
             BalancingSummary(
+                network_id="WEM",
                 trading_interval=self.parse_interval(row["Trading Interval"]),
                 forecast_load=row["Load Forecast (MW)"],
                 generation_scheduled=row["Scheduled Generation (MW)"],
