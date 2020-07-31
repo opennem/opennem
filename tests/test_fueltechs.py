@@ -32,3 +32,13 @@ class TestFueltechMap(object):
         assert (
             subj == "battery_charging"
         ), "Load storage battery is battery discharging"
+
+    def test_wem_pimjara(self):
+        subj = lookup_fueltech("Gas", None, "Gas")
+
+        assert subj == "gas_ocgt", "Pinjara is gas"
+
+    def test_wem_kemberton(self):
+        subj = lookup_fueltech("Gas", None, "Dual (Gas / Distillate)")
+
+        assert subj == "gas_ocgt", "Kemberton is gas"
