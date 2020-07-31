@@ -38,7 +38,7 @@ def lookup_facility_status(unit_status):
     if unit_status.startswith("maturing"):
         return "maturing"
 
-    if unit_status.startswith("Emerging"):
+    if unit_status.startswith("emerging"):
         return "emerging"
 
     logger.error(
