@@ -10,12 +10,13 @@ python -m opennem.db.load_facilitymap
 scrapy crawl -L ERROR au.wem.participant
 scrapy crawl -L ERROR au.wem.live.participant
 
-# # load facilities from wem and nem
-scrapy crawl -L INFO au.nem.facilities.rel
-scrapy crawl -L INFO au.nem.facilities.gi
-
 scrapy crawl -L ERROR au.wem.facilities
 scrapy crawl -L ERROR au.wem.live.facilities
+
+
+# # load facilities from wem and nem
+scrapy crawl au.aemo.current.registration_exemption
+scrapy crawl au.aemo.current.general_information
 
 
 # # merge with current facility mapping data (will import nem)
