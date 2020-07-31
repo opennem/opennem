@@ -368,6 +368,12 @@ class BalancingSummary(Base, BaseModel):
 
     __tablename__ = "balancing_summary"
 
+    network_id = Column(
+        Text,
+        ForeignKey("network.code", name="fk_balancing_summary_network_code"),
+    )
+    network = relationship("Network")
+
     trading_interval = Column(DateTime, index=True, primary_key=True)
     forecast_load = Column(Numeric, nullable=True)
     generation_scheduled = Column(Numeric, nullable=True)
