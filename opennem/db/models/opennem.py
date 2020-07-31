@@ -136,6 +136,7 @@ class Participant(Base, BaseModel):
     code = Column(Text, unique=True, index=True)
     name = Column(Text)
     network_name = Column(Text)
+    network_code = Column(Text)
     country = Column(Text)
     abn = Column(Text)
 
