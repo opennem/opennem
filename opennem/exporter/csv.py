@@ -36,9 +36,8 @@ def stations_csv_serialize(csv_stream=None):
 
     csv_fieldnames = csv_records[0].keys()
 
-    with open(csv_stream) as fh:
-        csvwriter = csv.DictWriter(fh, fieldnames=csv_fieldnames)
-        csvwriter.writeheader()
-        csvwriter.writerows(csv_records)
+    csvwriter = csv.DictWriter(csv_stream, fieldnames=csv_fieldnames)
+    csvwriter.writeheader()
+    csvwriter.writerows(csv_records)
 
     return csv_stream
