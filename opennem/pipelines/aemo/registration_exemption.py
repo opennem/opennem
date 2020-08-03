@@ -104,11 +104,14 @@ class RegistrationExemptionGrouperPipeline(object):
         for k, v in groupby(
             generators, key=lambda v: (v["name"], v["name_join"])
         ):
-            key = k[0]
+            key = k
             if not key in generators_grouped:
                 generators_grouped[key] = []
 
             generators_grouped[key] += list(v)
+
+        # with open("registrtation-exemption-grouped.json", "w") as fh:
+        #     json.dump(generators_grouped, fh, indent=4)
 
         return {**item, "generators": generators_grouped}
 
@@ -200,17 +203,16 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
         from pprint import pprint
 
-        for station_name, facilities in generators.items():
+        for station_key, facilities in generators.items():
             facility = None
             facility_station = None
             created_station = False
             created_facility = False
 
+            station_name = station_key[0]
+
             duid_unique = has_unique_duid(facilities)
             facility_count = len(facilities)
-
-            logger.debug(station_name)
-            logger.debug(facilities)
 
             # Step 1. Find the station
             # First by duid if it's unique
