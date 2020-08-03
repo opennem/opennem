@@ -75,6 +75,11 @@
     "renewable": true
   },
   {
+    "code": "solar_thermal",
+    "label": "Solar (Thermal)",
+    "renewable": true
+  },
+  {
     "code": "solar_rooftop",
     "label": "Solar (Rooftop)",
     "renewable": true
