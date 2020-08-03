@@ -37,6 +37,8 @@ class WemStoreParticipant(DatabaseStoreBase):
             participant = None
 
             participant_code = row["Participant Code"]
+            participant_name = participant_name_filter(row["Participant Name"])
+
             participant = (
                 s.query(Participant)
                 .filter(Participant.code == participant_code)
@@ -46,21 +48,19 @@ class WemStoreParticipant(DatabaseStoreBase):
             if not participant:
                 print("Participant not found: {}".format(participant_code))
                 participant = Participant(
-                    code=row["Participant Code"],
-                    name=row["Participant Name"],
-                    address=row["Address"],
-                    city=row["City"],
-                    state=row["State"],
-                    postcode=row["Postcode"],
+                    code=participant_code,
+                    name=participant_name,
+                    # @TODO WEM provides these but nem doesn't so ignore for noe
+                    # address=row["Address"],
+                    # city=row["City"],
+                    # state=row["State"],
+                    # postcode=row["Postcode"],
                     created_by="pipeline.wem.participant",
                 )
-            else:
-                participant.name = row["Participant Name"]
-                participant.name = row["Participant Name"]
-                participant.address = row["Address"]
-                participant.city = row["City"]
-                participant.state = row["State"]
-                participant.postcode = row["Postcode"]
+
+            elif participant.name != participant_name:
+                participant.name = participant_name
+                participant.updated_by = "pipeline.wem.participant"
 
             try:
                 s.add(participant)
@@ -113,6 +113,7 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
                     created_by="pipeline.wem.live.participant",
                 )
                 created_record = True
+
             elif participant.name != participant_name:
                 participant.name = participant_name
                 participant.updated_by = "pipeline.wem.live.participant"
