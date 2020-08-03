@@ -219,9 +219,11 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             station.name = station_name
             station.network_name = station_network_name
-            station.geom = "SRID=4326;POINT({} {})".format(lat, lng)
-            station.geocode_by = "aemo"
-            station.geocode_approved = True
+
+            if lat and lng and not station.geom:
+                station.geom = "SRID=4326;POINT({} {})".format(lat, lng)
+                station.geocode_by = "aemo"
+                station.geocode_approved = True
 
             facility = (
                 s.query(Facility)
