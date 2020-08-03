@@ -42,7 +42,3 @@ def stations_csv_serialize(csv_stream=None):
         csvwriter.writerows(csv_records)
 
     return csv_stream
-
-
-if __name__ == "__main__":
-    stations_csv_serialize()
