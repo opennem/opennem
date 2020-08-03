@@ -23,7 +23,8 @@ def stations_csv_records():
                 "unit_id": facility.unit_id,
                 "unit_num": facility.unit_number,
                 "unit_cap": facility.capacity_aggregate,
-                "station_cap": station.capacity_aggregate,
+                "station_cap_agg": station.capacity_aggregate,
+                "station_cap_registered": station.capacity_registered,
                 "added_by": facility.created_by,
                 "updated_by": facility.created_by,
             }
