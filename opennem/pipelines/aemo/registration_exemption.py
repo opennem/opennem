@@ -261,6 +261,10 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
                 s.add(facility_station)
                 created_station = True
+            else:
+                facility_station.updated_by = (
+                    "pipeline.aemo.registration_exemption"
+                )
 
             # Step 2. Add the facilities/units to the station
             # Now that we have a station or created one ..
@@ -341,6 +345,10 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                         created_by="pipeline.aemo.registration_exemption",
                     )
                     created_facility = True
+                else:
+                    facility.updated_by = (
+                        "pipeline.aemo.registration_exemption"
+                    )
 
                 # Sanity checking
                 if len(unit_code) < 3:
