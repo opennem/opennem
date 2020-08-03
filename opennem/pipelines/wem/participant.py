@@ -46,7 +46,6 @@ class WemStoreParticipant(DatabaseStoreBase):
             )
 
             if not participant:
-                print("Participant not found: {}".format(participant_code))
                 participant = Participant(
                     code=participant_code,
                     name=participant_name,
@@ -58,9 +57,16 @@ class WemStoreParticipant(DatabaseStoreBase):
                     created_by="pipeline.wem.participant",
                 )
 
+                logger.info(
+                    "Created new WEM participant: {}".format(participant_code)
+                )
+
             elif participant.name != participant_name:
                 participant.name = participant_name
                 participant.updated_by = "pipeline.wem.participant"
+                logger.info(
+                    "Updated WEM participant: {}".format(participant_code)
+                )
 
             try:
                 s.add(participant)
@@ -103,20 +109,24 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
             )
 
             if not participant:
-                logger.debug(
-                    "Participant not found: {}".format(participant_code)
-                )
-
                 participant = Participant(
                     code=participant_code,
                     name=participant_name,
                     created_by="pipeline.wem.live.participant",
                 )
+
                 created_record = True
+                logger.info(
+                    "Created new WEM participant: {}".format(participant_code)
+                )
 
             elif participant.name != participant_name:
                 participant.name = participant_name
                 participant.updated_by = "pipeline.wem.live.participant"
+
+                logger.info(
+                    "Updated WEM participant: {}".format(participant_code)
+                )
 
             try:
                 s.add(participant)
