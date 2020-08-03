@@ -323,7 +323,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     facility = (
                         s.query(Facility)
                         .filter(Facility.network_code == duid)
-                        .filter(Facility.unit_no == None)
+                        .filter(Facility.unit_number == None)
                         .filter(Facility.status_id == "operating")
                         .first()
                     )
