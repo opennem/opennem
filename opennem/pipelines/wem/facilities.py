@@ -231,7 +231,6 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                 facility = Facility(
                     code=facility_code,
                     network_code=facility_code,
-                    status_id="operating",
                     network_region="WEM",
                     created_by="pipeline.wem.live.facilities",
                 )
@@ -264,6 +263,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
             if fueltech and not facility.fueltech:
                 facility.fueltech_id = fueltech
 
+            facility.status_id = "operating"
             facility.station = station
 
             s.add(station)
