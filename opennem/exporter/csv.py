@@ -25,7 +25,7 @@ def stations_csv_records():
                 "station_cap_agg": station.capacity_aggregate,
                 "station_cap_registered": station.capacity_registered,
                 "added_by": facility.created_by,
-                "updated_by": facility.created_by,
+                "updated_by": facility.updated_by,
             }
             records.append(rec)
 
