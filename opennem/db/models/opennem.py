@@ -223,11 +223,12 @@ class Station(Base, BaseModel):
         cap_agg = None
 
         for fac in self.facilities:
-            if fac.capacity_aggregate and type(fac.capacity_aggregate) in [
-                int,
-                float,
-                Decimal,
-            ]:
+            if (
+                fac.capacity_aggregate
+                and type(fac.capacity_aggregate) in [int, float, Decimal,]
+                and fac.status_id
+                in ["operating", "committed", "commissioning"]
+            ):
                 if not cap_agg:
                     cap_agg = 0
 
