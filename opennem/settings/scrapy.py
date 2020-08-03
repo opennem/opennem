@@ -61,11 +61,12 @@ ITEM_PIPELINES = {
     # BOM Storers
     "opennem.pipelines.bom.StoreBomObservation": 430,
     # MMS Parsers and Storers
-    "opennem.pipelines.nem.mms.NemStoreMMSStations": 501,
-    "opennem.pipelines.nem.mms.NemStoreMMSStationStatus": 502,
-    "opennem.pipelines.nem.mms.NemStoreMMSDudetail": 503,
-    "opennem.pipelines.nem.mms.NemStoreMMSDudetailSummary": 504,
-    "opennem.pipelines.nem.mms.NemStoreMMSParticipant": 505,
+    "opennem.pipelines.nem.mms_dudetailsummary.AEMOMMSDudetailSummaryGrouper": 504,
+    "opennem.pipelines.nem.mms.NemStoreMMSStations": 551,
+    "opennem.pipelines.nem.mms.NemStoreMMSStationStatus": 552,
+    "opennem.pipelines.nem.mms.NemStoreMMSDudetail": 553,
+    "opennem.pipelines.nem.mms.NemStoreMMSDudetailSummary": 554,
+    "opennem.pipelines.nem.mms.NemStoreMMSParticipant": 555,
 }
 
 # @TODO if DEBUG
