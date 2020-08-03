@@ -26,7 +26,7 @@
                 "capacity_aggregate": 40.0,
                 "duid_data": [
                     {
-                        "oid": "CT3_2B3",
+                        "oid": "CT3_223",
                         "duid": "GREENOUGH_RIVER_PV1",
                         "fuel_tech": "solar_utility",
                         "fuel_tech_label": "Solar (Utility)",
@@ -62,7 +62,7 @@
                 "capacity_aggregate": 100.0,
                 "duid_data": [
                     {
-                        "oid": "CT6_2B6",
+                        "oid": "CT6_226",
                         "duid": "MERSOLAR_PV1",
                         "fuel_tech": "solar_utility",
                         "fuel_tech_label": "Solar (Utility)",
@@ -98,7 +98,7 @@
                 "capacity_aggregate": 0.96,
                 "duid_data": [
                     {
-                        "oid": "CT7_2B7",
+                        "oid": "CT7_227",
                         "duid": "AMBRISOLAR_PV1",
                         "fuel_tech": "solar_utility",
                         "fuel_tech_label": "Solar (Utility)",
@@ -134,7 +134,7 @@
                 "capacity_aggregate": 9.8,
                 "duid_data": [
                     {
-                        "oid": "CTS_2BS",
+                        "oid": "CTS_22S",
                         "duid": "NORTHAM_SF_PV1",
                         "fuel_tech": "solar_utility",
                         "fuel_tech_label": "Solar (Utility)",
@@ -170,7 +170,7 @@
                 "capacity_aggregate": 40.0,
                 "duid_data": [
                     {
-                        "oid": "CKE_23P",
+                        "oid": "CKE_2BP",
                         "duid": "BRIDGETOWN_BIOMASS_PLANT",
                         "fuel_tech": "bioenergy_biomass",
                         "fuel_tech_label": "Biomass",
@@ -618,22 +618,6 @@
                 "capacity_aggregate": 204.0,
                 "duid_data": [
                     {
-                        "oid": "A8X_C26",
-                        "duid": "JLA03",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 1,
-                        "unit_size": 51.0,
-                        "unit_alias": null,
-                        "registered_capacity": 51.0,
-                        "capacity_registered": 51.0,
-                        "capacity_aggregate": 51.0
-                    },
-                    {
                         "oid": "A8X_C2T",
                         "duid": "JLA01",
                         "fuel_tech": "gas_ocgt",
@@ -658,6 +642,22 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 51.0,
+                        "unit_alias": null,
+                        "registered_capacity": 51.0,
+                        "capacity_registered": 51.0,
+                        "capacity_aggregate": 51.0
+                    },
+                    {
+                        "oid": "A8X_C26",
+                        "duid": "JLA03",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 51.0,
                         "unit_alias": null,
@@ -1106,22 +1106,6 @@
                         "capacity_aggregate": null
                     },
                     {
-                        "oid": "ARF_ARS",
-                        "duid": "BW03",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 1,
-                        "unit_size": 660.0,
-                        "unit_alias": null,
-                        "registered_capacity": 660.0,
-                        "capacity_registered": 660.0,
-                        "capacity_aggregate": 660.0
-                    },
-                    {
                         "oid": "ARF_AR9",
                         "duid": "BW04",
                         "fuel_tech": "coal_black",
@@ -1130,6 +1114,22 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 4,
+                        "unit_number": 1,
+                        "unit_size": 660.0,
+                        "unit_alias": null,
+                        "registered_capacity": 660.0,
+                        "capacity_registered": 660.0,
+                        "capacity_aggregate": 660.0
+                    },
+                    {
+                        "oid": "ARF_ARS",
+                        "duid": "BW03",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 660.0,
                         "unit_alias": null,
@@ -1158,6 +1158,22 @@
                 "capacity_aggregate": 156.0,
                 "duid_data": [
                     {
+                        "oid": "AR4_AYP",
+                        "duid": "DRYCGT2",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 52.0,
+                        "unit_alias": null,
+                        "registered_capacity": 52.0,
+                        "capacity_registered": 52.0,
+                        "capacity_aggregate": 52.0
+                    },
+                    {
                         "oid": "AR4_AYR",
                         "duid": "DRYCNL",
                         "fuel_tech": null,
@@ -1172,6 +1188,22 @@
                         "registered_capacity": 25.0,
                         "capacity_registered": 25.0,
                         "capacity_aggregate": null
+                    },
+                    {
+                        "oid": "AR4_AY8",
+                        "duid": "DRYCGT3",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
+                        "unit_number": 1,
+                        "unit_size": 52.0,
+                        "unit_alias": null,
+                        "registered_capacity": 52.0,
+                        "capacity_registered": 52.0,
+                        "capacity_aggregate": 52.0
                     },
                     {
                         "oid": "AR4_AYS",
@@ -1198,38 +1230,6 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 52.0,
-                        "unit_alias": null,
-                        "registered_capacity": 52.0,
-                        "capacity_registered": 52.0,
-                        "capacity_aggregate": 52.0
-                    },
-                    {
-                        "oid": "AR4_AYP",
-                        "duid": "DRYCGT2",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 52.0,
-                        "unit_alias": null,
-                        "registered_capacity": 52.0,
-                        "capacity_registered": 52.0,
-                        "capacity_aggregate": 52.0
-                    },
-                    {
-                        "oid": "AR4_AY8",
-                        "duid": "DRYCGT3",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 52.0,
                         "unit_alias": null,
@@ -1374,6 +1374,22 @@
                         "capacity_aggregate": 120.0
                     },
                     {
+                        "oid": "ART_C7K",
+                        "duid": "TORRB2",
+                        "fuel_tech": "gas_steam",
+                        "fuel_tech_label": "Gas (Steam)",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 200.0,
+                        "unit_alias": null,
+                        "registered_capacity": 200.0,
+                        "capacity_registered": 200.0,
+                        "capacity_aggregate": 200.0
+                    },
+                    {
                         "oid": "ART_C7F",
                         "duid": "TORNL1",
                         "fuel_tech": null,
@@ -1422,22 +1438,6 @@
                         "capacity_aggregate": 120.0
                     },
                     {
-                        "oid": "ART_C7K",
-                        "duid": "TORRB2",
-                        "fuel_tech": "gas_steam",
-                        "fuel_tech_label": "Gas (Steam)",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 200.0,
-                        "unit_alias": null,
-                        "registered_capacity": 200.0,
-                        "capacity_registered": 200.0,
-                        "capacity_aggregate": 200.0
-                    },
-                    {
                         "oid": "ART_C77",
                         "duid": "TORRB4",
                         "fuel_tech": "gas_steam",
@@ -1474,20 +1474,20 @@
                 "capacity_aggregate": 2921.5,
                 "duid_data": [
                     {
-                        "oid": "ARK_CZ5",
-                        "duid": "ERNL1",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
+                        "oid": "ARK_CZF",
+                        "duid": "ER01",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
                         "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 720.0,
                         "unit_alias": null,
-                        "registered_capacity": 25.0,
-                        "capacity_registered": 25.0,
-                        "capacity_aggregate": null
+                        "registered_capacity": 720.0,
+                        "capacity_registered": 720.0,
+                        "capacity_aggregate": 720.0
                     },
                     {
                         "oid": "ARK_CZH",
@@ -1506,20 +1506,20 @@
                         "capacity_aggregate": 720.0
                     },
                     {
-                        "oid": "ARK_CZF",
-                        "duid": "ER01",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
+                        "oid": "ARK_CZ5",
+                        "duid": "ERNL1",
+                        "fuel_tech": null,
+                        "fuel_tech_label": null,
                         "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 720.0,
+                        "unit_id": null,
+                        "unit_number": null,
+                        "unit_size": null,
                         "unit_alias": null,
-                        "registered_capacity": 720.0,
-                        "capacity_registered": 720.0,
-                        "capacity_aggregate": 720.0
+                        "registered_capacity": 25.0,
+                        "capacity_registered": 25.0,
+                        "capacity_aggregate": null
                     },
                     {
                         "oid": "ARK_CZ4",
@@ -1585,26 +1585,10 @@
                 "state": "NSW",
                 "postcode": "2614",
                 "name": "Hume",
-                "registered_capacity": 58.0,
-                "capacity_registered": 58.0,
-                "capacity_aggregate": 116.0,
+                "registered_capacity": 29.0,
+                "capacity_registered": 29.0,
+                "capacity_aggregate": 58.0,
                 "duid_data": [
-                    {
-                        "oid": "AR6_CCW",
-                        "duid": "HUMEV",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 2,
-                        "unit_size": 29.0,
-                        "unit_alias": null,
-                        "registered_capacity": 29.0,
-                        "capacity_registered": 29.0,
-                        "capacity_aggregate": 58.0
-                    },
                     {
                         "oid": "AR6_CC9",
                         "duid": "HUMENSW",
@@ -1637,32 +1621,16 @@
                 "state": "NSW",
                 "postcode": "2550",
                 "name": "Brown Mountain",
-                "registered_capacity": 10.0,
-                "capacity_registered": 10.0,
+                "registered_capacity": 5.0,
+                "capacity_registered": 5.0,
                 "capacity_aggregate": 8.2,
                 "duid_data": [
                     {
                         "oid": "AR7_A9G",
                         "duid": "BROWNMT",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 5.0,
-                        "capacity_registered": 5.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "AR7_CYY",
-                        "duid": "BROWNMT",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
+                        "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -1674,7 +1642,7 @@
                         "capacity_aggregate": 0.5
                     },
                     {
-                        "oid": "AR7_2ZZ",
+                        "oid": "AR7_CY6",
                         "duid": "BROWNMT",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -1690,7 +1658,7 @@
                         "capacity_aggregate": 1.5
                     },
                     {
-                        "oid": "AR7_2ZA",
+                        "oid": "AR7_CY7",
                         "duid": "BROWNMT",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -1706,7 +1674,7 @@
                         "capacity_aggregate": 2.0
                     },
                     {
-                        "oid": "AR7_2ZC",
+                        "oid": "AR7_CYP",
                         "duid": "BROWNMT",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -1773,32 +1741,16 @@
                 "state": "NSW",
                 "postcode": "2000",
                 "name": "Burrinjuck",
-                "registered_capacity": 37.0,
-                "capacity_registered": 37.0,
+                "registered_capacity": 27.0,
+                "capacity_registered": 27.0,
                 "capacity_aggregate": 26.8,
                 "duid_data": [
                     {
                         "oid": "AR8_A95",
                         "duid": "BURRIN",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 10.0,
-                        "capacity_registered": 10.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "AR8_CYW",
-                        "duid": "BURRIN",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
+                        "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 3,
@@ -1810,7 +1762,7 @@
                         "capacity_aggregate": 11.4
                     },
                     {
-                        "oid": "AR8_CYX",
+                        "oid": "AR8_CYK",
                         "duid": "BURRIN",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -1868,6 +1820,58 @@
             "type": "Feature",
             "geometry": null,
             "properties": {
+                "oid": "ARX",
+                "ocode": "au_nem_nsw_1030",
+                "station_id": 1030,
+                "station_code": "BHILLGT",
+                "facility_id": "BHILLGT",
+                "network": "NEM",
+                "state": "NSW",
+                "postcode": "2880",
+                "name": "Broken Hill",
+                "registered_capacity": 100.0,
+                "capacity_registered": 100.0,
+                "capacity_aggregate": 50.0,
+                "duid_data": [
+                    {
+                        "oid": "ARX_CZR",
+                        "duid": "GB01",
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 2,
+                        "unit_size": 25.0,
+                        "unit_alias": null,
+                        "registered_capacity": 50.0,
+                        "capacity_registered": 50.0,
+                        "capacity_aggregate": 50.0
+                    },
+                    {
+                        "oid": "ARX_CZS",
+                        "duid": "GB02",
+                        "fuel_tech": null,
+                        "fuel_tech_label": null,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_id": null,
+                        "unit_number": null,
+                        "unit_size": null,
+                        "unit_alias": null,
+                        "registered_capacity": 50.0,
+                        "capacity_registered": 50.0,
+                        "capacity_aggregate": null
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
                 "oid": "ARY",
                 "ocode": "au_nem_nsw_1031",
                 "station_id": 1031,
@@ -1877,25 +1881,25 @@
                 "state": "NSW",
                 "postcode": "2577",
                 "name": "Shoalhaven Bendeela Kangaroo Valley Pumps",
-                "registered_capacity": 720.0,
-                "capacity_registered": 720.0,
+                "registered_capacity": 480.0,
+                "capacity_registered": 480.0,
                 "capacity_aggregate": 240.0,
                 "duid_data": [
                     {
                         "oid": "ARY_CT6",
                         "duid": "SHGEN",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
                         "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
+                        "unit_id": 1,
+                        "unit_number": 2,
+                        "unit_size": 40.0,
                         "unit_alias": null,
                         "registered_capacity": 240.0,
                         "capacity_registered": 240.0,
-                        "capacity_aggregate": null
+                        "capacity_aggregate": 80.0
                     },
                     {
                         "oid": "ARY_CT7",
@@ -1914,23 +1918,7 @@
                         "capacity_aggregate": null
                     },
                     {
-                        "oid": "ARY_2AH",
-                        "duid": "SHGEN",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 2,
-                        "unit_size": 40.0,
-                        "unit_alias": null,
-                        "registered_capacity": 240.0,
-                        "capacity_registered": 240.0,
-                        "capacity_aggregate": 80.0
-                    },
-                    {
-                        "oid": "ARY_2A5",
+                        "oid": "ARY_2ZR",
                         "duid": "SHGEN",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -1982,14 +1970,14 @@
                         "capacity_aggregate": null
                     },
                     {
-                        "oid": "ASZ_CAA",
-                        "duid": "GSTONE2",
+                        "oid": "ASZ_CAC",
+                        "duid": "GSTONE3",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
                         "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 2,
+                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 280.0,
                         "unit_alias": null,
@@ -2014,22 +2002,6 @@
                         "capacity_aggregate": 280.0
                     },
                     {
-                        "oid": "ASZ_CA3",
-                        "duid": "GSTONE6",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 6,
-                        "unit_number": 1,
-                        "unit_size": 280.0,
-                        "unit_alias": null,
-                        "registered_capacity": 280.0,
-                        "capacity_registered": 280.0,
-                        "capacity_aggregate": 280.0
-                    },
-                    {
                         "oid": "ASZ_CAZ",
                         "duid": "GSTONE1",
                         "fuel_tech": "coal_black",
@@ -2038,6 +2010,22 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 280.0,
+                        "unit_alias": null,
+                        "registered_capacity": 280.0,
+                        "capacity_registered": 280.0,
+                        "capacity_aggregate": 280.0
+                    },
+                    {
+                        "oid": "ASZ_CAA",
+                        "duid": "GSTONE2",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 280.0,
                         "unit_alias": null,
@@ -2062,20 +2050,56 @@
                         "capacity_aggregate": 280.0
                     },
                     {
-                        "oid": "ASZ_CAC",
-                        "duid": "GSTONE3",
+                        "oid": "ASZ_CA3",
+                        "duid": "GSTONE6",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
                         "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 3,
+                        "unit_id": 6,
                         "unit_number": 1,
                         "unit_size": 280.0,
                         "unit_alias": null,
                         "registered_capacity": 280.0,
                         "capacity_registered": 280.0,
                         "capacity_aggregate": 280.0
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "oid": "AS2",
+                "ocode": "au_nem_vic_1035",
+                "station_id": 1035,
+                "station_code": "HUMEV",
+                "facility_id": "HUMEV",
+                "network": "NEM",
+                "state": "VIC",
+                "postcode": "3691",
+                "name": "Hume",
+                "registered_capacity": 29.0,
+                "capacity_registered": 29.0,
+                "capacity_aggregate": 58.0,
+                "duid_data": [
+                    {
+                        "oid": "AS2_CCW",
+                        "duid": "HUMEV",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 2,
+                        "unit_size": 29.0,
+                        "unit_alias": null,
+                        "registered_capacity": 29.0,
+                        "capacity_registered": 29.0,
+                        "capacity_aggregate": 58.0
                     }
                 ]
             }
@@ -2166,23 +2190,7 @@
                         "capacity_aggregate": 60.0
                     },
                     {
-                        "oid": "ASF_CX2",
-                        "duid": "EILDON2",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 7.5,
-                        "unit_alias": "B",
-                        "registered_capacity": null,
-                        "capacity_registered": null,
-                        "capacity_aggregate": 7.5
-                    },
-                    {
-                        "oid": "ASF_CXC",
+                        "oid": "ASF_CXA",
                         "duid": "EILDON1",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -2198,11 +2206,27 @@
                         "capacity_aggregate": 7.5
                     },
                     {
-                        "oid": "ASF_CXB",
-                        "duid": "EILDON3",
+                        "oid": "ASF_CXC",
+                        "duid": "EILDON2",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
                         "commissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 7.5,
+                        "unit_alias": "B",
+                        "registered_capacity": null,
+                        "capacity_registered": null,
+                        "capacity_aggregate": 7.5
+                    },
+                    {
+                        "oid": "ASF_CZB",
+                        "duid": "EILDON3",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "commissioned_date": "2014-01-01T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -2401,32 +2425,16 @@
                 "state": "VIC",
                 "postcode": "3699",
                 "name": "Rubicon Mountain",
-                "registered_capacity": 26.75,
-                "capacity_registered": 26.75,
+                "registered_capacity": 13.2,
+                "capacity_registered": 13.2,
                 "capacity_aggregate": 13.2,
                 "duid_data": [
                     {
                         "oid": "AS5_CTF",
                         "duid": "RUBICON",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 13.55,
-                        "capacity_registered": 13.55,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "AS5_CX3",
-                        "duid": "RUBICON",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
+                        "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -2438,7 +2446,7 @@
                         "capacity_aggregate": 2.7
                     },
                     {
-                        "oid": "AS5_CXE",
+                        "oid": "AS5_CX2",
                         "duid": "RUBICON",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -2454,7 +2462,7 @@
                         "capacity_aggregate": 0.3
                     },
                     {
-                        "oid": "AS5_CXF",
+                        "oid": "AS5_CXB",
                         "duid": "RUBICON",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -2470,7 +2478,7 @@
                         "capacity_aggregate": 9.4
                     },
                     {
-                        "oid": "AS5_CX4",
+                        "oid": "AS5_CX3",
                         "duid": "RUBICON",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -2710,6 +2718,22 @@
                 "capacity_aggregate": 1460.0,
                 "duid_data": [
                     {
+                        "oid": "AS7_CKS",
+                        "duid": "STAN4",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 4,
+                        "unit_number": 1,
+                        "unit_size": 365.0,
+                        "unit_alias": null,
+                        "registered_capacity": 365.0,
+                        "capacity_registered": 365.0,
+                        "capacity_aggregate": 365.0
+                    },
+                    {
                         "oid": "AS7_CK9",
                         "duid": "STANNL1",
                         "fuel_tech": null,
@@ -2772,22 +2796,6 @@
                         "registered_capacity": 365.0,
                         "capacity_registered": 365.0,
                         "capacity_aggregate": 365.0
-                    },
-                    {
-                        "oid": "AS7_CKS",
-                        "duid": "STAN4",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 4,
-                        "unit_number": 1,
-                        "unit_size": 365.0,
-                        "unit_alias": null,
-                        "registered_capacity": 365.0,
-                        "capacity_registered": 365.0,
-                        "capacity_aggregate": 365.0
                     }
                 ]
             }
@@ -2826,14 +2834,14 @@
                         "capacity_aggregate": 350.0
                     },
                     {
-                        "oid": "ASP_C67",
-                        "duid": "TARONG#3",
+                        "oid": "ASP_C66",
+                        "duid": "TARONG#2",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
                         "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 3,
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 350.0,
                         "unit_alias": null,
@@ -2874,14 +2882,14 @@
                         "capacity_aggregate": null
                     },
                     {
-                        "oid": "ASP_C66",
-                        "duid": "TARONG#2",
+                        "oid": "ASP_C67",
+                        "duid": "TARONG#3",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
                         "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 2,
+                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 350.0,
                         "unit_alias": null,
@@ -2958,22 +2966,6 @@
                         "capacity_aggregate": 380.0
                     },
                     {
-                        "oid": "ASR_CST",
-                        "duid": "YWPS3",
-                        "fuel_tech": "coal_brown",
-                        "fuel_tech_label": "Coal (Brown)",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 1,
-                        "unit_size": 380.0,
-                        "unit_alias": null,
-                        "registered_capacity": 380.0,
-                        "capacity_registered": 380.0,
-                        "capacity_aggregate": 380.0
-                    },
-                    {
                         "oid": "ASR_CS5",
                         "duid": "YWPS2",
                         "fuel_tech": "coal_brown",
@@ -2988,6 +2980,22 @@
                         "registered_capacity": 360.0,
                         "capacity_registered": 360.0,
                         "capacity_aggregate": 360.0
+                    },
+                    {
+                        "oid": "ASR_CST",
+                        "duid": "YWPS3",
+                        "fuel_tech": "coal_brown",
+                        "fuel_tech_label": "Coal (Brown)",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
+                        "unit_number": 1,
+                        "unit_size": 380.0,
+                        "unit_alias": null,
+                        "registered_capacity": 380.0,
+                        "capacity_registered": 380.0,
+                        "capacity_aggregate": 380.0
                     }
                 ]
             }
@@ -3105,10 +3113,26 @@
                 "state": "NSW",
                 "postcode": "2630",
                 "name": "Tumut",
-                "registered_capacity": 4988.0,
-                "capacity_registered": 4988.0,
+                "registered_capacity": 4372.0,
+                "capacity_registered": 4372.0,
                 "capacity_aggregate": 616.0,
                 "duid_data": [
+                    {
+                        "oid": "ASW_CKB",
+                        "duid": "UPPTUMUT",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "commissioned_date": "2001-06-22T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 4,
+                        "unit_size": 82.0,
+                        "unit_alias": null,
+                        "registered_capacity": 616.0,
+                        "capacity_registered": 616.0,
+                        "capacity_aggregate": 328.0
+                    },
                     {
                         "oid": "ASW_CK2",
                         "duid": "SNOWY2",
@@ -3126,39 +3150,7 @@
                         "capacity_aggregate": null
                     },
                     {
-                        "oid": "ASW_CKB",
-                        "duid": "UPPTUMUT",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2001-06-22T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 616.0,
-                        "capacity_registered": 616.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "ASW_2CA",
-                        "duid": "UPPTUMUT",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 4,
-                        "unit_size": 82.0,
-                        "unit_alias": null,
-                        "registered_capacity": 616.0,
-                        "capacity_registered": 616.0,
-                        "capacity_aggregate": 328.0
-                    },
-                    {
-                        "oid": "ASW_2CC",
+                        "oid": "ASW_2AB",
                         "duid": "UPPTUMUT",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -3314,22 +3306,6 @@
                 "capacity_aggregate": 73.5,
                 "duid_data": [
                     {
-                        "oid": "A92_C52",
-                        "duid": "POR01",
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 2,
-                        "unit_size": 25.0,
-                        "unit_alias": null,
-                        "registered_capacity": 50.0,
-                        "capacity_registered": 50.0,
-                        "capacity_aggregate": 50.0
-                    },
-                    {
                         "oid": "A92_C5B",
                         "duid": "POR03",
                         "fuel_tech": "distillate",
@@ -3344,6 +3320,22 @@
                         "registered_capacity": 23.5,
                         "capacity_registered": 23.5,
                         "capacity_aggregate": 23.5
+                    },
+                    {
+                        "oid": "A92_C52",
+                        "duid": "POR01",
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 2,
+                        "unit_size": 25.0,
+                        "unit_alias": null,
+                        "registered_capacity": 50.0,
+                        "capacity_registered": 50.0,
+                        "capacity_aggregate": 50.0
                     }
                 ]
             }
@@ -3361,8 +3353,8 @@
                 "state": "SA",
                 "postcode": "5000",
                 "name": "Osborne",
-                "registered_capacity": 540.0,
-                "capacity_registered": 540.0,
+                "registered_capacity": 360.0,
+                "capacity_registered": 360.0,
                 "capacity_aggregate": 180.0,
                 "duid_data": [
                     {
@@ -3400,25 +3392,9 @@
                     {
                         "oid": "A93_CHE",
                         "duid": "OSBAG",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2000-02-15T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 180.0,
-                        "capacity_registered": 180.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "A93_2A4",
-                        "duid": "OSBAG",
                         "fuel_tech": "gas_ccgt",
                         "fuel_tech_label": "Gas (CCGT)",
-                        "commissioned_date": null,
+                        "commissioned_date": "2000-02-15T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -3430,7 +3406,7 @@
                         "capacity_aggregate": 118.0
                     },
                     {
-                        "oid": "A93_2AG",
+                        "oid": "A93_2Z8",
                         "duid": "OSBAG",
                         "fuel_tech": "gas_ccgt",
                         "fuel_tech_label": "Gas (CCGT)",
@@ -3602,7 +3578,7 @@
                         "capacity_aggregate": 108.9
                     },
                     {
-                        "oid": "A94_2AW",
+                        "oid": "A94_2AA",
                         "duid": "SITHE04",
                         "fuel_tech": "gas_ccgt",
                         "fuel_tech_label": "Gas (CCGT)",
@@ -3690,22 +3666,6 @@
                 "capacity_aggregate": 282.0,
                 "duid_data": [
                     {
-                        "oid": "AWE_CHZ",
-                        "duid": "OAKEY2",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "1999-09-24T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 141.0,
-                        "unit_alias": null,
-                        "registered_capacity": 141.0,
-                        "capacity_registered": 141.0,
-                        "capacity_aggregate": 141.0
-                    },
-                    {
                         "oid": "AWE_CGY",
                         "duid": "OAKEY1",
                         "fuel_tech": "gas_ocgt",
@@ -3714,6 +3674,22 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 141.0,
+                        "unit_alias": null,
+                        "registered_capacity": 141.0,
+                        "capacity_registered": 141.0,
+                        "capacity_aggregate": 141.0
+                    },
+                    {
+                        "oid": "AWE_CHZ",
+                        "duid": "OAKEY2",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "1999-09-24T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 141.0,
                         "unit_alias": null,
@@ -3742,22 +3718,6 @@
                 "capacity_aggregate": 80.0,
                 "duid_data": [
                     {
-                        "oid": "AW4_CB5",
-                        "duid": "LADBROK1",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "1999-11-05T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 40.0,
-                        "unit_alias": null,
-                        "registered_capacity": 40.0,
-                        "capacity_registered": 40.0,
-                        "capacity_aggregate": 40.0
-                    },
-                    {
                         "oid": "AW4_CBT",
                         "duid": "LADBROK2",
                         "fuel_tech": "gas_ocgt",
@@ -3766,6 +3726,22 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 40.0,
+                        "unit_alias": null,
+                        "registered_capacity": 40.0,
+                        "capacity_registered": 40.0,
+                        "capacity_aggregate": 40.0
+                    },
+                    {
+                        "oid": "AW4_CB5",
+                        "duid": "LADBROK1",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "1999-11-05T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 40.0,
                         "unit_alias": null,
@@ -3893,32 +3869,16 @@
                 "state": "SA",
                 "postcode": "5018",
                 "name": "Pelican Point",
-                "registered_capacity": 956.0,
-                "capacity_registered": 956.0,
+                "registered_capacity": 478.0,
+                "capacity_registered": 478.0,
                 "capacity_aggregate": 478.0,
                 "duid_data": [
                     {
                         "oid": "AW7_C5F",
                         "duid": "PPCCGT",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2000-09-07T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 478.0,
-                        "capacity_registered": 478.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "AW7_2AT",
-                        "duid": "PPCCGT",
                         "fuel_tech": "gas_ccgt",
                         "fuel_tech_label": "Gas (CCGT)",
-                        "commissioned_date": null,
+                        "commissioned_date": "2000-09-07T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -3930,7 +3890,7 @@
                         "capacity_aggregate": 320.0
                     },
                     {
-                        "oid": "AW7_2AK",
+                        "oid": "AW7_2ZS",
                         "duid": "PPCCGT",
                         "fuel_tech": "gas_ccgt",
                         "fuel_tech_label": "Gas (CCGT)",
@@ -4101,8 +4061,8 @@
                 "state": "NSW",
                 "postcode": "2630",
                 "name": "Murray",
-                "registered_capacity": 3075.0,
-                "capacity_registered": 3075.0,
+                "registered_capacity": 1575.0,
+                "capacity_registered": 1575.0,
                 "capacity_aggregate": 1502.0,
                 "duid_data": [
                     {
@@ -4156,25 +4116,9 @@
                     {
                         "oid": "AWW_C4R",
                         "duid": "MURRAY",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2001-06-22T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 1500.0,
-                        "capacity_registered": 1500.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "AWW_2AY",
-                        "duid": "MURRAY",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
+                        "commissioned_date": "2001-06-22T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -4186,7 +4130,7 @@
                         "capacity_aggregate": 950.0
                     },
                     {
-                        "oid": "AWW_2CZ",
+                        "oid": "AWW_2A2",
                         "duid": "MURRAY",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -4294,6 +4238,38 @@
                 "capacity_aggregate": 229.0,
                 "duid_data": [
                     {
+                        "oid": "AXZ_C55",
+                        "duid": "QPS1",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "2001-11-08T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 29.0,
+                        "unit_alias": null,
+                        "registered_capacity": 29.0,
+                        "capacity_registered": 29.0,
+                        "capacity_aggregate": 29.0
+                    },
+                    {
+                        "oid": "AXZ_C5K",
+                        "duid": "QPS3",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "2001-11-08T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
+                        "unit_number": 1,
+                        "unit_size": 24.0,
+                        "unit_alias": null,
+                        "registered_capacity": 24.0,
+                        "capacity_registered": 24.0,
+                        "capacity_aggregate": 24.0
+                    },
+                    {
                         "oid": "AXZ_C56",
                         "duid": "QPS4",
                         "fuel_tech": "gas_ocgt",
@@ -4302,6 +4278,22 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 4,
+                        "unit_number": 1,
+                        "unit_size": 24.0,
+                        "unit_alias": null,
+                        "registered_capacity": 24.0,
+                        "capacity_registered": 24.0,
+                        "capacity_aggregate": 24.0
+                    },
+                    {
+                        "oid": "AXZ_C5T",
+                        "duid": "QPS2",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "2001-11-08T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 24.0,
                         "unit_alias": null,
@@ -4324,54 +4316,6 @@
                         "registered_capacity": 128.0,
                         "capacity_registered": 128.0,
                         "capacity_aggregate": 128.0
-                    },
-                    {
-                        "oid": "AXZ_C55",
-                        "duid": "QPS1",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "2001-11-08T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 29.0,
-                        "unit_alias": null,
-                        "registered_capacity": 29.0,
-                        "capacity_registered": 29.0,
-                        "capacity_aggregate": 29.0
-                    },
-                    {
-                        "oid": "AXZ_C5T",
-                        "duid": "QPS2",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "2001-11-08T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 24.0,
-                        "unit_alias": null,
-                        "registered_capacity": 24.0,
-                        "capacity_registered": 24.0,
-                        "capacity_aggregate": 24.0
-                    },
-                    {
-                        "oid": "AXZ_C5K",
-                        "duid": "QPS3",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "2001-11-08T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 1,
-                        "unit_size": 24.0,
-                        "unit_alias": null,
-                        "registered_capacity": 24.0,
-                        "capacity_registered": 24.0,
-                        "capacity_aggregate": 24.0
                     }
                 ]
             }
@@ -4425,8 +4369,8 @@
                 "state": "SA",
                 "postcode": "5419",
                 "name": "Hallett",
-                "registered_capacity": 434.0,
-                "capacity_registered": 434.0,
+                "registered_capacity": 217.0,
+                "capacity_registered": 217.0,
                 "capacity_aggregate": 242.6,
                 "duid_data": [
                     {
@@ -4435,22 +4379,6 @@
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "commissioned_date": "2001-12-18T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 217.0,
-                        "capacity_registered": 217.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "AX2_CYF",
-                        "duid": "AGLHAL",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 2,
@@ -4462,7 +4390,7 @@
                         "capacity_aggregate": 28.0
                     },
                     {
-                        "oid": "AX2_CY4",
+                        "oid": "AX2_CYZ",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4478,7 +4406,7 @@
                         "capacity_aggregate": 37.0
                     },
                     {
-                        "oid": "AX2_CYG",
+                        "oid": "AX2_CYA",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4494,7 +4422,7 @@
                         "capacity_aggregate": 15.5
                     },
                     {
-                        "oid": "AX2_CYH",
+                        "oid": "AX2_CYC",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4510,7 +4438,7 @@
                         "capacity_aggregate": 22.5
                     },
                     {
-                        "oid": "AX2_CY5",
+                        "oid": "AX2_CY2",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4526,7 +4454,7 @@
                         "capacity_aggregate": 25.0
                     },
                     {
-                        "oid": "AX2_CYT",
+                        "oid": "AX2_CYB",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4542,7 +4470,7 @@
                         "capacity_aggregate": 23.4
                     },
                     {
-                        "oid": "AX2_CYK",
+                        "oid": "AX2_CY3",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4558,7 +4486,7 @@
                         "capacity_aggregate": 15.0
                     },
                     {
-                        "oid": "AX2_CY6",
+                        "oid": "AX2_CYE",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4574,7 +4502,7 @@
                         "capacity_aggregate": 15.3
                     },
                     {
-                        "oid": "AX2_CY7",
+                        "oid": "AX2_CYF",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4590,7 +4518,7 @@
                         "capacity_aggregate": 15.5
                     },
                     {
-                        "oid": "AX2_CYP",
+                        "oid": "AX2_CY4",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4606,7 +4534,7 @@
                         "capacity_aggregate": 15.7
                     },
                     {
-                        "oid": "AX2_CY8",
+                        "oid": "AX2_CYG",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4622,7 +4550,7 @@
                         "capacity_aggregate": 15.1
                     },
                     {
-                        "oid": "AX2_CYR",
+                        "oid": "AX2_CYH",
                         "duid": "AGLHAL",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
@@ -4761,32 +4689,16 @@
                 "state": "VIC",
                 "postcode": "3025",
                 "name": "Brooklyn U13",
-                "registered_capacity": 5.83,
-                "capacity_registered": 5.83,
+                "registered_capacity": 2.83,
+                "capacity_registered": 2.83,
                 "capacity_aggregate": 2.83,
                 "duid_data": [
                     {
                         "oid": "AXG_A94",
                         "duid": "BROOKLYN",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2002-05-30T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 3.0,
-                        "capacity_registered": 3.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "AXG_CYZ",
-                        "duid": "BROOKLYN",
                         "fuel_tech": "bioenergy_biogas",
                         "fuel_tech_label": "Biogas",
-                        "commissioned_date": null,
+                        "commissioned_date": "2002-05-30T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -4798,7 +4710,7 @@
                         "capacity_aggregate": 1.15
                     },
                     {
-                        "oid": "AXG_CYA",
+                        "oid": "AXG_CXS",
                         "duid": "BROOKLYN",
                         "fuel_tech": "bioenergy_biogas",
                         "fuel_tech_label": "Biogas",
@@ -4814,7 +4726,7 @@
                         "capacity_aggregate": 1.03
                     },
                     {
-                        "oid": "AXG_CYC",
+                        "oid": "AXG_CX9",
                         "duid": "BROOKLYN",
                         "fuel_tech": "bioenergy_biogas",
                         "fuel_tech_label": "Biogas",
@@ -5190,22 +5102,6 @@
                 "capacity_aggregate": 30.01,
                 "duid_data": [
                     {
-                        "oid": "AYT_A8W",
-                        "duid": "ANGAS1",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2004-12-22T00:00:00",
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 30.0,
-                        "capacity_registered": 30.0,
-                        "capacity_aggregate": null
-                    },
-                    {
                         "oid": "AYT_A8Y",
                         "duid": "ANGAST1",
                         "fuel_tech": "distillate",
@@ -5220,6 +5116,22 @@
                         "registered_capacity": 50.0,
                         "capacity_registered": 50.0,
                         "capacity_aggregate": 30.01
+                    },
+                    {
+                        "oid": "AYT_A8W",
+                        "duid": "ANGAS1",
+                        "fuel_tech": null,
+                        "fuel_tech_label": null,
+                        "commissioned_date": "2004-12-22T00:00:00",
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_id": null,
+                        "unit_number": null,
+                        "unit_size": null,
+                        "unit_alias": null,
+                        "registered_capacity": 30.0,
+                        "capacity_registered": 30.0,
+                        "capacity_aggregate": null
                     },
                     {
                         "oid": "AYT_A8X",
@@ -5325,32 +5237,16 @@
                 "state": "TAS",
                 "postcode": "7330",
                 "name": "Woolnorth studland bay / Bluff point",
-                "registered_capacity": 280.0,
-                "capacity_registered": 280.0,
+                "registered_capacity": 140.0,
+                "capacity_registered": 140.0,
                 "capacity_aggregate": 139.75,
                 "duid_data": [
                     {
                         "oid": "AYP_CRK",
                         "duid": "WOOLNTH1",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2005-05-16T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 140.0,
-                        "capacity_registered": 140.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "AYP_2ZK",
-                        "duid": "WOOLNTH1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
-                        "commissioned_date": null,
+                        "commissioned_date": "2005-05-16T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -5362,7 +5258,7 @@
                         "capacity_aggregate": 64.75
                     },
                     {
-                        "oid": "AYP_2Z6",
+                        "oid": "AYP_2ZZ",
                         "duid": "WOOLNTH1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -5745,26 +5641,10 @@
                 "state": "TAS",
                 "postcode": "",
                 "name": "Lemonthyme / Wilmot",
-                "registered_capacity": 214.6,
-                "capacity_registered": 214.6,
+                "registered_capacity": 132.6,
+                "capacity_registered": 132.6,
                 "capacity_aggregate": 81.6,
                 "duid_data": [
-                    {
-                        "oid": "CZA_CBY",
-                        "duid": "LEM_WIL",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2005-05-16T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 82.0,
-                        "capacity_registered": 82.0,
-                        "capacity_aggregate": null
-                    },
                     {
                         "oid": "CZA_CBX",
                         "duid": "LEMONTME",
@@ -5782,11 +5662,11 @@
                         "capacity_aggregate": null
                     },
                     {
-                        "oid": "CZA_2Z4",
+                        "oid": "CZA_CBY",
                         "duid": "LEM_WIL",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
+                        "commissioned_date": "2005-05-16T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -5798,7 +5678,7 @@
                         "capacity_aggregate": 51.0
                     },
                     {
-                        "oid": "CZA_2ZG",
+                        "oid": "CZA_CYW",
                         "duid": "LEM_WIL",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -5829,10 +5709,26 @@
                 "state": "TAS",
                 "postcode": "",
                 "name": "Catagunya / Liapootah / Wayatinah",
-                "registered_capacity": 493.7,
-                "capacity_registered": 493.7,
+                "registered_capacity": 320.7,
+                "capacity_registered": 320.7,
                 "capacity_aggregate": 173.7,
                 "duid_data": [
+                    {
+                        "oid": "CZC_AWE",
+                        "duid": "LI_WY_CA",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "commissioned_date": "2005-05-16T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 2,
+                        "unit_size": 24.0,
+                        "unit_alias": "C",
+                        "registered_capacity": 173.7,
+                        "capacity_registered": 173.7,
+                        "capacity_aggregate": 48.0
+                    },
                     {
                         "oid": "CZC_AWB",
                         "duid": "CATA_1",
@@ -5914,22 +5810,6 @@
                         "capacity_aggregate": null
                     },
                     {
-                        "oid": "CZC_AWE",
-                        "duid": "LI_WY_CA",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2005-05-16T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 173.0,
-                        "capacity_registered": 173.0,
-                        "capacity_aggregate": null
-                    },
-                    {
                         "oid": "CZC_AWF",
                         "duid": "L_W_CNL1",
                         "fuel_tech": null,
@@ -5946,23 +5826,7 @@
                         "capacity_aggregate": null
                     },
                     {
-                        "oid": "CZC_2Z2",
-                        "duid": "LI_WY_CA",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 2,
-                        "unit_size": 24.0,
-                        "unit_alias": "C",
-                        "registered_capacity": 173.7,
-                        "capacity_registered": 173.7,
-                        "capacity_aggregate": 48.0
-                    },
-                    {
-                        "oid": "CZC_2ZB",
+                        "oid": "CZC_CY8",
                         "duid": "LI_WY_CA",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -5978,7 +5842,7 @@
                         "capacity_aggregate": 27.9
                     },
                     {
-                        "oid": "CZC_2Z3",
+                        "oid": "CZC_CYR",
                         "duid": "LI_WY_CA",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -5994,7 +5858,7 @@
                         "capacity_aggregate": 27.9
                     },
                     {
-                        "oid": "CZC_2ZE",
+                        "oid": "CZC_CYS",
                         "duid": "LI_WY_CA",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -6010,7 +5874,7 @@
                         "capacity_aggregate": 31.5
                     },
                     {
-                        "oid": "CZC_2ZF",
+                        "oid": "CZC_CY9",
                         "duid": "LI_WY_CA",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -6425,10 +6289,26 @@
                 "state": "TAS",
                 "postcode": "",
                 "name": "Trevallyn",
-                "registered_capacity": 280.0,
-                "capacity_registered": 280.0,
+                "registered_capacity": 187.0,
+                "capacity_registered": 187.0,
                 "capacity_aggregate": 93.0,
                 "duid_data": [
+                    {
+                        "oid": "CZT_C78",
+                        "duid": "TREVALLN",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "commissioned_date": "2005-05-16T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 2,
+                        "unit_size": 20.0,
+                        "unit_alias": null,
+                        "registered_capacity": 93.0,
+                        "capacity_registered": 93.0,
+                        "capacity_aggregate": 40.0
+                    },
                     {
                         "oid": "CZT_C7R",
                         "duid": "TREV_1",
@@ -6459,22 +6339,6 @@
                         "unit_alias": null,
                         "registered_capacity": 20.0,
                         "capacity_registered": 20.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "CZT_C78",
-                        "duid": "TREVALLN",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2005-05-16T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 93.0,
-                        "capacity_registered": 93.0,
                         "capacity_aggregate": null
                     },
                     {
@@ -6510,23 +6374,7 @@
                         "capacity_aggregate": null
                     },
                     {
-                        "oid": "CZT_2Z5",
-                        "duid": "TREVALLN",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 2,
-                        "unit_size": 20.0,
-                        "unit_alias": null,
-                        "registered_capacity": 93.0,
-                        "capacity_registered": 93.0,
-                        "capacity_aggregate": 40.0
-                    },
-                    {
-                        "oid": "CZT_2ZT",
+                        "oid": "CZT_CYY",
                         "duid": "TREVALLN",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -6614,22 +6462,6 @@
                 "capacity_aggregate": 125.0,
                 "duid_data": [
                     {
-                        "oid": "CZ6_CP6",
-                        "duid": "TUNGATIN",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": "2005-05-16T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 5,
-                        "unit_size": 25.0,
-                        "unit_alias": null,
-                        "registered_capacity": 125.0,
-                        "capacity_registered": 125.0,
-                        "capacity_aggregate": 125.0
-                    },
-                    {
                         "oid": "CZ6_CPP",
                         "duid": "TUNGA_4",
                         "fuel_tech": null,
@@ -6660,6 +6492,22 @@
                         "registered_capacity": 25.0,
                         "capacity_registered": 25.0,
                         "capacity_aggregate": null
+                    },
+                    {
+                        "oid": "CZ6_CP6",
+                        "duid": "TUNGATIN",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "commissioned_date": "2005-05-16T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 5,
+                        "unit_size": 25.0,
+                        "unit_alias": null,
+                        "registered_capacity": 125.0,
+                        "capacity_registered": 125.0,
+                        "capacity_aggregate": 125.0
                     }
                 ]
             }
@@ -6785,32 +6633,16 @@
                 "state": "VIC",
                 "postcode": "3701",
                 "name": "Banimboola",
-                "registered_capacity": 25.85,
-                "capacity_registered": 25.85,
+                "registered_capacity": 12.85,
+                "capacity_registered": 12.85,
                 "capacity_aggregate": 12.85,
                 "duid_data": [
                     {
                         "oid": "CZW_ARG",
                         "duid": "BAPS",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2006-02-01T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 13.0,
-                        "capacity_registered": 13.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "CZW_CXZ",
-                        "duid": "BAPS",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
-                        "commissioned_date": null,
+                        "commissioned_date": "2006-02-01T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -6822,7 +6654,7 @@
                         "capacity_aggregate": 10.6
                     },
                     {
-                        "oid": "CZW_CXA",
+                        "oid": "CZW_CXZ",
                         "duid": "BAPS",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",
@@ -6966,14 +6798,14 @@
                 "capacity_aggregate": 312.0,
                 "duid_data": [
                     {
-                        "oid": "CAA_CB7",
-                        "duid": "LNGS2",
+                        "oid": "CAA_CB6",
+                        "duid": "LNGS1",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "commissioned_date": "2015-07-01T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 2,
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 156.0,
                         "unit_alias": null,
@@ -6998,14 +6830,14 @@
                         "capacity_aggregate": null
                     },
                     {
-                        "oid": "CAA_CB6",
-                        "duid": "LNGS1",
+                        "oid": "CAA_CB7",
+                        "duid": "LNGS2",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "commissioned_date": "2015-07-01T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 1,
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 156.0,
                         "unit_alias": null,
@@ -7065,44 +6897,12 @@
                 "state": "QLD",
                 "postcode": "4809",
                 "name": "Invicta Sugar Mill",
-                "registered_capacity": 100.3,
-                "capacity_registered": 100.3,
+                "registered_capacity": 50.3,
+                "capacity_registered": 50.3,
                 "capacity_aggregate": 50.3,
                 "duid_data": [
                     {
-                        "oid": "CA2_C2G",
-                        "duid": "INVICTA",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2006-03-29T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 50.0,
-                        "capacity_registered": 50.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "CA2_2C2",
-                        "duid": "INVICTA",
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 38.8,
-                        "unit_alias": null,
-                        "registered_capacity": 50.3,
-                        "capacity_registered": 50.3,
-                        "capacity_aggregate": 38.8
-                    },
-                    {
-                        "oid": "CA2_2CB",
+                        "oid": "CA2_2A3",
                         "duid": "INVICTA",
                         "fuel_tech": "bioenergy_biomass",
                         "fuel_tech_label": "Biomass",
@@ -7118,7 +6918,7 @@
                         "capacity_aggregate": 9.0
                     },
                     {
-                        "oid": "CA2_2C3",
+                        "oid": "CA2_2AE",
                         "duid": "INVICTA",
                         "fuel_tech": "bioenergy_biomass",
                         "fuel_tech_label": "Biomass",
@@ -7132,6 +6932,22 @@
                         "registered_capacity": null,
                         "capacity_registered": null,
                         "capacity_aggregate": 2.5
+                    },
+                    {
+                        "oid": "CA2_C2G",
+                        "duid": "INVICTA",
+                        "fuel_tech": "bioenergy_biomass",
+                        "fuel_tech_label": "Biomass",
+                        "commissioned_date": "2006-03-29T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 38.8,
+                        "unit_alias": null,
+                        "registered_capacity": 50.3,
+                        "capacity_registered": 50.3,
+                        "capacity_aggregate": 38.8
                     }
                 ]
             }
@@ -7222,22 +7038,6 @@
                 "capacity_aggregate": 163.0,
                 "duid_data": [
                     {
-                        "oid": "CAE_ARY",
-                        "duid": "BBTHREE1",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "2006-06-08T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 35.0,
-                        "unit_alias": null,
-                        "registered_capacity": 35.0,
-                        "capacity_registered": 35.0,
-                        "capacity_aggregate": 35.0
-                    },
-                    {
                         "oid": "CAE_ASA",
                         "duid": "BBTHREE3",
                         "fuel_tech": "gas_ocgt",
@@ -7246,22 +7046,6 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 3,
-                        "unit_number": 1,
-                        "unit_size": 35.0,
-                        "unit_alias": null,
-                        "registered_capacity": 35.0,
-                        "capacity_registered": 35.0,
-                        "capacity_aggregate": 35.0
-                    },
-                    {
-                        "oid": "CAE_ASZ",
-                        "duid": "BBTHREE2",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "2006-06-08T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 35.0,
                         "unit_alias": null,
@@ -7284,6 +7068,38 @@
                         "registered_capacity": 58.0,
                         "capacity_registered": 58.0,
                         "capacity_aggregate": 58.0
+                    },
+                    {
+                        "oid": "CAE_ARY",
+                        "duid": "BBTHREE1",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "2006-06-08T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 35.0,
+                        "unit_alias": null,
+                        "registered_capacity": 35.0,
+                        "capacity_registered": 35.0,
+                        "capacity_aggregate": 35.0
+                    },
+                    {
+                        "oid": "CAE_ASZ",
+                        "duid": "BBTHREE2",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "2006-06-08T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 35.0,
+                        "unit_alias": null,
+                        "registered_capacity": 35.0,
+                        "capacity_registered": 35.0,
+                        "capacity_aggregate": 35.0
                     }
                 ]
             }
@@ -7301,32 +7117,16 @@
                 "state": "QLD",
                 "postcode": "4709",
                 "name": "Oaky Creek",
-                "registered_capacity": 40.0,
-                "capacity_registered": 40.0,
+                "registered_capacity": 20.0,
+                "capacity_registered": 20.0,
                 "capacity_aggregate": 20.52,
                 "duid_data": [
                     {
                         "oid": "CAF_CH3",
                         "duid": "OAKYCREK",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2006-06-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 20.0,
-                        "capacity_registered": 20.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "CAF_CXS",
-                        "duid": "OAKYCREK",
                         "fuel_tech": "gas_wcmg",
                         "fuel_tech_label": "Gas (Coal Seam)",
-                        "commissioned_date": null,
+                        "commissioned_date": "2006-06-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -7338,7 +7138,7 @@
                         "capacity_aggregate": 14.52
                     },
                     {
-                        "oid": "CAF_CX9",
+                        "oid": "CAF_CXP",
                         "duid": "OAKYCREK",
                         "fuel_tech": "gas_wcmg",
                         "fuel_tech_label": "Gas (Coal Seam)",
@@ -7405,32 +7205,16 @@
                 "state": "QLD",
                 "postcode": "4746",
                 "name": "German Creek",
-                "registered_capacity": 89.98,
-                "capacity_registered": 89.98,
+                "registered_capacity": 44.98,
+                "capacity_registered": 44.98,
                 "capacity_aggregate": 44.97,
                 "duid_data": [
                     {
                         "oid": "CAG_CZX",
                         "duid": "GERMCRK",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2006-11-01T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 45.0,
-                        "capacity_registered": 45.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "CAG_CXW",
-                        "duid": "GERMCRK",
                         "fuel_tech": "gas_wcmg",
                         "fuel_tech_label": "Gas (Coal Seam)",
-                        "commissioned_date": null,
+                        "commissioned_date": "2006-11-01T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -7442,7 +7226,7 @@
                         "capacity_aggregate": 31.66
                     },
                     {
-                        "oid": "CAG_CXX",
+                        "oid": "CAG_CX8",
                         "duid": "GERMCRK",
                         "fuel_tech": "gas_wcmg",
                         "fuel_tech_label": "Gas (Coal Seam)",
@@ -7890,7 +7674,7 @@
                         "capacity_aggregate": 30.0
                     },
                     {
-                        "oid": "CCZ_CXP",
+                        "oid": "CCZ_CXK",
                         "duid": "BWTR1",
                         "fuel_tech": "bioenergy_biomass",
                         "fuel_tech_label": "Biomass",
@@ -7942,7 +7726,7 @@
                         "capacity_aggregate": 6.39
                     },
                     {
-                        "oid": "CCA_CYE",
+                        "oid": "CCA_CXY",
                         "duid": "WDLNGN01",
                         "fuel_tech": "bioenergy_biogas",
                         "fuel_tech_label": "Biogas",
@@ -8030,14 +7814,14 @@
                         "capacity_aggregate": 166.0
                     },
                     {
-                        "oid": "CC3_CPW",
-                        "duid": "URANQ13",
+                        "oid": "CC3_CPX",
+                        "duid": "URANQ14",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "commissioned_date": "2008-06-17T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 3,
+                        "unit_id": 4,
                         "unit_number": 1,
                         "unit_size": 166.0,
                         "unit_alias": null,
@@ -8062,14 +7846,14 @@
                         "capacity_aggregate": 166.0
                     },
                     {
-                        "oid": "CC3_CPX",
-                        "duid": "URANQ14",
+                        "oid": "CC3_CPW",
+                        "duid": "URANQ13",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "commissioned_date": "2008-06-17T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 4,
+                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 166.0,
                         "unit_alias": null,
@@ -8237,32 +8021,16 @@
                 "state": "VIC",
                 "postcode": "3350",
                 "name": "Ballarat Base Hospital",
-                "registered_capacity": 6.0,
-                "capacity_registered": 6.0,
+                "registered_capacity": 3.0,
+                "capacity_registered": 3.0,
                 "capacity_aggregate": 3.0,
                 "duid_data": [
                     {
                         "oid": "CCH_ARW",
                         "duid": "BBASEHOS",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2008-12-24T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 3.0,
-                        "capacity_registered": 3.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "CCH_CY2",
-                        "duid": "BBASEHOS",
                         "fuel_tech": "gas_recip",
                         "fuel_tech_label": "Gas (Reciprocating)",
-                        "commissioned_date": null,
+                        "commissioned_date": "2008-12-24T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -8274,7 +8042,7 @@
                         "capacity_aggregate": 2.0
                     },
                     {
-                        "oid": "CCH_CYB",
+                        "oid": "CCH_CXW",
                         "duid": "BBASEHOS",
                         "fuel_tech": "distillate",
                         "fuel_tech_label": "Distillate",
@@ -8502,14 +8270,14 @@
                         "capacity_aggregate": 181.0
                     },
                     {
-                        "oid": "CCP_AW8",
-                        "duid": "CG4",
+                        "oid": "CCP_AWP",
+                        "duid": "CG3",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "commissioned_date": "2009-05-20T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 4,
+                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 181.0,
                         "unit_alias": null,
@@ -8534,14 +8302,14 @@
                         "capacity_aggregate": 181.0
                     },
                     {
-                        "oid": "CCP_AWP",
-                        "duid": "CG3",
+                        "oid": "CCP_AW8",
+                        "duid": "CG4",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "commissioned_date": "2009-05-20T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 3,
+                        "unit_id": 4,
                         "unit_number": 1,
                         "unit_size": 181.0,
                         "unit_alias": null,
@@ -8601,12 +8369,28 @@
                 "state": "QLD",
                 "postcode": "4415",
                 "name": "Condamine A",
-                "registered_capacity": 287.0,
-                "capacity_registered": 287.0,
+                "registered_capacity": 143.0,
+                "capacity_registered": 143.0,
                 "capacity_aggregate": 143.0,
                 "duid_data": [
                     {
-                        "oid": "CCR_2A8",
+                        "oid": "CCR_AXS",
+                        "duid": "CPSA",
+                        "fuel_tech": "gas_ccgt",
+                        "fuel_tech_label": "Gas (CCGT)",
+                        "commissioned_date": "2009-06-02T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 2,
+                        "unit_size": 43.0,
+                        "unit_alias": null,
+                        "registered_capacity": 143.0,
+                        "capacity_registered": 143.0,
+                        "capacity_aggregate": 86.0
+                    },
+                    {
+                        "oid": "CCR_2ZX",
                         "duid": "CPSA",
                         "fuel_tech": "gas_ccgt",
                         "fuel_tech_label": "Gas (CCGT)",
@@ -8620,38 +8404,6 @@
                         "registered_capacity": null,
                         "capacity_registered": null,
                         "capacity_aggregate": 57.0
-                    },
-                    {
-                        "oid": "CCR_AXS",
-                        "duid": "CPSA",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2009-06-02T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 144.0,
-                        "capacity_registered": 144.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "CCR_2AP",
-                        "duid": "CPSA",
-                        "fuel_tech": "gas_ccgt",
-                        "fuel_tech_label": "Gas (CCGT)",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 2,
-                        "unit_size": 43.0,
-                        "unit_alias": null,
-                        "registered_capacity": 143.0,
-                        "capacity_registered": 143.0,
-                        "capacity_aggregate": 86.0
                     }
                 ]
             }
@@ -8690,7 +8442,7 @@
                         "capacity_aggregate": 140.6
                     },
                     {
-                        "oid": "CCS_2ZH",
+                        "oid": "CCS_CYX",
                         "duid": "TVCC201",
                         "fuel_tech": "gas_ccgt",
                         "fuel_tech_label": "Gas (CCGT)",
@@ -8769,22 +8521,6 @@
                         "commissioned_date": "2009-11-16T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 3,
-                        "unit_size": 121.0,
-                        "unit_alias": null,
-                        "registered_capacity": 363.0,
-                        "capacity_registered": 363.0,
-                        "capacity_aggregate": 363.0
-                    },
-                    {
-                        "oid": "CCX_2AF",
-                        "duid": "DDPS1",
-                        "fuel_tech": "gas_ccgt",
-                        "fuel_tech_label": "Gas (CCGT)",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
                         "unit_id": 0,
                         "unit_number": 1,
                         "unit_size": 280.0,
@@ -8792,6 +8528,22 @@
                         "registered_capacity": 280.0,
                         "capacity_registered": 280.0,
                         "capacity_aggregate": 280.0
+                    },
+                    {
+                        "oid": "CCX_2ZP",
+                        "duid": "DDPS1",
+                        "fuel_tech": "gas_ccgt",
+                        "fuel_tech_label": "Gas (CCGT)",
+                        "commissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 3,
+                        "unit_size": 121.0,
+                        "unit_alias": null,
+                        "registered_capacity": 363.0,
+                        "capacity_registered": 363.0,
+                        "capacity_aggregate": 363.0
                     }
                 ]
             }
@@ -9025,16 +8777,16 @@
                 "state": "NSW",
                 "postcode": "2390",
                 "name": "Wilga Park",
-                "registered_capacity": 20.0,
-                "capacity_registered": 20.0,
+                "registered_capacity": 10.0,
+                "capacity_registered": 10.0,
                 "capacity_aggregate": 10.0,
                 "duid_data": [
                     {
-                        "oid": "C23_2AS",
+                        "oid": "C23_CRC",
                         "duid": "WILGAPK",
                         "fuel_tech": "gas_wcmg",
                         "fuel_tech_label": "Gas (Coal Seam)",
-                        "commissioned_date": null,
+                        "commissioned_date": "2010-01-07T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -9046,7 +8798,7 @@
                         "capacity_aggregate": 4.0
                     },
                     {
-                        "oid": "C23_2A9",
+                        "oid": "C23_2AZ",
                         "duid": "WILGAPK",
                         "fuel_tech": "gas_wcmg",
                         "fuel_tech_label": "Gas (Coal Seam)",
@@ -9060,22 +8812,6 @@
                         "registered_capacity": null,
                         "capacity_registered": null,
                         "capacity_aggregate": 6.0
-                    },
-                    {
-                        "oid": "C23_CRC",
-                        "duid": "WILGAPK",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2010-01-07T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 10.0,
-                        "capacity_registered": 10.0,
-                        "capacity_aggregate": null
                     }
                 ]
             }
@@ -9438,7 +9174,7 @@
                         "capacity_aggregate": 0.72
                     },
                     {
-                        "oid": "C2R_CY3",
+                        "oid": "C2R_CXX",
                         "duid": "WESTILL1",
                         "fuel_tech": "distillate",
                         "fuel_tech_label": "Distillate",
@@ -9541,32 +9277,16 @@
                 "state": "TAS",
                 "postcode": "",
                 "name": "Waterloo",
-                "registered_capacity": 260.8,
-                "capacity_registered": 260.8,
+                "registered_capacity": 130.8,
+                "capacity_registered": 130.8,
                 "capacity_aggregate": 130.8,
                 "duid_data": [
                     {
                         "oid": "C2Y_C86",
                         "duid": "WATERLWF",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": "2010-08-20T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "registered_capacity": 130.0,
-                        "capacity_registered": 130.0,
-                        "capacity_aggregate": null
-                    },
-                    {
-                        "oid": "C2Y_2C5",
-                        "duid": "WATERLWF",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
-                        "commissioned_date": null,
+                        "commissioned_date": "2010-08-20T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
@@ -9578,7 +9298,7 @@
                         "capacity_aggregate": 111.0
                     },
                     {
-                        "oid": "C2Y_2CT",
+                        "oid": "C2Y_2AT",
                         "duid": "WATERLWF",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -9754,20 +9474,36 @@
                 "capacity_aggregate": 1050.0,
                 "duid_data": [
                     {
-                        "oid": "CBB_C84",
-                        "duid": "VPGS3",
+                        "oid": "CBB_C8E",
+                        "duid": "VPGS1",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "commissioned_date": "2002-05-15T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 4,
+                        "unit_id": 1,
+                        "unit_number": 6,
                         "unit_size": 50.0,
                         "unit_alias": null,
                         "registered_capacity": 50.0,
                         "capacity_registered": 50.0,
-                        "capacity_aggregate": 200.0
+                        "capacity_aggregate": 300.0
+                    },
+                    {
+                        "oid": "CBB_C8G",
+                        "duid": "VPGS4",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "commissioned_date": "2002-05-15T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 4,
+                        "unit_number": 3,
+                        "unit_size": 50.0,
+                        "unit_alias": null,
+                        "registered_capacity": 50.0,
+                        "capacity_registered": 50.0,
+                        "capacity_aggregate": 150.0
                     },
                     {
                         "oid": "CBB_C8H",
@@ -9784,22 +9520,6 @@
                         "registered_capacity": 50.0,
                         "capacity_registered": 50.0,
                         "capacity_aggregate": 100.0
-                    },
-                    {
-                        "oid": "CBB_C85",
-                        "duid": "VPGS6",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "commissioned_date": "2002-05-15T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 6,
-                        "unit_number": 1,
-                        "unit_size": 50.0,
-                        "unit_alias": null,
-                        "registered_capacity": 50.0,
-                        "capacity_registered": 50.0,
-                        "capacity_aggregate": 50.0
                     },
                     {
                         "oid": "CBB_C83",
@@ -9834,36 +9554,36 @@
                         "capacity_aggregate": 250.0
                     },
                     {
-                        "oid": "CBB_C8E",
-                        "duid": "VPGS1",
+                        "oid": "CBB_C84",
+                        "duid": "VPGS3",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "commissioned_date": "2002-05-15T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 6,
+                        "unit_id": 3,
+                        "unit_number": 4,
                         "unit_size": 50.0,
                         "unit_alias": null,
                         "registered_capacity": 50.0,
                         "capacity_registered": 50.0,
-                        "capacity_aggregate": 300.0
+                        "capacity_aggregate": 200.0
                     },
                     {
-                        "oid": "CBB_C8G",
-                        "duid": "VPGS4",
+                        "oid": "CBB_C85",
+                        "duid": "VPGS6",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "commissioned_date": "2002-05-15T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 4,
-                        "unit_number": 3,
+                        "unit_id": 6,
+                        "unit_number": 1,
                         "unit_size": 50.0,
                         "unit_alias": null,
                         "registered_capacity": 50.0,
                         "capacity_registered": 50.0,
-                        "capacity_aggregate": 150.0
+                        "capacity_aggregate": 50.0
                     }
                 ]
             }
@@ -10242,7 +9962,7 @@
                         "capacity_aggregate": 3.5
                     },
                     {
-                        "oid": "CBP_2Z9",
+                        "oid": "CBP_2ZE",
                         "duid": "RACOMIL1",
                         "fuel_tech": "bioenergy_biomass",
                         "fuel_tech_label": "Biomass",
@@ -10258,7 +9978,7 @@
                         "capacity_aggregate": 7.0
                     },
                     {
-                        "oid": "CBP_2ZW",
+                        "oid": "CBP_2ZF",
                         "duid": "RACOMIL1",
                         "fuel_tech": "bioenergy_biomass",
                         "fuel_tech_label": "Biomass",
@@ -10598,7 +10318,7 @@
                         "capacity_aggregate": 0.03
                     },
                     {
-                        "oid": "C3B_2Z7",
+                        "oid": "C3B_2ZA",
                         "duid": "CESF1",
                         "fuel_tech": "solar_utility",
                         "fuel_tech_label": "Solar (Utility)",
@@ -10614,7 +10334,7 @@
                         "capacity_aggregate": 0.01
                     },
                     {
-                        "oid": "C3B_2ZP",
+                        "oid": "C3B_2ZC",
                         "duid": "CESF1",
                         "fuel_tech": "solar_utility",
                         "fuel_tech_label": "Solar (Utility)",
@@ -10789,8 +10509,8 @@
                 "state": "NSW",
                 "postcode": "2580",
                 "name": "Gullen Range",
-                "registered_capacity": 395.5,
-                "capacity_registered": 395.5,
+                "registered_capacity": 285.5,
+                "capacity_registered": 285.5,
                 "capacity_aggregate": 278.18,
                 "duid_data": [
                     {
@@ -10812,18 +10532,18 @@
                     {
                         "oid": "C3G_CAX",
                         "duid": "GULLRWF2",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
                         "commissioned_date": "2020-05-19T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
+                        "unit_id": 74,
+                        "unit_number": 31,
+                        "unit_size": 3.451,
                         "unit_alias": null,
-                        "registered_capacity": 110.0,
-                        "capacity_registered": 110.0,
-                        "capacity_aggregate": null
+                        "registered_capacity": null,
+                        "capacity_registered": null,
+                        "capacity_aggregate": 106.98
                     },
                     {
                         "oid": "C3G_CA9",
@@ -10842,7 +10562,7 @@
                         "capacity_aggregate": 10.0
                     },
                     {
-                        "oid": "C3G_2AB",
+                        "oid": "C3G_2Z6",
                         "duid": "GULLRWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -10856,22 +10576,6 @@
                         "registered_capacity": null,
                         "capacity_registered": null,
                         "capacity_aggregate": 136.36
-                    },
-                    {
-                        "oid": "C3G_2A3",
-                        "duid": "GULLRWF2",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 74,
-                        "unit_number": 31,
-                        "unit_size": 3.451,
-                        "unit_alias": null,
-                        "registered_capacity": null,
-                        "capacity_registered": null,
-                        "capacity_aggregate": 106.98
                     }
                 ]
             }
@@ -11038,22 +10742,6 @@
                 "capacity_aggregate": 12.0,
                 "duid_data": [
                     {
-                        "oid": "C38_2AR",
-                        "duid": "WILGB01",
-                        "fuel_tech": "gas_wcmg",
-                        "fuel_tech_label": "Gas (Coal Seam)",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 2,
-                        "unit_size": 3.0,
-                        "unit_alias": null,
-                        "registered_capacity": 6.0,
-                        "capacity_registered": 6.0,
-                        "capacity_aggregate": 6.0
-                    },
-                    {
                         "oid": "C38_CR2",
                         "duid": "WILGB01",
                         "fuel_tech": "gas_wcmg",
@@ -11062,6 +10750,22 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
+                        "unit_number": 2,
+                        "unit_size": 3.0,
+                        "unit_alias": null,
+                        "registered_capacity": 6.0,
+                        "capacity_registered": 6.0,
+                        "capacity_aggregate": 6.0
+                    },
+                    {
+                        "oid": "C38_2ZY",
+                        "duid": "WILGB01",
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "commissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
                         "unit_number": 2,
                         "unit_size": 3.0,
                         "unit_alias": null,
@@ -11142,7 +10846,7 @@
                         "capacity_aggregate": 98.6
                     },
                     {
-                        "oid": "C3S_CX7",
+                        "oid": "C3S_CXT",
                         "duid": "BOCORWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -11194,7 +10898,7 @@
                         "capacity_aggregate": 37.8
                     },
                     {
-                        "oid": "C39_2C4",
+                        "oid": "C39_2AG",
                         "duid": "TARALGA1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -11210,7 +10914,7 @@
                         "capacity_aggregate": 42.0
                     },
                     {
-                        "oid": "C39_2CG",
+                        "oid": "C39_2AH",
                         "duid": "TARALGA1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -11421,9 +11125,9 @@
                 "state": "NSW",
                 "postcode": "2880",
                 "name": "Broken Hill",
-                "registered_capacity": 103.76,
-                "capacity_registered": 103.76,
-                "capacity_aggregate": 103.76,
+                "registered_capacity": 53.76,
+                "capacity_registered": 53.76,
+                "capacity_aggregate": 53.76,
                 "duid_data": [
                     {
                         "oid": "CEC_A9F",
@@ -11440,22 +11144,6 @@
                         "registered_capacity": 53.76,
                         "capacity_registered": 53.76,
                         "capacity_aggregate": 53.76
-                    },
-                    {
-                        "oid": "CEC_CZR",
-                        "duid": "GB01",
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 2,
-                        "unit_size": 25.0,
-                        "unit_alias": null,
-                        "registered_capacity": 50.0,
-                        "capacity_registered": 50.0,
-                        "capacity_aggregate": 50.0
                     }
                 ]
             }
@@ -11638,7 +11326,7 @@
                         "capacity_aggregate": 100.13
                     },
                     {
-                        "oid": "CE5_CXK",
+                        "oid": "CE5_CXH",
                         "duid": "ARWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -11654,7 +11342,7 @@
                         "capacity_aggregate": 2.57
                     },
                     {
-                        "oid": "CE5_CX6",
+                        "oid": "CE5_CX5",
                         "duid": "ARWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -11954,7 +11642,7 @@
                         "capacity_aggregate": 2.14
                     },
                     {
-                        "oid": "CES_2ZR",
+                        "oid": "CES_2ZB",
                         "duid": "STAPYLTON1",
                         "fuel_tech": "bioenergy_biogas",
                         "fuel_tech_label": "Biogas",
@@ -11970,7 +11658,7 @@
                         "capacity_aggregate": 0.76
                     },
                     {
-                        "oid": "CES_2ZS",
+                        "oid": "CES_2Z3",
                         "duid": "STAPYLTON1",
                         "fuel_tech": "bioenergy_biogas",
                         "fuel_tech_label": "Biogas",
@@ -12598,7 +12286,7 @@
                         "capacity_aggregate": 118.08
                     },
                     {
-                        "oid": "CF8_2CE",
+                        "oid": "CF8_2AF",
                         "duid": "SMCSF1",
                         "fuel_tech": "solar_utility",
                         "fuel_tech_label": "Solar (Utility)",
@@ -12650,7 +12338,7 @@
                         "capacity_aggregate": 25.0
                     },
                     {
-                        "oid": "CFR_2ZX",
+                        "oid": "CFR_2Z4",
                         "duid": "MANSLR1",
                         "fuel_tech": "solar_utility",
                         "fuel_tech_label": "Solar (Utility)",
@@ -12918,7 +12606,7 @@
                         "capacity_aggregate": 43.9
                     },
                     {
-                        "oid": "C4C_2ZY",
+                        "oid": "C4C_2ZG",
                         "duid": "MTGELWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -12934,7 +12622,7 @@
                         "capacity_aggregate": 25.09
                     },
                     {
-                        "oid": "C4C_2AZ",
+                        "oid": "C4C_2ZH",
                         "duid": "MTGELWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -12950,7 +12638,7 @@
                         "capacity_aggregate": 12.54
                     },
                     {
-                        "oid": "C4C_2AA",
+                        "oid": "C4C_2Z5",
                         "duid": "MTGELWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -12966,7 +12654,7 @@
                         "capacity_aggregate": 28.22
                     },
                     {
-                        "oid": "C4C_2AC",
+                        "oid": "C4C_2ZT",
                         "duid": "MTGELWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -12982,7 +12670,7 @@
                         "capacity_aggregate": 9.41
                     },
                     {
-                        "oid": "C4C_2A2",
+                        "oid": "C4C_2ZK",
                         "duid": "MTGELWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -13214,7 +12902,7 @@
                         "capacity_aggregate": 91.92
                     },
                     {
-                        "oid": "C44_2CK",
+                        "oid": "C44_2AK",
                         "duid": "WGWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -13374,7 +13062,7 @@
                         "capacity_aggregate": 127.65
                     },
                     {
-                        "oid": "C4T_CYS",
+                        "oid": "C4T_CY5",
                         "duid": "MEWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -13410,22 +13098,6 @@
                 "capacity_aggregate": 197.0,
                 "duid_data": [
                     {
-                        "oid": "C4K_CR8",
-                        "duid": "WRWF1",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "commissioned_date": "2017-07-06T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 70,
-                        "unit_size": 2.5,
-                        "unit_alias": null,
-                        "registered_capacity": 175.0,
-                        "capacity_registered": 175.0,
-                        "capacity_aggregate": 175.0
-                    },
-                    {
                         "oid": "C4K_CRP",
                         "duid": "WRSF1",
                         "fuel_tech": "solar_utility",
@@ -13440,6 +13112,22 @@
                         "registered_capacity": 22.0,
                         "capacity_registered": 22.0,
                         "capacity_aggregate": 22.0
+                    },
+                    {
+                        "oid": "C4K_CR8",
+                        "duid": "WRWF1",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "commissioned_date": "2017-07-06T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 70,
+                        "unit_size": 2.5,
+                        "unit_alias": null,
+                        "registered_capacity": 175.0,
+                        "capacity_registered": 175.0,
+                        "capacity_aggregate": 175.0
                     }
                 ]
             }
@@ -13586,7 +13274,7 @@
                         "capacity_aggregate": 79.75
                     },
                     {
-                        "oid": "C48_CXR",
+                        "oid": "C48_CX7",
                         "duid": "DAYDSF2",
                         "fuel_tech": "solar_utility",
                         "fuel_tech_label": "Solar (Utility)",
@@ -14214,7 +13902,7 @@
                         "capacity_aggregate": 66.04
                     },
                     {
-                        "oid": "CGT_2AE",
+                        "oid": "CGT_2Z7",
                         "duid": "NUMURSF2",
                         "fuel_tech": "solar_utility",
                         "fuel_tech_label": "Solar (Utility)",
@@ -14338,7 +14026,7 @@
                         "capacity_aggregate": 168.96
                     },
                     {
-                        "oid": "CGP_CXG",
+                        "oid": "CGP_CXE",
                         "duid": "COOPGWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -14354,7 +14042,7 @@
                         "capacity_aggregate": 51.94
                     },
                     {
-                        "oid": "CGP_CXH",
+                        "oid": "CGP_CXF",
                         "duid": "COOPGWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -14370,7 +14058,7 @@
                         "capacity_aggregate": 151.79
                     },
                     {
-                        "oid": "CGP_CX5",
+                        "oid": "CGP_CX4",
                         "duid": "COOPGWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -14694,22 +14382,6 @@
                 "capacity_aggregate": 144.46,
                 "duid_data": [
                     {
-                        "oid": "CHC_C3B",
-                        "duid": "LKBONNY1",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "commissioned_date": "2004-05-25T00:00:00",
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 46,
-                        "unit_size": 1.75,
-                        "unit_alias": null,
-                        "registered_capacity": 80.5,
-                        "capacity_registered": 80.5,
-                        "capacity_aggregate": 80.5
-                    },
-                    {
                         "oid": "CHC_CBP",
                         "duid": "LBBG1",
                         "fuel_tech": "battery_discharging",
@@ -14740,6 +14412,22 @@
                         "registered_capacity": 39.0,
                         "capacity_registered": 39.0,
                         "capacity_aggregate": 39.0
+                    },
+                    {
+                        "oid": "CHC_C3B",
+                        "duid": "LKBONNY1",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "commissioned_date": "2004-05-25T00:00:00",
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 46,
+                        "unit_size": 1.75,
+                        "unit_alias": null,
+                        "registered_capacity": 80.5,
+                        "capacity_registered": 80.5,
+                        "capacity_aggregate": 80.5
                     }
                 ]
             }
@@ -14834,20 +14522,20 @@
                 "capacity_aggregate": 335.78,
                 "duid_data": [
                     {
-                        "oid": "CH3_AY9",
-                        "duid": "DUNDWF1",
+                        "oid": "CH3_AYW",
+                        "duid": "DUNDWF2",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
                         "commissioned_date": "2020-03-10T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 40,
-                        "unit_size": 4.2,
+                        "unit_id": 41,
+                        "unit_number": 11,
+                        "unit_size": 4.18,
                         "unit_alias": null,
-                        "registered_capacity": 168.0,
-                        "capacity_registered": 168.0,
-                        "capacity_aggregate": 168.0
+                        "registered_capacity": 46.0,
+                        "capacity_registered": 46.0,
+                        "capacity_aggregate": 45.98
                     },
                     {
                         "oid": "CH3_AYX",
@@ -14866,20 +14554,20 @@
                         "capacity_aggregate": 121.8
                     },
                     {
-                        "oid": "CH3_AYW",
-                        "duid": "DUNDWF2",
+                        "oid": "CH3_AY9",
+                        "duid": "DUNDWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
                         "commissioned_date": "2020-03-10T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 41,
-                        "unit_number": 11,
-                        "unit_size": 4.18,
+                        "unit_id": 1,
+                        "unit_number": 40,
+                        "unit_size": 4.2,
                         "unit_alias": null,
-                        "registered_capacity": 46.0,
-                        "capacity_registered": 46.0,
-                        "capacity_aggregate": 45.98
+                        "registered_capacity": 168.0,
+                        "capacity_registered": 168.0,
+                        "capacity_aggregate": 168.0
                     }
                 ]
             }
@@ -15185,12 +14873,12 @@
                 "state": null,
                 "postcode": null,
                 "name": "Portland",
-                "registered_capacity": 239.78,
-                "capacity_registered": 239.78,
-                "capacity_aggregate": 93.78,
+                "registered_capacity": 148.0,
+                "capacity_registered": 148.0,
+                "capacity_aggregate": 2.0,
                 "duid_data": [
                     {
-                        "oid": "CHP_CXT",
+                        "oid": "CHP_CXG",
                         "duid": "0NPOR_74",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -15204,70 +14892,6 @@
                         "registered_capacity": 148.0,
                         "capacity_registered": 148.0,
                         "capacity_aggregate": 2.0
-                    },
-                    {
-                        "oid": "CHP_2A6",
-                        "duid": "0NPSM_1",
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 30.86,
-                        "unit_alias": null,
-                        "registered_capacity": 67.78,
-                        "capacity_registered": 67.78,
-                        "capacity_aggregate": 30.86
-                    },
-                    {
-                        "oid": "CHP_2A7",
-                        "duid": "0NPSM_2",
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 36.92,
-                        "unit_alias": null,
-                        "registered_capacity": null,
-                        "capacity_registered": null,
-                        "capacity_aggregate": 36.92
-                    },
-                    {
-                        "oid": "CHP_2C6",
-                        "duid": "0NVIMI_3",
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 1,
-                        "unit_size": 5.0,
-                        "unit_alias": null,
-                        "registered_capacity": 24.0,
-                        "capacity_registered": 24.0,
-                        "capacity_aggregate": 5.0
-                    },
-                    {
-                        "oid": "CHP_2C7",
-                        "duid": "0NVIMI_4",
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 4,
-                        "unit_number": 1,
-                        "unit_size": 19.0,
-                        "unit_alias": null,
-                        "registered_capacity": null,
-                        "capacity_registered": null,
-                        "capacity_aggregate": 19.0
                     }
                 ]
             }
@@ -15374,11 +14998,11 @@
                         "capacity_aggregate": 350.0
                     },
                     {
-                        "oid": "CHR_CX8",
-                        "duid": "0NCPS_2",
+                        "oid": "CHR_A9S",
+                        "duid": "CALL_A_4",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
-                        "commissioned_date": null,
+                        "commissioned_date": "1998-10-25T00:00:00",
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 2,
@@ -15390,11 +15014,11 @@
                         "capacity_aggregate": 30.0
                     },
                     {
-                        "oid": "CHR_A9S",
-                        "duid": "CALL_A_4",
+                        "oid": "CHR_CX6",
+                        "duid": "0NCPS_2",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
-                        "commissioned_date": "1998-10-25T00:00:00",
+                        "commissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 2,
@@ -15426,7 +15050,7 @@
                 "capacity_aggregate": 7.2,
                 "duid_data": [
                     {
-                        "oid": "CHS_CXY",
+                        "oid": "CHS_CXR",
                         "duid": "0NBPP_1",
                         "fuel_tech": "bioenergy_biogas",
                         "fuel_tech_label": "Biogas",
@@ -15462,7 +15086,7 @@
                 "capacity_aggregate": 4.0,
                 "duid_data": [
                     {
-                        "oid": "CH9_CY9",
+                        "oid": "CH9_CYT",
                         "duid": "FNWF1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
@@ -15493,12 +15117,12 @@
                 "state": null,
                 "postcode": null,
                 "name": "Melbourne Regional Landfill",
-                "registered_capacity": 8.88,
-                "capacity_registered": 8.88,
-                "capacity_aggregate": 8.88,
+                "registered_capacity": 100.66,
+                "capacity_registered": 100.66,
+                "capacity_aggregate": 100.66,
                 "duid_data": [
                     {
-                        "oid": "CHW_2Z8",
+                        "oid": "CHW_2Z2",
                         "duid": "0NMRL_1",
                         "fuel_tech": "bioenergy_biogas",
                         "fuel_tech_label": "Biogas",
@@ -15512,6 +15136,70 @@
                         "registered_capacity": 8.88,
                         "capacity_registered": 8.88,
                         "capacity_aggregate": 8.88
+                    },
+                    {
+                        "oid": "CHW_2Z9",
+                        "duid": "0NPSM_1",
+                        "fuel_tech": "bioenergy_biomass",
+                        "fuel_tech_label": "Biomass",
+                        "commissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 30.86,
+                        "unit_alias": null,
+                        "registered_capacity": 67.78,
+                        "capacity_registered": 67.78,
+                        "capacity_aggregate": 30.86
+                    },
+                    {
+                        "oid": "CHW_2ZW",
+                        "duid": "0NPSM_2",
+                        "fuel_tech": "bioenergy_biomass",
+                        "fuel_tech_label": "Biomass",
+                        "commissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 36.92,
+                        "unit_alias": null,
+                        "registered_capacity": null,
+                        "capacity_registered": null,
+                        "capacity_aggregate": 36.92
+                    },
+                    {
+                        "oid": "CHW_2A6",
+                        "duid": "0NVIMI_3",
+                        "fuel_tech": "bioenergy_biomass",
+                        "fuel_tech_label": "Biomass",
+                        "commissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
+                        "unit_number": 1,
+                        "unit_size": 5.0,
+                        "unit_alias": null,
+                        "registered_capacity": 24.0,
+                        "capacity_registered": 24.0,
+                        "capacity_aggregate": 5.0
+                    },
+                    {
+                        "oid": "CHW_2A7",
+                        "duid": "0NVIMI_4",
+                        "fuel_tech": "bioenergy_biomass",
+                        "fuel_tech_label": "Biomass",
+                        "commissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 4,
+                        "unit_number": 1,
+                        "unit_size": 19.0,
+                        "unit_alias": null,
+                        "registered_capacity": null,
+                        "capacity_registered": null,
+                        "capacity_aggregate": 19.0
                     }
                 ]
             }
@@ -15534,6 +15222,22 @@
                 "capacity_aggregate": 84.0,
                 "duid_data": [
                     {
+                        "oid": "C5Z_2A4",
+                        "duid": "0NSPS_1",
+                        "fuel_tech": null,
+                        "fuel_tech_label": null,
+                        "commissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 21.0,
+                        "unit_alias": null,
+                        "registered_capacity": 21.0,
+                        "capacity_registered": 21.0,
+                        "capacity_aggregate": 21.0
+                    },
+                    {
                         "oid": "C5Z_CKG",
                         "duid": "SNUG1",
                         "fuel_tech": "distillate",
@@ -15548,22 +15252,6 @@
                         "registered_capacity": 63.0,
                         "capacity_registered": 63.0,
                         "capacity_aggregate": 63.0
-                    },
-                    {
-                        "oid": "C5Z_2CF",
-                        "duid": "0NSPS_1",
-                        "fuel_tech": null,
-                        "fuel_tech_label": null,
-                        "commissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 21.0,
-                        "unit_alias": null,
-                        "registered_capacity": 21.0,
-                        "capacity_registered": 21.0,
-                        "capacity_aggregate": 21.0
                     }
                 ]
             }
@@ -15586,7 +15274,7 @@
                 "capacity_aggregate": 6.08,
                 "duid_data": [
                     {
-                        "oid": "C5A_2CH",
+                        "oid": "C5A_2A5",
                         "duid": "0NMPS_1",
                         "fuel_tech": "hydro",
                         "fuel_tech_label": "Hyrdo",

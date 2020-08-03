@@ -26,9 +26,9 @@ Mt Piper,au_nem_nsw_1002,MP2,NSW1,operating,coal_black,2,1,700.00,1400.00,1425.0
 Vales Point B,au_nem_nsw_1004,VPNL1,NSW1,operating,,,,,1320.00,1345.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Vales Point B,au_nem_nsw_1004,VP5,NSW1,operating,coal_black,5,1,660.00,1320.00,1345.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Vales Point B,au_nem_nsw_1004,VP6,NSW1,operating,coal_black,6,1,660.00,1320.00,1345.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Jeeralang A,au_nem_vic_1006,JLA03,VIC1,operating,gas_ocgt,3,1,51.00,204.00,204.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Jeeralang A,au_nem_vic_1006,JLA01,VIC1,operating,gas_ocgt,1,1,51.00,204.00,204.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Jeeralang A,au_nem_vic_1006,JLA02,VIC1,operating,gas_ocgt,2,1,51.00,204.00,204.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Jeeralang A,au_nem_vic_1006,JLA03,VIC1,operating,gas_ocgt,3,1,51.00,204.00,204.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Jeeralang A,au_nem_vic_1006,JLA04,VIC1,operating,gas_ocgt,4,1,51.00,204.00,204.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Jeeralang B,au_nem_vic_1007,JLB02,VIC1,operating,gas_ocgt,2,1,76.00,228.00,228.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Jeeralang B,au_nem_vic_1007,JLB01,VIC1,operating,gas_ocgt,1,1,76.00,228.00,228.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -49,59 +49,58 @@ Liddell,au_nem_nsw_1014,LD04,NSW1,operating,coal_black,4,1,500.00,2000.00,2025.0
 Bayswater,au_nem_nsw_1015,BW02,NSW1,operating,coal_black,2,1,660.00,2640.00,2665.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Bayswater,au_nem_nsw_1015,BW01,NSW1,operating,coal_black,1,1,660.00,2640.00,2665.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Bayswater,au_nem_nsw_1015,BAYNL1,NSW1,retired,,,,,2640.00,2665.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Bayswater,au_nem_nsw_1015,BW03,NSW1,operating,coal_black,3,1,660.00,2640.00,2665.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Bayswater,au_nem_nsw_1015,BW04,NSW1,operating,coal_black,4,1,660.00,2640.00,2665.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Bayswater,au_nem_nsw_1015,BW03,NSW1,operating,coal_black,3,1,660.00,2640.00,2665.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Dry Creek Station,au_nem_sa_1016,DRYCGT2,SA1,operating,gas_ocgt,2,1,52.00,156.00,341.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Dry Creek Station,au_nem_sa_1016,DRYCNL,SA1,operating,,,,,156.00,341.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Dry Creek Station,au_nem_sa_1016,DRYCGT3,SA1,operating,gas_ocgt,3,1,52.00,156.00,341.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Dry Creek Station,au_nem_sa_1016,DRYCNL3,SA1,retired,,,,,156.00,341.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Dry Creek Station,au_nem_sa_1016,DRYCGT1,SA1,operating,gas_ocgt,1,1,52.00,156.00,341.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Dry Creek Station,au_nem_sa_1016,DRYCGT2,SA1,operating,gas_ocgt,2,1,52.00,156.00,341.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Dry Creek Station,au_nem_sa_1016,DRYCGT3,SA1,operating,gas_ocgt,3,1,52.00,156.00,341.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Mintaro Station,au_nem_sa_1017,MINTNL1,SA1,operating,,,,,90.00,115.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Mintaro Station,au_nem_sa_1017,MINTARO,SA1,operating,gas_ocgt,1,1,90.00,90.00,115.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Torrens Island,au_nem_sa_1020,TORRA3,SA1,operating,gas_steam,3,1,120.00,1280.00,1380.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Torrens Island,au_nem_sa_1020,TORRB1,SA1,operating,gas_steam,1,1,200.00,1280.00,1380.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Torrens Island,au_nem_sa_1020,TORRB3,SA1,operating,gas_steam,3,1,200.00,1280.00,1380.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Torrens Island,au_nem_sa_1020,TORRA1,SA1,operating,gas_steam,1,1,120.00,1280.00,1380.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Torrens Island,au_nem_sa_1020,TORRB2,SA1,operating,gas_steam,2,1,200.00,1280.00,1380.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Torrens Island,au_nem_sa_1020,TORNL1,SA1,operating,,,,,1280.00,1380.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Torrens Island,au_nem_sa_1020,TORRA2,SA1,operating,gas_steam,2,1,120.00,1280.00,1380.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Torrens Island,au_nem_sa_1020,TORRA4,SA1,operating,gas_steam,4,1,120.00,1280.00,1380.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Torrens Island,au_nem_sa_1020,TORRB2,SA1,operating,gas_steam,2,1,200.00,1280.00,1380.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Torrens Island,au_nem_sa_1020,TORRB4,SA1,operating,gas_steam,4,1,200.00,1280.00,1380.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Eraring,au_nem_nsw_1021,ERNL1,NSW1,operating,,,,,2921.50,2946.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Eraring,au_nem_nsw_1021,ER04,NSW1,operating,coal_black,4,1,720.00,2921.50,2946.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Eraring,au_nem_nsw_1021,ER01,NSW1,operating,coal_black,1,1,720.00,2921.50,2946.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Eraring,au_nem_nsw_1021,ER04,NSW1,operating,coal_black,4,1,720.00,2921.50,2946.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Eraring,au_nem_nsw_1021,ERNL1,NSW1,operating,,,,,2921.50,2946.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Eraring,au_nem_nsw_1021,ER02,NSW1,operating,coal_black,2,1,720.00,2921.50,2946.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Eraring,au_nem_nsw_1021,ER03,NSW1,operating,coal_black,3,1,720.00,2921.50,2946.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Eraring,au_nem_nsw_1021,ERGT01,NSW1,operating,distillate,1,1,41.50,2921.50,2946.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Hume,au_nem_nsw_1022,HUMEV,VIC1,operating,hydro,1,2,58.00,116.00,58.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Hume,au_nem_nsw_1022,HUMENSW,NSW1,operating,hydro,1,2,58.00,116.00,58.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Brown Mountain,au_nem_nsw_1023,BROWNMT,NSW1,operating,,,,,8.20,10.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Brown Mountain,au_nem_nsw_1023,BROWNMT,NSW1,operating,hydro,1,1,0.50,8.20,10.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Brown Mountain,au_nem_nsw_1023,BROWNMT,NSW1,operating,hydro,2,2,1.50,8.20,10.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Brown Mountain,au_nem_nsw_1023,BROWNMT,NSW1,operating,hydro,4,2,2.00,8.20,10.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Brown Mountain,au_nem_nsw_1023,BROWNMT,NSW1,operating,hydro,6,1,4.20,8.20,10.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hume,au_nem_nsw_1022,HUMENSW,NSW1,operating,hydro,1,2,58.00,58.00,29.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Brown Mountain,au_nem_nsw_1023,BROWNMT,NSW1,operating,hydro,1,1,0.50,8.20,5.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Brown Mountain,au_nem_nsw_1023,BROWNMT,NSW1,operating,hydro,2,2,1.50,8.20,5.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Brown Mountain,au_nem_nsw_1023,BROWNMT,NSW1,operating,hydro,4,2,2.00,8.20,5.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Brown Mountain,au_nem_nsw_1023,BROWNMT,NSW1,operating,hydro,6,1,4.20,8.20,5.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Keepit,au_nem_nsw_1024,KEEPIT,NSW1,operating,hydro,1,1,6.00,6.00,6.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Burrinjuck,au_nem_nsw_1025,BURRIN,NSW1,operating,,,,,26.80,37.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Burrinjuck,au_nem_nsw_1025,BURRIN,NSW1,operating,hydro,3,2,11.40,26.80,37.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Burrinjuck,au_nem_nsw_1025,BURRIN,NSW1,operating,hydro,5,1,15.40,26.80,37.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Burrinjuck,au_nem_nsw_1025,BURRIN,NSW1,operating,hydro,3,2,11.40,26.80,27.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Burrinjuck,au_nem_nsw_1025,BURRIN,NSW1,operating,hydro,5,1,15.40,26.80,27.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Hunter Valley,au_nem_nsw_1028,HVGTS,NSW1,operating,distillate,1,2,50.00,50.00,50.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Shoalhaven Bendeela Kangaroo Valley Pumps,au_nem_nsw_1031,SHGEN,NSW1,operating,,,,,240.00,720.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Shoalhaven Bendeela Kangaroo Valley Pumps,au_nem_nsw_1031,SHGEN2,NSW1,retired,,,,,240.00,720.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Shoalhaven Bendeela Kangaroo Valley Pumps,au_nem_nsw_1031,SHGEN,NSW1,operating,hydro,1,2,80.00,240.00,720.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Shoalhaven Bendeela Kangaroo Valley Pumps,au_nem_nsw_1031,SHGEN,NSW1,operating,hydro,3,2,160.00,240.00,720.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Broken Hill,au_nem_nsw_1030,GB01,NSW1,operating,distillate,1,2,50.00,50.00,100.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Broken Hill,au_nem_nsw_1030,GB02,NSW1,retired,,,,,50.00,100.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Shoalhaven Bendeela Kangaroo Valley Pumps,au_nem_nsw_1031,SHGEN,NSW1,operating,hydro,1,2,80.00,240.00,480.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Shoalhaven Bendeela Kangaroo Valley Pumps,au_nem_nsw_1031,SHGEN2,NSW1,retired,,,,,240.00,480.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Shoalhaven Bendeela Kangaroo Valley Pumps,au_nem_nsw_1031,SHGEN,NSW1,operating,hydro,3,2,160.00,240.00,480.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Gladstone,au_nem_qld_1032,GLADNL1,QLD1,operating,,,,,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Gladstone,au_nem_qld_1032,GSTONE2,QLD1,operating,coal_black,2,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Gladstone,au_nem_qld_1032,GSTONE5,QLD1,operating,coal_black,5,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Gladstone,au_nem_qld_1032,GSTONE6,QLD1,operating,coal_black,6,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Gladstone,au_nem_qld_1032,GSTONE1,QLD1,operating,coal_black,1,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Gladstone,au_nem_qld_1032,GSTONE4,QLD1,operating,coal_black,4,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Gladstone,au_nem_qld_1032,GSTONE3,QLD1,operating,coal_black,3,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Gladstone,au_nem_qld_1032,GSTONE5,QLD1,operating,coal_black,5,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Gladstone,au_nem_qld_1032,GSTONE1,QLD1,operating,coal_black,1,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Gladstone,au_nem_qld_1032,GSTONE2,QLD1,operating,coal_black,2,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Gladstone,au_nem_qld_1032,GSTONE4,QLD1,operating,coal_black,4,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Gladstone,au_nem_qld_1032,GSTONE6,QLD1,operating,coal_black,6,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Hume,au_nem_vic_1035,HUMEV,VIC1,operating,hydro,1,2,58.00,58.00,29.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Dartmouth,au_nem_vic_1038,DARTM1,VIC1,operating,hydro,1,1,150.00,150.00,185.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Eildon,au_nem_vic_1039,EILDON2,VIC1,operating,hydro,2,1,60.00,139.50,124.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Eildon,au_nem_vic_1039,EILDON1,VIC1,operating,hydro,1,1,60.00,139.50,124.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Eildon,au_nem_vic_1039,EILDON2,VIC1,operating,hydro,2,1,7.50,139.50,124.50,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Eildon,au_nem_vic_1039,EILDON1,VIC1,operating,hydro,1,1,7.50,139.50,124.50,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Eildon,au_nem_vic_1039,EILDON3,VIC1,operating,hydro,1,1,4.50,139.50,124.50,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Eildon,au_nem_vic_1039,EILDON2,VIC1,operating,hydro,2,1,7.50,139.50,124.50,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Eildon,au_nem_vic_1039,EILDON3,VIC1,operating,hydro,1,1,4.50,139.50,124.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Bogong / Mackay,au_nem_vic_1040,MCKAY2,VIC1,retired,,,,,148.00,350.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Bogong / Mackay,au_nem_vic_1040,MCKAY1,VIC1,operating,hydro,1,2,148.00,148.00,350.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Clover,au_nem_vic_1041,CLOVER1,VIC1,retired,,,,,29.00,53.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -109,11 +108,10 @@ Clover,au_nem_vic_1041,CLOVER,VIC1,operating,hydro,1,2,29.00,29.00,53.00,au.nem.
 Clover,au_nem_vic_1041,CLOVER2,VIC1,retired,,,,,29.00,53.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 West Kiewa,au_nem_vic_1042,WKIEWA2,VIC1,operating,hydro,2,1,15.50,31.00,62.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 West Kiewa,au_nem_vic_1042,WKIEWA1,VIC1,operating,hydro,1,1,15.50,31.00,62.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Rubicon Mountain,au_nem_vic_1043,RUBICON,VIC1,operating,,,,,13.20,26.75,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Rubicon Mountain,au_nem_vic_1043,RUBICON,VIC1,operating,hydro,1,1,2.70,13.20,26.75,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Rubicon Mountain,au_nem_vic_1043,RUBICON,VIC1,operating,hydro,1,1,0.30,13.20,26.75,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Rubicon Mountain,au_nem_vic_1043,RUBICON,VIC1,operating,hydro,1,2,9.40,13.20,26.75,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Rubicon Mountain,au_nem_vic_1043,RUBICON,VIC1,operating,hydro,1,1,0.80,13.20,26.75,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Rubicon Mountain,au_nem_vic_1043,RUBICON,VIC1,operating,hydro,1,1,2.70,13.20,13.20,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Rubicon Mountain,au_nem_vic_1043,RUBICON,VIC1,operating,hydro,1,1,0.30,13.20,13.20,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Rubicon Mountain,au_nem_vic_1043,RUBICON,VIC1,operating,hydro,1,2,9.40,13.20,13.20,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Rubicon Mountain,au_nem_vic_1043,RUBICON,VIC1,operating,hydro,1,1,0.80,13.20,13.20,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Barron Gorge,au_nem_qld_1044,BARRON1,QLD1,operating,hydro,1,1,30.00,60.00,60.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Barron Gorge,au_nem_qld_1044,BARRON2,QLD1,operating,hydro,2,1,30.00,60.00,60.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Kareeya,au_nem_qld_1045,KAREEYA1,QLD1,operating,hydro,1,1,21.00,91.00,116.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -123,42 +121,40 @@ Kareeya,au_nem_qld_1045,KAREEYA2,QLD1,operating,hydro,2,1,21.00,91.00,116.00,au.
 Kareeya,au_nem_qld_1045,KAREEYA5,QLD1,operating,hydro,5,1,7.00,91.00,116.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Kareeya,au_nem_qld_1045,KAREEYA4,QLD1,operating,hydro,4,1,21.00,91.00,116.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Mackay,au_nem_qld_1046,MACKAYGT,QLD1,operating,distillate,1,1,30.00,30.00,30.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Stanwell,au_nem_qld_1047,STAN4,QLD1,operating,coal_black,4,1,365.00,1460.00,1485.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Stanwell,au_nem_qld_1047,STANNL1,QLD1,operating,,,,,1460.00,1485.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Stanwell,au_nem_qld_1047,STAN2,QLD1,operating,coal_black,2,1,365.00,1460.00,1485.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Stanwell,au_nem_qld_1047,STAN1,QLD1,operating,coal_black,1,1,365.00,1460.00,1485.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Stanwell,au_nem_qld_1047,STAN3,QLD1,operating,coal_black,3,1,365.00,1460.00,1485.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Stanwell,au_nem_qld_1047,STAN4,QLD1,operating,coal_black,4,1,365.00,1460.00,1485.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tarong,au_nem_qld_1048,TARONG#1,QLD1,operating,coal_black,1,1,350.00,1400.00,1425.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Tarong,au_nem_qld_1048,TARONG#3,QLD1,operating,coal_black,3,1,350.00,1400.00,1425.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Tarong,au_nem_qld_1048,TARONG#2,QLD1,operating,coal_black,2,1,350.00,1400.00,1425.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tarong,au_nem_qld_1048,TARONG#4,QLD1,operating,coal_black,4,1,350.00,1400.00,1425.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tarong,au_nem_qld_1048,TARNL1,QLD1,operating,,,,,1400.00,1425.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Tarong,au_nem_qld_1048,TARONG#2,QLD1,operating,coal_black,2,1,350.00,1400.00,1425.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Tarong,au_nem_qld_1048,TARONG#3,QLD1,operating,coal_black,3,1,350.00,1400.00,1425.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Yallourn W,au_nem_vic_1050,YWPS1,VIC1,operating,coal_brown,1,1,360.00,1480.00,1505.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Yallourn W,au_nem_vic_1050,YWNL1,VIC1,operating,,,,,1480.00,1505.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Yallourn W,au_nem_vic_1050,YWPS4,VIC1,operating,coal_brown,4,1,380.00,1480.00,1505.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Yallourn W,au_nem_vic_1050,YWPS3,VIC1,operating,coal_brown,3,1,380.00,1480.00,1505.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Yallourn W,au_nem_vic_1050,YWPS2,VIC1,operating,coal_brown,2,1,360.00,1480.00,1505.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Yallourn W,au_nem_vic_1050,YWPS3,VIC1,operating,coal_brown,3,1,380.00,1480.00,1505.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tumut 3,au_nem_nsw_1052,TUMT3NL1,NSW1,operating,,,,,1500.00,5331.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tumut 3,au_nem_nsw_1052,TUMT3NL2,NSW1,operating,,,,,1500.00,5331.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tumut 3,au_nem_nsw_1052,TUMT3NL3,NSW1,operating,,,,,1500.00,5331.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tumut 3,au_nem_nsw_1052,SNOWY1,SNOWY1,retired,,,,,1500.00,5331.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tumut 3,au_nem_nsw_1052,TUMUT3,NSW1,operating,hydro,1,6,1500.00,1500.00,5331.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Tumut,au_nem_nsw_1053,SNOWY2,SNOWY1,retired,,,,,616.00,4988.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Tumut,au_nem_nsw_1053,UPPTUMUT,NSW1,operating,,,,,616.00,4988.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Tumut,au_nem_nsw_1053,UPPTUMUT,NSW1,operating,hydro,1,4,328.00,616.00,4988.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Tumut,au_nem_nsw_1053,UPPTUMUT,NSW1,operating,hydro,5,4,288.00,616.00,4988.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Tumut,au_nem_nsw_1053,UPPTUMUT,NSW1,operating,hydro,1,4,328.00,616.00,4372.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Tumut,au_nem_nsw_1053,SNOWY2,SNOWY1,retired,,,,,616.00,4372.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Tumut,au_nem_nsw_1053,UPPTUMUT,NSW1,operating,hydro,5,4,288.00,616.00,4372.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Guthega,au_nem_nsw_1054,SNOWY3,SNOWY1,retired,,,,,60.00,3841.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Guthega,au_nem_nsw_1054,GUTHNL1,NSW1,operating,,,,,60.00,3841.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Guthega,au_nem_nsw_1054,GUTHEGA,NSW1,operating,hydro,1,2,60.00,60.00,3841.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Blowering,au_nem_nsw_1057,BLOWERNG,NSW1,operating,hydro,1,1,70.00,70.00,160.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Blowering,au_nem_nsw_1057,SNOWY6,NSW1,retired,,,,,70.00,160.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Port Lincoln,au_nem_sa_1059,POR01,SA1,operating,distillate,1,2,50.00,73.50,73.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Port Lincoln,au_nem_sa_1059,POR03,SA1,operating,distillate,3,1,23.50,73.50,73.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Osborne,au_nem_sa_1061,OSB02,SA1,retired,,,,,180.00,540.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Osborne,au_nem_sa_1061,OSB01,SA1,retired,,,,,180.00,540.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Osborne,au_nem_sa_1061,OSBAG,SA1,operating,,,,,180.00,540.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Osborne,au_nem_sa_1061,OSBAG,SA1,operating,gas_ccgt,1,1,118.00,180.00,540.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Osborne,au_nem_sa_1061,OSBAG,SA1,operating,gas_ccgt,2,1,62.00,180.00,540.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Port Lincoln,au_nem_sa_1059,POR01,SA1,operating,distillate,1,2,50.00,73.50,73.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Osborne,au_nem_sa_1061,OSB02,SA1,retired,,,,,180.00,360.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Osborne,au_nem_sa_1061,OSB01,SA1,retired,,,,,180.00,360.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Osborne,au_nem_sa_1061,OSBAG,SA1,operating,gas_ccgt,1,1,118.00,180.00,360.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Osborne,au_nem_sa_1061,OSBAG,SA1,operating,gas_ccgt,2,1,62.00,180.00,360.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Mt Stuart,au_nem_qld_1062,MSTUART2,QLD1,operating,distillate,2,1,144.00,419.00,419.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Mt Stuart,au_nem_qld_1062,MSTUART3,QLD1,operating,distillate,3,1,131.00,419.00,419.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Mt Stuart,au_nem_qld_1062,MSTUART1,QLD1,operating,distillate,1,1,144.00,419.00,419.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -168,56 +164,52 @@ Smithfield Energy Facility,au_nem_nsw_1064,SITHE01,NSW1,operating,gas_ccgt,1,3,1
 Smithfield Energy Facility,au_nem_nsw_1064,SITHE04,NSW1,operating,gas_ccgt,4,1,62.00,170.90,185.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Roma Station,au_nem_qld_1077,ROMA_8,QLD1,operating,gas_ocgt,8,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Roma Station,au_nem_qld_1077,ROMA_7,QLD1,operating,gas_ocgt,7,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Oakey,au_nem_qld_1086,OAKEY2,QLD1,operating,gas_ocgt,2,1,141.00,282.00,282.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Oakey,au_nem_qld_1086,OAKEY1,QLD1,operating,gas_ocgt,1,1,141.00,282.00,282.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Ladbroke Grove,au_nem_sa_1088,LADBROK1,SA1,operating,gas_ocgt,1,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Oakey,au_nem_qld_1086,OAKEY2,QLD1,operating,gas_ocgt,2,1,141.00,282.00,282.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Ladbroke Grove,au_nem_sa_1088,LADBROK2,SA1,operating,gas_ocgt,2,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Ladbroke Grove,au_nem_sa_1088,LADBROK1,SA1,operating,gas_ocgt,1,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Windy Hill,au_nem_qld_1090,WHILL1,QLD1,operating,wind,1,20,12.00,12.00,12.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Callide C Nett Off,au_nem_qld_1093,CPP_4,QLD1,operating,coal_black,4,1,420.00,840.00,865.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Callide C Nett Off,au_nem_qld_1093,CPP_3,QLD1,operating,coal_black,3,1,420.00,840.00,865.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Callide C Nett Off,au_nem_qld_1093,CALLNL2,QLD1,retired,,,,,840.00,865.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Pelican Point,au_nem_sa_1095,PPCCGT,SA1,operating,,,,,478.00,956.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Pelican Point,au_nem_sa_1095,PPCCGT,SA1,operating,gas_ccgt,1,2,320.00,478.00,956.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Pelican Point,au_nem_sa_1095,PPCCGT,SA1,operating,gas_ccgt,3,1,158.00,478.00,956.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Pelican Point,au_nem_sa_1095,PPCCGT,SA1,operating,gas_ccgt,1,2,320.00,478.00,478.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Pelican Point,au_nem_sa_1095,PPCCGT,SA1,operating,gas_ccgt,3,1,158.00,478.00,478.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Bairnsdale,au_nem_vic_1098,BDL01,VIC1,operating,gas_ocgt,1,1,47.00,94.00,94.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Bairnsdale,au_nem_vic_1098,BDL02,VIC1,operating,gas_ocgt,2,1,47.00,94.00,94.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Millmerran,au_nem_qld_1099,MPP_1,QLD1,operating,coal_black,1,1,426.00,852.00,852.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Millmerran,au_nem_qld_1099,MPP_2,QLD1,operating,coal_black,2,1,426.00,852.00,852.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Jacks Gully Landfill,au_nem_nsw_1100,JACKSGUL,NSW1,operating,bioenergy_biogas,1,2,2.30,2.30,2.30,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Murray,au_nem_nsw_1101,MURAYNL1,VIC1,operating,,,,,1502.00,3075.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Murray,au_nem_nsw_1101,MURAYNL3,VIC1,operating,,,,,1502.00,3075.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Murray,au_nem_nsw_1101,MURAYNL2,VIC1,operating,,,,,1502.00,3075.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Murray,au_nem_nsw_1101,MURRAY,VIC1,operating,,,,,1502.00,3075.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Murray,au_nem_nsw_1101,MURRAY,VIC1,operating,hydro,1,10,950.00,1502.00,3075.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Murray,au_nem_nsw_1101,MURRAY,VIC1,operating,hydro,11,4,552.00,1502.00,3075.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Murray,au_nem_nsw_1101,MURAYNL1,VIC1,operating,,,,,1502.00,1575.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Murray,au_nem_nsw_1101,MURAYNL3,VIC1,operating,,,,,1502.00,1575.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Murray,au_nem_nsw_1101,MURAYNL2,VIC1,operating,,,,,1502.00,1575.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Murray,au_nem_nsw_1101,MURRAY,VIC1,operating,hydro,1,10,950.00,1502.00,1575.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Murray,au_nem_nsw_1101,MURRAY,VIC1,operating,hydro,11,4,552.00,1502.00,1575.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Rocky Point Cogeneration,au_nem_qld_1102,RPCG,QLD1,operating,bioenergy_biomass,1,1,30.00,30.00,30.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Pindari,au_nem_nsw_1103,PINDARI,NSW1,operating,hydro,1,1,6.70,6.70,6.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Quarantine,au_nem_sa_1104,QPS4,SA1,operating,gas_ocgt,4,1,24.00,229.00,229.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Quarantine,au_nem_sa_1104,QPS5,SA1,operating,gas_ocgt,5,1,128.00,229.00,229.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Quarantine,au_nem_sa_1104,QPS1,SA1,operating,gas_ocgt,1,1,29.00,229.00,229.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Quarantine,au_nem_sa_1104,QPS2,SA1,operating,gas_ocgt,2,1,24.00,229.00,229.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Quarantine,au_nem_sa_1104,QPS3,SA1,operating,gas_ocgt,3,1,24.00,229.00,229.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Quarantine,au_nem_sa_1104,QPS4,SA1,operating,gas_ocgt,4,1,24.00,229.00,229.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Quarantine,au_nem_sa_1104,QPS2,SA1,operating,gas_ocgt,2,1,24.00,229.00,229.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Quarantine,au_nem_sa_1104,QPS5,SA1,operating,gas_ocgt,5,1,128.00,229.00,229.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Lonsdale,au_nem_sa_1105,LONSDALE,SA1,operating,distillate,1,18,20.25,20.25,20.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,,,,242.60,434.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,2,2,28.00,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,3,1,37.00,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,1,1,15.50,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,2,1,22.50,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,3,1,25.00,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,4,1,23.40,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,1,1,15.00,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,2,1,15.30,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,3,1,15.50,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,4,1,15.70,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,1,1,15.10,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,2,1,14.60,242.60,434.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,2,2,28.00,242.60,217.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,3,1,37.00,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,1,1,15.50,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,2,1,22.50,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,3,1,25.00,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,4,1,23.40,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,1,1,15.00,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,2,1,15.30,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,3,1,15.50,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,4,1,15.70,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,1,1,15.10,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Hallett,au_nem_sa_1107,AGLHAL,SA1,operating,gas_ocgt,2,1,14.60,242.60,217.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Somerton,au_nem_vic_1108,AGLSOM,VIC1,operating,gas_ocgt,1,4,170.00,170.00,170.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 West Nowra Landfill Generation Facility,au_nem_nsw_1111,AGLNOW1,NSW1,operating,bioenergy_biogas,1,1,1.00,1.00,1.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Toora,au_nem_vic_1112,TOORAWF,VIC1,operating,wind,1,12,21.00,21.00,21.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Brooklyn U13,au_nem_vic_1113,BROOKLYN,VIC1,operating,,,,,2.83,5.83,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Brooklyn U13,au_nem_vic_1113,BROOKLYN,VIC1,operating,bioenergy_biogas,1,1,1.15,2.83,5.83,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Brooklyn U13,au_nem_vic_1113,BROOKLYN,VIC1,operating,bioenergy_biogas,2,1,1.03,2.83,5.83,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Brooklyn U13,au_nem_vic_1113,BROOKLYN,VIC1,operating,bioenergy_biogas,3,1,0.65,2.83,5.83,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Brooklyn U13,au_nem_vic_1113,BROOKLYN,VIC1,operating,bioenergy_biogas,1,1,1.15,2.83,2.83,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Brooklyn U13,au_nem_vic_1113,BROOKLYN,VIC1,operating,bioenergy_biogas,2,1,1.03,2.83,2.83,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Brooklyn U13,au_nem_vic_1113,BROOKLYN,VIC1,operating,bioenergy_biogas,3,1,0.65,2.83,2.83,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Eastern Creek,au_nem_nsw_1114,EASTCRK,NSW1,operating,bioenergy_biogas,1,4,5.06,5.06,5.06,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tarong North,au_nem_qld_1118,TNPS1,QLD1,operating,coal_black,1,1,443.00,443.00,443.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Wivenhoe Small,au_nem_qld_1119,WIVENSH,QLD1,operating,hydro,1,1,4.70,4.70,4.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -228,14 +220,13 @@ Roghan Road,au_nem_qld_1132,EDLRGNRD,QLD1,operating,bioenergy_biomass,1,1,2.00,2
 Whitwood Road,au_nem_qld_1138,WHIT1,QLD1,operating,bioenergy_biogas,1,1,1.10,1.10,1.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Lucas Heights 2,au_nem_nsw_1139,LUCASHGT,NSW1,operating,bioenergy_biogas,1,11,12.65,17.25,17.25,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Lucas Heights 2,au_nem_nsw_1139,LUCAS2S2,NSW1,operating,bioenergy_biogas,12,4,4.60,17.25,17.25,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Angaston,au_nem_sa_1140,ANGAS1,SA1,retired,,,,,30.01,100.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Angaston,au_nem_sa_1140,ANGAST1,SA1,operating,distillate,1,18,30.01,30.01,100.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Angaston,au_nem_sa_1140,ANGAS1,SA1,retired,,,,,30.01,100.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Angaston,au_nem_sa_1140,ANGAS2,SA1,retired,,,,,30.01,100.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Wattle Point,au_nem_sa_1141,WPWF,SA1,operating,wind,1,55,90.75,90.75,90.75,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Cathedral Rocks,au_nem_sa_1142,CATHROCK,SA1,operating,wind,1,33,66.00,66.00,66.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Woolnorth studland bay / Bluff point,au_nem_tas_1144,WOOLNTH1,TAS1,operating,,,,,139.75,280.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Woolnorth studland bay / Bluff point,au_nem_tas_1144,WOOLNTH1,TAS1,operating,wind,1,37,64.75,139.75,280.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Woolnorth studland bay / Bluff point,au_nem_tas_1144,WOOLNTH1,TAS1,operating,wind,1,25,75.00,139.75,280.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Woolnorth studland bay / Bluff point,au_nem_tas_1144,WOOLNTH1,TAS1,operating,wind,1,37,64.75,139.75,140.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Woolnorth studland bay / Bluff point,au_nem_tas_1144,WOOLNTH1,TAS1,operating,wind,1,25,75.00,139.75,140.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Bastyan,au_nem_tas_1145,BASTYAN,TAS1,operating,hydro,1,1,79.90,79.90,79.90,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Butlers Gorge,au_nem_tas_1146,BUTLERSG,TAS1,operating,hydro,1,1,14.40,14.40,14.40,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Cethana,au_nem_tas_1147,CETHANA,TAS1,operating,hydro,1,1,85.00,85.00,85.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -248,22 +239,20 @@ Gordon,au_nem_tas_1151,GORDON3,TAS1,retired,,,,,432.00,889.00,au.nem.mms.dudetai
 Gordon,au_nem_tas_1151,GOVILLB1,TAS1,operating,,,,,432.00,889.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Gordon,au_nem_tas_1151,GORDON,TAS1,operating,hydro,1,3,432.00,432.00,889.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 John Butters,au_nem_tas_1152,JBUTTERS,TAS1,operating,hydro,1,1,144.00,144.00,144.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Lemonthyme / Wilmot,au_nem_tas_1153,LEM_WIL,TAS1,operating,,,,,81.60,214.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Lemonthyme / Wilmot,au_nem_tas_1153,LEMONTME,TAS1,retired,,,,,81.60,214.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Lemonthyme / Wilmot,au_nem_tas_1153,LEM_WIL,TAS1,operating,hydro,1,1,51.00,81.60,214.60,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Lemonthyme / Wilmot,au_nem_tas_1153,LEM_WIL,TAS1,operating,hydro,1,1,30.60,81.60,214.60,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,CATA_1,TAS1,retired,,,,,173.70,493.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,CATA_2,TAS1,retired,,,,,173.70,493.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,WYA252B1,TAS1,operating,,,,,173.70,493.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,WYB252B1,TAS1,operating,,,,,173.70,493.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,CATAGUN1,TAS1,retired,,,,,173.70,493.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,,,,,173.70,493.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,L_W_CNL1,TAS1,operating,,,,,173.70,493.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,hydro,1,2,48.00,173.70,493.70,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,hydro,1,1,27.90,173.70,493.70,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,hydro,2,1,27.90,173.70,493.70,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,hydro,3,1,31.50,173.70,493.70,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,hydro,1,3,38.40,173.70,493.70,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Lemonthyme / Wilmot,au_nem_tas_1153,LEMONTME,TAS1,retired,,,,,81.60,132.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Lemonthyme / Wilmot,au_nem_tas_1153,LEM_WIL,TAS1,operating,hydro,1,1,51.00,81.60,132.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Lemonthyme / Wilmot,au_nem_tas_1153,LEM_WIL,TAS1,operating,hydro,1,1,30.60,81.60,132.60,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,hydro,1,2,48.00,173.70,320.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,CATA_1,TAS1,retired,,,,,173.70,320.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,CATA_2,TAS1,retired,,,,,173.70,320.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,WYA252B1,TAS1,operating,,,,,173.70,320.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,WYB252B1,TAS1,operating,,,,,173.70,320.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,CATAGUN1,TAS1,retired,,,,,173.70,320.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,L_W_CNL1,TAS1,operating,,,,,173.70,320.70,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,hydro,1,1,27.90,173.70,320.70,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,hydro,2,1,27.90,173.70,320.70,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,hydro,3,1,31.50,173.70,320.70,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Catagunya / Liapootah / Wayatinah,au_nem_tas_1154,LI_WY_CA,TAS1,operating,hydro,1,3,38.40,173.70,320.70,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Lake Echo,au_nem_tas_1155,LK_ECHO,TAS1,operating,hydro,1,1,32.40,32.40,32.40,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Mackintosh,au_nem_tas_1156,MACKNTSH,TAS1,operating,hydro,1,1,79.90,79.90,79.90,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Meadowbank,au_nem_tas_1157,MEADOWB2,TAS1,retired,,,,,40.00,64.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -278,49 +267,44 @@ Reece,au_nem_tas_1161,REECE2,TAS1,operating,hydro,2,1,115.60,231.20,231.20,au.ne
 Reece,au_nem_tas_1161,REECE1,TAS1,operating,hydro,1,1,115.60,231.20,231.20,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Repulse,au_nem_tas_1162,REPULSE,TAS1,operating,hydro,1,1,34.00,34.00,28.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tarraleah,au_nem_tas_1163,TARRALEA,TAS1,operating,hydro,1,6,90.00,90.00,90.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Trevallyn,au_nem_tas_1164,TREV_1,TAS1,retired,,,,,93.00,280.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Trevallyn,au_nem_tas_1164,TREV_2,TAS1,retired,,,,,93.00,280.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Trevallyn,au_nem_tas_1164,TREVALLN,TAS1,operating,,,,,93.00,280.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Trevallyn,au_nem_tas_1164,TREV_4,TAS1,retired,,,,,93.00,280.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Trevallyn,au_nem_tas_1164,TREV_3,TAS1,retired,,,,,93.00,280.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Trevallyn,au_nem_tas_1164,TREVALLN,TAS1,operating,hydro,1,2,40.00,93.00,280.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Trevallyn,au_nem_tas_1164,TREVALLN,TAS1,operating,hydro,3,2,53.00,93.00,280.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Trevallyn,au_nem_tas_1164,TREVALLN,TAS1,operating,hydro,1,2,40.00,93.00,187.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Trevallyn,au_nem_tas_1164,TREV_1,TAS1,retired,,,,,93.00,187.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Trevallyn,au_nem_tas_1164,TREV_2,TAS1,retired,,,,,93.00,187.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Trevallyn,au_nem_tas_1164,TREV_4,TAS1,retired,,,,,93.00,187.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Trevallyn,au_nem_tas_1164,TREV_3,TAS1,retired,,,,,93.00,187.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Trevallyn,au_nem_tas_1164,TREVALLN,TAS1,operating,hydro,3,2,53.00,93.00,187.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Tribute,au_nem_tas_1165,TRIBUTE,TAS1,operating,hydro,1,1,82.80,82.80,107.80,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tribute,au_nem_tas_1165,TRIBNL1,TAS1,operating,,,,,82.80,107.80,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Tungatinah,au_nem_tas_1166,TUNGATIN,TAS1,operating,hydro,1,5,125.00,125.00,175.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tungatinah,au_nem_tas_1166,TUNGA_4,TAS1,retired,,,,,125.00,175.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tungatinah,au_nem_tas_1166,TUNGA_3,TAS1,retired,,,,,125.00,175.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Tungatinah,au_nem_tas_1166,TUNGATIN,TAS1,operating,hydro,1,5,125.00,125.00,175.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Yambuk,au_nem_vic_1169,YAMBUKWF,VIC1,operating,wind,1,20,30.00,30.00,30.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Mt Millar,au_nem_sa_1170,MTMILLAR,SA1,operating,wind,1,35,70.00,70.00,70.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Wonthaggi,au_nem_vic_1171,WONWP,VIC1,operating,wind,1,6,12.00,12.00,12.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Banimboola,au_nem_vic_1173,BAPS,VIC1,operating,,,,,12.85,25.85,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Banimboola,au_nem_vic_1173,BAPS,VIC1,operating,hydro,1,2,10.60,12.85,25.85,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Banimboola,au_nem_vic_1173,BAPS,VIC1,operating,hydro,3,1,2.25,12.85,25.85,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Banimboola,au_nem_vic_1173,BAPS,VIC1,operating,hydro,1,2,10.60,12.85,12.85,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Banimboola,au_nem_vic_1173,BAPS,VIC1,operating,hydro,3,1,2.25,12.85,12.85,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Starfish Hill,au_nem_sa_1174,STARHLWF,SA1,operating,wind,1,23,34.50,34.50,34.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Challicum Hills,au_nem_vic_1175,CHALLHWF,VIC1,operating,wind,1,35,52.50,52.50,52.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Canunda,au_nem_sa_1176,CNUNDAWF,SA1,operating,wind,1,23,46.00,46.00,46.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Laverton North,au_nem_vic_1177,LNGS2,VIC1,operating,gas_ocgt,2,1,156.00,312.00,624.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Laverton North,au_nem_vic_1177,LAVNORTH,VIC1,retired,,,,,312.00,624.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Laverton North,au_nem_vic_1177,LNGS1,VIC1,operating,gas_ocgt,1,1,156.00,312.00,624.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Laverton North,au_nem_vic_1177,LAVNORTH,VIC1,retired,,,,,312.00,624.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Laverton North,au_nem_vic_1177,LNGS2,VIC1,operating,gas_ocgt,2,1,156.00,312.00,624.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Rowallan,au_nem_tas_1178,ROWALLAN,TAS1,operating,hydro,1,1,10.50,10.50,10.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Invicta Sugar Mill,au_nem_qld_1179,INVICTA,QLD1,operating,,,,,50.30,100.30,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Invicta Sugar Mill,au_nem_qld_1179,INVICTA,QLD1,operating,bioenergy_biomass,1,1,38.80,50.30,100.30,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Invicta Sugar Mill,au_nem_qld_1179,INVICTA,QLD1,operating,bioenergy_biomass,2,1,9.00,50.30,100.30,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Invicta Sugar Mill,au_nem_qld_1179,INVICTA,QLD1,operating,bioenergy_biomass,3,1,2.50,50.30,100.30,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Invicta Sugar Mill,au_nem_qld_1179,INVICTA,QLD1,operating,bioenergy_biomass,2,1,9.00,50.30,50.30,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Invicta Sugar Mill,au_nem_qld_1179,INVICTA,QLD1,operating,bioenergy_biomass,3,1,2.50,50.30,50.30,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Invicta Sugar Mill,au_nem_qld_1179,INVICTA,QLD1,operating,bioenergy_biomass,1,1,38.80,50.30,50.30,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Braemar,au_nem_qld_1181,BRAEMAR2,QLD1,operating,gas_wcmg,2,1,168.00,504.00,504.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Braemar,au_nem_qld_1181,BRAEMAR3,QLD1,operating,gas_wcmg,3,1,168.00,504.00,504.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Braemar,au_nem_qld_1181,BRAEMAR1,QLD1,operating,gas_wcmg,1,1,168.00,504.00,504.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Bell Bay Three,au_nem_tas_1182,BBTHREE1,TAS1,operating,gas_ocgt,1,1,35.00,163.00,163.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Bell Bay Three,au_nem_tas_1182,BBTHREE3,TAS1,operating,gas_ocgt,3,1,35.00,163.00,163.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Bell Bay Three,au_nem_tas_1182,BBTHREE2,TAS1,operating,gas_ocgt,2,1,35.00,163.00,163.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Bell Bay Three,au_nem_tas_1182,TVPP104,TAS1,operating,gas_ocgt,1,1,58.00,163.00,163.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Oaky Creek,au_nem_qld_1183,OAKYCREK,QLD1,operating,,,,,20.52,40.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Oaky Creek,au_nem_qld_1183,OAKYCREK,QLD1,operating,gas_wcmg,1,14,14.52,20.52,40.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Oaky Creek,au_nem_qld_1183,OAKYCREK,QLD1,operating,gas_wcmg,15,2,6.00,20.52,40.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Bell Bay Three,au_nem_tas_1182,BBTHREE1,TAS1,operating,gas_ocgt,1,1,35.00,163.00,163.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Bell Bay Three,au_nem_tas_1182,BBTHREE2,TAS1,operating,gas_ocgt,2,1,35.00,163.00,163.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Oaky Creek,au_nem_qld_1183,OAKYCREK,QLD1,operating,gas_wcmg,1,14,14.52,20.52,20.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Oaky Creek,au_nem_qld_1183,OAKYCREK,QLD1,operating,gas_wcmg,15,2,6.00,20.52,20.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Tatura Biomass Generator,au_nem_vic_1184,TATURA01,VIC1,operating,bioenergy_biomass,1,1,1.10,1.10,1.10,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-German Creek,au_nem_qld_1185,GERMCRK,QLD1,operating,,,,,44.97,89.98,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-German Creek,au_nem_qld_1185,GERMCRK,QLD1,operating,gas_wcmg,1,16,31.66,44.97,89.98,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-German Creek,au_nem_qld_1185,GERMCRK,QLD1,operating,gas_wcmg,17,4,13.31,44.97,89.98,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+German Creek,au_nem_qld_1185,GERMCRK,QLD1,operating,gas_wcmg,1,16,31.66,44.97,44.98,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+German Creek,au_nem_qld_1185,GERMCRK,QLD1,operating,gas_wcmg,17,4,13.31,44.97,44.98,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Grange Avenue Landfill,au_nem_nsw_1186,GRANGEAV,NSW1,operating,bioenergy_biogas,1,1,2.00,2.00,2.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Remount,au_nem_tas_1187,REMOUNT,TAS1,operating,bioenergy_biogas,1,2,2.00,2.00,2.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Daandine,au_nem_qld_1188,DAANDINE,QLD1,operating,gas_wcmg,1,11,33.00,33.00,33.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -338,16 +322,15 @@ Woodlawn Energy Generation Station,au_nem_nsw_1201,WDLNGN01,NSW1,operating,bioen
 Woodlawn Energy Generation Station,au_nem_nsw_1201,WDLNGN01,NSW1,operating,bioenergy_biogas,7,1,1.06,7.45,7.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Tallawarra,au_nem_nsw_1204,TALWA1,NSW1,operating,gas_ccgt,1,1,440.00,440.00,440.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Uranquinty,au_nem_nsw_1205,URANQ11,NSW1,operating,gas_ocgt,1,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Uranquinty,au_nem_nsw_1205,URANQ13,NSW1,operating,gas_ocgt,3,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Uranquinty,au_nem_nsw_1205,URANQ12,NSW1,operating,gas_ocgt,2,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Uranquinty,au_nem_nsw_1205,URANQ14,NSW1,operating,gas_ocgt,4,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Uranquinty,au_nem_nsw_1205,URANQ12,NSW1,operating,gas_ocgt,2,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Uranquinty,au_nem_nsw_1205,URANQ13,NSW1,operating,gas_ocgt,3,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Moranbah North Waste Coal Mine,au_nem_qld_1206,MBAHNTH,QLD1,operating,gas_wcmg,1,21,63.42,63.42,63.42,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 South East Water Halllam,au_nem_vic_1207,HLMSEW01,VIC1,operating,hydro,1,1,0.25,0.25,0.25,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Veolia Ti Tree,au_nem_qld_1208,TITREE,QLD1,operating,bioenergy_biogas,1,2,2.00,2.00,2.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Shepparton Facility,au_nem_vic_1209,SHEP1,VIC1,operating,bioenergy_biomass,1,1,1.10,1.10,1.10,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Ballarat Base Hospital,au_nem_vic_1210,BBASEHOS,VIC1,operating,,,,,3.00,6.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Ballarat Base Hospital,au_nem_vic_1210,BBASEHOS,VIC1,operating,gas_recip,1,2,2.00,3.00,6.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Ballarat Base Hospital,au_nem_vic_1210,BBASEHOS,VIC1,operating,distillate,3,1,1.00,3.00,6.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Ballarat Base Hospital,au_nem_vic_1210,BBASEHOS,VIC1,operating,gas_recip,1,2,2.00,3.00,3.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Ballarat Base Hospital,au_nem_vic_1210,BBASEHOS,VIC1,operating,distillate,3,1,1.00,3.00,3.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Waubra,au_nem_nsw_1212,WAUBRAWF,VIC1,operating,wind,1,128,192.00,192.00,192.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Braemar 2,au_nem_qld_1213,BRAEMAR7,QLD1,operating,gas_wcmg,7,1,173.00,519.00,519.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Braemar 2,au_nem_qld_1213,BRAEMAR6,QLD1,operating,gas_wcmg,6,1,173.00,519.00,519.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -355,27 +338,25 @@ Braemar 2,au_nem_qld_1213,BRAEMAR5,QLD1,operating,gas_wcmg,5,1,173.00,519.00,519
 Clements Gap,au_nem_sa_1214,CLEMGPWF,SA1,operating,wind,1,27,54.00,54.00,57.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Hallett 2,au_nem_sa_1215,HALLWF2,SA1,operating,wind,1,34,71.40,71.40,71.40,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Colongra,au_nem_nsw_1216,CG2,NSW1,operating,gas_ocgt,2,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Colongra,au_nem_nsw_1216,CG4,NSW1,operating,gas_ocgt,4,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Colongra,au_nem_nsw_1216,CG1,NSW1,operating,gas_ocgt,1,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Colongra,au_nem_nsw_1216,CG3,NSW1,operating,gas_ocgt,3,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Colongra,au_nem_nsw_1216,CG1,NSW1,operating,gas_ocgt,1,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Colongra,au_nem_nsw_1216,CG4,NSW1,operating,gas_ocgt,4,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Cullerin Range,au_nem_nsw_1217,CULLRGWF,NSW1,operating,wind,1,15,30.00,30.00,30.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Condamine A,au_nem_qld_1218,CPSA,QLD1,operating,gas_ccgt,3,1,57.00,143.00,287.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Condamine A,au_nem_qld_1218,CPSA,QLD1,operating,,,,,143.00,287.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Condamine A,au_nem_qld_1218,CPSA,QLD1,operating,gas_ccgt,1,2,86.00,143.00,287.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Condamine A,au_nem_qld_1218,CPSA,QLD1,operating,gas_ccgt,1,2,86.00,143.00,143.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Condamine A,au_nem_qld_1218,CPSA,QLD1,operating,gas_ccgt,3,1,57.00,143.00,143.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Tamar Valley Combined Cycle,au_nem_tas_1219,TVCC201,TAS1,operating,gas_ccgt,1,1,140.60,208.60,208.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tamar Valley Combined Cycle,au_nem_tas_1219,TVCC201,TAS1,operating,gas_ccgt,2,1,68.00,208.60,208.60,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Capital,au_nem_nsw_1220,CAPTL_WF,NSW1,operating,wind,1,67,134.00,134.00,140.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Darling Downs,au_nem_qld_1222,DDPS1,QLD1,operating,gas_ccgt,1,3,363.00,643.00,643.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Darling Downs,au_nem_qld_1222,DDPS1,QLD1,operating,gas_ccgt,0,1,280.00,643.00,643.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Darling Downs,au_nem_qld_1222,DDPS1,QLD1,operating,gas_ccgt,0,1,280.00,643.00,643.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Darling Downs,au_nem_qld_1222,DDPS1,QLD1,operating,gas_ccgt,1,3,363.00,643.00,643.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Codrington,au_nem_vic_1223,CODRNGTON,VIC1,operating,wind,1,14,18.20,18.20,18.20,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Burrendong,au_nem_nsw_1224,BDONGHYD,NSW1,operating,hydro,1,1,19.00,19.00,19.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Copeton,au_nem_nsw_1225,COPTNHYD,NSW1,operating,hydro,1,1,22.50,22.50,22.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Glenbawn,au_nem_nsw_1226,GLBWNHYD,NSW1,operating,hydro,1,1,5.50,5.50,5.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Yarrawonga,au_nem_vic_1227,YWNGAHYD,VIC1,operating,hydro,1,2,9.45,9.45,9.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Eastern Creek 2,au_nem_nsw_1228,EASTCRK2,NSW1,operating,bioenergy_biogas,1,8,10.00,10.00,8.98,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Wilga Park,au_nem_nsw_1229,WILGAPK,NSW1,operating,gas_wcmg,1,4,4.00,10.00,20.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Wilga Park,au_nem_nsw_1229,WILGAPK,NSW1,operating,gas_wcmg,5,2,6.00,10.00,20.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Wilga Park,au_nem_nsw_1229,WILGAPK,NSW1,operating,,,,,10.00,20.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Wilga Park,au_nem_nsw_1229,WILGAPK,NSW1,operating,gas_wcmg,1,4,4.00,10.00,10.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Wilga Park,au_nem_nsw_1229,WILGAPK,NSW1,operating,gas_wcmg,5,2,6.00,10.00,10.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Appin,au_nem_nsw_1230,APPIN,NSW1,operating,gas_wcmg,1,54,55.62,55.62,55.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Broadmeadows Landfill,au_nem_vic_1232,BROADMDW,VIC1,operating,bioenergy_biogas,1,5,5.00,5.00,5.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Clayton Landfill,au_nem_vic_1233,CLAYTON,VIC1,operating,bioenergy_biogas,1,11,11.00,11.00,11.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -389,21 +370,20 @@ West Illawarra Leagues Club,au_nem_nsw_1242,WESTILL1,NSW1,operating,distillate,1
 West Illawarra Leagues Club,au_nem_nsw_1242,WESTILL1,NSW1,operating,distillate,2,1,0.28,1.00,1.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Yarwun,au_nem_qld_1243,YARWUN_1,QLD1,operating,gas_ccgt,1,1,154.00,154.00,154.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 North Brown Hill,au_nem_sa_1245,NBHWF1,SA1,operating,wind,1,63,132.30,132.30,132.30,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Waterloo,au_nem_tas_1247,WATERLWF,SA1,operating,,,,,130.80,260.80,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Waterloo,au_nem_tas_1247,WATERLWF,SA1,operating,wind,1,37,111.00,130.80,260.80,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Waterloo,au_nem_tas_1247,WATERLWF,SA1,operating,wind,38,6,19.80,130.80,260.80,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Waterloo,au_nem_tas_1247,WATERLWF,SA1,operating,wind,1,37,111.00,130.80,130.80,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Waterloo,au_nem_tas_1247,WATERLWF,SA1,operating,wind,38,6,19.80,130.80,130.80,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Nine Network Willoughby,au_nem_nsw_1248,NINEWIL1,NSW1,operating,distillate,1,3,3.18,3.18,3.20,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tataria,au_nem_sa_1250,TATIARA1,SA1,operating,distillate,1,1,0.50,0.50,0.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Pt Stanvac,au_nem_sa_1251,STANV2,SA1,retired,,,,,57.60,115.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Pt Stanvac,au_nem_sa_1251,STANV1,SA1,retired,,,,,57.60,115.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Pt Stanvac,au_nem_sa_1251,PTSTAN1,SA1,operating,distillate,1,36,57.60,57.60,115.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Valley Peaking Facility,au_nem_vic_1252,VPGS3,VIC1,operating,gas_ocgt,3,4,200.00,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Valley Peaking Facility,au_nem_vic_1252,VPGS5,VIC1,operating,gas_ocgt,5,2,100.00,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Valley Peaking Facility,au_nem_vic_1252,VPGS6,VIC1,operating,gas_ocgt,6,1,50.00,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Valley Peaking Facility,au_nem_vic_1252,VPGS,VIC1,retired,,,,,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Valley Peaking Facility,au_nem_vic_1252,VPGS2,VIC1,operating,gas_ocgt,2,5,250.00,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Valley Peaking Facility,au_nem_vic_1252,VPGS1,VIC1,operating,gas_ocgt,1,6,300.00,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Valley Peaking Facility,au_nem_vic_1252,VPGS4,VIC1,operating,gas_ocgt,4,3,150.00,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Valley Peaking Facility,au_nem_vic_1252,VPGS5,VIC1,operating,gas_ocgt,5,2,100.00,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Valley Peaking Facility,au_nem_vic_1252,VPGS,VIC1,retired,,,,,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Valley Peaking Facility,au_nem_vic_1252,VPGS2,VIC1,operating,gas_ocgt,2,5,250.00,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Valley Peaking Facility,au_nem_vic_1252,VPGS3,VIC1,operating,gas_ocgt,3,4,200.00,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Valley Peaking Facility,au_nem_vic_1252,VPGS6,VIC1,operating,gas_ocgt,6,1,50.00,1050.00,600.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Gunning,au_nem_nsw_1253,GUNNING1,NSW1,operating,wind,1,31,46.50,46.50,46.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Woodlawn,au_nem_nsw_1254,WOODLWN1,NSW1,operating,wind,1,1,2.10,2.10,48.30,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Hepburn Community,au_nem_vic_1255,HEPWIND1,VIC1,operating,wind,1,2,4.10,4.10,4.10,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -432,17 +412,16 @@ Snowtown South,au_nem_sa_1277,SNOWSTH1,SA1,operating,wind,1,42,126.00,126.00,126
 Snowtown North,au_nem_sa_1278,SNOWNTH1,SA1,operating,wind,1,48,144.00,144.00,144.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Springvale Landfill,au_nem_vic_1279,SVALE1,VIC1,operating,bioenergy_biogas,1,4,4.20,4.20,4.20,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Mt Mercer,au_nem_vic_1280,MERCER01,VIC1,operating,wind,1,64,131.20,131.20,131.20,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Gullen Range,au_nem_nsw_1281,GULLRWF1,NSW1,operating,wind,1,17,24.84,278.18,395.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Gullen Range,au_nem_nsw_1281,GULLRWF2,NSW1,operating,,,,,278.18,395.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Gullen Range,au_nem_nsw_1281,GULLRSF1,NSW1,operating,solar_utility,1,4,10.00,278.18,395.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Gullen Range,au_nem_nsw_1281,GULLRWF1,NSW1,operating,wind,18,56,136.36,278.18,395.50,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Gullen Range,au_nem_nsw_1281,GULLRWF2,NSW1,operating,wind,74,31,106.98,278.18,395.50,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Gullen Range,au_nem_nsw_1281,GULLRWF1,NSW1,operating,wind,1,17,24.84,278.18,285.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Gullen Range,au_nem_nsw_1281,GULLRWF2,NSW1,operating,wind,74,31,106.98,278.18,285.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Gullen Range,au_nem_nsw_1281,GULLRSF1,NSW1,operating,solar_utility,1,4,10.00,278.18,285.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Gullen Range,au_nem_nsw_1281,GULLRWF1,NSW1,operating,wind,18,56,136.36,278.18,285.50,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Glenmaggie,au_nem_vic_1282,GLENMAG1,VIC1,operating,hydro,1,1,3.80,3.80,3.80,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 William Hovell,au_nem_vic_1284,WILLHOV1,VIC1,operating,hydro,1,1,1.50,1.50,1.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Royalla,au_nem_act_1287,ROYALLA1,NSW1,operating,solar_utility,1,20,20.00,20.00,20.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Woy Woy Landfill Site,au_nem_nsw_1288,WOYWOY1,NSW1,operating,bioenergy_biogas,1,1,1.06,1.06,1.06,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Wilga Park B,au_nem_nsw_1289,WILGB01,NSW1,operating,gas_wcmg,3,2,6.00,12.00,12.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Wilga Park B,au_nem_nsw_1289,WILGB01,NSW1,operating,gas_wcmg,1,2,6.00,12.00,12.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Wilga Park B,au_nem_nsw_1289,WILGB01,NSW1,operating,gas_wcmg,3,2,6.00,12.00,12.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Kincumber Landfill Site,au_nem_nsw_1290,KINCUM1,NSW1,operating,bioenergy_biogas,1,1,1.06,1.06,1.06,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Boco Rock,au_nem_nsw_1291,BOCORWF1,NSW1,operating,wind,1,58,98.60,113.18,113.18,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Boco Rock,au_nem_nsw_1291,BOCORWF1,NSW1,operating,wind,59,9,14.58,113.18,113.18,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
@@ -454,8 +433,7 @@ Water Bolivar Waste Wwt,au_nem_sa_1294,BOLIVAR1,SA1,operating,pumps,1,3,7.20,7.2
 Bald Hills,au_nem_vic_1295,BALDHWF1,VIC1,operating,wind,1,52,106.60,106.60,106.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Chepstowe,au_nem_vic_1296,CHPSTWF1,VIC1,operating,wind,1,3,6.15,6.15,6.15,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Tahmoor Waste Coal Mine,au_nem_nsw_1297,TAHMOOR1,NSW1,operating,gas_wcmg,1,7,7.04,7.04,7.04,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Broken Hill,au_nem_nsw_1298,BROKENH1,NSW1,operating,solar_utility,1,80,53.76,103.76,103.76,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Broken Hill,au_nem_nsw_1298,GB01,NSW1,operating,distillate,1,2,50.00,103.76,103.76,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Broken Hill,au_nem_nsw_1298,BROKENH1,NSW1,operating,solar_utility,1,80,53.76,53.76,53.76,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Moree,au_nem_nsw_1299,MOREESF1,NSW1,operating,solar_utility,1,56,57.06,57.06,57.06,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Coonoer Bridge,au_nem_vic_1300,CBWF1,VIC1,operating,wind,1,1,19.80,19.80,19.80,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Oaky Creek 2,au_nem_qld_1301,OAKY2,QLD1,operating,gas_wcmg,1,5,15.00,15.00,15.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -518,8 +496,8 @@ Collinsville,au_nem_qld_1354,CSPVPS1,QLD1,operating,solar_utility,1,17,41.99,41.
 Crookwell 2,au_nem_nsw_1355,CROOKWF2,NSW1,operating,wind,1,28,96.04,96.04,96.04,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Mount Emerald,au_nem_qld_1356,MEWF1,QLD1,operating,wind,1,37,127.65,180.45,180.45,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Mount Emerald,au_nem_qld_1356,MEWF1,QLD1,operating,wind,38,16,52.80,180.45,180.45,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-White Rock,au_nem_nsw_1357,WRWF1,NSW1,operating,wind,1,70,175.00,197.00,197.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 White Rock,au_nem_nsw_1357,WRSF1,NSW1,operating,solar_utility,71,8,22.00,197.00,197.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+White Rock,au_nem_nsw_1357,WRWF1,NSW1,operating,wind,1,70,175.00,197.00,197.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Coleambally,au_nem_nsw_1358,COLEASF1,NSW1,operating,solar_utility,1,90,149.94,149.94,180.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Baking Board,au_nem_qld_1359,BAKING1,QLD1,operating,solar_utility,1,7,17.50,17.50,17.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Emerald,au_nem_qld_1360,EMERASF1,QLD1,operating,solar_utility,1,32,88.00,88.00,88.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -557,14 +535,14 @@ Limondale 2,au_nem_nsw_1389,LIMOSF21,NSW1,operating,solar_utility,1,14,28.98,28.
 Tableland Mill 2,au_nem_qld_1391,TABMILL2,QLD1,operating,bioenergy_biomass,1,1,17.00,17.00,24.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Bulgana Green,au_nem_vic_1392,BULGANA1,VIC1,operating,wind,1,50,100.00,100.00,182.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Goonumbla,au_nem_nsw_1393,GOONSF1,NSW1,operating,solar_utility,1,31,69.75,69.75,85.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Lake Bonney,au_nem_sa_1394,LKBONNY1,SA1,operating,wind,1,46,80.50,144.46,144.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Lake Bonney,au_nem_sa_1394,LBBG1,SA1,operating,battery_discharging,1,48,24.96,144.46,144.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Lake Bonney,au_nem_sa_1394,LKBONNY3,SA1,operating,wind,1,13,39.00,144.46,144.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Lake Bonney,au_nem_sa_1394,LKBONNY1,SA1,operating,wind,1,46,80.50,144.46,144.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Barker Inlet,au_nem_sa_1395,BARKIPS1,SA1,operating,gas_recip,1,12,210.00,210.00,211.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Finely,au_nem_nsw_1396,FINLYSF1,NSW1,operating,solar_utility,99,1,1.34,1.34,162.36,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Dundonnell,au_nem_vic_1397,DUNDWF1,VIC1,operating,wind,1,40,168.00,335.78,335.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Dundonnell,au_nem_vic_1397,DUNDWF3,VIC1,operating,wind,52,29,121.80,335.78,335.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Dundonnell,au_nem_vic_1397,DUNDWF2,VIC1,operating,wind,41,11,45.98,335.78,335.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Dundonnell,au_nem_vic_1397,DUNDWF3,VIC1,operating,wind,52,29,121.80,335.78,335.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Dundonnell,au_nem_vic_1397,DUNDWF1,VIC1,operating,wind,1,40,168.00,335.78,335.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Limondale 1,au_nem_nsw_1399,LIMOSF11,NSW1,operating,solar_utility,1,100,220.00,220.00,275.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Cattle Hill,au_nem_tas_1401,CTHLWF1,TAS1,operating,wind,1,48,144.00,144.00,148.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Elaine,au_nem_vic_1402,ELAINWF1,VIC1,operating,wind,1,22,83.60,83.60,83.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
@@ -573,20 +551,20 @@ Bomen,au_nem_nsw_1404,BOMENSF1,NSW1,operating,solar_utility,1,44,100.01,100.01,1
 Nevertire,au_nem_nsw_1405,NEVERSF1,NSW1,operating,solar_utility,1,48,104.64,104.64,132.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Granville Harbour,au_nem_tas_1406,GRANWF1,TAS1,operating,wind,1,31,110.05,110.05,110.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Cherry Tree,au_nem_vic_1407,CHYTWF1,VIC1,operating,wind,1,16,56.99,56.99,57.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Portland,au_nem_1408,0NPOR_74,VIC1,operating,wind,74,1,2.00,93.78,239.78,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Portland,au_nem_1408,0NPSM_1,QLD1,operating,bioenergy_biomass,1,1,30.86,93.78,239.78,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Portland,au_nem_1408,0NPSM_2,QLD1,operating,bioenergy_biomass,2,1,36.92,93.78,239.78,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Portland,au_nem_1408,0NVIMI_3,QLD1,operating,bioenergy_biomass,3,1,5.00,93.78,239.78,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Portland,au_nem_1408,0NVIMI_4,QLD1,operating,bioenergy_biomass,4,1,19.00,93.78,239.78,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Portland,au_nem_1408,0NPOR_74,VIC1,operating,wind,74,1,2.00,2.00,148.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Wivenhoe,au_nem_1409,W/HOE#1,QLD1,operating,pumps,1,1,285.00,570.00,570.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Wivenhoe,au_nem_1409,W/HOE#2,QLD1,operating,pumps,2,1,285.00,570.00,570.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Callide,au_nem_1410,CALL_B_2,QLD1,operating,coal_black,2,1,350.00,760.00,760.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Callide,au_nem_1410,CALL_B_1,QLD1,operating,coal_black,1,1,350.00,760.00,760.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
-Callide,au_nem_1410,0NCPS_2,QLD1,operating,coal_black,2,1,30.00,760.00,760.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Callide,au_nem_1410,CALL_A_4,QLD1,operating,coal_black,2,1,30.00,760.00,760.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Callide,au_nem_1410,0NCPS_2,QLD1,operating,coal_black,2,1,30.00,760.00,760.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Berwick,au_nem_1411,0NBPP_1,VIC1,operating,bioenergy_biogas,1,5,7.20,7.20,7.20,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Ferguson North,au_nem_1412,FNWF1,VIC1,operating,wind,1,1,4.00,4.00,4.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Melbourne Regional Landfill,au_nem_1413,0NMRL_1,VIC1,operating,bioenergy_biogas,1,8,8.88,8.88,8.88,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
-Snuggery,au_nem_1416,SNUG1,SA1,operating,distillate,1,3,63.00,84.00,84.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+Melbourne Regional Landfill,au_nem_1413,0NMRL_1,VIC1,operating,bioenergy_biogas,1,8,8.88,100.66,100.66,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Melbourne Regional Landfill,au_nem_1413,0NPSM_1,QLD1,operating,bioenergy_biomass,1,1,30.86,100.66,100.66,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Melbourne Regional Landfill,au_nem_1413,0NPSM_2,QLD1,operating,bioenergy_biomass,2,1,36.92,100.66,100.66,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Melbourne Regional Landfill,au_nem_1413,0NVIMI_3,QLD1,operating,bioenergy_biomass,3,1,5.00,100.66,100.66,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Melbourne Regional Landfill,au_nem_1413,0NVIMI_4,QLD1,operating,bioenergy_biomass,4,1,19.00,100.66,100.66,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
 Snuggery,au_nem_1416,0NSPS_1,SA1,operating,,1,1,21.00,84.00,84.00,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+Snuggery,au_nem_1416,SNUG1,SA1,operating,distillate,1,3,63.00,84.00,84.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
 Midlands,au_nem_1417,0NMPS_1,TAS1,operating,hydro,1,1,6.08,6.08,6.08,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
