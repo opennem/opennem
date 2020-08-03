@@ -298,7 +298,8 @@ class Facility(Base, BaseModel):
     # @TODO remove when ref count is 0
     capacity_registered = Column(Numeric, nullable=True)
 
-    registered = Column(DateTime)
+    registered = Column(DateTime, nullable=True)
+    deregistered = Column(DateTime, nullable=True)
 
     unit_id = Column(Integer, nullable=True)
     unit_number = Column(Integer, nullable=True)
