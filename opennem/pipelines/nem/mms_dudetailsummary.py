@@ -71,6 +71,7 @@ class AEMOMMSDudetailSummaryGrouper(object):
             if not key in grouped_records:
                 grouped_records[key] = {}
                 grouped_records[key]["id"] = k[0]
+                # grouped_records[key]["participant"] = v[0]["PARTICIPANTID"]
                 grouped_records[key]["details"] = {}
                 grouped_records[key]["facilities"] = []
 
@@ -107,8 +108,9 @@ class AEMOMMSDudetailSummaryGrouper(object):
 
                 grouped_records[rec]["facilities"].append(grouped_rec)
 
-        grouped_records = list(
-            map(lambda d: d.pop("facilities"), grouped_records.values())
-        )
+        grouped_records = [
+            {"id": i, "facilities": v["facilities"]}
+            for i, v in grouped_records.items()
+        ]
 
-        yield grouped_records
+        return grouped_records
