@@ -322,11 +322,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 if duid and not duid_unique and not facility:
                     facility = (
                         s.query(Facility)
-                        .filter_on(
-                            network_code=duid,
-                            unit_no=None,
-                            status_id="operating",
-                        )
+                        .filter(Facility.network_code == duid)
+                        .filter(Facility.unit_no == None)
+                        .filter(Facility.status_id == "operating")
                         .first()
                     )
 
