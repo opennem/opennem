@@ -37,7 +37,10 @@ def get_stations() -> List[Station]:
         .filter(Facility.fueltech != None)
         .filter(Facility.status != None)
         .order_by(
-            Station.network_region,
+            # Station.network_region,
+            # Station.id,
+            Facility.network_region,
+            Station.name,
             Station.id,
             Facility.unit_number,
             Facility.code,
