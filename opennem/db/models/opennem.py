@@ -151,7 +151,9 @@ class Station(Base, BaseModel):
     )
 
     network_id = Column(
-        Text, ForeignKey("network.code", name="fk_station_network_code"),
+        Text,
+        ForeignKey("network.code", name="fk_station_network_code"),
+        nullable=False,
     )
     network = relationship("Network")
 
