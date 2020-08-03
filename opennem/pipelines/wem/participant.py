@@ -6,6 +6,11 @@ from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
 
+from opennem.core.normalizers import (
+    normalize_duid,
+    normalize_string,
+    participant_name_filter,
+)
 from opennem.db.models.opennem import Participant
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
@@ -47,6 +52,7 @@ class WemStoreParticipant(DatabaseStoreBase):
                     city=row["City"],
                     state=row["State"],
                     postcode=row["Postcode"],
+                    created_by="pipeline.wem.participant",
                 )
             else:
                 participant.name = row["Participant Name"]
@@ -83,8 +89,13 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
                 continue
 
             participant = None
+            created_record = False
 
-            participant_code = row["PARTICIPANT_CODE"]
+            participant_code = normalize_string(row["PARTICIPANT_CODE"])
+            participant_name = participant_name_filter(
+                row["PARTICIPANT_DISPLAY_NAME"]
+            )
+
             participant = (
                 s.query(Participant)
                 .filter(Participant.code == participant_code)
@@ -92,13 +103,19 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
             )
 
             if not participant:
-                print("Participant not found: {}".format(participant_code))
+                logger.debug(
+                    "Participant not found: {}".format(participant_code)
+                )
+
                 participant = Participant(
                     code=participant_code,
-                    name=row["PARTICIPANT_DISPLAY_NAME"],
+                    name=participant_name,
+                    created_by="pipeline.wem.live.participant",
                 )
-            else:
-                participant.name = row["PARTICIPANT_DISPLAY_NAME"]
+                created_record = True
+            elif participant.name != participant_name:
+                participant.name = participant_name
+                participant.updated_by = "pipeline.wem.live.participant"
 
             try:
                 s.add(participant)
