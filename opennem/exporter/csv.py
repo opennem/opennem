@@ -1,9 +1,10 @@
 import csv
+from io import StringIO
 
 from opennem.api.stations import get_stations
 
 
-def stations_csv_serialize():
+def stations_csv_records():
     stations = get_stations()
 
     records = []
@@ -24,6 +25,23 @@ def stations_csv_serialize():
             records.append(rec)
 
     return records
+
+
+def stations_csv_serialize(csv_stream=None):
+
+    if not csv_stream:
+        csv_stream = StringIO()
+
+    csv_records = stations_csv_records()
+
+    csv_fieldnames = csv_records[0].keys()
+
+    with open(csv_stream) as fh:
+        csvwriter = csv.DictWriter(fh, fieldnames=csv_fieldnames)
+        csvwriter.writeheader()
+        csvwriter.writerows(csv_records)
+
+    return csv_stream
 
 
 if __name__ == "__main__":
