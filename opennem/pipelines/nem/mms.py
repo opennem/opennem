@@ -152,7 +152,7 @@ class NemStoreMMSStationStatus(DatabaseStoreBase):
                 logger.error("Could not find station {}".format(duid))
                 continue
 
-            station.status = status
+            # @TODO station statuses -> facilities should be set to retired if active
 
             try:
                 s.add(station)
@@ -309,6 +309,9 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
 
         records_updated = 0
         records_created = 0
+
+        # Use this to get the most recent record
+        last_record_duid = None
 
         for record in item:
             created = False
