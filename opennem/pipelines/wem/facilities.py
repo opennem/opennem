@@ -109,6 +109,7 @@ class WemStoreFacility(DatabaseStoreBase):
             capacity_unit = clean_capacity(row["Maximum Capacity (MW)"])
             registered_date = row["Registered From"]
 
+            facility.status_id = "operating"
             facility.capacity_registered = capacity_registered
             facility.unit_id = 1
             facility.unit_number = 1
@@ -230,6 +231,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                 facility = Facility(
                     code=facility_code,
                     network_code=facility_code,
+                    status_id="operating",
                     network_region="WEM",
                     created_by="pipeline.wem.live.facilities",
                 )
