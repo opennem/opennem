@@ -83,6 +83,7 @@ class WemStoreFacility(DatabaseStoreBase):
             if not station:
                 station = Station(
                     code=station_code,
+                    network_id="WEM",
                     network_code=station_code,
                     participant=participant,
                     network_region="WEM",
@@ -203,6 +204,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
             if not station:
                 station = Station(
                     code=station_code,
+                    network_id="WEM",
                     network_code=station_code,
                     participant=participant,
                     network_region="WEM",
