@@ -287,7 +287,14 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     facility_record["fuel_source_descriptor"],
                     facility_record["tech_primary"],
                     facility_record["tech_primary_descriptor"],
+                    facility_record["dispatch_type"],
                 )
+
+                # Skip loads that arenot batteries for now
+                if facility_record[
+                    "dispatch_type"
+                ] == "load" and fueltech not in ["battery_discharging"]:
+                    continue
 
                 # check if we have it by ocode first
                 facility = (
