@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+from typing import Optional
 
 from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
@@ -310,67 +311,88 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
         records_updated = 0
         records_created = 0
 
-        # Use this to get the most recent record
-        last_record_duid = None
-
         for record in item:
             created = False
 
-            end_date = record["END_DATE"].strip()
-            dispatch_type = record["DISPATCHTYPE"].strip()
+            station_code = normalize_duid(record["id"])
+            participant_code = normalize_duid(
+                record["facilities"][0]["PARTICIPANTID"]
+            )
 
-            if dispatch_type != "GENERATOR":
-                continue
-
-            # @NOTE silly AEMO hack where they set end date to 2999 for currents
-            if not end_date.startswith("2999"):
-                continue
-
-            duid = normalize_duid(record["DUID"])
-            network_region = normalize_string(record["REGIONID"])
-            station_code = normalize_duid(record["STATIONID"])
-            participant_code = normalize_duid(record["PARTICIPANTID"])
-
+            # Step 1. Find participant by code or create
             participant = (
                 s.query(ParticipantModel)
                 .filter(ParticipantModel.code == participant_code)
                 .one_or_none()
             )
 
+            if not participant:
+                participant = ParticipantModel(
+                    code=participant_code,
+                    network_code=participant_code,
+                    created_by="au.nem.mms.dudetail_summary",
+                )
+                logger.debug("Created participant {}".format(participant_code))
+            else:
+                participant.updated_by = "au.nem.mms.dudetail_summary"
+
+            # Step 2. Find station or create
             station = (
                 s.query(Station)
                 .filter(Station.network_code == station_code)
                 .one_or_none()
             )
 
-            facility = (
-                s.query(Facility)
-                .filter(Facility.network_code == duid)
-                .one_or_none()
-            )
-
             if not station:
                 station = Station(
+                    code=station_code,
                     network_code=station_code,
                     network_id="NEM",
-                    status_id="retired",
                     created_by="au.nem.mms.dudetail_summary",
                 )
+                logger.debug("Created station {}".format(station_code))
+            else:
+                station.updated_by = "au.nem.mms.dudetail_summary"
 
-            if not facility:
-                facility = Facility(
-                    network_code=duid, created_by="au.nem.mms.dudetail_summary"
+            station.participant = participant
+
+            # Step 3. now create the facilities and associate
+            for facility_record in record["facilities"]:
+                duid = normalize_duid(facility_record["DUID"])
+                network_region = normalize_string(facility_record["REGIONID"])
+                date_start = facility_record["date_start"]
+                date_end = facility_record["date_end"]
+                facility_state = "retired"
+
+                if date_end == None:
+                    facility_state = "operating"
+
+                facility = (
+                    s.query(Facility)
+                    .filter(Facility.network_code == duid)
+                    .one_or_none()
                 )
 
-                records_created += 1
-                created = True
-            else:
-                facility.updated_by = "au.nem.mms.dudetail_summary"
-                records_updated += 1
+                if not facility:
+                    facility = Facility(
+                        code=duid,
+                        network_code=duid,
+                        created_by="au.nem.mms.dudetail_summary",
+                    )
 
-            facility.network_region = network_region
-            facility.station = station
-            facility.participant = participant
+                    records_created += 1
+                    created = True
+                else:
+                    facility.updated_by = "au.nem.mms.dudetail_summary"
+                    records_updated += 1
+
+                facility.network_region = network_region
+                facility.deregistered = date_end
+                facility.registered = date_start
+                facility.status_id = facility_state
+
+                # Associations
+                facility.station = station
 
             try:
                 s.add(facility)
