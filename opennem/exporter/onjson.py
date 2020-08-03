@@ -37,6 +37,8 @@ def stations_json_serialize():
 
     json_records = stations_json_records()
 
-    json_serialized = json.dumps(json_records, cls=OpenNEMJSONEncoder)
+    json_serialized = json.dumps(
+        json_records, cls=OpenNEMJSONEncoder, indent=4
+    )
 
     return json_serialized
