@@ -10,17 +10,18 @@ def stations_csv_serialize():
 
     for station in stations:
         for facility in station.facilities:
-            records.append(
-                [
-                    station.oid,
-                    station.ocode,
-                    station.name,
-                    facility.network_code,
-                    facility.network_region,
-                    facility.status_label,
-                    facility.fueltech_label,
-                ]
-            )
+            rec = {
+                "oid": station.oid,
+                "ocode": station.ocode,
+                "name": station.name,
+                "network": facility.network_code,
+                "region": facility.network_region,
+                "status": facility.status_label,
+                "fueltech": facility.fueltech_label,
+                "added_by": facility.created_by,
+                "updated_by": facility.created_by,
+            }
+            records.append(rec)
 
     return records
 
