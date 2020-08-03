@@ -12,13 +12,18 @@ def stations_csv_records():
     for station in stations:
         for facility in station.facilities:
             rec = {
-                "oid": station.oid,
-                "ocode": station.ocode,
                 "name": station.name,
+                # "oid": station.oid,
+                "ocode": station.ocode,
+                "code": station.code,
                 "network": facility.network_code,
                 "region": facility.network_region,
-                "status": facility.status_label,
-                "fueltech": facility.fueltech_label,
+                "status": facility.status_id,
+                "fueltech": facility.fueltech_id,
+                "unit_id": facility.unit_id,
+                "unit_num": facility.unit_number,
+                "unit_cap": facility.capacity_aggregate,
+                "station_cap": station.capacity_aggregate,
                 "added_by": facility.created_by,
                 "updated_by": facility.created_by,
             }
