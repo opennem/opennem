@@ -40,6 +40,7 @@ STRIP_WORDS = [
     "bio reactor",
     "biomass",
     "ltd",
+    "agl",
     "pty",
     "units",
     "unit",
