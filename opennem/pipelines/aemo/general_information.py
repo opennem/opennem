@@ -14,6 +14,7 @@ from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,
     name_normalizer,
+    normalize_aemo_region,
     normalize_duid,
     participant_name_filter,
     station_name_cleaner,
@@ -135,7 +136,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
         facility_name_clean = station_name_cleaner(item["Name"])
         duid = normalize_duid(item["DUID"])
         facility_status = lookup_facility_status(item["UnitStatus"])
-        facility_region = item["Region"]
+        facility_region = normalize_aemo_region(item["Region"])
         facility_fueltech = (
             lookup_fueltech(item["FuelType"], techtype=item["TechType"])
             if ("FuelType" in item and item["FuelType"])

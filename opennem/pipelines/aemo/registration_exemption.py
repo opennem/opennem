@@ -14,6 +14,7 @@ from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,
     name_normalizer,
+    normalize_aemo_region,
     normalize_duid,
     participant_name_filter,
     station_name_cleaner,
@@ -190,7 +191,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 generator_data["station_name"]
             )
             participant_name = name_normalizer(generator_data["participant"])
-            facility_region = name_normalizer(generator_data["region"])
+            facility_region = normalize_aemo_region(generator_data["region"])
             duid = normalize_duid(generator_data["duid"])
             reg_cap = clean_capacity(generator_data["reg_cap"])
             unit_no = (
@@ -229,9 +230,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             if not facility_station:
                 facility_station = Station(
-                    name=station_name,
-                    name_clean=station_name_clean,
-                    nem_region=facility_region,
+                    name=station_name_clean,
+                    network_name=station_name,
+                    network_region=facility_region,
                     created_by="pipeline.nemstorerel",
                 )
 
@@ -245,7 +246,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     name=station_name,
                     code=duid,
                     name_clean=station_name_clean,
-                    region=facility_region,
+                    network_region=facility_region,
                     created_by="pipeline.nemstorerel",
                 )
                 facility.station = facility_station
@@ -417,7 +418,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 participant_name = name_normalizer(
                     facility_record["participant"]
                 )
-                facility_region = name_normalizer(facility_record["region"])
+                facility_region = normalize_aemo_region(
+                    facility_record["region"]
+                )
                 duid = normalize_duid(facility_record["duid"])
                 reg_cap = clean_capacity(facility_record["reg_cap"])
                 unit = parse_unit_duid(facility_record["unit_no"], duid)
