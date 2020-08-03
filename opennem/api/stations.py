@@ -36,7 +36,12 @@ def get_stations() -> List[Station]:
         # , Network, FacilityStatus)
         .filter(Facility.fueltech != None)
         .filter(Facility.status != None)
-        .order_by(Station.network_region, Station.id, Facility.code)
+        .order_by(
+            Station.network_region,
+            Station.id,
+            Facility.unit_number,
+            Facility.code,
+        )
         .all()
     )
 
