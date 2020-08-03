@@ -365,6 +365,7 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
                 facility.updated_by = "au.nem.mms.dudetail_summary"
                 records_updated += 1
 
+            facility.network_region = network_region
             facility.station = station
             facility.participant = participant
 
