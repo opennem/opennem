@@ -38,6 +38,7 @@ STRIP_WORDS = [
     "solar system",
     "power station",
     "bio reactor",
+    "biomass",
     "ltd",
     "pty",
     "units",
