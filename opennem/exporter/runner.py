@@ -13,7 +13,7 @@ def stations_geojson_to_s3():
 def stations_geojson_to_local():
     stations_geojson = stations_geojson_serialize()
 
-    write_to_local("stations.json", stations_geojson)
+    write_to_local("stations.goejson", stations_geojson)
 
 
 def stations_csv_to_local():
