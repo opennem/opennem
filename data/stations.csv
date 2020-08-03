@@ -1,0 +1,523 @@
+oid,ocode,name,network,region,status,fueltech,added_by,updated_by
+A88,au_nem_qld_1001,Swanbank E,SWAN_E,QLD1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A8R,au_nem_nsw_1002,Mt Piper,MPNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A8R,au_nem_nsw_1002,Mt Piper,MP1,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A8R,au_nem_nsw_1002,Mt Piper,MP2,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A89,au_nem_nsw_1004,Vales Point B,VPNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A89,au_nem_nsw_1004,Vales Point B,VP5,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A89,au_nem_nsw_1004,Vales Point B,VP6,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A8X,au_nem_vic_1006,Jeeralang A,JLA03,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A8X,au_nem_vic_1006,Jeeralang A,JLA04,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A8X,au_nem_vic_1006,Jeeralang A,JLA01,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A8X,au_nem_vic_1006,Jeeralang A,JLA02,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A8Y,au_nem_vic_1007,Jeeralang B,JLB02,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A8Y,au_nem_vic_1007,Jeeralang B,JLB01,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A8Y,au_nem_vic_1007,Jeeralang B,JLB03,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARZ,au_nem_vic_1008,Newport,NPS,VIC1,Operating,Gas (Steam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARA,au_nem_vic_1009,Loy Yang B,LOYYB1,VIC1,Operating,Coal (Brown),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARA,au_nem_vic_1009,Loy Yang B,LOYYB2,VIC1,Operating,Coal (Brown),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR3,au_nem_vic_1013,Loy Yang A,LYA2,VIC1,Operating,Coal (Brown),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR3,au_nem_vic_1013,Loy Yang A,LYNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR3,au_nem_vic_1013,Loy Yang A,LYA1,VIC1,Operating,Coal (Brown),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR3,au_nem_vic_1013,Loy Yang A,LYA3,VIC1,Operating,Coal (Brown),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR3,au_nem_vic_1013,Loy Yang A,LYA4,VIC1,Operating,Coal (Brown),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARE,au_nem_nsw_1014,Liddell,LD03,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARE,au_nem_nsw_1014,Liddell,LD04,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARE,au_nem_nsw_1014,Liddell,LIDDNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARE,au_nem_nsw_1014,Liddell,LD01,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARE,au_nem_nsw_1014,Liddell,LD02,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARF,au_nem_nsw_1015,Bayswater,BW01,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARF,au_nem_nsw_1015,Bayswater,BW03,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARF,au_nem_nsw_1015,Bayswater,BW02,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARF,au_nem_nsw_1015,Bayswater,BW04,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR4,au_nem_sa_1016,Dry Creek Station,DRYCGT3,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR4,au_nem_sa_1016,Dry Creek Station,DRYCNL,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR4,au_nem_sa_1016,Dry Creek Station,DRYCGT1,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR4,au_nem_sa_1016,Dry Creek Station,DRYCGT2,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARG,au_nem_sa_1017,Mintaro Station,MINTNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARG,au_nem_sa_1017,Mintaro Station,MINTARO,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ART,au_nem_sa_1020,Torrens Island,TORRA2,SA1,Operating,Gas (Steam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ART,au_nem_sa_1020,Torrens Island,TORRA4,SA1,Operating,Gas (Steam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ART,au_nem_sa_1020,Torrens Island,TORRB3,SA1,Operating,Gas (Steam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ART,au_nem_sa_1020,Torrens Island,TORNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ART,au_nem_sa_1020,Torrens Island,TORRA3,SA1,Operating,Gas (Steam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ART,au_nem_sa_1020,Torrens Island,TORRB1,SA1,Operating,Gas (Steam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ART,au_nem_sa_1020,Torrens Island,TORRA1,SA1,Operating,Gas (Steam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ART,au_nem_sa_1020,Torrens Island,TORRB2,SA1,Operating,Gas (Steam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ART,au_nem_sa_1020,Torrens Island,TORRB4,SA1,Operating,Gas (Steam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARK,au_nem_nsw_1021,Eraring,ERNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARK,au_nem_nsw_1021,Eraring,ER04,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARK,au_nem_nsw_1021,Eraring,ER03,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARK,au_nem_nsw_1021,Eraring,ER01,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARK,au_nem_nsw_1021,Eraring,ER02,NSW1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARK,au_nem_nsw_1021,Eraring,ERGT01,NSW1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR6,au_nem_nsw_1022,Hume,HUMENSW,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR6,au_nem_nsw_1022,Hume,HUMEV,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR7,au_nem_nsw_1023,Brown Mountain,BROWNMT,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR7,au_nem_nsw_1023,Brown Mountain,BROWNMT,NSW1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AR7,au_nem_nsw_1023,Brown Mountain,BROWNMT,NSW1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AR7,au_nem_nsw_1023,Brown Mountain,BROWNMT,NSW1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+ARP,au_nem_nsw_1024,Keepit,KEEPIT,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR8,au_nem_nsw_1025,Burrinjuck,BURRIN,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AR8,au_nem_nsw_1025,Burrinjuck,BURRIN,NSW1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AR9,au_nem_nsw_1028,Hunter Valley,HVGTS,NSW1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARY,au_nem_nsw_1031,Shoalhaven Bendeela Kangaroo Valley Pumps,SHPUMP,NSW1,Operating,,au.nem.mms.dudetail,au.nem.mms.dudetail
+ARY,au_nem_nsw_1031,Shoalhaven Bendeela Kangaroo Valley Pumps,SHGEN,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ARY,au_nem_nsw_1031,Shoalhaven Bendeela Kangaroo Valley Pumps,SHGEN,NSW1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+ARY,au_nem_nsw_1031,Shoalhaven Bendeela Kangaroo Valley Pumps,SHPUMP,NSW1,Operating,,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+ASZ,au_nem_qld_1032,Gladstone,GLADNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASZ,au_nem_qld_1032,Gladstone,GSTONE3,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASZ,au_nem_qld_1032,Gladstone,GSTONE6,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASZ,au_nem_qld_1032,Gladstone,GSTONE1,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASZ,au_nem_qld_1032,Gladstone,GSTONE2,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASZ,au_nem_qld_1032,Gladstone,GSTONE4,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASZ,au_nem_qld_1032,Gladstone,GSTONE5,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASE,au_nem_vic_1038,Dartmouth,DARTM1,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASF,au_nem_vic_1039,Eildon,EILDON3,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASF,au_nem_vic_1039,Eildon,EILDON2,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASF,au_nem_vic_1039,Eildon,EILDON1,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASF,au_nem_vic_1039,Eildon,EILDON1,VIC1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+ASF,au_nem_vic_1039,Eildon,EILDON2,VIC1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AS4,au_nem_vic_1040,Bogong / Mackay,MCKAY1,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASG,au_nem_vic_1041,Clover,CLOVER,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASH,au_nem_vic_1042,West Kiewa,WKIEWA1,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASH,au_nem_vic_1042,West Kiewa,WKIEWA2,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS5,au_nem_vic_1043,Rubicon Mountain,RUBICON,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS5,au_nem_vic_1043,Rubicon Mountain,RUBICON,VIC1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AS5,au_nem_vic_1043,Rubicon Mountain,RUBICON,VIC1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AS5,au_nem_vic_1043,Rubicon Mountain,RUBICON,VIC1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AST,au_nem_qld_1044,Barron Gorge,BARRON2,QLD1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AST,au_nem_qld_1044,Barron Gorge,BARRON1,QLD1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASK,au_nem_qld_1045,Kareeya,KAREEYA3,QLD1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASK,au_nem_qld_1045,Kareeya,KAREEYA5,QLD1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASK,au_nem_qld_1045,Kareeya,KAREEYA1,QLD1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASK,au_nem_qld_1045,Kareeya,KAREEYA2,QLD1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASK,au_nem_qld_1045,Kareeya,KAREEYA4,QLD1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS6,au_nem_qld_1046,Mackay,MACKAYGT,QLD1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS7,au_nem_qld_1047,Stanwell,STANNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS7,au_nem_qld_1047,Stanwell,STAN3,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS7,au_nem_qld_1047,Stanwell,STAN1,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS7,au_nem_qld_1047,Stanwell,STAN2,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS7,au_nem_qld_1047,Stanwell,STAN4,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASP,au_nem_qld_1048,Tarong,TARONG#1,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASP,au_nem_qld_1048,Tarong,TARONG#3,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASP,au_nem_qld_1048,Tarong,TARNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASP,au_nem_qld_1048,Tarong,TARONG#4,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASP,au_nem_qld_1048,Tarong,TARONG#2,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASR,au_nem_vic_1050,Yallourn W,YWNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASR,au_nem_vic_1050,Yallourn W,YWPS4,VIC1,Operating,Coal (Brown),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASR,au_nem_vic_1050,Yallourn W,YWPS2,VIC1,Operating,Coal (Brown),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASR,au_nem_vic_1050,Yallourn W,YWPS1,VIC1,Operating,Coal (Brown),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASR,au_nem_vic_1050,Yallourn W,YWPS3,VIC1,Operating,Coal (Brown),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS9,au_nem_nsw_1052,Tumut 3,TUMT3NL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS9,au_nem_nsw_1052,Tumut 3,TUMT3NL2,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS9,au_nem_nsw_1052,Tumut 3,TUMT3NL3,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AS9,au_nem_nsw_1052,Tumut 3,TUMUT3,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASW,au_nem_nsw_1053,Tumut,UPPTUMUT,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASW,au_nem_nsw_1053,Tumut,UPPTUMUT,NSW1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+ASX,au_nem_nsw_1054,Guthega,GUTHNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+ASX,au_nem_nsw_1054,Guthega,GUTHEGA,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A9A,au_nem_nsw_1057,Blowering,BLOWERNG,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A92,au_nem_sa_1059,Port Lincoln,POR01,SA1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A92,au_nem_sa_1059,Port Lincoln,POR03,SA1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A93,au_nem_sa_1061,Osborne,OSBAG,SA1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A93,au_nem_sa_1061,Osborne,OSBAG,SA1,Operating,Gas (CCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+A9E,au_nem_qld_1062,Mt Stuart,MSTUART3,QLD1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A9E,au_nem_qld_1062,Mt Stuart,MSTUART1,QLD1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A9E,au_nem_qld_1062,Mt Stuart,MSTUART2,QLD1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A9F,au_nem_qld_1063,Townsville,YABULU2,QLD1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A9F,au_nem_qld_1063,Townsville,YABULU,QLD1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A94,au_nem_nsw_1064,Smithfield Energy Facility,SITHE01,NSW1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A94,au_nem_nsw_1064,Smithfield Energy Facility,SITHE04,NSW1,Operating,Gas (CCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+A9W,au_nem_qld_1077,Roma Station,ROMA_7,QLD1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+A9W,au_nem_qld_1077,Roma Station,ROMA_8,QLD1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWE,au_nem_qld_1086,Oakey,OAKEY2,QLD1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWE,au_nem_qld_1086,Oakey,OAKEY1,QLD1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AW4,au_nem_sa_1088,Ladbroke Grove,LADBROK2,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AW4,au_nem_sa_1088,Ladbroke Grove,LADBROK1,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWH,au_nem_qld_1090,Windy Hill,WHILL1,QLD1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWK,au_nem_qld_1093,Callide C Nett Off,CPP_4,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWK,au_nem_qld_1093,Callide C Nett Off,CPP_3,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AW7,au_nem_sa_1095,Pelican Point,PPCCGT,SA1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AW7,au_nem_sa_1095,Pelican Point,PPCCGT,SA1,Operating,Gas (CCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AWR,au_nem_vic_1098,Bairnsdale,BDL01,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWR,au_nem_vic_1098,Bairnsdale,BDL02,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWS,au_nem_qld_1099,Millmerran,MPP_1,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWS,au_nem_qld_1099,Millmerran,MPP_2,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AW9,au_nem_nsw_1100,Jacks Gully Landfill,JACKSGUL,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWW,au_nem_nsw_1101,Murray,MURAYNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWW,au_nem_nsw_1101,Murray,MURAYNL3,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWW,au_nem_nsw_1101,Murray,MURRAY,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWW,au_nem_nsw_1101,Murray,MURAYNL2,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWW,au_nem_nsw_1101,Murray,MURRAY,VIC1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AWX,au_nem_qld_1102,Rocky Point Cogeneration,RPCG,QLD1,Operating,Biomass,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AWY,au_nem_nsw_1103,Pindari,PINDARI,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AXZ,au_nem_sa_1104,Quarantine,QPS2,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AXZ,au_nem_sa_1104,Quarantine,QPS3,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AXZ,au_nem_sa_1104,Quarantine,QPS5,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AXZ,au_nem_sa_1104,Quarantine,QPS1,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AXZ,au_nem_sa_1104,Quarantine,QPS4,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AXA,au_nem_sa_1105,Lonsdale,LONSDALE,SA1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AX2,au_nem_sa_1107,Hallett,AGLHAL,SA1,Operating,Gas (OCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AXB,au_nem_vic_1108,Somerton,AGLSOM,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AXF,au_nem_nsw_1111,West Nowra Landfill Generation Facility,AGLNOW1,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AX4,au_nem_vic_1112,Toora,TOORAWF,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AXG,au_nem_vic_1113,Brooklyn U13,BROOKLYN,VIC1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AXG,au_nem_vic_1113,Brooklyn U13,BROOKLYN,VIC1,Operating,Biogas,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AXG,au_nem_vic_1113,Brooklyn U13,BROOKLYN,VIC1,Operating,Biogas,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AXH,au_nem_nsw_1114,Eastern Creek,EASTCRK,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AX6,au_nem_qld_1118,Tarong North,TNPS1,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AX7,au_nem_qld_1119,Wivenhoe Small,WIVENSH,QLD1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AY2,au_nem_nsw_1131,Teralba,TERALBA,NSW1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AY5,au_nem_nsw_1139,Lucas Heights 2,LUCASHGT,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AY5,au_nem_nsw_1139,Lucas Heights 2,LUCAS2S2,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AYT,au_nem_sa_1140,Angaston,ANGAST1,SA1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AYK,au_nem_sa_1141,Wattle Point,WPWF,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AY6,au_nem_sa_1142,Cathedral Rocks,CATHROCK,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AYP,au_nem_tas_1144,Woolnorth studland bay / Bluff point,WOOLNTH1,TAS1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AYP,au_nem_tas_1144,Woolnorth studland bay / Bluff point,WOOLNTH1,TAS1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+AY8,au_nem_tas_1145,Bastyan,BASTYAN,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AYR,au_nem_tas_1146,Butlers Gorge,BUTLERSG,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AYS,au_nem_tas_1147,Cethana,CETHANA,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AY9,au_nem_tas_1148,Cluny,CLUNY,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AYW,au_nem_tas_1149,Devils Gate,DEVILS_G,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AYX,au_nem_tas_1150,Fisher,FISHER,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AYY,au_nem_tas_1151,Gordon,GOVILLB1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+AYY,au_nem_tas_1151,Gordon,GORDON,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZZ,au_nem_tas_1152,John Butters,JBUTTERS,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZA,au_nem_tas_1153,Lemonthyme / Wilmot,LEM_WIL,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZA,au_nem_tas_1153,Lemonthyme / Wilmot,LEM_WIL,TAS1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CZC,au_nem_tas_1154,Catagunya / Liapootah / Wayatinah,L_W_CNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZC,au_nem_tas_1154,Catagunya / Liapootah / Wayatinah,WYA252B1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZC,au_nem_tas_1154,Catagunya / Liapootah / Wayatinah,WYB252B1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZC,au_nem_tas_1154,Catagunya / Liapootah / Wayatinah,LI_WY_CA,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZC,au_nem_tas_1154,Catagunya / Liapootah / Wayatinah,LI_WY_CA,TAS1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CZC,au_nem_tas_1154,Catagunya / Liapootah / Wayatinah,LI_WY_CA,TAS1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CZC,au_nem_tas_1154,Catagunya / Liapootah / Wayatinah,LI_WY_CA,TAS1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CZC,au_nem_tas_1154,Catagunya / Liapootah / Wayatinah,LI_WY_CA,TAS1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CZ2,au_nem_tas_1155,Lake Echo,LK_ECHO,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZB,au_nem_tas_1156,Mackintosh,MACKNTSH,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZ3,au_nem_tas_1157,Meadowbank,MEADOWBK,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZE,au_nem_tas_1158,Paloona,PALOONA,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZF,au_nem_tas_1159,Poatina,POAT220,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZF,au_nem_tas_1159,Poatina,PO110NL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZF,au_nem_tas_1159,Poatina,POAT110,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZG,au_nem_tas_1161,Reece,REECE1,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZG,au_nem_tas_1161,Reece,REECE2,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZH,au_nem_tas_1162,Repulse,REPULSE,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZ5,au_nem_tas_1163,Tarraleah,TARRALEA,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZT,au_nem_tas_1164,Trevallyn,TREVALLN,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZT,au_nem_tas_1164,Trevallyn,TREVALLN,TAS1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CZK,au_nem_tas_1165,Tribute,TRIBUTE,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZK,au_nem_tas_1165,Tribute,TRIBNL1,,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZ6,au_nem_tas_1166,Tungatinah,TUNGATIN,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZ8,au_nem_vic_1169,Yambuk,YAMBUKWF,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZR,au_nem_sa_1170,Mt Millar,MTMILLAR,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZS,au_nem_vic_1171,Wonthaggi,WONWP,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZW,au_nem_vic_1173,Banimboola,BAPS,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZW,au_nem_vic_1173,Banimboola,BAPS,VIC1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CZX,au_nem_sa_1174,Starfish Hill,STARHLWF,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CZY,au_nem_vic_1175,Challicum Hills,CHALLHWF,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAZ,au_nem_sa_1176,Canunda,CNUNDAWF,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAA,au_nem_vic_1177,Laverton North,LNGS1,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAA,au_nem_vic_1177,Laverton North,LNGS2,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAC,au_nem_tas_1178,Rowallan,ROWALLAN,TAS1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CA2,au_nem_qld_1179,Invicta Sugar Mill,INVICTA,QLD1,Operating,Biomass,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CA2,au_nem_qld_1179,Invicta Sugar Mill,INVICTA,QLD1,Operating,Biomass,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CA2,au_nem_qld_1179,Invicta Sugar Mill,INVICTA,QLD1,Operating,Biomass,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CA3,au_nem_qld_1181,Braemar,BRAEMAR3,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CA3,au_nem_qld_1181,Braemar,BRAEMAR1,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CA3,au_nem_qld_1181,Braemar,BRAEMAR2,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAE,au_nem_tas_1182,Bell Bay Three,BBTHREE2,TAS1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAE,au_nem_tas_1182,Bell Bay Three,BBTHREE3,TAS1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAE,au_nem_tas_1182,Bell Bay Three,TVPP104,TAS1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAE,au_nem_tas_1182,Bell Bay Three,BBTHREE1,TAS1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAF,au_nem_qld_1183,Oaky Creek,OAKYCREK,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAF,au_nem_qld_1183,Oaky Creek,OAKYCREK,QLD1,Operating,Gas (Coal Seam),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CA4,au_nem_vic_1184,Tatura Biomass Generator,TATURA01,VIC1,Operating,Biomass,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAG,au_nem_qld_1185,German Creek,GERMCRK,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAG,au_nem_qld_1185,German Creek,GERMCRK,QLD1,Operating,Gas (Coal Seam),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CAH,au_nem_nsw_1186,Grange Avenue Landfill,GRANGEAV,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CA5,au_nem_tas_1187,Remount,REMOUNT,TAS1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAT,au_nem_qld_1188,Daandine,DAANDINE,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CA6,au_nem_qld_1190,Isis Central Sugar Mill Cogeneration,ICSM,QLD1,Operating,Biomass,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CA7,au_nem_queensland_1191,Moranbah Generation Project,MORANBAH,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CA8,au_nem_qld_1193,Kogan Creek,KPP_1,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAR,au_nem_sa_1194,Lake Bonney Windfarm,LKBONNY2,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAS,au_nem_nsw_1195,Jindabyne Small,JNDABNE1,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CA9,au_nem_nsw_1196,Condong,CONDONG1,NSW1,Operating,Biomass,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAW,au_nem_sa_1197,Hallett 1,HALLWF1,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CAX,au_nem_vic_1198,Snowtown 1,SNOWTWN1,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCZ,au_nem_nsw_1200,Broadwater,BWTR1,NSW1,Operating,Biomass,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCZ,au_nem_nsw_1200,Broadwater,BWTR1,NSW1,Operating,Biomass,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CCA,au_nem_nsw_1201,Woodlawn Energy Generation Station,WDLNGN01,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCA,au_nem_nsw_1201,Woodlawn Energy Generation Station,WDLNGN01,NSW1,Operating,Biogas,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CCB,au_nem_nsw_1204,Tallawarra,TALWA1,NSW1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CC3,au_nem_nsw_1205,Uranquinty,URANQ13,NSW1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CC3,au_nem_nsw_1205,Uranquinty,URANQ14,NSW1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CC3,au_nem_nsw_1205,Uranquinty,URANQ11,NSW1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CC3,au_nem_nsw_1205,Uranquinty,URANQ12,NSW1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCE,au_nem_qld_1206,Moranbah North Waste Coal Mine,MBAHNTH,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCF,au_nem_vic_1207,South East Water Halllam,HLMSEW01,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CC4,au_nem_qld_1208,Veolia Ti Tree,TITREE,QLD1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCG,au_nem_vic_1209,Shepparton Facility,SHEP1,VIC1,Operating,Biomass,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCH,au_nem_vic_1210,Ballarat Base Hospital,BBASEHOS,VIC1,Operating,Gas (Reciprocating),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCH,au_nem_vic_1210,Ballarat Base Hospital,BBASEHOS,VIC1,Operating,Distillate,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CCT,au_nem_nsw_1212,Waubra,WAUBRAWF,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCK,au_nem_qld_1213,Braemar 2,BRAEMAR5,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCK,au_nem_qld_1213,Braemar 2,BRAEMAR7,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCK,au_nem_qld_1213,Braemar 2,BRAEMAR6,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CC6,au_nem_sa_1214,Clements Gap,CLEMGPWF,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CC7,au_nem_sa_1215,Hallett 2,HALLWF2,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCP,au_nem_nsw_1216,Colongra,CG1,NSW1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCP,au_nem_nsw_1216,Colongra,CG3,NSW1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCP,au_nem_nsw_1216,Colongra,CG4,NSW1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCP,au_nem_nsw_1216,Colongra,CG2,NSW1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CC8,au_nem_nsw_1217,Cullerin Range,CULLRGWF,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCR,au_nem_qld_1218,Condamine A,CPSA,QLD1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCR,au_nem_qld_1218,Condamine A,CPSA,QLD1,Operating,Gas (CCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CCS,au_nem_tas_1219,Tamar Valley Combined Cycle,TVCC201,TAS1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCS,au_nem_tas_1219,Tamar Valley Combined Cycle,TVCC201,TAS1,Operating,Gas (CCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CC9,au_nem_nsw_1220,Capital,CAPTL_WF,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCX,au_nem_qld_1222,Darling Downs,DDPS1,QLD1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CCX,au_nem_qld_1222,Darling Downs,DDPS1,QLD1,Operating,Gas (CCGT),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CCY,au_nem_vic_1223,Codrington,CODRNGTON,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2Z,au_nem_nsw_1224,Burrendong,BDONGHYD,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2A,au_nem_nsw_1225,Copeton,COPTNHYD,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2C,au_nem_nsw_1226,Glenbawn,GLBWNHYD,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C22,au_nem_vic_1227,Yarrawonga,YWNGAHYD,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2B,au_nem_nsw_1228,Eastern Creek 2,EASTCRK2,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C23,au_nem_nsw_1229,Wilga Park,WILGAPK,NSW1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C23,au_nem_nsw_1229,Wilga Park,WILGAPK,NSW1,Operating,Gas (Coal Seam),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C2E,au_nem_nsw_1230,Appin,APPIN,NSW1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C24,au_nem_vic_1232,Broadmeadows Landfill,BROADMDW,VIC1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2G,au_nem_vic_1233,Clayton Landfill,CLAYTON,VIC1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C25,au_nem_nsw_1235,Tower,TOWER,NSW1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2T,au_nem_nsw_1236,Glennies Creek,GLENNCRK,NSW1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2K,au_nem_nsw_1237,Wyangala A,WYANGALA,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C26,au_nem_nsw_1238,Wyangala B,WYANGALB,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C27,au_nem_nsw_1239,Jounama Small,JOUNAMA1,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2P,au_nem_nsw_1240,Western Suburbs League Club Campbelltown,WESTCBT1,NSW1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2R,au_nem_nsw_1242,West Illawarra Leagues Club,WESTILL1,NSW1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2R,au_nem_nsw_1242,West Illawarra Leagues Club,WESTILL1,NSW1,Operating,Distillate,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C2S,au_nem_qld_1243,Yarwun,YARWUN_1,QLD1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2W,au_nem_sa_1245,North Brown Hill,NBHWF1,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2Y,au_nem_tas_1247,Waterloo,WATERLWF,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C2Y,au_nem_tas_1247,Waterloo,WATERLWF,SA1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CBZ,au_nem_nsw_1248,Nine Network Willoughby,NINEWIL1,NSW1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBC,au_nem_sa_1250,Tataria,TATIARA1,SA1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CB2,au_nem_sa_1251,Pt Stanvac,PTSTAN1,SA1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBB,au_nem_vic_1252,Valley Peaking Facility,VPGS4,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBB,au_nem_vic_1252,Valley Peaking Facility,VPGS6,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBB,au_nem_vic_1252,Valley Peaking Facility,VPGS2,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBB,au_nem_vic_1252,Valley Peaking Facility,VPGS5,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBB,au_nem_vic_1252,Valley Peaking Facility,VPGS1,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBB,au_nem_vic_1252,Valley Peaking Facility,VPGS3,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CB3,au_nem_nsw_1253,Gunning,GUNNING1,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBE,au_nem_nsw_1254,Woodlawn,WOODLWN1,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBF,au_nem_vic_1255,Hepburn Community,HEPWIND1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CB4,au_nem_sa_1256,The Bluff,BLUFF1,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBG,au_nem_vic_1257,Mortlake,MORTLK12,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBG,au_nem_vic_1257,Mortlake,MORTLK11,VIC1,Operating,Gas (OCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBH,au_nem_vic_1258,Oaklands Hill,OAKLAND1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBT,au_nem_vic_1260,Hallam Road,HALAMRD1,VIC1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CB6,au_nem_qld_1262,Browns Plains Landfill,BPLANDF1,QLD1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CB7,au_nem_vic_1263,Macarthur,MACARTH1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBP,au_nem_qld_1264,Racecourse Mill,RACOMIL1,QLD1,Operating,Biomass,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBP,au_nem_qld_1264,Racecourse Mill,RACOMIL1,QLD1,Operating,Biomass,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CBP,au_nem_qld_1264,Racecourse Mill,RACOMIL1,QLD1,Operating,Biomass,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CB8,au_nem_vic_1265,Mortons Lane,MLWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBR,au_nem_tas_1266,Musselroe,MUSSELR1,TAS1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBS,au_nem_nsw_1267,The Drop,THEDROP1,NSW1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CBX,au_nem_sa_1270,Wingfield 1 Landfill,WINGF1_1,SA1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3Z,au_nem_sa_1272,Wingfield 2 Landfill,WINGF2_1,SA1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3A,au_nem_vic_1273,Wollert,WOLLERT1,VIC1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3C,au_nem_vic_1274,Traralgon Network Support Station,TGNSS1,VIC1,Operating,Gas (Reciprocating),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C32,au_nem_vic_1275,Corio Landfill,CORIO1,VIC1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3B,au_nem_nsw_1276,Capital East,CESF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3B,au_nem_nsw_1276,Capital East,CESF1,NSW1,Operating,Solar (Utility),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C3B,au_nem_nsw_1276,Capital East,CESF1,NSW1,Operating,Solar (Utility),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C33,au_nem_sa_1277,Snowtown South,SNOWSTH1,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3E,au_nem_sa_1278,Snowtown North,SNOWNTH1,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3F,au_nem_vic_1279,Springvale Landfill,SVALE1,VIC1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C34,au_nem_vic_1280,Mt Mercer,MERCER01,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3G,au_nem_nsw_1281,Gullen Range,GULLRSF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3G,au_nem_nsw_1281,Gullen Range,GULLRWF1,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3G,au_nem_nsw_1281,Gullen Range,GULLRWF2,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3G,au_nem_nsw_1281,Gullen Range,GULLRWF1,NSW1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C3H,au_nem_vic_1282,Glenmaggie,GLENMAG1,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3T,au_nem_vic_1284,William Hovell,WILLHOV1,VIC1,Operating,Hyrdo,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C37,au_nem_act_1287,Royalla,ROYALLA1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3P,au_nem_nsw_1288,Woy Woy Landfill Site,WOYWOY1,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C38,au_nem_nsw_1289,Wilga Park B,WILGB01,NSW1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C38,au_nem_nsw_1289,Wilga Park B,WILGB01,NSW1,Operating,Gas (Coal Seam),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C3R,au_nem_nsw_1290,Kincumber Landfill Site,KINCUM1,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3S,au_nem_nsw_1291,Boco Rock,BOCORWF1,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3S,au_nem_nsw_1291,Boco Rock,BOCORWF1,NSW1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C39,au_nem_nsw_1292,Taralga,TARALGA1,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C39,au_nem_nsw_1292,Taralga,TARALGA1,NSW1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C39,au_nem_nsw_1292,Taralga,TARALGA1,NSW1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C3W,au_nem_nsw_1293,Nyngan,NYNGAN1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3X,au_nem_sa_1294,Water Bolivar Waste Wwt,BOLIVAR1,SA1,Operating,Pumps,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C3Y,au_nem_vic_1295,Bald Hills,BALDHWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CEZ,au_nem_vic_1296,Chepstowe,CHPSTWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CEA,au_nem_nsw_1297,Tahmoor Waste Coal Mine,TAHMOOR1,NSW1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CEC,au_nem_nsw_1298,Broken Hill,BROKENH1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CEC,au_nem_nsw_1298,Broken Hill,GB01,NSW1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CE2,au_nem_nsw_1299,Moree,MOREESF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CEB,au_nem_vic_1300,Coonoer Bridge,CBWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CE3,au_nem_qld_1301,Oaky Creek 2,OAKY2,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CEH,au_nem_sa_1306,Hornsdale,HDWF1,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CE5,au_nem_vic_1307,Ararat,ARWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CE5,au_nem_vic_1307,Ararat,ARWF1,VIC1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CE5,au_nem_vic_1307,Ararat,ARWF1,VIC1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CET,au_nem_act_1308,Mugga Lane,MLSP1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CEK,au_nem_nsw_1309,AGL Kemps Creek,AGLSITA1,NSW1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CE6,au_nem_qld_1310,Barcaldine,BARCSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CE6,au_nem_qld_1310,Barcaldine,BARCALDN,QLD1,Operating,Gas (CCGT),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CE7,au_nem_qld_1311,Grosvenor 1,GROSV2,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CE7,au_nem_qld_1311,Grosvenor 1,GROSV1,QLD1,Operating,Gas (Coal Seam),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CEP,au_nem_sa_1312,Hornsdale 2,HDWF2,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CE8,au_nem_qld_1313,Scsf,VALDORA1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CES,au_nem_qld_1315,Stapylton,STAPYLTON1,QLD1,Operating,Biogas,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CES,au_nem_qld_1315,Stapylton,STAPYLTON1,QLD1,Operating,Biogas,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CES,au_nem_qld_1315,Stapylton,STAPYLTON1,QLD1,Operating,Biogas,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CEW,au_nem_sa_1317,Hornsdale 3,HDWF3,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFZ,au_nem_sa_1320,Temporary Generation North,SATGN1,SA1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFA,au_nem_sa_1321,Temporary Generation South,SATGS1,SA1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CF2,au_nem_vic_1323,Kiata,KIATAWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFB,au_nem_sa_1324,Hornsdale Power Reserve,HPRL1,SA1,Operating,Battery (Discharging),au.nem.mms.dudetail,au.nem.mms.dudetail
+CFB,au_nem_sa_1324,Hornsdale Power Reserve,HPRG1,SA1,Operating,Battery (Discharging),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CF3,au_nem_vic_1325,Yaloak South,YSWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFE,au_nem_qld_1326,Kidston Project,KSP1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFF,au_nem_nsw_1327,Sapphire,SAPHWF1,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CF4,au_nem_nsw_1328,Griffith,GRIFSF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFG,au_nem_nsw_1329,Parkes,PARSF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFH,au_nem_vic_1330,Maroona,MAROOWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFT,au_nem_qld_1332,Hughenden,HUGSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFK,au_nem_qld_1333,Clare,CLARESF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CF6,au_nem_nsw_1334,Silverton,STWF1,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CF7,au_nem_qld_1335,Longreach,LRSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFP,au_nem_vic_1336,Gannawarra,GANNSF1,VIC1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CF8,au_nem_qld_1337,Sun Metals,SMCSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CF8,au_nem_qld_1337,Sun Metals,SMCSF1,QLD1,Operating,Solar (Utility),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CFR,au_nem_nsw_1338,Manildra,MANSLR1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFR,au_nem_nsw_1338,Manildra,MANSLR1,NSW1,Operating,Solar (Utility),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CFS,au_nem_nsw_1339,South Keswick,SKSF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CF9,au_nem_nsw_1340,Narromine,NASF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFX,au_nem_sa_1342,Bungala One,BNGSF1,SA1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CFY,au_nem_qld_1343,Hamilton,HAMISF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4Z,au_nem_vic_1344,Salt Creek,SALTCRK1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4A,au_nem_qld_1345,Whitsunday,WHITSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4C,au_nem_vic_1346,Mt Gellibrand,MTGELWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4C,au_nem_vic_1346,Mt Gellibrand,MTGELWF1,VIC1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C4C,au_nem_vic_1346,Mt Gellibrand,MTGELWF1,VIC1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C4C,au_nem_vic_1346,Mt Gellibrand,MTGELWF1,VIC1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C4C,au_nem_vic_1346,Mt Gellibrand,MTGELWF1,VIC1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C4C,au_nem_vic_1346,Mt Gellibrand,MTGELWF1,VIC1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C42,au_nem_sa_1347,Dalrymple North,DALNTH01,SA1,Operating,Battery (Discharging),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C42,au_nem_sa_1347,Dalrymple North,DALNTHL1,SA1,Operating,Battery (Discharging),au.nem.mms.dudetail,au.nem.mms.dudetail
+C4B,au_nem_qld_1348,Ross River,RRSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C43,au_nem_qld_1349,Darling Downs Solar Farm,DDSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4E,au_nem_nsw_1350,Bodangora,BODWF1,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4F,au_nem_vic_1351,Bannerton,BANN1,VIC1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C44,au_nem_sa_1352,Willogoleche,WGWF1,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C44,au_nem_sa_1352,Willogoleche,WGWF1,SA1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C4G,au_nem_sa_1353,Bungala Two,BNGSF2,SA1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4H,au_nem_qld_1354,Collinsville,CSPVPS1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C45,au_nem_nsw_1355,Crookwell 2,CROOKWF2,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4T,au_nem_qld_1356,Mount Emerald,MEWF1,QLD1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4T,au_nem_qld_1356,Mount Emerald,MEWF1,QLD1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C4K,au_nem_nsw_1357,White Rock,WRWF1,NSW1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4K,au_nem_nsw_1357,White Rock,WRSF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C46,au_nem_nsw_1358,Coleambally,COLEASF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C47,au_nem_qld_1359,Baking Board,BAKING1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4P,au_nem_qld_1360,Emerald,EMERASF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C48,au_nem_qld_1361,Daydream,DAYDSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C48,au_nem_qld_1361,Daydream,DAYDSF2,QLD1,Operating,Solar (Utility),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C4R,au_nem_qld_1362,Hayman,HAYMSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4S,au_nem_vic_1363,Timboon West,TIMWEST,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C49,au_nem_vic_1364,Karadoc,KARSF1,VIC1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4X,au_nem_vic_1366,Ballarat Energy,BALBG1,VIC1,Operating,Battery (Discharging),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C4X,au_nem_vic_1366,Ballarat Energy,BALBL1,VIC1,Operating,Battery (Discharging),au.nem.mms.dudetail,au.nem.mms.dudetail
+C4Y,au_nem_vic_1367,Wemen,WEMENSF1,VIC1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGZ,au_nem_vic_1368,Crowlands,CROWLWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGA,au_nem_vic_1369,Gannawarra Energy,GANNBL1,VIC1,Operating,Battery (Discharging),au.nem.mms.dudetail,au.nem.mms.dudetail
+CGA,au_nem_vic_1369,Gannawarra Energy,GANNBG1,VIC1,Operating,Battery (Discharging),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGC,au_nem_vic_1370,Yawong,YAWWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGB,au_nem_qld_1372,Susan River,SRSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CG3,au_nem_qld_1373,Childers,CHILDSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGE,au_nem_sa_1374,Tailem Bend Project 1,TBSF1,SA1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGF,au_nem_sa_1375,Lincoln Gap,LGAPWF1,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CG4,au_nem_qld_1376,Lilyvale,LILYSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGG,au_nem_qld_1377,Oakey 1,OAKEY1SF,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGH,au_nem_vic_1378,Murra Warra,MUWAWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CG5,au_nem_nsw_1379,Beryl,BERYLSF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGT,au_nem_vic_1380,Numurkah,NUMURSF1,VIC1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGT,au_nem_vic_1380,Numurkah,NUMURSF2,VIC1,Operating,Solar (Utility),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CGK,au_nem_qld_1381,Haughton,HAUGHT11,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CG6,au_nem_qld_1382,Rugby Run,RUGBYR1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGP,au_nem_qld_1384,Coopers Gap,COOPGWF1,QLD1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGP,au_nem_qld_1384,Coopers Gap,COOPGWF1,QLD1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CGP,au_nem_qld_1384,Coopers Gap,COOPGWF1,QLD1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CGP,au_nem_qld_1384,Coopers Gap,COOPGWF1,QLD1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CG8,au_nem_qld_1385,Clermont,CLERMSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGR,au_nem_vic_1386,Yendon,YENDWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGS,au_nem_qld_1387,Oakey 2,OAKEY2SF,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CG9,au_nem_qld_1388,Yarranlea,YARANSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGW,au_nem_nsw_1389,Limondale 2,LIMOSF21,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CGY,au_nem_qld_1391,Tableland Mill 2,TABMILL2,QLD1,Operating,Biomass,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHZ,au_nem_vic_1392,Bulgana Green,BULGANA1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHA,au_nem_nsw_1393,Goonumbla,GOONSF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHC,au_nem_sa_1394,Lake Bonney,LKBONNY1,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHC,au_nem_sa_1394,Lake Bonney,LKBONNY3,SA1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHC,au_nem_sa_1394,Lake Bonney,LBBL1,SA1,Operating,Battery (Discharging),au.nem.mms.dudetail,au.nem.mms.dudetail
+CHC,au_nem_sa_1394,Lake Bonney,LBBG1,SA1,Operating,Battery (Discharging),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CH2,au_nem_sa_1395,Barker Inlet,BARKIPS1,SA1,Operating,Gas (Reciprocating),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHB,au_nem_nsw_1396,Finely,FINLYSF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CH3,au_nem_vic_1397,Dundonnell,DUNDWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CH3,au_nem_vic_1397,Dundonnell,DUNDWF3,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CH3,au_nem_vic_1397,Dundonnell,DUNDWF2,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHF,au_nem_nsw_1399,Limondale 1,LIMOSF11,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHG,au_nem_tas_1401,Cattle Hill,CTHLWF1,TAS1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHH,au_nem_vic_1402,Elaine,ELAINWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CH5,au_nem_qld_1403,Maryrorough,MARYRSF1,QLD1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHT,au_nem_nsw_1404,Bomen,BOMENSF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHK,au_nem_nsw_1405,Nevertire,NEVERSF1,NSW1,Operating,Solar (Utility),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CH6,au_nem_tas_1406,Granville Harbour,GRANWF1,TAS1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CH7,au_nem_vic_1407,Cherry Tree,CHYTWF1,VIC1,Operating,Wind,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHP,au_nem_1408,Portland,,VIC1,Operating,,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CHP,au_nem_1408,Portland,,VIC1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CHP,au_nem_1408,Portland,,QLD1,Operating,Biomass,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CHP,au_nem_1408,Portland,,QLD1,Operating,Biomass,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CHP,au_nem_1408,Portland,,QLD1,Operating,Biomass,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CHP,au_nem_1408,Portland,,QLD1,Operating,Biomass,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CH8,au_nem_1409,Wivenhoe,PUMP1,QLD1,Operating,,au.nem.mms.dudetail,au.nem.mms.dudetail
+CH8,au_nem_1409,Wivenhoe,PUMP2,QLD1,Operating,,au.nem.mms.dudetail,au.nem.mms.dudetail
+CH8,au_nem_1409,Wivenhoe,W/HOE#1,QLD1,Operating,Pumps,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CH8,au_nem_1409,Wivenhoe,W/HOE#2,QLD1,Operating,Pumps,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHR,au_nem_1410,Callide,CALL_B_1,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHR,au_nem_1410,Callide,CALL_A_4,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHR,au_nem_1410,Callide,CALL_B_2,QLD1,Operating,Coal (Black),au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+CHR,au_nem_1410,Callide,,QLD1,Operating,Coal (Black),pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CHS,au_nem_1411,Berwick,,VIC1,Operating,Biogas,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+CH9,au_nem_1412,Roghan Road,EDLRGNRD,QLD1,Operating,Biomass,au.nem.mms.dudetail,au.nem.mms.dudetail
+CHW,au_nem_1413,Mornington Waste Disposal Facility,MORNW,VIC1,Operating,Biogas,au.nem.mms.dudetail,au.nem.mms.dudetail
+CHX,au_nem_1414,Wyndham Waste Disposal Facility,WYNDW,VIC1,Operating,Biogas,au.nem.mms.dudetail,au.nem.mms.dudetail
+CHY,au_nem_1415,Ferguson North,FNWF1,VIC1,Operating,Wind,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C5Z,au_nem_1416,Melbourne Regional Landfill,,VIC1,Operating,Biogas,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C5A,au_nem_1417,Whitwood Road,WHIT1,QLD1,Operating,Biogas,au.nem.mms.dudetail,au.nem.mms.dudetail
+C5B,au_nem_1420,Snuggery,,SA1,Operating,,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
+C5B,au_nem_1420,Snuggery,SNUG1,SA1,Operating,Distillate,au.nem.mms.dudetail_summary,au.nem.mms.dudetail_summary
+C53,au_nem_1421,Midlands,,TAS1,Operating,Hyrdo,pipeline.aemo.registration_exemption,pipeline.aemo.registration_exemption
