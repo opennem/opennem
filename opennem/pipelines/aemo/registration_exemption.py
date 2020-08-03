@@ -297,7 +297,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 # Skip loads that arenot batteries for now
                 if facility_record[
                     "dispatch_type"
-                ] == "load" and fueltech not in ["battery_discharging"]:
+                ].strip().lower() == "load" and fueltech not in [
+                    "battery_discharging"
+                ]:
                     continue
 
                 # check if we have it by ocode first
