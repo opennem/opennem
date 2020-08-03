@@ -264,7 +264,9 @@ class NemStoreMMSDudetail(DatabaseStoreBase):
 
             if not facility:
                 facility = Facility(
-                    network_code=duid, created_by="au.nem.mms.dudetail"
+                    network_code=duid,
+                    status_id="retired",
+                    created_by="au.nem.mms.dudetail",
                 )
 
                 records_created += 1
@@ -348,6 +350,7 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
                 station = Station(
                     network_code=station_code,
                     network_id="NEM",
+                    status_id="retired",
                     created_by="au.nem.mms.dudetail_summary",
                 )
 
