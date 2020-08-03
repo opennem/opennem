@@ -14,6 +14,7 @@ from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,
     name_normalizer,
+    normalize_aemo_region,
     normalize_duid,
     normalize_string,
     participant_name_filter,
@@ -359,7 +360,9 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
             # Step 3. now create the facilities and associate
             for facility_record in record["facilities"]:
                 duid = normalize_duid(facility_record["DUID"])
-                network_region = normalize_string(facility_record["REGIONID"])
+                network_region = normalize_aemo_region(
+                    facility_record["REGIONID"]
+                )
                 date_start = facility_record["date_start"]
                 date_end = facility_record["date_end"]
                 facility_state = "retired"

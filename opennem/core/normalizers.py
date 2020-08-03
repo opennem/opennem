@@ -143,6 +143,13 @@ def id_duid(facility_name):
 
     return __n
 
+def normalize_aemo_region(region_code: str = "") -> str:
+    region_code = region_code.strip().upper()
+
+    if region_code = "":
+        return None
+
+    return region_code
 
 def normalize_duid(duid: str) -> str:
     duid = duid or ""
