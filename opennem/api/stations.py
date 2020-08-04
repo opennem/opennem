@@ -33,7 +33,7 @@ def get_stations() -> List[Station]:
     stations = []
 
     query = (
-        s.query(Station, func.st_x(Station.geom), func.st_y(Station.geom))
+        s.query(Station, func.st_y(Station.geom), func.st_x(Station.geom))
         .join(Facility)
         .join(FuelTech)
         # , Network, FacilityStatus)
