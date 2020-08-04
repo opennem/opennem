@@ -3,6 +3,8 @@
 
 """
 
+from typing import Optional
+
 from opennem.core import base24
 from opennem.core.normalizers import is_number
 
@@ -32,7 +34,7 @@ def get_oid(model) -> str:
     return oid_string
 
 
-def get_network_region(network_region: str) -> str:
+def get_network_region(network_region: str) -> Optional[str]:
     """
         Trim the numbers off the end of nem regions
 
@@ -49,6 +51,17 @@ def get_network_region(network_region: str) -> str:
     return None
 
 
+def get_station_facility(station):
+    """
+        Get the first facility for a station
+
+    """
+    if (station.facilities) and len(station.facilities) > 0:
+        return station.facilities[0]
+
+    return None
+
+
 def get_ocode(station) -> str:
     """
 
@@ -57,7 +70,7 @@ def get_ocode(station) -> str:
     values = [
         station.network.country or "au",
         station.network.code or None,
-        get_network_region(station.facility.network_region),
+        get_network_region(get_station_facility(station)) or station.state,
         station.code or None,
         station.id,
     ]
