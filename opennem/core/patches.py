@@ -21,7 +21,7 @@ def patches():
         # "update facility set station_id = null where code = 'GULLRWF2'",
         # "update facility set code = 'GULLRWF2' where name_clean = 'Biala'",
         "update facility set station_id = (select id from station where name = 'Wivenhoe Small Hydro') where code ='WIVENSH'",
-        "update station set name_clean = 'Wivenhoe Mini' where name_clean = 'Wivenhoe Small'",
+        "update station set name = 'Wivenhoe Mini' where name = 'Wivenhoe Small'",
         "update facility set fueltech_id = 'pumps' where code in ('PUMP2', 'PUMP1')",
         "update facility set station_id = null where name='Crookwell' and code is null",
         "update facility set station_id = null where name='Pioneer Sugar Mill' and code is null",
