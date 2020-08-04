@@ -251,6 +251,11 @@ class Station(Base, BaseModel):
 
     @hybrid_property
     def location(self):
+        """
+            Get lat lng as x,y
+
+            @TODO test this
+        """
         if self.geom:
             return (func.as_x(self.geom), func.as_y(self.geom))
 
