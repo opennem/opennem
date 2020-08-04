@@ -28,6 +28,10 @@ logger = logging.getLogger(__name__)
 
 
 def get_stations() -> List[Station]:
+    """
+        API controller that gets all stations sorted and joined
+
+    """
     s = session()
 
     stations = []
@@ -36,12 +40,9 @@ def get_stations() -> List[Station]:
         s.query(Station, func.st_y(Station.geom), func.st_x(Station.geom))
         .join(Facility)
         .join(FuelTech)
-        # , Network, FacilityStatus)
         .filter(Facility.fueltech != None)
         .filter(Facility.status != None)
         .order_by(
-            # Station.network_region,
-            # Station.id,
             Facility.network_region,
             Station.name,
             Station.id,
