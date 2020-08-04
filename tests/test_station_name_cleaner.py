@@ -15,10 +15,10 @@ class TestStationNameCleaner(object):
         assert subj == "Test", "Test power station becomes just Test"
 
     def test_acronyms(self):
-        name = "agl power"
+        name = "bhp power"
         subj = station_name_cleaner(name)
 
-        assert subj == "AGL", "Acronym is AGL"
+        assert subj == "BHP", "Acronym is BHP"
 
     def test_hallett_power(self):
         name = "Hallett Power Station"
