@@ -254,14 +254,14 @@ class Station(Base, BaseModel):
     @hybrid_property
     def lat(self) -> Optional[float]:
         if self.geom:
-            return wkb.loads(bytes(self.geom.data)).x
+            return wkb.loads(bytes(self.geom.data)).y
 
         return None
 
     @hybrid_property
     def lng(self) -> Optional[float]:
         if self.geom:
-            return wkb.loads(bytes(self.geom.data)).y
+            return wkb.loads(bytes(self.geom.data)).x
 
         return None
 
