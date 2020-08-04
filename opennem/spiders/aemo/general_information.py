@@ -31,7 +31,7 @@ class AEMOGeneralInformationCurrentSpider(scrapy.Spider):
         "Owner",
         "TechType",
         "FuelType",
-        "DUID",
+        "duid",
         "Units",
         "UpperCapacity",
         "NameCapacity",
@@ -41,6 +41,7 @@ class AEMOGeneralInformationCurrentSpider(scrapy.Spider):
         "UseDate",
         "ClosureDateExpected",
         "ClosureDate",
+        "SurveyID",
         "SurveyVersion",
         "SurveyEffective",
     ]
@@ -60,7 +61,7 @@ class AEMOGeneralInformationCurrentSpider(scrapy.Spider):
 
             # pick out the columns we want
             # lots of hidden columns in the sheet
-            row_collapsed = row[0:8] + (row[11],) + row[12:19] + row[22:]
+            row_collapsed = row[0:8] + (row[11],) + row[12:19] + row[21:]
 
             return_dict = dict(zip(self.keys, list(row_collapsed)))
 
