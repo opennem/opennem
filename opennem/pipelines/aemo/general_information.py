@@ -251,6 +251,8 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 )
 
                 s.add(facility_station)
+                s.commit()
+
                 created_station = True
             else:
                 facility_station.updated_by = (
@@ -267,7 +269,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     continue
 
                 facility = None
-                facility_station = None
                 created_facility = False
 
                 facility_network_name = name_normalizer(
@@ -413,6 +414,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     )
 
                 s.add(facility)
+                s.commit()
 
                 facility_index += units_num
 
