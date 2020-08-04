@@ -227,6 +227,15 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 if facility_lookup and facility_lookup.station:
                     facility_station = facility_lookup.station
 
+            if not facility_station and facility_station_join_by_name(
+                station_name
+            ):
+                facility_station = (
+                    s.query(Station)
+                    .filter(Station.name == station_name)
+                    .one_or_none()
+                )
+
             # Create one as it doesn't exist
             if not facility_station:
                 facility_station = Station(
