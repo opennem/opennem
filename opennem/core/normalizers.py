@@ -313,6 +313,9 @@ def participant_name_filter(participant_name: str) -> str:
 
 
 def clean_capacity(capacity: Union[str, int, float]) -> float:
+    if not capacity:
+        return None
+
     cap_clean = capacity
 
     if type(capacity) is str:
