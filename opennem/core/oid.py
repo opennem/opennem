@@ -4,6 +4,7 @@
 """
 
 from opennem.core import base24
+from opennem.core.normalizers import is_number
 
 # from opennem.db.models.opennem import Station
 
@@ -31,6 +32,23 @@ def get_oid(model) -> str:
     return oid_string
 
 
+def get_network_region(network_region: str) -> str:
+    """
+        Trim the numbers off the end of nem regions
+
+    """
+    if (
+        network_region
+        and type(network_region) is str
+        and len(network_region) > 1
+    ):
+        if is_number(network_region[-1:]):
+            return network_region[:-1]
+        return network_region
+
+    return None
+
+
 def get_ocode(station) -> str:
     """
 
@@ -39,8 +57,7 @@ def get_ocode(station) -> str:
     values = [
         station.network.country or "au",
         station.network.code or None,
-        station.network_region or None,
-        station.state or None,
+        get_network_region(station.facility.network_region),
         station.code or None,
         station.id,
     ]
