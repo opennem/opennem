@@ -54,6 +54,9 @@ def load_opennem_facilities():
         station_name = station_name_cleaner(station_data["display_name"])
         station_code = normalize_duid(station_data["station_code"])
         station_state = map_v3_states(station_data["status"]["state"])
+        station_network = (
+            "WEM" if station_data["location"]["state"] == "WA" else "NEM"
+        )
 
         station = (
             s.query(Station)
@@ -63,6 +66,7 @@ def load_opennem_facilities():
 
         if not station:
             station = Station(
+                network_id=station_network,
                 code=station_code,
                 network_code=station_code,
                 name=station_name,
