@@ -36,3 +36,10 @@ class TestCapacityCleaner(object):
         subject = clean_capacity("1.00000001")
         assert type(subject) is float, "Capacity should be a float"
         assert subject == 1.0, "0 string capacity should be rounded to 1"
+
+    def test_capacity_range(self):
+        subject = clean_capacity(" 193.76 - 204.4 ")
+
+        assert (
+            subject == 204.4
+        ), "Parse capacity ranges to default to get maximum"
