@@ -56,7 +56,6 @@ class WemStoreFacility(DatabaseStoreBase):
                     code=participant_code,
                     name=participant_name,
                     network_name=participant_network_name,
-                    network_code=participant_network_code,
                     created_by="pipeline.wem.facilities",
                 )
                 s.add(participant)
@@ -86,7 +85,6 @@ class WemStoreFacility(DatabaseStoreBase):
                     network_id="WEM",
                     network_code=station_code,
                     participant=participant,
-                    network_region="WEM",
                     created_by="pipeline.wem.facilities",
                 )
 
@@ -207,7 +205,6 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                     network_id="WEM",
                     network_code=station_code,
                     participant=participant,
-                    network_region="WEM",
                     created_by="pipeline.wem.live.facilities",
                 )
 
