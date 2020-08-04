@@ -25,6 +25,7 @@ from sqlalchemy import (
     Table,
     Text,
     Time,
+    func,
 )
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
@@ -247,6 +248,11 @@ class Station(Base, BaseModel):
     @hybrid_property
     def ocode(self) -> str:
         return get_ocode(self)
+
+    @hybrid_property
+    def location(self):
+        if self.geom:
+            return (func.as_x(self.geom), func.as_y(self.geom))
 
 
 class Facility(Base, BaseModel):
