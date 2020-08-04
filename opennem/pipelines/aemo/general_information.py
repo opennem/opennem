@@ -205,11 +205,21 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
 
             if duid and duid_unique and facility_count == 1:
 
-                facility_lookup = (
-                    s.query(Facility)
-                    .filter(Facility.network_code == duid)
-                    .one_or_none()
-                )
+                facility_lookup = None
+
+                try:
+                    facility_lookup = (
+                        s.query(Facility)
+                        .filter(Facility.network_code == duid)
+                        .one_or_none()
+                    )
+                except MultipleResultsFound:
+                    logger.error(
+                        "Found multiple duid for station with code {}".format(
+                            duid
+                        )
+                    )
+                    continue
 
                 if facility_lookup and facility_lookup.station:
                     facility_station = facility_lookup.station
@@ -267,7 +277,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     facility_record["station_name"]
                 )
                 duid = normalize_duid(facility_record["duid"])
-                reg_cap = clean_capacity(facility_record["reg_cap"])
+                reg_cap = clean_capacity(facility_record["NameCapacity"])
 
                 units_num = facility_record["Units"]
                 unit_id = facility_index + (units_num - 1)
@@ -281,7 +291,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 facility_status = lookup_facility_status(
                     facility_record["UnitStatus"]
                 )
-                facility_region = normalize_aemo_region(
+                facility_network_region = normalize_aemo_region(
                     facility_record["Region"]
                 )
                 facility_fueltech = (
@@ -296,9 +306,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     else None
                 )
 
-                print(station_name, duid, facility_region, facility_fueltech)
-                continue
-
                 # check if we have it by ocode first
                 facility = (
                     s.query(Facility)
@@ -311,7 +318,10 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                         facility = (
                             s.query(Facility)
                             .filter(Facility.code == duid)
-                            .filter(Facility.network_region == facility_region)
+                            .filter(
+                                Facility.network_region
+                                == facility_network_region
+                            )
                             # .filter(Facility.nameplate_capacity != None)
                             .one_or_none()
                         )
@@ -321,48 +331,56 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                         )
 
                     if facility:
-                        if not facility.station:
-                            raise Exception(
-                                "GI: Existing facility {} {} with no station .. unpossible.".format(
-                                    facility.id, facility.name
-                                )
-                            )
-
                         if facility.station and not facility_station:
                             facility_station = facility.station
 
                         logger.info(
-                            "GI: Found facility by DUID: {} {} {}".format(
-                                facility.id, facility.name, facility_station.id
+                            "GI: Found facility by DUID: code {} station {}".format(
+                                facility.code,
+                                facility.station.name
+                                if facility.station
+                                else None,
                             )
                         )
 
                 # Done trying to find existing
                 if not facility:
                     facility = Facility(
-                        created_by="pipeline.aemo.general_information"
+                        network_code=duid,
+                        created_by="pipeline.aemo.general_information",
                     )
                     facility.station = facility_station
 
                     created_facility = True
 
-                if duid:
-                    facility.code = duid
+                if duid and not facility.network_code:
+                    facility.network_code = duid
 
-                if not facility.region:
-                    facility.region = facility_region
+                if not facility.network_region:
+                    facility.network_region = facility_network_region
 
-                if not facility.name:
-                    facility.name = facility_name
-
-                if not facility.network_name:
-                    facility.network_name = facility_network_name
-
-                # @TODO parse units into ints
-                # facility.unit_number = item["Units"]
-
-                if not facility.fueltech_id and facility_fueltech:
+                if not facility.fueltech_id:
                     facility.fueltech_id = facility_fueltech
+
+                if not facility.capacity_registered:
+                    facility.capacity_registered = reg_cap
+
+                # @TODO work this out
+                # facility.dispatch_type = facility_dispatch_type
+
+                if not facility.unit_id:
+                    facility.unit_id = unit.id
+                    facility.unit_number = unit.number
+                    facility.unit_size = unit_size
+                    facility.unit_alias = unit.alias
+
+                if not facility.unit_capacity:
+                    facility.unit_capacity = unit_size
+
+                if not facility.status_id:
+                    facility.status_id = facility_status
+
+                facility.station = facility_station
 
                 # if facility.fueltech_id is None:
                 #     logger.error(
@@ -374,7 +392,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 #         item["UpperCapacity"] or item["NameCapacity"]
                 #     )
 
-                facility.status_id = facility_status
+                # facility.status_id = facility_status
 
                 if facility_station and not facility.station:
                     facility.station = facility_station
@@ -392,20 +410,19 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
 
                 if created_station:
                     logger.info(
-                        "GI: {} station with name {} and id {}".format(
+                        "GI: {} station with name {} ".format(
                             "Created" if created_station else "Updated",
-                            facility_station.name_clean,
-                            facility_station.id,
+                            station_name,
+                            # facility_station.id,
                         )
                     )
 
                 if created_facility:
                     logger.info(
-                        "GI: {} facility with name {} and duid {} and id {}".format(
+                        "GI: {} facility with duid {} to station {}".format(
                             "Created" if created_facility else "Updated",
-                            facility.name_clean,
-                            facility.code,
-                            facility.id,
+                            duid,
+                            station_name,
                         )
                     )
 
