@@ -14,7 +14,12 @@ def stations_geojson_records():
 
     for station in stations:
 
-        f = Feature()
+        geom = None
+
+        if station.lat and station.lng:
+            geom = Point((station.lat, station.lng))
+
+        f = Feature(geometry=geom)
 
         f.properties = {
             "oid": station.oid,
