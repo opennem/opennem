@@ -199,11 +199,12 @@ class Station(Base, BaseModel):
         cap_reg = None
 
         for fac in self.facilities:
-            if fac.capacity_registered and type(fac.capacity_registered) in [
-                int,
-                float,
-                Decimal,
-            ]:
+            if (
+                fac.capacity_registered
+                and type(fac.capacity_registered) in [int, float, Decimal,]
+                and fac.status_id
+                in ["operating", "committed", "commissioning"]
+            ):
                 if not cap_reg:
                     cap_reg = 0
 
