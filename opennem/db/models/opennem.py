@@ -179,7 +179,6 @@ class Station(Base, BaseModel):
     # Original network fields
     network_code = Column(Text, index=True)
     network_name = Column(Text)
-    network_region = Column(Text)
 
     # Geo fields
     place_id = Column(Text, nullable=True, index=True)
