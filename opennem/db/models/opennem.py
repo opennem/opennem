@@ -298,7 +298,7 @@ class Facility(Base, BaseModel):
         nullable=True,
     )
     fueltech = relationship(
-        "FuelTech", backref=backref("nem_facilities", cascade="all,delete")
+        "FuelTech", backref=backref("facilities", cascade="all,delete")
     )
 
     status_id = Column(
