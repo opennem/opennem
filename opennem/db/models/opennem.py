@@ -11,6 +11,7 @@ from decimal import Decimal
 from typing import Optional
 
 from geoalchemy2 import Geometry
+from shapely import wkb
 from sqlalchemy import (
     Boolean,
     Column,
@@ -247,6 +248,20 @@ class Station(Base, BaseModel):
     @hybrid_property
     def ocode(self) -> str:
         return get_ocode(self)
+
+    @hybrid_property
+    def lat(self) -> Optional[float]:
+        if self.geom:
+            return wkb.loads(bytes(self.geom.data)).x
+
+        return None
+
+    @hybrid_property
+    def lng(self) -> Optional[float]:
+        if self.geom:
+            return wkb.loads(bytes(self.geom.data)).y
+
+        return None
 
     @hybrid_property
     def location(self):

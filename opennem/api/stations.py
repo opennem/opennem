@@ -34,10 +34,8 @@ def get_stations() -> List[Station]:
     """
     s = session()
 
-    stations = []
-
-    query = (
-        s.query(Station, func.st_y(Station.geom), func.st_x(Station.geom))
+    stations = (
+        s.query(Station)
         .join(Facility)
         .join(FuelTech)
         .filter(Facility.fueltech != None)
@@ -54,14 +52,6 @@ def get_stations() -> List[Station]:
     )
 
     logger.info("Got {} stations".format(len(stations)))
-
-    # Bind lat long using postgis functions
-    # note this isn't x-db compatible atm
-    for i in query:
-        station, lat, lng = i
-        station.lat = lat
-        station.lng = lng
-        stations.append(station)
 
     return stations
 
