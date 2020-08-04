@@ -357,6 +357,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
                 if not facility:
                     facility = Facility(
+                        code=unit_code,
                         network_code=duid,
                         created_by="pipeline.aemo.registration_exemption",
                     )

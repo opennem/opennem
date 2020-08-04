@@ -355,6 +355,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 # Done trying to find existing
                 if not facility:
                     facility = Facility(
+                        code=unit_code,
                         network_code=duid,
                         created_by="pipeline.aemo.general_information",
                     )
