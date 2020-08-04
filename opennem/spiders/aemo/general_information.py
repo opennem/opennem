@@ -33,6 +33,7 @@ class AEMOGeneralInformationCurrentSpider(scrapy.Spider):
         "FuelType",
         "duid",
         "Units",
+        "unit_capacity_lower",
         "unit_capacity",
         "UpperCapacity",
         "NameCapacity",
@@ -62,7 +63,7 @@ class AEMOGeneralInformationCurrentSpider(scrapy.Spider):
 
             # pick out the columns we want
             # lots of hidden columns in the sheet
-            row_collapsed = row[0:9] + (row[11],) + row[12:19] + row[21:]
+            row_collapsed = row[0:10] + (row[11],) + row[12:19] + row[21:]
 
             return_dict = dict(zip(self.keys, list(row_collapsed)))
 
