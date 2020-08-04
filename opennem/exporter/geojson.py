@@ -73,7 +73,7 @@ def stations_geojson_serialize():
 
     geoj = FeatureCollection(stations, crs=crs, name="opennem")
 
-    geoj["name"] = "nem_stations"
+    geoj["name"] = "opennem_stations"
     geoj["crs"] = crs
 
     geoj_string = dumps(geoj, indent=4, cls=OpenNEMGeoJSONEncoder)
