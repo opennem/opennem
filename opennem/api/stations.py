@@ -42,7 +42,6 @@ def get_stations() -> List[Station]:
         .filter(Facility.status != None)
         .order_by(
             Facility.network_region,
-            Station.state,
             Station.name,
             Station.id,
             Facility.unit_number,
