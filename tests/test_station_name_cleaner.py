@@ -86,6 +86,14 @@ class TestStationNameCleaner(object):
             subject == "Catagunya / Liapootah / Wayatinah"
         ), "Catagunya hyphenated name"
 
+    def test_dashed_names_with_stripping_capitalized(self):
+        name = "Catagunya / Liapootah / woy woy power station"
+        subject = station_name_cleaner(name)
+
+        assert (
+            subject == "Catagunya / Liapootah / Woy Woy"
+        ), "Catagunya hyphenated name"
+
     # Mappings
 
     def test_name_mapping_and_stripping(self):
