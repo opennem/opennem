@@ -103,20 +103,6 @@ class GeneralInformationGrouperPipeline(object):
             filter(lambda x: x["station_name"] != None, generators)
         )
 
-        # Add clean station names and if group_by name
-        generators = [
-            {
-                **i,
-                "name": station_name_cleaner(i["station_name"]),
-                "name_join": False
-                if facility_station_join_by_name(
-                    station_name_cleaner(i["station_name"])
-                )
-                else i["duid"],
-            }
-            for i in generators
-        ]
-
         # sort by name
 
         generators_grouped = {}
