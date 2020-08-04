@@ -321,7 +321,10 @@ def clean_capacity(capacity: Union[str, int, float]) -> float:
     if type(capacity) is str:
         cap_clean = strip_whitespace(capacity)
 
-        cap_clean = capacity.replace("-", "")
+        if "-" in cap_clean:
+            cap_clean_components = cap_clean.split("-")
+            cap_clean = cap_clean_components.pop()
+            return clean_capacity(cap_clean)
 
         if cap_clean == "":
             return None
