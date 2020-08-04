@@ -279,7 +279,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 duid = normalize_duid(facility_record["duid"])
                 reg_cap = clean_capacity(facility_record["NameCapacity"])
 
-                units_num = facility_record["Units"]
+                units_num = facility_record["Units"] or 1
                 unit_id = facility_index + (units_num - 1)
 
                 unit = parse_unit_duid(unit_id, duid)
@@ -305,6 +305,14 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     )
                     else None
                 )
+
+                if not facility_fueltech:
+                    logger.error(
+                        "Error looking up fueltech: {} {} ".format(
+                            facility_record["FuelType"],
+                            facility_record["TechType"],
+                        )
+                    )
 
                 # check if we have it by ocode first
                 facility = (
@@ -359,7 +367,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 if not facility.network_region:
                     facility.network_region = facility_network_region
 
-                if not facility.fueltech_id:
+                if not facility.fueltech_id and facility_fueltech:
                     facility.fueltech_id = facility_fueltech
 
                 if not facility.capacity_registered:
