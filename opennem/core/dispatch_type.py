@@ -2,7 +2,7 @@ import enum
 
 
 class DispatchType(enum.Enum):
-    GENERATING = 1
+    GENERATOR = 1
     LOAD = 2
 
 
@@ -20,6 +20,9 @@ def parse_dispatch_type(dispatch_string: str):
         return DispatchType.LOAD
 
     if dispatch_string == "generating":
-        return DispatchType.GENERATING
+        return DispatchType.GENERATOR
+
+    if dispatch_string == "generator":
+        return DispatchType.GENERATOR
 
     raise Exception("Unknown dispatch type: {}".format(dispatch_string))

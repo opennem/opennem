@@ -10,7 +10,12 @@ class TestDispatchType(object):
     def test_generating(self):
         subject = parse_dispatch_type("generating")
 
-        assert subject is DispatchType.GENERATING, "Generating is generating"
+        assert subject is DispatchType.GENERATOR, "Generating is generator"
+
+    def test_generating(self):
+        subject = parse_dispatch_type("Generator")
+
+        assert subject is DispatchType.GENERATOR, "Generator is generator"
 
     def test_load(self):
         subject = parse_dispatch_type("load")
@@ -21,12 +26,12 @@ class TestDispatchType(object):
         subject = parse_dispatch_type("  generating  ")
 
         assert (
-            subject is DispatchType.GENERATING
+            subject is DispatchType.GENERATOR
         ), "Generating padded is generating"
 
     def test_generating_case(self):
         subject = parse_dispatch_type("GeNeRaTiNg")
 
         assert (
-            subject is DispatchType.GENERATING
-        ), "Generating case is generating"
+            subject is DispatchType.GENERATOR
+        ), "Generating case is generator"
