@@ -43,6 +43,7 @@ geoalchemy2 = "^0.8.4"
 geojson = "^2.5.0"
 uvicorn = {version = "^0.11.7"}
 fastapi = {extras = ["all"], version = "^0.60.1"}
+shapely = "^1.7.0"
 
 [tool.poetry.dev-dependencies]
 black = "19.10b0"
