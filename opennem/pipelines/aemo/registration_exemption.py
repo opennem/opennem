@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.sql import text
 
+from opennem.core.dispatch_type import DispatchType, parse_dispatch_type
 from opennem.core.facilitystations import facility_station_join_by_name
 from opennem.core.facilitystatus import lookup_facility_status
 from opennem.core.fueltechs import lookup_fueltech
@@ -288,6 +289,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     unit, duid, facility_station_record["station_name"]
                 )
                 facility_status = "operating"
+                facility_dispatch_type = parse_dispatch_type(
+                    facility_record["dispatch_type"]
+                )
                 fueltech = lookup_fueltech(
                     facility_record["fuel_source_primary"],
                     facility_record["fuel_source_descriptor"],
@@ -297,11 +301,10 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 )
 
                 # Skip loads that arenot batteries for now
-                if facility_record[
-                    "dispatch_type"
-                ].strip().lower() == "load" and fueltech not in [
-                    "battery_discharging"
-                ]:
+                if (
+                    facility_dispatch_type == DispatchType.LOAD
+                    and fueltech not in ["battery_charging", "pumps",]
+                ):
                     continue
 
                 # check if we have it by ocode first
@@ -379,6 +382,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 facility.network_name = network_name
 
                 facility.capacity_registered = reg_cap
+                facility.dispatch_type = facility_dispatch_type
 
                 facility.unit_id = unit.id
                 facility.unit_number = unit.number
