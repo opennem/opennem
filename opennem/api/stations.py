@@ -8,6 +8,7 @@ from typing import List
 
 from geojson import Feature, FeatureCollection, Point, dumps
 from smart_open import open
+from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
 
 from opennem.db import db_connect
@@ -29,8 +30,10 @@ logger = logging.getLogger(__name__)
 def get_stations() -> List[Station]:
     s = session()
 
-    stations = (
-        s.query(Station)
+    stations = []
+
+    query = (
+        s.query(Station, func.st_x(Station.geom), func.st_y(Station.geom))
         .join(Facility)
         .join(FuelTech)
         # , Network, FacilityStatus)
@@ -49,6 +52,14 @@ def get_stations() -> List[Station]:
     )
 
     logger.info("Got {} stations".format(len(stations)))
+
+    # Bind lat long using postgis functions
+    # note this isn't x-db compatible atm
+    for i in query:
+        station, lat, lng = i
+        station.lat = lat
+        station.lng = lng
+        stations.append(station)
 
     return stations
 
