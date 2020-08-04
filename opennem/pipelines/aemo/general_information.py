@@ -77,6 +77,11 @@ class GeneralInformationGrouperPipeline(object):
 
 
 class GeneralInformationStoragePipeline(DatabaseStoreBase):
+    """
+        Stores the grouped General Information items from AEMO
+
+    """
+
     def parse_interval(self, date_str):
         return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
 

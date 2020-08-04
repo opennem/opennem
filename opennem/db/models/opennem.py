@@ -17,6 +17,7 @@ from sqlalchemy import (
     Column,
     Date,
     DateTime,
+    Enum,
     ForeignKey,
     Index,
     Integer,
@@ -34,6 +35,7 @@ from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from sqlalchemy.orm import backref, relationship
 from sqlalchemy.sql import func
 
+from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
 
 Base = declarative_base()
@@ -321,6 +323,10 @@ class Facility(Base, BaseModel):
     network_name = Column(Text)
 
     active = Column(Boolean, default=True)
+
+    dispatch_type = Column(
+        Enum(DispatchType), nullable=False, default=DispatchType.GENERATOR
+    )
 
     # @TODO remove when ref count is 0
     capacity_registered = Column(Numeric, nullable=True)
