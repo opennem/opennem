@@ -230,11 +230,19 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
             if not facility_station and facility_station_join_by_name(
                 station_name
             ):
-                facility_station = (
-                    s.query(Station)
-                    .filter(Station.name == station_name)
-                    .one_or_none()
-                )
+                try:
+                    facility_station = (
+                        s.query(Station)
+                        .filter(Station.name == station_name)
+                        .one_or_none()
+                    )
+                except MultipleResultsFound:
+                    logger.warning(
+                        "Multiple results found for station name : {}".format(
+                            station_name
+                        )
+                    )
+                    facility_station = None
 
             # Create one as it doesn't exist
             if not facility_station:
