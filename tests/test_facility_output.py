@@ -51,6 +51,8 @@ class TestStationOutput(object):
             "unit_cap": float,
             "station_cap_agg": float,
             "station_cap_registered": float,
+            "lat": float,
+            "lng": float,
             "added_by": str,
             "updated_by": str,
         }
@@ -58,12 +60,13 @@ class TestStationOutput(object):
         subject = self.get_random_station()
 
         for subject_field, subject_value in subject.items():
-            assert type(subject_value) in [
-                data_types[subject_field],
-                None,
-            ], "{} is of type {}".format(
-                subject_value, data_types[subject_field]
-            )
+            if subject_value:
+                assert type(subject_value) in [
+                    data_types[subject_field],
+                    None,
+                ], "{} is of type {}".format(
+                    subject_value, data_types[subject_field]
+                )
 
     def test_nem_single(self):
         """
@@ -84,26 +87,42 @@ class TestStationOutput(object):
         status_list = [i["status"] for i in self.data]
         status_set = list(set(status_list))
 
-    def test_returns_string_one(self):
-        pass
+        assert "operating" in status_set, "Have operating units"
+        assert "retired" in status_set, "Have retired units"
 
     def test_broken_hill(self):
         """
             Broken Hill has two stations
         """
-        pass
+        broken_hills = list(
+            filter(lambda x: x["name"] == "Broken Hill", self.data)
+        )
+        broken_hills_stations = list(set([x["ocode"] for x in broken_hills]))
+
+        assert len(broken_hills_stations) == 2, "Have two broken hill stations"
 
     def test_hume(self):
         """
             Hume has two stations - one in VIC and one in NSW
         """
-        pass
+        hume_stations = list(filter(lambda x: x["name"] == "Hume", self.data))
+        hume_states = [x["region"] for x in hume_stations]
+
+        assert len(hume_stations) == 2, "There are two Hume Stations"
+        assert "NSW1" in hume_states, "There is a hume station in NSW"
+        assert "VIC1" in hume_states, "There is a hume station in VIC"
 
     def test_hornsdale(self):
         """
             HPRG1 is discharging, HPRL1 is charging
         """
-        pass
+        hprg1 = list(filter(lambda x: x["code"] == "HPRG1", self.data))[0]
+        hprl1 = list(filter(lambda x: x["code"] == "HPRL1", self.data))[0]
+
+        assert (
+            hprg1["fueltech"] == "battery_discharging"
+        ), "HPRG1 is discharging"
+        assert hprl1["fueltech"] == "battery_charging", "HPRL1 is charging"
 
     def test_hallett(self):
         """ Hallett has a gas station and a wind farm
@@ -111,13 +130,25 @@ class TestStationOutput(object):
             gas - AGLHAL
             wind - HALLWF1
         """
-        pass
+        aglhal = list(filter(lambda x: x["code"] == "AGLHAL", self.data))[0]
+        hallwf = list(filter(lambda x: x["code"] == "HALLWF1", self.data))[0]
+
+        assert aglhal["fueltech"] == "gas_ocgt", "AGLHAL is gas"
+        assert hallwf["fueltech"] == "wind", "HALLWF1 is wind"
 
     def test_sa_vpp(self):
         """
             SA VPP has name SA VPP and is aggregate vpp
         """
-        pass
+        savpp = list(filter(lambda x: x["name"] == "SA VPP", self.data))
+
+        assert type(savpp) is list, "We have an SA VPP entry"
+        assert len(savpp) == 1, "We have one SA VPP entry"
+
+        savpp_rec = savpp.pop()
+        assert (
+            savpp_rec["fueltech"] == "aggregate_vpp"
+        ), "The SA VPP fueltech is aggregate vpp"
 
     def test_dalrymple(self):
         """
