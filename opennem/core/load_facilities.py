@@ -77,6 +77,9 @@ def load_opennem_facilities():
                 "Created station: {} {} ".format(station_name, station_code)
             )
 
+            s.add(station)
+            s.commit()
+
         facilities = [
             {"code": k, **v} for k, v in station_data["duid_data"].items()
         ]
@@ -111,12 +114,12 @@ def load_opennem_facilities():
                     )
                 )
 
-                facility = (
-                    s.query(Facility)
-                    .filter(Facility.network_code == facility_duid)
-                    .first()
-                )
-                # continue
+                # facility = (
+                #     s.query(Facility)
+                #     .filter(Facility.network_code == facility_duid)
+                #     .first()
+                # )
+                continue
 
             if not facility:
                 facility = Facility(
@@ -151,9 +154,10 @@ def load_opennem_facilities():
                 facility.station = station
 
             s.add(facility)
-
-        s.commit()
+            s.commit()
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+
     load_opennem_facilities()
