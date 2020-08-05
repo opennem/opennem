@@ -48,6 +48,7 @@ def stations_geojson_records():
                     if facility.fueltech
                     else None,
                     "commissioned_date": facility.registered,
+                    "decommissioned_date": facility.deregistered,
                     "status": facility.status_id,
                     "status_label": facility.status_label,
                     "unit_id": facility.unit_id,
