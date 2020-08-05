@@ -109,3 +109,11 @@ class TestStationNameCleaner(object):
         subject = station_name_cleaner(name)
 
         assert subject == "Hornsdale Power Reserve", "Hornsdale maps"
+
+    def test_name_uni_melbourne(self):
+        name = "University of Melbourne Archives Brunswick"
+        subject = station_name_cleaner(name)
+
+        assert (
+            subject == "UoM Brunswick"
+        ), "UoM is abbreviated and suburb name added"

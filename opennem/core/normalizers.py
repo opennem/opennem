@@ -235,7 +235,7 @@ def station_name_cleaner(facility_name: str) -> str:
     name_clean = re.sub(" +", " ", name_clean)
 
     name_clean = name_clean.replace("yalumba winery", "yalumba")
-    name_clean = name_clean.replace("university of melbourne", "uom")
+    name_clean = name_clean.replace("university of melbourne", "UoM")
 
     # @TODO remove these hard codes
     if not name_clean in ["barcaldine solar farm", "Darling Downs Solar Farm"]:
@@ -293,6 +293,8 @@ def station_name_cleaner(facility_name: str) -> str:
 
     if station_map_name(name_clean) != name_clean:
         return station_map_name(name_clean)
+
+    name_clean = name_clean.replace("UOM ", "UoM ")
 
     return name_clean
 
