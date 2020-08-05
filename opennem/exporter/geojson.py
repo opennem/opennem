@@ -32,7 +32,6 @@ def stations_geojson_records():
             "state": station.state.upper() if station.state else None,
             "postcode": station.postcode,
             "name": station.name,
-            "registered_capacity": station.capacity_registered,
             "capacity_registered": station.capacity_registered,
             "capacity_aggregate": station.capacity_aggregate,
             "duid_data": [],
@@ -55,8 +54,6 @@ def stations_geojson_records():
                     "unit_number": facility.unit_number,
                     "unit_size": facility.unit_capacity,
                     "unit_alias": facility.unit_alias,
-                    # backwards compat field
-                    "registered_capacity": facility.capacity_registered,
                     # capacities for the unit
                     "capacity_registered": facility.capacity_registered,
                     "capacity_aggregate": facility.capacity_aggregate,
