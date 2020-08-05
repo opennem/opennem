@@ -115,5 +115,5 @@ class TestStationNameCleaner(object):
         subject = station_name_cleaner(name)
 
         assert (
-            subject == "UoM Brunswick"
+            subject == "UoM Archives Brunswick"
         ), "UoM is abbreviated and suburb name added"
