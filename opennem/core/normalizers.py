@@ -21,6 +21,7 @@ STRIP_WORDS = [
     "phase 5",
     "renewable energy facility",
     "waste disposal facility",
+    "network support station",
     "combined cycle",
     "green power hub units",
     "wind and solar",
