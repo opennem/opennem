@@ -70,7 +70,7 @@ def load_opennem_facilities():
                 code=station_code,
                 network_code=station_code,
                 name=station_name,
-                network_name=station_name,
+                network_name=station_data["display_name"],
                 created_by="opennem.load_facilities",
             )
             logger.info(
