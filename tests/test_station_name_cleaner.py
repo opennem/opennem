@@ -52,6 +52,14 @@ class TestStationNameCleaner(object):
 
         assert subject == "Yallourn W", "Yallourn has a unit letter"
 
+    def test_strip_landfill(self):
+        name = "Broadmeadows Landfill"
+        subject = station_name_cleaner(name)
+
+        assert (
+            subject == "Broadmeadows"
+        ), "Broadmeadows Landfill becomes Broadmeadows"
+
     # Slash names
 
     def test_dashed_names(self):
