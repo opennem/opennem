@@ -43,6 +43,8 @@ STRIP_WORDS = [
     "bio reactor",
     "biomass",
     "landfill",
+    "wwt",
+    "waste",
     "ltd",
     "agl",
     "pty",
