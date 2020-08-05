@@ -45,6 +45,7 @@ def stations_geojson_records():
                     "duid": facility.duid,
                     "fuel_tech": facility.fueltech_id,
                     "fuel_tech_label": facility.fueltech_label,
+                    "fuel_tech_renewable": facility.fueltech.renewable,
                     "commissioned_date": facility.registered,
                     "status": facility.status_id,
                     "status_label": facility.status_label,
