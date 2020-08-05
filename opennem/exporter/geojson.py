@@ -28,6 +28,7 @@ def stations_geojson_records():
             "station_code": station.network_code,
             "facility_id": station.network_code,
             "network": station.network.label,
+            "network_country": station.network.country,
             "state": station.state.upper() if station.state else None,
             "postcode": station.postcode,
             "name": station.name,
@@ -53,8 +54,11 @@ def stations_geojson_records():
                     "unit_alias": facility.unit_alias,
                     # backwards compat field
                     "registered_capacity": facility.capacity_registered,
+                    # capacities for the unit
                     "capacity_registered": facility.capacity_registered,
                     "capacity_aggregate": facility.capacity_aggregate,
+                    # network specific fields (DUID is one)
+                    "network_region": facility.network_region,
                 }
             )
 
