@@ -207,6 +207,7 @@ class Station(Base, BaseModel):
                 and type(fac.capacity_registered) in [int, float, Decimal,]
                 and fac.status_id
                 in ["operating", "committed", "commissioning"]
+                and fac.dispatch_type == DispatchType.GENERATOR
             ):
                 if not cap_reg:
                     cap_reg = 0
@@ -232,6 +233,7 @@ class Station(Base, BaseModel):
                 and type(fac.capacity_aggregate) in [int, float, Decimal,]
                 and fac.status_id
                 in ["operating", "committed", "commissioning"]
+                and fac.dispatch_type == DispatchType.GENERATOR
             ):
                 if not cap_agg:
                     cap_agg = 0
