@@ -8,7 +8,6 @@ from opennem.exporter.onjson import stations_json_serialize
 def stations_geojson_to_s3():
     stations_geojson = stations_geojson_serialize()
 
-    write_to_s3("geo/stations.json", stations_geojson)
     write_to_s3("geo/au_facilities.json", stations_geojson)
 
 
