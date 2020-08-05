@@ -60,6 +60,22 @@ class TestStationNameCleaner(object):
             subject == "Broadmeadows"
         ), "Broadmeadows Landfill becomes Broadmeadows"
 
+    def test_strip_waste_disposal(self):
+        name = "Wyndham Waste Disposal Facility"
+        subject = station_name_cleaner(name)
+
+        assert (
+            subject == "Wyndham"
+        ), "Whyndham Waste Disposal stripped to suburb"
+
+    def test_strip_combined_cycle(self):
+        name = "Tamar Valley Combined Cycle"
+        subject = station_name_cleaner(name)
+
+        assert (
+            subject == "Tamar Valley"
+        ), "Tamar Valley Combined Cycle stripped to suburb"
+
     # Slash names
 
     def test_dashed_names(self):
