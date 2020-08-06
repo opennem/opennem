@@ -88,6 +88,7 @@ def load_opennem_facilities():
         for facility_data in facilities:
             facility_duid = facility_data["code"]
             facility_status = station_state
+            facility_network_region = facility_data["region_id"]
             facility_fueltech = (
                 fueltech_map(facility_data["fuel_tech"])
                 if "fuel_tech" in facility_data
@@ -125,6 +126,7 @@ def load_opennem_facilities():
                 facility = Facility(
                     code=facility_duid,
                     network_code=facility_duid,
+                    network_region=facility_network_region,
                     created_by="opennem.load_facilities",
                 )
 
