@@ -310,6 +310,18 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     unit, duid, facility_record["station_name"]
                 )
 
+                facility_comissioned = facility_record["SurveyEffective"]
+                facility_comissioned_dt = None
+
+                try:
+                    facility_comissioned_dt = datetime.strptime(
+                        facility_comissioned, "%d/%m/%y"
+                    )
+                except ValueError:
+                    logger.error(
+                        "Error parsing date: {}".format(facility_comissioned)
+                    )
+
                 facility_status = lookup_facility_status(
                     facility_record["UnitStatus"]
                 )
@@ -413,6 +425,9 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
 
                 if not facility.status_id:
                     facility.status_id = facility_status
+
+                if not facility.registered and facility_comissioned_dt:
+                    facility.registered = facility_comissioned_dt
 
                 facility.station = facility_station
 
