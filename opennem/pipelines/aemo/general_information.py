@@ -435,7 +435,9 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     facility.fueltech_id = facility_fueltech
                     facility.updated_by = "pipeline.aemo.general_information"
 
-                if not facility.capacity_registered:
+                if not facility.capacity_registered or (
+                    facility.status and facility.status != "operating"
+                ):
                     facility.capacity_registered = reg_cap
                     facility.updated_by = "pipeline.aemo.general_information"
 
@@ -449,9 +451,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     facility.unit_alias = unit.alias
 
                 if not facility.unit_capacity or (
-                    facility.status != "operating"
-                    and facility.created_by
-                    != "pipeline.aemo.registration_exemption"
+                    facility.status and facility.status != "operating"
                 ):
                     facility.unit_capacity = unit_size
                     facility.updated_by = "pipeline.aemo.general_information"
