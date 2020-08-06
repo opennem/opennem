@@ -5,8 +5,10 @@ from pprint import pprint
 
 from sqlalchemy.orm import sessionmaker
 
+from opennem.core.unit_codes import get_unit_code
+from opennem.core.unit_parser import parse_unit_duid
 from opennem.db import db_connect
-from opennem.db.models.opennem import metadata
+from opennem.db.models.opennem import Facility, Station, metadata
 
 engine = db_connect()
 session = sessionmaker(bind=engine)
@@ -32,6 +34,39 @@ def patches():
         for query in sqls:
             rows = c.execute(query)
             pprint(rows)
+
+    s = session()
+
+    duid = None
+
+    unit = parse_unit_duid(1, duid)
+    unit_code = get_unit_code(unit, duid, "Singleton Solar Farm")
+
+    singleton = Station(
+        name="Singleton",
+        locality="singleton",
+        network_name="Singleton Solar Farm",
+        network_id="NEM",
+        created_by="opennem.patches",
+    )
+    s.add(singleton)
+
+    singleston_facility = Facility(
+        code=unit_code,
+        status_id="operating",
+        network_region="QLD1",
+        network_name="Singleton Solar Farm",
+        fueltech_id="solar_utility",
+        unit_id=unit.id,
+        unit_number=unit.number,
+        unit_capacity=0.4,
+        capacity_registered=0.4,
+        created_by="opennem.patches",
+    )
+    singleston_facility.station = singleton
+
+    s.add(singleston_facility)
+    s.commit()
 
 
 if __name__ == "__main__":
