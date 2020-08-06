@@ -21,6 +21,7 @@ STRIP_WORDS = [
     "phase 5",
     "energy facility",
     "coal mine",
+    "nett off",
     "renewable energy facility",
     "waste disposal facility",
     "network support station",
