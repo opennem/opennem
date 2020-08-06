@@ -43,8 +43,7 @@ def get_stations() -> List[Station]:
         .order_by(
             Facility.network_region,
             Station.name,
-            Station.id,
-            Facility.unit_number,
+            Facility.network_code,
             Facility.code,
         )
         .all()
