@@ -66,6 +66,16 @@ def get_station_facility(station):
     return None
 
 
+def get_station_code(station):
+    if station.code:
+        return station.code.replace("_", "")
+
+    if station.network_code:
+        return station.code.replace("_", "")
+
+    return station.id
+
+
 def get_ocode(station) -> str:
     """
 
@@ -77,8 +87,7 @@ def get_ocode(station) -> str:
         station.network.country or "au",
         station.network.code or None,
         get_network_region(facility.network_region) or station.state,
-        station.code or None,
-        station.id,
+        get_station_code(station),
     ]
 
     ocode_values = []
