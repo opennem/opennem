@@ -43,6 +43,9 @@ def map_network_region(network_region: str) -> str:
     """
         Map network regions from old to new
 
+        Note that network regions aren't really geos
+        and there are networks within geos like DKIS (NT)
+        and NWIS (WA) that need to retain their network_region
     """
     if not network_region or not type(network_region) is str:
         return network_region
