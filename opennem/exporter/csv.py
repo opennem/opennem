@@ -21,6 +21,9 @@ def stations_csv_records():
             if duid_is_retired(facility.code):
                 continue
 
+            if facility.active == False:
+                continue
+
             rec = {
                 "name": station.name,
                 # "oid": station.oid,

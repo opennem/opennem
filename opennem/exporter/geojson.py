@@ -48,6 +48,9 @@ def stations_geojson_records():
             if duid_is_retired(facility.code):
                 continue
 
+            if facility.active == False:
+                continue
+
             f.properties["duid_data"].append(
                 {
                     "oid": facility.oid,
