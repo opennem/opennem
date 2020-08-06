@@ -39,6 +39,22 @@ def fueltech_map(fueltech):
     return fueltech
 
 
+def map_network_region(network_region: str) -> str:
+    """
+        Map network regions from old to new
+
+    """
+    if not network_region or not type(network_region) is str:
+        return network_region
+
+    network_region = network_region.strip()
+
+    if network_region == "WA1":
+        return "WEM"
+
+    return network_region
+
+
 def load_opennem_facilities():
     station_fixture = load_fixture("facility_registry.json")
 
@@ -88,7 +104,9 @@ def load_opennem_facilities():
         for facility_data in facilities:
             facility_duid = facility_data["code"]
             facility_status = station_state
-            facility_network_region = facility_data["region_id"]
+            facility_network_region = map_network_region(
+                facility_data["region_id"]
+            )
             facility_fueltech = (
                 fueltech_map(facility_data["fuel_tech"])
                 if "fuel_tech" in facility_data
