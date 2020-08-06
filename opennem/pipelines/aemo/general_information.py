@@ -260,6 +260,25 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     )
                     facility_station = None
 
+            # If we have a station name, and no duid, and it's ok to join by name
+            # then find the station (make sure to region lock)
+            if (
+                station_name
+                and not duid
+                and not facility_station
+                and facility_station_join_by_name(station_name)
+            ):
+                facility = (
+                    s.query(Facility)
+                    .join(Facility.station)
+                    .filter(Facility.network_region == station_network_region)
+                    .filter(Station.name == station_name)
+                    .first()
+                )
+
+                if facility:
+                    facility_station = facility.station
+
             # Create one as it doesn't exist
             if not facility_station:
                 facility_station = Station(

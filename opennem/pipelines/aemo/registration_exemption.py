@@ -69,6 +69,15 @@ def get_station_record_from_facilities(units: list):
     return units[0]
 
 
+def get_unique_reqion(units: list) -> str:
+    if not type(units) is list or len(units) < 1:
+        return None
+
+    first_record = units[0]
+
+    return first_record["region"].strip()
+
+
 class RegistrationExemptionGrouperPipeline(object):
     """
         This is the first-pass pipeline of the AEMO Registration and Exemptions list
@@ -224,6 +233,29 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
             facility_station_record = get_station_record_from_facilities(
                 facilities
             )
+
+            facility_network_region = get_unique_reqion(facilities)
+
+            if not duid and facility_station_join_by_name(station_name):
+                try:
+                    facility = (
+                        s.query(Facility)
+                        .join(Facility.station)
+                        .filter(
+                            Facility.network_region == facility_network_region
+                        )
+                        .filter(Station.name == station_name)
+                        .one_or_none()
+                    )
+                except MultipleResultsFound:
+                    logger.error(
+                        "Multiple stations found for {} {}".format(
+                            station_name, facility_network_region
+                        )
+                    )
+
+                if facility:
+                    facility_station = facility.station
 
             if duid and duid_unique and facility_count == 1:
 
