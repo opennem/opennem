@@ -37,9 +37,9 @@ def get_stations() -> List[Station]:
     stations = (
         s.query(Station)
         .join(Facility)
-        .join(FuelTech)
-        .filter(Facility.fueltech != None)
-        .filter(Facility.status != None)
+        .join(Facility.fueltech)
+        .filter(Facility.fueltech_id.isnot(None))
+        .filter(Facility.status_id.isnot(None))
         .order_by(
             Facility.network_region,
             Station.name,
