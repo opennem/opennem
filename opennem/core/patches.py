@@ -54,7 +54,7 @@ def patches():
     singleston_facility = Facility(
         code=unit_code,
         status_id="operating",
-        network_region="QLD1",
+        network_region="NSW1",
         network_name="Singleton Solar Farm",
         fueltech_id="solar_utility",
         unit_id=unit.id,
