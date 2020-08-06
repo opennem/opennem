@@ -61,13 +61,12 @@ class TestStationOutput(object):
 
         for subject_field, subject_value in subject.items():
             if subject_value:
-                pass
-                # assert type(subject_value) in [
-                #     data_types[subject_field],
-                #     None,
-                # ], "{} is of type {}".format(
-                #     subject_value, data_types[subject_field]
-                # )
+                assert type(subject_value) in [
+                    data_types[subject_field],
+                    None,
+                ], "{} is of type {}".format(
+                    subject_value, data_types[subject_field]
+                )
 
     def test_nem_single(self):
         """
