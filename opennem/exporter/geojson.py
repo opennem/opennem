@@ -73,7 +73,8 @@ def stations_geojson_records():
                 }
             )
 
-        records.append(f)
+        if len(f.properties["duid_data"]) > 0:
+            records.append(f)
 
     return records
 
