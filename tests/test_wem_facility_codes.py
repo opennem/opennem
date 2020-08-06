@@ -23,3 +23,9 @@ class TestWemFacilityCode(object):
         assert (
             facility_code == "BRIDGETOWN_BIOMASS_PLANT"
         ), "Bridgetown remains the same"
+
+    def test_gosnells(self):
+        code = "GOSNELLS"
+        facility_code = parse_wem_facility_code(code)
+
+        assert facility_code == "GOSNELLS", "Gosnells stations is the same"

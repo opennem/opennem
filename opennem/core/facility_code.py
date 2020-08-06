@@ -22,6 +22,9 @@ def parse_wem_facility_code(facility_code: str) -> str:
         # Exception?
         return None
 
+    if "_" not in facility_code:
+        return facility_code
+
     comp = facility_comp = facility_code.split("_")
 
     num_comp = len(comp)
