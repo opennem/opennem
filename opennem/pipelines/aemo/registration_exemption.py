@@ -422,7 +422,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
                 facility.unit_id = unit.id
                 facility.unit_number = unit.number
-                facility.unit_size = unit_size
                 facility.unit_alias = unit.alias
                 facility.unit_capacity = unit_size
 
