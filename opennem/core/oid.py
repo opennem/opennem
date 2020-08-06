@@ -67,11 +67,11 @@ def get_station_facility(station):
 
 
 def get_station_code(station):
-    if station.code:
+    if station.code and type(station.code) is str:
         return station.code.replace("_", "")
 
-    if station.network_code:
-        return station.code.replace("_", "")
+    if station.network_code and type(station.network_code) is str:
+        return station.network_code.replace("_", "")
 
     return station.id
 
