@@ -25909,7 +25909,7 @@
             },
             "properties": {
                 "oid": "2B4",
-                "ocode": "au_wem_wem_albany_1832",
+                "ocode": "au_wem_albany_1832",
                 "station_id": 1832,
                 "station_code": "ALBANY",
                 "facility_id": "ALBANY",
@@ -25953,7 +25953,7 @@
             },
             "properties": {
                 "oid": "2BT",
-                "ocode": "au_wem_wem_alcoa_1836",
+                "ocode": "au_wem_alcoa_1836",
                 "station_id": 1836,
                 "station_code": "ALCOA",
                 "facility_id": "ALCOA",
@@ -25997,7 +25997,7 @@
             },
             "properties": {
                 "oid": "23W",
-                "ocode": "au_wem_wem_ambrisolar_1869",
+                "ocode": "au_wem_ambrisolar_1869",
                 "station_id": 1869,
                 "station_code": "AMBRISOLAR",
                 "facility_id": "AMBRISOLAR",
@@ -26041,7 +26041,7 @@
             },
             "properties": {
                 "oid": "2B8",
-                "ocode": "au_wem_wem_badgingarra_1841",
+                "ocode": "au_wem_badgingarra_1841",
                 "station_id": 1841,
                 "station_code": "BADGINGARRA",
                 "facility_id": "BADGINGARRA",
@@ -26085,7 +26085,7 @@
             },
             "properties": {
                 "oid": "23K",
-                "ocode": "au_wem_wem_bw1_bluewaters_1861",
+                "ocode": "au_wem_bw1_bluewaters_1861",
                 "station_id": 1861,
                 "station_code": "BW1_BLUEWATERS",
                 "facility_id": "BW1_BLUEWATERS",
@@ -26129,7 +26129,7 @@
             },
             "properties": {
                 "oid": "23T",
-                "ocode": "au_wem_wem_bw2_bluewaters_1860",
+                "ocode": "au_wem_bw2_bluewaters_1860",
                 "station_id": 1860,
                 "station_code": "BW2_BLUEWATERS",
                 "facility_id": "BW2_BLUEWATERS",
@@ -26173,7 +26173,7 @@
             },
             "properties": {
                 "oid": "2E8",
-                "ocode": "au_wem_wem_bremer_bay_1889",
+                "ocode": "au_wem_bremer_bay_1889",
                 "station_id": 1889,
                 "station_code": "BREMER_BAY",
                 "facility_id": "BREMER_BAY",
@@ -26217,7 +26217,7 @@
             },
             "properties": {
                 "oid": "2ET",
-                "ocode": "au_wem_wem_bridgetown_biomass_plant_1884",
+                "ocode": "au_wem_bridgetown_biomass_plant_1884",
                 "station_id": 1884,
                 "station_code": "BRIDGETOWN_BIOMASS_PLANT",
                 "facility_id": "BRIDGETOWN_BIOMASS_PLANT",
@@ -26261,7 +26261,7 @@
             },
             "properties": {
                 "oid": "2ER",
-                "ocode": "au_wem_wem_cockburn_1890",
+                "ocode": "au_wem_cockburn_1890",
                 "station_id": 1890,
                 "station_code": "COCKBURN",
                 "facility_id": "COCKBURN",
@@ -26305,7 +26305,7 @@
             },
             "properties": {
                 "oid": "23C",
-                "ocode": "au_wem_wem_investec_collgar_1850",
+                "ocode": "au_wem_investec_collgar_1850",
                 "station_id": 1850,
                 "station_code": "INVESTEC_COLLGAR",
                 "facility_id": "INVESTEC_COLLGAR",
@@ -26349,7 +26349,7 @@
             },
             "properties": {
                 "oid": "2ES",
-                "ocode": "au_wem_wem_collie_1891",
+                "ocode": "au_wem_collie_1891",
                 "station_id": 1891,
                 "station_code": "COLLIE",
                 "facility_id": "COLLIE",
@@ -26393,7 +26393,7 @@
             },
             "properties": {
                 "oid": "23B",
-                "ocode": "au_wem_wem_dcwl_denmark_1852",
+                "ocode": "au_wem_dcwl_denmark_1852",
                 "station_id": 1852,
                 "station_code": "DCWL_DENMARK",
                 "facility_id": "DCWL_DENMARK",
@@ -26437,7 +26437,7 @@
             },
             "properties": {
                 "oid": "233",
-                "ocode": "au_wem_wem_edwfman_1853",
+                "ocode": "au_wem_edwfman_1853",
                 "station_id": 1853,
                 "station_code": "EDWFMAN",
                 "facility_id": "EDWFMAN",
@@ -26481,7 +26481,7 @@
             },
             "properties": {
                 "oid": "23H",
-                "ocode": "au_wem_wem_prk_1858",
+                "ocode": "au_wem_prk_1858",
                 "station_id": 1858,
                 "station_code": "PRK",
                 "facility_id": "PRK",
@@ -26525,7 +26525,7 @@
             },
             "properties": {
                 "oid": "2BG",
-                "ocode": "au_wem_wem_grasmere_1833",
+                "ocode": "au_wem_grasmere_1833",
                 "station_id": 1833,
                 "station_code": "GRASMERE",
                 "facility_id": "GRASMERE",
@@ -26569,7 +26569,7 @@
             },
             "properties": {
                 "oid": "235",
-                "ocode": "au_wem_wem_greenough_river_1859",
+                "ocode": "au_wem_greenough_river_1859",
                 "station_id": 1859,
                 "station_code": "GREENOUGH_RIVER",
                 "facility_id": "GREENOUGH_RIVER",
@@ -26613,7 +26613,7 @@
             },
             "properties": {
                 "oid": "2EP",
-                "ocode": "au_wem_wem_henderson_renewable_1888",
+                "ocode": "au_wem_henderson_renewable_1888",
                 "station_id": 1888,
                 "station_code": "HENDERSON_RENEWABLE",
                 "facility_id": "HENDERSON_RENEWABLE",
@@ -26657,7 +26657,7 @@
             },
             "properties": {
                 "oid": "237",
-                "ocode": "au_wem_wem_kalamunda_1863",
+                "ocode": "au_wem_kalamunda_1863",
                 "station_id": 1863,
                 "station_code": "KALAMUNDA",
                 "facility_id": "KALAMUNDA",
@@ -26701,7 +26701,7 @@
             },
             "properties": {
                 "oid": "2E9",
-                "ocode": "au_wem_wem_kalbarri_1892",
+                "ocode": "au_wem_kalbarri_1892",
                 "station_id": 1892,
                 "station_code": "KALBARRI",
                 "facility_id": "KALBARRI",
@@ -26745,7 +26745,7 @@
             },
             "properties": {
                 "oid": "2BY",
-                "ocode": "au_wem_wem_blairfox_karakin_1847",
+                "ocode": "au_wem_blairfox_karakin_1847",
                 "station_id": 1847,
                 "station_code": "BLAIRFOX_KARAKIN",
                 "facility_id": "BLAIRFOX_KARAKIN",
@@ -26789,7 +26789,7 @@
             },
             "properties": {
                 "oid": "2EW",
-                "ocode": "au_wem_wem_kemerton_1893",
+                "ocode": "au_wem_kemerton_1893",
                 "station_id": 1893,
                 "station_code": "KEMERTON",
                 "facility_id": "KEMERTON",
@@ -26851,7 +26851,7 @@
             },
             "properties": {
                 "oid": "23Y",
-                "ocode": "au_wem_wem_newgen_kwinana_1871",
+                "ocode": "au_wem_newgen_kwinana_1871",
                 "station_id": 1871,
                 "station_code": "NEWGEN_KWINANA",
                 "facility_id": "NEWGEN_KWINANA",
@@ -26895,7 +26895,7 @@
             },
             "properties": {
                 "oid": "2E7",
-                "ocode": "au_wem_wem_perthenergy_kwinana_1887",
+                "ocode": "au_wem_perthenergy_kwinana_1887",
                 "station_id": 1887,
                 "station_code": "PERTHENERGY_KWINANA",
                 "facility_id": "PERTHENERGY_KWINANA",
@@ -26939,7 +26939,7 @@
             },
             "properties": {
                 "oid": "2EX",
-                "ocode": "au_wem_wem_kwinana_1894",
+                "ocode": "au_wem_kwinana_1894",
                 "station_id": 1894,
                 "station_code": "KWINANA",
                 "facility_id": "KWINANA",
@@ -27001,7 +27001,7 @@
             },
             "properties": {
                 "oid": "2FC",
-                "ocode": "au_wem_wem_ppp_kcp_1898",
+                "ocode": "au_wem_ppp_kcp_1898",
                 "station_id": 1898,
                 "station_code": "PPP_KCP",
                 "facility_id": "PPP_KCP",
@@ -27045,7 +27045,7 @@
             },
             "properties": {
                 "oid": "23S",
-                "ocode": "au_wem_wem_namkkn_merr_1867",
+                "ocode": "au_wem_namkkn_merr_1867",
                 "station_id": 1867,
                 "station_code": "NAMKKN_MERR",
                 "facility_id": "NAMKKN_MERR",
@@ -27089,7 +27089,7 @@
             },
             "properties": {
                 "oid": "239",
-                "ocode": "au_wem_wem_mersolar_1868",
+                "ocode": "au_wem_mersolar_1868",
                 "station_id": 1868,
                 "station_code": "MERSOLAR",
                 "facility_id": "MERSOLAR",
@@ -27133,7 +27133,7 @@
             },
             "properties": {
                 "oid": "23R",
-                "ocode": "au_wem_wem_skyfrm_mtbarker_1866",
+                "ocode": "au_wem_skyfrm_mtbarker_1866",
                 "station_id": 1866,
                 "station_code": "SKYFRM_MTBARKER",
                 "facility_id": "SKYFRM_MTBARKER",
@@ -27177,7 +27177,7 @@
             },
             "properties": {
                 "oid": "2EY",
-                "ocode": "au_wem_wem_muja_1895",
+                "ocode": "au_wem_muja_1895",
                 "station_id": 1895,
                 "station_code": "MUJA",
                 "facility_id": "MUJA",
@@ -27275,7 +27275,7 @@
             },
             "properties": {
                 "oid": "23X",
-                "ocode": "au_wem_wem_mwf_mumbida_1870",
+                "ocode": "au_wem_mwf_mumbida_1870",
                 "station_id": 1870,
                 "station_code": "MWF_MUMBIDA",
                 "facility_id": "MWF_MUMBIDA",
@@ -27319,7 +27319,7 @@
             },
             "properties": {
                 "oid": "2FZ",
-                "ocode": "au_wem_wem_mungarra_1896",
+                "ocode": "au_wem_mungarra_1896",
                 "station_id": 1896,
                 "station_code": "MUNGARRA",
                 "facility_id": "MUNGARRA",
@@ -27381,7 +27381,7 @@
             },
             "properties": {
                 "oid": "2EZ",
-                "ocode": "au_wem_wem_newgen_neerabup_1872",
+                "ocode": "au_wem_newgen_neerabup_1872",
                 "station_id": 1872,
                 "station_code": "NEWGEN_NEERABUP",
                 "facility_id": "NEWGEN_NEERABUP",
@@ -27425,7 +27425,7 @@
             },
             "properties": {
                 "oid": "2EA",
-                "ocode": "au_wem_wem_northam_sf_1873",
+                "ocode": "au_wem_northam_sf_1873",
                 "station_id": 1873,
                 "station_code": "NORTHAM_SF",
                 "facility_id": "NORTHAM_SF",
@@ -27469,7 +27469,7 @@
             },
             "properties": {
                 "oid": "2FA",
-                "ocode": "au_wem_wem_pinjar_1897",
+                "ocode": "au_wem_pinjar_1897",
                 "station_id": 1897,
                 "station_code": "PINJAR",
                 "facility_id": "PINJAR",
@@ -27657,7 +27657,7 @@
             },
             "properties": {
                 "oid": "2B6",
-                "ocode": "au_wem_wem_alinta_pnj_1838",
+                "ocode": "au_wem_alinta_pnj_1838",
                 "station_id": 1838,
                 "station_code": "ALINTA_PNJ",
                 "facility_id": "ALINTA_PNJ",
@@ -27719,7 +27719,7 @@
             },
             "properties": {
                 "oid": "23P",
-                "ocode": "au_wem_wem_red_1864",
+                "ocode": "au_wem_red_1864",
                 "station_id": 1864,
                 "station_code": "RED",
                 "facility_id": "RED",
@@ -27763,7 +27763,7 @@
             },
             "properties": {
                 "oid": "232",
-                "ocode": "au_wem_wem_1851",
+                "ocode": "au_wem_1851",
                 "station_id": 1851,
                 "station_code": "",
                 "facility_id": "",
@@ -27861,7 +27861,7 @@
             },
             "properties": {
                 "oid": "2E2",
-                "ocode": "au_wem_wem_south_1875",
+                "ocode": "au_wem_south_1875",
                 "station_id": 1875,
                 "station_code": "SOUTH",
                 "facility_id": "SOUTH",
@@ -27905,7 +27905,7 @@
             },
             "properties": {
                 "oid": "2EE",
-                "ocode": "au_wem_wem_sthrncrs_1878",
+                "ocode": "au_wem_sthrncrs_1878",
                 "station_id": 1878,
                 "station_code": "STHRNCRS",
                 "facility_id": "STHRNCRS",
@@ -27949,7 +27949,7 @@
             },
             "properties": {
                 "oid": "238",
-                "ocode": "au_wem_wem_tamala_1865",
+                "ocode": "au_wem_tamala_1865",
                 "station_id": 1865,
                 "station_code": "TAMALA",
                 "facility_id": "TAMALA",
@@ -27993,7 +27993,7 @@
             },
             "properties": {
                 "oid": "2E4",
-                "ocode": "au_wem_wem_tesla_geraldton_1880",
+                "ocode": "au_wem_tesla_geraldton_1880",
                 "station_id": 1880,
                 "station_code": "TESLA_GERALDTON",
                 "facility_id": "TESLA_GERALDTON",
@@ -28037,7 +28037,7 @@
             },
             "properties": {
                 "oid": "2EG",
-                "ocode": "au_wem_wem_tesla_kemerton_1881",
+                "ocode": "au_wem_tesla_kemerton_1881",
                 "station_id": 1881,
                 "station_code": "TESLA_KEMERTON",
                 "facility_id": "TESLA_KEMERTON",
@@ -28081,7 +28081,7 @@
             },
             "properties": {
                 "oid": "2E5",
-                "ocode": "au_wem_wem_tesla_northam_1883",
+                "ocode": "au_wem_tesla_northam_1883",
                 "station_id": 1883,
                 "station_code": "TESLA_NORTHAM",
                 "facility_id": "TESLA_NORTHAM",
@@ -28125,7 +28125,7 @@
             },
             "properties": {
                 "oid": "2EH",
-                "ocode": "au_wem_wem_tesla_picton_1882",
+                "ocode": "au_wem_tesla_picton_1882",
                 "station_id": 1882,
                 "station_code": "TESLA_PICTON",
                 "facility_id": "TESLA_PICTON",
@@ -28169,7 +28169,7 @@
             },
             "properties": {
                 "oid": "2EF",
-                "ocode": "au_wem_wem_tiwest_1879",
+                "ocode": "au_wem_tiwest_1879",
                 "station_id": 1879,
                 "station_code": "TIWEST",
                 "facility_id": "TIWEST",
@@ -28213,7 +28213,7 @@
             },
             "properties": {
                 "oid": "2B7",
-                "ocode": "au_wem_wem_alinta_wgp_1839",
+                "ocode": "au_wem_alinta_wgp_1839",
                 "station_id": 1839,
                 "station_code": "ALINTA_WGP",
                 "facility_id": "ALINTA_WGP",
@@ -28275,7 +28275,7 @@
             },
             "properties": {
                 "oid": "2BP",
-                "ocode": "au_wem_wem_alinta_1840",
+                "ocode": "au_wem_alinta_1840",
                 "station_id": 1840,
                 "station_code": "ALINTA",
                 "facility_id": "ALINTA",
@@ -28319,7 +28319,7 @@
             },
             "properties": {
                 "oid": "23Z",
-                "ocode": "au_wem_wem_blairfox_westhills_1848",
+                "ocode": "au_wem_blairfox_westhills_1848",
                 "station_id": 1848,
                 "station_code": "BLAIRFOX_WESTHILLS",
                 "facility_id": "BLAIRFOX_WESTHILLS",
@@ -28363,7 +28363,7 @@
             },
             "properties": {
                 "oid": "2FE",
-                "ocode": "au_wem_wem_west_kalgoorlie_1902",
+                "ocode": "au_wem_west_kalgoorlie_1902",
                 "station_id": 1902,
                 "station_code": "WEST_KALGOORLIE",
                 "facility_id": "WEST_KALGOORLIE",

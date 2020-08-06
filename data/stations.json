@@ -11896,7 +11896,7 @@
     },
     {
         "name": "Albany",
-        "ocode": "au_wem_wem_albany_1832",
+        "ocode": "au_wem_albany_1832",
         "code": "ALBANY_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11911,7 +11911,7 @@
     },
     {
         "name": "Alcoa Wagerup",
-        "ocode": "au_wem_wem_alcoa_1836",
+        "ocode": "au_wem_alcoa_1836",
         "code": "ALCOA_WGP",
         "region": "WEM",
         "status": "operating",
@@ -11926,7 +11926,7 @@
     },
     {
         "name": "Ambrisolar",
-        "ocode": "au_wem_wem_ambrisolar_1869",
+        "ocode": "au_wem_ambrisolar_1869",
         "code": "AMBRISOLAR_PV1",
         "region": "WEM",
         "status": "operating",
@@ -11941,7 +11941,7 @@
     },
     {
         "name": "Badgingarra",
-        "ocode": "au_wem_wem_badgingarra_1841",
+        "ocode": "au_wem_badgingarra_1841",
         "code": "BADGINGARRA_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11956,7 +11956,7 @@
     },
     {
         "name": "Bluewaters 1",
-        "ocode": "au_wem_wem_bw1_bluewaters_1861",
+        "ocode": "au_wem_bw1_bluewaters_1861",
         "code": "BW1_BLUEWATERS_G2",
         "region": "WEM",
         "status": "operating",
@@ -11971,7 +11971,7 @@
     },
     {
         "name": "Bluewaters 2",
-        "ocode": "au_wem_wem_bw2_bluewaters_1860",
+        "ocode": "au_wem_bw2_bluewaters_1860",
         "code": "BW2_BLUEWATERS_G1",
         "region": "WEM",
         "status": "operating",
@@ -11986,7 +11986,7 @@
     },
     {
         "name": "Bremer Bay",
-        "ocode": "au_wem_wem_bremer_bay_1889",
+        "ocode": "au_wem_bremer_bay_1889",
         "code": "BREMER_BAY_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12001,7 +12001,7 @@
     },
     {
         "name": "Bridgetown",
-        "ocode": "au_wem_wem_bridgetown_biomass_plant_1884",
+        "ocode": "au_wem_bridgetown_biomass_plant_1884",
         "code": "BRIDGETOWN_BIOMASS_PLANT",
         "region": "WEM",
         "status": "operating",
@@ -12016,7 +12016,7 @@
     },
     {
         "name": "Cockburn Ccgt",
-        "ocode": "au_wem_wem_cockburn_1890",
+        "ocode": "au_wem_cockburn_1890",
         "code": "COCKBURN_CCG1",
         "region": "WEM",
         "status": "operating",
@@ -12031,7 +12031,7 @@
     },
     {
         "name": "Collgar",
-        "ocode": "au_wem_wem_investec_collgar_1850",
+        "ocode": "au_wem_investec_collgar_1850",
         "code": "INVESTEC_COLLGAR_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12046,7 +12046,7 @@
     },
     {
         "name": "Collie G1",
-        "ocode": "au_wem_wem_collie_1891",
+        "ocode": "au_wem_collie_1891",
         "code": "COLLIE_G1",
         "region": "WEM",
         "status": "operating",
@@ -12061,7 +12061,7 @@
     },
     {
         "name": "Denmark",
-        "ocode": "au_wem_wem_dcwl_denmark_1852",
+        "ocode": "au_wem_dcwl_denmark_1852",
         "code": "DCWL_DENMARK_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12076,7 +12076,7 @@
     },
     {
         "name": "Emu Downs",
-        "ocode": "au_wem_wem_edwfman_1853",
+        "ocode": "au_wem_edwfman_1853",
         "code": "EDWFMAN_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12091,7 +12091,7 @@
     },
     {
         "name": "Goldfields",
-        "ocode": "au_wem_wem_prk_1858",
+        "ocode": "au_wem_prk_1858",
         "code": "PRK_AG",
         "region": "WEM",
         "status": "operating",
@@ -12106,7 +12106,7 @@
     },
     {
         "name": "Grasmere",
-        "ocode": "au_wem_wem_grasmere_1833",
+        "ocode": "au_wem_grasmere_1833",
         "code": "GRASMERE_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12121,7 +12121,7 @@
     },
     {
         "name": "Greenough River",
-        "ocode": "au_wem_wem_greenough_river_1859",
+        "ocode": "au_wem_greenough_river_1859",
         "code": "GREENOUGH_RIVER_PV1",
         "region": "WEM",
         "status": "operating",
@@ -12136,7 +12136,7 @@
     },
     {
         "name": "Henderson",
-        "ocode": "au_wem_wem_henderson_renewable_1888",
+        "ocode": "au_wem_henderson_renewable_1888",
         "code": "HENDERSON_RENEWABLE_IG1",
         "region": "WEM",
         "status": "operating",
@@ -12151,7 +12151,7 @@
     },
     {
         "name": "Kalamunda",
-        "ocode": "au_wem_wem_kalamunda_1863",
+        "ocode": "au_wem_kalamunda_1863",
         "code": "KALAMUNDA_SG",
         "region": "WEM",
         "status": "operating",
@@ -12166,7 +12166,7 @@
     },
     {
         "name": "Kalbarri",
-        "ocode": "au_wem_wem_kalbarri_1892",
+        "ocode": "au_wem_kalbarri_1892",
         "code": "KALBARRI_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12181,7 +12181,7 @@
     },
     {
         "name": "Karakin",
-        "ocode": "au_wem_wem_blairfox_karakin_1847",
+        "ocode": "au_wem_blairfox_karakin_1847",
         "code": "BLAIRFOX_KARAKIN_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12196,7 +12196,7 @@
     },
     {
         "name": "Kemerton 2",
-        "ocode": "au_wem_wem_kemerton_1893",
+        "ocode": "au_wem_kemerton_1893",
         "code": "KEMERTON_GT11",
         "region": "WEM",
         "status": "operating",
@@ -12211,7 +12211,7 @@
     },
     {
         "name": "Kemerton 2",
-        "ocode": "au_wem_wem_kemerton_1893",
+        "ocode": "au_wem_kemerton_1893",
         "code": "KEMERTON_GT12",
         "region": "WEM",
         "status": "operating",
@@ -12226,7 +12226,7 @@
     },
     {
         "name": "Kwinana",
-        "ocode": "au_wem_wem_newgen_kwinana_1871",
+        "ocode": "au_wem_newgen_kwinana_1871",
         "code": "NEWGEN_KWINANA_CCG1",
         "region": "WEM",
         "status": "operating",
@@ -12241,7 +12241,7 @@
     },
     {
         "name": "Kwinana 1",
-        "ocode": "au_wem_wem_perthenergy_kwinana_1887",
+        "ocode": "au_wem_perthenergy_kwinana_1887",
         "code": "PERTHENERGY_KWINANA_GT1",
         "region": "WEM",
         "status": "operating",
@@ -12256,7 +12256,7 @@
     },
     {
         "name": "Kwinana 3",
-        "ocode": "au_wem_wem_kwinana_1894",
+        "ocode": "au_wem_kwinana_1894",
         "code": "KWINANA_GT2",
         "region": "WEM",
         "status": "operating",
@@ -12271,7 +12271,7 @@
     },
     {
         "name": "Kwinana 3",
-        "ocode": "au_wem_wem_kwinana_1894",
+        "ocode": "au_wem_kwinana_1894",
         "code": "KWINANA_GT3",
         "region": "WEM",
         "status": "operating",
@@ -12286,7 +12286,7 @@
     },
     {
         "name": "Kwinana Eg1",
-        "ocode": "au_wem_wem_ppp_kcp_1898",
+        "ocode": "au_wem_ppp_kcp_1898",
         "code": "PPP_KCP_EG1",
         "region": "WEM",
         "status": "operating",
@@ -12301,7 +12301,7 @@
     },
     {
         "name": "Merredin",
-        "ocode": "au_wem_wem_namkkn_merr_1867",
+        "ocode": "au_wem_namkkn_merr_1867",
         "code": "NAMKKN_MERR_SG1",
         "region": "WEM",
         "status": "operating",
@@ -12316,7 +12316,7 @@
     },
     {
         "name": "Merredin",
-        "ocode": "au_wem_wem_mersolar_1868",
+        "ocode": "au_wem_mersolar_1868",
         "code": "MERSOLAR_PV1",
         "region": "WEM",
         "status": "operating",
@@ -12331,7 +12331,7 @@
     },
     {
         "name": "Mount Barker",
-        "ocode": "au_wem_wem_skyfrm_mtbarker_1866",
+        "ocode": "au_wem_skyfrm_mtbarker_1866",
         "code": "SKYFRM_MTBARKER_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12346,7 +12346,7 @@
     },
     {
         "name": "Muja",
-        "ocode": "au_wem_wem_muja_1895",
+        "ocode": "au_wem_muja_1895",
         "code": "MUJA_G5",
         "region": "WEM",
         "status": "operating",
@@ -12361,7 +12361,7 @@
     },
     {
         "name": "Muja",
-        "ocode": "au_wem_wem_muja_1895",
+        "ocode": "au_wem_muja_1895",
         "code": "MUJA_G6",
         "region": "WEM",
         "status": "operating",
@@ -12376,7 +12376,7 @@
     },
     {
         "name": "Muja",
-        "ocode": "au_wem_wem_muja_1895",
+        "ocode": "au_wem_muja_1895",
         "code": "MUJA_G7",
         "region": "WEM",
         "status": "operating",
@@ -12391,7 +12391,7 @@
     },
     {
         "name": "Muja",
-        "ocode": "au_wem_wem_muja_1895",
+        "ocode": "au_wem_muja_1895",
         "code": "MUJA_G8",
         "region": "WEM",
         "status": "operating",
@@ -12406,7 +12406,7 @@
     },
     {
         "name": "Mumbida",
-        "ocode": "au_wem_wem_mwf_mumbida_1870",
+        "ocode": "au_wem_mwf_mumbida_1870",
         "code": "MWF_MUMBIDA_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12421,7 +12421,7 @@
     },
     {
         "name": "Mungarra 3",
-        "ocode": "au_wem_wem_mungarra_1896",
+        "ocode": "au_wem_mungarra_1896",
         "code": "MUNGARRA_GT1",
         "region": "WEM",
         "status": "operating",
@@ -12436,7 +12436,7 @@
     },
     {
         "name": "Mungarra 3",
-        "ocode": "au_wem_wem_mungarra_1896",
+        "ocode": "au_wem_mungarra_1896",
         "code": "MUNGARRA_GT3",
         "region": "WEM",
         "status": "operating",
@@ -12451,7 +12451,7 @@
     },
     {
         "name": "Neerabup 1",
-        "ocode": "au_wem_wem_newgen_neerabup_1872",
+        "ocode": "au_wem_newgen_neerabup_1872",
         "code": "NEWGEN_NEERABUP_GT1",
         "region": "WEM",
         "status": "operating",
@@ -12466,7 +12466,7 @@
     },
     {
         "name": "Northam",
-        "ocode": "au_wem_wem_northam_sf_1873",
+        "ocode": "au_wem_northam_sf_1873",
         "code": "NORTHAM_SF_PV1",
         "region": "WEM",
         "status": "operating",
@@ -12481,7 +12481,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_wem_pinjar_1897",
+        "ocode": "au_wem_pinjar_1897",
         "code": "PINJAR_GT1",
         "region": "WEM",
         "status": "operating",
@@ -12496,7 +12496,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_wem_pinjar_1897",
+        "ocode": "au_wem_pinjar_1897",
         "code": "PINJAR_GT10",
         "region": "WEM",
         "status": "operating",
@@ -12511,7 +12511,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_wem_pinjar_1897",
+        "ocode": "au_wem_pinjar_1897",
         "code": "PINJAR_GT11",
         "region": "WEM",
         "status": "operating",
@@ -12526,7 +12526,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_wem_pinjar_1897",
+        "ocode": "au_wem_pinjar_1897",
         "code": "PINJAR_GT2",
         "region": "WEM",
         "status": "operating",
@@ -12541,7 +12541,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_wem_pinjar_1897",
+        "ocode": "au_wem_pinjar_1897",
         "code": "PINJAR_GT3",
         "region": "WEM",
         "status": "operating",
@@ -12556,7 +12556,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_wem_pinjar_1897",
+        "ocode": "au_wem_pinjar_1897",
         "code": "PINJAR_GT4",
         "region": "WEM",
         "status": "operating",
@@ -12571,7 +12571,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_wem_pinjar_1897",
+        "ocode": "au_wem_pinjar_1897",
         "code": "PINJAR_GT5",
         "region": "WEM",
         "status": "operating",
@@ -12586,7 +12586,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_wem_pinjar_1897",
+        "ocode": "au_wem_pinjar_1897",
         "code": "PINJAR_GT7",
         "region": "WEM",
         "status": "operating",
@@ -12601,7 +12601,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_wem_pinjar_1897",
+        "ocode": "au_wem_pinjar_1897",
         "code": "PINJAR_GT9",
         "region": "WEM",
         "status": "operating",
@@ -12616,7 +12616,7 @@
     },
     {
         "name": "Pinjarra 2",
-        "ocode": "au_wem_wem_alinta_pnj_1838",
+        "ocode": "au_wem_alinta_pnj_1838",
         "code": "ALINTA_PNJ_U1",
         "region": "WEM",
         "status": "operating",
@@ -12631,7 +12631,7 @@
     },
     {
         "name": "Pinjarra 2",
-        "ocode": "au_wem_wem_alinta_pnj_1838",
+        "ocode": "au_wem_alinta_pnj_1838",
         "code": "ALINTA_PNJ_U2",
         "region": "WEM",
         "status": "operating",
@@ -12646,7 +12646,7 @@
     },
     {
         "name": "Red Hill",
-        "ocode": "au_wem_wem_red_1864",
+        "ocode": "au_wem_red_1864",
         "code": "RED_HILL",
         "region": "WEM",
         "status": "operating",
@@ -12661,7 +12661,7 @@
     },
     {
         "name": "Rockingham",
-        "ocode": "au_wem_wem_1851",
+        "ocode": "au_wem_1851",
         "code": "GOSNELLS",
         "region": "WEM",
         "status": "operating",
@@ -12676,7 +12676,7 @@
     },
     {
         "name": "Rockingham",
-        "ocode": "au_wem_wem_1851",
+        "ocode": "au_wem_1851",
         "code": "ATLAS",
         "region": "WEM",
         "status": "operating",
@@ -12691,7 +12691,7 @@
     },
     {
         "name": "Rockingham",
-        "ocode": "au_wem_wem_1851",
+        "ocode": "au_wem_1851",
         "code": "BIOGAS01",
         "region": "WEM",
         "status": "operating",
@@ -12706,7 +12706,7 @@
     },
     {
         "name": "Rockingham",
-        "ocode": "au_wem_wem_1851",
+        "ocode": "au_wem_1851",
         "code": "ROCKINGHAM",
         "region": "WEM",
         "status": "operating",
@@ -12721,7 +12721,7 @@
     },
     {
         "name": "South Cardup",
-        "ocode": "au_wem_wem_south_1875",
+        "ocode": "au_wem_south_1875",
         "code": "SOUTH_CARDUP",
         "region": "WEM",
         "status": "operating",
@@ -12736,7 +12736,7 @@
     },
     {
         "name": "Southern Cross",
-        "ocode": "au_wem_wem_sthrncrs_1878",
+        "ocode": "au_wem_sthrncrs_1878",
         "code": "STHRNCRS_EG",
         "region": "WEM",
         "status": "operating",
@@ -12751,7 +12751,7 @@
     },
     {
         "name": "Tamala Park",
-        "ocode": "au_wem_wem_tamala_1865",
+        "ocode": "au_wem_tamala_1865",
         "code": "TAMALA_PARK",
         "region": "WEM",
         "status": "operating",
@@ -12766,7 +12766,7 @@
     },
     {
         "name": "Tesla Geraldton",
-        "ocode": "au_wem_wem_tesla_geraldton_1880",
+        "ocode": "au_wem_tesla_geraldton_1880",
         "code": "TESLA_GERALDTON_G1",
         "region": "WEM",
         "status": "operating",
@@ -12781,7 +12781,7 @@
     },
     {
         "name": "Tesla Kemerton",
-        "ocode": "au_wem_wem_tesla_kemerton_1881",
+        "ocode": "au_wem_tesla_kemerton_1881",
         "code": "TESLA_KEMERTON_G1",
         "region": "WEM",
         "status": "operating",
@@ -12796,7 +12796,7 @@
     },
     {
         "name": "Tesla Northam",
-        "ocode": "au_wem_wem_tesla_northam_1883",
+        "ocode": "au_wem_tesla_northam_1883",
         "code": "TESLA_NORTHAM_G1",
         "region": "WEM",
         "status": "operating",
@@ -12811,7 +12811,7 @@
     },
     {
         "name": "Tesla Picton",
-        "ocode": "au_wem_wem_tesla_picton_1882",
+        "ocode": "au_wem_tesla_picton_1882",
         "code": "TESLA_PICTON_G1",
         "region": "WEM",
         "status": "operating",
@@ -12826,7 +12826,7 @@
     },
     {
         "name": "Tiwest",
-        "ocode": "au_wem_wem_tiwest_1879",
+        "ocode": "au_wem_tiwest_1879",
         "code": "TIWEST_COG1",
         "region": "WEM",
         "status": "operating",
@@ -12841,7 +12841,7 @@
     },
     {
         "name": "Wagerup 2",
-        "ocode": "au_wem_wem_alinta_wgp_1839",
+        "ocode": "au_wem_alinta_wgp_1839",
         "code": "ALINTA_WGP_GT",
         "region": "WEM",
         "status": "operating",
@@ -12856,7 +12856,7 @@
     },
     {
         "name": "Wagerup 2",
-        "ocode": "au_wem_wem_alinta_wgp_1839",
+        "ocode": "au_wem_alinta_wgp_1839",
         "code": "ALINTA_WGP_U2",
         "region": "WEM",
         "status": "operating",
@@ -12871,7 +12871,7 @@
     },
     {
         "name": "Walkaway",
-        "ocode": "au_wem_wem_alinta_1840",
+        "ocode": "au_wem_alinta_1840",
         "code": "ALINTA_WWF",
         "region": "WEM",
         "status": "operating",
@@ -12886,7 +12886,7 @@
     },
     {
         "name": "West Hills",
-        "ocode": "au_wem_wem_blairfox_westhills_1848",
+        "ocode": "au_wem_blairfox_westhills_1848",
         "code": "BLAIRFOX_WESTHILLS_WF3",
         "region": "WEM",
         "status": "operating",
@@ -12901,7 +12901,7 @@
     },
     {
         "name": "West Kalgoorlie Gt3",
-        "ocode": "au_wem_wem_west_kalgoorlie_1902",
+        "ocode": "au_wem_west_kalgoorlie_1902",
         "code": "WEST_KALGOORLIE_GT2",
         "region": "WEM",
         "status": "operating",
@@ -12916,7 +12916,7 @@
     },
     {
         "name": "West Kalgoorlie Gt3",
-        "ocode": "au_wem_wem_west_kalgoorlie_1902",
+        "ocode": "au_wem_west_kalgoorlie_1902",
         "code": "WEST_KALGOORLIE_GT3",
         "region": "WEM",
         "status": "operating",
