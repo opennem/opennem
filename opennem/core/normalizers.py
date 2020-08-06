@@ -19,6 +19,7 @@ STRIP_WORDS = [
     "phase 3",
     "phase 4",
     "phase 5",
+    "energy facility",
     "renewable energy facility",
     "waste disposal facility",
     "network support station",
