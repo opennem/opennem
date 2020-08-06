@@ -46,6 +46,10 @@ def get_network_region(network_region: str) -> Optional[str]:
     ):
         if is_number(network_region[-1:]):
             return network_region[:-1]
+
+        if network_region.strip().upper() == "WEM":
+            return None
+
         return network_region
 
     return None
@@ -77,8 +81,14 @@ def get_ocode(station) -> str:
         station.id,
     ]
 
-    values = [str(i).lower() for i in values if i is not None]
+    ocode_values = []
 
-    ocode = "_".join(values)
+    [
+        ocode_values.append(str(i).lower())
+        for i in values
+        if i is not None and str(i).lower() not in ocode_values
+    ]
+
+    ocode = "_".join(ocode_values)
 
     return ocode
