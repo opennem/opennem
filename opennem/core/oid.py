@@ -98,6 +98,6 @@ def get_ocode(station) -> str:
         if i is not None and str(i).lower() not in ocode_values
     ]
 
-    ocode = "_".join(ocode_values)
+    ocode = ".".join(ocode_values)
 
     return ocode
