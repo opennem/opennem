@@ -56,6 +56,9 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
 
         force_single is a hack for units like Hallett where "GT 2-4" means
         unit alias GT2-4 rather than alias GT with id 2 and 2 units
+
+        AEMO put a unit no in sometimes when they mean a unit ID (ie. 8) and
+        sometimes it means the number of units (ie. 40)
     """
     unit_id = 1
     unit_no = 0
@@ -137,6 +140,12 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
     if is_number(unit_input):
         unit_id = int(unit_input)
         unit_no += 1
+
+        # This is the crazy hack for when AEMO mix unit_no and unit_id
+        # in the same field
+        if unit_id > 8:
+            unit_id = 1
+            unit_no = unit_id
 
     # Range matches (ex. 1-50)
     unit_range_match = re.search(__unit_range_parse, unit_input)
