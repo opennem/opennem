@@ -21,7 +21,7 @@
                 "network_country": "au",
                 "state": null,
                 "postcode": null,
-                "name": "Albury",
+                "name": "Albury Renewable",
                 "capacity_registered": 1.12,
                 "capacity_aggregate": 1.12,
                 "duid_data": [
@@ -368,24 +368,6 @@
                         "network_region": "NSW1"
                     },
                     {
-                        "oid": "ARF_AR8",
-                        "duid": "BW01",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 660.0,
-                        "unit_alias": null,
-                        "capacity_registered": 660.0,
-                        "capacity_aggregate": 660.0,
-                        "network_region": "NSW1"
-                    },
-                    {
                         "oid": "ARF_AR9",
                         "duid": "BW04",
                         "fuel_tech": "coal_black",
@@ -401,6 +383,24 @@
                         "unit_alias": null,
                         "capacity_registered": 685.0,
                         "capacity_aggregate": 685.0,
+                        "network_region": "NSW1"
+                    },
+                    {
+                        "oid": "ARF_AR8",
+                        "duid": "BW01",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 660.0,
+                        "unit_alias": null,
+                        "capacity_registered": 660.0,
+                        "capacity_aggregate": 660.0,
                         "network_region": "NSW1"
                     }
                 ]
@@ -490,44 +490,6 @@
         },
         {
             "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "oid": "CTY",
-                "ocode": "au.nem.nsw.1463",
-                "station_id": 1463,
-                "station_code": null,
-                "facility_id": null,
-                "network": "NEM",
-                "network_country": "au",
-                "state": null,
-                "postcode": null,
-                "name": "Blayney",
-                "capacity_registered": 9.9,
-                "capacity_aggregate": 0.66,
-                "duid_data": [
-                    {
-                        "oid": "CTY_2CT",
-                        "duid": "0NBLA_1",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-05-16T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 0.66,
-                        "unit_alias": null,
-                        "capacity_registered": 9.9,
-                        "capacity_aggregate": 0.66,
-                        "network_region": "NSW1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
             "geometry": {
                 "type": "Point",
                 "coordinates": [
@@ -565,6 +527,44 @@
                         "unit_alias": null,
                         "capacity_registered": 9.9,
                         "capacity_aggregate": 9.9,
+                        "network_region": "NSW1"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "oid": "CTY",
+                "ocode": "au.nem.nsw.1463",
+                "station_id": 1463,
+                "station_code": null,
+                "facility_id": null,
+                "network": "NEM",
+                "network_country": "au",
+                "state": null,
+                "postcode": null,
+                "name": "Blayney",
+                "capacity_registered": 9.9,
+                "capacity_aggregate": 0.66,
+                "duid_data": [
+                    {
+                        "oid": "CTY_2CT",
+                        "duid": "0NBLA_1",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2019-05-16T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 0.66,
+                        "unit_alias": null,
+                        "capacity_registered": 9.9,
+                        "capacity_aggregate": 0.66,
                         "network_region": "NSW1"
                     }
                 ]
@@ -825,50 +825,6 @@
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    141.42062,
-                    -31.986313
-                ]
-            },
-            "properties": {
-                "oid": "ARX",
-                "ocode": "au.nem.nsw.bhillgt",
-                "station_id": 1030,
-                "station_code": "BHILLGT",
-                "facility_id": "BHILLGT",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "NSW",
-                "postcode": "2880",
-                "name": "Broken Hill",
-                "capacity_registered": 50.0,
-                "capacity_aggregate": 100.0,
-                "duid_data": [
-                    {
-                        "oid": "ARX_CZR",
-                        "duid": "GB01",
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 2,
-                        "unit_size": 50.0,
-                        "unit_alias": null,
-                        "capacity_registered": 50.0,
-                        "capacity_aggregate": 100.0,
-                        "network_region": "NSW1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
                     141.391547,
                     -31.988905
                 ]
@@ -903,6 +859,50 @@
                         "unit_alias": null,
                         "capacity_registered": 53.0,
                         "capacity_aggregate": 106.0,
+                        "network_region": "NSW1"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    141.42062,
+                    -31.986313
+                ]
+            },
+            "properties": {
+                "oid": "ARX",
+                "ocode": "au.nem.nsw.bhillgt",
+                "station_id": 1030,
+                "station_code": "BHILLGT",
+                "facility_id": "BHILLGT",
+                "network": "NEM",
+                "network_country": "au",
+                "state": "NSW",
+                "postcode": "2880",
+                "name": "Broken Hill",
+                "capacity_registered": 50.0,
+                "capacity_aggregate": 100.0,
+                "duid_data": [
+                    {
+                        "oid": "ARX_CZR",
+                        "duid": "GB01",
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 2,
+                        "unit_size": 50.0,
+                        "unit_alias": null,
+                        "capacity_registered": 50.0,
+                        "capacity_aggregate": 100.0,
                         "network_region": "NSW1"
                     }
                 ]
@@ -1092,24 +1092,6 @@
                         "network_region": "NSW1"
                     },
                     {
-                        "oid": "AR8_A95",
-                        "duid": "BURRIN",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 2,
-                        "unit_size": 16.0,
-                        "unit_alias": null,
-                        "capacity_registered": 16.0,
-                        "capacity_aggregate": 32.0,
-                        "network_region": "NSW1"
-                    },
-                    {
                         "oid": "AR8_2CR",
                         "duid": "BURRIN",
                         "fuel_tech": "hydro",
@@ -1125,6 +1107,24 @@
                         "unit_alias": null,
                         "capacity_registered": 11.2,
                         "capacity_aggregate": 5.6,
+                        "network_region": "NSW1"
+                    },
+                    {
+                        "oid": "AR8_A95",
+                        "duid": "BURRIN",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
+                        "unit_number": 2,
+                        "unit_size": 16.0,
+                        "unit_alias": null,
+                        "capacity_registered": 16.0,
+                        "capacity_aggregate": 32.0,
                         "network_region": "NSW1"
                     }
                 ]
@@ -1600,44 +1600,6 @@
         },
         {
             "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "oid": "C6W",
-                "ocode": "au.nem.nsw.1509",
-                "station_id": 1509,
-                "station_code": null,
-                "facility_id": null,
-                "network": "NEM",
-                "network_country": "au",
-                "state": null,
-                "postcode": null,
-                "name": "Crookwell",
-                "capacity_registered": 4.8,
-                "capacity_aggregate": 0.6,
-                "duid_data": [
-                    {
-                        "oid": "C6W_224",
-                        "duid": "0NCRO_8",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-05-16T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 8,
-                        "unit_number": 1,
-                        "unit_size": 0.6,
-                        "unit_alias": null,
-                        "capacity_registered": 4.8,
-                        "capacity_aggregate": 0.6,
-                        "network_region": "NSW1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
             "geometry": {
                 "type": "Point",
                 "coordinates": [
@@ -1675,6 +1637,44 @@
                         "unit_alias": null,
                         "capacity_registered": 4.8,
                         "capacity_aggregate": 4.8,
+                        "network_region": "NSW1"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "oid": "C6W",
+                "ocode": "au.nem.nsw.1509",
+                "station_id": 1509,
+                "station_code": null,
+                "facility_id": null,
+                "network": "NEM",
+                "network_country": "au",
+                "state": null,
+                "postcode": null,
+                "name": "Crookwell",
+                "capacity_registered": 4.8,
+                "capacity_aggregate": 0.6,
+                "duid_data": [
+                    {
+                        "oid": "C6W_224",
+                        "duid": "0NCRO_8",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2019-05-16T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 8,
+                        "unit_number": 1,
+                        "unit_size": 0.6,
+                        "unit_alias": null,
+                        "capacity_registered": 4.8,
+                        "capacity_aggregate": 0.6,
                         "network_region": "NSW1"
                     }
                 ]
@@ -2186,24 +2186,6 @@
                         "network_region": "NSW1"
                     },
                     {
-                        "oid": "ARK_CZG",
-                        "duid": "ER03",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 1,
-                        "unit_size": 720.0,
-                        "unit_alias": null,
-                        "capacity_registered": 720.0,
-                        "capacity_aggregate": 720.0,
-                        "network_region": "NSW1"
-                    },
-                    {
                         "oid": "ARK_CZT",
                         "duid": "ERGT01",
                         "fuel_tech": "distillate",
@@ -2219,6 +2201,24 @@
                         "unit_alias": null,
                         "capacity_registered": 41.5,
                         "capacity_aggregate": 41.5,
+                        "network_region": "NSW1"
+                    },
+                    {
+                        "oid": "ARK_CZG",
+                        "duid": "ER03",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
+                        "unit_number": 1,
+                        "unit_size": 720.0,
+                        "unit_alias": null,
+                        "capacity_registered": 720.0,
+                        "capacity_aggregate": 720.0,
                         "network_region": "NSW1"
                     }
                 ]
@@ -2243,7 +2243,7 @@
                 "network_country": "au",
                 "state": "NSW",
                 "postcode": "2713",
-                "name": "Finely",
+                "name": "Finley",
                 "capacity_registered": 162.36,
                 "capacity_aggregate": 1.64,
                 "duid_data": [
@@ -2560,24 +2560,6 @@
                         "network_region": "NSW1"
                     },
                     {
-                        "oid": "C3G_2ZK",
-                        "duid": "GULLRWF1",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": null,
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 18,
-                        "unit_number": 56,
-                        "unit_size": 2.435,
-                        "unit_alias": null,
-                        "capacity_registered": null,
-                        "capacity_aggregate": 136.36,
-                        "network_region": "NSW1"
-                    },
-                    {
                         "oid": "C3G_CA9",
                         "duid": "GULLRSF1",
                         "fuel_tech": "solar_utility",
@@ -2593,6 +2575,24 @@
                         "unit_alias": null,
                         "capacity_registered": 10.0,
                         "capacity_aggregate": 10.0,
+                        "network_region": "NSW1"
+                    },
+                    {
+                        "oid": "C3G_2ZK",
+                        "duid": "GULLRWF1",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 18,
+                        "unit_number": 56,
+                        "unit_size": 2.435,
+                        "unit_alias": null,
+                        "capacity_registered": null,
+                        "capacity_aggregate": 136.36,
                         "network_region": "NSW1"
                     }
                 ]
@@ -3258,6 +3258,24 @@
                 "capacity_aggregate": 2000.0,
                 "duid_data": [
                     {
+                        "oid": "ARE_CB9",
+                        "duid": "LD04",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 4,
+                        "unit_number": 1,
+                        "unit_size": 500.0,
+                        "unit_alias": null,
+                        "capacity_registered": 500.0,
+                        "capacity_aggregate": 500.0,
+                        "network_region": "NSW1"
+                    },
+                    {
                         "oid": "ARE_CBS",
                         "duid": "LD03",
                         "fuel_tech": "coal_black",
@@ -3268,24 +3286,6 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 3,
-                        "unit_number": 1,
-                        "unit_size": 500.0,
-                        "unit_alias": null,
-                        "capacity_registered": 500.0,
-                        "capacity_aggregate": 500.0,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "oid": "ARE_CB8",
-                        "duid": "LD01",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 500.0,
                         "unit_alias": null,
@@ -3312,8 +3312,8 @@
                         "network_region": "NSW1"
                     },
                     {
-                        "oid": "ARE_CB9",
-                        "duid": "LD04",
+                        "oid": "ARE_CB8",
+                        "duid": "LD01",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
                         "fuel_tech_renewable": false,
@@ -3321,7 +3321,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 4,
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 500.0,
                         "unit_alias": null,
@@ -4567,7 +4567,7 @@
                 "network_country": "au",
                 "state": "NSW",
                 "postcode": "2577",
-                "name": "Shoalhaven Bendeela Kangaroo Valley Pumps",
+                "name": "Shoalhaven",
                 "capacity_registered": 480.0,
                 "capacity_aggregate": 360.0,
                 "duid_data": [
@@ -4765,7 +4765,7 @@
                 "network_country": "au",
                 "state": "NSW",
                 "postcode": "2164",
-                "name": "Smithfield Energy Facility",
+                "name": "Smithfield",
                 "capacity_registered": 185.0,
                 "capacity_aggregate": 170.9,
                 "duid_data": [
@@ -5067,7 +5067,7 @@
                 "network_country": "au",
                 "state": "NSW",
                 "postcode": "2573",
-                "name": "Tahmoor Coal Mine",
+                "name": "Tahmoor",
                 "capacity_registered": 7.46,
                 "capacity_aggregate": 7.46,
                 "duid_data": [
@@ -5160,24 +5160,6 @@
                 "capacity_aggregate": 132.0,
                 "duid_data": [
                     {
-                        "oid": "C39_2AG",
-                        "duid": "TARALGA1",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": null,
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 43,
-                        "unit_number": 9,
-                        "unit_size": 3.0,
-                        "unit_alias": null,
-                        "capacity_registered": null,
-                        "capacity_aggregate": 27.0,
-                        "network_region": "NSW1"
-                    },
-                    {
                         "oid": "C39_C65",
                         "duid": "TARALGA1",
                         "fuel_tech": "wind",
@@ -5211,6 +5193,24 @@
                         "unit_alias": null,
                         "capacity_registered": null,
                         "capacity_aggregate": 42.0,
+                        "network_region": "NSW1"
+                    },
+                    {
+                        "oid": "C39_2AG",
+                        "duid": "TARALGA1",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 43,
+                        "unit_number": 9,
+                        "unit_size": 3.0,
+                        "unit_alias": null,
+                        "capacity_registered": null,
+                        "capacity_aggregate": 27.0,
                         "network_region": "NSW1"
                     }
                 ]
@@ -5720,24 +5720,6 @@
                         "network_region": "NSW1"
                     },
                     {
-                        "oid": "CC3_CPX",
-                        "duid": "URANQ14",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2008-06-17T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 4,
-                        "unit_number": 1,
-                        "unit_size": 166.0,
-                        "unit_alias": null,
-                        "capacity_registered": 166.0,
-                        "capacity_aggregate": 166.0,
-                        "network_region": "NSW1"
-                    },
-                    {
                         "oid": "CC3_CPS",
                         "duid": "URANQ11",
                         "fuel_tech": "gas_ocgt",
@@ -5748,6 +5730,24 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 166.0,
+                        "unit_alias": null,
+                        "capacity_registered": 166.0,
+                        "capacity_aggregate": 166.0,
+                        "network_region": "NSW1"
+                    },
+                    {
+                        "oid": "CC3_CPX",
+                        "duid": "URANQ14",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2008-06-17T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 4,
                         "unit_number": 1,
                         "unit_size": 166.0,
                         "unit_alias": null,
@@ -6138,24 +6138,6 @@
                 "capacity_aggregate": 192.48,
                 "duid_data": [
                     {
-                        "oid": "C4K_CR8",
-                        "duid": "WRWF1",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2017-07-06T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 70,
-                        "unit_size": 2.464,
-                        "unit_alias": null,
-                        "capacity_registered": 172.48,
-                        "capacity_aggregate": 172.48,
-                        "network_region": "NSW1"
-                    },
-                    {
                         "oid": "C4K_CRP",
                         "duid": "WRSF1",
                         "fuel_tech": "solar_utility",
@@ -6171,6 +6153,24 @@
                         "unit_alias": null,
                         "capacity_registered": 20.0,
                         "capacity_aggregate": 20.0,
+                        "network_region": "NSW1"
+                    },
+                    {
+                        "oid": "C4K_CR8",
+                        "duid": "WRWF1",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2017-07-06T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 70,
+                        "unit_size": 2.464,
+                        "unit_alias": null,
+                        "capacity_registered": 172.48,
+                        "capacity_aggregate": 172.48,
                         "network_region": "NSW1"
                     }
                 ]
@@ -7239,7 +7239,7 @@
                 "network_country": "au",
                 "state": "QLD",
                 "postcode": "4715",
-                "name": "Callide C Nett Off",
+                "name": "Callide C",
                 "capacity_registered": 840.0,
                 "capacity_aggregate": 840.0,
                 "duid_data": [
@@ -7514,8 +7514,26 @@
                 "capacity_aggregate": null,
                 "duid_data": [
                     {
-                        "oid": "ASA_AX5",
-                        "duid": "COLNSV_2",
+                        "oid": "ASA_AX6",
+                        "duid": "COLNSV_5",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": "2013-01-01T00:00:00",
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 66.0,
+                        "unit_alias": null,
+                        "capacity_registered": 66.0,
+                        "capacity_aggregate": 66.0,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "oid": "ASA_AXH",
+                        "duid": "COLNSV_1",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
                         "fuel_tech_renewable": false,
@@ -7532,8 +7550,8 @@
                         "network_region": "QLD1"
                     },
                     {
-                        "oid": "ASA_AXH",
-                        "duid": "COLNSV_1",
+                        "oid": "ASA_AX5",
+                        "duid": "COLNSV_2",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
                         "fuel_tech_renewable": false,
@@ -7583,24 +7601,6 @@
                         "unit_alias": null,
                         "capacity_registered": 30.0,
                         "capacity_aggregate": 30.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "oid": "ASA_AX6",
-                        "duid": "COLNSV_5",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": "2013-01-01T00:00:00",
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 66.0,
-                        "unit_alias": null,
-                        "capacity_registered": 66.0,
-                        "capacity_aggregate": 66.0,
                         "network_region": "QLD1"
                     }
                 ]
@@ -7754,6 +7754,24 @@
                 "capacity_aggregate": 454.53,
                 "duid_data": [
                     {
+                        "oid": "CGP_AXP",
+                        "duid": "COOPGWF1",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2019-06-04T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 48,
+                        "unit_size": 3.83,
+                        "unit_alias": null,
+                        "capacity_registered": 122.56,
+                        "capacity_aggregate": 183.84,
+                        "network_region": "QLD1"
+                    },
+                    {
                         "oid": "CGP_CXE",
                         "duid": "COOPGWF1",
                         "fuel_tech": "wind",
@@ -7805,24 +7823,6 @@
                         "unit_alias": null,
                         "capacity_registered": 69.0,
                         "capacity_aggregate": 66.96,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "oid": "CGP_AXP",
-                        "duid": "COOPGWF1",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-06-04T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 48,
-                        "unit_size": 3.83,
-                        "unit_alias": null,
-                        "capacity_registered": 122.56,
-                        "capacity_aggregate": 183.84,
                         "network_region": "QLD1"
                     }
                 ]
@@ -8276,24 +8276,6 @@
                 "capacity_aggregate": 66.11,
                 "duid_data": [
                     {
-                        "oid": "CAG_CXP",
-                        "duid": "GERMCRK",
-                        "fuel_tech": "gas_wcmg",
-                        "fuel_tech_label": "Gas (Coal Seam)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": null,
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 17,
-                        "unit_number": 4,
-                        "unit_size": 3.328,
-                        "unit_alias": null,
-                        "capacity_registered": null,
-                        "capacity_aggregate": 13.31,
-                        "network_region": "QLD1"
-                    },
-                    {
                         "oid": "CAG_CZX",
                         "duid": "GERMCRK",
                         "fuel_tech": "gas_wcmg",
@@ -8309,6 +8291,24 @@
                         "unit_alias": null,
                         "capacity_registered": 13.2,
                         "capacity_aggregate": 52.8,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "oid": "CAG_CXP",
+                        "duid": "GERMCRK",
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 17,
+                        "unit_number": 4,
+                        "unit_size": 3.328,
+                        "unit_alias": null,
+                        "capacity_registered": null,
+                        "capacity_aggregate": 13.31,
                         "network_region": "QLD1"
                     }
                 ]
@@ -8338,8 +8338,8 @@
                 "capacity_aggregate": 1680.0,
                 "duid_data": [
                     {
-                        "oid": "ASZ_CA2",
-                        "duid": "GSTONE4",
+                        "oid": "ASZ_CAA",
+                        "duid": "GSTONE2",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
                         "fuel_tech_renewable": false,
@@ -8347,7 +8347,25 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 4,
+                        "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 280.0,
+                        "unit_alias": null,
+                        "capacity_registered": 280.0,
+                        "capacity_aggregate": 280.0,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "oid": "ASZ_CAB",
+                        "duid": "GSTONE5",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 5,
                         "unit_number": 1,
                         "unit_size": 280.0,
                         "unit_alias": null,
@@ -8366,24 +8384,6 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 6,
-                        "unit_number": 1,
-                        "unit_size": 280.0,
-                        "unit_alias": null,
-                        "capacity_registered": 280.0,
-                        "capacity_aggregate": 280.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "oid": "ASZ_CAA",
-                        "duid": "GSTONE2",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 280.0,
                         "unit_alias": null,
@@ -8428,8 +8428,8 @@
                         "network_region": "QLD1"
                     },
                     {
-                        "oid": "ASZ_CAB",
-                        "duid": "GSTONE5",
+                        "oid": "ASZ_CA2",
+                        "duid": "GSTONE4",
                         "fuel_tech": "coal_black",
                         "fuel_tech_label": "Coal (Black)",
                         "fuel_tech_renewable": false,
@@ -8437,7 +8437,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 5,
+                        "unit_id": 4,
                         "unit_number": 1,
                         "unit_size": 280.0,
                         "unit_alias": null,
@@ -8966,24 +8966,6 @@
                 "capacity_aggregate": 93.4,
                 "duid_data": [
                     {
-                        "oid": "ASK_C2Y",
-                        "duid": "KAREEYA3",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 1,
-                        "unit_size": 21.6,
-                        "unit_alias": null,
-                        "capacity_registered": 21.6,
-                        "capacity_aggregate": 21.6,
-                        "network_region": "QLD1"
-                    },
-                    {
                         "oid": "ASK_CBZ",
                         "duid": "KAREEYA4",
                         "fuel_tech": "hydro",
@@ -8994,6 +8976,24 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 4,
+                        "unit_number": 1,
+                        "unit_size": 21.6,
+                        "unit_alias": null,
+                        "capacity_registered": 21.6,
+                        "capacity_aggregate": 21.6,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "oid": "ASK_C2Y",
+                        "duid": "KAREEYA3",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 21.6,
                         "unit_alias": null,
@@ -9020,24 +9020,6 @@
                         "network_region": "QLD1"
                     },
                     {
-                        "oid": "ASK_CBA",
-                        "duid": "KAREEYA5",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2000-02-24T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 5,
-                        "unit_number": 1,
-                        "unit_size": 7.0,
-                        "unit_alias": null,
-                        "capacity_registered": 7.0,
-                        "capacity_aggregate": 7.0,
-                        "network_region": "QLD1"
-                    },
-                    {
                         "oid": "ASK_C2X",
                         "duid": "KAREEYA2",
                         "fuel_tech": "hydro",
@@ -9053,6 +9035,24 @@
                         "unit_alias": null,
                         "capacity_registered": 21.6,
                         "capacity_aggregate": 21.6,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "oid": "ASK_CBA",
+                        "duid": "KAREEYA5",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2000-02-24T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 5,
+                        "unit_number": 1,
+                        "unit_size": 7.0,
+                        "unit_alias": null,
+                        "capacity_registered": 7.0,
+                        "capacity_aggregate": 7.0,
                         "network_region": "QLD1"
                     }
                 ]
@@ -9642,24 +9642,6 @@
                 "capacity_aggregate": 852.0,
                 "duid_data": [
                     {
-                        "oid": "AWS_CF7",
-                        "duid": "MPP_1",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2001-05-15T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 426.0,
-                        "unit_alias": null,
-                        "capacity_registered": 426.0,
-                        "capacity_aggregate": 426.0,
-                        "network_region": "QLD1"
-                    },
-                    {
                         "oid": "AWS_CFP",
                         "duid": "MPP_2",
                         "fuel_tech": "coal_black",
@@ -9670,6 +9652,24 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 426.0,
+                        "unit_alias": null,
+                        "capacity_registered": 426.0,
+                        "capacity_aggregate": 426.0,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "oid": "AWS_CF7",
+                        "duid": "MPP_1",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2001-05-15T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 426.0,
                         "unit_alias": null,
@@ -9819,7 +9819,7 @@
                 "network_country": "au",
                 "state": "QLD",
                 "postcode": "4744",
-                "name": "Moranbah North Coal Mine",
+                "name": "Moranbah North",
                 "capacity_registered": 63.84,
                 "capacity_aggregate": 63.84,
                 "duid_data": [
@@ -10162,24 +10162,6 @@
                 "capacity_aggregate": 282.0,
                 "duid_data": [
                     {
-                        "oid": "AWE_CGY",
-                        "duid": "OAKEY1",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1999-09-24T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 141.0,
-                        "unit_alias": null,
-                        "capacity_registered": 141.0,
-                        "capacity_aggregate": 141.0,
-                        "network_region": "QLD1"
-                    },
-                    {
                         "oid": "AWE_CHZ",
                         "duid": "OAKEY2",
                         "fuel_tech": "gas_ocgt",
@@ -10190,6 +10172,24 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 141.0,
+                        "unit_alias": null,
+                        "capacity_registered": 141.0,
+                        "capacity_aggregate": 141.0,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "oid": "AWE_CGY",
+                        "duid": "OAKEY1",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1999-09-24T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 141.0,
                         "unit_alias": null,
@@ -10667,7 +10667,7 @@
                 "network_country": "au",
                 "state": "QLD",
                 "postcode": "4123",
-                "name": "Rochedale",
+                "name": "Rochedale Renewable",
                 "capacity_registered": 4.49,
                 "capacity_aggregate": 4.49,
                 "duid_data": [
@@ -11284,24 +11284,6 @@
                         "network_region": "QLD1"
                     },
                     {
-                        "oid": "AS7_CK8",
-                        "duid": "STAN2",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 365.0,
-                        "unit_alias": null,
-                        "capacity_registered": 365.0,
-                        "capacity_aggregate": 365.0,
-                        "network_region": "QLD1"
-                    },
-                    {
                         "oid": "AS7_CKR",
                         "duid": "STAN3",
                         "fuel_tech": "coal_black",
@@ -11312,6 +11294,24 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 3,
+                        "unit_number": 1,
+                        "unit_size": 365.0,
+                        "unit_alias": null,
+                        "capacity_registered": 365.0,
+                        "capacity_aggregate": 365.0,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "oid": "AS7_CK8",
+                        "duid": "STAN2",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 365.0,
                         "unit_alias": null,
@@ -11407,7 +11407,7 @@
                 "network_country": "au",
                 "state": "QLD",
                 "postcode": "4207",
-                "name": "Stapylton",
+                "name": "Stapylton Renewable",
                 "capacity_registered": 3.36,
                 "capacity_aggregate": 3.36,
                 "duid_data": [
@@ -11581,7 +11581,7 @@
                 "network_country": "au",
                 "state": null,
                 "postcode": null,
-                "name": "Suntown",
+                "name": "Suntown Renewable",
                 "capacity_registered": 1.8,
                 "capacity_aggregate": 1.79,
                 "duid_data": [
@@ -11686,24 +11686,6 @@
                 "capacity_aggregate": 386.48,
                 "duid_data": [
                     {
-                        "oid": "A88_C44",
-                        "duid": "SWAN_E",
-                        "fuel_tech": "gas_ccgt",
-                        "fuel_tech_label": "Gas (CCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2002-05-15T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 385.0,
-                        "unit_alias": null,
-                        "capacity_registered": 385.0,
-                        "capacity_aggregate": 385.0,
-                        "network_region": "QLD1"
-                    },
-                    {
                         "oid": "A88_24Z",
                         "duid": "0NSWJV_1",
                         "fuel_tech": "bioenergy_biogas",
@@ -11737,6 +11719,42 @@
                         "unit_alias": null,
                         "capacity_registered": 0.364,
                         "capacity_aggregate": 0.36,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "oid": "A88_C44",
+                        "duid": "SWAN_E",
+                        "fuel_tech": "gas_ccgt",
+                        "fuel_tech_label": "Gas (CCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2002-05-15T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 385.0,
+                        "unit_alias": null,
+                        "capacity_registered": 385.0,
+                        "capacity_aggregate": 385.0,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "oid": "A88_C4C",
+                        "duid": "SWAN_B_1",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": "2013-08-13T00:00:00",
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 125.0,
+                        "unit_alias": null,
+                        "capacity_registered": 125.0,
+                        "capacity_aggregate": 125.0,
                         "network_region": "QLD1"
                     },
                     {
@@ -11783,24 +11801,6 @@
                         "fuel_tech_renewable": false,
                         "commissioned_date": "1998-10-25T00:00:00",
                         "decommissioned_date": "2011-07-01T00:00:00",
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 125.0,
-                        "unit_alias": null,
-                        "capacity_registered": 125.0,
-                        "capacity_aggregate": 125.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "oid": "A88_C4C",
-                        "duid": "SWAN_B_1",
-                        "fuel_tech": "coal_black",
-                        "fuel_tech_label": "Coal (Black)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": "2013-08-13T00:00:00",
                         "status": "retired",
                         "status_label": "Retired",
                         "unit_id": 1,
@@ -11938,6 +11938,24 @@
                 "capacity_aggregate": 1415.0,
                 "duid_data": [
                     {
+                        "oid": "ASP_24B",
+                        "duid": "0NTAGT_1",
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2020-06-05T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 15.0,
+                        "unit_alias": null,
+                        "capacity_registered": 15.0,
+                        "capacity_aggregate": 15.0,
+                        "network_region": "QLD1"
+                    },
+                    {
                         "oid": "ASP_C6K",
                         "duid": "TARONG#1",
                         "fuel_tech": "coal_black",
@@ -12007,24 +12025,6 @@
                         "unit_alias": null,
                         "capacity_registered": 350.0,
                         "capacity_aggregate": 350.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "oid": "ASP_24B",
-                        "duid": "0NTAGT_1",
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2020-06-05T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 15.0,
-                        "unit_alias": null,
-                        "capacity_registered": 15.0,
-                        "capacity_aggregate": 15.0,
                         "network_region": "QLD1"
                     }
                 ]
@@ -12587,7 +12587,7 @@
                 "network_country": "au",
                 "state": "QLD",
                 "postcode": "4305",
-                "name": "Whitwood Road",
+                "name": "Whitwood Road Renewable",
                 "capacity_registered": 1.12,
                 "capacity_aggregate": 1.12,
                 "duid_data": [
@@ -13566,8 +13566,8 @@
                 "capacity_aggregate": 156.0,
                 "duid_data": [
                     {
-                        "oid": "AR4_AY7",
-                        "duid": "DRYCGT1",
+                        "oid": "AR4_AYP",
+                        "duid": "DRYCGT2",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "fuel_tech_renewable": false,
@@ -13575,7 +13575,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 1,
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 52.0,
                         "unit_alias": null,
@@ -13602,8 +13602,8 @@
                         "network_region": "SA1"
                     },
                     {
-                        "oid": "AR4_AYP",
-                        "duid": "DRYCGT2",
+                        "oid": "AR4_AY7",
+                        "duid": "DRYCGT1",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "fuel_tech_renewable": false,
@@ -13611,7 +13611,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 2,
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 52.0,
                         "unit_alias": null,
@@ -14308,39 +14308,21 @@
                 "capacity_aggregate": 1319.5,
                 "duid_data": [
                     {
-                        "oid": "CHC_C3E",
-                        "duid": "LKBONNY3",
+                        "oid": "CHC_C3B",
+                        "duid": "LKBONNY1",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
                         "fuel_tech_renewable": true,
-                        "commissioned_date": "2010-07-02T00:00:00",
+                        "commissioned_date": "2004-05-25T00:00:00",
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
-                        "unit_number": 13,
-                        "unit_size": 3.0,
+                        "unit_number": 46,
+                        "unit_size": 1.75,
                         "unit_alias": null,
-                        "capacity_registered": 39.0,
-                        "capacity_aggregate": 39.0,
-                        "network_region": "SA1"
-                    },
-                    {
-                        "oid": "CHC_CBP",
-                        "duid": "LBBG1",
-                        "fuel_tech": "battery_discharging",
-                        "fuel_tech_label": "Battery (Discharging)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-10-08T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 48,
-                        "unit_size": 25.0,
-                        "unit_alias": null,
-                        "capacity_registered": 25.0,
-                        "capacity_aggregate": 1200.0,
+                        "capacity_registered": 80.5,
+                        "capacity_aggregate": 80.5,
                         "network_region": "SA1"
                     },
                     {
@@ -14362,21 +14344,39 @@
                         "network_region": "SA1"
                     },
                     {
-                        "oid": "CHC_C3B",
-                        "duid": "LKBONNY1",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
+                        "oid": "CHC_CBP",
+                        "duid": "LBBG1",
+                        "fuel_tech": "battery_discharging",
+                        "fuel_tech_label": "Battery (Discharging)",
                         "fuel_tech_renewable": true,
-                        "commissioned_date": "2004-05-25T00:00:00",
+                        "commissioned_date": "2019-10-08T00:00:00",
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
-                        "unit_number": 46,
-                        "unit_size": 1.75,
+                        "unit_number": 48,
+                        "unit_size": 25.0,
                         "unit_alias": null,
-                        "capacity_registered": 80.5,
-                        "capacity_aggregate": 80.5,
+                        "capacity_registered": 25.0,
+                        "capacity_aggregate": 1200.0,
+                        "network_region": "SA1"
+                    },
+                    {
+                        "oid": "CHC_C3E",
+                        "duid": "LKBONNY3",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2010-07-02T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 13,
+                        "unit_size": 3.0,
+                        "unit_alias": null,
+                        "capacity_registered": 39.0,
+                        "capacity_aggregate": 39.0,
                         "network_region": "SA1"
                     }
                 ]
@@ -14726,24 +14726,6 @@
                 "capacity_aggregate": null,
                 "duid_data": [
                     {
-                        "oid": "ARH_CG8",
-                        "duid": "NPS1",
-                        "fuel_tech": "coal_brown",
-                        "fuel_tech_label": "Coal (Brown)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": "2016-09-01T00:00:00",
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 265.0,
-                        "unit_alias": null,
-                        "capacity_registered": 265.0,
-                        "capacity_aggregate": 265.0,
-                        "network_region": "SA1"
-                    },
-                    {
                         "oid": "ARH_CGR",
                         "duid": "NPS2",
                         "fuel_tech": "coal_brown",
@@ -14795,6 +14777,24 @@
                         "unit_alias": null,
                         "capacity_registered": 100.0,
                         "capacity_aggregate": 100.0,
+                        "network_region": "SA1"
+                    },
+                    {
+                        "oid": "ARH_CG8",
+                        "duid": "NPS1",
+                        "fuel_tech": "coal_brown",
+                        "fuel_tech_label": "Coal (Brown)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": "2016-09-01T00:00:00",
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 265.0,
+                        "unit_alias": null,
+                        "capacity_registered": 265.0,
+                        "capacity_aggregate": 265.0,
                         "network_region": "SA1"
                     }
                 ]
@@ -15120,24 +15120,6 @@
                         "network_region": "SA1"
                     },
                     {
-                        "oid": "AR5_CHS",
-                        "duid": "PLAYFB4",
-                        "fuel_tech": "coal_brown",
-                        "fuel_tech_label": "Coal (Brown)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": "1999-05-26T00:00:00",
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 60.0,
-                        "unit_alias": null,
-                        "capacity_registered": 60.0,
-                        "capacity_aggregate": 60.0,
-                        "network_region": "SA1"
-                    },
-                    {
                         "oid": "AR5_269",
                         "duid": "PLAYB-AG",
                         "fuel_tech": "coal_brown",
@@ -15153,6 +15135,24 @@
                         "unit_alias": null,
                         "capacity_registered": 240.0,
                         "capacity_aggregate": 240.0,
+                        "network_region": "SA1"
+                    },
+                    {
+                        "oid": "AR5_CHS",
+                        "duid": "PLAYFB4",
+                        "fuel_tech": "coal_brown",
+                        "fuel_tech_label": "Coal (Brown)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": "1999-05-26T00:00:00",
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 60.0,
+                        "unit_alias": null,
+                        "capacity_registered": 60.0,
+                        "capacity_aggregate": 60.0,
                         "network_region": "SA1"
                     }
                 ]
@@ -15182,24 +15182,6 @@
                 "capacity_aggregate": 73.5,
                 "duid_data": [
                     {
-                        "oid": "A92_C5B",
-                        "duid": "POR03",
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2010-08-20T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 3,
-                        "unit_number": 1,
-                        "unit_size": 23.5,
-                        "unit_alias": "PL",
-                        "capacity_registered": 23.5,
-                        "capacity_aggregate": 23.5,
-                        "network_region": "SA1"
-                    },
-                    {
                         "oid": "A92_C52",
                         "duid": "POR01",
                         "fuel_tech": "distillate",
@@ -15215,6 +15197,24 @@
                         "unit_alias": null,
                         "capacity_registered": 50.0,
                         "capacity_aggregate": 50.0,
+                        "network_region": "SA1"
+                    },
+                    {
+                        "oid": "A92_C5B",
+                        "duid": "POR03",
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2010-08-20T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 3,
+                        "unit_number": 1,
+                        "unit_size": 23.5,
+                        "unit_alias": "PL",
+                        "capacity_registered": 23.5,
+                        "capacity_aggregate": 23.5,
                         "network_region": "SA1"
                     }
                 ]
@@ -15342,8 +15342,8 @@
                         "network_region": "SA1"
                     },
                     {
-                        "oid": "AXZ_C5K",
-                        "duid": "QPS3",
+                        "oid": "AXZ_C5T",
+                        "duid": "QPS2",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "fuel_tech_renewable": false,
@@ -15351,7 +15351,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 3,
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 24.0,
                         "unit_alias": null,
@@ -15396,8 +15396,8 @@
                         "network_region": "SA1"
                     },
                     {
-                        "oid": "AXZ_C5T",
-                        "duid": "QPS2",
+                        "oid": "AXZ_C5K",
+                        "duid": "QPS3",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "fuel_tech_renewable": false,
@@ -15405,7 +15405,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 2,
+                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 24.0,
                         "unit_alias": null,
@@ -15744,24 +15744,6 @@
                 "capacity_aggregate": 270.0,
                 "duid_data": [
                     {
-                        "oid": "C3E_CT9",
-                        "duid": "SNOWSTH1",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2013-09-10T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 42,
-                        "unit_size": 3.0,
-                        "unit_alias": null,
-                        "capacity_registered": 126.0,
-                        "capacity_aggregate": 126.0,
-                        "network_region": "SA1"
-                    },
-                    {
                         "oid": "C3E_CTS",
                         "duid": "SNOWNTH1",
                         "fuel_tech": "wind",
@@ -15778,67 +15760,23 @@
                         "capacity_registered": 144.0,
                         "capacity_aggregate": 144.0,
                         "network_region": "SA1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    140.414686,
-                    -37.664996
-                ]
-            },
-            "properties": {
-                "oid": "AR2",
-                "ocode": "au.nem.sa.snug",
-                "station_id": 1011,
-                "station_code": "SNUG",
-                "facility_id": "SNUG",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "SA",
-                "postcode": "5000",
-                "name": "Snuggery",
-                "capacity_registered": 42.0,
-                "capacity_aggregate": 42.0,
-                "duid_data": [
-                    {
-                        "oid": "AR2_CK5",
-                        "duid": "SNUG3",
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-12-07T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 21.0,
-                        "unit_alias": null,
-                        "capacity_registered": 21.0,
-                        "capacity_aggregate": 21.0,
-                        "network_region": "SA1"
                     },
                     {
-                        "oid": "AR2_CKH",
-                        "duid": "SNUG2",
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-12-07T00:00:00",
+                        "oid": "C3E_CT9",
+                        "duid": "SNOWSTH1",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2013-09-10T00:00:00",
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 21.0,
+                        "unit_number": 42,
+                        "unit_size": 3.0,
                         "unit_alias": null,
-                        "capacity_registered": 21.0,
-                        "capacity_aggregate": 21.0,
+                        "capacity_registered": 126.0,
+                        "capacity_aggregate": 126.0,
                         "network_region": "SA1"
                     }
                 ]
@@ -15890,6 +15828,68 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 4,
+                        "unit_number": 1,
+                        "unit_size": 21.0,
+                        "unit_alias": null,
+                        "capacity_registered": 21.0,
+                        "capacity_aggregate": 21.0,
+                        "network_region": "SA1"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    140.414686,
+                    -37.664996
+                ]
+            },
+            "properties": {
+                "oid": "AR2",
+                "ocode": "au.nem.sa.snug",
+                "station_id": 1011,
+                "station_code": "SNUG",
+                "facility_id": "SNUG",
+                "network": "NEM",
+                "network_country": "au",
+                "state": "SA",
+                "postcode": "5000",
+                "name": "Snuggery",
+                "capacity_registered": 42.0,
+                "capacity_aggregate": 42.0,
+                "duid_data": [
+                    {
+                        "oid": "AR2_CKH",
+                        "duid": "SNUG2",
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-12-07T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 21.0,
+                        "unit_alias": null,
+                        "capacity_registered": 21.0,
+                        "capacity_aggregate": 21.0,
+                        "network_region": "SA1"
+                    },
+                    {
+                        "oid": "AR2_CK5",
+                        "duid": "SNUG3",
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-12-07T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 21.0,
                         "unit_alias": null,
@@ -16094,24 +16094,6 @@
                 "capacity_aggregate": 154.0,
                 "duid_data": [
                     {
-                        "oid": "CFA_CTT",
-                        "duid": "SATGS1",
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2017-10-20T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 4,
-                        "unit_size": 30.8,
-                        "unit_alias": null,
-                        "capacity_registered": 123.2,
-                        "capacity_aggregate": 123.2,
-                        "network_region": "SA1"
-                    },
-                    {
                         "oid": "CFA_24E",
                         "duid": "0NTGS_4",
                         "fuel_tech": "distillate",
@@ -16127,6 +16109,24 @@
                         "unit_alias": null,
                         "capacity_registered": 123.2,
                         "capacity_aggregate": 30.8,
+                        "network_region": "SA1"
+                    },
+                    {
+                        "oid": "CFA_CTT",
+                        "duid": "SATGS1",
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2017-10-20T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 4,
+                        "unit_size": 30.8,
+                        "unit_alias": null,
+                        "capacity_registered": 123.2,
+                        "capacity_aggregate": 123.2,
                         "network_region": "SA1"
                     }
                 ]
@@ -16262,8 +16262,8 @@
                 "capacity_aggregate": 1280.0,
                 "duid_data": [
                     {
-                        "oid": "ART_C7G",
-                        "duid": "TORRA2",
+                        "oid": "ART_C74",
+                        "duid": "TORRA1",
                         "fuel_tech": "gas_steam",
                         "fuel_tech_label": "Gas (Steam)",
                         "fuel_tech_renewable": false,
@@ -16271,7 +16271,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 2,
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 120.0,
                         "unit_alias": null,
@@ -16298,6 +16298,24 @@
                         "network_region": "SA1"
                     },
                     {
+                        "oid": "ART_C7T",
+                        "duid": "TORRB1",
+                        "fuel_tech": "gas_steam",
+                        "fuel_tech_label": "Gas (Steam)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 200.0,
+                        "unit_alias": null,
+                        "capacity_registered": 200.0,
+                        "capacity_aggregate": 200.0,
+                        "network_region": "SA1"
+                    },
+                    {
                         "oid": "ART_C7K",
                         "duid": "TORRB2",
                         "fuel_tech": "gas_steam",
@@ -16316,8 +16334,8 @@
                         "network_region": "SA1"
                     },
                     {
-                        "oid": "ART_C76",
-                        "duid": "TORRB3",
+                        "oid": "ART_C77",
+                        "duid": "TORRB4",
                         "fuel_tech": "gas_steam",
                         "fuel_tech_label": "Gas (Steam)",
                         "fuel_tech_renewable": false,
@@ -16325,7 +16343,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 3,
+                        "unit_id": 4,
                         "unit_number": 1,
                         "unit_size": 200.0,
                         "unit_alias": null,
@@ -16334,8 +16352,8 @@
                         "network_region": "SA1"
                     },
                     {
-                        "oid": "ART_C74",
-                        "duid": "TORRA1",
+                        "oid": "ART_C7G",
+                        "duid": "TORRA2",
                         "fuel_tech": "gas_steam",
                         "fuel_tech_label": "Gas (Steam)",
                         "fuel_tech_renewable": false,
@@ -16343,7 +16361,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 1,
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 120.0,
                         "unit_alias": null,
@@ -16370,8 +16388,8 @@
                         "network_region": "SA1"
                     },
                     {
-                        "oid": "ART_C7T",
-                        "duid": "TORRB1",
+                        "oid": "ART_C76",
+                        "duid": "TORRB3",
                         "fuel_tech": "gas_steam",
                         "fuel_tech_label": "Gas (Steam)",
                         "fuel_tech_renewable": false,
@@ -16379,25 +16397,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 200.0,
-                        "unit_alias": null,
-                        "capacity_registered": 200.0,
-                        "capacity_aggregate": 200.0,
-                        "network_region": "SA1"
-                    },
-                    {
-                        "oid": "ART_C77",
-                        "duid": "TORRB4",
-                        "fuel_tech": "gas_steam",
-                        "fuel_tech_label": "Gas (Steam)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 4,
+                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 200.0,
                         "unit_alias": null,
@@ -16514,24 +16514,6 @@
                 "capacity_aggregate": 141.9,
                 "duid_data": [
                     {
-                        "oid": "C2Y_2A5",
-                        "duid": "WATERLWF",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": null,
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 38,
-                        "unit_number": 6,
-                        "unit_size": 3.3,
-                        "unit_alias": null,
-                        "capacity_registered": null,
-                        "capacity_aggregate": 19.8,
-                        "network_region": "SA1"
-                    },
-                    {
                         "oid": "C2Y_C86",
                         "duid": "WATERLWF",
                         "fuel_tech": "wind",
@@ -16547,6 +16529,24 @@
                         "unit_alias": null,
                         "capacity_registered": 19.8,
                         "capacity_aggregate": 122.1,
+                        "network_region": "SA1"
+                    },
+                    {
+                        "oid": "C2Y_2A5",
+                        "duid": "WATERLWF",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 38,
+                        "unit_number": 6,
+                        "unit_size": 3.3,
+                        "unit_alias": null,
+                        "capacity_registered": null,
+                        "capacity_aggregate": 19.8,
                         "network_region": "SA1"
                     }
                 ]
@@ -16620,24 +16620,6 @@
                 "capacity_aggregate": 109.76,
                 "duid_data": [
                     {
-                        "oid": "C44_2AT",
-                        "duid": "WGWF1",
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": null,
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 25,
-                        "unit_number": 8,
-                        "unit_size": 3.43,
-                        "unit_alias": null,
-                        "capacity_registered": 27.44,
-                        "capacity_aggregate": 27.44,
-                        "network_region": "SA1"
-                    },
-                    {
                         "oid": "C44_C8X",
                         "duid": "WGWF1",
                         "fuel_tech": "wind",
@@ -16653,6 +16635,24 @@
                         "unit_alias": null,
                         "capacity_registered": 27.44,
                         "capacity_aggregate": 82.32,
+                        "network_region": "SA1"
+                    },
+                    {
+                        "oid": "C44_2AT",
+                        "duid": "WGWF1",
+                        "fuel_tech": "wind",
+                        "fuel_tech_label": "Wind",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 25,
+                        "unit_number": 8,
+                        "unit_size": 3.43,
+                        "unit_alias": null,
+                        "capacity_registered": 27.44,
+                        "capacity_aggregate": 27.44,
                         "network_region": "SA1"
                     }
                 ]
@@ -16915,6 +16915,50 @@
             "geometry": {
                 "type": "Point",
                 "coordinates": [
+                    146.874083,
+                    -41.127009
+                ]
+            },
+            "properties": {
+                "oid": "CEG",
+                "ocode": "au.nem.tas.bbdisel1",
+                "station_id": 1305,
+                "station_code": "BBDISEL1",
+                "facility_id": "BBDISEL1",
+                "network": "NEM",
+                "network_country": "au",
+                "state": "TAS",
+                "postcode": "7253",
+                "name": "Bell Bay",
+                "capacity_registered": null,
+                "capacity_aggregate": null,
+                "duid_data": [
+                    {
+                        "oid": "CEG_ARX",
+                        "duid": "BBDISEL1",
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2016-05-11T00:00:00",
+                        "decommissioned_date": "2016-08-23T00:00:00",
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 75.0,
+                        "unit_alias": null,
+                        "capacity_registered": 75.0,
+                        "capacity_aggregate": 75.0,
+                        "network_region": "TAS1"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
                     146.9025,
                     -41.141944
                 ]
@@ -16977,50 +17021,6 @@
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    146.874083,
-                    -41.127009
-                ]
-            },
-            "properties": {
-                "oid": "CEG",
-                "ocode": "au.nem.tas.bbdisel1",
-                "station_id": 1305,
-                "station_code": "BBDISEL1",
-                "facility_id": "BBDISEL1",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "TAS",
-                "postcode": "7253",
-                "name": "Bell Bay",
-                "capacity_registered": null,
-                "capacity_aggregate": null,
-                "duid_data": [
-                    {
-                        "oid": "CEG_ARX",
-                        "duid": "BBDISEL1",
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2016-05-11T00:00:00",
-                        "decommissioned_date": "2016-08-23T00:00:00",
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 75.0,
-                        "unit_alias": null,
-                        "capacity_registered": 75.0,
-                        "capacity_aggregate": 75.0,
-                        "network_region": "TAS1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
                     146.905522,
                     -41.139324
                 ]
@@ -17040,42 +17040,6 @@
                 "capacity_aggregate": 163.0,
                 "duid_data": [
                     {
-                        "oid": "CAE_ARY",
-                        "duid": "BBTHREE1",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2006-06-08T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 35.0,
-                        "unit_alias": null,
-                        "capacity_registered": 35.0,
-                        "capacity_aggregate": 35.0,
-                        "network_region": "TAS1"
-                    },
-                    {
-                        "oid": "CAE_ASC",
-                        "duid": "TVPP104",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2009-03-31T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 58.0,
-                        "unit_alias": null,
-                        "capacity_registered": 58.0,
-                        "capacity_aggregate": 58.0,
-                        "network_region": "TAS1"
-                    },
-                    {
                         "oid": "CAE_ASZ",
                         "duid": "BBTHREE2",
                         "fuel_tech": "gas_ocgt",
@@ -17086,6 +17050,24 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 35.0,
+                        "unit_alias": null,
+                        "capacity_registered": 35.0,
+                        "capacity_aggregate": 35.0,
+                        "network_region": "TAS1"
+                    },
+                    {
+                        "oid": "CAE_ARY",
+                        "duid": "BBTHREE1",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2006-06-08T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 35.0,
                         "unit_alias": null,
@@ -17109,6 +17091,24 @@
                         "unit_alias": null,
                         "capacity_registered": 35.0,
                         "capacity_aggregate": 35.0,
+                        "network_region": "TAS1"
+                    },
+                    {
+                        "oid": "CAE_ASC",
+                        "duid": "TVPP104",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2009-03-31T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 58.0,
+                        "unit_alias": null,
+                        "capacity_registered": 58.0,
+                        "capacity_aggregate": 58.0,
                         "network_region": "TAS1"
                     }
                 ]
@@ -17690,24 +17690,6 @@
                 "capacity_aggregate": 457.0,
                 "duid_data": [
                     {
-                        "oid": "AYY_CA6",
-                        "duid": "GOVILLB1",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2005-05-16T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 25.0,
-                        "unit_alias": null,
-                        "capacity_registered": 25.0,
-                        "capacity_aggregate": 25.0,
-                        "network_region": "TAS1"
-                    },
-                    {
                         "oid": "AYY_CAH",
                         "duid": "GORDON",
                         "fuel_tech": "hydro",
@@ -17723,6 +17705,24 @@
                         "unit_alias": null,
                         "capacity_registered": 432.0,
                         "capacity_aggregate": 432.0,
+                        "network_region": "TAS1"
+                    },
+                    {
+                        "oid": "AYY_CA6",
+                        "duid": "GOVILLB1",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2005-05-16T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 25.0,
+                        "unit_alias": null,
+                        "capacity_registered": 25.0,
+                        "capacity_aggregate": 25.0,
                         "network_region": "TAS1"
                     }
                 ]
@@ -18538,24 +18538,6 @@
                 "capacity_aggregate": 231.2,
                 "duid_data": [
                     {
-                        "oid": "CZG_C5W",
-                        "duid": "REECE2",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2005-05-16T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 115.6,
-                        "unit_alias": null,
-                        "capacity_registered": 115.6,
-                        "capacity_aggregate": 115.6,
-                        "network_region": "TAS1"
-                    },
-                    {
                         "oid": "CZG_C59",
                         "duid": "REECE1",
                         "fuel_tech": "hydro",
@@ -18566,6 +18548,24 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 115.6,
+                        "unit_alias": null,
+                        "capacity_registered": 115.6,
+                        "capacity_aggregate": 115.6,
+                        "network_region": "TAS1"
+                    },
+                    {
+                        "oid": "CZG_C5W",
+                        "duid": "REECE2",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2005-05-16T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 115.6,
                         "unit_alias": null,
@@ -19342,24 +19342,6 @@
                 "capacity_aggregate": 94.0,
                 "duid_data": [
                     {
-                        "oid": "AWR_ASB",
-                        "duid": "BDL02",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2001-12-13T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 47.0,
-                        "unit_alias": null,
-                        "capacity_registered": 47.0,
-                        "capacity_aggregate": 47.0,
-                        "network_region": "VIC1"
-                    },
-                    {
                         "oid": "AWR_AS2",
                         "duid": "BDL01",
                         "fuel_tech": "gas_ocgt",
@@ -19370,6 +19352,24 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 47.0,
+                        "unit_alias": null,
+                        "capacity_registered": 47.0,
+                        "capacity_aggregate": 47.0,
+                        "network_region": "VIC1"
+                    },
+                    {
+                        "oid": "AWR_ASB",
+                        "duid": "BDL02",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2001-12-13T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 47.0,
                         "unit_alias": null,
@@ -19548,24 +19548,6 @@
                 "capacity_aggregate": 510.0,
                 "duid_data": [
                     {
-                        "oid": "C4X_AR3",
-                        "duid": "BALBG1",
-                        "fuel_tech": "battery_discharging",
-                        "fuel_tech_label": "Battery (Discharging)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-11-06T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 17,
-                        "unit_size": 30.0,
-                        "unit_alias": null,
-                        "capacity_registered": 30.0,
-                        "capacity_aggregate": 510.0,
-                        "network_region": "VIC1"
-                    },
-                    {
                         "oid": "C4X_CWP",
                         "duid": "BALBL1",
                         "fuel_tech": "battery_charging",
@@ -19581,6 +19563,24 @@
                         "unit_alias": null,
                         "capacity_registered": 30.0,
                         "capacity_aggregate": 29.99,
+                        "network_region": "VIC1"
+                    },
+                    {
+                        "oid": "C4X_AR3",
+                        "duid": "BALBG1",
+                        "fuel_tech": "battery_discharging",
+                        "fuel_tech_label": "Battery (Discharging)",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2018-11-06T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 17,
+                        "unit_size": 30.0,
+                        "unit_alias": null,
+                        "capacity_registered": 30.0,
+                        "capacity_aggregate": 510.0,
                         "network_region": "VIC1"
                     }
                 ]
@@ -20184,24 +20184,6 @@
                         "network_region": "VIC1"
                     },
                     {
-                        "oid": "AXG_CXR",
-                        "duid": "BROOKLYN",
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-04-14T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 1.03,
-                        "unit_alias": null,
-                        "capacity_registered": 1.03,
-                        "capacity_aggregate": 1.03,
-                        "network_region": "VIC1"
-                    },
-                    {
                         "oid": "AXG_CXS",
                         "duid": "BROOKLYN",
                         "fuel_tech": "bioenergy_biogas",
@@ -20217,6 +20199,24 @@
                         "unit_alias": null,
                         "capacity_registered": 0.65,
                         "capacity_aggregate": 0.65,
+                        "network_region": "VIC1"
+                    },
+                    {
+                        "oid": "AXG_CXR",
+                        "duid": "BROOKLYN",
+                        "fuel_tech": "bioenergy_biogas",
+                        "fuel_tech_label": "Biogas",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "2018-04-14T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 1.03,
+                        "unit_alias": null,
+                        "capacity_registered": 1.03,
+                        "capacity_aggregate": 1.03,
                         "network_region": "VIC1"
                     }
                 ]
@@ -20888,8 +20888,8 @@
                 "capacity_aggregate": 336.0,
                 "duid_data": [
                     {
-                        "oid": "CH3_AYX",
-                        "duid": "DUNDWF3",
+                        "oid": "CH3_AYW",
+                        "duid": "DUNDWF2",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
                         "fuel_tech_renewable": true,
@@ -20897,12 +20897,12 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 52,
-                        "unit_number": 29,
+                        "unit_id": 41,
+                        "unit_number": 11,
                         "unit_size": 4.2,
                         "unit_alias": null,
-                        "capacity_registered": 121.8,
-                        "capacity_aggregate": 121.8,
+                        "capacity_registered": 46.2,
+                        "capacity_aggregate": 46.2,
                         "network_region": "VIC1"
                     },
                     {
@@ -20924,8 +20924,8 @@
                         "network_region": "VIC1"
                     },
                     {
-                        "oid": "CH3_AYW",
-                        "duid": "DUNDWF2",
+                        "oid": "CH3_AYX",
+                        "duid": "DUNDWF3",
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
                         "fuel_tech_renewable": true,
@@ -20933,12 +20933,12 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 41,
-                        "unit_number": 11,
+                        "unit_id": 52,
+                        "unit_number": 29,
                         "unit_size": 4.2,
                         "unit_alias": null,
-                        "capacity_registered": 46.2,
-                        "capacity_aggregate": 46.2,
+                        "capacity_registered": 121.8,
+                        "capacity_aggregate": 121.8,
                         "network_region": "VIC1"
                     }
                 ]
@@ -20967,24 +20967,6 @@
                 "capacity_registered": 199.5,
                 "capacity_aggregate": 214.5,
                 "duid_data": [
-                    {
-                        "oid": "ASF_CZ2",
-                        "duid": "EILDON2",
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 2,
-                        "unit_number": 1,
-                        "unit_size": 60.0,
-                        "unit_alias": null,
-                        "capacity_registered": 60.0,
-                        "capacity_aggregate": 60.0,
-                        "network_region": "VIC1"
-                    },
                     {
                         "oid": "ASF_CZB",
                         "duid": "EILDON3",
@@ -21037,6 +21019,24 @@
                         "unit_alias": "B",
                         "capacity_registered": null,
                         "capacity_aggregate": 7.5,
+                        "network_region": "VIC1"
+                    },
+                    {
+                        "oid": "ASF_CZ2",
+                        "duid": "EILDON2",
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 60.0,
+                        "unit_alias": null,
+                        "capacity_registered": 60.0,
+                        "capacity_aggregate": 60.0,
                         "network_region": "VIC1"
                     },
                     {
@@ -21296,24 +21296,6 @@
                 "capacity_aggregate": 1266.5,
                 "duid_data": [
                     {
-                        "oid": "CGA_CW8",
-                        "duid": "GANNBL1",
-                        "fuel_tech": "battery_charging",
-                        "fuel_tech_label": "Battery (Charging)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": null,
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 50,
-                        "unit_size": 0.6175,
-                        "unit_alias": null,
-                        "capacity_registered": 30.875,
-                        "capacity_aggregate": 30.88,
-                        "network_region": "VIC1"
-                    },
-                    {
                         "oid": "CGA_CZP",
                         "duid": "GANNBG1",
                         "fuel_tech": "battery_discharging",
@@ -21329,6 +21311,24 @@
                         "unit_alias": null,
                         "capacity_registered": 25.33,
                         "capacity_aggregate": 1266.5,
+                        "network_region": "VIC1"
+                    },
+                    {
+                        "oid": "CGA_CW8",
+                        "duid": "GANNBL1",
+                        "fuel_tech": "battery_charging",
+                        "fuel_tech_label": "Battery (Charging)",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 50,
+                        "unit_size": 0.6175,
+                        "unit_alias": null,
+                        "capacity_registered": 30.875,
+                        "capacity_aggregate": 30.88,
                         "network_region": "VIC1"
                     }
                 ]
@@ -21435,7 +21435,7 @@
                 "network_country": "au",
                 "state": "VIC",
                 "postcode": "3976",
-                "name": "Hallam Road",
+                "name": "Hallam Road Renewable",
                 "capacity_registered": 8.98,
                 "capacity_aggregate": 8.98,
                 "duid_data": [
@@ -21483,6 +21483,24 @@
                 "capacity_registered": null,
                 "capacity_aggregate": null,
                 "duid_data": [
+                    {
+                        "oid": "ARB_C2Z",
+                        "duid": "HWPS1",
+                        "fuel_tech": "coal_brown",
+                        "fuel_tech_label": "Coal (Brown)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": "2017-04-01T00:00:00",
+                        "status": "retired",
+                        "status_label": "Retired",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 220.0,
+                        "unit_alias": null,
+                        "capacity_registered": 220.0,
+                        "capacity_aggregate": 220.0,
+                        "network_region": "VIC1"
+                    },
                     {
                         "oid": "ARB_C2A",
                         "duid": "HWPS2",
@@ -21607,24 +21625,6 @@
                         "unit_alias": null,
                         "capacity_registered": 200.0,
                         "capacity_aggregate": 200.0,
-                        "network_region": "VIC1"
-                    },
-                    {
-                        "oid": "ARB_C2Z",
-                        "duid": "HWPS1",
-                        "fuel_tech": "coal_brown",
-                        "fuel_tech_label": "Coal (Brown)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": "2017-04-01T00:00:00",
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 220.0,
-                        "unit_alias": null,
-                        "capacity_registered": 220.0,
-                        "capacity_aggregate": 220.0,
                         "network_region": "VIC1"
                     }
                 ]
@@ -21780,42 +21780,6 @@
                 "capacity_aggregate": 204.0,
                 "duid_data": [
                     {
-                        "oid": "A8X_C27",
-                        "duid": "JLA04",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 4,
-                        "unit_number": 1,
-                        "unit_size": 51.0,
-                        "unit_alias": null,
-                        "capacity_registered": 51.0,
-                        "capacity_aggregate": 51.0,
-                        "network_region": "VIC1"
-                    },
-                    {
-                        "oid": "A8X_C2T",
-                        "duid": "JLA01",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 51.0,
-                        "unit_alias": null,
-                        "capacity_registered": 51.0,
-                        "capacity_aggregate": 51.0,
-                        "network_region": "VIC1"
-                    },
-                    {
                         "oid": "A8X_C2K",
                         "duid": "JLA02",
                         "fuel_tech": "gas_ocgt",
@@ -21850,6 +21814,42 @@
                         "capacity_registered": 51.0,
                         "capacity_aggregate": 51.0,
                         "network_region": "VIC1"
+                    },
+                    {
+                        "oid": "A8X_C27",
+                        "duid": "JLA04",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 4,
+                        "unit_number": 1,
+                        "unit_size": 51.0,
+                        "unit_alias": null,
+                        "capacity_registered": 51.0,
+                        "capacity_aggregate": 51.0,
+                        "network_region": "VIC1"
+                    },
+                    {
+                        "oid": "A8X_C2T",
+                        "duid": "JLA01",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 51.0,
+                        "unit_alias": null,
+                        "capacity_registered": 51.0,
+                        "capacity_aggregate": 51.0,
+                        "network_region": "VIC1"
                     }
                 ]
             }
@@ -21878,8 +21878,8 @@
                 "capacity_aggregate": 228.0,
                 "duid_data": [
                     {
-                        "oid": "A8Y_C28",
-                        "duid": "JLB02",
+                        "oid": "A8Y_C2R",
+                        "duid": "JLB03",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "fuel_tech_renewable": false,
@@ -21887,7 +21887,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 2,
+                        "unit_id": 3,
                         "unit_number": 1,
                         "unit_size": 76.0,
                         "unit_alias": null,
@@ -21914,8 +21914,8 @@
                         "network_region": "VIC1"
                     },
                     {
-                        "oid": "A8Y_C2R",
-                        "duid": "JLB03",
+                        "oid": "A8Y_C28",
+                        "duid": "JLB02",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "fuel_tech_renewable": false,
@@ -21923,7 +21923,7 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": 3,
+                        "unit_id": 2,
                         "unit_number": 1,
                         "unit_size": 76.0,
                         "unit_alias": null,
@@ -22102,24 +22102,6 @@
                 "capacity_aggregate": 312.0,
                 "duid_data": [
                     {
-                        "oid": "CAA_CB6",
-                        "duid": "LNGS1",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2015-07-01T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 156.0,
-                        "unit_alias": null,
-                        "capacity_registered": 156.0,
-                        "capacity_aggregate": 156.0,
-                        "network_region": "VIC1"
-                    },
-                    {
                         "oid": "CAA_CB7",
                         "duid": "LNGS2",
                         "fuel_tech": "gas_ocgt",
@@ -22130,6 +22112,24 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 2,
+                        "unit_number": 1,
+                        "unit_size": 156.0,
+                        "unit_alias": null,
+                        "capacity_registered": 156.0,
+                        "capacity_aggregate": 156.0,
+                        "network_region": "VIC1"
+                    },
+                    {
+                        "oid": "CAA_CB6",
+                        "duid": "LNGS1",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2015-07-01T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 156.0,
                         "unit_alias": null,
@@ -22208,6 +22208,24 @@
                 "capacity_aggregate": 2210.0,
                 "duid_data": [
                     {
+                        "oid": "AR3_C3R",
+                        "duid": "LYA4",
+                        "fuel_tech": "coal_brown",
+                        "fuel_tech_label": "Coal (Brown)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 4,
+                        "unit_number": 1,
+                        "unit_size": 560.0,
+                        "unit_alias": null,
+                        "capacity_registered": 560.0,
+                        "capacity_aggregate": 560.0,
+                        "network_region": "VIC1"
+                    },
+                    {
                         "oid": "AR3_C38",
                         "duid": "LYA3",
                         "fuel_tech": "coal_brown",
@@ -22218,6 +22236,24 @@
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": 3,
+                        "unit_number": 1,
+                        "unit_size": 560.0,
+                        "unit_alias": null,
+                        "capacity_registered": 560.0,
+                        "capacity_aggregate": 560.0,
+                        "network_region": "VIC1"
+                    },
+                    {
+                        "oid": "AR3_C37",
+                        "duid": "LYA1",
+                        "fuel_tech": "coal_brown",
+                        "fuel_tech_label": "Coal (Brown)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "1998-10-25T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
                         "unit_number": 1,
                         "unit_size": 560.0,
                         "unit_alias": null,
@@ -22241,42 +22277,6 @@
                         "unit_alias": null,
                         "capacity_registered": 530.0,
                         "capacity_aggregate": 530.0,
-                        "network_region": "VIC1"
-                    },
-                    {
-                        "oid": "AR3_C37",
-                        "duid": "LYA1",
-                        "fuel_tech": "coal_brown",
-                        "fuel_tech_label": "Coal (Brown)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 560.0,
-                        "unit_alias": null,
-                        "capacity_registered": 560.0,
-                        "capacity_aggregate": 560.0,
-                        "network_region": "VIC1"
-                    },
-                    {
-                        "oid": "AR3_C3R",
-                        "duid": "LYA4",
-                        "fuel_tech": "coal_brown",
-                        "fuel_tech_label": "Coal (Brown)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "1998-10-25T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 4,
-                        "unit_number": 1,
-                        "unit_size": 560.0,
-                        "unit_alias": null,
-                        "capacity_registered": 560.0,
-                        "capacity_aggregate": 560.0,
                         "network_region": "VIC1"
                     }
                 ]
@@ -22614,8 +22614,8 @@
                 "capacity_aggregate": 566.0,
                 "duid_data": [
                     {
-                        "oid": "CBG_CFH",
-                        "duid": "MORTLK11",
+                        "oid": "CBG_CF5",
+                        "duid": "MORTLK12",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "fuel_tech_renewable": false,
@@ -22632,8 +22632,8 @@
                         "network_region": "VIC1"
                     },
                     {
-                        "oid": "CBG_CF5",
-                        "duid": "MORTLK12",
+                        "oid": "CBG_CFH",
+                        "duid": "MORTLK11",
                         "fuel_tech": "gas_ocgt",
                         "fuel_tech_label": "Gas (OCGT)",
                         "fuel_tech_renewable": false,
@@ -24526,24 +24526,6 @@
                         "network_region": "VIC1"
                     },
                     {
-                        "oid": "CBB_C8H",
-                        "duid": "VPGS5",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2002-05-15T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 5,
-                        "unit_number": 2,
-                        "unit_size": 50.0,
-                        "unit_alias": null,
-                        "capacity_registered": 50.0,
-                        "capacity_aggregate": 100.0,
-                        "network_region": "VIC1"
-                    },
-                    {
                         "oid": "CBB_C84",
                         "duid": "VPGS3",
                         "fuel_tech": "gas_ocgt",
@@ -24559,6 +24541,24 @@
                         "unit_alias": null,
                         "capacity_registered": 50.0,
                         "capacity_aggregate": 200.0,
+                        "network_region": "VIC1"
+                    },
+                    {
+                        "oid": "CBB_C8H",
+                        "duid": "VPGS5",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2002-05-15T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 5,
+                        "unit_number": 2,
+                        "unit_size": 50.0,
+                        "unit_alias": null,
+                        "capacity_registered": 50.0,
+                        "capacity_aggregate": 100.0,
                         "network_region": "VIC1"
                     }
                 ]
@@ -24847,7 +24847,7 @@
                 "network_country": "au",
                 "state": "VIC",
                 "postcode": "3750",
-                "name": "Wollert",
+                "name": "Wollert Renewable",
                 "capacity_registered": 6.74,
                 "capacity_aggregate": 7.86,
                 "duid_data": [
@@ -26433,50 +26433,6 @@
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    115.773172,
-                    -32.201951
-                ]
-            },
-            "properties": {
-                "oid": "23H",
-                "ocode": "au.wem.newgenkwinana",
-                "station_id": 1858,
-                "station_code": "NEWGEN_KWINANA",
-                "facility_id": "NEWGEN_KWINANA",
-                "network": "WEM",
-                "network_country": "au",
-                "state": null,
-                "postcode": null,
-                "name": "Kwinana",
-                "capacity_registered": 335.0,
-                "capacity_aggregate": 335.0,
-                "duid_data": [
-                    {
-                        "oid": "23H_25X",
-                        "duid": "NEWGEN_KWINANA_CCG1",
-                        "fuel_tech": "gas_ccgt",
-                        "fuel_tech_label": "Gas (CCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2008-01-01T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 335.0,
-                        "unit_alias": null,
-                        "capacity_registered": 335.0,
-                        "capacity_aggregate": 335.0,
-                        "network_region": "WEM"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
                     115.775445,
                     -32.197245
                 ]
@@ -26529,6 +26485,50 @@
                         "unit_alias": null,
                         "capacity_registered": 200.0,
                         "capacity_aggregate": 200.0,
+                        "network_region": "WEM"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    115.773172,
+                    -32.201951
+                ]
+            },
+            "properties": {
+                "oid": "23H",
+                "ocode": "au.wem.newgenkwinana",
+                "station_id": 1858,
+                "station_code": "NEWGEN_KWINANA",
+                "facility_id": "NEWGEN_KWINANA",
+                "network": "WEM",
+                "network_country": "au",
+                "state": null,
+                "postcode": null,
+                "name": "Kwinana",
+                "capacity_registered": 335.0,
+                "capacity_aggregate": 335.0,
+                "duid_data": [
+                    {
+                        "oid": "23H_25X",
+                        "duid": "NEWGEN_KWINANA_CCG1",
+                        "fuel_tech": "gas_ccgt",
+                        "fuel_tech_label": "Gas (CCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2008-01-01T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 335.0,
+                        "unit_alias": null,
+                        "capacity_registered": 335.0,
+                        "capacity_aggregate": 335.0,
                         "network_region": "WEM"
                     }
                 ]
@@ -26689,50 +26689,6 @@
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    118.226866,
-                    -31.54265
-                ]
-            },
-            "properties": {
-                "oid": "23E",
-                "ocode": "au.wem.namkknmerr",
-                "station_id": 1854,
-                "station_code": "NAMKKN_MERR",
-                "facility_id": "NAMKKN_MERR",
-                "network": "WEM",
-                "network_country": "au",
-                "state": null,
-                "postcode": null,
-                "name": "Merredin",
-                "capacity_registered": 92.6,
-                "capacity_aggregate": 92.6,
-                "duid_data": [
-                    {
-                        "oid": "23E_25R",
-                        "duid": "NAMKKN_MERR_SG1",
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2011-01-01T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": 1,
-                        "unit_number": 1,
-                        "unit_size": 92.6,
-                        "unit_alias": null,
-                        "capacity_registered": 92.6,
-                        "capacity_aggregate": 92.6,
-                        "network_region": "WEM"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
                     118.23,
                     -31.54
                 ]
@@ -26767,6 +26723,50 @@
                         "unit_alias": null,
                         "capacity_registered": 100.0,
                         "capacity_aggregate": 100.0,
+                        "network_region": "WEM"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    118.226866,
+                    -31.54265
+                ]
+            },
+            "properties": {
+                "oid": "23E",
+                "ocode": "au.wem.namkknmerr",
+                "station_id": 1854,
+                "station_code": "NAMKKN_MERR",
+                "facility_id": "NAMKKN_MERR",
+                "network": "WEM",
+                "network_country": "au",
+                "state": null,
+                "postcode": null,
+                "name": "Merredin",
+                "capacity_registered": 92.6,
+                "capacity_aggregate": 92.6,
+                "duid_data": [
+                    {
+                        "oid": "23E_25R",
+                        "duid": "NAMKKN_MERR_SG1",
+                        "fuel_tech": "gas_ocgt",
+                        "fuel_tech_label": "Gas (OCGT)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": "2011-01-01T00:00:00",
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": 1,
+                        "unit_number": 1,
+                        "unit_size": 92.6,
+                        "unit_alias": null,
+                        "capacity_registered": 92.6,
+                        "capacity_aggregate": 92.6,
                         "network_region": "WEM"
                     }
                 ]
