@@ -11,6 +11,12 @@ def stations_csv_records():
 
     for station in stations:
         for facility in station.facilities:
+            if facility.fueltech_id is None:
+                continue
+
+            if facility.status_id is None:
+                continue
+
             rec = {
                 "name": station.name,
                 # "oid": station.oid,
