@@ -52,7 +52,7 @@ def patches():
     s.add(singleton)
 
     singleston_facility = Facility(
-        code=unit_code,
+        code="0NSISF_1",
         status_id="operating",
         network_region="NSW1",
         network_name="Singleton Solar Farm",
