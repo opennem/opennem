@@ -112,6 +112,8 @@ class FuelTech(Base, BaseModel):
     label = Column(Text, nullable=True)
     renewable = Column(Boolean, default=False)
 
+    facilities = relationship("Facility")
+
 
 class Network(Base, BaseModel):
     __tablename__ = "network"
@@ -299,9 +301,7 @@ class Facility(Base, BaseModel):
         ForeignKey("fueltech.code", name="fk_facility_fueltech_id"),
         nullable=True,
     )
-    fueltech = relationship(
-        "FuelTech", backref=backref("facilities", cascade="all,delete")
-    )
+    fueltech = relationship("FuelTech", back_populates="facilities")
 
     status_id = Column(
         Text,
