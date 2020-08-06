@@ -15,3 +15,7 @@ def facility_duid_map(duid: str) -> str:
         return FACILITY_DUID_MAP[duid]
 
     return duid
+
+
+def duid_is_retired(duid: str) -> bool:
+    return duid in FACILITY_DUID_MAP
