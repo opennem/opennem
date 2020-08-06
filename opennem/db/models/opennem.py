@@ -216,6 +216,7 @@ class Station(Base, BaseModel):
                 and fac.status_id
                 in ["operating", "committed", "commissioning"]
                 and fac.dispatch_type == DispatchType.GENERATOR
+                and fac.active
             ):
                 if not cap_reg:
                     cap_reg = 0
@@ -242,6 +243,7 @@ class Station(Base, BaseModel):
                 and fac.status_id
                 in ["operating", "committed", "commissioning"]
                 and fac.dispatch_type == DispatchType.GENERATOR
+                and fac.active
             ):
                 if not cap_agg:
                     cap_agg = 0
@@ -362,6 +364,9 @@ class Facility(Base, BaseModel):
         """
         num_units = 1
         cap_aggr = None
+
+        if not self.active:
+            return 0
 
         if self.unit_number and type(self.unit_number) is int:
             num_units = self.unit_number
