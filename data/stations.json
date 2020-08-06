@@ -16,7 +16,7 @@
     },
     {
         "name": "Appin",
-        "ocode": "au_nem_nsw_1230",
+        "ocode": "au_nem_nsw_appin",
         "code": "APPIN",
         "region": "NSW1",
         "status": "operating",
@@ -31,7 +31,7 @@
     },
     {
         "name": "Awaba",
-        "ocode": "au_nem_nsw_1189",
+        "ocode": "au_nem_nsw_awabaref",
         "code": "AWABAREF",
         "region": "NSW1",
         "status": "retired",
@@ -46,7 +46,7 @@
     },
     {
         "name": "Awaba",
-        "ocode": "au_nem_nsw_1189",
+        "ocode": "au_nem_nsw_awabaref",
         "code": "0NAWA_1",
         "region": "NSW1",
         "status": "operating",
@@ -91,7 +91,7 @@
     },
     {
         "name": "Bankstown Sports Club",
-        "ocode": "au_nem_nsw_1246",
+        "ocode": "au_nem_nsw_bankspt",
         "code": "BANKSPT1",
         "region": "NSW1",
         "status": "retired",
@@ -106,7 +106,7 @@
     },
     {
         "name": "Bankstown Sports Club",
-        "ocode": "au_nem_nsw_1246",
+        "ocode": "au_nem_nsw_bankspt",
         "code": "0NBSC_1",
         "region": "NSW1",
         "status": "operating",
@@ -121,7 +121,7 @@
     },
     {
         "name": "Bankstown Sports Club",
-        "ocode": "au_nem_nsw_1246",
+        "ocode": "au_nem_nsw_bankspt",
         "code": "0NBSC_2",
         "region": "NSW1",
         "status": "operating",
@@ -136,7 +136,7 @@
     },
     {
         "name": "Bayswater",
-        "ocode": "au_nem_nsw_1015",
+        "ocode": "au_nem_nsw_baysw",
         "code": "BW03",
         "region": "NSW1",
         "status": "operating",
@@ -151,7 +151,7 @@
     },
     {
         "name": "Bayswater",
-        "ocode": "au_nem_nsw_1015",
+        "ocode": "au_nem_nsw_baysw",
         "code": "BW02",
         "region": "NSW1",
         "status": "operating",
@@ -166,7 +166,7 @@
     },
     {
         "name": "Bayswater",
-        "ocode": "au_nem_nsw_1015",
+        "ocode": "au_nem_nsw_baysw",
         "code": "BW01",
         "region": "NSW1",
         "status": "operating",
@@ -181,7 +181,7 @@
     },
     {
         "name": "Bayswater",
-        "ocode": "au_nem_nsw_1015",
+        "ocode": "au_nem_nsw_baysw",
         "code": "BW04",
         "region": "NSW1",
         "status": "operating",
@@ -211,7 +211,7 @@
     },
     {
         "name": "Beryl",
-        "ocode": "au_nem_nsw_1379",
+        "ocode": "au_nem_nsw_berylsf",
         "code": "BERYLSF1",
         "region": "NSW1",
         "status": "operating",
@@ -241,7 +241,7 @@
     },
     {
         "name": "Blayney",
-        "ocode": "au_nem_nsw_blayney_1896",
+        "ocode": "au_nem_nsw_blayney",
         "code": "BLAYNEY",
         "region": "NSW1",
         "status": "operating",
@@ -256,7 +256,7 @@
     },
     {
         "name": "Blowering",
-        "ocode": "au_nem_nsw_1057",
+        "ocode": "au_nem_nsw_snowy6",
         "code": "BLOWERNG",
         "region": "NSW1",
         "status": "operating",
@@ -271,7 +271,7 @@
     },
     {
         "name": "Boco Rock",
-        "ocode": "au_nem_nsw_1291",
+        "ocode": "au_nem_nsw_bocorock",
         "code": "BOCORWF1",
         "region": "NSW1",
         "status": "operating",
@@ -286,7 +286,7 @@
     },
     {
         "name": "Boco Rock",
-        "ocode": "au_nem_nsw_1291",
+        "ocode": "au_nem_nsw_bocorock",
         "code": "BOCORWF1",
         "region": "NSW1",
         "status": "operating",
@@ -301,7 +301,7 @@
     },
     {
         "name": "Bodangora",
-        "ocode": "au_nem_nsw_1350",
+        "ocode": "au_nem_nsw_bodwf",
         "code": "BODWF1",
         "region": "NSW1",
         "status": "operating",
@@ -316,7 +316,7 @@
     },
     {
         "name": "Bomen",
-        "ocode": "au_nem_nsw_1404",
+        "ocode": "au_nem_nsw_bomensf",
         "code": "BOMENSF1",
         "region": "NSW1",
         "status": "operating",
@@ -331,7 +331,7 @@
     },
     {
         "name": "Broadwater",
-        "ocode": "au_nem_nsw_1200",
+        "ocode": "au_nem_nsw_bwtr1",
         "code": "BWTR1",
         "region": "NSW1",
         "status": "operating",
@@ -346,7 +346,7 @@
     },
     {
         "name": "Broadwater",
-        "ocode": "au_nem_nsw_1200",
+        "ocode": "au_nem_nsw_bwtr1",
         "code": "BWTR1",
         "region": "NSW1",
         "status": "operating",
@@ -361,7 +361,7 @@
     },
     {
         "name": "Broken Hill",
-        "ocode": "au_nem_nsw_1030",
+        "ocode": "au_nem_nsw_bhillgt",
         "code": "GB01",
         "region": "NSW1",
         "status": "operating",
@@ -376,7 +376,7 @@
     },
     {
         "name": "Broken Hill",
-        "ocode": "au_nem_nsw_1298",
+        "ocode": "au_nem_nsw_brokenh",
         "code": "BROKENH1",
         "region": "NSW1",
         "status": "operating",
@@ -391,7 +391,7 @@
     },
     {
         "name": "Brown Mountain",
-        "ocode": "au_nem_nsw_1023",
+        "ocode": "au_nem_nsw_brownmt",
         "code": "BROWNMT",
         "region": "NSW1",
         "status": "operating",
@@ -406,7 +406,7 @@
     },
     {
         "name": "Brown Mountain",
-        "ocode": "au_nem_nsw_1023",
+        "ocode": "au_nem_nsw_brownmt",
         "code": "BROWNMT",
         "region": "NSW1",
         "status": "operating",
@@ -421,7 +421,7 @@
     },
     {
         "name": "Brown Mountain",
-        "ocode": "au_nem_nsw_1023",
+        "ocode": "au_nem_nsw_brownmt",
         "code": "BROWNMT",
         "region": "NSW1",
         "status": "operating",
@@ -436,7 +436,7 @@
     },
     {
         "name": "Brown Mountain",
-        "ocode": "au_nem_nsw_1023",
+        "ocode": "au_nem_nsw_brownmt",
         "code": "BROWNMT",
         "region": "NSW1",
         "status": "operating",
@@ -451,7 +451,7 @@
     },
     {
         "name": "Burrendong",
-        "ocode": "au_nem_nsw_1224",
+        "ocode": "au_nem_nsw_bdonghyd",
         "code": "BDONGHYD",
         "region": "NSW1",
         "status": "operating",
@@ -466,7 +466,7 @@
     },
     {
         "name": "Burrinjuck",
-        "ocode": "au_nem_nsw_1025",
+        "ocode": "au_nem_nsw_burrin",
         "code": "BURRIN",
         "region": "NSW1",
         "status": "operating",
@@ -481,7 +481,7 @@
     },
     {
         "name": "Burrinjuck",
-        "ocode": "au_nem_nsw_1025",
+        "ocode": "au_nem_nsw_burrin",
         "code": "BURRIN",
         "region": "NSW1",
         "status": "operating",
@@ -496,7 +496,7 @@
     },
     {
         "name": "Burrinjuck",
-        "ocode": "au_nem_nsw_1025",
+        "ocode": "au_nem_nsw_burrin",
         "code": "BURRIN",
         "region": "NSW1",
         "status": "operating",
@@ -511,7 +511,7 @@
     },
     {
         "name": "Capital",
-        "ocode": "au_nem_nsw_1220",
+        "ocode": "au_nem_nsw_captlwf",
         "code": "CAPTL_WF",
         "region": "NSW1",
         "status": "operating",
@@ -526,7 +526,7 @@
     },
     {
         "name": "Capital East",
-        "ocode": "au_nem_nsw_1276",
+        "ocode": "au_nem_nsw_cesf",
         "code": "CESF1",
         "region": "NSW1",
         "status": "operating",
@@ -541,7 +541,7 @@
     },
     {
         "name": "Capital East",
-        "ocode": "au_nem_nsw_1276",
+        "ocode": "au_nem_nsw_cesf",
         "code": "CESF1",
         "region": "NSW1",
         "status": "operating",
@@ -556,7 +556,7 @@
     },
     {
         "name": "Capital East",
-        "ocode": "au_nem_nsw_1276",
+        "ocode": "au_nem_nsw_cesf",
         "code": "CESF1",
         "region": "NSW1",
         "status": "operating",
@@ -601,7 +601,7 @@
     },
     {
         "name": "Coleambally",
-        "ocode": "au_nem_nsw_1358",
+        "ocode": "au_nem_nsw_coleasf",
         "code": "COLEASF1",
         "region": "NSW1",
         "status": "operating",
@@ -631,7 +631,7 @@
     },
     {
         "name": "Colongra",
-        "ocode": "au_nem_nsw_1216",
+        "ocode": "au_nem_nsw_colongra",
         "code": "CG3",
         "region": "NSW1",
         "status": "operating",
@@ -646,7 +646,7 @@
     },
     {
         "name": "Colongra",
-        "ocode": "au_nem_nsw_1216",
+        "ocode": "au_nem_nsw_colongra",
         "code": "CG4",
         "region": "NSW1",
         "status": "operating",
@@ -661,7 +661,7 @@
     },
     {
         "name": "Colongra",
-        "ocode": "au_nem_nsw_1216",
+        "ocode": "au_nem_nsw_colongra",
         "code": "CG1",
         "region": "NSW1",
         "status": "operating",
@@ -676,7 +676,7 @@
     },
     {
         "name": "Colongra",
-        "ocode": "au_nem_nsw_1216",
+        "ocode": "au_nem_nsw_colongra",
         "code": "CG2",
         "region": "NSW1",
         "status": "operating",
@@ -691,7 +691,7 @@
     },
     {
         "name": "Condong",
-        "ocode": "au_nem_nsw_1196",
+        "ocode": "au_nem_nsw_condong1",
         "code": "CONDONG1",
         "region": "NSW1",
         "status": "operating",
@@ -706,7 +706,7 @@
     },
     {
         "name": "Copeton",
-        "ocode": "au_nem_nsw_1225",
+        "ocode": "au_nem_nsw_coptnhyd",
         "code": "COPTNHYD",
         "region": "NSW1",
         "status": "operating",
@@ -736,7 +736,7 @@
     },
     {
         "name": "Crookwell",
-        "ocode": "au_nem_nsw_crookwel_1897",
+        "ocode": "au_nem_nsw_crookwel",
         "code": "CROOKWEL",
         "region": "NSW1",
         "status": "operating",
@@ -751,7 +751,7 @@
     },
     {
         "name": "Crookwell 2",
-        "ocode": "au_nem_nsw_1355",
+        "ocode": "au_nem_nsw_crookwf2",
         "code": "CROOKWF2",
         "region": "NSW1",
         "status": "operating",
@@ -781,7 +781,7 @@
     },
     {
         "name": "Cullerin Range",
-        "ocode": "au_nem_nsw_1217",
+        "ocode": "au_nem_nsw_cullerin",
         "code": "CULLRGWF",
         "region": "NSW1",
         "status": "operating",
@@ -841,7 +841,7 @@
     },
     {
         "name": "Earthpower",
-        "ocode": "au_nem_nsw_1126",
+        "ocode": "au_nem_nsw_pmattaep",
         "code": "PMATTAEP",
         "region": "NSW1",
         "status": "retired",
@@ -871,7 +871,7 @@
     },
     {
         "name": "Eastern Creek",
-        "ocode": "au_nem_nsw_1114",
+        "ocode": "au_nem_nsw_eastcrk",
         "code": "EASTCRK",
         "region": "NSW1",
         "status": "operating",
@@ -886,7 +886,7 @@
     },
     {
         "name": "Eastern Creek 2",
-        "ocode": "au_nem_nsw_1228",
+        "ocode": "au_nem_nsw_eastcrk2",
         "code": "EASTCRK2",
         "region": "NSW1",
         "status": "operating",
@@ -901,7 +901,7 @@
     },
     {
         "name": "Eastern Creek 2",
-        "ocode": "au_nem_nsw_1228",
+        "ocode": "au_nem_nsw_eastcrk2",
         "code": "0NEC2G_7",
         "region": "NSW1",
         "status": "operating",
@@ -916,7 +916,7 @@
     },
     {
         "name": "Eraring",
-        "ocode": "au_nem_nsw_1021",
+        "ocode": "au_nem_nsw_eraring",
         "code": "ER03",
         "region": "NSW1",
         "status": "operating",
@@ -931,7 +931,7 @@
     },
     {
         "name": "Eraring",
-        "ocode": "au_nem_nsw_1021",
+        "ocode": "au_nem_nsw_eraring",
         "code": "ER01",
         "region": "NSW1",
         "status": "operating",
@@ -946,7 +946,7 @@
     },
     {
         "name": "Eraring",
-        "ocode": "au_nem_nsw_1021",
+        "ocode": "au_nem_nsw_eraring",
         "code": "ER04",
         "region": "NSW1",
         "status": "operating",
@@ -961,7 +961,7 @@
     },
     {
         "name": "Eraring",
-        "ocode": "au_nem_nsw_1021",
+        "ocode": "au_nem_nsw_eraring",
         "code": "ER02",
         "region": "NSW1",
         "status": "operating",
@@ -976,7 +976,7 @@
     },
     {
         "name": "Eraring",
-        "ocode": "au_nem_nsw_1021",
+        "ocode": "au_nem_nsw_eraring",
         "code": "ERGT01",
         "region": "NSW1",
         "status": "operating",
@@ -991,7 +991,7 @@
     },
     {
         "name": "Finely",
-        "ocode": "au_nem_nsw_1396",
+        "ocode": "au_nem_nsw_finleysf",
         "code": "FINLYSF1",
         "region": "NSW1",
         "status": "operating",
@@ -1006,7 +1006,7 @@
     },
     {
         "name": "Glenbawn",
-        "ocode": "au_nem_nsw_1226",
+        "ocode": "au_nem_nsw_glbwnhyd",
         "code": "GLBWNHYD",
         "region": "NSW1",
         "status": "operating",
@@ -1021,7 +1021,7 @@
     },
     {
         "name": "Glenbawn",
-        "ocode": "au_nem_nsw_1226",
+        "ocode": "au_nem_nsw_glbwnhyd",
         "code": "0NGLE_1",
         "region": "NSW1",
         "status": "operating",
@@ -1036,7 +1036,7 @@
     },
     {
         "name": "Glennies Creek",
-        "ocode": "au_nem_nsw_1236",
+        "ocode": "au_nem_nsw_glenncrk",
         "code": "GLENNCRK",
         "region": "NSW1",
         "status": "operating",
@@ -1051,7 +1051,7 @@
     },
     {
         "name": "Goonumbla",
-        "ocode": "au_nem_nsw_1393",
+        "ocode": "au_nem_nsw_goonsf",
         "code": "GOONSF1",
         "region": "NSW1",
         "status": "operating",
@@ -1066,7 +1066,7 @@
     },
     {
         "name": "Goonumbla",
-        "ocode": "au_nem_nsw_1393",
+        "ocode": "au_nem_nsw_goonsf",
         "code": "0NGSF_1",
         "region": "QLD1",
         "status": "committed",
@@ -1081,7 +1081,7 @@
     },
     {
         "name": "Grange Avenue",
-        "ocode": "au_nem_nsw_1186",
+        "ocode": "au_nem_nsw_grangeav",
         "code": "GRANGEAV",
         "region": "NSW1",
         "status": "operating",
@@ -1096,7 +1096,7 @@
     },
     {
         "name": "Griffith",
-        "ocode": "au_nem_nsw_1328",
+        "ocode": "au_nem_nsw_grifsf",
         "code": "GRIFSF1",
         "region": "NSW1",
         "status": "operating",
@@ -1111,7 +1111,7 @@
     },
     {
         "name": "Gullen Range",
-        "ocode": "au_nem_nsw_1281",
+        "ocode": "au_nem_nsw_gullrgwf",
         "code": "GULLRWF2",
         "region": "NSW1",
         "status": "operating",
@@ -1126,7 +1126,7 @@
     },
     {
         "name": "Gullen Range",
-        "ocode": "au_nem_nsw_1281",
+        "ocode": "au_nem_nsw_gullrgwf",
         "code": "GULLRWF1",
         "region": "NSW1",
         "status": "operating",
@@ -1141,7 +1141,7 @@
     },
     {
         "name": "Gullen Range",
-        "ocode": "au_nem_nsw_1281",
+        "ocode": "au_nem_nsw_gullrgwf",
         "code": "GULLRWF1",
         "region": "NSW1",
         "status": "operating",
@@ -1156,7 +1156,7 @@
     },
     {
         "name": "Gullen Range",
-        "ocode": "au_nem_nsw_1281",
+        "ocode": "au_nem_nsw_gullrgwf",
         "code": "GULLRSF1",
         "region": "NSW1",
         "status": "operating",
@@ -1171,7 +1171,7 @@
     },
     {
         "name": "Gunning",
-        "ocode": "au_nem_nsw_1253",
+        "ocode": "au_nem_nsw_gunning",
         "code": "GUNNING1",
         "region": "NSW1",
         "status": "operating",
@@ -1186,7 +1186,7 @@
     },
     {
         "name": "Guthega",
-        "ocode": "au_nem_nsw_1054",
+        "ocode": "au_nem_nsw_snowy3",
         "code": "GUTHEGA",
         "region": "NSW1",
         "status": "operating",
@@ -1201,7 +1201,7 @@
     },
     {
         "name": "Hampton",
-        "ocode": "au_nem_nsw_hampton_1898",
+        "ocode": "au_nem_nsw_hampton",
         "code": "HAMPTON",
         "region": "NSW1",
         "status": "operating",
@@ -1231,7 +1231,7 @@
     },
     {
         "name": "Hume",
-        "ocode": "au_nem_nsw_1022",
+        "ocode": "au_nem_nsw_humensw",
         "code": "HUMENSW",
         "region": "NSW1",
         "status": "operating",
@@ -1246,7 +1246,7 @@
     },
     {
         "name": "Hunter Economic Zone",
-        "ocode": "au_nem_nsw_1203",
+        "ocode": "au_nem_nsw_hez",
         "code": "HEZ",
         "region": "NSW1",
         "status": "retired",
@@ -1261,7 +1261,7 @@
     },
     {
         "name": "Hunter Valley",
-        "ocode": "au_nem_nsw_1028",
+        "ocode": "au_nem_nsw_huntvgt",
         "code": "HVGTS",
         "region": "NSW1",
         "status": "operating",
@@ -1276,7 +1276,7 @@
     },
     {
         "name": "Jacks Gully",
-        "ocode": "au_nem_nsw_1100",
+        "ocode": "au_nem_nsw_jacksgul",
         "code": "JACKSGUL",
         "region": "NSW1",
         "status": "operating",
@@ -1291,7 +1291,7 @@
     },
     {
         "name": "Jindabyne Small",
-        "ocode": "au_nem_nsw_1195",
+        "ocode": "au_nem_nsw_jndshps",
         "code": "JNDABNE1",
         "region": "NSW1",
         "status": "operating",
@@ -1306,7 +1306,7 @@
     },
     {
         "name": "Jounama Small",
-        "ocode": "au_nem_nsw_1239",
+        "ocode": "au_nem_nsw_jounama",
         "code": "JOUNAMA1",
         "region": "NSW1",
         "status": "operating",
@@ -1321,7 +1321,7 @@
     },
     {
         "name": "Keepit",
-        "ocode": "au_nem_nsw_1024",
+        "ocode": "au_nem_nsw_keepit",
         "code": "KEEPIT",
         "region": "NSW1",
         "status": "operating",
@@ -1336,7 +1336,7 @@
     },
     {
         "name": "Kemps Creek",
-        "ocode": "au_nem_nsw_1309",
+        "ocode": "au_nem_nsw_aglsita",
         "code": "AGLSITA1",
         "region": "NSW1",
         "status": "operating",
@@ -1366,7 +1366,7 @@
     },
     {
         "name": "Kincumber Site",
-        "ocode": "au_nem_nsw_1290",
+        "ocode": "au_nem_nsw_kincumb",
         "code": "KINCUM1",
         "region": "NSW1",
         "status": "operating",
@@ -1396,7 +1396,7 @@
     },
     {
         "name": "Liddell",
-        "ocode": "au_nem_nsw_1014",
+        "ocode": "au_nem_nsw_liddell",
         "code": "LD03",
         "region": "NSW1",
         "status": "operating",
@@ -1411,7 +1411,7 @@
     },
     {
         "name": "Liddell",
-        "ocode": "au_nem_nsw_1014",
+        "ocode": "au_nem_nsw_liddell",
         "code": "LD01",
         "region": "NSW1",
         "status": "operating",
@@ -1426,7 +1426,7 @@
     },
     {
         "name": "Liddell",
-        "ocode": "au_nem_nsw_1014",
+        "ocode": "au_nem_nsw_liddell",
         "code": "LD02",
         "region": "NSW1",
         "status": "operating",
@@ -1441,7 +1441,7 @@
     },
     {
         "name": "Liddell",
-        "ocode": "au_nem_nsw_1014",
+        "ocode": "au_nem_nsw_liddell",
         "code": "LD04",
         "region": "NSW1",
         "status": "operating",
@@ -1456,7 +1456,7 @@
     },
     {
         "name": "Limondale 1",
-        "ocode": "au_nem_nsw_1399",
+        "ocode": "au_nem_nsw_limosf1",
         "code": "LIMOSF11",
         "region": "NSW1",
         "status": "operating",
@@ -1471,7 +1471,7 @@
     },
     {
         "name": "Limondale 2",
-        "ocode": "au_nem_nsw_1389",
+        "ocode": "au_nem_nsw_limosf2",
         "code": "LIMOSF21",
         "region": "NSW1",
         "status": "operating",
@@ -1486,7 +1486,7 @@
     },
     {
         "name": "Lucas Heights 1",
-        "ocode": "au_nem_nsw_1234",
+        "ocode": "au_nem_nsw_lucashgt",
         "code": "0NLHI_3",
         "region": "NSW1",
         "status": "operating",
@@ -1501,7 +1501,7 @@
     },
     {
         "name": "Lucas Heights 1",
-        "ocode": "au_nem_nsw_1234",
+        "ocode": "au_nem_nsw_lucashgt",
         "code": "0NLHI_5",
         "region": "NSW1",
         "status": "operating",
@@ -1516,7 +1516,7 @@
     },
     {
         "name": "Lucas Heights 2",
-        "ocode": "au_nem_nsw_1139",
+        "ocode": "au_nem_nsw_lucas2s2",
         "code": "LUCASHGT",
         "region": "NSW1",
         "status": "operating",
@@ -1531,7 +1531,7 @@
     },
     {
         "name": "Lucas Heights 2",
-        "ocode": "au_nem_nsw_1139",
+        "ocode": "au_nem_nsw_lucas2s2",
         "code": "LUCAS2S2",
         "region": "NSW1",
         "status": "operating",
@@ -1546,7 +1546,7 @@
     },
     {
         "name": "Manildra",
-        "ocode": "au_nem_nsw_1338",
+        "ocode": "au_nem_nsw_manslr",
         "code": "MANSLR1",
         "region": "NSW1",
         "status": "operating",
@@ -1561,7 +1561,7 @@
     },
     {
         "name": "Manildra",
-        "ocode": "au_nem_nsw_1338",
+        "ocode": "au_nem_nsw_manslr",
         "code": "MANSLR1",
         "region": "NSW1",
         "status": "operating",
@@ -1576,7 +1576,7 @@
     },
     {
         "name": "Moree",
-        "ocode": "au_nem_nsw_1299",
+        "ocode": "au_nem_nsw_moreesf",
         "code": "MOREESF1",
         "region": "NSW1",
         "status": "operating",
@@ -1606,7 +1606,7 @@
     },
     {
         "name": "Mt Piper",
-        "ocode": "au_nem_nsw_1002",
+        "ocode": "au_nem_nsw_mp",
         "code": "MP2",
         "region": "NSW1",
         "status": "operating",
@@ -1621,7 +1621,7 @@
     },
     {
         "name": "Mt Piper",
-        "ocode": "au_nem_nsw_1002",
+        "ocode": "au_nem_nsw_mp",
         "code": "MP1",
         "region": "NSW1",
         "status": "operating",
@@ -1636,7 +1636,7 @@
     },
     {
         "name": "Mugga Lane",
-        "ocode": "au_nem_nsw_1308",
+        "ocode": "au_nem_nsw_mlsp",
         "code": "MLSP1",
         "region": "NSW1",
         "status": "operating",
@@ -1651,7 +1651,7 @@
     },
     {
         "name": "Mugga Lane",
-        "ocode": "au_nem_nsw_1308",
+        "ocode": "au_nem_nsw_mlsp",
         "code": "0NMULA_4",
         "region": "NSW1",
         "status": "operating",
@@ -1666,7 +1666,7 @@
     },
     {
         "name": "Munmorah",
-        "ocode": "au_nem_nsw_1003",
+        "ocode": "au_nem_nsw_mm",
         "code": "MM3",
         "region": "NSW1",
         "status": "retired",
@@ -1681,7 +1681,7 @@
     },
     {
         "name": "Munmorah",
-        "ocode": "au_nem_nsw_1003",
+        "ocode": "au_nem_nsw_mm",
         "code": "MM4",
         "region": "NSW1",
         "status": "retired",
@@ -1696,7 +1696,7 @@
     },
     {
         "name": "Narromine",
-        "ocode": "au_nem_nsw_1340",
+        "ocode": "au_nem_nsw_nasf",
         "code": "NASF1",
         "region": "NSW1",
         "status": "operating",
@@ -1711,7 +1711,7 @@
     },
     {
         "name": "Nevertire",
-        "ocode": "au_nem_nsw_1405",
+        "ocode": "au_nem_nsw_neversf",
         "code": "NEVERSF1",
         "region": "NSW1",
         "status": "operating",
@@ -1726,7 +1726,7 @@
     },
     {
         "name": "Nine Network Willoughby",
-        "ocode": "au_nem_nsw_1248",
+        "ocode": "au_nem_nsw_ninewil",
         "code": "NINEWIL1",
         "region": "NSW1",
         "status": "operating",
@@ -1756,7 +1756,7 @@
     },
     {
         "name": "Nyngan",
-        "ocode": "au_nem_nsw_1293",
+        "ocode": "au_nem_nsw_nyngan",
         "code": "NYNGAN1",
         "region": "NSW1",
         "status": "operating",
@@ -1786,7 +1786,7 @@
     },
     {
         "name": "Parkes",
-        "ocode": "au_nem_nsw_1329",
+        "ocode": "au_nem_nsw_psf",
         "code": "PARSF1",
         "region": "NSW1",
         "status": "operating",
@@ -1846,7 +1846,7 @@
     },
     {
         "name": "Pindari",
-        "ocode": "au_nem_nsw_1103",
+        "ocode": "au_nem_nsw_pindari",
         "code": "PINDARI",
         "region": "NSW1",
         "status": "operating",
@@ -1891,7 +1891,7 @@
     },
     {
         "name": "Redbank",
-        "ocode": "au_nem_nsw_1097",
+        "ocode": "au_nem_nsw_redbank1",
         "code": "REDBANK1",
         "region": "NSW1",
         "status": "retired",
@@ -1921,7 +1921,7 @@
     },
     {
         "name": "Royalla",
-        "ocode": "au_nem_nsw_1287",
+        "ocode": "au_nem_nsw_royalla",
         "code": "ROYALLA1",
         "region": "NSW1",
         "status": "operating",
@@ -1936,7 +1936,7 @@
     },
     {
         "name": "Sapphire",
-        "ocode": "au_nem_nsw_1327",
+        "ocode": "au_nem_nsw_saphwf1",
         "code": "SAPHWF1",
         "region": "NSW1",
         "status": "operating",
@@ -1951,7 +1951,7 @@
     },
     {
         "name": "Shoalhaven Bendeela Kangaroo Valley Pumps",
-        "ocode": "au_nem_nsw_1031",
+        "ocode": "au_nem_nsw_shoalhav",
         "code": "SHGEN",
         "region": "NSW1",
         "status": "operating",
@@ -1966,7 +1966,7 @@
     },
     {
         "name": "Shoalhaven Bendeela Kangaroo Valley Pumps",
-        "ocode": "au_nem_nsw_1031",
+        "ocode": "au_nem_nsw_shoalhav",
         "code": "SHGEN",
         "region": "NSW1",
         "status": "operating",
@@ -1981,7 +1981,7 @@
     },
     {
         "name": "Shoalhaven Bendeela Kangaroo Valley Pumps",
-        "ocode": "au_nem_nsw_1031",
+        "ocode": "au_nem_nsw_shoalhav",
         "code": "SHGEN",
         "region": "NSW1",
         "status": "operating",
@@ -1996,7 +1996,7 @@
     },
     {
         "name": "Shoalhaven Bendeela Kangaroo Valley Pumps",
-        "ocode": "au_nem_nsw_1031",
+        "ocode": "au_nem_nsw_shoalhav",
         "code": "SHGEN",
         "region": "NSW1",
         "status": "operating",
@@ -2011,7 +2011,7 @@
     },
     {
         "name": "Shoalhaven Bendeela Kangaroo Valley Pumps",
-        "ocode": "au_nem_nsw_1031",
+        "ocode": "au_nem_nsw_shoalhav",
         "code": "SHPUMP",
         "region": null,
         "status": "retired",
@@ -2026,7 +2026,7 @@
     },
     {
         "name": "Silverton",
-        "ocode": "au_nem_nsw_1334",
+        "ocode": "au_nem_nsw_stwf",
         "code": "STWF1",
         "region": "NSW1",
         "status": "operating",
@@ -2056,7 +2056,7 @@
     },
     {
         "name": "Smithfield Energy Facility",
-        "ocode": "au_nem_nsw_1064",
+        "ocode": "au_nem_nsw_sithe",
         "code": "SITHE01",
         "region": "NSW1",
         "status": "operating",
@@ -2071,7 +2071,7 @@
     },
     {
         "name": "Smithfield Energy Facility",
-        "ocode": "au_nem_nsw_1064",
+        "ocode": "au_nem_nsw_sithe",
         "code": "SITHE04",
         "region": "NSW1",
         "status": "operating",
@@ -2101,7 +2101,7 @@
     },
     {
         "name": "South Keswick",
-        "ocode": "au_nem_nsw_1339",
+        "ocode": "au_nem_nsw_sksf",
         "code": "SKSF1",
         "region": "NSW1",
         "status": "operating",
@@ -2116,7 +2116,7 @@
     },
     {
         "name": "St George Leagues",
-        "ocode": "au_nem_nsw_1249",
+        "ocode": "au_nem_nsw_stgeorge",
         "code": "STGEORG1",
         "region": "NSW1",
         "status": "operating",
@@ -2176,7 +2176,7 @@
     },
     {
         "name": "Tahmoor Coal Mine",
-        "ocode": "au_nem_nsw_1297",
+        "ocode": "au_nem_nsw_tahmoor",
         "code": "TAHMOOR1",
         "region": "NSW1",
         "status": "operating",
@@ -2191,7 +2191,7 @@
     },
     {
         "name": "Tallawarra",
-        "ocode": "au_nem_nsw_1204",
+        "ocode": "au_nem_nsw_tallawar",
         "code": "TALWA1",
         "region": "NSW1",
         "status": "operating",
@@ -2206,7 +2206,7 @@
     },
     {
         "name": "Taralga",
-        "ocode": "au_nem_nsw_1292",
+        "ocode": "au_nem_nsw_taralga",
         "code": "TARALGA1",
         "region": "NSW1",
         "status": "operating",
@@ -2221,7 +2221,7 @@
     },
     {
         "name": "Taralga",
-        "ocode": "au_nem_nsw_1292",
+        "ocode": "au_nem_nsw_taralga",
         "code": "TARALGA1",
         "region": "NSW1",
         "status": "operating",
@@ -2236,7 +2236,7 @@
     },
     {
         "name": "Taralga",
-        "ocode": "au_nem_nsw_1292",
+        "ocode": "au_nem_nsw_taralga",
         "code": "TARALGA1",
         "region": "NSW1",
         "status": "operating",
@@ -2266,7 +2266,7 @@
     },
     {
         "name": "Teralba",
-        "ocode": "au_nem_nsw_1131",
+        "ocode": "au_nem_nsw_teralba",
         "code": "TERALBA",
         "region": "NSW1",
         "status": "operating",
@@ -2281,7 +2281,7 @@
     },
     {
         "name": "The Drop",
-        "ocode": "au_nem_nsw_1267",
+        "ocode": "au_nem_nsw_thedrop",
         "code": "THEDROP1",
         "region": "NSW1",
         "status": "operating",
@@ -2341,7 +2341,7 @@
     },
     {
         "name": "Tower",
-        "ocode": "au_nem_nsw_1235",
+        "ocode": "au_nem_nsw_tower",
         "code": "TOWER",
         "region": "NSW1",
         "status": "operating",
@@ -2356,7 +2356,7 @@
     },
     {
         "name": "Tumut",
-        "ocode": "au_nem_snowy_1053",
+        "ocode": "au_nem_snowy_snowy2",
         "code": "UPPTUMUT",
         "region": "NSW1",
         "status": "operating",
@@ -2371,7 +2371,7 @@
     },
     {
         "name": "Tumut",
-        "ocode": "au_nem_snowy_1053",
+        "ocode": "au_nem_snowy_snowy2",
         "code": "UPPTUMUT",
         "region": "NSW1",
         "status": "operating",
@@ -2386,7 +2386,7 @@
     },
     {
         "name": "Tumut",
-        "ocode": "au_nem_snowy_1053",
+        "ocode": "au_nem_snowy_snowy2",
         "code": "UPPTUMUT",
         "region": "NSW1",
         "status": "operating",
@@ -2401,7 +2401,7 @@
     },
     {
         "name": "Tumut",
-        "ocode": "au_nem_snowy_1053",
+        "ocode": "au_nem_snowy_snowy2",
         "code": "UPPTUMUT",
         "region": "NSW1",
         "status": "operating",
@@ -2416,7 +2416,7 @@
     },
     {
         "name": "Tumut 3",
-        "ocode": "au_nem_snowy_1052",
+        "ocode": "au_nem_snowy_snowy1",
         "code": "TUMUT3",
         "region": "NSW1",
         "status": "operating",
@@ -2431,7 +2431,7 @@
     },
     {
         "name": "Tumut 3",
-        "ocode": "au_nem_snowy_1052",
+        "ocode": "au_nem_snowy_snowy1",
         "code": "SNOWYP",
         "region": null,
         "status": "retired",
@@ -2446,7 +2446,7 @@
     },
     {
         "name": "Uranquinty",
-        "ocode": "au_nem_nsw_1205",
+        "ocode": "au_nem_nsw_uranq",
         "code": "URANQ12",
         "region": "NSW1",
         "status": "operating",
@@ -2461,7 +2461,7 @@
     },
     {
         "name": "Uranquinty",
-        "ocode": "au_nem_nsw_1205",
+        "ocode": "au_nem_nsw_uranq",
         "code": "URANQ13",
         "region": "NSW1",
         "status": "operating",
@@ -2476,7 +2476,7 @@
     },
     {
         "name": "Uranquinty",
-        "ocode": "au_nem_nsw_1205",
+        "ocode": "au_nem_nsw_uranq",
         "code": "URANQ14",
         "region": "NSW1",
         "status": "operating",
@@ -2491,7 +2491,7 @@
     },
     {
         "name": "Uranquinty",
-        "ocode": "au_nem_nsw_1205",
+        "ocode": "au_nem_nsw_uranq",
         "code": "URANQ11",
         "region": "NSW1",
         "status": "operating",
@@ -2506,7 +2506,7 @@
     },
     {
         "name": "Vales Point B",
-        "ocode": "au_nem_nsw_1004",
+        "ocode": "au_nem_nsw_vp",
         "code": "VP6",
         "region": "NSW1",
         "status": "operating",
@@ -2521,7 +2521,7 @@
     },
     {
         "name": "Vales Point B",
-        "ocode": "au_nem_nsw_1004",
+        "ocode": "au_nem_nsw_vp",
         "code": "VP5",
         "region": "NSW1",
         "status": "operating",
@@ -2536,7 +2536,7 @@
     },
     {
         "name": "Wallerawang",
-        "ocode": "au_nem_nsw_1005",
+        "ocode": "au_nem_nsw_ww",
         "code": "WW7",
         "region": "NSW1",
         "status": "retired",
@@ -2551,7 +2551,7 @@
     },
     {
         "name": "Wallerawang",
-        "ocode": "au_nem_nsw_1005",
+        "ocode": "au_nem_nsw_ww",
         "code": "WW8",
         "region": "NSW1",
         "status": "retired",
@@ -2566,7 +2566,7 @@
     },
     {
         "name": "Warragamba",
-        "ocode": "au_nem_nsw_1026",
+        "ocode": "au_nem_nsw_wg",
         "code": "WG01",
         "region": "NSW1",
         "status": "retired",
@@ -2581,7 +2581,7 @@
     },
     {
         "name": "West Illawarra Leagues Club",
-        "ocode": "au_nem_nsw_1242",
+        "ocode": "au_nem_nsw_westilla",
         "code": "WESTILL1",
         "region": "NSW1",
         "status": "operating",
@@ -2596,7 +2596,7 @@
     },
     {
         "name": "West Illawarra Leagues Club",
-        "ocode": "au_nem_nsw_1242",
+        "ocode": "au_nem_nsw_westilla",
         "code": "WESTILL1",
         "region": "NSW1",
         "status": "operating",
@@ -2611,7 +2611,7 @@
     },
     {
         "name": "West Nowra Generation Facility",
-        "ocode": "au_nem_nsw_1111",
+        "ocode": "au_nem_nsw_aglnow1",
         "code": "AGLNOW1",
         "region": "NSW1",
         "status": "operating",
@@ -2626,7 +2626,7 @@
     },
     {
         "name": "Western Suburbs League Club Campbelltown",
-        "ocode": "au_nem_nsw_1240",
+        "ocode": "au_nem_nsw_westcbt",
         "code": "WESTCBT1",
         "region": "NSW1",
         "status": "operating",
@@ -2656,7 +2656,7 @@
     },
     {
         "name": "White Rock",
-        "ocode": "au_nem_nsw_1357",
+        "ocode": "au_nem_nsw_wrsf1",
         "code": "WRWF1",
         "region": "NSW1",
         "status": "operating",
@@ -2671,7 +2671,7 @@
     },
     {
         "name": "White Rock",
-        "ocode": "au_nem_nsw_1357",
+        "ocode": "au_nem_nsw_wrsf1",
         "code": "WRSF1",
         "region": "NSW1",
         "status": "operating",
@@ -2686,7 +2686,7 @@
     },
     {
         "name": "Wilga Park",
-        "ocode": "au_nem_nsw_1229",
+        "ocode": "au_nem_nsw_wilgapk",
         "code": "WILGAPK",
         "region": "NSW1",
         "status": "operating",
@@ -2701,7 +2701,7 @@
     },
     {
         "name": "Wilga Park",
-        "ocode": "au_nem_nsw_1229",
+        "ocode": "au_nem_nsw_wilgapk",
         "code": "WILGAPK",
         "region": "NSW1",
         "status": "operating",
@@ -2716,7 +2716,7 @@
     },
     {
         "name": "Wilga Park",
-        "ocode": "au_nem_nsw_1229",
+        "ocode": "au_nem_nsw_wilgapk",
         "code": "WILGAPK",
         "region": "NSW1",
         "status": "operating",
@@ -2731,7 +2731,7 @@
     },
     {
         "name": "Wilga Park",
-        "ocode": "au_nem_nsw_1229",
+        "ocode": "au_nem_nsw_wilgapk",
         "code": "WILGAPK",
         "region": "NSW1",
         "status": "operating",
@@ -2746,7 +2746,7 @@
     },
     {
         "name": "Wilga Park B",
-        "ocode": "au_nem_nsw_1289",
+        "ocode": "au_nem_nsw_wilgapkb",
         "code": "WILGB01",
         "region": "NSW1",
         "status": "operating",
@@ -2761,7 +2761,7 @@
     },
     {
         "name": "Wilga Park B",
-        "ocode": "au_nem_nsw_1289",
+        "ocode": "au_nem_nsw_wilgapkb",
         "code": "WILGB01",
         "region": "NSW1",
         "status": "operating",
@@ -2776,7 +2776,7 @@
     },
     {
         "name": "Woodlawn",
-        "ocode": "au_nem_nsw_1254",
+        "ocode": "au_nem_nsw_woodlwn",
         "code": "WOODLWN1",
         "region": "NSW1",
         "status": "operating",
@@ -2791,7 +2791,7 @@
     },
     {
         "name": "Woodlawn Energy Generation Station",
-        "ocode": "au_nem_nsw_1201",
+        "ocode": "au_nem_nsw_wdlngn",
         "code": "WDLNGN01",
         "region": "NSW1",
         "status": "operating",
@@ -2806,7 +2806,7 @@
     },
     {
         "name": "Woodlawn Energy Generation Station",
-        "ocode": "au_nem_nsw_1201",
+        "ocode": "au_nem_nsw_wdlngn",
         "code": "WDLNGN01",
         "region": "NSW1",
         "status": "operating",
@@ -2821,7 +2821,7 @@
     },
     {
         "name": "Woy Woy Site",
-        "ocode": "au_nem_nsw_1288",
+        "ocode": "au_nem_nsw_woywoy",
         "code": "WOYWOY1",
         "region": "NSW1",
         "status": "operating",
@@ -2836,7 +2836,7 @@
     },
     {
         "name": "Wyangala A",
-        "ocode": "au_nem_nsw_1237",
+        "ocode": "au_nem_nsw_wyangala",
         "code": "WYANGALA",
         "region": "NSW1",
         "status": "operating",
@@ -2851,7 +2851,7 @@
     },
     {
         "name": "Wyangala B",
-        "ocode": "au_nem_nsw_1238",
+        "ocode": "au_nem_nsw_wyangalb",
         "code": "WYANGALB",
         "region": "NSW1",
         "status": "operating",
@@ -2896,7 +2896,7 @@
     },
     {
         "name": "Baking Board",
-        "ocode": "au_nem_qld_1359",
+        "ocode": "au_nem_qld_baking",
         "code": "BAKING1",
         "region": "QLD1",
         "status": "operating",
@@ -2911,7 +2911,7 @@
     },
     {
         "name": "Barcaldine",
-        "ocode": "au_nem_qld_1310",
+        "ocode": "au_nem_qld_barcsf",
         "code": "BARCALDN",
         "region": "QLD1",
         "status": "operating",
@@ -2926,7 +2926,7 @@
     },
     {
         "name": "Barcaldine",
-        "ocode": "au_nem_qld_1310",
+        "ocode": "au_nem_qld_barcsf",
         "code": "BARCSF1",
         "region": "QLD1",
         "status": "operating",
@@ -2941,7 +2941,7 @@
     },
     {
         "name": "Barron Gorge",
-        "ocode": "au_nem_qld_1044",
+        "ocode": "au_nem_qld_barron",
         "code": "BARRON2",
         "region": "QLD1",
         "status": "operating",
@@ -2956,7 +2956,7 @@
     },
     {
         "name": "Barron Gorge",
-        "ocode": "au_nem_qld_1044",
+        "ocode": "au_nem_qld_barron",
         "code": "BARRON1",
         "region": "QLD1",
         "status": "operating",
@@ -2971,7 +2971,7 @@
     },
     {
         "name": "Barron Gorge",
-        "ocode": "au_nem_qld_1044",
+        "ocode": "au_nem_qld_barron",
         "code": "BARRON-1",
         "region": "QLD1",
         "status": "operating",
@@ -2986,7 +2986,7 @@
     },
     {
         "name": "Barron Gorge",
-        "ocode": "au_nem_qld_1044",
+        "ocode": "au_nem_qld_barron",
         "code": "BARRON-2",
         "region": "QLD1",
         "status": "operating",
@@ -3016,7 +3016,7 @@
     },
     {
         "name": "Braemar",
-        "ocode": "au_nem_qld_1181",
+        "ocode": "au_nem_qld_braemara",
         "code": "BRAEMAR1",
         "region": "QLD1",
         "status": "operating",
@@ -3031,7 +3031,7 @@
     },
     {
         "name": "Braemar",
-        "ocode": "au_nem_qld_1181",
+        "ocode": "au_nem_qld_braemara",
         "code": "BRAEMAR2",
         "region": "QLD1",
         "status": "operating",
@@ -3046,7 +3046,7 @@
     },
     {
         "name": "Braemar",
-        "ocode": "au_nem_qld_1181",
+        "ocode": "au_nem_qld_braemara",
         "code": "BRAEMAR3",
         "region": "QLD1",
         "status": "operating",
@@ -3061,7 +3061,7 @@
     },
     {
         "name": "Braemar 2",
-        "ocode": "au_nem_qld_1213",
+        "ocode": "au_nem_qld_b2ps",
         "code": "BRAEMAR5",
         "region": "QLD1",
         "status": "operating",
@@ -3076,7 +3076,7 @@
     },
     {
         "name": "Braemar 2",
-        "ocode": "au_nem_qld_1213",
+        "ocode": "au_nem_qld_b2ps",
         "code": "BRAEMAR7",
         "region": "QLD1",
         "status": "operating",
@@ -3091,7 +3091,7 @@
     },
     {
         "name": "Braemar 2",
-        "ocode": "au_nem_qld_1213",
+        "ocode": "au_nem_qld_b2ps",
         "code": "BRAEMAR6",
         "region": "QLD1",
         "status": "operating",
@@ -3106,7 +3106,7 @@
     },
     {
         "name": "Browns Plains",
-        "ocode": "au_nem_qld_1262",
+        "ocode": "au_nem_qld_bplandf",
         "code": "BPLANDF1",
         "region": "QLD1",
         "status": "operating",
@@ -3121,7 +3121,7 @@
     },
     {
         "name": "Callide",
-        "ocode": "au_nem_qld_1000",
+        "ocode": "au_nem_qld_callide",
         "code": "CALL_A_2",
         "region": "QLD1",
         "status": "retired",
@@ -3196,7 +3196,7 @@
     },
     {
         "name": "Callide C Nett Off",
-        "ocode": "au_nem_qld_1093",
+        "ocode": "au_nem_qld_callidec",
         "code": "CPP_4",
         "region": "QLD1",
         "status": "operating",
@@ -3211,7 +3211,7 @@
     },
     {
         "name": "Callide C Nett Off",
-        "ocode": "au_nem_qld_1093",
+        "ocode": "au_nem_qld_callidec",
         "code": "CPP_3",
         "region": "QLD1",
         "status": "operating",
@@ -3226,7 +3226,7 @@
     },
     {
         "name": "Childers",
-        "ocode": "au_nem_qld_1373",
+        "ocode": "au_nem_qld_childsf",
         "code": "CHILDSF1",
         "region": "QLD1",
         "status": "operating",
@@ -3256,7 +3256,7 @@
     },
     {
         "name": "Clare",
-        "ocode": "au_nem_qld_1333",
+        "ocode": "au_nem_qld_claresf",
         "code": "CLARESF1",
         "region": "QLD1",
         "status": "operating",
@@ -3271,7 +3271,7 @@
     },
     {
         "name": "Clermont",
-        "ocode": "au_nem_qld_1385",
+        "ocode": "au_nem_qld_clermsf",
         "code": "CLERMSF1",
         "region": "QLD1",
         "status": "operating",
@@ -3301,7 +3301,7 @@
     },
     {
         "name": "Collinsville",
-        "ocode": "au_nem_qld_1033",
+        "ocode": "au_nem_qld_colnsv",
         "code": "COLNSV_2",
         "region": "QLD1",
         "status": "retired",
@@ -3316,7 +3316,7 @@
     },
     {
         "name": "Collinsville",
-        "ocode": "au_nem_qld_1033",
+        "ocode": "au_nem_qld_colnsv",
         "code": "COLNSV_3",
         "region": "QLD1",
         "status": "retired",
@@ -3331,7 +3331,7 @@
     },
     {
         "name": "Collinsville",
-        "ocode": "au_nem_qld_1033",
+        "ocode": "au_nem_qld_colnsv",
         "code": "COLNSV_4",
         "region": "QLD1",
         "status": "retired",
@@ -3346,7 +3346,7 @@
     },
     {
         "name": "Collinsville",
-        "ocode": "au_nem_qld_1033",
+        "ocode": "au_nem_qld_colnsv",
         "code": "COLNSV_5",
         "region": "QLD1",
         "status": "retired",
@@ -3361,7 +3361,7 @@
     },
     {
         "name": "Collinsville",
-        "ocode": "au_nem_qld_1033",
+        "ocode": "au_nem_qld_colnsv",
         "code": "COLNSV_1",
         "region": "QLD1",
         "status": "retired",
@@ -3376,7 +3376,7 @@
     },
     {
         "name": "Collinsville",
-        "ocode": "au_nem_qld_1354",
+        "ocode": "au_nem_qld_cspvps",
         "code": "CSPVPS1",
         "region": "QLD1",
         "status": "operating",
@@ -3391,7 +3391,7 @@
     },
     {
         "name": "Condamine A",
-        "ocode": "au_nem_qld_1218",
+        "ocode": "au_nem_qld_cpsa",
         "code": "CPSA",
         "region": "QLD1",
         "status": "operating",
@@ -3406,7 +3406,7 @@
     },
     {
         "name": "Condamine A",
-        "ocode": "au_nem_qld_1218",
+        "ocode": "au_nem_qld_cpsa",
         "code": "CPSA",
         "region": "QLD1",
         "status": "operating",
@@ -3421,7 +3421,7 @@
     },
     {
         "name": "Condamine A",
-        "ocode": "au_nem_qld_1218",
+        "ocode": "au_nem_qld_cpsa",
         "code": "CPSA",
         "region": "QLD1",
         "status": "operating",
@@ -3436,7 +3436,7 @@
     },
     {
         "name": "Coopers Gap",
-        "ocode": "au_nem_qld_1384",
+        "ocode": "au_nem_qld_coopgwf",
         "code": "COOPGWF1",
         "region": "QLD1",
         "status": "operating",
@@ -3451,7 +3451,7 @@
     },
     {
         "name": "Coopers Gap",
-        "ocode": "au_nem_qld_1384",
+        "ocode": "au_nem_qld_coopgwf",
         "code": "COOPGWF1",
         "region": "QLD1",
         "status": "operating",
@@ -3466,7 +3466,7 @@
     },
     {
         "name": "Coopers Gap",
-        "ocode": "au_nem_qld_1384",
+        "ocode": "au_nem_qld_coopgwf",
         "code": "COOPGWF1",
         "region": "QLD1",
         "status": "operating",
@@ -3481,7 +3481,7 @@
     },
     {
         "name": "Coopers Gap",
-        "ocode": "au_nem_qld_1384",
+        "ocode": "au_nem_qld_coopgwf",
         "code": "COOPGWF1",
         "region": "QLD1",
         "status": "operating",
@@ -3496,7 +3496,7 @@
     },
     {
         "name": "Daandine",
-        "ocode": "au_nem_qld_1188",
+        "ocode": "au_nem_qld_daandine",
         "code": "DAANDINE",
         "region": "QLD1",
         "status": "operating",
@@ -3511,7 +3511,7 @@
     },
     {
         "name": "Daandine",
-        "ocode": "au_nem_qld_1188",
+        "ocode": "au_nem_qld_daandine",
         "code": "0NDPS_1",
         "region": "QLD1",
         "status": "operating",
@@ -3526,7 +3526,7 @@
     },
     {
         "name": "Darling Downs",
-        "ocode": "au_nem_qld_1222",
+        "ocode": "au_nem_qld_ddps1",
         "code": "DDPS1",
         "region": "QLD1",
         "status": "operating",
@@ -3541,7 +3541,7 @@
     },
     {
         "name": "Darling Downs",
-        "ocode": "au_nem_qld_1222",
+        "ocode": "au_nem_qld_ddps1",
         "code": "DDPS1",
         "region": "QLD1",
         "status": "operating",
@@ -3556,7 +3556,7 @@
     },
     {
         "name": "Darling Downs",
-        "ocode": "au_nem_qld_1222",
+        "ocode": "au_nem_qld_ddps1",
         "code": "DDPS1",
         "region": "QLD1",
         "status": "operating",
@@ -3571,7 +3571,7 @@
     },
     {
         "name": "Darling Downs",
-        "ocode": "au_nem_qld_1222",
+        "ocode": "au_nem_qld_ddps1",
         "code": "DDPS1",
         "region": "QLD1",
         "status": "operating",
@@ -3586,7 +3586,7 @@
     },
     {
         "name": "Darling Downs Solar Farm",
-        "ocode": "au_nem_qld_1349",
+        "ocode": "au_nem_qld_ddsf",
         "code": "DDSF1",
         "region": "QLD1",
         "status": "operating",
@@ -3601,7 +3601,7 @@
     },
     {
         "name": "Daydream",
-        "ocode": "au_nem_qld_1361",
+        "ocode": "au_nem_qld_daydsf",
         "code": "DAYDSF1",
         "region": "QLD1",
         "status": "operating",
@@ -3616,7 +3616,7 @@
     },
     {
         "name": "Daydream",
-        "ocode": "au_nem_qld_1361",
+        "ocode": "au_nem_qld_daydsf",
         "code": "DAYDSF2",
         "region": "QLD1",
         "status": "operating",
@@ -3646,7 +3646,7 @@
     },
     {
         "name": "Emerald",
-        "ocode": "au_nem_qld_1360",
+        "ocode": "au_nem_qld_emerasf",
         "code": "EMERASF1",
         "region": "QLD1",
         "status": "operating",
@@ -3691,7 +3691,7 @@
     },
     {
         "name": "German Creek",
-        "ocode": "au_nem_qld_1185",
+        "ocode": "au_nem_qld_germcrk",
         "code": "GERMCRK",
         "region": "QLD1",
         "status": "operating",
@@ -3706,7 +3706,7 @@
     },
     {
         "name": "German Creek",
-        "ocode": "au_nem_qld_1185",
+        "ocode": "au_nem_qld_germcrk",
         "code": "GERMCRK",
         "region": "QLD1",
         "status": "operating",
@@ -3721,7 +3721,7 @@
     },
     {
         "name": "Gladstone",
-        "ocode": "au_nem_qld_1032",
+        "ocode": "au_nem_qld_g/stone",
         "code": "GSTONE4",
         "region": "QLD1",
         "status": "operating",
@@ -3736,7 +3736,7 @@
     },
     {
         "name": "Gladstone",
-        "ocode": "au_nem_qld_1032",
+        "ocode": "au_nem_qld_g/stone",
         "code": "GSTONE6",
         "region": "QLD1",
         "status": "operating",
@@ -3751,7 +3751,7 @@
     },
     {
         "name": "Gladstone",
-        "ocode": "au_nem_qld_1032",
+        "ocode": "au_nem_qld_g/stone",
         "code": "GSTONE2",
         "region": "QLD1",
         "status": "operating",
@@ -3766,7 +3766,7 @@
     },
     {
         "name": "Gladstone",
-        "ocode": "au_nem_qld_1032",
+        "ocode": "au_nem_qld_g/stone",
         "code": "GSTONE1",
         "region": "QLD1",
         "status": "operating",
@@ -3781,7 +3781,7 @@
     },
     {
         "name": "Gladstone",
-        "ocode": "au_nem_qld_1032",
+        "ocode": "au_nem_qld_g/stone",
         "code": "GSTONE3",
         "region": "QLD1",
         "status": "operating",
@@ -3796,7 +3796,7 @@
     },
     {
         "name": "Gladstone",
-        "ocode": "au_nem_qld_1032",
+        "ocode": "au_nem_qld_g/stone",
         "code": "GSTONE5",
         "region": "QLD1",
         "status": "operating",
@@ -3811,7 +3811,7 @@
     },
     {
         "name": "Grosvenor 1",
-        "ocode": "au_nem_qld_1311",
+        "ocode": "au_nem_qld_grosv1",
         "code": "GROSV2",
         "region": "QLD1",
         "status": "operating",
@@ -3826,7 +3826,7 @@
     },
     {
         "name": "Grosvenor 1",
-        "ocode": "au_nem_qld_1311",
+        "ocode": "au_nem_qld_grosv1",
         "code": "GROSV1",
         "region": "QLD1",
         "status": "operating",
@@ -3841,7 +3841,7 @@
     },
     {
         "name": "Hamilton",
-        "ocode": "au_nem_qld_1343",
+        "ocode": "au_nem_qld_hamisf",
         "code": "HAMISF1",
         "region": "QLD1",
         "status": "operating",
@@ -3856,7 +3856,7 @@
     },
     {
         "name": "Haughton",
-        "ocode": "au_nem_qld_1381",
+        "ocode": "au_nem_qld_haught1",
         "code": "HAUGHT11",
         "region": "QLD1",
         "status": "operating",
@@ -3871,7 +3871,7 @@
     },
     {
         "name": "Hayman",
-        "ocode": "au_nem_qld_1362",
+        "ocode": "au_nem_qld_haymsf",
         "code": "HAYMSF1",
         "region": "QLD1",
         "status": "operating",
@@ -3886,7 +3886,7 @@
     },
     {
         "name": "Hughenden",
-        "ocode": "au_nem_qld_1332",
+        "ocode": "au_nem_qld_hugsf",
         "code": "HUGSF1",
         "region": "QLD1",
         "status": "operating",
@@ -3931,7 +3931,7 @@
     },
     {
         "name": "Invicta Sugar Mill",
-        "ocode": "au_nem_qld_1179",
+        "ocode": "au_nem_qld_invicta",
         "code": "INVICTA",
         "region": "QLD1",
         "status": "operating",
@@ -3946,7 +3946,7 @@
     },
     {
         "name": "Invicta Sugar Mill",
-        "ocode": "au_nem_qld_1179",
+        "ocode": "au_nem_qld_invicta",
         "code": "INVICTA",
         "region": "QLD1",
         "status": "operating",
@@ -3961,7 +3961,7 @@
     },
     {
         "name": "Invicta Sugar Mill",
-        "ocode": "au_nem_qld_1179",
+        "ocode": "au_nem_qld_invicta",
         "code": "INVICTA",
         "region": "QLD1",
         "status": "operating",
@@ -3976,7 +3976,7 @@
     },
     {
         "name": "Isis Central Sugar Mill Cogeneration",
-        "ocode": "au_nem_qld_1190",
+        "ocode": "au_nem_qld_icsm",
         "code": "ICSM",
         "region": "QLD1",
         "status": "operating",
@@ -3991,7 +3991,7 @@
     },
     {
         "name": "KRC Cogeneration",
-        "ocode": "au_nem_qld_1192",
+        "ocode": "au_nem_qld_krccogen",
         "code": "KRCCOGEN",
         "region": "QLD1",
         "status": "retired",
@@ -4021,7 +4021,7 @@
     },
     {
         "name": "Kareeya",
-        "ocode": "au_nem_qld_1045",
+        "ocode": "au_nem_qld_kareeya",
         "code": "KAREEYA3",
         "region": "QLD1",
         "status": "operating",
@@ -4036,7 +4036,7 @@
     },
     {
         "name": "Kareeya",
-        "ocode": "au_nem_qld_1045",
+        "ocode": "au_nem_qld_kareeya",
         "code": "KAREEYA4",
         "region": "QLD1",
         "status": "operating",
@@ -4051,7 +4051,7 @@
     },
     {
         "name": "Kareeya",
-        "ocode": "au_nem_qld_1045",
+        "ocode": "au_nem_qld_kareeya",
         "code": "KAREEYA2",
         "region": "QLD1",
         "status": "operating",
@@ -4066,7 +4066,7 @@
     },
     {
         "name": "Kareeya",
-        "ocode": "au_nem_qld_1045",
+        "ocode": "au_nem_qld_kareeya",
         "code": "KAREEYA1",
         "region": "QLD1",
         "status": "operating",
@@ -4081,7 +4081,7 @@
     },
     {
         "name": "Kareeya",
-        "ocode": "au_nem_qld_1045",
+        "ocode": "au_nem_qld_kareeya",
         "code": "KAREEYA5",
         "region": "QLD1",
         "status": "operating",
@@ -4126,7 +4126,7 @@
     },
     {
         "name": "Kidston Project",
-        "ocode": "au_nem_qld_1326",
+        "ocode": "au_nem_qld_ksp1",
         "code": "KSP1",
         "region": "QLD1",
         "status": "operating",
@@ -4141,7 +4141,7 @@
     },
     {
         "name": "Kogan Creek",
-        "ocode": "au_nem_qld_1193",
+        "ocode": "au_nem_qld_koganck",
         "code": "KPP_1",
         "region": "QLD1",
         "status": "operating",
@@ -4186,7 +4186,7 @@
     },
     {
         "name": "Lilyvale",
-        "ocode": "au_nem_qld_1376",
+        "ocode": "au_nem_qld_lilyvasf",
         "code": "LILYSF1",
         "region": "QLD1",
         "status": "operating",
@@ -4216,7 +4216,7 @@
     },
     {
         "name": "Longreach",
-        "ocode": "au_nem_qld_1335",
+        "ocode": "au_nem_qld_lrsf",
         "code": "LRSF1",
         "region": "QLD1",
         "status": "operating",
@@ -4231,7 +4231,7 @@
     },
     {
         "name": "Mackay",
-        "ocode": "au_nem_qld_1046",
+        "ocode": "au_nem_qld_mackay",
         "code": "MACKAYGT",
         "region": "QLD1",
         "status": "operating",
@@ -4291,7 +4291,7 @@
     },
     {
         "name": "Maryrorough",
-        "ocode": "au_nem_qld_1403",
+        "ocode": "au_nem_qld_maryrsf",
         "code": "MARYRSF1",
         "region": "QLD1",
         "status": "operating",
@@ -4321,7 +4321,7 @@
     },
     {
         "name": "Millmerran",
-        "ocode": "au_nem_qld_1099",
+        "ocode": "au_nem_qld_millmern",
         "code": "MPP_1",
         "region": "QLD1",
         "status": "operating",
@@ -4336,7 +4336,7 @@
     },
     {
         "name": "Millmerran",
-        "ocode": "au_nem_qld_1099",
+        "ocode": "au_nem_qld_millmern",
         "code": "MPP_2",
         "region": "QLD1",
         "status": "operating",
@@ -4381,7 +4381,7 @@
     },
     {
         "name": "Moranbah Generation Project",
-        "ocode": "au_nem_qld_1191",
+        "ocode": "au_nem_qld_moranbah",
         "code": "MORANBAH",
         "region": "QLD1",
         "status": "operating",
@@ -4396,7 +4396,7 @@
     },
     {
         "name": "Moranbah North Coal Mine",
-        "ocode": "au_nem_qld_1206",
+        "ocode": "au_nem_qld_mbahnth",
         "code": "MBAHNTH",
         "region": "QLD1",
         "status": "operating",
@@ -4426,7 +4426,7 @@
     },
     {
         "name": "Mount Emerald",
-        "ocode": "au_nem_qld_1356",
+        "ocode": "au_nem_qld_mewf",
         "code": "MEWF1",
         "region": "QLD1",
         "status": "operating",
@@ -4441,7 +4441,7 @@
     },
     {
         "name": "Mount Emerald",
-        "ocode": "au_nem_qld_1356",
+        "ocode": "au_nem_qld_mewf",
         "code": "MEWF1",
         "region": "QLD1",
         "status": "operating",
@@ -4471,7 +4471,7 @@
     },
     {
         "name": "Mt Stuart",
-        "ocode": "au_nem_qld_1062",
+        "ocode": "au_nem_qld_mstuart",
         "code": "MSTUART2",
         "region": "QLD1",
         "status": "operating",
@@ -4486,7 +4486,7 @@
     },
     {
         "name": "Mt Stuart",
-        "ocode": "au_nem_qld_1062",
+        "ocode": "au_nem_qld_mstuart",
         "code": "MSTUART1",
         "region": "QLD1",
         "status": "operating",
@@ -4501,7 +4501,7 @@
     },
     {
         "name": "Mt Stuart",
-        "ocode": "au_nem_qld_1062",
+        "ocode": "au_nem_qld_mstuart",
         "code": "MSTUART3",
         "region": "QLD1",
         "status": "operating",
@@ -4516,7 +4516,7 @@
     },
     {
         "name": "Mulgrave Central Mill",
-        "ocode": "au_nem_qld_1094",
+        "ocode": "au_nem_qld_mulgrave",
         "code": "0NMCM_1",
         "region": "QLD1",
         "status": "operating",
@@ -4546,7 +4546,7 @@
     },
     {
         "name": "Oakey",
-        "ocode": "au_nem_qld_1086",
+        "ocode": "au_nem_qld_oakey",
         "code": "OAKEY1",
         "region": "QLD1",
         "status": "operating",
@@ -4561,7 +4561,7 @@
     },
     {
         "name": "Oakey",
-        "ocode": "au_nem_qld_1086",
+        "ocode": "au_nem_qld_oakey",
         "code": "OAKEY2",
         "region": "QLD1",
         "status": "operating",
@@ -4576,7 +4576,7 @@
     },
     {
         "name": "Oakey 1",
-        "ocode": "au_nem_qld_1377",
+        "ocode": "au_nem_qld_oakey1sf",
         "code": "OAKEY1SF",
         "region": "QLD1",
         "status": "operating",
@@ -4591,7 +4591,7 @@
     },
     {
         "name": "Oakey 2",
-        "ocode": "au_nem_qld_1387",
+        "ocode": "au_nem_qld_oakey2sf",
         "code": "OAKEY2SF",
         "region": "QLD1",
         "status": "operating",
@@ -4606,7 +4606,7 @@
     },
     {
         "name": "Oaky Creek",
-        "ocode": "au_nem_qld_1183",
+        "ocode": "au_nem_qld_ocps",
         "code": "OAKYCREK",
         "region": "QLD1",
         "status": "operating",
@@ -4621,7 +4621,7 @@
     },
     {
         "name": "Oaky Creek",
-        "ocode": "au_nem_qld_1183",
+        "ocode": "au_nem_qld_ocps",
         "code": "OAKYCREK",
         "region": "QLD1",
         "status": "operating",
@@ -4636,7 +4636,7 @@
     },
     {
         "name": "Oaky Creek 2",
-        "ocode": "au_nem_qld_1301",
+        "ocode": "au_nem_qld_oaky2",
         "code": "OAKY2",
         "region": "QLD1",
         "status": "operating",
@@ -4651,7 +4651,7 @@
     },
     {
         "name": "Pioneer Sugar Mill",
-        "ocode": "au_nem_qld_1180",
+        "ocode": "au_nem_qld_pioneer",
         "code": "0NPSM_1",
         "region": "QLD1",
         "status": "operating",
@@ -4666,7 +4666,7 @@
     },
     {
         "name": "Pioneer Sugar Mill",
-        "ocode": "au_nem_qld_1180",
+        "ocode": "au_nem_qld_pioneer",
         "code": "0NPSM_2",
         "region": "QLD1",
         "status": "operating",
@@ -4681,7 +4681,7 @@
     },
     {
         "name": "Plane Creek Mill",
-        "ocode": "au_nem_qld_1083",
+        "ocode": "au_nem_qld_planecrk",
         "code": "0NPCM_1",
         "region": "QLD1",
         "status": "operating",
@@ -4696,7 +4696,7 @@
     },
     {
         "name": "Plane Creek Mill",
-        "ocode": "au_nem_qld_1083",
+        "ocode": "au_nem_qld_planecrk",
         "code": "0NPCM_2",
         "region": "QLD1",
         "status": "operating",
@@ -4741,7 +4741,7 @@
     },
     {
         "name": "Racecourse Mill",
-        "ocode": "au_nem_qld_1264",
+        "ocode": "au_nem_qld_racomil",
         "code": "RACOMIL1",
         "region": "QLD1",
         "status": "operating",
@@ -4756,7 +4756,7 @@
     },
     {
         "name": "Racecourse Mill",
-        "ocode": "au_nem_qld_1264",
+        "ocode": "au_nem_qld_racomil",
         "code": "RACOMIL1",
         "region": "QLD1",
         "status": "operating",
@@ -4771,7 +4771,7 @@
     },
     {
         "name": "Racecourse Mill",
-        "ocode": "au_nem_qld_1264",
+        "ocode": "au_nem_qld_racomil",
         "code": "RACOMIL1",
         "region": "QLD1",
         "status": "operating",
@@ -4786,7 +4786,7 @@
     },
     {
         "name": "Rochedale",
-        "ocode": "au_nem_qld_1137",
+        "ocode": "au_nem_qld_rochedal",
         "code": "0NRREF_1",
         "region": "QLD1",
         "status": "operating",
@@ -4801,7 +4801,7 @@
     },
     {
         "name": "Rochedale",
-        "ocode": "au_nem_qld_1137",
+        "ocode": "au_nem_qld_rochedal",
         "code": "ROCHEDAL",
         "region": "QLD1",
         "status": "retired",
@@ -4816,7 +4816,7 @@
     },
     {
         "name": "Rocky Point Cogeneration",
-        "ocode": "au_nem_qld_1102",
+        "ocode": "au_nem_qld_rpcg",
         "code": "RPCG",
         "region": "QLD1",
         "status": "operating",
@@ -4831,7 +4831,7 @@
     },
     {
         "name": "Roghan Road",
-        "ocode": "au_nem_qld_1132",
+        "ocode": "au_nem_qld_edlrgnrd",
         "code": "EDLRGNRD",
         "region": "QLD1",
         "status": "operating",
@@ -4846,7 +4846,7 @@
     },
     {
         "name": "Roma Station",
-        "ocode": "au_nem_qld_1077",
+        "ocode": "au_nem_qld_roma",
         "code": "ROMA_8",
         "region": "QLD1",
         "status": "operating",
@@ -4861,7 +4861,7 @@
     },
     {
         "name": "Roma Station",
-        "ocode": "au_nem_qld_1077",
+        "ocode": "au_nem_qld_roma",
         "code": "ROMA_7",
         "region": "QLD1",
         "status": "operating",
@@ -4876,7 +4876,7 @@
     },
     {
         "name": "Ross River",
-        "ocode": "au_nem_qld_1348",
+        "ocode": "au_nem_qld_rrsf",
         "code": "RRSF1",
         "region": "QLD1",
         "status": "operating",
@@ -4891,7 +4891,7 @@
     },
     {
         "name": "Rugby Run",
-        "ocode": "au_nem_qld_1382",
+        "ocode": "au_nem_qld_rugbyr",
         "code": "RUGBYR1",
         "region": "QLD1",
         "status": "operating",
@@ -4921,7 +4921,7 @@
     },
     {
         "name": "Scsf",
-        "ocode": "au_nem_qld_1313",
+        "ocode": "au_nem_qld_valdora",
         "code": "VALDORA1",
         "region": "QLD1",
         "status": "operating",
@@ -4936,7 +4936,7 @@
     },
     {
         "name": "Somerset Dam",
-        "ocode": "au_nem_qld_1129",
+        "ocode": "au_nem_qld_somerset",
         "code": "0NSODA_1",
         "region": "QLD1",
         "status": "operating",
@@ -4996,7 +4996,7 @@
     },
     {
         "name": "Southbank Institute Of Technology 1",
-        "ocode": "au_nem_qld_1221",
+        "ocode": "au_nem_qld_sthbktec",
         "code": "STHBKTEC",
         "region": "QLD1",
         "status": "retired",
@@ -5026,7 +5026,7 @@
     },
     {
         "name": "Stanwell",
-        "ocode": "au_nem_qld_1047",
+        "ocode": "au_nem_qld_stanwell",
         "code": "STAN1",
         "region": "QLD1",
         "status": "operating",
@@ -5041,7 +5041,7 @@
     },
     {
         "name": "Stanwell",
-        "ocode": "au_nem_qld_1047",
+        "ocode": "au_nem_qld_stanwell",
         "code": "STAN4",
         "region": "QLD1",
         "status": "operating",
@@ -5056,7 +5056,7 @@
     },
     {
         "name": "Stanwell",
-        "ocode": "au_nem_qld_1047",
+        "ocode": "au_nem_qld_stanwell",
         "code": "STAN2",
         "region": "QLD1",
         "status": "operating",
@@ -5071,7 +5071,7 @@
     },
     {
         "name": "Stanwell",
-        "ocode": "au_nem_qld_1047",
+        "ocode": "au_nem_qld_stanwell",
         "code": "STAN3",
         "region": "QLD1",
         "status": "operating",
@@ -5086,7 +5086,7 @@
     },
     {
         "name": "Stanwell",
-        "ocode": "au_nem_qld_1047",
+        "ocode": "au_nem_qld_stanwell",
         "code": "STAN-1",
         "region": "QLD1",
         "status": "operating",
@@ -5101,7 +5101,7 @@
     },
     {
         "name": "Stanwell",
-        "ocode": "au_nem_qld_1047",
+        "ocode": "au_nem_qld_stanwell",
         "code": "STAN-2",
         "region": "QLD1",
         "status": "operating",
@@ -5116,7 +5116,7 @@
     },
     {
         "name": "Stanwell",
-        "ocode": "au_nem_qld_1047",
+        "ocode": "au_nem_qld_stanwell",
         "code": "STAN-3",
         "region": "QLD1",
         "status": "operating",
@@ -5131,7 +5131,7 @@
     },
     {
         "name": "Stanwell",
-        "ocode": "au_nem_qld_1047",
+        "ocode": "au_nem_qld_stanwell",
         "code": "STAN-4",
         "region": "QLD1",
         "status": "operating",
@@ -5146,7 +5146,7 @@
     },
     {
         "name": "Stapylton",
-        "ocode": "au_nem_qld_1315",
+        "ocode": "au_nem_qld_stapylton",
         "code": "STAPYLTON1",
         "region": "QLD1",
         "status": "operating",
@@ -5161,7 +5161,7 @@
     },
     {
         "name": "Stapylton",
-        "ocode": "au_nem_qld_1315",
+        "ocode": "au_nem_qld_stapylton",
         "code": "STAPYLTON1",
         "region": "QLD1",
         "status": "operating",
@@ -5176,7 +5176,7 @@
     },
     {
         "name": "Stapylton",
-        "ocode": "au_nem_qld_1315",
+        "ocode": "au_nem_qld_stapylton",
         "code": "STAPYLTON1",
         "region": "QLD1",
         "status": "operating",
@@ -5191,7 +5191,7 @@
     },
     {
         "name": "Sun Metals",
-        "ocode": "au_nem_qld_1337",
+        "ocode": "au_nem_qld_smcsf",
         "code": "SMCSF1",
         "region": "QLD1",
         "status": "operating",
@@ -5206,7 +5206,7 @@
     },
     {
         "name": "Sun Metals",
-        "ocode": "au_nem_qld_1337",
+        "ocode": "au_nem_qld_smcsf",
         "code": "SMCSF1",
         "region": "QLD1",
         "status": "operating",
@@ -5221,7 +5221,7 @@
     },
     {
         "name": "Suncoast Gold Macadamias",
-        "ocode": "au_nem_qld_1127",
+        "ocode": "au_nem_qld_suncoast",
         "code": "SUNCOAST",
         "region": "QLD1",
         "status": "retired",
@@ -5266,7 +5266,7 @@
     },
     {
         "name": "Susan River",
-        "ocode": "au_nem_qld_1372",
+        "ocode": "au_nem_qld_srsf",
         "code": "SRSF1",
         "region": "QLD1",
         "status": "operating",
@@ -5281,7 +5281,7 @@
     },
     {
         "name": "Swanbank E",
-        "ocode": "au_nem_qld_1001",
+        "ocode": "au_nem_qld_swanbank",
         "code": "SWAN_E",
         "region": "QLD1",
         "status": "operating",
@@ -5296,7 +5296,7 @@
     },
     {
         "name": "Swanbank E",
-        "ocode": "au_nem_qld_1001",
+        "ocode": "au_nem_qld_swanbank",
         "code": "0NSWJV_1",
         "region": "QLD1",
         "status": "operating",
@@ -5311,7 +5311,7 @@
     },
     {
         "name": "Swanbank E",
-        "ocode": "au_nem_qld_1001",
+        "ocode": "au_nem_qld_swanbank",
         "code": "0NSWJV_2",
         "region": "QLD1",
         "status": "operating",
@@ -5326,7 +5326,7 @@
     },
     {
         "name": "Swanbank E",
-        "ocode": "au_nem_qld_1001",
+        "ocode": "au_nem_qld_swanbank",
         "code": "SWAN_B_1",
         "region": "QLD1",
         "status": "retired",
@@ -5341,7 +5341,7 @@
     },
     {
         "name": "Swanbank E",
-        "ocode": "au_nem_qld_1001",
+        "ocode": "au_nem_qld_swanbank",
         "code": "SWAN_B_2",
         "region": "QLD1",
         "status": "retired",
@@ -5356,7 +5356,7 @@
     },
     {
         "name": "Swanbank E",
-        "ocode": "au_nem_qld_1001",
+        "ocode": "au_nem_qld_swanbank",
         "code": "SWAN_B_3",
         "region": "QLD1",
         "status": "retired",
@@ -5371,7 +5371,7 @@
     },
     {
         "name": "Swanbank E",
-        "ocode": "au_nem_qld_1001",
+        "ocode": "au_nem_qld_swanbank",
         "code": "SWAN_B_4",
         "region": "QLD1",
         "status": "retired",
@@ -5386,7 +5386,7 @@
     },
     {
         "name": "Tableland Mill",
-        "ocode": "au_nem_qld_1060",
+        "ocode": "au_nem_qld_tbland",
         "code": "0NTAMI_1",
         "region": "QLD1",
         "status": "operating",
@@ -5401,7 +5401,7 @@
     },
     {
         "name": "Tableland Mill",
-        "ocode": "au_nem_qld_1060",
+        "ocode": "au_nem_qld_tbland",
         "code": "0NTAMI_2",
         "region": "QLD1",
         "status": "committed",
@@ -5416,7 +5416,7 @@
     },
     {
         "name": "Tableland Mill 2",
-        "ocode": "au_nem_qld_1391",
+        "ocode": "au_nem_qld_tabmill2",
         "code": "TABMILL2",
         "region": "QLD1",
         "status": "operating",
@@ -5431,7 +5431,7 @@
     },
     {
         "name": "Tarong",
-        "ocode": "au_nem_qld_1048",
+        "ocode": "au_nem_qld_tarong",
         "code": "TARONG#1",
         "region": "QLD1",
         "status": "operating",
@@ -5446,7 +5446,7 @@
     },
     {
         "name": "Tarong",
-        "ocode": "au_nem_qld_1048",
+        "ocode": "au_nem_qld_tarong",
         "code": "TARONG#3",
         "region": "QLD1",
         "status": "operating",
@@ -5461,7 +5461,7 @@
     },
     {
         "name": "Tarong",
-        "ocode": "au_nem_qld_1048",
+        "ocode": "au_nem_qld_tarong",
         "code": "TARONG#2",
         "region": "QLD1",
         "status": "operating",
@@ -5476,7 +5476,7 @@
     },
     {
         "name": "Tarong",
-        "ocode": "au_nem_qld_1048",
+        "ocode": "au_nem_qld_tarong",
         "code": "TARONG#4",
         "region": "QLD1",
         "status": "operating",
@@ -5491,7 +5491,7 @@
     },
     {
         "name": "Tarong",
-        "ocode": "au_nem_qld_1048",
+        "ocode": "au_nem_qld_tarong",
         "code": "0NTAGT_1",
         "region": "QLD1",
         "status": "operating",
@@ -5506,7 +5506,7 @@
     },
     {
         "name": "Tarong North",
-        "ocode": "au_nem_qld_1118",
+        "ocode": "au_nem_qld_tarongn",
         "code": "TNPS1",
         "region": "QLD1",
         "status": "operating",
@@ -5566,7 +5566,7 @@
     },
     {
         "name": "Townsville",
-        "ocode": "au_nem_qld_1063",
+        "ocode": "au_nem_qld_yabulu",
         "code": "YABULU",
         "region": "QLD1",
         "status": "operating",
@@ -5581,7 +5581,7 @@
     },
     {
         "name": "Townsville",
-        "ocode": "au_nem_qld_1063",
+        "ocode": "au_nem_qld_yabulu",
         "code": "YABULU2",
         "region": "QLD1",
         "status": "operating",
@@ -5611,7 +5611,7 @@
     },
     {
         "name": "Veolia Ti Tree",
-        "ocode": "au_nem_qld_1208",
+        "ocode": "au_nem_qld_titree",
         "code": "TITREE",
         "region": "QLD1",
         "status": "operating",
@@ -5626,7 +5626,7 @@
     },
     {
         "name": "Victoria Mill",
-        "ocode": "au_nem_qld_1259",
+        "ocode": "au_nem_qld_vicmill",
         "code": "0NVIMI_3",
         "region": "QLD1",
         "status": "operating",
@@ -5641,7 +5641,7 @@
     },
     {
         "name": "Victoria Mill",
-        "ocode": "au_nem_qld_1259",
+        "ocode": "au_nem_qld_vicmill",
         "code": "0NVIMI_4",
         "region": "QLD1",
         "status": "operating",
@@ -5656,7 +5656,7 @@
     },
     {
         "name": "Victoria Mill",
-        "ocode": "au_nem_qld_1259",
+        "ocode": "au_nem_qld_vicmill",
         "code": "0NVIMI_1",
         "region": "QLD1",
         "status": "operating",
@@ -5671,7 +5671,7 @@
     },
     {
         "name": "Victoria Mill",
-        "ocode": "au_nem_qld_1259",
+        "ocode": "au_nem_qld_vicmill",
         "code": "0NVIMI_2",
         "region": "QLD1",
         "status": "operating",
@@ -5686,7 +5686,7 @@
     },
     {
         "name": "Victoria Mill",
-        "ocode": "au_nem_qld_1259",
+        "ocode": "au_nem_qld_vicmill",
         "code": "VICMILL1",
         "region": "QLD1",
         "status": "operating",
@@ -5731,7 +5731,7 @@
     },
     {
         "name": "Whitsunday",
-        "ocode": "au_nem_qld_1345",
+        "ocode": "au_nem_qld_whitsf",
         "code": "WHITSF1",
         "region": "QLD1",
         "status": "operating",
@@ -5746,7 +5746,7 @@
     },
     {
         "name": "Whitwood Road",
-        "ocode": "au_nem_qld_1138",
+        "ocode": "au_nem_qld_whit1",
         "code": "WHIT1",
         "region": "QLD1",
         "status": "operating",
@@ -5761,7 +5761,7 @@
     },
     {
         "name": "Windy Hill",
-        "ocode": "au_nem_qld_1090",
+        "ocode": "au_nem_qld_windhill",
         "code": "WHILL1",
         "region": "QLD1",
         "status": "operating",
@@ -5821,7 +5821,7 @@
     },
     {
         "name": "Wivenhoe Mini",
-        "ocode": "au_nem_qld_1119",
+        "ocode": "au_nem_qld_wivensh",
         "code": "WIVENSH",
         "region": "QLD1",
         "status": "operating",
@@ -5851,7 +5851,7 @@
     },
     {
         "name": "Yarranlea",
-        "ocode": "au_nem_qld_1388",
+        "ocode": "au_nem_qld_yaransf",
         "code": "YARANSF1",
         "region": "QLD1",
         "status": "operating",
@@ -5866,7 +5866,7 @@
     },
     {
         "name": "Yarwun",
-        "ocode": "au_nem_qld_1243",
+        "ocode": "au_nem_qld_yarwun",
         "code": "YARWUN_1",
         "region": "QLD1",
         "status": "operating",
@@ -5911,7 +5911,7 @@
     },
     {
         "name": "Amcor Glass Gawler",
-        "ocode": "au_nem_sa_1211",
+        "ocode": "au_nem_sa_amcorgr",
         "code": "AMCORGR",
         "region": "SA1",
         "status": "retired",
@@ -5926,7 +5926,7 @@
     },
     {
         "name": "Angaston",
-        "ocode": "au_nem_sa_1140",
+        "ocode": "au_nem_sa_angaston",
         "code": "ANGAST1",
         "region": "SA1",
         "status": "operating",
@@ -5971,7 +5971,7 @@
     },
     {
         "name": "Barker Inlet",
-        "ocode": "au_nem_sa_1395",
+        "ocode": "au_nem_sa_barkips",
         "code": "BARKIPS1",
         "region": "SA1",
         "status": "operating",
@@ -5986,7 +5986,7 @@
     },
     {
         "name": "Blue Lake Milling",
-        "ocode": "au_nem_sa_1261",
+        "ocode": "au_nem_sa_blulake",
         "code": "BLULAKE1",
         "region": "SA1",
         "status": "retired",
@@ -6001,7 +6001,7 @@
     },
     {
         "name": "Blue Lake Milling",
-        "ocode": "au_nem_sa_1261",
+        "ocode": "au_nem_sa_blulake",
         "code": "0NBLMP_1",
         "region": "SA1",
         "status": "operating",
@@ -6016,7 +6016,7 @@
     },
     {
         "name": "Bungala One",
-        "ocode": "au_nem_sa_1342",
+        "ocode": "au_nem_sa_bngsf1",
         "code": "BNGSF1",
         "region": "SA1",
         "status": "operating",
@@ -6031,7 +6031,7 @@
     },
     {
         "name": "Bungala Two",
-        "ocode": "au_nem_sa_1353",
+        "ocode": "au_nem_sa_bngsf2",
         "code": "BNGSF2",
         "region": "SA1",
         "status": "operating",
@@ -6046,7 +6046,7 @@
     },
     {
         "name": "Canunda",
-        "ocode": "au_nem_sa_1176",
+        "ocode": "au_nem_sa_canunda1",
         "code": "CNUNDAWF",
         "region": "SA1",
         "status": "operating",
@@ -6061,7 +6061,7 @@
     },
     {
         "name": "Cathedral Rocks",
-        "ocode": "au_nem_sa_1142",
+        "ocode": "au_nem_sa_cathrock",
         "code": "CATHROCK",
         "region": "SA1",
         "status": "operating",
@@ -6076,7 +6076,7 @@
     },
     {
         "name": "Clements Gap",
-        "ocode": "au_nem_sa_1214",
+        "ocode": "au_nem_sa_clemgpwf",
         "code": "CLEMGPWF",
         "region": "SA1",
         "status": "operating",
@@ -6091,7 +6091,7 @@
     },
     {
         "name": "Dalrymple North",
-        "ocode": "au_nem_sa_1347",
+        "ocode": "au_nem_sa_dalnth",
         "code": "DALNTHL1",
         "region": "SA1",
         "status": "operating",
@@ -6106,7 +6106,7 @@
     },
     {
         "name": "Dalrymple North",
-        "ocode": "au_nem_sa_1347",
+        "ocode": "au_nem_sa_dalnth",
         "code": "DALNTH01",
         "region": "SA1",
         "status": "operating",
@@ -6121,7 +6121,7 @@
     },
     {
         "name": "Dry Creek Station",
-        "ocode": "au_nem_sa_1016",
+        "ocode": "au_nem_sa_drycgt",
         "code": "DRYCGT2",
         "region": "SA1",
         "status": "operating",
@@ -6136,7 +6136,7 @@
     },
     {
         "name": "Dry Creek Station",
-        "ocode": "au_nem_sa_1016",
+        "ocode": "au_nem_sa_drycgt",
         "code": "DRYCGT3",
         "region": "SA1",
         "status": "operating",
@@ -6151,7 +6151,7 @@
     },
     {
         "name": "Dry Creek Station",
-        "ocode": "au_nem_sa_1016",
+        "ocode": "au_nem_sa_drycgt",
         "code": "DRYCGT1",
         "region": "SA1",
         "status": "operating",
@@ -6166,7 +6166,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6181,7 +6181,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6196,7 +6196,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6211,7 +6211,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6226,7 +6226,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6241,7 +6241,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6256,7 +6256,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6271,7 +6271,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6286,7 +6286,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6301,7 +6301,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6316,7 +6316,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6331,7 +6331,7 @@
     },
     {
         "name": "Hallett",
-        "ocode": "au_nem_sa_1107",
+        "ocode": "au_nem_sa_aglhal",
         "code": "AGLHAL",
         "region": "SA1",
         "status": "operating",
@@ -6346,7 +6346,7 @@
     },
     {
         "name": "Hallett 1",
-        "ocode": "au_nem_sa_1197",
+        "ocode": "au_nem_sa_hallwf",
         "code": "HALLWF1",
         "region": "SA1",
         "status": "operating",
@@ -6361,7 +6361,7 @@
     },
     {
         "name": "Hallett 2",
-        "ocode": "au_nem_sa_1215",
+        "ocode": "au_nem_sa_hallwf2",
         "code": "HALLWF2",
         "region": "SA1",
         "status": "operating",
@@ -6376,7 +6376,7 @@
     },
     {
         "name": "Highbury",
-        "ocode": "au_nem_sa_1268",
+        "ocode": "au_nem_sa_highbry",
         "code": "HIGHBRY1",
         "region": "SA1",
         "status": "retired",
@@ -6391,7 +6391,7 @@
     },
     {
         "name": "Hornsdale",
-        "ocode": "au_nem_sa_1306",
+        "ocode": "au_nem_sa_hornsdal",
         "code": "HDWF1",
         "region": "SA1",
         "status": "operating",
@@ -6406,7 +6406,7 @@
     },
     {
         "name": "Hornsdale 2",
-        "ocode": "au_nem_sa_1312",
+        "ocode": "au_nem_sa_hornsdal2",
         "code": "HDWF2",
         "region": "SA1",
         "status": "operating",
@@ -6421,7 +6421,7 @@
     },
     {
         "name": "Hornsdale 3",
-        "ocode": "au_nem_sa_1317",
+        "ocode": "au_nem_sa_hornsdal3",
         "code": "HDWF3",
         "region": "SA1",
         "status": "operating",
@@ -6436,7 +6436,7 @@
     },
     {
         "name": "Hornsdale Power Reserve",
-        "ocode": "au_nem_sa_1324",
+        "ocode": "au_nem_sa_hornsdpr",
         "code": "HPRG1",
         "region": "SA1",
         "status": "operating",
@@ -6451,7 +6451,7 @@
     },
     {
         "name": "Hornsdale Power Reserve",
-        "ocode": "au_nem_sa_1324",
+        "ocode": "au_nem_sa_hornsdpr",
         "code": "HPRL1",
         "region": "SA1",
         "status": "operating",
@@ -6481,7 +6481,7 @@
     },
     {
         "name": "Ladbroke Grove",
-        "ocode": "au_nem_sa_1088",
+        "ocode": "au_nem_sa_ladbroke",
         "code": "LADBROK1",
         "region": "SA1",
         "status": "operating",
@@ -6496,7 +6496,7 @@
     },
     {
         "name": "Ladbroke Grove",
-        "ocode": "au_nem_sa_1088",
+        "ocode": "au_nem_sa_ladbroke",
         "code": "LADBROK2",
         "region": "SA1",
         "status": "operating",
@@ -6511,7 +6511,7 @@
     },
     {
         "name": "Lake Bonney",
-        "ocode": "au_nem_sa_1394",
+        "ocode": "au_nem_sa_lbbess",
         "code": "LKBONNY3",
         "region": "SA1",
         "status": "operating",
@@ -6526,7 +6526,7 @@
     },
     {
         "name": "Lake Bonney",
-        "ocode": "au_nem_sa_1394",
+        "ocode": "au_nem_sa_lbbess",
         "code": "LBBG1",
         "region": "SA1",
         "status": "operating",
@@ -6541,7 +6541,7 @@
     },
     {
         "name": "Lake Bonney",
-        "ocode": "au_nem_sa_1394",
+        "ocode": "au_nem_sa_lbbess",
         "code": "LBBL1",
         "region": "SA1",
         "status": "operating",
@@ -6556,7 +6556,7 @@
     },
     {
         "name": "Lake Bonney",
-        "ocode": "au_nem_sa_1394",
+        "ocode": "au_nem_sa_lbbess",
         "code": "LKBONNY1",
         "region": "SA1",
         "status": "operating",
@@ -6571,7 +6571,7 @@
     },
     {
         "name": "Lake Bonney Windfarm",
-        "ocode": "au_nem_sa_1194",
+        "ocode": "au_nem_sa_lkbonny2",
         "code": "LKBONNY2",
         "region": "SA1",
         "status": "operating",
@@ -6586,7 +6586,7 @@
     },
     {
         "name": "Lincoln Gap",
-        "ocode": "au_nem_sa_1375",
+        "ocode": "au_nem_sa_lgapwf1",
         "code": "LGAPWF1",
         "region": "SA1",
         "status": "operating",
@@ -6601,7 +6601,7 @@
     },
     {
         "name": "Lonsdale",
-        "ocode": "au_nem_sa_1105",
+        "ocode": "au_nem_sa_lonsdale",
         "code": "LONSDALE",
         "region": "SA1",
         "status": "operating",
@@ -6616,7 +6616,7 @@
     },
     {
         "name": "Mintaro Station",
-        "ocode": "au_nem_sa_1017",
+        "ocode": "au_nem_sa_mintaro",
         "code": "MINTARO",
         "region": "SA1",
         "status": "operating",
@@ -6631,7 +6631,7 @@
     },
     {
         "name": "Mintaro Station",
-        "ocode": "au_nem_sa_1017",
+        "ocode": "au_nem_sa_mintaro",
         "code": "MINTNL1",
         "region": "SA1",
         "status": "operating",
@@ -6646,7 +6646,7 @@
     },
     {
         "name": "Mt Millar",
-        "ocode": "au_nem_sa_1170",
+        "ocode": "au_nem_sa_mtmillar",
         "code": "MTMILLAR",
         "region": "SA1",
         "status": "operating",
@@ -6676,7 +6676,7 @@
     },
     {
         "name": "North Brown Hill",
-        "ocode": "au_nem_sa_1245",
+        "ocode": "au_nem_sa_nbhwf",
         "code": "NBHWF1",
         "region": "SA1",
         "status": "operating",
@@ -6691,7 +6691,7 @@
     },
     {
         "name": "Northern",
-        "ocode": "au_nem_sa_1018",
+        "ocode": "au_nem_sa_northp",
         "code": "NPS1",
         "region": "SA1",
         "status": "retired",
@@ -6706,7 +6706,7 @@
     },
     {
         "name": "Northern",
-        "ocode": "au_nem_sa_1018",
+        "ocode": "au_nem_sa_northp",
         "code": "NPSNL2",
         "region": "SA1",
         "status": "retired",
@@ -6721,7 +6721,7 @@
     },
     {
         "name": "Northern",
-        "ocode": "au_nem_sa_1018",
+        "ocode": "au_nem_sa_northp",
         "code": "NPSNL1",
         "region": "SA1",
         "status": "retired",
@@ -6736,7 +6736,7 @@
     },
     {
         "name": "Northern",
-        "ocode": "au_nem_sa_1018",
+        "ocode": "au_nem_sa_northp",
         "code": "NPS2",
         "region": "SA1",
         "status": "retired",
@@ -6751,7 +6751,7 @@
     },
     {
         "name": "Osborne",
-        "ocode": "au_nem_sa_1061",
+        "ocode": "au_nem_sa_osborne",
         "code": "OSBAG",
         "region": "SA1",
         "status": "operating",
@@ -6766,7 +6766,7 @@
     },
     {
         "name": "Osborne",
-        "ocode": "au_nem_sa_1061",
+        "ocode": "au_nem_sa_osborne",
         "code": "OSBAG",
         "region": "SA1",
         "status": "operating",
@@ -6781,7 +6781,7 @@
     },
     {
         "name": "Osborne",
-        "ocode": "au_nem_sa_1061",
+        "ocode": "au_nem_sa_osborne",
         "code": "OSB-AG",
         "region": "SA1",
         "status": "operating",
@@ -6796,7 +6796,7 @@
     },
     {
         "name": "Pedler Creek",
-        "ocode": "au_nem_sa_1269",
+        "ocode": "au_nem_sa_pedler",
         "code": "PEDLER1",
         "region": "SA1",
         "status": "retired",
@@ -6811,7 +6811,7 @@
     },
     {
         "name": "Pedler Creek",
-        "ocode": "au_nem_sa_1269",
+        "ocode": "au_nem_sa_pedler",
         "code": "0NPECR_3",
         "region": "SA1",
         "status": "operating",
@@ -6826,7 +6826,7 @@
     },
     {
         "name": "Pelican Point",
-        "ocode": "au_nem_sa_1095",
+        "ocode": "au_nem_sa_npppps",
         "code": "PPCCGT",
         "region": "SA1",
         "status": "operating",
@@ -6841,7 +6841,7 @@
     },
     {
         "name": "Pelican Point",
-        "ocode": "au_nem_sa_1095",
+        "ocode": "au_nem_sa_npppps",
         "code": "PPCCGT",
         "region": "SA1",
         "status": "operating",
@@ -6871,7 +6871,7 @@
     },
     {
         "name": "Playford B",
-        "ocode": "au_nem_sa_1019",
+        "ocode": "au_nem_sa_playf",
         "code": "PLAYFB2",
         "region": "SA1",
         "status": "retired",
@@ -6886,7 +6886,7 @@
     },
     {
         "name": "Playford B",
-        "ocode": "au_nem_sa_1019",
+        "ocode": "au_nem_sa_playf",
         "code": "PLAYB-AG",
         "region": "SA1",
         "status": "retired",
@@ -6901,7 +6901,7 @@
     },
     {
         "name": "Playford B",
-        "ocode": "au_nem_sa_1019",
+        "ocode": "au_nem_sa_playf",
         "code": "PLAYFB1",
         "region": "SA1",
         "status": "retired",
@@ -6916,7 +6916,7 @@
     },
     {
         "name": "Playford B",
-        "ocode": "au_nem_sa_1019",
+        "ocode": "au_nem_sa_playf",
         "code": "PLAYFB3",
         "region": "SA1",
         "status": "retired",
@@ -6931,7 +6931,7 @@
     },
     {
         "name": "Playford B",
-        "ocode": "au_nem_sa_1019",
+        "ocode": "au_nem_sa_playf",
         "code": "PLAYFB4",
         "region": "SA1",
         "status": "retired",
@@ -6946,7 +6946,7 @@
     },
     {
         "name": "Port Lincoln",
-        "ocode": "au_nem_sa_1059",
+        "ocode": "au_nem_sa_portlcn",
         "code": "POR03",
         "region": "SA1",
         "status": "operating",
@@ -6961,7 +6961,7 @@
     },
     {
         "name": "Port Lincoln",
-        "ocode": "au_nem_sa_1059",
+        "ocode": "au_nem_sa_portlcn",
         "code": "POR01",
         "region": "SA1",
         "status": "operating",
@@ -6976,7 +6976,7 @@
     },
     {
         "name": "Pt Stanvac",
-        "ocode": "au_nem_sa_1251",
+        "ocode": "au_nem_sa_stanvac",
         "code": "PTSTAN1",
         "region": "SA1",
         "status": "operating",
@@ -6991,7 +6991,7 @@
     },
     {
         "name": "Pt Stanvac",
-        "ocode": "au_nem_sa_1251",
+        "ocode": "au_nem_sa_stanvac",
         "code": "STANV2",
         "region": "SA1",
         "status": "retired",
@@ -7006,7 +7006,7 @@
     },
     {
         "name": "Pt Stanvac",
-        "ocode": "au_nem_sa_1251",
+        "ocode": "au_nem_sa_stanvac",
         "code": "STANV1",
         "region": "SA1",
         "status": "retired",
@@ -7021,7 +7021,7 @@
     },
     {
         "name": "Quarantine",
-        "ocode": "au_nem_sa_1104",
+        "ocode": "au_nem_sa_quarantn",
         "code": "QPS1",
         "region": "SA1",
         "status": "operating",
@@ -7036,7 +7036,7 @@
     },
     {
         "name": "Quarantine",
-        "ocode": "au_nem_sa_1104",
+        "ocode": "au_nem_sa_quarantn",
         "code": "QPS3",
         "region": "SA1",
         "status": "operating",
@@ -7051,7 +7051,7 @@
     },
     {
         "name": "Quarantine",
-        "ocode": "au_nem_sa_1104",
+        "ocode": "au_nem_sa_quarantn",
         "code": "QPS4",
         "region": "SA1",
         "status": "operating",
@@ -7066,7 +7066,7 @@
     },
     {
         "name": "Quarantine",
-        "ocode": "au_nem_sa_1104",
+        "ocode": "au_nem_sa_quarantn",
         "code": "QPS5",
         "region": "SA1",
         "status": "operating",
@@ -7081,7 +7081,7 @@
     },
     {
         "name": "Quarantine",
-        "ocode": "au_nem_sa_1104",
+        "ocode": "au_nem_sa_quarantn",
         "code": "QPS2",
         "region": "SA1",
         "status": "operating",
@@ -7246,7 +7246,7 @@
     },
     {
         "name": "Snowtown 1",
-        "ocode": "au_nem_sa_1198",
+        "ocode": "au_nem_sa_snowtown",
         "code": "SNOWTWN1",
         "region": "SA1",
         "status": "operating",
@@ -7261,7 +7261,7 @@
     },
     {
         "name": "Snowtown North",
-        "ocode": "au_nem_sa_1278",
+        "ocode": "au_nem_sa_snownth",
         "code": "SNOWSTH1",
         "region": "SA1",
         "status": "operating",
@@ -7276,7 +7276,7 @@
     },
     {
         "name": "Snowtown North",
-        "ocode": "au_nem_sa_1278",
+        "ocode": "au_nem_sa_snownth",
         "code": "SNOWNTH1",
         "region": "SA1",
         "status": "operating",
@@ -7291,7 +7291,7 @@
     },
     {
         "name": "Snuggery",
-        "ocode": "au_nem_sa_1011",
+        "ocode": "au_nem_sa_snug",
         "code": "SNUG2",
         "region": "SA1",
         "status": "operating",
@@ -7306,7 +7306,7 @@
     },
     {
         "name": "Snuggery",
-        "ocode": "au_nem_sa_1011",
+        "ocode": "au_nem_sa_snug",
         "code": "SNUG3",
         "region": "SA1",
         "status": "operating",
@@ -7351,7 +7351,7 @@
     },
     {
         "name": "Starfish Hill",
-        "ocode": "au_nem_sa_1174",
+        "ocode": "au_nem_sa_starfhill",
         "code": "STARHLWF",
         "region": "SA1",
         "status": "operating",
@@ -7366,7 +7366,7 @@
     },
     {
         "name": "Tailem Bend Project 1",
-        "ocode": "au_nem_sa_1374",
+        "ocode": "au_nem_sa_tbsf",
         "code": "TBSF1",
         "region": "SA1",
         "status": "operating",
@@ -7381,7 +7381,7 @@
     },
     {
         "name": "Tataria",
-        "ocode": "au_nem_sa_1250",
+        "ocode": "au_nem_sa_tatiara",
         "code": "TATIARA1",
         "region": "SA1",
         "status": "operating",
@@ -7396,7 +7396,7 @@
     },
     {
         "name": "Tea Tree Gully",
-        "ocode": "au_nem_sa_1271",
+        "ocode": "au_nem_sa_teatree",
         "code": "TEATREE1",
         "region": "SA1",
         "status": "retired",
@@ -7411,7 +7411,7 @@
     },
     {
         "name": "Temporary Generation South",
-        "ocode": "au_nem_sa_1321",
+        "ocode": "au_nem_sa_satgs",
         "code": "SATGS1",
         "region": "SA1",
         "status": "operating",
@@ -7426,7 +7426,7 @@
     },
     {
         "name": "Temporary Generation South",
-        "ocode": "au_nem_sa_1321",
+        "ocode": "au_nem_sa_satgs",
         "code": "0NTGS_4",
         "region": "SA1",
         "status": "committed",
@@ -7441,7 +7441,7 @@
     },
     {
         "name": "Terminal",
-        "ocode": "au_nem_sa_1128",
+        "ocode": "au_nem_sa_termstor",
         "code": "0NTSMH_1",
         "region": "SA1",
         "status": "operating",
@@ -7456,7 +7456,7 @@
     },
     {
         "name": "Terminal",
-        "ocode": "au_nem_sa_1128",
+        "ocode": "au_nem_sa_termstor",
         "code": "TERMSTOR",
         "region": "SA1",
         "status": "retired",
@@ -7471,7 +7471,7 @@
     },
     {
         "name": "The Bluff",
-        "ocode": "au_nem_sa_1256",
+        "ocode": "au_nem_sa_bluff",
         "code": "BLUFF1",
         "region": "SA1",
         "status": "operating",
@@ -7486,7 +7486,7 @@
     },
     {
         "name": "Torrens Island",
-        "ocode": "au_nem_sa_1020",
+        "ocode": "au_nem_sa_torris",
         "code": "TORRA2",
         "region": "SA1",
         "status": "operating",
@@ -7501,7 +7501,7 @@
     },
     {
         "name": "Torrens Island",
-        "ocode": "au_nem_sa_1020",
+        "ocode": "au_nem_sa_torris",
         "code": "TORRA3",
         "region": "SA1",
         "status": "operating",
@@ -7516,7 +7516,7 @@
     },
     {
         "name": "Torrens Island",
-        "ocode": "au_nem_sa_1020",
+        "ocode": "au_nem_sa_torris",
         "code": "TORRB2",
         "region": "SA1",
         "status": "operating",
@@ -7531,7 +7531,7 @@
     },
     {
         "name": "Torrens Island",
-        "ocode": "au_nem_sa_1020",
+        "ocode": "au_nem_sa_torris",
         "code": "TORRB3",
         "region": "SA1",
         "status": "operating",
@@ -7546,7 +7546,7 @@
     },
     {
         "name": "Torrens Island",
-        "ocode": "au_nem_sa_1020",
+        "ocode": "au_nem_sa_torris",
         "code": "TORRA1",
         "region": "SA1",
         "status": "operating",
@@ -7561,7 +7561,7 @@
     },
     {
         "name": "Torrens Island",
-        "ocode": "au_nem_sa_1020",
+        "ocode": "au_nem_sa_torris",
         "code": "TORRA4",
         "region": "SA1",
         "status": "operating",
@@ -7576,7 +7576,7 @@
     },
     {
         "name": "Torrens Island",
-        "ocode": "au_nem_sa_1020",
+        "ocode": "au_nem_sa_torris",
         "code": "TORRB1",
         "region": "SA1",
         "status": "operating",
@@ -7591,7 +7591,7 @@
     },
     {
         "name": "Torrens Island",
-        "ocode": "au_nem_sa_1020",
+        "ocode": "au_nem_sa_torris",
         "code": "TORRB4",
         "region": "SA1",
         "status": "operating",
@@ -7621,7 +7621,7 @@
     },
     {
         "name": "Water Bolivar",
-        "ocode": "au_nem_sa_1294",
+        "ocode": "au_nem_sa_bolivar",
         "code": "BOLIVAR1",
         "region": "SA1",
         "status": "operating",
@@ -7636,7 +7636,7 @@
     },
     {
         "name": "Waterloo",
-        "ocode": "au_nem_sa_1247",
+        "ocode": "au_nem_sa_waterlwf",
         "code": "WATERLWF",
         "region": "SA1",
         "status": "operating",
@@ -7651,7 +7651,7 @@
     },
     {
         "name": "Waterloo",
-        "ocode": "au_nem_sa_1247",
+        "ocode": "au_nem_sa_waterlwf",
         "code": "WATERLWF",
         "region": "SA1",
         "status": "operating",
@@ -7666,7 +7666,7 @@
     },
     {
         "name": "Wattle Point",
-        "ocode": "au_nem_sa_1141",
+        "ocode": "au_nem_sa_wpwf",
         "code": "WPWF",
         "region": "SA1",
         "status": "operating",
@@ -7681,7 +7681,7 @@
     },
     {
         "name": "Willogoleche",
-        "ocode": "au_nem_sa_1352",
+        "ocode": "au_nem_sa_wgwf",
         "code": "WGWF1",
         "region": "SA1",
         "status": "operating",
@@ -7696,7 +7696,7 @@
     },
     {
         "name": "Willogoleche",
-        "ocode": "au_nem_sa_1352",
+        "ocode": "au_nem_sa_wgwf",
         "code": "WGWF1",
         "region": "SA1",
         "status": "operating",
@@ -7711,7 +7711,7 @@
     },
     {
         "name": "Wingfield 1",
-        "ocode": "au_nem_sa_1270",
+        "ocode": "au_nem_sa_wingf1",
         "code": "WINGF1_1",
         "region": "SA1",
         "status": "operating",
@@ -7726,7 +7726,7 @@
     },
     {
         "name": "Wingfield 2",
-        "ocode": "au_nem_sa_1272",
+        "ocode": "au_nem_sa_wingf2",
         "code": "WINGF2_1",
         "region": "SA1",
         "status": "operating",
@@ -7771,7 +7771,7 @@
     },
     {
         "name": "Jindabyne Pump At Guthega",
-        "ocode": "au_nem_vic_1073",
+        "ocode": "au_nem_vic_snwygjp2",
         "code": "SNWYGJP2",
         "region": "SNOWY1",
         "status": "retired",
@@ -7786,7 +7786,7 @@
     },
     {
         "name": "Bastyan",
-        "ocode": "au_nem_tas_1145",
+        "ocode": "au_nem_tas_bastyan",
         "code": "BASTYAN",
         "region": "TAS1",
         "status": "operating",
@@ -7801,7 +7801,7 @@
     },
     {
         "name": "Bell Bay",
-        "ocode": "au_nem_tas_1143",
+        "ocode": "au_nem_tas_bellbay",
         "code": "BELLBAY1",
         "region": "TAS1",
         "status": "retired",
@@ -7816,7 +7816,7 @@
     },
     {
         "name": "Bell Bay",
-        "ocode": "au_nem_tas_1143",
+        "ocode": "au_nem_tas_bellbay",
         "code": "BELLBAY2",
         "region": "TAS1",
         "status": "retired",
@@ -7831,7 +7831,7 @@
     },
     {
         "name": "Bell Bay",
-        "ocode": "au_nem_tas_1305",
+        "ocode": "au_nem_tas_bbdisel1",
         "code": "BBDISEL1",
         "region": "TAS1",
         "status": "retired",
@@ -7846,7 +7846,7 @@
     },
     {
         "name": "Bell Bay Three",
-        "ocode": "au_nem_tas_1182",
+        "ocode": "au_nem_tas_bbp31",
         "code": "BBTHREE2",
         "region": "TAS1",
         "status": "operating",
@@ -7861,7 +7861,7 @@
     },
     {
         "name": "Bell Bay Three",
-        "ocode": "au_nem_tas_1182",
+        "ocode": "au_nem_tas_bbp31",
         "code": "TVPP104",
         "region": "TAS1",
         "status": "operating",
@@ -7876,7 +7876,7 @@
     },
     {
         "name": "Bell Bay Three",
-        "ocode": "au_nem_tas_1182",
+        "ocode": "au_nem_tas_bbp31",
         "code": "BBTHREE1",
         "region": "TAS1",
         "status": "operating",
@@ -7891,7 +7891,7 @@
     },
     {
         "name": "Bell Bay Three",
-        "ocode": "au_nem_tas_1182",
+        "ocode": "au_nem_tas_bbp31",
         "code": "BBTHREE3",
         "region": "TAS1",
         "status": "operating",
@@ -7906,7 +7906,7 @@
     },
     {
         "name": "Butlers Gorge",
-        "ocode": "au_nem_tas_1146",
+        "ocode": "au_nem_tas_butlersg",
         "code": "BUTLERSG",
         "region": "TAS1",
         "status": "operating",
@@ -7921,7 +7921,7 @@
     },
     {
         "name": "Butlers Gorge",
-        "ocode": "au_nem_tas_1146",
+        "ocode": "au_nem_tas_butlersg",
         "code": "0NBUGO_1",
         "region": "TAS1",
         "status": "operating",
@@ -7936,7 +7936,7 @@
     },
     {
         "name": "Catagunya / Liapootah / Wayatinah",
-        "ocode": "au_nem_tas_1154",
+        "ocode": "au_nem_tas_liwyca",
         "code": "CATAGUN1",
         "region": "TAS1",
         "status": "retired",
@@ -7951,7 +7951,7 @@
     },
     {
         "name": "Catagunya / Liapootah / Wayatinah",
-        "ocode": "au_nem_tas_1154",
+        "ocode": "au_nem_tas_liwyca",
         "code": "LI_WY_CA",
         "region": "TAS1",
         "status": "operating",
@@ -7966,7 +7966,7 @@
     },
     {
         "name": "Catagunya / Liapootah / Wayatinah",
-        "ocode": "au_nem_tas_1154",
+        "ocode": "au_nem_tas_liwyca",
         "code": "LI_WY_CA",
         "region": "TAS1",
         "status": "operating",
@@ -7981,7 +7981,7 @@
     },
     {
         "name": "Catagunya / Liapootah / Wayatinah",
-        "ocode": "au_nem_tas_1154",
+        "ocode": "au_nem_tas_liwyca",
         "code": "LI_WY_CA",
         "region": "TAS1",
         "status": "operating",
@@ -7996,7 +7996,7 @@
     },
     {
         "name": "Catagunya / Liapootah / Wayatinah",
-        "ocode": "au_nem_tas_1154",
+        "ocode": "au_nem_tas_liwyca",
         "code": "LI_WY_CA",
         "region": "TAS1",
         "status": "operating",
@@ -8011,7 +8011,7 @@
     },
     {
         "name": "Catagunya / Liapootah / Wayatinah",
-        "ocode": "au_nem_tas_1154",
+        "ocode": "au_nem_tas_liwyca",
         "code": "LI_WY_CA",
         "region": "TAS1",
         "status": "operating",
@@ -8026,7 +8026,7 @@
     },
     {
         "name": "Catagunya / Liapootah / Wayatinah",
-        "ocode": "au_nem_tas_1154",
+        "ocode": "au_nem_tas_liwyca",
         "code": "LI_WY_CA",
         "region": "TAS1",
         "status": "operating",
@@ -8041,7 +8041,7 @@
     },
     {
         "name": "Catagunya / Liapootah / Wayatinah",
-        "ocode": "au_nem_tas_1154",
+        "ocode": "au_nem_tas_liwyca",
         "code": "LI_WY_CA",
         "region": "TAS1",
         "status": "operating",
@@ -8056,7 +8056,7 @@
     },
     {
         "name": "Catagunya / Liapootah / Wayatinah",
-        "ocode": "au_nem_tas_1154",
+        "ocode": "au_nem_tas_liwyca",
         "code": "LI_WY_CA",
         "region": "TAS1",
         "status": "operating",
@@ -8071,7 +8071,7 @@
     },
     {
         "name": "Cattle Hill",
-        "ocode": "au_nem_tas_1401",
+        "ocode": "au_nem_tas_cthlwf",
         "code": "CTHLWF1",
         "region": "TAS1",
         "status": "operating",
@@ -8086,7 +8086,7 @@
     },
     {
         "name": "Cethana",
-        "ocode": "au_nem_tas_1147",
+        "ocode": "au_nem_tas_cethana",
         "code": "CETHANA",
         "region": "TAS1",
         "status": "operating",
@@ -8101,7 +8101,7 @@
     },
     {
         "name": "Cluny",
-        "ocode": "au_nem_tas_1148",
+        "ocode": "au_nem_tas_cluny",
         "code": "CLUNY",
         "region": "TAS1",
         "status": "operating",
@@ -8116,7 +8116,7 @@
     },
     {
         "name": "Devils Gate",
-        "ocode": "au_nem_tas_1149",
+        "ocode": "au_nem_tas_devilsg",
         "code": "DEVILS_G",
         "region": "TAS1",
         "status": "operating",
@@ -8131,7 +8131,7 @@
     },
     {
         "name": "Fisher",
-        "ocode": "au_nem_tas_1150",
+        "ocode": "au_nem_tas_fisher",
         "code": "FISHER",
         "region": "TAS1",
         "status": "operating",
@@ -8146,7 +8146,7 @@
     },
     {
         "name": "George Town",
-        "ocode": "au_nem_tas_1302",
+        "ocode": "au_nem_tas_georgtwn",
         "code": "GEORGTN1",
         "region": "TAS1",
         "status": "retired",
@@ -8176,7 +8176,7 @@
     },
     {
         "name": "Gordon",
-        "ocode": "au_nem_tas_1151",
+        "ocode": "au_nem_tas_gordon",
         "code": "GORDON",
         "region": "TAS1",
         "status": "operating",
@@ -8191,7 +8191,7 @@
     },
     {
         "name": "Gordon",
-        "ocode": "au_nem_tas_1151",
+        "ocode": "au_nem_tas_gordon",
         "code": "GOVILLB1",
         "region": "TAS1",
         "status": "operating",
@@ -8206,7 +8206,7 @@
     },
     {
         "name": "Granville Harbour",
-        "ocode": "au_nem_tas_1406",
+        "ocode": "au_nem_tas_granwf",
         "code": "GRANWF1",
         "region": "TAS1",
         "status": "operating",
@@ -8236,7 +8236,7 @@
     },
     {
         "name": "John Butters",
-        "ocode": "au_nem_tas_1152",
+        "ocode": "au_nem_tas_jbutters",
         "code": "JBUTTERS",
         "region": "TAS1",
         "status": "operating",
@@ -8251,7 +8251,7 @@
     },
     {
         "name": "Lake Echo",
-        "ocode": "au_nem_tas_1155",
+        "ocode": "au_nem_tas_lkecho",
         "code": "LK_ECHO",
         "region": "TAS1",
         "status": "operating",
@@ -8281,7 +8281,7 @@
     },
     {
         "name": "Lemonthyme / Wilmot",
-        "ocode": "au_nem_tas_1153",
+        "ocode": "au_nem_tas_lemwil",
         "code": "LEM_WIL",
         "region": "TAS1",
         "status": "operating",
@@ -8296,7 +8296,7 @@
     },
     {
         "name": "Lemonthyme / Wilmot",
-        "ocode": "au_nem_tas_1153",
+        "ocode": "au_nem_tas_lemwil",
         "code": "LEM_WIL",
         "region": "TAS1",
         "status": "operating",
@@ -8311,7 +8311,7 @@
     },
     {
         "name": "Lemonthyme / Wilmot",
-        "ocode": "au_nem_tas_1153",
+        "ocode": "au_nem_tas_lemwil",
         "code": "LEM_WIL",
         "region": "TAS1",
         "status": "operating",
@@ -8326,7 +8326,7 @@
     },
     {
         "name": "Lemonthyme / Wilmot",
-        "ocode": "au_nem_tas_1153",
+        "ocode": "au_nem_tas_lemwil",
         "code": "LEM_WIL",
         "region": "TAS1",
         "status": "operating",
@@ -8356,7 +8356,7 @@
     },
     {
         "name": "Mackintosh",
-        "ocode": "au_nem_tas_1156",
+        "ocode": "au_nem_tas_mackntsh",
         "code": "MACKNTSH",
         "region": "TAS1",
         "status": "operating",
@@ -8371,7 +8371,7 @@
     },
     {
         "name": "Meadowbank",
-        "ocode": "au_nem_tas_1157",
+        "ocode": "au_nem_tas_meadowbk",
         "code": "MEADOWBK",
         "region": "TAS1",
         "status": "operating",
@@ -8386,7 +8386,7 @@
     },
     {
         "name": "Meadowbank",
-        "ocode": "au_nem_tas_1157",
+        "ocode": "au_nem_tas_meadowbk",
         "code": "MEADOWB2",
         "region": "TAS1",
         "status": "retired",
@@ -8401,7 +8401,7 @@
     },
     {
         "name": "Midlands",
-        "ocode": "au_nem_tas_1285",
+        "ocode": "au_nem_tas_midldps",
         "code": "0NMPS_1",
         "region": "TAS1",
         "status": "operating",
@@ -8416,7 +8416,7 @@
     },
     {
         "name": "Midlands",
-        "ocode": "au_nem_tas_1285",
+        "ocode": "au_nem_tas_midldps",
         "code": "0NMIHY_1",
         "region": "TAS1",
         "status": "operating",
@@ -8431,7 +8431,7 @@
     },
     {
         "name": "Midlands",
-        "ocode": "au_nem_tas_1285",
+        "ocode": "au_nem_tas_midldps",
         "code": "MIDLDPS1",
         "region": "TAS1",
         "status": "operating",
@@ -8446,7 +8446,7 @@
     },
     {
         "name": "Musselroe",
-        "ocode": "au_nem_tas_1266",
+        "ocode": "au_nem_tas_musselro",
         "code": "MUSSELR1",
         "region": "TAS1",
         "status": "operating",
@@ -8461,7 +8461,7 @@
     },
     {
         "name": "Paloona",
-        "ocode": "au_nem_tas_1158",
+        "ocode": "au_nem_tas_paloona",
         "code": "PALOONA",
         "region": "TAS1",
         "status": "operating",
@@ -8476,7 +8476,7 @@
     },
     {
         "name": "Poatina",
-        "ocode": "au_nem_tas_1159",
+        "ocode": "au_nem_tas_ptina110",
         "code": "POAT220",
         "region": "TAS1",
         "status": "operating",
@@ -8491,7 +8491,7 @@
     },
     {
         "name": "Poatina",
-        "ocode": "au_nem_tas_1159",
+        "ocode": "au_nem_tas_ptina110",
         "code": "POAT110",
         "region": "TAS1",
         "status": "operating",
@@ -8506,7 +8506,7 @@
     },
     {
         "name": "Poatina",
-        "ocode": "au_nem_tas_1159",
+        "ocode": "au_nem_tas_ptina110",
         "code": "PO110NL1",
         "region": "TAS1",
         "status": "operating",
@@ -8521,7 +8521,7 @@
     },
     {
         "name": "Port Latta Generator",
-        "ocode": "au_nem_tas_1303",
+        "ocode": "au_nem_tas_portlatt",
         "code": "PORTLAT1",
         "region": "TAS1",
         "status": "retired",
@@ -8536,7 +8536,7 @@
     },
     {
         "name": "Que River",
-        "ocode": "au_nem_tas_1304",
+        "ocode": "au_nem_tas_queriver",
         "code": "QUERIVE1",
         "region": "TAS1",
         "status": "retired",
@@ -8551,7 +8551,7 @@
     },
     {
         "name": "Reece",
-        "ocode": "au_nem_tas_1161",
+        "ocode": "au_nem_tas_reece",
         "code": "REECE2",
         "region": "TAS1",
         "status": "operating",
@@ -8566,7 +8566,7 @@
     },
     {
         "name": "Reece",
-        "ocode": "au_nem_tas_1161",
+        "ocode": "au_nem_tas_reece",
         "code": "REECE1",
         "region": "TAS1",
         "status": "operating",
@@ -8581,7 +8581,7 @@
     },
     {
         "name": "Remount",
-        "ocode": "au_nem_tas_1187",
+        "ocode": "au_nem_tas_remount",
         "code": "REMOUNT",
         "region": "TAS1",
         "status": "operating",
@@ -8596,7 +8596,7 @@
     },
     {
         "name": "Repulse",
-        "ocode": "au_nem_tas_1162",
+        "ocode": "au_nem_tas_repulse",
         "code": "REPULSE",
         "region": "TAS1",
         "status": "operating",
@@ -8611,7 +8611,7 @@
     },
     {
         "name": "Rowallan",
-        "ocode": "au_nem_tas_1178",
+        "ocode": "au_nem_tas_rowallan",
         "code": "ROWALLAN",
         "region": "TAS1",
         "status": "operating",
@@ -8641,7 +8641,7 @@
     },
     {
         "name": "Tamar Valley",
-        "ocode": "au_nem_tas_1219",
+        "ocode": "au_nem_tas_tvccps",
         "code": "TVCC201",
         "region": "TAS1",
         "status": "operating",
@@ -8656,7 +8656,7 @@
     },
     {
         "name": "Tamar Valley",
-        "ocode": "au_nem_tas_1219",
+        "ocode": "au_nem_tas_tvccps",
         "code": "TVCC201",
         "region": "TAS1",
         "status": "operating",
@@ -8671,7 +8671,7 @@
     },
     {
         "name": "Tarraleah",
-        "ocode": "au_nem_tas_1163",
+        "ocode": "au_nem_tas_tarralea",
         "code": "TARRALEA",
         "region": "TAS1",
         "status": "operating",
@@ -8701,7 +8701,7 @@
     },
     {
         "name": "Trevallyn",
-        "ocode": "au_nem_tas_1164",
+        "ocode": "au_nem_tas_trevalln",
         "code": "TREVALLN",
         "region": "TAS1",
         "status": "operating",
@@ -8716,7 +8716,7 @@
     },
     {
         "name": "Trevallyn",
-        "ocode": "au_nem_tas_1164",
+        "ocode": "au_nem_tas_trevalln",
         "code": "TREVALLN",
         "region": "TAS1",
         "status": "operating",
@@ -8731,7 +8731,7 @@
     },
     {
         "name": "Trevallyn",
-        "ocode": "au_nem_tas_1164",
+        "ocode": "au_nem_tas_trevalln",
         "code": "TREVALLN",
         "region": "TAS1",
         "status": "operating",
@@ -8746,7 +8746,7 @@
     },
     {
         "name": "Trevallyn",
-        "ocode": "au_nem_tas_1164",
+        "ocode": "au_nem_tas_trevalln",
         "code": "TREVALLN",
         "region": "TAS1",
         "status": "operating",
@@ -8761,7 +8761,7 @@
     },
     {
         "name": "Tribute",
-        "ocode": "au_nem_tas_1165",
+        "ocode": "au_nem_tas_tribute",
         "code": "TRIBUTE",
         "region": "TAS1",
         "status": "operating",
@@ -8776,7 +8776,7 @@
     },
     {
         "name": "Tribute",
-        "ocode": "au_nem_tas_1165",
+        "ocode": "au_nem_tas_tribute",
         "code": "TRIBNL1",
         "region": "TAS1",
         "status": "operating",
@@ -8791,7 +8791,7 @@
     },
     {
         "name": "Tungatinah",
-        "ocode": "au_nem_tas_1166",
+        "ocode": "au_nem_tas_tungatin",
         "code": "TUNGATIN",
         "region": "TAS1",
         "status": "operating",
@@ -8806,7 +8806,7 @@
     },
     {
         "name": "Woolnorth Studland Bay / Bluff Point",
-        "ocode": "au_nem_tas_1144",
+        "ocode": "au_nem_tas_woolnth1",
         "code": "WOOLNTH1",
         "region": "TAS1",
         "status": "operating",
@@ -8821,7 +8821,7 @@
     },
     {
         "name": "Woolnorth Studland Bay / Bluff Point",
-        "ocode": "au_nem_tas_1144",
+        "ocode": "au_nem_tas_woolnth1",
         "code": "WOOLNTH1",
         "region": "TAS1",
         "status": "operating",
@@ -8836,7 +8836,7 @@
     },
     {
         "name": "Woolnorth Studland Bay / Bluff Point",
-        "ocode": "au_nem_tas_1144",
+        "ocode": "au_nem_tas_woolnth1",
         "code": "WOOLNTH1",
         "region": "TAS1",
         "status": "operating",
@@ -8866,7 +8866,7 @@
     },
     {
         "name": "Angelsea",
-        "ocode": "au_nem_vic_1034",
+        "ocode": "au_nem_vic_aps",
         "code": "APS",
         "region": "VIC1",
         "status": "retired",
@@ -8881,7 +8881,7 @@
     },
     {
         "name": "Ararat",
-        "ocode": "au_nem_vic_1307",
+        "ocode": "au_nem_vic_arwf",
         "code": "ARWF1",
         "region": "VIC1",
         "status": "operating",
@@ -8896,7 +8896,7 @@
     },
     {
         "name": "Ararat",
-        "ocode": "au_nem_vic_1307",
+        "ocode": "au_nem_vic_arwf",
         "code": "ARWF1",
         "region": "VIC1",
         "status": "operating",
@@ -8911,7 +8911,7 @@
     },
     {
         "name": "Bairnsdale",
-        "ocode": "au_nem_vic_1098",
+        "ocode": "au_nem_vic_deibdl",
         "code": "BDL02",
         "region": "VIC1",
         "status": "operating",
@@ -8926,7 +8926,7 @@
     },
     {
         "name": "Bairnsdale",
-        "ocode": "au_nem_vic_1098",
+        "ocode": "au_nem_vic_deibdl",
         "code": "BDL01",
         "region": "VIC1",
         "status": "operating",
@@ -8941,7 +8941,7 @@
     },
     {
         "name": "Bald Hills",
-        "ocode": "au_nem_vic_1295",
+        "ocode": "au_nem_vic_bhwf",
         "code": "BALDHWF1",
         "region": "VIC1",
         "status": "operating",
@@ -8971,7 +8971,7 @@
     },
     {
         "name": "Ballarat Base Hospital",
-        "ocode": "au_nem_vic_1210",
+        "ocode": "au_nem_vic_bbasehos",
         "code": "BBASEHOS",
         "region": "VIC1",
         "status": "operating",
@@ -8986,7 +8986,7 @@
     },
     {
         "name": "Ballarat Base Hospital",
-        "ocode": "au_nem_vic_1210",
+        "ocode": "au_nem_vic_bbasehos",
         "code": "BBASEHOS",
         "region": "VIC1",
         "status": "operating",
@@ -9001,7 +9001,7 @@
     },
     {
         "name": "Ballarat Energy",
-        "ocode": "au_nem_vic_1366",
+        "ocode": "au_nem_vic_balbess",
         "code": "BALBG1",
         "region": "VIC1",
         "status": "operating",
@@ -9016,7 +9016,7 @@
     },
     {
         "name": "Ballarat Energy",
-        "ocode": "au_nem_vic_1366",
+        "ocode": "au_nem_vic_balbess",
         "code": "BALBL1",
         "region": "VIC1",
         "status": "operating",
@@ -9031,7 +9031,7 @@
     },
     {
         "name": "Banimboola",
-        "ocode": "au_nem_vic_1173",
+        "ocode": "au_nem_vic_baps",
         "code": "BAPS",
         "region": "VIC1",
         "status": "operating",
@@ -9046,7 +9046,7 @@
     },
     {
         "name": "Banimboola",
-        "ocode": "au_nem_vic_1173",
+        "ocode": "au_nem_vic_baps",
         "code": "BAPS",
         "region": "VIC1",
         "status": "operating",
@@ -9061,7 +9061,7 @@
     },
     {
         "name": "Banimboola",
-        "ocode": "au_nem_vic_1173",
+        "ocode": "au_nem_vic_baps",
         "code": "BAPS",
         "region": "VIC1",
         "status": "operating",
@@ -9076,7 +9076,7 @@
     },
     {
         "name": "Bannerton",
-        "ocode": "au_nem_vic_1351",
+        "ocode": "au_nem_vic_bannsp",
         "code": "BANN1",
         "region": "VIC1",
         "status": "operating",
@@ -9136,7 +9136,7 @@
     },
     {
         "name": "Berwick",
-        "ocode": "au_nem_vic_1231",
+        "ocode": "au_nem_vic_berwick",
         "code": "BERWICK",
         "region": "VIC1",
         "status": "operating",
@@ -9151,7 +9151,7 @@
     },
     {
         "name": "Berwick",
-        "ocode": "au_nem_vic_1231",
+        "ocode": "au_nem_vic_berwick",
         "code": "0NBPP_1",
         "region": "VIC1",
         "status": "operating",
@@ -9166,7 +9166,7 @@
     },
     {
         "name": "Berwick",
-        "ocode": "au_nem_vic_1231",
+        "ocode": "au_nem_vic_berwick",
         "code": "0NBER_4",
         "region": "VIC1",
         "status": "operating",
@@ -9181,7 +9181,7 @@
     },
     {
         "name": "Berwick",
-        "ocode": "au_nem_vic_1231",
+        "ocode": "au_nem_vic_berwick",
         "code": "0NBER_5",
         "region": "VIC1",
         "status": "operating",
@@ -9211,7 +9211,7 @@
     },
     {
         "name": "Bogong / Mackay",
-        "ocode": "au_nem_vic_1040",
+        "ocode": "au_nem_vic_mckay",
         "code": "MCKAY1",
         "region": "VIC1",
         "status": "operating",
@@ -9226,7 +9226,7 @@
     },
     {
         "name": "Bogong / Mackay",
-        "ocode": "au_nem_vic_1040",
+        "ocode": "au_nem_vic_mckay",
         "code": "MCKAY2",
         "region": "VIC1",
         "status": "retired",
@@ -9271,7 +9271,7 @@
     },
     {
         "name": "Broadmeadows",
-        "ocode": "au_nem_vic_1232",
+        "ocode": "au_nem_vic_broadmdw",
         "code": "BROADMDW",
         "region": "VIC1",
         "status": "operating",
@@ -9286,7 +9286,7 @@
     },
     {
         "name": "Brooklyn U13",
-        "ocode": "au_nem_vic_1113",
+        "ocode": "au_nem_vic_brooklyn",
         "code": "BROOKLYN",
         "region": "VIC1",
         "status": "operating",
@@ -9301,7 +9301,7 @@
     },
     {
         "name": "Brooklyn U13",
-        "ocode": "au_nem_vic_1113",
+        "ocode": "au_nem_vic_brooklyn",
         "code": "BROOKLYN",
         "region": "VIC1",
         "status": "operating",
@@ -9316,7 +9316,7 @@
     },
     {
         "name": "Brooklyn U13",
-        "ocode": "au_nem_vic_1113",
+        "ocode": "au_nem_vic_brooklyn",
         "code": "BROOKLYN",
         "region": "VIC1",
         "status": "operating",
@@ -9331,7 +9331,7 @@
     },
     {
         "name": "Bulgana Green",
-        "ocode": "au_nem_vic_1392",
+        "ocode": "au_nem_vic_bulgana",
         "code": "BULGANA1",
         "region": "VIC1",
         "status": "operating",
@@ -9346,7 +9346,7 @@
     },
     {
         "name": "Bulgana Green",
-        "ocode": "au_nem_vic_1392",
+        "ocode": "au_nem_vic_bulgana",
         "code": "0NBGPH_1",
         "region": "VIC1",
         "status": "committed",
@@ -9421,7 +9421,7 @@
     },
     {
         "name": "Challicum Hills",
-        "ocode": "au_nem_vic_1175",
+        "ocode": "au_nem_vic_challwf",
         "code": "CHALLHWF",
         "region": "VIC1",
         "status": "operating",
@@ -9436,7 +9436,7 @@
     },
     {
         "name": "Chepstowe",
-        "ocode": "au_nem_vic_1296",
+        "ocode": "au_nem_vic_chpstwf",
         "code": "CHPSTWF1",
         "region": "VIC1",
         "status": "operating",
@@ -9451,7 +9451,7 @@
     },
     {
         "name": "Cherry Tree",
-        "ocode": "au_nem_vic_1407",
+        "ocode": "au_nem_vic_chytwf",
         "code": "CHYTWF1",
         "region": "VIC1",
         "status": "operating",
@@ -9466,7 +9466,7 @@
     },
     {
         "name": "Clayton",
-        "ocode": "au_nem_vic_1233",
+        "ocode": "au_nem_vic_clayton",
         "code": "CLAYTON",
         "region": "VIC1",
         "status": "operating",
@@ -9481,7 +9481,7 @@
     },
     {
         "name": "Clover",
-        "ocode": "au_nem_vic_1041",
+        "ocode": "au_nem_vic_clover",
         "code": "CLOVER",
         "region": "VIC1",
         "status": "operating",
@@ -9496,7 +9496,7 @@
     },
     {
         "name": "Codrington",
-        "ocode": "au_nem_vic_1223",
+        "ocode": "au_nem_vic_codrgton",
         "code": "CODRNGTON",
         "region": "VIC1",
         "status": "operating",
@@ -9511,7 +9511,7 @@
     },
     {
         "name": "Coonoer Bridge",
-        "ocode": "au_nem_vic_1300",
+        "ocode": "au_nem_vic_cbwf",
         "code": "CBWF1",
         "region": "VIC1",
         "status": "operating",
@@ -9526,7 +9526,7 @@
     },
     {
         "name": "Corio",
-        "ocode": "au_nem_vic_1275",
+        "ocode": "au_nem_vic_corio",
         "code": "CORIO1",
         "region": "VIC1",
         "status": "operating",
@@ -9541,7 +9541,7 @@
     },
     {
         "name": "Crowlands",
-        "ocode": "au_nem_vic_1368",
+        "ocode": "au_nem_vic_crowlwf",
         "code": "CROWLWF1",
         "region": "VIC1",
         "status": "operating",
@@ -9556,7 +9556,7 @@
     },
     {
         "name": "Dartmouth",
-        "ocode": "au_nem_vic_1038",
+        "ocode": "au_nem_vic_dartm",
         "code": "DARTM1",
         "region": "VIC1",
         "status": "operating",
@@ -9571,7 +9571,7 @@
     },
     {
         "name": "Dundonnell",
-        "ocode": "au_nem_vic_1397",
+        "ocode": "au_nem_vic_dundwf",
         "code": "DUNDWF3",
         "region": "VIC1",
         "status": "operating",
@@ -9586,7 +9586,7 @@
     },
     {
         "name": "Dundonnell",
-        "ocode": "au_nem_vic_1397",
+        "ocode": "au_nem_vic_dundwf",
         "code": "DUNDWF1",
         "region": "VIC1",
         "status": "operating",
@@ -9601,7 +9601,7 @@
     },
     {
         "name": "Dundonnell",
-        "ocode": "au_nem_vic_1397",
+        "ocode": "au_nem_vic_dundwf",
         "code": "DUNDWF2",
         "region": "VIC1",
         "status": "operating",
@@ -9616,7 +9616,7 @@
     },
     {
         "name": "Eildon",
-        "ocode": "au_nem_vic_1039",
+        "ocode": "au_nem_vic_eildon",
         "code": "EILDON3",
         "region": "VIC1",
         "status": "operating",
@@ -9631,7 +9631,7 @@
     },
     {
         "name": "Eildon",
-        "ocode": "au_nem_vic_1039",
+        "ocode": "au_nem_vic_eildon",
         "code": "EILDON2",
         "region": "VIC1",
         "status": "operating",
@@ -9646,7 +9646,7 @@
     },
     {
         "name": "Eildon",
-        "ocode": "au_nem_vic_1039",
+        "ocode": "au_nem_vic_eildon",
         "code": "EILDON1",
         "region": "VIC1",
         "status": "operating",
@@ -9661,7 +9661,7 @@
     },
     {
         "name": "Eildon",
-        "ocode": "au_nem_vic_1039",
+        "ocode": "au_nem_vic_eildon",
         "code": "EILDON1",
         "region": "VIC1",
         "status": "operating",
@@ -9676,7 +9676,7 @@
     },
     {
         "name": "Eildon",
-        "ocode": "au_nem_vic_1039",
+        "ocode": "au_nem_vic_eildon",
         "code": "EILDON2",
         "region": "VIC1",
         "status": "operating",
@@ -9691,7 +9691,7 @@
     },
     {
         "name": "Eildon",
-        "ocode": "au_nem_vic_1039",
+        "ocode": "au_nem_vic_eildon",
         "code": "EILDON1",
         "region": "VIC1",
         "status": "operating",
@@ -9706,7 +9706,7 @@
     },
     {
         "name": "Eildon",
-        "ocode": "au_nem_vic_1039",
+        "ocode": "au_nem_vic_eildon",
         "code": "EILDON2",
         "region": "VIC1",
         "status": "operating",
@@ -9721,7 +9721,7 @@
     },
     {
         "name": "Eildon",
-        "ocode": "au_nem_vic_1039",
+        "ocode": "au_nem_vic_eildon",
         "code": "EILDON2",
         "region": "VIC1",
         "status": "operating",
@@ -9736,7 +9736,7 @@
     },
     {
         "name": "Elaine",
-        "ocode": "au_nem_vic_1402",
+        "ocode": "au_nem_vic_elainewf",
         "code": "ELAINWF1",
         "region": "VIC1",
         "status": "operating",
@@ -9781,7 +9781,7 @@
     },
     {
         "name": "Gannawarra",
-        "ocode": "au_nem_vic_1336",
+        "ocode": "au_nem_vic_gannsf",
         "code": "GANNSF1",
         "region": "VIC1",
         "status": "operating",
@@ -9796,7 +9796,7 @@
     },
     {
         "name": "Gannawarra Energy",
-        "ocode": "au_nem_vic_1369",
+        "ocode": "au_nem_vic_gannbess",
         "code": "GANNBL1",
         "region": "VIC1",
         "status": "operating",
@@ -9811,7 +9811,7 @@
     },
     {
         "name": "Gannawarra Energy",
-        "ocode": "au_nem_vic_1369",
+        "ocode": "au_nem_vic_gannbess",
         "code": "GANNBG1",
         "region": "VIC1",
         "status": "operating",
@@ -9826,7 +9826,7 @@
     },
     {
         "name": "Glenmaggie",
-        "ocode": "au_nem_vic_1282",
+        "ocode": "au_nem_vic_glenmagg",
         "code": "GLENMAG1",
         "region": "VIC1",
         "status": "operating",
@@ -9856,7 +9856,7 @@
     },
     {
         "name": "Hallam Road",
-        "ocode": "au_nem_vic_1260",
+        "ocode": "au_nem_vic_halamrd",
         "code": "HALAMRD1",
         "region": "VIC1",
         "status": "operating",
@@ -9871,7 +9871,7 @@
     },
     {
         "name": "Hazelwood",
-        "ocode": "au_nem_vic_1012",
+        "ocode": "au_nem_vic_hazel",
         "code": "HWPS2",
         "region": "VIC1",
         "status": "retired",
@@ -9886,7 +9886,7 @@
     },
     {
         "name": "Hazelwood",
-        "ocode": "au_nem_vic_1012",
+        "ocode": "au_nem_vic_hazel",
         "code": "HWPS3",
         "region": "VIC1",
         "status": "retired",
@@ -9901,7 +9901,7 @@
     },
     {
         "name": "Hazelwood",
-        "ocode": "au_nem_vic_1012",
+        "ocode": "au_nem_vic_hazel",
         "code": "HWPS1",
         "region": "VIC1",
         "status": "retired",
@@ -9916,7 +9916,7 @@
     },
     {
         "name": "Hazelwood",
-        "ocode": "au_nem_vic_1012",
+        "ocode": "au_nem_vic_hazel",
         "code": "HWPS4",
         "region": "VIC1",
         "status": "retired",
@@ -9931,7 +9931,7 @@
     },
     {
         "name": "Hazelwood",
-        "ocode": "au_nem_vic_1012",
+        "ocode": "au_nem_vic_hazel",
         "code": "HWPS6",
         "region": "VIC1",
         "status": "retired",
@@ -9946,7 +9946,7 @@
     },
     {
         "name": "Hazelwood",
-        "ocode": "au_nem_vic_1012",
+        "ocode": "au_nem_vic_hazel",
         "code": "HWPS7",
         "region": "VIC1",
         "status": "retired",
@@ -9961,7 +9961,7 @@
     },
     {
         "name": "Hazelwood",
-        "ocode": "au_nem_vic_1012",
+        "ocode": "au_nem_vic_hazel",
         "code": "HWPS5",
         "region": "VIC1",
         "status": "retired",
@@ -9976,7 +9976,7 @@
     },
     {
         "name": "Hazelwood",
-        "ocode": "au_nem_vic_1012",
+        "ocode": "au_nem_vic_hazel",
         "code": "HWPS8",
         "region": "VIC1",
         "status": "retired",
@@ -9991,7 +9991,7 @@
     },
     {
         "name": "Hepburn Community",
-        "ocode": "au_nem_vic_1255",
+        "ocode": "au_nem_vic_hepwind",
         "code": "HEPWIND1",
         "region": "VIC1",
         "status": "operating",
@@ -10006,7 +10006,7 @@
     },
     {
         "name": "Hume",
-        "ocode": "au_nem_vic_1035",
+        "ocode": "au_nem_vic_humev",
         "code": "HUMEV",
         "region": "VIC1",
         "status": "operating",
@@ -10036,7 +10036,7 @@
     },
     {
         "name": "Jeeralang A",
-        "ocode": "au_nem_vic_1006",
+        "ocode": "au_nem_vic_jeera",
         "code": "JLA04",
         "region": "VIC1",
         "status": "operating",
@@ -10051,7 +10051,7 @@
     },
     {
         "name": "Jeeralang A",
-        "ocode": "au_nem_vic_1006",
+        "ocode": "au_nem_vic_jeera",
         "code": "JLA01",
         "region": "VIC1",
         "status": "operating",
@@ -10066,7 +10066,7 @@
     },
     {
         "name": "Jeeralang A",
-        "ocode": "au_nem_vic_1006",
+        "ocode": "au_nem_vic_jeera",
         "code": "JLA02",
         "region": "VIC1",
         "status": "operating",
@@ -10081,7 +10081,7 @@
     },
     {
         "name": "Jeeralang A",
-        "ocode": "au_nem_vic_1006",
+        "ocode": "au_nem_vic_jeera",
         "code": "JLA03",
         "region": "VIC1",
         "status": "operating",
@@ -10096,7 +10096,7 @@
     },
     {
         "name": "Jeeralang B",
-        "ocode": "au_nem_vic_1007",
+        "ocode": "au_nem_vic_jeerb",
         "code": "JLB02",
         "region": "VIC1",
         "status": "operating",
@@ -10111,7 +10111,7 @@
     },
     {
         "name": "Jeeralang B",
-        "ocode": "au_nem_vic_1007",
+        "ocode": "au_nem_vic_jeerb",
         "code": "JLB01",
         "region": "VIC1",
         "status": "operating",
@@ -10126,7 +10126,7 @@
     },
     {
         "name": "Jeeralang B",
-        "ocode": "au_nem_vic_1007",
+        "ocode": "au_nem_vic_jeerb",
         "code": "JLB03",
         "region": "VIC1",
         "status": "operating",
@@ -10156,7 +10156,7 @@
     },
     {
         "name": "Karadoc",
-        "ocode": "au_nem_vic_1364",
+        "ocode": "au_nem_vic_karsf",
         "code": "KARSF1",
         "region": "VIC1",
         "status": "operating",
@@ -10171,7 +10171,7 @@
     },
     {
         "name": "Kiata",
-        "ocode": "au_nem_vic_1323",
+        "ocode": "au_nem_vic_kiatawf",
         "code": "KIATAWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10186,7 +10186,7 @@
     },
     {
         "name": "Kiata",
-        "ocode": "au_nem_vic_1323",
+        "ocode": "au_nem_vic_kiatawf",
         "code": "KiataWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10201,7 +10201,7 @@
     },
     {
         "name": "Laverton North",
-        "ocode": "au_nem_vic_1177",
+        "ocode": "au_nem_vic_lngs",
         "code": "LNGS1",
         "region": "VIC1",
         "status": "operating",
@@ -10216,7 +10216,7 @@
     },
     {
         "name": "Laverton North",
-        "ocode": "au_nem_vic_1177",
+        "ocode": "au_nem_vic_lngs",
         "code": "LNGS2",
         "region": "VIC1",
         "status": "operating",
@@ -10231,7 +10231,7 @@
     },
     {
         "name": "Longford",
-        "ocode": "au_nem_vic_1115",
+        "ocode": "au_nem_vic_longford",
         "code": "LONGFORD",
         "region": "VIC1",
         "status": "operating",
@@ -10246,7 +10246,7 @@
     },
     {
         "name": "Loy Yang A",
-        "ocode": "au_nem_vic_1013",
+        "ocode": "au_nem_vic_loyyanga",
         "code": "LYA4",
         "region": "VIC1",
         "status": "operating",
@@ -10261,7 +10261,7 @@
     },
     {
         "name": "Loy Yang A",
-        "ocode": "au_nem_vic_1013",
+        "ocode": "au_nem_vic_loyyanga",
         "code": "LYA3",
         "region": "VIC1",
         "status": "operating",
@@ -10276,7 +10276,7 @@
     },
     {
         "name": "Loy Yang A",
-        "ocode": "au_nem_vic_1013",
+        "ocode": "au_nem_vic_loyyanga",
         "code": "LYA2",
         "region": "VIC1",
         "status": "operating",
@@ -10291,7 +10291,7 @@
     },
     {
         "name": "Loy Yang A",
-        "ocode": "au_nem_vic_1013",
+        "ocode": "au_nem_vic_loyyanga",
         "code": "LYA1",
         "region": "VIC1",
         "status": "operating",
@@ -10306,7 +10306,7 @@
     },
     {
         "name": "Loy Yang B",
-        "ocode": "au_nem_vic_1009",
+        "ocode": "au_nem_vic_loyyb",
         "code": "LOYYB1",
         "region": "VIC1",
         "status": "operating",
@@ -10321,7 +10321,7 @@
     },
     {
         "name": "Loy Yang B",
-        "ocode": "au_nem_vic_1009",
+        "ocode": "au_nem_vic_loyyb",
         "code": "LOYYB2",
         "region": "VIC1",
         "status": "operating",
@@ -10336,7 +10336,7 @@
     },
     {
         "name": "Macarthur",
-        "ocode": "au_nem_vic_1263",
+        "ocode": "au_nem_vic_macarth",
         "code": "MACARTH1",
         "region": "VIC1",
         "status": "operating",
@@ -10351,7 +10351,7 @@
     },
     {
         "name": "Maroona",
-        "ocode": "au_nem_vic_1330",
+        "ocode": "au_nem_vic_maroowf1",
         "code": "MAROOWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10411,7 +10411,7 @@
     },
     {
         "name": "Mornington",
-        "ocode": "au_nem_vic_1124",
+        "ocode": "au_nem_vic_mornw",
         "code": "MORNW",
         "region": "VIC1",
         "status": "operating",
@@ -10426,7 +10426,7 @@
     },
     {
         "name": "Mortlake",
-        "ocode": "au_nem_vic_1257",
+        "ocode": "au_nem_vic_mortlk",
         "code": "MORTLK12",
         "region": "VIC1",
         "status": "operating",
@@ -10441,7 +10441,7 @@
     },
     {
         "name": "Mortlake",
-        "ocode": "au_nem_vic_1257",
+        "ocode": "au_nem_vic_mortlk",
         "code": "MORTLK11",
         "region": "VIC1",
         "status": "operating",
@@ -10456,7 +10456,7 @@
     },
     {
         "name": "Mortons Lane",
-        "ocode": "au_nem_vic_1265",
+        "ocode": "au_nem_vic_mlwf",
         "code": "MLWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10471,7 +10471,7 @@
     },
     {
         "name": "Morwell",
-        "ocode": "au_nem_vic_1010",
+        "ocode": "au_nem_vic_energyb",
         "code": "MOR1",
         "region": "VIC1",
         "status": "retired",
@@ -10486,7 +10486,7 @@
     },
     {
         "name": "Morwell",
-        "ocode": "au_nem_vic_1010",
+        "ocode": "au_nem_vic_energyb",
         "code": "MOR2",
         "region": "VIC1",
         "status": "retired",
@@ -10501,7 +10501,7 @@
     },
     {
         "name": "Morwell",
-        "ocode": "au_nem_vic_1010",
+        "ocode": "au_nem_vic_energyb",
         "code": "MOR3",
         "region": "VIC1",
         "status": "retired",
@@ -10531,7 +10531,7 @@
     },
     {
         "name": "Mt Gellibrand",
-        "ocode": "au_nem_vic_1346",
+        "ocode": "au_nem_vic_mtgelwf",
         "code": "MTGELWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10546,7 +10546,7 @@
     },
     {
         "name": "Mt Gellibrand",
-        "ocode": "au_nem_vic_1346",
+        "ocode": "au_nem_vic_mtgelwf",
         "code": "MTGELWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10561,7 +10561,7 @@
     },
     {
         "name": "Mt Gellibrand",
-        "ocode": "au_nem_vic_1346",
+        "ocode": "au_nem_vic_mtgelwf",
         "code": "MTGELWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10576,7 +10576,7 @@
     },
     {
         "name": "Mt Gellibrand",
-        "ocode": "au_nem_vic_1346",
+        "ocode": "au_nem_vic_mtgelwf",
         "code": "MTGELWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10591,7 +10591,7 @@
     },
     {
         "name": "Mt Gellibrand",
-        "ocode": "au_nem_vic_1346",
+        "ocode": "au_nem_vic_mtgelwf",
         "code": "MTGELWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10606,7 +10606,7 @@
     },
     {
         "name": "Mt Gellibrand",
-        "ocode": "au_nem_vic_1346",
+        "ocode": "au_nem_vic_mtgelwf",
         "code": "MTGELWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10621,7 +10621,7 @@
     },
     {
         "name": "Mt Mercer",
-        "ocode": "au_nem_vic_1280",
+        "ocode": "au_nem_vic_mtmercer",
         "code": "MERCER01",
         "region": "VIC1",
         "status": "operating",
@@ -10636,7 +10636,7 @@
     },
     {
         "name": "Murra Warra",
-        "ocode": "au_nem_vic_1378",
+        "ocode": "au_nem_vic_muwawf",
         "code": "MUWAWF1",
         "region": "VIC1",
         "status": "operating",
@@ -10651,7 +10651,7 @@
     },
     {
         "name": "Murray",
-        "ocode": "au_nem_vic_1101",
+        "ocode": "au_nem_vic_murray",
         "code": "MURRAY",
         "region": "VIC1",
         "status": "operating",
@@ -10666,7 +10666,7 @@
     },
     {
         "name": "Murray",
-        "ocode": "au_nem_vic_1101",
+        "ocode": "au_nem_vic_murray",
         "code": "MURRAY",
         "region": "VIC1",
         "status": "operating",
@@ -10696,7 +10696,7 @@
     },
     {
         "name": "Newport",
-        "ocode": "au_nem_vic_1008",
+        "ocode": "au_nem_vic_newport",
         "code": "NPS",
         "region": "VIC1",
         "status": "operating",
@@ -10711,7 +10711,7 @@
     },
     {
         "name": "Numurkah",
-        "ocode": "au_nem_vic_1380",
+        "ocode": "au_nem_vic_numurksf",
         "code": "NUMURSF2",
         "region": "VIC1",
         "status": "operating",
@@ -10726,7 +10726,7 @@
     },
     {
         "name": "Numurkah",
-        "ocode": "au_nem_vic_1380",
+        "ocode": "au_nem_vic_numurksf",
         "code": "NUMURSF1",
         "region": "VIC1",
         "status": "operating",
@@ -10741,7 +10741,7 @@
     },
     {
         "name": "Oaklands Hill",
-        "ocode": "au_nem_vic_1258",
+        "ocode": "au_nem_vic_oakland",
         "code": "OAKLAND1",
         "region": "VIC1",
         "status": "operating",
@@ -10756,7 +10756,7 @@
     },
     {
         "name": "Portland",
-        "ocode": "au_nem_vic_1199",
+        "ocode": "au_nem_vic_portwf",
         "code": "0NPOR_1",
         "region": "VIC1",
         "status": "operating",
@@ -10771,7 +10771,7 @@
     },
     {
         "name": "Portland",
-        "ocode": "au_nem_vic_1199",
+        "ocode": "au_nem_vic_portwf",
         "code": "0NPWF_1",
         "region": "VIC1",
         "status": "operating",
@@ -10786,7 +10786,7 @@
     },
     {
         "name": "Portland",
-        "ocode": "au_nem_vic_1199",
+        "ocode": "au_nem_vic_portwf",
         "code": "PORTWF",
         "region": "VIC1",
         "status": "operating",
@@ -10816,7 +10816,7 @@
     },
     {
         "name": "Rubicon Mountain",
-        "ocode": "au_nem_vic_1043",
+        "ocode": "au_nem_vic_rubicon",
         "code": "RUBICON",
         "region": "VIC1",
         "status": "operating",
@@ -10831,7 +10831,7 @@
     },
     {
         "name": "Rubicon Mountain",
-        "ocode": "au_nem_vic_1043",
+        "ocode": "au_nem_vic_rubicon",
         "code": "RUBICON",
         "region": "VIC1",
         "status": "operating",
@@ -10846,7 +10846,7 @@
     },
     {
         "name": "Rubicon Mountain",
-        "ocode": "au_nem_vic_1043",
+        "ocode": "au_nem_vic_rubicon",
         "code": "RUBICON",
         "region": "VIC1",
         "status": "operating",
@@ -10861,7 +10861,7 @@
     },
     {
         "name": "Rubicon Mountain",
-        "ocode": "au_nem_vic_1043",
+        "ocode": "au_nem_vic_rubicon",
         "code": "RUBICON",
         "region": "VIC1",
         "status": "operating",
@@ -10906,7 +10906,7 @@
     },
     {
         "name": "Salt Creek",
-        "ocode": "au_nem_vic_1344",
+        "ocode": "au_nem_vic_saltcrk",
         "code": "SALTCRK1",
         "region": "VIC1",
         "status": "operating",
@@ -10951,7 +10951,7 @@
     },
     {
         "name": "Shepparton Facility",
-        "ocode": "au_nem_vic_1209",
+        "ocode": "au_nem_vic_shep1",
         "code": "SHEP1",
         "region": "VIC1",
         "status": "operating",
@@ -10966,7 +10966,7 @@
     },
     {
         "name": "Somerton",
-        "ocode": "au_nem_vic_1108",
+        "ocode": "au_nem_vic_aglsom",
         "code": "AGLSOM",
         "region": "VIC1",
         "status": "operating",
@@ -10981,7 +10981,7 @@
     },
     {
         "name": "South East Water Halllam",
-        "ocode": "au_nem_vic_1207",
+        "ocode": "au_nem_vic_hlmsew01",
         "code": "HLMSEW01",
         "region": "VIC1",
         "status": "operating",
@@ -10996,7 +10996,7 @@
     },
     {
         "name": "Springvale",
-        "ocode": "au_nem_vic_1279",
+        "ocode": "au_nem_vic_svale",
         "code": "SVALE1",
         "region": "VIC1",
         "status": "operating",
@@ -11041,7 +11041,7 @@
     },
     {
         "name": "Tatura Generator",
-        "ocode": "au_nem_vic_1184",
+        "ocode": "au_nem_vic_tatura",
         "code": "TATURA01",
         "region": "VIC1",
         "status": "operating",
@@ -11056,7 +11056,7 @@
     },
     {
         "name": "Timboon West",
-        "ocode": "au_nem_vic_1363",
+        "ocode": "au_nem_vic_timwest",
         "code": "TIMWEST",
         "region": "VIC1",
         "status": "operating",
@@ -11116,7 +11116,7 @@
     },
     {
         "name": "Toora",
-        "ocode": "au_nem_vic_1112",
+        "ocode": "au_nem_vic_toorawf",
         "code": "TOORAWF",
         "region": "VIC1",
         "status": "operating",
@@ -11131,7 +11131,7 @@
     },
     {
         "name": "Traralgon",
-        "ocode": "au_nem_vic_1274",
+        "ocode": "au_nem_vic_tgnss",
         "code": "TGNSS1",
         "region": "VIC1",
         "status": "operating",
@@ -11221,7 +11221,7 @@
     },
     {
         "name": "Valley Peaking Facility",
-        "ocode": "au_nem_vic_1252",
+        "ocode": "au_nem_vic_vpgs",
         "code": "VPGS1",
         "region": "VIC1",
         "status": "operating",
@@ -11236,7 +11236,7 @@
     },
     {
         "name": "Valley Peaking Facility",
-        "ocode": "au_nem_vic_1252",
+        "ocode": "au_nem_vic_vpgs",
         "code": "VPGS2",
         "region": "VIC1",
         "status": "operating",
@@ -11251,7 +11251,7 @@
     },
     {
         "name": "Valley Peaking Facility",
-        "ocode": "au_nem_vic_1252",
+        "ocode": "au_nem_vic_vpgs",
         "code": "VPGS4",
         "region": "VIC1",
         "status": "operating",
@@ -11266,7 +11266,7 @@
     },
     {
         "name": "Valley Peaking Facility",
-        "ocode": "au_nem_vic_1252",
+        "ocode": "au_nem_vic_vpgs",
         "code": "VPGS6",
         "region": "VIC1",
         "status": "operating",
@@ -11281,7 +11281,7 @@
     },
     {
         "name": "Valley Peaking Facility",
-        "ocode": "au_nem_vic_1252",
+        "ocode": "au_nem_vic_vpgs",
         "code": "VPGS5",
         "region": "VIC1",
         "status": "operating",
@@ -11296,7 +11296,7 @@
     },
     {
         "name": "Valley Peaking Facility",
-        "ocode": "au_nem_vic_1252",
+        "ocode": "au_nem_vic_vpgs",
         "code": "VPGS3",
         "region": "VIC1",
         "status": "operating",
@@ -11341,7 +11341,7 @@
     },
     {
         "name": "Waubra",
-        "ocode": "au_nem_vic_1212",
+        "ocode": "au_nem_vic_waubrawf",
         "code": "WAUBRAWF",
         "region": "VIC1",
         "status": "operating",
@@ -11356,7 +11356,7 @@
     },
     {
         "name": "Wemen",
-        "ocode": "au_nem_vic_1367",
+        "ocode": "au_nem_vic_wemensf1",
         "code": "WEMENSF1",
         "region": "VIC1",
         "status": "operating",
@@ -11371,7 +11371,7 @@
     },
     {
         "name": "West Kiewa",
-        "ocode": "au_nem_vic_1042",
+        "ocode": "au_nem_vic_wkiewa",
         "code": "WKIEWA1",
         "region": "VIC1",
         "status": "operating",
@@ -11386,7 +11386,7 @@
     },
     {
         "name": "West Kiewa",
-        "ocode": "au_nem_vic_1042",
+        "ocode": "au_nem_vic_wkiewa",
         "code": "WKIEWA2",
         "region": "VIC1",
         "status": "operating",
@@ -11401,7 +11401,7 @@
     },
     {
         "name": "William Hovell",
-        "ocode": "au_nem_vic_1284",
+        "ocode": "au_nem_vic_willhov",
         "code": "WILLHOV1",
         "region": "VIC1",
         "status": "operating",
@@ -11416,7 +11416,7 @@
     },
     {
         "name": "Wollert",
-        "ocode": "au_nem_vic_1273",
+        "ocode": "au_nem_vic_wollert",
         "code": "WOLLERT1",
         "region": "VIC1",
         "status": "operating",
@@ -11431,7 +11431,7 @@
     },
     {
         "name": "Wonthaggi",
-        "ocode": "au_nem_vic_1171",
+        "ocode": "au_nem_vic_wonwp",
         "code": "WONWP",
         "region": "VIC1",
         "status": "operating",
@@ -11446,7 +11446,7 @@
     },
     {
         "name": "Wyndham",
-        "ocode": "au_nem_vic_1125",
+        "ocode": "au_nem_vic_wyndw",
         "code": "WYNDW",
         "region": "VIC1",
         "status": "operating",
@@ -11461,7 +11461,7 @@
     },
     {
         "name": "Yallourn W",
-        "ocode": "au_nem_vic_1050",
+        "ocode": "au_nem_vic_yallourn",
         "code": "YWPS1",
         "region": "VIC1",
         "status": "operating",
@@ -11476,7 +11476,7 @@
     },
     {
         "name": "Yallourn W",
-        "ocode": "au_nem_vic_1050",
+        "ocode": "au_nem_vic_yallourn",
         "code": "YWPS2",
         "region": "VIC1",
         "status": "operating",
@@ -11491,7 +11491,7 @@
     },
     {
         "name": "Yallourn W",
-        "ocode": "au_nem_vic_1050",
+        "ocode": "au_nem_vic_yallourn",
         "code": "YWPS4",
         "region": "VIC1",
         "status": "operating",
@@ -11506,7 +11506,7 @@
     },
     {
         "name": "Yallourn W",
-        "ocode": "au_nem_vic_1050",
+        "ocode": "au_nem_vic_yallourn",
         "code": "YWPS3",
         "region": "VIC1",
         "status": "operating",
@@ -11521,7 +11521,7 @@
     },
     {
         "name": "Yaloak South",
-        "ocode": "au_nem_vic_1325",
+        "ocode": "au_nem_vic_yswf",
         "code": "YSWF1",
         "region": "VIC1",
         "status": "operating",
@@ -11536,7 +11536,7 @@
     },
     {
         "name": "Yambuk",
-        "ocode": "au_nem_vic_1169",
+        "ocode": "au_nem_vic_yambuk",
         "code": "YAMBUKWF",
         "region": "VIC1",
         "status": "operating",
@@ -11551,7 +11551,7 @@
     },
     {
         "name": "Yarrawonga",
-        "ocode": "au_nem_vic_1227",
+        "ocode": "au_nem_vic_ywngahyd",
         "code": "YWNGAHYD",
         "region": "VIC1",
         "status": "operating",
@@ -11581,7 +11581,7 @@
     },
     {
         "name": "Yawong",
-        "ocode": "au_nem_vic_1370",
+        "ocode": "au_nem_vic_yawwf",
         "code": "YAWWF1",
         "region": "VIC1",
         "status": "operating",
@@ -11596,7 +11596,7 @@
     },
     {
         "name": "Yendon",
-        "ocode": "au_nem_vic_1386",
+        "ocode": "au_nem_vic_yendonwf",
         "code": "YENDWF1",
         "region": "VIC1",
         "status": "operating",
@@ -11626,7 +11626,7 @@
     },
     {
         "name": "Albany",
-        "ocode": "au_wem_albany_1819",
+        "ocode": "au_wem_albany",
         "code": "ALBANY_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11641,7 +11641,7 @@
     },
     {
         "name": "Alcoa Wagerup",
-        "ocode": "au_wem_alcoa_1823",
+        "ocode": "au_wem_alcoa",
         "code": "ALCOA_WGP",
         "region": "WEM",
         "status": "operating",
@@ -11656,7 +11656,7 @@
     },
     {
         "name": "Ambrisolar",
-        "ocode": "au_wem_ambrisolar_1856",
+        "ocode": "au_wem_ambrisolar",
         "code": "AMBRISOLAR_PV1",
         "region": "WEM",
         "status": "operating",
@@ -11671,7 +11671,7 @@
     },
     {
         "name": "Badgingarra",
-        "ocode": "au_wem_badgingarra_1828",
+        "ocode": "au_wem_badgingarra",
         "code": "BADGINGARRA_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11686,7 +11686,7 @@
     },
     {
         "name": "Bluewaters 1",
-        "ocode": "au_wem_bw1_bluewaters_1848",
+        "ocode": "au_wem_bw1bluewaters",
         "code": "BW1_BLUEWATERS_G2",
         "region": "WEM",
         "status": "operating",
@@ -11701,7 +11701,7 @@
     },
     {
         "name": "Bluewaters 2",
-        "ocode": "au_wem_bw2_bluewaters_1847",
+        "ocode": "au_wem_bw2bluewaters",
         "code": "BW2_BLUEWATERS_G1",
         "region": "WEM",
         "status": "operating",
@@ -11716,7 +11716,7 @@
     },
     {
         "name": "Bremer Bay",
-        "ocode": "au_wem_bremer_bay_1876",
+        "ocode": "au_wem_bremerbay",
         "code": "BREMER_BAY_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11731,7 +11731,7 @@
     },
     {
         "name": "Bridgetown",
-        "ocode": "au_wem_bridgetown_biomass_plant_1871",
+        "ocode": "au_wem_bridgetownbiomassplant",
         "code": "BRIDGETOWN_BIOMASS_PLANT",
         "region": "WEM",
         "status": "operating",
@@ -11746,7 +11746,7 @@
     },
     {
         "name": "Cockburn Ccgt",
-        "ocode": "au_wem_cockburn_1877",
+        "ocode": "au_wem_cockburn",
         "code": "COCKBURN_CCG1",
         "region": "WEM",
         "status": "operating",
@@ -11761,7 +11761,7 @@
     },
     {
         "name": "Collgar",
-        "ocode": "au_wem_investec_collgar_1837",
+        "ocode": "au_wem_investeccollgar",
         "code": "INVESTEC_COLLGAR_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11776,7 +11776,7 @@
     },
     {
         "name": "Collie G1",
-        "ocode": "au_wem_collie_1878",
+        "ocode": "au_wem_collie",
         "code": "COLLIE_G1",
         "region": "WEM",
         "status": "operating",
@@ -11791,7 +11791,7 @@
     },
     {
         "name": "Denmark",
-        "ocode": "au_wem_dcwl_denmark_1839",
+        "ocode": "au_wem_dcwldenmark",
         "code": "DCWL_DENMARK_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11806,7 +11806,7 @@
     },
     {
         "name": "Emu Downs",
-        "ocode": "au_wem_edwfman_1840",
+        "ocode": "au_wem_edwfman",
         "code": "EDWFMAN_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11821,7 +11821,7 @@
     },
     {
         "name": "Goldfields",
-        "ocode": "au_wem_prk_1845",
+        "ocode": "au_wem_prk",
         "code": "PRK_AG",
         "region": "WEM",
         "status": "operating",
@@ -11836,7 +11836,7 @@
     },
     {
         "name": "Grasmere",
-        "ocode": "au_wem_grasmere_1820",
+        "ocode": "au_wem_grasmere",
         "code": "GRASMERE_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11851,7 +11851,7 @@
     },
     {
         "name": "Greenough River",
-        "ocode": "au_wem_greenough_river_1846",
+        "ocode": "au_wem_greenoughriver",
         "code": "GREENOUGH_RIVER_PV1",
         "region": "WEM",
         "status": "operating",
@@ -11866,7 +11866,7 @@
     },
     {
         "name": "Henderson",
-        "ocode": "au_wem_henderson_renewable_1875",
+        "ocode": "au_wem_hendersonrenewable",
         "code": "HENDERSON_RENEWABLE_IG1",
         "region": "WEM",
         "status": "operating",
@@ -11881,7 +11881,7 @@
     },
     {
         "name": "Kalamunda",
-        "ocode": "au_wem_kalamunda_1850",
+        "ocode": "au_wem_kalamunda",
         "code": "KALAMUNDA_SG",
         "region": "WEM",
         "status": "operating",
@@ -11896,7 +11896,7 @@
     },
     {
         "name": "Kalbarri",
-        "ocode": "au_wem_kalbarri_1879",
+        "ocode": "au_wem_kalbarri",
         "code": "KALBARRI_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11911,7 +11911,7 @@
     },
     {
         "name": "Karakin",
-        "ocode": "au_wem_blairfox_karakin_1834",
+        "ocode": "au_wem_blairfoxkarakin",
         "code": "BLAIRFOX_KARAKIN_WF1",
         "region": "WEM",
         "status": "operating",
@@ -11926,7 +11926,7 @@
     },
     {
         "name": "Kemerton 2",
-        "ocode": "au_wem_kemerton_1880",
+        "ocode": "au_wem_kemerton",
         "code": "KEMERTON_GT11",
         "region": "WEM",
         "status": "operating",
@@ -11941,7 +11941,7 @@
     },
     {
         "name": "Kemerton 2",
-        "ocode": "au_wem_kemerton_1880",
+        "ocode": "au_wem_kemerton",
         "code": "KEMERTON_GT12",
         "region": "WEM",
         "status": "operating",
@@ -11956,7 +11956,7 @@
     },
     {
         "name": "Kwinana",
-        "ocode": "au_wem_newgen_kwinana_1858",
+        "ocode": "au_wem_newgenkwinana",
         "code": "NEWGEN_KWINANA_CCG1",
         "region": "WEM",
         "status": "operating",
@@ -11971,7 +11971,7 @@
     },
     {
         "name": "Kwinana",
-        "ocode": "au_wem_kwinana_old_1914",
+        "ocode": "au_wem_kwinanaold",
         "code": "KWINANA_C5",
         "region": "WEM",
         "status": "retired",
@@ -11986,7 +11986,7 @@
     },
     {
         "name": "Kwinana",
-        "ocode": "au_wem_kwinana_old_1914",
+        "ocode": "au_wem_kwinanaold",
         "code": "KWINANA_C6",
         "region": "WEM",
         "status": "retired",
@@ -12001,7 +12001,7 @@
     },
     {
         "name": "Kwinana 1",
-        "ocode": "au_wem_perthenergy_kwinana_1874",
+        "ocode": "au_wem_perthenergykwinana",
         "code": "PERTHENERGY_KWINANA_GT1",
         "region": "WEM",
         "status": "operating",
@@ -12016,7 +12016,7 @@
     },
     {
         "name": "Kwinana 3",
-        "ocode": "au_wem_kwinana_1881",
+        "ocode": "au_wem_kwinana",
         "code": "KWINANA_GT2",
         "region": "WEM",
         "status": "operating",
@@ -12031,7 +12031,7 @@
     },
     {
         "name": "Kwinana 3",
-        "ocode": "au_wem_kwinana_1881",
+        "ocode": "au_wem_kwinana",
         "code": "KWINANA_GT3",
         "region": "WEM",
         "status": "operating",
@@ -12046,7 +12046,7 @@
     },
     {
         "name": "Kwinana Eg1",
-        "ocode": "au_wem_ppp_kcp_1885",
+        "ocode": "au_wem_pppkcp",
         "code": "PPP_KCP_EG1",
         "region": "WEM",
         "status": "operating",
@@ -12061,7 +12061,7 @@
     },
     {
         "name": "Merredin",
-        "ocode": "au_wem_namkkn_merr_1854",
+        "ocode": "au_wem_namkknmerr",
         "code": "NAMKKN_MERR_SG1",
         "region": "WEM",
         "status": "operating",
@@ -12076,7 +12076,7 @@
     },
     {
         "name": "Merredin",
-        "ocode": "au_wem_mersolar_1855",
+        "ocode": "au_wem_mersolar",
         "code": "MERSOLAR_PV1",
         "region": "WEM",
         "status": "operating",
@@ -12091,7 +12091,7 @@
     },
     {
         "name": "Mount Barker",
-        "ocode": "au_wem_skyfrm_mtbarker_1853",
+        "ocode": "au_wem_skyfrmmtbarker",
         "code": "SKYFRM_MTBARKER_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12106,7 +12106,7 @@
     },
     {
         "name": "Muja",
-        "ocode": "au_wem_muja_1882",
+        "ocode": "au_wem_muja",
         "code": "MUJA_G5",
         "region": "WEM",
         "status": "operating",
@@ -12121,7 +12121,7 @@
     },
     {
         "name": "Muja",
-        "ocode": "au_wem_muja_1882",
+        "ocode": "au_wem_muja",
         "code": "MUJA_G6",
         "region": "WEM",
         "status": "operating",
@@ -12136,7 +12136,7 @@
     },
     {
         "name": "Muja",
-        "ocode": "au_wem_muja_1882",
+        "ocode": "au_wem_muja",
         "code": "MUJA_G7",
         "region": "WEM",
         "status": "operating",
@@ -12151,7 +12151,7 @@
     },
     {
         "name": "Muja",
-        "ocode": "au_wem_muja_1882",
+        "ocode": "au_wem_muja",
         "code": "MUJA_G8",
         "region": "WEM",
         "status": "operating",
@@ -12166,7 +12166,7 @@
     },
     {
         "name": "Muja AB",
-        "ocode": "au_wem_muja_ab_1915",
+        "ocode": "au_wem_mujaab",
         "code": "MUJA_M1",
         "region": "WEM",
         "status": "retired",
@@ -12181,7 +12181,7 @@
     },
     {
         "name": "Muja AB",
-        "ocode": "au_wem_muja_ab_1915",
+        "ocode": "au_wem_mujaab",
         "code": "MUJA_M2",
         "region": "WEM",
         "status": "retired",
@@ -12196,7 +12196,7 @@
     },
     {
         "name": "Muja AB",
-        "ocode": "au_wem_muja_ab_1915",
+        "ocode": "au_wem_mujaab",
         "code": "MUJA_M3",
         "region": "WEM",
         "status": "retired",
@@ -12211,7 +12211,7 @@
     },
     {
         "name": "Muja AB",
-        "ocode": "au_wem_muja_ab_1915",
+        "ocode": "au_wem_mujaab",
         "code": "MUJA_M4",
         "region": "WEM",
         "status": "retired",
@@ -12226,7 +12226,7 @@
     },
     {
         "name": "Mumbida",
-        "ocode": "au_wem_mwf_mumbida_1857",
+        "ocode": "au_wem_mwfmumbida",
         "code": "MWF_MUMBIDA_WF1",
         "region": "WEM",
         "status": "operating",
@@ -12241,7 +12241,7 @@
     },
     {
         "name": "Mungarra 3",
-        "ocode": "au_wem_mungarra_1883",
+        "ocode": "au_wem_mungarra",
         "code": "MUNGARRA_GT1",
         "region": "WEM",
         "status": "operating",
@@ -12256,7 +12256,7 @@
     },
     {
         "name": "Mungarra 3",
-        "ocode": "au_wem_mungarra_1883",
+        "ocode": "au_wem_mungarra",
         "code": "MUNGARRA_GT3",
         "region": "WEM",
         "status": "operating",
@@ -12271,7 +12271,7 @@
     },
     {
         "name": "Mungarra 3",
-        "ocode": "au_wem_mungarra_1883",
+        "ocode": "au_wem_mungarra",
         "code": "MUNGARRA_GT2",
         "region": "WEM",
         "status": "operating",
@@ -12286,7 +12286,7 @@
     },
     {
         "name": "Neerabup 1",
-        "ocode": "au_wem_newgen_neerabup_1859",
+        "ocode": "au_wem_newgenneerabup",
         "code": "NEWGEN_NEERABUP_GT1",
         "region": "WEM",
         "status": "operating",
@@ -12301,7 +12301,7 @@
     },
     {
         "name": "Northam",
-        "ocode": "au_wem_northam_sf_1860",
+        "ocode": "au_wem_northamsf",
         "code": "NORTHAM_SF_PV1",
         "region": "WEM",
         "status": "operating",
@@ -12316,7 +12316,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_pinjar_1884",
+        "ocode": "au_wem_pinjar",
         "code": "PINJAR_GT1",
         "region": "WEM",
         "status": "operating",
@@ -12331,7 +12331,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_pinjar_1884",
+        "ocode": "au_wem_pinjar",
         "code": "PINJAR_GT10",
         "region": "WEM",
         "status": "operating",
@@ -12346,7 +12346,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_pinjar_1884",
+        "ocode": "au_wem_pinjar",
         "code": "PINJAR_GT11",
         "region": "WEM",
         "status": "operating",
@@ -12361,7 +12361,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_pinjar_1884",
+        "ocode": "au_wem_pinjar",
         "code": "PINJAR_GT2",
         "region": "WEM",
         "status": "operating",
@@ -12376,7 +12376,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_pinjar_1884",
+        "ocode": "au_wem_pinjar",
         "code": "PINJAR_GT3",
         "region": "WEM",
         "status": "operating",
@@ -12391,7 +12391,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_pinjar_1884",
+        "ocode": "au_wem_pinjar",
         "code": "PINJAR_GT4",
         "region": "WEM",
         "status": "operating",
@@ -12406,7 +12406,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_pinjar_1884",
+        "ocode": "au_wem_pinjar",
         "code": "PINJAR_GT5",
         "region": "WEM",
         "status": "operating",
@@ -12421,7 +12421,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_pinjar_1884",
+        "ocode": "au_wem_pinjar",
         "code": "PINJAR_GT7",
         "region": "WEM",
         "status": "operating",
@@ -12436,7 +12436,7 @@
     },
     {
         "name": "Pinjar",
-        "ocode": "au_wem_pinjar_1884",
+        "ocode": "au_wem_pinjar",
         "code": "PINJAR_GT9",
         "region": "WEM",
         "status": "operating",
@@ -12451,7 +12451,7 @@
     },
     {
         "name": "Pinjarra 2",
-        "ocode": "au_wem_alinta_pnj_1825",
+        "ocode": "au_wem_alintapnj",
         "code": "ALINTA_PNJ_U1",
         "region": "WEM",
         "status": "operating",
@@ -12466,7 +12466,7 @@
     },
     {
         "name": "Pinjarra 2",
-        "ocode": "au_wem_alinta_pnj_1825",
+        "ocode": "au_wem_alintapnj",
         "code": "ALINTA_PNJ_U2",
         "region": "WEM",
         "status": "operating",
@@ -12481,7 +12481,7 @@
     },
     {
         "name": "Red Hill",
-        "ocode": "au_wem_red_1851",
+        "ocode": "au_wem_red",
         "code": "RED_HILL",
         "region": "WEM",
         "status": "operating",
@@ -12556,7 +12556,7 @@
     },
     {
         "name": "South Cardup",
-        "ocode": "au_wem_south_1862",
+        "ocode": "au_wem_south",
         "code": "SOUTH_CARDUP",
         "region": "WEM",
         "status": "operating",
@@ -12571,7 +12571,7 @@
     },
     {
         "name": "Southern Cross",
-        "ocode": "au_wem_sthrncrs_1865",
+        "ocode": "au_wem_sthrncrs",
         "code": "STHRNCRS_EG",
         "region": "WEM",
         "status": "operating",
@@ -12586,7 +12586,7 @@
     },
     {
         "name": "Tamala Park",
-        "ocode": "au_wem_tamala_1852",
+        "ocode": "au_wem_tamala",
         "code": "TAMALA_PARK",
         "region": "WEM",
         "status": "operating",
@@ -12601,7 +12601,7 @@
     },
     {
         "name": "Tesla Geraldton",
-        "ocode": "au_wem_tesla_geraldton_1867",
+        "ocode": "au_wem_teslageraldton",
         "code": "TESLA_GERALDTON_G1",
         "region": "WEM",
         "status": "operating",
@@ -12616,7 +12616,7 @@
     },
     {
         "name": "Tesla Kemerton",
-        "ocode": "au_wem_tesla_kemerton_1868",
+        "ocode": "au_wem_teslakemerton",
         "code": "TESLA_KEMERTON_G1",
         "region": "WEM",
         "status": "operating",
@@ -12631,7 +12631,7 @@
     },
     {
         "name": "Tesla Northam",
-        "ocode": "au_wem_tesla_northam_1870",
+        "ocode": "au_wem_teslanortham",
         "code": "TESLA_NORTHAM_G1",
         "region": "WEM",
         "status": "operating",
@@ -12646,7 +12646,7 @@
     },
     {
         "name": "Tesla Picton",
-        "ocode": "au_wem_tesla_picton_1869",
+        "ocode": "au_wem_teslapicton",
         "code": "TESLA_PICTON_G1",
         "region": "WEM",
         "status": "operating",
@@ -12661,7 +12661,7 @@
     },
     {
         "name": "Tiwest",
-        "ocode": "au_wem_tiwest_1866",
+        "ocode": "au_wem_tiwest",
         "code": "TIWEST_COG1",
         "region": "WEM",
         "status": "operating",
@@ -12676,7 +12676,7 @@
     },
     {
         "name": "Wagerup 2",
-        "ocode": "au_wem_alinta_wgp_1826",
+        "ocode": "au_wem_alintawgp",
         "code": "ALINTA_WGP_GT",
         "region": "WEM",
         "status": "operating",
@@ -12691,7 +12691,7 @@
     },
     {
         "name": "Wagerup 2",
-        "ocode": "au_wem_alinta_wgp_1826",
+        "ocode": "au_wem_alintawgp",
         "code": "ALINTA_WGP_U2",
         "region": "WEM",
         "status": "operating",
@@ -12706,7 +12706,7 @@
     },
     {
         "name": "Walkaway",
-        "ocode": "au_wem_alinta_1827",
+        "ocode": "au_wem_alinta",
         "code": "ALINTA_WWF",
         "region": "WEM",
         "status": "operating",
@@ -12721,7 +12721,7 @@
     },
     {
         "name": "West Hills",
-        "ocode": "au_wem_blairfox_westhills_1835",
+        "ocode": "au_wem_blairfoxwesthills",
         "code": "BLAIRFOX_WESTHILLS_WF3",
         "region": "WEM",
         "status": "operating",
@@ -12736,7 +12736,7 @@
     },
     {
         "name": "West Kalgoorlie Gt3",
-        "ocode": "au_wem_west_kalgoorlie_1889",
+        "ocode": "au_wem_westkalgoorlie",
         "code": "WEST_KALGOORLIE_GT2",
         "region": "WEM",
         "status": "operating",
@@ -12751,7 +12751,7 @@
     },
     {
         "name": "West Kalgoorlie Gt3",
-        "ocode": "au_wem_west_kalgoorlie_1889",
+        "ocode": "au_wem_westkalgoorlie",
         "code": "WEST_KALGOORLIE_GT3",
         "region": "WEM",
         "status": "operating",
@@ -12766,7 +12766,7 @@
     },
     {
         "name": "Wivenhoe",
-        "ocode": "au_nem_qld_1049",
+        "ocode": "au_nem_qld_wivenhoe",
         "code": "PUMP1",
         "region": null,
         "status": "retired",
@@ -12781,7 +12781,7 @@
     },
     {
         "name": "Wivenhoe",
-        "ocode": "au_nem_qld_1049",
+        "ocode": "au_nem_qld_wivenhoe",
         "code": "PUMP2",
         "region": null,
         "status": "retired",

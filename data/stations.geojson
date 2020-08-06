@@ -57,7 +57,7 @@
             },
             "properties": {
                 "oid": "C2E",
-                "ocode": "au_nem_nsw_1230",
+                "ocode": "au_nem_nsw_appin",
                 "station_id": 1230,
                 "station_code": "APPIN",
                 "facility_id": "APPIN",
@@ -101,7 +101,7 @@
             },
             "properties": {
                 "oid": "CAK",
-                "ocode": "au_nem_nsw_1189",
+                "ocode": "au_nem_nsw_awabaref",
                 "station_id": 1189,
                 "station_code": "AWABAREF",
                 "facility_id": "AWABAREF",
@@ -239,7 +239,7 @@
             },
             "properties": {
                 "oid": "C2X",
-                "ocode": "au_nem_nsw_1246",
+                "ocode": "au_nem_nsw_bankspt",
                 "station_id": 1246,
                 "station_code": "BANKSPT",
                 "facility_id": "BANKSPT",
@@ -319,7 +319,7 @@
             },
             "properties": {
                 "oid": "ARF",
-                "ocode": "au_nem_nsw_1015",
+                "ocode": "au_nem_nsw_baysw",
                 "station_id": 1015,
                 "station_code": "BAYSW",
                 "facility_id": "BAYSW",
@@ -455,7 +455,7 @@
             },
             "properties": {
                 "oid": "CG5",
-                "ocode": "au_nem_nsw_1379",
+                "ocode": "au_nem_nsw_berylsf",
                 "station_id": 1379,
                 "station_code": "BERYLSF",
                 "facility_id": "BERYLSF",
@@ -537,7 +537,7 @@
             },
             "properties": {
                 "oid": "2FZ",
-                "ocode": "au_nem_nsw_blayney_1896",
+                "ocode": "au_nem_nsw_blayney",
                 "station_id": 1896,
                 "station_code": "BLAYNEY",
                 "facility_id": "BLAYNEY",
@@ -581,7 +581,7 @@
             },
             "properties": {
                 "oid": "A9A",
-                "ocode": "au_nem_nsw_1057",
+                "ocode": "au_nem_nsw_snowy6",
                 "station_id": 1057,
                 "station_code": "SNOWY6",
                 "facility_id": "SNOWY6",
@@ -625,7 +625,7 @@
             },
             "properties": {
                 "oid": "C3S",
-                "ocode": "au_nem_nsw_1291",
+                "ocode": "au_nem_nsw_bocorock",
                 "station_id": 1291,
                 "station_code": "BOCOROCK",
                 "facility_id": "BOCOROCK",
@@ -687,7 +687,7 @@
             },
             "properties": {
                 "oid": "C4E",
-                "ocode": "au_nem_nsw_1350",
+                "ocode": "au_nem_nsw_bodwf",
                 "station_id": 1350,
                 "station_code": "BODWF",
                 "facility_id": "BODWF",
@@ -725,7 +725,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CHT",
-                "ocode": "au_nem_nsw_1404",
+                "ocode": "au_nem_nsw_bomensf",
                 "station_id": 1404,
                 "station_code": "BOMENSF",
                 "facility_id": "BOMENSF",
@@ -769,7 +769,7 @@
             },
             "properties": {
                 "oid": "CCZ",
-                "ocode": "au_nem_nsw_1200",
+                "ocode": "au_nem_nsw_bwtr1",
                 "station_id": 1200,
                 "station_code": "BWTR1",
                 "facility_id": "BWTR1",
@@ -831,7 +831,7 @@
             },
             "properties": {
                 "oid": "ARX",
-                "ocode": "au_nem_nsw_1030",
+                "ocode": "au_nem_nsw_bhillgt",
                 "station_id": 1030,
                 "station_code": "BHILLGT",
                 "facility_id": "BHILLGT",
@@ -875,7 +875,7 @@
             },
             "properties": {
                 "oid": "CEC",
-                "ocode": "au_nem_nsw_1298",
+                "ocode": "au_nem_nsw_brokenh",
                 "station_id": 1298,
                 "station_code": "BROKENH",
                 "facility_id": "BROKENH",
@@ -919,7 +919,7 @@
             },
             "properties": {
                 "oid": "AR7",
-                "ocode": "au_nem_nsw_1023",
+                "ocode": "au_nem_nsw_brownmt",
                 "station_id": 1023,
                 "station_code": "BROWNMT",
                 "facility_id": "BROWNMT",
@@ -1017,7 +1017,7 @@
             },
             "properties": {
                 "oid": "C2Z",
-                "ocode": "au_nem_nsw_1224",
+                "ocode": "au_nem_nsw_bdonghyd",
                 "station_id": 1224,
                 "station_code": "BDONGHYD",
                 "facility_id": "BDONGHYD",
@@ -1061,7 +1061,7 @@
             },
             "properties": {
                 "oid": "AR8",
-                "ocode": "au_nem_nsw_1025",
+                "ocode": "au_nem_nsw_burrin",
                 "station_id": 1025,
                 "station_code": "BURRIN",
                 "facility_id": "BURRIN",
@@ -1141,7 +1141,7 @@
             },
             "properties": {
                 "oid": "CC9",
-                "ocode": "au_nem_nsw_1220",
+                "ocode": "au_nem_nsw_captlwf",
                 "station_id": 1220,
                 "station_code": "CAPTL_WF",
                 "facility_id": "CAPTL_WF",
@@ -1185,7 +1185,7 @@
             },
             "properties": {
                 "oid": "C3B",
-                "ocode": "au_nem_nsw_1276",
+                "ocode": "au_nem_nsw_cesf",
                 "station_id": 1276,
                 "station_code": "CESF",
                 "facility_id": "CESF",
@@ -1341,7 +1341,7 @@
             },
             "properties": {
                 "oid": "C46",
-                "ocode": "au_nem_nsw_1358",
+                "ocode": "au_nem_nsw_coleasf",
                 "station_id": 1358,
                 "station_code": "COLEASF",
                 "facility_id": "COLEASF",
@@ -1423,7 +1423,7 @@
             },
             "properties": {
                 "oid": "CCP",
-                "ocode": "au_nem_nsw_1216",
+                "ocode": "au_nem_nsw_colongra",
                 "station_id": 1216,
                 "station_code": "COLONGRA",
                 "facility_id": "COLONGRA",
@@ -1521,7 +1521,7 @@
             },
             "properties": {
                 "oid": "CA9",
-                "ocode": "au_nem_nsw_1196",
+                "ocode": "au_nem_nsw_condong1",
                 "station_id": 1196,
                 "station_code": "CONDONG1",
                 "facility_id": "CONDONG1",
@@ -1565,7 +1565,7 @@
             },
             "properties": {
                 "oid": "C2A",
-                "ocode": "au_nem_nsw_1225",
+                "ocode": "au_nem_nsw_coptnhyd",
                 "station_id": 1225,
                 "station_code": "COPTNHYD",
                 "facility_id": "COPTNHYD",
@@ -1647,7 +1647,7 @@
             },
             "properties": {
                 "oid": "2FA",
-                "ocode": "au_nem_nsw_crookwel_1897",
+                "ocode": "au_nem_nsw_crookwel",
                 "station_id": 1897,
                 "station_code": "CROOKWEL",
                 "facility_id": "CROOKWEL",
@@ -1691,7 +1691,7 @@
             },
             "properties": {
                 "oid": "C45",
-                "ocode": "au_nem_nsw_1355",
+                "ocode": "au_nem_nsw_crookwf2",
                 "station_id": 1355,
                 "station_code": "CROOKWF2",
                 "facility_id": "CROOKWF2",
@@ -1773,7 +1773,7 @@
             },
             "properties": {
                 "oid": "CC8",
-                "ocode": "au_nem_nsw_1217",
+                "ocode": "au_nem_nsw_cullerin",
                 "station_id": 1217,
                 "station_code": "CULLERIN",
                 "facility_id": "CULLERIN",
@@ -1931,7 +1931,7 @@
             },
             "properties": {
                 "oid": "AXX",
-                "ocode": "au_nem_nsw_1126",
+                "ocode": "au_nem_nsw_pmattaep",
                 "station_id": 1126,
                 "station_code": "PMATTAEP",
                 "facility_id": "PMATTAEP",
@@ -2013,7 +2013,7 @@
             },
             "properties": {
                 "oid": "AXH",
-                "ocode": "au_nem_nsw_1114",
+                "ocode": "au_nem_nsw_eastcrk",
                 "station_id": 1114,
                 "station_code": "EASTCRK",
                 "facility_id": "EASTCRK",
@@ -2057,7 +2057,7 @@
             },
             "properties": {
                 "oid": "C2B",
-                "ocode": "au_nem_nsw_1228",
+                "ocode": "au_nem_nsw_eastcrk2",
                 "station_id": 1228,
                 "station_code": "EASTCRK2",
                 "facility_id": "EASTCRK2",
@@ -2119,7 +2119,7 @@
             },
             "properties": {
                 "oid": "ARK",
-                "ocode": "au_nem_nsw_1021",
+                "ocode": "au_nem_nsw_eraring",
                 "station_id": 1021,
                 "station_code": "ERARING",
                 "facility_id": "ERARING",
@@ -2235,7 +2235,7 @@
             },
             "properties": {
                 "oid": "CHB",
-                "ocode": "au_nem_nsw_1396",
+                "ocode": "au_nem_nsw_finleysf",
                 "station_id": 1396,
                 "station_code": "FINLEYSF",
                 "facility_id": "FINLEYSF",
@@ -2279,7 +2279,7 @@
             },
             "properties": {
                 "oid": "C2C",
-                "ocode": "au_nem_nsw_1226",
+                "ocode": "au_nem_nsw_glbwnhyd",
                 "station_id": 1226,
                 "station_code": "GLBWNHYD",
                 "facility_id": "GLBWNHYD",
@@ -2341,7 +2341,7 @@
             },
             "properties": {
                 "oid": "C2T",
-                "ocode": "au_nem_nsw_1236",
+                "ocode": "au_nem_nsw_glenncrk",
                 "station_id": 1236,
                 "station_code": "GLENNCRK",
                 "facility_id": "GLENNCRK",
@@ -2379,7 +2379,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CHA",
-                "ocode": "au_nem_nsw_1393",
+                "ocode": "au_nem_nsw_goonsf",
                 "station_id": 1393,
                 "station_code": "GOONSF",
                 "facility_id": "GOONSF",
@@ -2441,7 +2441,7 @@
             },
             "properties": {
                 "oid": "CAH",
-                "ocode": "au_nem_nsw_1186",
+                "ocode": "au_nem_nsw_grangeav",
                 "station_id": 1186,
                 "station_code": "GRANGEAV",
                 "facility_id": "GRANGEAV",
@@ -2485,7 +2485,7 @@
             },
             "properties": {
                 "oid": "CF4",
-                "ocode": "au_nem_nsw_1328",
+                "ocode": "au_nem_nsw_grifsf",
                 "station_id": 1328,
                 "station_code": "GRIFSF",
                 "facility_id": "GRIFSF",
@@ -2529,7 +2529,7 @@
             },
             "properties": {
                 "oid": "C3G",
-                "ocode": "au_nem_nsw_1281",
+                "ocode": "au_nem_nsw_gullrgwf",
                 "station_id": 1281,
                 "station_code": "GULLRGWF",
                 "facility_id": "GULLRGWF",
@@ -2627,7 +2627,7 @@
             },
             "properties": {
                 "oid": "CB3",
-                "ocode": "au_nem_nsw_1253",
+                "ocode": "au_nem_nsw_gunning",
                 "station_id": 1253,
                 "station_code": "GUNNING",
                 "facility_id": "GUNNING",
@@ -2671,7 +2671,7 @@
             },
             "properties": {
                 "oid": "ASX",
-                "ocode": "au_nem_nsw_1054",
+                "ocode": "au_nem_nsw_snowy3",
                 "station_id": 1054,
                 "station_code": "SNOWY3",
                 "facility_id": "SNOWY3",
@@ -2715,7 +2715,7 @@
             },
             "properties": {
                 "oid": "2FC",
-                "ocode": "au_nem_nsw_hampton_1898",
+                "ocode": "au_nem_nsw_hampton",
                 "station_id": 1898,
                 "station_code": "HAMPTON",
                 "facility_id": "HAMPTON",
@@ -2797,7 +2797,7 @@
             },
             "properties": {
                 "oid": "AR6",
-                "ocode": "au_nem_nsw_1022",
+                "ocode": "au_nem_nsw_humensw",
                 "station_id": 1022,
                 "station_code": "HUMENSW",
                 "facility_id": "HUMENSW",
@@ -2841,7 +2841,7 @@
             },
             "properties": {
                 "oid": "CC2",
-                "ocode": "au_nem_nsw_1203",
+                "ocode": "au_nem_nsw_hez",
                 "station_id": 1203,
                 "station_code": "HEZ",
                 "facility_id": "HEZ",
@@ -2885,7 +2885,7 @@
             },
             "properties": {
                 "oid": "AR9",
-                "ocode": "au_nem_nsw_1028",
+                "ocode": "au_nem_nsw_huntvgt",
                 "station_id": 1028,
                 "station_code": "HUNTVGT",
                 "facility_id": "HUNTVGT",
@@ -2929,7 +2929,7 @@
             },
             "properties": {
                 "oid": "AW9",
-                "ocode": "au_nem_nsw_1100",
+                "ocode": "au_nem_nsw_jacksgul",
                 "station_id": 1100,
                 "station_code": "JACKSGUL",
                 "facility_id": "JACKSGUL",
@@ -2973,7 +2973,7 @@
             },
             "properties": {
                 "oid": "CAS",
-                "ocode": "au_nem_nsw_1195",
+                "ocode": "au_nem_nsw_jndshps",
                 "station_id": 1195,
                 "station_code": "JNDSHPS",
                 "facility_id": "JNDSHPS",
@@ -3017,7 +3017,7 @@
             },
             "properties": {
                 "oid": "C27",
-                "ocode": "au_nem_nsw_1239",
+                "ocode": "au_nem_nsw_jounama",
                 "station_id": 1239,
                 "station_code": "JOUNAMA",
                 "facility_id": "JOUNAMA",
@@ -3061,7 +3061,7 @@
             },
             "properties": {
                 "oid": "ARP",
-                "ocode": "au_nem_nsw_1024",
+                "ocode": "au_nem_nsw_keepit",
                 "station_id": 1024,
                 "station_code": "KEEPIT",
                 "facility_id": "KEEPIT",
@@ -3099,7 +3099,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CEK",
-                "ocode": "au_nem_nsw_1309",
+                "ocode": "au_nem_nsw_aglsita",
                 "station_id": 1309,
                 "station_code": "AGLSITA",
                 "facility_id": "AGLSITA",
@@ -3181,7 +3181,7 @@
             },
             "properties": {
                 "oid": "C3R",
-                "ocode": "au_nem_nsw_1290",
+                "ocode": "au_nem_nsw_kincumb",
                 "station_id": 1290,
                 "station_code": "KINCUMB",
                 "facility_id": "KINCUMB",
@@ -3263,7 +3263,7 @@
             },
             "properties": {
                 "oid": "ARE",
-                "ocode": "au_nem_nsw_1014",
+                "ocode": "au_nem_nsw_liddell",
                 "station_id": 1014,
                 "station_code": "LIDDELL",
                 "facility_id": "LIDDELL",
@@ -3361,7 +3361,7 @@
             },
             "properties": {
                 "oid": "CHF",
-                "ocode": "au_nem_nsw_1399",
+                "ocode": "au_nem_nsw_limosf1",
                 "station_id": 1399,
                 "station_code": "LIMOSF1",
                 "facility_id": "LIMOSF1",
@@ -3405,7 +3405,7 @@
             },
             "properties": {
                 "oid": "CGW",
-                "ocode": "au_nem_nsw_1389",
+                "ocode": "au_nem_nsw_limosf2",
                 "station_id": 1389,
                 "station_code": "LIMOSF2",
                 "facility_id": "LIMOSF2",
@@ -3443,7 +3443,7 @@
             "geometry": null,
             "properties": {
                 "oid": "C2H",
-                "ocode": "au_nem_nsw_1234",
+                "ocode": "au_nem_nsw_lucashgt",
                 "station_id": 1234,
                 "station_code": "LUCASHGT",
                 "facility_id": "LUCASHGT",
@@ -3505,7 +3505,7 @@
             },
             "properties": {
                 "oid": "AY5",
-                "ocode": "au_nem_nsw_1139",
+                "ocode": "au_nem_nsw_lucas2s2",
                 "station_id": 1139,
                 "station_code": "LUCAS2S2",
                 "facility_id": "LUCAS2S2",
@@ -3567,7 +3567,7 @@
             },
             "properties": {
                 "oid": "CFR",
-                "ocode": "au_nem_nsw_1338",
+                "ocode": "au_nem_nsw_manslr",
                 "station_id": 1338,
                 "station_code": "MANSLR",
                 "facility_id": "MANSLR",
@@ -3629,7 +3629,7 @@
             },
             "properties": {
                 "oid": "CE2",
-                "ocode": "au_nem_nsw_1299",
+                "ocode": "au_nem_nsw_moreesf",
                 "station_id": 1299,
                 "station_code": "MOREESF",
                 "facility_id": "MOREESF",
@@ -3711,7 +3711,7 @@
             },
             "properties": {
                 "oid": "A8R",
-                "ocode": "au_nem_nsw_1002",
+                "ocode": "au_nem_nsw_mp",
                 "station_id": 1002,
                 "station_code": "MP",
                 "facility_id": "MP",
@@ -3773,7 +3773,7 @@
             },
             "properties": {
                 "oid": "CET",
-                "ocode": "au_nem_nsw_1308",
+                "ocode": "au_nem_nsw_mlsp",
                 "station_id": 1308,
                 "station_code": "MLSP",
                 "facility_id": "MLSP",
@@ -3835,7 +3835,7 @@
             },
             "properties": {
                 "oid": "A8S",
-                "ocode": "au_nem_nsw_1003",
+                "ocode": "au_nem_nsw_mm",
                 "station_id": 1003,
                 "station_code": "MM",
                 "facility_id": "MM",
@@ -3897,7 +3897,7 @@
             },
             "properties": {
                 "oid": "CF9",
-                "ocode": "au_nem_nsw_1340",
+                "ocode": "au_nem_nsw_nasf",
                 "station_id": 1340,
                 "station_code": "NASF",
                 "facility_id": "NASF",
@@ -3941,7 +3941,7 @@
             },
             "properties": {
                 "oid": "CHK",
-                "ocode": "au_nem_nsw_1405",
+                "ocode": "au_nem_nsw_neversf",
                 "station_id": 1405,
                 "station_code": "NEVERSF",
                 "facility_id": "NEVERSF",
@@ -3985,7 +3985,7 @@
             },
             "properties": {
                 "oid": "CBZ",
-                "ocode": "au_nem_nsw_1248",
+                "ocode": "au_nem_nsw_ninewil",
                 "station_id": 1248,
                 "station_code": "NINEWIL",
                 "facility_id": "NINEWIL",
@@ -4067,7 +4067,7 @@
             },
             "properties": {
                 "oid": "C3W",
-                "ocode": "au_nem_nsw_1293",
+                "ocode": "au_nem_nsw_nyngan",
                 "station_id": 1293,
                 "station_code": "NYNGAN",
                 "facility_id": "NYNGAN",
@@ -4149,7 +4149,7 @@
             },
             "properties": {
                 "oid": "CFG",
-                "ocode": "au_nem_nsw_1329",
+                "ocode": "au_nem_nsw_psf",
                 "station_id": 1329,
                 "station_code": "PSF",
                 "facility_id": "PSF",
@@ -4307,7 +4307,7 @@
             },
             "properties": {
                 "oid": "AWY",
-                "ocode": "au_nem_nsw_1103",
+                "ocode": "au_nem_nsw_pindari",
                 "station_id": 1103,
                 "station_code": "PINDARI",
                 "facility_id": "PINDARI",
@@ -4407,7 +4407,7 @@
             },
             "properties": {
                 "oid": "AW8",
-                "ocode": "au_nem_nsw_1097",
+                "ocode": "au_nem_nsw_redbank1",
                 "station_id": 1097,
                 "station_code": "REDBANK1",
                 "facility_id": "REDBANK1",
@@ -4489,7 +4489,7 @@
             },
             "properties": {
                 "oid": "C37",
-                "ocode": "au_nem_nsw_1287",
+                "ocode": "au_nem_nsw_royalla",
                 "station_id": 1287,
                 "station_code": "ROYALLA",
                 "facility_id": "ROYALLA",
@@ -4533,7 +4533,7 @@
             },
             "properties": {
                 "oid": "CFF",
-                "ocode": "au_nem_nsw_1327",
+                "ocode": "au_nem_nsw_saphwf1",
                 "station_id": 1327,
                 "station_code": "SAPHWF1",
                 "facility_id": "SAPHWF1",
@@ -4577,7 +4577,7 @@
             },
             "properties": {
                 "oid": "ARY",
-                "ocode": "au_nem_nsw_1031",
+                "ocode": "au_nem_nsw_shoalhav",
                 "station_id": 1031,
                 "station_code": "SHOALHAV",
                 "facility_id": "SHOALHAV",
@@ -4693,7 +4693,7 @@
             },
             "properties": {
                 "oid": "CF6",
-                "ocode": "au_nem_nsw_1334",
+                "ocode": "au_nem_nsw_stwf",
                 "station_id": 1334,
                 "station_code": "STWF",
                 "facility_id": "STWF",
@@ -4775,7 +4775,7 @@
             },
             "properties": {
                 "oid": "A94",
-                "ocode": "au_nem_nsw_1064",
+                "ocode": "au_nem_nsw_sithe",
                 "station_id": 1064,
                 "station_code": "SITHE",
                 "facility_id": "SITHE",
@@ -4875,7 +4875,7 @@
             },
             "properties": {
                 "oid": "CFS",
-                "ocode": "au_nem_nsw_1339",
+                "ocode": "au_nem_nsw_sksf",
                 "station_id": 1339,
                 "station_code": "SKSF",
                 "facility_id": "SKSF",
@@ -4919,7 +4919,7 @@
             },
             "properties": {
                 "oid": "CBA",
-                "ocode": "au_nem_nsw_1249",
+                "ocode": "au_nem_nsw_stgeorge",
                 "station_id": 1249,
                 "station_code": "STGEORGE",
                 "facility_id": "STGEORGE",
@@ -5077,7 +5077,7 @@
             },
             "properties": {
                 "oid": "CEA",
-                "ocode": "au_nem_nsw_1297",
+                "ocode": "au_nem_nsw_tahmoor",
                 "station_id": 1297,
                 "station_code": "TAHMOOR",
                 "facility_id": "TAHMOOR",
@@ -5121,7 +5121,7 @@
             },
             "properties": {
                 "oid": "CCB",
-                "ocode": "au_nem_nsw_1204",
+                "ocode": "au_nem_nsw_tallawar",
                 "station_id": 1204,
                 "station_code": "TALLAWAR",
                 "facility_id": "TALLAWAR",
@@ -5165,7 +5165,7 @@
             },
             "properties": {
                 "oid": "C39",
-                "ocode": "au_nem_nsw_1292",
+                "ocode": "au_nem_nsw_taralga",
                 "station_id": 1292,
                 "station_code": "TARALGA",
                 "facility_id": "TARALGA",
@@ -5283,7 +5283,7 @@
             },
             "properties": {
                 "oid": "AY2",
-                "ocode": "au_nem_nsw_1131",
+                "ocode": "au_nem_nsw_teralba",
                 "station_id": 1131,
                 "station_code": "TERALBA",
                 "facility_id": "TERALBA",
@@ -5327,7 +5327,7 @@
             },
             "properties": {
                 "oid": "CBS",
-                "ocode": "au_nem_nsw_1267",
+                "ocode": "au_nem_nsw_thedrop",
                 "station_id": 1267,
                 "station_code": "THEDROP",
                 "facility_id": "THEDROP",
@@ -5485,7 +5485,7 @@
             },
             "properties": {
                 "oid": "C25",
-                "ocode": "au_nem_nsw_1235",
+                "ocode": "au_nem_nsw_tower",
                 "station_id": 1235,
                 "station_code": "TOWER",
                 "facility_id": "TOWER",
@@ -5529,7 +5529,7 @@
             },
             "properties": {
                 "oid": "ASW",
-                "ocode": "au_nem_snowy_1053",
+                "ocode": "au_nem_snowy_snowy2",
                 "station_id": 1053,
                 "station_code": "SNOWY2",
                 "facility_id": "SNOWY2",
@@ -5627,7 +5627,7 @@
             },
             "properties": {
                 "oid": "AS9",
-                "ocode": "au_nem_snowy_1052",
+                "ocode": "au_nem_snowy_snowy1",
                 "station_id": 1052,
                 "station_code": "SNOWY1",
                 "facility_id": "SNOWY1",
@@ -5689,7 +5689,7 @@
             },
             "properties": {
                 "oid": "CC3",
-                "ocode": "au_nem_nsw_1205",
+                "ocode": "au_nem_nsw_uranq",
                 "station_id": 1205,
                 "station_code": "URANQ",
                 "facility_id": "URANQ",
@@ -5787,7 +5787,7 @@
             },
             "properties": {
                 "oid": "A89",
-                "ocode": "au_nem_nsw_1004",
+                "ocode": "au_nem_nsw_vp",
                 "station_id": 1004,
                 "station_code": "VP",
                 "facility_id": "VP",
@@ -5849,7 +5849,7 @@
             },
             "properties": {
                 "oid": "A8W",
-                "ocode": "au_nem_nsw_1005",
+                "ocode": "au_nem_nsw_ww",
                 "station_id": 1005,
                 "station_code": "WW",
                 "facility_id": "WW",
@@ -5911,7 +5911,7 @@
             },
             "properties": {
                 "oid": "ARR",
-                "ocode": "au_nem_nsw_1026",
+                "ocode": "au_nem_nsw_wg",
                 "station_id": 1026,
                 "station_code": "WG",
                 "facility_id": "WG",
@@ -5955,7 +5955,7 @@
             },
             "properties": {
                 "oid": "C2R",
-                "ocode": "au_nem_nsw_1242",
+                "ocode": "au_nem_nsw_westilla",
                 "station_id": 1242,
                 "station_code": "WESTILLA",
                 "facility_id": "WESTILLA",
@@ -6017,7 +6017,7 @@
             },
             "properties": {
                 "oid": "AXF",
-                "ocode": "au_nem_nsw_1111",
+                "ocode": "au_nem_nsw_aglnow1",
                 "station_id": 1111,
                 "station_code": "AGLNOW1",
                 "facility_id": "AGLNOW1",
@@ -6061,7 +6061,7 @@
             },
             "properties": {
                 "oid": "C2P",
-                "ocode": "au_nem_nsw_1240",
+                "ocode": "au_nem_nsw_westcbt",
                 "station_id": 1240,
                 "station_code": "WESTCBT",
                 "facility_id": "WESTCBT",
@@ -6143,7 +6143,7 @@
             },
             "properties": {
                 "oid": "C4K",
-                "ocode": "au_nem_nsw_1357",
+                "ocode": "au_nem_nsw_wrsf1",
                 "station_id": 1357,
                 "station_code": "WRSF1",
                 "facility_id": "WRSF1",
@@ -6205,7 +6205,7 @@
             },
             "properties": {
                 "oid": "C23",
-                "ocode": "au_nem_nsw_1229",
+                "ocode": "au_nem_nsw_wilgapk",
                 "station_id": 1229,
                 "station_code": "WILGAPK",
                 "facility_id": "WILGAPK",
@@ -6303,7 +6303,7 @@
             },
             "properties": {
                 "oid": "C38",
-                "ocode": "au_nem_nsw_1289",
+                "ocode": "au_nem_nsw_wilgapkb",
                 "station_id": 1289,
                 "station_code": "WILGAPKB",
                 "facility_id": "WILGAPKB",
@@ -6365,7 +6365,7 @@
             },
             "properties": {
                 "oid": "CBE",
-                "ocode": "au_nem_nsw_1254",
+                "ocode": "au_nem_nsw_woodlwn",
                 "station_id": 1254,
                 "station_code": "WOODLWN",
                 "facility_id": "WOODLWN",
@@ -6409,7 +6409,7 @@
             },
             "properties": {
                 "oid": "CCA",
-                "ocode": "au_nem_nsw_1201",
+                "ocode": "au_nem_nsw_wdlngn",
                 "station_id": 1201,
                 "station_code": "WDLNGN",
                 "facility_id": "WDLNGN",
@@ -6471,7 +6471,7 @@
             },
             "properties": {
                 "oid": "C3P",
-                "ocode": "au_nem_nsw_1288",
+                "ocode": "au_nem_nsw_woywoy",
                 "station_id": 1288,
                 "station_code": "WOYWOY",
                 "facility_id": "WOYWOY",
@@ -6515,7 +6515,7 @@
             },
             "properties": {
                 "oid": "C2K",
-                "ocode": "au_nem_nsw_1237",
+                "ocode": "au_nem_nsw_wyangala",
                 "station_id": 1237,
                 "station_code": "WYANGALA",
                 "facility_id": "WYANGALA",
@@ -6559,7 +6559,7 @@
             },
             "properties": {
                 "oid": "C26",
-                "ocode": "au_nem_nsw_1238",
+                "ocode": "au_nem_nsw_wyangalb",
                 "station_id": 1238,
                 "station_code": "WYANGALB",
                 "facility_id": "WYANGALB",
@@ -6679,7 +6679,7 @@
             },
             "properties": {
                 "oid": "C47",
-                "ocode": "au_nem_qld_1359",
+                "ocode": "au_nem_qld_baking",
                 "station_id": 1359,
                 "station_code": "BAKING",
                 "facility_id": "BAKING",
@@ -6723,7 +6723,7 @@
             },
             "properties": {
                 "oid": "CE6",
-                "ocode": "au_nem_qld_1310",
+                "ocode": "au_nem_qld_barcsf",
                 "station_id": 1310,
                 "station_code": "BARCSF",
                 "facility_id": "BARCSF",
@@ -6785,7 +6785,7 @@
             },
             "properties": {
                 "oid": "AST",
-                "ocode": "au_nem_qld_1044",
+                "ocode": "au_nem_qld_barron",
                 "station_id": 1044,
                 "station_code": "BARRON",
                 "facility_id": "BARRON",
@@ -6921,7 +6921,7 @@
             },
             "properties": {
                 "oid": "CA3",
-                "ocode": "au_nem_qld_1181",
+                "ocode": "au_nem_qld_braemara",
                 "station_id": 1181,
                 "station_code": "BRAEMARA",
                 "facility_id": "BRAEMARA",
@@ -7001,7 +7001,7 @@
             },
             "properties": {
                 "oid": "CCK",
-                "ocode": "au_nem_qld_1213",
+                "ocode": "au_nem_qld_b2ps",
                 "station_id": 1213,
                 "station_code": "B2PS",
                 "facility_id": "B2PS",
@@ -7081,7 +7081,7 @@
             },
             "properties": {
                 "oid": "CB6",
-                "ocode": "au_nem_qld_1262",
+                "ocode": "au_nem_qld_bplandf",
                 "station_id": 1262,
                 "station_code": "BPLANDF",
                 "facility_id": "BPLANDF",
@@ -7119,7 +7119,7 @@
             "geometry": null,
             "properties": {
                 "oid": "A8P",
-                "ocode": "au_nem_qld_1000",
+                "ocode": "au_nem_qld_callide",
                 "station_id": 1000,
                 "station_code": "CALLIDE",
                 "facility_id": "CALLIDE",
@@ -7249,7 +7249,7 @@
             "geometry": null,
             "properties": {
                 "oid": "AWK",
-                "ocode": "au_nem_qld_1093",
+                "ocode": "au_nem_qld_callidec",
                 "station_id": 1093,
                 "station_code": "CALLIDEC",
                 "facility_id": "CALLIDEC",
@@ -7311,7 +7311,7 @@
             },
             "properties": {
                 "oid": "CG3",
-                "ocode": "au_nem_qld_1373",
+                "ocode": "au_nem_qld_childsf",
                 "station_id": 1373,
                 "station_code": "CHILDSF",
                 "facility_id": "CHILDSF",
@@ -7393,7 +7393,7 @@
             },
             "properties": {
                 "oid": "CFK",
-                "ocode": "au_nem_qld_1333",
+                "ocode": "au_nem_qld_claresf",
                 "station_id": 1333,
                 "station_code": "CLARESF",
                 "facility_id": "CLARESF",
@@ -7437,7 +7437,7 @@
             },
             "properties": {
                 "oid": "CG8",
-                "ocode": "au_nem_qld_1385",
+                "ocode": "au_nem_qld_clermsf",
                 "station_id": 1385,
                 "station_code": "CLERMSF",
                 "facility_id": "CLERMSF",
@@ -7519,7 +7519,7 @@
             },
             "properties": {
                 "oid": "ASA",
-                "ocode": "au_nem_qld_1033",
+                "ocode": "au_nem_qld_colnsv",
                 "station_id": 1033,
                 "station_code": "COLNSV",
                 "facility_id": "COLNSV",
@@ -7635,7 +7635,7 @@
             },
             "properties": {
                 "oid": "C4H",
-                "ocode": "au_nem_qld_1354",
+                "ocode": "au_nem_qld_cspvps",
                 "station_id": 1354,
                 "station_code": "CSPVPS",
                 "facility_id": "CSPVPS",
@@ -7679,7 +7679,7 @@
             },
             "properties": {
                 "oid": "CCR",
-                "ocode": "au_nem_qld_1218",
+                "ocode": "au_nem_qld_cpsa",
                 "station_id": 1218,
                 "station_code": "CPSA",
                 "facility_id": "CPSA",
@@ -7759,7 +7759,7 @@
             },
             "properties": {
                 "oid": "CGP",
-                "ocode": "au_nem_qld_1384",
+                "ocode": "au_nem_qld_coopgwf",
                 "station_id": 1384,
                 "station_code": "COOPGWF",
                 "facility_id": "COOPGWF",
@@ -7857,7 +7857,7 @@
             },
             "properties": {
                 "oid": "CAT",
-                "ocode": "au_nem_qld_1188",
+                "ocode": "au_nem_qld_daandine",
                 "station_id": 1188,
                 "station_code": "DAANDINE",
                 "facility_id": "DAANDINE",
@@ -7919,7 +7919,7 @@
             },
             "properties": {
                 "oid": "CCX",
-                "ocode": "au_nem_qld_1222",
+                "ocode": "au_nem_qld_ddps1",
                 "station_id": 1222,
                 "station_code": "DDPS1",
                 "facility_id": "DDPS1",
@@ -8017,7 +8017,7 @@
             },
             "properties": {
                 "oid": "C43",
-                "ocode": "au_nem_qld_1349",
+                "ocode": "au_nem_qld_ddsf",
                 "station_id": 1349,
                 "station_code": "DDSF",
                 "facility_id": "DDSF",
@@ -8061,7 +8061,7 @@
             },
             "properties": {
                 "oid": "C48",
-                "ocode": "au_nem_qld_1361",
+                "ocode": "au_nem_qld_daydsf",
                 "station_id": 1361,
                 "station_code": "DAYDSF",
                 "facility_id": "DAYDSF",
@@ -8161,7 +8161,7 @@
             },
             "properties": {
                 "oid": "C4P",
-                "ocode": "au_nem_qld_1360",
+                "ocode": "au_nem_qld_emerasf",
                 "station_id": 1360,
                 "station_code": "EMERASF",
                 "facility_id": "EMERASF",
@@ -8281,7 +8281,7 @@
             },
             "properties": {
                 "oid": "CAG",
-                "ocode": "au_nem_qld_1185",
+                "ocode": "au_nem_qld_germcrk",
                 "station_id": 1185,
                 "station_code": "GERMCRK",
                 "facility_id": "GERMCRK",
@@ -8343,7 +8343,7 @@
             },
             "properties": {
                 "oid": "ASZ",
-                "ocode": "au_nem_qld_1032",
+                "ocode": "au_nem_qld_g/stone",
                 "station_id": 1032,
                 "station_code": "G/STONE",
                 "facility_id": "G/STONE",
@@ -8471,7 +8471,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CE7",
-                "ocode": "au_nem_qld_1311",
+                "ocode": "au_nem_qld_grosv1",
                 "station_id": 1311,
                 "station_code": "GROSV1",
                 "facility_id": "GROSV1",
@@ -8533,7 +8533,7 @@
             },
             "properties": {
                 "oid": "CFY",
-                "ocode": "au_nem_qld_1343",
+                "ocode": "au_nem_qld_hamisf",
                 "station_id": 1343,
                 "station_code": "HAMISF",
                 "facility_id": "HAMISF",
@@ -8577,7 +8577,7 @@
             },
             "properties": {
                 "oid": "CGK",
-                "ocode": "au_nem_qld_1381",
+                "ocode": "au_nem_qld_haught1",
                 "station_id": 1381,
                 "station_code": "HAUGHT1",
                 "facility_id": "HAUGHT1",
@@ -8621,7 +8621,7 @@
             },
             "properties": {
                 "oid": "C4R",
-                "ocode": "au_nem_qld_1362",
+                "ocode": "au_nem_qld_haymsf",
                 "station_id": 1362,
                 "station_code": "HAYMSF",
                 "facility_id": "HAYMSF",
@@ -8665,7 +8665,7 @@
             },
             "properties": {
                 "oid": "CFT",
-                "ocode": "au_nem_qld_1332",
+                "ocode": "au_nem_qld_hugsf",
                 "station_id": 1332,
                 "station_code": "HUGSF",
                 "facility_id": "HUGSF",
@@ -8765,7 +8765,7 @@
             },
             "properties": {
                 "oid": "CA2",
-                "ocode": "au_nem_qld_1179",
+                "ocode": "au_nem_qld_invicta",
                 "station_id": 1179,
                 "station_code": "INVICTA",
                 "facility_id": "INVICTA",
@@ -8845,7 +8845,7 @@
             },
             "properties": {
                 "oid": "CA6",
-                "ocode": "au_nem_qld_1190",
+                "ocode": "au_nem_qld_icsm",
                 "station_id": 1190,
                 "station_code": "ICSM",
                 "facility_id": "ICSM",
@@ -8889,7 +8889,7 @@
             },
             "properties": {
                 "oid": "CAP",
-                "ocode": "au_nem_qld_1192",
+                "ocode": "au_nem_qld_krccogen",
                 "station_id": 1192,
                 "station_code": "KRCCOGEN",
                 "facility_id": "KRCCOGEN",
@@ -8971,7 +8971,7 @@
             },
             "properties": {
                 "oid": "ASK",
-                "ocode": "au_nem_qld_1045",
+                "ocode": "au_nem_qld_kareeya",
                 "station_id": 1045,
                 "station_code": "KAREEYA",
                 "facility_id": "KAREEYA",
@@ -9143,7 +9143,7 @@
             },
             "properties": {
                 "oid": "CFE",
-                "ocode": "au_nem_qld_1326",
+                "ocode": "au_nem_qld_ksp1",
                 "station_id": 1326,
                 "station_code": "KSP1",
                 "facility_id": "KSP1",
@@ -9187,7 +9187,7 @@
             },
             "properties": {
                 "oid": "CA8",
-                "ocode": "au_nem_qld_1193",
+                "ocode": "au_nem_qld_koganck",
                 "station_id": 1193,
                 "station_code": "KOGANCK",
                 "facility_id": "KOGANCK",
@@ -9307,7 +9307,7 @@
             },
             "properties": {
                 "oid": "CG4",
-                "ocode": "au_nem_qld_1376",
+                "ocode": "au_nem_qld_lilyvasf",
                 "station_id": 1376,
                 "station_code": "LILYVASF",
                 "facility_id": "LILYVASF",
@@ -9389,7 +9389,7 @@
             },
             "properties": {
                 "oid": "CF7",
-                "ocode": "au_nem_qld_1335",
+                "ocode": "au_nem_qld_lrsf",
                 "station_id": 1335,
                 "station_code": "LRSF",
                 "facility_id": "LRSF",
@@ -9433,7 +9433,7 @@
             },
             "properties": {
                 "oid": "AS6",
-                "ocode": "au_nem_qld_1046",
+                "ocode": "au_nem_qld_mackay",
                 "station_id": 1046,
                 "station_code": "MACKAY",
                 "facility_id": "MACKAY",
@@ -9565,7 +9565,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CH5",
-                "ocode": "au_nem_qld_1403",
+                "ocode": "au_nem_qld_maryrsf",
                 "station_id": 1403,
                 "station_code": "MARYRSF",
                 "facility_id": "MARYRSF",
@@ -9647,7 +9647,7 @@
             },
             "properties": {
                 "oid": "AWS",
-                "ocode": "au_nem_qld_1099",
+                "ocode": "au_nem_qld_millmern",
                 "station_id": 1099,
                 "station_code": "MILLMERN",
                 "facility_id": "MILLMERN",
@@ -9785,7 +9785,7 @@
             },
             "properties": {
                 "oid": "CA7",
-                "ocode": "au_nem_qld_1191",
+                "ocode": "au_nem_qld_moranbah",
                 "station_id": 1191,
                 "station_code": "MORANBAH",
                 "facility_id": "MORANBAH",
@@ -9829,7 +9829,7 @@
             },
             "properties": {
                 "oid": "CCE",
-                "ocode": "au_nem_qld_1206",
+                "ocode": "au_nem_qld_mbahnth",
                 "station_id": 1206,
                 "station_code": "MBAHNTH",
                 "facility_id": "MBAHNTH",
@@ -9911,7 +9911,7 @@
             },
             "properties": {
                 "oid": "C4T",
-                "ocode": "au_nem_qld_1356",
+                "ocode": "au_nem_qld_mewf",
                 "station_id": 1356,
                 "station_code": "MEWF",
                 "facility_id": "MEWF",
@@ -10011,7 +10011,7 @@
             },
             "properties": {
                 "oid": "A9E",
-                "ocode": "au_nem_qld_1062",
+                "ocode": "au_nem_qld_mstuart",
                 "station_id": 1062,
                 "station_code": "MSTUART",
                 "facility_id": "MSTUART",
@@ -10085,7 +10085,7 @@
             "geometry": null,
             "properties": {
                 "oid": "AW6",
-                "ocode": "au_nem_qld_1094",
+                "ocode": "au_nem_qld_mulgrave",
                 "station_id": 1094,
                 "station_code": "MULGRAVE",
                 "facility_id": "MULGRAVE",
@@ -10167,7 +10167,7 @@
             },
             "properties": {
                 "oid": "AWE",
-                "ocode": "au_nem_qld_1086",
+                "ocode": "au_nem_qld_oakey",
                 "station_id": 1086,
                 "station_code": "OAKEY",
                 "facility_id": "OAKEY",
@@ -10229,7 +10229,7 @@
             },
             "properties": {
                 "oid": "CGG",
-                "ocode": "au_nem_qld_1377",
+                "ocode": "au_nem_qld_oakey1sf",
                 "station_id": 1377,
                 "station_code": "OAKEY1SF",
                 "facility_id": "OAKEY1SF",
@@ -10273,7 +10273,7 @@
             },
             "properties": {
                 "oid": "CGS",
-                "ocode": "au_nem_qld_1387",
+                "ocode": "au_nem_qld_oakey2sf",
                 "station_id": 1387,
                 "station_code": "OAKEY2SF",
                 "facility_id": "OAKEY2SF",
@@ -10317,7 +10317,7 @@
             },
             "properties": {
                 "oid": "CAF",
-                "ocode": "au_nem_qld_1183",
+                "ocode": "au_nem_qld_ocps",
                 "station_id": 1183,
                 "station_code": "OCPS",
                 "facility_id": "OCPS",
@@ -10379,7 +10379,7 @@
             },
             "properties": {
                 "oid": "CE3",
-                "ocode": "au_nem_qld_1301",
+                "ocode": "au_nem_qld_oaky2",
                 "station_id": 1301,
                 "station_code": "OAKY2",
                 "facility_id": "OAKY2",
@@ -10423,7 +10423,7 @@
             },
             "properties": {
                 "oid": "CAB",
-                "ocode": "au_nem_qld_1180",
+                "ocode": "au_nem_qld_pioneer",
                 "station_id": 1180,
                 "station_code": "PIONEER",
                 "facility_id": "PIONEER",
@@ -10479,7 +10479,7 @@
             "geometry": null,
             "properties": {
                 "oid": "AW2",
-                "ocode": "au_nem_qld_1083",
+                "ocode": "au_nem_qld_planecrk",
                 "station_id": 1083,
                 "station_code": "PLANECRK",
                 "facility_id": "PLANECRK",
@@ -10597,7 +10597,7 @@
             },
             "properties": {
                 "oid": "CBP",
-                "ocode": "au_nem_qld_1264",
+                "ocode": "au_nem_qld_racomil",
                 "station_id": 1264,
                 "station_code": "RACOMIL",
                 "facility_id": "RACOMIL",
@@ -10677,7 +10677,7 @@
             },
             "properties": {
                 "oid": "AYG",
-                "ocode": "au_nem_qld_1137",
+                "ocode": "au_nem_qld_rochedal",
                 "station_id": 1137,
                 "station_code": "ROCHEDAL",
                 "facility_id": "ROCHEDAL",
@@ -10739,7 +10739,7 @@
             },
             "properties": {
                 "oid": "AWX",
-                "ocode": "au_nem_qld_1102",
+                "ocode": "au_nem_qld_rpcg",
                 "station_id": 1102,
                 "station_code": "RPCG",
                 "facility_id": "RPCG",
@@ -10783,7 +10783,7 @@
             },
             "properties": {
                 "oid": "AYB",
-                "ocode": "au_nem_qld_1132",
+                "ocode": "au_nem_qld_edlrgnrd",
                 "station_id": 1132,
                 "station_code": "EDLRGNRD",
                 "facility_id": "EDLRGNRD",
@@ -10827,7 +10827,7 @@
             },
             "properties": {
                 "oid": "A9W",
-                "ocode": "au_nem_qld_1077",
+                "ocode": "au_nem_qld_roma",
                 "station_id": 1077,
                 "station_code": "ROMA",
                 "facility_id": "ROMA",
@@ -10889,7 +10889,7 @@
             },
             "properties": {
                 "oid": "C4B",
-                "ocode": "au_nem_qld_1348",
+                "ocode": "au_nem_qld_rrsf",
                 "station_id": 1348,
                 "station_code": "RRSF",
                 "facility_id": "RRSF",
@@ -10933,7 +10933,7 @@
             },
             "properties": {
                 "oid": "CG6",
-                "ocode": "au_nem_qld_1382",
+                "ocode": "au_nem_qld_rugbyr",
                 "station_id": 1382,
                 "station_code": "RUGBYR",
                 "facility_id": "RUGBYR",
@@ -11015,7 +11015,7 @@
             },
             "properties": {
                 "oid": "CE8",
-                "ocode": "au_nem_qld_1313",
+                "ocode": "au_nem_qld_valdora",
                 "station_id": 1313,
                 "station_code": "VALDORA",
                 "facility_id": "VALDORA",
@@ -11053,7 +11053,7 @@
             "geometry": null,
             "properties": {
                 "oid": "AYA",
-                "ocode": "au_nem_qld_1129",
+                "ocode": "au_nem_qld_somerset",
                 "station_id": 1129,
                 "station_code": "SOMERSET",
                 "facility_id": "SOMERSET",
@@ -11171,7 +11171,7 @@
             },
             "properties": {
                 "oid": "CCW",
-                "ocode": "au_nem_qld_1221",
+                "ocode": "au_nem_qld_sthbktec",
                 "station_id": 1221,
                 "station_code": "STHBKTEC",
                 "facility_id": "STHBKTEC",
@@ -11253,7 +11253,7 @@
             },
             "properties": {
                 "oid": "AS7",
-                "ocode": "au_nem_qld_1047",
+                "ocode": "au_nem_qld_stanwell",
                 "station_id": 1047,
                 "station_code": "STANWELL",
                 "facility_id": "STANWELL",
@@ -11417,7 +11417,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CES",
-                "ocode": "au_nem_qld_1315",
+                "ocode": "au_nem_qld_stapylton",
                 "station_id": 1315,
                 "station_code": "STAPYLTON",
                 "facility_id": "STAPYLTON",
@@ -11497,7 +11497,7 @@
             },
             "properties": {
                 "oid": "CF8",
-                "ocode": "au_nem_qld_1337",
+                "ocode": "au_nem_qld_smcsf",
                 "station_id": 1337,
                 "station_code": "SMCSF",
                 "facility_id": "SMCSF",
@@ -11553,7 +11553,7 @@
             "geometry": null,
             "properties": {
                 "oid": "AXY",
-                "ocode": "au_nem_qld_1127",
+                "ocode": "au_nem_qld_suncoast",
                 "station_id": 1127,
                 "station_code": "SUNCOAST",
                 "facility_id": "SUNCOAST",
@@ -11653,7 +11653,7 @@
             },
             "properties": {
                 "oid": "CGB",
-                "ocode": "au_nem_qld_1372",
+                "ocode": "au_nem_qld_srsf",
                 "station_id": 1372,
                 "station_code": "SRSF",
                 "facility_id": "SRSF",
@@ -11691,7 +11691,7 @@
             "geometry": null,
             "properties": {
                 "oid": "A88",
-                "ocode": "au_nem_qld_1001",
+                "ocode": "au_nem_qld_swanbank",
                 "station_id": 1001,
                 "station_code": "SWANBANK",
                 "facility_id": "SWANBANK",
@@ -11837,7 +11837,7 @@
             "geometry": null,
             "properties": {
                 "oid": "A9B",
-                "ocode": "au_nem_qld_1060",
+                "ocode": "au_nem_qld_tbland",
                 "station_id": 1060,
                 "station_code": "TBLAND",
                 "facility_id": "TBLAND",
@@ -11899,7 +11899,7 @@
             },
             "properties": {
                 "oid": "CGY",
-                "ocode": "au_nem_qld_1391",
+                "ocode": "au_nem_qld_tabmill2",
                 "station_id": 1391,
                 "station_code": "TABMILL2",
                 "facility_id": "TABMILL2",
@@ -11943,7 +11943,7 @@
             },
             "properties": {
                 "oid": "ASP",
-                "ocode": "au_nem_qld_1048",
+                "ocode": "au_nem_qld_tarong",
                 "station_id": 1048,
                 "station_code": "TARONG",
                 "facility_id": "TARONG",
@@ -12059,7 +12059,7 @@
             },
             "properties": {
                 "oid": "AX6",
-                "ocode": "au_nem_qld_1118",
+                "ocode": "au_nem_qld_tarongn",
                 "station_id": 1118,
                 "station_code": "TARONGN",
                 "facility_id": "TARONGN",
@@ -12217,7 +12217,7 @@
             },
             "properties": {
                 "oid": "A9F",
-                "ocode": "au_nem_qld_1063",
+                "ocode": "au_nem_qld_yabulu",
                 "station_id": 1063,
                 "station_code": "YABULU",
                 "facility_id": "YABULU",
@@ -12317,7 +12317,7 @@
             },
             "properties": {
                 "oid": "CC4",
-                "ocode": "au_nem_qld_1208",
+                "ocode": "au_nem_qld_titree",
                 "station_id": 1208,
                 "station_code": "TITREE",
                 "facility_id": "TITREE",
@@ -12361,7 +12361,7 @@
             },
             "properties": {
                 "oid": "CB5",
-                "ocode": "au_nem_qld_1259",
+                "ocode": "au_nem_qld_vicmill",
                 "station_id": 1259,
                 "station_code": "VICMILL",
                 "facility_id": "VICMILL",
@@ -12553,7 +12553,7 @@
             },
             "properties": {
                 "oid": "C4A",
-                "ocode": "au_nem_qld_1345",
+                "ocode": "au_nem_qld_whitsf",
                 "station_id": 1345,
                 "station_code": "WHITSF",
                 "facility_id": "WHITSF",
@@ -12597,7 +12597,7 @@
             },
             "properties": {
                 "oid": "AYH",
-                "ocode": "au_nem_qld_1138",
+                "ocode": "au_nem_qld_whit1",
                 "station_id": 1138,
                 "station_code": "WHIT1",
                 "facility_id": "WHIT1",
@@ -12641,7 +12641,7 @@
             },
             "properties": {
                 "oid": "AWH",
-                "ocode": "au_nem_qld_1090",
+                "ocode": "au_nem_qld_windhill",
                 "station_id": 1090,
                 "station_code": "WINDHILL",
                 "facility_id": "WINDHILL",
@@ -12779,7 +12779,7 @@
             },
             "properties": {
                 "oid": "AX7",
-                "ocode": "au_nem_qld_1119",
+                "ocode": "au_nem_qld_wivensh",
                 "station_id": 1119,
                 "station_code": "WIVENSH",
                 "facility_id": "WIVENSH",
@@ -12855,7 +12855,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CG9",
-                "ocode": "au_nem_qld_1388",
+                "ocode": "au_nem_qld_yaransf",
                 "station_id": 1388,
                 "station_code": "YARANSF",
                 "facility_id": "YARANSF",
@@ -12899,7 +12899,7 @@
             },
             "properties": {
                 "oid": "C2S",
-                "ocode": "au_nem_qld_1243",
+                "ocode": "au_nem_qld_yarwun",
                 "station_id": 1243,
                 "station_code": "YARWUN",
                 "facility_id": "YARWUN",
@@ -13019,7 +13019,7 @@
             },
             "properties": {
                 "oid": "CC5",
-                "ocode": "au_nem_sa_1211",
+                "ocode": "au_nem_sa_amcorgr",
                 "station_id": 1211,
                 "station_code": "AMCORGR",
                 "facility_id": "AMCORGR",
@@ -13063,7 +13063,7 @@
             },
             "properties": {
                 "oid": "AYT",
-                "ocode": "au_nem_sa_1140",
+                "ocode": "au_nem_sa_angaston",
                 "station_id": 1140,
                 "station_code": "ANGASTON",
                 "facility_id": "ANGASTON",
@@ -13183,7 +13183,7 @@
             },
             "properties": {
                 "oid": "CH2",
-                "ocode": "au_nem_sa_1395",
+                "ocode": "au_nem_sa_barkips",
                 "station_id": 1395,
                 "station_code": "BARKIPS",
                 "facility_id": "BARKIPS",
@@ -13227,7 +13227,7 @@
             },
             "properties": {
                 "oid": "CBK",
-                "ocode": "au_nem_sa_1261",
+                "ocode": "au_nem_sa_blulake",
                 "station_id": 1261,
                 "station_code": "BLULAKE",
                 "facility_id": "BLULAKE",
@@ -13289,7 +13289,7 @@
             },
             "properties": {
                 "oid": "CFX",
-                "ocode": "au_nem_sa_1342",
+                "ocode": "au_nem_sa_bngsf1",
                 "station_id": 1342,
                 "station_code": "BNGSF1",
                 "facility_id": "BNGSF1",
@@ -13333,7 +13333,7 @@
             },
             "properties": {
                 "oid": "C4G",
-                "ocode": "au_nem_sa_1353",
+                "ocode": "au_nem_sa_bngsf2",
                 "station_id": 1353,
                 "station_code": "BNGSF2",
                 "facility_id": "BNGSF2",
@@ -13377,7 +13377,7 @@
             },
             "properties": {
                 "oid": "CAZ",
-                "ocode": "au_nem_sa_1176",
+                "ocode": "au_nem_sa_canunda1",
                 "station_id": 1176,
                 "station_code": "CANUNDA1",
                 "facility_id": "CANUNDA1",
@@ -13421,7 +13421,7 @@
             },
             "properties": {
                 "oid": "AY6",
-                "ocode": "au_nem_sa_1142",
+                "ocode": "au_nem_sa_cathrock",
                 "station_id": 1142,
                 "station_code": "CATHROCK",
                 "facility_id": "CATHROCK",
@@ -13465,7 +13465,7 @@
             },
             "properties": {
                 "oid": "CC6",
-                "ocode": "au_nem_sa_1214",
+                "ocode": "au_nem_sa_clemgpwf",
                 "station_id": 1214,
                 "station_code": "CLEMGPWF",
                 "facility_id": "CLEMGPWF",
@@ -13509,7 +13509,7 @@
             },
             "properties": {
                 "oid": "C42",
-                "ocode": "au_nem_sa_1347",
+                "ocode": "au_nem_sa_dalnth",
                 "station_id": 1347,
                 "station_code": "DALNTH",
                 "facility_id": "DALNTH",
@@ -13571,7 +13571,7 @@
             },
             "properties": {
                 "oid": "AR4",
-                "ocode": "au_nem_sa_1016",
+                "ocode": "au_nem_sa_drycgt",
                 "station_id": 1016,
                 "station_code": "DRYCGT",
                 "facility_id": "DRYCGT",
@@ -13651,7 +13651,7 @@
             },
             "properties": {
                 "oid": "AX2",
-                "ocode": "au_nem_sa_1107",
+                "ocode": "au_nem_sa_aglhal",
                 "station_id": 1107,
                 "station_code": "AGLHAL",
                 "facility_id": "AGLHAL",
@@ -13893,7 +13893,7 @@
             },
             "properties": {
                 "oid": "CAW",
-                "ocode": "au_nem_sa_1197",
+                "ocode": "au_nem_sa_hallwf",
                 "station_id": 1197,
                 "station_code": "HALLWF",
                 "facility_id": "HALLWF",
@@ -13937,7 +13937,7 @@
             },
             "properties": {
                 "oid": "CC7",
-                "ocode": "au_nem_sa_1215",
+                "ocode": "au_nem_sa_hallwf2",
                 "station_id": 1215,
                 "station_code": "HALLWF2",
                 "facility_id": "HALLWF2",
@@ -13975,7 +13975,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CB9",
-                "ocode": "au_nem_sa_1268",
+                "ocode": "au_nem_sa_highbry",
                 "station_id": 1268,
                 "station_code": "HIGHBRY",
                 "facility_id": "HIGHBRY",
@@ -14019,7 +14019,7 @@
             },
             "properties": {
                 "oid": "CEH",
-                "ocode": "au_nem_sa_1306",
+                "ocode": "au_nem_sa_hornsdal",
                 "station_id": 1306,
                 "station_code": "HORNSDAL",
                 "facility_id": "HORNSDAL",
@@ -14063,7 +14063,7 @@
             },
             "properties": {
                 "oid": "CEP",
-                "ocode": "au_nem_sa_1312",
+                "ocode": "au_nem_sa_hornsdal2",
                 "station_id": 1312,
                 "station_code": "HORNSDAL2",
                 "facility_id": "HORNSDAL2",
@@ -14107,7 +14107,7 @@
             },
             "properties": {
                 "oid": "CEW",
-                "ocode": "au_nem_sa_1317",
+                "ocode": "au_nem_sa_hornsdal3",
                 "station_id": 1317,
                 "station_code": "HORNSDAL3",
                 "facility_id": "HORNSDAL3",
@@ -14151,7 +14151,7 @@
             },
             "properties": {
                 "oid": "CFB",
-                "ocode": "au_nem_sa_1324",
+                "ocode": "au_nem_sa_hornsdpr",
                 "station_id": 1324,
                 "station_code": "HORNSDPR",
                 "facility_id": "HORNSDPR",
@@ -14251,7 +14251,7 @@
             },
             "properties": {
                 "oid": "AW4",
-                "ocode": "au_nem_sa_1088",
+                "ocode": "au_nem_sa_ladbroke",
                 "station_id": 1088,
                 "station_code": "LADBROKE",
                 "facility_id": "LADBROKE",
@@ -14313,7 +14313,7 @@
             },
             "properties": {
                 "oid": "CHC",
-                "ocode": "au_nem_sa_1394",
+                "ocode": "au_nem_sa_lbbess",
                 "station_id": 1394,
                 "station_code": "LBBESS",
                 "facility_id": "LBBESS",
@@ -14411,7 +14411,7 @@
             },
             "properties": {
                 "oid": "CAR",
-                "ocode": "au_nem_sa_1194",
+                "ocode": "au_nem_sa_lkbonny2",
                 "station_id": 1194,
                 "station_code": "LKBONNY_2",
                 "facility_id": "LKBONNY_2",
@@ -14455,7 +14455,7 @@
             },
             "properties": {
                 "oid": "CGF",
-                "ocode": "au_nem_sa_1375",
+                "ocode": "au_nem_sa_lgapwf1",
                 "station_id": 1375,
                 "station_code": "LGAPWF1",
                 "facility_id": "LGAPWF1",
@@ -14499,7 +14499,7 @@
             },
             "properties": {
                 "oid": "AXA",
-                "ocode": "au_nem_sa_1105",
+                "ocode": "au_nem_sa_lonsdale",
                 "station_id": 1105,
                 "station_code": "LONSDALE",
                 "facility_id": "LONSDALE",
@@ -14543,7 +14543,7 @@
             },
             "properties": {
                 "oid": "ARG",
-                "ocode": "au_nem_sa_1017",
+                "ocode": "au_nem_sa_mintaro",
                 "station_id": 1017,
                 "station_code": "MINTARO",
                 "facility_id": "MINTARO",
@@ -14605,7 +14605,7 @@
             },
             "properties": {
                 "oid": "CZR",
-                "ocode": "au_nem_sa_1170",
+                "ocode": "au_nem_sa_mtmillar",
                 "station_id": 1170,
                 "station_code": "MTMILLAR",
                 "facility_id": "MTMILLAR",
@@ -14687,7 +14687,7 @@
             },
             "properties": {
                 "oid": "C2W",
-                "ocode": "au_nem_sa_1245",
+                "ocode": "au_nem_sa_nbhwf",
                 "station_id": 1245,
                 "station_code": "NBHWF",
                 "facility_id": "NBHWF",
@@ -14731,7 +14731,7 @@
             },
             "properties": {
                 "oid": "ARH",
-                "ocode": "au_nem_sa_1018",
+                "ocode": "au_nem_sa_northp",
                 "station_id": 1018,
                 "station_code": "NORTHP",
                 "facility_id": "NORTHP",
@@ -14829,7 +14829,7 @@
             },
             "properties": {
                 "oid": "A93",
-                "ocode": "au_nem_sa_1061",
+                "ocode": "au_nem_sa_osborne",
                 "station_id": 1061,
                 "station_code": "OSBORNE",
                 "facility_id": "OSBORNE",
@@ -14909,7 +14909,7 @@
             },
             "properties": {
                 "oid": "CBW",
-                "ocode": "au_nem_sa_1269",
+                "ocode": "au_nem_sa_pedler",
                 "station_id": 1269,
                 "station_code": "PEDLER",
                 "facility_id": "PEDLER",
@@ -14971,7 +14971,7 @@
             },
             "properties": {
                 "oid": "AW7",
-                "ocode": "au_nem_sa_1095",
+                "ocode": "au_nem_sa_npppps",
                 "station_id": 1095,
                 "station_code": "NPPPPS",
                 "facility_id": "NPPPPS",
@@ -15071,7 +15071,7 @@
             },
             "properties": {
                 "oid": "AR5",
-                "ocode": "au_nem_sa_1019",
+                "ocode": "au_nem_sa_playf",
                 "station_id": 1019,
                 "station_code": "PLAYF",
                 "facility_id": "PLAYF",
@@ -15187,7 +15187,7 @@
             },
             "properties": {
                 "oid": "A92",
-                "ocode": "au_nem_sa_1059",
+                "ocode": "au_nem_sa_portlcn",
                 "station_id": 1059,
                 "station_code": "PORTLCN",
                 "facility_id": "PORTLCN",
@@ -15249,7 +15249,7 @@
             },
             "properties": {
                 "oid": "CB2",
-                "ocode": "au_nem_sa_1251",
+                "ocode": "au_nem_sa_stanvac",
                 "station_id": 1251,
                 "station_code": "STANVAC",
                 "facility_id": "STANVAC",
@@ -15329,7 +15329,7 @@
             },
             "properties": {
                 "oid": "AXZ",
-                "ocode": "au_nem_sa_1104",
+                "ocode": "au_nem_sa_quarantn",
                 "station_id": 1104,
                 "station_code": "QUARANTN",
                 "facility_id": "QUARANTN",
@@ -15705,7 +15705,7 @@
             },
             "properties": {
                 "oid": "CAX",
-                "ocode": "au_nem_sa_1198",
+                "ocode": "au_nem_sa_snowtown",
                 "station_id": 1198,
                 "station_code": "SNOWTOWN",
                 "facility_id": "SNOWTOWN",
@@ -15749,7 +15749,7 @@
             },
             "properties": {
                 "oid": "C3E",
-                "ocode": "au_nem_sa_1278",
+                "ocode": "au_nem_sa_snownth",
                 "station_id": 1278,
                 "station_code": "SNOWNTH",
                 "facility_id": "SNOWNTH",
@@ -15811,7 +15811,7 @@
             },
             "properties": {
                 "oid": "AR2",
-                "ocode": "au_nem_sa_1011",
+                "ocode": "au_nem_sa_snug",
                 "station_id": 1011,
                 "station_code": "SNUG",
                 "facility_id": "SNUG",
@@ -15929,7 +15929,7 @@
             },
             "properties": {
                 "oid": "CZX",
-                "ocode": "au_nem_sa_1174",
+                "ocode": "au_nem_sa_starfhill",
                 "station_id": 1174,
                 "station_code": "STARFHILL",
                 "facility_id": "STARFHILL",
@@ -15973,7 +15973,7 @@
             },
             "properties": {
                 "oid": "CGE",
-                "ocode": "au_nem_sa_1374",
+                "ocode": "au_nem_sa_tbsf",
                 "station_id": 1374,
                 "station_code": "TBSF",
                 "facility_id": "TBSF",
@@ -16017,7 +16017,7 @@
             },
             "properties": {
                 "oid": "CBC",
-                "ocode": "au_nem_sa_1250",
+                "ocode": "au_nem_sa_tatiara",
                 "station_id": 1250,
                 "station_code": "TATIARA",
                 "facility_id": "TATIARA",
@@ -16055,7 +16055,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CBY",
-                "ocode": "au_nem_sa_1271",
+                "ocode": "au_nem_sa_teatree",
                 "station_id": 1271,
                 "station_code": "TEATREE",
                 "facility_id": "TEATREE",
@@ -16099,7 +16099,7 @@
             },
             "properties": {
                 "oid": "CFA",
-                "ocode": "au_nem_sa_1321",
+                "ocode": "au_nem_sa_satgs",
                 "station_id": 1321,
                 "station_code": "SATGS",
                 "facility_id": "SATGS",
@@ -16161,7 +16161,7 @@
             },
             "properties": {
                 "oid": "AYZ",
-                "ocode": "au_nem_sa_1128",
+                "ocode": "au_nem_sa_termstor",
                 "station_id": 1128,
                 "station_code": "TERMSTOR",
                 "facility_id": "TERMSTOR",
@@ -16223,7 +16223,7 @@
             },
             "properties": {
                 "oid": "CB4",
-                "ocode": "au_nem_sa_1256",
+                "ocode": "au_nem_sa_bluff",
                 "station_id": 1256,
                 "station_code": "BLUFF",
                 "facility_id": "BLUFF",
@@ -16267,7 +16267,7 @@
             },
             "properties": {
                 "oid": "ART",
-                "ocode": "au_nem_sa_1020",
+                "ocode": "au_nem_sa_torris",
                 "station_id": 1020,
                 "station_code": "TORRIS",
                 "facility_id": "TORRIS",
@@ -16475,7 +16475,7 @@
             },
             "properties": {
                 "oid": "C3X",
-                "ocode": "au_nem_sa_1294",
+                "ocode": "au_nem_sa_bolivar",
                 "station_id": 1294,
                 "station_code": "BOLIVAR",
                 "facility_id": "BOLIVAR",
@@ -16519,7 +16519,7 @@
             },
             "properties": {
                 "oid": "C2Y",
-                "ocode": "au_nem_sa_1247",
+                "ocode": "au_nem_sa_waterlwf",
                 "station_id": 1247,
                 "station_code": "WATERLWF",
                 "facility_id": "WATERLWF",
@@ -16581,7 +16581,7 @@
             },
             "properties": {
                 "oid": "AYK",
-                "ocode": "au_nem_sa_1141",
+                "ocode": "au_nem_sa_wpwf",
                 "station_id": 1141,
                 "station_code": "WPWF",
                 "facility_id": "WPWF",
@@ -16625,7 +16625,7 @@
             },
             "properties": {
                 "oid": "C44",
-                "ocode": "au_nem_sa_1352",
+                "ocode": "au_nem_sa_wgwf",
                 "station_id": 1352,
                 "station_code": "WGWF",
                 "facility_id": "WGWF",
@@ -16687,7 +16687,7 @@
             },
             "properties": {
                 "oid": "CBX",
-                "ocode": "au_nem_sa_1270",
+                "ocode": "au_nem_sa_wingf1",
                 "station_id": 1270,
                 "station_code": "WINGF1",
                 "facility_id": "WINGF1",
@@ -16731,7 +16731,7 @@
             },
             "properties": {
                 "oid": "C3Z",
-                "ocode": "au_nem_sa_1272",
+                "ocode": "au_nem_sa_wingf2",
                 "station_id": 1272,
                 "station_code": "WINGF2",
                 "facility_id": "WINGF2",
@@ -16851,7 +16851,7 @@
             },
             "properties": {
                 "oid": "A98",
-                "ocode": "au_nem_vic_1073",
+                "ocode": "au_nem_vic_snwygjp2",
                 "station_id": 1073,
                 "station_code": "SNWYGJP2",
                 "facility_id": "SNWYGJP2",
@@ -16895,7 +16895,7 @@
             },
             "properties": {
                 "oid": "AY8",
-                "ocode": "au_nem_tas_1145",
+                "ocode": "au_nem_tas_bastyan",
                 "station_id": 1145,
                 "station_code": "BASTYAN",
                 "facility_id": "BASTYAN",
@@ -16939,7 +16939,7 @@
             },
             "properties": {
                 "oid": "AY7",
-                "ocode": "au_nem_tas_1143",
+                "ocode": "au_nem_tas_bellbay",
                 "station_id": 1143,
                 "station_code": "BELLBAY",
                 "facility_id": "BELLBAY",
@@ -17001,7 +17001,7 @@
             },
             "properties": {
                 "oid": "CEG",
-                "ocode": "au_nem_tas_1305",
+                "ocode": "au_nem_tas_bbdisel1",
                 "station_id": 1305,
                 "station_code": "BBDISEL1",
                 "facility_id": "BBDISEL1",
@@ -17045,7 +17045,7 @@
             },
             "properties": {
                 "oid": "CAE",
-                "ocode": "au_nem_tas_1182",
+                "ocode": "au_nem_tas_bbp31",
                 "station_id": 1182,
                 "station_code": "BBP31",
                 "facility_id": "BBP31",
@@ -17143,7 +17143,7 @@
             },
             "properties": {
                 "oid": "AYR",
-                "ocode": "au_nem_tas_1146",
+                "ocode": "au_nem_tas_butlersg",
                 "station_id": 1146,
                 "station_code": "BUTLERSG",
                 "facility_id": "BUTLERSG",
@@ -17205,7 +17205,7 @@
             },
             "properties": {
                 "oid": "CZC",
-                "ocode": "au_nem_tas_1154",
+                "ocode": "au_nem_tas_liwyca",
                 "station_id": 1154,
                 "station_code": "LI_WY_CA",
                 "facility_id": "LI_WY_CA",
@@ -17393,7 +17393,7 @@
             },
             "properties": {
                 "oid": "CHG",
-                "ocode": "au_nem_tas_1401",
+                "ocode": "au_nem_tas_cthlwf",
                 "station_id": 1401,
                 "station_code": "CTHLWF",
                 "facility_id": "CTHLWF",
@@ -17437,7 +17437,7 @@
             },
             "properties": {
                 "oid": "AYS",
-                "ocode": "au_nem_tas_1147",
+                "ocode": "au_nem_tas_cethana",
                 "station_id": 1147,
                 "station_code": "CETHANA",
                 "facility_id": "CETHANA",
@@ -17481,7 +17481,7 @@
             },
             "properties": {
                 "oid": "AY9",
-                "ocode": "au_nem_tas_1148",
+                "ocode": "au_nem_tas_cluny",
                 "station_id": 1148,
                 "station_code": "CLUNY",
                 "facility_id": "CLUNY",
@@ -17525,7 +17525,7 @@
             },
             "properties": {
                 "oid": "AYW",
-                "ocode": "au_nem_tas_1149",
+                "ocode": "au_nem_tas_devilsg",
                 "station_id": 1149,
                 "station_code": "DEVILS_G",
                 "facility_id": "DEVILS_G",
@@ -17569,7 +17569,7 @@
             },
             "properties": {
                 "oid": "AYX",
-                "ocode": "au_nem_tas_1150",
+                "ocode": "au_nem_tas_fisher",
                 "station_id": 1150,
                 "station_code": "FISHER",
                 "facility_id": "FISHER",
@@ -17613,7 +17613,7 @@
             },
             "properties": {
                 "oid": "CEE",
-                "ocode": "au_nem_tas_1302",
+                "ocode": "au_nem_tas_georgtwn",
                 "station_id": 1302,
                 "station_code": "GEORGTWN",
                 "facility_id": "GEORGTWN",
@@ -17695,7 +17695,7 @@
             },
             "properties": {
                 "oid": "AYY",
-                "ocode": "au_nem_tas_1151",
+                "ocode": "au_nem_tas_gordon",
                 "station_id": 1151,
                 "station_code": "GORDON",
                 "facility_id": "GORDON",
@@ -17757,7 +17757,7 @@
             },
             "properties": {
                 "oid": "CH6",
-                "ocode": "au_nem_tas_1406",
+                "ocode": "au_nem_tas_granwf",
                 "station_id": 1406,
                 "station_code": "GRANWF",
                 "facility_id": "GRANWF",
@@ -17839,7 +17839,7 @@
             },
             "properties": {
                 "oid": "CZZ",
-                "ocode": "au_nem_tas_1152",
+                "ocode": "au_nem_tas_jbutters",
                 "station_id": 1152,
                 "station_code": "JBUTTERS",
                 "facility_id": "JBUTTERS",
@@ -17883,7 +17883,7 @@
             },
             "properties": {
                 "oid": "CZ2",
-                "ocode": "au_nem_tas_1155",
+                "ocode": "au_nem_tas_lkecho",
                 "station_id": 1155,
                 "station_code": "LK_ECHO",
                 "facility_id": "LK_ECHO",
@@ -17965,7 +17965,7 @@
             },
             "properties": {
                 "oid": "CZA",
-                "ocode": "au_nem_tas_1153",
+                "ocode": "au_nem_tas_lemwil",
                 "station_id": 1153,
                 "station_code": "LEM_WIL",
                 "facility_id": "LEM_WIL",
@@ -18101,7 +18101,7 @@
             },
             "properties": {
                 "oid": "CZB",
-                "ocode": "au_nem_tas_1156",
+                "ocode": "au_nem_tas_mackntsh",
                 "station_id": 1156,
                 "station_code": "MACKNTSH",
                 "facility_id": "MACKNTSH",
@@ -18145,7 +18145,7 @@
             },
             "properties": {
                 "oid": "CZ3",
-                "ocode": "au_nem_tas_1157",
+                "ocode": "au_nem_tas_meadowbk",
                 "station_id": 1157,
                 "station_code": "MEADOWBK",
                 "facility_id": "MEADOWBK",
@@ -18207,7 +18207,7 @@
             },
             "properties": {
                 "oid": "C3K",
-                "ocode": "au_nem_tas_1285",
+                "ocode": "au_nem_tas_midldps",
                 "station_id": 1285,
                 "station_code": "MIDLDPS",
                 "facility_id": "MIDLDPS",
@@ -18287,7 +18287,7 @@
             },
             "properties": {
                 "oid": "CBR",
-                "ocode": "au_nem_tas_1266",
+                "ocode": "au_nem_tas_musselro",
                 "station_id": 1266,
                 "station_code": "MUSSELRO",
                 "facility_id": "MUSSELRO",
@@ -18331,7 +18331,7 @@
             },
             "properties": {
                 "oid": "CZE",
-                "ocode": "au_nem_tas_1158",
+                "ocode": "au_nem_tas_paloona",
                 "station_id": 1158,
                 "station_code": "PALOONA",
                 "facility_id": "PALOONA",
@@ -18375,7 +18375,7 @@
             },
             "properties": {
                 "oid": "CZF",
-                "ocode": "au_nem_tas_1159",
+                "ocode": "au_nem_tas_ptina110",
                 "station_id": 1159,
                 "station_code": "PTINA110",
                 "facility_id": "PTINA110",
@@ -18455,7 +18455,7 @@
             },
             "properties": {
                 "oid": "CEF",
-                "ocode": "au_nem_tas_1303",
+                "ocode": "au_nem_tas_portlatt",
                 "station_id": 1303,
                 "station_code": "PORTLATT",
                 "facility_id": "PORTLATT",
@@ -18499,7 +18499,7 @@
             },
             "properties": {
                 "oid": "CE4",
-                "ocode": "au_nem_tas_1304",
+                "ocode": "au_nem_tas_queriver",
                 "station_id": 1304,
                 "station_code": "QUERIVER",
                 "facility_id": "QUERIVER",
@@ -18543,7 +18543,7 @@
             },
             "properties": {
                 "oid": "CZG",
-                "ocode": "au_nem_tas_1161",
+                "ocode": "au_nem_tas_reece",
                 "station_id": 1161,
                 "station_code": "REECE",
                 "facility_id": "REECE",
@@ -18605,7 +18605,7 @@
             },
             "properties": {
                 "oid": "CA5",
-                "ocode": "au_nem_tas_1187",
+                "ocode": "au_nem_tas_remount",
                 "station_id": 1187,
                 "station_code": "REMOUNT",
                 "facility_id": "REMOUNT",
@@ -18649,7 +18649,7 @@
             },
             "properties": {
                 "oid": "CZH",
-                "ocode": "au_nem_tas_1162",
+                "ocode": "au_nem_tas_repulse",
                 "station_id": 1162,
                 "station_code": "REPULSE",
                 "facility_id": "REPULSE",
@@ -18693,7 +18693,7 @@
             },
             "properties": {
                 "oid": "CAC",
-                "ocode": "au_nem_tas_1178",
+                "ocode": "au_nem_tas_rowallan",
                 "station_id": 1178,
                 "station_code": "ROWALLAN",
                 "facility_id": "ROWALLAN",
@@ -18775,7 +18775,7 @@
             },
             "properties": {
                 "oid": "CCS",
-                "ocode": "au_nem_tas_1219",
+                "ocode": "au_nem_tas_tvccps",
                 "station_id": 1219,
                 "station_code": "TVCCPS",
                 "facility_id": "TVCCPS",
@@ -18837,7 +18837,7 @@
             },
             "properties": {
                 "oid": "CZ5",
-                "ocode": "au_nem_tas_1163",
+                "ocode": "au_nem_tas_tarralea",
                 "station_id": 1163,
                 "station_code": "TARRALEA",
                 "facility_id": "TARRALEA",
@@ -18919,7 +18919,7 @@
             },
             "properties": {
                 "oid": "CZT",
-                "ocode": "au_nem_tas_1164",
+                "ocode": "au_nem_tas_trevalln",
                 "station_id": 1164,
                 "station_code": "TREVALLN",
                 "facility_id": "TREVALLN",
@@ -19017,7 +19017,7 @@
             },
             "properties": {
                 "oid": "CZK",
-                "ocode": "au_nem_tas_1165",
+                "ocode": "au_nem_tas_tribute",
                 "station_id": 1165,
                 "station_code": "TRIBUTE",
                 "facility_id": "TRIBUTE",
@@ -19079,7 +19079,7 @@
             },
             "properties": {
                 "oid": "CZ6",
-                "ocode": "au_nem_tas_1166",
+                "ocode": "au_nem_tas_tungatin",
                 "station_id": 1166,
                 "station_code": "TUNGATIN",
                 "facility_id": "TUNGATIN",
@@ -19123,7 +19123,7 @@
             },
             "properties": {
                 "oid": "AYP",
-                "ocode": "au_nem_tas_1144",
+                "ocode": "au_nem_tas_woolnth1",
                 "station_id": 1144,
                 "station_code": "WOOLNTH1",
                 "facility_id": "WOOLNTH1",
@@ -19241,7 +19241,7 @@
             },
             "properties": {
                 "oid": "ASC",
-                "ocode": "au_nem_vic_1034",
+                "ocode": "au_nem_vic_aps",
                 "station_id": 1034,
                 "station_code": "APS",
                 "facility_id": "APS",
@@ -19285,7 +19285,7 @@
             },
             "properties": {
                 "oid": "CE5",
-                "ocode": "au_nem_vic_1307",
+                "ocode": "au_nem_vic_arwf",
                 "station_id": 1307,
                 "station_code": "ARWF",
                 "facility_id": "ARWF",
@@ -19347,7 +19347,7 @@
             },
             "properties": {
                 "oid": "AWR",
-                "ocode": "au_nem_vic_1098",
+                "ocode": "au_nem_vic_deibdl",
                 "station_id": 1098,
                 "station_code": "DEIBDL",
                 "facility_id": "DEIBDL",
@@ -19409,7 +19409,7 @@
             },
             "properties": {
                 "oid": "C3Y",
-                "ocode": "au_nem_vic_1295",
+                "ocode": "au_nem_vic_bhwf",
                 "station_id": 1295,
                 "station_code": "BHWF",
                 "facility_id": "BHWF",
@@ -19491,7 +19491,7 @@
             },
             "properties": {
                 "oid": "CCH",
-                "ocode": "au_nem_vic_1210",
+                "ocode": "au_nem_vic_bbasehos",
                 "station_id": 1210,
                 "station_code": "BBASEHOS",
                 "facility_id": "BBASEHOS",
@@ -19553,7 +19553,7 @@
             },
             "properties": {
                 "oid": "C4X",
-                "ocode": "au_nem_vic_1366",
+                "ocode": "au_nem_vic_balbess",
                 "station_id": 1366,
                 "station_code": "BALBESS",
                 "facility_id": "BALBESS",
@@ -19615,7 +19615,7 @@
             },
             "properties": {
                 "oid": "CZW",
-                "ocode": "au_nem_vic_1173",
+                "ocode": "au_nem_vic_baps",
                 "station_id": 1173,
                 "station_code": "BAPS",
                 "facility_id": "BAPS",
@@ -19695,7 +19695,7 @@
             },
             "properties": {
                 "oid": "C4F",
-                "ocode": "au_nem_vic_1351",
+                "ocode": "au_nem_vic_bannsp",
                 "station_id": 1351,
                 "station_code": "BANNSP",
                 "facility_id": "BANNSP",
@@ -19853,7 +19853,7 @@
             },
             "properties": {
                 "oid": "C2F",
-                "ocode": "au_nem_vic_1231",
+                "ocode": "au_nem_vic_berwick",
                 "station_id": 1231,
                 "station_code": "BERWICK",
                 "facility_id": "BERWICK",
@@ -19989,7 +19989,7 @@
             },
             "properties": {
                 "oid": "AS4",
-                "ocode": "au_nem_vic_1040",
+                "ocode": "au_nem_vic_mckay",
                 "station_id": 1040,
                 "station_code": "MCKAY",
                 "facility_id": "MCKAY",
@@ -20127,7 +20127,7 @@
             },
             "properties": {
                 "oid": "C24",
-                "ocode": "au_nem_vic_1232",
+                "ocode": "au_nem_vic_broadmdw",
                 "station_id": 1232,
                 "station_code": "BROADMDW",
                 "facility_id": "BROADMDW",
@@ -20171,7 +20171,7 @@
             },
             "properties": {
                 "oid": "AXG",
-                "ocode": "au_nem_vic_1113",
+                "ocode": "au_nem_vic_brooklyn",
                 "station_id": 1113,
                 "station_code": "BROOKLYN",
                 "facility_id": "BROOKLYN",
@@ -20245,7 +20245,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CHZ",
-                "ocode": "au_nem_vic_1392",
+                "ocode": "au_nem_vic_bulgana",
                 "station_id": 1392,
                 "station_code": "BULGANA",
                 "facility_id": "BULGANA",
@@ -20459,7 +20459,7 @@
             },
             "properties": {
                 "oid": "CZY",
-                "ocode": "au_nem_vic_1175",
+                "ocode": "au_nem_vic_challwf",
                 "station_id": 1175,
                 "station_code": "CHALLWF",
                 "facility_id": "CHALLWF",
@@ -20503,7 +20503,7 @@
             },
             "properties": {
                 "oid": "CEZ",
-                "ocode": "au_nem_vic_1296",
+                "ocode": "au_nem_vic_chpstwf",
                 "station_id": 1296,
                 "station_code": "CHPSTWF",
                 "facility_id": "CHPSTWF",
@@ -20541,7 +20541,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CH7",
-                "ocode": "au_nem_vic_1407",
+                "ocode": "au_nem_vic_chytwf",
                 "station_id": 1407,
                 "station_code": "CHYTWF",
                 "facility_id": "CHYTWF",
@@ -20585,7 +20585,7 @@
             },
             "properties": {
                 "oid": "C2G",
-                "ocode": "au_nem_vic_1233",
+                "ocode": "au_nem_vic_clayton",
                 "station_id": 1233,
                 "station_code": "CLAYTON",
                 "facility_id": "CLAYTON",
@@ -20629,7 +20629,7 @@
             },
             "properties": {
                 "oid": "ASG",
-                "ocode": "au_nem_vic_1041",
+                "ocode": "au_nem_vic_clover",
                 "station_id": 1041,
                 "station_code": "CLOVER",
                 "facility_id": "CLOVER",
@@ -20673,7 +20673,7 @@
             },
             "properties": {
                 "oid": "CCY",
-                "ocode": "au_nem_vic_1223",
+                "ocode": "au_nem_vic_codrgton",
                 "station_id": 1223,
                 "station_code": "CODRGTON",
                 "facility_id": "CODRGTON",
@@ -20717,7 +20717,7 @@
             },
             "properties": {
                 "oid": "CEB",
-                "ocode": "au_nem_vic_1300",
+                "ocode": "au_nem_vic_cbwf",
                 "station_id": 1300,
                 "station_code": "CBWF",
                 "facility_id": "CBWF",
@@ -20761,7 +20761,7 @@
             },
             "properties": {
                 "oid": "C32",
-                "ocode": "au_nem_vic_1275",
+                "ocode": "au_nem_vic_corio",
                 "station_id": 1275,
                 "station_code": "CORIO",
                 "facility_id": "CORIO",
@@ -20805,7 +20805,7 @@
             },
             "properties": {
                 "oid": "CGZ",
-                "ocode": "au_nem_vic_1368",
+                "ocode": "au_nem_vic_crowlwf",
                 "station_id": 1368,
                 "station_code": "CROWLWF",
                 "facility_id": "CROWLWF",
@@ -20849,7 +20849,7 @@
             },
             "properties": {
                 "oid": "ASE",
-                "ocode": "au_nem_vic_1038",
+                "ocode": "au_nem_vic_dartm",
                 "station_id": 1038,
                 "station_code": "DARTM",
                 "facility_id": "DARTM",
@@ -20893,7 +20893,7 @@
             },
             "properties": {
                 "oid": "CH3",
-                "ocode": "au_nem_vic_1397",
+                "ocode": "au_nem_vic_dundwf",
                 "station_id": 1397,
                 "station_code": "DUNDWF",
                 "facility_id": "DUNDWF",
@@ -20973,7 +20973,7 @@
             },
             "properties": {
                 "oid": "ASF",
-                "ocode": "au_nem_vic_1039",
+                "ocode": "au_nem_vic_eildon",
                 "station_id": 1039,
                 "station_code": "EILDON",
                 "facility_id": "EILDON",
@@ -21137,7 +21137,7 @@
             "geometry": null,
             "properties": {
                 "oid": "CHH",
-                "ocode": "au_nem_vic_1402",
+                "ocode": "au_nem_vic_elainewf",
                 "station_id": 1402,
                 "station_code": "ELAINEWF",
                 "facility_id": "ELAINEWF",
@@ -21257,7 +21257,7 @@
             },
             "properties": {
                 "oid": "CFP",
-                "ocode": "au_nem_vic_1336",
+                "ocode": "au_nem_vic_gannsf",
                 "station_id": 1336,
                 "station_code": "GANNSF",
                 "facility_id": "GANNSF",
@@ -21301,7 +21301,7 @@
             },
             "properties": {
                 "oid": "CGA",
-                "ocode": "au_nem_vic_1369",
+                "ocode": "au_nem_vic_gannbess",
                 "station_id": 1369,
                 "station_code": "GANNBESS",
                 "facility_id": "GANNBESS",
@@ -21363,7 +21363,7 @@
             },
             "properties": {
                 "oid": "C3H",
-                "ocode": "au_nem_vic_1282",
+                "ocode": "au_nem_vic_glenmagg",
                 "station_id": 1282,
                 "station_code": "GLENMAGG",
                 "facility_id": "GLENMAGG",
@@ -21445,7 +21445,7 @@
             },
             "properties": {
                 "oid": "CBT",
-                "ocode": "au_nem_vic_1260",
+                "ocode": "au_nem_vic_halamrd",
                 "station_id": 1260,
                 "station_code": "HALAMRD",
                 "facility_id": "HALAMRD",
@@ -21489,7 +21489,7 @@
             },
             "properties": {
                 "oid": "ARB",
-                "ocode": "au_nem_vic_1012",
+                "ocode": "au_nem_vic_hazel",
                 "station_id": 1012,
                 "station_code": "HAZEL",
                 "facility_id": "HAZEL",
@@ -21659,7 +21659,7 @@
             },
             "properties": {
                 "oid": "CBF",
-                "ocode": "au_nem_vic_1255",
+                "ocode": "au_nem_vic_hepwind",
                 "station_id": 1255,
                 "station_code": "HEPWIND",
                 "facility_id": "HEPWIND",
@@ -21703,7 +21703,7 @@
             },
             "properties": {
                 "oid": "AS2",
-                "ocode": "au_nem_vic_1035",
+                "ocode": "au_nem_vic_humev",
                 "station_id": 1035,
                 "station_code": "HUMEV",
                 "facility_id": "HUMEV",
@@ -21785,7 +21785,7 @@
             },
             "properties": {
                 "oid": "A8X",
-                "ocode": "au_nem_vic_1006",
+                "ocode": "au_nem_vic_jeera",
                 "station_id": 1006,
                 "station_code": "JEERA",
                 "facility_id": "JEERA",
@@ -21883,7 +21883,7 @@
             },
             "properties": {
                 "oid": "A8Y",
-                "ocode": "au_nem_vic_1007",
+                "ocode": "au_nem_vic_jeerb",
                 "station_id": 1007,
                 "station_code": "JEERB",
                 "facility_id": "JEERB",
@@ -22001,7 +22001,7 @@
             },
             "properties": {
                 "oid": "C49",
-                "ocode": "au_nem_vic_1364",
+                "ocode": "au_nem_vic_karsf",
                 "station_id": 1364,
                 "station_code": "KARSF",
                 "facility_id": "KARSF",
@@ -22045,7 +22045,7 @@
             },
             "properties": {
                 "oid": "CF2",
-                "ocode": "au_nem_vic_1323",
+                "ocode": "au_nem_vic_kiatawf",
                 "station_id": 1323,
                 "station_code": "KIATAWF",
                 "facility_id": "KIATAWF",
@@ -22107,7 +22107,7 @@
             },
             "properties": {
                 "oid": "CAA",
-                "ocode": "au_nem_vic_1177",
+                "ocode": "au_nem_vic_lngs",
                 "station_id": 1177,
                 "station_code": "LNGS",
                 "facility_id": "LNGS",
@@ -22169,7 +22169,7 @@
             },
             "properties": {
                 "oid": "AX5",
-                "ocode": "au_nem_vic_1115",
+                "ocode": "au_nem_vic_longford",
                 "station_id": 1115,
                 "station_code": "LONGFORD",
                 "facility_id": "LONGFORD",
@@ -22213,7 +22213,7 @@
             },
             "properties": {
                 "oid": "AR3",
-                "ocode": "au_nem_vic_1013",
+                "ocode": "au_nem_vic_loyyanga",
                 "station_id": 1013,
                 "station_code": "LOYYANGA",
                 "facility_id": "LOYYANGA",
@@ -22311,7 +22311,7 @@
             },
             "properties": {
                 "oid": "ARA",
-                "ocode": "au_nem_vic_1009",
+                "ocode": "au_nem_vic_loyyb",
                 "station_id": 1009,
                 "station_code": "LOYYB",
                 "facility_id": "LOYYB",
@@ -22373,7 +22373,7 @@
             },
             "properties": {
                 "oid": "CB7",
-                "ocode": "au_nem_vic_1263",
+                "ocode": "au_nem_vic_macarth",
                 "station_id": 1263,
                 "station_code": "MACARTH",
                 "facility_id": "MACARTH",
@@ -22417,7 +22417,7 @@
             },
             "properties": {
                 "oid": "CFH",
-                "ocode": "au_nem_vic_1330",
+                "ocode": "au_nem_vic_maroowf1",
                 "station_id": 1330,
                 "station_code": "MAROOWF1",
                 "facility_id": "MAROOWF1",
@@ -22575,7 +22575,7 @@
             },
             "properties": {
                 "oid": "AX9",
-                "ocode": "au_nem_vic_1124",
+                "ocode": "au_nem_vic_mornw",
                 "station_id": 1124,
                 "station_code": "MORNW",
                 "facility_id": "MORNW",
@@ -22619,7 +22619,7 @@
             },
             "properties": {
                 "oid": "CBG",
-                "ocode": "au_nem_vic_1257",
+                "ocode": "au_nem_vic_mortlk",
                 "station_id": 1257,
                 "station_code": "MORTLK",
                 "facility_id": "MORTLK",
@@ -22681,7 +22681,7 @@
             },
             "properties": {
                 "oid": "CB8",
-                "ocode": "au_nem_vic_1265",
+                "ocode": "au_nem_vic_mlwf",
                 "station_id": 1265,
                 "station_code": "MLWF",
                 "facility_id": "MLWF",
@@ -22725,7 +22725,7 @@
             },
             "properties": {
                 "oid": "ARC",
-                "ocode": "au_nem_vic_1010",
+                "ocode": "au_nem_vic_energyb",
                 "station_id": 1010,
                 "station_code": "ENERGYB",
                 "facility_id": "ENERGYB",
@@ -22843,7 +22843,7 @@
             },
             "properties": {
                 "oid": "C4C",
-                "ocode": "au_nem_vic_1346",
+                "ocode": "au_nem_vic_mtgelwf",
                 "station_id": 1346,
                 "station_code": "MTGELWF",
                 "facility_id": "MTGELWF",
@@ -22977,7 +22977,7 @@
             },
             "properties": {
                 "oid": "C34",
-                "ocode": "au_nem_vic_1280",
+                "ocode": "au_nem_vic_mtmercer",
                 "station_id": 1280,
                 "station_code": "MTMERCER",
                 "facility_id": "MTMERCER",
@@ -23021,7 +23021,7 @@
             },
             "properties": {
                 "oid": "CGH",
-                "ocode": "au_nem_vic_1378",
+                "ocode": "au_nem_vic_muwawf",
                 "station_id": 1378,
                 "station_code": "MUWAWF",
                 "facility_id": "MUWAWF",
@@ -23065,7 +23065,7 @@
             },
             "properties": {
                 "oid": "AWW",
-                "ocode": "au_nem_vic_1101",
+                "ocode": "au_nem_vic_murray",
                 "station_id": 1101,
                 "station_code": "MURRAY",
                 "facility_id": "MURRAY",
@@ -23165,7 +23165,7 @@
             },
             "properties": {
                 "oid": "ARZ",
-                "ocode": "au_nem_vic_1008",
+                "ocode": "au_nem_vic_newport",
                 "station_id": 1008,
                 "station_code": "NEWPORT",
                 "facility_id": "NEWPORT",
@@ -23209,7 +23209,7 @@
             },
             "properties": {
                 "oid": "CGT",
-                "ocode": "au_nem_vic_1380",
+                "ocode": "au_nem_vic_numurksf",
                 "station_id": 1380,
                 "station_code": "NUMURKSF",
                 "facility_id": "NUMURKSF",
@@ -23271,7 +23271,7 @@
             },
             "properties": {
                 "oid": "CBH",
-                "ocode": "au_nem_vic_1258",
+                "ocode": "au_nem_vic_oakland",
                 "station_id": 1258,
                 "station_code": "OAKLAND",
                 "facility_id": "OAKLAND",
@@ -23315,7 +23315,7 @@
             },
             "properties": {
                 "oid": "CAY",
-                "ocode": "au_nem_vic_1199",
+                "ocode": "au_nem_vic_portwf",
                 "station_id": 1199,
                 "station_code": "PORTWF",
                 "facility_id": "PORTWF",
@@ -23433,7 +23433,7 @@
             },
             "properties": {
                 "oid": "AS5",
-                "ocode": "au_nem_vic_1043",
+                "ocode": "au_nem_vic_rubicon",
                 "station_id": 1043,
                 "station_code": "RUBICON",
                 "facility_id": "RUBICON",
@@ -23607,7 +23607,7 @@
             },
             "properties": {
                 "oid": "C4Z",
-                "ocode": "au_nem_vic_1344",
+                "ocode": "au_nem_vic_saltcrk",
                 "station_id": 1344,
                 "station_code": "SALTCRK",
                 "facility_id": "SALTCRK",
@@ -23727,7 +23727,7 @@
             },
             "properties": {
                 "oid": "CCG",
-                "ocode": "au_nem_vic_1209",
+                "ocode": "au_nem_vic_shep1",
                 "station_id": 1209,
                 "station_code": "SHEP1",
                 "facility_id": "SHEP1",
@@ -23771,7 +23771,7 @@
             },
             "properties": {
                 "oid": "AXB",
-                "ocode": "au_nem_vic_1108",
+                "ocode": "au_nem_vic_aglsom",
                 "station_id": 1108,
                 "station_code": "AGLSOM",
                 "facility_id": "AGLSOM",
@@ -23815,7 +23815,7 @@
             },
             "properties": {
                 "oid": "CCF",
-                "ocode": "au_nem_vic_1207",
+                "ocode": "au_nem_vic_hlmsew01",
                 "station_id": 1207,
                 "station_code": "HLMSEW01",
                 "facility_id": "HLMSEW01",
@@ -23859,7 +23859,7 @@
             },
             "properties": {
                 "oid": "C3F",
-                "ocode": "au_nem_vic_1279",
+                "ocode": "au_nem_vic_svale",
                 "station_id": 1279,
                 "station_code": "SVALE",
                 "facility_id": "SVALE",
@@ -23979,7 +23979,7 @@
             },
             "properties": {
                 "oid": "CA4",
-                "ocode": "au_nem_vic_1184",
+                "ocode": "au_nem_vic_tatura",
                 "station_id": 1184,
                 "station_code": "TATURA",
                 "facility_id": "TATURA",
@@ -24023,7 +24023,7 @@
             },
             "properties": {
                 "oid": "C4S",
-                "ocode": "au_nem_vic_1363",
+                "ocode": "au_nem_vic_timwest",
                 "station_id": 1363,
                 "station_code": "TIMWEST",
                 "facility_id": "TIMWEST",
@@ -24181,7 +24181,7 @@
             },
             "properties": {
                 "oid": "AX4",
-                "ocode": "au_nem_vic_1112",
+                "ocode": "au_nem_vic_toorawf",
                 "station_id": 1112,
                 "station_code": "TOORAWF",
                 "facility_id": "TOORAWF",
@@ -24225,7 +24225,7 @@
             },
             "properties": {
                 "oid": "C3C",
-                "ocode": "au_nem_vic_1274",
+                "ocode": "au_nem_vic_tgnss",
                 "station_id": 1274,
                 "station_code": "TGNSS",
                 "facility_id": "TGNSS",
@@ -24459,7 +24459,7 @@
             },
             "properties": {
                 "oid": "CBB",
-                "ocode": "au_nem_vic_1252",
+                "ocode": "au_nem_vic_vpgs",
                 "station_id": 1252,
                 "station_code": "VPGS",
                 "facility_id": "VPGS",
@@ -24669,7 +24669,7 @@
             },
             "properties": {
                 "oid": "CCT",
-                "ocode": "au_nem_vic_1212",
+                "ocode": "au_nem_vic_waubrawf",
                 "station_id": 1212,
                 "station_code": "WAUBRAWF",
                 "facility_id": "WAUBRAWF",
@@ -24713,7 +24713,7 @@
             },
             "properties": {
                 "oid": "C4Y",
-                "ocode": "au_nem_vic_1367",
+                "ocode": "au_nem_vic_wemensf1",
                 "station_id": 1367,
                 "station_code": "WEMENSF1",
                 "facility_id": "WEMENSF1",
@@ -24757,7 +24757,7 @@
             },
             "properties": {
                 "oid": "ASH",
-                "ocode": "au_nem_vic_1042",
+                "ocode": "au_nem_vic_wkiewa",
                 "station_id": 1042,
                 "station_code": "WKIEWA",
                 "facility_id": "WKIEWA",
@@ -24813,7 +24813,7 @@
             "geometry": null,
             "properties": {
                 "oid": "C3T",
-                "ocode": "au_nem_vic_1284",
+                "ocode": "au_nem_vic_willhov",
                 "station_id": 1284,
                 "station_code": "WILLHOV",
                 "facility_id": "WILLHOV",
@@ -24857,7 +24857,7 @@
             },
             "properties": {
                 "oid": "C3A",
-                "ocode": "au_nem_vic_1273",
+                "ocode": "au_nem_vic_wollert",
                 "station_id": 1273,
                 "station_code": "WOLLERT",
                 "facility_id": "WOLLERT",
@@ -24901,7 +24901,7 @@
             },
             "properties": {
                 "oid": "CZS",
-                "ocode": "au_nem_vic_1171",
+                "ocode": "au_nem_vic_wonwp",
                 "station_id": 1171,
                 "station_code": "WONWP",
                 "facility_id": "WONWP",
@@ -24945,7 +24945,7 @@
             },
             "properties": {
                 "oid": "AXW",
-                "ocode": "au_nem_vic_1125",
+                "ocode": "au_nem_vic_wyndw",
                 "station_id": 1125,
                 "station_code": "WYNDW",
                 "facility_id": "WYNDW",
@@ -24989,7 +24989,7 @@
             },
             "properties": {
                 "oid": "ASR",
-                "ocode": "au_nem_vic_1050",
+                "ocode": "au_nem_vic_yallourn",
                 "station_id": 1050,
                 "station_code": "YALLOURN",
                 "facility_id": "YALLOURN",
@@ -25087,7 +25087,7 @@
             },
             "properties": {
                 "oid": "CF3",
-                "ocode": "au_nem_vic_1325",
+                "ocode": "au_nem_vic_yswf",
                 "station_id": 1325,
                 "station_code": "YSWF",
                 "facility_id": "YSWF",
@@ -25131,7 +25131,7 @@
             },
             "properties": {
                 "oid": "CZ8",
-                "ocode": "au_nem_vic_1169",
+                "ocode": "au_nem_vic_yambuk",
                 "station_id": 1169,
                 "station_code": "YAMBUK",
                 "facility_id": "YAMBUK",
@@ -25175,7 +25175,7 @@
             },
             "properties": {
                 "oid": "C22",
-                "ocode": "au_nem_vic_1227",
+                "ocode": "au_nem_vic_ywngahyd",
                 "station_id": 1227,
                 "station_code": "YWNGAHYD",
                 "facility_id": "YWNGAHYD",
@@ -25257,7 +25257,7 @@
             },
             "properties": {
                 "oid": "CGC",
-                "ocode": "au_nem_vic_1370",
+                "ocode": "au_nem_vic_yawwf",
                 "station_id": 1370,
                 "station_code": "YAWWF",
                 "facility_id": "YAWWF",
@@ -25301,7 +25301,7 @@
             },
             "properties": {
                 "oid": "CGR",
-                "ocode": "au_nem_vic_1386",
+                "ocode": "au_nem_vic_yendonwf",
                 "station_id": 1386,
                 "station_code": "YENDONWF",
                 "facility_id": "YENDONWF",
@@ -25383,7 +25383,7 @@
             },
             "properties": {
                 "oid": "22S",
-                "ocode": "au_wem_albany_1819",
+                "ocode": "au_wem_albany",
                 "station_id": 1819,
                 "station_code": "ALBANY",
                 "facility_id": "ALBANY",
@@ -25427,7 +25427,7 @@
             },
             "properties": {
                 "oid": "22Y",
-                "ocode": "au_wem_alcoa_1823",
+                "ocode": "au_wem_alcoa",
                 "station_id": 1823,
                 "station_code": "ALCOA",
                 "facility_id": "ALCOA",
@@ -25471,7 +25471,7 @@
             },
             "properties": {
                 "oid": "234",
-                "ocode": "au_wem_ambrisolar_1856",
+                "ocode": "au_wem_ambrisolar",
                 "station_id": 1856,
                 "station_code": "AMBRISOLAR",
                 "facility_id": "AMBRISOLAR",
@@ -25515,7 +25515,7 @@
             },
             "properties": {
                 "oid": "2BB",
-                "ocode": "au_wem_badgingarra_1828",
+                "ocode": "au_wem_badgingarra",
                 "station_id": 1828,
                 "station_code": "BADGINGARRA",
                 "facility_id": "BADGINGARRA",
@@ -25559,7 +25559,7 @@
             },
             "properties": {
                 "oid": "23Z",
-                "ocode": "au_wem_bw1_bluewaters_1848",
+                "ocode": "au_wem_bw1bluewaters",
                 "station_id": 1848,
                 "station_code": "BW1_BLUEWATERS",
                 "facility_id": "BW1_BLUEWATERS",
@@ -25603,7 +25603,7 @@
             },
             "properties": {
                 "oid": "2BY",
-                "ocode": "au_wem_bw2_bluewaters_1847",
+                "ocode": "au_wem_bw2bluewaters",
                 "station_id": 1847,
                 "station_code": "BW2_BLUEWATERS",
                 "facility_id": "BW2_BLUEWATERS",
@@ -25647,7 +25647,7 @@
             },
             "properties": {
                 "oid": "2EB",
-                "ocode": "au_wem_bremer_bay_1876",
+                "ocode": "au_wem_bremerbay",
                 "station_id": 1876,
                 "station_code": "BREMER_BAY",
                 "facility_id": "BREMER_BAY",
@@ -25691,7 +25691,7 @@
             },
             "properties": {
                 "oid": "23Y",
-                "ocode": "au_wem_bridgetown_biomass_plant_1871",
+                "ocode": "au_wem_bridgetownbiomassplant",
                 "station_id": 1871,
                 "station_code": "BRIDGETOWN_BIOMASS_PLANT",
                 "facility_id": "BRIDGETOWN_BIOMASS_PLANT",
@@ -25735,7 +25735,7 @@
             },
             "properties": {
                 "oid": "2E3",
-                "ocode": "au_wem_cockburn_1877",
+                "ocode": "au_wem_cockburn",
                 "station_id": 1877,
                 "station_code": "COCKBURN",
                 "facility_id": "COCKBURN",
@@ -25779,7 +25779,7 @@
             },
             "properties": {
                 "oid": "2BK",
-                "ocode": "au_wem_investec_collgar_1837",
+                "ocode": "au_wem_investeccollgar",
                 "station_id": 1837,
                 "station_code": "INVESTEC_COLLGAR",
                 "facility_id": "INVESTEC_COLLGAR",
@@ -25823,7 +25823,7 @@
             },
             "properties": {
                 "oid": "2EE",
-                "ocode": "au_wem_collie_1878",
+                "ocode": "au_wem_collie",
                 "station_id": 1878,
                 "station_code": "COLLIE",
                 "facility_id": "COLLIE",
@@ -25867,7 +25867,7 @@
             },
             "properties": {
                 "oid": "2B7",
-                "ocode": "au_wem_dcwl_denmark_1839",
+                "ocode": "au_wem_dcwldenmark",
                 "station_id": 1839,
                 "station_code": "DCWL_DENMARK",
                 "facility_id": "DCWL_DENMARK",
@@ -25911,7 +25911,7 @@
             },
             "properties": {
                 "oid": "2BP",
-                "ocode": "au_wem_edwfman_1840",
+                "ocode": "au_wem_edwfman",
                 "station_id": 1840,
                 "station_code": "EDWFMAN",
                 "facility_id": "EDWFMAN",
@@ -25955,7 +25955,7 @@
             },
             "properties": {
                 "oid": "2BW",
-                "ocode": "au_wem_prk_1845",
+                "ocode": "au_wem_prk",
                 "station_id": 1845,
                 "station_code": "PRK",
                 "facility_id": "PRK",
@@ -25999,7 +25999,7 @@
             },
             "properties": {
                 "oid": "229",
-                "ocode": "au_wem_grasmere_1820",
+                "ocode": "au_wem_grasmere",
                 "station_id": 1820,
                 "station_code": "GRASMERE",
                 "facility_id": "GRASMERE",
@@ -26043,7 +26043,7 @@
             },
             "properties": {
                 "oid": "2BX",
-                "ocode": "au_wem_greenough_river_1846",
+                "ocode": "au_wem_greenoughriver",
                 "station_id": 1846,
                 "station_code": "GREENOUGH_RIVER",
                 "facility_id": "GREENOUGH_RIVER",
@@ -26087,7 +26087,7 @@
             },
             "properties": {
                 "oid": "2E2",
-                "ocode": "au_wem_henderson_renewable_1875",
+                "ocode": "au_wem_hendersonrenewable",
                 "station_id": 1875,
                 "station_code": "HENDERSON_RENEWABLE",
                 "facility_id": "HENDERSON_RENEWABLE",
@@ -26131,7 +26131,7 @@
             },
             "properties": {
                 "oid": "23C",
-                "ocode": "au_wem_kalamunda_1850",
+                "ocode": "au_wem_kalamunda",
                 "station_id": 1850,
                 "station_code": "KALAMUNDA",
                 "facility_id": "KALAMUNDA",
@@ -26175,7 +26175,7 @@
             },
             "properties": {
                 "oid": "2EF",
-                "ocode": "au_wem_kalbarri_1879",
+                "ocode": "au_wem_kalbarri",
                 "station_id": 1879,
                 "station_code": "KALBARRI",
                 "facility_id": "KALBARRI",
@@ -26219,7 +26219,7 @@
             },
             "properties": {
                 "oid": "2BH",
-                "ocode": "au_wem_blairfox_karakin_1834",
+                "ocode": "au_wem_blairfoxkarakin",
                 "station_id": 1834,
                 "station_code": "BLAIRFOX_KARAKIN",
                 "facility_id": "BLAIRFOX_KARAKIN",
@@ -26263,7 +26263,7 @@
             },
             "properties": {
                 "oid": "2E4",
-                "ocode": "au_wem_kemerton_1880",
+                "ocode": "au_wem_kemerton",
                 "station_id": 1880,
                 "station_code": "KEMERTON",
                 "facility_id": "KEMERTON",
@@ -26325,7 +26325,7 @@
             },
             "properties": {
                 "oid": "23H",
-                "ocode": "au_wem_newgen_kwinana_1858",
+                "ocode": "au_wem_newgenkwinana",
                 "station_id": 1858,
                 "station_code": "NEWGEN_KWINANA",
                 "facility_id": "NEWGEN_KWINANA",
@@ -26369,7 +26369,7 @@
             },
             "properties": {
                 "oid": "2FR",
-                "ocode": "au_wem_kwinana_old_1914",
+                "ocode": "au_wem_kwinanaold",
                 "station_id": 1914,
                 "station_code": "KWINANA_OLD",
                 "facility_id": "KWINANA_OLD",
@@ -26431,7 +26431,7 @@
             },
             "properties": {
                 "oid": "2EC",
-                "ocode": "au_wem_perthenergy_kwinana_1874",
+                "ocode": "au_wem_perthenergykwinana",
                 "station_id": 1874,
                 "station_code": "PERTHENERGY_KWINANA",
                 "facility_id": "PERTHENERGY_KWINANA",
@@ -26475,7 +26475,7 @@
             },
             "properties": {
                 "oid": "2EG",
-                "ocode": "au_wem_kwinana_1881",
+                "ocode": "au_wem_kwinana",
                 "station_id": 1881,
                 "station_code": "KWINANA",
                 "facility_id": "KWINANA",
@@ -26537,7 +26537,7 @@
             },
             "properties": {
                 "oid": "2EK",
-                "ocode": "au_wem_ppp_kcp_1885",
+                "ocode": "au_wem_pppkcp",
                 "station_id": 1885,
                 "station_code": "PPP_KCP",
                 "facility_id": "PPP_KCP",
@@ -26581,7 +26581,7 @@
             },
             "properties": {
                 "oid": "23E",
-                "ocode": "au_wem_namkkn_merr_1854",
+                "ocode": "au_wem_namkknmerr",
                 "station_id": 1854,
                 "station_code": "NAMKKN_MERR",
                 "facility_id": "NAMKKN_MERR",
@@ -26625,7 +26625,7 @@
             },
             "properties": {
                 "oid": "23F",
-                "ocode": "au_wem_mersolar_1855",
+                "ocode": "au_wem_mersolar",
                 "station_id": 1855,
                 "station_code": "MERSOLAR",
                 "facility_id": "MERSOLAR",
@@ -26669,7 +26669,7 @@
             },
             "properties": {
                 "oid": "233",
-                "ocode": "au_wem_skyfrm_mtbarker_1853",
+                "ocode": "au_wem_skyfrmmtbarker",
                 "station_id": 1853,
                 "station_code": "SKYFRM_MTBARKER",
                 "facility_id": "SKYFRM_MTBARKER",
@@ -26713,7 +26713,7 @@
             },
             "properties": {
                 "oid": "2EH",
-                "ocode": "au_wem_muja_1882",
+                "ocode": "au_wem_muja",
                 "station_id": 1882,
                 "station_code": "MUJA",
                 "facility_id": "MUJA",
@@ -26811,7 +26811,7 @@
             },
             "properties": {
                 "oid": "2FS",
-                "ocode": "au_wem_muja_ab_1915",
+                "ocode": "au_wem_mujaab",
                 "station_id": 1915,
                 "station_code": "MUJA_AB",
                 "facility_id": "MUJA_AB",
@@ -26909,7 +26909,7 @@
             },
             "properties": {
                 "oid": "23G",
-                "ocode": "au_wem_mwf_mumbida_1857",
+                "ocode": "au_wem_mwfmumbida",
                 "station_id": 1857,
                 "station_code": "MWF_MUMBIDA",
                 "facility_id": "MWF_MUMBIDA",
@@ -26953,7 +26953,7 @@
             },
             "properties": {
                 "oid": "2E5",
-                "ocode": "au_wem_mungarra_1883",
+                "ocode": "au_wem_mungarra",
                 "station_id": 1883,
                 "station_code": "MUNGARRA",
                 "facility_id": "MUNGARRA",
@@ -27033,7 +27033,7 @@
             },
             "properties": {
                 "oid": "235",
-                "ocode": "au_wem_newgen_neerabup_1859",
+                "ocode": "au_wem_newgenneerabup",
                 "station_id": 1859,
                 "station_code": "NEWGEN_NEERABUP",
                 "facility_id": "NEWGEN_NEERABUP",
@@ -27077,7 +27077,7 @@
             },
             "properties": {
                 "oid": "23T",
-                "ocode": "au_wem_northam_sf_1860",
+                "ocode": "au_wem_northamsf",
                 "station_id": 1860,
                 "station_code": "NORTHAM_SF",
                 "facility_id": "NORTHAM_SF",
@@ -27121,7 +27121,7 @@
             },
             "properties": {
                 "oid": "2ET",
-                "ocode": "au_wem_pinjar_1884",
+                "ocode": "au_wem_pinjar",
                 "station_id": 1884,
                 "station_code": "PINJAR",
                 "facility_id": "PINJAR",
@@ -27309,7 +27309,7 @@
             },
             "properties": {
                 "oid": "2BA",
-                "ocode": "au_wem_alinta_pnj_1825",
+                "ocode": "au_wem_alintapnj",
                 "station_id": 1825,
                 "station_code": "ALINTA_PNJ",
                 "facility_id": "ALINTA_PNJ",
@@ -27371,7 +27371,7 @@
             },
             "properties": {
                 "oid": "232",
-                "ocode": "au_wem_red_1851",
+                "ocode": "au_wem_red",
                 "station_id": 1851,
                 "station_code": "RED",
                 "facility_id": "RED",
@@ -27513,7 +27513,7 @@
             },
             "properties": {
                 "oid": "236",
-                "ocode": "au_wem_south_1862",
+                "ocode": "au_wem_south",
                 "station_id": 1862,
                 "station_code": "SOUTH",
                 "facility_id": "SOUTH",
@@ -27557,7 +27557,7 @@
             },
             "properties": {
                 "oid": "238",
-                "ocode": "au_wem_sthrncrs_1865",
+                "ocode": "au_wem_sthrncrs",
                 "station_id": 1865,
                 "station_code": "STHRNCRS",
                 "facility_id": "STHRNCRS",
@@ -27601,7 +27601,7 @@
             },
             "properties": {
                 "oid": "23B",
-                "ocode": "au_wem_tamala_1852",
+                "ocode": "au_wem_tamala",
                 "station_id": 1852,
                 "station_code": "TAMALA",
                 "facility_id": "TAMALA",
@@ -27645,7 +27645,7 @@
             },
             "properties": {
                 "oid": "23S",
-                "ocode": "au_wem_tesla_geraldton_1867",
+                "ocode": "au_wem_teslageraldton",
                 "station_id": 1867,
                 "station_code": "TESLA_GERALDTON",
                 "facility_id": "TESLA_GERALDTON",
@@ -27689,7 +27689,7 @@
             },
             "properties": {
                 "oid": "239",
-                "ocode": "au_wem_tesla_kemerton_1868",
+                "ocode": "au_wem_teslakemerton",
                 "station_id": 1868,
                 "station_code": "TESLA_KEMERTON",
                 "facility_id": "TESLA_KEMERTON",
@@ -27733,7 +27733,7 @@
             },
             "properties": {
                 "oid": "23X",
-                "ocode": "au_wem_tesla_northam_1870",
+                "ocode": "au_wem_teslanortham",
                 "station_id": 1870,
                 "station_code": "TESLA_NORTHAM",
                 "facility_id": "TESLA_NORTHAM",
@@ -27777,7 +27777,7 @@
             },
             "properties": {
                 "oid": "23W",
-                "ocode": "au_wem_tesla_picton_1869",
+                "ocode": "au_wem_teslapicton",
                 "station_id": 1869,
                 "station_code": "TESLA_PICTON",
                 "facility_id": "TESLA_PICTON",
@@ -27821,7 +27821,7 @@
             },
             "properties": {
                 "oid": "23R",
-                "ocode": "au_wem_tiwest_1866",
+                "ocode": "au_wem_tiwest",
                 "station_id": 1866,
                 "station_code": "TIWEST",
                 "facility_id": "TIWEST",
@@ -27865,7 +27865,7 @@
             },
             "properties": {
                 "oid": "2BC",
-                "ocode": "au_wem_alinta_wgp_1826",
+                "ocode": "au_wem_alintawgp",
                 "station_id": 1826,
                 "station_code": "ALINTA_WGP",
                 "facility_id": "ALINTA_WGP",
@@ -27927,7 +27927,7 @@
             },
             "properties": {
                 "oid": "2B2",
-                "ocode": "au_wem_alinta_1827",
+                "ocode": "au_wem_alinta",
                 "station_id": 1827,
                 "station_code": "ALINTA",
                 "facility_id": "ALINTA",
@@ -27971,7 +27971,7 @@
             },
             "properties": {
                 "oid": "2B5",
-                "ocode": "au_wem_blairfox_westhills_1835",
+                "ocode": "au_wem_blairfoxwesthills",
                 "station_id": 1835,
                 "station_code": "BLAIRFOX_WESTHILLS",
                 "facility_id": "BLAIRFOX_WESTHILLS",
@@ -28015,7 +28015,7 @@
             },
             "properties": {
                 "oid": "2E8",
-                "ocode": "au_wem_west_kalgoorlie_1889",
+                "ocode": "au_wem_westkalgoorlie",
                 "station_id": 1889,
                 "station_code": "WEST_KALGOORLIE",
                 "facility_id": "WEST_KALGOORLIE",
@@ -28077,7 +28077,7 @@
             },
             "properties": {
                 "oid": "AS8",
-                "ocode": "au_nem_qld_1049",
+                "ocode": "au_nem_qld_wivenhoe",
                 "station_id": 1049,
                 "station_code": "WIVENHOE",
                 "facility_id": "WIVENHOE",
