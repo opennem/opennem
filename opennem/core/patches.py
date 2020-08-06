@@ -18,11 +18,11 @@ def patches():
         "update facility set capacity_registered = 2.0, unit_capacity = 2.0 where code = 'GOSNELLS'",
         "update facility set capacity_registered = 1.1, unit_capacity = 1.1  where code = 'ATLAS'",
         # code GULLRWF2_74 -> Biala
-        # "update facility set station_id = null where code = 'GULLRWF2'",
-        # "update facility set code = 'GULLRWF2' where name_clean = 'Biala'",
+        "update facility set active=false where code ='GULLRWF2'",
         "update facility set station_id = (select id from station where name = 'Wivenhoe Small Hydro') where code ='WIVENSH'",
         "update station set name = 'Wivenhoe Mini' where name = 'Wivenhoe Small'",
         "update facility set fueltech_id = 'pumps' where code in ('PUMP2', 'PUMP1')",
+        "update facility set active=false where code='PIONEER'",
         # "update facility set station_id = null where name='Crookwell' and code is null",
         # "update facility set station_id = null where name='Pioneer Sugar Mill' and code is null",
     ]
