@@ -302,7 +302,8 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     facility_record["dispatch_type"],
                 )
 
-                # Skip loads that arenot batteries for now
+                # Skip loads that are not batteries or pumps for now
+                # @NOTE @TODO better to centralize this as it needs to be consistent
                 if (
                     facility_dispatch_type == DispatchType.LOAD
                     and fueltech not in ["battery_charging", "pumps",]
