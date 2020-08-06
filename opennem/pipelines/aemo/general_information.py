@@ -390,6 +390,9 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 if not facility.network_region:
                     facility.network_region = facility_network_region
 
+                if not facility.network_name:
+                    facility.network_name = facility_network_name
+
                 if not facility.fueltech_id and facility_fueltech:
                     facility.fueltech_id = facility_fueltech
 
