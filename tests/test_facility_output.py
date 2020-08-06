@@ -150,6 +150,26 @@ class TestStationOutput(object):
             savpp_rec["fueltech"] == "battery_discharging"
         ), "The SA VPP fueltech is aggregate vpp"
 
+    def test_midlands(self):
+        """
+            There should be one midlands station
+        """
+        midlands = list(filter(lambda x: x["name"] == "Midlands", self.data))
+
+        assert len(midlands) == 1, "There should be one midlands entry"
+
+    def test_pioneer(self):
+        """
+            There should be one Pioneer Sugar Mill
+        """
+        midlands = list(
+            filter(lambda x: x["name"] == "Pioneer Sugar Mill", self.data)
+        )
+
+        assert (
+            len(midlands) == 1
+        ), "There should be one Pioneer Sugar Mill entry"
+
     def test_dalrymple(self):
         """
             Dalrymple DALNTH has one charging one discharging battery unit
