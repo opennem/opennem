@@ -2,6 +2,7 @@ import csv
 
 from geojson import Feature, FeatureCollection, Point, dumps
 from opennem.api.stations import get_stations
+from opennem.core.facility_duid_map import duid_is_retired
 from opennem.exporter.encoders import OpenNEMGeoJSONEncoder
 
 __all__ = ["stations_geojson_serialize"]
@@ -38,6 +39,15 @@ def stations_geojson_records():
         }
 
         for facility in station.facilities:
+            if facility.fueltech_id is None:
+                continue
+
+            if facility.status_id is None:
+                continue
+
+            if duid_is_retired(facility.code):
+                continue
+
             f.properties["duid_data"].append(
                 {
                     "oid": facility.oid,
