@@ -421,18 +421,23 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
 
                 if duid and not facility.network_code:
                     facility.network_code = duid
+                    facility.updated_by = "pipeline.aemo.general_information"
 
                 if not facility.network_region:
                     facility.network_region = facility_network_region
+                    facility.updated_by = "pipeline.aemo.general_information"
 
                 if not facility.network_name:
                     facility.network_name = facility_network_name
+                    facility.updated_by = "pipeline.aemo.general_information"
 
                 if not facility.fueltech_id and facility_fueltech:
                     facility.fueltech_id = facility_fueltech
+                    facility.updated_by = "pipeline.aemo.general_information"
 
                 if not facility.capacity_registered:
                     facility.capacity_registered = reg_cap
+                    facility.updated_by = "pipeline.aemo.general_information"
 
                 # @TODO work this out
                 # facility.dispatch_type = facility_dispatch_type
@@ -443,14 +448,21 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     facility.unit_size = unit_size
                     facility.unit_alias = unit.alias
 
-                if not facility.unit_capacity:
+                if not facility.unit_capacity or (
+                    facility.status != "operating"
+                    and facility.created_by
+                    != "pipeline.aemo.registration_exemption"
+                ):
                     facility.unit_capacity = unit_size
+                    facility.updated_by = "pipeline.aemo.general_information"
 
                 if not facility.status_id:
                     facility.status_id = facility_status
+                    facility.updated_by = "pipeline.aemo.general_information"
 
                 if not facility.registered and facility_comissioned_dt:
                     facility.registered = facility_comissioned_dt
+                    facility.updated_by = "pipeline.aemo.general_information"
 
                 facility.station = facility_station
 
