@@ -313,10 +313,14 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 facility_comissioned = facility_record["SurveyEffective"]
                 facility_comissioned_dt = None
 
+                if type(facility_comissioned) is datetime:
+                    facility_comissioned_dt = facility_comissioned
+
                 try:
-                    facility_comissioned_dt = datetime.strptime(
-                        facility_comissioned, "%d/%m/%y"
-                    )
+                    if type(facility_comissioned) is str:
+                        facility_comissioned_dt = datetime.strptime(
+                            facility_comissioned, "%d/%m/%y"
+                        )
                 except ValueError:
                     logger.error(
                         "Error parsing date: {}".format(facility_comissioned)
