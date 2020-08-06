@@ -363,7 +363,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     try:
                         facility = (
                             s.query(Facility)
-                            .filter(Facility.code == duid)
+                            .filter(Facility.network_code == duid)
                             .filter(
                                 Facility.network_region
                                 == facility_network_region
