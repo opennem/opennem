@@ -7,6 +7,11 @@ class TestCapacityCleaner(object):
         assert type(subject) is type(None), "Blank string should be nonetype"
         assert subject == None, "Blank capacity should be none"
 
+    def test_capacity_none(self):
+        subject = clean_capacity(None)
+        assert type(subject) is type(None), "None string should be nonetype"
+        assert subject == None, "None capacity should be none"
+
     def test_capacity_string_excel_blank(self):
         subject = clean_capacity("-")
         assert type(subject) is type(None), "Blank string should be nonetype"

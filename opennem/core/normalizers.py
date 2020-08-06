@@ -321,9 +321,6 @@ def participant_name_filter(participant_name: str) -> str:
 
 
 def clean_capacity(capacity: Union[str, int, float]) -> float:
-    if not capacity:
-        return None
-
     cap_clean = capacity
 
     if type(capacity) is str:
@@ -345,6 +342,9 @@ def clean_capacity(capacity: Union[str, int, float]) -> float:
         cap_clean = float(cap_clean)
 
     elif type(capacity) is not float:
+        if capacity is None:
+            return None
+
         raise Exception(
             "Capacity clean of type {} not supported: {}".format(
                 type(capacity), capacity
