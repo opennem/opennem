@@ -4929,8 +4929,8 @@
         "unit_id": 1,
         "unit_num": 1,
         "unit_cap": 30.86,
-        "station_cap_agg": 135.78,
-        "station_cap_registered": 166.68,
+        "station_cap_agg": 67.78,
+        "station_cap_registered": 98.68,
         "added_by": "pipeline.aemo.registration_exemption",
         "updated_by": null
     },
@@ -4944,8 +4944,8 @@
         "unit_id": 2,
         "unit_num": 1,
         "unit_cap": 36.92,
-        "station_cap_agg": 135.78,
-        "station_cap_registered": 166.68,
+        "station_cap_agg": 67.78,
+        "station_cap_registered": 98.68,
         "added_by": "pipeline.aemo.registration_exemption",
         "updated_by": null
     },
