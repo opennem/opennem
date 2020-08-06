@@ -1,24 +1,24 @@
 name,ocode,code,region,status,fueltech,unit_id,unit_num,unit_cap,station_cap_agg,station_cap_registered,added_by,updated_by
 Albury,au.nem.nsw.1429,0NAREF_1,NSW1,operating,bioenergy_biogas,1,1,1.12,1.12,1.12,pipeline.aemo.general_information,pipeline.aemo.general_information
 Appin,au.nem.nsw.appin,APPIN,NSW1,operating,gas_wcmg,1,54,55.62,55.62,55.62,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Awaba,au.nem.nsw.awabaref,AWABAREF,NSW1,retired,bioenergy_biogas,1,1,1.00,1.12,1.12,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Awaba,au.nem.nsw.awabaref,0NAWA_1,NSW1,operating,bioenergy_biogas,1,1,1.12,1.12,1.12,pipeline.aemo.general_information,pipeline.aemo.general_information
+Awaba,au.nem.nsw.awabaref,AWABAREF,NSW1,retired,bioenergy_biogas,1,1,1.00,1.12,1.12,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Bakers Maison,au.nem.nsw.1439,0NBAMA_1,NSW1,operating,solar_utility,1,1,0.22,0.22,0.22,pipeline.aemo.general_information,pipeline.aemo.general_information
 Bango,au.nem.nsw.1441,0NB9WF_1,NSW1,committed,wind,1,1,5.30,5.30,159.00,pipeline.aemo.general_information,pipeline.aemo.general_information
-Bankstown Sports Club,au.nem.nsw.bankspt,BANKSPT1,NSW1,retired,distillate,1,1,1.00,2.14,2.14,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Bankstown Sports Club,au.nem.nsw.bankspt,0NBSC_1,NSW1,operating,distillate,1,1,1.34,2.14,2.14,pipeline.aemo.general_information,pipeline.aemo.general_information
 Bankstown Sports Club,au.nem.nsw.bankspt,0NBSC_2,NSW1,operating,distillate,2,1,0.80,2.14,2.14,pipeline.aemo.general_information,pipeline.aemo.general_information
+Bankstown Sports Club,au.nem.nsw.bankspt,BANKSPT1,NSW1,retired,distillate,1,1,1.00,2.14,2.14,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Bayswater,au.nem.nsw.baysw,BW03,NSW1,operating,coal_black,3,1,660.00,2665.00,2665.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Bayswater,au.nem.nsw.baysw,BW02,NSW1,operating,coal_black,2,1,660.00,2665.00,2665.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Bayswater,au.nem.nsw.baysw,BW01,NSW1,operating,coal_black,1,1,660.00,2665.00,2665.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Bayswater,au.nem.nsw.baysw,BW04,NSW1,operating,coal_black,4,1,685.00,2665.00,2665.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Bayswater,au.nem.nsw.baysw,BW02,NSW1,operating,coal_black,2,1,660.00,2665.00,2665.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Belrose,au.nem.nsw.1453,0NBEL_1,NSW1,operating,bioenergy_biogas,1,1,1.03,1.03,1.03,pipeline.aemo.general_information,pipeline.aemo.general_information
 Beryl,au.nem.nsw.berylsf,BERYLSF1,NSW1,operating,solar_utility,1,60,98.40,98.40,98.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Blayney,au.nem.nsw.1463,0NBLA_1,NSW1,operating,wind,1,1,0.66,0.66,9.90,pipeline.aemo.general_information,pipeline.aemo.general_information
 Blayney,au.nem.nsw.blayney,BLAYNEY,NSW1,operating,wind,1,1,9.90,9.90,9.90,opennem.load_facilities,
 Blowering,au.nem.nsw.snowy6,BLOWERNG,NSW1,operating,hydro,1,1,80.00,80.00,80.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Boco Rock,au.nem.nsw.bocorock,BOCORWF1,NSW1,operating,wind,59,9,14.58,107.38,14.40,pipeline.aemo.registration_exemption,
 Boco Rock,au.nem.nsw.bocorock,BOCORWF1,NSW1,operating,wind,1,58,92.80,107.38,14.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Boco Rock,au.nem.nsw.bocorock,BOCORWF1,NSW1,operating,wind,59,9,14.58,107.38,14.40,pipeline.aemo.registration_exemption,
 Bodangora,au.nem.nsw.bodwf,BODWF1,NSW1,operating,wind,1,33,113.19,113.19,113.19,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Bomen,au.nem.nsw.bomensf,BOMENSF1,NSW1,operating,solar_utility,1,44,100.01,100.01,100.01,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Broadwater,au.nem.nsw.bwtr1,BWTR1,NSW1,operating,bioenergy_biomass,1,1,30.00,38.00,38.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
@@ -30,8 +30,8 @@ Brown Mountain,au.nem.nsw.brownmt,BROWNMT,NSW1,operating,hydro,2,2,1.50,8.20,5.0
 Brown Mountain,au.nem.nsw.brownmt,BROWNMT,NSW1,operating,hydro,4,2,2.00,8.20,5.00,pipeline.aemo.registration_exemption,
 Brown Mountain,au.nem.nsw.brownmt,BROWNMT,NSW1,operating,hydro,6,1,4.20,8.20,5.00,pipeline.aemo.registration_exemption,
 Burrendong,au.nem.nsw.bdonghyd,BDONGHYD,NSW1,operating,hydro,1,1,19.00,19.00,19.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Burrinjuck,au.nem.nsw.burrin,BURRIN,NSW1,operating,hydro,5,1,15.40,53.00,27.20,pipeline.aemo.registration_exemption,
 Burrinjuck,au.nem.nsw.burrin,BURRIN,NSW1,operating,hydro,3,2,32.00,53.00,27.20,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Burrinjuck,au.nem.nsw.burrin,BURRIN,NSW1,operating,hydro,5,1,15.40,53.00,27.20,pipeline.aemo.registration_exemption,
 Burrinjuck,au.nem.nsw.burrin,BURRIN,NSW1,operating,hydro,2,1,5.60,53.00,27.20,pipeline.aemo.general_information,pipeline.aemo.general_information
 Capital,au.nem.nsw.captlwf,CAPTL_WF,NSW1,operating,wind,1,67,140.70,140.70,140.70,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Capital East,au.nem.nsw.cesf,CESF1,NSW1,operating,solar_utility,1,2,0.03,0.21,0.20,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
@@ -41,10 +41,10 @@ Chillamurra,au.nem.nsw.1492,0NCHI_1,NSW1,operating,solar_utility,1,1,4.77,4.77,4
 Club Merrylands,au.nem.nsw.1499,0NCLME_1,NSW1,operating,distillate,1,1,,,,pipeline.aemo.general_information,pipeline.aemo.general_information
 Coleambally,au.nem.nsw.coleasf,COLEASF1,NSW1,operating,solar_utility,1,90,150.30,150.30,150.30,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Collector,au.nem.nsw.1501,0NCOL_1,NSW1,committed,wind,1,1,4.20,4.20,226.80,pipeline.aemo.general_information,pipeline.aemo.general_information
-Colongra,au.nem.nsw.colongra,CG3,NSW1,operating,gas_ocgt,3,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Colongra,au.nem.nsw.colongra,CG4,NSW1,operating,gas_ocgt,4,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Colongra,au.nem.nsw.colongra,CG1,NSW1,operating,gas_ocgt,1,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Colongra,au.nem.nsw.colongra,CG2,NSW1,operating,gas_ocgt,2,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Colongra,au.nem.nsw.colongra,CG3,NSW1,operating,gas_ocgt,3,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Colongra,au.nem.nsw.colongra,CG1,NSW1,operating,gas_ocgt,1,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Colongra,au.nem.nsw.colongra,CG4,NSW1,operating,gas_ocgt,4,1,181.00,724.00,724.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Condong,au.nem.nsw.condong1,CONDONG1,NSW1,operating,bioenergy_biomass,1,1,30.00,30.00,30.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Copeton,au.nem.nsw.coptnhyd,COPTNHYD,NSW1,operating,hydro,1,1,20.00,20.00,20.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Crookwell,au.nem.nsw.1509,0NCRO_8,NSW1,operating,wind,8,1,0.60,0.60,4.80,pipeline.aemo.general_information,pipeline.aemo.general_information
@@ -60,11 +60,11 @@ Earthpower Technologies Sydney,au.nem.nsw.1530,0NETS_1,NSW1,operating,distillate
 Eastern Creek,au.nem.nsw.eastcrk,EASTCRK,NSW1,operating,bioenergy_biogas,1,4,5.06,5.06,5.06,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Eastern Creek 2,au.nem.nsw.eastcrk2,EASTCRK2,NSW1,operating,bioenergy_biogas,1,8,10.00,11.12,16.84,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Eastern Creek 2,au.nem.nsw.eastcrk2,0NEC2G_7,NSW1,operating,bioenergy_biogas,7,1,1.12,11.12,16.84,pipeline.aemo.general_information,pipeline.aemo.general_information
-Eraring,au.nem.nsw.eraring,ER03,NSW1,operating,coal_black,3,1,720.00,2921.50,2946.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Eraring,au.nem.nsw.eraring,ER01,NSW1,operating,coal_black,1,1,720.00,2921.50,2946.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Eraring,au.nem.nsw.eraring,ER03,NSW1,operating,coal_black,3,1,720.00,2921.50,2946.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Eraring,au.nem.nsw.eraring,ERGT01,NSW1,operating,distillate,1,1,41.50,2921.50,2946.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Eraring,au.nem.nsw.eraring,ER04,NSW1,operating,coal_black,4,1,720.00,2921.50,2946.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Eraring,au.nem.nsw.eraring,ER02,NSW1,operating,coal_black,2,1,720.00,2921.50,2946.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Eraring,au.nem.nsw.eraring,ERGT01,NSW1,operating,distillate,1,1,41.50,2921.50,2946.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Finely,au.nem.nsw.finleysf,FINLYSF1,NSW1,operating,solar_utility,1,1,1.64,1.64,162.36,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Glenbawn,au.nem.nsw.glbwnhyd,GLBWNHYD,NSW1,operating,hydro,1,1,5.50,10.50,10.50,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Glenbawn,au.nem.nsw.glbwnhyd,0NGLE_1,NSW1,operating,hydro,1,1,5.00,10.50,10.50,pipeline.aemo.general_information,pipeline.aemo.general_information
@@ -73,10 +73,9 @@ Goonumbla,au.nem.nsw.goonsf,GOONSF1,NSW1,operating,solar_utility,1,31,69.75,72.0
 Goonumbla,au.nem.nsw.goonsf,0NGSF_1,QLD1,committed,solar_utility,1,1,2.26,72.01,155.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 Grange Avenue,au.nem.nsw.grangeav,GRANGEAV,NSW1,operating,bioenergy_biogas,1,1,1.26,1.26,1.26,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Griffith,au.nem.nsw.grifsf,GRIFSF1,NSW1,operating,solar_utility,1,12,360.00,360.00,30.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Gullen Range,au.nem.nsw.gullrgwf,GULLRWF2,NSW1,operating,wind,74,31,106.98,278.84,145.50,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Gullen Range,au.nem.nsw.gullrgwf,GULLRWF1,NSW1,operating,wind,1,17,25.50,278.84,145.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Gullen Range,au.nem.nsw.gullrgwf,GULLRWF1,NSW1,operating,wind,18,56,136.36,278.84,145.50,pipeline.aemo.registration_exemption,
-Gullen Range,au.nem.nsw.gullrgwf,GULLRSF1,NSW1,operating,solar_utility,1,4,10.00,278.84,145.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Gullen Range,au.nem.nsw.gullrgwf,GULLRSF1,NSW1,operating,solar_utility,1,4,10.00,171.86,35.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Gullen Range,au.nem.nsw.gullrgwf,GULLRWF1,NSW1,operating,wind,1,17,25.50,171.86,35.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Gullen Range,au.nem.nsw.gullrgwf,GULLRWF1,NSW1,operating,wind,18,56,136.36,171.86,35.50,pipeline.aemo.registration_exemption,
 Gunning,au.nem.nsw.gunning,GUNNING1,NSW1,operating,wind,1,31,46.50,46.50,46.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Guthega,au.nem.nsw.snowy3,GUTHEGA,NSW1,operating,hydro,1,2,60.00,60.00,85.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Hampton,au.nem.nsw.hampton,HAMPTON,NSW1,operating,wind,1,1,1.32,1.32,1.32,opennem.load_facilities,
@@ -92,22 +91,22 @@ Kemps Creek,au.nem.nsw.aglsita,AGLSITA1,NSW1,operating,bioenergy_biogas,1,2,1.00
 Kiamal,au.nem.nsw.1593,0NKSF_1,NSW1,operating,solar_utility,1,1,1.33,1.33,199.95,pipeline.aemo.general_information,pipeline.aemo.general_information
 Kincumber Site,au.nem.nsw.kincumb,KINCUM1,NSW1,operating,bioenergy_biogas,1,1,1.06,1.06,1.06,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Lake Macquarie Community,au.nem.nsw.1607,0NLWD_1,NSW1,operating,solar_utility,1,1,0.08,0.08,0.08,pipeline.aemo.general_information,pipeline.aemo.general_information
-Liddell,au.nem.nsw.liddell,LD03,NSW1,operating,coal_black,3,1,500.00,2000.00,2025.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Liddell,au.nem.nsw.liddell,LD01,NSW1,operating,coal_black,1,1,500.00,2000.00,2025.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Liddell,au.nem.nsw.liddell,LD03,NSW1,operating,coal_black,3,1,500.00,2000.00,2025.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Liddell,au.nem.nsw.liddell,LD02,NSW1,operating,coal_black,2,1,500.00,2000.00,2025.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Liddell,au.nem.nsw.liddell,LD04,NSW1,operating,coal_black,4,1,500.00,2000.00,2025.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Limondale 1,au.nem.nsw.limosf1,LIMOSF11,NSW1,operating,solar_utility,1,100,220.00,220.00,220.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Limondale 2,au.nem.nsw.limosf2,LIMOSF21,NSW1,operating,solar_utility,1,14,28.98,28.98,28.98,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Lucas Heights 1,au.nem.nsw.lucashgt,0NLHI_3,NSW1,operating,bioenergy_biogas,3,1,1.03,2.18,5.39,pipeline.aemo.general_information,pipeline.aemo.general_information
 Lucas Heights 1,au.nem.nsw.lucashgt,0NLHI_5,NSW1,operating,bioenergy_biogas,5,1,1.15,2.18,5.39,pipeline.aemo.general_information,pipeline.aemo.general_information
-Lucas Heights 2,au.nem.nsw.lucas2s2,LUCASHGT,NSW1,operating,bioenergy_biogas,1,11,12.65,17.25,29.90,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Lucas Heights 2,au.nem.nsw.lucas2s2,LUCAS2S2,NSW1,operating,bioenergy_biogas,12,4,4.60,17.25,29.90,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Lucas Heights 2,au.nem.nsw.lucas2s2,LUCASHGT,NSW1,operating,bioenergy_biogas,1,11,12.65,17.25,29.90,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Manildra,au.nem.nsw.manslr,MANSLR1,NSW1,operating,solar_utility,1,10,25.00,50.00,50.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Manildra,au.nem.nsw.manslr,MANSLR1,NSW1,operating,solar_utility,11,10,25.00,50.00,50.00,pipeline.aemo.registration_exemption,
 Moree,au.nem.nsw.moreesf,MOREESF1,NSW1,operating,solar_utility,1,56,56.00,56.00,56.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Mount Majura,au.nem.nsw.1637,0NMOMA_1,NSW1,operating,solar_utility,1,1,2.30,2.30,2.30,pipeline.aemo.general_information,pipeline.aemo.general_information
-Mt Piper,au.nem.nsw.mp,MP2,NSW1,operating,coal_black,2,1,660.00,1320.00,1345.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Mt Piper,au.nem.nsw.mp,MP1,NSW1,operating,coal_black,1,1,660.00,1320.00,1345.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Mt Piper,au.nem.nsw.mp,MP2,NSW1,operating,coal_black,2,1,660.00,1320.00,1345.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Mugga Lane,au.nem.nsw.mlsp,MLSP1,NSW1,operating,solar_utility,1,1,0.68,1.83,18.20,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Mugga Lane,au.nem.nsw.mlsp,0NMULA_4,NSW1,operating,bioenergy_biogas,4,1,1.15,1.83,18.20,pipeline.aemo.general_information,pipeline.aemo.general_information
 Munmorah,au.nem.nsw.mm,MM3,NSW1,retired,coal_black,1,1,300.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
@@ -135,7 +134,7 @@ Shoalhaven Bendeela Kangaroo Valley Pumps,au.nem.nsw.shoalhav,SHGEN,NSW1,operati
 Shoalhaven Bendeela Kangaroo Valley Pumps,au.nem.nsw.shoalhav,SHGEN,NSW1,operating,pumps,4,1,40.00,360.00,480.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 Shoalhaven Bendeela Kangaroo Valley Pumps,au.nem.nsw.shoalhav,SHPUMP,,retired,pumps,1,1,240.00,360.00,480.00,au.nem.mms.dudetail,au.nem.mms.dudetail
 Silverton,au.nem.nsw.stwf,STWF1,NSW1,operating,wind,1,58,198.94,198.94,198.94,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Singleton,au.nem.nsw.1916,0NSISF_1,NSW1,operating,solar_utility,1,1,0.40,0.40,0.40,opennem.patches,
+Singleton,au.nem.nsw.1915,0NSISF_1,NSW1,operating,solar_utility,1,1,0.40,0.40,0.40,opennem.patches,
 Smithfield Energy Facility,au.nem.nsw.sithe,SITHE01,NSW1,operating,gas_ccgt,1,3,108.90,170.90,185.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Smithfield Energy Facility,au.nem.nsw.sithe,SITHE04,NSW1,operating,gas_ccgt,4,1,62.00,170.90,185.00,pipeline.aemo.registration_exemption,
 Snowy 2.0,au.nem.nsw.1709,0NSN2._6,NSW1,committed,pumps,6,1,340.00,340.00,2040.00,pipeline.aemo.general_information,pipeline.aemo.general_information
@@ -160,12 +159,12 @@ Tumut,au.nem.snowy.snowy2,UPPTUMUT,NSW1,operating,hydro,1,4,328.00,770.00,1232.0
 Tumut,au.nem.snowy.snowy2,UPPTUMUT,NSW1,operating,hydro,5,4,288.00,770.00,1232.00,pipeline.aemo.registration_exemption,
 Tumut,au.nem.snowy.snowy2,UPPTUMUT,NSW1,operating,hydro,4,1,82.00,770.00,1232.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 Tumut,au.nem.snowy.snowy2,UPPTUMUT,NSW1,operating,hydro,8,1,72.00,770.00,1232.00,pipeline.aemo.general_information,pipeline.aemo.general_information
-Tumut 3,au.nem.snowy.snowy1,TUMUT3,NSW1,operating,hydro,1,6,1500.00,1500.00,1575.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Tumut 3,au.nem.snowy.snowy1,SNOWYP,,retired,pumps,1,1,600.00,1500.00,1575.00,au.nem.mms.dudetail,au.nem.mms.dudetail
-Uranquinty,au.nem.nsw.uranq,URANQ12,NSW1,operating,gas_ocgt,2,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Uranquinty,au.nem.nsw.uranq,URANQ13,NSW1,operating,gas_ocgt,3,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Tumut 3,au.nem.nsw.snowy1,TUMUT3,NSW1,operating,hydro,1,6,1500.00,1500.00,1575.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Tumut 3,au.nem.nsw.snowy1,SNOWYP,,retired,pumps,1,1,600.00,1500.00,1575.00,au.nem.mms.dudetail,au.nem.mms.dudetail
 Uranquinty,au.nem.nsw.uranq,URANQ14,NSW1,operating,gas_ocgt,4,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Uranquinty,au.nem.nsw.uranq,URANQ11,NSW1,operating,gas_ocgt,1,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Uranquinty,au.nem.nsw.uranq,URANQ12,NSW1,operating,gas_ocgt,2,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Uranquinty,au.nem.nsw.uranq,URANQ13,NSW1,operating,gas_ocgt,3,1,166.00,664.00,664.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Vales Point B,au.nem.nsw.vp,VP6,NSW1,operating,coal_black,6,1,660.00,1320.00,1345.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Vales Point B,au.nem.nsw.vp,VP5,NSW1,operating,coal_black,5,1,660.00,1320.00,1345.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Wallerawang,au.nem.nsw.ww,WW7,NSW1,retired,coal_black,1,1,500.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
@@ -193,25 +192,25 @@ Wyangala B,au.nem.nsw.wyangalb,WYANGALB,NSW1,operating,hydro,1,1,4.00,4.00,4.00,
 Wyong,au.nem.nsw.1808,HAUGHT11,NSW1,operating,bioenergy_biogas,2,1,1.12,1.12,2.25,pipeline.aemo.general_information,pipeline.aemo.general_information
 Aldi Brendale,au.nem.qld.1430,0NALBR_1,QLD1,operating,solar_utility,1,1,0.93,0.93,0.93,pipeline.aemo.general_information,pipeline.aemo.general_information
 Baking Board,au.nem.qld.baking,BAKING1,QLD1,operating,solar_utility,1,7,14.70,14.70,14.70,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Barcaldine,au.nem.qld.barcsf,BARCALDN,QLD1,operating,gas_ccgt,1,1,37.00,77.00,57.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Barcaldine,au.nem.qld.barcsf,BARCSF1,QLD1,operating,solar_utility,1,2,40.00,77.00,57.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Barcaldine,au.nem.qld.barcsf,BARCALDN,QLD1,operating,gas_ccgt,1,1,37.00,77.00,57.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Barron Gorge,au.nem.qld.barron,BARRON2,QLD1,operating,hydro,2,1,33.00,126.00,126.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Barron Gorge,au.nem.qld.barron,BARRON1,QLD1,operating,hydro,1,1,33.00,126.00,126.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Barron Gorge,au.nem.qld.barron,BARRON-1,QLD1,operating,hydro,1,1,30.00,126.00,126.00,opennem.load_facilities,
 Barron Gorge,au.nem.qld.barron,BARRON-2,QLD1,operating,hydro,1,1,30.00,126.00,126.00,opennem.load_facilities,
 Birkdale,au.nem.qld.1460,0NBIR_1,QLD1,operating,bioenergy_biogas,1,1,0.79,0.79,0.79,pipeline.aemo.general_information,pipeline.aemo.general_information
-Braemar,au.nem.qld.braemara,BRAEMAR1,QLD1,operating,gas_wcmg,1,1,168.00,504.00,504.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Braemar,au.nem.qld.braemara,BRAEMAR2,QLD1,operating,gas_wcmg,2,1,168.00,504.00,504.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Braemar,au.nem.qld.braemara,BRAEMAR3,QLD1,operating,gas_wcmg,3,1,168.00,504.00,504.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Braemar,au.nem.qld.braemara,BRAEMAR2,QLD1,operating,gas_wcmg,2,1,168.00,504.00,504.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Braemar,au.nem.qld.braemara,BRAEMAR1,QLD1,operating,gas_wcmg,1,1,168.00,504.00,504.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Braemar 2,au.nem.qld.b2ps,BRAEMAR5,QLD1,operating,gas_wcmg,5,1,173.00,519.00,519.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Braemar 2,au.nem.qld.b2ps,BRAEMAR7,QLD1,operating,gas_wcmg,7,1,173.00,519.00,519.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Braemar 2,au.nem.qld.b2ps,BRAEMAR6,QLD1,operating,gas_wcmg,6,1,173.00,519.00,519.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Browns Plains,au.nem.qld.bplandf,BPLANDF1,QLD1,operating,bioenergy_biogas,1,2,2.06,2.06,1.03,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Callide,au.nem.qld.callide,CALL_A_2,QLD1,retired,coal_black,1,1,30.00,,55.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Callide,au.nem.qld.1409,CALL_B_2,QLD1,operating,coal_black,2,1,350.00,760.00,760.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Callide,au.nem.qld.1409,CALL_A_4,QLD1,operating,coal_black,2,1,30.00,760.00,760.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Callide,au.nem.qld.1409,CALL_B_1,QLD1,operating,coal_black,1,1,350.00,760.00,760.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Callide,au.nem.qld.1409,0NCPS_2,QLD1,operating,coal_black,2,1,30.00,760.00,760.00,pipeline.aemo.registration_exemption,
-Callide,au.nem.qld.1409,CALL_A_4,QLD1,operating,coal_black,2,1,30.00,760.00,760.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Callide,au.nem.qld.1409,CALL_B_2,QLD1,operating,coal_black,2,1,350.00,760.00,760.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Callide C Nett Off,au.nem.qld.callidec,CPP_4,QLD1,operating,coal_black,4,1,420.00,840.00,840.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Callide C Nett Off,au.nem.qld.callidec,CPP_3,QLD1,operating,coal_black,3,1,420.00,840.00,840.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Childers,au.nem.qld.childsf,CHILDSF1,QLD1,operating,solar_utility,1,37,55.87,55.87,55.87,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -220,24 +219,24 @@ Clare,au.nem.qld.claresf,CLARESF1,QLD1,operating,solar_utility,1,69,110.40,110.4
 Clermont,au.nem.qld.clermsf,CLERMSF1,QLD1,operating,solar_utility,1,37,92.50,92.50,92.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Cohuna,au.nem.qld.1500,0NCSF_1,QLD1,operating,solar_utility,1,1,1.64,1.64,31.10,pipeline.aemo.general_information,pipeline.aemo.general_information
 Collinsville,au.nem.qld.colnsv,COLNSV_2,QLD1,retired,coal_black,1,1,30.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
+Collinsville,au.nem.qld.colnsv,COLNSV_1,QLD1,retired,coal_black,1,1,30.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Collinsville,au.nem.qld.colnsv,COLNSV_3,QLD1,retired,coal_black,1,1,30.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Collinsville,au.nem.qld.colnsv,COLNSV_4,QLD1,retired,coal_black,1,1,30.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Collinsville,au.nem.qld.colnsv,COLNSV_5,QLD1,retired,coal_black,1,1,66.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Collinsville,au.nem.qld.colnsv,COLNSV_1,QLD1,retired,coal_black,1,1,30.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Collinsville,au.nem.qld.cspvps,CSPVPS1,QLD1,operating,solar_utility,1,17,42.50,42.50,42.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Condamine A,au.nem.qld.cpsa,CPSA,QLD1,operating,gas_ccgt,1,2,86.00,185.70,286.40,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Condamine A,au.nem.qld.cpsa,CPSA,QLD1,operating,gas_ccgt,3,1,56.00,185.70,286.40,pipeline.aemo.registration_exemption,pipeline.aemo.general_information
 Condamine A,au.nem.qld.cpsa,CPSA,QLD1,operating,gas_wcmg,2,1,43.70,185.70,286.40,pipeline.aemo.general_information,pipeline.aemo.general_information
+Condamine A,au.nem.qld.cpsa,CPSA,QLD1,operating,gas_ccgt,3,1,56.00,185.70,286.40,pipeline.aemo.registration_exemption,pipeline.aemo.general_information
+Coopers Gap,au.nem.qld.coopgwf,COOPGWF1,QLD1,operating,wind,1,48,183.84,454.53,400.56,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Coopers Gap,au.nem.qld.coopgwf,COOPGWF1,QLD1,operating,wind,49,14,51.94,454.53,400.56,pipeline.aemo.registration_exemption,
 Coopers Gap,au.nem.qld.coopgwf,COOPGWF1,QLD1,operating,wind,63,43,151.79,454.53,400.56,pipeline.aemo.registration_exemption,
 Coopers Gap,au.nem.qld.coopgwf,COOPGWF1,QLD1,operating,wind,106,18,66.96,454.53,400.56,pipeline.aemo.registration_exemption,
-Coopers Gap,au.nem.qld.coopgwf,COOPGWF1,QLD1,operating,wind,1,48,183.84,454.53,400.56,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Daandine,au.nem.qld.daandine,DAANDINE,QLD1,operating,gas_wcmg,1,11,33.00,36.01,66.14,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Daandine,au.nem.qld.daandine,0NDPS_1,QLD1,operating,gas_wcmg,1,1,3.01,36.01,66.14,pipeline.aemo.general_information,pipeline.aemo.general_information
 Darling Downs,au.nem.qld.ddps1,DDPS1,QLD1,operating,gas_ccgt,0,1,280.00,1044.50,1287.50,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Darling Downs,au.nem.qld.ddps1,DDPS1,QLD1,operating,gas_ccgt,1,3,363.00,1044.50,1287.50,pipeline.aemo.registration_exemption,
 Darling Downs,au.nem.qld.ddps1,DDPS1,QLD1,operating,gas_wcmg,3,1,121.50,1044.50,1287.50,pipeline.aemo.general_information,pipeline.aemo.general_information
 Darling Downs,au.nem.qld.ddps1,DDPS1,QLD1,operating,gas_wcmg,4,1,280.00,1044.50,1287.50,pipeline.aemo.general_information,pipeline.aemo.general_information
+Darling Downs,au.nem.qld.ddps1,DDPS1,QLD1,operating,gas_ccgt,1,3,363.00,1044.50,1287.50,pipeline.aemo.registration_exemption,
 Darling Downs Solar Farm,au.nem.qld.ddsf,DDSF1,QLD1,operating,solar_utility,1,44,121.00,121.00,121.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Daydream,au.nem.qld.daydsf,DAYDSF1,QLD1,operating,solar_utility,1,29,79.75,167.75,255.75,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Daydream,au.nem.qld.daydsf,DAYDSF2,QLD1,operating,solar_utility,30,32,88.00,167.75,255.75,pipeline.aemo.registration_exemption,
@@ -247,14 +246,14 @@ FPC Green Energy,au.nem.qld.1539,0NFGE_1,QLD1,operating,bioenergy_biomass,1,1,30
 Fraser Coast Community,au.nem.qld.1540,0NFCCS_1,QLD1,operating,solar_utility,1,1,0.40,0.40,0.40,pipeline.aemo.general_information,pipeline.aemo.general_information
 German Creek,au.nem.qld.germcrk,GERMCRK,QLD1,operating,gas_wcmg,1,16,52.80,66.11,13.20,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 German Creek,au.nem.qld.germcrk,GERMCRK,QLD1,operating,gas_wcmg,17,4,13.31,66.11,13.20,pipeline.aemo.registration_exemption,
-Gladstone,au.nem.qld.g/stone,GSTONE4,QLD1,operating,coal_black,4,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Gladstone,au.nem.qld.g/stone,GSTONE6,QLD1,operating,coal_black,6,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Gladstone,au.nem.qld.g/stone,GSTONE2,QLD1,operating,coal_black,2,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Gladstone,au.nem.qld.g/stone,GSTONE1,QLD1,operating,coal_black,1,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Gladstone,au.nem.qld.g/stone,GSTONE3,QLD1,operating,coal_black,3,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Gladstone,au.nem.qld.g/stone,GSTONE2,QLD1,operating,coal_black,2,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Gladstone,au.nem.qld.g/stone,GSTONE5,QLD1,operating,coal_black,5,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Grosvenor 1,au.nem.qld.grosv1,GROSV2,QLD1,operating,gas_wcmg,1,5,15.20,36.20,36.20,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Gladstone,au.nem.qld.g/stone,GSTONE6,QLD1,operating,coal_black,6,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Gladstone,au.nem.qld.g/stone,GSTONE3,QLD1,operating,coal_black,3,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Gladstone,au.nem.qld.g/stone,GSTONE4,QLD1,operating,coal_black,4,1,280.00,1680.00,1705.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Grosvenor 1,au.nem.qld.grosv1,GROSV1,QLD1,operating,gas_wcmg,1,7,21.00,36.20,36.20,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Grosvenor 1,au.nem.qld.grosv1,GROSV2,QLD1,operating,gas_wcmg,1,5,15.20,36.20,36.20,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Hamilton,au.nem.qld.hamisf,HAMISF1,QLD1,operating,solar_utility,1,1,2.50,2.50,57.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Haughton,au.nem.qld.haught1,HAUGHT11,QLD1,operating,solar_utility,1,81,132.60,132.60,132.60,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Hayman,au.nem.qld.haymsf,HAYMSF1,QLD1,operating,solar_utility,1,21,57.75,57.75,57.75,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -267,11 +266,11 @@ Invicta Sugar Mill,au.nem.qld.invicta,INVICTA,QLD1,operating,bioenergy_biomass,3
 Isis Central Sugar Mill Cogeneration,au.nem.qld.icsm,ICSM,QLD1,operating,bioenergy_biomass,1,1,25.00,25.00,25.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 KRC Cogeneration,au.nem.qld.krccogen,KRCCOGEN,QLD1,retired,gas_ocgt,1,1,5.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Kalamia Mill,au.nem.qld.1583,0NKAMI_1,QLD1,operating,bioenergy_biomass,1,1,9.00,9.00,9.00,pipeline.aemo.general_information,pipeline.aemo.general_information
-Kareeya,au.nem.qld.kareeya,KAREEYA3,QLD1,operating,hydro,3,1,21.60,93.40,93.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Kareeya,au.nem.qld.kareeya,KAREEYA4,QLD1,operating,hydro,4,1,21.60,93.40,93.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Kareeya,au.nem.qld.kareeya,KAREEYA2,QLD1,operating,hydro,2,1,21.60,93.40,93.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Kareeya,au.nem.qld.kareeya,KAREEYA1,QLD1,operating,hydro,1,1,21.60,93.40,93.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Kareeya,au.nem.qld.kareeya,KAREEYA3,QLD1,operating,hydro,3,1,21.60,93.40,93.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Kareeya,au.nem.qld.kareeya,KAREEYA5,QLD1,operating,hydro,5,1,7.00,93.40,93.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Kareeya,au.nem.qld.kareeya,KAREEYA1,QLD1,operating,hydro,1,1,21.60,93.40,93.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Kareeya,au.nem.qld.kareeya,KAREEYA4,QLD1,operating,hydro,4,1,21.60,93.40,93.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Kennedy Energy Park,au.nem.qld.1587,0NKEP_6,QLD1,committed,solar_utility,6,1,2.50,6.10,58.20,pipeline.aemo.general_information,pipeline.aemo.general_information
 Kennedy Energy Park,au.nem.qld.1587,0NKEP_1,QLD1,committed,battery_discharging,1,1,3.60,6.10,58.20,pipeline.aemo.general_information,pipeline.aemo.general_information
 Kidston Project,au.nem.qld.ksp1,KSP1,QLD1,operating,solar_utility,1,20,50.00,50.00,50.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -287,8 +286,8 @@ Maryborough Mill,au.nem.qld.1616,0NMAMI_2,QLD1,operating,bioenergy_biomass,2,1,2
 Maryborough Mill,au.nem.qld.1616,0NMAMI_3,QLD1,operating,bioenergy_biomass,3,1,3.50,5.50,7.50,pipeline.aemo.general_information,pipeline.aemo.general_information
 Maryrorough,au.nem.qld.maryrsf,MARYRSF1,QLD1,operating,solar_utility,1,12,414.00,414.00,34.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 McNamee Partners,au.nem.qld.1620,0NMCPA_8,QLD1,operating,solar_utility,8,1,0.03,0.03,0.26,pipeline.aemo.general_information,pipeline.aemo.general_information
-Millmerran,au.nem.qld.millmern,MPP_1,QLD1,operating,coal_black,1,1,426.00,852.00,852.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Millmerran,au.nem.qld.millmern,MPP_2,QLD1,operating,coal_black,2,1,426.00,852.00,852.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Millmerran,au.nem.qld.millmern,MPP_1,QLD1,operating,coal_black,1,1,426.00,852.00,852.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Molendinar,au.nem.qld.1630,0NMOL_1,QLD1,operating,bioenergy_biogas,1,1,0.48,0.48,0.48,pipeline.aemo.general_information,pipeline.aemo.general_information
 Molong,au.nem.qld.1631,0NMSF_1,QLD1,committed,solar_utility,1,1,1.64,1.64,36.08,pipeline.aemo.general_information,pipeline.aemo.general_information
 Moranbah Generation Project,au.nem.qld.moranbah,MORANBAH,QLD1,operating,gas_wcmg,1,8,12.56,12.56,12.56,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -298,8 +297,8 @@ Mount Emerald,au.nem.qld.mewf,MEWF1,QLD1,operating,wind,1,37,127.65,180.45,180.4
 Mount Emerald,au.nem.qld.mewf,MEWF1,QLD1,operating,wind,38,16,52.80,180.45,180.45,pipeline.aemo.registration_exemption,
 Mount Sheridan Plaza,au.nem.qld.1638,0NMSP_1,QLD1,operating,solar_utility,1,1,0.30,0.30,0.30,pipeline.aemo.general_information,pipeline.aemo.general_information
 Mt Stuart,au.nem.qld.mstuart,MSTUART2,QLD1,operating,distillate,2,1,146.00,423.50,423.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Mt Stuart,au.nem.qld.mstuart,MSTUART1,QLD1,operating,distillate,1,1,146.00,423.50,423.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Mt Stuart,au.nem.qld.mstuart,MSTUART3,QLD1,operating,distillate,3,1,131.50,423.50,423.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Mt Stuart,au.nem.qld.mstuart,MSTUART1,QLD1,operating,distillate,1,1,146.00,423.50,423.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Mulgrave Central Mill,au.nem.qld.mulgrave,0NMCM_1,QLD1,operating,bioenergy_biomass,1,1,9.00,9.00,9.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 Normanton,au.nem.qld.1652,0NNSF_1,QLD1,operating,solar_utility,1,1,4.96,4.96,4.96,pipeline.aemo.general_information,pipeline.aemo.general_information
 Oakey,au.nem.qld.oakey,OAKEY1,QLD1,operating,gas_ocgt,1,1,141.00,282.00,282.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
@@ -315,15 +314,15 @@ Plane Creek Mill,au.nem.qld.planecrk,0NPCM_1,QLD1,operating,bioenergy_biomass,1,
 Plane Creek Mill,au.nem.qld.planecrk,0NPCM_2,QLD1,operating,bioenergy_biomass,2,1,4.00,14.00,14.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 Proserpine,au.nem.qld.1677,0NPRO_1,QLD1,operating,bioenergy_biomass,1,1,11.00,17.00,17.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 Proserpine,au.nem.qld.1677,0NPRO_2,QLD1,operating,bioenergy_biomass,2,1,6.00,17.00,17.00,pipeline.aemo.general_information,pipeline.aemo.general_information
-Racecourse Mill,au.nem.qld.racomil,RACOMIL1,QLD1,operating,bioenergy_biomass,1,1,37.25,47.75,47.75,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Racecourse Mill,au.nem.qld.racomil,RACOMIL1,QLD1,operating,bioenergy_biomass,2,1,7.00,47.75,47.75,pipeline.aemo.registration_exemption,pipeline.aemo.general_information
 Racecourse Mill,au.nem.qld.racomil,RACOMIL1,QLD1,operating,bioenergy_biomass,3,1,3.50,47.75,47.75,pipeline.aemo.registration_exemption,pipeline.aemo.general_information
+Racecourse Mill,au.nem.qld.racomil,RACOMIL1,QLD1,operating,bioenergy_biomass,1,1,37.25,47.75,47.75,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Rochedale,au.nem.qld.rochedal,0NRREF_1,QLD1,operating,bioenergy_biogas,1,1,4.49,4.49,4.49,pipeline.aemo.general_information,pipeline.aemo.general_information
 Rochedale,au.nem.qld.rochedal,ROCHEDAL,QLD1,retired,bioenergy_biogas,5,1,1.12,4.49,4.49,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Rocky Point Cogeneration,au.nem.qld.rpcg,RPCG,QLD1,operating,bioenergy_biomass,1,1,30.00,30.00,30.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Roghan Road,au.nem.qld.edlrgnrd,EDLRGNRD,QLD1,operating,bioenergy_biomass,1,1,1.15,1.15,1.15,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Roma Station,au.nem.qld.roma,ROMA_8,QLD1,operating,gas_ocgt,8,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Roma Station,au.nem.qld.roma,ROMA_7,QLD1,operating,gas_ocgt,7,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Roma Station,au.nem.qld.roma,ROMA_8,QLD1,operating,gas_ocgt,8,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Ross River,au.nem.qld.rrsf,RRSF1,QLD1,operating,solar_utility,1,64,128.00,128.00,128.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Rugby Run,au.nem.qld.rugbyr,RUGBYR1,QLD1,operating,solar_utility,1,25,1625.00,1625.00,65.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 SIPS Staypylton Industrial,au.nem.qld.1706,0NSSIP_1,QLD1,operating,solar_utility,1,1,0.15,0.15,0.15,pipeline.aemo.general_information,pipeline.aemo.general_information
@@ -336,8 +335,8 @@ Southbank Institute Of Technology 1,au.nem.qld.sthbktec,STHBKTEC,QLD1,retired,di
 St Ursulas College Yeppoon,au.nem.qld.1717,0NSUCY_1,QLD1,operating,solar_utility,1,1,0.17,0.17,0.17,pipeline.aemo.general_information,pipeline.aemo.general_information
 Stanwell,au.nem.qld.stanwell,STAN1,QLD1,operating,coal_black,1,1,365.00,2920.00,2945.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Stanwell,au.nem.qld.stanwell,STAN4,QLD1,operating,coal_black,4,1,365.00,2920.00,2945.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Stanwell,au.nem.qld.stanwell,STAN2,QLD1,operating,coal_black,2,1,365.00,2920.00,2945.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Stanwell,au.nem.qld.stanwell,STAN3,QLD1,operating,coal_black,3,1,365.00,2920.00,2945.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Stanwell,au.nem.qld.stanwell,STAN2,QLD1,operating,coal_black,2,1,365.00,2920.00,2945.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Stanwell,au.nem.qld.stanwell,STAN-1,QLD1,operating,coal_black,1,1,365.00,2920.00,2945.00,opennem.load_facilities,
 Stanwell,au.nem.qld.stanwell,STAN-2,QLD1,operating,coal_black,1,1,365.00,2920.00,2945.00,opennem.load_facilities,
 Stanwell,au.nem.qld.stanwell,STAN-3,QLD1,operating,coal_black,1,1,365.00,2920.00,2945.00,opennem.load_facilities,
@@ -363,15 +362,15 @@ Tableland Mill,au.nem.qld.tbland,0NTAMI_2,QLD1,committed,gas_steam,2,1,24.00,31.
 Tableland Mill 2,au.nem.qld.tabmill2,TABMILL2,QLD1,operating,bioenergy_biomass,1,1,17.00,17.00,24.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Tarong,au.nem.qld.tarong,TARONG#1,QLD1,operating,coal_black,1,1,350.00,1415.00,1440.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Tarong,au.nem.qld.tarong,TARONG#3,QLD1,operating,coal_black,3,1,350.00,1415.00,1440.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Tarong,au.nem.qld.tarong,TARONG#2,QLD1,operating,coal_black,2,1,350.00,1415.00,1440.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Tarong,au.nem.qld.tarong,TARONG#4,QLD1,operating,coal_black,4,1,350.00,1415.00,1440.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Tarong,au.nem.qld.tarong,TARONG#2,QLD1,operating,coal_black,2,1,350.00,1415.00,1440.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Tarong,au.nem.qld.tarong,0NTAGT_1,QLD1,operating,distillate,1,1,15.00,1415.00,1440.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 Tarong North,au.nem.qld.tarongn,TNPS1,QLD1,operating,coal_black,1,1,450.00,450.00,450.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Todae DHP,au.nem.qld.1739,0NTSD_1,QLD1,operating,solar_utility,1,1,0.95,0.95,0.95,pipeline.aemo.general_information,pipeline.aemo.general_information
 Todae Lourdes,au.nem.qld.1753,0NTSSL_1,QLD1,operating,solar_utility,1,1,0.26,0.26,0.26,pipeline.aemo.general_information,pipeline.aemo.general_information
 Tong Park Agricultural,au.nem.qld.1756,0NTPA_1,QLD1,operating,bioenergy_biogas,1,1,1.23,1.23,1.23,pipeline.aemo.general_information,pipeline.aemo.general_information
-Townsville,au.nem.qld.yabulu,YABULU,QLD1,operating,gas_ccgt,1,1,160.00,242.00,242.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Townsville,au.nem.qld.yabulu,YABULU2,QLD1,operating,gas_ccgt,2,1,82.00,242.00,242.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Townsville,au.nem.qld.yabulu,YABULU,QLD1,operating,gas_ccgt,1,1,160.00,242.00,242.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 University Of Southern Queensland Toowoomba,au.nem.qld.1766,0NUOSQ_1,QLD1,operating,solar_utility,1,1,1.09,1.09,1.09,pipeline.aemo.general_information,pipeline.aemo.general_information
 Veolia Ti Tree,au.nem.qld.titree,TITREE,QLD1,operating,bioenergy_biogas,1,2,2.20,2.20,4.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Victoria Mill,au.nem.qld.vicmill,0NVIMI_3,QLD1,operating,bioenergy_biomass,3,1,5.00,72.00,72.00,pipeline.aemo.registration_exemption,
@@ -398,8 +397,8 @@ Angaston,au.nem.sa.angaston,ANGAST1,SA1,operating,distillate,1,18,29.88,29.88,49
 Aquatic & Leasure Centre,au.nem.sa.1695,0NSA&L_1,SA1,operating,solar_utility,1,1,0.51,0.51,0.51,pipeline.aemo.general_information,pipeline.aemo.general_information
 BHP Olympic Dam,au.nem.sa.1458,0NBODB_1,SA1,operating,distillate,1,1,30.00,30.00,30.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 Barker Inlet,au.nem.sa.barkips,BARKIPS1,SA1,operating,gas_recip,1,12,210.00,210.00,211.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Blue Lake Milling,au.nem.sa.blulake,BLULAKE1,SA1,retired,distillate,1,1,1.00,0.50,0.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Blue Lake Milling,au.nem.sa.blulake,0NBLMP_1,SA1,operating,distillate,1,1,0.50,0.50,0.50,pipeline.aemo.general_information,pipeline.aemo.general_information
+Blue Lake Milling,au.nem.sa.blulake,BLULAKE1,SA1,retired,distillate,1,1,1.00,0.50,0.50,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Bungala One,au.nem.sa.bngsf1,BNGSF1,SA1,operating,solar_utility,1,1,2.50,2.50,135.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Bungala Two,au.nem.sa.bngsf2,BNGSF2,SA1,operating,solar_utility,1,1,2.50,2.50,110.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Canunda,au.nem.sa.canunda1,CNUNDAWF,SA1,operating,wind,1,23,46.00,46.00,46.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -407,9 +406,9 @@ Cathedral Rocks,au.nem.sa.cathrock,CATHROCK,SA1,operating,wind,1,33,66.00,66.00,
 Clements Gap,au.nem.sa.clemgpwf,CLEMGPWF,SA1,operating,wind,1,27,56.70,56.70,56.70,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Dalrymple North,au.nem.sa.dalnth,DALNTHL1,SA1,operating,battery_charging,1,12,30.00,30.00,30.00,au.nem.mms.dudetail,pipeline.aemo.registration_exemption
 Dalrymple North,au.nem.sa.dalnth,DALNTH01,SA1,operating,battery_discharging,1,12,30.00,30.00,30.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Dry Creek Station,au.nem.sa.drycgt,DRYCGT2,SA1,operating,gas_ocgt,2,1,52.00,156.00,181.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Dry Creek Station,au.nem.sa.drycgt,DRYCGT3,SA1,operating,gas_ocgt,3,1,52.00,156.00,181.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Dry Creek Station,au.nem.sa.drycgt,DRYCGT1,SA1,operating,gas_ocgt,1,1,52.00,156.00,181.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Dry Creek Station,au.nem.sa.drycgt,DRYCGT3,SA1,operating,gas_ocgt,3,1,52.00,156.00,181.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Dry Creek Station,au.nem.sa.drycgt,DRYCGT2,SA1,operating,gas_ocgt,2,1,52.00,156.00,181.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Hallett,au.nem.sa.aglhal,AGLHAL,SA1,operating,gas_ocgt,2,2,28.00,242.60,217.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Hallett,au.nem.sa.aglhal,AGLHAL,SA1,operating,gas_ocgt,3,1,37.00,242.60,217.00,pipeline.aemo.registration_exemption,
 Hallett,au.nem.sa.aglhal,AGLHAL,SA1,operating,gas_ocgt,1,1,15.50,242.60,217.00,pipeline.aemo.registration_exemption,
@@ -431,12 +430,12 @@ Hornsdale 3,au.nem.sa.hornsdal3,HDWF3,SA1,operating,wind,1,35,112.00,112.00,112.
 Hornsdale Power Reserve,au.nem.sa.hornsdpr,HPRG1,SA1,operating,battery_discharging,1,294,29400.00,29400.00,100.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Hornsdale Power Reserve,au.nem.sa.hornsdpr,HPRL1,SA1,operating,battery_charging,1,294,119.98,29400.00,100.00,au.nem.mms.dudetail,pipeline.aemo.registration_exemption
 Kingscote,au.nem.sa.1598,0NKPS_5,SA1,operating,distillate,5,1,2.00,2.00,10.00,pipeline.aemo.general_information,pipeline.aemo.general_information
-Ladbroke Grove,au.nem.sa.ladbroke,LADBROK1,SA1,operating,gas_ocgt,1,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Ladbroke Grove,au.nem.sa.ladbroke,LADBROK2,SA1,operating,gas_ocgt,2,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Lake Bonney,au.nem.sa.lbbess,LKBONNY3,SA1,operating,wind,1,13,39.00,1319.50,144.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Lake Bonney,au.nem.sa.lbbess,LBBG1,SA1,operating,battery_discharging,1,48,1200.00,1319.50,144.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Ladbroke Grove,au.nem.sa.ladbroke,LADBROK1,SA1,operating,gas_ocgt,1,1,40.00,80.00,80.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Lake Bonney,au.nem.sa.lbbess,LBBL1,SA1,operating,battery_charging,1,48,24.96,1319.50,144.50,au.nem.mms.dudetail,pipeline.aemo.registration_exemption
+Lake Bonney,au.nem.sa.lbbess,LBBG1,SA1,operating,battery_discharging,1,48,1200.00,1319.50,144.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Lake Bonney,au.nem.sa.lbbess,LKBONNY1,SA1,operating,wind,1,46,80.50,1319.50,144.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Lake Bonney,au.nem.sa.lbbess,LKBONNY3,SA1,operating,wind,1,13,39.00,1319.50,144.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Lake Bonney Windfarm,au.nem.sa.lkbonny2,LKBONNY2,SA1,operating,wind,1,53,159.00,159.00,159.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Lincoln Gap,au.nem.sa.lgapwf1,LGAPWF1,SA1,operating,wind,1,59,212.40,212.40,86.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Lonsdale,au.nem.sa.lonsdale,LONSDALE,SA1,operating,distillate,1,18,20.70,20.70,20.70,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -446,31 +445,31 @@ Mt Millar,au.nem.sa.mtmillar,MTMILLAR,SA1,operating,wind,1,35,70.00,70.00,70.00,
 Nawma Balefill Site Uleybury,au.nem.sa.1647,0NNBSU_1,SA1,operating,solar_utility,1,1,1.12,1.12,1.12,pipeline.aemo.general_information,pipeline.aemo.general_information
 North Brown Hill,au.nem.sa.nbhwf,NBHWF1,SA1,operating,wind,1,63,132.30,132.30,132.30,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Northern,au.nem.sa.northp,NPS1,SA1,retired,coal_brown,1,1,265.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Northern,au.nem.sa.northp,NPSNL2,SA1,retired,coal_brown,1,1,100.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Northern,au.nem.sa.northp,NPSNL1,SA1,retired,coal_brown,1,1,100.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Northern,au.nem.sa.northp,NPS2,SA1,retired,coal_brown,1,1,265.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
+Northern,au.nem.sa.northp,NPSNL1,SA1,retired,coal_brown,1,1,100.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
+Northern,au.nem.sa.northp,NPSNL2,SA1,retired,coal_brown,1,1,100.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Osborne,au.nem.sa.osborne,OSBAG,SA1,operating,gas_ccgt,1,1,118.00,360.00,360.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Osborne,au.nem.sa.osborne,OSBAG,SA1,operating,gas_ccgt,2,1,62.00,360.00,360.00,pipeline.aemo.registration_exemption,
 Osborne,au.nem.sa.osborne,OSB-AG,SA1,operating,gas_ccgt,1,1,180.00,360.00,360.00,opennem.load_facilities,
-Pedler Creek,au.nem.sa.pedler,PEDLER1,SA1,retired,bioenergy_biogas,1,1,3.00,1.03,3.09,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Pedler Creek,au.nem.sa.pedler,0NPECR_3,SA1,operating,distillate,3,1,1.03,1.03,3.09,pipeline.aemo.general_information,pipeline.aemo.general_information
+Pedler Creek,au.nem.sa.pedler,PEDLER1,SA1,retired,bioenergy_biogas,1,1,3.00,1.03,3.09,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Pelican Point,au.nem.sa.npppps,PPCCGT,SA1,operating,gas_ccgt,1,2,320.00,478.00,478.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Pelican Point,au.nem.sa.npppps,PPCCGT,SA1,operating,gas_ccgt,3,1,158.00,478.00,478.00,pipeline.aemo.registration_exemption,
 Peterborough,au.nem.sa.1671,0NPSF_2,SA1,operating,solar_utility,2,1,2.45,2.45,4.90,pipeline.aemo.general_information,pipeline.aemo.general_information
-Playford B,au.nem.sa.playf,PLAYFB2,SA1,retired,coal_brown,1,1,60.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Playford B,au.nem.sa.playf,PLAYB-AG,SA1,retired,coal_brown,1,1,240.00,,,opennem.load_facilities,
 Playford B,au.nem.sa.playf,PLAYFB1,SA1,retired,coal_brown,1,1,60.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
+Playford B,au.nem.sa.playf,PLAYFB2,SA1,retired,coal_brown,1,1,60.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Playford B,au.nem.sa.playf,PLAYFB3,SA1,retired,coal_brown,1,1,60.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Playford B,au.nem.sa.playf,PLAYFB4,SA1,retired,coal_brown,1,1,60.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
+Playford B,au.nem.sa.playf,PLAYB-AG,SA1,retired,coal_brown,1,1,240.00,,,opennem.load_facilities,
 Port Lincoln,au.nem.sa.portlcn,POR03,SA1,operating,distillate,3,1,23.50,73.50,73.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Port Lincoln,au.nem.sa.portlcn,POR01,SA1,operating,distillate,1,2,50.00,73.50,73.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Pt Stanvac,au.nem.sa.stanvac,PTSTAN1,SA1,operating,distillate,1,36,57.60,57.60,57.60,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Pt Stanvac,au.nem.sa.stanvac,STANV2,SA1,retired,distillate,1,1,58.00,57.60,57.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Pt Stanvac,au.nem.sa.stanvac,STANV1,SA1,retired,distillate,1,1,58.00,57.60,57.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Quarantine,au.nem.sa.quarantn,QPS1,SA1,operating,gas_ocgt,1,1,29.00,229.00,229.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Pt Stanvac,au.nem.sa.stanvac,STANV2,SA1,retired,distillate,1,1,58.00,57.60,57.60,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Quarantine,au.nem.sa.quarantn,QPS3,SA1,operating,gas_ocgt,3,1,24.00,229.00,229.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Quarantine,au.nem.sa.quarantn,QPS4,SA1,operating,gas_ocgt,4,1,24.00,229.00,229.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Quarantine,au.nem.sa.quarantn,QPS5,SA1,operating,gas_ocgt,5,1,128.00,229.00,229.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Quarantine,au.nem.sa.quarantn,QPS1,SA1,operating,gas_ocgt,1,1,29.00,229.00,229.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Quarantine,au.nem.sa.quarantn,QPS4,SA1,operating,gas_ocgt,4,1,24.00,229.00,229.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Quarantine,au.nem.sa.quarantn,QPS2,SA1,operating,gas_ocgt,2,1,24.00,229.00,229.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Redmud Green Energy,au.nem.sa.1682,0NRGE1,SA1,operating,solar_utility,1,1,0.21,1.86,1.87,pipeline.aemo.general_information,pipeline.aemo.general_information
 Redmud Green Energy,au.nem.sa.1682,0NRGE4_1,SA1,operating,solar_utility,1,1,0.60,1.86,1.87,pipeline.aemo.general_information,pipeline.aemo.general_information
@@ -487,8 +486,8 @@ Snowtown North,au.nem.sa.snownth,SNOWSTH1,SA1,operating,wind,1,42,126.00,270.00,
 Snowtown North,au.nem.sa.snownth,SNOWNTH1,SA1,operating,wind,1,48,144.00,270.00,270.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Snuggery,au.nem.sa.snug,SNUG2,SA1,operating,distillate,1,1,21.00,42.00,42.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Snuggery,au.nem.sa.snug,SNUG3,SA1,operating,distillate,1,1,21.00,42.00,42.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Snuggery,au.nem.sa.1413,SNUG1,SA1,operating,distillate,1,3,63.00,105.00,105.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Snuggery,au.nem.sa.1413,SNUGNL1,SA1,operating,distillate,4,1,21.00,105.00,105.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Snuggery,au.nem.sa.1413,SNUG1,SA1,operating,distillate,1,3,63.00,105.00,105.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Starfish Hill,au.nem.sa.starfhill,STARHLWF,SA1,operating,wind,1,23,34.50,34.50,33.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Tailem Bend Project 1,au.nem.sa.tbsf,TBSF1,SA1,operating,solar_utility,1,54,108.00,108.00,108.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Tataria,au.nem.sa.tatiara,TATIARA1,SA1,operating,distillate,1,1,0.48,0.48,0.48,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -499,20 +498,20 @@ Terminal,au.nem.sa.termstor,0NTSMH_1,SA1,operating,hydro,1,1,1.86,1.86,1.86,pipe
 Terminal,au.nem.sa.termstor,TERMSTOR,SA1,retired,hydro,1,1,2.00,1.86,1.86,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 The Bluff,au.nem.sa.bluff,BLUFF1,SA1,operating,wind,1,25,52.50,52.50,52.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Torrens Island,au.nem.sa.torris,TORRA2,SA1,operating,gas_steam,2,1,120.00,1280.00,1380.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Torrens Island,au.nem.sa.torris,TORRA3,SA1,operating,gas_steam,3,1,120.00,1280.00,1380.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Torrens Island,au.nem.sa.torris,TORRB1,SA1,operating,gas_steam,1,1,200.00,1280.00,1380.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Torrens Island,au.nem.sa.torris,TORRB2,SA1,operating,gas_steam,2,1,200.00,1280.00,1380.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Torrens Island,au.nem.sa.torris,TORRB3,SA1,operating,gas_steam,3,1,200.00,1280.00,1380.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Torrens Island,au.nem.sa.torris,TORRA1,SA1,operating,gas_steam,1,1,120.00,1280.00,1380.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Torrens Island,au.nem.sa.torris,TORRA3,SA1,operating,gas_steam,3,1,120.00,1280.00,1380.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Torrens Island,au.nem.sa.torris,TORRA4,SA1,operating,gas_steam,4,1,120.00,1280.00,1380.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Torrens Island,au.nem.sa.torris,TORRB1,SA1,operating,gas_steam,1,1,200.00,1280.00,1380.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Torrens Island,au.nem.sa.torris,TORRB4,SA1,operating,gas_steam,4,1,200.00,1280.00,1380.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Vibe Energy,au.nem.sa.1772,0NVEB_1,SA1,operating,distillate,1,1,5.00,5.00,5.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 Water Bolivar,au.nem.sa.bolivar,BOLIVAR1,SA1,operating,pumps,1,3,7.50,7.50,10.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Waterloo,au.nem.sa.waterlwf,WATERLWF,SA1,operating,wind,1,37,122.10,141.90,19.80,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Waterloo,au.nem.sa.waterlwf,WATERLWF,SA1,operating,wind,38,6,19.80,141.90,19.80,pipeline.aemo.registration_exemption,
+Waterloo,au.nem.sa.waterlwf,WATERLWF,SA1,operating,wind,1,37,122.10,141.90,19.80,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Wattle Point,au.nem.sa.wpwf,WPWF,SA1,operating,wind,1,55,90.75,90.75,90.75,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Willogoleche,au.nem.sa.wgwf,WGWF1,SA1,operating,wind,25,8,27.44,109.76,54.88,pipeline.aemo.registration_exemption,
 Willogoleche,au.nem.sa.wgwf,WGWF1,SA1,operating,wind,1,24,82.32,109.76,54.88,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Willogoleche,au.nem.sa.wgwf,WGWF1,SA1,operating,wind,25,8,27.44,109.76,54.88,pipeline.aemo.registration_exemption,
 Wingfield 1,au.nem.sa.wingf1,WINGF1_1,SA1,operating,bioenergy_biogas,1,4,4.10,4.10,4.10,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Wingfield 2,au.nem.sa.wingf2,WINGF2_1,SA1,operating,bioenergy_biogas,1,4,4.10,4.10,4.10,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Yalumba Oxford Landing,au.nem.sa.1810,0NYWSS_1,SA1,operating,solar_utility,1,1,0.20,0.20,0.20,pipeline.aemo.general_information,pipeline.aemo.general_information
@@ -522,13 +521,12 @@ Bastyan,au.nem.tas.bastyan,BASTYAN,TAS1,operating,hydro,1,1,79.90,79.90,79.90,au
 Bell Bay,au.nem.tas.bellbay,BELLBAY1,TAS1,retired,gas_steam,1,1,120.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Bell Bay,au.nem.tas.bellbay,BELLBAY2,TAS1,retired,gas_steam,1,1,120.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Bell Bay,au.nem.tas.bbdisel1,BBDISEL1,TAS1,retired,distillate,1,1,75.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Bell Bay Three,au.nem.tas.bbp31,BBTHREE2,TAS1,operating,gas_ocgt,2,1,35.00,163.00,163.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Bell Bay Three,au.nem.tas.bbp31,TVPP104,TAS1,operating,gas_ocgt,1,1,58.00,163.00,163.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Bell Bay Three,au.nem.tas.bbp31,BBTHREE1,TAS1,operating,gas_ocgt,1,1,35.00,163.00,163.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Bell Bay Three,au.nem.tas.bbp31,BBTHREE3,TAS1,operating,gas_ocgt,3,1,35.00,163.00,163.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Butlers Gorge,au.nem.tas.butlersg,BUTLERSG,TAS1,operating,hydro,1,1,12.20,14.40,14.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Bell Bay Three,au.nem.tas.bbp31,TVPP104,TAS1,operating,gas_ocgt,1,1,58.00,163.00,163.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Bell Bay Three,au.nem.tas.bbp31,BBTHREE2,TAS1,operating,gas_ocgt,2,1,35.00,163.00,163.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Butlers Gorge,au.nem.tas.butlersg,0NBUGO_1,TAS1,operating,hydro,1,1,2.20,14.40,14.40,pipeline.aemo.general_information,pipeline.aemo.general_information
-Catagunya / Liapootah / Wayatinah,au.nem.tas.liwyca,CATAGUN1,TAS1,retired,distillate,1,1,24.00,238.40,418.80,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
+Butlers Gorge,au.nem.tas.butlersg,BUTLERSG,TAS1,operating,hydro,1,1,12.20,14.40,14.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Catagunya / Liapootah / Wayatinah,au.nem.tas.liwyca,LI_WY_CA,TAS1,operating,hydro,1,2,48.00,238.40,418.80,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Catagunya / Liapootah / Wayatinah,au.nem.tas.liwyca,LI_WY_CA,TAS1,operating,hydro,1,1,27.90,238.40,418.80,pipeline.aemo.registration_exemption,
 Catagunya / Liapootah / Wayatinah,au.nem.tas.liwyca,LI_WY_CA,TAS1,operating,hydro,2,1,27.90,238.40,418.80,pipeline.aemo.registration_exemption,
@@ -537,6 +535,7 @@ Catagunya / Liapootah / Wayatinah,au.nem.tas.liwyca,LI_WY_CA,TAS1,operating,hydr
 Catagunya / Liapootah / Wayatinah,au.nem.tas.liwyca,LI_WY_CA,TAS1,operating,hydro,3,1,27.90,238.40,418.80,pipeline.aemo.general_information,pipeline.aemo.general_information
 Catagunya / Liapootah / Wayatinah,au.nem.tas.liwyca,LI_WY_CA,TAS1,operating,hydro,6,1,12.80,238.40,418.80,pipeline.aemo.general_information,pipeline.aemo.general_information
 Catagunya / Liapootah / Wayatinah,au.nem.tas.liwyca,LI_WY_CA,TAS1,operating,hydro,8,1,24.00,238.40,418.80,pipeline.aemo.general_information,pipeline.aemo.general_information
+Catagunya / Liapootah / Wayatinah,au.nem.tas.liwyca,CATAGUN1,TAS1,retired,distillate,1,1,24.00,238.40,418.80,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Cattle Hill,au.nem.tas.cthlwf,CTHLWF1,TAS1,operating,wind,1,48,153.60,153.60,153.60,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Cethana,au.nem.tas.cethana,CETHANA,TAS1,operating,hydro,1,1,85.00,85.00,85.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Cluny,au.nem.tas.cluny,CLUNY,TAS1,operating,hydro,1,1,19.00,19.00,19.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -544,8 +543,8 @@ Devils Gate,au.nem.tas.devilsg,DEVILS_G,TAS1,operating,hydro,1,1,60.00,60.00,60.
 Fisher,au.nem.tas.fisher,FISHER,TAS1,operating,hydro,1,1,43.20,43.20,43.20,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 George Town,au.nem.tas.georgtwn,GEORGTN1,TAS1,retired,distillate,1,1,30.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Glenorchy,au.nem.tas.1546,0NGLE_2,TAS1,operating,bioenergy_biogas,2,1,1.69,1.69,3.38,pipeline.aemo.general_information,pipeline.aemo.general_information
-Gordon,au.nem.tas.gordon,GORDON,TAS1,operating,hydro,1,3,432.00,457.00,457.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Gordon,au.nem.tas.gordon,GOVILLB1,TAS1,operating,hydro,1,1,25.00,457.00,457.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
+Gordon,au.nem.tas.gordon,GORDON,TAS1,operating,hydro,1,3,432.00,457.00,457.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Granville Harbour,au.nem.tas.granwf,GRANWF1,TAS1,operating,wind,1,31,111.60,111.60,111.60,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Hobart,au.nem.tas.1571,0NHOB_1,TAS1,operating,bioenergy_biogas,1,1,1.00,1.00,1.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 John Butters,au.nem.tas.jbutters,JBUTTERS,TAS1,operating,hydro,1,1,144.00,144.00,144.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -564,13 +563,13 @@ Midlands,au.nem.tas.midldps,0NMIHY_1,TAS1,operating,hydro,1,1,6.00,18.08,18.08,p
 Midlands,au.nem.tas.midldps,MIDLDPS1,TAS1,operating,hydro,1,1,6.00,18.08,18.08,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Musselroe,au.nem.tas.musselro,MUSSELR1,TAS1,operating,wind,1,56,168.00,168.00,168.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Paloona,au.nem.tas.paloona,PALOONA,TAS1,operating,hydro,1,1,28.00,28.00,28.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Poatina,au.nem.tas.ptina110,POAT220,TAS1,operating,hydro,3,4,200.00,325.00,325.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Poatina,au.nem.tas.ptina110,POAT110,TAS1,operating,hydro,1,2,100.00,325.00,325.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Poatina,au.nem.tas.ptina110,POAT220,TAS1,operating,hydro,3,4,200.00,325.00,325.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Poatina,au.nem.tas.ptina110,PO110NL1,TAS1,operating,hydro,1,1,25.00,325.00,325.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Port Latta Generator,au.nem.tas.portlatt,PORTLAT1,TAS1,retired,distillate,1,1,11.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Que River,au.nem.tas.queriver,QUERIVE1,TAS1,retired,distillate,1,1,24.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Reece,au.nem.tas.reece,REECE2,TAS1,operating,hydro,2,1,115.60,231.20,231.20,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Reece,au.nem.tas.reece,REECE1,TAS1,operating,hydro,1,1,115.60,231.20,231.20,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Reece,au.nem.tas.reece,REECE2,TAS1,operating,hydro,2,1,115.60,231.20,231.20,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Remount,au.nem.tas.remount,REMOUNT,TAS1,operating,bioenergy_biogas,1,2,2.25,2.25,2.25,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Repulse,au.nem.tas.repulse,REPULSE,TAS1,operating,hydro,1,1,28.00,28.00,28.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Rowallan,au.nem.tas.rowallan,ROWALLAN,TAS1,operating,hydro,1,1,10.50,10.50,10.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -593,25 +592,25 @@ Aeroten Leongatha,au.nem.vic.1425,0NALS_1,VIC1,operating,solar_utility,1,1,0.20,
 Angelsea,au.nem.vic.aps,APS,VIC1,retired,coal_brown,1,1,165.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Ararat,au.nem.vic.arwf,ARWF1,VIC1,operating,wind,1,1,2.57,141.46,,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Ararat,au.nem.vic.arwf,ARWF1,VIC1,operating,wind,33,43,138.89,141.46,,pipeline.aemo.registration_exemption,
-Bairnsdale,au.nem.vic.deibdl,BDL02,VIC1,operating,gas_ocgt,2,1,47.00,94.00,94.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Bairnsdale,au.nem.vic.deibdl,BDL01,VIC1,operating,gas_ocgt,1,1,47.00,94.00,94.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Bairnsdale,au.nem.vic.deibdl,BDL02,VIC1,operating,gas_ocgt,2,1,47.00,94.00,94.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Bald Hills,au.nem.vic.bhwf,BALDHWF1,VIC1,operating,wind,1,52,106.60,106.60,106.60,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Ballarat,au.nem.vic.1440,0NBAL_1,VIC1,operating,bioenergy_biogas,1,1,0.79,0.79,0.79,pipeline.aemo.general_information,pipeline.aemo.general_information
 Ballarat Base Hospital,au.nem.vic.bbasehos,BBASEHOS,VIC1,operating,gas_recip,1,2,2.00,3.00,3.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Ballarat Base Hospital,au.nem.vic.bbasehos,BBASEHOS,VIC1,operating,distillate,3,1,1.00,3.00,3.00,pipeline.aemo.registration_exemption,
-Ballarat Energy,au.nem.vic.balbess,BALBG1,VIC1,operating,battery_discharging,1,17,510.00,510.00,30.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Ballarat Energy,au.nem.vic.balbess,BALBL1,VIC1,operating,battery_charging,1,17,29.99,510.00,30.00,au.nem.mms.dudetail,pipeline.aemo.registration_exemption
-Banimboola,au.nem.vic.baps,BAPS,VIC1,operating,hydro,3,1,2.25,24.45,12.20,pipeline.aemo.registration_exemption,
+Ballarat Energy,au.nem.vic.balbess,BALBG1,VIC1,operating,battery_discharging,1,17,510.00,510.00,30.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Banimboola,au.nem.vic.baps,BAPS,VIC1,operating,hydro,1,2,20.00,24.45,12.20,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Banimboola,au.nem.vic.baps,BAPS,VIC1,operating,hydro,3,1,2.25,24.45,12.20,pipeline.aemo.registration_exemption,
 Banimboola,au.nem.vic.baps,BAPS,VIC1,operating,hydro,2,1,2.20,24.45,12.20,pipeline.aemo.general_information,pipeline.aemo.general_information
 Bannerton,au.nem.vic.bannsp,BANN1,VIC1,operating,solar_utility,1,40,100.00,100.00,100.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Bayswood Timber Hallam,au.nem.vic.1448,0NBAY_1,VIC1,operating,solar_utility,1,1,0.15,0.15,0.15,pipeline.aemo.general_information,pipeline.aemo.general_information
 Beaconhills College Berwick,au.nem.vic.1449,0NBCB_1,VIC1,operating,solar_utility,1,1,0.20,0.20,0.20,pipeline.aemo.general_information,pipeline.aemo.general_information
 Bendigo,au.nem.vic.1455,0NBEN_1,VIC1,operating,bioenergy_biogas,1,1,0.50,0.50,0.50,pipeline.aemo.general_information,pipeline.aemo.general_information
-Berwick,au.nem.vic.berwick,BERWICK,VIC1,operating,bioenergy_biogas,1,1,7.00,15.68,18.77,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Berwick,au.nem.vic.berwick,0NBPP_1,VIC1,operating,bioenergy_biogas,1,5,7.20,15.68,18.77,pipeline.aemo.registration_exemption,
 Berwick,au.nem.vic.berwick,0NBER_4,VIC1,operating,bioenergy_biogas,4,1,1.03,15.68,18.77,pipeline.aemo.general_information,pipeline.aemo.general_information
 Berwick,au.nem.vic.berwick,0NBER_5,VIC1,operating,bioenergy_biogas,5,1,0.45,15.68,18.77,pipeline.aemo.general_information,pipeline.aemo.general_information
+Berwick,au.nem.vic.berwick,BERWICK,VIC1,operating,bioenergy_biogas,1,1,7.00,15.68,18.77,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Biala,au.nem.vic.1459,0NBWF_1,VIC1,committed,wind,1,1,3.57,3.57,110.67,pipeline.aemo.general_information,pipeline.aemo.general_information
 Bogong / Mackay,au.nem.vic.mckay,MCKAY1,VIC1,operating,hydro,1,2,140.00,140.00,140.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Bogong / Mackay,au.nem.vic.mckay,MCKAY2,VIC1,retired,hydro,1,1,53.00,140.00,140.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
@@ -619,8 +618,8 @@ Boronia,au.nem.vic.1468,0NBMH_1,VIC1,operating,hydro,1,1,0.11,0.11,0.11,pipeline
 Bridgewater,au.nem.vic.1472,0NBRI_1,VIC1,operating,solar_utility,1,1,1.30,1.30,1.30,pipeline.aemo.general_information,pipeline.aemo.general_information
 Broadmeadows,au.nem.vic.broadmdw,BROADMDW,VIC1,operating,bioenergy_biogas,1,5,5.15,5.15,6.18,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Brooklyn U13,au.nem.vic.brooklyn,BROOKLYN,VIC1,operating,bioenergy_biogas,1,1,1.15,2.83,2.83,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Brooklyn U13,au.nem.vic.brooklyn,BROOKLYN,VIC1,operating,bioenergy_biogas,3,1,0.65,2.83,2.83,pipeline.aemo.registration_exemption,pipeline.aemo.general_information
 Brooklyn U13,au.nem.vic.brooklyn,BROOKLYN,VIC1,operating,bioenergy_biogas,2,1,1.03,2.83,2.83,pipeline.aemo.registration_exemption,pipeline.aemo.general_information
+Brooklyn U13,au.nem.vic.brooklyn,BROOKLYN,VIC1,operating,bioenergy_biogas,3,1,0.65,2.83,2.83,pipeline.aemo.registration_exemption,pipeline.aemo.general_information
 Bulgana Green,au.nem.vic.bulgana,BULGANA1,VIC1,operating,wind,1,50,182.50,202.50,224.40,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Bulgana Green,au.nem.vic.bulgana,0NBGPH_1,VIC1,committed,battery_discharging,1,1,20.00,202.50,224.40,pipeline.aemo.general_information,pipeline.aemo.general_information
 Bunurong Bangholme,au.nem.vic.1480,0NB2KS_1,VIC1,operating,solar_utility,1,1,0.26,0.26,0.26,pipeline.aemo.general_information,pipeline.aemo.general_information
@@ -637,14 +636,14 @@ Coonoer Bridge,au.nem.vic.cbwf,CBWF1,VIC1,operating,wind,1,1,3.30,3.30,19.80,au.
 Corio,au.nem.vic.corio,CORIO1,VIC1,operating,bioenergy_biogas,1,1,1.00,1.00,1.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Crowlands,au.nem.vic.crowlwf,CROWLWF1,VIC1,operating,wind,1,39,79.95,79.95,79.95,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Dartmouth,au.nem.vic.dartm,DARTM1,VIC1,operating,hydro,1,1,185.00,185.00,185.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Dundonnell,au.nem.vic.dundwf,DUNDWF3,VIC1,operating,wind,52,29,121.80,336.00,336.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Dundonnell,au.nem.vic.dundwf,DUNDWF1,VIC1,operating,wind,1,40,168.00,336.00,336.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Dundonnell,au.nem.vic.dundwf,DUNDWF2,VIC1,operating,wind,41,11,46.20,336.00,336.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Dundonnell,au.nem.vic.dundwf,DUNDWF1,VIC1,operating,wind,1,40,168.00,336.00,336.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Dundonnell,au.nem.vic.dundwf,DUNDWF3,VIC1,operating,wind,52,29,121.80,336.00,336.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Eildon,au.nem.vic.eildon,EILDON3,VIC1,operating,hydro,1,1,4.50,214.50,199.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Eildon,au.nem.vic.eildon,EILDON2,VIC1,operating,hydro,2,1,60.00,214.50,199.50,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Eildon,au.nem.vic.eildon,EILDON1,VIC1,operating,hydro,1,1,60.00,214.50,199.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Eildon,au.nem.vic.eildon,EILDON1,VIC1,operating,hydro,1,1,7.50,214.50,199.50,pipeline.aemo.registration_exemption,
+Eildon,au.nem.vic.eildon,EILDON2,VIC1,operating,hydro,2,1,60.00,214.50,199.50,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Eildon,au.nem.vic.eildon,EILDON2,VIC1,operating,hydro,2,1,7.50,214.50,199.50,pipeline.aemo.registration_exemption,
+Eildon,au.nem.vic.eildon,EILDON1,VIC1,operating,hydro,1,1,60.00,214.50,199.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Eildon,au.nem.vic.eildon,EILDON1,VIC1,operating,hydro,2,1,7.50,214.50,199.50,pipeline.aemo.general_information,pipeline.aemo.general_information
 Eildon,au.nem.vic.eildon,EILDON2,VIC1,operating,hydro,3,1,60.00,214.50,199.50,pipeline.aemo.general_information,pipeline.aemo.general_information
 Eildon,au.nem.vic.eildon,EILDON2,VIC1,operating,hydro,4,1,7.50,214.50,199.50,pipeline.aemo.general_information,pipeline.aemo.general_information
@@ -661,17 +660,17 @@ Hazelwood,au.nem.vic.hazel,HWPS2,VIC1,retired,coal_brown,1,1,220.00,,,au.nem.mms
 Hazelwood,au.nem.vic.hazel,HWPS3,VIC1,retired,coal_brown,1,1,200.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Hazelwood,au.nem.vic.hazel,HWPS1,VIC1,retired,coal_brown,1,1,220.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Hazelwood,au.nem.vic.hazel,HWPS4,VIC1,retired,coal_brown,1,1,200.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
+Hazelwood,au.nem.vic.hazel,HWPS5,VIC1,retired,coal_brown,1,1,200.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Hazelwood,au.nem.vic.hazel,HWPS6,VIC1,retired,coal_brown,1,1,200.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Hazelwood,au.nem.vic.hazel,HWPS7,VIC1,retired,coal_brown,1,1,200.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Hazelwood,au.nem.vic.hazel,HWPS5,VIC1,retired,coal_brown,1,1,200.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Hazelwood,au.nem.vic.hazel,HWPS8,VIC1,retired,coal_brown,1,1,200.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Hepburn Community,au.nem.vic.hepwind,HEPWIND1,VIC1,operating,wind,1,2,4.10,4.10,4.10,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Hume,au.nem.vic.humev,HUMEV,VIC1,operating,hydro,1,2,58.00,58.00,29.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 JL King & Co,au.nem.vic.1580,0NJK&C_1,VIC1,operating,solar_utility,1,1,0.15,0.15,0.15,pipeline.aemo.general_information,pipeline.aemo.general_information
+Jeeralang A,au.nem.vic.jeera,JLA03,VIC1,operating,gas_ocgt,3,1,51.00,204.00,204.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Jeeralang A,au.nem.vic.jeera,JLA04,VIC1,operating,gas_ocgt,4,1,51.00,204.00,204.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Jeeralang A,au.nem.vic.jeera,JLA01,VIC1,operating,gas_ocgt,1,1,51.00,204.00,204.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Jeeralang A,au.nem.vic.jeera,JLA02,VIC1,operating,gas_ocgt,2,1,51.00,204.00,204.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Jeeralang A,au.nem.vic.jeera,JLA03,VIC1,operating,gas_ocgt,3,1,51.00,204.00,204.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Jeeralang B,au.nem.vic.jeerb,JLB02,VIC1,operating,gas_ocgt,2,1,76.00,228.00,228.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Jeeralang B,au.nem.vic.jeerb,JLB01,VIC1,operating,gas_ocgt,1,1,76.00,228.00,228.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Jeeralang B,au.nem.vic.jeerb,JLB03,VIC1,operating,gas_ocgt,3,1,76.00,228.00,228.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
@@ -682,10 +681,10 @@ Kiata,au.nem.vic.kiatawf,KiataWF1,VIC1,operating,wind,1,1,3.45,34.50,62.10,pipel
 Laverton North,au.nem.vic.lngs,LNGS1,VIC1,operating,gas_ocgt,1,1,156.00,312.00,312.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Laverton North,au.nem.vic.lngs,LNGS2,VIC1,operating,gas_ocgt,2,1,156.00,312.00,312.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Longford,au.nem.vic.longford,LONGFORD,VIC1,operating,gas_ocgt,1,1,44.00,44.00,44.00,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
-Loy Yang A,au.nem.vic.loyyanga,LYA4,VIC1,operating,coal_brown,4,1,560.00,2210.00,2235.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Loy Yang A,au.nem.vic.loyyanga,LYA3,VIC1,operating,coal_brown,3,1,560.00,2210.00,2235.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Loy Yang A,au.nem.vic.loyyanga,LYA2,VIC1,operating,coal_brown,2,1,530.00,2210.00,2235.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Loy Yang A,au.nem.vic.loyyanga,LYA3,VIC1,operating,coal_brown,3,1,560.00,2210.00,2235.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Loy Yang A,au.nem.vic.loyyanga,LYA1,VIC1,operating,coal_brown,1,1,560.00,2210.00,2235.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Loy Yang A,au.nem.vic.loyyanga,LYA4,VIC1,operating,coal_brown,4,1,560.00,2210.00,2235.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Loy Yang B,au.nem.vic.loyyb,LOYYB1,VIC1,operating,coal_brown,1,1,535.00,1115.00,1115.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Loy Yang B,au.nem.vic.loyyb,LOYYB2,VIC1,operating,coal_brown,2,1,580.00,1115.00,1115.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Macarthur,au.nem.vic.macarth,MACARTH1,VIC1,operating,wind,1,140,420.00,420.00,420.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -694,8 +693,8 @@ Melbourne Regional,au.nem.vic.1411,0NMRL_1,VIC1,operating,bioenergy_biogas,1,8,8
 Midland Highway Orrvale,au.nem.vic.1624,0NMHO_1,VIC1,operating,solar_utility,1,1,0.51,0.51,0.51,pipeline.aemo.general_information,pipeline.aemo.general_information
 Moorabool,au.nem.vic.1632,0NMWF_1,VIC1,committed,wind,1,1,3.00,3.00,312.00,pipeline.aemo.general_information,pipeline.aemo.general_information
 Mornington,au.nem.vic.mornw,MORNW,VIC1,operating,bioenergy_biogas,1,1,0.79,0.79,0.79,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-Mortlake,au.nem.vic.mortlk,MORTLK12,VIC1,operating,gas_ocgt,1,1,283.00,566.00,566.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Mortlake,au.nem.vic.mortlk,MORTLK11,VIC1,operating,gas_ocgt,1,1,283.00,566.00,566.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Mortlake,au.nem.vic.mortlk,MORTLK12,VIC1,operating,gas_ocgt,1,1,283.00,566.00,566.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Mortons Lane,au.nem.vic.mlwf,MLWF1,VIC1,operating,wind,1,13,19.50,19.50,19.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Morwell,au.nem.vic.energyb,MOR1,VIC1,retired,coal_brown,1,1,90.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
 Morwell,au.nem.vic.energyb,MOR2,VIC1,retired,coal_brown,1,1,30.00,,,au.nem.mms.dudetail_summary,au.nem.mms.dudetail
@@ -713,8 +712,8 @@ Murray,au.nem.vic.murray,MURRAY,VIC1,operating,hydro,1,10,950.00,1502.00,1575.00
 Murray,au.nem.vic.murray,MURRAY,VIC1,operating,hydro,11,4,552.00,1502.00,1575.00,pipeline.aemo.registration_exemption,
 Newhaven College,au.nem.vic.1650,0NNECO_1,VIC1,operating,solar_utility,1,1,0.24,0.24,0.24,pipeline.aemo.general_information,pipeline.aemo.general_information
 Newport,au.nem.vic.newport,NPS,VIC1,operating,gas_steam,1,1,500.00,500.00,500.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Numurkah,au.nem.vic.numurksf,NUMURSF2,VIC1,operating,solar_utility,38,19,33.92,104.96,145.52,pipeline.aemo.registration_exemption,
 Numurkah,au.nem.vic.numurksf,NUMURSF1,VIC1,operating,solar_utility,1,37,71.04,104.96,145.52,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+Numurkah,au.nem.vic.numurksf,NUMURSF2,VIC1,operating,solar_utility,38,19,33.92,104.96,145.52,pipeline.aemo.registration_exemption,
 Oaklands Hill,au.nem.vic.oakland,OAKLAND1,VIC1,operating,wind,1,32,67.20,67.20,67.20,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Portland,au.nem.vic.portwf,0NPOR_1,VIC1,operating,wind,1,1,2.00,152.05,355.45,pipeline.aemo.registration_exemption,
 Portland,au.nem.vic.portwf,0NPWF_1,VIC1,operating,wind,1,1,2.05,152.05,355.45,pipeline.aemo.general_information,pipeline.aemo.general_information
@@ -747,18 +746,18 @@ UoM McCoy Carlton,au.nem.vic.1761,0NUOMM_1,VIC1,operating,solar_utility,1,1,0.07
 UoM Peter Hall Parkville,au.nem.vic.1763,0NUOMP_1,VIC1,operating,solar_utility,1,1,0.05,0.05,0.05,pipeline.aemo.general_information,pipeline.aemo.general_information
 UoM Sports Centre Parkville,au.nem.vic.1764,0NUOMS_1,VIC1,operating,solar_utility,1,1,0.16,0.16,0.16,pipeline.aemo.general_information,pipeline.aemo.general_information
 UoM The Spot Carlton,au.nem.vic.1765,0NUOMT_1,VIC1,operating,solar_utility,1,1,0.06,0.06,0.06,pipeline.aemo.general_information,pipeline.aemo.general_information
-Valley Peaking Facility,au.nem.vic.vpgs,VPGS1,VIC1,operating,gas_ocgt,1,6,300.00,1050.00,300.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Valley Peaking Facility,au.nem.vic.vpgs,VPGS2,VIC1,operating,gas_ocgt,2,5,250.00,1050.00,300.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Valley Peaking Facility,au.nem.vic.vpgs,VPGS4,VIC1,operating,gas_ocgt,4,3,150.00,1050.00,300.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Valley Peaking Facility,au.nem.vic.vpgs,VPGS6,VIC1,operating,gas_ocgt,6,1,50.00,1050.00,300.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
-Valley Peaking Facility,au.nem.vic.vpgs,VPGS5,VIC1,operating,gas_ocgt,5,2,100.00,1050.00,300.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Valley Peaking Facility,au.nem.vic.vpgs,VPGS1,VIC1,operating,gas_ocgt,1,6,300.00,1050.00,300.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Valley Peaking Facility,au.nem.vic.vpgs,VPGS3,VIC1,operating,gas_ocgt,3,4,200.00,1050.00,300.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
+Valley Peaking Facility,au.nem.vic.vpgs,VPGS5,VIC1,operating,gas_ocgt,5,2,100.00,1050.00,300.00,au.nem.mms.dudetail_summary,pipeline.aemo.registration_exemption
 Vawdrey Manufacturing,au.nem.vic.1771,0NVAMA_1,VIC1,operating,solar_utility,1,1,0.75,0.75,0.75,pipeline.aemo.general_information,pipeline.aemo.general_information
 Wantirna,au.nem.vic.1786,0NWMH_1,VIC1,operating,hydro,1,1,0.13,0.13,0.13,pipeline.aemo.general_information,pipeline.aemo.general_information
 Waubra,au.nem.vic.waubrawf,WAUBRAWF,VIC1,operating,wind,1,128,192.00,192.00,192.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Wemen,au.nem.vic.wemensf1,WEMENSF1,VIC1,operating,solar_utility,1,39,97.50,97.50,97.50,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
-West Kiewa,au.nem.vic.wkiewa,WKIEWA1,VIC1,operating,hydro,1,1,17.00,34.00,68.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 West Kiewa,au.nem.vic.wkiewa,WKIEWA2,VIC1,operating,hydro,2,1,17.00,34.00,68.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
+West Kiewa,au.nem.vic.wkiewa,WKIEWA1,VIC1,operating,hydro,1,1,17.00,34.00,68.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 William Hovell,au.nem.vic.willhov,WILLHOV1,VIC1,operating,hydro,1,1,1.80,1.80,1.80,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Wollert,au.nem.vic.wollert,WOLLERT1,VIC1,operating,bioenergy_biogas,1,7,7.86,7.86,6.74,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
 Wonthaggi,au.nem.vic.wonwp,WONWP,VIC1,operating,wind,1,6,12.00,12.00,12.00,au.nem.mms.dudetail_summary,pipeline.aemo.general_information
@@ -777,17 +776,20 @@ Zilzie Winery,au.nem.vic.1818,0NZWSS_1,VIC1,operating,solar_utility,1,1,0.11,0.1
 Albany,au.wem.albany,ALBANY_WF1,WEM,operating,wind,1,1,21.60,21.60,21.60,pipeline.wem.facilities,
 Alcoa Wagerup,au.wem.alcoa,ALCOA_WGP,WEM,operating,gas_ocgt,1,1,26.00,26.00,26.00,pipeline.wem.facilities,
 Ambrisolar,au.wem.ambrisolar,AMBRISOLAR_PV1,WEM,operating,solar_utility,1,1,0.96,0.96,0.96,pipeline.wem.facilities,
+Atlas,au.wem.atlas,ATLAS,WEM,operating,bioenergy_biogas,1,1,1.10,1.10,1.10,pipeline.wem.facilities,
 Badgingarra,au.wem.badgingarra,BADGINGARRA_WF1,WEM,operating,wind,1,1,130.00,130.00,130.00,pipeline.wem.facilities,
 Bluewaters 1,au.wem.bw1bluewaters,BW1_BLUEWATERS_G2,WEM,operating,coal_black,1,1,217.00,217.00,217.00,pipeline.wem.facilities,
 Bluewaters 2,au.wem.bw2bluewaters,BW2_BLUEWATERS_G1,WEM,operating,coal_black,1,1,217.00,217.00,217.00,pipeline.wem.facilities,
 Bremer Bay,au.wem.bremerbay,BREMER_BAY_WF1,WEM,operating,wind,1,1,0.60,0.60,0.60,pipeline.wem.facilities,
 Bridgetown,au.wem.bridgetownbiomassplant,BRIDGETOWN_BIOMASS_PLANT,WEM,operating,bioenergy_biomass,1,1,40.00,40.00,40.00,pipeline.wem.facilities,
+Cleantech Biogas,au.wem.biogas01,BIOGAS01,WEM,operating,bioenergy_biogas,1,1,2.00,2.00,2.00,pipeline.wem.facilities,
 Cockburn Ccgt,au.wem.cockburn,COCKBURN_CCG1,WEM,operating,gas_ccgt,1,1,249.70,249.70,249.70,pipeline.wem.facilities,
 Collgar,au.wem.investeccollgar,INVESTEC_COLLGAR_WF1,WEM,operating,wind,1,1,206.00,206.00,206.00,pipeline.wem.facilities,
 Collie G1,au.wem.collie,COLLIE_G1,WEM,operating,coal_black,1,1,318.30,318.30,318.30,pipeline.wem.facilities,
 Denmark,au.wem.dcwldenmark,DCWL_DENMARK_WF1,WEM,operating,wind,1,1,1.44,1.44,1.44,pipeline.wem.facilities,
 Emu Downs,au.wem.edwfman,EDWFMAN_WF1,WEM,operating,wind,1,1,80.00,80.00,80.00,pipeline.wem.facilities,
 Goldfields,au.wem.prk,PRK_AG,WEM,operating,gas_ocgt,1,1,68.00,68.00,68.00,pipeline.wem.facilities,
+Gosnells,au.wem.gosnells,GOSNELLS,WEM,operating,bioenergy_biogas,1,1,2.00,2.00,2.00,pipeline.wem.facilities,
 Grasmere,au.wem.grasmere,GRASMERE_WF1,WEM,operating,wind,1,1,13.80,13.80,13.80,pipeline.wem.facilities,
 Greenough River,au.wem.greenoughriver,GREENOUGH_RIVER_PV1,WEM,operating,solar_utility,1,1,40.00,40.00,40.00,pipeline.wem.facilities,
 Henderson,au.wem.hendersonrenewable,HENDERSON_RENEWABLE_IG1,WEM,operating,bioenergy_biogas,1,1,3.00,3.00,3.00,pipeline.wem.facilities,
@@ -829,13 +831,10 @@ Pinjar,au.wem.pinjar,PINJAR_GT4,WEM,operating,gas_ocgt,1,1,39.30,600.50,600.50,p
 Pinjar,au.wem.pinjar,PINJAR_GT5,WEM,operating,gas_ocgt,1,1,39.30,600.50,600.50,pipeline.wem.facilities,
 Pinjar,au.wem.pinjar,PINJAR_GT7,WEM,operating,gas_ocgt,1,1,39.30,600.50,600.50,pipeline.wem.facilities,
 Pinjar,au.wem.pinjar,PINJAR_GT9,WEM,operating,gas_ocgt,1,1,118.15,600.50,600.50,pipeline.wem.facilities,
-Pinjarra 2,au.wem.alintapnj,ALINTA_PNJ_U1,WEM,operating,gas_ocgt,1,1,143.00,286.00,286.00,pipeline.wem.facilities,
-Pinjarra 2,au.wem.alintapnj,ALINTA_PNJ_U2,WEM,operating,gas_ocgt,1,1,143.00,286.00,286.00,pipeline.wem.facilities,
+Pinjarra,au.wem.alintapnj,ALINTA_PNJ_U1,WEM,operating,gas_ocgt,1,1,143.00,286.00,286.00,pipeline.wem.facilities,
+Pinjarra,au.wem.alintapnj,ALINTA_PNJ_U2,WEM,operating,gas_ocgt,1,1,143.00,286.00,286.00,pipeline.wem.facilities,
 Red Hill,au.wem.red,RED_HILL,WEM,operating,bioenergy_biogas,1,1,3.64,3.64,3.64,pipeline.wem.facilities,
-Rockingham,au.wem.1838,ATLAS,WEM,operating,bioenergy_biogas,1,1,1.10,9.10,9.10,pipeline.wem.facilities,
-Rockingham,au.wem.1838,GOSNELLS,WEM,operating,bioenergy_biogas,1,1,2.00,9.10,9.10,pipeline.wem.facilities,
-Rockingham,au.wem.1838,BIOGAS01,WEM,operating,bioenergy_biogas,1,1,2.00,9.10,9.10,pipeline.wem.facilities,
-Rockingham,au.wem.1838,ROCKINGHAM,WEM,operating,bioenergy_biogas,1,1,4.00,9.10,9.10,pipeline.wem.facilities,
+Rockingham,au.wem.rockingham,ROCKINGHAM,WEM,operating,bioenergy_biogas,1,1,4.00,4.00,4.00,pipeline.wem.facilities,
 South Cardup,au.wem.south,SOUTH_CARDUP,WEM,operating,bioenergy_biogas,1,1,4.16,4.16,4.16,pipeline.wem.facilities,
 Southern Cross,au.wem.sthrncrs,STHRNCRS_EG,WEM,operating,gas_ocgt,1,1,23.00,23.00,23.00,pipeline.wem.facilities,
 Tamala Park,au.wem.tamala,TAMALA_PARK,WEM,operating,bioenergy_biogas,1,1,4.80,4.80,4.80,pipeline.wem.facilities,
@@ -844,11 +843,11 @@ Tesla Kemerton,au.wem.teslakemerton,TESLA_KEMERTON_G1,WEM,operating,distillate,1
 Tesla Northam,au.wem.teslanortham,TESLA_NORTHAM_G1,WEM,operating,distillate,1,1,9.90,9.90,9.90,pipeline.wem.facilities,
 Tesla Picton,au.wem.teslapicton,TESLA_PICTON_G1,WEM,operating,distillate,1,1,9.90,9.90,9.90,pipeline.wem.facilities,
 Tiwest,au.wem.tiwest,TIWEST_COG1,WEM,operating,gas_ocgt,1,1,42.10,42.10,42.10,pipeline.wem.facilities,
-Wagerup 2,au.wem.alintawgp,ALINTA_WGP_GT,WEM,operating,gas_ocgt,1,1,196.00,392.00,392.00,pipeline.wem.facilities,
-Wagerup 2,au.wem.alintawgp,ALINTA_WGP_U2,WEM,operating,gas_ocgt,1,1,196.00,392.00,392.00,pipeline.wem.facilities,
+Wagerup,au.wem.alintawgp,ALINTA_WGP_GT,WEM,operating,gas_ocgt,1,1,196.00,392.00,392.00,pipeline.wem.facilities,
+Wagerup,au.wem.alintawgp,ALINTA_WGP_U2,WEM,operating,gas_ocgt,1,1,196.00,392.00,392.00,pipeline.wem.facilities,
 Walkaway,au.wem.alinta,ALINTA_WWF,WEM,operating,wind,1,1,89.10,89.10,89.10,pipeline.wem.facilities,
 West Hills,au.wem.blairfoxwesthills,BLAIRFOX_WESTHILLS_WF3,WEM,operating,wind,1,1,5.00,5.00,5.00,pipeline.wem.facilities,
-West Kalgoorlie Gt3,au.wem.westkalgoorlie,WEST_KALGOORLIE_GT2,WEM,operating,distillate,1,1,41.20,64.50,64.50,pipeline.wem.facilities,
-West Kalgoorlie Gt3,au.wem.westkalgoorlie,WEST_KALGOORLIE_GT3,WEM,operating,distillate,1,1,23.30,64.50,64.50,pipeline.wem.facilities,
+West Kalgoorlie,au.wem.westkalgoorlie,WEST_KALGOORLIE_GT2,WEM,operating,distillate,1,1,41.20,64.50,64.50,pipeline.wem.facilities,
+West Kalgoorlie,au.wem.westkalgoorlie,WEST_KALGOORLIE_GT3,WEM,operating,distillate,1,1,23.30,64.50,64.50,pipeline.wem.facilities,
 Wivenhoe,au.nem.qld.wivenhoe,PUMP1,,retired,pumps,1,1,240.00,,,au.nem.mms.dudetail,au.nem.mms.dudetail
 Wivenhoe,au.nem.qld.wivenhoe,PUMP2,,retired,pumps,1,1,240.00,,,au.nem.mms.dudetail,au.nem.mms.dudetail
