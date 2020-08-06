@@ -150,6 +150,12 @@ class Participant(Base, BaseModel):
 class Station(Base, BaseModel):
     __tablename__ = "station"
 
+    def __str__(self):
+        return "{} <{}>".format(self.name, self.code)
+
+    def __repr__(self):
+        return "{} {} <{}>".format(self.__class__, self.name, self.code)
+
     id = Column(
         Integer,
         Sequence("seq_station_id", start=1000, increment=1),
@@ -282,6 +288,12 @@ class Station(Base, BaseModel):
 
 class Facility(Base, BaseModel):
     __tablename__ = "facility"
+
+    def __str__(self):
+        return "{} <{}>".format(self.code, self.fueltech_id)
+
+    def __repr__(self):
+        return "{} {} <{}>".format(self.__class__, self.code, self.fueltech_id)
 
     id = Column(
         Integer,
