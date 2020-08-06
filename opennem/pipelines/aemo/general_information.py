@@ -84,6 +84,15 @@ def get_unique_duid(units: list) -> str:
     )
 
 
+def get_unique_reqion(units: list) -> str:
+    if not type(units) is list or len(units) < 1:
+        return None
+
+    first_record = units[0]
+
+    return first_record["Region"].strip()
+
+
 class GeneralInformationGrouperPipeline(object):
     """
         This is the first-pass pipeline of the AEMO general information list
@@ -183,6 +192,9 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
             # First by duid if it's unique
             duid = get_unique_duid(facility_records)
 
+            # all GI records should have a region
+            station_network_region = get_unique_reqion(facility_records)
+
             # This is the most suitable unit record to use for the station
             # see helper above
             facility_station_record = get_station_record_from_facilities(
@@ -198,6 +210,9 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                         s.query(Facility)
                         .filter(Facility.network_code == duid)
                         .filter(Facility.network_code != None)
+                        .filter(
+                            Facility.network_region == station_network_region
+                        )
                         .one_or_none()
                     )
                 except MultipleResultsFound:
@@ -220,6 +235,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 facility_lookup = (
                     s.query(Facility)
                     .filter(Facility.network_code == duid)
+                    .filter(Facility.network_region == station_network_region)
                     .filter(Facility.network_code != None)
                     .first()
                 )
