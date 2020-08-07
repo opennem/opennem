@@ -154,7 +154,10 @@ class TestStationOutput(object):
         """
             There should be one midlands station
         """
-        midlands = list(filter(lambda x: x["name"] == "Midlands", self.data))
+        midlands_facilities = list(
+            filter(lambda x: x["name"] == "Midlands", self.data)
+        )
+        midlands = list(set([i["ocode"] for i in midlands_facilities]))
 
         assert len(midlands) == 1, "There should be one midlands entry"
 
@@ -162,12 +165,13 @@ class TestStationOutput(object):
         """
             There should be one Pioneer Sugar Mill
         """
-        midlands = list(
+        pioneer_facilities = list(
             filter(lambda x: x["name"] == "Pioneer Sugar Mill", self.data)
         )
+        pioneer = list(set([i["ocode"] for i in pioneer_facilities]))
 
         assert (
-            len(midlands) == 1
+            len(pioneer) == 1
         ), "There should be one Pioneer Sugar Mill entry"
 
     def test_dalrymple(self):
