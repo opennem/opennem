@@ -1,10 +1,13 @@
 poetry version $@
 
-VERSION=$(poetry version | sed 's/[^0-9\.]*//g')
+VERSION=$(poetry version | sed 's/opennem\ //g')
+
+echo "Building version $VERSION"
 
 docker build -t opennem/opennem:$VERSION .
 docker push opennem/opennem:$VERSION
 
+# @TODO check that we're ready for relesae to make it :latest
 # docker tag  opennem/opennem:$VERSION opennem/opennem
 # docker push opennem/opennem
 
