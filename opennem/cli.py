@@ -1,22 +1,30 @@
-import logging
-
 import click
 from scrapy.utils.python import garbage_collect
 
-logger = logging.getLogger(__name__)
+from opennem.diff.facility_diff import run_diff
+from opennem.utils import logging
+
+logger = logging.getLogger("opennem.cli")
+logger.setLevel(logging.DEBUG)
 
 
 @click.group()
 def main():
-    click.echo("cli @todo")
+    pass
 
 
 @click.command()
 def crawl():
-    print("crawl")
+    logger.info("crawl")
+
+
+@click.command()
+def diff():
+    run_diff()
 
 
 main.add_command(crawl)
+main.add_command(diff)
 
 if __name__ == "__main__":
     try:
