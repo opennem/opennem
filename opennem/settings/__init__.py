@@ -9,6 +9,8 @@
 import os
 from urllib.parse import urlparse
 
+from .logging import get_logging_config
+
 MODULE_DIR = os.path.dirname(__file__)
 
 MYSQL_HOST_URL = os.getenv("MYSQL_HOST_URL", default=False)

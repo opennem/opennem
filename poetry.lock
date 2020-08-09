@@ -1705,7 +1705,8 @@ postgres = ["psycopg2-binary"]
 server = ["fastapi", "uvicorn"]
 
 [metadata]
-content-hash = "0e06cb1142c3f6dd73499bf174692429463a3a61ae78bb085e3541ee119faac2"
+content-hash = "b6fbb10bf7062674ec6ea212728d9b7ee8dbc5b3cc18d2fc67364f36c7c0982f"
+lock-version = "1.0"
 python-versions = "^3.7"
 
 [metadata.files]
