@@ -27,7 +27,7 @@ session = sessionmaker(bind=engine)
 logger = logging.getLogger(__name__)
 
 
-def get_stations() -> List[Station]:
+def get_stations(name: str = None) -> List[Station]:
     """
         API controller that gets all stations sorted and joined
 
@@ -40,18 +40,35 @@ def get_stations() -> List[Station]:
         .join(Facility.fueltech)
         .filter(Facility.fueltech_id.isnot(None))
         .filter(Facility.status_id.isnot(None))
-        .order_by(
-            Facility.network_region,
-            Station.name,
-            Facility.network_code,
-            Facility.code,
-        )
-        .all()
     )
+
+    if name:
+        stations = stations.filter(Station.name.like("%{}%".format(name)))
+
+    stations = stations.order_by(
+        Facility.network_region,
+        Station.name,
+        Facility.network_code,
+        Facility.code,
+    )
+
+    stations = stations.all()
 
     logger.info("Got {} stations".format(len(stations)))
 
     return stations
+
+
+def get_station(station_id: str) -> Station:
+    """
+        Returns a single station by id
+
+    """
+    s = session()
+
+    station = s.query(Station).get(station_id)
+
+    return station
 
 
 if __name__ == "__main__":
