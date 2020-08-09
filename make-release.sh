@@ -1,4 +1,4 @@
-poetry version $@
+poetry version ${1-prerelease}
 
 VERSION=$(poetry version | sed 's/opennem\ //g')
 
