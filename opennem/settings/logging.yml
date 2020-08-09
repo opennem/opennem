@@ -4,16 +4,18 @@ disable_existing_loggers: true
 
 formatters:
   basic:
-    format: "[%(levelname)8s] %(message)s"
+    format: "[%(name)-25s %(levelname)8s] %(message)s"
   standard:
     format: "[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s"
     datefmt: "%H:%M:%S"
+  clean:
+    format: "%(message)s"
 
 handlers:
   console: # handler which will log into stdout
     class: logging.StreamHandler
     level: DEBUG
-    formatter: standard # Use formatter defined above
+    formatter: basic
     stream: ext://sys.stdout
   file_debug:
     class: logging.FileHandler
@@ -41,5 +43,9 @@ loggers:
     propagate: no
   opennem.cli:
     level: INFO
+    handlers: [console]
+    propagate: no
+  opennem.diff:
+    level: DEBUG
     handlers: [console]
     propagate: no

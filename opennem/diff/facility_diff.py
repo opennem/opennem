@@ -11,6 +11,11 @@ from datetime import timedelta
 from operator import itemgetter
 from pprint import pprint
 
+from opennem.utils import logging
+
+logger = logging.getLogger("opennem.diff")
+logger.setLevel(logging.DEBUG)
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -33,7 +38,9 @@ def normalize_regions(region):
     return region
 
 
-def main():
+def run_diff():
+    logger.info("Running facility diff")
+
     with open("opennem/db/fixtures/facility_registry.json") as fh:
         fac_current = json.load(fh)
 
@@ -90,10 +97,3 @@ def main():
         csvwriter = csv.writer(fh)
         for line in remapped:
             csvwriter.writerow(line)
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        logger.error("User interrupt")
