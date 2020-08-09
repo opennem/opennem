@@ -19,3 +19,7 @@ def facility_map_station(
         return STATION_DUID_MAP[duid]
 
     return default_station
+
+
+def facility_has_station_remap(duid: str) -> bool:
+    return duid in STATION_DUID_MAP
