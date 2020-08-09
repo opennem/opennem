@@ -1,7 +1,7 @@
 import csv
 from io import StringIO
 
-from opennem.api.stations import get_stations
+from opennem.controllers.stations import get_stations
 from opennem.core.facility_duid_map import duid_is_retired
 
 

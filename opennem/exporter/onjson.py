@@ -1,6 +1,6 @@
 import json
 
-from opennem.api.stations import get_stations
+from opennem.controllers.stations import get_stations
 from opennem.exporter.csv import stations_csv_records
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 
