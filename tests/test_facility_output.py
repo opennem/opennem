@@ -197,3 +197,12 @@ class TestStationOutput(object):
             Victoria Mill (VICMILL) has two units 24MW capacity
         """
         pass
+
+    # Station duid mapping tests
+    """
+
+        hallet, snowtown and hornsdale all have station => duid remaps
+    """
+
+    def test_snowtown_map(self):
+        pass
