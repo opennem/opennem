@@ -34,6 +34,10 @@ def get_oid(model) -> str:
     return oid_string
 
 
+def oid_to_id(oid: str) -> int:
+    pass
+
+
 def get_network_region(network_region: str) -> Optional[str]:
     """
         Trim the numbers off the end of nem regions
