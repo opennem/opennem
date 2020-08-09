@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.sql import text
 
+from opennem.core.dispatch_type import DispatchType, parse_dispatch_type
 from opennem.core.facilitystations import facility_station_join_by_name
 from opennem.core.facilitystatus import map_v3_states
 from opennem.core.fueltechs import lookup_fueltech
@@ -257,6 +258,7 @@ class NemStoreMMSDudetail(DatabaseStoreBase):
             duid = normalize_duid(record["DUID"])
             capacity_registered = clean_capacity(record["REGISTEREDCAPACITY"])
             capacity_max = clean_capacity(record["MAXCAPACITY"])
+            dispatch_type = parse_dispatch_type(record["DISPATCHTYPE"])
 
             facility = (
                 s.query(Facility)
@@ -268,6 +270,7 @@ class NemStoreMMSDudetail(DatabaseStoreBase):
                 facility = Facility(
                     network_code=duid,
                     status_id="retired",
+                    dispatch_type=dispatch_type,
                     created_by="au.nem.mms.dudetail",
                 )
 
@@ -319,6 +322,7 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
             participant_code = normalize_duid(
                 record["facilities"][0]["PARTICIPANTID"]
             )
+            dispatch_type = parse_dispatch_type(record["DISPATCHTYPE"])
 
             # Step 1. Find participant by code or create
             participant = (
@@ -380,6 +384,7 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
                     facility = Facility(
                         code=duid,
                         network_code=duid,
+                        dispatch_type=dispatch_type,
                         created_by="au.nem.mms.dudetail_summary",
                     )
 
