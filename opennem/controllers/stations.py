@@ -11,6 +11,7 @@ from smart_open import open
 from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
 
+from opennem.api import StationSubmission
 from opennem.db import db_connect
 from opennem.db.models.opennem import (
     Facility,
@@ -27,7 +28,9 @@ session = sessionmaker(bind=engine)
 logger = logging.getLogger(__name__)
 
 
-def get_stations(name: str = None) -> List[Station]:
+def get_stations(
+    name: str = None, limit: Optional[int] = None, page: int = 1
+) -> List[Station]:
     """
         API controller that gets all stations sorted and joined
 
@@ -69,6 +72,21 @@ def get_station(station_id: str) -> Station:
     station = s.query(Station).get(station_id)
 
     return station
+
+
+def create_station(station: StationSubmission) -> bool:
+    """
+        Create a station
+
+    """
+    s = session()
+
+    station_record = Station(name=station.name, network_id=station.network_id)
+
+    s.add(station_record)
+    s.commit()
+
+    return station_record
 
 
 if __name__ == "__main__":
