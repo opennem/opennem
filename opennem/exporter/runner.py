@@ -3,12 +3,17 @@ from opennem.exporter.csv import stations_csv_serialize
 from opennem.exporter.geojson import stations_geojson_serialize
 from opennem.exporter.local import write_to_local
 from opennem.exporter.onjson import stations_json_serialize
+from opennem.utils import logging
+
+logger = logging.getLogger("opennem.exporter")
 
 
 def stations_geojson_to_s3():
     stations_geojson = stations_geojson_serialize()
 
-    write_to_s3("geo/au_facilities.json", stations_geojson)
+    facilities_path = "geo/au_facilities.json"
+
+    file_length = write_to_s3("geo/au_facilities.json", stations_geojson)
 
 
 def stations_geojson_to_local():
