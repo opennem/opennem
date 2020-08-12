@@ -322,7 +322,6 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
         for record in item:
             created = False
 
-            station_code = normalize_duid(record["id"])
             participant_code = normalize_duid(
                 record["facilities"][0]["PARTICIPANTID"]
             )
@@ -345,35 +344,39 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
             else:
                 participant.updated_by = "au.nem.mms.dudetail_summary"
 
-            # Step 2. Find station or create
-            station = (
-                s.query(Station)
-                .filter(Station.network_code == station_code)
-                .one_or_none()
-            )
-
-            if not station:
-                station = Station(
-                    code=station_code,
-                    network_code=station_code,
-                    network_id="NEM",
-                    created_by="au.nem.mms.dudetail_summary",
-                )
-                logger.debug("Created station {}".format(station_code))
-            else:
-                station.updated_by = "au.nem.mms.dudetail_summary"
-
-            station.participant = participant
-
             # Step 3. now create the facilities and associate
             for facility_record in record["facilities"]:
                 duid = normalize_duid(facility_record["DUID"])
+                station_code = facility_map_station(
+                    duid, normalize_duid(record["id"])
+                )
+
                 network_region = normalize_aemo_region(
                     facility_record["REGIONID"]
                 )
                 date_start = facility_record["date_start"]
                 date_end = facility_record["date_end"]
                 facility_state = "retired"
+
+                # Step 2. Find station or create
+                station = (
+                    s.query(Station)
+                    .filter(Station.network_code == station_code)
+                    .one_or_none()
+                )
+
+                if not station:
+                    station = Station(
+                        code=station_code,
+                        network_code=station_code,
+                        network_id="NEM",
+                        created_by="au.nem.mms.dudetail_summary",
+                    )
+                    logger.debug("Created station {}".format(station_code))
+                else:
+                    station.updated_by = "au.nem.mms.dudetail_summary"
+
+                station.participant = participant
 
                 if date_end == None:
                     facility_state = "operating"
