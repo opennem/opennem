@@ -65,13 +65,18 @@ def db_connect(db_name=None, debug=False):
     """
     db_conn_str = get_database_host()
 
+    connect_args = {}
+
+    if db_conn_str.startswith("sqlite"):
+        connect_args = {"check_same_thread": False}
+
     try:
         e = create_engine(
             db_conn_str,
             echo=debug,
             pool_size=10,
             pool_timeout=60,
-            connect_args={"check_same_thread": False},
+            connect_args=connect_args,
         )
         return e
     except Exception as e:
