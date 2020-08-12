@@ -4,14 +4,13 @@ import logging
 from datetime import date, datetime
 from decimal import Decimal
 from pprint import pprint
-from typing import List
+from typing import List, Optional
 
 from geojson import Feature, FeatureCollection, Point, dumps
 from smart_open import open
 from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
 
-from opennem.api import StationSubmission
 from opennem.db import db_connect
 from opennem.db.models.opennem import (
     Facility,
@@ -21,6 +20,7 @@ from opennem.db.models.opennem import (
     Station,
     metadata,
 )
+from opennem.schema import OpennemStationSubmission
 
 engine = db_connect()
 session = sessionmaker(bind=engine)
@@ -74,7 +74,7 @@ def get_station(station_id: str) -> Station:
     return station
 
 
-def create_station(station: StationSubmission) -> bool:
+def create_station(station: OpennemStationSubmission) -> Station:
     """
         Create a station
 
@@ -87,7 +87,3 @@ def create_station(station: StationSubmission) -> bool:
     s.commit()
 
     return station_record
-
-
-if __name__ == "__main__":
-    get_stations()
