@@ -14,7 +14,9 @@ app = FastAPI()
 
 
 @app.get("/stations")
-def stations(name: str = None, limit: Optional[int] = None, page: int = 1):
+def stations(
+    name: Optional[str] = None, limit: Optional[int] = None, page: int = 1
+):
     stations = get_stations(name=name, limit=limit, page=page)
 
     return {"stations": [i for i in stations]}
