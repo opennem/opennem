@@ -67,7 +67,11 @@ def db_connect(db_name=None, debug=False):
 
     try:
         e = create_engine(
-            db_conn_str, echo=debug, pool_size=10, pool_timeout=60
+            db_conn_str,
+            echo=debug,
+            pool_size=10,
+            pool_timeout=60,
+            connect_args={"check_same_thread": False},
         )
         return e
     except Exception as e:
