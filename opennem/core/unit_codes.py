@@ -33,6 +33,9 @@ def get_unit_code(
     if not duid_clean.endswith(str(unit.id)):
         unit_id = str(unit.id)
 
+    if unit_id == 1:
+        unit_id = None
+
     components = [duid_clean, unit.alias, unit_id]
 
     # empty out None's
