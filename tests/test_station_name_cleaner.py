@@ -153,3 +153,9 @@ class TestStationNameCleaner(object):
         subject = station_name_cleaner(name)
 
         assert subject == "SA VPP", "SA Government Virtual becomes SA VPP"
+
+    def test_swanbank_b(self):
+        name = "Swanbank B Power Station & Swanbank E Gas Turbine"
+        subject = station_name_cleaner(name)
+
+        assert subject == "Swanbank B", "Swanbank B"
