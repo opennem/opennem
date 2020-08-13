@@ -455,10 +455,10 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             if created_station:
                 logger.info(
-                    "{} station with name {} and id {}".format(
+                    "{} station with name {} and code {}".format(
                         "Created" if created_station else "Updated",
                         facility_station.name,
-                        facility_station.id,
+                        facility_station.code,
                     )
                 )
 
