@@ -91,6 +91,6 @@ session = sessionmaker(bind=engine, autocommit=False, autoflush=False,)
 def get_database_session():
     try:
         s = session()
-        yield s
+        return s
     finally:
         s.close()

@@ -21,7 +21,8 @@ def run_opennem_import():
     opennem_records = load_data_csv("opennem.csv")
 
     for rec in opennem_records:
-        logger.debug(opennem_record)
+        logger.debug(rec)
+
         if not "record_type" in rec:
             raise Exception("Invalid CSV: No record_type")
 
