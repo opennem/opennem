@@ -16,6 +16,10 @@ from opennem.core.normalizers import (
     normalize_duid,
     station_name_cleaner,
 )
+from opennem.core.station_duid_map import (
+    facility_has_station_remap,
+    facility_map_station,
+)
 from opennem.db import db_connect
 from opennem.db.load_fixtures import load_fixture
 from opennem.db.models.opennem import Facility, Station
@@ -70,35 +74,6 @@ def load_opennem_facilities():
     for station_data in stations:
         station = None
 
-        station_name = station_name_cleaner(station_data["display_name"])
-        station_code = normalize_duid(station_data["station_code"])
-        station_state = map_v3_states(station_data["status"]["state"])
-        station_network = (
-            "WEM" if station_data["location"]["state"] == "WA" else "NEM"
-        )
-
-        station = (
-            s.query(Station)
-            .filter(Station.network_code == station_code)
-            .one_or_none()
-        )
-
-        if not station:
-            station = Station(
-                network_id=station_network,
-                code=station_code,
-                network_code=station_code,
-                name=station_name,
-                network_name=station_data["display_name"],
-                created_by="opennem.load_facilities",
-            )
-            logger.info(
-                "Created station: {} {} ".format(station_name, station_code)
-            )
-
-            s.add(station)
-            s.commit()
-
         facilities = [
             {"code": k, **v} for k, v in station_data["duid_data"].items()
         ]
@@ -106,6 +81,40 @@ def load_opennem_facilities():
         # update facilities
         for facility_data in facilities:
             facility_duid = facility_data["code"]
+            station_name = station_name_cleaner(station_data["display_name"])
+            # station_code = normalize_duid(station_data["station_code"])
+            station_code = facility_map_station(
+                facility_duid, normalize_duid(station_data["station_code"])
+            )
+            station_state = map_v3_states(station_data["status"]["state"])
+            station_network = (
+                "WEM" if station_data["location"]["state"] == "WA" else "NEM"
+            )
+
+            station = (
+                s.query(Station)
+                .filter(Station.network_code == station_code)
+                .one_or_none()
+            )
+
+            if not station:
+                station = Station(
+                    network_id=station_network,
+                    code=station_code,
+                    network_code=station_code,
+                    name=station_name,
+                    network_name=station_data["display_name"],
+                    created_by="opennem.load_facilities",
+                )
+                logger.info(
+                    "Created station: {} {} ".format(
+                        station_name, station_code
+                    )
+                )
+
+                s.add(station)
+                s.commit()
+
             facility_status = station_state
             facility_network_region = map_network_region(
                 station_data["region_id"]
