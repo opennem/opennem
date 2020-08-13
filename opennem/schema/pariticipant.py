@@ -11,10 +11,10 @@ from opennem.core.normalizers import (
     station_name_cleaner,
 )
 
-from .opennem import OpennemBaseModel
+from .opennem import OpennemBaseSchema
 
 
-class OpennemParticipant(OpennemBaseModel):
+class OpennemParticipant(OpennemBaseSchema):
     code: Optional[str]
     name: str
     country: str = "au"
