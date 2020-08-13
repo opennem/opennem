@@ -29,7 +29,7 @@ from opennem.db.models.opennem import Facility, FacilityStatus
 from opennem.db.models.opennem import Participant as ParticipantModel
 from opennem.db.models.opennem import Station
 from opennem.pipelines import DatabaseStoreBase
-from opennem.schema import OpennemParticipant
+from opennem.schema.pariticipant import OpennemParticipant
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
@@ -97,13 +97,15 @@ class NemStoreMMSStations(DatabaseStoreBase):
 
             if not station:
                 station = Station(
-                    network_code=duid, created_by="au.nem.mms.participant",
+                    code=duid,
+                    network_code=duid,
+                    created_by="au.nem.mms.stations",
                 )
 
                 records_created += 1
                 created = True
             else:
-                station.updated_by = "au.nem.mms.participant"
+                station.updated_by = "au.nem.mms.stations"
                 records_updated += 1
 
             station.name = name
@@ -272,6 +274,7 @@ class NemStoreMMSDudetail(DatabaseStoreBase):
 
             if not facility:
                 facility = Facility(
+                    code=duid,
                     network_code=duid,
                     status_id="retired",
                     dispatch_type=dispatch_type,
@@ -448,7 +451,9 @@ class NemStoreMMSStatdualloc(DatabaseStoreBase):
             created = False
 
             duid = normalize_duid(record["DUID"])
-            station_code = normalize_duid(record["STATIONID"])
+            station_code = facility_map_station(
+                duid, normalize_duid(record["STATIONID"])
+            )
 
             station = (
                 s.query(Station)
@@ -464,6 +469,7 @@ class NemStoreMMSStatdualloc(DatabaseStoreBase):
 
             if not station:
                 station = Station(
+                    code=station_code,
                     network_code=station_code,
                     network_id="NEM",
                     created_by="au.nem.mms.statdualloc",
@@ -471,6 +477,7 @@ class NemStoreMMSStatdualloc(DatabaseStoreBase):
 
             if not facility:
                 facility = Facility(
+                    code=duid,
                     network_code=duid,
                     network_id="NEM",
                     status_id="retired",
