@@ -4,6 +4,15 @@ from opennem.core import load_data_json
 
 STATION_DUID_MAP = load_data_json("facility_duid_map.json")
 
+STATION_CODE_REMAP = {"SWAN_B": "SWANBANK", "SWAN_E": "SWANBANK_E"}
+
+
+def map_old_station_names(station_code: str) -> str:
+    if station_code in STATION_CODE_REMAP:
+        return STATION_CODE_REMAP[station_code]
+
+    return station_code
+
 
 def facility_map_station(
     duid: str, default_station: Optional[str] = None
@@ -18,7 +27,9 @@ def facility_map_station(
     if duid in STATION_DUID_MAP:
         return STATION_DUID_MAP[duid]
 
-    return default_station
+    station_code = map_old_station_names(default_station)
+
+    return station_code
 
 
 def facility_has_station_remap(duid: str) -> bool:
