@@ -3,13 +3,16 @@ import csv
 from geojson import Feature, FeatureCollection, Point, dumps
 from opennem.controllers.stations import get_stations
 from opennem.core.facility_duid_map import duid_is_retired
+from opennem.db import get_database_session
 from opennem.exporter.encoders import OpenNEMGeoJSONEncoder
 
 __all__ = ["stations_geojson_serialize"]
 
 
 def stations_geojson_records():
-    stations = get_stations()
+    db = get_database_session()
+
+    stations = get_stations(db)
 
     records = []
 

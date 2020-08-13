@@ -3,10 +3,12 @@ from io import StringIO
 
 from opennem.controllers.stations import get_stations
 from opennem.core.facility_duid_map import duid_is_retired
+from opennem.db import get_database_session
 
 
 def stations_csv_records():
-    stations = get_stations()
+    db = get_database_session()
+    stations = get_stations(db)
 
     records = []
 
