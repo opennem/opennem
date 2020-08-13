@@ -159,3 +159,15 @@ class TestStationNameCleaner(object):
         subject = station_name_cleaner(name)
 
         assert subject == "Swanbank B", "Swanbank B"
+
+    def test_swanbank_b_single(self):
+        name = "Swanbank B"
+        subject = station_name_cleaner(name)
+
+        assert subject == "Swanbank B", "Swanbank B"
+
+    def test_swanbank_e_single(self):
+        name = "Swanbank E"
+        subject = station_name_cleaner(name)
+
+        assert subject == "Swanbank E", "Swanbank E"
