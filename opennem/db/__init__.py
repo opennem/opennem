@@ -82,3 +82,15 @@ def db_connect(db_name=None, debug=False):
     except Exception as e:
         logger.error("Could not connect to database: {}".format(e))
         return
+
+
+engine = db_connect()
+session = sessionmaker(bind=engine, autocommit=False, autoflush=False,)
+
+
+def get_database_session():
+    try:
+        s = session()
+        yield s
+    finally:
+        s.close()
