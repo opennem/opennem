@@ -7,11 +7,8 @@ from pprint import pprint
 from typing import List, Optional
 
 from geojson import Feature, FeatureCollection, Point, dumps
-from smart_open import open
 from sqlalchemy import func
-from sqlalchemy.orm import sessionmaker
 
-from opennem.db import db_connect
 from opennem.db.models.opennem import (
     Facility,
     FacilityStatus,
@@ -20,25 +17,21 @@ from opennem.db.models.opennem import (
     Station,
     metadata,
 )
-from opennem.schema import OpennemStationSubmission
-
-engine = db_connect()
-session = sessionmaker(bind=engine)
+from opennem.schema.opennem import StationSubmission
 
 logger = logging.getLogger(__name__)
 
 
 def get_stations(
-    name: str = None, limit: Optional[int] = None, page: int = 1
+    session, name: str = None, limit: Optional[int] = None, page: int = 1
 ) -> List[Station]:
     """
         API controller that gets all stations sorted and joined
 
     """
-    s = session()
 
     stations = (
-        s.query(Station)
+        session.query(Station)
         .join(Facility)
         .join(Facility.fueltech)
         .filter(Facility.fueltech_id.isnot(None))
@@ -62,28 +55,24 @@ def get_stations(
     return stations
 
 
-def get_station(station_id: str) -> Station:
+def get_station(session, station_id: str) -> Station:
     """
         Returns a single station by id
 
     """
-    s = session()
-
-    station = s.query(Station).get(station_id)
+    station = session.query(Station).get(station_id)
 
     return station
 
 
-def create_station(station: OpennemStationSubmission) -> Station:
+def create_station(session, station: StationSubmission) -> Station:
     """
         Create a station
 
     """
-    s = session()
-
     station_record = Station(name=station.name, network_id=station.network_id)
 
-    s.add(station_record)
-    s.commit()
+    session.add(station_record)
+    session.commit()
 
     return station_record
