@@ -213,7 +213,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     facility_lookup = (
                         s.query(Facility)
                         .filter(Facility.network_code == duid)
-                        .filter(Facility.network_code != None)
                         .filter(
                             Facility.network_region == station_network_region
                         )
@@ -240,7 +239,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     s.query(Facility)
                     .filter(Facility.network_code == duid)
                     .filter(Facility.network_region == station_network_region)
-                    .filter(Facility.network_code != None)
                     .first()
                 )
 
