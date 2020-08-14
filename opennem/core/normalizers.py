@@ -82,7 +82,6 @@ STRIP_WORDS = [
     "bess",
     "bess1",
     "gen",
-    "e",
     "gt",
     "bioreactor",
     "bordertown",
