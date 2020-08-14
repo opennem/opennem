@@ -468,15 +468,12 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
 
                 facility.station = facility_station
 
-                # if facility.fueltech_id is None:
-                #     logger.error(
-                #         "Could not find fueltech for: {}".format(item)
-                #     )
-
-                # if not facility.nameplate_capacity:
-                #     facility.nameplate_capacity = clean_capacity(
-                #         item["UpperCapacity"] or item["NameCapacity"]
-                #     )
+                if facility.fueltech_id is None:
+                    logger.warning(
+                        "Could not find fueltech for: {} {}".format(
+                            facility.code, facility.network_code
+                        )
+                    )
 
                 # facility.status_id = facility_status
 
