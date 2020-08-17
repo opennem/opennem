@@ -129,8 +129,6 @@ class GeneralInformationGrouperPipeline(object):
 
             generators_grouped[key] += list(v)
 
-        # generators_grouped = list(generators_grouped.items()
-
         return {"generators": generators_grouped}
 
 
@@ -164,7 +162,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 )
 
                 s.add(participant)
-                # s.commit()
                 logger.info(
                     "GI: Added new partipant to NEM database: {}".format(
                         participant_name
@@ -174,12 +171,17 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
     def process_facilities(self, records):
         s = self.session()
 
-        all_duids = [
-            i[0]
-            for i in s.query(Facility.network_code)
-            .filter(Facility.network_code != None)
-            .all()
-        ]
+        # Store a list of all existing duids
+        all_duids = list(
+            set(
+                [
+                    i[0]
+                    for i in s.query(Facility.network_code)
+                    .filter(Facility.network_code != None)
+                    .all()
+                ]
+            )
+        )
 
         for _, facility_records in records.items():
             facility_index = 1
@@ -302,7 +304,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 )
 
             for facility_record in facility_records:
-                # skip pipelines
                 if facility_record["FuelType"] in ["Natural Gas Pipeline"]:
                     continue
 
@@ -518,8 +519,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
         finally:
             s.close()
 
-        pass
-
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
@@ -529,6 +528,3 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
         generators = item["generators"]
 
         self.process_facilities(generators)
-
-        # with open("test.json", "w") as fh:
-        # json.dump(generators, fh, cls=OpenNEMJSONEncoder, indent=4)
