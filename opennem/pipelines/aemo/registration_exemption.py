@@ -415,7 +415,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     )
 
                 #
-                facility.code = unit_code
+                if not facility.code:
+                    facility.code = unit_code
+
                 facility.fueltech_id = fueltech
                 facility.network_code = duid
                 facility.network_region = facility_region
