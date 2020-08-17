@@ -266,7 +266,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 facility_lookup = (
                     s.query(Facility)
                     .filter(Facility.network_code == duid)
-                    .filter(Facility.network_code != None)
                     .one_or_none()
                 )
 
@@ -282,7 +281,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 facility_lookup = (
                     s.query(Facility)
                     .filter(Facility.network_code == duid)
-                    .filter(Facility.network_code != None)
                     .first()
                 )
 
