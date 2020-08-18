@@ -240,7 +240,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             facility_network_region = get_unique_reqion(facilities)
 
-            if not duid and facility_station_join_by_name(station_name):
+            if facility_station_join_by_name(station_name):
                 try:
                     facility = (
                         s.query(Facility)
@@ -292,23 +292,29 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
             ):
                 try:
                     facility = (
-                        s.query(Facility)
-                        .join(Facility.station)
-                        .filter(
-                            Facility.network_region == facility_network_region
-                        )
-                        .filter(Station.name == station_name)
-                        .one_or_none()
+                        s.query(Station)
+                        # .filter(
+                        #     Facility.network_region == facility_network_region
+                        # )
+                        .filter(Station.name == station_name).one_or_none()
                     )
                 except MultipleResultsFound:
                     logger.error(
-                        "Multiple stations found for {} {}".format(
+                        "REL: Multiple stations found for {} {}".format(
                             station_name, facility_network_region
                         )
                     )
 
                 if facility:
                     facility_station = facility.station
+
+                logger.debug(
+                    "REL: Looked up {} by name and region {} and found {}".format(
+                        station_name,
+                        facility_network_region,
+                        facility.station if facility else "nothing",
+                    )
+                )
 
             # Create one as it doesm't exist
             if not facility_station:
@@ -478,7 +484,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             if created_station:
                 logger.info(
-                    "{} station with name {} and code {}".format(
+                    "REL: {} station with name {} and code {}".format(
                         "Created" if created_station else "Updated",
                         facility_station.name,
                         facility_station.code,
@@ -487,7 +493,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             if created_facility:
                 logger.info(
-                    "{} facility with name {} and duid {} and id {}".format(
+                    "REL: {} facility with name {} and duid {} and id {}".format(
                         "Created" if created_facility else "Updated",
                         facility.network_name,
                         facility.code,
