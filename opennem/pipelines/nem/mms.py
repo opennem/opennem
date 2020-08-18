@@ -297,13 +297,13 @@ class NemStoreMMSDudetail(DatabaseStoreBase):
                 logger.error(e)
 
             logger.debug(
-                "{} facility record with id {}".format(
+                "MMS Dudetail: {} facility record with id {}".format(
                     "Created" if created else "Updated", duid
                 )
             )
 
         logger.info(
-            "Created {} facility records and updated {}".format(
+            "MMS Dudetail:Created {} facility records and updated {}".format(
                 records_created, records_updated
             )
         )
@@ -422,13 +422,13 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
                 logger.error(e)
 
             logger.debug(
-                "{} facility record with id {}".format(
+                "MMS DudetailSummary:{} facility record with id {}".format(
                     "Created" if created else "Updated", duid
                 )
             )
 
         logger.info(
-            "Created {} facility records and updated {}".format(
+            "MMS DudetailSummary: Created {} facility records and updated {}".format(
                 records_created, records_updated
             )
         )
