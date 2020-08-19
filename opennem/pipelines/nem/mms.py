@@ -343,7 +343,6 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
             participant_code = normalize_duid(
                 record["facilities"][0]["PARTICIPANTID"]
             )
-            dispatch_type = parse_dispatch_type(record["DISPATCHTYPE"])
 
             # Step 1. Find participant by code or create
             participant = (
@@ -399,6 +398,18 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
                 if date_end == None:
                     facility_state = "operating"
 
+                if not "DISPATCHTYPE" in facility_record:
+                    logger.error(
+                        "MMS dudetailsummary: Invalid record: {}".format(
+                            facility_record
+                        )
+                    )
+                    continue
+
+                dispatch_type = parse_dispatch_type(
+                    facility_record["DISPATCHTYPE"]
+                )
+
                 facility = (
                     s.query(Facility)
                     .filter(Facility.network_code == duid)
@@ -406,6 +417,7 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
                 )
 
                 if not facility:
+
                     facility = Facility(
                         code=duid,
                         network_code=duid,
@@ -425,16 +437,19 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
 
                 facility.status_id = facility_state
 
+                if not facility.dispatch_type:
+                    facility.dispatch_type = dispatch_type
+
                 # Associations
                 facility_station_id = facility_map_station(duid, station.id)
 
                 facility.station_id = station.id
 
-            try:
-                s.add(facility)
-                s.commit()
-            except Exception as e:
-                logger.error(e)
+                try:
+                    s.add(facility)
+                    s.commit()
+                except Exception as e:
+                    logger.error(e)
 
             logger.debug(
                 "MMS DudetailSummary:{} facility record with id {}".format(
