@@ -278,7 +278,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                         .filter(Station.name == station_name).one_or_none()
                     )
                 except MultipleResultsFound:
-                    logger.error(
+                    logger.warning(
                         "REL: Multiple stations found for {} {}".format(
                             station_name, facility_network_region
                         )
@@ -450,7 +450,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
                 # Log that we have a new fueltech
                 if fueltech and fueltech != facility.fueltech_id:
-                    logger.warn(
+                    logger.warning(
                         "Fueltech mismatch for {} {}: prev {} new {}".format(
                             facility.name_clean,
                             facility.code,
