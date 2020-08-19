@@ -240,27 +240,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             facility_network_region = get_unique_reqion(facilities)
 
-            if facility_station_join_by_name(station_name):
-                try:
-                    facility = (
-                        s.query(Facility)
-                        .join(Facility.station)
-                        .filter(
-                            Facility.network_region == facility_network_region
-                        )
-                        .filter(Station.name == station_name)
-                        .one_or_none()
-                    )
-                except MultipleResultsFound:
-                    logger.error(
-                        "Multiple stations found for {} {}".format(
-                            station_name, facility_network_region
-                        )
-                    )
-
-                if facility:
-                    facility_station = facility.station
-
             if duid and duid_unique and facility_count == 1:
 
                 facility_lookup = (
@@ -291,7 +270,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 station_name
             ):
                 try:
-                    facility = (
+                    facility_station = (
                         s.query(Station)
                         # .filter(
                         #     Facility.network_region == facility_network_region
