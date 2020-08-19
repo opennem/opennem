@@ -477,14 +477,13 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 s.add(facility)
                 s.commit()
 
-            logger.info(
-                "REL: {} facility with name {} and duid {} and id {}".format(
-                    "Created" if created_facility else "Updated",
-                    facility.network_name,
-                    facility.code,
-                    facility.network_code,
+                logger.info(
+                    "REL: {} facility with duid {} and id {}".format(
+                        "Created" if created_facility else "Updated",
+                        facility.code,
+                        facility.network_code,
+                    )
                 )
-            )
 
             generators_updated += 1
 
