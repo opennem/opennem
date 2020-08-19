@@ -459,9 +459,9 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     facility.unit_capacity = unit_size
                     facility.updated_by = "pipeline.aemo.general_information"
 
-                if not facility.status_id:
-                    facility.status_id = facility_status
-                    facility.updated_by = "pipeline.aemo.general_information"
+                # if not facility.status_id:
+                facility.status_id = facility_status
+                # facility.updated_by = "pipeline.aemo.general_information"
 
                 if not facility.registered and facility_comissioned_dt:
                     facility.registered = facility_comissioned_dt
