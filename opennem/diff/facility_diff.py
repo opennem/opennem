@@ -11,7 +11,7 @@ from datetime import timedelta
 from operator import itemgetter
 from pprint import pprint
 
-from opennem.utils import logging
+from opennem.utils.log_config import logging
 
 logger = logging.getLogger("opennem.diff")
 logger.setLevel(logging.DEBUG)

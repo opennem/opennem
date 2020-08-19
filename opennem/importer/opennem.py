@@ -2,7 +2,7 @@ import os
 
 from opennem.core import load_data_csv
 from opennem.db.models.opennem import Facility, Station
-from opennem.utils import logging
+from opennem.utils.log_config import logging
 
 logger = logging.getLogger("opennem.importer")
 
