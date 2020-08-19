@@ -1,11 +1,9 @@
-# from opennem.utils
-import logging
-
 from opennem.exporter.aws import write_to_s3
 from opennem.exporter.csv import stations_csv_serialize
 from opennem.exporter.geojson import stations_geojson_serialize
 from opennem.exporter.local import write_to_local
 from opennem.exporter.onjson import stations_json_serialize
+from opennem.utils.log_config import logging
 
 logger = logging.getLogger("opennem.exporter")
 
