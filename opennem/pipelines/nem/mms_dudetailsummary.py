@@ -55,11 +55,12 @@ class AEMOMMSDudetailSummaryGrouper(object):
                 "REGIONID": i["REGIONID"],
                 "STATIONID": i["STATIONID"],
                 "PARTICIPANTID": i["PARTICIPANTID"],
+                "DISPATCHTYPE": i["DISPATCHTYPE"]
                 # "DUID": i["DUID"],
                 # **i,
             }
             for i in records
-            if i["DISPATCHTYPE"] == "GENERATOR"
+            # if i["DISPATCHTYPE"] == "GENERATOR"
         ]
 
         grouped_records = {}
