@@ -284,9 +284,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                         )
                     )
 
-                if facility:
-                    facility_station = facility.station
-
                 logger.debug(
                     "REL: Looked up {} by name and region {} and found {}".format(
                         station_name,
@@ -311,6 +308,15 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
             else:
                 facility_station.updated_by = (
                     "pipeline.aemo.registration_exemption"
+                )
+
+            if created_station:
+                logger.info(
+                    "REL: {} station with name {} and code {}".format(
+                        "Created" if created_station else "Updated",
+                        facility_station.name,
+                        facility_station.code,
+                    )
                 )
 
             # Step 2. Add the facilities/units to the station
@@ -461,15 +467,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 s.add(facility)
                 s.commit()
 
-            if created_station:
-                logger.info(
-                    "REL: {} station with name {} and code {}".format(
-                        "Created" if created_station else "Updated",
-                        facility_station.name,
-                        facility_station.code,
-                    )
-                )
-
             if created_facility:
                 logger.info(
                     "REL: {} facility with name {} and duid {} and id {}".format(
@@ -482,7 +479,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             generators_updated += 1
 
-        print(
+        logger.info(
             "NEM REL Pipeline: Added {} stations, updated {} stations. Added {}, updated {} generators of {} total".format(
                 stations_added,
                 stations_updated,
