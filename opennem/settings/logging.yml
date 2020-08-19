@@ -15,7 +15,7 @@ handlers:
   console: # handler which will log into stdout
     class: logging.StreamHandler
     level: DEBUG
-    formatter: basic
+    formatter: standard
     stream: ext://sys.stdout
   file_debug:
     class: logging.FileHandler
