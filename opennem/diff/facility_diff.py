@@ -38,13 +38,16 @@ def normalize_regions(region):
     return region
 
 
+markdown_report = ""
+
+
 def run_diff():
     logger.info("Running facility diff")
 
     with open("opennem/db/fixtures/facility_registry.json") as fh:
         fac_current = json.load(fh)
 
-    remapped = []
+    fac_current_remapped = []
 
     for k, v in fac_current.items():
         for duid, fac in v["duid_data"].items():
@@ -59,20 +62,17 @@ def run_diff():
                 if "registered_capacity" in fac
                 else 0,
             ]
-            remapped.append(i)
+            fac_current_remapped.append(i)
 
-    remapped = sorted(remapped, key=itemgetter(2, 0, 4, 6))
+    fac_current_remapped = sorted(
+        fac_current_remapped, key=itemgetter(2, 0, 4, 6)
+    )
 
-    with open("data/facility_diff/facilities_current.csv", "w") as fh:
-        csvwriter = csv.writer(fh)
-        for line in remapped:
-            csvwriter.writerow(line)
-
-    with open("data/facility_diff/au_facilities.json") as fh:
+    with open("data/stations.geojson") as fh:
         fac_v3 = json.load(fh)
 
     fac_v3 = fac_v3["features"]
-    remapped = []
+    fac_v3_remapped = []
 
     for f in fac_v3:
         for fac in f["properties"]["duid_data"]:
@@ -89,11 +89,10 @@ def run_diff():
                 if "registered_capacity" in fac
                 else 0,
             ]
-            remapped.append(i)
+            fac_v3_remapped.append(i)
 
-    remapped = sorted(remapped, key=itemgetter(3, 0, 5, 7))
+    fac_v3_remapped = sorted(fac_v3_remapped, key=itemgetter(3, 0, 5, 7))
 
-    with open("data/facility_diff/facilities_v3.csv", "w") as fh:
-        csvwriter = csv.writer(fh)
-        for line in remapped:
-            csvwriter.writerow(line)
+
+if __name__ == "__main__":
+    run_diff()
