@@ -189,8 +189,15 @@ class NemStoreMMSParticipant(DatabaseStoreBase):
         participant_codes = list(set([i[0] for i in q.fetchall()]))
 
         records = item
+
         for record in records:
             created = False
+
+            if not "NAME" in record or not "PARTICIPANTID" in record:
+                logger.error(record)
+                raise Exception(
+                    "Invalid MMS participant record: {}".format(record)
+                )
 
             participant_schema = OpennemParticipant(
                 **{
