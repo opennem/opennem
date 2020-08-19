@@ -199,13 +199,21 @@ class NemStoreMMSParticipant(DatabaseStoreBase):
                     "Invalid MMS participant record: {}".format(record)
                 )
 
-            participant_schema = OpennemParticipant(
-                **{
-                    "code": record["PARTICIPANTID"],
-                    "name": record["NAME"],
-                    "network_name": record["NAME"],
-                }
-            )
+            participant_schema = None
+
+            try:
+                participant_schema = OpennemParticipant(
+                    **{
+                        "code": record["PARTICIPANTID"],
+                        "name": record["NAME"],
+                        "network_name": record["NAME"],
+                    }
+                )
+            except Exception as e:
+                logger.error(
+                    "Validation error with record: {}".format(record["NAME"])
+                )
+                continue
 
             # pid = normalize_duid(record["PARTICIPANTID"])
             # name = normalize_string(record["NAME"])
