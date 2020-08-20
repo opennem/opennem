@@ -2,6 +2,7 @@ import json
 import logging
 from datetime import datetime
 from itertools import groupby
+from typing import List, Optional
 
 from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
@@ -76,25 +77,27 @@ def has_unique_duid(units: List) -> bool:
 
 
 def get_unique_duid(units: List) -> str:
-    if not type(units) is list or len(units) < 1:
+    if len(units) < 1:
+        raise Exception("No units passed in list")
+
+    first_record = units[0]
+
+    if "duid" in first_record and first_record["duid"]:
+        return normalize_duid(first_record["duid"])
+
+    raise Exception("Could not get unique duid")
+
+
+def get_unique_reqion(units: list) -> Optional[str]:
+    if len(units) < 1:
         return None
 
     first_record = units[0]
 
-    return (
-        normalize_duid(first_record["duid"])
-        if "duid" in first_record
-        else None
-    )
+    if "Region" in first_record:
+        return first_record["Region"].strip()
 
-
-def get_unique_reqion(units: list) -> str:
-    if not type(units) is list or len(units) < 1:
-        return None
-
-    first_record = units[0]
-
-    return first_record["Region"].strip()
+    return None
 
 
 class GeneralInformationGrouperPipeline(object):
