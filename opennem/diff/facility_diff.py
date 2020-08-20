@@ -63,6 +63,37 @@ def report_changed_fueltechs(registry_units, current_units):
     return renames
 
 
+def report_changed_capacities(registry_units, current_units):
+    renames = []
+
+    for unit in registry_units:
+        in_current = list(filter(lambda x: x.duid == unit.duid, current_units))
+
+        if in_current and len(in_current):
+            unit_current = in_current[0]
+            if unit_current.capacity == None and unit.capacity:
+                renames.append(
+                    "{} (`{}`) added capacity `{}`".format(
+                        unit_current.name, unit_current.duid, unit.capacity,
+                    )
+                )
+            elif (
+                unit_current.capacity
+                and unit.capacity
+                and round(unit_current.capacity, 0) != round(unit.capacity, 0)
+            ):
+                renames.append(
+                    "{} (`{}`) capacity `{}` changed to `{}`".format(
+                        unit_current.name,
+                        unit_current.duid,
+                        unit_current.capacity,
+                        unit.capacity,
+                    )
+                )
+
+    return renames
+
+
 def run_diff():
     diff_report = {}
 
@@ -109,6 +140,11 @@ def run_diff():
     # Fueltechs
     md.new_header(level=1, title="Changed Fueltechs")
     renames = report_changed_fueltechs(registry_units, current_units)
+    md.new_list(renames)
+
+    # Capacities
+    md.new_header(level=1, title="Changed Capacities")
+    renames = report_changed_capacities(registry_units, current_units)
     md.new_list(renames)
 
     md.new_table_of_contents(table_title="Contents", depth=2)
