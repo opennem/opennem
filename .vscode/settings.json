@@ -11,5 +11,6 @@
       "source.organizeImports": true
     }
   },
-  "python.linting.pylintEnabled": true
+  "python.linting.pylintEnabled": true,
+  "python.linting.mypyEnabled": true
 }
