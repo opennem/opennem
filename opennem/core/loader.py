@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, List, Optional
 
 # DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
-DATA_PATH = Path(__file__) / "data"
+DATA_PATH = Path(__file__).parent / "data"
 PROJECT_DATA_PATH = Path(__file__).parent.parent.parent / "data"
 
 JSON_EXTENSIONS = ["json", "jsonl", "geojson"]
