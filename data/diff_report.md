@@ -26,7 +26,6 @@ Contents
 - `Jindabyne Pump` renamed to `Jindabyne Pump At Guthega`
 - `Jounama (Mini Hydro)` renamed to `Jounama Small`
 - `Kincumber` renamed to `Kincumber Site`
-- `Limondale  2` renamed to `Limondale 2`
 - `Limondale SF` renamed to `Limondale 1`
 - `Lucas Heights 2` renamed to `Lucas Heights 1`
 - `St George Leagues Club` renamed to `St George Leagues`
@@ -35,7 +34,6 @@ Contents
 - `Willoughby` renamed to `Nine Network Willoughby`
 - `Woodlawn Bioreactor` renamed to `Woodlawn Energy`
 - `Woy Woy` renamed to `Woy Woy Site`
-- `Condamine  A` renamed to `Condamine A`
 - `Darling Downs` renamed to `Darling Downs Solar Farm`
 - `KRC Co-gen` renamed to `KRC`
 - `Kidston` renamed to `Kidston Project`
@@ -51,13 +49,11 @@ Contents
 - `Bolivar Waste Water Treatment` renamed to `Water Bolivar`
 - `Dalrymple North Battery` renamed to `Dalrymple North`
 - `Dry Creek` renamed to `Dry Creek Station`
-- `Hornsdale  2` renamed to `Hornsdale 2`
-- `Hornsdale  3` renamed to `Hornsdale 3`
 - `Lake Bonney 2` renamed to `Lake Bonney Windfarm`
 - `Lake Bonney Bess1` renamed to `Lake Bonney`
 - `Mintaro` renamed to `Mintaro Station`
 - `Port Stanvac` renamed to `Pt Stanvac`
-- `Tailem Bend  1` renamed to `Tailem Bend Project 1`
+- `Tailem Bend 1` renamed to `Tailem Bend Project 1`
 - `Tataria Bordertown` renamed to `Tataria`
 - `Terminal Storage (Mini Hydro)` renamed to `Terminal`
 - `Catagunya/Liapootah/Wayatinah` renamed to `Catagunya / Liapootah / Wayatinah`
@@ -68,7 +64,7 @@ Contents
 - `Ballarat Hospital` renamed to `Ballarat Base Hospital`
 - `Bogong/Mackay` renamed to `Bogong / Mackay`
 - `Brooklyn` renamed to `Brooklyn U13`
-- `Bulgana Green  Hub` renamed to `Bulgana Green`
+- `Bulgana Green Hub` renamed to `Bulgana Green`
 - `Energy Brix` renamed to `Morwell`
 - `Gannawarra Battery` renamed to `Gannawarra Energy`
 - `Hallam` renamed to `South East Water Halllam`
@@ -80,7 +76,7 @@ Contents
 - `Snowtown` renamed to `Snowtown 1`
 - `Tatura Biomass` renamed to `Tatura Generator`
 - `Traralgon Network Support` renamed to `Traralgon`
-- `Valley  Peaking` renamed to `Valley Peaking Facility`
+- `Valley Peaking` renamed to `Valley Peaking Facility`
 - `Collie` renamed to `Collie G1`
 - `Geraldton diesel` renamed to `Tesla Geraldton`
 - `Kambalda` renamed to `Southern Cross`
