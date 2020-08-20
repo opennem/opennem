@@ -10,7 +10,6 @@ from sqlalchemy.sql import text
 
 from opennem.core.dispatch_type import DispatchType, parse_dispatch_type
 from opennem.core.facilitystations import facility_station_join_by_name
-from opennem.core.facilitystatus import lookup_facility_status
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,

@@ -8,7 +8,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.sql import text
 
 from opennem.core.facilitystations import facility_station_join_by_name
-from opennem.core.facilitystatus import lookup_facility_status
+from opennem.core.facilitystatus import map_aemo_facility_status
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,
@@ -84,7 +84,7 @@ class NemStoreGI(DatabaseStoreBase):
         facility_name = name_normalizer(item["Name"])
         facility_name_clean = station_name_cleaner(item["Name"])
         duid = normalize_duid(item["DUID"])
-        facility_status = lookup_facility_status(item["UnitStatus"])
+        facility_status = map_aemo_facility_status(item["UnitStatus"])
         facility_region = item["Region"]
         facility_fueltech = (
             lookup_fueltech(item["FuelType"], techtype=item["TechType"])
@@ -251,7 +251,7 @@ class NemStoreGI(DatabaseStoreBase):
         return {
             "name": name_normalizer(item["Name"]),
             "status": item["UnitStatus"],
-            "status_id": lookup_facility_status(item["UnitStatus"]),
+            "status_id": map_aemo_facility_status(item["UnitStatus"]),
         }
 
 

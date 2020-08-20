@@ -9,7 +9,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.sql import text
 
 from opennem.core.facilitystations import facility_station_join_by_name
-from opennem.core.facilitystatus import lookup_facility_status
+from opennem.core.facilitystatus import map_aemo_facility_status
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,
@@ -70,12 +70,12 @@ def record_get_station_name(facilities) -> str:
     return station_name
 
 
-def has_unique_duid(units: list) -> bool:
+def has_unique_duid(units: List) -> bool:
     duids = set([i["duid"] for i in units])
     return len(duids) == len(units)
 
 
-def get_unique_duid(units: list) -> str:
+def get_unique_duid(units: List) -> str:
     if not type(units) is list or len(units) < 1:
         return None
 
@@ -348,7 +348,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                         "Error parsing date: {}".format(facility_comissioned)
                     )
 
-                facility_status = lookup_facility_status(
+                facility_status = map_aemo_facility_status(
                     facility_record["UnitStatus"]
                 )
                 facility_network_region = normalize_aemo_region(

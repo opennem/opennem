@@ -3,11 +3,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def lookup_facility_status(unit_status):
+def map_aemo_facility_status(facility_status: str) -> str:
+    """
+        Maps an AEMO facility status to an Opennem facility status
 
-    unit_status = unit_status or ""
 
-    unit_status = unit_status.lower().strip()
+    """
+    unit_status = facility_status.lower().strip()
 
     if unit_status.startswith("in service"):
         return "operating"
@@ -24,8 +26,8 @@ def lookup_facility_status(unit_status):
     if unit_status.startswith("emerging"):
         return "emerging"
 
-    logger.error(
-        "Could not find status for unit status: {}".format(unit_status)
+    raise Exception(
+        "Could not find AEMO status for facility status: {}".format(
+            unit_status
+        )
     )
-
-    return None
