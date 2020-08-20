@@ -8,8 +8,14 @@ from typing import Any, List, Optional
 DATA_PATH = Path(__file__) / "data"
 PROJECT_DATA_PATH = Path(__file__).parent.parent.parent / "data"
 
+JSON_EXTENSIONS = ["json", "jsonl", "geojson"]
+
 
 class FileNotFound(Exception):
+    pass
+
+
+class FileInvalid(Exception):
     pass
 
 
@@ -28,14 +34,19 @@ def load_data(fixture_name: str, from_project: bool = False) -> Any:
 
 
 def load_data_json(fixture_name: str, data_path: Path = DATA_PATH) -> Any:
-    fixture_path = data_path / fixture_name
+    fixture_path: Path = data_path / fixture_name
 
     if not fixture_path.exists() and fixture_path.is_file():
         raise FileNotFound("Not a file: {}".format(fixture_path))
 
-    fixture = None
+    if not fixture_path.suffix or fixture_path.suffix in JSON_EXTENSIONS:
+        raise FileInvalid(
+            "Invalid file extension cannot load: {}".format(fixture_name)
+        )
 
-    with open(fixture_path) as fh:
+    fixture: Any = None
+
+    with fixture_path.open() as fh:
         fixture = json.load(fh)
 
     return fixture
