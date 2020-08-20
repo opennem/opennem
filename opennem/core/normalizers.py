@@ -131,6 +131,7 @@ __is_single_number = re.compile(r"^\d$")
 # @TODO put all these helpers in utils/
 
 strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
+normalize_whitespace = lambda v: str(re.sub(r"\s{2,}", " ", v.strip()))
 
 
 def is_number(value: Union[str, int]) -> bool:
