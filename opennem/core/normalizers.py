@@ -45,6 +45,8 @@ STRIP_WORDS = [
     "power station",
     "bio reactor",
     "sydney",
+    "kograh",
+    "club",
     "technologies",
     "biomass",
     "landfill",
