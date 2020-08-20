@@ -338,6 +338,9 @@ def participant_name_filter(participant_name: str) -> str:
 def clean_capacity(capacity: Union[str, int, float]) -> Optional[float]:
     cap_clean = None
 
+    if capacity == None:
+        return None
+
     if type(capacity) == str:
         cap_clean = strip_whitespace(capacity)
 
@@ -354,7 +357,7 @@ def clean_capacity(capacity: Union[str, int, float]) -> Optional[float]:
         cap_clean = float(cap_clean)
 
     elif type(capacity) == int:
-        cap_clean = float(cap_clean)
+        cap_clean = float(capacity)
 
     elif type(capacity) is not float:
         if capacity is None:
@@ -365,6 +368,9 @@ def clean_capacity(capacity: Union[str, int, float]) -> Optional[float]:
                 type(capacity), capacity
             )
         )
+
+    if cap_clean == None:
+        return None
 
     cap_clean = round(cap_clean, 6)
 
