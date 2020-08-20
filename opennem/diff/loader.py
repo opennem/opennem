@@ -3,7 +3,7 @@ from operator import attrgetter
 from typing import Any, List
 
 from opennem.core.loader import load_data
-from opennem.core.normalizers import clean_capacity
+from opennem.core.normalizers import clean_capacity, normalize_whitespace
 from opennem.db.load_fixtures import load_fixture
 from opennem.importer.compat import (
     map_compat_facility_state,
@@ -80,7 +80,7 @@ def load_registry() -> List[StationSchema]:
             facilities.append(facility)
 
         record = StationSchema(
-            name=station_record["display_name"],
+            name=normalize_whitespace(station_record.get("display_name")),
             code=station_id,
             state=station_record.get("location", {}).get("state", None),
             facilities=_sort_facilities(facilities),
