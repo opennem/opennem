@@ -58,6 +58,7 @@ ipython = "^7.15.0"
 pytest = "^5.4.3"
 pytest-watch = "^4.2.0"
 mypy = "^0.782"
+mdutils = "^1.2.2"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'

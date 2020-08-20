@@ -769,6 +769,14 @@ version = "0.6.1"
 
 [[package]]
 category = "dev"
+description = "Useful package for creating Markdown files while executing python code."
+name = "mdutils"
+optional = false
+python-versions = "*"
+version = "1.2.2"
+
+[[package]]
+category = "dev"
 description = "More routines for operating on iterables, beyond itertools"
 name = "more-itertools"
 optional = false
@@ -1737,7 +1745,7 @@ postgres = ["psycopg2-binary"]
 server = ["fastapi", "uvicorn"]
 
 [metadata]
-content-hash = "f69bc907ea4f161473d463ffbc670786ceb992614a16e3781e4359b51e0230c4"
+content-hash = "f700369d2381a13b6faa6774697fb8db00ef6f0e417becd13909a44471c4c3af"
 lock-version = "1.0"
 python-versions = "^3.7"
 
@@ -2110,6 +2118,9 @@ markupsafe = [
 mccabe = [
     {file = "mccabe-0.6.1-py2.py3-none-any.whl", hash = "sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"},
     {file = "mccabe-0.6.1.tar.gz", hash = "sha256:dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"},
+]
+mdutils = [
+    {file = "mdutils-1.2.2.tar.gz", hash = "sha256:21270863b7431d48666ba38299f094d8866717048456db15a17492f3c50ed5bb"},
 ]
 more-itertools = [
     {file = "more-itertools-8.4.0.tar.gz", hash = "sha256:68c70cc7167bdf5c7c9d8f6954a7837089c6a36bf565383919bb595efb8a17e5"},

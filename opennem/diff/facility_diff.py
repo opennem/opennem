@@ -8,110 +8,66 @@ import csv
 import json
 import logging
 from datetime import timedelta
+from itertools import chain
 from operator import itemgetter
 from pprint import pprint
 
+from mdutils.mdutils import MdUtils
+
 from opennem.utils.log_config import logging
 
+from .loader import load_current, load_registry
+
 logger = logging.getLogger("opennem.diff")
-logger.setLevel(logging.DEBUG)
-
-logging.basicConfig(level=logging.INFO)
-
-
-def normalize_states(state):
-    state = state.lower()
-
-    if state == "commissioned":
-        return "operating"
-
-    if state == "decommissioned":
-        return "retired"
-
-    return state
-
-
-def normalize_regions(region):
-    if region == "WA":
-        return "WA1"
-
-    return region
-
 
 markdown_report = []
 
 
-def get_maps():
-    logger.info("Running facility diff")
+def run_diff():
+    diff_report = {}
 
-    with open("opennem/db/fixtures/facility_registry.json") as fh:
-        fac_current = json.load(fh)
+    registry = load_registry()
+    current = load_current()
 
-    fac_current_remapped = []
+    registry_units = list(chain(*[s.facilities for s in registry]))
+    current_units = list(chain(*[s.facilities for s in current]))
 
-    for k, v in fac_current.items():
-        for duid, fac in v["duid_data"].items():
-            i = [
-                v["display_name"] or "",
-                k,
-                normalize_regions(v["region_id"]) or "",
-                normalize_states(v["status"]["state"]),
-                duid or "",
-                fac["fuel_tech"] if "fuel_tech" in fac else "",
-                fac["registered_capacity"]
-                if "registered_capacity" in fac
-                else 0,
+    registry_station_codes = [station.code for station in registry]
+    current_station_codes = [station.code for station in current]
+
+    registry_station_names = [station.name for station in registry]
+    current_station_names = [station.name for station in current]
+
+    new_stations = list(
+        set(
+            [
+                station.name
+                for station in current
+                if station.name not in registry_station_names
+                and station.code not in registry_station_codes
             ]
-            fac_current_remapped.append(i)
-
-    fac_current_remapped = sorted(
-        fac_current_remapped, key=itemgetter(2, 0, 4, 6)
+        )
     )
 
-    with open("data/stations.geojson") as fh:
-        fac_v3 = json.load(fh)
+    md = MdUtils(file_name="data/diff_report.md", title="Opennem Report")
+    md.new_header(level=1, title="Opennem Report")
 
-    fac_v3 = fac_v3["features"]
-    fac_v3_remapped = []
+    summary = ["", "Prod", "Version 3"]
+    summary.extend(["Stations", str(len(registry)), str(len(current))])
+    summary.extend(
+        ["Units", str(len(registry_units)), str(len(current_units))]
+    )
 
-    for f in fac_v3:
-        for fac in f["properties"]["duid_data"]:
-            i = [
-                f["properties"]["name"] or "",
-                # fac["duid"],
-                f["properties"]["oid"],
-                f["properties"]["station_code"] or "",
-                normalize_regions(f["properties"]["network_region"])
-                if "network_region" in f["properties"]
-                else "",
-                fac["status"].lower(),
-                fac["duid"] or "",
-                fac["fuel_tech"] if "fuel_tech" in fac else "",
-                fac["registered_capacity"]
-                if "registered_capacity" in fac
-                else 0,
-            ]
-            fac_v3_remapped.append(i)
+    md.new_table(columns=3, rows=3, text=summary)
 
-    fac_v3_remapped = sorted(fac_v3_remapped, key=itemgetter(3, 0, 5, 7))
-
-    return fac_current_remapped, fac_v3_remapped
+    md.create_md_file()
+    pprint(diff_report)
 
 
-def add(line, check=False):
-    if type(line) is list:
-        for l in line:
-            if check:
-                l = " * {}".format(l)
-            markdown_report.append(l)
-    else:
-        if check:
-            line = " * {}".format(line)
-        markdown_report.append(line)
+def run_diff_old():
+    current = load_registry()
+    v3 = load_current()
 
-
-def run_diff():
-    current, v3 = get_maps()
     current_stations = list(set([i[1] for i in current]))
     v3_stations = list(set([i[2] for i in v3]))
     current_stations_names = list(set([i[0] for i in current]))
@@ -130,6 +86,23 @@ def run_diff():
     add(" ## Stations in current not in v3")
     add("")
     add(list(set(current_stations_names) - set(v3_stations_names)), True)
+    add(" # Facility duids in current not in v3")
+    add("")
+
+    facility_duid_diff = list(
+        set([i[4] for i in current]) - set([i[5] for i in v3])
+    )
+
+    add(facility_duid_diff, True)
+
+    add(" # Fueltech Changes")
+    add("")
+
+    facility_duid_diff = list(
+        set([(i[4], i[5]) for i in current]) - set([(i[5], i[6]) for i in v3])
+    )
+
+    add(facility_duid_diff, True)
 
     with open("data/diff_report.md", "w") as fh:
         fh.write("\n".join(markdown_report))
