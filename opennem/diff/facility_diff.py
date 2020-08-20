@@ -6,6 +6,8 @@
 
 import csv
 import json
+
+# from opennem.utils.log_config
 import logging
 import re
 from datetime import timedelta
@@ -14,8 +16,6 @@ from operator import itemgetter
 from pprint import pprint
 
 from mdutils.mdutils import MdUtils
-
-from opennem.utils.log_config import logging
 
 from .loader import load_current, load_registry
 
@@ -94,6 +94,42 @@ def report_changed_capacities(registry_units, current_units):
     return renames
 
 
+def station_in_registry_not_in_new(registry, current):
+    registry_station_codes = [station.code for station in registry]
+    current_station_codes = [station.code for station in current]
+
+    diff = list(set(registry_station_codes) - set(current_station_codes))
+
+    diff_stations = list(filter(lambda x: x.code in diff, registry))
+
+    list_table = ["Name", "Code", "Facilities"]
+
+    [
+        list_table.extend([i.name, i.code, str(len(i.facilities))])
+        for i in diff_stations
+    ]
+
+    return list_table
+
+
+def stations_in_new_not_in_registry(registry, current):
+    registry_station_codes = [station.code for station in registry]
+    current_station_codes = [station.code for station in current]
+
+    diff = list(set(current_station_codes) - set(registry_station_codes))
+
+    diff_stations = list(filter(lambda x: x.code in diff, current))
+
+    list_table = ["Name", "Code", "Facilities"]
+
+    [
+        list_table.extend([i.name, str(i.code), str(len(i.facilities))])
+        for i in diff_stations
+    ]
+
+    return list_table
+
+
 def run_diff():
     diff_report = {}
 
@@ -146,6 +182,18 @@ def run_diff():
     md.new_header(level=1, title="Changed Capacities")
     renames = report_changed_capacities(registry_units, current_units)
     md.new_list(renames)
+
+    # Old stations not in new
+    md.new_header(level=1, title="Stations not in current")
+    not_in_news = station_in_registry_not_in_new(registry, current)
+    md.new_table(columns=3, rows=int(len(not_in_news) / 3), text=not_in_news)
+
+    # Old stations not in new
+    md.new_header(level=1, title="New Stations")
+    not_in_registry = stations_in_new_not_in_registry(registry, current)
+    md.new_table(
+        columns=3, rows=int(len(not_in_registry) / 3), text=not_in_registry
+    )
 
     md.new_table_of_contents(table_title="Contents", depth=2)
     md.create_md_file()
