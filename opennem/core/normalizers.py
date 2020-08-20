@@ -45,6 +45,7 @@ STRIP_WORDS = [
     "power station",
     "bio reactor",
     "sydney",
+    "technologies",
     "biomass",
     "landfill",
     "wwt",
