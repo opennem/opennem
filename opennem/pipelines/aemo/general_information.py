@@ -76,16 +76,16 @@ def has_unique_duid(units: List) -> bool:
     return len(duids) == len(units)
 
 
-def get_unique_duid(units: List) -> str:
+def get_unique_duid(units: List) -> Optional[str]:
     if len(units) < 1:
-        raise Exception("No units passed in list")
+        return None
 
     first_record = units[0]
 
     if "duid" in first_record and first_record["duid"]:
         return normalize_duid(first_record["duid"])
 
-    raise Exception("Could not get unique duid")
+    return None
 
 
 def get_unique_reqion(units: list) -> Optional[str]:
