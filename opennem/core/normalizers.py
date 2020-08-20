@@ -50,6 +50,8 @@ STRIP_WORDS = [
     "kograh",
     "technologies",
     "biomass",
+    "site",
+    "project",
     "landfill",
     "wwt",
     "waste",
