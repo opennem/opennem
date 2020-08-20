@@ -7,6 +7,7 @@
 import csv
 import json
 import logging
+import re
 from datetime import timedelta
 from itertools import chain
 from operator import itemgetter
@@ -35,6 +36,27 @@ def report_changed_names(registry, current):
                 renames.append(
                     "`{}` renamed to `{}`".format(
                         station.name, station_current.name
+                    )
+                )
+
+    return renames
+
+
+def report_changed_fueltechs(registry_units, current_units):
+    renames = []
+
+    for unit in registry_units:
+        in_current = list(filter(lambda x: x.duid == unit.duid, current_units))
+
+        if in_current and len(in_current):
+            unit_current = in_current[0]
+            if unit_current.fueltech != unit.fueltech:
+                renames.append(
+                    "{} (`{}`) fueltech `{}` changed to `{}`".format(
+                        unit_current.name,
+                        unit_current.duid,
+                        unit_current.fueltech,
+                        unit.fueltech,
                     )
                 )
 
@@ -82,6 +104,11 @@ def run_diff():
     # Renames
     md.new_header(level=1, title="Renamed Stations")
     renames = report_changed_names(registry, current)
+    md.new_list(renames)
+
+    # Fueltechs
+    md.new_header(level=1, title="Changed Fueltechs")
+    renames = report_changed_fueltechs(registry_units, current_units)
     md.new_list(renames)
 
     md.new_table_of_contents(table_title="Contents", depth=2)

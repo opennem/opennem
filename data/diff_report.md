@@ -8,6 +8,7 @@ Contents
 * [Opennem Report](#opennem-report)
 * [Summary](#summary)
 * [Renamed Stations](#renamed-stations)
+* [Changed Fueltechs](#changed-fueltechs)
 
 # Opennem Report
 
@@ -93,3 +94,27 @@ Contents
 - `Picton diesel` renamed to `Tesla Picton`
 - `Pinjara` renamed to `Pinjarra`
 - `Richgro` renamed to `Cleantech Biogas`
+
+# Changed Fueltechs
+
+- Broadwater (`BWTR1`) fueltech `bioenergy_biomass` changed to `bioenergy_biogas`
+- Condong (`CONDONG1`) fueltech `bioenergy_biomass` changed to `bioenergy_biogas`
+- Wilga Park (`WILGAPK`) fueltech `gas_wcmg` changed to `gas_recip`
+- Wilga Park B (`WILGB01`) fueltech `gas_wcmg` changed to `gas_recip`
+- Braemar (`BRAEMAR1`) fueltech `gas_wcmg` changed to `gas_ocgt`
+- Braemar (`BRAEMAR2`) fueltech `gas_wcmg` changed to `gas_ocgt`
+- Braemar (`BRAEMAR3`) fueltech `gas_wcmg` changed to `gas_ocgt`
+- Braemar 2 (`BRAEMAR5`) fueltech `gas_wcmg` changed to `gas_ocgt`
+- Braemar 2 (`BRAEMAR6`) fueltech `gas_wcmg` changed to `gas_ocgt`
+- Braemar 2 (`BRAEMAR7`) fueltech `gas_wcmg` changed to `gas_ocgt`
+- Daandine (`DAANDINE`) fueltech `gas_wcmg` changed to `gas_recip`
+- Wyong (`HAUGHT11`) fueltech `bioenergy_biogas` changed to `solar_utility`
+- Moranbah Generation Project (`MORANBAH`) fueltech `gas_wcmg` changed to `gas_recip`
+- Oaky Creek (`OAKYCREK`) fueltech `gas_wcmg` changed to `gas_recip`
+- Roghan Road (`EDLRGNRD`) fueltech `bioenergy_biomass` changed to `bioenergy_biogas`
+- Wivenhoe (`W/HOE#1`) fueltech `pumps` changed to `hydro`
+- Wivenhoe (`W/HOE#2`) fueltech `pumps` changed to `hydro`
+- Water Bolivar (`BOLIVAR1`) fueltech `pumps` changed to `bioenergy_biogas`
+- Lake Bonney (`LBBL1`) fueltech `battery_charging` changed to ``
+- Shepparton Facility (`SHEP1`) fueltech `bioenergy_biomass` changed to `bioenergy_biogas`
+- Tatura Generator (`TATURA01`) fueltech `bioenergy_biomass` changed to `bioenergy_biogas`

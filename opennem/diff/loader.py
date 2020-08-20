@@ -68,6 +68,7 @@ def load_registry() -> List[StationSchema]:
             )
 
             facility = FacilitySchema(
+                name=normalize_whitespace(station_record.get("display_name")),
                 network_region=map_compat_network_region(
                     station_record["region_id"]
                 ),
@@ -109,6 +110,7 @@ def load_current() -> List[StationSchema]:
         for facility in station.get("duid_data", {}):
 
             facility = FacilitySchema(
+                name=station.get("name"),
                 network_region=facility.get("network_region"),
                 status=facility.get("status"),
                 duid=facility.get("duid"),

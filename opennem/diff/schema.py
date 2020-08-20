@@ -16,6 +16,7 @@ class FacilitySchema(SchemaBase):
     network_region: str
     status: str
     duid: str
+    name: str
     fueltech: Optional[str] = None
     capacity: Optional[float] = None
 
