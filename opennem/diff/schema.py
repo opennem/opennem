@@ -1,6 +1,9 @@
+import re
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
+
+from opennem.core.normalizers import normalize_whitespace
 
 
 class SchemaBase(BaseModel):
@@ -22,3 +25,17 @@ class StationSchema(SchemaBase):
     code: Optional[str] = None
     state: Optional[str] = None
     facilities: List[FacilitySchema] = []
+
+    @classmethod
+    @validator("name")
+    def name_clean(cls, v):
+        name = normalize_whitespace(v)
+
+        return name
+
+    @classmethod
+    @validator("state")
+    def state_clean(cls, v):
+        state = state.upper()
+
+        return state
