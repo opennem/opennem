@@ -1,3 +1,8 @@
+"""
+    Module to map parameters between versions of opennem
+"""
+
+
 def map_compat_fueltech(fueltech: str) -> str:
     """
         Map old opennem fueltechs to new fueltechs
