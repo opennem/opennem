@@ -43,7 +43,7 @@ class NemMMSStationStatusSpider(NemSingleMMSSpider):
     url = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/2020/MMSDM_2020_06/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_STATIONOPERATINGSTATUS_202006010000.zip"
 
 
-class NemMMSStationStatusSpider(NemSingleMMSSpider):
+class NemMMSParticipantSpider(NemSingleMMSSpider):
     name = "au.nem.mms.participant"
 
     pipelines_extra = set([NemStoreMMSParticipant])
