@@ -10,7 +10,6 @@ from sqlalchemy.sql import text
 
 from opennem.core.dispatch_type import DispatchType, parse_dispatch_type
 from opennem.core.facilitystations import facility_station_join_by_name
-from opennem.core.facilitystatus import map_v3_states
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,
@@ -149,7 +148,9 @@ class NemStoreMMSStationStatus(DatabaseStoreBase):
         for record in item:
             duid = normalize_duid(record["STATIONID"])
             # authorized_date = name_normalizer(record["AUTHORISEDDATE"])
-            status = map_v3_states(record["STATUS"])
+
+            # @TODO this needs to be mapped to v3 state
+            status = record["STATUS"]
 
             station = (
                 s.query(Station)

@@ -9,7 +9,6 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from opennem.core.facilitystations import facility_station_join_by_name
-from opennem.core.facilitystatus import map_v3_states
 from opennem.core.normalizers import (
     clean_capacity,
     name_normalizer,
@@ -26,6 +25,7 @@ from opennem.db.models.opennem import (
     Participant,
     Station,
 )
+from opennem.importer.compat import map_compat_facility_state
 
 FIXTURE_PATH = os.path.join(os.path.dirname(__file__), "fixtures")
 
@@ -177,7 +177,9 @@ def update_existing_geos():
 
         station_name = station_name_cleaner(station_data["display_name"])
         station_code = normalize_duid(station_data["station_code"])
-        station_state = map_v3_states(station_data["status"]["state"])
+        station_state = map_compat_facility_state(
+            station_data["status"]["state"]
+        )
 
         station = (
             s.query(Station)
