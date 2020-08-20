@@ -1,5 +1,5 @@
 import re
-from typing import Union
+from typing import Optional, Union
 
 from opennem.core.station_names import station_map_name
 
@@ -130,13 +130,18 @@ __is_single_number = re.compile(r"^\d$")
 
 # @TODO put all these helpers in utils/
 
-strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
-normalize_whitespace = lambda v: str(re.sub(r"\s{2,}", " ", v.strip()))
+
+def strip_whitespace(subject: str) -> str:
+    return str(re.sub(r"\s+", "", subject.strip()))
+
+
+def normalize_whitespace(subject: str) -> str:
+    return str(re.sub(r"\s{2,}", " ", subject.strip()))
 
 
 def is_number(value: Union[str, int]) -> bool:
-    if type(value) is not str:
-        value = str(value)
+    if type(value) is int:
+        return True
 
     if re.match(__is_number, value):
         return True
@@ -199,7 +204,11 @@ def name_normalizer(name: str) -> str:
     return str(name_normalized)
 
 
-def clean_numbers(part) -> int:
+def clean_numbers(part: Union[str, int]) -> Union[str, int, None]:
+    """
+        Clean the number part of a station name
+
+    """
     if not is_number(part):
         return part
 
@@ -326,10 +335,10 @@ def participant_name_filter(participant_name: str) -> str:
     return _p.strip()
 
 
-def clean_capacity(capacity: Union[str, int, float]) -> float:
-    cap_clean = capacity
+def clean_capacity(capacity: Union[str, int, float]) -> Optional[float]:
+    cap_clean = None
 
-    if type(capacity) is str:
+    if type(capacity) == str:
         cap_clean = strip_whitespace(capacity)
 
         if "-" in cap_clean:
@@ -344,7 +353,7 @@ def clean_capacity(capacity: Union[str, int, float]) -> float:
         cap_clean = cap_clean.replace(",", ".")
         cap_clean = float(cap_clean)
 
-    elif type(capacity) is int:
+    elif type(capacity) == int:
         cap_clean = float(cap_clean)
 
     elif type(capacity) is not float:
