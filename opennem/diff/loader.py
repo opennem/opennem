@@ -11,11 +11,17 @@ from opennem.importer.compat import (
     map_compat_network_region,
 )
 
-from .schema import StationSchema
+from .schema import FacilitySchema, StationSchema
+
+__all__ = ["load_registry", "load_current"]
 
 
-def sort_records(records: List[Any]) -> List[Any]:
-    return sorted(records, key=attrgetter("network_region", "name", "duid"))
+def _sort_stations(records: List[Any]) -> List[Any]:
+    return sorted(records, key=attrgetter("state", "name"))
+
+
+def _sort_facilities(records: List[Any]) -> List[Any]:
+    return sorted(records, key=attrgetter("duid", "status"))
 
 
 def load_registry() -> List[StationSchema]:
@@ -27,8 +33,9 @@ def load_registry() -> List[StationSchema]:
     records = []
 
     for station_id, station_record in stations.items():
-        for duid, facility_record in station_record["duid_data"].items():
+        facilities = []
 
+        for duid, facility_record in station_record["duid_data"].items():
             status = map_compat_facility_state(
                 station_record.get("status", {}).get("state", "")
             )
@@ -39,9 +46,7 @@ def load_registry() -> List[StationSchema]:
                 facility_record.get("registered_capacity")
             )
 
-            record = StationSchema(
-                name=station_record["display_name"],
-                station_code=station_id,
+            facility = FacilitySchema(
                 network_region=map_compat_network_region(
                     station_record["region_id"]
                 ),
@@ -51,9 +56,18 @@ def load_registry() -> List[StationSchema]:
                 capacity=registered_capacity,
             )
 
-            records.append(record)
+            facilities.append(facility)
 
-    records = sort_records(records)
+        record = StationSchema(
+            name=station_record["display_name"],
+            code=station_id,
+            state=station_record.get("location", {}).get("state", None),
+            facilities=_sort_facilities(facilities),
+        )
+
+        records.append(record)
+
+    records = _sort_stations(records)
 
     return records
 
@@ -62,18 +76,18 @@ def load_current() -> List[StationSchema]:
     """
         Load the current project station data into a list of station schemas
     """
-    stations = load_data("stations.geojson", True)
+    station_data = load_data("stations.geojson", True)
 
     records = []
 
-    for s in stations.get("features", []):
+    for s in station_data.get("features", []):
         station = s.get("properties")
+
+        facilities = []
 
         for facility in station.get("duid_data", {}):
 
-            record = StationSchema(
-                name=station.get("name"),
-                station_code=station.get("station_code"),
+            facility = FacilitySchema(
                 network_region=facility.get("network_region"),
                 status=facility.get("status"),
                 duid=facility.get("duid"),
@@ -81,8 +95,17 @@ def load_current() -> List[StationSchema]:
                 capacity=facility.get("capacity_registered"),
             )
 
-            records.append(record)
+            facilities.append(facility)
 
-    records = sort_records(records)
+        record = StationSchema(
+            name=station.get("name"),
+            code=station.get("station_code"),
+            state=station.get("state"),
+            facilities=_sort_facilities(facilities),
+        )
+
+        records.append(record)
+
+    records = _sort_stations(records)
 
     return records
