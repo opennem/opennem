@@ -12,5 +12,6 @@
     }
   },
   "python.linting.pylintEnabled": true,
-  "python.linting.mypyEnabled": true
+  "python.linting.mypyEnabled": true,
+  "python.testing.pytestEnabled": true
 }
