@@ -24,6 +24,27 @@ def _sort_facilities(records: List[Any]) -> List[Any]:
     return sorted(records, key=attrgetter("duid", "status"))
 
 
+def _get_state_from_current(station, facilities: List[Any]) -> str:
+    state = station.get("state")
+
+    if not state:
+        facility_states = list(
+            set([f.network_region for f in facilities if f.network_region])
+        )
+
+        state = facility_states.pop()
+
+    state = state.upper()
+
+    if state == "WEM":
+        state = "WA"
+
+    if state.endswith("1"):
+        state = state[:-1]
+
+    return state
+
+
 def load_registry() -> List[StationSchema]:
     """
         Loads the facility registry into a list of Station schema's
@@ -100,7 +121,7 @@ def load_current() -> List[StationSchema]:
         record = StationSchema(
             name=station.get("name"),
             code=station.get("station_code"),
-            state=station.get("state"),
+            state=_get_state_from_current(station, facilities),
             facilities=_sort_facilities(facilities),
         )
 
