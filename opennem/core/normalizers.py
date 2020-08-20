@@ -156,9 +156,6 @@ def id_duid(facility_name):
 def normalize_aemo_region(region_code: str = "") -> str:
     region_code = region_code.strip().upper()
 
-    if region_code == "":
-        return None
-
     return region_code
 
 
@@ -168,13 +165,10 @@ def normalize_duid(duid: str) -> str:
     # @TODO replace with regexp that removes junk
     duid = duid.strip().replace("-", "")
 
-    if duid == "":
-        return None
-
     return duid
 
 
-def normalize_string(csv_string) -> str:
+def normalize_string(csv_string: str) -> str:
     if not type(csv_string) is str:
         csv_string = str(csv_string)
 
