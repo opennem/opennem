@@ -10,6 +10,8 @@ Contents
 * [Renamed Stations](#renamed-stations)
 * [Changed Fueltechs](#changed-fueltechs)
 * [Changed Capacities](#changed-capacities)
+* [Stations not in current](#stations-not-in-current)
+* [New Stations](#new-stations)
 
 # Opennem Report
 
@@ -132,7 +134,6 @@ Contents
 - Capital (`CAPTL_WF`) capacity `140.7` changed to `140.0`
 - Capital East (`CESF1`) capacity `0.205` changed to `1.0`
 - Coleambally (`COLEASF1`) capacity `150.3` changed to `180.0`
-- Copeton (`COPTNHYD`) capacity `20.0` changed to `22.5`
 - Glennies Creek (`GLENNCRK`) capacity `12.78` changed to `12.0`
 - Grange Avenue (`GRANGEAV`) capacity `1.26` changed to `2.0`
 - Griffith (`GRIFSF1`) capacity `30.0` changed to `27.0`
@@ -183,7 +184,6 @@ Contents
 - Mt Stuart (`MSTUART3`) capacity `131.5` changed to `131.0`
 - Oakey 1 (`OAKEY1SF`) capacity `25.0` changed to `30.0`
 - Oakey 2 (`OAKEY2SF`) capacity `55.64` changed to `65.0`
-- Racecourse Mill (`RACOMIL1`) capacity `37.25` changed to `48.5`
 - Roghan Road (`EDLRGNRD`) capacity `1.15` changed to `2.0`
 - Rugby Run (`RUGBYR1`) capacity `65.0` changed to `83.0`
 - Stapylton (`STAPYLTON1`) capacity `2.14` changed to `3.0`
@@ -195,7 +195,6 @@ Contents
 - Bungala Two (`BNGSF2`) capacity `110.0` changed to `135.0`
 - Hallett 1 (`HALLWF1`) capacity `94.5` changed to `95.0`
 - Lake Bonney (`LKBONNY1`) capacity `80.5` changed to `81.0`
-- Lincoln Gap (`LGAPWF1`) capacity `86.4` changed to `212.4`
 - Port Lincoln (`POR03`) capacity `23.5` changed to `23.0`
 - Pt Stanvac (`STANV1`) capacity `29.0` changed to `58.0`
 - Pt Stanvac (`STANV2`) capacity `29.0` changed to `58.0`
@@ -217,7 +216,6 @@ Contents
 - Rowallan (`ROWALLAN`) capacity `10.5` changed to `11.0`
 - Waterloo (`WATERLWF`) capacity `130.8` changed to `130.0`
 - Woolnorth Studland Bay / Bluff Point (`WOOLNTH1`) added capacity `140.0`
-- Ararat (`ARWF1`) added capacity `241.59`
 - Bairnsdale (`BDL01`) capacity `47.0` changed to `46.0`
 - Bairnsdale (`BDL02`) capacity `47.0` changed to `46.0`
 - Bald Hills (`BALDHWF1`) capacity `106.6` changed to `59.0`
@@ -246,7 +244,6 @@ Contents
 - Loy Yang B (`LOYYB1`) capacity `535.0` changed to `500.0`
 - Loy Yang B (`LOYYB2`) capacity `580.0` changed to `500.0`
 - Maroona (`MAROOWF1`) capacity `7.2` changed to `6.0`
-- Mt Gellibrand (`MTGELWF1`) capacity `43.904` changed to `137.984`
 - Murra Warra (`MUWAWF1`) capacity `225.7` changed to `231.0`
 - Numurkah (`NUMURSF1`) capacity `107.52` changed to `74.0`
 - Rubicon Mountain (`RUBICON`) capacity `2.7` changed to `13.0`
@@ -261,6 +258,195 @@ Contents
 - Yaloak South (`YSWF1`) capacity `28.7` changed to `28.0`
 - Yarrawonga (`YWNGAHYD`) capacity `9.5` changed to `9.0`
 - Greenough River (`GREENOUGH_RIVER_PV1`) capacity `40.0` changed to `10.0`
-- Northam (`NORTHAM_SF_PV1`) capacity `9.8` changed to `7.753`
-- Wagerup (`ALINTA_WGP_GT`) capacity `196.0` changed to `195.152`
-- Wagerup (`ALINTA_WGP_U2`) capacity `196.0` changed to `196.848`
+
+# Stations not in current
+
+|Name|Code|Facilities|
+| :---: | :---: | :---: |
+|Eraring|ERGT01|1|
+|Goonumbla|GOONUMSF|1|
+|White Rock|WRWF1|1|
+|White Rock Wind and|WHIROCWIND|2|
+|Callide A|CALL_A|2|
+|Callide B|CALL_B|2|
+|Callide C|CALLIDEC1|2|
+|Grosvenor 2|GROSV2|1|
+|Swanbank B|SWAN_B|4|
+|Swanbank E|SWAN_E|1|
+|Wivenhoe (Mini Hydro)|WIVENSH|1|
+|Lake Bonney 1|LKBONNY1|1|
+|Lake Bonney 3|LKBONNY3|1|
+|Snowtown South|SNOWSTH|1|
+|Temporary Generation North|SATGN|1|
+|Poatina|PTINA220|1|
+|Bulgana Green Power Hub - Units|BULGREPOWER|1|
+|Eildon (Run of River)|EILDONPD|1|
+|Bluewaters|BLUEWATERS|2|
+|Kalamunda|KALAMUNDA_SG|1|
+|Kwinana cogen|TIWEST_COG1|1|
+|Parkeston|PRK_AG|1|
+|Red Hill|RED_HILL|1|
+|South Cardup|SOUTH_CARDUP|1|
+|Tamala Park|TAMALA_PARK|1|
+|Wagerup|ALCOA_WGP|3|
+|Walkaway|ALINTA_WWF|1|
+
+# New Stations
+
+|Name|Code|Facilities|
+| :---: | :---: | :---: |
+|Albury|None|1|
+|Bakers Maison|None|1|
+|Bango|None|1|
+|Belrose|None|1|
+|Blayney|None|1|
+|Chillamurra|None|1|
+|Club Merrylands|None|1|
+|Collector|None|1|
+|Crookwell|None|1|
+|Crudine Ridge|None|1|
+|Darlington Point|None|1|
+|De Bortoli Wines|None|1|
+|Draytons Family Wines|None|1|
+|Horsley Park|None|1|
+|Kiamal|None|1|
+|Lake Macquarie Community|None|1|
+|Mount Majura|None|1|
+|Nymboida|None|1|
+|Oaky|None|1|
+|Parkes Shire Council STP|None|1|
+|Parkes Shire Council WTP|None|1|
+|Penrith RSL|None|1|
+|Proten|None|2|
+|Revesby Workers Club|None|1|
+|Singleton|None|1|
+|Snowy|SNOWYP|1|
+|Snowy 2.0|None|1|
+|St George Leagues Club Kogarah|None|1|
+|Summer Hill|None|1|
+|Sunraysia|None|1|
+|Taronga Western Plains Zoo|None|1|
+|Todae CSU|None|1|
+|Todae Llandilo|None|1|
+|Todae Minchinbury|None|1|
+|Wetherill Park|None|1|
+|Wyong|None|1|
+|Aldi Brendale|None|1|
+|Birkdale|None|1|
+|Callide|CALLIDE|5|
+|Callide C|CALLIDEC|2|
+|Churchill Abattoir|None|1|
+|Cohuna|None|1|
+|Dunblane|None|1|
+|FPC Green Energy|None|1|
+|Fraser Coast Community|None|1|
+|Inkerman Mill|None|2|
+|Kalamia Mill|None|1|
+|Kennedy Energy Park|None|2|
+|Lake Somerset|None|1|
+|Lakeland|None|1|
+|Llewellyn Motors|None|1|
+|Macknade Mill|None|1|
+|Maryborough Mill|None|2|
+|McNamee Partners|None|1|
+|Molendinar|None|1|
+|Molong|None|1|
+|Moranbah Workers|None|1|
+|Mount Sheridan Plaza|None|1|
+|Mulgrave Central Mill|MULGRAVE|1|
+|Normanton|None|1|
+|Plane Creek Mill|PLANECRK|2|
+|Portland|None|3|
+|Proserpine|None|2|
+|SIPS Staypylton Industrial|None|1|
+|Somerset Dam|SOMERSET|1|
+|South Johnstone Mill|None|3|
+|St Ursulas College Yeppoon|None|1|
+|Suntown|None|2|
+|Swanbank B|SWANBANK|5|
+|Swanbank JV|None|2|
+|Tableland Mill|TBLAND|2|
+|Todae DHP|None|1|
+|Todae Lourdes|None|1|
+|Tong Park Agricultural|None|1|
+|University Of Southern Queensland Toowoomba|None|1|
+|Vulcan Yatala|None|1|
+|Warwick|None|1|
+|Winton|None|1|
+|Woolcock Centre|None|1|
+|Adelaide Airport|None|1|
+|Adelaide Zoo|None|1|
+|Aquatic & Leasure Centre|None|1|
+|BHP Olympic Dam|None|1|
+|Kingscote|None|1|
+|Nawma Balefill Site Uleybury|None|1|
+|Peterborough|None|1|
+|Redmud Green Energy|None|7|
+|SA VPP|None|1|
+|Seacliff|None|1|
+|Snapper Point|None|1|
+|Vibe Energy|None|1|
+|Yalumba Oxford Landing|None|1|
+|Yes Sunlands|None|1|
+|Glenorchy|None|1|
+|Hobart|None|1|
+|Lake Margaret|None|1|
+|Lower Lake Margaret|None|1|
+|St Patricks College Launceston|None|1|
+|Tods Corner|None|1|
+|Aeroten Leongatha|None|1|
+|Ballarat|None|1|
+|Bayswood Timber Hallam|None|1|
+|Beaconhills College Berwick|None|1|
+|Bendigo|None|1|
+|Biala|None|1|
+|Boronia|None|1|
+|Bridgewater|None|1|
+|Bunurong Bangholme|None|1|
+|Cardinia Creek Minihydro|None|1|
+|Carina West H2E|None|1|
+|Cedar Meats Geelong|None|1|
+|Ferguson North|None|1|
+|Flavorite Marketing|None|1|
+|Glenrowan West Sun|None|1|
+|JL King & Co|None|1|
+|Jessica Way Truganina|None|1|
+|Melbourne Regional|MELBRL|1|
+|Midland Highway Orrvale|None|1|
+|Moorabool|None|1|
+|Mount Waverley|None|1|
+|Newhaven College|None|1|
+|Portland|PORTLAND|1|
+|Rewaste Wollert|None|1|
+|SCS Shepparton|None|1|
+|Sale Hospital|None|1|
+|Shamic Sheetmetal|None|1|
+|Shepparton|None|1|
+|Stockyard Hill|None|1|
+|Swan Hill Solar Farm|None|1|
+|Todae La Trobe University Wodonga|None|1|
+|Todae Nillumbik|None|1|
+|Todae Toowoomba|None|1|
+|UoM Archives Brunswick|None|1|
+|UoM McCoy Carlton|None|1|
+|UoM Peter Hall Parkville|None|1|
+|UoM Sports Centre Parkville|None|1|
+|UoM The Spot Carlton|None|1|
+|Vawdrey Manufacturing|None|1|
+|Wantirna|None|1|
+|William Hovell|WILLHOV|1|
+|Yatpool|None|1|
+|Zilzie Winery|None|1|
+|Alcoa Wagerup|ALCOA|1|
+|Bluewaters 1|BW1_BLUEWATERS|1|
+|Bluewaters 2|BW2_BLUEWATERS|1|
+|Goldfields|PRK|1|
+|Kalamunda|KALAMUNDA|1|
+|Kwinana Eg1|PPP_KCP|1|
+|Merredin|MERSOLAR|1|
+|Red Hill|RED|1|
+|South Cardup|SOUTH|1|
+|Tamala Park|TAMALA|1|
+|Tiwest|TIWEST|1|
+|Wagerup|ALINTA_WGP|2|
+|Walkaway|ALINTA|1|
