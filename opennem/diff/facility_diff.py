@@ -23,6 +23,24 @@ logger = logging.getLogger("opennem.diff")
 markdown_report = []
 
 
+def report_changed_names(registry, current):
+    renames = []
+
+    for station in registry:
+        in_current = list(filter(lambda x: x.code == station.code, current))
+
+        if in_current and len(in_current):
+            station_current = in_current[0]
+            if station_current.name != station.name:
+                renames.append(
+                    "`{}` renamed to `{}`".format(
+                        station.name, station_current.name
+                    )
+                )
+
+    return renames
+
+
 def run_diff():
     diff_report = {}
 
@@ -52,16 +70,22 @@ def run_diff():
     md = MdUtils(file_name="data/diff_report.md", title="Opennem Report")
     md.new_header(level=1, title="Opennem Report")
 
+    # Summary
+    md.new_header(level=1, title="Summary")
     summary = ["", "Prod", "Version 3"]
     summary.extend(["Stations", str(len(registry)), str(len(current))])
     summary.extend(
         ["Units", str(len(registry_units)), str(len(current_units))]
     )
-
     md.new_table(columns=3, rows=3, text=summary)
 
+    # Renames
+    md.new_header(level=1, title="Renamed Stations")
+    renames = report_changed_names(registry, current)
+    md.new_list(renames)
+
+    md.new_table_of_contents(table_title="Contents", depth=2)
     md.create_md_file()
-    pprint(diff_report)
 
 
 def run_diff_old():
@@ -73,13 +97,6 @@ def run_diff_old():
     current_stations_names = list(set([i[0] for i in current]))
     v3_stations_names = list(set([i[0] for i in v3]))
 
-    add("# Opennem Facility Diff Report")
-    add("## Overview ")
-    add(" * Current Stations: {}".format(len(current_stations)))
-    add(" * v3 Stations: {}".format(len(v3_stations)))
-    add(" * Current Facilities: {}".format(len(current)))
-    add(" * v3 Facilities: {}".format(len(v3)))
-    add("")
     add(" ## Station codes in current not in v3")
     add("")
     add(list(set(current_stations) - set(v3_stations)), True)
