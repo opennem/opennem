@@ -6,94 +6,235 @@
 
 import csv
 import json
+
+# from opennem.utils.log_config
 import logging
+import re
 from datetime import timedelta
+from itertools import chain
 from operator import itemgetter
 from pprint import pprint
 
-from opennem.utils import logging
+from mdutils.mdutils import MdUtils
+
+from .loader import load_current, load_registry
 
 logger = logging.getLogger("opennem.diff")
-logger.setLevel(logging.DEBUG)
 
-logging.basicConfig(level=logging.INFO)
-
-
-def normalize_states(state):
-    state = state.lower()
-
-    if state == "commissioned":
-        return "operating"
-
-    if state == "decommissioned":
-        return "retired"
-
-    return state
+markdown_report = []
 
 
-def normalize_regions(region):
-    if region == "WA":
-        return "WA1"
+def report_changed_names(registry, current):
+    renames = []
 
-    return region
+    for station in registry:
+        in_current = list(filter(lambda x: x.code == station.code, current))
+
+        if in_current and len(in_current):
+            station_current = in_current[0]
+            if station_current.name != station.name:
+                renames.append(
+                    "`{}` renamed to `{}`".format(
+                        station.name, station_current.name
+                    )
+                )
+
+    return renames
+
+
+def report_changed_fueltechs(registry_units, current_units):
+    renames = []
+
+    for unit in registry_units:
+        in_current = list(filter(lambda x: x.duid == unit.duid, current_units))
+
+        if in_current and len(in_current):
+            unit_current = in_current[0]
+            if unit_current.fueltech != unit.fueltech:
+                renames.append(
+                    "{} (`{}`) fueltech `{}` changed to `{}`".format(
+                        unit_current.name,
+                        unit_current.duid,
+                        unit_current.fueltech,
+                        unit.fueltech,
+                    )
+                )
+
+    return renames
+
+
+def report_changed_capacities(registry_units, current_units):
+    renames = []
+
+    for unit in registry_units:
+        in_current = list(filter(lambda x: x.duid == unit.duid, current_units))
+
+        if in_current and len(in_current):
+            unit_current = in_current[0]
+            if unit_current.capacity == None and unit.capacity:
+                renames.append(
+                    "{} (`{}`) added capacity `{}`".format(
+                        unit_current.name, unit_current.duid, unit.capacity,
+                    )
+                )
+            elif (
+                unit_current.capacity
+                and unit.capacity
+                and round(unit_current.capacity, 0) != round(unit.capacity, 0)
+            ):
+                renames.append(
+                    "{} (`{}`) capacity `{}` changed to `{}`".format(
+                        unit_current.name,
+                        unit_current.duid,
+                        unit_current.capacity,
+                        unit.capacity,
+                    )
+                )
+
+    return renames
+
+
+def station_in_registry_not_in_new(registry, current):
+    registry_station_codes = [station.code for station in registry]
+    current_station_codes = [station.code for station in current]
+
+    diff = list(set(registry_station_codes) - set(current_station_codes))
+
+    diff_stations = list(filter(lambda x: x.code in diff, registry))
+
+    list_table = ["Name", "Code", "Facilities"]
+
+    [
+        list_table.extend([i.name, i.code, str(len(i.facilities))])
+        for i in diff_stations
+    ]
+
+    return list_table
+
+
+def stations_in_new_not_in_registry(registry, current):
+    registry_station_codes = [station.code for station in registry]
+    current_station_codes = [station.code for station in current]
+
+    diff = list(set(current_station_codes) - set(registry_station_codes))
+
+    diff_stations = list(filter(lambda x: x.code in diff, current))
+
+    list_table = ["Name", "Code", "Facilities"]
+
+    [
+        list_table.extend([i.name, str(i.code), str(len(i.facilities))])
+        for i in diff_stations
+    ]
+
+    return list_table
 
 
 def run_diff():
-    logger.info("Running facility diff")
+    diff_report = {}
 
-    with open("opennem/db/fixtures/facility_registry.json") as fh:
-        fac_current = json.load(fh)
+    registry = load_registry()
+    current = load_current()
 
-    remapped = []
+    registry_units = list(chain(*[s.facilities for s in registry]))
+    current_units = list(chain(*[s.facilities for s in current]))
 
-    for k, v in fac_current.items():
-        for duid, fac in v["duid_data"].items():
-            i = [
-                v["display_name"] or "",
-                k,
-                normalize_regions(v["region_id"]) or "",
-                normalize_states(v["status"]["state"]),
-                duid or "",
-                fac["fuel_tech"] if "fuel_tech" in fac else "",
-                fac["registered_capacity"]
-                if "registered_capacity" in fac
-                else 0,
+    registry_station_codes = [station.code for station in registry]
+    current_station_codes = [station.code for station in current]
+
+    registry_station_names = [station.name for station in registry]
+    current_station_names = [station.name for station in current]
+
+    new_stations = list(
+        set(
+            [
+                station.name
+                for station in current
+                if station.name not in registry_station_names
+                and station.code not in registry_station_codes
             ]
-            remapped.append(i)
+        )
+    )
 
-    remapped = sorted(remapped, key=itemgetter(2, 0, 4, 6))
+    md = MdUtils(file_name="data/diff_report.md", title="Opennem Report")
+    md.new_header(level=1, title="Opennem Report")
 
-    with open("data/facility_diff/facilities_current.csv", "w") as fh:
-        csvwriter = csv.writer(fh)
-        for line in remapped:
-            csvwriter.writerow(line)
+    # Summary
+    md.new_header(level=1, title="Summary")
+    summary = ["", "Prod", "Version 3"]
+    summary.extend(["Stations", str(len(registry)), str(len(current))])
+    summary.extend(
+        ["Units", str(len(registry_units)), str(len(current_units))]
+    )
+    md.new_table(columns=3, rows=3, text=summary)
 
-    with open("data/facility_diff/au_facilities.json") as fh:
-        fac_v3 = json.load(fh)
+    # Renames
+    md.new_header(level=1, title="Renamed Stations")
+    renames = report_changed_names(registry, current)
+    md.new_list(renames)
 
-    fac_v3 = fac_v3["features"]
-    remapped = []
+    # Fueltechs
+    md.new_header(level=1, title="Changed Fueltechs")
+    renames = report_changed_fueltechs(registry_units, current_units)
+    md.new_list(renames)
 
-    for f in fac_v3:
-        for fac in f["properties"]["duid_data"]:
-            i = [
-                f["properties"]["name"] or "",
-                # fac["duid"],
-                f["properties"]["oid"],
-                f["properties"]["station_code"] or "",
-                normalize_regions(f["properties"]["network_region"]) or "",
-                fac["status"].lower(),
-                fac["duid"] or "",
-                fac["fuel_tech"] if "fuel_tech" in fac else "",
-                fac["registered_capacity"]
-                if "registered_capacity" in fac
-                else 0,
-            ]
-            remapped.append(i)
+    # Capacities
+    md.new_header(level=1, title="Changed Capacities")
+    renames = report_changed_capacities(registry_units, current_units)
+    md.new_list(renames)
 
-    remapped = sorted(remapped, key=itemgetter(3, 0, 5, 7))
+    # Old stations not in new
+    md.new_header(level=1, title="Stations not in current")
+    not_in_news = station_in_registry_not_in_new(registry, current)
+    md.new_table(columns=3, rows=int(len(not_in_news) / 3), text=not_in_news)
 
-    with open("data/facility_diff/facilities_v3.csv", "w") as fh:
-        csvwriter = csv.writer(fh)
-        for line in remapped:
-            csvwriter.writerow(line)
+    # Old stations not in new
+    md.new_header(level=1, title="New Stations")
+    not_in_registry = stations_in_new_not_in_registry(registry, current)
+    md.new_table(
+        columns=3, rows=int(len(not_in_registry) / 3), text=not_in_registry
+    )
+
+    md.new_table_of_contents(table_title="Contents", depth=2)
+    md.create_md_file()
+
+
+def run_diff_old():
+    current = load_registry()
+    v3 = load_current()
+
+    current_stations = list(set([i[1] for i in current]))
+    v3_stations = list(set([i[2] for i in v3]))
+    current_stations_names = list(set([i[0] for i in current]))
+    v3_stations_names = list(set([i[0] for i in v3]))
+
+    add(" ## Station codes in current not in v3")
+    add("")
+    add(list(set(current_stations) - set(v3_stations)), True)
+    add(" ## Stations in current not in v3")
+    add("")
+    add(list(set(current_stations_names) - set(v3_stations_names)), True)
+    add(" # Facility duids in current not in v3")
+    add("")
+
+    facility_duid_diff = list(
+        set([i[4] for i in current]) - set([i[5] for i in v3])
+    )
+
+    add(facility_duid_diff, True)
+
+    add(" # Fueltech Changes")
+    add("")
+
+    facility_duid_diff = list(
+        set([(i[4], i[5]) for i in current]) - set([(i[5], i[6]) for i in v3])
+    )
+
+    add(facility_duid_diff, True)
+
+    with open("data/diff_report.md", "w") as fh:
+        fh.write("\n".join(markdown_report))
+
+
+if __name__ == "__main__":
+    run_diff()

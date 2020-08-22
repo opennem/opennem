@@ -10,7 +10,6 @@ from sqlalchemy.sql import text
 
 from opennem.core.dispatch_type import DispatchType, parse_dispatch_type
 from opennem.core.facilitystations import facility_station_join_by_name
-from opennem.core.facilitystatus import lookup_facility_status
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,
@@ -215,8 +214,6 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
         generators_updated = 0
         generators_added = 0
 
-        from pprint import pprint
-
         for station_key, facilities in generators.items():
             facility = None
             facility_station = None
@@ -240,35 +237,21 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             facility_network_region = get_unique_reqion(facilities)
 
-            if not duid and facility_station_join_by_name(station_name):
+            if duid and duid_unique and facility_count == 1:
+                facility_lookup = None
+
                 try:
-                    facility = (
+                    facility_lookup = (
                         s.query(Facility)
-                        .join(Facility.station)
-                        .filter(
-                            Facility.network_region == facility_network_region
-                        )
-                        .filter(Station.name == station_name)
+                        .filter(Facility.network_code == duid)
                         .one_or_none()
                     )
                 except MultipleResultsFound:
-                    logger.error(
-                        "Multiple stations found for {} {}".format(
-                            station_name, facility_network_region
+                    logger.warning(
+                        "REL: Multiple stations found for {} {} with duid {}".format(
+                            station_name, facility_network_region, duid
                         )
                     )
-
-                if facility:
-                    facility_station = facility.station
-
-            if duid and duid_unique and facility_count == 1:
-
-                facility_lookup = (
-                    s.query(Facility)
-                    .filter(Facility.network_code == duid)
-                    .filter(Facility.network_code != None)
-                    .one_or_none()
-                )
 
                 if facility_lookup and facility_lookup.station:
                     facility_station = facility_lookup.station
@@ -282,12 +265,35 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 facility_lookup = (
                     s.query(Facility)
                     .filter(Facility.network_code == duid)
-                    .filter(Facility.network_code != None)
                     .first()
                 )
 
                 if facility_lookup and facility_lookup.station:
                     facility_station = facility_lookup.station
+
+            if not facility_station and facility_station_join_by_name(
+                station_name
+            ):
+                try:
+                    facility_station = (
+                        s.query(Station)
+                        .filter(Station.name == station_name)
+                        .one_or_none()
+                    )
+                except MultipleResultsFound:
+                    logger.warning(
+                        "REL: Multiple stations found for {} {}".format(
+                            station_name, facility_network_region
+                        )
+                    )
+
+                logger.debug(
+                    "REL: Looked up {} by name and region {} and found {}".format(
+                        station_name,
+                        facility_network_region,
+                        facility.station if facility else "nothing",
+                    )
+                )
 
             # Create one as it doesm't exist
             if not facility_station:
@@ -306,6 +312,14 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 facility_station.updated_by = (
                     "pipeline.aemo.registration_exemption"
                 )
+
+            logger.info(
+                "REL: {} station with name {} and code {}".format(
+                    "Created" if created_station else "Updated",
+                    facility_station.name,
+                    facility_station.code,
+                )
+            )
 
             # Step 2. Add the facilities/units to the station
             # Now that we have a station or created one ..
@@ -355,11 +369,18 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
                 # If the duid is unique then we have no issues on which to join/create
                 if duid and duid_unique and not facility:
-                    facility = (
-                        s.query(Facility)
-                        .filter(Facility.network_code == duid)
-                        .one_or_none()
-                    )
+                    try:
+                        facility = (
+                            s.query(Facility)
+                            .filter(Facility.network_code == duid)
+                            .one_or_none()
+                        )
+                    except MultipleResultsFound:
+                        logger.warning(
+                            "REL: Multiple facilities found for {} {}".format(
+                                station_name, duid
+                            )
+                        )
 
                 if duid and not duid_unique and not facility:
                     facility = (
@@ -415,7 +436,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     )
 
                 #
-                facility.code = unit_code
+                if not facility.code:
+                    facility.code = unit_code
+
                 facility.fueltech_id = fueltech
                 facility.network_code = duid
                 facility.network_region = facility_region
@@ -436,7 +459,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
                 # Log that we have a new fueltech
                 if fueltech and fueltech != facility.fueltech_id:
-                    logger.warn(
+                    logger.warning(
                         "Fueltech mismatch for {} {}: prev {} new {}".format(
                             facility.name_clean,
                             facility.code,
@@ -453,20 +476,9 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 s.add(facility)
                 s.commit()
 
-            if created_station:
                 logger.info(
-                    "{} station with name {} and code {}".format(
-                        "Created" if created_station else "Updated",
-                        facility_station.name,
-                        facility_station.code,
-                    )
-                )
-
-            if created_facility:
-                logger.info(
-                    "{} facility with name {} and duid {} and id {}".format(
+                    "REL: {} facility with duid {} and id {}".format(
                         "Created" if created_facility else "Updated",
-                        facility.network_name,
                         facility.code,
                         facility.network_code,
                     )
@@ -474,7 +486,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             generators_updated += 1
 
-        print(
+        logger.info(
             "NEM REL Pipeline: Added {} stations, updated {} stations. Added {}, updated {} generators of {} total".format(
                 stations_added,
                 stations_updated,
@@ -483,5 +495,3 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 len(generators),
             )
         )
-
-        return 0

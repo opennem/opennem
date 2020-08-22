@@ -3,28 +3,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def map_v3_states(state):
+def map_aemo_facility_status(facility_status: str) -> str:
     """
-        Maps a current v1 version opennem facility_registry.json state
-        to a v3 state
+        Maps an AEMO facility status to an Opennem facility status
+
 
     """
-    state = state.lower().strip()
-
-    if state == "commissioned":
-        return "operating"
-
-    if state == "decommissioned":
-        return "retired"
-
-    return state
-
-
-def lookup_facility_status(unit_status):
-
-    unit_status = unit_status or ""
-
-    unit_status = unit_status.lower().strip()
+    unit_status = facility_status.lower().strip()
 
     if unit_status.startswith("in service"):
         return "operating"
@@ -41,8 +26,8 @@ def lookup_facility_status(unit_status):
     if unit_status.startswith("emerging"):
         return "emerging"
 
-    logger.error(
-        "Could not find status for unit status: {}".format(unit_status)
+    raise Exception(
+        "Could not find AEMO status for facility status: {}".format(
+            unit_status
+        )
     )
-
-    return None

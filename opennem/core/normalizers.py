@@ -1,5 +1,5 @@
 import re
-from typing import Union
+from typing import Optional, Union
 
 from opennem.core.station_names import station_map_name
 
@@ -44,7 +44,14 @@ STRIP_WORDS = [
     "solar system",
     "power station",
     "bio reactor",
+    "generation station",
+    "sydney",
+    "cogeneration",
+    "kograh",
+    "technologies",
     "biomass",
+    "site",
+    "project",
     "landfill",
     "wwt",
     "waste",
@@ -71,6 +78,9 @@ STRIP_WORDS = [
     "solar",
     "storage",
     "wind",
+    "ccgt",
+    "renewable",
+    "water",
     "lfg",
     "nsw",
     "vic",
@@ -82,8 +92,6 @@ STRIP_WORDS = [
     "bess",
     "bess1",
     "gen",
-    "e",
-    "jv",
     "gt",
     "bioreactor",
     "bordertown",
@@ -122,12 +130,18 @@ __is_single_number = re.compile(r"^\d$")
 
 # @TODO put all these helpers in utils/
 
-strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
+
+def strip_whitespace(subject: str) -> str:
+    return str(re.sub(r"\s+", "", subject.strip()))
+
+
+def normalize_whitespace(subject: str) -> str:
+    return str(re.sub(r"\s{2,}", " ", subject.strip()))
 
 
 def is_number(value: Union[str, int]) -> bool:
-    if type(value) is not str:
-        value = str(value)
+    if type(value) is int:
+        return True
 
     if re.match(__is_number, value):
         return True
@@ -158,9 +172,6 @@ def id_duid(facility_name):
 def normalize_aemo_region(region_code: str = "") -> str:
     region_code = region_code.strip().upper()
 
-    if region_code == "":
-        return None
-
     return region_code
 
 
@@ -170,13 +181,10 @@ def normalize_duid(duid: str) -> str:
     # @TODO replace with regexp that removes junk
     duid = duid.strip().replace("-", "")
 
-    if duid == "":
-        return None
-
     return duid
 
 
-def normalize_string(csv_string) -> str:
+def normalize_string(csv_string: str) -> str:
     if not type(csv_string) is str:
         csv_string = str(csv_string)
 
@@ -196,7 +204,11 @@ def name_normalizer(name: str) -> str:
     return str(name_normalized)
 
 
-def clean_numbers(part) -> int:
+def clean_numbers(part: Union[str, int]) -> Union[str, int, None]:
+    """
+        Clean the number part of a station name
+
+    """
     if not is_number(part):
         return part
 
@@ -323,10 +335,13 @@ def participant_name_filter(participant_name: str) -> str:
     return _p.strip()
 
 
-def clean_capacity(capacity: Union[str, int, float]) -> float:
-    cap_clean = capacity
+def clean_capacity(capacity: Union[str, int, float]) -> Optional[float]:
+    cap_clean = None
 
-    if type(capacity) is str:
+    if capacity == None:
+        return None
+
+    if type(capacity) == str:
         cap_clean = strip_whitespace(capacity)
 
         if "-" in cap_clean:
@@ -341,8 +356,8 @@ def clean_capacity(capacity: Union[str, int, float]) -> float:
         cap_clean = cap_clean.replace(",", ".")
         cap_clean = float(cap_clean)
 
-    elif type(capacity) is int:
-        cap_clean = float(cap_clean)
+    elif type(capacity) == int:
+        cap_clean = float(capacity)
 
     elif type(capacity) is not float:
         if capacity is None:
@@ -353,6 +368,9 @@ def clean_capacity(capacity: Union[str, int, float]) -> float:
                 type(capacity), capacity
             )
         )
+
+    if cap_clean == None:
+        return None
 
     cap_clean = round(cap_clean, 6)
 

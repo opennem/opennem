@@ -1,7 +1,7 @@
 import csv
 import json
 import os
-from typing import List, Optional
+from typing import Any, List, Optional
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
 
@@ -10,7 +10,7 @@ class FileNotFound(Exception):
     pass
 
 
-def load_data_json(fixture_name):
+def load_data_json(fixture_name: str) -> Any:
     fixture_path = os.path.join(DATA_PATH, fixture_name)
 
     if not os.path.isfile(fixture_path):

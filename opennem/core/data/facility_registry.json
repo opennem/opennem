@@ -1,0 +1,8745 @@
+{
+  "AGLHAL": {
+    "station_id": "AGLHAL",
+    "display_name": "Hallett",
+    "location": {
+      "state": "SA",
+      "postcode": 5419,
+      "latitude": -33.3493102447996,
+      "longitude": 138.752632826228
+    },
+    "duid_data": {
+      "AGLHAL": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 217
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "AGLNOW1": {
+    "station_id": "AGLNOW1",
+    "display_name": "West Nowra",
+    "location": {
+      "state": "NSW",
+      "postcode": 2541,
+      "latitude": -34.882318,
+      "longitude": 150.551075
+    },
+    "duid_data": {
+      "AGLNOW1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "AGLSITA": {
+    "station_id": "AGLSITA",
+    "display_name": "Kemps Creek",
+    "location": {
+      "state": "NSW",
+      "postcode": 2555,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "AGLSITA1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "AGLSOM": {
+    "station_id": "AGLSOM",
+    "display_name": "Somerton",
+    "location": {
+      "state": "VIC",
+      "postcode": 3062,
+      "latitude": -37.6309486600574,
+      "longitude": 144.95309828615
+    },
+    "duid_data": {
+      "AGLSOM": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 170
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "AMCORGR": {
+    "station_id": "AMCORGR",
+    "display_name": "Amcor Glass",
+    "location": {
+      "state": "SA",
+      "postcode": 5118,
+      "latitude": -34.882663,
+      "longitude": 138.577975
+    },
+    "duid_data": {
+      "AMCORGR": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 4
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2015-12-31"
+    }
+  },
+  "ANGASTON": {
+    "station_id": "ANGASTON",
+    "display_name": "Angaston",
+    "location": {
+      "state": "SA",
+      "postcode": 5353,
+      "latitude": -34.5039482864289,
+      "longitude": 139.024296339333
+    },
+    "duid_data": {
+      "ANGAS1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 30
+      },
+      "ANGAS2": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 20
+      },
+      "ANGAST1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 50
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "APPIN": {
+    "station_id": "APPIN",
+    "display_name": "Appin",
+    "location": {
+      "state": "NSW",
+      "postcode": 2560,
+      "latitude": -34.210868,
+      "longitude": 150.792711
+    },
+    "duid_data": {
+      "APPIN": {
+        "fuel_tech": "gas_wcmg",
+        "registered_capacity": 55
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "APS": {
+    "station_id": "APS",
+    "display_name": "Angelsea",
+    "location": {
+      "state": "VIC",
+      "postcode": 3230,
+      "latitude": -38.389031,
+      "longitude": 144.180589
+    },
+    "duid_data": {
+      "APS": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 165
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2015-09-01"
+    }
+  },
+  "ARWF": {
+    "station_id": "ARWF",
+    "display_name": "Ararat",
+    "location": {
+      "state": "VIC",
+      "postcode": 3377,
+      "latitude": -37.263393,
+      "longitude": 143.08211599999998
+    },
+    "duid_data": {
+      "ARWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 241.59
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "AWABAREF": {
+    "station_id": "AWABAREF",
+    "display_name": "Awaba",
+    "location": {
+      "state": "NSW",
+      "postcode": 2283,
+      "latitude": -33.023339,
+      "longitude": 151.551228
+    },
+    "duid_data": {
+      "AWABAREF": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2019-04-01"
+    }
+  },
+  "B2PS": {
+    "station_id": "B2PS",
+    "display_name": "Braemar 2",
+    "location": {
+      "state": "QLD",
+      "postcode": 4505,
+      "latitude": -27.1098726737727,
+      "longitude": 150.90765329885
+    },
+    "duid_data": {
+      "BRAEMAR5": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 173
+      },
+      "BRAEMAR6": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 173
+      },
+      "BRAEMAR7": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 173
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BAKING": {
+    "station_id": "BAKING",
+    "display_name": "Baking Board",
+    "location": {
+      "state": "QLD",
+      "postcode": 4413,
+      "latitude": -26.721165999999997,
+      "longitude": 150.55417
+    },
+    "duid_data": {
+      "BAKING1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 17
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BALBESS": {
+    "station_id": "BALBESS",
+    "display_name": "Ballarat Battery",
+    "location": {
+      "state": "VIC",
+      "postcode": 3352,
+      "latitude": -37.567452,
+      "longitude": 143.85274099999998
+    },
+    "duid_data": {
+      "BALBG1": {
+        "fuel_tech": "battery_discharging",
+        "registered_capacity": 30
+      },
+      "BALBL1": {
+        "fuel_tech": "battery_charging",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BANKSPT": {
+    "station_id": "BANKSPT",
+    "display_name": "Bankstown Sports Club",
+    "location": {
+      "state": "NSW",
+      "postcode": 220,
+      "latitude": -33.919998,
+      "longitude": 151.033742
+    },
+    "duid_data": {
+      "BANKSPT1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2018-03-12"
+    }
+  },
+  "BANNSP": {
+    "station_id": "BANNSP",
+    "display_name": "Bannerton",
+    "location": {
+      "state": "VIC",
+      "postcode": 3549,
+      "latitude": -34.67263,
+      "longitude": 142.75036200000002
+    },
+    "duid_data": {
+      "BANN1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 50
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BAPS": {
+    "station_id": "BAPS",
+    "display_name": "Banimboola",
+    "location": {
+      "state": "VIC",
+      "postcode": 3701,
+      "latitude": -36.534524,
+      "longitude": 147.45978799999997
+    },
+    "duid_data": {
+      "BAPS": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 12
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BARCALDN": {
+    "station_id": "BARCALDN",
+    "display_name": "Barcaldine",
+    "location": {
+      "state": "QLD",
+      "postcode": 4002,
+      "latitude": -23.5521705751292,
+      "longitude": 145.31485121010098
+    },
+    "duid_data": {
+      "BARCALDN": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 37
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BARCSF": {
+    "station_id": "BARCSF",
+    "display_name": "Barcaldine",
+    "location": {
+      "state": "QLD",
+      "postcode": 4725,
+      "latitude": -23.547333,
+      "longitude": 145.318972
+    },
+    "duid_data": {
+      "BARCSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 10
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BARKIPS": {
+    "station_id": "BARKIPS",
+    "display_name": "Barker Inlet",
+    "location": {
+      "state": "SA",
+      "postcode": 5960,
+      "latitude": -34.804,
+      "longitude": 138.524
+    },
+    "duid_data": {
+      "BARKIPS1": {
+        "fuel_tech": "gas_recip",
+        "registered_capacity": 211
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BARRON": {
+    "station_id": "BARRON",
+    "display_name": "Barron Gorge",
+    "location": {
+      "state": "QLD",
+      "postcode": 4870,
+      "latitude": -16.8507701285363,
+      "longitude": 145.64704928388701
+    },
+    "duid_data": {
+      "BARRON-1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 30
+      },
+      "BARRON-2": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BASTYAN": {
+    "station_id": "BASTYAN",
+    "display_name": "Bastyan",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.7362309059766,
+      "longitude": 145.531588505673
+    },
+    "duid_data": {
+      "BASTYAN": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 80
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BAYSW": {
+    "station_id": "BAYSW",
+    "display_name": "Bayswater",
+    "location": {
+      "state": "NSW",
+      "postcode": 2140,
+      "latitude": -32.3935017885229,
+      "longitude": 150.953963043732
+    },
+    "duid_data": {
+      "BW01": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 660
+      },
+      "BW02": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 660
+      },
+      "BW03": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 660
+      },
+      "BW04": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 660
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BBASEHOS": {
+    "station_id": "BBASEHOS",
+    "display_name": "Ballarat Hospital",
+    "location": {
+      "state": "VIC",
+      "postcode": 3350,
+      "latitude": -37.558774,
+      "longitude": 143.847247
+    },
+    "duid_data": {
+      "BBASEHOS": {
+        "fuel_tech": "gas_recip",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BBDISEL1": {
+    "station_id": "BBDISEL1",
+    "display_name": "Bell Bay",
+    "location": {
+      "state": "TAS",
+      "postcode": 7253,
+      "latitude": -41.127009,
+      "longitude": 146.874083
+    },
+    "duid_data": {
+      "BBDISEL1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 75
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-08-23"
+    }
+  },
+  "BBP31": {
+    "station_id": "BBP31",
+    "display_name": "Bell Bay Three",
+    "location": {
+      "state": "TAS",
+      "postcode": 7253,
+      "latitude": -41.139323562966396,
+      "longitude": 146.905521847101
+    },
+    "duid_data": {
+      "BBTHREE1": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 35
+      },
+      "BBTHREE2": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 35
+      },
+      "BBTHREE3": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 35
+      },
+      "TVPP104": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 58
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BDONGHYD": {
+    "station_id": "BDONGHYD",
+    "display_name": "Burrendong",
+    "location": {
+      "state": "NSW",
+      "postcode": 2820,
+      "latitude": -32.664646999999995,
+      "longitude": 149.108016
+    },
+    "duid_data": {
+      "BDONGHYD": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 19
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BELLBAY": {
+    "station_id": "BELLBAY",
+    "display_name": "Bell Bay",
+    "location": {
+      "state": "TAS",
+      "postcode": 7253,
+      "latitude": -41.141944,
+      "longitude": 146.9025
+    },
+    "duid_data": {
+      "BELLBAY1": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 120
+      },
+      "BELLBAY2": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 120
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2010-07-06"
+    }
+  },
+  "BERWICK": {
+    "station_id": "BERWICK",
+    "display_name": "Berwick",
+    "location": {
+      "state": "VIC",
+      "postcode": 3804,
+      "latitude": -37.940819,
+      "longitude": 145.236257
+    },
+    "duid_data": {
+      "BERWICK": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 7
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "VIC1"
+  },
+  "BERYLSF": {
+    "station_id": "BERYLSF",
+    "display_name": "Beryl",
+    "location": {
+      "state": "NSW",
+      "postcode": 2582,
+      "latitude": -32.347501,
+      "longitude": 149.460738
+    },
+    "duid_data": {
+      "BERYLSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 98
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BHILLGT": {
+    "station_id": "BHILLGT",
+    "display_name": "Broken Hill",
+    "location": {
+      "state": "NSW",
+      "postcode": 2880,
+      "latitude": -31.9863131909747,
+      "longitude": 141.420620039361
+    },
+    "duid_data": {
+      "GB01": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 50
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BHWF": {
+    "station_id": "BHWF",
+    "display_name": "Bald Hills",
+    "location": {
+      "state": "VIC",
+      "postcode": 3956,
+      "latitude": -38.7581889808652,
+      "longitude": 145.95606244657802
+    },
+    "duid_data": {
+      "BALDHWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 59
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BLUFF": {
+    "station_id": "BLUFF",
+    "display_name": "The Bluff",
+    "location": {
+      "state": "SA",
+      "postcode": 5419,
+      "latitude": -33.3677405026772,
+      "longitude": 138.79378986166
+    },
+    "duid_data": {
+      "BLUFF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 52.5
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BLULAKE": {
+    "station_id": "BLULAKE",
+    "display_name": "Blue Lake Milling",
+    "location": {
+      "state": "SA",
+      "postcode": 5268,
+      "latitude": -36.316596999999994,
+      "longitude": 140.75757099999998
+    },
+    "duid_data": {
+      "BLULAKE1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2018-03-12"
+    }
+  },
+  "BNGSF1": {
+    "station_id": "BNGSF1",
+    "display_name": "Bungala One",
+    "location": {
+      "state": "SA",
+      "postcode": 5700,
+      "latitude": -32.423316,
+      "longitude": 137.841798
+    },
+    "duid_data": {
+      "BNGSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 135
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BNGSF2": {
+    "station_id": "BNGSF2",
+    "display_name": "Bungala Two",
+    "location": {
+      "state": "SA",
+      "postcode": 5700,
+      "latitude": -32.406993,
+      "longitude": 137.840933
+    },
+    "duid_data": {
+      "BNGSF2": {
+        "fuel_tech": "solar",
+        "registered_capacity": 135
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BOCOROCK": {
+    "station_id": "BOCOROCK",
+    "display_name": "Boco Rock",
+    "location": {
+      "state": "NSW",
+      "postcode": 2630,
+      "latitude": -36.574526757506106,
+      "longitude": 149.12486288728599
+    },
+    "duid_data": {
+      "BOCORWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 113
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BODWF": {
+    "station_id": "BODWF",
+    "display_name": "Bodangora",
+    "location": {
+      "state": "NSW",
+      "postcode": 2802,
+      "latitude": -32.407128,
+      "longitude": 149.04133000000002
+    },
+    "duid_data": {
+      "BODWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 113
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BOLIVAR": {
+    "station_id": "BOLIVAR",
+    "display_name": "Bolivar Waste Water Treatment",
+    "location": {
+      "state": "SA",
+      "postcode": 5110,
+      "latitude": -34.495482,
+      "longitude": 138.387641
+    },
+    "duid_data": {
+      "BOLIVAR1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 10
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BOMENSF": {
+    "station_id": "BOMENSF",
+    "display_name": "Bomen",
+    "location": {
+      "state": "NSW",
+      "postcode": 2650,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "BOMENSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 121
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BPLANDF": {
+    "station_id": "BPLANDF",
+    "display_name": "Browns Plains",
+    "location": {
+      "state": "QLD",
+      "postcode": 4118,
+      "latitude": -27.674584000000003,
+      "longitude": 153.068499
+    },
+    "duid_data": {
+      "BPLANDF1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 2
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BRAEMARA": {
+    "station_id": "BRAEMARA",
+    "display_name": "Braemar",
+    "location": {
+      "state": "QLD",
+      "postcode": 4406,
+      "latitude": -27.111668775911003,
+      "longitude": 150.907647496929
+    },
+    "duid_data": {
+      "BRAEMAR1": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 168
+      },
+      "BRAEMAR2": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 168
+      },
+      "BRAEMAR3": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 168
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BROADMDW": {
+    "station_id": "BROADMDW",
+    "display_name": "Broadmeadows",
+    "location": {
+      "state": "VIC",
+      "postcode": 3047,
+      "latitude": -37.685081,
+      "longitude": 144.96611399999998
+    },
+    "duid_data": {
+      "BROADMDW": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 5
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BROKENH": {
+    "station_id": "BROKENH",
+    "display_name": "Broken Hill",
+    "location": {
+      "state": "NSW",
+      "postcode": 2880,
+      "latitude": -31.988905,
+      "longitude": 141.391547
+    },
+    "duid_data": {
+      "BROKENH1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 27
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BROOKLYN": {
+    "station_id": "BROOKLYN",
+    "display_name": "Brooklyn",
+    "location": {
+      "state": "VIC",
+      "postcode": 3025,
+      "latitude": -37.818597,
+      "longitude": 144.82849199999998
+    },
+    "duid_data": {
+      "BROOKLYN": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 3
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BROWNMT": {
+    "station_id": "BROWNMT",
+    "display_name": "Brown Mountain",
+    "location": {
+      "state": "NSW",
+      "postcode": 2550,
+      "latitude": -36.594993,
+      "longitude": 149.473997
+    },
+    "duid_data": {
+      "BROWNMT": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 5
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BULGANA": {
+    "station_id": "BULGANA",
+    "display_name": "Bulgana Green  Hub",
+    "location": {
+      "state": "VIC",
+      "postcode": 3384,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "BULGANA1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 87
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BURRIN": {
+    "station_id": "BURRIN",
+    "display_name": "Burrinjuck",
+    "location": {
+      "state": "NSW",
+      "postcode": 2000,
+      "latitude": -35.003532219190895,
+      "longitude": 148.57989053933
+    },
+    "duid_data": {
+      "BURRIN": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 27
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BUTLERSG": {
+    "station_id": "BUTLERSG",
+    "display_name": "Butlers Gorge",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -42.2671066306884,
+      "longitude": 146.262126696147
+    },
+    "duid_data": {
+      "BUTLERSG": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 15
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BWTR1": {
+    "station_id": "BWTR1",
+    "display_name": "Broadwater",
+    "location": {
+      "state": "NSW",
+      "postcode": 2472,
+      "latitude": -29.016483,
+      "longitude": 153.44575600000002
+    },
+    "duid_data": {
+      "BWTR1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 38
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CALLIDEC1": {
+    "station_id": "CALLIDEC1",
+    "display_name": "Callide C",
+    "location": {
+      "state": "QLD",
+      "postcode": 4715,
+      "latitude": -24.347222,
+      "longitude": 150.608611
+    },
+    "duid_data": {
+      "CPP_3": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 420
+      },
+      "CPP_4": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 420
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CANUNDA1": {
+    "station_id": "CANUNDA1",
+    "display_name": "Canunda",
+    "location": {
+      "state": "SA",
+      "postcode": 5280,
+      "latitude": -37.6983027777778,
+      "longitude": 140.383633333333
+    },
+    "duid_data": {
+      "CNUNDAWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 46
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CAPTL_WF": {
+    "station_id": "CAPTL_WF",
+    "display_name": "Capital",
+    "location": {
+      "state": "NSW",
+      "postcode": 2621,
+      "latitude": -35.123534200872996,
+      "longitude": 149.500248815014
+    },
+    "duid_data": {
+      "CAPTL_WF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 140
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CATHROCK": {
+    "station_id": "CATHROCK",
+    "display_name": "Cathedral Rocks",
+    "location": {
+      "state": "SA",
+      "postcode": null,
+      "latitude": -34.8487411412149,
+      "longitude": 135.592648854827
+    },
+    "duid_data": {
+      "CATHROCK": {
+        "fuel_tech": "wind",
+        "registered_capacity": 66
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CBWF": {
+    "station_id": "CBWF",
+    "display_name": "Coonoer Bridge",
+    "location": {
+      "state": "VIC",
+      "postcode": null,
+      "latitude": -36.472722,
+      "longitude": 143.322039
+    },
+    "duid_data": {
+      "CBWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 19.8
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CESF": {
+    "station_id": "CESF",
+    "display_name": "Capital East",
+    "location": {
+      "state": "NSW",
+      "postcode": 2621,
+      "latitude": -35.180684,
+      "longitude": 149.546482
+    },
+    "duid_data": {
+      "CESF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CETHANA": {
+    "station_id": "CETHANA",
+    "display_name": "Cethana",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.4798517889387,
+      "longitude": 146.13447195282302
+    },
+    "duid_data": {
+      "CETHANA": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 85
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CHALLWF": {
+    "station_id": "CHALLWF",
+    "display_name": "Challicum Hills",
+    "location": {
+      "state": "VIC",
+      "postcode": 3375,
+      "latitude": -37.395465970035204,
+      "longitude": 143.104590414104
+    },
+    "duid_data": {
+      "CHALLHWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 52
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CHILDSF": {
+    "station_id": "CHILDSF",
+    "display_name": "Childers",
+    "location": {
+      "state": "QLD",
+      "postcode": 4660,
+      "latitude": -25.295026999999997,
+      "longitude": 152.403674
+    },
+    "duid_data": {
+      "CHILDSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 64
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CHPSTWF": {
+    "station_id": "CHPSTWF",
+    "display_name": "Chepstowe",
+    "location": {
+      "state": "VIC",
+      "postcode": 3351,
+      "latitude": -37.596503000000006,
+      "longitude": 143.499582
+    },
+    "duid_data": {
+      "CHPSTWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 6
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CHYTWF": {
+    "station_id": "CHYTWF",
+    "display_name": "Cherry Tree",
+    "location": {
+      "state": "VIC",
+      "postcode": 3660,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "CHYTWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 57
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CLARESF": {
+    "station_id": "CLARESF",
+    "display_name": "Clare",
+    "location": {
+      "state": "QLD",
+      "postcode": 4807,
+      "latitude": -19.83977,
+      "longitude": 147.21055
+    },
+    "duid_data": {
+      "CLARESF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 110
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CLAYTON": {
+    "station_id": "CLAYTON",
+    "display_name": "Clayton",
+    "location": {
+      "state": "VIC",
+      "postcode": 3169,
+      "latitude": -37.950618,
+      "longitude": 145.119681
+    },
+    "duid_data": {
+      "CLAYTON": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 11
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CLEMGPWF": {
+    "station_id": "CLEMGPWF",
+    "display_name": "Clements Gap",
+    "location": {
+      "state": "SA",
+      "postcode": 5523,
+      "latitude": -33.4897731866514,
+      "longitude": 138.11169493851003
+    },
+    "duid_data": {
+      "CLEMGPWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 57
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CLERMSF": {
+    "station_id": "CLERMSF",
+    "display_name": "Clermont",
+    "location": {
+      "state": "QLD",
+      "postcode": 4721,
+      "latitude": -22.8394058,
+      "longitude": 147.5460307
+    },
+    "duid_data": {
+      "CLERMSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 92
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CLOVER": {
+    "station_id": "CLOVER",
+    "display_name": "Clover",
+    "location": {
+      "state": "VIC",
+      "postcode": 3699,
+      "latitude": -36.785150242910596,
+      "longitude": 147.21951686434602
+    },
+    "duid_data": {
+      "CLOVER": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 29
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CLUNY": {
+    "station_id": "CLUNY",
+    "display_name": "Cluny",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -42.5062285725933,
+      "longitude": 146.68112292844998
+    },
+    "duid_data": {
+      "CLUNY": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 19
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CODRGTON": {
+    "station_id": "CODRGTON",
+    "display_name": "Codrington",
+    "location": {
+      "state": "VIC",
+      "postcode": 3285,
+      "latitude": -38.2828746908265,
+      "longitude": 141.95496017677
+    },
+    "duid_data": {
+      "CODRNGTON": {
+        "fuel_tech": "wind",
+        "registered_capacity": 18
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "COLEASF": {
+    "station_id": "COLEASF",
+    "display_name": "Coleambally",
+    "location": {
+      "state": "NSW",
+      "postcode": 2707,
+      "latitude": -34.759494000000004,
+      "longitude": 145.92983999999998
+    },
+    "duid_data": {
+      "COLEASF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 180
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "COLNSV": {
+    "station_id": "COLNSV",
+    "display_name": "Collinsville",
+    "location": {
+      "state": "QLD",
+      "postcode": 4804,
+      "latitude": -20.543332999999997,
+      "longitude": 147.806944
+    },
+    "duid_data": {
+      "COLNSV_1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 30
+      },
+      "COLNSV_2": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 30
+      },
+      "COLNSV_3": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 30
+      },
+      "COLNSV_4": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 30
+      },
+      "COLNSV_5": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 66
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2013-01-01"
+    }
+  },
+  "COLONGRA": {
+    "station_id": "COLONGRA",
+    "display_name": "Colongra",
+    "location": {
+      "state": "NSW",
+      "postcode": 2262,
+      "latitude": -33.2087809607995,
+      "longitude": 151.543540042872
+    },
+    "duid_data": {
+      "CG1": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 181
+      },
+      "CG2": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 181
+      },
+      "CG3": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 181
+      },
+      "CG4": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 181
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CONDONG1": {
+    "station_id": "CONDONG1",
+    "display_name": "Condong",
+    "location": {
+      "state": "NSW",
+      "postcode": 2484,
+      "latitude": -28.314766,
+      "longitude": 153.433808
+    },
+    "duid_data": {
+      "CONDONG1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "COOPGWF": {
+    "station_id": "COOPGWF",
+    "display_name": "Coopers Gap",
+    "location": {
+      "state": "QLD",
+      "postcode": 4610,
+      "latitude": -26.7170038,
+      "longitude": 151.4491769
+    },
+    "duid_data": {
+      "COOPGWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 452
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "COPTNHYD": {
+    "station_id": "COPTNHYD",
+    "display_name": "Copeton",
+    "location": {
+      "state": "NSW",
+      "postcode": 2360,
+      "latitude": -29.907544,
+      "longitude": 150.930235
+    },
+    "duid_data": {
+      "COPTNHYD": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 22.5
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "NSW1"
+  },
+  "CORIO": {
+    "station_id": "CORIO",
+    "display_name": "Corio",
+    "location": {
+      "state": "VIC",
+      "postcode": 3241,
+      "latitude": -38.059048,
+      "longitude": 144.404905
+    },
+    "duid_data": {
+      "CORIO1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CPSA": {
+    "station_id": "CPSA",
+    "display_name": "Condamine  A",
+    "location": {
+      "state": "QLD",
+      "postcode": 4415,
+      "latitude": -26.6666729324806,
+      "longitude": 150.268581153696
+    },
+    "duid_data": {
+      "CPSA": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 143
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CROOKWF2": {
+    "station_id": "CROOKWF2",
+    "display_name": "Crookwell 2",
+    "location": {
+      "state": "NSW",
+      "postcode": 2583,
+      "latitude": -34.547676,
+      "longitude": 149.589254
+    },
+    "duid_data": {
+      "CROOKWF2": {
+        "fuel_tech": "wind",
+        "registered_capacity": 96
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CROWLWF": {
+    "station_id": "CROWLWF",
+    "display_name": "Crowlands",
+    "location": {
+      "state": "VIC",
+      "postcode": 3377,
+      "latitude": -36.97615,
+      "longitude": 143.097998
+    },
+    "duid_data": {
+      "CROWLWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 79
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CSPVPS": {
+    "station_id": "CSPVPS",
+    "display_name": "Collinsville",
+    "location": {
+      "state": "QLD",
+      "postcode": 4804,
+      "latitude": -20.55714,
+      "longitude": 147.820552
+    },
+    "duid_data": {
+      "CSPVPS1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 42
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CTHLWF": {
+    "station_id": "CTHLWF",
+    "display_name": "Cattle Hill",
+    "location": {
+      "state": "TAS",
+      "postcode": 7030,
+      "latitude": -42.1548445,
+      "longitude": 146.6946935
+    },
+    "duid_data": {
+      "CTHLWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 148
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CULLERIN": {
+    "station_id": "CULLERIN",
+    "display_name": "Cullerin Range",
+    "location": {
+      "state": "NSW",
+      "postcode": 2581,
+      "latitude": -34.7509945681949,
+      "longitude": 149.38102679924802
+    },
+    "duid_data": {
+      "CULLRGWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "DAANDINE": {
+    "station_id": "DAANDINE",
+    "display_name": "Daandine",
+    "location": {
+      "state": "QLD",
+      "postcode": 4405,
+      "latitude": -27.0862943709476,
+      "longitude": 150.94252770215
+    },
+    "duid_data": {
+      "DAANDINE": {
+        "fuel_tech": "gas_recip",
+        "registered_capacity": 33
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "DALNTH": {
+    "station_id": "DALNTH",
+    "display_name": "Dalrymple North Battery",
+    "location": {
+      "state": "SA",
+      "postcode": 5582,
+      "latitude": -34.888446,
+      "longitude": 137.75811399999998
+    },
+    "duid_data": {
+      "DALNTH01": {
+        "fuel_tech": "battery_discharging",
+        "registered_capacity": 30
+      },
+      "DALNTHL1": {
+        "fuel_tech": "battery_charging",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "DARTM": {
+    "station_id": "DARTM",
+    "display_name": "Dartmouth",
+    "location": {
+      "state": "VIC",
+      "postcode": 3699,
+      "latitude": -36.5552897653927,
+      "longitude": 147.519872277055
+    },
+    "duid_data": {
+      "DARTM1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 150
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "DAYDSF": {
+    "station_id": "DAYDSF",
+    "display_name": "Daydream",
+    "location": {
+      "state": "QLD",
+      "postcode": 4804,
+      "latitude": -20.512804,
+      "longitude": 147.691968
+    },
+    "duid_data": {
+      "DAYDSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 79
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "DDPS1": {
+    "station_id": "DDPS1",
+    "display_name": "Darling Downs",
+    "location": {
+      "state": "QLD",
+      "postcode": 4406,
+      "latitude": -27.1168512752019,
+      "longitude": 150.89539128796198
+    },
+    "duid_data": {
+      "DDPS1": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 121
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "DDSF": {
+    "station_id": "DDSF",
+    "display_name": "Darling Downs",
+    "location": {
+      "state": "QLD",
+      "postcode": 4406,
+      "latitude": -27.112,
+      "longitude": 150.8819
+    },
+    "duid_data": {
+      "DDSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 121
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "DEIBDL": {
+    "station_id": "DEIBDL",
+    "display_name": "Bairnsdale",
+    "location": {
+      "state": "VIC",
+      "postcode": 3875,
+      "latitude": -37.842230501524796,
+      "longitude": 147.56372527022
+    },
+    "duid_data": {
+      "BDL01": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 46
+      },
+      "BDL02": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 46
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "DEVILS_G": {
+    "station_id": "DEVILS_G",
+    "display_name": "Devils Gate",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.349924712473296,
+      "longitude": 146.262708994396
+    },
+    "duid_data": {
+      "DEVILS_G": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 60
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "DRYCGT": {
+    "station_id": "DRYCGT",
+    "display_name": "Dry Creek",
+    "location": {
+      "state": "SA",
+      "postcode": 5094,
+      "latitude": -34.8472931778913,
+      "longitude": 138.582297039723
+    },
+    "duid_data": {
+      "DRYCGT1": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 52
+      },
+      "DRYCGT2": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 52
+      },
+      "DRYCGT3": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 52
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "DUNDWF": {
+    "station_id": "DUNDWF",
+    "display_name": "Dundonnell",
+    "location": {
+      "state": "VIC",
+      "postcode": 3272,
+      "latitude": -37.8638943,
+      "longitude": 142.94345380000001
+    },
+    "duid_data": {
+      "DUNDWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 168
+      },
+      "DUNDWF2": {
+        "fuel_tech": "wind",
+        "registered_capacity": 46
+      },
+      "DUNDWF3": {
+        "fuel_tech": "wind",
+        "registered_capacity": 121
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "EASTCRK": {
+    "station_id": "EASTCRK",
+    "display_name": "Eastern Creek",
+    "location": {
+      "state": "NSW",
+      "postcode": 2766,
+      "latitude": -33.815468,
+      "longitude": 150.854307
+    },
+    "duid_data": {
+      "EASTCRK": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 5
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "EASTCRK2": {
+    "station_id": "EASTCRK2",
+    "display_name": "Eastern Creek 2",
+    "location": {
+      "state": "NSW",
+      "postcode": 2766,
+      "latitude": -33.815468,
+      "longitude": 150.854307
+    },
+    "duid_data": {
+      "EASTCRK2": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 8.984
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "EDLRGNRD": {
+    "station_id": "EDLRGNRD",
+    "display_name": "Roghan Road",
+    "location": {
+      "state": "QLD",
+      "postcode": 4018,
+      "latitude": -27.342062,
+      "longitude": 153.04949399999998
+    },
+    "duid_data": {
+      "EDLRGNRD": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 2
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2019-07-26"
+    }
+  },
+  "EILDON": {
+    "station_id": "EILDON",
+    "display_name": "Eildon",
+    "location": {
+      "state": "VIC",
+      "postcode": 3699,
+      "latitude": -37.2212623147345,
+      "longitude": 145.92096602966998
+    },
+    "duid_data": {
+      "EILDON1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 60
+      },
+      "EILDON2": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 60
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "EILDONPD": {
+    "station_id": "EILDONPD",
+    "display_name": "Eildon (Run of River)",
+    "location": {
+      "state": "VIC",
+      "postcode": 3713,
+      "latitude": -37.221773999999996,
+      "longitude": 145.922582
+    },
+    "duid_data": {
+      "EILDON3": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 5
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "ELAINEWF": {
+    "station_id": "ELAINEWF",
+    "display_name": "Elaine",
+    "location": {
+      "state": "VIC",
+      "postcode": 3334,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "ELAINWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 83
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "EMERASF": {
+    "station_id": "EMERASF",
+    "display_name": "Emerald",
+    "location": {
+      "state": "QLD",
+      "postcode": 4720,
+      "latitude": -23.50879,
+      "longitude": 148.128017
+    },
+    "duid_data": {
+      "EMERASF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 88
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "ENERGYB": {
+    "station_id": "ENERGYB",
+    "display_name": "Energy Brix",
+    "location": {
+      "state": "VIC",
+      "postcode": 3840,
+      "latitude": -38.254444,
+      "longitude": 146.413611
+    },
+    "duid_data": {
+      "MOR1": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 90
+      },
+      "MOR2": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 30
+      },
+      "MOR3": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 75
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-03-11"
+    }
+  },
+  "ERARING": {
+    "station_id": "ERARING",
+    "display_name": "Eraring",
+    "location": {
+      "state": "NSW",
+      "postcode": 2264,
+      "latitude": -33.0615480516907,
+      "longitude": 151.524612285081
+    },
+    "duid_data": {
+      "ER01": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 720
+      },
+      "ER02": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 720
+      },
+      "ER03": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 720
+      },
+      "ER04": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 720
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "ERGT01": {
+    "station_id": "ERGT01",
+    "display_name": "Eraring",
+    "location": {
+      "state": "NSW",
+      "postcode": 2264,
+      "latitude": -33.062117,
+      "longitude": 151.517224
+    },
+    "duid_data": {
+      "ERGT01": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 42
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "FINLEYSF": {
+    "station_id": "FINLEYSF",
+    "display_name": "Finley",
+    "location": {
+      "state": "NSW",
+      "postcode": 2713,
+      "latitude": -35.64421,
+      "longitude": 145.508644
+    },
+    "duid_data": {
+      "FINLYSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 162
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "FISHER": {
+    "station_id": "FISHER",
+    "display_name": "Fisher",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.6726623378254,
+      "longitude": 146.268739375245
+    },
+    "duid_data": {
+      "FISHER": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 43
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "G/STONE": {
+    "station_id": "G/STONE",
+    "display_name": "Gladstone",
+    "location": {
+      "state": "QLD",
+      "postcode": 4680,
+      "latitude": -23.8487410267305,
+      "longitude": 151.22078674103702
+    },
+    "duid_data": {
+      "GSTONE1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 280
+      },
+      "GSTONE2": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 280
+      },
+      "GSTONE3": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 280
+      },
+      "GSTONE4": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 280
+      },
+      "GSTONE5": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 280
+      },
+      "GSTONE6": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 280
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GANNBESS": {
+    "station_id": "GANNBESS",
+    "display_name": "Gannawarra Battery",
+    "location": {
+      "state": "VIC",
+      "postcode": 3579,
+      "latitude": -35.735056,
+      "longitude": 143.77946200000002
+    },
+    "duid_data": {
+      "GANNBG1": {
+        "fuel_tech": "battery_discharging",
+        "registered_capacity": 30
+      },
+      "GANNBL1": {
+        "fuel_tech": "battery_charging",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GANNSF": {
+    "station_id": "GANNSF",
+    "display_name": "Gannawarra",
+    "location": {
+      "state": "VIC",
+      "postcode": 3579,
+      "latitude": -35.73,
+      "longitude": 143.7711
+    },
+    "duid_data": {
+      "GANNSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 25
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GEORGTWN": {
+    "station_id": "GEORGTWN",
+    "display_name": "George Town",
+    "location": {
+      "state": "TAS",
+      "postcode": 7253,
+      "latitude": -41.091063,
+      "longitude": 146.893204
+    },
+    "duid_data": {
+      "GEORGTN1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-06-27"
+    }
+  },
+  "GERMCRK": {
+    "station_id": "GERMCRK",
+    "display_name": "German Creek",
+    "location": {
+      "state": "QLD",
+      "postcode": 4746,
+      "latitude": -22.928526,
+      "longitude": 148.549097
+    },
+    "duid_data": {
+      "GERMCRK": {
+        "fuel_tech": "gas_wcmg",
+        "registered_capacity": 45
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GLBWNHYD": {
+    "station_id": "GLBWNHYD",
+    "display_name": "Glenbawn",
+    "location": {
+      "state": "NSW",
+      "postcode": 2337,
+      "latitude": -32.107937,
+      "longitude": 150.999481
+    },
+    "duid_data": {
+      "GLBWNHYD": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 5.5
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "NSW1"
+  },
+  "GLENMAGG": {
+    "station_id": "GLENMAGG",
+    "display_name": "Glenmaggie",
+    "location": {
+      "state": "VIC",
+      "postcode": 3858,
+      "latitude": -37.904835999999996,
+      "longitude": 146.800388
+    },
+    "duid_data": {
+      "GLENMAG1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 4
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GLENNCRK": {
+    "station_id": "GLENNCRK",
+    "display_name": "Glennies Creek",
+    "location": {
+      "state": "NSW",
+      "postcode": 2330,
+      "latitude": -32.464343,
+      "longitude": 151.130432
+    },
+    "duid_data": {
+      "GLENNCRK": {
+        "fuel_tech": "gas_wcmg",
+        "registered_capacity": 12
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GOONSF": {
+    "station_id": "GOONSF",
+    "display_name": "Goonumbla",
+    "location": {
+      "state": "NSW",
+      "postcode": 2870,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "GOONSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 85
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GORDON": {
+    "station_id": "GORDON",
+    "display_name": "Gordon",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -42.7401570733513,
+      "longitude": 145.983375290986
+    },
+    "duid_data": {
+      "GORDON": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 432
+      },
+      "GOVILLB1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 25
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GRANGEAV": {
+    "station_id": "GRANGEAV",
+    "display_name": "Grange Avenue",
+    "location": {
+      "state": "NSW",
+      "postcode": 2765,
+      "latitude": -33.713011,
+      "longitude": 150.83316000000002
+    },
+    "duid_data": {
+      "GRANGEAV": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 2
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GRANWF": {
+    "station_id": "GRANWF",
+    "display_name": "Granville Harbour",
+    "location": {
+      "state": "TAS",
+      "postcode": 7469,
+      "latitude": -41.802,
+      "longitude": 145.056
+    },
+    "duid_data": {
+      "GRANWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 111
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GRIFSF": {
+    "station_id": "GRIFSF",
+    "display_name": "Griffith",
+    "location": {
+      "state": "NSW",
+      "postcode": 2680,
+      "latitude": -34.317414,
+      "longitude": 146.120739
+    },
+    "duid_data": {
+      "GRIFSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 27
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GROSV1": {
+    "station_id": "GROSV1",
+    "display_name": "Grosvenor 1",
+    "location": {
+      "state": "QLD",
+      "postcode": 4744,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "GROSV1": {
+        "fuel_tech": "gas_wcmg",
+        "registered_capacity": 21
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GROSV2": {
+    "station_id": "GROSV2",
+    "display_name": "Grosvenor 2",
+    "location": {
+      "state": "QLD",
+      "postcode": 4744,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "GROSV2": {
+        "fuel_tech": "gas_wcmg",
+        "registered_capacity": 15
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GULLRGWF": {
+    "station_id": "GULLRGWF",
+    "display_name": "Gullen Range",
+    "location": {
+      "state": "NSW",
+      "postcode": 2580,
+      "latitude": -34.624511555250805,
+      "longitude": 149.458548623602
+    },
+    "duid_data": {
+      "GULLRSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 10
+      },
+      "GULLRWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 165
+      },
+      "GULLRWF2": {
+        "fuel_tech": "wind",
+        "registered_capacity": 110
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GUNNING": {
+    "station_id": "GUNNING",
+    "display_name": "Gunning",
+    "location": {
+      "state": "NSW",
+      "postcode": 2581,
+      "latitude": -34.676360746605894,
+      "longitude": 149.66443017949499
+    },
+    "duid_data": {
+      "GUNNING1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 47
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HALAMRD": {
+    "station_id": "HALAMRD",
+    "display_name": "Hallam Road",
+    "location": {
+      "state": "VIC",
+      "postcode": 3976,
+      "latitude": -38.052181,
+      "longitude": 145.267798
+    },
+    "duid_data": {
+      "HALAMRD1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 9
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HALLWF": {
+    "station_id": "HALLWF",
+    "display_name": "Hallett 1",
+    "location": {
+      "state": "SA",
+      "postcode": 5419,
+      "latitude": -33.3284341007768,
+      "longitude": 138.704668661635
+    },
+    "duid_data": {
+      "HALLWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 95
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HALLWF2": {
+    "station_id": "HALLWF2",
+    "display_name": "Hallett 2",
+    "location": {
+      "state": "SA",
+      "postcode": 5419,
+      "latitude": -33.5382102938784,
+      "longitude": 138.857214598585
+    },
+    "duid_data": {
+      "HALLWF2": {
+        "fuel_tech": "wind",
+        "registered_capacity": 71
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HAMISF": {
+    "station_id": "HAMISF",
+    "display_name": "Hamilton",
+    "location": {
+      "state": "QLD",
+      "postcode": 4804,
+      "latitude": -20.468593,
+      "longitude": 147.799484
+    },
+    "duid_data": {
+      "HAMISF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 57
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HAUGHT1": {
+    "station_id": "HAUGHT1",
+    "display_name": "Haughton",
+    "location": {
+      "state": "QLD",
+      "postcode": 4809,
+      "latitude": -19.732167999999998,
+      "longitude": 147.07613700000002
+    },
+    "duid_data": {
+      "HAUGHT11": {
+        "fuel_tech": "solar",
+        "registered_capacity": 132
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HAYMSF": {
+    "station_id": "HAYMSF",
+    "display_name": "Hayman",
+    "location": {
+      "state": "QLD",
+      "postcode": 4804,
+      "latitude": -20.536162,
+      "longitude": 147.84606499999998
+    },
+    "duid_data": {
+      "HAYMSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 57
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HAZEL": {
+    "station_id": "HAZEL",
+    "display_name": "Hazelwood",
+    "location": {
+      "state": "VIC",
+      "postcode": 3840,
+      "latitude": -38.2705750514914,
+      "longitude": 146.389794163907
+    },
+    "duid_data": {
+      "HWPS1": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 220
+      },
+      "HWPS2": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 220
+      },
+      "HWPS3": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 200
+      },
+      "HWPS4": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 200
+      },
+      "HWPS5": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 200
+      },
+      "HWPS6": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 200
+      },
+      "HWPS7": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 200
+      },
+      "HWPS8": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 200
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2017-04-01"
+    }
+  },
+  "HEPWIND": {
+    "station_id": "HEPWIND",
+    "display_name": "Hepburn Wind",
+    "location": {
+      "state": "VIC",
+      "postcode": 3461,
+      "latitude": -37.424555,
+      "longitude": 144.115711
+    },
+    "duid_data": {
+      "HEPWIND1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 4
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HEZ": {
+    "station_id": "HEZ",
+    "display_name": "Hunter Economic Zone",
+    "location": {
+      "state": "NSW",
+      "postcode": 2326,
+      "latitude": -32.835481,
+      "longitude": 151.451033
+    },
+    "duid_data": {
+      "HEZ": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 29
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-10-28"
+    }
+  },
+  "HIGHBRY": {
+    "station_id": "HIGHBRY",
+    "display_name": "Highbury",
+    "location": {
+      "state": "SA",
+      "postcode": 5089,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "HIGHBRY1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 2
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-05-19"
+    }
+  },
+  "HLMSEW01": {
+    "station_id": "HLMSEW01",
+    "display_name": "Hallam",
+    "location": {
+      "state": "VIC",
+      "postcode": 3803,
+      "latitude": -38.143332,
+      "longitude": 145.11996399999998
+    },
+    "duid_data": {
+      "HLMSEW01": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HORNSDAL": {
+    "station_id": "HORNSDAL",
+    "display_name": "Hornsdale",
+    "location": {
+      "state": "SA",
+      "postcode": 5460,
+      "latitude": -33.05982,
+      "longitude": 138.537673
+    },
+    "duid_data": {
+      "HDWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 102
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HORNSDAL2": {
+    "station_id": "HORNSDAL2",
+    "display_name": "Hornsdale  2",
+    "location": {
+      "state": "SA",
+      "postcode": 5490,
+      "latitude": -33.05982,
+      "longitude": 138.537673
+    },
+    "duid_data": {
+      "HDWF2": {
+        "fuel_tech": "wind",
+        "registered_capacity": 102
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HORNSDAL3": {
+    "station_id": "HORNSDAL3",
+    "display_name": "Hornsdale  3",
+    "location": {
+      "state": "SA",
+      "postcode": 5490,
+      "latitude": -33.05982,
+      "longitude": 138.537673
+    },
+    "duid_data": {
+      "HDWF3": {
+        "fuel_tech": "wind",
+        "registered_capacity": 112
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HORNSDPR": {
+    "station_id": "HORNSDPR",
+    "display_name": "Hornsdale Power Reserve",
+    "location": {
+      "state": "SA",
+      "postcode": 5490,
+      "latitude": -33.085519,
+      "longitude": 138.52191399999998
+    },
+    "duid_data": {
+      "HPRG1": {
+        "fuel_tech": "battery_discharging",
+        "registered_capacity": 100
+      },
+      "HPRL1": {
+        "fuel_tech": "battery_charging",
+        "registered_capacity": 120
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HUGSF": {
+    "station_id": "HUGSF",
+    "display_name": "Hughenden",
+    "location": {
+      "state": "QLD",
+      "postcode": 4821,
+      "latitude": -20.854794000000002,
+      "longitude": 144.186048
+    },
+    "duid_data": {
+      "HUGSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 10
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HUMENSW": {
+    "station_id": "HUMENSW",
+    "display_name": "Hume (NSW)",
+    "location": {
+      "state": "NSW",
+      "postcode": 2614,
+      "latitude": -36.1063825051951,
+      "longitude": 147.032263443678
+    },
+    "duid_data": {
+      "HUMENSW": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 29
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HUMEV": {
+    "station_id": "HUMEV",
+    "display_name": "Hume (VIC)",
+    "location": {
+      "state": "VIC",
+      "postcode": 3691,
+      "latitude": -36.106887,
+      "longitude": 147.032572
+    },
+    "duid_data": {
+      "HUMEV": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 29
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HUNTVGT": {
+    "station_id": "HUNTVGT",
+    "display_name": "Hunter Valley",
+    "location": {
+      "state": "NSW",
+      "postcode": 2000,
+      "latitude": -32.3899891907919,
+      "longitude": 150.965962887934
+    },
+    "duid_data": {
+      "HVGTS": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 50
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "ICSM": {
+    "station_id": "ICSM",
+    "display_name": "Isis Central Sugar Mill",
+    "location": {
+      "state": "QLD",
+      "postcode": 4660,
+      "latitude": -25.197619,
+      "longitude": 152.206949
+    },
+    "duid_data": {
+      "ICSM": {
+        "fuel_tech": "bioenergy_biomass",
+        "registered_capacity": 25
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "INVICTA": {
+    "station_id": "INVICTA",
+    "display_name": "Invicta Sugar Mill",
+    "location": {
+      "state": "QLD",
+      "postcode": 4809,
+      "latitude": -19.5157903138225,
+      "longitude": 147.106530479438
+    },
+    "duid_data": {
+      "INVICTA": {
+        "fuel_tech": "bioenergy_biomass",
+        "registered_capacity": 50
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "JACKSGUL": {
+    "station_id": "JACKSGUL",
+    "display_name": "Jacks Gully",
+    "location": {
+      "state": "NSW",
+      "postcode": 2570,
+      "latitude": -34.072955,
+      "longitude": 150.74369099999998
+    },
+    "duid_data": {
+      "JACKSGUL": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 2
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "JBUTTERS": {
+    "station_id": "JBUTTERS",
+    "display_name": "John Butters",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -42.1558901868039,
+      "longitude": 145.536508422632
+    },
+    "duid_data": {
+      "JBUTTERS": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 144
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "JEERA": {
+    "station_id": "JEERA",
+    "display_name": "Jeeralang A",
+    "location": {
+      "state": "VIC",
+      "postcode": 3000,
+      "latitude": -38.2751112170371,
+      "longitude": 146.427046429655
+    },
+    "duid_data": {
+      "JLA01": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 51
+      },
+      "JLA02": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 51
+      },
+      "JLA03": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 51
+      },
+      "JLA04": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 51
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "JEERB": {
+    "station_id": "JEERB",
+    "display_name": "Jeeralang B",
+    "location": {
+      "state": "VIC",
+      "postcode": 3000,
+      "latitude": -38.2738445583474,
+      "longitude": 146.424826524902
+    },
+    "duid_data": {
+      "JLB01": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 76
+      },
+      "JLB02": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 76
+      },
+      "JLB03": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 76
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "JNDSHPS": {
+    "station_id": "JNDSHPS",
+    "display_name": "Jindabyne (Mini Hydro)",
+    "location": {
+      "state": "NSW",
+      "postcode": 2627,
+      "latitude": -36.434917999999996,
+      "longitude": 148.63057
+    },
+    "duid_data": {
+      "JNDABNE1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "JOUNAMA": {
+    "station_id": "JOUNAMA",
+    "display_name": "Jounama (Mini Hydro)",
+    "location": {
+      "state": "NSW",
+      "postcode": 2720,
+      "latitude": -35.561274,
+      "longitude": 148.306384
+    },
+    "duid_data": {
+      "JOUNAMA1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 14
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "KAREEYA": {
+    "station_id": "KAREEYA",
+    "display_name": "Kareeya",
+    "location": {
+      "state": "QLD",
+      "postcode": 4854,
+      "latitude": -17.7664558224223,
+      "longitude": 145.576884428941
+    },
+    "duid_data": {
+      "KAREEYA1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 21
+      },
+      "KAREEYA2": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 21
+      },
+      "KAREEYA3": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 21
+      },
+      "KAREEYA4": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 21
+      },
+      "KAREEYA5": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 7
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "KARSF": {
+    "station_id": "KARSF",
+    "display_name": "Karadoc",
+    "location": {
+      "state": "VIC",
+      "postcode": 3500,
+      "latitude": -34.227903999999995,
+      "longitude": 142.28033
+    },
+    "duid_data": {
+      "KARSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 104
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "KEEPIT": {
+    "station_id": "KEEPIT",
+    "display_name": "Keepit",
+    "location": {
+      "state": "NSW",
+      "postcode": 2340,
+      "latitude": -30.87868,
+      "longitude": 150.491876
+    },
+    "duid_data": {
+      "KEEPIT": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 6
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "KIATAWF": {
+    "station_id": "KIATAWF",
+    "display_name": "Kiata",
+    "location": {
+      "state": "VIC",
+      "postcode": 3418,
+      "latitude": -36.397693,
+      "longitude": 141.746827
+    },
+    "duid_data": {
+      "KIATAWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 31
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "KINCUMB": {
+    "station_id": "KINCUMB",
+    "display_name": "Kincumber",
+    "location": {
+      "state": "NSW",
+      "postcode": 2251,
+      "latitude": -33.477111,
+      "longitude": 151.402603
+    },
+    "duid_data": {
+      "KINCUM1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "KOGANCK": {
+    "station_id": "KOGANCK",
+    "display_name": "Kogan Creek",
+    "location": {
+      "state": "QLD",
+      "postcode": null,
+      "latitude": -26.915284998618198,
+      "longitude": 150.748947538925
+    },
+    "duid_data": {
+      "KPP_1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 744
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "KRCCOGEN": {
+    "station_id": "KRCCOGEN",
+    "display_name": "KRC Co-gen",
+    "location": {
+      "state": "QLD",
+      "postcode": 4350,
+      "latitude": -27.573590000000003,
+      "longitude": 151.926883
+    },
+    "duid_data": {
+      "KRCCOGEN": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 5
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2012-12-14"
+    }
+  },
+  "KSP1": {
+    "station_id": "KSP1",
+    "display_name": "Kidston",
+    "location": {
+      "state": "QLD",
+      "postcode": 4871,
+      "latitude": -18.88,
+      "longitude": 144.151
+    },
+    "duid_data": {
+      "KSP1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 50
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LADBROKE": {
+    "station_id": "LADBROKE",
+    "display_name": "Ladbroke Grove",
+    "location": {
+      "state": "SA",
+      "postcode": 5277,
+      "latitude": -37.456183170651,
+      "longitude": 140.782699220365
+    },
+    "duid_data": {
+      "LADBROK1": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 40
+      },
+      "LADBROK2": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 40
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LBBESS": {
+    "station_id": "LBBESS",
+    "display_name": "Lake Bonney Bess1",
+    "location": {
+      "state": "SA",
+      "postcode": 5280,
+      "latitude": -37.7387871,
+      "longitude": 140.3846721
+    },
+    "duid_data": {
+      "LBBG1": {
+        "fuel_tech": "battery_discharging",
+        "registered_capacity": 25
+      },
+      "LBBL1": {}
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LEM_WIL": {
+    "station_id": "LEM_WIL",
+    "display_name": "Lemonthyme/Wilmot",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.483135251403205,
+      "longitude": 146.125337536866
+    },
+    "duid_data": {
+      "LEM_WIL": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 82
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LGAPWF1": {
+    "station_id": "LGAPWF1",
+    "display_name": "Lincoln Gap",
+    "location": {
+      "state": "SA",
+      "postcode": 5700,
+      "latitude": -32.5463326,
+      "longitude": 137.5527629
+    },
+    "duid_data": {
+      "LGAPWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 212.4
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LIDDELL": {
+    "station_id": "LIDDELL",
+    "display_name": "Liddell",
+    "location": {
+      "state": "NSW",
+      "postcode": 2140,
+      "latitude": -32.3690267892295,
+      "longitude": 150.980112150275
+    },
+    "duid_data": {
+      "LD01": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 500
+      },
+      "LD02": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 500
+      },
+      "LD03": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 500
+      },
+      "LD04": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 500
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LILYVASF": {
+    "station_id": "LILYVASF",
+    "display_name": "Lilyvale",
+    "location": {
+      "state": "QLD",
+      "postcode": 4709,
+      "latitude": -23.070504,
+      "longitude": 148.413865
+    },
+    "duid_data": {
+      "LILYSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 118
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LIMOSF2": {
+    "station_id": "LIMOSF2",
+    "display_name": "Limondale  2",
+    "location": {
+      "state": "NSW",
+      "postcode": 2715,
+      "latitude": -34.7755018,
+      "longitude": 143.50804630000002
+    },
+    "duid_data": {
+      "LIMOSF21": {
+        "fuel_tech": "solar",
+        "registered_capacity": 38
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LI_WY_CA": {
+    "station_id": "LI_WY_CA",
+    "display_name": "Catagunya/Liapootah/Wayatinah",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -42.3761311830926,
+      "longitude": 146.509824066027
+    },
+    "duid_data": {
+      "CATAGUN1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 24
+      },
+      "LI_WY_CA": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 173
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LKBONNY1": {
+    "station_id": "LKBONNY1",
+    "display_name": "Lake Bonney  1",
+    "location": {
+      "state": "SA",
+      "postcode": 5280,
+      "latitude": -37.7605043836737,
+      "longitude": 140.40554118305099
+    },
+    "duid_data": {
+      "LKBONNY1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 81
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LKBONNY3": {
+    "station_id": "LKBONNY3",
+    "display_name": "Lake Bonney 3",
+    "location": {
+      "state": "SA",
+      "postcode": 5280,
+      "latitude": -37.7605043836737,
+      "longitude": 140.40554118305099
+    },
+    "duid_data": {
+      "LKBONNY3": {
+        "fuel_tech": "wind",
+        "registered_capacity": 39
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LKBONNY_2": {
+    "station_id": "LKBONNY_2",
+    "display_name": "Lake Bonney 2",
+    "location": {
+      "state": "SA",
+      "postcode": 5280,
+      "latitude": -37.7605043836737,
+      "longitude": 140.40554118305099
+    },
+    "duid_data": {
+      "LKBONNY2": {
+        "fuel_tech": "wind",
+        "registered_capacity": 159
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LK_ECHO": {
+    "station_id": "LK_ECHO",
+    "display_name": "Lake Echo",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -42.253338934193,
+      "longitude": 146.62051476718202
+    },
+    "duid_data": {
+      "LK_ECHO": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 32
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LNGS": {
+    "station_id": "LNGS",
+    "display_name": "Laverton North",
+    "location": {
+      "state": "VIC",
+      "postcode": 3026,
+      "latitude": -37.841693295236794,
+      "longitude": 144.788006154048
+    },
+    "duid_data": {
+      "LNGS1": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 156
+      },
+      "LNGS2": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 156
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LONGFORD": {
+    "station_id": "LONGFORD",
+    "display_name": "Longford",
+    "location": {
+      "state": "VIC",
+      "postcode": 3851,
+      "latitude": -38.223244,
+      "longitude": 147.1631
+    },
+    "duid_data": {
+      "LONGFORD": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 44
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LONSDALE": {
+    "station_id": "LONSDALE",
+    "display_name": "Lonsdale",
+    "location": {
+      "state": "SA",
+      "postcode": 5160,
+      "latitude": -35.109718,
+      "longitude": 138.49096200000002
+    },
+    "duid_data": {
+      "LONSDALE": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 21
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LOYYANGA": {
+    "station_id": "LOYYANGA",
+    "display_name": "Loy Yang A",
+    "location": {
+      "state": "VIC",
+      "postcode": 3844,
+      "latitude": -38.2506223018629,
+      "longitude": 146.57636128850402
+    },
+    "duid_data": {
+      "LYA1": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 560
+      },
+      "LYA2": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 530
+      },
+      "LYA3": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 560
+      },
+      "LYA4": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 560
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LOYYB": {
+    "station_id": "LOYYB",
+    "display_name": "Loy Yang B",
+    "location": {
+      "state": "VIC",
+      "postcode": 3844,
+      "latitude": -38.2536191822701,
+      "longitude": 146.585593179624
+    },
+    "duid_data": {
+      "LOYYB1": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 500
+      },
+      "LOYYB2": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 500
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LRSF": {
+    "station_id": "LRSF",
+    "display_name": "Longreach",
+    "location": {
+      "state": "QLD",
+      "postcode": 4730,
+      "latitude": -23.455048,
+      "longitude": 144.227917
+    },
+    "duid_data": {
+      "LRSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 17
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LUCAS2S2": {
+    "station_id": "LUCAS2S2",
+    "display_name": "Lucas Heights 2",
+    "location": {
+      "state": "NSW",
+      "postcode": 2234,
+      "latitude": -34.044088,
+      "longitude": 150.972475
+    },
+    "duid_data": {
+      "LUCAS2S2": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 5
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LUCASHGT": {
+    "station_id": "LUCASHGT",
+    "display_name": "Lucas Heights 2",
+    "location": {
+      "state": "NSW",
+      "postcode": 2234,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "LUCASHGT": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 12.65
+      }
+    },
+    "status": {
+      "state": "Decommissioned",
+      "date": "2013-02-05"
+    },
+    "region_id": "NSW1"
+  },
+  "MACARTH": {
+    "station_id": "MACARTH",
+    "display_name": "Macarthur",
+    "location": {
+      "state": "VIC",
+      "postcode": 3286,
+      "latitude": -38.043482838344104,
+      "longitude": 142.179080598594
+    },
+    "duid_data": {
+      "MACARTH1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 420
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MACKAY": {
+    "station_id": "MACKAY",
+    "display_name": "Mackay",
+    "location": {
+      "state": "QLD",
+      "postcode": null,
+      "latitude": -21.1444407069939,
+      "longitude": 149.159170667386
+    },
+    "duid_data": {
+      "MACKAYGT": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MACKNTSH": {
+    "station_id": "MACKNTSH",
+    "display_name": "Mackintosh",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.701362999273705,
+      "longitude": 145.646558100718
+    },
+    "duid_data": {
+      "MACKNTSH": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 80
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MANSLR": {
+    "station_id": "MANSLR",
+    "display_name": "Manildra",
+    "location": {
+      "state": "NSW",
+      "postcode": 2865,
+      "latitude": -33.172831,
+      "longitude": 148.71823999999998
+    },
+    "duid_data": {
+      "MANSLR1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 25
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MAROOWF1": {
+    "station_id": "MAROOWF1",
+    "display_name": "Maroona",
+    "location": {
+      "state": "VIC",
+      "postcode": 3377,
+      "latitude": -37.41875,
+      "longitude": 142.82433999999998
+    },
+    "duid_data": {
+      "MAROOWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 6
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MARYRSF": {
+    "station_id": "MARYRSF",
+    "display_name": "Maryrorough",
+    "location": {
+      "state": "QLD",
+      "postcode": 4356,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "MARYRSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 33
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MBAHNTH": {
+    "station_id": "MBAHNTH",
+    "display_name": "Moranbah North",
+    "location": {
+      "state": "QLD",
+      "postcode": 4744,
+      "latitude": -21.978481,
+      "longitude": 148.004809
+    },
+    "duid_data": {
+      "MBAHNTH": {
+        "fuel_tech": "gas_wcmg",
+        "registered_capacity": 63
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MCKAY": {
+    "station_id": "MCKAY",
+    "display_name": "Bogong/Mackay",
+    "location": {
+      "state": "VIC",
+      "postcode": 3699,
+      "latitude": -36.80547095191611,
+      "longitude": 147.22784471544
+    },
+    "duid_data": {
+      "MCKAY1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 53
+      },
+      "MCKAY2": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 53
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MEADOWBK": {
+    "station_id": "MEADOWBK",
+    "display_name": "Meadowbank",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -42.610834503212295,
+      "longitude": 146.84638765481301
+    },
+    "duid_data": {
+      "MEADOWB2": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 24
+      },
+      "MEADOWBK": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 40
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MEWF": {
+    "station_id": "MEWF",
+    "display_name": "Mt Emerald",
+    "location": {
+      "state": "QLD",
+      "postcode": 4880,
+      "latitude": -17.133248000000002,
+      "longitude": 145.38003700000002
+    },
+    "duid_data": {
+      "MEWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 180
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MIDLDPS": {
+    "station_id": "MIDLDPS",
+    "display_name": "Midlands",
+    "location": {
+      "state": "TAS",
+      "postcode": 7209,
+      "latitude": -42.085747,
+      "longitude": 147.274558
+    },
+    "duid_data": {
+      "MIDLDPS1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 6
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MILLMERN": {
+    "station_id": "MILLMERN",
+    "display_name": "Millmerran",
+    "location": {
+      "state": "QLD",
+      "postcode": 4357,
+      "latitude": -27.9616570077391,
+      "longitude": 151.28090983869
+    },
+    "duid_data": {
+      "MPP_1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 426
+      },
+      "MPP_2": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 426
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MINTARO": {
+    "station_id": "MINTARO",
+    "display_name": "Mintaro",
+    "location": {
+      "state": "SA",
+      "postcode": 5415,
+      "latitude": -33.9031486136929,
+      "longitude": 138.73879717507901
+    },
+    "duid_data": {
+      "MINTARO": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 90
+      },
+      "MINTNL1": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 25
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MLSP": {
+    "station_id": "MLSP",
+    "display_name": "Mugga Lane",
+    "location": {
+      "state": "ACT",
+      "postcode": 2900,
+      "latitude": -35.398441,
+      "longitude": 149.14906000000002
+    },
+    "duid_data": {
+      "MLSP1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 12
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MLWF": {
+    "station_id": "MLWF",
+    "display_name": "Mortons Lane",
+    "location": {
+      "state": "VIC",
+      "postcode": 3293,
+      "latitude": -37.8331864361526,
+      "longitude": 142.465288088147
+    },
+    "duid_data": {
+      "MLWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 20
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MM": {
+    "station_id": "MM",
+    "display_name": "Munmorah",
+    "location": {
+      "state": "NSW",
+      "postcode": 2262,
+      "latitude": -33.211781,
+      "longitude": 151.54216100000002
+    },
+    "duid_data": {
+      "MM3": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 300
+      },
+      "MM4": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 300
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2014-05-29"
+    }
+  },
+  "MORANBAH": {
+    "station_id": "MORANBAH",
+    "display_name": "Moranbah",
+    "location": {
+      "state": "QLD",
+      "postcode": 4744,
+      "latitude": -21.962469,
+      "longitude": 148.006004
+    },
+    "duid_data": {
+      "MORANBAH": {
+        "fuel_tech": "gas_recip",
+        "registered_capacity": 13
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MOREESF": {
+    "station_id": "MOREESF",
+    "display_name": "Moree",
+    "location": {
+      "state": "NSW",
+      "postcode": 2400,
+      "latitude": -29.572607,
+      "longitude": 149.861266
+    },
+    "duid_data": {
+      "MOREESF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 57
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MORNW": {
+    "station_id": "MORNW",
+    "display_name": "Mornington Waste Disposal",
+    "location": {
+      "state": "VIC",
+      "postcode": 3941,
+      "latitude": -38.392053999999995,
+      "longitude": 144.85479099999998
+    },
+    "duid_data": {
+      "MORNW": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2018-04-01"
+    }
+  },
+  "MORTLK": {
+    "station_id": "MORTLK",
+    "display_name": "Mortlake",
+    "location": {
+      "state": "VIC",
+      "postcode": 3272,
+      "latitude": -38.0626278266324,
+      "longitude": 142.666330491351
+    },
+    "duid_data": {
+      "MORTLK11": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 283
+      },
+      "MORTLK12": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 283
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MP": {
+    "station_id": "MP",
+    "display_name": "Mt Piper",
+    "location": {
+      "state": "NSW",
+      "postcode": 2847,
+      "latitude": -33.3607151085441,
+      "longitude": 150.03569813637
+    },
+    "duid_data": {
+      "MP1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 700
+      },
+      "MP2": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 700
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MSTUART": {
+    "station_id": "MSTUART",
+    "display_name": "Mt Stuart",
+    "location": {
+      "state": "QLD",
+      "postcode": 4002,
+      "latitude": -19.3371562032237,
+      "longitude": 146.851238997871
+    },
+    "duid_data": {
+      "MSTUART1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 144
+      },
+      "MSTUART2": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 144
+      },
+      "MSTUART3": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 131
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MTGELWF": {
+    "station_id": "MTGELWF",
+    "display_name": "Mt Gellibrand",
+    "location": {
+      "state": "VIC",
+      "postcode": 3241,
+      "latitude": -38.257657,
+      "longitude": 143.798651
+    },
+    "duid_data": {
+      "MTGELWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 137.984
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MTMERCER": {
+    "station_id": "MTMERCER",
+    "display_name": "Mt Mercer",
+    "location": {
+      "state": "VIC",
+      "postcode": 3352,
+      "latitude": -37.8475926188678,
+      "longitude": 143.87018302016799
+    },
+    "duid_data": {
+      "MERCER01": {
+        "fuel_tech": "wind",
+        "registered_capacity": 131
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MTMILLAR": {
+    "station_id": "MTMILLAR",
+    "display_name": "Mt Millar",
+    "location": {
+      "state": "SA",
+      "postcode": 5034,
+      "latitude": -33.6193424956887,
+      "longitude": 136.717568216817
+    },
+    "duid_data": {
+      "MTMILLAR": {
+        "fuel_tech": "wind",
+        "registered_capacity": 70
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MURRAY": {
+    "station_id": "MURRAY",
+    "display_name": "Murray",
+    "location": {
+      "state": "NSW",
+      "postcode": 2630,
+      "latitude": -36.24599188507089,
+      "longitude": 148.188551670122
+    },
+    "duid_data": {
+      "MURRAY": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 1500
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MUSSELRO": {
+    "station_id": "MUSSELRO",
+    "display_name": "Musselroe",
+    "location": {
+      "state": "TAS",
+      "postcode": 7264,
+      "latitude": -40.777105262677395,
+      "longitude": 148.00631466047702
+    },
+    "duid_data": {
+      "MUSSELR1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 168
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MUWAWF": {
+    "station_id": "MUWAWF",
+    "display_name": "Murra Warra",
+    "location": {
+      "state": "VIC",
+      "postcode": 3401,
+      "latitude": -36.438821000000004,
+      "longitude": 142.246003
+    },
+    "duid_data": {
+      "MUWAWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 231
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "NASF": {
+    "station_id": "NASF",
+    "display_name": "Narromine",
+    "location": {
+      "state": "NSW",
+      "postcode": 2821,
+      "latitude": -32.218323,
+      "longitude": 148.254523
+    },
+    "duid_data": {
+      "NASF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 10
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "NBHWF": {
+    "station_id": "NBHWF",
+    "display_name": "North Brown Hill",
+    "location": {
+      "state": "SA",
+      "postcode": 54891,
+      "latitude": -33.2281156193048,
+      "longitude": 138.71688837303898
+    },
+    "duid_data": {
+      "NBHWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 132
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "NEVERSF": {
+    "station_id": "NEVERSF",
+    "display_name": "Nevertire",
+    "location": {
+      "state": "NSW",
+      "postcode": 2826,
+      "latitude": -31.831043800000003,
+      "longitude": 147.70517780000003
+    },
+    "duid_data": {
+      "NEVERSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 132
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "NEWPORT": {
+    "station_id": "NEWPORT",
+    "display_name": "Newport",
+    "location": {
+      "state": "VIC",
+      "postcode": 3000,
+      "latitude": -37.8413742466,
+      "longitude": 144.89547862132
+    },
+    "duid_data": {
+      "NPS": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 500
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "NINEWIL": {
+    "station_id": "NINEWIL",
+    "display_name": "Willoughby",
+    "location": {
+      "state": "NSW",
+      "postcode": 2068,
+      "latitude": -33.810858,
+      "longitude": 151.196599
+    },
+    "duid_data": {
+      "NINEWIL1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 3
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "NORTHP": {
+    "station_id": "NORTHP",
+    "display_name": "Northern",
+    "location": {
+      "state": "SA",
+      "postcode": 5700,
+      "latitude": -32.5429,
+      "longitude": 137.7874
+    },
+    "duid_data": {
+      "NPS1": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 265
+      },
+      "NPS2": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 265
+      },
+      "NPSNL1": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 100
+      },
+      "NPSNL2": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 100
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-09-01"
+    }
+  },
+  "NPPPPS": {
+    "station_id": "NPPPPS",
+    "display_name": "Pelican Point",
+    "location": {
+      "state": "SA",
+      "postcode": 5018,
+      "latitude": -34.764365355128604,
+      "longitude": 138.5053993318
+    },
+    "duid_data": {
+      "PPCCGT": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 478
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "NUMURKSF": {
+    "station_id": "NUMURKSF",
+    "display_name": "Numurkah",
+    "location": {
+      "state": "VIC",
+      "postcode": 3636,
+      "latitude": -36.159275,
+      "longitude": 145.47389099999998
+    },
+    "duid_data": {
+      "NUMURSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 74
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "NYNGAN": {
+    "station_id": "NYNGAN",
+    "display_name": "Nyngan",
+    "location": {
+      "state": "NSW",
+      "postcode": 2825,
+      "latitude": -31.563191344278497,
+      "longitude": 147.074195112039
+    },
+    "duid_data": {
+      "NYNGAN1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 102
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "OAKEY": {
+    "station_id": "OAKEY",
+    "display_name": "Oakey",
+    "location": {
+      "state": "QLD",
+      "postcode": 4401,
+      "latitude": -27.4182072591559,
+      "longitude": 151.678887225743
+    },
+    "duid_data": {
+      "OAKEY1": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 141
+      },
+      "OAKEY2": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 141
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "OAKEY1SF": {
+    "station_id": "OAKEY1SF",
+    "display_name": "Oakey 1",
+    "location": {
+      "state": "QLD",
+      "postcode": 4401,
+      "latitude": -27.402454,
+      "longitude": 151.6425757
+    },
+    "duid_data": {
+      "OAKEY1SF": {
+        "fuel_tech": "solar",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "OAKEY2SF": {
+    "station_id": "OAKEY2SF",
+    "display_name": "Oakey 2",
+    "location": {
+      "state": "QLD",
+      "postcode": 4401,
+      "latitude": -27.402454,
+      "longitude": 151.6425757
+    },
+    "duid_data": {
+      "OAKEY2SF": {
+        "fuel_tech": "solar",
+        "registered_capacity": 65
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "OAKLAND": {
+    "station_id": "OAKLAND",
+    "display_name": "Oaklands Hill",
+    "location": {
+      "state": "VIC",
+      "postcode": 3293,
+      "latitude": -37.6794809945517,
+      "longitude": 142.55299488616998
+    },
+    "duid_data": {
+      "OAKLAND1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 67
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "OAKY2": {
+    "station_id": "OAKY2",
+    "display_name": "Oaky Creek 2",
+    "location": {
+      "state": "QLD",
+      "postcode": 4709,
+      "latitude": -23.048717,
+      "longitude": 148.484462
+    },
+    "duid_data": {
+      "OAKY2": {
+        "fuel_tech": "gas_wcmg",
+        "registered_capacity": 15
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "OCPS": {
+    "station_id": "OCPS",
+    "display_name": "Oaky Creek",
+    "location": {
+      "state": "QLD",
+      "postcode": 4709,
+      "latitude": -23.048717,
+      "longitude": 148.484462
+    },
+    "duid_data": {
+      "OAKYCREK": {
+        "fuel_tech": "gas_recip",
+        "registered_capacity": 20
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "OSBORNE": {
+    "station_id": "OSBORNE",
+    "display_name": "Osborne",
+    "location": {
+      "state": "SA",
+      "postcode": 5000,
+      "latitude": -34.797699815377,
+      "longitude": 138.50809861051098
+    },
+    "duid_data": {
+      "OSB-AG": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 180
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "PALOONA": {
+    "station_id": "PALOONA",
+    "display_name": "Paloona",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.28267954161829,
+      "longitude": 146.248580482472
+    },
+    "duid_data": {
+      "PALOONA": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 33
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "PEDLER": {
+    "station_id": "PEDLER",
+    "display_name": "Pedler Creek",
+    "location": {
+      "state": "SA",
+      "postcode": 5169,
+      "latitude": -35.202388,
+      "longitude": 138.50121399999998
+    },
+    "duid_data": {
+      "PEDLER1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 3
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2017-07-25"
+    }
+  },
+  "PINDARI": {
+    "station_id": "PINDARI",
+    "display_name": "Pindari",
+    "location": {
+      "state": "NSW",
+      "postcode": 2360,
+      "latitude": -29.388034,
+      "longitude": 151.244774
+    },
+    "duid_data": {
+      "PINDARI": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 6
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "PIONEER": {
+    "station_id": "PIONEER",
+    "display_name": "Pioneer Sugar Mill",
+    "location": {
+      "state": "QLD",
+      "postcode": 4825,
+      "latitude": -19.557546,
+      "longitude": 147.330825
+    },
+    "duid_data": {
+      "PIONEER": {
+        "fuel_tech": "bioenergy_biomass",
+        "registered_capacity": 68
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "PLAYF": {
+    "station_id": "PLAYF",
+    "display_name": "Playford B",
+    "location": {
+      "state": "SA",
+      "postcode": 5700,
+      "latitude": -32.538886,
+      "longitude": 137.781822
+    },
+    "duid_data": {
+      "PLAYB-AG": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 240
+      },
+      "PLAYFB1": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 60
+      },
+      "PLAYFB2": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 60
+      },
+      "PLAYFB3": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 60
+      },
+      "PLAYFB4": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 60
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-09-01"
+    }
+  },
+  "PMATTAEP": {
+    "station_id": "PMATTAEP",
+    "display_name": "Earthpower Biomass",
+    "location": {
+      "state": "NSW",
+      "postcode": 2142,
+      "latitude": -33.824397,
+      "longitude": 151.04214199999998
+    },
+    "duid_data": {
+      "PMATTAEP": {
+        "fuel_tech": "gas_recip",
+        "registered_capacity": 4
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2013-03-12"
+    }
+  },
+  "PORTLATT": {
+    "station_id": "PORTLATT",
+    "display_name": "Port Latta",
+    "location": {
+      "state": "TAS",
+      "postcode": 7321,
+      "latitude": -40.857362,
+      "longitude": 145.384824
+    },
+    "duid_data": {
+      "PORTLAT1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 11
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-06-27"
+    }
+  },
+  "PORTLCN": {
+    "station_id": "PORTLCN",
+    "display_name": "Port Lincoln",
+    "location": {
+      "state": "SA",
+      "postcode": 5000,
+      "latitude": -34.700616012351496,
+      "longitude": 135.804530499443
+    },
+    "duid_data": {
+      "POR01": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 50
+      },
+      "POR03": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 23
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "PORTWF": {
+    "station_id": "PORTWF",
+    "display_name": "Portland",
+    "location": {
+      "state": "VIC",
+      "postcode": 3305,
+      "latitude": -38.3614171461369,
+      "longitude": 141.38455974743601
+    },
+    "duid_data": {
+      "PORTWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 148
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "PSF": {
+    "station_id": "PSF",
+    "display_name": "Parkes",
+    "location": {
+      "state": "NSW",
+      "postcode": 2870,
+      "latitude": -33.113056,
+      "longitude": 148.076372
+    },
+    "duid_data": {
+      "PARSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 55
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "PTINA110": {
+    "station_id": "PTINA110",
+    "display_name": "Poatina",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.8050732147105,
+      "longitude": 146.92436549882402
+    },
+    "duid_data": {
+      "PO110NL1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 25
+      },
+      "POAT110": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 100
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "PTINA220": {
+    "station_id": "PTINA220",
+    "display_name": "Poatina",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.8050732147105,
+      "longitude": 146.92436549882402
+    },
+    "duid_data": {
+      "POAT220": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 200
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "QUARANTN": {
+    "station_id": "QUARANTN",
+    "display_name": "Quarantine",
+    "location": {
+      "state": "SA",
+      "postcode": 5015,
+      "latitude": -34.7790736853879,
+      "longitude": 138.522454543776
+    },
+    "duid_data": {
+      "QPS1": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 29
+      },
+      "QPS2": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 24
+      },
+      "QPS3": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 24
+      },
+      "QPS4": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 24
+      },
+      "QPS5": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 128
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "QUERIVER": {
+    "station_id": "QUERIVER",
+    "display_name": "Que River",
+    "location": {
+      "state": "TAS",
+      "postcode": 7321,
+      "latitude": -41.610502000000004,
+      "longitude": 145.544305
+    },
+    "duid_data": {
+      "QUERIVE1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 24
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-07-26"
+    }
+  },
+  "RACOMIL": {
+    "station_id": "RACOMIL",
+    "display_name": "Racecourse Mill",
+    "location": {
+      "state": "QLD",
+      "postcode": 4740,
+      "latitude": -21.163842000000002,
+      "longitude": 149.13573799999998
+    },
+    "duid_data": {
+      "RACOMIL1": {
+        "fuel_tech": "bioenergy_biomass",
+        "registered_capacity": 48.5
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "REDBANK1": {
+    "station_id": "REDBANK1",
+    "display_name": "Redbank",
+    "location": {
+      "state": "NSW",
+      "postcode": 2330,
+      "latitude": -32.58,
+      "longitude": 151.072
+    },
+    "duid_data": {
+      "REDBANK1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 150
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-05-20"
+    }
+  },
+  "REECE": {
+    "station_id": "REECE",
+    "display_name": "Reece",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.7231313449952,
+      "longitude": 145.136468433099
+    },
+    "duid_data": {
+      "REECE1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 116
+      },
+      "REECE2": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 116
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "REMOUNT": {
+    "station_id": "REMOUNT",
+    "display_name": "Remount",
+    "location": {
+      "state": "TAS",
+      "postcode": 7248,
+      "latitude": -41.398447,
+      "longitude": 147.1495
+    },
+    "duid_data": {
+      "REMOUNT": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 2
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "REPULSE": {
+    "station_id": "REPULSE",
+    "display_name": "Repulse",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -42.507986886479,
+      "longitude": 146.64716982064
+    },
+    "duid_data": {
+      "REPULSE": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 28
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "ROCHEDAL": {
+    "station_id": "ROCHEDAL",
+    "display_name": "Rochedale",
+    "location": {
+      "state": "QLD",
+      "postcode": 4123,
+      "latitude": -27.555798,
+      "longitude": 153.123155
+    },
+    "duid_data": {
+      "ROCHEDAL": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 4
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2020-01-08"
+    }
+  },
+  "ROMA": {
+    "station_id": "ROMA",
+    "display_name": "Roma",
+    "location": {
+      "state": "QLD",
+      "postcode": 4455,
+      "latitude": -26.576788038755602,
+      "longitude": 148.839485013731
+    },
+    "duid_data": {
+      "ROMA_7": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 40
+      },
+      "ROMA_8": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 40
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "ROWALLAN": {
+    "station_id": "ROWALLAN",
+    "display_name": "Rowallan",
+    "location": {
+      "state": "TAS",
+      "postcode": 7310,
+      "latitude": -41.729569831849,
+      "longitude": 146.218086949827
+    },
+    "duid_data": {
+      "ROWALLAN": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 11
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "ROYALLA": {
+    "station_id": "ROYALLA",
+    "display_name": "Royalla",
+    "location": {
+      "state": "ACT",
+      "postcode": 2901,
+      "latitude": -35.486052460420105,
+      "longitude": 149.141965695762
+    },
+    "duid_data": {
+      "ROYALLA1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 20
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "RPCG": {
+    "station_id": "RPCG",
+    "display_name": "Rocky Point Co-gen",
+    "location": {
+      "state": "QLD",
+      "postcode": 4207,
+      "latitude": -27.733564,
+      "longitude": 153.326464
+    },
+    "duid_data": {
+      "RPCG": {
+        "fuel_tech": "bioenergy_biomass",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "RRSF": {
+    "station_id": "RRSF",
+    "display_name": "Ross River",
+    "location": {
+      "state": "QLD",
+      "postcode": 4815,
+      "latitude": -19.425304999999998,
+      "longitude": 146.715686
+    },
+    "duid_data": {
+      "RRSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 128
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "RUBICON": {
+    "station_id": "RUBICON",
+    "display_name": "Rubicon",
+    "location": {
+      "state": "VIC",
+      "postcode": 3699,
+      "latitude": -37.29245321854629,
+      "longitude": 145.818202438307
+    },
+    "duid_data": {
+      "RUBICON": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 13
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "RUGBYR": {
+    "station_id": "RUGBYR",
+    "display_name": "Rugby Run",
+    "location": {
+      "state": "QLD",
+      "postcode": 4744,
+      "latitude": -21.940469,
+      "longitude": 147.880877
+    },
+    "duid_data": {
+      "RUGBYR1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 83
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SALTCRK": {
+    "station_id": "SALTCRK",
+    "display_name": "Salt Creek",
+    "location": {
+      "state": "VIC",
+      "postcode": 3273,
+      "latitude": -37.918698,
+      "longitude": 142.796027
+    },
+    "duid_data": {
+      "SALTCRK1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 54
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SAPHWF1": {
+    "station_id": "SAPHWF1",
+    "display_name": "Sapphire",
+    "location": {
+      "state": "NSW",
+      "postcode": 2360,
+      "latitude": -29.710272999999997,
+      "longitude": 151.44558
+    },
+    "duid_data": {
+      "SAPHWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 270
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SATGN": {
+    "station_id": "SATGN",
+    "display_name": "Temporary Generation North",
+    "location": {
+      "state": "SA",
+      "postcode": 5112,
+      "latitude": -34.719707,
+      "longitude": 138.668425
+    },
+    "duid_data": {
+      "SATGN1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 154
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SATGS": {
+    "station_id": "SATGS",
+    "display_name": "Temporary Generation South",
+    "location": {
+      "state": "SA",
+      "postcode": 5160,
+      "latitude": -35.096799,
+      "longitude": 138.483997
+    },
+    "duid_data": {
+      "SATGS1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 123
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SHEP1": {
+    "station_id": "SHEP1",
+    "display_name": "Shepparton Wastewater Treatment",
+    "location": {
+      "state": "VIC",
+      "postcode": 3630,
+      "latitude": -36.322223,
+      "longitude": 145.379291
+    },
+    "duid_data": {
+      "SHEP1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SHOALHAV": {
+    "station_id": "SHOALHAV",
+    "display_name": "Shoalhaven",
+    "location": {
+      "state": "NSW",
+      "postcode": 2577,
+      "latitude": -34.7330846446504,
+      "longitude": 150.466700105161
+    },
+    "duid_data": {
+      "SHGEN": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 240
+      },
+      "SHPUMP": {
+        "fuel_tech": "pumps",
+        "registered_capacity": 240
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SITHE": {
+    "station_id": "SITHE",
+    "display_name": "Smithfield",
+    "location": {
+      "state": "NSW",
+      "postcode": 2164,
+      "latitude": -33.8500226284367,
+      "longitude": 150.950050828532
+    },
+    "duid_data": {
+      "SITHE01": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 39
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SKSF": {
+    "station_id": "SKSF",
+    "display_name": "South Keswick",
+    "location": {
+      "state": "NSW",
+      "postcode": 2830,
+      "latitude": -32.272859999999994,
+      "longitude": 148.64983600000002
+    },
+    "duid_data": {
+      "SKSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 15
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SMCSF": {
+    "station_id": "SMCSF",
+    "display_name": "Sun Metals",
+    "location": {
+      "state": "QLD",
+      "postcode": 4810,
+      "latitude": -19.437317999999998,
+      "longitude": 146.696015
+    },
+    "duid_data": {
+      "SMCSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 117
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SNOWNTH": {
+    "station_id": "SNOWNTH",
+    "display_name": "Snowtown North",
+    "location": {
+      "state": "SA",
+      "postcode": 5520,
+      "latitude": -33.756478648772394,
+      "longitude": 138.143043187414
+    },
+    "duid_data": {
+      "SNOWNTH1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 144
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SNOWSTH": {
+    "station_id": "SNOWSTH",
+    "display_name": "Snowtown South",
+    "location": {
+      "state": "SA",
+      "postcode": 5520,
+      "latitude": -33.862624210288,
+      "longitude": 138.13036653197202
+    },
+    "duid_data": {
+      "SNOWSTH1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 126
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SNOWTOWN": {
+    "station_id": "SNOWTOWN",
+    "display_name": "Snowtown",
+    "location": {
+      "state": "VIC",
+      "postcode": 3418,
+      "latitude": -33.6915984540895,
+      "longitude": 138.16602222010098
+    },
+    "duid_data": {
+      "SNOWTWN1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 99
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SNOWY1": {
+    "station_id": "SNOWY1",
+    "display_name": "Tumut 3",
+    "location": {
+      "state": "NSW",
+      "postcode": 2630,
+      "latitude": -35.6108171090502,
+      "longitude": 148.29264351448998
+    },
+    "duid_data": {
+      "TUMUT3": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 1500
+      },
+      "SNOWYP": {
+        "fuel_tech": "pumps",
+        "registered_capacity": 600
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SNOWY2": {
+    "station_id": "SNOWY2",
+    "display_name": "Tumut",
+    "location": {
+      "state": "NSW",
+      "postcode": 2630,
+      "latitude": -35.9534920741923,
+      "longitude": 148.369693358993
+    },
+    "duid_data": {
+      "UPPTUMUT": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 616
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SNOWY3": {
+    "station_id": "SNOWY3",
+    "display_name": "Guthega",
+    "location": {
+      "state": "NSW",
+      "postcode": 2630,
+      "latitude": -36.3497724824309,
+      "longitude": 148.414030190556
+    },
+    "duid_data": {
+      "GUTHEGA": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 60
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SNOWY6": {
+    "station_id": "SNOWY6",
+    "display_name": "Blowering",
+    "location": {
+      "state": "NSW",
+      "postcode": 2630,
+      "latitude": -35.3974021381011,
+      "longitude": 148.247225084376
+    },
+    "duid_data": {
+      "BLOWERNG": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 80
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SNUG": {
+    "station_id": "SNUG",
+    "display_name": "Snuggery",
+    "location": {
+      "state": "SA",
+      "postcode": 5000,
+      "latitude": -37.664995624079204,
+      "longitude": 140.41468562441003
+    },
+    "duid_data": {
+      "SNUG1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 21
+      },
+      "SNUG2": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 21
+      },
+      "SNUG3": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 21
+      },
+      "SNUGNL1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 25
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SNWYGJP2": {
+    "station_id": "SNWYGJP2",
+    "display_name": "Jindabyne Pump",
+    "location": {
+      "state": "NSW",
+      "postcode": null,
+      "latitude": -36.434917999999996,
+      "longitude": 148.63057
+    },
+    "duid_data": {
+      "SNWYGJP2": {
+        "fuel_tech": "pumps",
+        "registered_capacity": 70
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SRSF": {
+    "station_id": "SRSF",
+    "display_name": "Susan River",
+    "location": {
+      "state": "QLD",
+      "postcode": 4655,
+      "latitude": -25.420275,
+      "longitude": 152.742028
+    },
+    "duid_data": {
+      "SRSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 85
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "STANVAC": {
+    "station_id": "STANVAC",
+    "display_name": "Port Stanvac",
+    "location": {
+      "state": "SA",
+      "postcode": 5160,
+      "latitude": -35.110345,
+      "longitude": 138.490872
+    },
+    "duid_data": {
+      "PTSTAN1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 57.6
+      },
+      "STANV1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 58
+      },
+      "STANV2": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 58
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "STANWELL": {
+    "station_id": "STANWELL",
+    "display_name": "Stanwell",
+    "location": {
+      "state": "QLD",
+      "postcode": 4702,
+      "latitude": -23.507501145433302,
+      "longitude": 150.317883708605
+    },
+    "duid_data": {
+      "STAN-1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 365
+      },
+      "STAN-2": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 365
+      },
+      "STAN-3": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 365
+      },
+      "STAN-4": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 365
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "STAPYLTON": {
+    "station_id": "STAPYLTON",
+    "display_name": "Stapylton",
+    "location": {
+      "state": "QLD",
+      "postcode": 4207,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "STAPYLTON1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 3
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "STARFHILL": {
+    "station_id": "STARFHILL",
+    "display_name": "Starfish Hill",
+    "location": {
+      "state": "SA",
+      "postcode": 5204,
+      "latitude": -35.5789829575224,
+      "longitude": 138.13965306151698
+    },
+    "duid_data": {
+      "STARHLWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 35
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "STGEORGE": {
+    "station_id": "STGEORGE",
+    "display_name": "St George Leagues Club",
+    "location": {
+      "state": "NSW",
+      "postcode": 2217,
+      "latitude": -33.974819000000004,
+      "longitude": 151.129354
+    },
+    "duid_data": {
+      "STGEORG1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "STHBKTEC": {
+    "station_id": "STHBKTEC",
+    "display_name": "Southbank Institute Of Technology",
+    "location": {
+      "state": "QLD",
+      "postcode": 4101,
+      "latitude": -27.480589000000002,
+      "longitude": 153.020999
+    },
+    "duid_data": {
+      "STHBKTEC": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2019-06-26"
+    }
+  },
+  "STWF": {
+    "station_id": "STWF",
+    "display_name": "Silverton",
+    "location": {
+      "state": "NSW",
+      "postcode": 2880,
+      "latitude": -31.86095,
+      "longitude": 141.296349
+    },
+    "duid_data": {
+      "STWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 198
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SUNCOAST": {
+    "station_id": "SUNCOAST",
+    "display_name": "Suncoast Gold Macadamias",
+    "location": {
+      "state": "QLD",
+      "postcode": 4570,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "SUNCOAST": {
+        "fuel_tech": "bioenergy_biomass",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-01-15"
+    }
+  },
+  "SVALE": {
+    "station_id": "SVALE",
+    "display_name": "Springvale",
+    "location": {
+      "state": "VIC",
+      "postcode": 3172,
+      "latitude": -37.973375,
+      "longitude": 145.139695
+    },
+    "duid_data": {
+      "SVALE1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 5
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TABMILL2": {
+    "station_id": "TABMILL2",
+    "display_name": "Tableland Mill",
+    "location": {
+      "state": "QLD",
+      "postcode": 4880,
+      "latitude": -17.119813,
+      "longitude": 145.34513
+    },
+    "duid_data": {
+      "TABMILL2": {
+        "fuel_tech": "biomass",
+        "registered_capacity": 24
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TAHMOOR": {
+    "station_id": "TAHMOOR",
+    "display_name": "Tahmoor",
+    "location": {
+      "state": "NSW",
+      "postcode": 2573,
+      "latitude": -34.249117,
+      "longitude": 150.577718
+    },
+    "duid_data": {
+      "TAHMOOR1": {
+        "fuel_tech": "gas_wcmg",
+        "registered_capacity": 7
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TALLAWAR": {
+    "station_id": "TALLAWAR",
+    "display_name": "Tallawarra",
+    "location": {
+      "state": "NSW",
+      "postcode": 2530,
+      "latitude": -34.5230894452804,
+      "longitude": 150.808566045493
+    },
+    "duid_data": {
+      "TALWA1": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 440
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TARALGA": {
+    "station_id": "TARALGA",
+    "display_name": "Taralga",
+    "location": {
+      "state": "NSW",
+      "postcode": 2580,
+      "latitude": -34.4253872675598,
+      "longitude": 149.859603200677
+    },
+    "duid_data": {
+      "TARALGA1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 106
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TARONG": {
+    "station_id": "TARONG",
+    "display_name": "Tarong",
+    "location": {
+      "state": "QLD",
+      "postcode": 4615,
+      "latitude": -26.7743967256886,
+      "longitude": 151.91783763481502
+    },
+    "duid_data": {
+      "TARONG#1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 350
+      },
+      "TARONG#2": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 350
+      },
+      "TARONG#3": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 350
+      },
+      "TARONG#4": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 350
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TARONGN": {
+    "station_id": "TARONGN",
+    "display_name": "Tarong North",
+    "location": {
+      "state": "QLD",
+      "postcode": 4615,
+      "latitude": -26.7743967256886,
+      "longitude": 151.91783763481502
+    },
+    "duid_data": {
+      "TNPS1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 443
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TARRALEA": {
+    "station_id": "TARRALEA",
+    "display_name": "Tarraleah",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -42.301735605204,
+      "longitude": 146.456661016905
+    },
+    "duid_data": {
+      "TARRALEA": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 90
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TATIARA": {
+    "station_id": "TATIARA",
+    "display_name": "Tataria Bordertown",
+    "location": {
+      "state": "SA",
+      "postcode": 5268,
+      "latitude": -36.326977,
+      "longitude": 140.73703500000002
+    },
+    "duid_data": {
+      "TATIARA1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TATURA": {
+    "station_id": "TATURA",
+    "display_name": "Tatura Biomass",
+    "location": {
+      "state": "VIC",
+      "postcode": 3616,
+      "latitude": -36.47915,
+      "longitude": 145.235037
+    },
+    "duid_data": {
+      "TATURA01": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TBSF": {
+    "station_id": "TBSF",
+    "display_name": "Tailem Bend  1",
+    "location": {
+      "state": "SA",
+      "postcode": 5260,
+      "latitude": -35.28,
+      "longitude": 139.49
+    },
+    "duid_data": {
+      "TBSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 108
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TEATREE": {
+    "station_id": "TEATREE",
+    "display_name": "Tea Tree Gully",
+    "location": {
+      "state": "SA",
+      "postcode": 5097,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "TEATREE1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2016-05-19"
+    }
+  },
+  "TERALBA": {
+    "station_id": "TERALBA",
+    "display_name": "Teralba",
+    "location": {
+      "state": "NSW",
+      "postcode": 2284,
+      "latitude": -32.945557,
+      "longitude": 151.612042
+    },
+    "duid_data": {
+      "TERALBA": {
+        "fuel_tech": "gas_wcmg",
+        "registered_capacity": 3
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TERMSTOR": {
+    "station_id": "TERMSTOR",
+    "display_name": "Terminal Storage (Mini Hydro)",
+    "location": {
+      "state": "SA",
+      "postcode": 5001,
+      "latitude": -34.840140000000005,
+      "longitude": 138.712137
+    },
+    "duid_data": {
+      "TERMSTOR": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 2
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2017-09-14"
+    }
+  },
+  "TGNSS": {
+    "station_id": "TGNSS",
+    "display_name": "Traralgon Network Support",
+    "location": {
+      "state": "VIC",
+      "postcode": 3844,
+      "latitude": -37.833513,
+      "longitude": 144.965955
+    },
+    "duid_data": {
+      "TGNSS1": {
+        "fuel_tech": "gas_recip",
+        "registered_capacity": 10
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "THEDROP": {
+    "station_id": "THEDROP",
+    "display_name": "The Drop",
+    "location": {
+      "state": "NSW",
+      "postcode": 3644,
+      "latitude": -35.973527000000004,
+      "longitude": 145.99927399999999
+    },
+    "duid_data": {
+      "THEDROP1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 3
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TIMWEST": {
+    "station_id": "TIMWEST",
+    "display_name": "Timboon West",
+    "location": {
+      "state": "VIC",
+      "postcode": 3268,
+      "latitude": -38.528351,
+      "longitude": 142.916231
+    },
+    "duid_data": {
+      "TIMWEST": {
+        "fuel_tech": "wind",
+        "registered_capacity": 7
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TITREE": {
+    "station_id": "TITREE",
+    "display_name": "Veolia Ti Tree Bio Reactor",
+    "location": {
+      "state": "QLD",
+      "postcode": null,
+      "latitude": -27.695551000000002,
+      "longitude": 152.65031299999998
+    },
+    "duid_data": {
+      "TITREE": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 2
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TOORAWF": {
+    "station_id": "TOORAWF",
+    "display_name": "Toora",
+    "location": {
+      "state": "VIC",
+      "postcode": 3962,
+      "latitude": -38.653527957636,
+      "longitude": 146.339773925194
+    },
+    "duid_data": {
+      "TOORAWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 21
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TORRIS": {
+    "station_id": "TORRIS",
+    "display_name": "Torrens Island",
+    "location": {
+      "state": "SA",
+      "postcode": 5015,
+      "latitude": -34.8045591391219,
+      "longitude": 138.522228698972
+    },
+    "duid_data": {
+      "TORRA1": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 120
+      },
+      "TORRA2": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 120
+      },
+      "TORRA3": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 120
+      },
+      "TORRA4": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 120
+      },
+      "TORRB1": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 200
+      },
+      "TORRB2": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 200
+      },
+      "TORRB3": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 200
+      },
+      "TORRB4": {
+        "fuel_tech": "gas_steam",
+        "registered_capacity": 200
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TOWER": {
+    "station_id": "TOWER",
+    "display_name": "Tower",
+    "location": {
+      "state": "NSW",
+      "postcode": 2569,
+      "latitude": -34.219460999999995,
+      "longitude": 150.71801200000002
+    },
+    "duid_data": {
+      "TOWER": {
+        "fuel_tech": "gas_wcmg",
+        "registered_capacity": 41
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TREVALLN": {
+    "station_id": "TREVALLN",
+    "display_name": "Trevallyn",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.4223016124435,
+      "longitude": 147.112025239595
+    },
+    "duid_data": {
+      "TREVALLN": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 93
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TRIBUTE": {
+    "station_id": "TRIBUTE",
+    "display_name": "Tribute",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -41.8114682913897,
+      "longitude": 145.653251895339
+    },
+    "duid_data": {
+      "TRIBNL1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 25
+      },
+      "TRIBUTE": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 83
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TUNGATIN": {
+    "station_id": "TUNGATIN",
+    "display_name": "Tungatinah",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -42.2963963682648,
+      "longitude": 146.45588138196
+    },
+    "duid_data": {
+      "TUNGATIN": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 125
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "TVCCPS": {
+    "station_id": "TVCCPS",
+    "display_name": "Tamar Valley",
+    "location": {
+      "state": "TAS",
+      "postcode": 7253,
+      "latitude": -41.1392679526502,
+      "longitude": 146.906184786351
+    },
+    "duid_data": {
+      "TVCC201": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 208.6
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "URANQ": {
+    "station_id": "URANQ",
+    "display_name": "Uranquinty",
+    "location": {
+      "state": "NSW",
+      "postcode": 2652,
+      "latitude": -35.180225647620205,
+      "longitude": 147.21565992714
+    },
+    "duid_data": {
+      "URANQ11": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 166
+      },
+      "URANQ12": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 166
+      },
+      "URANQ13": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 166
+      },
+      "URANQ14": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 166
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "VALDORA": {
+    "station_id": "VALDORA",
+    "display_name": "Sunshine Coast",
+    "location": {
+      "state": "QLD",
+      "postcode": 4561,
+      "latitude": -26.560799,
+      "longitude": 153.025947
+    },
+    "duid_data": {
+      "VALDORA1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 15
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "VICMILL": {
+    "station_id": "VICMILL",
+    "display_name": "Victoria Mill",
+    "location": {
+      "state": "QLD",
+      "postcode": 4850,
+      "latitude": -18.650208,
+      "longitude": 146.200866
+    },
+    "duid_data": {
+      "VICMILL1": {
+        "fuel_tech": "bioenergy_biomass",
+        "registered_capacity": 24
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "VP": {
+    "station_id": "VP",
+    "display_name": "Vales Point B",
+    "location": {
+      "state": "NSW",
+      "postcode": 2259,
+      "latitude": -33.164639,
+      "longitude": 151.5441155
+    },
+    "duid_data": {
+      "VP5": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 660
+      },
+      "VP6": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 660
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "VPGS": {
+    "station_id": "VPGS",
+    "display_name": "Valley  Peaking",
+    "location": {
+      "state": "VIC",
+      "postcode": 3844,
+      "latitude": -38.2526008522186,
+      "longitude": 146.58890593343202
+    },
+    "duid_data": {
+      "VPGS1": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 50
+      },
+      "VPGS2": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 50
+      },
+      "VPGS3": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 50
+      },
+      "VPGS4": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 50
+      },
+      "VPGS5": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 50
+      },
+      "VPGS6": {
+        "fuel_tech": "gas_ocgt",
+        "registered_capacity": 50
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WATERLWF": {
+    "station_id": "WATERLWF",
+    "display_name": "Waterloo",
+    "location": {
+      "state": "TAS",
+      "postcode": null,
+      "latitude": -33.991095267936004,
+      "longitude": 138.915722795005
+    },
+    "duid_data": {
+      "WATERLWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 130
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WAUBRAWF": {
+    "station_id": "WAUBRAWF",
+    "display_name": "Waubra",
+    "location": {
+      "state": "NSW",
+      "postcode": 3352,
+      "latitude": -37.3579790620375,
+      "longitude": 143.592600206467
+    },
+    "duid_data": {
+      "WAUBRAWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 192
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WDLNGN": {
+    "station_id": "WDLNGN",
+    "display_name": "Woodlawn Bioreactor",
+    "location": {
+      "state": "NSW",
+      "postcode": 2580,
+      "latitude": -35.05928,
+      "longitude": 149.5749
+    },
+    "duid_data": {
+      "WDLNGN01": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 7
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WEMENSF1": {
+    "station_id": "WEMENSF1",
+    "display_name": "Wemen",
+    "location": {
+      "state": "VIC",
+      "postcode": 3549,
+      "latitude": -34.80259,
+      "longitude": 142.543348
+    },
+    "duid_data": {
+      "WEMENSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 97
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WESTCBT": {
+    "station_id": "WESTCBT",
+    "display_name": "Western Suburbs League Club",
+    "location": {
+      "state": "NSW",
+      "postcode": 2560,
+      "latitude": -34.051072999999995,
+      "longitude": 150.83275700000002
+    },
+    "duid_data": {
+      "WESTCBT1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WESTILLA": {
+    "station_id": "WESTILLA",
+    "display_name": "West Illawarra Leagues Club",
+    "location": {
+      "state": "NSW",
+      "postcode": 2526,
+      "latitude": -34.451645,
+      "longitude": 150.843037
+    },
+    "duid_data": {
+      "WESTILL1": {
+        "fuel_tech": "distillate",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WG": {
+    "station_id": "WG",
+    "display_name": "Warragamba",
+    "location": {
+      "state": "NSW",
+      "postcode": 2752,
+      "latitude": -33.883064000000005,
+      "longitude": 150.595436
+    },
+    "duid_data": {
+      "WG01": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 50
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2013-07-19"
+    }
+  },
+  "WGWF": {
+    "station_id": "WGWF",
+    "display_name": "Willogoleche",
+    "location": {
+      "state": "SA",
+      "postcode": 5419,
+      "latitude": -33.393569,
+      "longitude": 138.84821000000002
+    },
+    "duid_data": {
+      "WGWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 119
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WHIT1": {
+    "station_id": "WHIT1",
+    "display_name": "Whitwood Road",
+    "location": {
+      "state": "QLD",
+      "postcode": 4305,
+      "latitude": -27.620454,
+      "longitude": 152.824409
+    },
+    "duid_data": {
+      "WHIT1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2020-01-08"
+    }
+  },
+  "WHITSF": {
+    "station_id": "WHITSF",
+    "display_name": "Whitsunday",
+    "location": {
+      "state": "QLD",
+      "postcode": 4804,
+      "latitude": -20.537259,
+      "longitude": 147.80475
+    },
+    "duid_data": {
+      "WHITSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 57
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WILGAPK": {
+    "station_id": "WILGAPK",
+    "display_name": "Wilga Park",
+    "location": {
+      "state": "NSW",
+      "postcode": 2390,
+      "latitude": -30.314444,
+      "longitude": 149.65276799999998
+    },
+    "duid_data": {
+      "WILGAPK": {
+        "fuel_tech": "gas_recip",
+        "registered_capacity": 10
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WILGAPKB": {
+    "station_id": "WILGAPKB",
+    "display_name": "Wilga Park B",
+    "location": {
+      "state": "NSW",
+      "postcode": 2390,
+      "latitude": -30.314444,
+      "longitude": 149.65276799999998
+    },
+    "duid_data": {
+      "WILGB01": {
+        "fuel_tech": "gas_recip",
+        "registered_capacity": 12
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WINDHILL": {
+    "station_id": "WINDHILL",
+    "display_name": "Windy Hill",
+    "location": {
+      "state": "QLD",
+      "postcode": 4872,
+      "latitude": -17.590398999999998,
+      "longitude": 145.52968
+    },
+    "duid_data": {
+      "WHILL1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 12
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WINGF1": {
+    "station_id": "WINGF1",
+    "display_name": "Wingfield 1",
+    "location": {
+      "state": "SA",
+      "postcode": 5013,
+      "latitude": -34.835138,
+      "longitude": 138.548949
+    },
+    "duid_data": {
+      "WINGF1_1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 5
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WINGF2": {
+    "station_id": "WINGF2",
+    "display_name": "Wingfield 2",
+    "location": {
+      "state": "SA",
+      "postcode": 5013,
+      "latitude": -34.835138,
+      "longitude": 138.548949
+    },
+    "duid_data": {
+      "WINGF2_1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 5
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WIVENHOE": {
+    "station_id": "WIVENHOE",
+    "display_name": "Wivenhoe",
+    "location": {
+      "state": "QLD",
+      "postcode": 4306,
+      "latitude": -27.3722237672267,
+      "longitude": 152.63236172623698
+    },
+    "duid_data": {
+      "PUMP1": {
+        "fuel_tech": "pumps",
+        "registered_capacity": 240
+      },
+      "PUMP2": {
+        "fuel_tech": "pumps",
+        "registered_capacity": 240
+      },
+      "W/HOE#1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 285
+      },
+      "W/HOE#2": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 285
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WIVENSH": {
+    "station_id": "WIVENSH",
+    "display_name": "Wivenhoe (Mini Hydro)",
+    "location": {
+      "state": "QLD",
+      "postcode": 4306,
+      "latitude": -27.394592,
+      "longitude": 152.609237
+    },
+    "duid_data": {
+      "WIVENSH": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 5
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WKIEWA": {
+    "station_id": "WKIEWA",
+    "display_name": "West Kiewa",
+    "location": {
+      "state": "VIC",
+      "postcode": 3699,
+      "latitude": -36.759673693368605,
+      "longitude": 147.18608214576798
+    },
+    "duid_data": {
+      "WKIEWA1": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 31
+      },
+      "WKIEWA2": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 31
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WOLLERT": {
+    "station_id": "WOLLERT",
+    "display_name": "Wollert",
+    "location": {
+      "state": "VIC",
+      "postcode": 3750,
+      "latitude": -37.591792,
+      "longitude": 145.043033
+    },
+    "duid_data": {
+      "WOLLERT1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 7
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WONWP": {
+    "station_id": "WONWP",
+    "display_name": "Wonthaggi",
+    "location": {
+      "state": "VIC",
+      "postcode": 3995,
+      "latitude": -38.605129999999996,
+      "longitude": 145.546292
+    },
+    "duid_data": {
+      "WONWP": {
+        "fuel_tech": "wind",
+        "registered_capacity": 12
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WOODLWN": {
+    "station_id": "WOODLWN",
+    "display_name": "Woodlawn",
+    "location": {
+      "state": "NSW",
+      "postcode": 2580,
+      "latitude": -35.0816745987566,
+      "longitude": 149.570510727867
+    },
+    "duid_data": {
+      "WOODLWN1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 48
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WOOLNTH1": {
+    "station_id": "WOOLNTH1",
+    "display_name": "Woolnorth",
+    "location": {
+      "state": "TAS",
+      "postcode": 7330,
+      "latitude": -40.736374750198706,
+      "longitude": 144.694820513736
+    },
+    "duid_data": {
+      "WOOLNTH1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 140
+      }
+    },
+    "region_id": "TAS1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WOYWOY": {
+    "station_id": "WOYWOY",
+    "display_name": "Woy Woy",
+    "location": {
+      "state": "NSW",
+      "postcode": 2256,
+      "latitude": -33.506914,
+      "longitude": 151.291606
+    },
+    "duid_data": {
+      "WOYWOY1": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WPWF": {
+    "station_id": "WPWF",
+    "display_name": "Wattle Point",
+    "location": {
+      "state": "SA",
+      "postcode": 5576,
+      "latitude": -35.1154104383038,
+      "longitude": 137.718672417968
+    },
+    "duid_data": {
+      "WPWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 91
+      }
+    },
+    "region_id": "SA1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WRSF1": {
+    "station_id": "WRSF1",
+    "display_name": "White Rock",
+    "location": {
+      "state": "NSW",
+      "postcode": 2370,
+      "latitude": -29.7632925,
+      "longitude": 151.5502083
+    },
+    "duid_data": {
+      "WRSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 22
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WRWF1": {
+    "station_id": "WRWF1",
+    "display_name": "White Rock",
+    "location": {
+      "state": "NSW",
+      "postcode": 2370,
+      "latitude": -29.8291832,
+      "longitude": 151.5453929
+    },
+    "duid_data": {
+      "WRWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 175
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WW": {
+    "station_id": "WW",
+    "display_name": "Wallerawang",
+    "location": {
+      "state": "NSW",
+      "postcode": 2845,
+      "latitude": -33.403889,
+      "longitude": 150.084444
+    },
+    "duid_data": {
+      "WW7": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 500
+      },
+      "WW8": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 500
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2015-05-10"
+    }
+  },
+  "WYANGALA": {
+    "station_id": "WYANGALA",
+    "display_name": "Wyangala A",
+    "location": {
+      "state": "NSW",
+      "postcode": 2808,
+      "latitude": -33.980371000000005,
+      "longitude": 148.947377
+    },
+    "duid_data": {
+      "WYANGALA": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 20
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WYANGALB": {
+    "station_id": "WYANGALB",
+    "display_name": "Wyangala B",
+    "location": {
+      "state": "NSW",
+      "postcode": 2808,
+      "latitude": -33.980371000000005,
+      "longitude": 148.947377
+    },
+    "duid_data": {
+      "WYANGALB": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 4
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WYNDW": {
+    "station_id": "WYNDW",
+    "display_name": "Wyndham",
+    "location": {
+      "state": "VIC",
+      "postcode": 3030,
+      "latitude": -37.935371999999994,
+      "longitude": 144.5898
+    },
+    "duid_data": {
+      "WYNDW": {
+        "fuel_tech": "bioenergy_biogas",
+        "registered_capacity": 1
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2018-04-01"
+    }
+  },
+  "YABULU": {
+    "station_id": "YABULU",
+    "display_name": "Townsville",
+    "location": {
+      "state": "QLD",
+      "postcode": 4000,
+      "latitude": -19.2003738513919,
+      "longitude": 146.61826474008998
+    },
+    "duid_data": {
+      "YABULU": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 160
+      },
+      "YABULU2": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 82
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "YALLOURN": {
+    "station_id": "YALLOURN",
+    "display_name": "Yallourn W",
+    "location": {
+      "state": "VIC",
+      "postcode": 3825,
+      "latitude": -38.177596216851605,
+      "longitude": 146.347508446364
+    },
+    "duid_data": {
+      "YWPS1": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 360
+      },
+      "YWPS2": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 360
+      },
+      "YWPS3": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 380
+      },
+      "YWPS4": {
+        "fuel_tech": "brown_coal",
+        "registered_capacity": 380
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "YAMBUK": {
+    "station_id": "YAMBUK",
+    "display_name": "Yambuk",
+    "location": {
+      "state": "VIC",
+      "postcode": 3285,
+      "latitude": -38.305278107624,
+      "longitude": 142.018439165612
+    },
+    "duid_data": {
+      "YAMBUKWF": {
+        "fuel_tech": "wind",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "YARANSF": {
+    "station_id": "YARANSF",
+    "display_name": "Yarranlea",
+    "location": {
+      "state": "QLD",
+      "postcode": 4356,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "YARANSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 121
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "YARWUN": {
+    "station_id": "YARWUN",
+    "display_name": "Yarwun",
+    "location": {
+      "state": "QLD",
+      "postcode": 4680,
+      "latitude": -23.8302003068757,
+      "longitude": 151.149691648905
+    },
+    "duid_data": {
+      "YARWUN_1": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 154
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "YAWWF": {
+    "station_id": "YAWWF",
+    "display_name": "Yawong",
+    "location": {
+      "state": "VIC",
+      "postcode": 3478,
+      "latitude": -36.471022,
+      "longitude": 143.361722
+    },
+    "duid_data": {
+      "YAWWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 7.2
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "YENDONWF": {
+    "station_id": "YENDONWF",
+    "display_name": "Yendon",
+    "location": {
+      "state": "VIC",
+      "postcode": 3352,
+      "latitude": -37.630952,
+      "longitude": 144.022463
+    },
+    "duid_data": {
+      "YENDWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 144
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "YSWF": {
+    "station_id": "YSWF",
+    "display_name": "Yaloak South",
+    "location": {
+      "state": "VIC",
+      "postcode": 3342,
+      "latitude": -37.716474,
+      "longitude": 144.241947
+    },
+    "duid_data": {
+      "YSWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 28
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "YWNGAHYD": {
+    "station_id": "YWNGAHYD",
+    "display_name": "Yarrawonga",
+    "location": {
+      "state": "VIC",
+      "postcode": 3730,
+      "latitude": -36.009465999999996,
+      "longitude": 145.99956799999998
+    },
+    "duid_data": {
+      "YWNGAHYD": {
+        "fuel_tech": "hydro",
+        "registered_capacity": 9
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SWAN_E": {
+    "station_id": "SWAN_E",
+    "display_name": "Swanbank E",
+    "location": {
+      "state": "QLD",
+      "postcode": 4306,
+      "latitude": -27.6552859093397,
+      "longitude": 152.818643586756
+    },
+    "duid_data": {
+      "SWAN_E": {
+        "fuel_tech": "gas_ccgt",
+        "registered_capacity": 385
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "SWAN_B": {
+    "station_id": "SWAN_B",
+    "display_name": "Swanbank B",
+    "location": {
+      "state": "QLD",
+      "postcode": 4306,
+      "latitude": -27.6552859093397,
+      "longitude": 152.818643586756
+    },
+    "duid_data": {
+      "SWAN_B_1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 125
+      },
+      "SWAN_B_2": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 125
+      },
+      "SWAN_B_3": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 125
+      },
+      "SWAN_B_4": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 125
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2012-05-01"
+    }
+  },
+  "CALL_A": {
+    "station_id": "CALL_A",
+    "display_name": "Callide A",
+    "location": {
+      "state": "QLD",
+      "postcode": 4715,
+      "latitude": -24.3331687723181,
+      "longitude": 150.626321580678
+    },
+    "duid_data": {
+      "CALL_A_2": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 30
+      },
+      "CALL_A_4": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2015-03-01"
+    }
+  },
+  "CALL_B": {
+    "station_id": "CALL_B",
+    "display_name": "Callide B",
+    "location": {
+      "state": "QLD",
+      "postcode": 4715,
+      "latitude": -24.3331687723181,
+      "longitude": 150.626321580678
+    },
+    "duid_data": {
+      "CALL_B_1": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 350
+      },
+      "CALL_B_2": {
+        "fuel_tech": "black_coal",
+        "registered_capacity": 350
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BLAYNEY": {
+    "station_id": "BLAYNEY",
+    "display_name": "Blayney",
+    "location": {
+      "state": "NSW",
+      "postcode": null,
+      "latitude": -33.621944,
+      "longitude": 149.198333
+    },
+    "duid_data": {
+      "BLAYNEY": {
+        "fuel_tech": "wind",
+        "registered_capacity": 9.9
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "CROOKWEL": {
+    "station_id": "CROOKWEL",
+    "display_name": "Crookwell",
+    "location": {
+      "state": "NSW",
+      "postcode": null,
+      "latitude": -34.5165,
+      "longitude": 149.54248
+    },
+    "duid_data": {
+      "CROOKWEL": {
+        "fuel_tech": "wind",
+        "registered_capacity": 4.8
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "HAMPTON": {
+    "station_id": "HAMPTON",
+    "display_name": "Hampton",
+    "location": {
+      "state": "NSW",
+      "postcode": null,
+      "latitude": -33.649722,
+      "longitude": 150.05
+    },
+    "duid_data": {
+      "HAMPTON": {
+        "fuel_tech": "wind",
+        "registered_capacity": 1.32
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "BULGREPOWER": {
+    "station_id": "BULGREPOWER",
+    "display_name": "Bulgana Green Power Hub - Units",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "state": "VIC",
+      "postcode": null
+    },
+    "region_id": "VIC1",
+    "duid_data": {
+      "BULGANA1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 182
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GOONUMSF": {
+    "station_id": "GOONUMSF",
+    "display_name": "Goonumbla",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "state": "NSW",
+      "postcode": null
+    },
+    "region_id": "NSW1",
+    "duid_data": {
+      "GOONSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 85
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LIMOSF1": {
+    "station_id": "LIMOSF1",
+    "display_name": "Limondale SF",
+    "location": {
+      "latitude": -34.7755018,
+      "longitude": 143.50804630000002,
+      "state": "NSW",
+      "postcode": null
+    },
+    "region_id": "NSW1",
+    "duid_data": {
+      "LIMOSF11": {
+        "fuel_tech": "solar",
+        "registered_capacity": 275
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WHIROCWIND": {
+    "station_id": "WHIROCWIND",
+    "display_name": "White Rock Wind and",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "state": "NSW",
+      "postcode": null
+    },
+    "region_id": "NSW1",
+    "duid_data": {
+      "WRSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 22
+      },
+      "WRWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 175
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "ALBANY": {
+    "station_id": "ALBANY",
+    "display_name": "Albany",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6330,
+      "latitude": -35.0658354,
+      "longitude": 117.79750630000001
+    },
+    "duid_data": {
+      "ALBANY_WF1": {
+        "registered_capacity": 21.6,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "BADGINGARRA": {
+    "station_id": "BADGINGARRA",
+    "display_name": "Badgingarra",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6521,
+      "latitude": -30.4399239,
+      "longitude": 115.3240452
+    },
+    "duid_data": {
+      "BADGINGARRA_WF1": {
+        "registered_capacity": 130,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "BLUEWATERS": {
+    "station_id": "BLUEWATERS",
+    "display_name": "Bluewaters",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6225,
+      "latitude": -33.3306742,
+      "longitude": 116.2259578
+    },
+    "duid_data": {
+      "BW2_BLUEWATERS_G1": {
+        "registered_capacity": 217,
+        "fuel_tech": "black_coal"
+      },
+      "BW1_BLUEWATERS_G2": {
+        "registered_capacity": 217,
+        "fuel_tech": "black_coal"
+      }
+    }
+  },
+  "BREMER_BAY": {
+    "station_id": "BREMER_BAY",
+    "display_name": "Bremer Bay",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6338,
+      "latitude": -34.399032899999995,
+      "longitude": 119.38937659999998
+    },
+    "duid_data": {
+      "BREMER_BAY_WF1": {
+        "registered_capacity": 0.6,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "COCKBURN": {
+    "station_id": "COCKBURN",
+    "display_name": "Cockburn",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6165,
+      "latitude": -32.200134000000006,
+      "longitude": 115.77398799999999
+    },
+    "duid_data": {
+      "COCKBURN_CCG1": {
+        "registered_capacity": 249.7,
+        "fuel_tech": "gas_ccgt"
+      }
+    }
+  },
+  "INVESTEC_COLLGAR": {
+    "station_id": "INVESTEC_COLLGAR",
+    "display_name": "Collgar",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6415,
+      "latitude": -31.597509999999996,
+      "longitude": 118.490597
+    },
+    "duid_data": {
+      "INVESTEC_COLLGAR_WF1": {
+        "registered_capacity": 206,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "COLLIE": {
+    "station_id": "COLLIE",
+    "display_name": "Collie",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6225,
+      "latitude": -33.341509,
+      "longitude": 116.262185
+    },
+    "duid_data": {
+      "COLLIE_G1": {
+        "registered_capacity": 318.3,
+        "fuel_tech": "black_coal"
+      }
+    }
+  },
+  "DCWL_DENMARK": {
+    "station_id": "DCWL_DENMARK",
+    "display_name": "Denmark",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6333,
+      "latitude": -35.036970600000004,
+      "longitude": 117.3190123
+    },
+    "duid_data": {
+      "DCWL_DENMARK_WF1": {
+        "registered_capacity": 1.44,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "EDWFMAN": {
+    "station_id": "EDWFMAN",
+    "display_name": "Emu Downs",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6521,
+      "latitude": -30.475646899999997,
+      "longitude": 115.3790523
+    },
+    "duid_data": {
+      "EDWFMAN_WF1": {
+        "registered_capacity": 80,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "TESLA_GERALDTON": {
+    "station_id": "TESLA_GERALDTON",
+    "display_name": "Geraldton diesel",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6532,
+      "latitude": -28.790815000000002,
+      "longitude": 114.69183100000001
+    },
+    "duid_data": {
+      "TESLA_GERALDTON_G1": {
+        "registered_capacity": 9.9,
+        "fuel_tech": "distillate"
+      }
+    }
+  },
+  "GOSNELLS": {
+    "station_id": "GOSNELLS",
+    "display_name": "Gosnells",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6155,
+      "latitude": -32.0795137,
+      "longitude": 115.89508799999999
+    },
+    "duid_data": {
+      "GOSNELLS": {
+        "registered_capacity": 1,
+        "fuel_tech": "bioenergy_biogas"
+      }
+    }
+  },
+  "GRASMERE": {
+    "station_id": "GRASMERE",
+    "display_name": "Grasmere",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6330,
+      "latitude": -35.0658354,
+      "longitude": 117.79750630000001
+    },
+    "duid_data": {
+      "GRASMERE_WF1": {
+        "registered_capacity": 13.8,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "GREENOUGH_RIVER": {
+    "station_id": "GREENOUGH_RIVER",
+    "display_name": "Greenough River",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6532,
+      "latitude": -28.9038103,
+      "longitude": 115.10937009999999
+    },
+    "duid_data": {
+      "GREENOUGH_RIVER_PV1": {
+        "registered_capacity": 10,
+        "fuel_tech": "solar"
+      }
+    }
+  },
+  "HENDERSON_RENEWABLE": {
+    "station_id": "HENDERSON_RENEWABLE",
+    "display_name": "Henderson",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6166,
+      "latitude": -32.1640034,
+      "longitude": 115.790695
+    },
+    "duid_data": {
+      "HENDERSON_RENEWABLE_IG1": {
+        "registered_capacity": 3,
+        "fuel_tech": "bioenergy_biogas"
+      }
+    }
+  },
+  "KALAMUNDA_SG": {
+    "station_id": "KALAMUNDA_SG",
+    "display_name": "Kalamunda",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6076,
+      "latitude": -32.0032923,
+      "longitude": 116.07488529999999
+    },
+    "duid_data": {
+      "KALAMUNDA_SG": {
+        "registered_capacity": 1.3,
+        "fuel_tech": "bioenergy_biogas"
+      }
+    }
+  },
+  "KALBARRI": {
+    "station_id": "KALBARRI",
+    "display_name": "Kalbarri",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6535,
+      "latitude": -27.8983027,
+      "longitude": 114.19235359999999
+    },
+    "duid_data": {
+      "KALBARRI_WF1": {
+        "registered_capacity": 1.6,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "STHRNCRS": {
+    "station_id": "STHRNCRS",
+    "display_name": "Kambalda",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6442,
+      "latitude": -31.1919033,
+      "longitude": 121.67190120000001
+    },
+    "duid_data": {
+      "STHRNCRS_EG": {
+        "registered_capacity": 23,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "BLAIRFOX_KARAKIN": {
+    "station_id": "BLAIRFOX_KARAKIN",
+    "display_name": "Karakin",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6044,
+      "latitude": -30.9422424,
+      "longitude": 115.3666128
+    },
+    "duid_data": {
+      "BLAIRFOX_KARAKIN_WF1": {
+        "registered_capacity": 5,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "KEMERTON": {
+    "station_id": "KEMERTON",
+    "display_name": "Kemerton",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6233,
+      "latitude": -33.163566100000004,
+      "longitude": 115.7811324
+    },
+    "duid_data": {
+      "KEMERTON_GT11": {
+        "registered_capacity": 154.7,
+        "fuel_tech": "gas_ocgt"
+      },
+      "KEMERTON_GT12": {
+        "registered_capacity": 154.7,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "TESLA_KEMERTON": {
+    "station_id": "TESLA_KEMERTON",
+    "display_name": "Kemerton diesel",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6233,
+      "latitude": -33.211662,
+      "longitude": 115.76057
+    },
+    "duid_data": {
+      "TESLA_KEMERTON_G1": {
+        "registered_capacity": 9.9,
+        "fuel_tech": "distillate"
+      }
+    }
+  },
+  "KWINANA": {
+    "station_id": "KWINANA",
+    "display_name": "Kwinana",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6165,
+      "latitude": -32.197245,
+      "longitude": 115.77544499999999
+    },
+    "duid_data": {
+      "KWINANA_GT2": {
+        "registered_capacity": 103.2,
+        "fuel_tech": "gas_ocgt"
+      },
+      "KWINANA_GT3": {
+        "registered_capacity": 103.2,
+        "fuel_tech": "gas_ocgt"
+      },
+      "PPP_KCP_EG1": {
+        "registered_capacity": 85.7,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "PERTHENERGY_KWINANA": {
+    "station_id": "PERTHENERGY_KWINANA",
+    "display_name": "Kwinana Swift",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6167,
+      "latitude": -32.223991999999996,
+      "longitude": 115.778516
+    },
+    "duid_data": {
+      "PERTHENERGY_KWINANA_GT1": {
+        "registered_capacity": 116,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "TIWEST_COG1": {
+    "station_id": "TIWEST_COG1",
+    "display_name": "Kwinana cogen",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6167,
+      "latitude": -32.2290511,
+      "longitude": 115.77441090000002
+    },
+    "duid_data": {
+      "TIWEST_COG1": {
+        "registered_capacity": 42.1,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "BRIDGETOWN_BIOMASS_PLANT": {
+    "station_id": "BRIDGETOWN_BIOMASS_PLANT",
+    "display_name": "Manjimup",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6258,
+      "latitude": -34.3331509,
+      "longitude": 116.1085206
+    },
+    "duid_data": {
+      "BRIDGETOWN_BIOMASS_PLANT": {
+        "registered_capacity": 40,
+        "fuel_tech": "bioenergy_biomass"
+      }
+    }
+  },
+  "NAMKKN_MERR": {
+    "station_id": "NAMKKN_MERR",
+    "display_name": "Merredin",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6415,
+      "latitude": -31.5426501,
+      "longitude": 118.2268664
+    },
+    "duid_data": {
+      "NAMKKN_MERR_SG1": {
+        "registered_capacity": 92.6,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "AMBRISOLAR": {
+    "station_id": "AMBRISOLAR",
+    "display_name": "Metro",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6163,
+      "latitude": -32.1033849,
+      "longitude": 115.8084562
+    },
+    "duid_data": {
+      "AMBRISOLAR_PV1": {
+        "registered_capacity": 0.96,
+        "fuel_tech": "solar"
+      }
+    }
+  },
+  "ATLAS": {
+    "station_id": "ATLAS",
+    "display_name": "Mirrabooka",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6021,
+      "latitude": -31.864457399999996,
+      "longitude": 115.8182949
+    },
+    "duid_data": {
+      "ATLAS": {
+        "registered_capacity": 1.23,
+        "fuel_tech": "bioenergy_biogas"
+      }
+    }
+  },
+  "SKYFRM_MTBARKER": {
+    "station_id": "SKYFRM_MTBARKER",
+    "display_name": "Mount Barker",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6324,
+      "latitude": -34.6011629,
+      "longitude": 117.64390449999999
+    },
+    "duid_data": {
+      "SKYFRM_MTBARKER_WF1": {
+        "registered_capacity": 2.43,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "MUJA": {
+    "station_id": "MUJA",
+    "display_name": "Muja CD",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6225,
+      "latitude": -33.445811,
+      "longitude": 116.306655
+    },
+    "duid_data": {
+      "MUJA_G5": {
+        "registered_capacity": 195.8,
+        "fuel_tech": "black_coal"
+      },
+      "MUJA_G6": {
+        "registered_capacity": 193.6,
+        "fuel_tech": "black_coal"
+      },
+      "MUJA_G7": {
+        "registered_capacity": 212.6,
+        "fuel_tech": "black_coal"
+      },
+      "MUJA_G8": {
+        "registered_capacity": 212.6,
+        "fuel_tech": "black_coal"
+      }
+    }
+  },
+  "MWF_MUMBIDA": {
+    "station_id": "MWF_MUMBIDA",
+    "display_name": "Mumbida",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6532,
+      "latitude": -29.011063099999998,
+      "longitude": 114.96622849999999
+    },
+    "duid_data": {
+      "MWF_MUMBIDA_WF1": {
+        "registered_capacity": 55,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "MUNGARRA": {
+    "station_id": "MUNGARRA",
+    "display_name": "Mungarra",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6630,
+      "latitude": -28.8878993,
+      "longitude": 115.115999
+    },
+    "duid_data": {
+      "MUNGARRA_GT1": {
+        "registered_capacity": 39.5,
+        "fuel_tech": "gas_ocgt"
+      },
+      "MUNGARRA_GT2": {
+        "registered_capacity": 39.5,
+        "fuel_tech": "gas_ocgt"
+      },
+      "MUNGARRA_GT3": {
+        "registered_capacity": 38,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "NEWGEN_NEERABUP": {
+    "station_id": "NEWGEN_NEERABUP",
+    "display_name": "Neerabup",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6031,
+      "latitude": -31.671177500000002,
+      "longitude": 115.7988503
+    },
+    "duid_data": {
+      "NEWGEN_NEERABUP_GT1": {
+        "registered_capacity": 342,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "NEWGEN_KWINANA": {
+    "station_id": "NEWGEN_KWINANA",
+    "display_name": "Newgen Kwinana",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6165,
+      "latitude": -32.201951,
+      "longitude": 115.773172
+    },
+    "duid_data": {
+      "NEWGEN_KWINANA_CCG1": {
+        "registered_capacity": 335,
+        "fuel_tech": "gas_ccgt"
+      }
+    }
+  },
+  "NORTHAM_SF": {
+    "station_id": "NORTHAM_SF",
+    "display_name": "Northam",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6401,
+      "latitude": -31.6516099,
+      "longitude": 116.71154109999999
+    },
+    "duid_data": {
+      "NORTHAM_SF_PV1": {
+        "registered_capacity": 7.752999999999999,
+        "fuel_tech": "solar"
+      }
+    }
+  },
+  "TESLA_NORTHAM": {
+    "station_id": "TESLA_NORTHAM",
+    "display_name": "Northam diesel",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6403,
+      "latitude": -31.642906,
+      "longitude": 116.847503
+    },
+    "duid_data": {
+      "TESLA_NORTHAM_G1": {
+        "registered_capacity": 9.9,
+        "fuel_tech": "distillate"
+      }
+    }
+  },
+  "PRK_AG": {
+    "station_id": "PRK_AG",
+    "display_name": "Parkeston",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6434,
+      "latitude": -30.738009299999998,
+      "longitude": 121.5062638
+    },
+    "duid_data": {
+      "PRK_AG": {
+        "registered_capacity": 68,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "TESLA_PICTON": {
+    "station_id": "TESLA_PICTON",
+    "display_name": "Picton diesel",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6229,
+      "latitude": -33.356646000000005,
+      "longitude": 115.72098000000001
+    },
+    "duid_data": {
+      "TESLA_PICTON_G1": {
+        "registered_capacity": 9.9,
+        "fuel_tech": "distillate"
+      }
+    }
+  },
+  "PINJAR": {
+    "station_id": "PINJAR",
+    "display_name": "Pinjar",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6078,
+      "latitude": -31.558544899999998,
+      "longitude": 115.8185124
+    },
+    "duid_data": {
+      "PINJAR_GT1": {
+        "registered_capacity": 38.5,
+        "fuel_tech": "gas_ocgt"
+      },
+      "PINJAR_GT10": {
+        "registered_capacity": 118.2,
+        "fuel_tech": "gas_ocgt"
+      },
+      "PINJAR_GT11": {
+        "registered_capacity": 130,
+        "fuel_tech": "gas_ocgt"
+      },
+      "PINJAR_GT2": {
+        "registered_capacity": 38.5,
+        "fuel_tech": "gas_ocgt"
+      },
+      "PINJAR_GT3": {
+        "registered_capacity": 39.3,
+        "fuel_tech": "gas_ocgt"
+      },
+      "PINJAR_GT4": {
+        "registered_capacity": 39.3,
+        "fuel_tech": "gas_ocgt"
+      },
+      "PINJAR_GT5": {
+        "registered_capacity": 39.3,
+        "fuel_tech": "gas_ocgt"
+      },
+      "PINJAR_GT7": {
+        "registered_capacity": 39.3,
+        "fuel_tech": "gas_ocgt"
+      },
+      "PINJAR_GT9": {
+        "registered_capacity": 118.2,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "ALINTA_PNJ": {
+    "station_id": "ALINTA_PNJ",
+    "display_name": "Pinjara",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6208,
+      "latitude": -32.6471604,
+      "longitude": 115.94685120000001
+    },
+    "duid_data": {
+      "ALINTA_PNJ_U1": {
+        "registered_capacity": 143,
+        "fuel_tech": "gas_ocgt"
+      },
+      "ALINTA_PNJ_U2": {
+        "registered_capacity": 143,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "RED_HILL": {
+    "station_id": "RED_HILL",
+    "display_name": "Red Hill",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6056,
+      "latitude": -31.830628499999996,
+      "longitude": 116.1008881
+    },
+    "duid_data": {
+      "RED_HILL": {
+        "registered_capacity": 3.64,
+        "fuel_tech": "bioenergy_biogas"
+      }
+    }
+  },
+  "BIOGAS01": {
+    "station_id": "BIOGAS01",
+    "display_name": "Richgro",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6164,
+      "latitude": -32.103786,
+      "longitude": 115.895771
+    },
+    "duid_data": {
+      "BIOGAS01": {
+        "registered_capacity": 2,
+        "fuel_tech": "bioenergy_biogas"
+      }
+    }
+  },
+  "ROCKINGHAM": {
+    "station_id": "ROCKINGHAM",
+    "display_name": "Rockingham",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6170,
+      "latitude": -32.287538399999995,
+      "longitude": 115.8158851
+    },
+    "duid_data": {
+      "ROCKINGHAM": {
+        "registered_capacity": 4,
+        "fuel_tech": "bioenergy_biogas"
+      }
+    }
+  },
+  "SOUTH_CARDUP": {
+    "station_id": "SOUTH_CARDUP",
+    "display_name": "South Cardup",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6122,
+      "latitude": -32.266420000000004,
+      "longitude": 116.019263
+    },
+    "duid_data": {
+      "SOUTH_CARDUP": {
+        "registered_capacity": 4.158,
+        "fuel_tech": "bioenergy_biogas"
+      }
+    }
+  },
+  "TAMALA_PARK": {
+    "station_id": "TAMALA_PARK",
+    "display_name": "Tamala Park",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6030,
+      "latitude": -31.7061983,
+      "longitude": 115.72573440000001
+    },
+    "duid_data": {
+      "TAMALA_PARK": {
+        "registered_capacity": 4.8,
+        "fuel_tech": "bioenergy_biogas"
+      }
+    }
+  },
+  "ALCOA_WGP": {
+    "station_id": "ALCOA_WGP",
+    "display_name": "Wagerup",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6215,
+      "latitude": -32.9043187,
+      "longitude": 115.9204307
+    },
+    "duid_data": {
+      "ALCOA_WGP": {
+        "registered_capacity": 26,
+        "fuel_tech": "gas_ocgt"
+      },
+      "ALINTA_WGP_GT": {
+        "registered_capacity": 195.15200000000002,
+        "fuel_tech": "gas_ocgt"
+      },
+      "ALINTA_WGP_U2": {
+        "registered_capacity": 196.84799999999998,
+        "fuel_tech": "gas_ocgt"
+      }
+    }
+  },
+  "ALINTA_WWF": {
+    "station_id": "ALINTA_WWF",
+    "display_name": "Walkaway",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6528,
+      "latitude": -28.902492300000002,
+      "longitude": 114.8927165
+    },
+    "duid_data": {
+      "ALINTA_WWF": {
+        "registered_capacity": 89.1,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "BLAIRFOX_WESTHILLS": {
+    "station_id": "BLAIRFOX_WESTHILLS",
+    "display_name": "West Hills",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6507,
+      "latitude": -30.8581035,
+      "longitude": 115.4632611
+    },
+    "duid_data": {
+      "BLAIRFOX_WESTHILLS_WF3": {
+        "registered_capacity": 5,
+        "fuel_tech": "wind"
+      }
+    }
+  },
+  "WEST_KALGOORLIE": {
+    "station_id": "WEST_KALGOORLIE",
+    "display_name": "West Kalgoorlie",
+    "status": {
+      "state": "Commissioned"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6430,
+      "latitude": -30.7804027,
+      "longitude": 121.42151909999998
+    },
+    "duid_data": {
+      "WEST_KALGOORLIE_GT2": {
+        "registered_capacity": 41.2,
+        "fuel_tech": "distillate"
+      },
+      "WEST_KALGOORLIE_GT3": {
+        "registered_capacity": 23.3,
+        "fuel_tech": "distillate"
+      }
+    }
+  },
+  "KWINANA_OLD": {
+    "station_id": "KWINANA",
+    "display_name": "Kwinana",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2015-04-01"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6165,
+      "latitude": -32.197245,
+      "longitude": 115.77544499999999
+    },
+    "duid_data": {
+      "KWINANA_C5": {
+        "registered_capacity": 200,
+        "fuel_tech": "black_coal"
+      },
+      "KWINANA_C6": {
+        "registered_capacity": 200,
+        "fuel_tech": "black_coal"
+      }
+    }
+  },
+  "MUJA_AB": {
+    "station_id": "MUJA",
+    "display_name": "Muja AB",
+    "status": {
+      "state": "Decommissioned",
+      "date": "2017-05-01"
+    },
+    "region_id": "WA1",
+    "location": {
+      "state": "WA",
+      "postcode": 6225,
+      "latitude": -33.445811,
+      "longitude": 116.306655
+    },
+    "duid_data": {
+      "MUJA_M1": {
+        "registered_capacity": 60,
+        "fuel_tech": "black_coal"
+      },
+      "MUJA_M2": {
+        "registered_capacity": 60,
+        "fuel_tech": "black_coal"
+      },
+      "MUJA_M3": {
+        "registered_capacity": 60,
+        "fuel_tech": "black_coal"
+      },
+      "MUJA_M4": {
+        "registered_capacity": 60,
+        "fuel_tech": "black_coal"
+      }
+    }
+  }
+}

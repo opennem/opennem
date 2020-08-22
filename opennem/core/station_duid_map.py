@@ -27,7 +27,8 @@ def facility_map_station(
     if duid in STATION_DUID_MAP:
         return STATION_DUID_MAP[duid]
 
-    station_code = map_old_station_names(default_station)
+    if default_station:
+        station_code = map_old_station_names(default_station)
 
     return station_code
 

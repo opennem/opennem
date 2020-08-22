@@ -9,7 +9,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import MultipleResultsFound
 
 from opennem.core.facilitystations import facility_station_join_by_name
-from opennem.core.facilitystatus import map_v3_states
 from opennem.core.normalizers import (
     clean_capacity,
     name_normalizer,
@@ -23,43 +22,13 @@ from opennem.core.station_duid_map import (
 from opennem.db import db_connect
 from opennem.db.load_fixtures import load_fixture
 from opennem.db.models.opennem import Facility, Station
+from opennem.importer.compat import (
+    map_compat_facility_state,
+    map_compat_fueltech,
+    map_compat_network_region,
+)
 
 logger = logging.getLogger(__name__)
-
-
-def fueltech_map(fueltech):
-    if fueltech == "brown_coal":
-        return "coal_brown"
-
-    if fueltech == "black_coal":
-        return "coal_black"
-
-    if fueltech == "solar":
-        return "solar_utility"
-
-    if fueltech == "biomass":
-        return "bioenergy_biomass"
-
-    return fueltech
-
-
-def map_network_region(network_region: str) -> str:
-    """
-        Map network regions from old to new
-
-        Note that network regions aren't really geos
-        and there are networks within geos like DKIS (NT)
-        and NWIS (WA) that need to retain their network_region
-    """
-    if not network_region or not type(network_region) is str:
-        return network_region
-
-    network_region = network_region.strip()
-
-    if network_region == "WA1":
-        return "WEM"
-
-    return network_region
 
 
 def load_opennem_facilities():
@@ -86,7 +55,9 @@ def load_opennem_facilities():
             station_code = facility_map_station(
                 facility_duid, normalize_duid(station_data["station_code"])
             )
-            station_state = map_v3_states(station_data["status"]["state"])
+            station_state = map_compat_facility_state(
+                station_data["status"]["state"]
+            )
             station_network = (
                 "WEM" if station_data["location"]["state"] == "WA" else "NEM"
             )
@@ -116,19 +87,30 @@ def load_opennem_facilities():
                 s.commit()
 
             facility_status = station_state
-            facility_network_region = map_network_region(
+
+            # Network region
+            facility_network_region = map_compat_network_region(
                 station_data["region_id"]
             )
-            facility_fueltech = (
-                fueltech_map(facility_data["fuel_tech"])
-                if "fuel_tech" in facility_data
-                else None
-            )
-            facility_capacity = (
-                clean_capacity(facility_data["registered_capacity"])
-                if "registered_capacity" in facility_data
-                else None
-            )
+
+            # Fueltech
+            facility_fueltech = None
+
+            if "fuel_tech" in facility_data and facility_data["fuel_tech"]:
+                facility_fueltech = map_compat_fueltech(
+                    facility_data["fuel_tech"]
+                )
+
+            # Capacity
+            facility_capacity = None
+
+            if (
+                "registered_capacity" in facility_data
+                and facility_data["registered_capacity"]
+            ):
+                facility_capacity = clean_capacity(
+                    facility_data["registered_capacity"]
+                )
 
             facility = None
 

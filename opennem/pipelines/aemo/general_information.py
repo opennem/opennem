@@ -2,6 +2,7 @@ import json
 import logging
 from datetime import datetime
 from itertools import groupby
+from typing import List, Optional
 
 from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
@@ -9,7 +10,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.sql import text
 
 from opennem.core.facilitystations import facility_station_join_by_name
-from opennem.core.facilitystatus import lookup_facility_status
+from opennem.core.facilitystatus import map_aemo_facility_status
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,
@@ -70,31 +71,33 @@ def record_get_station_name(facilities) -> str:
     return station_name
 
 
-def has_unique_duid(units: list) -> bool:
+def has_unique_duid(units: List) -> bool:
     duids = set([i["duid"] for i in units])
     return len(duids) == len(units)
 
 
-def get_unique_duid(units: list) -> str:
-    if not type(units) is list or len(units) < 1:
+def get_unique_duid(units: List) -> Optional[str]:
+    if len(units) < 1:
         return None
 
     first_record = units[0]
 
-    return (
-        normalize_duid(first_record["duid"])
-        if "duid" in first_record
-        else None
-    )
+    if "duid" in first_record and first_record["duid"]:
+        return normalize_duid(first_record["duid"])
+
+    return None
 
 
-def get_unique_reqion(units: list) -> str:
-    if not type(units) is list or len(units) < 1:
+def get_unique_reqion(units: list) -> Optional[str]:
+    if len(units) < 1:
         return None
 
     first_record = units[0]
 
-    return first_record["Region"].strip()
+    if "Region" in first_record:
+        return first_record["Region"].strip()
+
+    return None
 
 
 class GeneralInformationGrouperPipeline(object):
@@ -129,8 +132,6 @@ class GeneralInformationGrouperPipeline(object):
 
             generators_grouped[key] += list(v)
 
-        # generators_grouped = list(generators_grouped.items()
-
         return {"generators": generators_grouped}
 
 
@@ -164,7 +165,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 )
 
                 s.add(participant)
-                # s.commit()
                 logger.info(
                     "GI: Added new partipant to NEM database: {}".format(
                         participant_name
@@ -174,12 +174,17 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
     def process_facilities(self, records):
         s = self.session()
 
-        all_duids = [
-            i[0]
-            for i in s.query(Facility.network_code)
-            .filter(Facility.network_code != None)
-            .all()
-        ]
+        # Store a list of all existing duids
+        all_duids = list(
+            set(
+                [
+                    i[0]
+                    for i in s.query(Facility.network_code)
+                    .filter(Facility.network_code != None)
+                    .all()
+                ]
+            )
+        )
 
         for _, facility_records in records.items():
             facility_index = 1
@@ -213,7 +218,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     facility_lookup = (
                         s.query(Facility)
                         .filter(Facility.network_code == duid)
-                        .filter(Facility.network_code != None)
                         .filter(
                             Facility.network_region == station_network_region
                         )
@@ -240,7 +244,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     s.query(Facility)
                     .filter(Facility.network_code == duid)
                     .filter(Facility.network_region == station_network_region)
-                    .filter(Facility.network_code != None)
                     .first()
                 )
 
@@ -304,7 +307,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 )
 
             for facility_record in facility_records:
-                # skip pipelines
                 if facility_record["FuelType"] in ["Natural Gas Pipeline"]:
                     continue
 
@@ -349,7 +351,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                         "Error parsing date: {}".format(facility_comissioned)
                     )
 
-                facility_status = lookup_facility_status(
+                facility_status = map_aemo_facility_status(
                     facility_record["UnitStatus"]
                 )
                 facility_network_region = normalize_aemo_region(
@@ -460,9 +462,9 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     facility.unit_capacity = unit_size
                     facility.updated_by = "pipeline.aemo.general_information"
 
-                if not facility.status_id:
-                    facility.status_id = facility_status
-                    facility.updated_by = "pipeline.aemo.general_information"
+                # if not facility.status_id:
+                facility.status_id = facility_status
+                # facility.updated_by = "pipeline.aemo.general_information"
 
                 if not facility.registered and facility_comissioned_dt:
                     facility.registered = facility_comissioned_dt
@@ -470,15 +472,12 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
 
                 facility.station = facility_station
 
-                # if facility.fueltech_id is None:
-                #     logger.error(
-                #         "Could not find fueltech for: {}".format(item)
-                #     )
-
-                # if not facility.nameplate_capacity:
-                #     facility.nameplate_capacity = clean_capacity(
-                #         item["UpperCapacity"] or item["NameCapacity"]
-                #     )
+                if facility.fueltech_id is None:
+                    logger.warning(
+                        "Could not find fueltech for: {} {}".format(
+                            facility.code, facility.network_code
+                        )
+                    )
 
                 # facility.status_id = facility_status
 
@@ -523,8 +522,6 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
         finally:
             s.close()
 
-        pass
-
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
@@ -534,6 +531,3 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
         generators = item["generators"]
 
         self.process_facilities(generators)
-
-        # with open("test.json", "w") as fh:
-        # json.dump(generators, fh, cls=OpenNEMJSONEncoder, indent=4)

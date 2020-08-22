@@ -10,7 +10,6 @@ from sqlalchemy.sql import text
 
 from opennem.core.dispatch_type import DispatchType, parse_dispatch_type
 from opennem.core.facilitystations import facility_station_join_by_name
-from opennem.core.facilitystatus import map_v3_states
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,
@@ -149,7 +148,9 @@ class NemStoreMMSStationStatus(DatabaseStoreBase):
         for record in item:
             duid = normalize_duid(record["STATIONID"])
             # authorized_date = name_normalizer(record["AUTHORISEDDATE"])
-            status = map_v3_states(record["STATUS"])
+
+            # @TODO this needs to be mapped to v3 state
+            status = record["STATUS"]
 
             station = (
                 s.query(Station)
@@ -189,16 +190,31 @@ class NemStoreMMSParticipant(DatabaseStoreBase):
         participant_codes = list(set([i[0] for i in q.fetchall()]))
 
         records = item
+
         for record in records:
             created = False
 
-            participant_schema = OpennemParticipant(
-                **{
-                    "code": record["PARTICIPANTID"],
-                    "name": record["NAME"],
-                    "network_name": record["NAME"],
-                }
-            )
+            if not "NAME" in record or not "PARTICIPANTID" in record:
+                logger.error(record)
+                raise Exception(
+                    "Invalid MMS participant record: {}".format(record)
+                )
+
+            participant_schema = None
+
+            try:
+                participant_schema = OpennemParticipant(
+                    **{
+                        "code": record["PARTICIPANTID"],
+                        "name": record["NAME"],
+                        "network_name": record["NAME"],
+                    }
+                )
+            except Exception as e:
+                logger.error(
+                    "Validation error with record: {}".format(record["NAME"])
+                )
+                continue
 
             # pid = normalize_duid(record["PARTICIPANTID"])
             # name = normalize_string(record["NAME"])
@@ -297,13 +313,13 @@ class NemStoreMMSDudetail(DatabaseStoreBase):
                 logger.error(e)
 
             logger.debug(
-                "{} facility record with id {}".format(
+                "MMS Dudetail: {} facility record with id {}".format(
                     "Created" if created else "Updated", duid
                 )
             )
 
         logger.info(
-            "Created {} facility records and updated {}".format(
+            "MMS Dudetail:Created {} facility records and updated {}".format(
                 records_created, records_updated
             )
         )
@@ -328,7 +344,6 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
             participant_code = normalize_duid(
                 record["facilities"][0]["PARTICIPANTID"]
             )
-            dispatch_type = parse_dispatch_type(record["DISPATCHTYPE"])
 
             # Step 1. Find participant by code or create
             participant = (
@@ -384,6 +399,18 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
                 if date_end == None:
                     facility_state = "operating"
 
+                if not "DISPATCHTYPE" in facility_record:
+                    logger.error(
+                        "MMS dudetailsummary: Invalid record: {}".format(
+                            facility_record
+                        )
+                    )
+                    continue
+
+                dispatch_type = parse_dispatch_type(
+                    facility_record["DISPATCHTYPE"]
+                )
+
                 facility = (
                     s.query(Facility)
                     .filter(Facility.network_code == duid)
@@ -391,6 +418,7 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
                 )
 
                 if not facility:
+
                     facility = Facility(
                         code=duid,
                         network_code=duid,
@@ -410,25 +438,28 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
 
                 facility.status_id = facility_state
 
+                if not facility.dispatch_type:
+                    facility.dispatch_type = dispatch_type
+
                 # Associations
                 facility_station_id = facility_map_station(duid, station.id)
 
                 facility.station_id = station.id
 
-            try:
-                s.add(facility)
-                s.commit()
-            except Exception as e:
-                logger.error(e)
+                try:
+                    s.add(facility)
+                    s.commit()
+                except Exception as e:
+                    logger.error(e)
 
             logger.debug(
-                "{} facility record with id {}".format(
+                "MMS DudetailSummary:{} facility record with id {}".format(
                     "Created" if created else "Updated", duid
                 )
             )
 
         logger.info(
-            "Created {} facility records and updated {}".format(
+            "MMS DudetailSummary: Created {} facility records and updated {}".format(
                 records_created, records_updated
             )
         )
