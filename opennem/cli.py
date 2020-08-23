@@ -1,9 +1,11 @@
+# from opennem.utils.log_config
+import logging
+
 import click
 from scrapy.utils.python import garbage_collect
 
 from opennem.diff.facility_diff import run_diff
 from opennem.importer.opennem import run_opennem_import
-from opennem.utils.log_config import logging
 
 logger = logging.getLogger("opennem.cli")
 logger.setLevel(logging.DEBUG)
