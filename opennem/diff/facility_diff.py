@@ -94,13 +94,23 @@ def report_changed_capacities(registry_units, current_units):
     return renames
 
 
+def records_diff(
+    subject: List[object], comparitor: List[object], key: str = "code"
+) -> List[str]:
+    diff_keys = list(
+        set([getattr(i, key) for i in subject])
+        - set([getattr(i, key) for i in comparitor])
+    )
+
+    diff_records = list(
+        filter(lambda x: getattr(x, key) in diff_keys, subject)
+    )
+
+    return diff_records
+
+
 def station_in_registry_not_in_new(registry, current):
-    registry_station_codes = [station.code for station in registry]
-    current_station_codes = [station.code for station in current]
-
-    diff = list(set(registry_station_codes) - set(current_station_codes))
-
-    diff_stations = list(filter(lambda x: x.code in diff, registry))
+    diff_stations = records_diff(registry, current)
 
     list_table = ["Name", "Code", "Facilities"]
 
@@ -113,12 +123,7 @@ def station_in_registry_not_in_new(registry, current):
 
 
 def stations_in_new_not_in_registry(registry, current):
-    registry_station_codes = [station.code for station in registry]
-    current_station_codes = [station.code for station in current]
-
-    diff = list(set(current_station_codes) - set(registry_station_codes))
-
-    diff_stations = list(filter(lambda x: x.code in diff, current))
+    diff_stations = records_diff(current, registry)
 
     list_table = ["Name", "Code", "Facilities"]
 
