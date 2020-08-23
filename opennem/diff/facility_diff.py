@@ -128,11 +128,16 @@ def stations_in_new_not_in_registry(registry, current):
     list_table = ["Name", "Code", "Facilities"]
 
     [
-        list_table.extend([i.name, str(i.code), str(len(i.facilities))])
+        list_table.extend(
+            [i.name, str(i.code) if i.code else "", str(len(i.facilities))]
+        )
         for i in diff_stations
     ]
 
     return list_table
+
+
+get_num_rows = lambda records, columns: int(len(records) / columns)
 
 
 def run_diff():
@@ -191,13 +196,21 @@ def run_diff():
     # Old stations not in new
     md.new_header(level=1, title="Stations not in current")
     not_in_news = station_in_registry_not_in_new(registry, current)
-    md.new_table(columns=3, rows=int(len(not_in_news) / 3), text=not_in_news)
+    md.new_table(
+        columns=3,
+        rows=get_num_rows(not_in_news, 3),
+        text=not_in_news,
+        text_align="left",
+    )
 
     # Old stations not in new
     md.new_header(level=1, title="New Stations")
     not_in_registry = stations_in_new_not_in_registry(registry, current)
     md.new_table(
-        columns=3, rows=int(len(not_in_registry) / 3), text=not_in_registry
+        columns=3,
+        rows=get_num_rows(not_in_registry, 3),
+        text=not_in_registry,
+        text_align="left",
     )
 
     md.new_table_of_contents(table_title="Contents", depth=2)
