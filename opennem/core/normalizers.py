@@ -143,6 +143,8 @@ def is_number(value: Union[str, int]) -> bool:
     if type(value) is int:
         return True
 
+    value = str(value)
+
     if re.match(__is_number, value):
         return True
 
