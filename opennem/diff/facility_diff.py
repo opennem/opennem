@@ -204,42 +204,5 @@ def run_diff():
     md.create_md_file()
 
 
-def run_diff_old():
-    current = load_registry()
-    v3 = load_current()
-
-    current_stations = list(set([i[1] for i in current]))
-    v3_stations = list(set([i[2] for i in v3]))
-    current_stations_names = list(set([i[0] for i in current]))
-    v3_stations_names = list(set([i[0] for i in v3]))
-
-    add(" ## Station codes in current not in v3")
-    add("")
-    add(list(set(current_stations) - set(v3_stations)), True)
-    add(" ## Stations in current not in v3")
-    add("")
-    add(list(set(current_stations_names) - set(v3_stations_names)), True)
-    add(" # Facility duids in current not in v3")
-    add("")
-
-    facility_duid_diff = list(
-        set([i[4] for i in current]) - set([i[5] for i in v3])
-    )
-
-    add(facility_duid_diff, True)
-
-    add(" # Fueltech Changes")
-    add("")
-
-    facility_duid_diff = list(
-        set([(i[4], i[5]) for i in current]) - set([(i[5], i[6]) for i in v3])
-    )
-
-    add(facility_duid_diff, True)
-
-    with open("data/diff_report.md", "w") as fh:
-        fh.write("\n".join(markdown_report))
-
-
 if __name__ == "__main__":
     run_diff()
