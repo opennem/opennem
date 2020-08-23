@@ -107,6 +107,21 @@ There is a `docker-compose` file that will bring a local database:
 $ docker-compose up -d
 ```
 
+Create PostgreSQL databases
+
+```sh
+psql --username $POSTGRES_USER <<EOF
+CREATE DATABASE opennem;
+CREATE DATABASE opennem_dev;
+EOF
+```
+
+Start using alembic create the versions directory
+
+```sh
+$ mkdir opennem/db/migrations/versions
+```
+
 Bring up the database migrations using alembic:
 
 ```sh
@@ -122,7 +137,7 @@ $ scrapy
 The `opennem` cli interface provides other options and settings:
 
 ```sh
-$ opennem -h
+$ opennem --help
 ```
 
 Settings for Visual Studio Code are stored in `.vscode`. Code is kept formatted and linted using `pylint`, `black` and `isort` with settings defined in `pyproject.toml`
