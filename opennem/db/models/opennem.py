@@ -99,13 +99,10 @@ class BaseModel(object):
         session.execute(on_conflict_stmt)
 
     created_by = Column(Text, nullable=True)
-    updated_by = Column(Text, nullable=True)
-    processed_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
 
-class FuelTech(Base, BaseModel):
+class FuelTech(Base):
     __tablename__ = "fueltech"
 
     code = Column(Text, primary_key=True)
@@ -115,7 +112,7 @@ class FuelTech(Base, BaseModel):
     facilities = relationship("Facility")
 
 
-class Network(Base, BaseModel):
+class Network(Base):
     __tablename__ = "network"
 
     code = Column(Text, primary_key=True)
@@ -123,7 +120,7 @@ class Network(Base, BaseModel):
     label = Column(Text, nullable=True)
 
 
-class FacilityStatus(Base, BaseModel):
+class FacilityStatus(Base):
     __tablename__ = "facility_status"
 
     code = Column(Text, primary_key=True)
