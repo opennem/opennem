@@ -55,3 +55,4 @@ db_misc.py
 init-dev.sh
 init.sh
 *.log
+data/mms/
