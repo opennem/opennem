@@ -14,6 +14,7 @@ from datetime import timedelta
 from itertools import chain
 from operator import itemgetter
 from pprint import pprint
+from typing import List
 
 from mdutils.mdutils import MdUtils
 
