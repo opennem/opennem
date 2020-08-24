@@ -173,29 +173,23 @@ class Station(Base, BaseModel):
     )
     participant = relationship("Participant")
 
+    revision_id = Column(
+        Integer,
+        ForeignKey("station_revision.id", name="fk_station_revision_id"),
+        nullable=False,
+    )
+    revision_active_id = Column(
+        Integer,
+        ForeignKey(
+            "station_revision.id", name="fk_station_revision_active_id"
+        ),
+        nullable=False,
+    )
+
     facilities = relationship("Facility")
 
     code = Column(Text, unique=True, index=True, nullable=True)
     name = Column(Text)
-
-    address1 = Column(Text)
-    address2 = Column(Text)
-    locality = Column(Text)
-    state = Column(Text)
-    postcode = Column(Text, nullable=True)
-
-    # Original network fields
-    network_code = Column(Text, index=True)
-    network_name = Column(Text)
-
-    # Geo fields
-    place_id = Column(Text, nullable=True, index=True)
-    geocode_approved = Column(Boolean, default=False)
-    geocode_skip = Column(Boolean, default=False)
-    geocode_processed_at = Column(DateTime, nullable=True)
-    geocode_by = Column(Text, nullable=True)
-    geom = Column(Geometry("POINT", srid=4326))
-    boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
 
     @hybrid_property
     def capacity_registered(self) -> Optional[int]:
@@ -260,6 +254,53 @@ class Station(Base, BaseModel):
     def ocode(self) -> str:
         return get_ocode(self)
 
+
+class StationRevision(Base, BaseModel):
+    __tablename__ = "station_revision"
+
+    def __str__(self):
+        return "{} <{}>".format(self.name, self.code)
+
+    def __repr__(self):
+        return "{} {} <{}>".format(self.__class__, self.name, self.code)
+
+    id = Column(
+        Integer,
+        Sequence("seq_station_revision_id", start=10000, increment=1),
+        primary_key=True,
+    )
+
+    address1 = Column(Text)
+    address2 = Column(Text)
+    locality = Column(Text)
+    state = Column(Text)
+    postcode = Column(Text, nullable=True)
+
+    # Original network fields
+    network_code = Column(Text, index=True)
+    network_name = Column(Text)
+
+    # Geo fields
+    place_id = Column(Text, nullable=True, index=True)
+    geocode_approved = Column(Boolean, default=False)
+    geocode_skip = Column(Boolean, default=False)
+    geocode_processed_at = Column(DateTime, nullable=True)
+    geocode_by = Column(Text, nullable=True)
+    geom = Column(Geometry("POINT", srid=4326))
+    boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
+
+    parent_id = Column(
+        Integer,
+        ForeignKey("station.id", name="fk_station_revision_station"),
+        nullable=True,
+    )
+    parent = relationship(
+        "Station",
+        backref="revisions",
+        foreign_keys=[Station.revision_id],
+        uselist=True,
+    )
+
     @hybrid_property
     def lat(self) -> Optional[float]:
         if self.geom:
@@ -273,16 +314,6 @@ class Station(Base, BaseModel):
             return wkb.loads(bytes(self.geom.data)).x
 
         return None
-
-    @hybrid_property
-    def location(self):
-        """
-            Get lat lng as x,y
-
-            @TODO test this
-        """
-        if self.geom:
-            return (func.as_x(self.geom), func.as_y(self.geom))
 
 
 class Facility(Base, BaseModel):
