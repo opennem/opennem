@@ -6,6 +6,13 @@ class DispatchType(enum.Enum):
     LOAD = 2
 
 
+def dispatch_type_string(dispatch_type: DispatchType) -> str:
+    if dispatch_type == DispatchType.GENERATOR:
+        return "generator"
+
+    return "load"
+
+
 def parse_dispatch_type(dispatch_string: str):
     """
         Converts dispatch type string into an enum constant
