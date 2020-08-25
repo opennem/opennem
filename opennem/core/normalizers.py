@@ -90,6 +90,7 @@ STRIP_WORDS = [
     "run of river",
     "and",
     "bess",
+    "h2e",
     "bess1",
     "gen",
     "gt",
