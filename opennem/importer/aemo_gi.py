@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 from opennem.core.dispatch_type import parse_dispatch_type
 from opennem.core.facilitystatus import map_aemo_facility_status
 from opennem.core.fueltechs import lookup_fueltech
-from opennem.core.loader import PROJECT_DATA_PATH
+from opennem.core.loader import PROJECT_DATA_PATH, load_data
 from opennem.core.normalizers import (
     clean_capacity,
     normalize_aemo_region,
@@ -258,29 +258,14 @@ def load_gi():
 
 
 def run_import_nem_gi():
-    station_fixture = load_fixture("facility_registry.json")
-    mms = run_import_mms()
-
-    nem_stations_registry = {
-        i: v
-        for i, v in station_fixture.items()
-        if v["location"]["state"] not in ["WA"]
-    }
-
-    nem_gi = load_gi()
-
-    mms_duid_station_map = {}
-
-    for station, station_record in mms.items():
-        for network_code in [
-            i["network_code"] for i in station_record["facilities"]
-        ]:
-            mms_duid_station_map[network_code] = station
+    mms_duid_station_map = load_data("mms_duid_station_map.json", True)
 
     nem_gi = gi_grouper(nem_gi, mms_duid_station_map)
 
     with open("data/nem_gi.json", "w") as fh:
         json.dump(nem_gi, fh, indent=4, cls=OpenNEMJSONEncoder)
+
+    logger.info("Wrote {} records".format(len(nem_gi.keys())))
 
 
 if __name__ == "__main__":

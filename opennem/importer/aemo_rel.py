@@ -6,7 +6,7 @@ from openpyxl import load_workbook
 
 from opennem.core.dispatch_type import parse_dispatch_type
 from opennem.core.fueltechs import lookup_fueltech
-from opennem.core.loader import PROJECT_DATA_PATH
+from opennem.core.loader import PROJECT_DATA_PATH, load_data
 from opennem.core.normalizers import (
     clean_capacity,
     normalize_duid,
@@ -20,8 +20,11 @@ from opennem.core.unit_codes import get_unit_code
 from opennem.core.unit_parser import parse_unit_duid
 from opennem.db.load_fixtures import load_fixture
 from opennem.exporter.encoders import OpenNEMJSONEncoder
+from opennem.utils.log_config import logging
 
 from .mms import run_import_mms
+
+logger = logging.getLogger("opennem.importer.mms")
 
 participant_keys = ["name", "abn"]
 
@@ -166,29 +169,15 @@ def load_rel():
 
 
 def run_import_nem_rel():
-    station_fixture = load_fixture("facility_registry.json")
-    mms = run_import_mms()
-
-    nem_stations_registry = {
-        i: v
-        for i, v in station_fixture.items()
-        if v["location"]["state"] not in ["WA"]
-    }
+    mms_duid_station_map = load_data("mms_duid_station_map.json", True)
 
     nem_rel = load_rel()
-
-    mms_duid_station_map = {}
-
-    for station, station_record in mms.items():
-        for network_code in [
-            i["network_code"] for i in station_record["facilities"]
-        ]:
-            mms_duid_station_map[network_code] = station
-
     nem_rel = rel_grouper(nem_rel, mms_duid_station_map)
 
     with open("data/rel.json", "w") as fh:
         json.dump(nem_rel, fh, indent=4, cls=OpenNEMJSONEncoder)
+
+    logger.info("Wrote {} records".format(len(nem_rel.keys())))
 
 
 if __name__ == "__main__":

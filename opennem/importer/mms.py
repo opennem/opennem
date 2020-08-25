@@ -360,7 +360,11 @@ def load_mms_tables():
 def run_import_mms():
     tables = load_mms_tables()
 
-    logger.info("got tables: {}".format(",".join(list(tables.keys()))))
+    logger.info(
+        "Imported {} tables: {}".format(
+            len(tables.keys()), ", ".join(list(tables.keys()))
+        )
+    )
 
     tables = stations_grouper(tables)
     tables = dudetailsummary_grouper(tables)
@@ -369,9 +373,21 @@ def run_import_mms():
 
     mms = tables["mms"]
 
+    mms_duid_station_map = {}
+
+    for station, station_record in mms.items():
+        for network_code in [
+            i["network_code"] for i in station_record["facilities"]
+        ]:
+            mms_duid_station_map[network_code] = station
+
     with open("data/mms.json", "w") as fh:
-        json.dump(tables["mms"], fh, indent=4, cls=OpenNEMJSONEncoder)
-    # items = load_aemo_csv(mmsfile)
+        json.dump(mms, fh, indent=4, cls=OpenNEMJSONEncoder)
+
+    with open("data/mms_duid_station_map.json", "w") as fh:
+        json.dump(mms_duid_station_map, fh, indent=4, cls=OpenNEMJSONEncoder)
+
+    logger.info("Wrote {} records".format(len(mms.keys())))
 
     return mms
 
