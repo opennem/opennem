@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+import zipfile
 from pathlib import Path
 from typing import Any, List, Optional
 
@@ -8,7 +9,7 @@ from typing import Any, List, Optional
 DATA_PATH = Path(__file__).parent / "data"
 PROJECT_DATA_PATH = Path(__file__).parent.parent.parent / "data"
 
-JSON_EXTENSIONS = ["json", "jsonl", "geojson"]
+JSON_EXTENSIONS = [".json", ".jsonl", ".geojson"]
 
 
 class FileNotFound(Exception):
@@ -19,7 +20,7 @@ class FileInvalid(Exception):
     pass
 
 
-def load_data(fixture_name: str, from_project: bool = False) -> Any:
+def load_data(file_name: str, from_project: bool = False) -> Any:
     """
         Load a CSV or JSON data file from either the library
         or project data directory
@@ -27,50 +28,78 @@ def load_data(fixture_name: str, from_project: bool = False) -> Any:
     """
     data_path = PROJECT_DATA_PATH if from_project else DATA_PATH
 
-    if fixture_name.endswith(".csv"):
-        return load_data_csv(fixture_name, data_path)
+    file_path: Path = data_path / Path(file_name)
 
-    return load_data_json(fixture_name, data_path)
+    if not file_path.exists() and file_path.is_file():
+        raise FileNotFound("Not a file: {}".format(file_path))
+
+    print(file_path.suffix)
+
+    if file_path.suffix in [".zip"]:
+        return load_data_zip(file_path)
+
+    if file_path.suffix in [".csv"]:
+        return load_data_csv(file_path)
+
+    if file_path.suffix in JSON_EXTENSIONS:
+        return load_data_json(file_path)
+
+    return load_data_string(file_path)
 
 
-def load_data_json(fixture_name: str, data_path: Path = DATA_PATH) -> Any:
-    fixture_path: Path = data_path / fixture_name
+def load_data_string(file_path: Path) -> str:
 
-    if not fixture_path.exists() and fixture_path.is_file():
-        raise FileNotFound("Not a file: {}".format(fixture_path))
+    content = ""
 
-    if not fixture_path.suffix or fixture_path.suffix in JSON_EXTENSIONS:
+    with open(file_path) as fh:
+        content = fh.read()
+
+    return content
+
+
+def load_data_zip(file_path: Path) -> str:
+    content = ""
+
+    with zipfile.ZipFile(file_path) as zf:
+        zip_files = zf.namelist()
+
+        if len(zip_files) == 1:
+            content = zf.open(zip_files[0])
+            return {"filename": zip_files[0], "content": content.read()}
+
+        if len(zip_files) != 1:
+            raise Exception(
+                "Zero or more than one file in zip file. Have {}".format(
+                    len(zip_files)
+                )
+            )
+
+
+def load_data_json(file_path: Path) -> Any:
+    if not file_path.suffix or file_path.suffix in JSON_EXTENSIONS:
         raise FileInvalid(
-            "Invalid file extension cannot load: {}".format(fixture_name)
+            "Invalid file extension cannot load: {}".format(file_path)
         )
 
     fixture: Any = None
 
-    with fixture_path.open() as fh:
+    with file_path.open() as fh:
         fixture = json.load(fh)
 
     return fixture
 
 
-def load_data_csv(
-    filename: str, data_path: Path = DATA_PATH
-) -> Optional[List[dict]]:
+def load_data_csv(file_path: Path) -> Optional[List[dict]]:
     """
         Load a CSV file
 
         @TODO use libmagic to determine encoding types since Excel saves
         can be funky
     """
-
-    data_filepath = data_path / filename
-
-    if not data_filepath.exists() and data_filepath.is_file():
-        raise FileNotFound("Not a file: {}".format(data_filepath))
-
     records = []
 
     # leave the encoding in place now todo is to determine it
-    with open(data_filepath, encoding="utf-8-sig") as fh:
+    with open(file_path, encoding="utf-8-sig") as fh:
         csvreader = csv.DictReader(fh)
         records = [entry for entry in csvreader]
 
