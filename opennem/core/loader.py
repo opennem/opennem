@@ -64,8 +64,12 @@ def load_data_zip(file_path: Path) -> str:
         zip_files = zf.namelist()
 
         if len(zip_files) == 1:
-            content = zf.open(zip_files[0])
-            return {"filename": zip_files[0], "content": content.read()}
+            content = zf.open(zip_files[0]).read()
+
+            if type(content) is bytes:
+                content = content.decode("utf-8")
+
+            return {"filename": zip_files[0], "content": content}
 
         if len(zip_files) != 1:
             raise Exception(
