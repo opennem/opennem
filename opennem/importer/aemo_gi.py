@@ -1,7 +1,7 @@
 import json
+import logging
 from datetime import datetime
 from itertools import groupby
-from pprint import pprint
 from typing import List, Optional, Union
 
 from openpyxl import load_workbook
@@ -26,6 +26,8 @@ from opennem.db.load_fixtures import load_fixture
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 
 from .mms import run_import_mms
+
+logger = logging.getLogger("opennem.importer.gi")
 
 participant_keys = ["name", "abn"]
 
@@ -66,7 +68,7 @@ def parse_comissioned_date(
         if type(date_str) is str:
             dt = datetime.strptime(date_str, "%d/%m/%y")
     except ValueError:
-        logger.error("Error parsing date: {}".format(facility_comissioned))
+        logger.error("Error parsing date: {}".format(date_str))
 
     return dt
 
@@ -88,6 +90,12 @@ def lookup_station_code(
 
     if not station_code:
         station_code = station_code_from_duids(duids)
+
+        logger.info(
+            "Had to generate station code from duids: {} from {}".format(
+                station_code, ",".join(duids)
+            )
+        )
 
     return station_code
 
