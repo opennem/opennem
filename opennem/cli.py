@@ -1,5 +1,6 @@
 # from opennem.utils.log_config
 import logging
+import os
 
 import click
 from scrapy.utils.python import garbage_collect
@@ -9,7 +10,11 @@ from opennem.importer.mms import run_import_mms
 from opennem.importer.opennem import run_opennem_import
 
 logger = logging.getLogger("opennem.cli")
-logger.setLevel(logging.DEBUG)
+
+DEBUG = bool(os.getenv("DEBUG", default=False))
+
+if DEBUG:
+    logger.setLevel(logging.DEBUG)
 
 
 @click.group()
@@ -56,5 +61,13 @@ if __name__ == "__main__":
         logger.error("User interrupted")
     except Exception as e:
         logger.error(e)
+
+        if DEBUG:
+            from pprint import pprint
+            import traceback
+
+            traceback.print_exc()
+
+            # pprint(e)
     finally:
         garbage_collect()
