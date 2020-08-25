@@ -25,7 +25,7 @@ def main():
 
 @click.command()
 def crawl():
-    logger.info("crawl")
+    logger.info("crawl @TODO")
 
 
 @click.command()

@@ -260,6 +260,7 @@ def load_gi():
 def run_import_nem_gi():
     mms_duid_station_map = load_data("mms_duid_station_map.json", True)
 
+    nem_gi = load_gi()
     nem_gi = gi_grouper(nem_gi, mms_duid_station_map)
 
     with open("data/nem_gi.json", "w") as fh:
