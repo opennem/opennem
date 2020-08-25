@@ -594,16 +594,16 @@
             }
         ]
     },
-    "0NBAYS": {
-        "station_code": "0NBAYS",
+    "0NBTHV": {
+        "station_code": "0NBTHV",
         "facilities": [
             {
                 "id": 48,
                 "name": "Bayswood Timber Hallam",
-                "network_code": "0NBAYS_0",
+                "network_code": "0NBTHV_0",
                 "network_name": "Bayswood\u00a0Timber\u00a0Hallam\u00a0VIC",
                 "status": "operating",
-                "station_code": "0NBAYS",
+                "station_code": "0NBTHV",
                 "network_region": "VIC1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -1726,16 +1726,16 @@
             }
         ]
     },
-    "0NCACRMI": {
-        "station_code": "0NCACRMI",
+    "0NCCMH": {
+        "station_code": "0NCCMH",
         "facilities": [
             {
                 "id": 5,
                 "name": "Cardinia Creek Minihydro",
-                "network_code": "0NCACRMI_0",
+                "network_code": "0NCCMH_0",
                 "network_name": "Cardinia Creek Mini-Hydro",
                 "status": "operating",
-                "station_code": "0NCACRMI",
+                "station_code": "0NCCMH",
                 "network_region": "VIC1",
                 "fueltech": "hydro",
                 "registered": "2018-07-31T00:00:00",
@@ -2052,16 +2052,16 @@
             }
         ]
     },
-    "0NCHUABA": {
-        "station_code": "0NCHUABA",
+    "0NCAX": {
+        "station_code": "0NCAX",
         "facilities": [
             {
                 "id": 89,
                 "name": "Churchill Abattoir",
-                "network_code": "0NCHUABA_0",
+                "network_code": "0NCAX_0",
                 "network_name": "Churchill Abattoir_x000D_",
                 "status": "operating",
-                "station_code": "0NCHUABA",
+                "station_code": "0NCAX",
                 "network_region": "QLD1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -2814,16 +2814,16 @@
             }
         ]
     },
-    "0NDFWS": {
-        "station_code": "0NDFWS",
+    "0NDSFWS": {
+        "station_code": "0NDSFWS",
         "facilities": [
             {
                 "id": 14,
                 "name": "Draytons Family Wines",
-                "network_code": "0NDFWS_0",
+                "network_code": "0NDSFWS_0",
                 "network_name": "Drayton's Family Wines Solar",
                 "status": "operating",
-                "station_code": "0NDFWS",
+                "station_code": "0NDSFWS",
                 "network_region": "NSW1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -4389,16 +4389,16 @@
             }
         ]
     },
-    "0NJK&C1S": {
-        "station_code": "0NJK&C1S",
+    "0NJKC1S": {
+        "station_code": "0NJKC1S",
         "facilities": [
             {
                 "id": 54,
                 "name": "JL King & Co",
-                "network_code": "0NJK&C1S_0",
+                "network_code": "0NJKC1S_0",
                 "network_name": "JL King & Co 150kW- Solar-",
                 "status": "operating",
-                "station_code": "0NJK&C1S",
+                "station_code": "0NJKC1S",
                 "network_region": "VIC1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -4621,16 +4621,16 @@
             }
         ]
     },
-    "0NKEPP1": {
-        "station_code": "0NKEPP1",
+    "0NKEPP1S": {
+        "station_code": "0NKEPP1S",
         "facilities": [
             {
                 "id": 1465,
                 "name": "Kennedy Energy Park",
-                "network_code": "0NKEPP1_5",
+                "network_code": "0NKEPP1S_5",
                 "network_name": "Kennedy Energy Park - Phase 1 - Solar",
                 "status": "committed",
-                "station_code": "0NKEPP1",
+                "station_code": "0NKEPP1S",
                 "network_region": "QLD1",
                 "fueltech": "solar_utility",
                 "registered": "2020-06-18T00:00:00",
@@ -4643,10 +4643,10 @@
             {
                 "id": 1604,
                 "name": "Kennedy Energy Park",
-                "network_code": "0NKEPP1_0",
+                "network_code": "0NKEPP1S_0",
                 "network_name": "Kennedy Energy Park - Phase 1 - Storage",
                 "status": "committed",
-                "station_code": "0NKEPP1",
+                "station_code": "0NKEPP1S",
                 "network_region": "QLD1",
                 "fueltech": "battery_discharging",
                 "registered": "2020-06-18T00:00:00",
@@ -4658,16 +4658,16 @@
             }
         ]
     },
-    "0NKEPP": {
-        "station_code": "0NKEPP",
+    "0NKEPP1W": {
+        "station_code": "0NKEPP1W",
         "facilities": [
             {
                 "id": 1464,
                 "name": "Kennedy Energy Park",
-                "network_code": "0NKEPP1",
+                "network_code": "0NKEPP1W_1",
                 "network_name": "Kennedy Energy Park - Phase 1 - Wind",
                 "status": "committed",
-                "station_code": "0NKEPP",
+                "station_code": "0NKEPP1W",
                 "network_region": "QLD1",
                 "fueltech": "wind",
                 "registered": "2020-06-03T00:00:00",
@@ -6379,16 +6379,16 @@
             }
         ]
     },
-    "0NNLS": {
-        "station_code": "0NNLS",
+    "0NNALFSO": {
+        "station_code": "0NNALFSO",
         "facilities": [
             {
                 "id": 29,
                 "name": "Nawma",
-                "network_code": "0NNLS_0",
+                "network_code": "0NNALFSO_0",
                 "network_name": "NAWMA - LFG - SOLAR",
                 "status": "operating",
-                "station_code": "0NNLS",
+                "station_code": "0NNALFSO",
                 "network_region": "SA1",
                 "fueltech": "",
                 "registered": "2018-07-31T00:00:00",
@@ -7121,16 +7121,16 @@
             }
         ]
     },
-    "0NPF6": {
-        "station_code": "0NPF6",
+    "0NPRFA6": {
+        "station_code": "0NPRFA6",
         "facilities": [
             {
                 "id": 44,
                 "name": "Proten",
-                "network_code": "0NPF6_0",
+                "network_code": "0NPRFA60",
                 "network_name": "Proten - Farm 60",
                 "status": "operating",
-                "station_code": "0NPF6",
+                "station_code": "0NPRFA6",
                 "network_region": "NSW1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7143,10 +7143,10 @@
             {
                 "id": 45,
                 "name": "Proten",
-                "network_code": "0NPF6_1",
+                "network_code": "0NPRFA61",
                 "network_name": "Proten - Farm 61",
                 "status": "operating",
-                "station_code": "0NPF6",
+                "station_code": "0NPRFA6",
                 "network_region": "NSW1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7158,16 +7158,16 @@
             }
         ]
     },
-    "0NPF7": {
-        "station_code": "0NPF7",
+    "0NPRFA74": {
+        "station_code": "0NPRFA74",
         "facilities": [
             {
                 "id": 19,
                 "name": "Proten",
-                "network_code": "0NPF7_2",
+                "network_code": "0NPRFA74_2",
                 "network_name": "Proten - Farm 74",
                 "status": "operating",
-                "station_code": "0NPF7",
+                "station_code": "0NPRFA74",
                 "network_region": "NSW1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7779,16 +7779,16 @@
             }
         ]
     },
-    "0NSA&LC": {
-        "station_code": "0NSA&LC",
+    "0NSALC": {
+        "station_code": "0NSALC",
         "facilities": [
             {
                 "id": 41,
                 "name": "Aquatic & Leasure Centre",
-                "network_code": "0NSA&LC_0",
+                "network_code": "0NSALC_0",
                 "network_name": "SA Aquatic & Leasure Centre",
                 "status": "operating",
-                "station_code": "0NSA&LC",
+                "station_code": "0NSALC",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7800,16 +7800,16 @@
             }
         ]
     },
-    "0NSGVPP": {
-        "station_code": "0NSGVPP",
+    "0NSGVPPS": {
+        "station_code": "0NSGVPPS",
         "facilities": [
             {
                 "id": 1607,
                 "name": "SA VPP",
-                "network_code": "0NSGVPP_0",
+                "network_code": "0NSGVPPS_0",
                 "network_name": "SA Government Virtual Power Plant - stage 1",
                 "status": "operating",
-                "station_code": "0NSGVPP",
+                "station_code": "0NSGVPPS",
                 "network_region": "SA1",
                 "fueltech": "battery_discharging",
                 "registered": "2018-06-22T00:00:00",
@@ -7822,10 +7822,10 @@
             {
                 "id": 1608,
                 "name": "SA VPP",
-                "network_code": "0NSGVPP_1",
+                "network_code": "0NSGVPPS_1",
                 "network_name": "SA Government Virtual Power Plant - stage 2",
                 "status": "committed",
-                "station_code": "0NSGVPP",
+                "station_code": "0NSGVPPS",
                 "network_region": "SA1",
                 "fueltech": "battery_discharging",
                 "registered": "2018-07-30T00:00:00",
@@ -7837,16 +7837,16 @@
             }
         ]
     },
-    "0NSHS": {
-        "station_code": "0NSHS",
+    "0NSAHOSO": {
+        "station_code": "0NSAHOSO",
         "facilities": [
             {
                 "id": 58,
                 "name": "Sale Hospital",
-                "network_code": "0NSHS_0",
+                "network_code": "0NSAHOSO_0",
                 "network_name": "SALE HOSPITAL - SOLAR",
                 "status": "operating",
-                "station_code": "0NSHS",
+                "station_code": "0NSAHOSO",
                 "network_region": "VIC1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -8168,16 +8168,16 @@
             }
         ]
     },
-    "0NSNO2.0": {
-        "station_code": "0NSNO2.0",
+    "0NSN20": {
+        "station_code": "0NSN20",
         "facilities": [
             {
                 "id": 1752,
                 "name": "Snowy 2.0",
-                "network_code": "0NSNO2.0_5",
+                "network_code": "0NSN20_5",
                 "network_name": "Snowy 2.0",
                 "status": "committed",
-                "station_code": "0NSNO2.0",
+                "station_code": "0NSN20",
                 "network_region": "NSW1",
                 "fueltech": "pumps",
                 "registered": "2020-06-03T00:00:00",
@@ -8363,16 +8363,16 @@
             }
         ]
     },
-    "0NSGLCK": {
-        "station_code": "0NSGLCK",
+    "0NSGLCKN": {
+        "station_code": "0NSGLCKN",
         "facilities": [
             {
                 "id": 1294,
                 "name": "St George Leagues Club Kogarah",
-                "network_code": "0NSGLCK_0",
+                "network_code": "0NSGLCKN_0",
                 "network_name": "St George Leagues Club - Kogarah, NSW",
                 "status": "operating",
-                "station_code": "0NSGLCK",
+                "station_code": "0NSGLCKN",
                 "network_region": "NSW1",
                 "fueltech": "distillate",
                 "registered": "2020-01-21T00:00:00",
@@ -8384,16 +8384,16 @@
             }
         ]
     },
-    "0NSPCL": {
-        "station_code": "0NSPCL",
+    "0NSPSCL": {
+        "station_code": "0NSPSCL",
         "facilities": [
             {
                 "id": 27,
                 "name": "St Patricks College Launceston",
-                "network_code": "0NSPCL_0",
+                "network_code": "0NSPSCL_0",
                 "network_name": "St Patrick's College Launceston",
                 "status": "operating",
-                "station_code": "0NSPCL",
+                "station_code": "0NSPSCL",
                 "network_region": "TAS1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -8405,16 +8405,16 @@
             }
         ]
     },
-    "0NSUCY": {
-        "station_code": "0NSUCY",
+    "0NSUSCY": {
+        "station_code": "0NSUSCY",
         "facilities": [
             {
                 "id": 77,
                 "name": "St Ursulas College Yeppoon",
-                "network_code": "0NSUCY_0",
+                "network_code": "0NSUSCY_0",
                 "network_name": "St Ursula's College Yeppoon",
                 "status": "operating",
-                "station_code": "0NSUCY",
+                "station_code": "0NSUSCY",
                 "network_region": "QLD1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -9316,16 +9316,16 @@
             }
         ]
     },
-    "0NTS\u2013LTU": {
-        "station_code": "0NTS\u2013LTU",
+    "0NTSLTUB": {
+        "station_code": "0NTSLTUB",
         "facilities": [
             {
                 "id": 61,
                 "name": "Todae La Trobe University Bendigo",
-                "network_code": "0NTS\u2013LTU_0",
+                "network_code": "0NTSLTUB_0",
                 "network_name": "Todae Solar \u2013 La Trobe University Bendigo",
                 "status": "operating",
-                "station_code": "0NTS\u2013LTU",
+                "station_code": "0NTSLTUB",
                 "network_region": "VIC1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -9334,14 +9334,19 @@
                 "capacity_upper": null,
                 "capacity_registered": 0.3498,
                 "capacity_storage": null
-            },
+            }
+        ]
+    },
+    "0NTSLTUW": {
+        "station_code": "0NTSLTUW",
+        "facilities": [
             {
                 "id": 62,
                 "name": "Todae La Trobe University Wodonga",
-                "network_code": "0NTS\u2013LTU_0",
+                "network_code": "0NTSLTUW_0",
                 "network_name": "Todae Solar \u2013 La Trobe University Wodonga",
                 "status": "operating",
-                "station_code": "0NTS\u2013LTU",
+                "station_code": "0NTSLTUW",
                 "network_region": "VIC1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -9353,16 +9358,16 @@
             }
         ]
     },
-    "0NTSN": {
-        "station_code": "0NTSN",
+    "0NTOSONI": {
+        "station_code": "0NTOSONI",
         "facilities": [
             {
                 "id": 8,
                 "name": "Todae Nillumbik",
-                "network_code": "0NTSN_0",
+                "network_code": "0NTOSONI_0",
                 "network_name": "Todae Solar - Nillumbik",
                 "status": "operating",
-                "station_code": "0NTSN",
+                "station_code": "0NTOSONI",
                 "network_region": "VIC1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -9458,16 +9463,16 @@
             }
         ]
     },
-    "0NTSSHS": {
-        "station_code": "0NTSSHS",
+    "0NTSSHSN": {
+        "station_code": "0NTSSHSN",
         "facilities": [
             {
                 "id": 79,
                 "name": "Todae Holy Spirit Northside",
-                "network_code": "0NTSSHS_0",
+                "network_code": "0NTSSHSN_0",
                 "network_name": "Todae Solar SV - Holy Spirit Northside",
                 "status": "operating",
-                "station_code": "0NTSSHS",
+                "station_code": "0NTSSHSN",
                 "network_region": "QLD1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -10031,16 +10036,16 @@
             }
         ]
     },
-    "0NVEBPS": {
-        "station_code": "0NVEBPS",
+    "0NVEBPSG": {
+        "station_code": "0NVEBPSG",
         "facilities": [
             {
                 "id": 1511,
                 "name": "Vibe Energy",
-                "network_code": "0NVEBPS_0",
+                "network_code": "0NVEBPSG_0",
                 "network_name": "Vibe Energy - Bordertown Power Station Gen - Bordertown, SA",
                 "status": "operating",
-                "station_code": "0NVEBPS",
+                "station_code": "0NVEBPSG",
                 "network_region": "SA1",
                 "fueltech": "distillate",
                 "registered": "2020-01-21T00:00:00",
@@ -11079,16 +11084,16 @@
             }
         ]
     },
-    "0NYWSS(": {
-        "station_code": "0NYWSS(",
+    "0NYWSSA": {
+        "station_code": "0NYWSSA",
         "facilities": [
             {
                 "id": 42,
                 "name": "Yalumba Angaston",
-                "network_code": "0NYWSS(_0",
+                "network_code": "0NYWSSA_0",
                 "network_name": "Yalumba Winery Solar system (Angaston)",
                 "status": "operating",
-                "station_code": "0NYWSS(",
+                "station_code": "0NYWSSA",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -11100,16 +11105,16 @@
             }
         ]
     },
-    "0NYWSS(L": {
-        "station_code": "0NYWSS(L",
+    "0NYWSSOL": {
+        "station_code": "0NYWSSOL",
         "facilities": [
             {
                 "id": 43,
                 "name": "Yalumba Oxford Landing",
-                "network_code": "0NYWSS(L_0",
+                "network_code": "0NYWSSOL_0",
                 "network_name": "Yalumba Winery Solar system (Oxford Landing)",
                 "status": "operating",
-                "station_code": "0NYWSS(L",
+                "station_code": "0NYWSSOL",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
