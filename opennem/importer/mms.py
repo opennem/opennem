@@ -360,7 +360,7 @@ def load_mms_tables():
 def run_import_mms():
     tables = load_mms_tables()
 
-    print(tables.keys())
+    logger.info("got tables: {}".format(",".join(list(tables.keys()))))
 
     tables = stations_grouper(tables)
     tables = dudetailsummary_grouper(tables)
