@@ -33,8 +33,6 @@ def load_data(file_name: str, from_project: bool = False) -> Any:
     if not file_path.exists() and file_path.is_file():
         raise FileNotFound("Not a file: {}".format(file_path))
 
-    print(file_path.suffix)
-
     if file_path.suffix in [".zip"]:
         return load_data_zip(file_path)
 
