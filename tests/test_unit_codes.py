@@ -62,3 +62,14 @@ class TestUnitCodes(object):
         subject = get_basecode("Snowy River Scheme 2.0")
 
         assert subject == "0NSRS20", "Parses out junk characters correctly"
+
+    def test_short(self):
+        subject = get_basecode("Todae DHP")
+
+        assert subject == "0NTODDHP", "Attaches acronyms correctly "
+
+    def test_uniqueness(self):
+        subject_1 = get_basecode("Todae La Trobe University Bendigo")
+        subject_2 = get_basecode("Todae Solar - Nillumbik")
+
+        assert subject_1 != subject_2, "These two should be unique basecodes"
