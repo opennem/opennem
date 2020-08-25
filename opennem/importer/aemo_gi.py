@@ -152,12 +152,12 @@ def gi_grouper(records, station_code_map):
 
     grouped_records = {}
 
-    for _, v in groupby(
+    for k, v in groupby(
         records, key=lambda v: (v["name"].strip(), v["owner"].strip())
     ):
         v = list(v)
 
-        key = v[0]["station_name"]
+        key = k[0]
 
         if not key in grouped_records:
             grouped_records[key] = []
