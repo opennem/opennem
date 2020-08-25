@@ -56,3 +56,4 @@ init-dev.sh
 init.sh
 *.log
 data/mms/
+data/aemo/
