@@ -59,8 +59,8 @@ def get_basecode(station_name: str) -> str:
     if not type(station_name) is str or not station_name:
         raise Exception("Expected to generate a code with no station name")
 
-    MIN_DUID_LENGTH = 3
-    MAX_DUID_LENGTH = 4
+    MIN_DUID_LENGTH = 4
+    MAX_DUID_LENGTH = 6
 
     comps = station_name.strip().split(" ")
 
