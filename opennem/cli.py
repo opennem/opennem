@@ -6,6 +6,7 @@ import click
 from scrapy.utils.python import garbage_collect
 
 from opennem.diff.facility_diff import run_diff
+from opennem.importer.all import run_all
 from opennem.importer.mms import run_import_mms
 from opennem.importer.opennem import run_opennem_import
 
@@ -47,12 +48,18 @@ def cmd_import_mms():
     run_import_mms()
 
 
+@click.command()
+def cmd_import_all():
+    run_all()
+
+
 main.add_command(crawl)
 main.add_command(diff)
 main.add_command(cmd_import, name="import")
 
 cmd_import.add_command(cmd_import_opennem, name="opennem")
 cmd_import.add_command(cmd_import_mms, name="mms")
+cmd_import.add_command(cmd_import_all, name="all")
 
 if __name__ == "__main__":
     try:
