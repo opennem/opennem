@@ -1,3 +1,4 @@
+import re
 from typing import Optional
 
 from opennem.core.normalizers import normalize_duid
@@ -49,6 +50,17 @@ def get_unit_code(
 OPENNEM_CODE_PREFIX = "0N"
 
 
+__alphanum_strip = re.compile(r"[\W_\ ]+")
+
+
+def clean_name_for_basecode(station_name: str) -> str:
+    """
+        Cleans up the name in prep to generate a basecode
+    """
+
+    return __alphanum_strip.sub(" ", station_name.strip())
+
+
 def get_basecode(station_name: str) -> str:
     """
         Generate a code from the station name when there isn't an DUID
@@ -62,7 +74,9 @@ def get_basecode(station_name: str) -> str:
     MIN_DUID_LENGTH = 4
     MAX_DUID_LENGTH = 6
 
-    comps = station_name.strip().split(" ")
+    station_name = clean_name_for_basecode(station_name)
+
+    comps = station_name.split(" ")
 
     num_words = len(comps)
 

@@ -52,3 +52,13 @@ class TestUnitCodes(object):
         subject = duid_is_ocode(ocode)
 
         assert subject == True, "0NPSM is an ocode"
+
+    def test_basecode_brackets(self):
+        subject = get_basecode("Snowy River Scheme (Unit)")
+
+        assert subject == "0NSRSU", "Parses out junk characters correctly"
+
+    def test_basecode_periods(self):
+        subject = get_basecode("Snowy River Scheme 2.0")
+
+        assert subject == "0NSRS20", "Parses out junk characters correctly"
