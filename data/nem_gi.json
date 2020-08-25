@@ -183,8 +183,8 @@
             }
         ]
     },
-    "0NAWAB": {
-        "station_code": "0NAWAB",
+    "AWABAREF": {
+        "station_code": "AWABAREF",
         "facilities": [
             {
                 "id": 1004,
@@ -192,7 +192,7 @@
                 "network_code": "0NAWAB_0",
                 "network_name": "Awaba",
                 "status": "operating",
-                "station_code": "0NAWAB",
+                "station_code": "AWABAREF",
                 "network_region": "NSW1",
                 "fueltech": "bioenergy_biogas",
                 "registered": "2018-02-19T00:00:00",
@@ -388,8 +388,8 @@
             }
         ]
     },
-    "0NBASPCL": {
-        "station_code": "0NBASPCL",
+    "BANKSPT": {
+        "station_code": "BANKSPT",
         "facilities": [
             {
                 "id": 1009,
@@ -397,7 +397,7 @@
                 "network_code": "0NBASPCL_0",
                 "network_name": "Bankstown Sports Club",
                 "status": "operating",
-                "station_code": "0NBASPCL",
+                "station_code": "BANKSPT",
                 "network_region": "NSW1",
                 "fueltech": "distillate",
                 "registered": "2018-02-19T00:00:00",
@@ -413,7 +413,7 @@
                 "network_code": "0NBASPCL_1",
                 "network_name": "Bankstown Sports Club",
                 "status": "operating",
-                "station_code": "0NBASPCL",
+                "station_code": "BANKSPT",
                 "network_region": "NSW1",
                 "fueltech": "distillate",
                 "registered": "2018-02-19T00:00:00",
@@ -720,8 +720,8 @@
             }
         ]
     },
-    "0NBERW": {
-        "station_code": "0NBERW",
+    "BERWICK": {
+        "station_code": "BERWICK",
         "facilities": [
             {
                 "id": 1019,
@@ -729,7 +729,7 @@
                 "network_code": "0NBERW_3",
                 "network_name": "Berwick",
                 "status": "operating",
-                "station_code": "0NBERW",
+                "station_code": "BERWICK",
                 "network_region": "VIC1",
                 "fueltech": "bioenergy_biogas",
                 "registered": "2018-02-19T00:00:00",
@@ -745,7 +745,7 @@
                 "network_code": "0NBERW_1",
                 "network_name": "Berwick",
                 "status": "operating",
-                "station_code": "0NBERW",
+                "station_code": "BERWICK",
                 "network_region": "VIC1",
                 "fueltech": "bioenergy_biogas",
                 "registered": "2018-02-19T00:00:00",
@@ -841,8 +841,8 @@
             }
         ]
     },
-    "0NBLAY": {
-        "station_code": "0NBLAY",
+    "BLAYNEY": {
+        "station_code": "BLAYNEY",
         "facilities": [
             {
                 "id": 1020,
@@ -850,7 +850,7 @@
                 "network_code": "0NBLAY_1",
                 "network_name": "Blayney",
                 "status": "operating",
-                "station_code": "0NBLAY",
+                "station_code": "BLAYNEY",
                 "network_region": "NSW1",
                 "fueltech": "wind",
                 "registered": "2019-05-16T00:00:00",
@@ -1410,7 +1410,7 @@
         "facilities": [
             {
                 "id": 1289,
-                "name": "Bulgana Green",
+                "name": "Bulgana Wind Farm",
                 "network_code": "BULGANA1",
                 "network_name": "Bulgana Green Power Hub - Wind Farm",
                 "status": "committed",
@@ -1547,8 +1547,8 @@
             }
         ]
     },
-    "0NBUTGOR": {
-        "station_code": "0NBUTGOR",
+    "BUTLERSG": {
+        "station_code": "BUTLERSG",
         "facilities": [
             {
                 "id": 1034,
@@ -1556,7 +1556,7 @@
                 "network_code": "0NBUTGOR_0",
                 "network_name": "Butlers Gorge",
                 "status": "operating",
-                "station_code": "0NBUTGOR",
+                "station_code": "BUTLERSG",
                 "network_region": "TAS1",
                 "fueltech": "hydro",
                 "registered": "2020-06-03T00:00:00",
@@ -1565,12 +1565,7 @@
                 "capacity_upper": null,
                 "capacity_registered": 2.2,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "BUTLERSG": {
-        "station_code": "BUTLERSG",
-        "facilities": [
+            },
             {
                 "id": 1034,
                 "name": "Butlers Gorge",
@@ -1731,7 +1726,7 @@
         "facilities": [
             {
                 "id": 5,
-                "name": "Cardinia Creek Minihydro",
+                "name": "Cardinia Creek Mini Hydro",
                 "network_code": "0NCCMH_0",
                 "network_name": "Cardinia Creek Mini-Hydro",
                 "status": "operating",
@@ -1752,7 +1747,7 @@
         "facilities": [
             {
                 "id": 6,
-                "name": "Carina West H2E",
+                "name": "Carina West",
                 "network_code": "0NCAWEH2_0",
                 "network_name": "CARINA WEST H2E",
                 "status": "operating",
@@ -2483,8 +2478,8 @@
             }
         ]
     },
-    "0NCROO": {
-        "station_code": "0NCROO",
+    "CROOKWEL": {
+        "station_code": "CROOKWEL",
         "facilities": [
             {
                 "id": 1060,
@@ -2492,7 +2487,7 @@
                 "network_code": "0NCROO_7",
                 "network_name": "Crookwell",
                 "status": "operating",
-                "station_code": "0NCROO",
+                "station_code": "CROOKWEL",
                 "network_region": "NSW1",
                 "fueltech": "wind",
                 "registered": "2019-05-16T00:00:00",
@@ -3500,8 +3495,8 @@
             }
         ]
     },
-    "0NGLEN": {
-        "station_code": "0NGLEN",
+    "GLBWNHYD": {
+        "station_code": "GLBWNHYD",
         "facilities": [
             {
                 "id": 1078,
@@ -3509,7 +3504,7 @@
                 "network_code": "0NGLEN_0",
                 "network_name": "Glenbawn",
                 "status": "operating",
-                "station_code": "0NGLEN",
+                "station_code": "GLBWNHYD",
                 "network_region": "NSW1",
                 "fueltech": "hydro",
                 "registered": "2020-06-04T00:00:00",
@@ -3517,22 +3512,6 @@
                 "unit_capacity": 5.0,
                 "capacity_upper": 5.0,
                 "capacity_registered": 5.0,
-                "capacity_storage": null
-            },
-            {
-                "id": 1315,
-                "name": "Glenorchy",
-                "network_code": "0NGLEN_1",
-                "network_name": "Glenorchy",
-                "status": "operating",
-                "station_code": "0NGLEN",
-                "network_region": "TAS1",
-                "fueltech": "bioenergy_biogas",
-                "registered": "2020-06-04T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 3.38,
                 "capacity_storage": null
             }
         ]
@@ -3575,6 +3554,27 @@
                 "unit_capacity": null,
                 "capacity_upper": null,
                 "capacity_registered": 12.78,
+                "capacity_storage": null
+            }
+        ]
+    },
+    "0NGLEN": {
+        "station_code": "0NGLEN",
+        "facilities": [
+            {
+                "id": 1315,
+                "name": "Glenorchy",
+                "network_code": "0NGLEN_1",
+                "network_name": "Glenorchy",
+                "status": "operating",
+                "station_code": "0NGLEN",
+                "network_region": "TAS1",
+                "fueltech": "bioenergy_biogas",
+                "registered": "2020-06-04T00:00:00",
+                "unit_capacity_lower": null,
+                "unit_capacity": null,
+                "capacity_upper": null,
+                "capacity_registered": 3.38,
                 "capacity_storage": null
             }
         ]
@@ -3910,7 +3910,7 @@
         "facilities": [
             {
                 "id": 1088,
-                "name": "Hallett Hallett Hill",
+                "name": "Hallett 2",
                 "network_code": "HALLWF2",
                 "network_name": "Hallett Stage 2 Hallett Hill",
                 "status": "operating",
@@ -4643,7 +4643,7 @@
             {
                 "id": 1604,
                 "name": "Kennedy Energy Park",
-                "network_code": "0NKEPP1S_0",
+                "network_code": "0NKEPP1S_1",
                 "network_name": "Kennedy Energy Park - Phase 1 - Storage",
                 "status": "committed",
                 "station_code": "0NKEPP1S",
@@ -5511,8 +5511,8 @@
             }
         ]
     },
-    "0NMACMIL": {
-        "station_code": "0NMACMIL",
+    "MACKNADE": {
+        "station_code": "MACKNADE",
         "facilities": [
             {
                 "id": 1131,
@@ -5520,7 +5520,7 @@
                 "network_code": "0NMACMIL_0",
                 "network_name": "Macknade Mill",
                 "status": "operating",
-                "station_code": "0NMACMIL",
+                "station_code": "MACKNADE",
                 "network_region": "QLD1",
                 "fueltech": "bioenergy_biomass",
                 "registered": "2019-05-03T00:00:00",
@@ -5536,7 +5536,7 @@
                 "network_code": "0NMACMIL_1",
                 "network_name": "Macknade Mill",
                 "status": "operating",
-                "station_code": "0NMACMIL",
+                "station_code": "MACKNADE",
                 "network_region": "QLD1",
                 "fueltech": "bioenergy_biomass",
                 "registered": "2019-05-03T00:00:00",
@@ -6242,7 +6242,7 @@
         "facilities": [
             {
                 "id": 1335,
-                "name": "Mugga Lane",
+                "name": "Mugga Lane Solar Park",
                 "network_code": "MLSP1",
                 "network_name": "Mugga Lane Solar Park",
                 "status": "operating",
@@ -6258,8 +6258,8 @@
             }
         ]
     },
-    "0NMUCEMI": {
-        "station_code": "0NMUCEMI",
+    "MULGRAVE": {
+        "station_code": "MULGRAVE",
         "facilities": [
             {
                 "id": 1306,
@@ -6267,7 +6267,7 @@
                 "network_code": "0NMUCEMI_0",
                 "network_name": "Mulgrave Central Mill",
                 "status": "operating",
-                "station_code": "0NMUCEMI",
+                "station_code": "MULGRAVE",
                 "network_region": "QLD1",
                 "fueltech": "bioenergy_biomass",
                 "registered": "2020-05-22T00:00:00",
@@ -6384,7 +6384,7 @@
         "facilities": [
             {
                 "id": 29,
-                "name": "Nawma",
+                "name": "NAWMA",
                 "network_code": "0NNALFSO_0",
                 "network_name": "NAWMA - LFG - SOLAR",
                 "status": "operating",
@@ -6405,7 +6405,7 @@
         "facilities": [
             {
                 "id": 1544,
-                "name": "Nawma Balefill Uleybury",
+                "name": "NAWMA Balefill Uleybury",
                 "network_code": "0NNBSU_1",
                 "network_name": "NAWMA Balefill Site Uleybury",
                 "status": "operating",
@@ -6421,7 +6421,7 @@
             },
             {
                 "id": 1544,
-                "name": "Nawma Balefill Uleybury",
+                "name": "NAWMA Balefill Uleybury",
                 "network_code": "0NNBSU_1",
                 "network_name": "NAWMA Balefill Site Uleybury",
                 "status": "operating",
@@ -6789,8 +6789,8 @@
             }
         ]
     },
-    "0NPEDCRE": {
-        "station_code": "0NPEDCRE",
+    "PEDLER": {
+        "station_code": "PEDLER",
         "facilities": [
             {
                 "id": 1157,
@@ -6798,7 +6798,7 @@
                 "network_code": "0NPEDCRE_2",
                 "network_name": "Pedler Creek",
                 "status": "operating",
-                "station_code": "0NPEDCRE",
+                "station_code": "PEDLER",
                 "network_region": "SA1",
                 "fueltech": "distillate",
                 "registered": "2018-02-19T00:00:00",
@@ -6910,8 +6910,8 @@
             }
         ]
     },
-    "0NPLCRMI": {
-        "station_code": "0NPLCRMI",
+    "PLANECRK": {
+        "station_code": "PLANECRK",
         "facilities": [
             {
                 "id": 1161,
@@ -6919,7 +6919,7 @@
                 "network_code": "0NPLCRMI_0",
                 "network_name": "Plane Creek Mill",
                 "status": "operating",
-                "station_code": "0NPLCRMI",
+                "station_code": "PLANECRK",
                 "network_region": "QLD1",
                 "fueltech": "bioenergy_biomass",
                 "registered": "2018-02-19T00:00:00",
@@ -6935,7 +6935,7 @@
                 "network_code": "0NPLCRMI_1",
                 "network_name": "Plane Creek Mill",
                 "status": "operating",
-                "station_code": "0NPLCRMI",
+                "station_code": "PLANECRK",
                 "network_region": "QLD1",
                 "fueltech": "bioenergy_biomass",
                 "registered": "2018-02-19T00:00:00",
@@ -7047,8 +7047,8 @@
             }
         ]
     },
-    "PORTWF": {
-        "station_code": "PORTWF",
+    "PORTLAND": {
+        "station_code": "PORTLAND",
         "facilities": [
             {
                 "id": 1165,
@@ -7056,7 +7056,7 @@
                 "network_code": "0NPOWIFA_1",
                 "network_name": "Portland Wind Farm",
                 "status": "operating",
-                "station_code": "PORTWF",
+                "station_code": "PORTLAND",
                 "network_region": "VIC1",
                 "fueltech": "wind",
                 "registered": "2018-02-19T00:00:00",
@@ -7072,7 +7072,7 @@
                 "network_code": "0NPOWIFA_1",
                 "network_name": "Portland Wind Farm",
                 "status": "operating",
-                "station_code": "PORTWF",
+                "station_code": "PORTLAND",
                 "network_region": "VIC1",
                 "fueltech": "wind",
                 "registered": "2018-02-19T00:00:00",
@@ -7121,8 +7121,8 @@
             }
         ]
     },
-    "0NPRFA6": {
-        "station_code": "0NPRFA6",
+    "0NPROTEN": {
+        "station_code": "0NPROTEN",
         "facilities": [
             {
                 "id": 44,
@@ -7130,7 +7130,7 @@
                 "network_code": "0NPRFA60",
                 "network_name": "Proten - Farm 60",
                 "status": "operating",
-                "station_code": "0NPRFA6",
+                "station_code": "0NPROTEN",
                 "network_region": "NSW1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7146,7 +7146,7 @@
                 "network_code": "0NPRFA61",
                 "network_name": "Proten - Farm 61",
                 "status": "operating",
-                "station_code": "0NPRFA6",
+                "station_code": "0NPROTEN",
                 "network_region": "NSW1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7155,19 +7155,14 @@
                 "capacity_upper": null,
                 "capacity_registered": 0.3567,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "0NPRFA74": {
-        "station_code": "0NPRFA74",
-        "facilities": [
+            },
             {
                 "id": 19,
                 "name": "Proten",
                 "network_code": "0NPRFA74_2",
                 "network_name": "Proten - Farm 74",
                 "status": "operating",
-                "station_code": "0NPRFA74",
+                "station_code": "0NPROTEN",
                 "network_region": "NSW1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7176,19 +7171,14 @@
                 "capacity_upper": null,
                 "capacity_registered": 0.2499,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "0NPF77": {
-        "station_code": "0NPF77",
-        "facilities": [
+            },
             {
                 "id": 46,
                 "name": "Proten",
                 "network_code": "0NPF77_3",
                 "network_name": "Proten - Farm 75 - 79",
                 "status": "operating",
-                "station_code": "0NPF77",
+                "station_code": "0NPROTEN",
                 "network_region": "NSW1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7253,8 +7243,8 @@
             }
         ]
     },
-    "0NRGE1": {
-        "station_code": "0NRGE1",
+    "0NREDMUD": {
+        "station_code": "0NREDMUD",
         "facilities": [
             {
                 "id": 30,
@@ -7262,7 +7252,23 @@
                 "network_code": "0NRGE1_0",
                 "network_name": "Redmud Green Energy 10",
                 "status": "operating",
-                "station_code": "0NRGE1",
+                "station_code": "0NREDMUD",
+                "network_region": "SA1",
+                "fueltech": "solar_utility",
+                "registered": "2018-07-31T00:00:00",
+                "unit_capacity_lower": null,
+                "unit_capacity": null,
+                "capacity_upper": null,
+                "capacity_registered": 0.212,
+                "capacity_storage": null
+            },
+            {
+                "id": 31,
+                "name": "Redmud Green Energy",
+                "network_code": "0NRGE1",
+                "network_name": "Redmud Green Energy 11",
+                "status": "operating",
+                "station_code": "0NREDMUD",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7278,7 +7284,7 @@
                 "network_code": "0NRGE1_2",
                 "network_name": "Redmud Green Energy 12",
                 "status": "operating",
-                "station_code": "0NRGE1",
+                "station_code": "0NREDMUD",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7294,7 +7300,7 @@
                 "network_code": "0NRGE1_3",
                 "network_name": "Redmud Green Energy 13",
                 "status": "operating",
-                "station_code": "0NRGE1",
+                "station_code": "0NREDMUD",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7310,7 +7316,7 @@
                 "network_code": "0NRGE1_4",
                 "network_name": "Redmud Green Energy 14",
                 "status": "operating",
-                "station_code": "0NRGE1",
+                "station_code": "0NREDMUD",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7319,40 +7325,14 @@
                 "capacity_upper": null,
                 "capacity_registered": 0.212,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "0NRGE": {
-        "station_code": "0NRGE",
-        "facilities": [
-            {
-                "id": 31,
-                "name": "Redmud Green Energy",
-                "network_code": "0NRGE1",
-                "network_name": "Redmud Green Energy 11",
-                "status": "operating",
-                "station_code": "0NRGE",
-                "network_region": "SA1",
-                "fueltech": "solar_utility",
-                "registered": "2018-07-31T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 0.212,
-                "capacity_storage": null
-            }
-        ]
-    },
-    "0NRGE4": {
-        "station_code": "0NRGE4",
-        "facilities": [
+            },
             {
                 "id": 35,
                 "name": "Redmud Green Energy",
                 "network_code": "0NRGE4_5",
                 "network_name": "Redmud Green Energy 4",
                 "status": "operating",
-                "station_code": "0NRGE4",
+                "station_code": "0NREDMUD",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7361,19 +7341,14 @@
                 "capacity_upper": null,
                 "capacity_registered": 0.6,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "0NRGE5": {
-        "station_code": "0NRGE5",
-        "facilities": [
+            },
             {
                 "id": 36,
                 "name": "Redmud Green Energy",
                 "network_code": "0NRGE5_6",
                 "network_name": "Redmud Green Energy 5",
                 "status": "operating",
-                "station_code": "0NRGE5",
+                "station_code": "0NREDMUD",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7382,19 +7357,14 @@
                 "capacity_upper": null,
                 "capacity_registered": 0.212,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "0NRGE6": {
-        "station_code": "0NRGE6",
-        "facilities": [
+            },
             {
                 "id": 37,
                 "name": "Redmud Green Energy",
                 "network_code": "0NRGE6_7",
                 "network_name": "Redmud Green Energy 6",
                 "status": "operating",
-                "station_code": "0NRGE6",
+                "station_code": "0NREDMUD",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7403,19 +7373,14 @@
                 "capacity_upper": null,
                 "capacity_registered": 0.212,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "0NRGE7": {
-        "station_code": "0NRGE7",
-        "facilities": [
+            },
             {
                 "id": 38,
                 "name": "Redmud Green Energy",
                 "network_code": "0NRGE7_8",
                 "network_name": "Redmud Green Energy 7",
                 "status": "operating",
-                "station_code": "0NRGE7",
+                "station_code": "0NREDMUD",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7424,19 +7389,14 @@
                 "capacity_upper": null,
                 "capacity_registered": 0.212,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "0NRGE8": {
-        "station_code": "0NRGE8",
-        "facilities": [
+            },
             {
                 "id": 39,
                 "name": "Redmud Green Energy",
                 "network_code": "0NRGE8_1",
                 "network_name": "Redmud Green Energy 8",
                 "status": "operating",
-                "station_code": "0NRGE8",
+                "station_code": "0NREDMUD",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7445,19 +7405,14 @@
                 "capacity_upper": null,
                 "capacity_registered": 0.212,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "0NRGE9": {
-        "station_code": "0NRGE9",
-        "facilities": [
+            },
             {
                 "id": 40,
                 "name": "Redmud Green Energy",
                 "network_code": "0NRGE9_1",
                 "network_name": "Redmud Green Energy 9",
                 "status": "operating",
-                "station_code": "0NRGE9",
+                "station_code": "0NREDMUD",
                 "network_region": "SA1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -7611,8 +7566,8 @@
             }
         ]
     },
-    "0NRREF": {
-        "station_code": "0NRREF",
+    "ROCHEDAL": {
+        "station_code": "ROCHEDAL",
         "facilities": [
             {
                 "id": 1171,
@@ -7620,7 +7575,7 @@
                 "network_code": "0NRREF_0",
                 "network_name": "Rochedale Renewable Energy Facility",
                 "status": "operating",
-                "station_code": "0NRREF",
+                "station_code": "ROCHEDAL",
                 "network_region": "QLD1",
                 "fueltech": "bioenergy_biogas",
                 "registered": "2018-04-14T00:00:00",
@@ -7629,12 +7584,7 @@
                 "capacity_upper": null,
                 "capacity_registered": 4.492,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "ROCHEDAL": {
-        "station_code": "ROCHEDAL",
-        "facilities": [
+            },
             {
                 "id": 1171,
                 "name": "Rochedale",
@@ -7989,7 +7939,7 @@
         "facilities": [
             {
                 "id": 1312,
-                "name": "Shepparton Facility",
+                "name": "Shepparton Wastewater Treatment",
                 "network_code": "SHEP1",
                 "network_name": "Shepparton Wastewater Treatment Facility",
                 "status": "operating",
@@ -8226,8 +8176,8 @@
             }
         ]
     },
-    "0NSOMDAM": {
-        "station_code": "0NSOMDAM",
+    "SOMERSET": {
+        "station_code": "SOMERSET",
         "facilities": [
             {
                 "id": 90,
@@ -8235,7 +8185,7 @@
                 "network_code": "0NSOMDAM_0",
                 "network_name": "Somerset Dam",
                 "status": "operating",
-                "station_code": "0NSOMDAM",
+                "station_code": "SOMERSET",
                 "network_region": "QLD1",
                 "fueltech": "solar_utility",
                 "registered": "2018-07-31T00:00:00",
@@ -8247,8 +8197,8 @@
             }
         ]
     },
-    "0NSOJOMI": {
-        "station_code": "0NSOJOMI",
+    "STHJST": {
+        "station_code": "STHJST",
         "facilities": [
             {
                 "id": 1307,
@@ -8256,7 +8206,7 @@
                 "network_code": "0NSOJOMI_0",
                 "network_name": "South Johnstone Mill",
                 "status": "operating",
-                "station_code": "0NSOJOMI",
+                "station_code": "STHJST",
                 "network_region": "QLD1",
                 "fueltech": "bioenergy_biomass",
                 "registered": "2018-04-14T00:00:00",
@@ -8272,7 +8222,7 @@
                 "network_code": "0NSOJOMI_1",
                 "network_name": "South Johnstone Mill",
                 "status": "operating",
-                "station_code": "0NSOJOMI",
+                "station_code": "STHJST",
                 "network_region": "QLD1",
                 "fueltech": "bioenergy_biomass",
                 "registered": "2018-04-14T00:00:00",
@@ -8288,7 +8238,7 @@
                 "network_code": "0NSOJOMI_2",
                 "network_name": "South Johnstone Mill",
                 "status": "operating",
-                "station_code": "0NSOJOMI",
+                "station_code": "STHJST",
                 "network_region": "QLD1",
                 "fueltech": "bioenergy_biomass",
                 "registered": "2018-04-14T00:00:00",
@@ -8721,8 +8671,8 @@
             }
         ]
     },
-    "0NSHSF1U": {
-        "station_code": "0NSHSF1U",
+    "0NSWANSF": {
+        "station_code": "0NSWANSF",
         "facilities": [
             {
                 "id": 1583,
@@ -8730,7 +8680,7 @@
                 "network_code": "0NSHSF1U_2",
                 "network_name": "Swan Hill Solar Farm 1 Unit 1",
                 "status": "operating",
-                "station_code": "0NSHSF1U",
+                "station_code": "0NSWANSF",
                 "network_region": "VIC1",
                 "fueltech": "solar_utility",
                 "registered": "2019-05-06T00:00:00",
@@ -8739,19 +8689,14 @@
                 "capacity_upper": null,
                 "capacity_registered": 7.2,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "0NSHSF2U": {
-        "station_code": "0NSHSF2U",
-        "facilities": [
+            },
             {
                 "id": 1611,
                 "name": "Swan Hill Solar Farm",
                 "network_code": "0NSHSF2U_3",
                 "network_name": "Swan Hill Solar Farm 2 Unit 1",
                 "status": "operating",
-                "station_code": "0NSHSF2U",
+                "station_code": "0NSWANSF",
                 "network_region": "VIC1",
                 "fueltech": "solar_utility",
                 "registered": "2019-05-06T00:00:00",
@@ -9148,8 +9093,8 @@
             }
         ]
     },
-    "0NTEGESO": {
-        "station_code": "0NTEGESO",
+    "SATGS": {
+        "station_code": "SATGS",
         "facilities": [
             {
                 "id": 1533,
@@ -9157,7 +9102,7 @@
                 "network_code": "0NTEGESO_3",
                 "network_name": "Temporary Generation South",
                 "status": "committed",
-                "station_code": "0NTEGESO",
+                "station_code": "SATGS",
                 "network_region": "SA1",
                 "fueltech": "distillate",
                 "registered": "2020-07-06T00:00:00",
@@ -9166,12 +9111,7 @@
                 "capacity_upper": null,
                 "capacity_registered": 123.2,
                 "capacity_storage": null
-            }
-        ]
-    },
-    "SATGS": {
-        "station_code": "SATGS",
-        "facilities": [
+            },
             {
                 "id": 1533,
                 "name": "Temporary Generation South",
@@ -9211,16 +9151,16 @@
             }
         ]
     },
-    "0NTSMH": {
-        "station_code": "0NTSMH",
+    "TERMSTOR": {
+        "station_code": "TERMSTOR",
         "facilities": [
             {
                 "id": 1204,
-                "name": "Terminal",
+                "name": "Terminal Storage Mini Hydro",
                 "network_code": "0NTSMH_0",
                 "network_name": "Terminal Storage MinI Hydro",
                 "status": "operating",
-                "station_code": "0NTSMH",
+                "station_code": "TERMSTOR",
                 "network_region": "SA1",
                 "fueltech": "hydro",
                 "registered": "2019-06-01T00:00:00",
@@ -10041,7 +9981,7 @@
         "facilities": [
             {
                 "id": 1511,
-                "name": "Vibe Energy",
+                "name": "Vibe Bordertown",
                 "network_code": "0NVEBPSG_0",
                 "network_name": "Vibe Energy - Bordertown Power Station Gen - Bordertown, SA",
                 "status": "operating",
@@ -11273,7 +11213,7 @@
         "facilities": [
             {
                 "id": 1548,
-                "name": "Yes Sunlands",
+                "name": "Sunlands",
                 "network_code": "0NYESSUN_1",
                 "network_name": "YES Sunlands",
                 "status": "operating",

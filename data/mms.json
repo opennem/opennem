@@ -5896,7 +5896,7 @@
     },
     "TERMSTOR": {
         "updated_at": "2011-01-06T00:00:00",
-        "name": "Terminal",
+        "name": "Terminal Storage Mini Hydro",
         "station_code": "TERMSTOR",
         "network_name": "Terminal Storage Mini Hydro Power Station",
         "address1": "Grand Junction Road",
@@ -8458,7 +8458,7 @@
     },
     "SHEP1": {
         "updated_at": "2019-02-13T00:00:00",
-        "name": "Shepparton Facility",
+        "name": "Shepparton Wastewater Treatment",
         "station_code": "SHEP1",
         "network_name": "Shepparton Wastewater Treatment Facility",
         "address1": "200 Daldy Road",
@@ -11236,7 +11236,7 @@
     },
     "MLSP": {
         "updated_at": "2016-11-11T00:00:00",
-        "name": "Mugga Lane",
+        "name": "Mugga Lane Solar Park",
         "station_code": "MLSP",
         "network_name": "Mugga Lane Solar Park",
         "address1": "Monaro Highway And Mugga Lane",

@@ -2546,11 +2546,11 @@
         ]
     },
     "SHEP1": {
-        "name": "Shepparton Facility",
+        "name": "Shepparton Wastewater Treatment",
         "network_name": "Shepparton Wastewater Treatment Facility",
         "facilities": [
             {
-                "name": "Shepparton Facility",
+                "name": "Shepparton Wastewater Treatment",
                 "network_code": "SHEP1",
                 "status": "operating",
                 "station_code": "SHEP1",
@@ -6196,11 +6196,11 @@
         ]
     },
     "MLSP": {
-        "name": "Mugga Lane",
+        "name": "Mugga Lane Solar Park",
         "network_name": "Mugga Lane Solar Park",
         "facilities": [
             {
-                "name": "Mugga Lane",
+                "name": "Mugga Lane Solar Park",
                 "network_code": "MLSP1",
                 "status": "operating",
                 "station_code": "MLSP",
