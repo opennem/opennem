@@ -54,15 +54,20 @@ def dudetailsummary_grouper(tables):
         {
             "date_start": parse_mms_date(i["START_DATE"]),
             "date_end": parse_mms_date(i["END_DATE"]),
-            "status": "operating"
-            if parse_mms_date(i["END_DATE"])
-            else "retired",
+            # "status": "operating",
             "network_code": i["DUID"],
             "network_region": i["REGIONID"],
             "station_code": i["STATIONID"],
             "participant_id": i["PARTICIPANTID"],
             "dispatch_type": i["DISPATCHTYPE"],
         }
+        for i in records
+    ]
+
+    now = datetime.now()
+
+    records = [
+        {**i, "status": "retired" if i["date_end"] <= now else "operating"}
         for i in records
     ]
 
