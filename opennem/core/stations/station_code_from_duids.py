@@ -57,6 +57,9 @@ def station_code_from_duids(duids: List[str]) -> Optional[str]:
     if is_single_number(common[-1]):
         common = common[:-1]
 
+    if common.endswith("_"):
+        common = common[:-1]
+
     if len(common) > 2:
         return common
 
