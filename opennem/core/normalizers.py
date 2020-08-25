@@ -123,6 +123,7 @@ ACRONYMS = [
     "jl",
     "uom",
     "agl",
+    "nawma",
 ]
 
 
