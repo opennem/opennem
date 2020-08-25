@@ -9,6 +9,7 @@ from pprint import pprint
 from typing import Optional
 
 from opennem.core.loader import load_data
+from opennem.core.normalizers import station_name_cleaner
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 
 logger = logging.getLogger("opennem.importer.mms")
@@ -200,6 +201,7 @@ def stations_grouper(tables):
     records = [
         {
             "updated_at": parse_mms_date(i["LASTCHANGED"]),
+            "name": station_name_cleaner(i["STATIONNAME"]),
             "station_code": i["STATIONID"],
             "network_name": i["STATIONNAME"],
             "address1": i["ADDRESS1"],
