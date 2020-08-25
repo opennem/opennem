@@ -78,11 +78,6 @@ def load_data_zip(file_path: Path) -> str:
 
 
 def load_data_json(file_path: Path) -> Any:
-    if not file_path.suffix or file_path.suffix in JSON_EXTENSIONS:
-        raise FileInvalid(
-            "Invalid file extension cannot load: {}".format(file_path)
-        )
-
     fixture: Any = None
 
     with file_path.open() as fh:
