@@ -1,6 +1,7 @@
 {
     "CALLIDE": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Callide",
         "station_code": "CALLIDE",
         "network_name": "Callide Power Station",
         "address1": "PO BOX 392",
@@ -110,6 +111,7 @@
     },
     "SWANBANK": {
         "updated_at": "2011-06-30T00:00:00",
+        "name": "Swanbank B",
         "station_code": "SWANBANK",
         "network_name": "Swanbank B Power Station & Swanbank E Gas Turbine",
         "address1": "MS 460",
@@ -315,6 +317,7 @@
     },
     "MP": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Mt Piper",
         "station_code": "MP",
         "network_name": "MT PIPER POWER STATION",
         "address1": "MT PIPER POWER STATION",
@@ -364,6 +367,7 @@
     },
     "MM": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Munmorah",
         "station_code": "MM",
         "network_name": "MUNMORAH POWER STATION",
         "address1": "MUNMORAH POWER STATION",
@@ -413,6 +417,7 @@
     },
     "VP": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Vales Point B",
         "station_code": "VP",
         "network_name": "Vales Point \"B\" Power Station",
         "address1": "VALES POINT POWER STATION",
@@ -462,6 +467,7 @@
     },
     "WW": {
         "updated_at": "2011-03-01T00:00:00",
+        "name": "Wallerawang",
         "station_code": "WW",
         "network_name": "Wallerawang Power Station",
         "address1": "WALLERAWANG POWER STATION",
@@ -511,6 +517,7 @@
     },
     "JEERA": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Jeeralang A",
         "station_code": "JEERA",
         "network_name": "Jeeralang \"A\" Power Station",
         "address1": "",
@@ -572,6 +579,7 @@
     },
     "JEERB": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Jeeralang B",
         "station_code": "JEERB",
         "network_name": "Jeeralang \"B\" Power Station",
         "address1": "",
@@ -621,6 +629,7 @@
     },
     "NEWPORT": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Newport",
         "station_code": "NEWPORT",
         "network_name": "NEWPORT POWER STATION",
         "address1": "",
@@ -646,6 +655,7 @@
     },
     "LOYYB": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Loy Yang B",
         "station_code": "LOYYB",
         "network_name": "LOY YANG B POWER STATION",
         "address1": "",
@@ -683,6 +693,7 @@
     },
     "ENERGYB": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Morwell",
         "station_code": "ENERGYB",
         "network_name": "Energy Brix Complex Power Station",
         "address1": "GATE 2",
@@ -744,6 +755,7 @@
     },
     "SNUG": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Snuggery",
         "station_code": "SNUG",
         "network_name": "SNUGGERY POWER STATION",
         "address1": "",
@@ -817,6 +829,7 @@
     },
     "HAZEL": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Hazelwood",
         "station_code": "HAZEL",
         "network_name": "Hazelwood Power Station",
         "address1": "MORWELL",
@@ -938,6 +951,7 @@
     },
     "LOYYANGA": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Loy Yang A",
         "station_code": "LOYYANGA",
         "network_name": "LOY YANG A POWER STATION",
         "address1": "BARTONS LANE",
@@ -1011,6 +1025,7 @@
     },
     "LIDDELL": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Liddell",
         "station_code": "LIDDELL",
         "network_name": "Liddell Power Station",
         "address1": "",
@@ -1084,6 +1099,7 @@
     },
     "BAYSW": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Bayswater",
         "station_code": "BAYSW",
         "network_name": "Bayswater Power Station",
         "address1": "BAYSWATER",
@@ -1157,6 +1173,7 @@
     },
     "DRYCGT": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Dry Creek Station",
         "station_code": "DRYCGT",
         "network_name": "Dry Creek Gas Turbine Station",
         "address1": "DRY CREEK",
@@ -1230,6 +1247,7 @@
     },
     "MINTARO": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Mintaro Station",
         "station_code": "MINTARO",
         "network_name": "Mintaro Gas Turbine Station",
         "address1": "MINTARO",
@@ -1267,6 +1285,7 @@
     },
     "NORTHP": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Northern",
         "station_code": "NORTHP",
         "network_name": "NORTHERN POWER STATION",
         "address1": "P.O. BOX 15",
@@ -1328,6 +1347,7 @@
     },
     "PLAYF": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Playford B",
         "station_code": "PLAYF",
         "network_name": "Playford B Power Station",
         "address1": "P.O. BOX 15",
@@ -1401,6 +1421,7 @@
     },
     "TORRIS": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Torrens Island",
         "station_code": "TORRIS",
         "network_name": "TORRENS ISLAND POWER STATION",
         "address1": "P.O. BOX 195",
@@ -1522,6 +1543,7 @@
     },
     "ERARING": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Eraring",
         "station_code": "ERARING",
         "network_name": "ERARING POWER STATION",
         "address1": "",
@@ -1595,6 +1617,7 @@
     },
     "HUMENSW": {
         "updated_at": "2013-08-01T00:00:00",
+        "name": "Hume",
         "station_code": "HUMENSW",
         "network_name": "Hume (NSW) Hydro Power Station",
         "address1": "HUME DAM",
@@ -1620,6 +1643,7 @@
     },
     "BROWNMT": {
         "updated_at": "2013-08-01T00:00:00",
+        "name": "Brown Mountain",
         "station_code": "BROWNMT",
         "network_name": "Brown Mountain Hydro Power Station",
         "address1": "SNOWY MTS HIGHWAY",
@@ -1645,6 +1669,7 @@
     },
     "KEEPIT": {
         "updated_at": "2013-08-01T00:00:00",
+        "name": "Keepit",
         "station_code": "KEEPIT",
         "network_name": "Keepit Hydro Power Station",
         "address1": "KEEPIT DAM",
@@ -1670,6 +1695,7 @@
     },
     "BURRIN": {
         "updated_at": "2013-08-01T00:00:00",
+        "name": "Burrinjuck",
         "station_code": "BURRIN",
         "network_name": "Burrinjuck Hydro Power Station",
         "address1": "",
@@ -1695,6 +1721,7 @@
     },
     "WG": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Warragamba",
         "station_code": "WG",
         "network_name": "WARRAGAMBA POWER STATION",
         "address1": "",
@@ -1720,6 +1747,7 @@
     },
     "NORTHGT": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Northern",
         "station_code": "NORTHGT",
         "network_name": "NORTHERN GAS TURBINE",
         "address1": "ROCKY POINT ROAD",
@@ -1745,6 +1773,7 @@
     },
     "HUNTVGT": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Hunter Valley",
         "station_code": "HUNTVGT",
         "network_name": "Hunter Valley Gas Turbine",
         "address1": "NEW ENGLAND HIGHWAY",
@@ -1770,6 +1799,7 @@
     },
     "KOOLKHAN": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Koolkhan",
         "station_code": "KOOLKHAN",
         "network_name": "KOOLKHAN GAS TURBINE",
         "address1": "CASINO ROAD",
@@ -1795,6 +1825,7 @@
     },
     "BHILLGT": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Broken Hill",
         "station_code": "BHILLGT",
         "network_name": "Broken Hill Gas Turbines",
         "address1": "Pinnacles Road",
@@ -1832,6 +1863,7 @@
     },
     "SHOALHAV": {
         "updated_at": "2011-03-01T00:00:00",
+        "name": "Shoalhaven",
         "station_code": "SHOALHAV",
         "network_name": "Shoalhaven Power Station (Bendeela And Kangaroo Valley Power Station And Pumps)",
         "address1": "BENDEELA ROAD",
@@ -1881,6 +1913,7 @@
     },
     "G/STONE": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Gladstone",
         "station_code": "G/STONE",
         "network_name": "GLADSTONE POWER STATION",
         "address1": "PO BOX 5046",
@@ -1978,6 +2011,7 @@
     },
     "COLNSV": {
         "updated_at": "2012-06-29T00:00:00",
+        "name": "Collinsville",
         "station_code": "COLNSV",
         "network_name": "Collinsville Power Station",
         "address1": "1 Power House Road",
@@ -2063,6 +2097,7 @@
     },
     "APS": {
         "updated_at": "2014-07-28T00:00:00",
+        "name": "Angelsea",
         "station_code": "APS",
         "network_name": "ANGELSEA POWER STATION",
         "address1": "ALCOA AUSTRALIA LIMITED",
@@ -2088,6 +2123,7 @@
     },
     "HUMEV": {
         "updated_at": "2013-08-01T00:00:00",
+        "name": "Hume",
         "station_code": "HUMEV",
         "network_name": "Hume (Vic) Hydro Power Station",
         "address1": "HUME DAM NSW",
@@ -2113,6 +2149,7 @@
     },
     "PORTLAND": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Portland",
         "station_code": "PORTLAND",
         "network_name": "PORTLAND",
         "address1": "PORTLAND POWER SERVICES",
@@ -2150,6 +2187,7 @@
     },
     "PTH": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Point Henry Smelter",
         "station_code": "PTH",
         "network_name": "POINT HENRY SMELTER",
         "address1": "POINT HENRY ROAD",
@@ -2199,6 +2237,7 @@
     },
     "DARTM": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Dartmouth",
         "station_code": "DARTM",
         "network_name": "DARTMOUTH POWER STATION",
         "address1": "DARTMOUTH",
@@ -2224,6 +2263,7 @@
     },
     "EILDON": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Eildon",
         "station_code": "EILDON",
         "network_name": "EILDON POWER STATION",
         "address1": "KIEWA VALLEY HIGHWAY",
@@ -2261,6 +2301,7 @@
     },
     "MCKAY": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Bogong / Mackay",
         "station_code": "MCKAY",
         "network_name": "Bogong / Mackay Power Station",
         "address1": "KIEWA VALLEY HIGHWAY",
@@ -2298,6 +2339,7 @@
     },
     "CLOVER": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Clover",
         "station_code": "CLOVER",
         "network_name": "CLOVER POWER STATION",
         "address1": "KIEWA VALLEY HIGHWAY",
@@ -2347,6 +2389,7 @@
     },
     "WKIEWA": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "West Kiewa",
         "station_code": "WKIEWA",
         "network_name": "WEST KIEWA POWER STATION",
         "address1": "KIEWA VALLEY HIGHWAY",
@@ -2384,6 +2427,7 @@
     },
     "RUBICON": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Rubicon Mountain",
         "station_code": "RUBICON",
         "network_name": "Rubicon Mountain Streams Station",
         "address1": "KIEWA VALLEY HIGHWAY",
@@ -2409,6 +2453,7 @@
     },
     "BARRON": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Barron Gorge",
         "station_code": "BARRON",
         "network_name": "Barron Gorge Power Station",
         "address1": "PO BOX 320 R",
@@ -2446,6 +2491,7 @@
     },
     "KAREEYA": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Kareeya",
         "station_code": "KAREEYA",
         "network_name": "KAREEYA POWER STATION",
         "address1": "PO BOX 398",
@@ -2531,6 +2577,7 @@
     },
     "MACKAY": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Mackay",
         "station_code": "MACKAY",
         "network_name": "MACKAY GAS TURBINE",
         "address1": "MACKAY GAS TURBINE",
@@ -2556,6 +2603,7 @@
     },
     "STANWELL": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Stanwell",
         "station_code": "STANWELL",
         "network_name": "STANWELL POWER STATION",
         "address1": "PO BOX 5895",
@@ -2629,6 +2677,7 @@
     },
     "TARONG": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Tarong",
         "station_code": "TARONG",
         "network_name": "TARONG POWER STATION",
         "address1": "MAIDENWELL ROAD",
@@ -2702,6 +2751,7 @@
     },
     "WIVENHOE": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Wivenhoe",
         "station_code": "WIVENHOE",
         "network_name": "WIVENHOE POWER STATION",
         "address1": "WIVENHOE-SOMERSET ROAD",
@@ -2763,6 +2813,7 @@
     },
     "YALLOURN": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Yallourn W",
         "station_code": "YALLOURN",
         "network_name": "YALLOURN 'W' POWER STATION",
         "address1": "EASTERN ROAD",
@@ -2836,6 +2887,7 @@
     },
     "BARCALDN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Barcaldine",
         "station_code": "BARCALDN",
         "network_name": "Barcaldine Power Station",
         "address1": "PO BOX 107",
@@ -2861,6 +2913,7 @@
     },
     "SNOWY1": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Tumut 3",
         "station_code": "SNOWY1",
         "network_name": "Tumut 3 Power Station",
         "address1": "MITTAGANG ROAD",
@@ -2934,6 +2987,7 @@
     },
     "SNOWY2": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Tumut",
         "station_code": "SNOWY2",
         "network_name": "Tumut Power Station",
         "address1": "MITTAGANG ROAD",
@@ -2971,6 +3025,7 @@
     },
     "SNOWY3": {
         "updated_at": "2015-03-19T00:00:00",
+        "name": "Guthega",
         "station_code": "SNOWY3",
         "network_name": "Guthega Power Station",
         "address1": "MITTAGANG ROAD",
@@ -3020,6 +3075,7 @@
     },
     "SNOWY4": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Snowy",
         "station_code": "SNOWY4",
         "network_name": "SNOWY",
         "address1": "MITTAGANG ROAD",
@@ -3045,6 +3101,7 @@
     },
     "SNOWY5": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Snowy",
         "station_code": "SNOWY5",
         "network_name": "SNOWY",
         "address1": "MITTAGANG ROAD",
@@ -3070,6 +3127,7 @@
     },
     "SNOWY6": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Blowering",
         "station_code": "SNOWY6",
         "network_name": "Blowering Power Station",
         "address1": "MITTAGANG ROAD",
@@ -3107,6 +3165,7 @@
     },
     "SNOWYP": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Snowy",
         "station_code": "SNOWYP",
         "network_name": "SNOWY",
         "address1": "MITTAGANG ROAD",
@@ -3132,6 +3191,7 @@
     },
     "PORTLCN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Port Lincoln",
         "station_code": "PORTLCN",
         "network_name": "Port Lincoln Gas Turbine",
         "address1": "NN",
@@ -3169,6 +3229,7 @@
     },
     "TBLAND": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Tableland Mill",
         "station_code": "TBLAND",
         "network_name": "TABLELAND MILL",
         "address1": "SPRING MOUNTAIN ROAD",
@@ -3194,6 +3255,7 @@
     },
     "OSBORNE": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Osborne",
         "station_code": "OSBORNE",
         "network_name": "OSBORNE POWER STATION",
         "address1": "MERSEY RD",
@@ -3243,6 +3305,7 @@
     },
     "MSTUART": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Mt Stuart",
         "station_code": "MSTUART",
         "network_name": "Mt Stuart Power Station",
         "address1": "HUNTER STREET",
@@ -3292,6 +3355,7 @@
     },
     "YABULU": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Townsville",
         "station_code": "YABULU",
         "network_name": "Townsville Gas Turbine",
         "address1": "LOT 1",
@@ -3329,6 +3393,7 @@
     },
     "SITHE": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Smithfield",
         "station_code": "SITHE",
         "network_name": "SMITHFIELD ENERGY FACILITY",
         "address1": "33 Herbert Place",
@@ -3354,6 +3419,7 @@
     },
     "STHJST": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "South Johnstone",
         "station_code": "STHJST",
         "network_name": "SOUTH JOHNSTONE",
         "address1": "C\\- CS ENERGY",
@@ -3379,6 +3445,7 @@
     },
     "BHASZINC": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Bhas Zinc",
         "station_code": "BHASZINC",
         "network_name": "BHAS ZINC PLANT SA",
         "address1": "C/- ETSA POWER ADELAIDE",
@@ -3404,6 +3471,7 @@
     },
     "VICSMLT": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Victorian Smelter Ancillary Services",
         "station_code": "VICSMLT",
         "network_name": "VICTORIAN SMELTER ANCILLARY SERVICES",
         "address1": "C/- SECV",
@@ -3441,6 +3509,7 @@
     },
     "BLOWER": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Blowering",
         "station_code": "BLOWER",
         "network_name": "BLOWERING",
         "address1": "MITTAGANG ROAD",
@@ -3466,6 +3535,7 @@
     },
     "GUTHEGA": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Guthega",
         "station_code": "GUTHEGA",
         "network_name": "Guthega Power Station",
         "address1": "MITTAGANG ROAD",
@@ -3503,6 +3573,7 @@
     },
     "MURRAY1": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Murray1",
         "station_code": "MURRAY1",
         "network_name": "MURRAY1",
         "address1": "MITTAGANG ROAD",
@@ -3636,6 +3707,7 @@
     },
     "MURRAY2": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Murray2",
         "station_code": "MURRAY2",
         "network_name": "MURRAY2",
         "address1": "MITTAGANG ROAD",
@@ -3697,6 +3769,7 @@
     },
     "SNOWY": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Tumut 3 Pumps",
         "station_code": "SNOWY",
         "network_name": "Tumut 3 Pumps",
         "address1": "MITTAGANG ROAD",
@@ -3734,6 +3807,7 @@
     },
     "SNWYGJP2": {
         "updated_at": "2015-03-19T00:00:00",
+        "name": "Jindabyne Pump At Guthega",
         "station_code": "SNWYGJP2",
         "network_name": "Jindabyne Pump At Guthega",
         "address1": "MITTAGANG ROAD",
@@ -3771,6 +3845,7 @@
     },
     "TUMUT1": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Tumut1",
         "station_code": "TUMUT1",
         "network_name": "TUMUT1",
         "address1": "MITTAGANG ROAD",
@@ -3832,6 +3907,7 @@
     },
     "TUMUT2": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Tumut2",
         "station_code": "TUMUT2",
         "network_name": "TUMUT2",
         "address1": "MITTAGANG ROAD",
@@ -3893,6 +3969,7 @@
     },
     "TUMUT3": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Tumut3",
         "station_code": "TUMUT3",
         "network_name": "TUMUT3",
         "address1": "MITTAGANG ROAD",
@@ -3978,6 +4055,7 @@
     },
     "ROMA": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Roma Station",
         "station_code": "ROMA",
         "network_name": "Roma Gas Turbine Station",
         "address1": "Warrego Highway",
@@ -4015,6 +4093,7 @@
     },
     "JINDABYNE": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Snowy",
         "station_code": "JINDABYNE",
         "network_name": "SNOWY",
         "address1": "MITTAGANG ROAD",
@@ -4027,6 +4106,7 @@
     },
     "TOMAGO": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Tomago Smelter",
         "station_code": "TOMAGO",
         "network_name": "TOMAGO SMELTER",
         "address1": "LIDDELL",
@@ -4076,6 +4156,7 @@
     },
     "FARLEIGH": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Farleigh Mill",
         "station_code": "FARLEIGH",
         "network_name": "FARLEIGH MILL",
         "address1": "FARLEIGH MILL",
@@ -4101,6 +4182,7 @@
     },
     "MACKNADE": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Macknade Sugar Mill",
         "station_code": "MACKNADE",
         "network_name": "MACKNADE SUGAR MILL",
         "address1": "MACKNADE SUGAR MILL",
@@ -4126,6 +4208,7 @@
     },
     "MARIAN": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Marian Mill",
         "station_code": "MARIAN",
         "network_name": "MARIAN MILL",
         "address1": "MARIAN MILL",
@@ -4151,6 +4234,7 @@
     },
     "PLANECRK": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Plane Creek Mill",
         "station_code": "PLANECRK",
         "network_name": "PLANE CREEK MILL",
         "address1": "PLANE CREEK MILL",
@@ -4176,6 +4260,7 @@
     },
     "PLEYSTOW": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Pleystowe Mill",
         "station_code": "PLEYSTOW",
         "network_name": "PLEYSTOWE MILL",
         "address1": "PLEYSTOWE MILL",
@@ -4201,6 +4286,7 @@
     },
     "RCOURSE": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Racecourse Mill",
         "station_code": "RCOURSE",
         "network_name": "RACECOURSE MILL",
         "address1": "RACECOURSE MILL AND REFINERY",
@@ -4226,6 +4312,7 @@
     },
     "OAKEY": {
         "updated_at": "2014-12-15T00:00:00",
+        "name": "Oakey",
         "station_code": "OAKEY",
         "network_name": "OAKEY POWER STATION",
         "address1": "Cnr Kearney Warrego Highway",
@@ -4263,6 +4350,7 @@
     },
     "ERG_AS": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Ergon Frequency Control A.s.",
         "station_code": "ERG_AS",
         "network_name": "ERGON FREQUENCY CONTROL A.S.",
         "address1": "C/- ERGON ENERGY",
@@ -4288,6 +4376,7 @@
     },
     "LADBROKE": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Ladbroke Grove",
         "station_code": "LADBROKE",
         "network_name": "Ladbroke Grove Power Station",
         "address1": "Argyle Road",
@@ -4325,6 +4414,7 @@
     },
     "WGULLY": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Whytes Gully",
         "station_code": "WGULLY",
         "network_name": "WHYTES GULLY",
         "address1": "LOT 203 REDDALLS ROAD",
@@ -4350,6 +4440,7 @@
     },
     "WINDHILL": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Windy Hill",
         "station_code": "WINDHILL",
         "network_name": "Windy Hill Wind Farm",
         "address1": "Via Windy Hill, Atherton Tablelands",
@@ -4375,6 +4466,7 @@
     },
     "DIRECTLINK": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Dlink Interconnector",
         "station_code": "DIRECTLINK",
         "network_name": "DLINK INTERCONNECTOR",
         "address1": "PO Box 786",
@@ -4412,6 +4504,7 @@
     },
     "UWS": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Uws Cogen",
         "station_code": "UWS",
         "network_name": "UWS CO-GEN UNIT",
         "address1": "CNR VICTORIA ROAD & JAMES RUSE DRIVE",
@@ -4437,6 +4530,7 @@
     },
     "CALLIDEC": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Callide C",
         "station_code": "CALLIDEC",
         "network_name": "CALLIDE C NETT OFF",
         "address1": "CALLIDE",
@@ -4486,6 +4580,7 @@
     },
     "MULGRAVE": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Mulgrave Central Mill",
         "station_code": "MULGRAVE",
         "network_name": "MULGRAVE CENTRAL MILL",
         "address1": "GORDON STREET",
@@ -4511,6 +4606,7 @@
     },
     "NPPPPS": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Pelican Point",
         "station_code": "NPPPPS",
         "network_name": "Pelican Point Power Station",
         "address1": "PELICAN POINT ROAD",
@@ -4536,6 +4632,7 @@
     },
     "CALLIDEC1": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Callide C",
         "station_code": "CALLIDEC1",
         "network_name": "CALLIDE C NETT OFF",
         "address1": "CALLIDE",
@@ -4561,6 +4658,7 @@
     },
     "REDBANK1": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Redbank",
         "station_code": "REDBANK1",
         "network_name": "Redbank Power Station",
         "address1": "112 LONG POINT ROAD WEST",
@@ -4586,6 +4684,7 @@
     },
     "DEIBDL": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Bairnsdale",
         "station_code": "DEIBDL",
         "network_name": "Bairnsdale Power Station",
         "address1": "LOT 1 MITTONS LANE",
@@ -4623,6 +4722,7 @@
     },
     "MILLMERN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Millmerran",
         "station_code": "MILLMERN",
         "network_name": "Millmerran Power Plant",
         "address1": "ROAD 55, MOFFATT RESERVE ROCKY CREEK ROAD",
@@ -4660,6 +4760,7 @@
     },
     "JACKSGUL": {
         "updated_at": "2013-07-31T00:00:00",
+        "name": "Jacks Gully",
         "station_code": "JACKSGUL",
         "network_name": "Jacks Gully Landfill Gas Power Station",
         "address1": "275 Richardson Road",
@@ -4685,6 +4786,7 @@
     },
     "MURRAY": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Murray",
         "station_code": "MURRAY",
         "network_name": "Murray Power Station",
         "address1": "MITTAGANG ROAD",
@@ -4746,6 +4848,7 @@
     },
     "RPCG": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Rocky Point",
         "station_code": "RPCG",
         "network_name": "Rocky Point Cogeneration Plant",
         "address1": "MILL ROAD",
@@ -4771,6 +4874,7 @@
     },
     "PINDARI": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Pindari",
         "station_code": "PINDARI",
         "network_name": "Pindari Hydro Power Station",
         "address1": "DLWC OFFICE, PO BOX 50",
@@ -4796,6 +4900,7 @@
     },
     "QUARANTN": {
         "updated_at": "2018-12-10T00:00:00",
+        "name": "Quarantine",
         "station_code": "QUARANTN",
         "network_name": "Quarantine Power Station",
         "address1": "Torrens Island Nth",
@@ -4869,6 +4974,7 @@
     },
     "LONSDALE": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Lonsdale",
         "station_code": "LONSDALE",
         "network_name": "Lonsdale Power Station",
         "address1": "100 Refinery Road",
@@ -4894,6 +5000,7 @@
     },
     "LYGS": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Valley",
         "station_code": "LYGS",
         "network_name": "VALLEY POWER",
         "address1": "Bartons Lane",
@@ -4979,6 +5086,7 @@
     },
     "AGLHAL": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Hallett",
         "station_code": "AGLHAL",
         "network_name": "Hallett Power Station",
         "address1": "THE WILLOWS ROAD",
@@ -5004,6 +5112,7 @@
     },
     "AGLSOM": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Somerton",
         "station_code": "AGLSOM",
         "network_name": "Somerton Power Station",
         "address1": "130 HUME HIGHWAY",
@@ -5029,6 +5138,7 @@
     },
     "SUNSHINE": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Sunshine Energy",
         "station_code": "SUNSHINE",
         "network_name": "SUNSHINE ENERGY",
         "address1": "8 HULETT STREET",
@@ -5054,6 +5164,7 @@
     },
     "WCLASS": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Hrl Tramway Road",
         "station_code": "WCLASS",
         "network_name": "HRL TRAMWAY ROAD",
         "address1": "TRAMWAY ROAD",
@@ -5079,6 +5190,7 @@
     },
     "AGLNOW1": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "West Nowra Generation Facility",
         "station_code": "AGLNOW1",
         "network_name": "West Nowra Landfill Gas Power Generation Facility",
         "address1": "WEST NOWRA LANDFILL, FLATROCK ROAD",
@@ -5104,6 +5216,7 @@
     },
     "TOORAWF": {
         "updated_at": "2007-11-30T00:00:00",
+        "name": "Toora",
         "station_code": "TOORAWF",
         "network_name": "TOORA WIND FARM",
         "address1": "Silcocks Hill Road",
@@ -5129,6 +5242,7 @@
     },
     "BROOKLYN": {
         "updated_at": "2013-11-07T00:00:00",
+        "name": "Brooklyn U13",
         "station_code": "BROOKLYN",
         "network_name": "Brooklyn LFG U1-3",
         "address1": "JONES ROAD",
@@ -5154,6 +5268,7 @@
     },
     "EASTCRK": {
         "updated_at": "2014-02-14T00:00:00",
+        "name": "Eastern Creek",
         "station_code": "EASTCRK",
         "network_name": "Eastern Creek LFG PS Units 1-4",
         "address1": "WALLGROVE ROAD",
@@ -5179,6 +5294,7 @@
     },
     "LONGFORD": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Longford",
         "station_code": "LONGFORD",
         "network_name": "LONGFORD PLANT",
         "address1": "GARRETTS ROAD",
@@ -5204,6 +5320,7 @@
     },
     "MURLINKP": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Murlink Intconnector",
         "station_code": "MURLINKP",
         "network_name": "MURLINK INTCONNECTOR",
         "address1": "PO BOX 7077 RIVERSIDE CENTRE",
@@ -5241,6 +5358,7 @@
     },
     "STPN1": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Stapylton",
         "station_code": "STPN1",
         "network_name": "STAPYLTON",
         "address1": "215 BURNSIDE ROAD",
@@ -5266,6 +5384,7 @@
     },
     "TARONGN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Tarong North",
         "station_code": "TARONGN",
         "network_name": "Tarong North Power Station",
         "address1": "MAIDENWELL ROAD",
@@ -5291,6 +5410,7 @@
     },
     "WIVENSH": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Wivenhoe Small",
         "station_code": "WIVENSH",
         "network_name": "WIVENHOE SMALL HYDRO",
         "address1": "BRISBANE VALLEY HIGHWAY",
@@ -5316,6 +5436,7 @@
     },
     "RT_NSW1": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Reserve Trader Nsw1",
         "station_code": "RT_NSW1",
         "network_name": "RESERVE TRADER NSW1",
         "address1": "NEMMCO",
@@ -5401,6 +5522,7 @@
     },
     "RT_QLD1": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Reserve Trader Qld1",
         "station_code": "RT_QLD1",
         "network_name": "RESERVE TRADER QLD1",
         "address1": "NEMMCO",
@@ -5426,6 +5548,7 @@
     },
     "RT_SA1": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Reserve Trader Sa1",
         "station_code": "RT_SA1",
         "network_name": "RESERVE TRADER SA1",
         "address1": "NEMMCO",
@@ -5511,6 +5634,7 @@
     },
     "RT_VIC1": {
         "updated_at": "2003-11-25T00:00:00",
+        "name": "Reserve Trader Vic1",
         "station_code": "RT_VIC1",
         "network_name": "RESERVE TRADER VIC1",
         "address1": "NEMMCO",
@@ -5668,6 +5792,7 @@
     },
     "MORNW": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Mornington",
         "station_code": "MORNW",
         "network_name": "Mornington Waste Disposal Facility",
         "address1": "TRUEMAN'S ROAD",
@@ -5693,6 +5818,7 @@
     },
     "WYNDW": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Wyndham",
         "station_code": "WYNDW",
         "network_name": "Wyndham Waste Disposal Facility",
         "address1": "WEST ROAD",
@@ -5718,6 +5844,7 @@
     },
     "PMATTAEP": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Earthpower",
         "station_code": "PMATTAEP",
         "network_name": "EarthPower Biomass Plant",
         "address1": "35 GRAND AVENUE",
@@ -5743,6 +5870,7 @@
     },
     "SUNCOAST": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Suncoast Gold Macadamias",
         "station_code": "SUNCOAST",
         "network_name": "Suncoast Gold Macadamias",
         "address1": "DRUMMOND DRIVE",
@@ -5768,6 +5896,7 @@
     },
     "TERMSTOR": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Terminal",
         "station_code": "TERMSTOR",
         "network_name": "Terminal Storage Mini Hydro Power Station",
         "address1": "Grand Junction Road",
@@ -5793,6 +5922,7 @@
     },
     "SOMERSET": {
         "updated_at": "2004-03-03T00:00:00",
+        "name": "Somerset Dam",
         "station_code": "SOMERSET",
         "network_name": "SOMERSET DAM",
         "address1": "SOMERSET DAM",
@@ -5818,6 +5948,7 @@
     },
     "LKBONNY1": {
         "updated_at": "2012-05-09T00:00:00",
+        "name": "Lake Bonney",
         "station_code": "LKBONNY1",
         "network_name": "Lake Bonney Wind Farm Stage 1",
         "address1": "SECTION 244 HUNDRED MAYURRA",
@@ -5843,6 +5974,7 @@
     },
     "TERALBA": {
         "updated_at": "2004-05-25T00:00:00",
+        "name": "Teralba",
         "station_code": "TERALBA",
         "network_name": "TERALBA POWER STATION",
         "address1": "STOCKTON BOREHOLE COLLIERY, RAILWAY STREET",
@@ -5868,6 +6000,7 @@
     },
     "EDLRGNRD": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Roghan Road",
         "station_code": "EDLRGNRD",
         "network_name": "Roghan Road LFG Power Plant",
         "address1": "411 ROGHAN ROAD",
@@ -5893,6 +6026,7 @@
     },
     "DG_NSW1": {
         "updated_at": "2004-07-27T00:00:00",
+        "name": "Nsw1 Dummy Generator",
         "station_code": "DG_NSW1",
         "network_name": "NSW1 Dummy Generator",
         "address1": "NEMMCO",
@@ -5918,6 +6052,7 @@
     },
     "DG_QLD1": {
         "updated_at": "2004-07-27T00:00:00",
+        "name": "Qld1 Dummy Generator",
         "station_code": "DG_QLD1",
         "network_name": "QLD1 Dummy Generator",
         "address1": "NEMMCO",
@@ -5943,6 +6078,7 @@
     },
     "DG_SA1": {
         "updated_at": "2004-07-27T00:00:00",
+        "name": "Sa1 Dummy Generator",
         "station_code": "DG_SA1",
         "network_name": "SA1 Dummy Generator",
         "address1": "NEMMCO",
@@ -5968,6 +6104,7 @@
     },
     "DG_VIC1": {
         "updated_at": "2004-07-27T00:00:00",
+        "name": "Vic1 Dummy Generator",
         "station_code": "DG_VIC1",
         "network_name": "VIC1 Dummy Generator",
         "address1": "NEMMCO",
@@ -5993,6 +6130,7 @@
     },
     "ROCHEDAL": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Rochedale",
         "station_code": "ROCHEDAL",
         "network_name": "Rochedale Renewable Energy Facility",
         "address1": "174 GARDNER ROAD",
@@ -6018,6 +6156,7 @@
     },
     "WHIT1": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Whitwood Road",
         "station_code": "WHIT1",
         "network_name": "Whitwood Road Renewable Energy Facility",
         "address1": "189 WHITWOOD ROAD, NEW CHUM",
@@ -6043,6 +6182,7 @@
     },
     "LUCAS2S2": {
         "updated_at": "2012-12-21T00:00:00",
+        "name": "Lucas Heights 2",
         "station_code": "LUCAS2S2",
         "network_name": "Lucas Heights 2 Power Station",
         "address1": "LITTLE FOREST ROAD",
@@ -6080,6 +6220,7 @@
     },
     "ANGASTON": {
         "updated_at": "2004-12-30T00:00:00",
+        "name": "Angaston",
         "station_code": "ANGASTON",
         "network_name": "ANGASTON POWER STATION",
         "address1": "LOT 6 STOCKWELL ROAD",
@@ -6129,6 +6270,7 @@
     },
     "WPWF": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Wattle Point",
         "station_code": "WPWF",
         "network_name": "Wattle Point Wind Farm",
         "address1": "YORKE PENINSULA",
@@ -6154,6 +6296,7 @@
     },
     "CATHROCK": {
         "updated_at": "2005-04-29T00:00:00",
+        "name": "Cathedral Rocks",
         "station_code": "CATHROCK",
         "network_name": "CATHEDRAL ROCKS",
         "address1": "CATHEDRAL ROCKS WIND FARM",
@@ -6179,6 +6322,7 @@
     },
     "BELLBAY": {
         "updated_at": "2005-05-16T00:00:00",
+        "name": "Bell Bay",
         "station_code": "BELLBAY",
         "network_name": "BELL BAY",
         "address1": "EAST TAMAR HIGHWAY",
@@ -6216,6 +6360,7 @@
     },
     "WOOLNTH1": {
         "updated_at": "2015-03-19T00:00:00",
+        "name": "Woolnorth Studland Bay / Bluff Point",
         "station_code": "WOOLNTH1",
         "network_name": "Woolnorth Studland Bay / Bluff Point Wind Farm",
         "address1": "Woolnorth Wind Lot 1",
@@ -6241,6 +6386,7 @@
     },
     "BASTYAN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Bastyan",
         "station_code": "BASTYAN",
         "network_name": "Bastyan Power Station",
         "address1": "BASTYAN",
@@ -6266,6 +6412,7 @@
     },
     "BUTLERSG": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Butlers Gorge",
         "station_code": "BUTLERSG",
         "network_name": "Butlers Gorge Power Station",
         "address1": "BUTLERSG",
@@ -6291,6 +6438,7 @@
     },
     "CETHANA": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Cethana",
         "station_code": "CETHANA",
         "network_name": "Cethana Power Station",
         "address1": "CETHANA",
@@ -6316,6 +6464,7 @@
     },
     "CLUNY": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Cluny",
         "station_code": "CLUNY",
         "network_name": "Cluny Power Station",
         "address1": "CLUNY",
@@ -6341,6 +6490,7 @@
     },
     "DEVILS_G": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Devils Gate",
         "station_code": "DEVILS_G",
         "network_name": "Devils Gate Power Station",
         "address1": "DEVILS GATE",
@@ -6366,6 +6516,7 @@
     },
     "FISHER": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Fisher",
         "station_code": "FISHER",
         "network_name": "Fisher Power Station",
         "address1": "FISHER",
@@ -6391,6 +6542,7 @@
     },
     "GORDON": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Gordon",
         "station_code": "GORDON",
         "network_name": "Gordon Power Station",
         "address1": "GORDON",
@@ -6464,6 +6616,7 @@
     },
     "JBUTTERS": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "John Butters",
         "station_code": "JBUTTERS",
         "network_name": "John Butters Power Station",
         "address1": "JOHN BUTTERS",
@@ -6489,6 +6642,7 @@
     },
     "LEM_WIL": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Lemonthyme / Wilmot",
         "station_code": "LEM_WIL",
         "network_name": "Lemonthyme / Wilmot Power Station",
         "address1": "LEMONTHYME",
@@ -6526,6 +6680,7 @@
     },
     "LI_WY_CA": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Catagunya / Liapootah / Wayatinah",
         "station_code": "LI_WY_CA",
         "network_name": "Catagunya / Liapootah / Wayatinah Power Station",
         "address1": "LIAPOOTAH",
@@ -6623,6 +6778,7 @@
     },
     "LK_ECHO": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Lake Echo",
         "station_code": "LK_ECHO",
         "network_name": "Lake Echo Power Station",
         "address1": "LAKE ECHO",
@@ -6648,6 +6804,7 @@
     },
     "MACKNTSH": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Mackintosh",
         "station_code": "MACKNTSH",
         "network_name": "Mackintosh Power Station",
         "address1": "MACKINTOSH",
@@ -6673,6 +6830,7 @@
     },
     "MEADOWBK": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Meadowbank",
         "station_code": "MEADOWBK",
         "network_name": "Meadowbank Power Station",
         "address1": "MEADOW BANK",
@@ -6710,6 +6868,7 @@
     },
     "PALOONA": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Paloona",
         "station_code": "PALOONA",
         "network_name": "Paloona Power Station",
         "address1": "PALOONA",
@@ -6735,6 +6894,7 @@
     },
     "PTINA110": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Poatina",
         "station_code": "PTINA110",
         "network_name": "Poatina Power Station",
         "address1": "POATINA",
@@ -6796,6 +6956,7 @@
     },
     "PTINA220": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Poatina",
         "station_code": "PTINA220",
         "network_name": "Poatina Power Station",
         "address1": "POATINA",
@@ -6821,6 +6982,7 @@
     },
     "REECE": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Reece",
         "station_code": "REECE",
         "network_name": "Reece Power Station",
         "address1": "REECE",
@@ -6858,6 +7020,7 @@
     },
     "REPULSE": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Repulse",
         "station_code": "REPULSE",
         "network_name": "Repulse Power Station",
         "address1": "REPULSE",
@@ -6883,6 +7046,7 @@
     },
     "TARRALEA": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Tarraleah",
         "station_code": "TARRALEA",
         "network_name": "Tarraleah Power Station",
         "address1": "TARRALEA",
@@ -6908,6 +7072,7 @@
     },
     "TREVALLN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Trevallyn",
         "station_code": "TREVALLN",
         "network_name": "Trevallyn Power Station",
         "address1": "TREVALLYN",
@@ -6981,6 +7146,7 @@
     },
     "TRIBUTE": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Tribute",
         "station_code": "TRIBUTE",
         "network_name": "Tribute Power Station",
         "address1": "TRIBUTE",
@@ -7018,6 +7184,7 @@
     },
     "TUNGATIN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Tungatinah",
         "station_code": "TUNGATIN",
         "network_name": "Tungatinah Power Station",
         "address1": "TUNGATINAH",
@@ -7067,6 +7234,7 @@
     },
     "DG_TAS1": {
         "updated_at": "2005-05-16T00:00:00",
+        "name": "Tas1 Dummy Generator",
         "station_code": "DG_TAS1",
         "network_name": "TAS1 Dummy Generator",
         "address1": "NEMMCO",
@@ -7092,6 +7260,7 @@
     },
     "RT_TAS1": {
         "updated_at": "2005-05-16T00:00:00",
+        "name": "Reserve Trader Tas1",
         "station_code": "RT_TAS1",
         "network_name": "RESERVE TRADER TAS1",
         "address1": "NEMMCO",
@@ -7117,6 +7286,7 @@
     },
     "YAMBUK": {
         "updated_at": "2005-07-15T00:00:00",
+        "name": "Yambuk",
         "station_code": "YAMBUK",
         "network_name": "YAMBUK WIND FARM",
         "address1": "PRINCES HIGHWAY",
@@ -7142,6 +7312,7 @@
     },
     "MTMILLAR": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Mt Millar",
         "station_code": "MTMILLAR",
         "network_name": "Mt Millar Wind Farm",
         "address1": "Range Road",
@@ -7167,6 +7338,7 @@
     },
     "WONWP": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Wonthaggi",
         "station_code": "WONWP",
         "network_name": "Wonthaggi Wind Farm",
         "address1": "CAMPBELL STREET",
@@ -7192,6 +7364,7 @@
     },
     "BASSLINK": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Basslink HVDC Link",
         "station_code": "BASSLINK",
         "network_name": "Basslink HVDC Link",
         "address1": "GPO Box 4066",
@@ -7229,6 +7402,7 @@
     },
     "BAPS": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Banimboola",
         "station_code": "BAPS",
         "network_name": "Banimboola Power Station",
         "address1": "Dartmonth Rd",
@@ -7254,6 +7428,7 @@
     },
     "STARFHILL": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Starfish Hill",
         "station_code": "STARFHILL",
         "network_name": "Starfish Hill Wind Farm",
         "address1": "Yo Ho Road",
@@ -7279,6 +7454,7 @@
     },
     "CHALLWF": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Challicum Hills",
         "station_code": "CHALLWF",
         "network_name": "Challicum Hills Wind Farm",
         "address1": "WESTERN HIGHWAY",
@@ -7304,6 +7480,7 @@
     },
     "CANUNDA1": {
         "updated_at": "2006-02-07T00:00:00",
+        "name": "Canunda",
         "station_code": "CANUNDA1",
         "network_name": "CANUNDA WIND FARM ",
         "address1": "POONADA ROAD",
@@ -7329,6 +7506,7 @@
     },
     "LNGS": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Laverton North",
         "station_code": "LNGS",
         "network_name": "Laverton North Power Station",
         "address1": "LOT 2",
@@ -7378,6 +7556,7 @@
     },
     "ROWALLAN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Rowallan",
         "station_code": "ROWALLAN",
         "network_name": "Rowallan Power Station",
         "address1": "",
@@ -7403,6 +7582,7 @@
     },
     "INVICTA": {
         "updated_at": "2013-05-15T00:00:00",
+        "name": "Invicta Sugar Mill",
         "station_code": "INVICTA",
         "network_name": "Invicta Sugar Mill",
         "address1": "Mill St",
@@ -7428,6 +7608,7 @@
     },
     "PIONEER": {
         "updated_at": "2006-03-29T00:00:00",
+        "name": "Pioneer Sugar Mill",
         "station_code": "PIONEER",
         "network_name": "Pioneer Sugar Mill",
         "address1": "",
@@ -7453,6 +7634,7 @@
     },
     "BRAEMARA": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Braemar",
         "station_code": "BRAEMARA",
         "network_name": "Braemar Power Station",
         "address1": "128 GRAHAM ROAD",
@@ -7502,6 +7684,7 @@
     },
     "BBP31": {
         "updated_at": "2019-10-04T00:00:00",
+        "name": "Bell Bay Three",
         "station_code": "BBP31",
         "network_name": "Bell Bay Three Power Station",
         "address1": "East Tamar Highway",
@@ -7563,6 +7746,7 @@
     },
     "OCPS": {
         "updated_at": "2006-06-26T00:00:00",
+        "name": "Oaky Creek",
         "station_code": "OCPS",
         "network_name": "Oaky Creek Power Station",
         "address1": "Oaky Creek Mine Road",
@@ -7588,6 +7772,7 @@
     },
     "TATURA": {
         "updated_at": "2019-02-13T00:00:00",
+        "name": "Tatura Generator",
         "station_code": "TATURA",
         "network_name": "Tatura Biomass Generator",
         "address1": "730 Dhurringile Road",
@@ -7613,6 +7798,7 @@
     },
     "GERMCRK": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "German Creek",
         "station_code": "GERMCRK",
         "network_name": "German Creek Power Station",
         "address1": "Grasstree Road",
@@ -7638,6 +7824,7 @@
     },
     "GRANGEAV": {
         "updated_at": "2013-07-31T00:00:00",
+        "name": "Grange Avenue",
         "station_code": "GRANGEAV",
         "network_name": "Grange Avenue Landfill Gas Power Station",
         "address1": "236 Grange Avenue",
@@ -7663,6 +7850,7 @@
     },
     "REMOUNT": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Remount",
         "station_code": "REMOUNT",
         "network_name": "Remount Power Station",
         "address1": "Remount Rd",
@@ -7688,6 +7876,7 @@
     },
     "DAANDINE": {
         "updated_at": "2015-06-30T00:00:00",
+        "name": "Daandine",
         "station_code": "DAANDINE",
         "network_name": "Daandine Power Station",
         "address1": "Lot 125, Dalby-Kogan Road",
@@ -7713,6 +7902,7 @@
     },
     "AWABAREF": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Awaba",
         "station_code": "AWABAREF",
         "network_name": "Awaba Power Station",
         "address1": "Wilton Rd",
@@ -7738,6 +7928,7 @@
     },
     "ICSM": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Isis Central Sugar Mill",
         "station_code": "ICSM",
         "network_name": "ISIS Central Sugar Mill Co-generation Plant",
         "address1": "Kevin Livingston Drive",
@@ -7763,6 +7954,7 @@
     },
     "MORANBAH": {
         "updated_at": "2007-03-01T00:00:00",
+        "name": "Moranbah Generation",
         "station_code": "MORANBAH",
         "network_name": "Moranbah Generation Project",
         "address1": "Ergon Substation",
@@ -7788,6 +7980,7 @@
     },
     "KRCCOGEN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "KRC",
         "station_code": "KRCCOGEN",
         "network_name": "KRC Cogeneration Plant Power Station",
         "address1": "Mort Street",
@@ -7813,6 +8006,7 @@
     },
     "KOGANCK": {
         "updated_at": "2007-04-03T00:00:00",
+        "name": "Kogan Creek",
         "station_code": "KOGANCK",
         "network_name": "Kogan Creek Power Station",
         "address1": "",
@@ -7838,6 +8032,7 @@
     },
     "LKBONNY_2": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Lake Bonney Windfarm",
         "station_code": "LKBONNY_2",
         "network_name": "Lake Bonney Stage 2 Windfarm",
         "address1": "SECTION 244 ",
@@ -7863,6 +8058,7 @@
     },
     "JNDSHPS": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Jindabyne Small",
         "station_code": "JNDSHPS",
         "network_name": "Jindabyne Small Hydro Power Station",
         "address1": "Jindabyne Dam Spillway,",
@@ -7888,6 +8084,7 @@
     },
     "CONDONG1": {
         "updated_at": "2007-12-06T00:00:00",
+        "name": "Condong",
         "station_code": "CONDONG1",
         "network_name": "Condong Power Station",
         "address1": "Mcleod Street",
@@ -7913,6 +8110,7 @@
     },
     "HALLWF": {
         "updated_at": "2017-07-17T00:00:00",
+        "name": "Hallett 1",
         "station_code": "HALLWF",
         "network_name": "Hallett 1 Wind Farm",
         "address1": "'The Willows' Road",
@@ -7938,6 +8136,7 @@
     },
     "SNOWTOWN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Snowtown 1",
         "station_code": "SNOWTOWN",
         "network_name": "Snowtown Wind Farm Units 1 And 47",
         "address1": "Broughton Road",
@@ -7963,6 +8162,7 @@
     },
     "PORTWF": {
         "updated_at": "2008-01-09T00:00:00",
+        "name": "Portland",
         "station_code": "PORTWF",
         "network_name": "Portland Wind Farm",
         "address1": "Pacific Hydro P3C Substation",
@@ -7988,6 +8188,7 @@
     },
     "BWTR1": {
         "updated_at": "2013-11-08T00:00:00",
+        "name": "Broadwater",
         "station_code": "BWTR1",
         "network_name": "Broadwater Power Station",
         "address1": "117 Pacific Highway",
@@ -8013,6 +8214,7 @@
     },
     "WDLNGN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Woodlawn Energy",
         "station_code": "WDLNGN",
         "network_name": "Woodlawn Bioreactor Energy Generation Station",
         "address1": "619 Collector Road",
@@ -8038,6 +8240,7 @@
     },
     "ERGT01": {
         "updated_at": "2008-02-12T00:00:00",
+        "name": "Eraring",
         "station_code": "ERGT01",
         "network_name": "Eraring Power Station",
         "address1": "Rocky Point Road",
@@ -8063,6 +8266,7 @@
     },
     "HEZ": {
         "updated_at": "2008-04-02T00:00:00",
+        "name": "Hunter Economic Zone",
         "station_code": "HEZ",
         "network_name": "Hunter Economic Zone Power Station",
         "address1": "Lot27 As Part Of Lot 7 Dp 1037092",
@@ -8088,6 +8292,7 @@
     },
     "TALLAWAR": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Tallawarra",
         "station_code": "TALLAWAR",
         "network_name": "Tallawarra Power Station",
         "address1": "Yallah Bay Rd",
@@ -8113,6 +8318,7 @@
     },
     "URANQ": {
         "updated_at": "2008-10-27T00:00:00",
+        "name": "Uranquinty",
         "station_code": "URANQ",
         "network_name": "Uranquinty Power Station",
         "address1": "The Crossroads",
@@ -8174,6 +8380,7 @@
     },
     "MBAHNTH": {
         "updated_at": "2014-10-20T00:00:00",
+        "name": "Moranbah North",
         "station_code": "MBAHNTH",
         "network_name": "Moranbah North Waste Coal Mine Gas Power Station",
         "address1": "Mine Access Rd Via Goonyella Rd",
@@ -8199,6 +8406,7 @@
     },
     "HLMSEW01": {
         "updated_at": "2008-07-03T00:00:00",
+        "name": "South East Halllam",
         "station_code": "HLMSEW01",
         "network_name": "South East Water - Halllam Hydro Plant",
         "address1": "Se Water's Pressure Reducing Station WB058",
@@ -8224,6 +8432,7 @@
     },
     "TITREE": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Veolia Ti Tree",
         "station_code": "TITREE",
         "network_name": "Veolia Ti Tree Bio Reactor",
         "address1": "Champions Way",
@@ -8249,6 +8458,7 @@
     },
     "SHEP1": {
         "updated_at": "2019-02-13T00:00:00",
+        "name": "Shepparton Facility",
         "station_code": "SHEP1",
         "network_name": "Shepparton Wastewater Treatment Facility",
         "address1": "200 Daldy Road",
@@ -8274,6 +8484,7 @@
     },
     "BBASEHOS": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Ballarat Base Hospital",
         "station_code": "BBASEHOS",
         "network_name": "Ballarat Base Hospital Plant",
         "address1": "Base Hospital Campus",
@@ -8299,6 +8510,7 @@
     },
     "AMCORGR": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Amcor Glass Gawler",
         "station_code": "AMCORGR",
         "network_name": "Amcor Glass, Gawler Plant",
         "address1": "Argent Road",
@@ -8324,6 +8536,7 @@
     },
     "WAUBRAWF": {
         "updated_at": "2009-02-26T00:00:00",
+        "name": "Waubra",
         "station_code": "WAUBRAWF",
         "network_name": "WAUBRA WIND FARM",
         "address1": "Harrisons Rd",
@@ -8349,6 +8562,7 @@
     },
     "B2PS": {
         "updated_at": "2009-03-24T00:00:00",
+        "name": "Braemar 2",
         "station_code": "B2PS",
         "network_name": "BRAEMAR 2 POWER STATION",
         "address1": "Lot 27",
@@ -8398,6 +8612,7 @@
     },
     "CLEMGPWF": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Clements Gap",
         "station_code": "CLEMGPWF",
         "network_name": "Clements Gap Wind Farm",
         "address1": "Kirchner Road",
@@ -8423,6 +8638,7 @@
     },
     "HALLWF2": {
         "updated_at": "2009-05-08T00:00:00",
+        "name": "Hallett 2",
         "station_code": "HALLWF2",
         "network_name": "Hallett 2 Wind Farm",
         "address1": "Lot 101,",
@@ -8448,6 +8664,7 @@
     },
     "COLONGRA": {
         "updated_at": "2009-05-19T00:00:00",
+        "name": "Colongra",
         "station_code": "COLONGRA",
         "network_name": "Colongra Power Station",
         "address1": "Scenic Drive",
@@ -8509,6 +8726,7 @@
     },
     "CULLERIN": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Cullerin Range",
         "station_code": "CULLERIN",
         "network_name": "Cullerin Range Wind Farm",
         "address1": "Lerida Road Nth",
@@ -8534,6 +8752,7 @@
     },
     "CPSA": {
         "updated_at": "2009-06-01T00:00:00",
+        "name": "Condamine A",
         "station_code": "CPSA",
         "network_name": "Condamine Power Station A",
         "address1": "Lot 48 BWR138,",
@@ -8559,6 +8778,7 @@
     },
     "TVCCPS": {
         "updated_at": "2019-10-04T00:00:00",
+        "name": "Tamar Valley",
         "station_code": "TVCCPS",
         "network_name": "Tamar Valley Combined Cycle Power Station",
         "address1": "East Tamar Highway",
@@ -8584,6 +8804,7 @@
     },
     "CAPTL_WF": {
         "updated_at": "2009-06-29T00:00:00",
+        "name": "Capital",
         "station_code": "CAPTL_WF",
         "network_name": "Capital Wind Farm",
         "address1": "Tarago Rd",
@@ -8609,6 +8830,7 @@
     },
     "STHBKTEC": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Southbank Institute Of Technology 1",
         "station_code": "STHBKTEC",
         "network_name": "Southbank Institute Of Technology Unit 1 Plant",
         "address1": "Ernst St",
@@ -8634,6 +8856,7 @@
     },
     "DDPS1": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Darling Downs",
         "station_code": "DDPS1",
         "network_name": "Darling Downs Power Station",
         "address1": "Grahams Rd (Via Dalby-Kogan Rd)",
@@ -8659,6 +8882,7 @@
     },
     "CODRGTON": {
         "updated_at": "2010-01-06T00:00:00",
+        "name": "Codrington",
         "station_code": "CODRGTON",
         "network_name": "Codrington Wind Farm",
         "address1": "Princess Highway",
@@ -8684,6 +8908,7 @@
     },
     "BDONGHYD": {
         "updated_at": "2010-01-06T00:00:00",
+        "name": "Burrendong",
         "station_code": "BDONGHYD",
         "network_name": "Burrendong Hydro Power Station",
         "address1": "Burrrendong Dam Via Wellington",
@@ -8709,6 +8934,7 @@
     },
     "COPTNHYD": {
         "updated_at": "2010-01-06T00:00:00",
+        "name": "Copeton",
         "station_code": "COPTNHYD",
         "network_name": "Copeton Hydro Power Station",
         "address1": "Copeton Dam Via Inverell",
@@ -8734,6 +8960,7 @@
     },
     "GLBWNHYD": {
         "updated_at": "2010-01-06T00:00:00",
+        "name": "Glenbawn",
         "station_code": "GLBWNHYD",
         "network_name": "Glenbawn Hydro Power Station",
         "address1": "Glenbawn Dam Via Scone",
@@ -8759,6 +8986,7 @@
     },
     "YWNGAHYD": {
         "updated_at": "2010-01-06T00:00:00",
+        "name": "Yarrawonga",
         "station_code": "YWNGAHYD",
         "network_name": "Yarrawonga Hydro Power Station",
         "address1": "Burley Rd",
@@ -8784,6 +9012,7 @@
     },
     "EASTCRK2": {
         "updated_at": "2019-12-20T00:00:00",
+        "name": "Eastern Creek 2",
         "station_code": "EASTCRK2",
         "network_name": "Eastern Creek 2 Gas Utilisation Facility",
         "address1": "Eastern Creek Waste Management Centre",
@@ -8809,6 +9038,7 @@
     },
     "WILGAPK": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Wilga Park",
         "station_code": "WILGAPK",
         "network_name": "Wilga Park Power Station",
         "address1": "Kiandool Rd",
@@ -8834,6 +9064,7 @@
     },
     "APPIN": {
         "updated_at": "2010-01-06T00:00:00",
+        "name": "Appin",
         "station_code": "APPIN",
         "network_name": "Appin Power Plant",
         "address1": "Northhampton Dale Rd",
@@ -8859,6 +9090,7 @@
     },
     "BERWICK": {
         "updated_at": "2010-01-06T00:00:00",
+        "name": "Berwick",
         "station_code": "BERWICK",
         "network_name": "Berwick Power Plant",
         "address1": "Berwick Landfill",
@@ -8884,6 +9116,7 @@
     },
     "BROADMDW": {
         "updated_at": "2015-03-19T00:00:00",
+        "name": "Broadmeadows",
         "station_code": "BROADMDW",
         "network_name": "Broadmeadows Landfill Gas Power Station",
         "address1": "Broadmeadows Landfill",
@@ -8909,6 +9142,7 @@
     },
     "CLAYTON": {
         "updated_at": "2013-11-07T00:00:00",
+        "name": "Clayton",
         "station_code": "CLAYTON",
         "network_name": "Clayton Landfill Gas Power Station",
         "address1": "Clayton Landfill",
@@ -8934,6 +9168,7 @@
     },
     "LUCASHGT": {
         "updated_at": "2010-01-06T00:00:00",
+        "name": "Lucas Heights 1",
         "station_code": "LUCASHGT",
         "network_name": "Lucas Heights II Power Plant",
         "address1": "Lucas Height Landfill",
@@ -8959,6 +9194,7 @@
     },
     "TOWER": {
         "updated_at": "2020-01-30T00:00:00",
+        "name": "Tower",
         "station_code": "TOWER",
         "network_name": "Tower Power Plant",
         "address1": "Douglas Park Drive",
@@ -8984,6 +9220,7 @@
     },
     "GLENNCRK": {
         "updated_at": "2010-01-06T00:00:00",
+        "name": "Glennies Creek",
         "station_code": "GLENNCRK",
         "network_name": "Glennies Creek Power Station",
         "address1": "Glennies Creek Coal Mine",
@@ -9009,6 +9246,7 @@
     },
     "WYANGALA": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Wyangala A",
         "station_code": "WYANGALA",
         "network_name": "Wyangala A Power Station",
         "address1": "Warrah Rd",
@@ -9034,6 +9272,7 @@
     },
     "WYANGALB": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Wyangala B",
         "station_code": "WYANGALB",
         "network_name": "Wyangala B Power Station",
         "address1": "Warrah Rd",
@@ -9059,6 +9298,7 @@
     },
     "JOUNAMA": {
         "updated_at": "2010-03-12T00:00:00",
+        "name": "Jounama Small",
         "station_code": "JOUNAMA",
         "network_name": "Jounama Small Hydro Power Station",
         "address1": "Jounama Dam Road Via Snowy Mountains Hwy",
@@ -9084,6 +9324,7 @@
     },
     "WESTCBT": {
         "updated_at": "2010-04-19T00:00:00",
+        "name": "Western Suburbs League Club Campbelltown",
         "station_code": "WESTCBT",
         "network_name": "Western Suburbs League Club (Campbelltown) Plant",
         "address1": "10 Old Leumeah Road",
@@ -9109,6 +9350,7 @@
     },
     "SYMEX": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Symex",
         "station_code": "SYMEX",
         "network_name": "Symex Power Plant",
         "address1": "14 Woodruff St",
@@ -9134,6 +9376,7 @@
     },
     "WESTILLA": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "West Illawarra Leagues Club",
         "station_code": "WESTILLA",
         "network_name": "West Illawarra Leagues Club Plant",
         "address1": "1 Hargreaves St",
@@ -9159,6 +9402,7 @@
     },
     "YARWUN": {
         "updated_at": "2010-06-29T00:00:00",
+        "name": "Yarwun",
         "station_code": "YARWUN",
         "network_name": "Yarwun Power Station",
         "address1": "975 Hanson Road",
@@ -9184,6 +9428,7 @@
     },
     "LKBONNY3": {
         "updated_at": "2010-07-01T00:00:00",
+        "name": "Lake Bonney",
         "station_code": "LKBONNY3",
         "network_name": "Lake Bonney Stage 3 Wind Farm",
         "address1": "Canunda Frontage Road",
@@ -9209,6 +9454,7 @@
     },
     "NBHWF": {
         "updated_at": "2017-07-17T00:00:00",
+        "name": "North Brown Hill",
         "station_code": "NBHWF",
         "network_name": "North Brown Hill Wind Farm",
         "address1": "Gilfillan Rd",
@@ -9234,6 +9480,7 @@
     },
     "BANKSPT": {
         "updated_at": "2011-01-06T00:00:00",
+        "name": "Bankstown Sports Club",
         "station_code": "BANKSPT",
         "network_name": "Bankstown Sports Club Plant Units",
         "address1": "8 Greenfield Parade",
@@ -9259,6 +9506,7 @@
     },
     "WATERLWF": {
         "updated_at": "2010-08-19T00:00:00",
+        "name": "Waterloo",
         "station_code": "WATERLWF",
         "network_name": "Waterloo Wind Farm",
         "address1": "Shultz Rd",
@@ -9284,6 +9532,7 @@
     },
     "NINEWIL": {
         "updated_at": "2010-10-07T00:00:00",
+        "name": "Nine Network Willoughby",
         "station_code": "NINEWIL",
         "network_name": "Nine Network Willoughby Plant",
         "address1": "24 Artarmon Road",
@@ -9309,6 +9558,7 @@
     },
     "STGEORGE": {
         "updated_at": "2019-12-19T00:00:00",
+        "name": "St George Leagues",
         "station_code": "STGEORGE",
         "network_name": "St George Leagues Plant",
         "address1": "124 Princes Highway",
@@ -9334,6 +9584,7 @@
     },
     "TATIARA": {
         "updated_at": "2010-11-04T00:00:00",
+        "name": "Tataria",
         "station_code": "TATIARA",
         "network_name": "Tataria Bordertown Plant",
         "address1": "Meatworks Road",
@@ -9359,6 +9610,7 @@
     },
     "STANVAC": {
         "updated_at": "2010-12-16T00:00:00",
+        "name": "Pt Stanvac",
         "station_code": "STANVAC",
         "network_name": "Pt Stanvac Power Station",
         "address1": "Lot 100",
@@ -9408,6 +9660,7 @@
     },
     "VPGS": {
         "updated_at": "2012-01-31T00:00:00",
+        "name": "Valley Peaking Facility",
         "station_code": "VPGS",
         "network_name": "Valley Power Peaking Facility",
         "address1": "Barton's Lane",
@@ -9505,6 +9758,7 @@
     },
     "GUNNING": {
         "updated_at": "2011-03-24T00:00:00",
+        "name": "Gunning",
         "station_code": "GUNNING",
         "network_name": "Gunning Wind Farm",
         "address1": "Gurrundah Road",
@@ -9530,6 +9784,7 @@
     },
     "WOODLWN": {
         "updated_at": "2011-05-02T00:00:00",
+        "name": "Woodlawn",
         "station_code": "WOODLWN",
         "network_name": "Woodlawn Wind Farm",
         "address1": "",
@@ -9555,6 +9810,7 @@
     },
     "HEPWIND": {
         "updated_at": "2011-06-16T00:00:00",
+        "name": "Hepburn Community",
         "station_code": "HEPWIND",
         "network_name": "Hepburn Community Wind Farm",
         "address1": "2040 Ballan-Daylesford Rd",
@@ -9580,6 +9836,7 @@
     },
     "BLUFF": {
         "updated_at": "2011-07-04T00:00:00",
+        "name": "The Bluff",
         "station_code": "BLUFF",
         "network_name": "The Bluff Wind Farm",
         "address1": "Wilkins Highway",
@@ -9605,6 +9862,7 @@
     },
     "MORTLK": {
         "updated_at": "2011-07-29T00:00:00",
+        "name": "Mortlake",
         "station_code": "MORTLK",
         "network_name": "Mortlake Power Station",
         "address1": "1154 Connewarren Lane",
@@ -9642,6 +9900,7 @@
     },
     "OAKLAND": {
         "updated_at": "2011-08-04T00:00:00",
+        "name": "Oaklands Hill",
         "station_code": "OAKLAND",
         "network_name": "Oaklands Hill Wind Farm",
         "address1": "Glenthompson-Caramut Road",
@@ -9667,6 +9926,7 @@
     },
     "VICMILL": {
         "updated_at": "2011-08-08T00:00:00",
+        "name": "Victoria Mill",
         "station_code": "VICMILL",
         "network_name": "Victoria Mill",
         "address1": "Forest Beach Rd",
@@ -9692,6 +9952,7 @@
     },
     "HALAMRD": {
         "updated_at": "2011-11-09T00:00:00",
+        "name": "Hallam Road",
         "station_code": "HALAMRD",
         "network_name": "HALLAM ROAD RENEWABLE ENERGY FACILITY",
         "address1": "274 Hallam Road",
@@ -9717,6 +9978,7 @@
     },
     "BLULAKE": {
         "updated_at": "2011-12-20T00:00:00",
+        "name": "Blue Lake Milling",
         "station_code": "BLULAKE",
         "network_name": "Blue Lake Milling Power Plant",
         "address1": "Pigeon Flat Road",
@@ -9742,6 +10004,7 @@
     },
     "BPLANDF": {
         "updated_at": "2012-03-30T00:00:00",
+        "name": "Browns Plains",
         "station_code": "BPLANDF",
         "network_name": "Browns Plains Landfill Gas PS",
         "address1": "349 Brown Plains Road",
@@ -9767,6 +10030,7 @@
     },
     "MACARTH": {
         "updated_at": "2012-08-20T00:00:00",
+        "name": "Macarthur",
         "station_code": "MACARTH",
         "network_name": "Macarthur Wind Farm",
         "address1": "Macarthur-Hawkesdale Road",
@@ -9792,6 +10056,7 @@
     },
     "RACOMIL": {
         "updated_at": "2012-11-07T00:00:00",
+        "name": "Racecourse Mill",
         "station_code": "RACOMIL",
         "network_name": "Racecourse Mill Power Station",
         "address1": "Peak Downs Highway",
@@ -9817,6 +10082,7 @@
     },
     "MLWF": {
         "updated_at": "2012-11-08T00:00:00",
+        "name": "Mortons Lane",
         "station_code": "MLWF",
         "network_name": "Mortons Lane Wind Farm",
         "address1": "300 Mortons Lane",
@@ -9842,6 +10108,7 @@
     },
     "MUSSELRO": {
         "updated_at": "2013-03-07T00:00:00",
+        "name": "Musselroe",
         "station_code": "MUSSELRO",
         "network_name": "Musselroe Wind Farm",
         "address1": "Cape Portland Road",
@@ -9867,6 +10134,7 @@
     },
     "THEDROP": {
         "updated_at": "2013-03-08T00:00:00",
+        "name": "The Drop",
         "station_code": "THEDROP",
         "network_name": "The Drop Power Station",
         "address1": "Mulwala Canal",
@@ -9892,6 +10160,7 @@
     },
     "HIGHBRY": {
         "updated_at": "2013-03-27T00:00:00",
+        "name": "Highbury",
         "station_code": "HIGHBRY",
         "network_name": "Highbury Landfill Gas Power Station",
         "address1": "Halls Road",
@@ -9917,6 +10186,7 @@
     },
     "PEDLER": {
         "updated_at": "2015-03-19T00:00:00",
+        "name": "Pedler Creek",
         "station_code": "PEDLER",
         "network_name": "Pedler Creek Landfill Gas Power Station Units 1-3",
         "address1": "Wheaton Road",
@@ -9942,6 +10212,7 @@
     },
     "WINGF1": {
         "updated_at": "2013-03-27T00:00:00",
+        "name": "Wingfield 1",
         "station_code": "WINGF1",
         "network_name": "Wingfield 1 Landfill Gas Power Station",
         "address1": "23-29 Nixon Road",
@@ -9967,6 +10238,7 @@
     },
     "TEATREE": {
         "updated_at": "2013-03-27T00:00:00",
+        "name": "Tea Tree Gully",
         "station_code": "TEATREE",
         "network_name": "Tea Tree Gully Landfill Gas Power Station",
         "address1": "Smart Road",
@@ -9992,6 +10264,7 @@
     },
     "WINGF2": {
         "updated_at": "2013-03-27T00:00:00",
+        "name": "Wingfield 2",
         "station_code": "WINGF2",
         "network_name": "Wingfield 2 Landfill Gas Power Station",
         "address1": "Hanson Road",
@@ -10017,6 +10290,7 @@
     },
     "WOLLERT": {
         "updated_at": "2013-06-11T00:00:00",
+        "name": "Wollert",
         "station_code": "WOLLERT",
         "network_name": "Wollert Renewable Energy Facility",
         "address1": "45-135 Bridge In Road",
@@ -10042,6 +10316,7 @@
     },
     "TGNSS": {
         "updated_at": "2013-06-11T00:00:00",
+        "name": "Traralgon",
         "station_code": "TGNSS",
         "network_name": "Traralgon Network Support Station",
         "address1": "73-83 Eastern Road",
@@ -10067,6 +10342,7 @@
     },
     "CORIO": {
         "updated_at": "2013-07-12T00:00:00",
+        "name": "Corio",
         "station_code": "CORIO",
         "network_name": "Corio Landfill Gas Power Station",
         "address1": "Biddlecomb Road",
@@ -10092,6 +10368,7 @@
     },
     "CESF": {
         "updated_at": "2013-09-06T00:00:00",
+        "name": "Capital East",
         "station_code": "CESF",
         "network_name": "Capital East Solar Farm",
         "address1": "1475 Tarago Road",
@@ -10117,6 +10394,7 @@
     },
     "SNOWSTH": {
         "updated_at": "2013-09-06T00:00:00",
+        "name": "Snowtown South",
         "station_code": "SNOWSTH",
         "network_name": "Snowtown South Wind Farm",
         "address1": "Lochiel - Snowtown Road",
@@ -10142,6 +10420,7 @@
     },
     "SNOWNTH": {
         "updated_at": "2013-09-06T00:00:00",
+        "name": "Snowtown North",
         "station_code": "SNOWNTH",
         "network_name": "Snowtown Wind Farm Stage 2 North",
         "address1": "Lochiel - Snowtown Road",
@@ -10167,6 +10446,7 @@
     },
     "SVALE": {
         "updated_at": "2013-10-11T00:00:00",
+        "name": "Springvale",
         "station_code": "SVALE",
         "network_name": "Springvale Landfill Gas Power Station",
         "address1": "Clarke Road",
@@ -10192,6 +10472,7 @@
     },
     "MTMERCER": {
         "updated_at": "2013-10-11T00:00:00",
+        "name": "Mt Mercer",
         "station_code": "MTMERCER",
         "network_name": "Mt Mercer Wind Farm",
         "address1": "286 Shelford-Mt Mercer Rd",
@@ -10217,6 +10498,7 @@
     },
     "GULLRGWF": {
         "updated_at": "2013-11-18T00:00:00",
+        "name": "Gullen Range",
         "station_code": "GULLRGWF",
         "network_name": "Gullen Range Wind Farm",
         "address1": "280 Storriers Lane",
@@ -10266,6 +10548,7 @@
     },
     "GLENMAGG": {
         "updated_at": "2013-12-18T00:00:00",
+        "name": "Glenmaggie",
         "station_code": "GLENMAGG",
         "network_name": "Glenmaggie Hydro Power Station",
         "address1": "Off Glenmaggie Lake Weir Wall, Ryans Road",
@@ -10291,6 +10574,7 @@
     },
     "EILDONPD": {
         "updated_at": "2013-12-18T00:00:00",
+        "name": "Eildon",
         "station_code": "EILDONPD",
         "network_name": "Eildon Power Station",
         "address1": "Off Eildon Pondage Weir Wall",
@@ -10316,6 +10600,7 @@
     },
     "WILLHOV": {
         "updated_at": "2013-12-18T00:00:00",
+        "name": "William Hovell",
         "station_code": "WILLHOV",
         "network_name": "William Hovell Power Station",
         "address1": "Off Lake William Hovell Weir Wall",
@@ -10341,6 +10626,7 @@
     },
     "MIDLDPS": {
         "updated_at": "2014-01-29T00:00:00",
+        "name": "Midlands",
         "station_code": "MIDLDPS",
         "network_name": "Midlands Power Station",
         "address1": "546 Verwood Road",
@@ -10366,6 +10652,7 @@
     },
     "AS_NSW1": {
         "updated_at": "2014-01-30T00:00:00",
+        "name": "Station Id Dummy Nscas",
         "station_code": "AS_NSW1",
         "network_name": "Station ID - Dummy (NSCAS)",
         "address1": "",
@@ -10391,6 +10678,7 @@
     },
     "ROYALLA": {
         "updated_at": "2014-05-05T00:00:00",
+        "name": "Royalla",
         "station_code": "ROYALLA",
         "network_name": "Royalla Solar Farm",
         "address1": "\"Bellview\"",
@@ -10416,6 +10704,7 @@
     },
     "WOYWOY": {
         "updated_at": "2014-07-24T00:00:00",
+        "name": "Woy Woy",
         "station_code": "WOYWOY",
         "network_name": "Woy Woy Landfill Site",
         "address1": "Lot 3",
@@ -10441,6 +10730,7 @@
     },
     "WILGAPKB": {
         "updated_at": "2014-08-04T00:00:00",
+        "name": "Wilga Park B",
         "station_code": "WILGAPKB",
         "network_name": "Wilga Park B",
         "address1": "Kiandool Rd",
@@ -10466,6 +10756,7 @@
     },
     "KINCUMB": {
         "updated_at": "2014-08-25T00:00:00",
+        "name": "Kincumber",
         "station_code": "KINCUMB",
         "network_name": "Kincumber Landfill Site",
         "address1": "Lot 1",
@@ -10491,6 +10782,7 @@
     },
     "BOCOROCK": {
         "updated_at": "2014-08-28T00:00:00",
+        "name": "Boco Rock",
         "station_code": "BOCOROCK",
         "network_name": "Boco Rock Wind Farm",
         "address1": "Avon Lake Road",
@@ -10516,6 +10808,7 @@
     },
     "TARALGA": {
         "updated_at": "2014-12-10T00:00:00",
+        "name": "Taralga",
         "station_code": "TARALGA",
         "network_name": "Taralga Wind Farm",
         "address1": "Corner Of Taralga Road And Old Show Ground Road",
@@ -10541,6 +10834,7 @@
     },
     "NYNGAN": {
         "updated_at": "2014-12-15T00:00:00",
+        "name": "Nyngan",
         "station_code": "NYNGAN",
         "network_name": "Nyngan Solar Plant",
         "address1": "Nyngan Solar Plant",
@@ -10566,6 +10860,7 @@
     },
     "BOLIVAR": {
         "updated_at": "2014-12-30T00:00:00",
+        "name": "Bolivar",
         "station_code": "BOLIVAR",
         "network_name": "SA Water Bolivar Waste Water Treatment (WWT) Plant",
         "address1": "Site 1151",
@@ -10591,6 +10886,7 @@
     },
     "BHWF": {
         "updated_at": "2015-01-28T00:00:00",
+        "name": "Bald Hills",
         "station_code": "BHWF",
         "network_name": "Bald Hills Wind Farm",
         "address1": "1080 Buffalo - Waratah Road",
@@ -10616,6 +10912,7 @@
     },
     "CHPSTWF": {
         "updated_at": "2015-03-23T00:00:00",
+        "name": "Chepstowe",
         "station_code": "CHPSTWF",
         "network_name": "Chepstowe Wind Farm",
         "address1": "Chepstowe-Pittong Road",
@@ -10641,6 +10938,7 @@
     },
     "TAHMOOR": {
         "updated_at": "2015-06-30T00:00:00",
+        "name": "Tahmoor",
         "station_code": "TAHMOOR",
         "network_name": "Tahmoor Waste Coal Mine Gas Power Station",
         "address1": "Gate 3 Tahmoor Colliery",
@@ -10666,6 +10964,7 @@
     },
     "BROKENH": {
         "updated_at": "2015-08-24T00:00:00",
+        "name": "Broken Hill",
         "station_code": "BROKENH",
         "network_name": "Broken Hill Solar Plant",
         "address1": "Lot 1 Dp 1191197",
@@ -10691,6 +10990,7 @@
     },
     "MOREESF": {
         "updated_at": "2016-02-08T00:00:00",
+        "name": "Moree",
         "station_code": "MOREESF",
         "network_name": "MOREE SOLAR FARM",
         "address1": "Bartons Road Pk 2.2",
@@ -10716,6 +11016,7 @@
     },
     "CBWF": {
         "updated_at": "2016-02-08T00:00:00",
+        "name": "Coonoer Bridge",
         "station_code": "CBWF",
         "network_name": "Coonoer Bridge Wind Farm",
         "address1": "Via Charlton Victoria",
@@ -10741,6 +11042,7 @@
     },
     "OAKY2": {
         "updated_at": "2016-04-01T00:00:00",
+        "name": "Oaky Creek 2",
         "station_code": "OAKY2",
         "network_name": "Oaky Creek 2",
         "address1": "Grasstree Rd Via Tiera",
@@ -10766,6 +11068,7 @@
     },
     "GEORGTWN": {
         "updated_at": "2016-03-17T00:00:00",
+        "name": "George Town",
         "station_code": "GEORGTWN",
         "network_name": "GEORGE TOWN DIESEL",
         "address1": "East Tamar Highway",
@@ -10803,6 +11106,7 @@
     },
     "PORTLATT": {
         "updated_at": "2016-03-24T00:00:00",
+        "name": "Port Latta Generator",
         "station_code": "PORTLATT",
         "network_name": "Port Latta Diesel Generator",
         "address1": "Port Latta Substation",
@@ -10828,6 +11132,7 @@
     },
     "QUERIVER": {
         "updated_at": "2016-04-04T00:00:00",
+        "name": "Que River",
         "station_code": "QUERIVER",
         "network_name": "Que River Diesel",
         "address1": "Que River Mine Site",
@@ -10853,6 +11158,7 @@
     },
     "BBDISEL1": {
         "updated_at": "2016-05-10T00:00:00",
+        "name": "Bell Bay",
         "station_code": "BBDISEL1",
         "network_name": "Bell Bay Power Station",
         "address1": "East Tamar Highway",
@@ -10878,6 +11184,7 @@
     },
     "HORNSDAL": {
         "updated_at": "2016-06-01T00:00:00",
+        "name": "Hornsdale",
         "station_code": "HORNSDAL",
         "network_name": "Hornsdale Wind Farm",
         "address1": "Sec 188 Tarcowie Caltowie Road",
@@ -10903,6 +11210,7 @@
     },
     "ARWF": {
         "updated_at": "2016-06-22T00:00:00",
+        "name": "Ararat",
         "station_code": "ARWF",
         "network_name": "Ararat Wind Farm",
         "address1": "Pyrenees Highway",
@@ -10928,6 +11236,7 @@
     },
     "MLSP": {
         "updated_at": "2016-11-11T00:00:00",
+        "name": "Mugga Lane",
         "station_code": "MLSP",
         "network_name": "Mugga Lane Solar Park",
         "address1": "Monaro Highway And Mugga Lane",
@@ -10953,6 +11262,7 @@
     },
     "AGLSITA": {
         "updated_at": "2016-11-18T00:00:00",
+        "name": "Kemps Creek",
         "station_code": "AGLSITA",
         "network_name": "AGL KEMPS CREEK",
         "address1": "1725 Elizabeth Dr",
@@ -10978,6 +11288,7 @@
     },
     "BARCSF": {
         "updated_at": "2019-02-13T00:00:00",
+        "name": "Barcaldine",
         "station_code": "BARCSF",
         "network_name": "Barcaldine Solar Farm",
         "address1": "Lots 33 -35, Capricon Highway",
@@ -11003,6 +11314,7 @@
     },
     "GROSV1": {
         "updated_at": "2017-01-23T00:00:00",
+        "name": "Grosvenor 1",
         "station_code": "GROSV1",
         "network_name": "Grosvenor 1 Waste Coal Mine Gas Power Station",
         "address1": "Goonyella Road",
@@ -11028,6 +11340,7 @@
     },
     "HORNSDAL2": {
         "updated_at": "2017-02-17T00:00:00",
+        "name": "Hornsdale 2",
         "station_code": "HORNSDAL2",
         "network_name": "Hornsdale Wind Farm 2",
         "address1": "Sec 188 Caltowie-Tarcowie Road",
@@ -11053,6 +11366,7 @@
     },
     "VALDORA": {
         "updated_at": "2019-02-13T00:00:00",
+        "name": "Sunshine Coast Solar Farm",
         "station_code": "VALDORA",
         "network_name": "SCSF",
         "address1": "909 Yandina Coolum Road",
@@ -11078,6 +11392,7 @@
     },
     "WRWF1": {
         "updated_at": "2018-08-20T00:00:00",
+        "name": "White Rock",
         "station_code": "WRWF1",
         "network_name": "White Rock Wind Farm",
         "address1": "Off Gywdir Highway",
@@ -11103,6 +11418,7 @@
     },
     "STAPYLTON": {
         "updated_at": "2017-07-17T00:00:00",
+        "name": "Stapylton",
         "station_code": "STAPYLTON",
         "network_name": "Stapylton Renewable Energy Facility",
         "address1": "32 Rossmans Road",
@@ -11128,6 +11444,7 @@
     },
     "MELBRL": {
         "updated_at": "2017-07-28T00:00:00",
+        "name": "Melbourne Regional",
         "station_code": "MELBRL",
         "network_name": "Melbourne Regional Landfill",
         "address1": "1100-1152 Christies Road",
@@ -11140,6 +11457,7 @@
     },
     "HORNSDAL3": {
         "updated_at": "2017-08-14T00:00:00",
+        "name": "Hornsdale 3",
         "station_code": "HORNSDAL3",
         "network_name": "Hornsdale Wind Farm 3",
         "address1": "Sec 188 Caltowie Tarcowie Road",
@@ -11165,6 +11483,7 @@
     },
     "ENOCSTA": {
         "updated_at": "2017-09-20T00:00:00",
+        "name": "Enoc Msap",
         "station_code": "ENOCSTA",
         "network_name": "ENOC MSAP VIC",
         "address1": "Multiple Sites",
@@ -11190,6 +11509,7 @@
     },
     "GROSV2": {
         "updated_at": "2017-09-26T00:00:00",
+        "name": "Grosvenor 1",
         "station_code": "GROSV2",
         "network_name": "Grosvenor 2",
         "address1": "Goonyella Road",
@@ -11215,6 +11535,7 @@
     },
     "SATGN": {
         "updated_at": "2017-10-19T00:00:00",
+        "name": "Temporary Generation North",
         "station_code": "SATGN",
         "network_name": "Temporary Generation North",
         "address1": "180 Phillip Highway",
@@ -11240,6 +11561,7 @@
     },
     "SATGS": {
         "updated_at": "2017-10-19T00:00:00",
+        "name": "Temporary Generation South",
         "station_code": "SATGS",
         "network_name": "Temporary Generation South",
         "address1": "Lot 12 Chrysler Road",
@@ -11265,6 +11587,7 @@
     },
     "ENOCNSW": {
         "updated_at": "2017-10-20T00:00:00",
+        "name": "Enoc Msap",
         "station_code": "ENOCNSW",
         "network_name": "ENOC MSAP NSW",
         "address1": "Multiple Sites",
@@ -11290,6 +11613,7 @@
     },
     "KIATAWF": {
         "updated_at": "2017-11-02T00:00:00",
+        "name": "Kiata",
         "station_code": "KIATAWF",
         "network_name": "Kiata Wind Farm",
         "address1": "Corner Coker Dam Road And Salisbury South Road",
@@ -11315,6 +11639,7 @@
     },
     "HORNSDPR": {
         "updated_at": "2017-11-13T00:00:00",
+        "name": "Hornsdale Power Reserve",
         "station_code": "HORNSDPR",
         "network_name": "Hornsdale Power Reserve",
         "address1": "Sec 188 Tarcowie Caltowie Road",
@@ -11352,6 +11677,7 @@
     },
     "YSWF": {
         "updated_at": "2017-11-21T00:00:00",
+        "name": "Yaloak South",
         "station_code": "YSWF",
         "network_name": "Yaloak South Wind Farm",
         "address1": "2043 Glenmore Road",
@@ -11377,6 +11703,7 @@
     },
     "KSP1": {
         "updated_at": "2017-11-22T00:00:00",
+        "name": "Kidston",
         "station_code": "KSP1",
         "network_name": "Kidston Solar Project",
         "address1": "Lot 2 Gilbertson Road",
@@ -11402,6 +11729,7 @@
     },
     "SAPHWF1": {
         "updated_at": "2017-12-06T00:00:00",
+        "name": "Sapphire",
         "station_code": "SAPHWF1",
         "network_name": "Sapphire Wind Farm",
         "address1": "Waterloo Road",
@@ -11427,6 +11755,7 @@
     },
     "GRIFSF": {
         "updated_at": "2017-12-12T00:00:00",
+        "name": "Griffith",
         "station_code": "GRIFSF",
         "network_name": "Griffith Solar Farm",
         "address1": "Hamilton Road",
@@ -11452,6 +11781,7 @@
     },
     "PSF": {
         "updated_at": "2017-12-12T00:00:00",
+        "name": "Parkes",
         "station_code": "PSF",
         "network_name": "Parkes Solar Farm",
         "address1": "Lot 401 / Dp 1227784, Pat Meredith Drive",
@@ -11477,6 +11807,7 @@
     },
     "MAROOWF1": {
         "updated_at": "2017-12-28T00:00:00",
+        "name": "Maroona",
         "station_code": "MAROOWF1",
         "network_name": "Maroona Wind Farm",
         "address1": "961 Andrews Lane",
@@ -11502,6 +11833,7 @@
     },
     "ENOCQLD": {
         "updated_at": "2018-01-12T00:00:00",
+        "name": "Enoc Masp",
         "station_code": "ENOCQLD",
         "network_name": "ENOC MASP QLD",
         "address1": "Multiple Sites",
@@ -11527,6 +11859,7 @@
     },
     "HUGSF": {
         "updated_at": "2018-01-24T00:00:00",
+        "name": "Hughenden",
         "station_code": "HUGSF",
         "network_name": "Hughenden Solar Farm",
         "address1": "Lot 2 McLaren Street",
@@ -11552,6 +11885,7 @@
     },
     "CLARESF": {
         "updated_at": "2018-02-13T00:00:00",
+        "name": "Clare",
         "station_code": "CLARESF",
         "network_name": "Clare Solar Farm",
         "address1": "82, 124, 196 Shadforth Road",
@@ -11577,6 +11911,7 @@
     },
     "STWF": {
         "updated_at": "2018-02-23T00:00:00",
+        "name": "Silverton",
         "station_code": "STWF",
         "network_name": "Silverton Wind Farm",
         "address1": "Daydream Mine Road",
@@ -11602,6 +11937,7 @@
     },
     "LRSF": {
         "updated_at": "2018-03-02T00:00:00",
+        "name": "Longreach",
         "station_code": "LRSF",
         "network_name": "Longreach Solar Farm",
         "address1": "Camden Park, 50758 Landsborough Highway",
@@ -11627,6 +11963,7 @@
     },
     "GANNSF": {
         "updated_at": "2018-03-16T00:00:00",
+        "name": "Gannawarra",
         "station_code": "GANNSF",
         "network_name": "Gannawarra Solar Farm",
         "address1": "Lot 20 TP487486M",
@@ -11652,6 +11989,7 @@
     },
     "SMCSF": {
         "updated_at": "2018-03-29T00:00:00",
+        "name": "Sun Metals",
         "station_code": "SMCSF",
         "network_name": "Sun Metals Solar Farm",
         "address1": "1 Zinc Avenue",
@@ -11677,6 +12015,7 @@
     },
     "MANSLR": {
         "updated_at": "2018-04-19T00:00:00",
+        "name": "Manildra",
         "station_code": "MANSLR",
         "network_name": "Manildra Solar Farm",
         "address1": "1869 Packham Drive",
@@ -11702,6 +12041,7 @@
     },
     "SKSF": {
         "updated_at": "2018-04-20T00:00:00",
+        "name": "South Keswick",
         "station_code": "SKSF",
         "network_name": "South Keswick Solar Farm",
         "address1": "19L Sheraton Road",
@@ -11727,6 +12067,7 @@
     },
     "NASF": {
         "updated_at": "2018-04-23T00:00:00",
+        "name": "Narromine",
         "station_code": "NASF",
         "network_name": "Narromine Solar Farm",
         "address1": "298 Eumungerie Road",
@@ -11752,6 +12093,7 @@
     },
     "ASTHYD1": {
         "updated_at": "2018-04-27T00:00:00",
+        "name": "Hydrotas Masp Tas",
         "station_code": "ASTHYD1",
         "network_name": "HydroTas MASP TAS",
         "address1": "Multiple Sites",
@@ -11777,6 +12119,7 @@
     },
     "BNGSF1": {
         "updated_at": "2018-04-30T00:00:00",
+        "name": "Bungala One",
         "station_code": "BNGSF1",
         "network_name": "Bungala One Solar Farm",
         "address1": "Warrakimbo Road",
@@ -11802,6 +12145,7 @@
     },
     "HAMISF": {
         "updated_at": "2018-05-25T00:00:00",
+        "name": "Hamilton",
         "station_code": "HAMISF",
         "network_name": "Hamilton Solar Farm",
         "address1": "Lot 2, Rp 742329, Strathmore Road",
@@ -11827,6 +12171,7 @@
     },
     "SALTCRK": {
         "updated_at": "2018-05-25T00:00:00",
+        "name": "Salt Creek",
         "station_code": "SALTCRK",
         "network_name": "Salt Creek Wind Farm",
         "address1": "Hexham-Woorndoo Road",
@@ -11852,6 +12197,7 @@
     },
     "WHITSF": {
         "updated_at": "2018-05-25T00:00:00",
+        "name": "Whitsunday",
         "station_code": "WHITSF",
         "network_name": "Whitsunday Solar Farm",
         "address1": "Lot 2, Rp 742329, Strathmore Road",
@@ -11877,6 +12223,7 @@
     },
     "MTGELWF": {
         "updated_at": "2018-05-30T00:00:00",
+        "name": "Mt Gellibrand",
         "station_code": "MTGELWF",
         "network_name": "Mt Gellibrand Wind Farm",
         "address1": "Mooleric Road",
@@ -11902,6 +12249,7 @@
     },
     "DALNTH": {
         "updated_at": "2018-06-04T00:00:00",
+        "name": "Dalrymple North",
         "station_code": "DALNTH",
         "network_name": "Dalrymple North BESS",
         "address1": "Little Glory Road",
@@ -11939,6 +12287,7 @@
     },
     "RRSF": {
         "updated_at": "2018-06-22T00:00:00",
+        "name": "Ross River",
         "station_code": "RRSF",
         "network_name": "Ross River Solar Farm",
         "address1": "160 Round Mountain Road",
@@ -11964,6 +12313,7 @@
     },
     "DDSF": {
         "updated_at": "2018-06-25T00:00:00",
+        "name": "Darling Downs Solar Farm",
         "station_code": "DDSF",
         "network_name": "Darling Downs Solar Farm",
         "address1": "119 Grahams Road",
@@ -11989,6 +12339,7 @@
     },
     "BODWF": {
         "updated_at": "2018-07-09T00:00:00",
+        "name": "Bodangora",
         "station_code": "BODWF",
         "network_name": "Bodangora Wind Farm",
         "address1": "Bodangora Wind Farm, Gillinghall Road",
@@ -12014,6 +12365,7 @@
     },
     "BANNSP": {
         "updated_at": "2018-07-09T00:00:00",
+        "name": "Bannerton",
         "station_code": "BANNSP",
         "network_name": "Bannerton Solar Park",
         "address1": "Anzac Road",
@@ -12039,6 +12391,7 @@
     },
     "WGWF": {
         "updated_at": "2018-07-20T00:00:00",
+        "name": "Willogoleche",
         "station_code": "WGWF",
         "network_name": "Willogoleche Wind Farm",
         "address1": "Wilkins Highway",
@@ -12064,6 +12417,7 @@
     },
     "BNGSF2": {
         "updated_at": "2018-07-30T00:00:00",
+        "name": "Bungala Two",
         "station_code": "BNGSF2",
         "network_name": "Bungala Two Solar Farm",
         "address1": "Lot 91 Maybank Road",
@@ -12089,6 +12443,7 @@
     },
     "CSPVPS": {
         "updated_at": "2018-07-30T00:00:00",
+        "name": "Collinsville",
         "station_code": "CSPVPS",
         "network_name": "Collinsville Solar PV Power Station",
         "address1": "1 Powerhouse Road",
@@ -12114,6 +12469,7 @@
     },
     "CROOKWF2": {
         "updated_at": "2018-07-31T00:00:00",
+        "name": "Crookwell 2",
         "station_code": "CROOKWF2",
         "network_name": "Crookwell 2 Wind Farm",
         "address1": "153 Woodhouselee Road",
@@ -12139,6 +12495,7 @@
     },
     "MEWF": {
         "updated_at": "2018-08-13T00:00:00",
+        "name": "Mount Emerald",
         "station_code": "MEWF",
         "network_name": "Mount Emerald Wind Farm",
         "address1": "Lot 7, Kippen Drive",
@@ -12164,6 +12521,7 @@
     },
     "WRSF1": {
         "updated_at": "2018-08-20T00:00:00",
+        "name": "White Rock",
         "station_code": "WRSF1",
         "network_name": "White Rock Solar Farm",
         "address1": "Off Gywdir Highway",
@@ -12189,6 +12547,7 @@
     },
     "COLEASF": {
         "updated_at": "2018-08-31T00:00:00",
+        "name": "Coleambally",
         "station_code": "COLEASF",
         "network_name": "Coleambally Solar Farm",
         "address1": "Kook Rd",
@@ -12214,6 +12573,7 @@
     },
     "BAKING": {
         "updated_at": "2018-09-07T00:00:00",
+        "name": "Baking Board",
         "station_code": "BAKING",
         "network_name": "Baking Board Solar Farm",
         "address1": "168 Sturgess-Baking Board Road",
@@ -12239,6 +12599,7 @@
     },
     "EMERASF": {
         "updated_at": "2018-09-12T00:00:00",
+        "name": "Emerald",
         "station_code": "EMERASF",
         "network_name": "Emerald Solar Park",
         "address1": "Lot 138 Munro Road",
@@ -12264,6 +12625,7 @@
     },
     "DAYDSF": {
         "updated_at": "2018-09-27T00:00:00",
+        "name": "Daydream",
         "station_code": "DAYDSF",
         "network_name": "Daydream Solar Farm",
         "address1": "Lot 2 On RP742329, Bowen Developmental Road",
@@ -12289,6 +12651,7 @@
     },
     "HAYMSF": {
         "updated_at": "2018-09-27T00:00:00",
+        "name": "Hayman",
         "station_code": "HAYMSF",
         "network_name": "Hayman Solar Farm",
         "address1": "Lot 2 On RP742329, Bowen Developmental Road",
@@ -12314,6 +12677,7 @@
     },
     "TIMWEST": {
         "updated_at": "2018-10-08T00:00:00",
+        "name": "Timboon West",
         "station_code": "TIMWEST",
         "network_name": "Timboon West Wind Farm",
         "address1": "101 East And West Road",
@@ -12339,6 +12703,7 @@
     },
     "KARSF": {
         "updated_at": "2018-10-08T00:00:00",
+        "name": "Karadoc",
         "station_code": "KARSF",
         "network_name": "Karadoc Solar Farm",
         "address1": "Birkins Road",
@@ -12364,6 +12729,7 @@
     },
     "ENOCSA": {
         "updated_at": "2018-10-15T00:00:00",
+        "name": "Enoc Masp",
         "station_code": "ENOCSA",
         "network_name": "ENOC MASP SA",
         "address1": "Multiple Sites",
@@ -12389,6 +12755,7 @@
     },
     "BALBESS": {
         "updated_at": "2018-11-02T00:00:00",
+        "name": "Ballarat Energy",
         "station_code": "BALBESS",
         "network_name": "Ballarat Battery Energy Storage System",
         "address1": "Ballarat Terminal Station",
@@ -12426,6 +12793,7 @@
     },
     "WEMENSF1": {
         "updated_at": "2018-11-05T00:00:00",
+        "name": "Wemen",
         "station_code": "WEMENSF1",
         "network_name": "Wemen Solar Farm",
         "address1": "114 Booth Rd",
@@ -12451,6 +12819,7 @@
     },
     "CROWLWF": {
         "updated_at": "2018-11-05T00:00:00",
+        "name": "Crowlands",
         "station_code": "CROWLWF",
         "network_name": "Crowlands Wind Farm",
         "address1": "631 Spring Flat Road",
@@ -12476,6 +12845,7 @@
     },
     "GANNBESS": {
         "updated_at": "2018-11-05T00:00:00",
+        "name": "Gannawarra Energy",
         "station_code": "GANNBESS",
         "network_name": "Gannawarra Energy Storage System",
         "address1": "Lalbert-Kerang Road",
@@ -12513,6 +12883,7 @@
     },
     "YAWWF": {
         "updated_at": "2018-11-12T00:00:00",
+        "name": "Yawong",
         "station_code": "YAWWF",
         "network_name": "Yawong Wind Farm",
         "address1": "466 Yeungroon-Coonooer Road",
@@ -12538,6 +12909,7 @@
     },
     "ASNACTEW": {
         "updated_at": "2018-12-10T00:00:00",
+        "name": "Actewagl VPP",
         "station_code": "ASNACTEW",
         "network_name": "ActewAGL VPP",
         "address1": "Multiple Sites",
@@ -12563,6 +12935,7 @@
     },
     "SRSF": {
         "updated_at": "2018-12-17T00:00:00",
+        "name": "Susan River",
         "station_code": "SRSF",
         "network_name": "Susan River Solar Farm",
         "address1": "2123 Maryborough Hervey Bay Road",
@@ -12588,6 +12961,7 @@
     },
     "CHILDSF": {
         "updated_at": "2019-01-24T00:00:00",
+        "name": "Childers",
         "station_code": "CHILDSF",
         "network_name": "Childers Solar Farm",
         "address1": "27265 Bruce Highway",
@@ -12613,6 +12987,7 @@
     },
     "TBSF": {
         "updated_at": "2019-02-01T00:00:00",
+        "name": "Tailem Bend 1",
         "station_code": "TBSF",
         "network_name": "Tailem Bend Solar Project 1",
         "address1": "261 Lime Kiln Road",
@@ -12638,6 +13013,7 @@
     },
     "LGAPWF1": {
         "updated_at": "2019-02-04T00:00:00",
+        "name": "Lincoln Gap",
         "station_code": "LGAPWF1",
         "network_name": "Lincoln Gap Wind Farm",
         "address1": "Eyre Highway",
@@ -12663,6 +13039,7 @@
     },
     "LILYVASF": {
         "updated_at": "2019-02-04T00:00:00",
+        "name": "Lilyvale",
         "station_code": "LILYVASF",
         "network_name": "Lilyvale Solar Farm",
         "address1": "1185 Mt Stuart Road",
@@ -12688,6 +13065,7 @@
     },
     "OAKEY1SF": {
         "updated_at": "2019-03-08T00:00:00",
+        "name": "Oakey 1",
         "station_code": "OAKEY1SF",
         "network_name": "Oakey 1 Solar Farm",
         "address1": "12871 Warrego Highway",
@@ -12713,6 +13091,7 @@
     },
     "MUWAWF": {
         "updated_at": "2019-03-15T00:00:00",
+        "name": "Murra Warra",
         "station_code": "MUWAWF",
         "network_name": "Murra Warra Wind Farm",
         "address1": "Alisa Wheet Road",
@@ -12738,6 +13117,7 @@
     },
     "BERYLSF": {
         "updated_at": "2019-04-10T00:00:00",
+        "name": "Beryl",
         "station_code": "BERYLSF",
         "network_name": "Beryl Solar Farm",
         "address1": "245 Beryl Road",
@@ -12763,6 +13143,7 @@
     },
     "NUMURKSF": {
         "updated_at": "2019-05-03T00:00:00",
+        "name": "Numurkah",
         "station_code": "NUMURKSF",
         "network_name": "Numurkah Solar Farm",
         "address1": "408 Wunghnu Road",
@@ -12788,6 +13169,7 @@
     },
     "HAUGHT1": {
         "updated_at": "2019-05-24T00:00:00",
+        "name": "Haughton",
         "station_code": "HAUGHT1",
         "network_name": "Haughton Solar Farm Stage 1, Units 1-81",
         "address1": "Keith Venables Road",
@@ -12813,6 +13195,7 @@
     },
     "RUGBYR": {
         "updated_at": "2019-05-24T00:00:00",
+        "name": "Rugby Run",
         "station_code": "RUGBYR",
         "network_name": "Rugby Run Solar Farm",
         "address1": "633 Rugby Run Road",
@@ -12838,6 +13221,7 @@
     },
     "ASSEL": {
         "updated_at": "2019-05-31T00:00:00",
+        "name": "Energy Locals VPP",
         "station_code": "ASSEL",
         "network_name": "Energy Locals SA VPP",
         "address1": "Multiple Sites",
@@ -12863,6 +13247,7 @@
     },
     "COOPGWF": {
         "updated_at": "2019-06-03T00:00:00",
+        "name": "Coopers Gap",
         "station_code": "COOPGWF",
         "network_name": "Coopers Gap Wind Farm",
         "address1": "Niagara Road Near Corner Of Bunya Hwy",
@@ -12888,6 +13273,7 @@
     },
     "CLERMSF": {
         "updated_at": "2019-06-17T00:00:00",
+        "name": "Clermont",
         "station_code": "CLERMSF",
         "network_name": "Clermont Solar Farm",
         "address1": "397 Alpha Bypass Road",
@@ -12913,6 +13299,7 @@
     },
     "YENDONWF": {
         "updated_at": "2019-06-17T00:00:00",
+        "name": "Yendon",
         "station_code": "YENDONWF",
         "network_name": "Yendon Wind Farm",
         "address1": "Central Highlands",
@@ -12938,6 +13325,7 @@
     },
     "OAKEY2SF": {
         "updated_at": "2019-08-30T00:00:00",
+        "name": "Oakey 2",
         "station_code": "OAKEY2SF",
         "network_name": "Oakey 2 Solar Farm",
         "address1": "12871 Warrego Highway",
@@ -12963,6 +13351,7 @@
     },
     "YARANSF": {
         "updated_at": "2020-01-06T00:00:00",
+        "name": "Yarranlea",
         "station_code": "YARANSF",
         "network_name": "Yarranlea Solar Farm",
         "address1": "Corner Of Pittsworth-Tummaville Road And Yarranlea-Murlaggan Road",
@@ -12988,6 +13377,7 @@
     },
     "LIMOSF2": {
         "updated_at": "2019-12-23T00:00:00",
+        "name": "Limondale 2",
         "station_code": "LIMOSF2",
         "network_name": "Limondale Solar Farm 2",
         "address1": "Yanga Way",
@@ -13013,6 +13403,7 @@
     },
     "VSSEL1": {
         "updated_at": "2019-09-11T00:00:00",
+        "name": "VPP Energy Locals 1",
         "station_code": "VSSEL1",
         "network_name": "VPP Energy Locals SA 1",
         "address1": "Multiple Sites",
@@ -13038,6 +13429,7 @@
     },
     "TABMILL2": {
         "updated_at": "2019-09-09T00:00:00",
+        "name": "Tableland Mill 2",
         "station_code": "TABMILL2",
         "network_name": "Tableland Mill Unit 2",
         "address1": "1827 Springmount Road",
@@ -13063,6 +13455,7 @@
     },
     "BULGANA": {
         "updated_at": "2020-05-11T00:00:00",
+        "name": "Bulgana Green",
         "station_code": "BULGANA",
         "network_name": "Bulgana Green Power Hub",
         "address1": "Vances Crossing Road",
@@ -13088,6 +13481,7 @@
     },
     "GOONSF": {
         "updated_at": "2020-05-11T00:00:00",
+        "name": "Goonumbla",
         "station_code": "GOONSF",
         "network_name": "Goonumbla Solar Farm",
         "address1": "42 Pat Meredith Drive",
@@ -13113,6 +13507,7 @@
     },
     "LBBESS": {
         "updated_at": "2019-10-07T00:00:00",
+        "name": "Lake Bonney",
         "station_code": "LBBESS",
         "network_name": "Lake Bonney BESS1",
         "address1": "Canunda Frontage Road",
@@ -13150,6 +13545,7 @@
     },
     "BARKIPS": {
         "updated_at": "2019-10-14T00:00:00",
+        "name": "Barker Inlet",
         "station_code": "BARKIPS",
         "network_name": "Barker Inlet Power Station",
         "address1": "Via Grand Truckway",
@@ -13175,6 +13571,7 @@
     },
     "FINLEYSF": {
         "updated_at": "2019-07-26T00:00:00",
+        "name": "Finley",
         "station_code": "FINLEYSF",
         "network_name": "Finely Solar Farm",
         "address1": "188 Canalla Road",
@@ -13200,6 +13597,7 @@
     },
     "DUNDWF": {
         "updated_at": "2020-03-06T00:00:00",
+        "name": "Dundonnell",
         "station_code": "DUNDWF",
         "network_name": "Dundonnell Wind Farm",
         "address1": "Woorndo-Streathan Road",
@@ -13249,6 +13647,7 @@
     },
     "ASNAES": {
         "updated_at": "2020-03-06T00:00:00",
+        "name": "As Aes",
         "station_code": "ASNAES",
         "network_name": "AS AES NSW",
         "address1": "Multiple Sites",
@@ -13274,6 +13673,7 @@
     },
     "LIMOSF1": {
         "updated_at": "2020-06-29T00:00:00",
+        "name": "Limondale 1",
         "station_code": "LIMOSF1",
         "network_name": "Limondale Solar Farm 1",
         "address1": "Yanga Way",
@@ -13299,6 +13699,7 @@
     },
     "VSSAE1": {
         "updated_at": "2020-02-24T00:00:00",
+        "name": "VPP Agle 1",
         "station_code": "VSSAE1",
         "network_name": "VPP AGLE SA 1",
         "address1": "Mutliple Sites",
@@ -13324,6 +13725,7 @@
     },
     "CTHLWF": {
         "updated_at": "2020-01-03T00:00:00",
+        "name": "Cattle Hill",
         "station_code": "CTHLWF",
         "network_name": "Cattle Hill Wind Farm",
         "address1": "197 Macclesfield Road",
@@ -13349,6 +13751,7 @@
     },
     "ELAINEWF": {
         "updated_at": "2020-04-03T00:00:00",
+        "name": "Elaine",
         "station_code": "ELAINEWF",
         "network_name": "Elaine Wind Farm",
         "address1": "Midland Highway And Fords Lane",
@@ -13374,6 +13777,7 @@
     },
     "MARYRSF": {
         "updated_at": "2020-02-21T00:00:00",
+        "name": "Maryrorough",
         "station_code": "MARYRSF",
         "network_name": "Maryrorough Solar Farm",
         "address1": "Corner Of Roach Rd & Yarranlea-Murlaggan Road",
@@ -13399,6 +13803,7 @@
     },
     "BOMENSF": {
         "updated_at": "2020-03-13T00:00:00",
+        "name": "Bomen",
         "station_code": "BOMENSF",
         "network_name": "Bomen Solar Farm",
         "address1": "Trahairs Road",
@@ -13424,6 +13829,7 @@
     },
     "NEVERSF": {
         "updated_at": "2019-11-29T00:00:00",
+        "name": "Nevertire",
         "station_code": "NEVERSF",
         "network_name": "NEVERTIRE SOLAR FARM",
         "address1": "Mitchell Highway",
@@ -13449,6 +13855,7 @@
     },
     "GRANWF": {
         "updated_at": "2019-11-29T00:00:00",
+        "name": "Granville Harbour",
         "station_code": "GRANWF",
         "network_name": "Granville Harbour Wind Farm",
         "address1": "Heemskirk Road",
@@ -13474,6 +13881,7 @@
     },
     "CHYTWF": {
         "updated_at": "2020-04-24T00:00:00",
+        "name": "Cherry Tree",
         "station_code": "CHYTWF",
         "network_name": "Cherry Tree Wind Farm",
         "address1": "Homewood Road",
