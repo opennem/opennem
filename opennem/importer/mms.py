@@ -357,7 +357,7 @@ def load_mms_tables():
     return tables
 
 
-def run_import_mms():
+def mms_import():
     tables = load_mms_tables()
 
     logger.info(
@@ -373,6 +373,14 @@ def run_import_mms():
 
     mms = tables["mms"]
 
+    return mms
+
+
+def mms_station_map_from_records(mms):
+    """
+        Get the station to duid map from MMS and return it
+    """
+
     mms_duid_station_map = {}
 
     for station, station_record in mms.items():
@@ -380,6 +388,20 @@ def run_import_mms():
             i["network_code"] for i in station_record["facilities"]
         ]:
             mms_duid_station_map[network_code] = station
+
+    return mms_duid_station_map
+
+
+def mms_export(self):
+    """
+
+        Export MMS records
+
+        @TODO move this to opennem.export and keep modules consistent
+    """
+    mms = mms_import()
+
+    mms_duid_station_map = mms_station_map_from_records(mms)
 
     with open("data/mms.json", "w") as fh:
         json.dump(mms, fh, indent=4, cls=OpenNEMJSONEncoder)
@@ -389,8 +411,6 @@ def run_import_mms():
 
     logger.info("Wrote {} records".format(len(mms.keys())))
 
-    return mms
-
 
 if __name__ == "__main__":
-    run_import_mms()
+    mms_export()

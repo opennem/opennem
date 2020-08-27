@@ -7,7 +7,7 @@ from scrapy.utils.python import garbage_collect
 
 from opennem.diff.facility_diff import run_diff
 from opennem.importer.all import run_all
-from opennem.importer.mms import run_import_mms
+from opennem.importer.mms import mms_export
 from opennem.importer.opennem import run_opennem_import
 
 logger = logging.getLogger("opennem.cli")
@@ -45,7 +45,7 @@ def cmd_import_opennem():
 
 @click.command()
 def cmd_import_mms():
-    run_import_mms()
+    mms_export()
 
 
 @click.command()
