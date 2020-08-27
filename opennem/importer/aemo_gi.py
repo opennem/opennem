@@ -257,11 +257,17 @@ def load_gi():
     return records
 
 
-def run_import_nem_gi():
+def gi_import():
     mms_duid_station_map = load_data("mms_duid_station_map.json", True)
 
     nem_gi = load_gi()
     nem_gi = gi_grouper(nem_gi, mms_duid_station_map)
+
+    return nem_gi
+
+
+def gi_export():
+    nem_gi = gi_import()
 
     with open("data/nem_gi.json", "w") as fh:
         json.dump(nem_gi, fh, indent=4, cls=OpenNEMJSONEncoder)
@@ -270,4 +276,4 @@ def run_import_nem_gi():
 
 
 if __name__ == "__main__":
-    run_import_nem_gi()
+    gi_export()
