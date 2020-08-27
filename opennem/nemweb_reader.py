@@ -1,3 +1,4 @@
+# pylint: skip-file
 # python3
 from io import BytesIO, StringIO
 from zipfile import BadZipfile, ZipFile
@@ -55,7 +56,8 @@ class NemFile:
                 self.__dict__[table] += line
 
         self.__dict__ = {
-            table: pd.read_csv(BytesIO(self.__dict__[table])) for table in self.__dict__
+            table: pd.read_csv(BytesIO(self.__dict__[table]))
+            for table in self.__dict__
         }
 
     def __iter__(self):

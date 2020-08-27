@@ -1,3 +1,4 @@
+# pylint: skip-file
 import datetime
 import os
 import re
@@ -90,13 +91,17 @@ def lor_notice(market_notice, lor_match):
     if region_match == None:
         raise Exception("No region in external reference")
 
-    lor_category_pattern = re.compile(r"(\w{1}orecast|\w{1}ctual|\w{1}ancellation)")
+    lor_category_pattern = re.compile(
+        r"(\w{1}orecast|\w{1}ctual|\w{1}ancellation)"
+    )
     lor_category_match = re.search(lor_category_pattern, market_notice[14])
     if lor_category_match == None:
         raise Exception("No LOR type (not Forecast or Actual)")
     elif lor_category_match.group(1).lower() == "cancellation":
         lor_cancellation_template(
-            int(lor_match.group(1)), region_match.group(1), lor_category_match.group(1)
+            int(lor_match.group(1)),
+            region_match.group(1),
+            lor_category_match.group(1),
         )
     else:
         lor_update(market_notice, lor_match, region_match, lor_category_match)
@@ -124,9 +129,12 @@ def lor_update(market_notice, lor_match, region_match, lor_category_match):
                 from_time, to_time = time_parse3(string="".join(market_notice))
             except:
                 try:
-                    from_time, to_time, from_time2, to_time2 = multi_time_parse(
-                        string="".join(market_notice)
-                    )
+                    (
+                        from_time,
+                        to_time,
+                        from_time2,
+                        to_time2,
+                    ) = multi_time_parse(string="".join(market_notice))
                 except:
                     raise Exception("Bad datestring format")
 
@@ -148,8 +156,12 @@ def lor_update(market_notice, lor_match, region_match, lor_category_match):
 
 
 def reserve_available(market_notice):
-    reserve_available_pattern = re.compile(r"reserve available is (\d{3,4}) MW")
-    reserve_available_match = re.search(reserve_available_pattern, "".join(market_notice))
+    reserve_available_pattern = re.compile(
+        r"reserve available is (\d{3,4}) MW"
+    )
+    reserve_available_match = re.search(
+        reserve_available_pattern, "".join(market_notice)
+    )
     if reserve_available_match == None:
         raise Exception("Bad reserve requirement format")
     return reserve_available_match.group(1)
@@ -195,7 +207,10 @@ def lor_template(
             CONFIG["slack_hooks"]["reserve_notice"]
         ),
         json={
-            "attachments": [{"title": title, "color": colors[level]}, {"text": details}]
+            "attachments": [
+                {"title": title, "color": colors[level]},
+                {"text": details},
+            ]
         },
     )
 
@@ -213,7 +228,9 @@ def lor_cancellation_template(level, region, category):
 
 def time_parse(string, start="(F|f)rom"):
     time_pattern = re.compile(
-        r"{0} (\d{{2}})(\d{{2}}) hrs (\d{{2}})/(\d{{2}})/(\d{{4}})".format(start)
+        r"{0} (\d{{2}})(\d{{2}}) hrs (\d{{2}})/(\d{{2}})/(\d{{4}})".format(
+            start
+        )
     )
     time_match = re.search(time_pattern, string)
     _, H, M, d, m, y = time_match.groups()
@@ -284,7 +301,9 @@ def send(market_notice):
     server = login()
     msg = create_msg(market_notice)
     server.sendmail(
-        CONFIG["gmail"]["username"], CONFIG["gmail"]["send_to"], msg.as_string()
+        CONFIG["gmail"]["username"],
+        CONFIG["gmail"]["send_to"],
+        msg.as_string(),
     )
     server.close()
 
