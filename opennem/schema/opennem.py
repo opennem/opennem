@@ -100,17 +100,14 @@ class FacilitySchema(OpennemBaseSchema):
     unit_alias: Optional[str]
     unit_capacity: Optional[float]
 
-    # virtual methods
-    capacity_aggregate: Optional[int]
-
-    @validator("capacity_regisered")
-    def capacity_registered_clean(cls, value):
+    @validator("capacity_registered")
+    def clean_capacity_regisered(cls, value):
         value = clean_capacity(value)
 
         return value
 
     @validator("capacity_maximum")
-    def capacity_registered_clean(cls, value):
+    def clean_capacity_maximum(cls, value):
         value = clean_capacity(value)
 
         return value
