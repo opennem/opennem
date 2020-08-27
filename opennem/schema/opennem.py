@@ -145,6 +145,8 @@ class StationSchema(OpennemBaseSchema):
 
     # virtual methods
     capacity_aggregate: Optional[int]
+
+    # geo fields
     lat: Optional[float]
     lng: Optional[float]
 
