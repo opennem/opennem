@@ -8,6 +8,7 @@ from pathlib import Path
 from pprint import pprint
 from typing import Optional
 
+from opennem.core.facilitystatus import parse_facility_status
 from opennem.core.loader import load_data
 from opennem.core.normalizers import station_name_cleaner
 from opennem.exporter.encoders import OpenNEMJSONEncoder
@@ -68,7 +69,12 @@ def dudetailsummary_grouper(tables):
     now = datetime.now()
 
     records = [
-        {**i, "status": "retired" if i["date_end"] <= now else "operating"}
+        {
+            **i,
+            "status": parse_facility_status("retired")
+            if i["date_end"] <= now
+            else parse_facility_status("operating"),
+        }
         for i in records
     ]
 
