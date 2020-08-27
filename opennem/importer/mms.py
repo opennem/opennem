@@ -200,6 +200,7 @@ def stations_grouper(tables):
 
     records = [
         {
+            "id": _id,
             "updated_at": parse_mms_date(i["LASTCHANGED"]),
             "name": station_name_cleaner(i["STATIONNAME"]),
             "station_code": i["STATIONID"],
@@ -211,7 +212,7 @@ def stations_grouper(tables):
             "postcode": i["POSTCODE"],
             "facilities": [],
         }
-        for i in records
+        for _id, i in enumerate(records, start=1000)
     ]
 
     for record in records:
@@ -244,7 +245,7 @@ def dudetail_grouper(tables):
             "capacity_maximum": i["MAXCAPACITY"],
             "dispatch_type": i["DISPATCHTYPE"],
         }
-        for i in records
+        for _id, i in enumerate(records, start=1000)
     ]
 
     grouped_records = {}
