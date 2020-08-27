@@ -12,6 +12,7 @@ from opennem.core.facilitystatus import parse_facility_status
 from opennem.core.loader import load_data
 from opennem.core.normalizers import station_name_cleaner
 from opennem.exporter.encoders import OpenNEMJSONEncoder
+from opennem.schema.opennem import StationSchema
 
 logger = logging.getLogger("opennem.importer.mms")
 
@@ -57,7 +58,7 @@ def dudetailsummary_grouper(tables):
             "date_start": parse_mms_date(i["START_DATE"]),
             "date_end": parse_mms_date(i["END_DATE"]),
             # "status": "operating",
-            "network_code": i["DUID"],
+            "code": i["DUID"],
             "network_region": i["REGIONID"],
             "station_code": i["STATIONID"],
             "participant_id": i["PARTICIPANTID"],
@@ -81,9 +82,7 @@ def dudetailsummary_grouper(tables):
     grouped_records = {}
 
     # First pass sorts facilities into stations
-    for k, v in groupby(
-        records, lambda x: (x["station_code"], x["network_code"])
-    ):
+    for k, v in groupby(records, lambda x: (x["station_code"], x["code"])):
         key = k[0]
         duid = k[1]
         if not key in grouped_records:
@@ -209,6 +208,7 @@ def stations_grouper(tables):
             "id": _id,
             "updated_at": parse_mms_date(i["LASTCHANGED"]),
             "name": station_name_cleaner(i["STATIONNAME"]),
+            "code": i["STATIONID"],
             "station_code": i["STATIONID"],
             "network_name": i["STATIONNAME"],
             "address1": i["ADDRESS1"],
@@ -245,7 +245,7 @@ def dudetail_grouper(tables):
 
     records = [
         {
-            "network_code": i["DUID"],
+            "code": i["DUID"],
             "version": i["VERSIONNO"],
             "capacity_registered": i["REGISTEREDCAPACITY"],
             "capacity_maximum": i["MAXCAPACITY"],
@@ -256,8 +256,8 @@ def dudetail_grouper(tables):
 
     grouped_records = {}
 
-    for network_code, records in groupby(records, lambda x: x["network_code"]):
-        if not network_code in grouped_records:
+    for network_code, records in groupby(records, lambda x: x["code"]):
+        if network_code not in grouped_records:
             grouped_records[network_code] = {}
             grouped_records[network_code]["details"] = []
 
@@ -276,7 +276,7 @@ def dudetail_grouper(tables):
         for station_code in mms.keys():
 
             for fac in mms[station_code]["facilities"]:
-                if fac["network_code"] == network_code:
+                if fac["code"] == network_code:
 
                     # don't need the version field any more
                     fac.pop("version", None)
@@ -383,6 +383,8 @@ def mms_import():
 
     mms = tables["mms"]
 
+    mms = [StationSchema(**i) for i in mms.values()]
+
     return mms
 
 
@@ -394,9 +396,7 @@ def mms_station_map_from_records(mms):
     mms_duid_station_map = {}
 
     for station, station_record in mms.items():
-        for network_code in [
-            i["network_code"] for i in station_record["facilities"]
-        ]:
+        for network_code in [i["code"] for i in station_record["facilities"]]:
             mms_duid_station_map[network_code] = station
 
     return mms_duid_station_map
