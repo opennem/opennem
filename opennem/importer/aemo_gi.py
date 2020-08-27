@@ -25,8 +25,6 @@ from opennem.core.unit_parser import parse_unit_duid
 from opennem.db.load_fixtures import load_fixture
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 
-from .mms import run_import_mms
-
 logger = logging.getLogger("opennem.importer.gi")
 
 participant_keys = ["name", "abn"]
