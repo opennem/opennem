@@ -25,7 +25,7 @@ class OpennemParticipant(OpennemBaseSchema):
         return normalize_duid(v)
 
     @validator("name")
-    def name_clean(self, v):
-        name = participant_name_filter(v)
+    def name_clean(cls, value):
+        name = participant_name_filter(value)
 
         return name
