@@ -1,22 +1,29 @@
+# pylint: disable=no-self-argument, no-self-use
 import json
 from datetime import datetime
 from typing import List, Optional, Union
 
 from geoalchemy2.elements import WKBElement
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from opennem.core.dispatch_type import DispatchType
+from opennem.core.facilitystatus import (
+    map_aemo_facility_status,
+    parse_facility_status,
+)
+from opennem.core.normalizers import (
+    clean_capacity,
+    clean_numbers,
+    normalize_string,
+    station_name_cleaner,
+)
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 
 
 class OpennemBaseSchema(BaseModel):
 
     created_by: Optional[str]
-    updated_by: Optional[str]
-
-    processed_at: Optional[datetime] = None
-    created_at: datetime
-    updated_at: Optional[datetime] = None
+    created_at: Optional[datetime]
 
     class Config:
         orm_mode = True
@@ -28,9 +35,9 @@ class OpennemBaseSchema(BaseModel):
 
         json_encoders = {}
 
-        def json_dumps(self):
-            print("json", self.__values__)
-            return json.dumps(self.__values__, cls=OpenNEMJSONEncoder,)
+        # def json_dumps(self):
+        #     print("json", self.__values__)
+        #     return json.dumps(self.__values__, cls=OpenNEMJSONEncoder,)
 
 
 class FueltechSchema(OpennemBaseSchema):
@@ -68,31 +75,22 @@ class FacilityBaseSchema(OpennemBaseSchema):
     id: int
 
 
-class FacilitySchema(FacilityBaseSchema):
+class FacilitySchema(OpennemBaseSchema):
+    network: NetworkSchema = NetworkSchema(
+        code="NEM", country="au", label="NEM"
+    )
+    network_code: str = "NEM"
 
-    participant: ParticipantSchema
-    participant_id: Optional[str]
-
-    fueltech: FueltechSchema
-    fueltech_id: Optional[str]
+    fueltech: Optional[FueltechSchema]
 
     status: FacilityStatusSchema
-    status_id: Optional[str]
-
-    station: StationBaseSchema
-    station_id: int
 
     code: str
-
-    network_code: str
-    network_region: Optional[str]
-    network_name: Optional[str]
-
-    active: bool = True
 
     dispatch_type: DispatchType
 
     capacity_registered: Optional[float]
+    capacity_maximum: Optional[float]
 
     registered: Optional[datetime]
     deregistered: Optional[datetime]
@@ -104,24 +102,31 @@ class FacilitySchema(FacilityBaseSchema):
 
     # virtual methods
     capacity_aggregate: Optional[int]
-    duid: str
-    oid: str
-    ocode: str
-    status_label: Optional[str]
-    fueltech_label: Optional[str]
+
+    @validator("capacity_regisered")
+    def capacity_registered_clean(cls, value):
+        value = clean_capacity(value)
+
+        return value
+
+    @validator("capacity_maximum")
+    def capacity_registered_clean(cls, value):
+        value = clean_capacity(value)
+
+        return value
 
 
-class StationSchema(StationBaseSchema):
-    network: NetworkSchema
-    network_id: str
+class StationSchema(OpennemBaseSchema):
+    id: int
 
     participant: Optional[ParticipantSchema] = None
     participant_id: Optional[str]
 
-    # facilities: List[FacilitySchema] = []
+    facilities: List[FacilitySchema] = []
 
-    code: Optional[str] = None
-    name: Optional[str] = None
+    code: str
+
+    name: str
 
     address1: Optional[str] = ""
     address2: Optional[str] = ""
@@ -130,7 +135,6 @@ class StationSchema(StationBaseSchema):
     postcode: Optional[str] = ""
 
     # Original network fields
-    network_code: Optional[str]
     network_name: Optional[str]
 
     # Geo fields
@@ -144,10 +148,34 @@ class StationSchema(StationBaseSchema):
 
     # virtual methods
     capacity_aggregate: Optional[int]
-    oid: str
-    ocode: str
     lat: Optional[float]
     lng: Optional[float]
+
+    @validator("address1")
+    def clean_address(cls, value):
+        return normalize_string(value)
+
+    @validator("address2")
+    def clean_address2(cls, value):
+        return normalize_string(value)
+
+    @validator("locality")
+    def clean_locality(cls, value):
+        return normalize_string(value)
+
+    @validator("state")
+    def state_upper(cls, value: str) -> str:
+        return value.upper()
+
+    @validator("postcode")
+    def clean_postcode(cls, value: str) -> str:
+        return value.strip()
+
+    # @validator("createdat")
+    def created_at_exists(cls, value: Optional[datetime]) -> datetime:
+        dt = None
+
+        return dt
 
 
 class StationSubmission(BaseModel):
