@@ -334,7 +334,6 @@ def load_aemo_csv(item, filename):
             if table_name is not None:
                 item[table_name] = table_records
 
-            table = {}
             table_name = "{}_{}".format(row[1], row[2])
             table_fields = row[4:]
             table_records = []
