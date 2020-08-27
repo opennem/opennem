@@ -4,7 +4,7 @@
     ".venv": true
   },
   "python.pythonPath": ".venv/bin/python",
-  "python.linting.pylintPath": "pylint",
+  "python.linting.pylintPath": ".venv/bin/pylint",
   "python.formatting.provider": "black",
   "[python]": {
     "editor.codeActionsOnSave": {
