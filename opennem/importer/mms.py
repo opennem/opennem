@@ -182,7 +182,7 @@ def operatingstatus_grouper(tables):
         grouped_records[station_code]["status"] = date_max["status"]
         # grouped_records[station_code]["status"] = date_max["status"]
 
-        if not station_code in mms:
+        if station_code not in mms:
             print("operatingstatus: {} is not in MMS".format(station_code))
 
         mms[station_code]["status"] = date_max["status"]
@@ -196,7 +196,7 @@ def operatingstatus_grouper(tables):
 
 def stations_grouper(tables):
 
-    if not "PARTICIPANT_REGISTRATION_STATION" in tables:
+    if "PARTICIPANT_REGISTRATION_STATION" not in tables:
         raise Exception("No PARTICIPANT_REGISTRATION_STATION table")
 
     records = tables["PARTICIPANT_REGISTRATION_STATION"]
