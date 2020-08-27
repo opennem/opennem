@@ -18,6 +18,8 @@ from typing import List
 
 from mdutils.mdutils import MdUtils
 
+from opennem.core.loader import load_data
+
 from .loader import load_current, load_registry
 
 logger = logging.getLogger("opennem.diff")
@@ -146,6 +148,10 @@ def run_diff():
 
     registry = load_registry()
     current = load_current()
+
+    nem_mms = load_data("mms.json", True)
+    nem_gi = load_data("nem_gi.json", True)
+    nem_rel = load_data("rel.json", True)
 
     registry_units = list(chain(*[s.facilities for s in registry]))
     current_units = list(chain(*[s.facilities for s in current]))
