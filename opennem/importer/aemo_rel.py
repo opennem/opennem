@@ -168,11 +168,17 @@ def load_rel():
     return generators
 
 
-def run_import_nem_rel():
+def rel_import():
     mms_duid_station_map = load_data("mms_duid_station_map.json", True)
 
     nem_rel = load_rel()
     nem_rel = rel_grouper(nem_rel, mms_duid_station_map)
+
+    return nem_rel
+
+
+def rel_export():
+    nem_rel = rel_import()
 
     with open("data/rel.json", "w") as fh:
         json.dump(nem_rel, fh, indent=4, cls=OpenNEMJSONEncoder)
@@ -181,4 +187,4 @@ def run_import_nem_rel():
 
 
 if __name__ == "__main__":
-    run_import_nem_rel()
+    rel_export()
