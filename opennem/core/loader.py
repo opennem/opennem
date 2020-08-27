@@ -20,7 +20,9 @@ class FileInvalid(Exception):
     pass
 
 
-def load_data(file_name: str, from_project: bool = False) -> Any:
+def load_data(
+    file_name: str, from_project: bool = False, from_fixture: bool = False
+) -> Any:
     """
         Load a CSV or JSON data file from either the library
         or project data directory
