@@ -170,7 +170,7 @@ def operatingstatus_grouper(tables):
     grouped_records = {}
 
     for station_code, records in groupby(records, lambda x: x["station_code"]):
-        if not station_code in grouped_records:
+        if station_code not in grouped_records:
             grouped_records[station_code] = {}
             grouped_records[station_code]["id"] = station_code
             grouped_records[station_code]["details"] = []
@@ -224,7 +224,7 @@ def stations_grouper(tables):
     for record in records:
         station_code = record["station_code"]
 
-        if not station_code in mms:
+        if station_code not in mms:
             mms[station_code] = {}
 
         mms[station_code] = record
@@ -236,7 +236,7 @@ def stations_grouper(tables):
 
 def dudetail_grouper(tables):
 
-    if not "PARTICIPANT_REGISTRATION_DUDETAIL" in tables:
+    if "PARTICIPANT_REGISTRATION_DUDETAIL" not in tables:
         raise Exception("No PARTICIPANT_REGISTRATION_DUDETAIL table")
 
     records = tables["PARTICIPANT_REGISTRATION_DUDETAIL"]
@@ -303,14 +303,14 @@ def load_aemo_csv(item, filename):
     if not item:
         item = {}
 
-    if not type(item) is dict:
+    if type(item) is not dict:
         raise Exception(
             "Invalid item type expecting a dict so we can fill it "
         )
 
     current_item = load_data(filename, True)
 
-    if not "content" in current_item:
+    if "content" not in current_item:
         logger.error("No content in item to parse")
         return item
 
@@ -382,8 +382,6 @@ def mms_import():
     tables = dudetail_grouper(tables)
 
     mms = tables["mms"]
-
-    mms = [StationSchema(**i) for i in mms.values()]
 
     return mms
 
