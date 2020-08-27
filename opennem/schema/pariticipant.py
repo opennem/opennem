@@ -20,14 +20,12 @@ class OpennemParticipant(OpennemBaseSchema):
     country: str = "au"
     abn: Optional[str]
 
-    @classmethod
     @validator("code")
-    def code_clean(cls, v):
+    def code_clean(self, v):
         return normalize_duid(v)
 
-    @classmethod
     @validator("name")
-    def name_clean(cls, v):
+    def name_clean(self, v):
         name = participant_name_filter(v)
 
         return name
