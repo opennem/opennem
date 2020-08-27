@@ -241,8 +241,8 @@ def dudetail_grouper(tables):
             "network_code": i["DUID"],
             "version": i["VERSIONNO"],
             "capacity_registered": i["REGISTEREDCAPACITY"],
-            "dispatch_type": i["DISPATCHTYPE"],
             "capacity_maximum": i["MAXCAPACITY"],
+            "dispatch_type": i["DISPATCHTYPE"],
         }
         for i in records
     ]
@@ -270,6 +270,10 @@ def dudetail_grouper(tables):
 
             for fac in mms[station_code]["facilities"]:
                 if fac["network_code"] == network_code:
+
+                    # don't need the version field any more
+                    fac.pop("version", None)
+
                     facility = {
                         **fac,
                         **dudetail_record,
