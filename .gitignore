@@ -57,3 +57,4 @@ init.sh
 *.log
 data/mms/
 data/aemo/
+.mypy_cache/
