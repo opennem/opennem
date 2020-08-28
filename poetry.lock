@@ -896,14 +896,6 @@ version = "0.1.2"
 
 [[package]]
 category = "dev"
-description = "Python style guide checker"
-name = "pep8"
-optional = false
-python-versions = "*"
-version = "1.7.1"
-
-[[package]]
-category = "dev"
 description = "Pexpect allows easy control of interactive console applications."
 marker = "sys_platform != \"win32\""
 name = "pexpect"
@@ -1779,7 +1771,7 @@ postgres = ["psycopg2-binary"]
 server = ["fastapi", "uvicorn"]
 
 [metadata]
-content-hash = "81faeb7452459c0a71b732501768f44fdef4a164b9e7121231b861eed952e3c6"
+content-hash = "ec663dfa4e0d713a4da695d7d0bff8a91600ca1f4acbfae7464858a8fea4cff4"
 lock-version = "1.0"
 python-versions = "^3.7"
 
@@ -2223,10 +2215,6 @@ pathspec = [
 ]
 pathtools = [
     {file = "pathtools-0.1.2.tar.gz", hash = "sha256:7c35c5421a39bb82e58018febd90e3b6e5db34c5443aaaf742b3f33d4655f1c0"},
-]
-pep8 = [
-    {file = "pep8-1.7.1-py2.py3-none-any.whl", hash = "sha256:b22cfae5db09833bb9bd7c8463b53e1a9c9b39f12e304a8d0bba729c501827ee"},
-    {file = "pep8-1.7.1.tar.gz", hash = "sha256:fe249b52e20498e59e0b5c5256aa52ee99fc295b26ec9eaa85776ffdb9fe6374"},
 ]
 pexpect = [
     {file = "pexpect-4.8.0-py2.py3-none-any.whl", hash = "sha256:0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937"},
