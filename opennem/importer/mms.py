@@ -46,7 +46,7 @@ def parse_mms_date(date_string: str) -> Optional[datetime]:
 
 def dudetailsummary_grouper(tables):
 
-    if not "PARTICIPANT_REGISTRATION_DUDETAILSUMMARY" in tables:
+    if "PARTICIPANT_REGISTRATION_DUDETAILSUMMARY" not in tables:
         raise Exception("No dudetailsummary table")
 
     records = tables["PARTICIPANT_REGISTRATION_DUDETAILSUMMARY"]
@@ -85,35 +85,34 @@ def dudetailsummary_grouper(tables):
     for k, v in groupby(records, lambda x: (x["station_code"], x["code"])):
         key = k[0]
         duid = k[1]
-        if not key in grouped_records:
+        if key not in grouped_records:
             grouped_records[key] = {}
             grouped_records[key]["station_code"] = k[0]
             # grouped_records[key]["participant"] = v[0]["PARTICIPANTID"]
             grouped_records[key]["details"] = {}
             grouped_records[key]["facilities"] = []
 
-        if not duid in grouped_records[key]["details"]:
+        if duid not in grouped_records[key]["details"]:
             grouped_records[key]["details"][duid] = []
 
         grouped_records[key]["details"][duid] += list(v)
 
-    # Second pass flatten the records and we should get start and end dates and a derived status
+    # Second pass flatten the records and we should get start and end dates
+    # and a derived status
     for rec in grouped_records.keys():
-        for facility_group, facility_group_records in grouped_records[rec][
+        for _, facility_group_records in grouped_records[rec][
             "details"
         ].items():
 
-            date_end_min = min(
-                facility_group_records, key=lambda x: x["date_end"]
-            )
+            # date_end_min = min(
+            #     facility_group_records, key=lambda x: x["date_end"]
+            # )
             date_end_max = max(
                 facility_group_records, key=lambda x: x["date_end"]
             )
             date_start_min = min(
                 facility_group_records, key=lambda x: x["date_start"]
             )
-
-            # print(date_end_min, date_start_min, date_end_max)
 
             grouped_rec = {
                 **date_end_max,
@@ -135,7 +134,7 @@ def dudetailsummary_grouper(tables):
     for record in grouped_records:
         station_code = record["station_code"]
 
-        if not station_code in mms:
+        if station_code not in mms:
             print("dudetailsummary: {} not in mms".format(station_code))
             continue
 
@@ -149,7 +148,7 @@ def dudetailsummary_grouper(tables):
 
 def operatingstatus_grouper(tables):
 
-    if not "PARTICIPANT_REGISTRATION_STATIONOPERATINGSTATUS" in tables:
+    if "PARTICIPANT_REGISTRATION_STATIONOPERATINGSTATUS" not in tables:
         raise Exception(
             "No PARTICIPANT_REGISTRATION_STATIONOPERATINGSTATUS table"
         )

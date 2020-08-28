@@ -115,7 +115,7 @@ def rel_grouper(records, station_code_map):
     for key, v in groupby(records_parsed, key=lambda v: v["station_code"]):
 
         # key = k[1
-        if not key in grouped_records:
+        if key not in grouped_records:
             grouped_records[key] = []
 
         grouped_records[key] += list(v)
@@ -156,11 +156,10 @@ def load_rel():
     # participant_ws = wb.get_sheet_by_name("Registered Participants")
 
     generators = []
-    participants = []
 
     for row in generator_ws.iter_rows(min_row=2, values_only=True):
         generators.append(
-            dict(zip(FACILITY_KEYS, list(row[0 : len(FACILITY_KEYS)]),))
+            dict(zip(FACILITY_KEYS, list(row[: len(FACILITY_KEYS)]),))
         )
 
     return generators

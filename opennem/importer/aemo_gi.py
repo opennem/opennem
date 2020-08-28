@@ -108,7 +108,7 @@ FACILITY_INVALID_STATUS = [
 
 
 def gi_filter(record):
-    if record["station_name"] == None:
+    if record["station_name"] is None:
         return False
 
     if record["FuelType"] in ["Natural Gas Pipeline"]:
@@ -157,7 +157,7 @@ def gi_grouper(records, station_code_map):
 
         key = k[0]
 
-        if not key in grouped_records:
+        if key not in grouped_records:
             grouped_records[key] = []
 
         grouped_records[key] += v
@@ -192,8 +192,6 @@ def gi_grouper(records, station_code_map):
                     "id": i["SurveyID"],
                     "name": name,
                     "network_code": duid,
-                    "network_name": i["station_name"],
-                    "status": "operating",
                     "station_code": station_code,
                     "network_region": normalize_aemo_region(i["Region"]),
                     "network_name": i["station_name"].strip(),
@@ -220,7 +218,7 @@ def gi_grouper(records, station_code_map):
                 "Unmapped station {}: {}".format(station_code, facilities)
             )
 
-        if not station_code in coded_records:
+        if station_code not in coded_records:
             coded_records[station_code] = {
                 "station_code": station_code,
                 # "name": station_name_cleaner(station_name),
