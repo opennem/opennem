@@ -246,8 +246,8 @@ def dudetail_grouper(tables):
         {
             "code": i["DUID"],
             "version": i["VERSIONNO"],
-            "capacity_registered": i["REGISTEREDCAPACITY"],
-            "capacity_maximum": i["MAXCAPACITY"],
+            "capacity_registered": float(i["REGISTEREDCAPACITY"]),
+            "capacity_maximum": float(i["MAXCAPACITY"]),
             "dispatch_type": i["DISPATCHTYPE"],
         }
         for _id, i in enumerate(records, start=1000)
@@ -399,7 +399,7 @@ def mms_station_map_from_records(mms):
     return mms_duid_station_map
 
 
-def mms_export(self):
+def mms_export():
     """
 
         Export MMS records
