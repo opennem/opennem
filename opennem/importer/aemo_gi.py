@@ -7,7 +7,11 @@ from typing import List, Optional, Union
 from openpyxl import load_workbook
 
 from opennem.core.dispatch_type import parse_dispatch_type
-from opennem.core.facilitystatus import map_aemo_facility_status
+from opennem.core.facility.fueltechs import parse_facility_fueltech
+from opennem.core.facilitystatus import (
+    map_aemo_facility_status,
+    parse_facility_status,
+)
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.loader import PROJECT_DATA_PATH, load_data
 from opennem.core.normalizers import (
@@ -189,14 +193,20 @@ def gi_grouper(records, station_code_map):
             records_parsed.append(
                 {
                     # not a real station id
-                    "id": i["SurveyID"],
+                    # "id": _id,
                     "name": name,
+                    "code": duid,
                     "network_code": duid,
                     "station_code": station_code,
                     "network_region": normalize_aemo_region(i["Region"]),
                     "network_name": i["station_name"].strip(),
-                    "fueltech": fueltech,
-                    "status": map_aemo_facility_status(i["status"]),
+                    "dispatch_type": "GENERATOR",
+                    "fueltech": parse_facility_fueltech(fueltech)
+                    if fueltech
+                    else None,
+                    "status": parse_facility_status(
+                        map_aemo_facility_status(i["status"])
+                    ),
                     "registered": parse_comissioned_date(i["SurveyEffective"]),
                     **get_capacities(i),
                 }
@@ -205,6 +215,7 @@ def gi_grouper(records, station_code_map):
             facility_index += 1
 
     coded_records = {}
+    _id = 3000
 
     for station_code, facilities in groupby(
         records_parsed, key=lambda x: x["station_code"]
@@ -220,15 +231,35 @@ def gi_grouper(records, station_code_map):
 
         if station_code not in coded_records:
             coded_records[station_code] = {
-                "station_code": station_code,
+                "id": _id,
+                "code": station_code,
                 # "name": station_name_cleaner(station_name),
                 # "network_name": station_name,
                 "facilities": [],
             }
+            _id += 1
 
         coded_records[station_code]["facilities"] += facilities
 
-    return coded_records
+    grouped_records = {}
+
+    for station_code, station_record in coded_records.items():
+        grouped_records[station_code] = {
+            "id": station_record.get("id"),
+            "code": station_code,
+            "facilities": [],
+        }
+
+        for facility in station_record["facilities"]:
+            grouped_records[station_code]["name"] = facility["name"]
+            grouped_records[station_code]["network_name"] = facility[
+                "network_name"
+            ]
+            facility.pop("name")
+            facility.pop("network_name")
+            grouped_records[station_code]["facilities"].append(facility)
+
+    return grouped_records
 
 
 def load_gi():
