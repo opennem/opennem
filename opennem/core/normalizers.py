@@ -322,7 +322,15 @@ def station_name_cleaner(facility_name: str) -> str:
     if station_map_name(name_clean) != name_clean:
         return station_map_name(name_clean)
 
+    # uom special case
     name_clean = name_clean.replace("UOM ", "UoM ")
+
+    # todae special case
+    todae_match = re.match(r"^(Todae)\ (.*)", name_clean)
+    if todae_match:
+        todae_name, todae_rest = todae_match.groups()
+
+        name_clean = "{} ({})".format(todae_rest, todae_name)
 
     return name_clean
 
