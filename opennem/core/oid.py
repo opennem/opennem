@@ -88,8 +88,8 @@ def get_ocode(station) -> str:
     facility = get_station_facility(station)
 
     values = [
-        station.network.country or "au",
-        station.network.code or None,
+        facility.network.country or "au",
+        facility.network.code or None,
         get_network_region(facility.network_region) or station.state,
         get_station_code(station),
     ]
