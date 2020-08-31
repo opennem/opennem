@@ -90,7 +90,9 @@ class FacilitySchema(OpennemBaseSchema):
     # @TODO no longer optional
     code: Optional[str] = ""
 
-    dispatch_type: DispatchType
+    dispatch_type: DispatchType = "GENERATOR"
+
+    active: bool = True
 
     capacity_registered: Optional[float]
     capacity_maximum: Optional[float]
