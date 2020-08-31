@@ -5,6 +5,8 @@ from typing import List, Optional
 from openpyxl import load_workbook
 
 from opennem.core.dispatch_type import parse_dispatch_type
+from opennem.core.facility.fueltechs import parse_facility_fueltech
+from opennem.core.facilitystatus import parse_facility_status
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.loader import PROJECT_DATA_PATH, load_data
 from opennem.core.normalizers import (
@@ -78,7 +80,7 @@ def lookup_station_code(
 def rel_grouper(records, station_code_map):
     records_parsed = []
 
-    for i in records:
+    for _id, i in enumerate(records, start=2000):
         name = station_name_cleaner(i["station_name"])
         duid = normalize_duid(i["duid"])
         unit = parse_unit_duid(i["unit_no"], duid)
@@ -96,15 +98,15 @@ def rel_grouper(records, station_code_map):
         records_parsed.append(
             {
                 "name": name,
-                "network_code": duid,
-                "status": "operating",
+                "code": duid,
+                "status": parse_facility_status("operating"),
                 "station_code": station_code,
                 "network_region": i["region"].strip(),
                 "network_name": i["station_name"].strip(),
                 "unit_size": clean_capacity(i["unit_size"]),
                 "unit_code": get_unit_code(unit, duid, name),
                 "dispatch_type": parse_dispatch_type(i["dispatch_type"]),
-                "fueltech": fueltech,
+                "fueltech": parse_facility_fueltech(fueltech),
                 "capacity_registered": clean_capacity(i["reg_cap"]),
                 "capacity_maximum": clean_capacity(i["max_cap"]),
             }
@@ -121,6 +123,7 @@ def rel_grouper(records, station_code_map):
         grouped_records[key] += list(v)
 
     coded_records = {}
+    _id = 2000
 
     for station_code, rel in grouped_records.items():
         station_name = rel[0]["network_name"]
@@ -138,8 +141,12 @@ def rel_grouper(records, station_code_map):
         coded_records[station_code] = {
             "name": station_name_cleaner(station_name),
             "network_name": station_name,
+            "code": station_code,
+            "id": _id,
             "facilities": rel,
         }
+
+        _id += 1
 
     return coded_records
 
