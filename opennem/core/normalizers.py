@@ -183,7 +183,10 @@ def normalize_duid(duid: str) -> str:
     duid = duid or ""
 
     # @TODO replace with regexp that removes junk
-    duid = duid.strip().replace("-", "")
+    duid = duid.strip()
+
+    if duid == "-":
+        return ""
 
     return duid
 
