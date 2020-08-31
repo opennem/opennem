@@ -1,12 +1,26 @@
 import json
 import logging
 
+from opennem.core.facility.fueltechs import parse_facility_fueltech
 from opennem.core.facilitystatus import parse_facility_status
 from opennem.core.loader import load_data
 from opennem.exporter.encoders import OpenNEMJSONEncoder
-from opennem.importer.compat import map_compat_facility_state
+from opennem.importer.compat import (
+    map_compat_facility_state,
+    map_compat_fueltech,
+)
 
 logger = logging.getLogger("opennem.importer.registry")
+
+
+FACILITY_FUELTECHS = load_data("facility_fueltech_map.json")
+
+
+def get_fueltech(duid: str) -> str:
+    if duid in FACILITY_FUELTECHS:
+        return FACILITY_FUELTECHS[duid]
+
+    return None
 
 
 def map_station(registry_station):
@@ -14,6 +28,7 @@ def map_station(registry_station):
         "name": registry_station.get("display_name", ""),
         "code": registry_station.get("station_id", ""),
         "station_code": registry_station.get("station_id", ""),
+        "state": registry_station.get("location", {}).get("state", None),
         "lat": registry_station.get("location", {}).get("latitude", None),
         "lng": registry_station.get("location", {}).get("longitude", None),
         "facilities": [],
@@ -39,6 +54,9 @@ def map_station(registry_station):
                 map_compat_facility_state(
                     registry_station.get("status", {}).get("state", "")
                 )
+            ),
+            "fueltech": parse_facility_fueltech(
+                map_compat_fueltech(registry_facility.get("fuel_tech", None))
             ),
             "capacity_registered": registry_facility.get(
                 "registered_capacity", None
