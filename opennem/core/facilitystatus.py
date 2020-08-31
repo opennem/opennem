@@ -51,7 +51,7 @@ def map_aemo_facility_status(facility_status: str) -> str:
 
 
 def parse_facility_status(status_code: str) -> dict:
-    if not status_code in FACILITY_STATUS_FIXTURE.keys():
+    if status_code not in FACILITY_STATUS_FIXTURE.keys():
         raise Exception("Invalid facility status: {}".format(status_code))
 
     return FACILITY_STATUS_FIXTURE[status_code]
