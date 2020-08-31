@@ -8,9 +8,9 @@ class DispatchType(enum.Enum):
 
 def dispatch_type_string(dispatch_type: DispatchType) -> str:
     if dispatch_type == DispatchType.GENERATOR:
-        return "generator"
+        return "GENERATOR"
 
-    return "load"
+    return "LOAD"
 
 
 def parse_dispatch_type(dispatch_string: str):
