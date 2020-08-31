@@ -7241,7 +7241,7 @@
     "LKBONNY1": {
         "id": 1130,
         "updated_at": "2012-05-09T00:00:00",
-        "name": "Lake Bonney",
+        "name": "Lake Bonney Stage 1",
         "code": "LKBONNY1",
         "station_code": "LKBONNY1",
         "network_name": "Lake Bonney Wind Farm Stage 1",
@@ -9750,7 +9750,7 @@
     "LKBONNY_2": {
         "id": 1194,
         "updated_at": "2011-01-06T00:00:00",
-        "name": "Lake Bonney Windfarm",
+        "name": "Lake Bonney Stage 2",
         "code": "LKBONNY_2",
         "station_code": "LKBONNY_2",
         "network_name": "Lake Bonney Stage 2 Windfarm",
@@ -11420,7 +11420,7 @@
     "LKBONNY3": {
         "id": 1244,
         "updated_at": "2010-07-01T00:00:00",
-        "name": "Lake Bonney",
+        "name": "Lake Bonney Stage 3",
         "code": "LKBONNY3",
         "station_code": "LKBONNY3",
         "network_name": "Lake Bonney Stage 3 Wind Farm",
@@ -13909,7 +13909,7 @@
     "GROSV2": {
         "id": 1319,
         "updated_at": "2017-09-26T00:00:00",
-        "name": "Grosvenor 1",
+        "name": "Grosvenor 2",
         "code": "GROSV2",
         "station_code": "GROSV2",
         "network_name": "Grosvenor 2",
@@ -15504,7 +15504,7 @@
     "GANNBESS": {
         "id": 1369,
         "updated_at": "2018-11-05T00:00:00",
-        "name": "Gannawarra Energy",
+        "name": "Gannawarra",
         "code": "GANNBESS",
         "station_code": "GANNBESS",
         "network_name": "Gannawarra Energy Storage System",

@@ -8,6 +8,7 @@
                 "network_code": "0NADEAIR_1",
                 "station_code": "0NADEAIR",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -29,6 +30,7 @@
                 "network_code": "0NADEAIR_2",
                 "station_code": "0NADEAIR",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -58,6 +60,7 @@
                 "network_code": "0NAZSS_0",
                 "station_code": "0NAZSS",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -87,6 +90,7 @@
                 "network_code": "0NAELESO_0",
                 "station_code": "0NAELESO",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -116,6 +120,7 @@
                 "network_code": "0NAREF_0",
                 "station_code": "0NAREF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -145,6 +150,7 @@
                 "network_code": "0NALDBRE_0",
                 "station_code": "0NALDBRE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -174,6 +180,7 @@
                 "network_code": "ANGAST1",
                 "station_code": "ANGASTON",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -203,6 +210,7 @@
                 "network_code": "APPIN",
                 "station_code": "APPIN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -232,6 +240,7 @@
                 "network_code": "ARWF1",
                 "station_code": "ARWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -261,6 +270,7 @@
                 "network_code": "0NAWAB_0",
                 "station_code": "AWABAREF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -290,6 +300,7 @@
                 "network_code": "0NBAKMAI_0",
                 "station_code": "0NBAKMAI",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -319,6 +330,7 @@
                 "network_code": "BAKING1",
                 "station_code": "BAKING",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -348,6 +360,7 @@
                 "network_code": "BALDHWF1",
                 "station_code": "BHWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -377,6 +390,7 @@
                 "network_code": "0NBALL_0",
                 "station_code": "0NBALL",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -406,6 +420,7 @@
                 "network_code": "BBASEHOS",
                 "station_code": "BBASEHOS",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -435,6 +450,7 @@
                 "network_code": "BALBG1",
                 "station_code": "BALBESS",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "battery_discharging",
                     "label": "Battery (Discharging)",
@@ -464,6 +480,7 @@
                 "network_code": "0NB9WF_1",
                 "station_code": "0NB9WF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -493,6 +510,7 @@
                 "network_code": "BAPS",
                 "station_code": "BAPS",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -514,6 +532,7 @@
                 "network_code": "BAPS",
                 "station_code": "BAPS",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -543,6 +562,7 @@
                 "network_code": "0NBASPCL_0",
                 "station_code": "BANKSPT",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -564,6 +584,7 @@
                 "network_code": "0NBASPCL_1",
                 "station_code": "BANKSPT",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -593,6 +614,7 @@
                 "network_code": "BANN1",
                 "station_code": "BANNSP",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -622,6 +644,7 @@
                 "network_code": "BARCSF1",
                 "station_code": "BARCSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -647,10 +670,11 @@
         "code": "BARRON",
         "facilities": [
             {
-                "code": "BARRON1",
-                "network_code": "BARRON1",
+                "code": "BARRON-1",
+                "network_code": "BARRON-1",
                 "station_code": "BARRON",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -668,10 +692,11 @@
                 "capacity_storage": null
             },
             {
-                "code": "BARRON2",
-                "network_code": "BARRON2",
+                "code": "BARRON-2",
+                "network_code": "BARRON-2",
                 "station_code": "BARRON",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -701,6 +726,7 @@
                 "network_code": "BASTYAN",
                 "station_code": "BASTYAN",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -730,6 +756,7 @@
                 "network_code": "BW01",
                 "station_code": "BAYSW",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -751,6 +778,7 @@
                 "network_code": "BW02",
                 "station_code": "BAYSW",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -772,6 +800,7 @@
                 "network_code": "BW03",
                 "station_code": "BAYSW",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -793,6 +822,7 @@
                 "network_code": "BW04",
                 "station_code": "BAYSW",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -822,6 +852,7 @@
                 "network_code": "0NBTHV_0",
                 "station_code": "0NBTHV",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -851,6 +882,7 @@
                 "network_code": "0NBECOBE_0",
                 "station_code": "0NBECOBE",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -880,6 +912,7 @@
                 "network_code": "0NBELC_0",
                 "station_code": "0NBELC",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -909,6 +942,7 @@
                 "network_code": "0NBELR_0",
                 "station_code": "0NBELR",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -938,6 +972,7 @@
                 "network_code": "0NBEND_0",
                 "station_code": "0NBEND",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -967,6 +1002,7 @@
                 "network_code": "0NBEWIFA_1",
                 "station_code": "0NBEWIFA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -996,6 +1032,7 @@
                 "network_code": "0NBERW_3",
                 "station_code": "BERWICK",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -1017,6 +1054,7 @@
                 "network_code": "0NBERW_1",
                 "station_code": "BERWICK",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -1046,6 +1084,7 @@
                 "network_code": "BERYLSF1",
                 "station_code": "BERYLSF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -1075,6 +1114,7 @@
                 "network_code": "0NBODBG_0",
                 "station_code": "0NBODBG",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -1104,6 +1144,7 @@
                 "network_code": "0NBIWIFA_1",
                 "station_code": "0NBIWIFA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -1133,6 +1174,7 @@
                 "network_code": "0NBIRK_0",
                 "station_code": "0NBIRK",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -1162,6 +1204,7 @@
                 "network_code": "0NBLAY_1",
                 "station_code": "BLAYNEY",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -1191,6 +1234,7 @@
                 "network_code": "BLOWERNG",
                 "station_code": "SNOWY6",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -1220,6 +1264,7 @@
                 "network_code": "0NBLMPP_0",
                 "station_code": "0NBLMPP",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -1249,6 +1294,7 @@
                 "network_code": "BOCORWF1",
                 "station_code": "BOCOROCK",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -1270,6 +1316,7 @@
                 "network_code": "BOCORWF1",
                 "station_code": "BOCOROCK",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -1299,6 +1346,7 @@
                 "network_code": "BODWF1",
                 "station_code": "BODWF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -1328,6 +1376,7 @@
                 "network_code": "MCKAY1",
                 "station_code": "MCKAY",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -1349,6 +1398,7 @@
                 "network_code": "MCKAY1",
                 "station_code": "MCKAY",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -1378,6 +1428,7 @@
                 "network_code": "BOLIVAR1",
                 "station_code": "BOLIVAR",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -1407,6 +1458,7 @@
                 "network_code": "BOMENSF1",
                 "station_code": "BOMENSF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -1436,6 +1488,7 @@
                 "network_code": "0NBOMIHY_0",
                 "station_code": "0NBOMIHY",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -1465,6 +1518,7 @@
                 "network_code": "BRAEMAR1",
                 "station_code": "BRAEMARA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -1486,6 +1540,7 @@
                 "network_code": "BRAEMAR2",
                 "station_code": "BRAEMARA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -1507,6 +1562,7 @@
                 "network_code": "BRAEMAR3",
                 "station_code": "BRAEMARA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -1536,6 +1592,7 @@
                 "network_code": "BRAEMAR5",
                 "station_code": "B2PS",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -1557,6 +1614,7 @@
                 "network_code": "BRAEMAR6",
                 "station_code": "B2PS",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -1578,6 +1636,7 @@
                 "network_code": "BRAEMAR7",
                 "station_code": "B2PS",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -1607,6 +1666,7 @@
                 "network_code": "0NBRID_0",
                 "station_code": "0NBRID",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -1636,6 +1696,7 @@
                 "network_code": "BROADMDW",
                 "station_code": "BROADMDW",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -1665,6 +1726,7 @@
                 "network_code": "BWTR1",
                 "station_code": "BWTR1",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -1694,6 +1756,7 @@
                 "network_code": "GB01",
                 "station_code": "BHILLGT",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -1723,6 +1786,7 @@
                 "network_code": "BROKENH1",
                 "station_code": "BROKENH",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -1752,6 +1816,7 @@
                 "network_code": "BROOKLYN",
                 "station_code": "BROOKLYN",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -1773,6 +1838,7 @@
                 "network_code": "BROOKLYN",
                 "station_code": "BROOKLYN",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -1794,6 +1860,7 @@
                 "network_code": "BROOKLYN",
                 "station_code": "BROOKLYN",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -1823,6 +1890,7 @@
                 "network_code": "BROWNMT",
                 "station_code": "BROWNMT",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -1852,6 +1920,7 @@
                 "network_code": "BPLANDF1",
                 "station_code": "BPLANDF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -1873,6 +1942,7 @@
                 "network_code": "BPLANDF1",
                 "station_code": "BPLANDF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -1902,6 +1972,7 @@
                 "network_code": "0NBGPHB_0",
                 "station_code": "0NBGPHB",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "battery_discharging",
                     "label": "Battery (Discharging)",
@@ -1931,6 +2002,7 @@
                 "network_code": "BULGANA1",
                 "station_code": "BULGANA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -1960,6 +2032,7 @@
                 "network_code": "BNGSF1",
                 "station_code": "BNGSF1",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -1989,6 +2062,7 @@
                 "network_code": "BNGSF2",
                 "station_code": "BNGSF2",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -2018,6 +2092,7 @@
                 "network_code": "0NB2KSPB_0",
                 "station_code": "0NB2KSPB",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -2047,6 +2122,7 @@
                 "network_code": "BDONGHYD",
                 "station_code": "BDONGHYD",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2076,6 +2152,7 @@
                 "network_code": "BURRIN",
                 "station_code": "BURRIN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2097,6 +2174,7 @@
                 "network_code": "BURRIN",
                 "station_code": "BURRIN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2126,6 +2204,7 @@
                 "network_code": "0NBUTGOR_0",
                 "station_code": "BUTLERSG",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2147,6 +2226,7 @@
                 "network_code": "BUTLERSG",
                 "station_code": "BUTLERSG",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2176,6 +2256,7 @@
                 "network_code": "CALL_B_1",
                 "station_code": "CALLIDE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -2197,6 +2278,7 @@
                 "network_code": "CALL_B_2",
                 "station_code": "CALLIDE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -2226,6 +2308,7 @@
                 "network_code": "CPP_3",
                 "station_code": "CALLIDEC",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -2247,6 +2330,7 @@
                 "network_code": "CPP_4",
                 "station_code": "CALLIDEC",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -2276,6 +2360,7 @@
                 "network_code": "CNUNDAWF",
                 "station_code": "CANUNDA1",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -2305,6 +2390,7 @@
                 "network_code": "CESF1",
                 "station_code": "CESF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -2334,6 +2420,7 @@
                 "network_code": "CAPTL_WF",
                 "station_code": "CAPTL_WF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -2363,6 +2450,7 @@
                 "network_code": "0NCCMH_0",
                 "station_code": "0NCCMH",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2392,6 +2480,7 @@
                 "network_code": "0NCAWEH2_0",
                 "station_code": "0NCAWEH2",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -2421,6 +2510,7 @@
                 "network_code": "LI_WY_CA",
                 "station_code": "LI_WY_CA",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2442,6 +2532,7 @@
                 "network_code": "LI_WY_CA",
                 "station_code": "LI_WY_CA",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2463,6 +2554,7 @@
                 "network_code": "LI_WY_CA",
                 "station_code": "LI_WY_CA",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2492,6 +2584,7 @@
                 "network_code": "CATHROCK",
                 "station_code": "CATHROCK",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -2521,6 +2614,7 @@
                 "network_code": "CTHLWF1",
                 "station_code": "CTHLWF",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -2550,6 +2644,7 @@
                 "network_code": "0NCMSG_0",
                 "station_code": "0NCMSG",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -2579,6 +2674,7 @@
                 "network_code": "CETHANA",
                 "station_code": "CETHANA",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2608,6 +2704,7 @@
                 "network_code": "CHALLHWF",
                 "station_code": "CHALLWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -2637,6 +2734,7 @@
                 "network_code": "NINEWIL1",
                 "station_code": "NINEWIL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -2666,6 +2764,7 @@
                 "network_code": "CHPSTWF1",
                 "station_code": "CHPSTWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -2695,6 +2794,7 @@
                 "network_code": "CHYTWF1",
                 "station_code": "CHYTWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -2724,6 +2824,7 @@
                 "network_code": "CHILDSF1",
                 "station_code": "CHILDSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -2753,6 +2854,7 @@
                 "network_code": "0NCHIL_0",
                 "station_code": "0NCHIL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -2782,6 +2884,7 @@
                 "network_code": "0NCHSOFA_1",
                 "station_code": "0NCHSOFA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -2811,6 +2914,7 @@
                 "network_code": "0NCAX_0",
                 "station_code": "0NCAX",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -2840,6 +2944,7 @@
                 "network_code": "CLARESF1",
                 "station_code": "CLARESF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -2869,6 +2974,7 @@
                 "network_code": "CLAYTON",
                 "station_code": "CLAYTON",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -2898,6 +3004,7 @@
                 "network_code": "CLEMGPWF",
                 "station_code": "CLEMGPWF",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -2927,6 +3034,7 @@
                 "network_code": "CLERMSF1",
                 "station_code": "CLERMSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -2956,6 +3064,7 @@
                 "network_code": "CLOVER",
                 "station_code": "CLOVER",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -2985,6 +3094,7 @@
                 "network_code": "0NCLUMER_0",
                 "station_code": "0NCLUMER",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -3014,6 +3124,7 @@
                 "network_code": "CLUNY",
                 "station_code": "CLUNY",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -3043,6 +3154,7 @@
                 "network_code": "CODRNGTON",
                 "station_code": "CODRGTON",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3072,6 +3184,7 @@
                 "network_code": "0NCOSOFA_1",
                 "station_code": "0NCOSOFA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -3101,6 +3214,7 @@
                 "network_code": "COLEASF1",
                 "station_code": "COLEASF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -3130,6 +3244,7 @@
                 "network_code": "0NCOLL_1",
                 "station_code": "0NCOLL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3159,6 +3274,7 @@
                 "network_code": "CSPVPS1",
                 "station_code": "CSPVPS",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -3188,6 +3304,7 @@
                 "network_code": "CPSA",
                 "station_code": "CPSA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -3209,6 +3326,7 @@
                 "network_code": "CPSA",
                 "station_code": "CPSA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -3238,6 +3356,7 @@
                 "network_code": "CONDONG1",
                 "station_code": "CONDONG1",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -3267,6 +3386,7 @@
                 "network_code": "CBWF1",
                 "station_code": "CBWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3296,6 +3416,7 @@
                 "network_code": "COOPGWF1",
                 "station_code": "COOPGWF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3317,6 +3438,7 @@
                 "network_code": "COOPGWF1",
                 "station_code": "COOPGWF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3346,6 +3468,7 @@
                 "network_code": "COPTNHYD",
                 "station_code": "COPTNHYD",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -3375,6 +3498,7 @@
                 "network_code": "CORIO1",
                 "station_code": "CORIO",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -3404,6 +3528,7 @@
                 "network_code": "0NCROO_7",
                 "station_code": "CROOKWEL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3433,6 +3558,7 @@
                 "network_code": "CROOKWF2",
                 "station_code": "CROOKWF2",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3462,6 +3588,7 @@
                 "network_code": "CROWLWF1",
                 "station_code": "CROWLWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3491,6 +3618,7 @@
                 "network_code": "0NCRWF_1",
                 "station_code": "0NCRWF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3520,6 +3648,7 @@
                 "network_code": "CULLRGWF",
                 "station_code": "CULLERIN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3549,6 +3678,7 @@
                 "network_code": "0NDAPOST_1",
                 "station_code": "0NDAPOST",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -3578,6 +3708,7 @@
                 "network_code": "DALNTH01",
                 "station_code": "DALNTH",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "battery_discharging",
                     "label": "Battery (Discharging)",
@@ -3607,6 +3738,7 @@
                 "network_code": "DDPS1",
                 "station_code": "DDPS1",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -3628,6 +3760,7 @@
                 "network_code": "DDPS1",
                 "station_code": "DDPS1",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -3657,6 +3790,7 @@
                 "network_code": "DDSF1",
                 "station_code": "DDSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -3686,6 +3820,7 @@
                 "network_code": "0NDPSF_1",
                 "station_code": "0NDPSF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -3715,6 +3850,7 @@
                 "network_code": "DARTM1",
                 "station_code": "DARTM",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -3744,6 +3880,7 @@
                 "network_code": "DAYDSF1",
                 "station_code": "DAYDSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -3773,6 +3910,7 @@
                 "network_code": "0NDEBOWI_0",
                 "station_code": "0NDEBOWI",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -3802,6 +3940,7 @@
                 "network_code": "DEVILS_G",
                 "station_code": "DEVILS_G",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -3831,6 +3970,7 @@
                 "network_code": "0NDSHP_0",
                 "station_code": "0NDSHP",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -3860,6 +4000,7 @@
                 "network_code": "0NDSFWS_0",
                 "station_code": "0NDSFWS",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -3889,6 +4030,7 @@
                 "network_code": "0NDUSOFA_3",
                 "station_code": "0NDUSOFA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -3918,6 +4060,7 @@
                 "network_code": "DUNDWF1",
                 "station_code": "DUNDWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3939,6 +4082,7 @@
                 "network_code": "DUNDWF2",
                 "station_code": "DUNDWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3960,6 +4104,7 @@
                 "network_code": "DUNDWF3",
                 "station_code": "DUNDWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -3989,6 +4134,7 @@
                 "network_code": "0NEATESY_0",
                 "station_code": "0NEATESY",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -4018,6 +4164,7 @@
                 "network_code": "EASTCRK",
                 "station_code": "EASTCRK",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -4047,6 +4194,7 @@
                 "network_code": "0NEC2GUF_6",
                 "station_code": "0NEC2GUF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -4076,6 +4224,7 @@
                 "network_code": "EILDON1",
                 "station_code": "EILDON",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -4097,6 +4246,7 @@
                 "network_code": "EILDON1",
                 "station_code": "EILDON",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -4118,6 +4268,7 @@
                 "network_code": "EILDON2",
                 "station_code": "EILDON",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -4139,6 +4290,7 @@
                 "network_code": "EILDON2",
                 "station_code": "EILDON",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -4168,6 +4320,7 @@
                 "network_code": "EILDON3",
                 "station_code": "EILDONPD",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -4197,6 +4350,7 @@
                 "network_code": "ELAINWF1",
                 "station_code": "ELAINEWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -4226,6 +4380,7 @@
                 "network_code": "EMERASF1",
                 "station_code": "EMERASF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -4255,6 +4410,7 @@
                 "network_code": "ER01",
                 "station_code": "ERARING",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -4276,6 +4432,7 @@
                 "network_code": "ER02",
                 "station_code": "ERARING",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -4297,6 +4454,7 @@
                 "network_code": "ER03",
                 "station_code": "ERARING",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -4318,6 +4476,7 @@
                 "network_code": "ER04",
                 "station_code": "ERARING",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -4347,6 +4506,7 @@
                 "network_code": "ERGT01",
                 "station_code": "ERGT01",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -4376,6 +4536,7 @@
                 "network_code": "FINLYSF1",
                 "station_code": "FINLEYSF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -4405,6 +4566,7 @@
                 "network_code": "FISHER",
                 "station_code": "FISHER",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -4434,6 +4596,7 @@
                 "network_code": "0NFLAMAR_0",
                 "station_code": "0NFLAMAR",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -4463,6 +4626,7 @@
                 "network_code": "0NFPGREN_0",
                 "station_code": "0NFPGREN",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -4492,6 +4656,7 @@
                 "network_code": "0NFCCSF_0",
                 "station_code": "0NFCCSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -4521,6 +4686,7 @@
                 "network_code": "0NGASOFA_1",
                 "station_code": "0NGASOFA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -4550,6 +4716,7 @@
                 "network_code": "GANNBG1",
                 "station_code": "GANNBESS",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "battery_discharging",
                     "label": "Battery (Discharging)",
@@ -4567,7 +4734,7 @@
                 "capacity_storage": 50.0
             }
         ],
-        "name": "Gannawarra Energy",
+        "name": "Gannawarra",
         "network_name": "Gannawarra Energy Storage System"
     },
     "GANNSF": {
@@ -4579,6 +4746,7 @@
                 "network_code": "GANNSF1",
                 "station_code": "GANNSF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -4608,6 +4776,7 @@
                 "network_code": "GERMCRK",
                 "station_code": "GERMCRK",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -4629,6 +4798,7 @@
                 "network_code": "GERMCRK",
                 "station_code": "GERMCRK",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -4658,6 +4828,7 @@
                 "network_code": "GSTONE1",
                 "station_code": "G/STONE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -4679,6 +4850,7 @@
                 "network_code": "GSTONE2",
                 "station_code": "G/STONE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -4700,6 +4872,7 @@
                 "network_code": "GSTONE3",
                 "station_code": "G/STONE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -4721,6 +4894,7 @@
                 "network_code": "GSTONE4",
                 "station_code": "G/STONE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -4742,6 +4916,7 @@
                 "network_code": "GSTONE5",
                 "station_code": "G/STONE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -4763,6 +4938,7 @@
                 "network_code": "GSTONE6",
                 "station_code": "G/STONE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -4792,6 +4968,7 @@
                 "network_code": "0NGLEN_0",
                 "station_code": "GLBWNHYD",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -4821,6 +4998,7 @@
                 "network_code": "GLENMAG1",
                 "station_code": "GLENMAGG",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -4850,6 +5028,7 @@
                 "network_code": "GLENNCRK",
                 "station_code": "GLENNCRK",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -4879,6 +5058,7 @@
                 "network_code": "0NGLEN_1",
                 "station_code": "0NGLEN",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -4908,6 +5088,7 @@
                 "network_code": "0NGWSF_1",
                 "station_code": "0NGWSF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -4937,6 +5118,7 @@
                 "network_code": "0NGOSOFA_1",
                 "station_code": "0NGOSOFA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -4966,6 +5148,7 @@
                 "network_code": "GORDON",
                 "station_code": "GORDON",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -4995,6 +5178,7 @@
                 "network_code": "GRANGEAV",
                 "station_code": "GRANGEAV",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -5024,6 +5208,7 @@
                 "network_code": "GRANWF1",
                 "station_code": "GRANWF",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5053,6 +5238,7 @@
                 "network_code": "GRIFSF1",
                 "station_code": "GRIFSF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -5082,6 +5268,7 @@
                 "network_code": "GROSV1",
                 "station_code": "GROSV1",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -5111,6 +5298,7 @@
                 "network_code": "GULLRSF1",
                 "station_code": "GULLRGWF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -5132,6 +5320,7 @@
                 "network_code": "GULLRWF1",
                 "station_code": "GULLRGWF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5153,6 +5342,7 @@
                 "network_code": "GULLRWF1",
                 "station_code": "GULLRGWF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5182,6 +5372,7 @@
                 "network_code": "GUNNING1",
                 "station_code": "GUNNING",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5211,6 +5402,7 @@
                 "network_code": "GUTHEGA",
                 "station_code": "SNOWY3",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -5240,6 +5432,7 @@
                 "network_code": "HALAMRD1",
                 "station_code": "HALAMRD",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -5269,6 +5462,7 @@
                 "network_code": "NBHWF1",
                 "station_code": "NBHWF",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5298,6 +5492,7 @@
                 "network_code": "BLUFF1",
                 "station_code": "BLUFF",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5327,6 +5522,7 @@
                 "network_code": "HALLWF1",
                 "station_code": "HALLWF",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5356,6 +5552,7 @@
                 "network_code": "HALLWF2",
                 "station_code": "HALLWF2",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5385,6 +5582,7 @@
                 "network_code": "HAMISF1",
                 "station_code": "HAMISF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -5414,6 +5612,7 @@
                 "network_code": "HAUGHT11",
                 "station_code": "HAUGHT1",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -5435,6 +5634,7 @@
                 "network_code": "HAUGHT11",
                 "station_code": "HAUGHT1",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -5464,6 +5664,7 @@
                 "network_code": "HAYMSF1",
                 "station_code": "HAYMSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -5493,6 +5694,7 @@
                 "network_code": "0NHOBA_0",
                 "station_code": "0NHOBA",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -5522,6 +5724,7 @@
                 "network_code": "HPRG1",
                 "station_code": "HORNSDPR",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "battery_discharging",
                     "label": "Battery (Discharging)",
@@ -5551,6 +5754,7 @@
                 "network_code": "HDWF1",
                 "station_code": "HORNSDAL",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5580,6 +5784,7 @@
                 "network_code": "HDWF2",
                 "station_code": "HORNSDAL2",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5609,6 +5814,7 @@
                 "network_code": "HDWF3",
                 "station_code": "HORNSDAL3",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -5638,6 +5844,7 @@
                 "network_code": "HUGSF1",
                 "station_code": "HUGSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -5667,6 +5874,7 @@
                 "network_code": "HUMENSW",
                 "station_code": "HUMENSW",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -5696,6 +5904,7 @@
                 "network_code": "HUMEV",
                 "station_code": "HUMEV",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -5725,6 +5934,7 @@
                 "network_code": "HVGTS",
                 "station_code": "HUNTVGT",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -5754,6 +5964,7 @@
                 "network_code": "HLMSEW01",
                 "station_code": "HLMSEW01",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -5783,6 +5994,7 @@
                 "network_code": "0NINKMIL_0",
                 "station_code": "0NINKMIL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -5804,6 +6016,7 @@
                 "network_code": "0NINKMIL_1",
                 "station_code": "0NINKMIL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -5833,6 +6046,7 @@
                 "network_code": "INVICTA",
                 "station_code": "INVICTA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -5854,6 +6068,7 @@
                 "network_code": "INVICTA",
                 "station_code": "INVICTA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -5875,6 +6090,7 @@
                 "network_code": "INVICTA",
                 "station_code": "INVICTA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -5904,6 +6120,7 @@
                 "network_code": "ICSM",
                 "station_code": "ICSM",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -5933,6 +6150,7 @@
                 "network_code": "JACKSGUL",
                 "station_code": "JACKSGUL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -5962,6 +6180,7 @@
                 "network_code": "0NJWTS_0",
                 "station_code": "0NJWTS",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -5991,6 +6210,7 @@
                 "network_code": "JNDABNE1",
                 "station_code": "JNDSHPS",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6020,6 +6240,7 @@
                 "network_code": "0NJKC1S_0",
                 "station_code": "0NJKC1S",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -6049,6 +6270,7 @@
                 "network_code": "JBUTTERS",
                 "station_code": "JBUTTERS",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6078,6 +6300,7 @@
                 "network_code": "JOUNAMA1",
                 "station_code": "JOUNAMA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6107,6 +6330,7 @@
                 "network_code": "0NKALMIL_0",
                 "station_code": "0NKALMIL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -6136,6 +6360,7 @@
                 "network_code": "0NKASOFA_0",
                 "station_code": "0NKASOFA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -6165,6 +6390,7 @@
                 "network_code": "KARSF1",
                 "station_code": "KARSF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -6194,6 +6420,7 @@
                 "network_code": "KAREEYA1",
                 "station_code": "KAREEYA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6215,6 +6442,7 @@
                 "network_code": "KAREEYA2",
                 "station_code": "KAREEYA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6236,6 +6464,7 @@
                 "network_code": "KAREEYA3",
                 "station_code": "KAREEYA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6257,6 +6486,7 @@
                 "network_code": "KAREEYA4",
                 "station_code": "KAREEYA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6278,6 +6508,7 @@
                 "network_code": "KAREEYA5",
                 "station_code": "KAREEYA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6307,6 +6538,7 @@
                 "network_code": "KEEPIT",
                 "station_code": "KEEPIT",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6336,6 +6568,7 @@
                 "network_code": "0NKEPP1S_5",
                 "station_code": "0NKEPP1S",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -6357,6 +6590,7 @@
                 "network_code": "0NKEPP1S_1",
                 "station_code": "0NKEPP1S",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "battery_discharging",
                     "label": "Battery (Discharging)",
@@ -6386,6 +6620,7 @@
                 "network_code": "0NKEPP1W_1",
                 "station_code": "0NKEPP1W",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -6415,6 +6650,7 @@
                 "network_code": "0NKSFS1",
                 "station_code": "0NKSFS",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -6444,6 +6680,7 @@
                 "network_code": "KiataWF1",
                 "station_code": "KiataWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -6473,6 +6710,7 @@
                 "network_code": "KSP1",
                 "station_code": "KSP1",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -6502,6 +6740,7 @@
                 "network_code": "0NKIPOST_4",
                 "station_code": "0NKIPOST",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -6531,6 +6770,7 @@
                 "network_code": "KPP_1",
                 "station_code": "KOGANCK",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -6560,6 +6800,7 @@
                 "network_code": "LKBONNY1",
                 "station_code": "LKBONNY1",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -6589,6 +6830,7 @@
                 "network_code": "LKBONNY2",
                 "station_code": "LKBONNY_2",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -6618,6 +6860,7 @@
                 "network_code": "LKBONNY3",
                 "station_code": "LKBONNY3",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -6647,6 +6890,7 @@
                 "network_code": "LBBG1",
                 "station_code": "LBBESS",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "battery_discharging",
                     "label": "Battery (Discharging)",
@@ -6676,6 +6920,7 @@
                 "network_code": "LK_ECHO",
                 "station_code": "LK_ECHO",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6705,6 +6950,7 @@
                 "network_code": "0NLAKMAR_6",
                 "station_code": "0NLAKMAR",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6734,6 +6980,7 @@
                 "network_code": "0NLAKSOM_0",
                 "station_code": "0NLAKSOM",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6763,6 +7010,7 @@
                 "network_code": "0NLSAS_1",
                 "station_code": "0NLSAS",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -6792,6 +7040,7 @@
                 "network_code": "LEM_WIL",
                 "station_code": "LEM_WIL",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6813,6 +7062,7 @@
                 "network_code": "LEM_WIL",
                 "station_code": "LEM_WIL",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -6842,6 +7092,7 @@
                 "network_code": "HEPWIND1",
                 "station_code": "HEPWIND",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -6871,6 +7122,7 @@
                 "network_code": "LD01",
                 "station_code": "LIDDELL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -6892,6 +7144,7 @@
                 "network_code": "LD02",
                 "station_code": "LIDDELL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -6913,6 +7166,7 @@
                 "network_code": "LD03",
                 "station_code": "LIDDELL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -6934,6 +7188,7 @@
                 "network_code": "LD04",
                 "station_code": "LIDDELL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -6963,6 +7218,7 @@
                 "network_code": "LILYSF1",
                 "station_code": "LILYVASF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -6992,6 +7248,7 @@
                 "network_code": "LIMOSF11",
                 "station_code": "LIMOSF1",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7021,6 +7278,7 @@
                 "network_code": "LIMOSF21",
                 "station_code": "LIMOSF2",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7050,6 +7308,7 @@
                 "network_code": "LGAPWF1",
                 "station_code": "LGAPWF1",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -7071,6 +7330,7 @@
                 "network_code": "LGAPWF1",
                 "station_code": "LGAPWF1",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -7100,6 +7360,7 @@
                 "network_code": "0NLLEMOT_1",
                 "station_code": "0NLLEMOT",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7129,6 +7390,7 @@
                 "network_code": "0NLWDPS_0",
                 "station_code": "0NLWDPS",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7158,6 +7420,7 @@
                 "network_code": "LRSF1",
                 "station_code": "LRSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7187,6 +7450,7 @@
                 "network_code": "LONSDALE",
                 "station_code": "LONSDALE",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -7216,6 +7480,7 @@
                 "network_code": "0NLOLAMA_0",
                 "station_code": "0NLOLAMA",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -7245,6 +7510,7 @@
                 "network_code": "LYA1",
                 "station_code": "LOYYANGA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_brown",
                     "label": "Coal (Brown)",
@@ -7266,6 +7532,7 @@
                 "network_code": "LYA2",
                 "station_code": "LOYYANGA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_brown",
                     "label": "Coal (Brown)",
@@ -7287,6 +7554,7 @@
                 "network_code": "LYA3",
                 "station_code": "LOYYANGA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_brown",
                     "label": "Coal (Brown)",
@@ -7308,6 +7576,7 @@
                 "network_code": "LYA4",
                 "station_code": "LOYYANGA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_brown",
                     "label": "Coal (Brown)",
@@ -7337,6 +7606,7 @@
                 "network_code": "LOYYB1",
                 "station_code": "LOYYB",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_brown",
                     "label": "Coal (Brown)",
@@ -7358,6 +7628,7 @@
                 "network_code": "LOYYB2",
                 "station_code": "LOYYB",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_brown",
                     "label": "Coal (Brown)",
@@ -7387,6 +7658,7 @@
                 "network_code": "LUCAS2S2",
                 "station_code": "LUCAS2S2",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -7416,6 +7688,7 @@
                 "network_code": "0NLUHEI_2",
                 "station_code": "0NLUHEI",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -7437,6 +7710,7 @@
                 "network_code": "0NLUHEI_2",
                 "station_code": "0NLUHEI",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -7466,6 +7740,7 @@
                 "network_code": "MACARTH1",
                 "station_code": "MACARTH",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -7495,6 +7770,7 @@
                 "network_code": "MACKAYGT",
                 "station_code": "MACKAY",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -7524,6 +7800,7 @@
                 "network_code": "MACKNTSH",
                 "station_code": "MACKNTSH",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -7553,6 +7830,7 @@
                 "network_code": "0NMACMIL_0",
                 "station_code": "MACKNADE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -7574,6 +7852,7 @@
                 "network_code": "0NMACMIL_1",
                 "station_code": "MACKNADE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -7603,6 +7882,7 @@
                 "network_code": "MANSLR1",
                 "station_code": "MANSLR",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7632,6 +7912,7 @@
                 "network_code": "MAROOWF1",
                 "station_code": "MAROOWF1",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -7661,6 +7942,7 @@
                 "network_code": "0NMARMIL_1",
                 "station_code": "0NMARMIL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -7682,6 +7964,7 @@
                 "network_code": "0NMARMIL_1",
                 "station_code": "0NMARMIL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -7711,6 +7994,7 @@
                 "network_code": "MARYRSF1",
                 "station_code": "MARYRSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7740,6 +8024,7 @@
                 "network_code": "0NMCNPAR_7",
                 "station_code": "0NMCNPAR",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7769,6 +8054,7 @@
                 "network_code": "MEADOWBK",
                 "station_code": "MEADOWBK",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -7798,6 +8084,7 @@
                 "network_code": "0NMISUFA_0",
                 "station_code": "0NMISUFA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7827,6 +8114,7 @@
                 "network_code": "0NMIHIOR_0",
                 "station_code": "0NMIHIOR",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7856,6 +8144,7 @@
                 "network_code": "0NMIDHYD_0",
                 "station_code": "0NMIDHYD",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -7885,6 +8174,7 @@
                 "network_code": "MPP_1",
                 "station_code": "MILLMERN",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -7906,6 +8196,7 @@
                 "network_code": "MPP_2",
                 "station_code": "MILLMERN",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -7935,6 +8226,7 @@
                 "network_code": "0NMOLE_0",
                 "station_code": "0NMOLE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -7964,6 +8256,7 @@
                 "network_code": "0NMOSOFA_1",
                 "station_code": "0NMOSOFA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -7993,6 +8286,7 @@
                 "network_code": "0NMOWIFA_1",
                 "station_code": "0NMOWIFA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -8022,6 +8316,7 @@
                 "network_code": "MORANBAH",
                 "station_code": "MORANBAH",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -8051,6 +8346,7 @@
                 "network_code": "MBAHNTH",
                 "station_code": "MBAHNTH",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -8080,6 +8376,7 @@
                 "network_code": "0NMOWOSO_0",
                 "station_code": "0NMOWOSO",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8109,6 +8406,7 @@
                 "network_code": "MOREESF1",
                 "station_code": "MOREESF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8138,6 +8436,7 @@
                 "network_code": "MORNW",
                 "station_code": "MORNW",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -8167,6 +8466,7 @@
                 "network_code": "MLWF1",
                 "station_code": "MLWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -8196,6 +8496,7 @@
                 "network_code": "MEWF1",
                 "station_code": "MEWF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -8225,6 +8526,7 @@
                 "network_code": "0NMOUMAJ_0",
                 "station_code": "0NMOUMAJ",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8254,6 +8556,7 @@
                 "network_code": "0NMOSHPL_0",
                 "station_code": "0NMOSHPL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8283,6 +8586,7 @@
                 "network_code": "0NMWMH_0",
                 "station_code": "0NMWMH",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -8312,6 +8616,7 @@
                 "network_code": "MTGELWF1",
                 "station_code": "MTGELWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -8341,6 +8646,7 @@
                 "network_code": "MERCER01",
                 "station_code": "MTMERCER",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -8370,6 +8676,7 @@
                 "network_code": "MTMILLAR",
                 "station_code": "MTMILLAR",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -8399,6 +8706,7 @@
                 "network_code": "MP1",
                 "station_code": "MP",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -8420,6 +8728,7 @@
                 "network_code": "MP2",
                 "station_code": "MP",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -8449,6 +8758,7 @@
                 "network_code": "MSTUART1",
                 "station_code": "MSTUART",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -8470,6 +8780,7 @@
                 "network_code": "MSTUART2",
                 "station_code": "MSTUART",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -8491,6 +8802,7 @@
                 "network_code": "MSTUART3",
                 "station_code": "MSTUART",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -8520,6 +8832,7 @@
                 "network_code": "0NMUGLAN_3",
                 "station_code": "0NMUGLAN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -8549,6 +8862,7 @@
                 "network_code": "MLSP1",
                 "station_code": "MLSP",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8578,6 +8892,7 @@
                 "network_code": "0NMUCEMI_0",
                 "station_code": "MULGRAVE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -8607,6 +8922,7 @@
                 "network_code": "MUWAWF1",
                 "station_code": "MUWAWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -8636,6 +8952,7 @@
                 "network_code": "MURRAY",
                 "station_code": "MURRAY",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -8657,6 +8974,7 @@
                 "network_code": "MURRAY",
                 "station_code": "MURRAY",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -8686,6 +9004,7 @@
                 "network_code": "MUSSELR1",
                 "station_code": "MUSSELRO",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -8715,6 +9034,7 @@
                 "network_code": "NASF1",
                 "station_code": "NASF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8744,6 +9064,7 @@
                 "network_code": "0NNALFSO_0",
                 "station_code": "0NNALFSO",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": null,
                 "status": {
                     "code": "operating",
@@ -8769,6 +9090,7 @@
                 "network_code": "0NNBSU_1",
                 "station_code": "0NNBSU",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8790,6 +9112,7 @@
                 "network_code": "0NNBSU_1",
                 "station_code": "0NNBSU",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -8819,6 +9142,7 @@
                 "network_code": "NEVERSF1",
                 "station_code": "NEVERSF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8848,6 +9172,7 @@
                 "network_code": "0NNEWCOL_0",
                 "station_code": "0NNEWCOL",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8877,6 +9202,7 @@
                 "network_code": "0NNOSOFA_0",
                 "station_code": "0NNOSOFA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8906,6 +9232,7 @@
                 "network_code": "NUMURSF1",
                 "station_code": "NUMURKSF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8935,6 +9262,7 @@
                 "network_code": "0NNYMB_0",
                 "station_code": "0NNYMB",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -8964,6 +9292,7 @@
                 "network_code": "NYNGAN1",
                 "station_code": "NYNGAN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -8993,6 +9322,7 @@
                 "network_code": "OAKEY1SF",
                 "station_code": "OAKEY1SF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9022,6 +9352,7 @@
                 "network_code": "OAKEY2SF",
                 "station_code": "OAKEY2SF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9051,6 +9382,7 @@
                 "network_code": "OAKLAND1",
                 "station_code": "OAKLAND",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -9080,6 +9412,7 @@
                 "network_code": "0NOAKY_0",
                 "station_code": "0NOAKY",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -9109,6 +9442,7 @@
                 "network_code": "OAKYCREK",
                 "station_code": "OCPS",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -9130,6 +9464,7 @@
                 "network_code": "OAKYCREK",
                 "station_code": "OCPS",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -9159,6 +9494,7 @@
                 "network_code": "OAKY2",
                 "station_code": "OAKY2",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -9188,6 +9524,7 @@
                 "network_code": "PALOONA",
                 "station_code": "PALOONA",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -9217,6 +9554,7 @@
                 "network_code": "0NPSCS_0",
                 "station_code": "0NPSCS",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9246,6 +9584,7 @@
                 "network_code": "0NPSCW_0",
                 "station_code": "0NPSCW",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9275,6 +9614,7 @@
                 "network_code": "PARSF1",
                 "station_code": "PSF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9304,6 +9644,7 @@
                 "network_code": "0NPEDCRE_2",
                 "station_code": "PEDLER",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -9333,6 +9674,7 @@
                 "network_code": "0NPERSSO_0",
                 "station_code": "0NPERSSO",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9362,6 +9704,7 @@
                 "network_code": "0NPESOFA_1",
                 "station_code": "0NPESOFA",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9391,6 +9734,7 @@
                 "network_code": "PINDARI",
                 "station_code": "PINDARI",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -9420,6 +9764,7 @@
                 "network_code": "0NPISUMI_0",
                 "station_code": "PIONEER",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -9441,6 +9786,7 @@
                 "network_code": "0NPISUMI_1",
                 "station_code": "PIONEER",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -9470,6 +9816,7 @@
                 "network_code": "0NPLCRMI_0",
                 "station_code": "PLANECRK",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -9491,6 +9838,7 @@
                 "network_code": "0NPLCRMI_1",
                 "station_code": "PLANECRK",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -9520,6 +9868,7 @@
                 "network_code": "POAT110",
                 "station_code": "PTINA110",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -9549,6 +9898,7 @@
                 "network_code": "POAT220",
                 "station_code": "PTINA220",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -9578,6 +9928,7 @@
                 "network_code": "POR01",
                 "station_code": "PORTLCN",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -9599,6 +9950,7 @@
                 "network_code": "POR03",
                 "station_code": "PORTLCN",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -9628,6 +9980,7 @@
                 "network_code": "PTSTAN1",
                 "station_code": "STANVAC",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -9657,6 +10010,7 @@
                 "network_code": "0NPOWIFA_1",
                 "station_code": "PORTLAND",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -9678,6 +10032,7 @@
                 "network_code": "0NPOWIFA_1",
                 "station_code": "PORTLAND",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -9707,6 +10062,7 @@
                 "network_code": "0NPROS_0",
                 "station_code": "0NPROS",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -9728,6 +10084,7 @@
                 "network_code": "0NPROS_1",
                 "station_code": "0NPROS",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -9757,6 +10114,7 @@
                 "network_code": "0NPRFA60",
                 "station_code": "0NPROTEN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9778,6 +10136,7 @@
                 "network_code": "0NPRFA61",
                 "station_code": "0NPROTEN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9799,6 +10158,7 @@
                 "network_code": "0NPRFA74_2",
                 "station_code": "0NPROTEN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9820,6 +10180,7 @@
                 "network_code": "0NPF77_3",
                 "station_code": "0NPROTEN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9849,6 +10210,7 @@
                 "network_code": "RACOMIL1",
                 "station_code": "RACOMIL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -9870,6 +10232,7 @@
                 "network_code": "RACOMIL1",
                 "station_code": "RACOMIL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -9891,6 +10254,7 @@
                 "network_code": "RACOMIL1",
                 "station_code": "RACOMIL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -9920,6 +10284,7 @@
                 "network_code": "0NRGE1_0",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9941,6 +10306,7 @@
                 "network_code": "0NRGE1",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9962,6 +10328,7 @@
                 "network_code": "0NRGE1_2",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -9983,6 +10350,7 @@
                 "network_code": "0NRGE1_3",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10004,6 +10372,7 @@
                 "network_code": "0NRGE1_4",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10025,6 +10394,7 @@
                 "network_code": "0NRGE4_5",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10046,6 +10416,7 @@
                 "network_code": "0NRGE5_6",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10067,6 +10438,7 @@
                 "network_code": "0NRGE6_7",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10088,6 +10460,7 @@
                 "network_code": "0NRGE7_8",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10109,6 +10482,7 @@
                 "network_code": "0NRGE8_1",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10130,6 +10504,7 @@
                 "network_code": "0NRGE9_1",
                 "station_code": "0NREDMUD",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10159,6 +10534,7 @@
                 "network_code": "REECE1",
                 "station_code": "REECE",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -10180,6 +10556,7 @@
                 "network_code": "REECE2",
                 "station_code": "REECE",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -10209,6 +10586,7 @@
                 "network_code": "REMOUNT",
                 "station_code": "REMOUNT",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -10238,6 +10616,7 @@
                 "network_code": "RPCG",
                 "station_code": "RPCG",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -10267,6 +10646,7 @@
                 "network_code": "REPULSE",
                 "station_code": "REPULSE",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -10296,6 +10676,7 @@
                 "network_code": "0NREWOCL_1",
                 "station_code": "0NREWOCL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -10325,6 +10706,7 @@
                 "network_code": "0NREWWOL_0",
                 "station_code": "0NREWWOL",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -10354,6 +10736,7 @@
                 "network_code": "0NRREF_0",
                 "station_code": "ROCHEDAL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -10375,6 +10758,7 @@
                 "network_code": "ROCHEDAL",
                 "station_code": "ROCHEDAL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -10404,6 +10788,7 @@
                 "network_code": "EDLRGNRD",
                 "station_code": "EDLRGNRD",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -10433,6 +10818,7 @@
                 "network_code": "RRSF1",
                 "station_code": "RRSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10462,6 +10848,7 @@
                 "network_code": "ROWALLAN",
                 "station_code": "ROWALLAN",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -10491,6 +10878,7 @@
                 "network_code": "ROYALLA1",
                 "station_code": "ROYALLA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10520,6 +10908,7 @@
                 "network_code": "RUBICON",
                 "station_code": "RUBICON",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -10549,6 +10938,7 @@
                 "network_code": "RUGBYR1",
                 "station_code": "RUGBYR",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10578,6 +10968,7 @@
                 "network_code": "0NSALC_0",
                 "station_code": "0NSALC",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10607,6 +10998,7 @@
                 "network_code": "0NSGVPPS_0",
                 "station_code": "0NSGVPPS",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "battery_discharging",
                     "label": "Battery (Discharging)",
@@ -10628,6 +11020,7 @@
                 "network_code": "0NSGVPPS_1",
                 "station_code": "0NSGVPPS",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "battery_discharging",
                     "label": "Battery (Discharging)",
@@ -10657,6 +11050,7 @@
                 "network_code": "0NSAHOSO_0",
                 "station_code": "0NSAHOSO",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10686,6 +11080,7 @@
                 "network_code": "SALTCRK1",
                 "station_code": "SALTCRK",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -10715,6 +11110,7 @@
                 "network_code": "SAPHWF1",
                 "station_code": "SAPHWF1",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -10744,6 +11140,7 @@
                 "network_code": "0NSCSSHE_0",
                 "station_code": "0NSCSSHE",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10773,6 +11170,7 @@
                 "network_code": "0NSEMIHY_0",
                 "station_code": "0NSEMIHY",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -10802,6 +11200,7 @@
                 "network_code": "0NSHASHE_0",
                 "station_code": "0NSHASHE",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -10831,6 +11230,7 @@
                 "network_code": "0NSHEP_0",
                 "station_code": "0NSHEP",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -10860,6 +11260,7 @@
                 "network_code": "SHEP1",
                 "station_code": "SHEP1",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -10889,6 +11290,7 @@
                 "network_code": "SHGEN",
                 "station_code": "SHOALHAV",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "pumps",
                     "label": "Pumps",
@@ -10910,6 +11312,7 @@
                 "network_code": "SHGEN",
                 "station_code": "SHOALHAV",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "pumps",
                     "label": "Pumps",
@@ -10939,6 +11342,7 @@
                 "network_code": "STWF1",
                 "station_code": "STWF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -10968,6 +11372,7 @@
                 "network_code": "0NSIENVP_0",
                 "station_code": "0NSIENVP",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": null,
                 "status": {
                     "code": "committed",
@@ -10993,6 +11398,7 @@
                 "network_code": "0NSSIPS_0",
                 "station_code": "0NSSIPS",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11022,6 +11428,7 @@
                 "network_code": "SNOWNTH1",
                 "station_code": "SNOWNTH",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -11051,6 +11458,7 @@
                 "network_code": "SNOWSTH1",
                 "station_code": "SNOWSTH",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -11080,6 +11488,7 @@
                 "network_code": "SNOWTWN1",
                 "station_code": "SNOWTOWN",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -11109,6 +11518,7 @@
                 "network_code": "0NSN20_5",
                 "station_code": "0NSN20",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "pumps",
                     "label": "Pumps",
@@ -11138,6 +11548,7 @@
                 "network_code": "SNUG1",
                 "station_code": "SNUG",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -11159,6 +11570,7 @@
                 "network_code": "SNUGNL1",
                 "station_code": "SNUG",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -11188,6 +11600,7 @@
                 "network_code": "0NSOMDAM_0",
                 "station_code": "SOMERSET",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11217,6 +11630,7 @@
                 "network_code": "0NSOJOMI_0",
                 "station_code": "STHJST",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -11238,6 +11652,7 @@
                 "network_code": "0NSOJOMI_1",
                 "station_code": "STHJST",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -11259,6 +11674,7 @@
                 "network_code": "0NSOJOMI_2",
                 "station_code": "STHJST",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -11288,6 +11704,7 @@
                 "network_code": "SKSF1",
                 "station_code": "SKSF",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11317,6 +11734,7 @@
                 "network_code": "STHBKTEC",
                 "station_code": "STHBKTEC",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -11346,6 +11764,7 @@
                 "network_code": "SVALE1",
                 "station_code": "SVALE",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -11375,6 +11794,7 @@
                 "network_code": "0NSGLCKN_0",
                 "station_code": "0NSGLCKN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -11404,6 +11824,7 @@
                 "network_code": "0NSPSCL_0",
                 "station_code": "0NSPSCL",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11433,6 +11854,7 @@
                 "network_code": "0NSUSCY_0",
                 "station_code": "0NSUSCY",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11453,15 +11875,16 @@
         "name": "St Ursulas College Yeppoon",
         "network_name": "St Ursula's College Yeppoon"
     },
-    "STAN": {
+    "STANWELL": {
         "id": 3325,
-        "code": "STAN",
+        "code": "STANWELL",
         "facilities": [
             {
-                "code": "STAN1",
-                "network_code": "STAN1",
-                "station_code": "STAN",
+                "code": "STAN-1",
+                "network_code": "STAN-1",
+                "station_code": "STANWELL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -11479,10 +11902,11 @@
                 "capacity_storage": null
             },
             {
-                "code": "STAN2",
-                "network_code": "STAN2",
-                "station_code": "STAN",
+                "code": "STAN-2",
+                "network_code": "STAN-2",
+                "station_code": "STANWELL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -11500,10 +11924,11 @@
                 "capacity_storage": null
             },
             {
-                "code": "STAN3",
-                "network_code": "STAN3",
-                "station_code": "STAN",
+                "code": "STAN-3",
+                "network_code": "STAN-3",
+                "station_code": "STANWELL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -11521,10 +11946,11 @@
                 "capacity_storage": null
             },
             {
-                "code": "STAN4",
-                "network_code": "STAN4",
-                "station_code": "STAN",
+                "code": "STAN-4",
+                "network_code": "STAN-4",
+                "station_code": "STANWELL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -11554,6 +11980,7 @@
                 "network_code": "STAPYLTON1",
                 "station_code": "STAPYLTON",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -11583,6 +12010,7 @@
                 "network_code": "STARHLWF",
                 "station_code": "STARFHILL",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -11612,6 +12040,7 @@
                 "network_code": "0NSDWP_0",
                 "station_code": "0NSDWP",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11641,6 +12070,7 @@
                 "network_code": "0NSHWF_1",
                 "station_code": "0NSHWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -11670,6 +12100,7 @@
                 "network_code": "0NSUMHIL_1",
                 "station_code": "0NSUMHIL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -11699,6 +12130,7 @@
                 "network_code": "SMCSF1",
                 "station_code": "SMCSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11728,6 +12160,7 @@
                 "network_code": "0NSUSOFA_1",
                 "station_code": "0NSUSOFA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11757,6 +12190,7 @@
                 "network_code": "VALDORA1",
                 "station_code": "VALDORA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11786,6 +12220,7 @@
                 "network_code": "0NSREF_0",
                 "station_code": "0NSREF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -11807,6 +12242,7 @@
                 "network_code": "0NSREF_1",
                 "station_code": "0NSREF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -11836,6 +12272,7 @@
                 "network_code": "SRSF1",
                 "station_code": "SRSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11865,6 +12302,7 @@
                 "network_code": "0NSHSF1U_2",
                 "station_code": "0NSWANSF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11886,6 +12324,7 @@
                 "network_code": "0NSHSF2U_3",
                 "station_code": "0NSWANSF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -11915,6 +12354,7 @@
                 "network_code": "SWAN_E",
                 "station_code": "SWANBANK",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -11944,6 +12384,7 @@
                 "network_code": "0NSWAJV_0",
                 "station_code": "0NSWAJV",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -11965,6 +12406,7 @@
                 "network_code": "0NSWAJV_1",
                 "station_code": "0NSWAJV",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -11994,6 +12436,7 @@
                 "network_code": "0NTABMIL_0",
                 "station_code": "0NTABMIL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_steam",
                     "label": "Gas (Steam)",
@@ -12015,6 +12458,7 @@
                 "network_code": "0NTABMIL_1",
                 "station_code": "0NTABMIL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_steam",
                     "label": "Gas (Steam)",
@@ -12044,6 +12488,7 @@
                 "network_code": "TAHMOOR1",
                 "station_code": "TAHMOOR",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -12073,6 +12518,7 @@
                 "network_code": "TBSF1",
                 "station_code": "TBSF",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12102,6 +12548,7 @@
                 "network_code": "TARALGA1",
                 "station_code": "TARALGA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -12123,6 +12570,7 @@
                 "network_code": "TARALGA1",
                 "station_code": "TARALGA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -12144,6 +12592,7 @@
                 "network_code": "TARALGA1",
                 "station_code": "TARALGA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -12173,6 +12622,7 @@
                 "network_code": "TARONG#1",
                 "station_code": "TARONG",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -12194,6 +12644,7 @@
                 "network_code": "TARONG#2",
                 "station_code": "TARONG",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -12215,6 +12666,7 @@
                 "network_code": "TARONG#3",
                 "station_code": "TARONG",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -12236,6 +12688,7 @@
                 "network_code": "TARONG#4",
                 "station_code": "TARONG",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -12265,6 +12718,7 @@
                 "network_code": "0NTARGT_4",
                 "station_code": "0NTARGT",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -12294,6 +12748,7 @@
                 "network_code": "TNPS1",
                 "station_code": "TARONGN",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -12323,6 +12778,7 @@
                 "network_code": "0NTWPZ_0",
                 "station_code": "0NTWPZ",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12352,6 +12808,7 @@
                 "network_code": "TARRALEA",
                 "station_code": "TARRALEA",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -12381,6 +12838,7 @@
                 "network_code": "TATURA01",
                 "station_code": "TATURA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -12410,6 +12868,7 @@
                 "network_code": "SATGN1",
                 "station_code": "SATGN",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -12439,6 +12898,7 @@
                 "network_code": "0NTEGESO_3",
                 "station_code": "SATGS",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -12460,6 +12920,7 @@
                 "network_code": "SATGS1",
                 "station_code": "SATGS",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -12489,6 +12950,7 @@
                 "network_code": "TERALBA",
                 "station_code": "TERALBA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -12518,6 +12980,7 @@
                 "network_code": "0NTSMH_0",
                 "station_code": "TERMSTOR",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -12547,6 +13010,7 @@
                 "network_code": "THEDROP1",
                 "station_code": "THEDROP",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -12576,6 +13040,7 @@
                 "network_code": "TITREE",
                 "station_code": "TITREE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -12605,6 +13070,7 @@
                 "network_code": "TIMWEST",
                 "station_code": "TIMWEST",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -12634,6 +13100,7 @@
                 "network_code": "0NTSD1_0",
                 "station_code": "0NTSD1",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12651,7 +13118,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae DHP",
+        "name": "DHP (Todae)",
         "network_name": "Todae Solar - DHP 1MW"
     },
     "0NTSLTUB": {
@@ -12663,6 +13130,7 @@
                 "network_code": "0NTSLTUB_0",
                 "station_code": "0NTSLTUB",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12680,7 +13148,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae La Trobe University Bendigo",
+        "name": "La Trobe University Bendigo (Todae)",
         "network_name": "Todae Solar \u2013 La Trobe University Bendigo"
     },
     "0NTSLTUW": {
@@ -12692,6 +13160,7 @@
                 "network_code": "0NTSLTUW_0",
                 "station_code": "0NTSLTUW",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12709,7 +13178,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae La Trobe University Wodonga",
+        "name": "La Trobe University Wodonga (Todae)",
         "network_name": "Todae Solar \u2013 La Trobe University Wodonga"
     },
     "0NTOSONI": {
@@ -12721,6 +13190,7 @@
                 "network_code": "0NTOSONI_0",
                 "station_code": "0NTOSONI",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12738,7 +13208,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Nillumbik",
+        "name": "Nillumbik (Todae)",
         "network_name": "Todae Solar - Nillumbik"
     },
     "0NTOSOCS": {
@@ -12750,6 +13220,7 @@
                 "network_code": "0NTOSOCS_0",
                 "station_code": "0NTOSOCS",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12767,7 +13238,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae CSU",
+        "name": "CSU (Todae)",
         "network_name": "Todae Solar CSU"
     },
     "0NTSPL": {
@@ -12779,6 +13250,7 @@
                 "network_code": "0NTSPL_0",
                 "station_code": "0NTSPL",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12796,7 +13268,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Llandilo",
+        "name": "Llandilo (Todae)",
         "network_name": "Todae Solar PE - Llandilo"
     },
     "0NTSPM": {
@@ -12808,6 +13280,7 @@
                 "network_code": "0NTSPM_0",
                 "station_code": "0NTSPM",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12825,7 +13298,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Minchinbury",
+        "name": "Minchinbury (Todae)",
         "network_name": "Todae Solar- PF Minchinbury"
     },
     "0NTSSE": {
@@ -12837,6 +13310,7 @@
                 "network_code": "0NTSSE_0",
                 "station_code": "0NTSSE",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12854,7 +13328,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Eltham",
+        "name": "Eltham (Todae)",
         "network_name": "Todae Solar SV - Eltham"
     },
     "0NTSSHSN": {
@@ -12866,6 +13340,7 @@
                 "network_code": "0NTSSHSN_0",
                 "station_code": "0NTSSHSN",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12883,7 +13358,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Holy Spirit Northside",
+        "name": "Holy Spirit Northside (Todae)",
         "network_name": "Todae Solar SV - Holy Spirit Northside"
     },
     "0NTSSMC": {
@@ -12895,6 +13370,7 @@
                 "network_code": "0NTSSMC_0",
                 "station_code": "0NTSSMC",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12912,7 +13388,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Mater Clinic",
+        "name": "Mater Clinic (Todae)",
         "network_name": "Todae Solar SV - Mater Clinic"
     },
     "0NTSSMH": {
@@ -12924,6 +13400,7 @@
                 "network_code": "0NTSSMH_0",
                 "station_code": "0NTSSMH",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12941,7 +13418,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Mater Hospital",
+        "name": "Mater Hospital (Todae)",
         "network_name": "Todae Solar SV - Mater Hospital"
     },
     "0NTSSM": {
@@ -12953,6 +13430,7 @@
                 "network_code": "0NTSSM_0",
                 "station_code": "0NTSSM",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12970,7 +13448,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Mitchelton",
+        "name": "Mitchelton (Todae)",
         "network_name": "Todae Solar SV - Mitchelton"
     },
     "0NTSSPB": {
@@ -12982,6 +13460,7 @@
                 "network_code": "0NTSSPB_0",
                 "station_code": "0NTSSPB",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -12999,7 +13478,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Private Brisbane",
+        "name": "Private Brisbane (Todae)",
         "network_name": "Todae Solar SV - Private Brisbane"
     },
     "0NTSST": {
@@ -13011,6 +13490,7 @@
                 "network_code": "0NTSST_0",
                 "station_code": "0NTSST",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13028,7 +13508,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Toowoomba",
+        "name": "Toowoomba (Todae)",
         "network_name": "Todae Solar SV - Toowoomba"
     },
     "0NTSSL": {
@@ -13040,6 +13520,7 @@
                 "network_code": "0NTSSL_0",
                 "station_code": "0NTSSL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13057,7 +13538,7 @@
                 "capacity_storage": null
             }
         ],
-        "name": "Todae Lourdes",
+        "name": "Lourdes (Todae)",
         "network_name": "Todae Solar SV Lourdes"
     },
     "0NTODCOR": {
@@ -13069,6 +13550,7 @@
                 "network_code": "0NTODCOR_0",
                 "station_code": "0NTODCOR",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "pumps",
                     "label": "Pumps",
@@ -13098,6 +13580,7 @@
                 "network_code": "0NTPAW_0",
                 "station_code": "0NTPAW",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -13127,6 +13610,7 @@
                 "network_code": "TOORAWF",
                 "station_code": "TOORAWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -13156,6 +13640,7 @@
                 "network_code": "TOWER",
                 "station_code": "TOWER",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -13185,6 +13670,7 @@
                 "network_code": "TREVALLN",
                 "station_code": "TREVALLN",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -13206,6 +13692,7 @@
                 "network_code": "TREVALLN",
                 "station_code": "TREVALLN",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -13235,6 +13722,7 @@
                 "network_code": "TRIBUTE",
                 "station_code": "TRIBUTE",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -13264,6 +13752,7 @@
                 "network_code": "TUMUT3",
                 "station_code": "SNOWY1",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -13293,6 +13782,7 @@
                 "network_code": "TUNGATIN",
                 "station_code": "TUNGATIN",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -13322,6 +13812,7 @@
                 "network_code": "0NUOMAB_0",
                 "station_code": "0NUOMAB",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13351,6 +13842,7 @@
                 "network_code": "0NUOMMC_0",
                 "station_code": "0NUOMMC",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13380,6 +13872,7 @@
                 "network_code": "0NUOMPAC_0",
                 "station_code": "0NUOMPAC",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13409,6 +13902,7 @@
                 "network_code": "0NUOMPHP_0",
                 "station_code": "0NUOMPHP",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13438,6 +13932,7 @@
                 "network_code": "0NUOMSCP_0",
                 "station_code": "0NUOMSCP",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13467,6 +13962,7 @@
                 "network_code": "0NUOMTSC_0",
                 "station_code": "0NUOMTSC",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13496,6 +13992,7 @@
                 "network_code": "0NUOSQT_0",
                 "station_code": "0NUOSQT",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13525,6 +14022,7 @@
                 "network_code": "UPPTUMUT",
                 "station_code": "SNOWY2",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -13546,6 +14044,7 @@
                 "network_code": "UPPTUMUT",
                 "station_code": "SNOWY2",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -13575,6 +14074,7 @@
                 "network_code": "VP5",
                 "station_code": "VP",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -13596,6 +14096,7 @@
                 "network_code": "VP6",
                 "station_code": "VP",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
@@ -13625,6 +14126,7 @@
                 "network_code": "0NVAWMAN_0",
                 "station_code": "0NVAWMAN",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13654,6 +14156,7 @@
                 "network_code": "0NVEBPSG_0",
                 "station_code": "0NVEBPSG",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -13683,6 +14186,7 @@
                 "network_code": "TATIARA1",
                 "station_code": "TATIARA",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -13712,6 +14216,7 @@
                 "network_code": "0NVICMIL_0",
                 "station_code": "VICMILL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -13733,6 +14238,7 @@
                 "network_code": "0NVICMIL_1",
                 "station_code": "VICMILL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biomass",
                     "label": "Biomass",
@@ -13762,6 +14268,7 @@
                 "network_code": "0NVULYAT_0",
                 "station_code": "0NVULYAT",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13791,6 +14298,7 @@
                 "network_code": "0NWAMIHY_0",
                 "station_code": "0NWAMIHY",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -13820,6 +14328,7 @@
                 "network_code": "0NWASOFA_7",
                 "station_code": "0NWASOFA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13841,6 +14350,7 @@
                 "network_code": "0NWASOFA_8",
                 "station_code": "0NWASOFA",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -13870,6 +14380,7 @@
                 "network_code": "WATERLWF",
                 "station_code": "WATERLWF",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -13891,6 +14402,7 @@
                 "network_code": "WATERLWF",
                 "station_code": "WATERLWF",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -13920,6 +14432,7 @@
                 "network_code": "WPWF",
                 "station_code": "WPWF",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -13949,6 +14462,7 @@
                 "network_code": "WAUBRAWF",
                 "station_code": "WAUBRAWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -13978,6 +14492,7 @@
                 "network_code": "0NWESOFA_1",
                 "station_code": "0NWESOFA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -14007,6 +14522,7 @@
                 "network_code": "WEMENSF1",
                 "station_code": "WEMENSF1",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -14036,6 +14552,7 @@
                 "network_code": "WKIEWA1",
                 "station_code": "WKIEWA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -14057,6 +14574,7 @@
                 "network_code": "WKIEWA2",
                 "station_code": "WKIEWA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -14086,6 +14604,7 @@
                 "network_code": "AGLNOW1",
                 "station_code": "AGLNOW1",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -14115,6 +14634,7 @@
                 "network_code": "WESTCBT1",
                 "station_code": "WESTCBT",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -14144,6 +14664,7 @@
                 "network_code": "WESTILL1",
                 "station_code": "WESTILLA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "distillate",
                     "label": "Distillate",
@@ -14173,6 +14694,7 @@
                 "network_code": "WRSF1",
                 "station_code": "WRSF1",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -14202,6 +14724,7 @@
                 "network_code": "WRWF1",
                 "station_code": "WRWF1",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -14231,6 +14754,7 @@
                 "network_code": "WHITSF1",
                 "station_code": "WHITSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -14260,6 +14784,7 @@
                 "network_code": "WHIT1",
                 "station_code": "WHIT1",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -14289,6 +14814,7 @@
                 "network_code": "WILGAPK",
                 "station_code": "WILGAPK",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -14310,6 +14836,7 @@
                 "network_code": "WILGAPK",
                 "station_code": "WILGAPK",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -14339,6 +14866,7 @@
                 "network_code": "WILGB01",
                 "station_code": "WILGAPKB",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "gas_wcmg",
                     "label": "Gas (Coal Seam)",
@@ -14368,6 +14896,7 @@
                 "network_code": "WILLHOV1",
                 "station_code": "WILLHOV",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -14397,6 +14926,7 @@
                 "network_code": "0NWISOFA_0",
                 "station_code": "0NWISOFA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -14418,6 +14948,7 @@
                 "network_code": "0NWISOFA_0",
                 "station_code": "0NWISOFA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -14447,6 +14978,7 @@
                 "network_code": "WGWF1",
                 "station_code": "WGWF",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -14468,6 +15000,7 @@
                 "network_code": "WGWF1",
                 "station_code": "WGWF",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -14497,6 +15030,7 @@
                 "network_code": "WHILL1",
                 "station_code": "WINDHILL",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -14526,6 +15060,7 @@
                 "network_code": "WINGF1_1",
                 "station_code": "WINGF1",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -14555,6 +15090,7 @@
                 "network_code": "WINGF2_1",
                 "station_code": "WINGF2",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -14584,6 +15120,7 @@
                 "network_code": "W/HOE#1",
                 "station_code": "WIVENHOE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "pumps",
                     "label": "Pumps",
@@ -14605,6 +15142,7 @@
                 "network_code": "W/HOE#2",
                 "station_code": "WIVENHOE",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "pumps",
                     "label": "Pumps",
@@ -14634,6 +15172,7 @@
                 "network_code": "WIVENSH",
                 "station_code": "WIVENSH",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -14663,6 +15202,7 @@
                 "network_code": "WOLLERT1",
                 "station_code": "WOLLERT",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -14692,6 +15232,7 @@
                 "network_code": "WONWP",
                 "station_code": "WONWP",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -14721,6 +15262,7 @@
                 "network_code": "WDLNGN01",
                 "station_code": "WDLNGN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -14750,6 +15292,7 @@
                 "network_code": "WOODLWN1",
                 "station_code": "WOODLWN",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -14779,6 +15322,7 @@
                 "network_code": "0NWOOCEN_0",
                 "station_code": "0NWOOCEN",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -14808,6 +15352,7 @@
                 "network_code": "WOOLNTH1",
                 "station_code": "WOOLNTH1",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -14829,6 +15374,7 @@
                 "network_code": "WOOLNTH1",
                 "station_code": "WOOLNTH1",
                 "network_region": "TAS1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -14858,6 +15404,7 @@
                 "network_code": "WYANGALA",
                 "station_code": "WYANGALA",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -14887,6 +15434,7 @@
                 "network_code": "WYANGALB",
                 "station_code": "WYANGALB",
                 "network_region": "NSW1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -14916,6 +15464,7 @@
                 "network_code": "WYNDW",
                 "station_code": "WYNDW",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -14937,6 +15486,7 @@
                 "network_code": "WYNDW",
                 "station_code": "WYNDW",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "bioenergy_biogas",
                     "label": "Biogas",
@@ -14966,6 +15516,7 @@
                 "network_code": "YWPS1",
                 "station_code": "YALLOURN",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_brown",
                     "label": "Coal (Brown)",
@@ -14987,6 +15538,7 @@
                 "network_code": "YWPS2",
                 "station_code": "YALLOURN",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_brown",
                     "label": "Coal (Brown)",
@@ -15008,6 +15560,7 @@
                 "network_code": "YWPS3",
                 "station_code": "YALLOURN",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_brown",
                     "label": "Coal (Brown)",
@@ -15029,6 +15582,7 @@
                 "network_code": "YWPS4",
                 "station_code": "YALLOURN",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "coal_brown",
                     "label": "Coal (Brown)",
@@ -15058,6 +15612,7 @@
                 "network_code": "YSWF1",
                 "station_code": "YSWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -15087,6 +15642,7 @@
                 "network_code": "0NYWSSA_0",
                 "station_code": "0NYWSSA",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -15116,6 +15672,7 @@
                 "network_code": "0NYWSSOL_0",
                 "station_code": "0NYWSSOL",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -15145,6 +15702,7 @@
                 "network_code": "YAMBUKWF",
                 "station_code": "YAMBUK",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -15174,6 +15732,7 @@
                 "network_code": "YARANSF1",
                 "station_code": "YARANSF",
                 "network_region": "QLD1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -15203,6 +15762,7 @@
                 "network_code": "YWNGAHYD",
                 "station_code": "YWNGAHYD",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "hydro",
                     "label": "Hyrdo",
@@ -15232,6 +15792,7 @@
                 "network_code": "0NYASOFA_1",
                 "station_code": "0NYASOFA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -15253,6 +15814,7 @@
                 "network_code": "0NYASOFA_1",
                 "station_code": "0NYASOFA",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -15282,6 +15844,7 @@
                 "network_code": "YAWWF1",
                 "station_code": "YAWWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -15311,6 +15874,7 @@
                 "network_code": "YENDWF1",
                 "station_code": "YENDONWF",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "wind",
                     "label": "Wind",
@@ -15340,6 +15904,7 @@
                 "network_code": "0NYESSUN_1",
                 "station_code": "0NYESSUN",
                 "network_region": "SA1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
@@ -15369,6 +15934,7 @@
                 "network_code": "0NZWSS_0",
                 "station_code": "0NZWSS",
                 "network_region": "VIC1",
+                "dispatch_type": "GENERATOR",
                 "fueltech": {
                     "code": "solar_utility",
                     "label": "Solar (Utility)",
