@@ -17,6 +17,7 @@ from opennem.core.normalizers import (
     normalize_string,
     station_name_cleaner,
 )
+from opennem.core.oid import get_ocode, get_oid
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 
 
@@ -176,6 +177,69 @@ class StationSchema(OpennemBaseSchema):
         dt = None
 
         return dt
+
+    @property
+    def capacity_registered(self) -> Optional[int]:
+        """
+            This is the sum of registered capacities for all units for
+            this station
+
+        """
+        cap_reg = None
+
+        for fac in self.facilities:
+            if (
+                fac.capacity_registered
+                and type(fac.capacity_registered) in [int, float, Decimal]
+                and fac.status
+                and fac.status.code
+                in ["operating", "committed", "commissioning"]
+                and fac.dispatch_type == DispatchType.GENERATOR
+                and fac.active
+            ):
+                if not cap_reg:
+                    cap_reg = 0
+
+                cap_reg += fac.capacity_registered
+
+        if cap_reg:
+            cap_reg = round(cap_reg, 2)
+
+        return cap_reg
+
+    @property
+    def capacity_aggregate(self) -> Optional[int]:
+        """
+            This is the sum of aggregate capacities for all units
+
+        """
+        cap_agg = None
+
+        for fac in self.facilities:
+            if (
+                fac.capacity_aggregate
+                and type(fac.capacity_aggregate) in [int, float, Decimal]
+                and fac.status
+                and fac.status.code
+                in ["operating", "committed", "commissioning"]
+                and fac.dispatch_type == DispatchType.GENERATOR
+                and fac.active
+            ):
+                if not cap_agg:
+                    cap_agg = 0
+
+                cap_agg += fac.capacity_aggregate
+
+        if cap_agg:
+            cap_agg = round(cap_agg, 2)
+
+        return cap_agg
+
+    def oid(self) -> str:
+        return get_oid(self)
+
+    def ocode(self) -> str:
+        return get_ocode(self)
 
 
 class StationSubmission(BaseModel):
