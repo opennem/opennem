@@ -100,6 +100,8 @@ class FacilitySchema(OpennemBaseSchema):
     registered: Optional[datetime]
     deregistered: Optional[datetime]
 
+    network_region: str
+
     unit_id: Optional[int]
     unit_number: Optional[int]
     unit_alias: Optional[str]
@@ -107,7 +109,7 @@ class FacilitySchema(OpennemBaseSchema):
 
     @validator("capacity_registered")
     def clean_capacity_regisered(cls, value):
-        value = clean_capacity(value)
+        # value = clean_capacity(value)
 
         return value
 
