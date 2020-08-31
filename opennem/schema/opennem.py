@@ -1,6 +1,7 @@
 # pylint: disable=no-self-argument, no-self-use
 import json
 from datetime import datetime
+from decimal import Decimal
 from typing import List, Optional, Union
 
 from geoalchemy2.elements import WKBElement
