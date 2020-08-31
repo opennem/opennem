@@ -212,7 +212,7 @@ class Station(Base, BaseModel):
         for fac in self.facilities:
             if (
                 fac.capacity_registered
-                and type(fac.capacity_registered) in [int, float, Decimal,]
+                and type(fac.capacity_registered) in [int, float, Decimal]
                 and fac.status_id
                 in ["operating", "committed", "commissioning"]
                 and fac.dispatch_type == DispatchType.GENERATOR
@@ -239,7 +239,7 @@ class Station(Base, BaseModel):
         for fac in self.facilities:
             if (
                 fac.capacity_aggregate
-                and type(fac.capacity_aggregate) in [int, float, Decimal,]
+                and type(fac.capacity_aggregate) in [int, float, Decimal]
                 and fac.status_id
                 in ["operating", "committed", "commissioning"]
                 and fac.dispatch_type == DispatchType.GENERATOR
