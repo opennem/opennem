@@ -14,7 +14,7 @@ class OpenNEMJSONEncoder(json.JSONEncoder):
             return o.isoformat()
         if isinstance(o, DispatchType):
             return dispatch_type_string(o)
-        return super(OpenNEMGeoJSONEncoder, self).default(o)
+        return super(OpenNEMJSONEncoder, self).default(o)
 
 
 class OpenNEMGeoJSONEncoder(GeoJSONEncoder, OpenNEMJSONEncoder):
