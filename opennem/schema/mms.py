@@ -11,10 +11,6 @@ from opennem.core.normalizers import (
     station_name_cleaner,
 )
 
-from .opennem import OpennemBaseModel
-
-__all__ = ["OpennemStationSubmission", "OpennemStation"]
-
 
 class MMSBase(BaseModel):
     class Config:
