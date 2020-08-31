@@ -85,7 +85,8 @@ class FacilitySchema(OpennemBaseSchema):
 
     status: FacilityStatusSchema
 
-    code: str
+    # @TODO no longer optional
+    code: Optional[str] = ""
 
     dispatch_type: DispatchType
 
