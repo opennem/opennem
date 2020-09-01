@@ -126,6 +126,11 @@
                     "code": "coal_black",
                     "label": "Coal (Black)",
                     "renewable": false
+                },
+                "fueltech": {
+                    "code": "coal_black",
+                    "label": "Coal (Black)",
+                    "renewable": false
                 }
             },
             {
@@ -143,6 +148,11 @@
                 "capacity_registered": 350.0,
                 "capacity_maximum": 385.0,
                 "fueltech_id": {
+                    "code": "coal_black",
+                    "label": "Coal (Black)",
+                    "renewable": false
+                },
+                "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
                     "renewable": false
@@ -407,6 +417,11 @@
                     "code": "gas_ccgt",
                     "label": "Gas (CCGT)",
                     "renewable": false
+                },
+                "fueltech": {
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             }
         ]
@@ -2611,28 +2626,6 @@
                 },
                 "capacity_registered": 25.0,
                 "capacity_maximum": 30.0
-            },
-            {
-                "code": "ERGT01",
-                "network_code": "ERGT01",
-                "station_code": "ERGT01",
-                "network_region": "NSW1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "distillate",
-                    "label": "Distillate",
-                    "renewable": false
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2020-04-17T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 41.5,
-                "capacity_storage": null
             }
         ],
         "lat": -33.0615480516907,
@@ -3045,8 +3038,8 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "hydro",
-                    "label": "Hyrdo",
+                    "code": "pumps",
+                    "label": "Pumps",
                     "renewable": true
                 }
             },
@@ -3400,28 +3393,6 @@
                     "label": "Coal (Black)",
                     "renewable": false
                 }
-            },
-            {
-                "code": "CSPVPS1",
-                "network_code": "CSPVPS1",
-                "station_code": "CSPVPS",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "solar_utility",
-                    "label": "Solar (Utility)",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2019-04-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 42.5,
-                "capacity_storage": null
             }
         ],
         "lat": -20.543332999999997,
@@ -3551,28 +3522,6 @@
                 },
                 "capacity_registered": 255.0,
                 "capacity_maximum": 300.0
-            },
-            {
-                "code": "0NPOWIFA_1",
-                "network_code": "0NPOWIFA_1",
-                "station_code": "PORTLAND",
-                "network_region": "VIC1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "wind",
-                    "label": "Wind",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 59.45,
-                "capacity_storage": null
             }
         ]
     },
@@ -4525,28 +4474,6 @@
                     "label": "Coal (Black)",
                     "renewable": false
                 }
-            },
-            {
-                "code": "0NTARGT_4",
-                "network_code": "0NTARGT_4",
-                "station_code": "0NTARGT",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "distillate",
-                    "label": "Distillate",
-                    "renewable": false
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2020-06-05T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 15.0,
-                "capacity_upper": 15.0,
-                "capacity_registered": 15.0,
-                "capacity_storage": null
             }
         ],
         "lat": -26.7743967256886,
@@ -4626,8 +4553,8 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "hydro",
-                    "label": "Hyrdo",
+                    "code": "pumps",
+                    "label": "Pumps",
                     "renewable": true
                 }
             },
@@ -4651,8 +4578,8 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "hydro",
-                    "label": "Hyrdo",
+                    "code": "pumps",
+                    "label": "Pumps",
                     "renewable": true
                 }
             }
@@ -5317,50 +5244,6 @@
                 },
                 "capacity_registered": 7.0,
                 "capacity_maximum": 7.0
-            },
-            {
-                "code": "0NTABMIL_0",
-                "network_code": "0NTABMIL_0",
-                "station_code": "0NTABMIL",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "gas_steam",
-                    "label": "Gas (Steam)",
-                    "renewable": false
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-04-14T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 7.0,
-                "capacity_upper": 7.0,
-                "capacity_registered": 7.0,
-                "capacity_storage": null
-            },
-            {
-                "code": "0NTABMIL_1",
-                "network_code": "0NTABMIL_1",
-                "station_code": "0NTABMIL",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "gas_steam",
-                    "label": "Gas (Steam)",
-                    "renewable": false
-                },
-                "status": {
-                    "code": "committed",
-                    "label": "Committed"
-                },
-                "registered": "2018-04-14T00:00:00",
-                "unit_capacity_lower": 20.0,
-                "unit_capacity": 24.0,
-                "capacity_upper": 24.0,
-                "capacity_registered": 24.0,
-                "capacity_storage": null
             }
         ]
     },
@@ -5669,72 +5552,6 @@
                 },
                 "capacity_registered": 18.0,
                 "capacity_maximum": 18.0
-            },
-            {
-                "code": "0NSOJOMI_0",
-                "network_code": "0NSOJOMI_0",
-                "station_code": "STHJST",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-04-14T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 9.5,
-                "capacity_storage": null
-            },
-            {
-                "code": "0NSOJOMI_1",
-                "network_code": "0NSOJOMI_1",
-                "station_code": "STHJST",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-04-14T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 7.8,
-                "capacity_storage": null
-            },
-            {
-                "code": "0NSOJOMI_2",
-                "network_code": "0NSOJOMI_2",
-                "station_code": "STHJST",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-04-14T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 2.0,
-                "capacity_upper": 2.0,
-                "capacity_registered": 2.0,
-                "capacity_storage": null
             }
         ]
     },
@@ -6694,50 +6511,6 @@
                 },
                 "capacity_registered": 3.0,
                 "capacity_maximum": 3.0
-            },
-            {
-                "code": "0NMACMIL_0",
-                "network_code": "0NMACMIL_0",
-                "station_code": "MACKNADE",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2019-05-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 5.0,
-                "capacity_upper": 5.0,
-                "capacity_registered": 5.0,
-                "capacity_storage": null
-            },
-            {
-                "code": "0NMACMIL_1",
-                "network_code": "0NMACMIL_1",
-                "station_code": "MACKNADE",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2019-05-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 3.0,
-                "capacity_upper": 3.0,
-                "capacity_registered": 3.0,
-                "capacity_storage": null
             }
         ]
     },
@@ -6800,50 +6573,6 @@
                 },
                 "capacity_registered": 23.0,
                 "capacity_maximum": 23.0
-            },
-            {
-                "code": "0NPLCRMI_0",
-                "network_code": "0NPLCRMI_0",
-                "station_code": "PLANECRK",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 10.0,
-                "capacity_upper": 10.0,
-                "capacity_registered": 10.0,
-                "capacity_storage": null
-            },
-            {
-                "code": "0NPLCRMI_1",
-                "network_code": "0NPLCRMI_1",
-                "station_code": "PLANECRK",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 4.0,
-                "capacity_upper": 4.0,
-                "capacity_registered": 4.0,
-                "capacity_storage": null
             }
         ]
     },
@@ -6906,28 +6635,6 @@
                 },
                 "capacity_registered": 14.0,
                 "capacity_maximum": 14.0
-            },
-            {
-                "code": "RACOMIL1",
-                "network_code": "RACOMIL1",
-                "station_code": "RACOMIL",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-04-14T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 3.5,
-                "capacity_storage": null
             }
         ]
     },
@@ -7296,6 +7003,11 @@
                     "code": "coal_black",
                     "label": "Coal (Black)",
                     "renewable": false
+                },
+                "fueltech": {
+                    "code": "coal_black",
+                    "label": "Coal (Black)",
+                    "renewable": false
                 }
             },
             {
@@ -7313,6 +7025,11 @@
                 "capacity_registered": 420.0,
                 "capacity_maximum": 500.0,
                 "fueltech_id": {
+                    "code": "coal_black",
+                    "label": "Coal (Black)",
+                    "renewable": false
+                },
+                "fueltech": {
                     "code": "coal_black",
                     "label": "Coal (Black)",
                     "renewable": false
@@ -7348,28 +7065,6 @@
                 },
                 "capacity_registered": 2.0,
                 "capacity_maximum": 2.0
-            },
-            {
-                "code": "0NMUCEMI_0",
-                "network_code": "0NMUCEMI_0",
-                "station_code": "MULGRAVE",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2020-05-22T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 9.0,
-                "capacity_upper": 9.0,
-                "capacity_registered": 9.0,
-                "capacity_storage": 0.0
             }
         ]
     },
@@ -8314,9 +8009,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
-                    "renewable": true
+                    "code": "distillate",
+                    "label": "Distillate",
+                    "renewable": false
                 }
             }
         ],
@@ -8564,28 +8259,6 @@
                 },
                 "capacity_registered": 5.0,
                 "capacity_maximum": 5.0
-            },
-            {
-                "code": "STAPYLTON1",
-                "network_code": "STAPYLTON1",
-                "station_code": "STAPYLTON",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-04-14T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 2.6,
-                "capacity_storage": null
             }
         ]
     },
@@ -9233,28 +8906,6 @@
                     "label": "Gas (Reciprocating)",
                     "renewable": false
                 }
-            },
-            {
-                "code": "0NEATESY_0",
-                "network_code": "0NEATESY_0",
-                "station_code": "0NEATESY",
-                "network_region": "NSW1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "distillate",
-                    "label": "Distillate",
-                    "renewable": false
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-04-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 3.9,
-                "capacity_storage": null
             }
         ],
         "lat": -33.824397,
@@ -9331,28 +8982,6 @@
                     "label": "Hyrdo",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NTSMH_0",
-                "network_code": "0NTSMH_0",
-                "station_code": "TERMSTOR",
-                "network_region": "SA1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "hydro",
-                    "label": "Hyrdo",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2019-06-01T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 1.86,
-                "capacity_storage": null
             }
         ],
         "lat": -34.840140000000005,
@@ -9386,35 +9015,13 @@
                 },
                 "capacity_registered": 3.0,
                 "capacity_maximum": 4.0
-            },
-            {
-                "code": "0NSOMDAM_0",
-                "network_code": "0NSOMDAM_0",
-                "station_code": "SOMERSET",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "solar_utility",
-                    "label": "Solar (Utility)",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-07-31T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 3.2,
-                "capacity_storage": null
             }
         ]
     },
     "LKBONNY1": {
         "id": 1130,
         "updated_at": "2012-05-09T00:00:00",
-        "name": "Lake Bonney Stage 1",
+        "name": "Lake Bonney 1",
         "code": "LKBONNY1",
         "station_code": "LKBONNY1",
         "network_name": "Lake Bonney Wind Farm Stage 1",
@@ -9687,8 +9294,8 @@
                 "participant_id": "BORAL",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "retired",
-                    "label": "Retired"
+                    "code": "operating",
+                    "label": "Operating"
                 },
                 "capacity_registered": 3.0,
                 "capacity_maximum": 4.0,
@@ -9697,28 +9304,6 @@
                     "label": "Biogas",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NRREF_0",
-                "network_code": "0NRREF_0",
-                "station_code": "ROCHEDAL",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-04-14T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 4.492,
-                "capacity_storage": null
             }
         ],
         "lat": -27.555798,
@@ -10176,28 +9761,6 @@
                     "label": "Hyrdo",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NBUTGOR_0",
-                "network_code": "0NBUTGOR_0",
-                "station_code": "BUTLERSG",
-                "network_region": "TAS1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "hydro",
-                    "label": "Hyrdo",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2020-06-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 2.2,
-                "capacity_storage": null
             }
         ],
         "lat": -42.2671066306884,
@@ -11002,28 +10565,6 @@
                 },
                 "capacity_registered": 50.0,
                 "capacity_maximum": 62.0
-            },
-            {
-                "code": "POAT220",
-                "network_code": "POAT220",
-                "station_code": "PTINA220",
-                "network_region": "TAS1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "hydro",
-                    "label": "Hyrdo",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2020-06-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 50.0,
-                "capacity_upper": 200.0,
-                "capacity_registered": 200.0,
-                "capacity_storage": null
             }
         ],
         "lat": -41.8050732147105,
@@ -12076,50 +11617,6 @@
                     "label": "Biomass",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NPISUMI_0",
-                "network_code": "0NPISUMI_0",
-                "station_code": "PIONEER",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2019-05-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 36.9,
-                "capacity_storage": null
-            },
-            {
-                "code": "0NPISUMI_1",
-                "network_code": "0NPISUMI_1",
-                "station_code": "PIONEER",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2019-05-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 30.9,
-                "capacity_storage": null
             }
         ],
         "lat": -19.557546,
@@ -12159,9 +11656,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "gas_ocgt",
-                    "label": "Gas (OCGT)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             },
             {
@@ -12184,9 +11681,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "gas_ocgt",
-                    "label": "Gas (OCGT)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             },
             {
@@ -12209,9 +11706,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "gas_ocgt",
-                    "label": "Gas (OCGT)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             }
         ],
@@ -12370,9 +11867,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "gas_recip",
-                    "label": "Gas (Reciprocating)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             }
         ],
@@ -12589,28 +12086,6 @@
                     "label": "Gas (Reciprocating)",
                     "renewable": false
                 }
-            },
-            {
-                "code": "0NDAPOST_1",
-                "network_code": "0NDAPOST_1",
-                "station_code": "0NDAPOST",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "gas_wcmg",
-                    "label": "Gas (Coal Seam)",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2020-06-17T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 33.143,
-                "capacity_storage": null
             }
         ],
         "lat": -27.0862943709476,
@@ -12649,28 +12124,6 @@
                     "label": "Biogas",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NAWAB_0",
-                "network_code": "0NAWAB_0",
-                "station_code": "AWABAREF",
-                "network_region": "NSW1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 1.123,
-                "capacity_storage": null
             }
         ],
         "lat": -33.023339,
@@ -12753,9 +12206,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "gas_recip",
-                    "label": "Gas (Reciprocating)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             }
         ],
@@ -12846,7 +12299,7 @@
     "LKBONNY_2": {
         "id": 1194,
         "updated_at": "2011-01-06T00:00:00",
-        "name": "Lake Bonney Stage 2",
+        "name": "Lake Bonney 2",
         "code": "LKBONNY_2",
         "station_code": "LKBONNY_2",
         "network_name": "Lake Bonney Stage 2 Windfarm",
@@ -12963,8 +12416,8 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
+                    "code": "bioenergy_biomass",
+                    "label": "Biomass",
                     "renewable": true
                 }
             }
@@ -13130,8 +12583,8 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
+                    "code": "bioenergy_biomass",
+                    "label": "Biomass",
                     "renewable": true
                 }
             }
@@ -13544,8 +12997,8 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
+                    "code": "bioenergy_biomass",
+                    "label": "Biomass",
                     "renewable": true
                 }
             }
@@ -13630,8 +13083,8 @@
                     "renewable": false
                 },
                 "fueltech": {
-                    "code": "gas_recip",
-                    "label": "Gas (Reciprocating)",
+                    "code": "distillate",
+                    "label": "Distillate",
                     "renewable": false
                 }
             }
@@ -13754,9 +13207,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "gas_ocgt",
-                    "label": "Gas (OCGT)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             },
             {
@@ -13779,9 +13232,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "gas_ocgt",
-                    "label": "Gas (OCGT)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             },
             {
@@ -13804,9 +13257,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "gas_ocgt",
-                    "label": "Gas (OCGT)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             }
         ],
@@ -14094,9 +13547,9 @@
                     "renewable": false
                 },
                 "fueltech": {
-                    "code": "gas_ccgt",
-                    "label": "Gas (CCGT)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             }
         ],
@@ -14212,8 +13665,8 @@
                 "participant_id": "SECURENG",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "retired",
-                    "label": "Retired"
+                    "code": "operating",
+                    "label": "Operating"
                 },
                 "capacity_registered": 1.0,
                 "capacity_maximum": 1.0,
@@ -14261,9 +13714,9 @@
                     "renewable": false
                 },
                 "fueltech": {
-                    "code": "gas_ccgt",
-                    "label": "Gas (CCGT)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             }
         ],
@@ -14437,28 +13890,6 @@
                     "label": "Hyrdo",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NGLEN_0",
-                "network_code": "0NGLEN_0",
-                "station_code": "GLBWNHYD",
-                "network_region": "NSW1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "hydro",
-                    "label": "Hyrdo",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2020-06-04T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 5.0,
-                "capacity_upper": 5.0,
-                "capacity_registered": 5.0,
-                "capacity_storage": null
             }
         ],
         "lat": -32.107937,
@@ -14545,28 +13976,6 @@
                     "label": "Biogas",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NEC2GUF_6",
-                "network_code": "0NEC2GUF_6",
-                "station_code": "0NEC2GUF",
-                "network_region": "NSW1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 7.861,
-                "capacity_storage": null
             }
         ],
         "lat": -33.815468,
@@ -14606,9 +14015,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "gas_recip",
-                    "label": "Gas (Reciprocating)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             }
         ],
@@ -14691,50 +14100,6 @@
                     "label": "Biogas",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NBERW_3",
-                "network_code": "0NBERW_3",
-                "station_code": "BERWICK",
-                "network_region": "VIC1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 4.12,
-                "capacity_storage": null
-            },
-            {
-                "code": "0NBERW_1",
-                "network_code": "0NBERW_1",
-                "station_code": "BERWICK",
-                "network_region": "VIC1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 0.45,
-                "capacity_storage": null
             }
         ],
         "lat": -37.940819,
@@ -14864,28 +14229,6 @@
                     "label": "Biogas",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NLUHEI_2",
-                "network_code": "0NLUHEI_2",
-                "station_code": "0NLUHEI",
-                "network_region": "NSW1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 2.3,
-                "capacity_storage": null
             }
         ],
         "lat": null,
@@ -15269,7 +14612,7 @@
     "LKBONNY3": {
         "id": 1244,
         "updated_at": "2010-07-01T00:00:00",
-        "name": "Lake Bonney Stage 3",
+        "name": "Lake Bonney 3",
         "code": "LKBONNY3",
         "station_code": "LKBONNY3",
         "network_name": "Lake Bonney Stage 3 Wind Farm",
@@ -15385,50 +14728,6 @@
                     "label": "Distillate",
                     "renewable": false
                 }
-            },
-            {
-                "code": "0NBASPCL_0",
-                "network_code": "0NBASPCL_0",
-                "station_code": "BANKSPT",
-                "network_region": "NSW1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "distillate",
-                    "label": "Distillate",
-                    "renewable": false
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 1.34,
-                "capacity_storage": null
-            },
-            {
-                "code": "0NBASPCL_1",
-                "network_code": "0NBASPCL_1",
-                "station_code": "BANKSPT",
-                "network_region": "NSW1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "distillate",
-                    "label": "Distillate",
-                    "renewable": false
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 0.8,
-                "capacity_storage": null
             }
         ],
         "lat": -33.919998,
@@ -16183,50 +15482,6 @@
                     "label": "Biomass",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NVICMIL_0",
-                "network_code": "0NVICMIL_0",
-                "station_code": "VICMILL",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2019-05-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 19.0,
-                "capacity_upper": 19.0,
-                "capacity_registered": 19.0,
-                "capacity_storage": null
-            },
-            {
-                "code": "0NVICMIL_1",
-                "network_code": "0NVICMIL_1",
-                "station_code": "VICMILL",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "bioenergy_biomass",
-                    "label": "Biomass",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2019-05-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 5.0,
-                "capacity_upper": 5.0,
-                "capacity_registered": 5.0,
-                "capacity_storage": null
             }
         ],
         "lat": -18.650208,
@@ -16308,28 +15563,6 @@
                     "label": "Distillate",
                     "renewable": false
                 }
-            },
-            {
-                "code": "0NBLMPP_0",
-                "network_code": "0NBLMPP_0",
-                "station_code": "0NBLMPP",
-                "network_region": "SA1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "distillate",
-                    "label": "Distillate",
-                    "renewable": false
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-04-14T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 0.505,
-                "capacity_storage": null
             }
         ],
         "lat": -36.316596999999994,
@@ -16664,28 +15897,6 @@
                     "label": "Biogas",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NPEDCRE_2",
-                "network_code": "0NPEDCRE_2",
-                "station_code": "PEDLER",
-                "network_region": "SA1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "distillate",
-                    "label": "Distillate",
-                    "renewable": false
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-02-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 3.09,
-                "capacity_storage": null
             }
         ],
         "lat": -35.202388,
@@ -17370,6 +16581,11 @@
                     "code": "hydro",
                     "label": "Hyrdo",
                     "renewable": true
+                },
+                "fueltech": {
+                    "code": "hydro",
+                    "label": "Hyrdo",
+                    "renewable": true
                 }
             }
         ]
@@ -17407,28 +16623,6 @@
                     "label": "Hyrdo",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NMIDHYD_0",
-                "network_code": "0NMIDHYD_0",
-                "station_code": "0NMIDHYD",
-                "network_region": "TAS1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "hydro",
-                    "label": "Hyrdo",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-07-31T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 6.0,
-                "capacity_upper": 6.0,
-                "capacity_registered": 6.0,
-                "capacity_storage": null
             }
         ],
         "lat": -42.085747,
@@ -17585,9 +16779,9 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "gas_recip",
-                    "label": "Gas (Reciprocating)",
-                    "renewable": false
+                    "code": "gas_wcmg",
+                    "label": "Gas (Coal Seam)",
+                    "renewable": true
                 }
             }
         ],
@@ -17800,8 +16994,8 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "bioenergy_biogas",
-                    "label": "Biogas",
+                    "code": "bioenergy_biomass",
+                    "label": "Biomass",
                     "renewable": true
                 }
             }
@@ -18315,50 +17509,6 @@
                     "label": "Wind",
                     "renewable": true
                 }
-            },
-            {
-                "code": "HDWF2",
-                "network_code": "HDWF2",
-                "station_code": "HORNSDAL2",
-                "network_region": "SA1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "wind",
-                    "label": "Wind",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2019-06-04T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 102.4,
-                "capacity_storage": null
-            },
-            {
-                "code": "HDWF3",
-                "network_code": "HDWF3",
-                "station_code": "HORNSDAL3",
-                "network_region": "SA1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "wind",
-                    "label": "Wind",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2020-06-04T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": 112.0,
-                "capacity_registered": 112.0,
-                "capacity_storage": null
             }
         ],
         "lat": -33.05982,
@@ -18703,28 +17853,6 @@
                     "label": "Wind",
                     "renewable": true
                 }
-            },
-            {
-                "code": "WRSF1",
-                "network_code": "WRSF1",
-                "station_code": "WRSF1",
-                "network_region": "NSW1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "solar_utility",
-                    "label": "Solar (Utility)",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2020-06-19T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": 20.0,
-                "capacity_registered": 20.0,
-                "capacity_storage": null
             }
         ],
         "lat": -29.8291832,
@@ -18986,28 +18114,6 @@
                     "label": "Distillate",
                     "renewable": false
                 }
-            },
-            {
-                "code": "0NTEGESO_3",
-                "network_code": "0NTEGESO_3",
-                "station_code": "SATGS",
-                "network_region": "SA1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "distillate",
-                    "label": "Distillate",
-                    "renewable": false
-                },
-                "status": {
-                    "code": "committed",
-                    "label": "Committed"
-                },
-                "registered": "2020-07-06T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 123.2,
-                "capacity_storage": null
             }
         ],
         "lat": -35.096799,
@@ -19082,28 +18188,6 @@
                     "label": "Wind",
                     "renewable": true
                 }
-            },
-            {
-                "code": "KiataWF1",
-                "network_code": "KiataWF1",
-                "station_code": "KiataWF",
-                "network_region": "VIC1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "wind",
-                    "label": "Wind",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2020-06-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 31.05,
-                "capacity_storage": null
             }
         ],
         "lat": -36.397693,
@@ -19489,8 +18573,8 @@
                 "participant_id": "HUGSF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "committed",
+                    "label": "Committed"
                 },
                 "capacity_registered": 20.97,
                 "capacity_maximum": 18.0,
@@ -19575,8 +18659,8 @@
                 "participant_id": "AGLPARFW",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 198.94,
                 "capacity_maximum": 198.0,
@@ -19676,28 +18760,6 @@
                     "label": "Solar (Utility)",
                     "renewable": true
                 }
-            },
-            {
-                "code": "GANNBG1",
-                "network_code": "GANNBG1",
-                "station_code": "GANNBESS",
-                "network_region": "VIC1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "battery_discharging",
-                    "label": "Battery (Discharging)",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "operating",
-                    "label": "Operating"
-                },
-                "registered": "2018-04-16T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 25.33,
-                "capacity_storage": 50.0
             }
         ],
         "lat": -35.73,
@@ -20427,8 +19489,8 @@
                 "participant_id": "URANQNTY",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 135.0,
                 "capacity_maximum": 110.0,
@@ -21106,8 +20168,8 @@
                 "participant_id": "CROWLDWF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 79.0,
                 "capacity_maximum": 79.0,
@@ -21420,8 +20482,8 @@
                 "participant_id": "LINGAPWF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "committed",
+                    "label": "Committed"
                 },
                 "capacity_registered": 212.0,
                 "capacity_maximum": 212.0,
@@ -21463,8 +20525,8 @@
                 "participant_id": "EEQLILY",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 118.0,
                 "capacity_maximum": 100.0,
@@ -21549,8 +20611,8 @@
                 "participant_id": "MWARRA",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 231.0,
                 "capacity_maximum": 225.0,
@@ -21689,8 +20751,8 @@
                     "renewable": true
                 },
                 "fueltech": {
-                    "code": "solar_utility",
-                    "label": "Solar (Utility)",
+                    "code": "bioenergy_biogas",
+                    "label": "Biogas",
                     "renewable": true
                 }
             }
@@ -21795,8 +20857,8 @@
                 "participant_id": "AGLPARFQ",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 69.0,
                 "capacity_maximum": 440.0,
@@ -21881,8 +20943,8 @@
                 "participant_id": "LALLALWF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 144.0,
                 "capacity_maximum": 142.0,
@@ -21924,8 +20986,8 @@
                 "participant_id": "DIAMDGEN",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 65.0,
                 "capacity_maximum": 55.0,
@@ -21967,8 +21029,8 @@
                 "participant_id": "YARRANSF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 121.0,
                 "capacity_maximum": 103.0,
@@ -22127,8 +21189,8 @@
                 "participant_id": "BULGANA",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "committed",
+                    "label": "Committed"
                 },
                 "capacity_registered": 182.0,
                 "capacity_maximum": 100.0,
@@ -22142,28 +21204,6 @@
                     "label": "Wind",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NBGPHB_0",
-                "network_code": "0NBGPHB_0",
-                "station_code": "0NBGPHB",
-                "network_region": "VIC1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "battery_discharging",
-                    "label": "Battery (Discharging)",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "committed",
-                    "label": "Committed"
-                },
-                "registered": "2020-07-20T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": 20.0,
-                "capacity_upper": 20.0,
-                "capacity_registered": 20.0,
-                "capacity_storage": 20.0
             }
         ],
         "lat": null,
@@ -22207,28 +21247,6 @@
                     "label": "Solar (Utility)",
                     "renewable": true
                 }
-            },
-            {
-                "code": "0NGOSOFA_1",
-                "network_code": "0NGOSOFA_1",
-                "station_code": "0NGOSOFA",
-                "network_region": "NSW1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "solar_utility",
-                    "label": "Solar (Utility)",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "committed",
-                    "label": "Committed"
-                },
-                "registered": "2020-06-24T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 69.998,
-                "capacity_storage": null
             }
         ],
         "lat": null,
@@ -22406,8 +21424,8 @@
                 "participant_id": "DUNDWF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 168.0,
                 "capacity_maximum": 168.0,
@@ -22431,8 +21449,8 @@
                 "participant_id": "DUNDWF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 46.0,
                 "capacity_maximum": 46.0,
@@ -22456,8 +21474,8 @@
                 "participant_id": "DUNDWF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 121.0,
                 "capacity_maximum": 122.0,
@@ -22530,8 +21548,8 @@
                 "participant_id": "LIMONSF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "committed",
+                    "label": "Committed"
                 },
                 "capacity_registered": 275.0,
                 "capacity_maximum": 220.0,
@@ -22604,8 +21622,8 @@
                 "participant_id": "WILDCATL",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 148.0,
                 "capacity_maximum": 144.0,
@@ -22647,8 +21665,8 @@
                 "participant_id": "LALLALWF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 83.0,
                 "capacity_maximum": 82.0,
@@ -22690,8 +21708,8 @@
                 "participant_id": "DIAMDGEN",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "committed",
+                    "label": "Committed"
                 },
                 "capacity_registered": 33.0,
                 "capacity_maximum": 27.0,
@@ -22733,8 +21751,8 @@
                 "participant_id": "BOMENSF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 121.0,
                 "capacity_maximum": 100.0,
@@ -22776,8 +21794,8 @@
                 "participant_id": "NVTSF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 132.0,
                 "capacity_maximum": 105.0,
@@ -22819,8 +21837,8 @@
                 "participant_id": "GRANHAWF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 110.0,
                 "capacity_maximum": 110.0,
@@ -22862,8 +21880,8 @@
                 "participant_id": "CHERRYWF",
                 "dispatch_type": "GENERATOR",
                 "status": {
-                    "code": "operating",
-                    "label": "Operating"
+                    "code": "commissioning",
+                    "label": "Commissioning"
                 },
                 "capacity_registered": 57.0,
                 "capacity_maximum": 57.0,
@@ -24538,28 +23556,6 @@
                 "capacity_upper": 2.0,
                 "capacity_registered": 2.0,
                 "capacity_storage": 4.0
-            },
-            {
-                "code": "0NKEPP1W_1",
-                "network_code": "0NKEPP1W_1",
-                "station_code": "0NKEPP1W",
-                "network_region": "QLD1",
-                "dispatch_type": "GENERATOR",
-                "fueltech": {
-                    "code": "wind",
-                    "label": "Wind",
-                    "renewable": true
-                },
-                "status": {
-                    "code": "committed",
-                    "label": "Committed"
-                },
-                "registered": "2020-06-03T00:00:00",
-                "unit_capacity_lower": null,
-                "unit_capacity": null,
-                "capacity_upper": null,
-                "capacity_registered": 43.2,
-                "capacity_storage": null
             }
         ]
     },

@@ -8124,13 +8124,13 @@
         ]
     },
     "LKBONNY_2": {
-        "name": "Lake Bonney Stage 2",
+        "name": "Lake Bonney 2",
         "network_name": "Lake Bonney Stage 2 Windfarm",
         "code": "LKBONNY_2",
         "id": 2199,
         "facilities": [
             {
-                "name": "Lake Bonney Stage 2",
+                "name": "Lake Bonney 2",
                 "code": "LKBONNY2",
                 "status": {
                     "code": "operating",
@@ -8153,13 +8153,13 @@
         ]
     },
     "LKBONNY3": {
-        "name": "Lake Bonney Stage 3",
+        "name": "Lake Bonney 3",
         "network_name": "Lake Bonney Stage 3 Wind Farm",
         "code": "LKBONNY3",
         "id": 2200,
         "facilities": [
             {
-                "name": "Lake Bonney Stage 3",
+                "name": "Lake Bonney 3",
                 "code": "LKBONNY3",
                 "status": {
                     "code": "operating",
@@ -8182,13 +8182,13 @@
         ]
     },
     "LKBONNY1": {
-        "name": "Lake Bonney Stage 1",
+        "name": "Lake Bonney 1",
         "network_name": "Lake Bonney Wind Farm Stage 1",
         "code": "LKBONNY1",
         "id": 2201,
         "facilities": [
             {
-                "name": "Lake Bonney Stage 1",
+                "name": "Lake Bonney 1",
                 "code": "LKBONNY1",
                 "status": {
                     "code": "operating",

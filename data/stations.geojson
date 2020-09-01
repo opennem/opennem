@@ -10,6 +10,85 @@
     "features": [
         {
             "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "station_id": 1000,
+                "station_code": "CALLIDE",
+                "facility_id": "CALLIDE",
+                "network": "NEM",
+                "network_country": "au",
+                "state": "QLD",
+                "postcode": "4715",
+                "name": "Callide",
+                "capacity_registered": 785.0,
+                "duid_data": [
+                    {
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": null,
+                        "unit_number": null,
+                        "unit_size": null,
+                        "unit_alias": null,
+                        "capacity_registered": 350.0,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": null,
+                        "unit_number": null,
+                        "unit_size": null,
+                        "unit_alias": null,
+                        "capacity_registered": 350.0,
+                        "network_region": "QLD1"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "station_id": 1001,
+                "station_code": "SWANBANK",
+                "facility_id": "SWANBANK",
+                "network": "NEM",
+                "network_country": "au",
+                "state": "QLD",
+                "postcode": "4306",
+                "name": "Swanbank B",
+                "capacity_registered": 385.0,
+                "duid_data": [
+                    {
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": null,
+                        "unit_number": null,
+                        "unit_size": null,
+                        "unit_alias": null,
+                        "capacity_registered": 385.0,
+                        "network_region": "QLD1"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
             "geometry": {
                 "type": "Point",
                 "coordinates": [
@@ -1468,7 +1547,7 @@
                 "state": "NSW",
                 "postcode": "2264",
                 "name": "Eraring",
-                "capacity_registered": 2946.5,
+                "capacity_registered": 2905.0,
                 "duid_data": [
                     {
                         "fuel_tech": "coal_black",
@@ -1528,21 +1607,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 720.0,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2020-04-17T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 41.5,
                         "network_region": "NSW1"
                     }
                 ]
@@ -1835,8 +1899,8 @@
                 "capacity_registered": 240.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
+                        "fuel_tech": "pumps",
+                        "fuel_tech_label": "Pumps",
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
@@ -1998,7 +2062,7 @@
                 "state": "QLD",
                 "postcode": "4804",
                 "name": "Collinsville",
-                "capacity_registered": 42.5,
+                "capacity_registered": null,
                 "duid_data": [
                     {
                         "fuel_tech": "coal_black",
@@ -2073,21 +2137,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 60.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "solar_utility",
-                        "fuel_tech_label": "Solar (Utility)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-04-03T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 42.5,
                         "network_region": "QLD1"
                     }
                 ]
@@ -2164,38 +2213,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 29.0,
-                        "network_region": "VIC1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "station_id": 1036,
-                "station_code": "PORTLAND",
-                "facility_id": "PORTLAND",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "VIC",
-                "postcode": "3305",
-                "name": "Portland",
-                "capacity_registered": 59.45,
-                "duid_data": [
-                    {
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 59.45,
                         "network_region": "VIC1"
                     }
                 ]
@@ -2764,7 +2781,7 @@
                 "state": "QLD",
                 "postcode": "4615",
                 "name": "Tarong",
-                "capacity_registered": 1440.0,
+                "capacity_registered": 1425.0,
                 "duid_data": [
                     {
                         "fuel_tech": "coal_black",
@@ -2824,21 +2841,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 350.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2020-06-05T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 15.0,
-                        "unit_alias": null,
-                        "capacity_registered": 15.0,
                         "network_region": "QLD1"
                     }
                 ]
@@ -2895,8 +2897,8 @@
                         "network_region": "QLD1"
                     },
                     {
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
+                        "fuel_tech": "pumps",
+                        "fuel_tech_label": "Pumps",
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
@@ -2910,8 +2912,8 @@
                         "network_region": "QLD1"
                     },
                     {
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
+                        "fuel_tech": "pumps",
+                        "fuel_tech_label": "Pumps",
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
@@ -3255,53 +3257,6 @@
         },
         {
             "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "station_id": 1060,
-                "station_code": "TBLAND",
-                "facility_id": "TBLAND",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "QLD",
-                "postcode": "4000",
-                "name": "Tableland Mill",
-                "capacity_registered": 31.0,
-                "duid_data": [
-                    {
-                        "fuel_tech": "gas_steam",
-                        "fuel_tech_label": "Gas (Steam)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2018-04-14T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 7.0,
-                        "unit_alias": null,
-                        "capacity_registered": 7.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "gas_steam",
-                        "fuel_tech_label": "Gas (Steam)",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2018-04-14T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "committed",
-                        "status_label": "Committed",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 24.0,
-                        "unit_alias": null,
-                        "capacity_registered": 24.0,
-                        "network_region": "QLD1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
             "geometry": {
                 "type": "Point",
                 "coordinates": [
@@ -3499,68 +3454,6 @@
         },
         {
             "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "station_id": 1065,
-                "station_code": "STHJST",
-                "facility_id": "STHJST",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "QLD",
-                "postcode": "BRISBANE",
-                "name": "South Johnstone",
-                "capacity_registered": 19.3,
-                "duid_data": [
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-04-14T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 9.5,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-04-14T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 7.8,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-04-14T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 2.0,
-                        "unit_alias": null,
-                        "capacity_registered": 2.0,
-                        "network_region": "QLD1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
             "geometry": {
                 "type": "Point",
                 "coordinates": [
@@ -3645,132 +3538,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 40.0,
-                        "network_region": "QLD1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "station_id": 1081,
-                "station_code": "MACKNADE",
-                "facility_id": "MACKNADE",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "QLD",
-                "postcode": "4850",
-                "name": "Macknade Sugar Mill",
-                "capacity_registered": 8.0,
-                "duid_data": [
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-05-03T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 5.0,
-                        "unit_alias": null,
-                        "capacity_registered": 5.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-05-03T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 3.0,
-                        "unit_alias": null,
-                        "capacity_registered": 3.0,
-                        "network_region": "QLD1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "station_id": 1083,
-                "station_code": "PLANECRK",
-                "facility_id": "PLANECRK",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "QLD",
-                "postcode": "4737",
-                "name": "Plane Creek Mill",
-                "capacity_registered": 14.0,
-                "duid_data": [
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 10.0,
-                        "unit_alias": null,
-                        "capacity_registered": 10.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 4.0,
-                        "unit_alias": null,
-                        "capacity_registered": 4.0,
-                        "network_region": "QLD1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "station_id": 1085,
-                "station_code": "RCOURSE",
-                "facility_id": "RCOURSE",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "QLD",
-                "postcode": "4740",
-                "name": "Racecourse Mill",
-                "capacity_registered": 3.5,
-                "duid_data": [
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-04-14T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 3.5,
                         "network_region": "QLD1"
                     }
                 ]
@@ -3924,29 +3691,44 @@
             "type": "Feature",
             "geometry": null,
             "properties": {
-                "station_id": 1094,
-                "station_code": "MULGRAVE",
-                "facility_id": "MULGRAVE",
+                "station_id": 1093,
+                "station_code": "CALLIDEC",
+                "facility_id": "CALLIDEC",
                 "network": "NEM",
                 "network_country": "au",
                 "state": "QLD",
-                "postcode": "4865",
-                "name": "Mulgrave Central Mill",
-                "capacity_registered": 9.0,
+                "postcode": "4715",
+                "name": "Callide C",
+                "capacity_registered": 840.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-05-22T00:00:00",
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": null,
                         "unit_number": null,
-                        "unit_size": 9.0,
+                        "unit_size": null,
                         "unit_alias": null,
-                        "capacity_registered": 9.0,
+                        "capacity_registered": 420.0,
+                        "network_region": "QLD1"
+                    },
+                    {
+                        "fuel_tech": "coal_black",
+                        "fuel_tech_label": "Coal (Black)",
+                        "fuel_tech_renewable": false,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": null,
+                        "unit_number": null,
+                        "unit_size": null,
+                        "unit_alias": null,
+                        "capacity_registered": 420.0,
                         "network_region": "QLD1"
                     }
                 ]
@@ -4519,9 +4301,9 @@
                 "capacity_registered": 1.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
-                        "fuel_tech_renewable": true,
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
+                        "fuel_tech_renewable": false,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -4684,38 +4466,6 @@
                         "unit_alias": null,
                         "capacity_registered": 31.0,
                         "network_region": "VIC1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "station_id": 1117,
-                "station_code": "STPN1",
-                "facility_id": "STPN1",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "QLD",
-                "postcode": "4207",
-                "name": "Stapylton",
-                "capacity_registered": 2.6,
-                "duid_data": [
-                    {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-04-14T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 2.6,
-                        "network_region": "QLD1"
                     }
                 ]
             }
@@ -4890,7 +4640,7 @@
                 "state": "NSW",
                 "postcode": "2142",
                 "name": "Earthpower",
-                "capacity_registered": 3.9,
+                "capacity_registered": null,
                 "duid_data": [
                     {
                         "fuel_tech": "gas_recip",
@@ -4905,21 +4655,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 4.0,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2018-04-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 3.9,
                         "network_region": "NSW1"
                     }
                 ]
@@ -4975,7 +4710,7 @@
                 "state": "SA",
                 "postcode": "5001",
                 "name": "Terminal Storage Mini Hydro",
-                "capacity_registered": 1.86,
+                "capacity_registered": null,
                 "duid_data": [
                     {
                         "fuel_tech": "hydro",
@@ -4991,53 +4726,6 @@
                         "unit_alias": null,
                         "capacity_registered": 2.0,
                         "network_region": "SA1"
-                    },
-                    {
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-06-01T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 1.86,
-                        "network_region": "SA1"
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "geometry": null,
-            "properties": {
-                "station_id": 1129,
-                "station_code": "SOMERSET",
-                "facility_id": "SOMERSET",
-                "network": "NEM",
-                "network_country": "au",
-                "state": "QLD",
-                "postcode": "4312",
-                "name": "Somerset Dam",
-                "capacity_registered": 3.2,
-                "duid_data": [
-                    {
-                        "fuel_tech": "solar_utility",
-                        "fuel_tech_label": "Solar (Utility)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-07-31T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 3.2,
-                        "network_region": "QLD1"
                     }
                 ]
             }
@@ -5059,7 +4747,7 @@
                 "network_country": "au",
                 "state": "SA",
                 "postcode": "5280",
-                "name": "Lake Bonney Stage 1",
+                "name": "Lake Bonney 1",
                 "capacity_registered": 80.5,
                 "duid_data": [
                     {
@@ -5174,7 +4862,7 @@
                 "state": "QLD",
                 "postcode": "4123",
                 "name": "Rochedale",
-                "capacity_registered": 4.49,
+                "capacity_registered": 3.0,
                 "duid_data": [
                     {
                         "fuel_tech": "bioenergy_biogas",
@@ -5182,28 +4870,13 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "retired",
-                        "status_label": "Retired",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 3.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-04-14T00:00:00",
-                        "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
                         "unit_alias": null,
-                        "capacity_registered": 4.492,
+                        "capacity_registered": 3.0,
                         "network_region": "QLD1"
                     }
                 ]
@@ -5546,7 +5219,7 @@
                 "state": "TAS",
                 "postcode": "",
                 "name": "Butlers Gorge",
-                "capacity_registered": 16.6,
+                "capacity_registered": 14.4,
                 "duid_data": [
                     {
                         "fuel_tech": "hydro",
@@ -5561,21 +5234,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 14.4,
-                        "network_region": "TAS1"
-                    },
-                    {
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-06-03T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 2.2,
                         "network_region": "TAS1"
                     }
                 ]
@@ -6100,7 +5758,7 @@
                 "state": "TAS",
                 "postcode": "",
                 "name": "Poatina",
-                "capacity_registered": 325.0,
+                "capacity_registered": 125.0,
                 "duid_data": [
                     {
                         "fuel_tech": "hydro",
@@ -6130,21 +5788,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 100.0,
-                        "network_region": "TAS1"
-                    },
-                    {
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-06-03T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 50.0,
-                        "unit_alias": null,
-                        "capacity_registered": 200.0,
                         "network_region": "TAS1"
                     }
                 ]
@@ -6859,7 +6502,7 @@
                 "state": "QLD",
                 "postcode": "4825",
                 "name": "Pioneer Sugar Mill",
-                "capacity_registered": 135.8,
+                "capacity_registered": 68.0,
                 "duid_data": [
                     {
                         "fuel_tech": "bioenergy_biomass",
@@ -6874,36 +6517,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 68.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-05-03T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 36.9,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-05-03T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 30.9,
                         "network_region": "QLD1"
                     }
                 ]
@@ -6930,9 +6543,9 @@
                 "capacity_registered": 504.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -6945,9 +6558,9 @@
                         "network_region": "QLD1"
                     },
                     {
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -6960,9 +6573,9 @@
                         "network_region": "QLD1"
                     },
                     {
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -7081,9 +6694,9 @@
                 "capacity_registered": 12.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "gas_recip",
-                        "fuel_tech_label": "Gas (Reciprocating)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -7268,7 +6881,7 @@
                 "state": "QLD",
                 "postcode": "4405",
                 "name": "Daandine",
-                "capacity_registered": 66.14,
+                "capacity_registered": 33.0,
                 "duid_data": [
                     {
                         "fuel_tech": "gas_recip",
@@ -7283,21 +6896,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 33.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "gas_wcmg",
-                        "fuel_tech_label": "Gas (Coal Seam)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-06-17T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 33.143,
                         "network_region": "QLD1"
                     }
                 ]
@@ -7321,7 +6919,7 @@
                 "state": "NSW",
                 "postcode": "2283",
                 "name": "Awaba",
-                "capacity_registered": 1.12,
+                "capacity_registered": null,
                 "duid_data": [
                     {
                         "fuel_tech": "bioenergy_biogas",
@@ -7336,21 +6934,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 1.0,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 1.123,
                         "network_region": "NSW1"
                     }
                 ]
@@ -7415,9 +6998,9 @@
                 "capacity_registered": 12.56,
                 "duid_data": [
                     {
-                        "fuel_tech": "gas_recip",
-                        "fuel_tech_label": "Gas (Reciprocating)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -7525,7 +7108,7 @@
                 "network_country": "au",
                 "state": "SA",
                 "postcode": "5280",
-                "name": "Lake Bonney Stage 2",
+                "name": "Lake Bonney 2",
                 "capacity_registered": 159.0,
                 "duid_data": [
                     {
@@ -7605,8 +7188,8 @@
                 "capacity_registered": 30.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
+                        "fuel_tech": "bioenergy_biomass",
+                        "fuel_tech_label": "Biomass",
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
@@ -7757,8 +7340,8 @@
                 "capacity_registered": 30.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
+                        "fuel_tech": "bioenergy_biomass",
+                        "fuel_tech_label": "Biomass",
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
@@ -8106,8 +7689,8 @@
                 "capacity_registered": 2.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
+                        "fuel_tech": "bioenergy_biomass",
+                        "fuel_tech_label": "Biomass",
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
@@ -8182,8 +7765,8 @@
                 "capacity_registered": 2.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "gas_recip",
-                        "fuel_tech_label": "Gas (Reciprocating)",
+                        "fuel_tech": "distillate",
+                        "fuel_tech_label": "Distillate",
                         "fuel_tech_renewable": false,
                         "commissioned_date": null,
                         "decommissioned_date": null,
@@ -8296,9 +7879,9 @@
                 "capacity_registered": 519.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -8311,9 +7894,9 @@
                         "network_region": "QLD1"
                     },
                     {
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -8326,9 +7909,9 @@
                         "network_region": "QLD1"
                     },
                     {
-                        "fuel_tech": "gas_ocgt",
-                        "fuel_tech_label": "Gas (OCGT)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -8561,9 +8144,9 @@
                 "capacity_registered": 87.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "gas_ccgt",
-                        "fuel_tech_label": "Gas (CCGT)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -8672,7 +8255,7 @@
                 "state": "QLD",
                 "postcode": "4101",
                 "name": "Southbank Institute Of Technology 1",
-                "capacity_registered": null,
+                "capacity_registered": 1.0,
                 "duid_data": [
                     {
                         "fuel_tech": "distillate",
@@ -8680,8 +8263,8 @@
                         "fuel_tech_renewable": false,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "retired",
-                        "status_label": "Retired",
+                        "status": "operating",
+                        "status_label": "Operating",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -8713,9 +8296,9 @@
                 "capacity_registered": 363.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "gas_ccgt",
-                        "fuel_tech_label": "Gas (CCGT)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -8862,7 +8445,7 @@
                 "state": "NSW",
                 "postcode": "2337",
                 "name": "Glenbawn",
-                "capacity_registered": 10.5,
+                "capacity_registered": 5.5,
                 "duid_data": [
                     {
                         "fuel_tech": "hydro",
@@ -8877,21 +8460,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 5.5,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-06-04T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 5.0,
-                        "unit_alias": null,
-                        "capacity_registered": 5.0,
                         "network_region": "NSW1"
                     }
                 ]
@@ -8953,7 +8521,7 @@
                 "state": "NSW",
                 "postcode": "2766",
                 "name": "Eastern Creek 2",
-                "capacity_registered": 16.84,
+                "capacity_registered": 8.98,
                 "duid_data": [
                     {
                         "fuel_tech": "bioenergy_biogas",
@@ -8968,21 +8536,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 8.984,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 7.861,
                         "network_region": "NSW1"
                     }
                 ]
@@ -9009,9 +8562,9 @@
                 "capacity_registered": 4.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "gas_recip",
-                        "fuel_tech_label": "Gas (Reciprocating)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -9082,7 +8635,7 @@
                 "state": "VIC",
                 "postcode": "3804",
                 "name": "Berwick",
-                "capacity_registered": 11.57,
+                "capacity_registered": 7.0,
                 "duid_data": [
                     {
                         "fuel_tech": "bioenergy_biogas",
@@ -9097,36 +8650,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 7.0,
-                        "network_region": "VIC1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 4.12,
-                        "network_region": "VIC1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 0.45,
                         "network_region": "VIC1"
                     }
                 ]
@@ -9220,7 +8743,7 @@
                 "state": "NSW",
                 "postcode": "2234",
                 "name": "Lucas Heights 1",
-                "capacity_registered": 14.95,
+                "capacity_registered": 12.65,
                 "duid_data": [
                     {
                         "fuel_tech": "bioenergy_biogas",
@@ -9235,21 +8758,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 12.65,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 2.3,
                         "network_region": "NSW1"
                     }
                 ]
@@ -9576,7 +9084,7 @@
                 "network_country": "au",
                 "state": "SA",
                 "postcode": "5280",
-                "name": "Lake Bonney Stage 3",
+                "name": "Lake Bonney 3",
                 "capacity_registered": 39.0,
                 "duid_data": [
                     {
@@ -9653,7 +9161,7 @@
                 "state": "NSW",
                 "postcode": "220",
                 "name": "Bankstown Sports Club",
-                "capacity_registered": 2.14,
+                "capacity_registered": null,
                 "duid_data": [
                     {
                         "fuel_tech": "distillate",
@@ -9668,36 +9176,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 2.0,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 1.34,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 0.8,
                         "network_region": "NSW1"
                     }
                 ]
@@ -10297,7 +9775,7 @@
                 "state": "QLD",
                 "postcode": "4850",
                 "name": "Victoria Mill",
-                "capacity_registered": 48.0,
+                "capacity_registered": 24.0,
                 "duid_data": [
                     {
                         "fuel_tech": "bioenergy_biomass",
@@ -10312,36 +9790,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 24.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-05-03T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 19.0,
-                        "unit_alias": null,
-                        "capacity_registered": 19.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "bioenergy_biomass",
-                        "fuel_tech_label": "Biomass",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-05-03T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 5.0,
-                        "unit_alias": null,
-                        "capacity_registered": 5.0,
                         "network_region": "QLD1"
                     }
                 ]
@@ -10403,7 +9851,7 @@
                 "state": "SA",
                 "postcode": "5268",
                 "name": "Blue Lake Milling",
-                "capacity_registered": 0.51,
+                "capacity_registered": null,
                 "duid_data": [
                     {
                         "fuel_tech": "distillate",
@@ -10418,21 +9866,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 1.0,
-                        "network_region": "SA1"
-                    },
-                    {
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2018-04-14T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 0.505,
                         "network_region": "SA1"
                     }
                 ]
@@ -10716,7 +10149,7 @@
                 "state": "SA",
                 "postcode": "5169",
                 "name": "Pedler Creek",
-                "capacity_registered": 3.09,
+                "capacity_registered": null,
                 "duid_data": [
                     {
                         "fuel_tech": "bioenergy_biogas",
@@ -10731,21 +10164,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 3.0,
-                        "network_region": "SA1"
-                    },
-                    {
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2018-02-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 3.09,
                         "network_region": "SA1"
                     }
                 ]
@@ -11309,6 +10727,38 @@
         },
         {
             "type": "Feature",
+            "geometry": null,
+            "properties": {
+                "station_id": 1284,
+                "station_code": "WILLHOV",
+                "facility_id": "WILLHOV",
+                "network": "NEM",
+                "network_country": "au",
+                "state": "VIC",
+                "postcode": "3678",
+                "name": "William Hovell",
+                "capacity_registered": 1.5,
+                "duid_data": [
+                    {
+                        "fuel_tech": "hydro",
+                        "fuel_tech_label": "Hyrdo",
+                        "fuel_tech_renewable": true,
+                        "commissioned_date": null,
+                        "decommissioned_date": null,
+                        "status": "operating",
+                        "status_label": "Operating",
+                        "unit_id": null,
+                        "unit_number": null,
+                        "unit_size": null,
+                        "unit_alias": null,
+                        "capacity_registered": 1.5,
+                        "network_region": "VIC1"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Feature",
             "geometry": {
                 "type": "Point",
                 "coordinates": [
@@ -11325,7 +10775,7 @@
                 "state": "TAS",
                 "postcode": "7209",
                 "name": "Midlands",
-                "capacity_registered": 12.0,
+                "capacity_registered": 6.0,
                 "duid_data": [
                     {
                         "fuel_tech": "hydro",
@@ -11338,21 +10788,6 @@
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 6.0,
-                        "network_region": "TAS1"
-                    },
-                    {
-                        "fuel_tech": "hydro",
-                        "fuel_tech_label": "Hyrdo",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-07-31T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 6.0,
                         "unit_alias": null,
                         "capacity_registered": 6.0,
                         "network_region": "TAS1"
@@ -11457,9 +10892,9 @@
                 "capacity_registered": 6.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "gas_recip",
-                        "fuel_tech_label": "Gas (Reciprocating)",
-                        "fuel_tech_renewable": false,
+                        "fuel_tech": "gas_wcmg",
+                        "fuel_tech_label": "Gas (Coal Seam)",
+                        "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
                         "status": "operating",
@@ -11647,8 +11082,8 @@
                 "capacity_registered": 10.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "bioenergy_biogas",
-                        "fuel_tech_label": "Biogas",
+                        "fuel_tech": "bioenergy_biomass",
+                        "fuel_tech_label": "Biomass",
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
@@ -12100,7 +11535,7 @@
                 "state": "SA",
                 "postcode": "5460",
                 "name": "Hornsdale",
-                "capacity_registered": 316.8,
+                "capacity_registered": 102.4,
                 "duid_data": [
                     {
                         "fuel_tech": "wind",
@@ -12115,36 +11550,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 102.4,
-                        "network_region": "SA1"
-                    },
-                    {
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2019-06-04T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 102.4,
-                        "network_region": "SA1"
-                    },
-                    {
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-06-04T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 112.0,
                         "network_region": "SA1"
                     }
                 ]
@@ -12422,7 +11827,7 @@
                 "state": "NSW",
                 "postcode": "2370",
                 "name": "White Rock",
-                "capacity_registered": 195.0,
+                "capacity_registered": 175.0,
                 "duid_data": [
                     {
                         "fuel_tech": "wind",
@@ -12437,21 +11842,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 175.0,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "fuel_tech": "solar_utility",
-                        "fuel_tech_label": "Solar (Utility)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-06-19T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 20.0,
                         "network_region": "NSW1"
                     }
                 ]
@@ -12615,7 +12005,7 @@
                 "state": "SA",
                 "postcode": "5160",
                 "name": "Temporary Generation South",
-                "capacity_registered": 246.4,
+                "capacity_registered": 123.2,
                 "duid_data": [
                     {
                         "fuel_tech": "distillate",
@@ -12625,21 +12015,6 @@
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 123.2,
-                        "network_region": "SA1"
-                    },
-                    {
-                        "fuel_tech": "distillate",
-                        "fuel_tech_label": "Distillate",
-                        "fuel_tech_renewable": false,
-                        "commissioned_date": "2020-07-06T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "committed",
-                        "status_label": "Committed",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -12668,28 +12043,13 @@
                 "state": "VIC",
                 "postcode": "3418",
                 "name": "Kiata",
-                "capacity_registered": 62.1,
+                "capacity_registered": 31.05,
                 "duid_data": [
                     {
                         "fuel_tech": "wind",
                         "fuel_tech_label": "Wind",
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 31.05,
-                        "network_region": "VIC1"
-                    },
-                    {
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-06-03T00:00:00",
                         "decommissioned_date": null,
                         "status": "operating",
                         "status_label": "Operating",
@@ -13010,8 +12370,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "committed",
+                        "status_label": "Committed",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -13086,8 +12446,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -13154,7 +12514,7 @@
                 "state": "VIC",
                 "postcode": "3579",
                 "name": "Gannawarra",
-                "capacity_registered": 80.33,
+                "capacity_registered": 55.0,
                 "duid_data": [
                     {
                         "fuel_tech": "solar_utility",
@@ -13169,21 +12529,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 55.0,
-                        "network_region": "VIC1"
-                    },
-                    {
-                        "fuel_tech": "battery_discharging",
-                        "fuel_tech_label": "Battery (Discharging)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2018-04-16T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 25.33,
                         "network_region": "VIC1"
                     }
                 ]
@@ -13800,8 +13145,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -14362,8 +13707,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -14605,8 +13950,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "committed",
+                        "status_label": "Committed",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -14643,8 +13988,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -14719,8 +14064,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -14828,8 +14173,8 @@
                 "capacity_registered": 132.0,
                 "duid_data": [
                     {
-                        "fuel_tech": "solar_utility",
-                        "fuel_tech_label": "Solar (Utility)",
+                        "fuel_tech": "bioenergy_biogas",
+                        "fuel_tech_label": "Biogas",
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
@@ -14909,8 +14254,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -14985,8 +14330,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15023,8 +14368,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15055,8 +14400,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15155,7 +14500,7 @@
                 "state": "VIC",
                 "postcode": "3384",
                 "name": "Bulgana Green",
-                "capacity_registered": 202.0,
+                "capacity_registered": 182.0,
                 "duid_data": [
                     {
                         "fuel_tech": "wind",
@@ -15163,28 +14508,13 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "committed",
+                        "status_label": "Committed",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 182.0,
-                        "network_region": "VIC1"
-                    },
-                    {
-                        "fuel_tech": "battery_discharging",
-                        "fuel_tech_label": "Battery (Discharging)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-07-20T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "committed",
-                        "status_label": "Committed",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": 20.0,
-                        "unit_alias": null,
-                        "capacity_registered": 20.0,
                         "network_region": "VIC1"
                     }
                 ]
@@ -15202,7 +14532,7 @@
                 "state": "NSW",
                 "postcode": "2870",
                 "name": "Goonumbla",
-                "capacity_registered": 155.0,
+                "capacity_registered": 85.0,
                 "duid_data": [
                     {
                         "fuel_tech": "solar_utility",
@@ -15217,21 +14547,6 @@
                         "unit_size": null,
                         "unit_alias": null,
                         "capacity_registered": 85.0,
-                        "network_region": "NSW1"
-                    },
-                    {
-                        "fuel_tech": "solar_utility",
-                        "fuel_tech_label": "Solar (Utility)",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-06-24T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "committed",
-                        "status_label": "Committed",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 69.998,
                         "network_region": "NSW1"
                     }
                 ]
@@ -15377,8 +14692,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15392,8 +14707,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15407,8 +14722,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15445,8 +14760,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "committed",
+                        "status_label": "Committed",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15483,8 +14798,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15515,8 +14830,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15547,8 +14862,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "committed",
+                        "status_label": "Committed",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15579,8 +14894,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15617,8 +14932,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15655,8 +14970,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -15687,8 +15002,8 @@
                         "fuel_tech_renewable": true,
                         "commissioned_date": null,
                         "decommissioned_date": null,
-                        "status": "operating",
-                        "status_label": "Operating",
+                        "status": "commissioning",
+                        "status_label": "Commissioning",
                         "unit_id": null,
                         "unit_number": null,
                         "unit_size": null,
@@ -17417,7 +16732,7 @@
                 "state": "",
                 "postcode": "",
                 "name": "Kennedy Energy Park",
-                "capacity_registered": 60.2,
+                "capacity_registered": 17.0,
                 "duid_data": [
                     {
                         "fuel_tech": "solar_utility",
@@ -17447,21 +16762,6 @@
                         "unit_size": 2.0,
                         "unit_alias": null,
                         "capacity_registered": 2.0,
-                        "network_region": "QLD1"
-                    },
-                    {
-                        "fuel_tech": "wind",
-                        "fuel_tech_label": "Wind",
-                        "fuel_tech_renewable": true,
-                        "commissioned_date": "2020-06-03T00:00:00",
-                        "decommissioned_date": null,
-                        "status": "committed",
-                        "status_label": "Committed",
-                        "unit_id": null,
-                        "unit_number": null,
-                        "unit_size": null,
-                        "unit_alias": null,
-                        "capacity_registered": 43.2,
                         "network_region": "QLD1"
                     }
                 ]
