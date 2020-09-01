@@ -198,6 +198,11 @@ def opennem_import():
             if not gi_facility_duid:
                 continue
 
+            if gi_facility_duid not in om_station["facilities"]:
+                continue
+
+            om_facility = om_station["facilities"][gi_facility_duid]
+
             if gi_facility_duid not in om_station["facilities"].keys():
                 logger.info(
                     " ==> Added duid {} to station ".format(gi_facility_duid)
@@ -215,6 +220,12 @@ def opennem_import():
                     )
                 )
                 om_facility["status"] = gi_facility["status"]
+
+            elif not om_facility["status"]:
+                om_facility["status"] = gi_facility["status"]
+
+            if not om_facility.get("fueltech", None):
+                om_facility["fueltech"] = gi_facility["fueltech"]
 
     # registry
     for station_code, registry_station in registry.items():

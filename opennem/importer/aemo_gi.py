@@ -247,6 +247,8 @@ def gi_grouper(records, station_code_map):
         grouped_records[station_code] = {
             "id": station_record.get("id"),
             "code": station_code,
+            "name": station_name_cleaner(station_name),
+            "network_name": station_name,
             "facilities": [],
         }
 
