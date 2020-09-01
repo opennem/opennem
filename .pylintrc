@@ -6,7 +6,7 @@ extension-pkg-whitelist=pydantic
 [MESSAGES CONTROL]
 disable=all
 
-enable=F,E1101,E0611,unreachable,duplicate-key,import-error,import-self,unnecessary-semicolon,global-variable-not-assigned,unused-variable,binary-op-exception,bad-format-string,anomalous-backslash-in-string,bad-open-mode
+enable=F,E,E1101,E0611,unreachable,duplicate-key,import-error,import-self,unnecessary-semicolon,global-variable-not-assigned,unused-variable,binary-op-exception,bad-format-string,anomalous-backslash-in-string,bad-open-mode
 
 [TYPECHECK]
 ignored-classes=scoped_session,Session

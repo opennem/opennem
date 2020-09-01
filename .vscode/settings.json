@@ -4,7 +4,8 @@
     ".venv": true
   },
   "python.pythonPath": ".venv/bin/python",
-  "python.linting.pylintPath": ".venv/bin/pylint",
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestPath": ".venv/bin/pytest",
   "python.formatting.provider": "black",
   "[python]": {
     "editor.codeActionsOnSave": {
@@ -14,7 +15,10 @@
   "python.linting.enabled": true,
   "python.linting.pylintUseMinimalCheckers": false,
   "python.linting.pylintEnabled": true,
+  "python.linting.pylintPath": ".venv/bin/pylint",
   "python.linting.pycodestyleEnabled": true,
   "python.linting.mypyEnabled": true,
-  "python.testing.pytestEnabled": true
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Path": ".venv/bin/flake8",
+  "python.analysis.disabled": ["no-self-argument"]
 }
