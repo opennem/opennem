@@ -1,9 +1,20 @@
 # # init db
 python -m opennem.db.initdb
 
-# # load required fixtures
+
 python -m opennem.db.load_fixtures
-python -m opennem.db.load_facilitymap
+
+scrapy crawl -L ERROR au.nem.mms.participant
+scrapy crawl -L ERROR au.nem.mms.stations
+
+# # scrapy crawl au.nem.mms.stations_status
+
+scrapy crawl -L ERROR au.nem.mms.dudetail_summary
+scrapy crawl -L ERROR au.nem.mms.dudetail
+scrapy crawl -L ERROR au.nem.mms.statdualloc
+
+scrapy crawl -L DEBUG au.aemo.current.registration_exemption
+scrapy crawl -L INFO au.aemo.current.general_information
 
 
 # # load participants
@@ -44,13 +55,19 @@ scrapy crawl au.aemo.current.general_information
 # # scrapy crawl au.nem.archive.dispatch_is
 # # scrapy crawl au.nem.archive.dispatch_scada
 
-# # python -m opennem.api.exporter
-# #
+# # map missing fueltechs
+python -m opennem.core.facility_fueltechs
 
-# python -m opennem.geo.geocode
+# # map missing facilities
+python -m opennem.core.load_facilities
 
+# # patches
 python -m opennem.core.patches
 
-python -m opennem.geo.export
 
-python facility_diff.py
+# # geocode records
+python -m opennem.geo.geocode
+
+python -m opennem.exporter.runner
+
+python -m opennem.cli diff
