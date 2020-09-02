@@ -1,7 +1,4 @@
-import csv
-import json
 import logging
-from typing import List
 
 from pydantic import ValidationError
 
@@ -9,10 +6,12 @@ from geojson import Feature, FeatureCollection, Point, dumps
 from opennem.controllers.stations import get_stations
 from opennem.core.facility_duid_map import duid_is_retired
 from opennem.db import get_database_session
-from opennem.exporter.encoders import OpenNEMGeoJSONEncoder, OpenNEMJSONEncoder
+from opennem.exporter.encoders import OpenNEMGeoJSONEncoder
 from opennem.schema.opennem import StationSchema
 
 __all__ = ["stations_geojson_serialize"]
+
+logger = logging.getLogger(__name__)
 
 
 def stations_geojson_records():
@@ -89,9 +88,6 @@ def stations_geojson_records():
             records.append(f)
 
     return records
-
-
-logger = logging.getLogger(__name__)
 
 
 def stations_geojson_records_json(stations: List[StationSchema]):
