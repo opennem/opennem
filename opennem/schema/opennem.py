@@ -1,5 +1,5 @@
-# pylint: disable=no-self-argument, no-self-use
-import json
+# pylint:disable=no-self-argument
+
 from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional, Union
