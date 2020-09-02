@@ -112,38 +112,25 @@ class FacilitySchema(OpennemBaseSchema):
     unit_capacity: Optional[float]
 
     @validator("capacity_registered")
-    def clean_capacity_regisered(cls, value):
-        # value = clean_capacity(value)
+    def _clean_capacity_regisered(cls, value):
+        value = clean_capacity(value)
 
         return value
 
     @validator("capacity_maximum")
-    def clean_capacity_maximum(cls, value):
+    def _clean_capacity_maximum(cls, value):
         value = clean_capacity(value)
 
         return value
 
 
-class StationSchema(OpennemBaseSchema):
-    id: int
-
-    participant: Optional[ParticipantSchema] = None
-    participant_id: Optional[str]
-
-    facilities: List[FacilitySchema] = []
-
-    code: str
-
-    name: str
-
+class LocationSchema(OpennemBaseSchema):
     address1: Optional[str] = ""
     address2: Optional[str] = ""
     locality: Optional[str] = ""
     state: Optional[str] = ""
     postcode: Optional[str] = ""
-
-    # Original network fields
-    network_name: Optional[str]
+    country: Optional[str] = "au"
 
     # Geo fields
     # place_id: Optional[str]
@@ -153,9 +140,6 @@ class StationSchema(OpennemBaseSchema):
     geocode_by: Optional[str]
     # geom: Optional[WKBElement] = None
     # boundary: Optional[WKBElement] = None
-
-    # virtual methods
-    capacity_aggregate: Optional[int]
 
     # geo fields
     lat: Optional[float]
@@ -181,11 +165,23 @@ class StationSchema(OpennemBaseSchema):
     def clean_postcode(cls, value: str) -> str:
         return value.strip()
 
-    # @validator("createdat")
-    def created_at_exists(cls, value: Optional[datetime]) -> datetime:
-        dt = None
 
-        return dt
+class StationSchema(OpennemBaseSchema):
+    id: int
+
+    participant: Optional[ParticipantSchema] = None
+    participant_id: Optional[str]
+
+    facilities: List[FacilitySchema] = []
+
+    code: str
+
+    name: str
+
+    # Original network fields
+    network_name: Optional[str]
+
+    location: LocationSchema = LocationSchema()
 
     @property
     def capacity_registered(self) -> Optional[int]:
