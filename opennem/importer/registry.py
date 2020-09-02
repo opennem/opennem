@@ -1,38 +1,40 @@
 import json
 import logging
+from typing import List
 
 from opennem.core.facility.fueltechs import parse_facility_fueltech
 from opennem.core.facilitystatus import parse_facility_status
 from opennem.core.loader import load_data
+from opennem.core.networks import network_from_network_region
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.importer.compat import (
     map_compat_facility_state,
     map_compat_fueltech,
+    map_compat_network_region,
 )
+from opennem.schema.opennem import (
+    FacilitySchema,
+    LocationSchema,
+    StationSchema,
+)
+from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.registry")
 
 
-FACILITY_FUELTECHS = load_data("facility_fueltech_map.json")
+def registry_to_station(registry_station: dict, _id: int) -> StationSchema:
+    station = StationSchema(
+        id=_id,
+        code=registry_station.get("station_id", ""),
+        name=registry_station.get("display_name", ""),
+        network_name=registry_station.get("display_name", ""),
+    )
 
-
-def get_fueltech(duid: str) -> str:
-    if duid in FACILITY_FUELTECHS:
-        return FACILITY_FUELTECHS[duid]
-
-    return None
-
-
-def map_station(registry_station):
-    station = {
-        "name": registry_station.get("display_name", ""),
-        "code": registry_station.get("station_id", ""),
-        "station_code": registry_station.get("station_id", ""),
-        "state": registry_station.get("location", {}).get("state", None),
-        "lat": registry_station.get("location", {}).get("latitude", None),
-        "lng": registry_station.get("location", {}).get("longitude", None),
-        "facilities": [],
-    }
+    station.location = LocationSchema(
+        state=registry_station.get("location", {}).get("state", None),
+        lat=registry_station.get("location", {}).get("latitude", None),
+        lng=registry_station.get("location", {}).get("longitude", None),
+    )
 
     if "duid_data" not in registry_station:
         logger.info(
@@ -43,60 +45,79 @@ def map_station(registry_station):
         return station
 
     for duid, registry_facility in registry_station["duid_data"].items():
-        facility = {
-            # "date_start": "1998-10-25T00:00:00",
-            # "date_end": "2016-03-11T00:00:00",
-            "code": duid,
-            "network_region": registry_station.get("region_id", ""),
-            "station_code": registry_station.get("station_id", ""),
-            "dispatch_type": "GENERATOR",
-            "status": parse_facility_status(
-                map_compat_facility_state(
-                    registry_station.get("status", {}).get("state", "")
-                )
-            ),
-            "fueltech": parse_facility_fueltech(
-                map_compat_fueltech(registry_facility.get("fuel_tech", None))
-            ),
-            "capacity_registered": registry_facility.get(
-                "registered_capacity", None
-            ),
-        }
-        station["facilities"].append(facility)
+        network_region = map_compat_network_region(
+            registry_station.get("region_id", "")
+        )
+
+        facility = FacilitySchema(
+            **{
+                "code": duid,
+                "network": network_from_network_region(network_region),
+                "network_region": network_region,
+                "station_code": registry_station.get("station_id", ""),
+                "dispatch_type": "GENERATOR",
+                "status": parse_facility_status(
+                    map_compat_facility_state(
+                        registry_station.get("status", {}).get("state", "")
+                    )
+                ),
+                "fueltech": parse_facility_fueltech(
+                    map_compat_fueltech(
+                        registry_facility.get("fuel_tech", None)
+                    )
+                ),
+                "capacity_registered": registry_facility.get(
+                    "registered_capacity", None
+                ),
+            }
+        )
+        station.facilities.append(facility)
 
     return station
 
 
-def map_registry(registry):
+def registry_to_stations(registry, start_id: int = 5000) -> StationSet:
 
-    _id = 5000
+    _id = start_id
 
-    registry_mapped = {}
+    stations = StationSet()
 
     for station_code, station in registry.items():
-        _station = map_station(station)
-        _station = {"id": _id, **_station}
+        _station = registry_to_station(station, _id)
 
-        registry_mapped[station_code] = _station
+        if _station:
+            station_existing = stations.get_code(_station.code)
 
-    return registry_mapped
+            if station_existing:
+                logger.info(
+                    "Merging station {} into {}".format(
+                        station_code, station_existing.code
+                    )
+                )
+                station_existing.facilities += _station.facilities
+                continue
+
+            stations.add(_station)
+            _id += 1
+
+    return stations
 
 
-def registry_import():
+def registry_import() -> StationSet:
     registry = load_data("facility_registry.json")
 
-    on_registry = map_registry(registry)
+    on_registry = registry_to_stations(registry)
 
     return on_registry
 
 
 def registry_export():
-    nem_registry = registry_import()
+    stations = registry_import()
 
     with open("data/registry.json", "w") as fh:
-        json.dump(nem_registry, fh, indent=4, cls=OpenNEMJSONEncoder)
+        json.dump(stations, fh, indent=4, cls=OpenNEMJSONEncoder)
 
-    logger.info("Wrote {} records".format(len(nem_registry.keys())))
+    logger.info("Wrote {} records".format(stations.length))
 
 
 if __name__ == "__main__":
