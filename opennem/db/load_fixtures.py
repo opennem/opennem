@@ -248,8 +248,12 @@ def update_existing_geos():
         s.commit()
 
 
-if __name__ == "__main__":
+def load_fixtures():
     load_fueltechs()
     load_facilitystatus()
     load_networks()
     load_bom_stations()
+
+
+if __name__ == "__main__":
+    load_fixtures()
