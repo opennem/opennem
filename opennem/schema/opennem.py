@@ -2,9 +2,8 @@
 
 from datetime import datetime
 from decimal import Decimal
-from typing import List, Optional, Union
+from typing import List, Optional
 
-from geoalchemy2.elements import WKBElement
 from pydantic import BaseModel, validator
 
 from opennem.core.dispatch_type import DispatchType
@@ -19,7 +18,6 @@ from opennem.core.normalizers import (
     station_name_cleaner,
 )
 from opennem.core.oid import get_ocode, get_oid
-from opennem.exporter.encoders import OpenNEMJSONEncoder
 
 
 class OpennemBaseSchema(BaseModel):
