@@ -20,7 +20,18 @@ from opennem.core.normalizers import (
 from opennem.core.oid import get_ocode, get_oid
 
 
-class OpennemBaseSchema(BaseModel):
+class BaseConfig(BaseModel):
+    class Config:
+        orm_mode = True
+        anystr_strip_whitespace = True
+
+        arbitrary_types_allowed = True
+        validate_assignment = True
+
+        json_encoders = {}
+
+
+class OpennemBaseSchema(BaseConfig):
 
     created_by: Optional[str]
     created_at: Optional[datetime]
@@ -28,31 +39,26 @@ class OpennemBaseSchema(BaseModel):
     class Config:
         orm_mode = True
         anystr_strip_whitespace = True
-
-        #
+        use_enum_values = True
         arbitrary_types_allowed = True
-        # validate_assignment = True
+        validate_assignment = True
 
         json_encoders = {}
 
-        # def json_dumps(self):
-        #     print("json", self.__values__)
-        #     return json.dumps(self.__values__, cls=OpenNEMJSONEncoder,)
 
-
-class FueltechSchema(OpennemBaseSchema):
+class FueltechSchema(BaseConfig):
     code: str
     label: str
     renewable: bool
 
 
-class NetworkSchema(OpennemBaseSchema):
+class NetworkSchema(BaseConfig):
     code: str
     country: str
     label: str
 
 
-class FacilityStatusSchema(OpennemBaseSchema):
+class FacilityStatusSchema(BaseConfig):
     code: str
     label: str
 
