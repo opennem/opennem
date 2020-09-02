@@ -28,13 +28,16 @@ class BaseConfig(BaseModel):
         arbitrary_types_allowed = True
         validate_assignment = True
 
-        json_encoders = {}
+        json_encoders = {
+            # datetime: lambda v: v.isotime(),
+            # Decimal: lambda v: float(v),
+        }
 
 
 class OpennemBaseSchema(BaseConfig):
 
     created_by: Optional[str]
-    created_at: Optional[datetime]
+    created_at: Optional[datetime] = datetime.now()
 
     class Config:
         orm_mode = True
