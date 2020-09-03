@@ -52,13 +52,13 @@ class StationSet(UserList):
         pass
 
     def add(self, station: StationSchema):
-        if not station.id:
-            raise Exception("Require a station id")
+        if not station.code:
+            raise Exception("Require a station code")
 
-        _key = station.id
+        _key = station.code
 
-        if self.get(_key):
-            raise Exception("Duplicate id {}".format(_key))
+        if self.get_code(_key):
+            raise Exception("Duplicate code {}".format(_key))
 
         self.data.append(station)
 
