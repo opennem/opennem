@@ -88,7 +88,6 @@ class FacilitySchema(OpennemBaseSchema):
     network: NetworkSchema = NetworkSchema(
         code="NEM", country="au", label="NEM"
     )
-    network_code: str = "NEM"
 
     fueltech: Optional[FueltechSchema]
 
@@ -102,7 +101,6 @@ class FacilitySchema(OpennemBaseSchema):
     active: bool = True
 
     capacity_registered: Optional[float]
-    capacity_maximum: Optional[float]
 
     registered: Optional[datetime]
     deregistered: Optional[datetime]
@@ -114,14 +112,10 @@ class FacilitySchema(OpennemBaseSchema):
     unit_alias: Optional[str]
     unit_capacity: Optional[float]
 
+    # @validator("network")
+
     @validator("capacity_registered")
     def _clean_capacity_regisered(cls, value):
-        value = clean_capacity(value)
-
-        return value
-
-    @validator("capacity_maximum")
-    def _clean_capacity_maximum(cls, value):
         value = clean_capacity(value)
 
         return value
@@ -170,7 +164,7 @@ class LocationSchema(OpennemBaseSchema):
 
 
 class StationSchema(OpennemBaseSchema):
-    id: int
+    id: Optional[int]
 
     participant: Optional[ParticipantSchema] = None
     participant_id: Optional[str]
