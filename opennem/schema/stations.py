@@ -64,6 +64,11 @@ class StationSet(UserList):
 
         return self
 
+    def add_dict(self, station_dict: dict):
+        station = StationSchema(**station_dict)
+
+        self.add(station)
+
     @property
     def length(self) -> int:
         return len(self.data)
