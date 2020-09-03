@@ -284,6 +284,17 @@ version = "4.4.2"
 
 [[package]]
 category = "main"
+description = "Contains asdict and fromdict methods for SQL-Alchemy declarative models"
+name = "dictalchemy"
+optional = false
+python-versions = "*"
+version = "0.1.2.7"
+
+[package.dependencies]
+SQLAlchemy = ">=0.9.4"
+
+[[package]]
+category = "main"
 description = "Dictdiffer is a library that helps you to diff and patch dictionaries."
 name = "dictdiffer"
 optional = false
@@ -1771,7 +1782,7 @@ postgres = ["psycopg2-binary"]
 server = ["fastapi", "uvicorn"]
 
 [metadata]
-content-hash = "ec663dfa4e0d713a4da695d7d0bff8a91600ca1f4acbfae7464858a8fea4cff4"
+content-hash = "675741b16e9ed8ca49b34ae2f7827c3f0ac7d6081e046abd2c6b509aa6930852"
 lock-version = "1.0"
 python-versions = "^3.7"
 
@@ -1921,6 +1932,9 @@ cssselect = [
 decorator = [
     {file = "decorator-4.4.2-py2.py3-none-any.whl", hash = "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760"},
     {file = "decorator-4.4.2.tar.gz", hash = "sha256:e3a62f0520172440ca0dcc823749319382e377f37f140a0b99ef45fecb84bfe7"},
+]
+dictalchemy = [
+    {file = "dictalchemy-0.1.2.7.tar.gz", hash = "sha256:a08b1463b5cd849158c77701da67be4fbb3080de3ad08abb165710aa63987809"},
 ]
 dictdiffer = [
     {file = "dictdiffer-0.8.1-py2.py3-none-any.whl", hash = "sha256:d79d9a39e459fe33497c858470ca0d2e93cb96621751de06d631856adfd9c390"},
