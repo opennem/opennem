@@ -1,13 +1,14 @@
+# pylint: skip-file
 import datetime
 import re
 import time
 from io import BytesIO, StringIO
 
-import pytz
 import requests
-from datadog import statsd
-
 import sentry_sdk
+
+import pytz
+from datadog import statsd
 from dms_daemon import orm
 from dms_daemon.nemweb_reader import NemFile, ZipFileStreamer
 
@@ -86,8 +87,12 @@ def main():
 
     time.sleep(60)
     request_time = datetime.datetime.now()
-    page = get_page(url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/")
-    page2 = get_page(url="http://www.nemweb.com.au/Reports/CURRENT/DispatchIS_Reports/")
+    page = get_page(
+        url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
+    )
+    page2 = get_page(
+        url="http://www.nemweb.com.au/Reports/CURRENT/DispatchIS_Reports/"
+    )
 
     pattern = re.compile(
         "/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_{0}_[0-9]{{16}}.zip".format(
@@ -121,13 +126,18 @@ def dispatch_scada_proc(sf, df):
         try:
             meta = meta_data[row.DUID]
             region = meta[-2]
-            price = df.DISPATCH_PRICE.RRP[df.DISPATCH_PRICE.REGIONID == region].values[0]
+            price = df.DISPATCH_PRICE.RRP[
+                df.DISPATCH_PRICE.REGIONID == region
+            ].values[0]
             scadavalue = row.SCADAVALUE
             meta_pairs = [
-                "{0}:{1}".format(i, j) for i, j in zip(meta_cols.lower().split(","), meta)
+                "{0}:{1}".format(i, j)
+                for i, j in zip(meta_cols.lower().split(","), meta)
             ]
             statsd.gauge("unit.power", scadavalue, tags=meta_pairs)
-            statsd.gauge("unit.marketvalue", scadavalue * price / 12.0, tags=meta_pairs)
+            statsd.gauge(
+                "unit.marketvalue", scadavalue * price / 12.0, tags=meta_pairs
+            )
         except:
             print("missing")
             pass
@@ -150,10 +160,14 @@ def dispatch_file_proc(df):
             tags=["regionid:{0}".format(row.REGIONID)],
         )
         statsd.gauge(
-            "dispatch.price", row.RRP, tags=["regionid:{0}".format(row.REGIONID)]
+            "dispatch.price",
+            row.RRP,
+            tags=["regionid:{0}".format(row.REGIONID)],
         )
         statsd.gauge(
-            "dispatch.marketvalue", row.VALUE, tags=["regionid:{0}".format(row.REGIONID)]
+            "dispatch.marketvalue",
+            row.VALUE,
+            tags=["regionid:{0}".format(row.REGIONID)],
         )
 
 
@@ -176,7 +190,8 @@ def capacity():
         value = cap_data[duid][0]
         meta = meta_data[duid]
         meta_pairs = [
-            "{0}:{1}".format(i, j) for i, j in zip(meta_cols.lower().split(","), meta)
+            "{0}:{1}".format(i, j)
+            for i, j in zip(meta_cols.lower().split(","), meta)
         ]
         statsd.gauge("unit.capacity", value, meta_pairs)
 
@@ -190,8 +205,12 @@ def main_test():
     time.sleep(60)
     request_time = datetime.datetime.now()
 
-    page = get_page(url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/")
-    page2 = get_page(url="http://www.nemweb.com.au/Reports/CURRENT/DispatchIS_Reports/")
+    page = get_page(
+        url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
+    )
+    page2 = get_page(
+        url="http://www.nemweb.com.au/Reports/CURRENT/DispatchIS_Reports/"
+    )
 
     pattern = re.compile(
         "/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_{0}_[0-9]{{16}}.zip".format(

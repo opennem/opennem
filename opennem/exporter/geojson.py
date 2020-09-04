@@ -1,12 +1,17 @@
-import csv
+import logging
+
+from pydantic import ValidationError
 
 from geojson import Feature, FeatureCollection, Point, dumps
 from opennem.controllers.stations import get_stations
 from opennem.core.facility_duid_map import duid_is_retired
 from opennem.db import get_database_session
 from opennem.exporter.encoders import OpenNEMGeoJSONEncoder
+from opennem.schema.opennem import StationSchema
 
 __all__ = ["stations_geojson_serialize"]
+
+logger = logging.getLogger(__name__)
 
 
 def stations_geojson_records():
@@ -51,7 +56,7 @@ def stations_geojson_records():
             if duid_is_retired(facility.code):
                 continue
 
-            if facility.active == False:
+            if facility.active is False:
                 continue
 
             f.properties["duid_data"].append(
@@ -85,13 +90,86 @@ def stations_geojson_records():
     return records
 
 
-def stations_geojson_serialize():
+def stations_geojson_records_json(stations: List[StationSchema]):
+    records = []
+
+    for station in stations:
+
+        geom = None
+
+        if not station.facilities:
+            continue
+
+        if station.lat and station.lng:
+            geom = Point((station.lng, station.lat))
+
+        f = Feature(geometry=geom)
+
+        f.properties = {
+            # "oid": station.oid,
+            # "ocode": station.ocode,
+            "station_id": station.id,
+            "station_code": station.code,
+            "facility_id": station.code,
+            "network": station.facilities[0].network.label,
+            "network_country": station.facilities[0].network.country,
+            "state": station.state,
+            "postcode": station.postcode,
+            "name": station.name,
+            "capacity_registered": station.capacity_registered,
+            # "capacity_aggregate": station.capacity_aggregate,
+            "duid_data": [],
+        }
+
+        for facility in station.facilities:
+            if facility.fueltech is None:
+                continue
+
+            if facility.status is None:
+                continue
+
+            if duid_is_retired(facility.code):
+                continue
+
+            if facility.active is False:
+                continue
+
+            f.properties["duid_data"].append(
+                {
+                    # "oid": facility.oid,
+                    # "duid": facility.duid,
+                    "fuel_tech": facility.fueltech.code,
+                    "fuel_tech_label": facility.fueltech.label,
+                    "fuel_tech_renewable": facility.fueltech.renewable,
+                    "commissioned_date": facility.registered,
+                    "decommissioned_date": facility.deregistered,
+                    "status": facility.status.code,
+                    "status_label": facility.status.label,
+                    "unit_id": facility.unit_id,
+                    "unit_number": facility.unit_number,
+                    "unit_size": facility.unit_capacity,
+                    "unit_alias": facility.unit_alias,
+                    # capacities for the unit
+                    "capacity_registered": facility.capacity_registered,
+                    # "capacity_aggregate": facility.capacity_aggregate,
+                    # network specific fields (DUID is one)
+                    "network_region": facility.network_region,
+                }
+            )
+
+        if len(f.properties["duid_data"]) > 0:
+            records.append(f)
+
+    return records
+
+
+def stations_geojson_serialize(stations: List[StationSchema]):
     crs = {
         "type": "name",
         "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"},
     }
 
-    stations = stations_geojson_records()
+    stations = stations_geojson_records_json(stations)
 
     geoj = FeatureCollection(stations, crs=crs, name="opennem")
 

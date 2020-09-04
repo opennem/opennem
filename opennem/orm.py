@@ -1,3 +1,4 @@
+# pylint: skip-file
 import datetime
 import glob
 from time import time

@@ -1,6 +1,23 @@
 import logging
 
+from opennem.db.load_fixtures import load_fixture
+
 logger = logging.getLogger(__name__)
+
+
+def load_statuses() -> dict:
+    statuses = load_fixture("facility_status.json")
+
+    status_dict = {}
+
+    for s in statuses:
+        _code = s.get("code", None)
+        status_dict[_code] = s
+
+    return status_dict
+
+
+FACILITY_STATUS_FIXTURE = load_statuses()
 
 
 def map_aemo_facility_status(facility_status: str) -> str:
@@ -31,3 +48,10 @@ def map_aemo_facility_status(facility_status: str) -> str:
             unit_status
         )
     )
+
+
+def parse_facility_status(status_code: str) -> dict:
+    if status_code not in FACILITY_STATUS_FIXTURE.keys():
+        raise Exception("Invalid facility status: {}".format(status_code))
+
+    return FACILITY_STATUS_FIXTURE[status_code]

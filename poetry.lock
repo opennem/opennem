@@ -284,6 +284,20 @@ version = "4.4.2"
 
 [[package]]
 category = "main"
+description = "Dictdiffer is a library that helps you to diff and patch dictionaries."
+name = "dictdiffer"
+optional = false
+python-versions = "*"
+version = "0.8.1"
+
+[package.extras]
+all = ["Sphinx (>=1.4.4)", "sphinx-rtd-theme (>=0.1.9)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "tox (>=3.7.0)", "numpy (>=1.11.0)"]
+docs = ["Sphinx (>=1.4.4)", "sphinx-rtd-theme (>=0.1.9)"]
+numpy = ["numpy (>=1.11.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "tox (>=3.7.0)"]
+
+[[package]]
+category = "main"
 description = "DNS toolkit"
 name = "dnspython"
 optional = false
@@ -967,7 +981,7 @@ six = "*"
 category = "main"
 description = "psycopg2 - Python-PostgreSQL Database Adapter"
 name = "psycopg2"
-optional = false
+optional = true
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 version = "2.8.5"
 
@@ -1347,23 +1361,6 @@ version = "0.3.3"
 
 [package.dependencies]
 botocore = ">=1.12.36,<2.0a.0"
-
-[[package]]
-category = "main"
-description = "Automatic version tracking for SQLAlchemy + PostgreSQL (based on versionalchemy)"
-name = "savage"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4"
-version = "1.0.0"
-
-[package.dependencies]
-SQLAlchemy = ">=1.0"
-psycopg2 = ">=2.7"
-six = ">=1.12.0"
-
-[package.extras]
-dev = ["pytest", "pytest-cov", "pytest-mock", "autopep8 (>=1.4.4)", "flake8", "ipython", "isort (>=4.3.21)", "pip-tools", "pylint", "black (>=18.0.b0,<19)"]
-test = ["pytest", "pytest-cov", "pytest-mock"]
 
 [[package]]
 category = "main"
@@ -1774,7 +1771,7 @@ postgres = ["psycopg2-binary"]
 server = ["fastapi", "uvicorn"]
 
 [metadata]
-content-hash = "989e3f4b7a0c5127eeb3109a64015bc608d78645167724fe07a36b10b24dabfe"
+content-hash = "ec663dfa4e0d713a4da695d7d0bff8a91600ca1f4acbfae7464858a8fea4cff4"
 lock-version = "1.0"
 python-versions = "^3.7"
 
@@ -1924,6 +1921,10 @@ cssselect = [
 decorator = [
     {file = "decorator-4.4.2-py2.py3-none-any.whl", hash = "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760"},
     {file = "decorator-4.4.2.tar.gz", hash = "sha256:e3a62f0520172440ca0dcc823749319382e377f37f140a0b99ef45fecb84bfe7"},
+]
+dictdiffer = [
+    {file = "dictdiffer-0.8.1-py2.py3-none-any.whl", hash = "sha256:d79d9a39e459fe33497c858470ca0d2e93cb96621751de06d631856adfd9c390"},
+    {file = "dictdiffer-0.8.1.tar.gz", hash = "sha256:1adec0d67cdf6166bda96ae2934ddb5e54433998ceab63c984574d187cc563d2"},
 ]
 dnspython = [
     {file = "dnspython-2.0.0-py3-none-any.whl", hash = "sha256:40bb3c24b9d4ec12500f0124288a65df232a3aa749bb0c39734b782873a2544d"},
@@ -2489,9 +2490,6 @@ rx = [
 s3transfer = [
     {file = "s3transfer-0.3.3-py2.py3-none-any.whl", hash = "sha256:2482b4259524933a022d59da830f51bd746db62f047d6eb213f2f8855dcb8a13"},
     {file = "s3transfer-0.3.3.tar.gz", hash = "sha256:921a37e2aefc64145e7b73d50c71bb4f26f46e4c9f414dc648c6245ff92cf7db"},
-]
-savage = [
-    {file = "savage-1.0.0.tar.gz", hash = "sha256:bec074380a2fd5e646803b40474b52e96ee9ecf9b913fabaeab6c9522699a321"},
 ]
 scrapy = [
     {file = "Scrapy-2.2.1-py2.py3-none-any.whl", hash = "sha256:d9d898739f199bd9f9e2258770d5bfeeb754b6ed4eb84a41c04fd52e9649266d"},

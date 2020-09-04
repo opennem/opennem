@@ -11,17 +11,38 @@ from opennem.core.normalizers import (
     station_name_cleaner,
 )
 
-from .opennem import OpennemBaseModel
 
-__all__ = ["OpennemStationSubmission", "OpennemStation"]
+class MMSBase(BaseModel):
+    class Config:
+        orm_mode = True
+        anystr_strip_whitespace = True
 
 
-class OpennemStationSubmission(BaseModel):
+class MMSParticipant(MMSBase):
+    code: Optional[str]
+    name: str
+    country: str = "au"
+    abn: Optional[str]
+
+    @classmethod
+    @validator("code")
+    def code_clean(cls, v):
+        return normalize_duid(v)
+
+    @classmethod
+    @validator("name")
+    def name_clean(cls, v):
+        name = participant_name_filter(v)
+
+        return name
+
+
+class MMSStation(MMSBase):
     name: str
     network_id: str
 
 
-class OpennemStation(OpennemBaseModel):
+class MMSFacility(MMSBase):
     code: Optional[str]
     name: str
 

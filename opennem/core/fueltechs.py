@@ -97,7 +97,7 @@ def lookup_fueltech(
     ttd = clean_fueltech(techtype_desc)
     dispatch_type = dispatch_type.strip().lower()
 
-    if not dispatch_type in ["generator", "load"]:
+    if dispatch_type not in ["generator", "load"]:
         raise Exception("Invalid dispatch type: {}".format(dispatch_type))
 
     lookup_set = tuple([ft, ftd, tt, ttd, dispatch_type])

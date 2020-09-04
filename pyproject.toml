@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem"
-version = "2.0.0-alpha.9"
+version = "3.0.0-alpha.14"
 description = "opennem engine agent"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 license = "MIT"
@@ -44,6 +44,7 @@ uvicorn = {version = "^0.11.7", optional = true}
 fastapi = {extras = ["all"], version = "^0.60.1", optional = true}
 shapely = "^1.7.0"
 pyyaml = "^5.3.1"
+dictdiffer = "^0.8.1"
 
 [tool.poetry.dev-dependencies]
 black = "19.10b0"
@@ -59,6 +60,7 @@ pytest-watch = "^4.2.0"
 mypy = "^0.782"
 mdutils = "^1.2.2"
 sqlalchemy-stubs = "^0.3"
+pycodestyle = "^2.6.0"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'

@@ -27,28 +27,49 @@ class TestUnitCodes(object):
         station_name = "Portland"
 
         unit_code = get_unit_code(unit, duid, station_name)
-        assert unit_code == "0NPOR_1", "Unit code is right with no duid"
+        assert unit_code == "0NPORT_1", "Unit code is right with no duid"
 
     def test_basecode(self):
         station_name = "Pioneer Sugar Mill"
         subject = get_basecode(station_name)
 
-        assert subject == "0NPSM", "Pioneer sugar mill becomes 0NPSM"
+        assert subject == "0NPISUMI", "Pioneer sugar mill becomes 0NPISUMI"
 
     def test_basecode_single_word(self):
         station_name = "Portland"
         subject = get_basecode(station_name)
 
-        assert subject == "0NPOR", "Portland becomes 0NPOR"
+        assert subject == "0NPORT", "Portland becomes 0NPOR"
 
     def test_basecode_five_words(self):
         station_name = "Portland Portland Portland Portland Portland"
         subject = get_basecode(station_name)
 
-        assert subject == "0NPPPP", "Portland becomes 0NPPPP"
+        assert subject == "0NPPPPP", "Portland becomes 0NPPPP"
 
     def test_is_temp_ocode(self):
         ocode = "0NPSM"
         subject = duid_is_ocode(ocode)
 
         assert subject == True, "0NPSM is an ocode"
+
+    def test_basecode_brackets(self):
+        subject = get_basecode("Snowy River Scheme (Unit)")
+
+        assert subject == "0NSRSU", "Parses out junk characters correctly"
+
+    def test_basecode_periods(self):
+        subject = get_basecode("Snowy River Scheme 2.0")
+
+        assert subject == "0NSRS20", "Parses out junk characters correctly"
+
+    def test_short(self):
+        subject = get_basecode("Todae DHP")
+
+        assert subject == "0NTODDHP", "Attaches acronyms correctly "
+
+    def test_uniqueness(self):
+        subject_1 = get_basecode("Todae La Trobe University Bendigo")
+        subject_2 = get_basecode("Todae Solar - Nillumbik")
+
+        assert subject_1 != subject_2, "These two should be unique basecodes"

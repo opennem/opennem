@@ -14,8 +14,11 @@ from datetime import timedelta
 from itertools import chain
 from operator import itemgetter
 from pprint import pprint
+from typing import List
 
 from mdutils.mdutils import MdUtils
+
+from opennem.core.loader import load_data
 
 from .loader import load_current, load_registry
 
@@ -94,13 +97,23 @@ def report_changed_capacities(registry_units, current_units):
     return renames
 
 
+def records_diff(
+    subject: List[object], comparitor: List[object], key: str = "code"
+) -> List[str]:
+    diff_keys = list(
+        set([getattr(i, key) for i in subject])
+        - set([getattr(i, key) for i in comparitor])
+    )
+
+    diff_records = list(
+        filter(lambda x: getattr(x, key) in diff_keys, subject)
+    )
+
+    return diff_records
+
+
 def station_in_registry_not_in_new(registry, current):
-    registry_station_codes = [station.code for station in registry]
-    current_station_codes = [station.code for station in current]
-
-    diff = list(set(registry_station_codes) - set(current_station_codes))
-
-    diff_stations = list(filter(lambda x: x.code in diff, registry))
+    diff_stations = records_diff(registry, current)
 
     list_table = ["Name", "Code", "Facilities"]
 
@@ -113,21 +126,21 @@ def station_in_registry_not_in_new(registry, current):
 
 
 def stations_in_new_not_in_registry(registry, current):
-    registry_station_codes = [station.code for station in registry]
-    current_station_codes = [station.code for station in current]
-
-    diff = list(set(current_station_codes) - set(registry_station_codes))
-
-    diff_stations = list(filter(lambda x: x.code in diff, current))
+    diff_stations = records_diff(current, registry)
 
     list_table = ["Name", "Code", "Facilities"]
 
     [
-        list_table.extend([i.name, str(i.code), str(len(i.facilities))])
+        list_table.extend(
+            [i.name, str(i.code) if i.code else "", str(len(i.facilities))]
+        )
         for i in diff_stations
     ]
 
     return list_table
+
+
+get_num_rows = lambda records, columns: int(len(records) / columns)
 
 
 def run_diff():
@@ -135,6 +148,10 @@ def run_diff():
 
     registry = load_registry()
     current = load_current()
+
+    nem_mms = load_data("mms.json", True)
+    nem_gi = load_data("nem_gi.json", True)
+    nem_rel = load_data("rel.json", True)
 
     registry_units = list(chain(*[s.facilities for s in registry]))
     current_units = list(chain(*[s.facilities for s in current]))
@@ -186,54 +203,25 @@ def run_diff():
     # Old stations not in new
     md.new_header(level=1, title="Stations not in current")
     not_in_news = station_in_registry_not_in_new(registry, current)
-    md.new_table(columns=3, rows=int(len(not_in_news) / 3), text=not_in_news)
+    md.new_table(
+        columns=3,
+        rows=get_num_rows(not_in_news, 3),
+        text=not_in_news,
+        text_align="left",
+    )
 
     # Old stations not in new
     md.new_header(level=1, title="New Stations")
     not_in_registry = stations_in_new_not_in_registry(registry, current)
     md.new_table(
-        columns=3, rows=int(len(not_in_registry) / 3), text=not_in_registry
+        columns=3,
+        rows=get_num_rows(not_in_registry, 3),
+        text=not_in_registry,
+        text_align="left",
     )
 
     md.new_table_of_contents(table_title="Contents", depth=2)
     md.create_md_file()
-
-
-def run_diff_old():
-    current = load_registry()
-    v3 = load_current()
-
-    current_stations = list(set([i[1] for i in current]))
-    v3_stations = list(set([i[2] for i in v3]))
-    current_stations_names = list(set([i[0] for i in current]))
-    v3_stations_names = list(set([i[0] for i in v3]))
-
-    add(" ## Station codes in current not in v3")
-    add("")
-    add(list(set(current_stations) - set(v3_stations)), True)
-    add(" ## Stations in current not in v3")
-    add("")
-    add(list(set(current_stations_names) - set(v3_stations_names)), True)
-    add(" # Facility duids in current not in v3")
-    add("")
-
-    facility_duid_diff = list(
-        set([i[4] for i in current]) - set([i[5] for i in v3])
-    )
-
-    add(facility_duid_diff, True)
-
-    add(" # Fueltech Changes")
-    add("")
-
-    facility_duid_diff = list(
-        set([(i[4], i[5]) for i in current]) - set([(i[5], i[6]) for i in v3])
-    )
-
-    add(facility_duid_diff, True)
-
-    with open("data/diff_report.md", "w") as fh:
-        fh.write("\n".join(markdown_report))
 
 
 if __name__ == "__main__":

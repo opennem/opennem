@@ -1,0 +1,24 @@
+{
+  "label": "pylint: whole project",
+  "type": "shell",
+  "command": ".venv/bin/pylint --msg-template \"{path}:{line}:{column}:{category}:{symbol} - {msg}\" opennem",
+  "windows": {
+    "command": ".venv/Scripts/pylint --msg-template \"{path}:{line}: {column}:{category}:{symbol} - {msg}\" opennem"
+  },
+  "presentation": {
+    "reveal": "never",
+    "panel": "shared"
+  },
+  "problemMatcher": {
+    "owner": "python",
+    "fileLocation": ["relative", "${workspaceFolder}"],
+    "pattern": {
+      "regexp": "^(.+):(\\d+):(\\d+):(\\w+):(.*)$",
+      "file": 1,
+      "line": 2,
+      "column": 3,
+      "severity": 4,
+      "message": 5
+    }
+  }
+}

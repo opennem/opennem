@@ -2,8 +2,15 @@ import enum
 
 
 class DispatchType(enum.Enum):
-    GENERATOR = 1
-    LOAD = 2
+    GENERATOR = "GENERATOR"
+    LOAD = "LOAD"
+
+
+def dispatch_type_string(dispatch_type: DispatchType) -> str:
+    if dispatch_type == DispatchType.GENERATOR:
+        return "GENERATOR"
+
+    return "LOAD"
 
 
 def parse_dispatch_type(dispatch_string: str):

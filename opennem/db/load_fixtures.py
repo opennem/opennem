@@ -74,7 +74,6 @@ def load_fueltechs():
 
     for fueltech in fixture:
         ft = FuelTech(
-            created_by="opennem.fixture",
             code=fueltech["code"],
             label=fueltech["label"],
             renewable=fueltech["renewable"],
@@ -93,11 +92,7 @@ def load_facilitystatus():
     s = session()
 
     for status in fixture:
-        ft = FacilityStatus(
-            created_by="opennem.fixture",
-            code=status["code"],
-            label=status["label"],
-        )
+        ft = FacilityStatus(code=status["code"], label=status["label"],)
 
         try:
             s.add(ft)
@@ -113,7 +108,6 @@ def load_networks():
 
     for network in fixture:
         ft = Network(
-            created_by="opennem.fixture",
             code=network["code"],
             label=network["label"],
             country=network["country"],
@@ -254,8 +248,12 @@ def update_existing_geos():
         s.commit()
 
 
-if __name__ == "__main__":
+def load_fixtures():
     load_fueltechs()
     load_facilitystatus()
     load_networks()
     load_bom_stations()
+
+
+if __name__ == "__main__":
+    load_fixtures()

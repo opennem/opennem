@@ -90,6 +90,7 @@ STRIP_WORDS = [
     "run of river",
     "and",
     "bess",
+    "h2e",
     "bess1",
     "gen",
     "gt",
@@ -122,6 +123,7 @@ ACRONYMS = [
     "jl",
     "uom",
     "agl",
+    "nawma",
 ]
 
 
@@ -142,6 +144,8 @@ def normalize_whitespace(subject: str) -> str:
 def is_number(value: Union[str, int]) -> bool:
     if type(value) is int:
         return True
+
+    value = str(value)
 
     if re.match(__is_number, value):
         return True
@@ -179,7 +183,10 @@ def normalize_duid(duid: str) -> str:
     duid = duid or ""
 
     # @TODO replace with regexp that removes junk
-    duid = duid.strip().replace("-", "")
+    duid = duid.strip()
+
+    if duid == "-":
+        return ""
 
     return duid
 
@@ -315,7 +322,15 @@ def station_name_cleaner(facility_name: str) -> str:
     if station_map_name(name_clean) != name_clean:
         return station_map_name(name_clean)
 
+    # uom special case
     name_clean = name_clean.replace("UOM ", "UoM ")
+
+    # todae special case
+    todae_match = re.match(r"^(Todae)\ (.*)", name_clean)
+    if todae_match:
+        todae_name, todae_rest = todae_match.groups()
+
+        name_clean = "{} ({})".format(todae_rest, todae_name)
 
     return name_clean
 
@@ -335,13 +350,24 @@ def participant_name_filter(participant_name: str) -> str:
     return _p.strip()
 
 
-def clean_capacity(capacity: Union[str, int, float]) -> Optional[float]:
+def clean_capacity(
+    capacity: Union[str, int, float], round_to: int = 6
+) -> Optional[float]:
+    """
+        Takes a capacity and cleans it up into a float
+
+        @TODO support unit conversion
+    """
     cap_clean = None
 
-    if capacity == None:
+    if capacity is None:
         return None
 
-    if type(capacity) == str:
+    # Type gating float, string, int, others ..
+    if type(capacity) is float:
+        cap_clean = capacity
+
+    elif type(capacity) == str:
         cap_clean = strip_whitespace(capacity)
 
         if "-" in cap_clean:
@@ -369,9 +395,9 @@ def clean_capacity(capacity: Union[str, int, float]) -> Optional[float]:
             )
         )
 
-    if cap_clean == None:
+    if cap_clean is None:
         return None
 
-    cap_clean = round(cap_clean, 6)
+    cap_clean = round(cap_clean, round_to)
 
     return cap_clean

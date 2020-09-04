@@ -4,3 +4,4 @@
 .pylintrc
 .vscode
 .env*
+pyproject.toml

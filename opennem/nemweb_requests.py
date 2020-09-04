@@ -1,13 +1,14 @@
+# pylint: skip-file
 import datetime
 import os
 import re
 import time
 from io import BytesIO, StringIO
 
-import pandas as pd
 import requests
 from sqlalchemy.exc import IntegrityError
 
+import pandas as pd
 from dms_daemon import CONFIG, live, orm
 from dms_daemon.market_notice_reader import check_notice
 from dms_daemon.nemweb_reader import NemFile, ZipFileStreamer
@@ -36,8 +37,12 @@ def get_zip(
     return BytesIO(response.content)
 
 
-def last_date(table="DISPATCH_UNIT_SCADA", column="SETTLEMENTDATE", db="nemweb_live"):
-    cursor = orm.engine2.execute("SELECT MAX({1}) FROM {0}".format(table, column))
+def last_date(
+    table="DISPATCH_UNIT_SCADA", column="SETTLEMENTDATE", db="nemweb_live"
+):
+    cursor = orm.engine2.execute(
+        "SELECT MAX({1}) FROM {0}".format(table, column)
+    )
     return cursor.fetchall()[0][0]
 
 
@@ -96,7 +101,9 @@ def dispatch_scada():
 
 def rooftop_actual():
     d = last_date(table="ROOFTOP_ACTUAL", column="INTERVAL_DATETIME")
-    page = get_page(link="http://www.nemweb.com.au/Reports/Current/ROOFTOP_PV/ACTUAL/")
+    page = get_page(
+        link="http://www.nemweb.com.au/Reports/Current/ROOFTOP_PV/ACTUAL/"
+    )
     tables = ["ROOFTOP_ACTUAL"]
 
     pattern = re.compile(
@@ -122,7 +129,9 @@ def rooftop_actual():
 
 def dispatch_unit_solution():
     d = last_date(table="DISPATCH_UNIT_SOLUTION")
-    page = get_page(link="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/")
+    page = get_page(
+        link="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/"
+    )
     tables = ["DISPATCH_UNIT_SOLUTION"]
 
     pattern = re.compile(
@@ -169,9 +178,13 @@ def dispatch_unit_duplicate(
 
 def metered_data_gen_duid():
     d = last_date(table="METER_DATA_GEN_DUID", column="INTERVAL_DATETIME")
-    last_trading_day = datetime.datetime(d.year, d.month, d.day) - datetime.timedelta(1)
+    last_trading_day = datetime.datetime(
+        d.year, d.month, d.day
+    ) - datetime.timedelta(1)
 
-    page = get_page(link="http://www.nemweb.com.au/Reports/Current/Next_Day_Actual_Gen/")
+    page = get_page(
+        link="http://www.nemweb.com.au/Reports/Current/Next_Day_Actual_Gen/"
+    )
     tables = ["METER_DATA_GEN_DUID"]
 
     pattern = re.compile(
@@ -190,7 +203,9 @@ def metered_data_gen_duid():
 
 
 def rooftop_forecast(d):
-    page = get_page(link="http://www.nemweb.com.au/Reports/Current/ROOFTOP_PV/FORECAST/")
+    page = get_page(
+        link="http://www.nemweb.com.au/Reports/Current/ROOFTOP_PV/FORECAST/"
+    )
     tables = ["ROOFTOP_FORECAST"]
 
     pattern = re.compile(
@@ -220,8 +235,14 @@ def rooftop_forecast_duplicate():
 
 def dispatch_is():
     d = last_date(table="DISPATCH_PRICE")
-    page = get_page(link="http://www.nemweb.com.au/Reports/CURRENT/DispatchIS_Reports/")
-    tables = ["DISPATCH_PRICE", "DISPATCH_REGIONSUM", "DISPATCH_INTERCONNECTORRES"]
+    page = get_page(
+        link="http://www.nemweb.com.au/Reports/CURRENT/DispatchIS_Reports/"
+    )
+    tables = [
+        "DISPATCH_PRICE",
+        "DISPATCH_REGIONSUM",
+        "DISPATCH_INTERCONNECTORRES",
+    ]
 
     pattern = re.compile(
         "/Reports/CURRENT/DispatchIS_Reports/PUBLIC_DISPATCHIS_([0-9]{12})_[0-9]{16}.zip"
@@ -240,8 +261,14 @@ def dispatch_is():
 
 def trading_is():
     d = last_date(table="TRADING_PRICE")
-    page = get_page(link="http://www.nemweb.com.au/Reports/CURRENT/TradingIS_Reports/")
-    tables = ["TRADING_PRICE", "TRADING_REGIONSUM", "TRADING_INTERCONNECTORRES"]
+    page = get_page(
+        link="http://www.nemweb.com.au/Reports/CURRENT/TradingIS_Reports/"
+    )
+    tables = [
+        "TRADING_PRICE",
+        "TRADING_REGIONSUM",
+        "TRADING_INTERCONNECTORRES",
+    ]
 
     pattern = re.compile(
         "/Reports/CURRENT/TradingIS_Reports/PUBLIC_TRADINGIS_([0-9]{12})_[0-9]{16}.zip"
@@ -284,7 +311,9 @@ def bidoffer_energy():
 
 def bidoffer_fcas():
     d = datetime.datetime(2017, 7, 31)
-    page = get_page(link="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Offer_FCAS/")
+    page = get_page(
+        link="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Offer_FCAS/"
+    )
     tables = ["OFFER_BIDDAYOFFER", "OFFER_BIDPEROFFER"]
 
     pattern = re.compile(
@@ -308,11 +337,15 @@ def seqno_to_dt(x):
     month = int(x[4:6])
     day = int(x[6:8])
     ti = int(x[-2:])
-    return datetime.datetime(year, month, day, 4) + ti * datetime.timedelta(0, 1800)
+    return datetime.datetime(year, month, day, 4) + ti * datetime.timedelta(
+        0, 1800
+    )
 
 
 def predispatch():
-    d = last_date(table="PREDISPATCH_REGION_SOLUTION", column="PREDISPATCHSEQNO")
+    d = last_date(
+        table="PREDISPATCH_REGION_SOLUTION", column="PREDISPATCHSEQNO"
+    )
     # d = datetime.datetime(2020,1,30)
     d = seqno_to_dt(d)
     page = get_page(
@@ -336,7 +369,9 @@ def predispatch():
 
 
 def market_notices():
-    page = get_page(link="http://www.nemweb.com.au/Reports/Current/Market_Notice/")
+    page = get_page(
+        link="http://www.nemweb.com.au/Reports/Current/Market_Notice/"
+    )
 
     pattern = re.compile(
         "/Reports/Current/Market_Notice/NEMITWEB1_MKTNOTICE_([0-9]{8}).R([0-9]{5})"
@@ -358,7 +393,9 @@ def market_notices():
 
         else:
             print(filename)
-            response = requests.get("http://www.nemweb.com.au{0}".format(match.group(0)))
+            response = requests.get(
+                "http://www.nemweb.com.au{0}".format(match.group(0))
+            )
             with open(filename, "wb") as f:
                 f.write(response.content)
             check_notice(filename)

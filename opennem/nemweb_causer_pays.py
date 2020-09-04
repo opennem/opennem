@@ -1,10 +1,11 @@
+# pylint: skip-file
 import datetime
 import re
 
-import pandas as pd
 import requests
 from sqlalchemy import exc
 
+import pandas as pd
 from dms_daemon import CONFIG, nemweb_requests, orm
 
 
@@ -58,7 +59,13 @@ def insert_fcas(csvs, table="fcas_201802"):
             parse_dates=[0],
             index_col=[0],
             header=None,
-            names=["SETTLEMENTDATE", "ELEMENT_ID", "VARIABLE_ID", "VALUE", "QUALITY"],
+            names=[
+                "SETTLEMENTDATE",
+                "ELEMENT_ID",
+                "VARIABLE_ID",
+                "VALUE",
+                "QUALITY",
+            ],
         )
 
         if df.index.dtype.name == "object":
@@ -135,14 +142,17 @@ def create_table(table_str="fcas_201801"):
 
 
 def auto_table(error_msg):
-    pattern = re.compile("Table 'nemweb_causer_pays.(fcas_[0-9]{6})' doesn't exist")
+    pattern = re.compile(
+        "Table 'nemweb_causer_pays.(fcas_[0-9]{6})' doesn't exist"
+    )
     match = pattern.match(error_msg)
     if len(match.groups()) == 1:
         create_table(match.group(1))
         slack_dms_webhook("Created new table: {0}".format(match.group(1)))
     else:
         raise Exception(
-            "Auto_table error: wrong table name format", match.group(0).split("'")[1]
+            "Auto_table error: wrong table name format",
+            match.group(0).split("'")[1],
         )
 
 
