@@ -13,6 +13,7 @@ from opennem.core.loader import load_data
 from opennem.core.normalizers import station_name_cleaner
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.opennem import StationSchema
+from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.mms")
 
@@ -380,7 +381,12 @@ def mms_import():
     tables = operatingstatus_grouper(tables)
     tables = dudetail_grouper(tables)
 
-    mms = tables["mms"]
+    _mms = tables["mms"]
+
+    mms = StationSet()
+
+    for s in _mms.values():
+        mms.add_dict(s)
 
     return mms
 

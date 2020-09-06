@@ -10,9 +10,11 @@
 from decimal import Decimal
 from typing import Optional
 
+from dictalchemy import DictableModel
 from geoalchemy2 import Geometry
 from shapely import wkb
 from sqlalchemy import (
+    JSON,
     Boolean,
     Column,
     Date,
@@ -38,7 +40,7 @@ from sqlalchemy.sql import func
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
 
-Base = declarative_base()
+Base = declarative_base(cls=DictableModel)
 metadata = Base.metadata
 
 
@@ -142,6 +144,50 @@ class Participant(Base, BaseModel):
     network_code = Column(Text)
     country = Column(Text)
     abn = Column(Text)
+
+
+class Revisions(Base, BaseModel):
+
+    __tablename__ = "revisions"
+
+    id = Column(
+        Integer,
+        Sequence("seq_revision_id", start=1000, increment=1),
+        primary_key=True,
+    )
+
+    schema = Column(Text, nullable=False, index=True)
+    code = Column(Text, nullable=False, index=True)
+    data = Column(JSON)
+
+    approved = Column(Boolean, default=False)
+    approved_by = Column(Text)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class Location(Base):
+    __tablename__ = "location"
+
+    id = Column(
+        Integer, Sequence("seq_location_id", start=1000), primary_key=True
+    )
+
+    # station_id = Column(Integer, ForeignKey("station.id"))
+
+    address1 = Column(Text)
+    address2 = Column(Text)
+    locality = Column(Text)
+    state = Column(Text)
+    postcode = Column(Text, nullable=True)
+
+    # Geo fields
+    place_id = Column(Text, nullable=True, index=True)
+    geocode_approved = Column(Boolean, default=False)
+    geocode_skip = Column(Boolean, default=False)
+    geocode_processed_at = Column(DateTime, nullable=True)
+    geocode_by = Column(Text, nullable=True)
+    geom = Column(Geometry("POINT", srid=4326))
+    boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
 
 
 class Station(Base, BaseModel):
