@@ -28,6 +28,7 @@ from opennem.core.unit_codes import get_basecode, get_unit_code
 from opennem.core.unit_parser import parse_unit_duid
 from opennem.db.load_fixtures import load_fixture
 from opennem.exporter.encoders import OpenNEMJSONEncoder
+from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.gi")
 
@@ -292,7 +293,12 @@ def gi_import():
     nem_gi = load_gi()
     nem_gi = gi_grouper(nem_gi, mms_duid_station_map)
 
-    return nem_gi
+    gi = StationSet()
+
+    for r in nem_gi.values():
+        gi.add_dict(r)
+
+    return gi
 
 
 def gi_export():
