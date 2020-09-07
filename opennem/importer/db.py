@@ -1,7 +1,9 @@
 import logging
+import re
 from datetime import datetime
 from pprint import pprint
 
+from pydantic import BaseModel
 from sqlalchemy.orm.session import make_transient
 
 from opennem.core.loader import load_data
@@ -35,18 +37,63 @@ def create_revision(model):
     return clone_model
 
 
-def db_test():
+def get_schema_name(record: object) -> str:
+    class_name = str(record.__class__.__name__)
+
+    class_name = re.sub("Schema", "", class_name)
+
+    class_name = class_name.lower()
+
+    return class_name
+
+
+def revision_factory(
+    record: BaseModel, field_name: str, created_by: str, revision_data={}
+) -> bool:
+    s = session()
+
+    field_type = get_schema_name(record)
+    field_value = getattr(record, field_name)
+
+    if not record.code:
+        raise Exception("Require a code to create a revision")
+
+    revision_lookup = (
+        s.query(Revision)
+        .filter(Revision.schema == field_type)
+        .filter(Revision.code == record.code)
+        .filter(Revision.data[field_name].as_string() == field_value)
+        .one_or_none()
+    )
+
+    if revision_lookup:
+        return True
+
+    revision_data[field_name] = field_value
+
+    revision = Revision(
+        schema=field_type,
+        code=record.code,
+        created_by=created_by,
+        data=revision_data,
+    )
+
+    s.add(revision)
+    s.commit()
+
+    return True
+
+
+def load_revision(records, created_by="aemo.mms.202006"):
     logger.info("Running db test")
     s = session()
 
-    all_stations = [i.code for i in s.query(Station.code).distinct()]
-    all_facilities = [i.code for i in s.query(Facility.code).distinct()]
+    s.query(Revision).delete()
 
-    # ....
+    # all_stations = [i.code for i in s.query(Station.code).distinct()]
+    # all_facilities = [i.code for i in s.query(Facility.code).distinct()]
 
-    mms = mms_import()
-
-    for station_record in mms:
+    for station_record in records:
         station_model = (
             s.query(Station)
             .filter(Station.code == station_record.code)
@@ -58,43 +105,50 @@ def db_test():
                 f"New station {station_record.name} {station_record.code}"
             )
 
-            station_dict = station_record.dict(exclude={"id"})
+            # revision = Revision(
+            #     schema="station",
+            #     code=station_record.code,
+            #     created_by=created_by,
+            # )
 
-            revision = Revision(
-                schema="station",
-                code=station_record.code,
-                created_by="aemo.mms.202006",
+            # revision.data = {
+            #     "code": station_record.code,
+            #     "network_name": station_record.network_name,
+            # }
+            revision_factory(station_record, "code", created_by)
+            revision_factory(station_record, "name", created_by)
+            revision_factory(station_record, "network_name", created_by)
+
+            # s.add(revision)
+            # s.commit()
+
+        else:
+            if station_model.name != station_record.name:
+                revision_factory(station_record, "name", created_by)
+
+            if station_model.network_name != station_record.network_name:
+                revision_factory(station_record, "network_name", created_by)
+
+        for facility in station_record.facilities:
+            facility_model = (
+                s.query(Facility)
+                .filter(Facility.code == facility.code)
+                .one_or_none()
             )
 
-            revision.data = {
-                "code": station_record.code,
-                "network_name": station_record.network_name,
-            }
+            if not facility_model:
+                logger.info(
+                    "New facility %s => %s", station_record.name, facility.code
+                )
 
-            s.add(revision)
+                revision_factory(facility, "code", created_by)
+                revision_factory(facility, "code", created_by)
 
-            # pylint: disable=no-member
-            # station_model = Station().fromdict(station_dict)
-            # station_model.approved = True
-            # station_model.approved_at = datetime.now()
-            # station_model.approved_by = "opennem.mms"
-            # station_model.created_by = "opennem.mms"
 
-            # for fac in station_record.facilities:
-            #     f = Facility(
-            #         **fac.dict(exclude={"id", "fueltech", "status", "network"})
-            #     )
+def db_test():
+    mms = mms_import()
 
-            #     f.network_id = fac.network.code
-
-            #     if fac.fueltech:
-            #         f.fueltech_id = fac.fueltech.code
-
-            #     f.status_id = fac.status.code
-
-            #     station_model.facilities.append(f)
-
-            s.commit()
+    load_revision(mms)
 
 
 def registry_init():
