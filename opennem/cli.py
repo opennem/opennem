@@ -7,6 +7,7 @@ from scrapy.utils.python import garbage_collect
 
 from opennem.diff.facility_diff import run_diff
 from opennem.importer.all import run_all
+from opennem.importer.db import init as db_init
 from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_export, opennem_import
 
@@ -31,6 +32,16 @@ def crawl():
 @click.command()
 def diff():
     run_diff()
+
+
+@click.group()
+def cmd_db():
+    pass
+
+
+@click.command()
+def cmd_db_init():
+    db_init()
 
 
 @click.group()
@@ -70,6 +81,7 @@ def cmd_export_all():
 
 main.add_command(crawl)
 main.add_command(diff)
+main.add_command(cmd_db, name="db")
 main.add_command(cmd_import, name="import")
 
 cmd_import.add_command(cmd_import_opennem, name="opennem")
@@ -79,6 +91,7 @@ cmd_import.add_command(cmd_import_all, name="all")
 cmd_export.add_command(cmd_export_opennem, name="opennem")
 cmd_export.add_command(cmd_export_all, name="all")
 
+cmd_db.add_command(cmd_db_init, name="init")
 
 if __name__ == "__main__":
     try:
