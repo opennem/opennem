@@ -12,7 +12,7 @@ from opennem.controllers.stations import (
 )
 from opennem.core.loader import load_data
 from opennem.db import db_connect
-from opennem.db.models.opennem import Facility, Station
+from opennem.db.models.opennem import Facility, Revision, Station
 from opennem.importer.registry import registry_import
 from opennem.schema.opennem import StationSchema, StationSubmission
 
@@ -79,5 +79,18 @@ def station_create(
 
 
 @app.get("/revisions")
-def revisions() -> List[dict]:
-    return {}
+def revisions(session: Session = Depends(get_database_session)) -> List[dict]:
+    revisions = session.query(Revision).all()
+
+    return revisions
+
+
+@app.get("/revision/approve/{revision_id}")
+def revision_update(
+    session: Session = Depends(get_database_session), revision_id: int = None
+) -> dict:
+    revision = session.query(Revision).get(revision_id)
+    revision.approved = True
+    revision.approved_by = "opennem.admin"
+
+    return {"success": True}

@@ -8,7 +8,7 @@ from opennem.core.loader import load_data
 from opennem.db import engine, session
 from opennem.db.initdb import init_opennem
 from opennem.db.load_fixtures import load_fixtures
-from opennem.db.models.opennem import Facility, Location, Revisions, Station
+from opennem.db.models.opennem import Facility, Location, Revision, Station
 from opennem.importer.mms import mms_import
 from opennem.importer.registry import registry_import
 from opennem.schema.opennem import StationSchema
@@ -28,6 +28,8 @@ def create_revision(model):
     clone = model.asdict(exclude_pk=True)
     # clone.pop("id")
     # model.fromdict(clone)
+
+    # pylint: disable=no-member
     clone_model = Station().fromdict(clone)
 
     return clone_model
@@ -58,27 +60,41 @@ def db_test():
 
             station_dict = station_record.dict(exclude={"id"})
 
-            station_model = Station().fromdict(station_dict)
-            station_model.approved = True
-            station_model.approved_at = datetime.now()
-            station_model.approved_by = "opennem.mms"
-            station_model.created_by = "opennem.mms"
+            revision = Revision(
+                schema="station",
+                code=station_record.code,
+                created_by="aemo.mms.202006",
+            )
 
-            for fac in station_record.facilities:
-                f = Facility(
-                    **fac.dict(exclude={"id", "fueltech", "status", "network"})
-                )
+            revision.data = {
+                "code": station_record.code,
+                "network_name": station_record.network_name,
+            }
 
-                f.network_id = fac.network.code
+            s.add(revision)
 
-                if fac.fueltech:
-                    f.fueltech_id = fac.fueltech.code
+            # pylint: disable=no-member
+            # station_model = Station().fromdict(station_dict)
+            # station_model.approved = True
+            # station_model.approved_at = datetime.now()
+            # station_model.approved_by = "opennem.mms"
+            # station_model.created_by = "opennem.mms"
 
-                f.status_id = fac.status.code
+            # for fac in station_record.facilities:
+            #     f = Facility(
+            #         **fac.dict(exclude={"id", "fueltech", "status", "network"})
+            #     )
 
-                station_model.facilities.append(f)
+            #     f.network_id = fac.network.code
 
-            s.add(station_model)
+            #     if fac.fueltech:
+            #         f.fueltech_id = fac.fueltech.code
+
+            #     f.status_id = fac.status.code
+
+            #     station_model.facilities.append(f)
+
+            s.commit()
 
 
 def registry_init():
