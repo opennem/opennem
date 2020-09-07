@@ -2,6 +2,8 @@ import decimal
 import json
 from datetime import datetime
 
+import ujson
+
 from geojson import GeoJSONEncoder
 from opennem.core.dispatch_type import DispatchType, dispatch_type_string
 
@@ -26,3 +28,34 @@ class OpenNEMGeoJSONEncoder(GeoJSONEncoder, OpenNEMJSONEncoder):
         if isinstance(o, DispatchType):
             return dispatch_type_string(o)
         return super(OpenNEMGeoJSONEncoder, self).default(o)
+
+
+def opennem_deserialize(serialized: str) -> any:
+
+    obj_serialized = None
+
+    # try ujson first because it's faster
+    try:
+        obj_serialized = ujson.loads(serialized)
+    except TypeError:
+        pass
+
+    if not obj_serialized:
+        obj_serialized = json.loads(serialized, cls=OpenNEMGeoJSONEncoder)
+
+    return obj_serialized
+
+
+def opennem_serialize(obj: any) -> str:
+    obj_deserialized = None
+
+    # try ujson first because it's faster
+    try:
+        obj_deserialized = ujson.dumps(obj)
+    except TypeError:
+        pass
+
+    if not obj_deserialized:
+        obj_deserialized = json.dumps(obj, cls=OpenNEMGeoJSONEncoder)
+
+    return obj_deserialized

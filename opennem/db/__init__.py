@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from opennem.exporter.encoders import opennem_deserialize, opennem_serialize
 from opennem.settings import get_database_host
 
 DeclarativeBase = declarative_base()
@@ -26,6 +27,8 @@ def db_connect(db_name=None, debug=False):
     try:
         e = create_engine(
             db_conn_str,
+            json_serializer=opennem_serialize,
+            json_deserializer=opennem_deserialize,
             echo=debug,
             pool_size=10,
             pool_timeout=60,
