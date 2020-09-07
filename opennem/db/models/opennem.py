@@ -48,63 +48,16 @@ class BaseModel(object):
     """
         Base model for both NEM and WEM
 
-        Each table has an overrid for update and additional meta fields
-
-        @TODO - upsert support for postgresql and mysql dialects (see db/__init__)
     """
 
-    def update(self, **kwargs):
-        for key, value in kwargs.items():
-            if key == "id" or key.endswith("_id"):
-                continue
-
-            # @TODO watch how we do updates so we don't overwrite data
-            cur_val = getattr(self, key)
-            if key not in [None, ""]:
-                setattr(self, key, value)
-
-    def __compile_query(self, query):
-        """Via http://nicolascadou.com/blog/2014/01/printing-actual-sqlalchemy-queries"""
-        compiler = (
-            query.compile
-            if not hasattr(query, "statement")
-            else query.statement.compile
-        )
-        return compiler(dialect=postgresql.dialect())
-
-    def __upsert(
-        self,
-        session,
-        model,
-        rows,
-        as_of_date_col="report_date",
-        no_update_cols=[],
-    ):
-        table = model.__table__
-
-        stmt = self.insert(table).values(rows)
-
-        update_cols = [
-            c.name
-            for c in table.c
-            if c not in list(table.primary_key.columns)
-            and c.name not in no_update_cols
-        ]
-
-        on_conflict_stmt = stmt.on_conflict_do_update(
-            index_elements=table.primary_key.columns,
-            set_={k: getattr(stmt.excluded, k) for k in update_cols},
-            index_where=(model.report_date < stmt.excluded.report_date),
-        )
-
-        print(self.compile_query(on_conflict_stmt))
-        session.execute(on_conflict_stmt)
-
     created_by = Column(Text, nullable=True)
+    # updated_by = Column(Text, nullable=True)
+    # processed_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
 
-class FuelTech(Base):
+class FuelTech(Base, BaseModel):
     __tablename__ = "fueltech"
 
     code = Column(Text, primary_key=True)
@@ -114,7 +67,7 @@ class FuelTech(Base):
     facilities = relationship("Facility")
 
 
-class Network(Base):
+class Network(Base, BaseModel):
     __tablename__ = "network"
 
     code = Column(Text, primary_key=True)
@@ -122,7 +75,7 @@ class Network(Base):
     label = Column(Text, nullable=True)
 
 
-class FacilityStatus(Base):
+class FacilityStatus(Base, BaseModel):
     __tablename__ = "facility_status"
 
     code = Column(Text, primary_key=True)
@@ -205,13 +158,6 @@ class Station(Base, BaseModel):
         primary_key=True,
     )
 
-    network_id = Column(
-        Text,
-        ForeignKey("network.code", name="fk_station_network_code"),
-        nullable=False,
-    )
-    network = relationship("Network")
-
     participant_id = Column(
         Integer,
         ForeignKey("participant.id", name="fk_station_participant_id"),
@@ -219,23 +165,25 @@ class Station(Base, BaseModel):
     )
     participant = relationship("Participant")
 
-    revision_id = Column(
+    location_id = Column(
         Integer,
-        ForeignKey("station_revision.id", name="fk_station_revision_id"),
-        nullable=False,
+        ForeignKey("location.id", name="fk_station_location_id"),
+        nullable=True,
     )
-    revision_active_id = Column(
-        Integer,
-        ForeignKey(
-            "station_revision.id", name="fk_station_revision_active_id"
-        ),
-        nullable=False,
-    )
+    location = relationship("Location")
 
     facilities = relationship("Facility")
 
-    code = Column(Text, unique=True, index=True, nullable=True)
+    code = Column(Text, index=True, nullable=True)
     name = Column(Text)
+
+    # Original network fields
+    network_code = Column(Text, index=True)
+    network_name = Column(Text)
+
+    approved = Column(Boolean, default=False)
+    approved_by = Column(Text)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
 
     @hybrid_property
     def capacity_registered(self) -> Optional[int]:
@@ -249,7 +197,7 @@ class Station(Base, BaseModel):
         for fac in self.facilities:
             if (
                 fac.capacity_registered
-                and type(fac.capacity_registered) in [int, float, Decimal,]
+                and type(fac.capacity_registered) in [int, float, Decimal]
                 and fac.status_id
                 in ["operating", "committed", "commissioning"]
                 and fac.dispatch_type == DispatchType.GENERATOR
@@ -276,7 +224,7 @@ class Station(Base, BaseModel):
         for fac in self.facilities:
             if (
                 fac.capacity_aggregate
-                and type(fac.capacity_aggregate) in [int, float, Decimal,]
+                and type(fac.capacity_aggregate) in [int, float, Decimal]
                 and fac.status_id
                 in ["operating", "committed", "commissioning"]
                 and fac.dispatch_type == DispatchType.GENERATOR
@@ -300,64 +248,17 @@ class Station(Base, BaseModel):
     def ocode(self) -> str:
         return get_ocode(self)
 
-
-class StationRevision(Base, BaseModel):
-    __tablename__ = "station_revision"
-
-    def __str__(self):
-        return "{} <{}>".format(self.name, self.code)
-
-    def __repr__(self):
-        return "{} {} <{}>".format(self.__class__, self.name, self.code)
-
-    id = Column(
-        Integer,
-        Sequence("seq_station_revision_id", start=10000, increment=1),
-        primary_key=True,
-    )
-
-    address1 = Column(Text)
-    address2 = Column(Text)
-    locality = Column(Text)
-    state = Column(Text)
-    postcode = Column(Text, nullable=True)
-
-    # Original network fields
-    network_code = Column(Text, index=True)
-    network_name = Column(Text)
-
-    # Geo fields
-    place_id = Column(Text, nullable=True, index=True)
-    geocode_approved = Column(Boolean, default=False)
-    geocode_skip = Column(Boolean, default=False)
-    geocode_processed_at = Column(DateTime, nullable=True)
-    geocode_by = Column(Text, nullable=True)
-    geom = Column(Geometry("POINT", srid=4326))
-    boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
-
-    parent_id = Column(
-        Integer,
-        ForeignKey("station.id", name="fk_station_revision_station"),
-        nullable=True,
-    )
-    parent = relationship(
-        "Station",
-        backref="revisions",
-        foreign_keys=[Station.revision_id],
-        uselist=True,
-    )
-
     @hybrid_property
     def lat(self) -> Optional[float]:
-        if self.geom:
-            return wkb.loads(bytes(self.geom.data)).y
+        if self.location.geom:
+            return wkb.loads(bytes(self.location.geom.data)).y
 
         return None
 
     @hybrid_property
     def lng(self) -> Optional[float]:
-        if self.geom:
-            return wkb.loads(bytes(self.geom.data)).x
+        if self.location.geom:
+            return wkb.loads(bytes(self.location.geom.data)).x
 
         return None
 
@@ -377,12 +278,12 @@ class Facility(Base, BaseModel):
         primary_key=True,
     )
 
-    participant_id = Column(
-        Integer,
-        ForeignKey("participant.id", name="fk_facility_participant_id"),
-        nullable=True,
+    network_id = Column(
+        Text,
+        ForeignKey("network.code", name="fk_station_network_code"),
+        nullable=False,
     )
-    participant = relationship("Participant")
+    network = relationship("Network")
 
     fueltech_id = Column(
         Text,
@@ -405,7 +306,7 @@ class Facility(Base, BaseModel):
     station = relationship("Station", back_populates="facilities")
 
     # DUID but modified by opennem as an identifier
-    code = Column(Text, nullable=True, index=True, unique=True)
+    code = Column(Text, index=True)
 
     # Network details
     network_code = Column(Text, nullable=True, index=True)
