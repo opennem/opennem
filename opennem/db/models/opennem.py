@@ -99,7 +99,7 @@ class Participant(Base, BaseModel):
     abn = Column(Text)
 
 
-class Revisions(Base, BaseModel):
+class Revision(Base, BaseModel):
 
     __tablename__ = "revisions"
 
@@ -111,7 +111,7 @@ class Revisions(Base, BaseModel):
 
     schema = Column(Text, nullable=False, index=True)
     code = Column(Text, nullable=False, index=True)
-    data = Column(JSON)
+    data = Column(JSON, nullable=True)
 
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
