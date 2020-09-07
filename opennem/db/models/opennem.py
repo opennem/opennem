@@ -117,6 +117,10 @@ class Revision(Base, BaseModel):
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
 
+    discarded = Column(Boolean, default=False)
+    discarded_by = Column(Text)
+    discarded_at = Column(DateTime(timezone=True), nullable=True)
+
 
 class Location(Base):
     __tablename__ = "location"
