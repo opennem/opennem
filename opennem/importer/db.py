@@ -81,7 +81,7 @@ def db_test():
             s.add(station_model)
 
 
-def registry_import():
+def registry_init():
     registry = registry_import()
 
     s = session()
@@ -154,12 +154,13 @@ def test_revisions():
 
 def init():
     init_opennem(engine)
-    # logger.info("Db initialized")
+    logger.info("Db initialized")
 
     load_fixtures()
-    # logger.info("Fixtures loaded")
+    logger.info("Fixtures loaded")
 
-    registry_import()
+    registry_init()
+    logger.info("Registry initialized")
 
 
 if __name__ == "__main__":
