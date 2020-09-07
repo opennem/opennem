@@ -10,8 +10,10 @@ from opennem.controllers.stations import (
     get_station,
     get_stations,
 )
+from opennem.core.loader import load_data
 from opennem.db import db_connect
 from opennem.db.models.opennem import Facility, Station
+from opennem.importer.registry import registry_import
 from opennem.schema.opennem import StationSchema, StationSubmission
 
 app = FastAPI()
@@ -21,6 +23,7 @@ origins = [
     "https://admin.opennem.test",
     "http://localhost",
     "http://localhost:3000",
+    "http://localhost:8001",
 ]
 
 app.add_middleware(
@@ -52,7 +55,9 @@ def stations(
     limit: Optional[int] = None,
     page: int = 1,
 ) -> List[StationSchema]:
-    stations = get_stations(db, name=name, limit=limit, page=page)
+    stations = registry_import().as_list()
+    # stations = load_data("registry.json", True)
+    # stations = get_stations(db, name=name, limit=limit, page=page)
 
     return stations
 
