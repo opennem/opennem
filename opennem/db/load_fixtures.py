@@ -252,7 +252,7 @@ def load_fixtures():
     load_fueltechs()
     load_facilitystatus()
     load_networks()
-    load_bom_stations()
+    # load_bom_stations()
 
 
 if __name__ == "__main__":
