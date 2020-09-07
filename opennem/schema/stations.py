@@ -69,6 +69,9 @@ class StationSet(UserList):
 
         self.add(station)
 
+    def as_list(self):
+        return self.data
+
     @property
     def length(self) -> int:
         return len(self.data)
