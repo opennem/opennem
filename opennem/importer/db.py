@@ -2,6 +2,7 @@ import logging
 import re
 from datetime import datetime
 from pprint import pprint
+from typing import List, Union
 
 from pydantic import BaseModel
 from sqlalchemy.orm.exc import MultipleResultsFound
@@ -52,9 +53,15 @@ def get_schema_name(record: object) -> str:
 
 
 def revision_factory(
-    record: BaseModel, field_name: str, created_by: str,
+    record: BaseModel, field_names: Union[str, List[str]], created_by: str,
 ) -> bool:
 
+    if isinstance(field_names, str):
+        field_names = [field_names]
+
+    revision_data = {}
+
+    for field_name in field_names:
     field_type = get_schema_name(record)
     field_value = getattr(record, field_name)
 
@@ -69,12 +76,18 @@ def revision_factory(
 
         else:
             logger.error("Could not serialize data value %s", field_value)
-            return False
+                field_value = False
+
+        if field_value is not False:
+            revision_data[field_name] = field_value
 
     if not record.code:
-        raise Exception("Require a code to create a revision")
+        logger.error("Require a code to create a revision: %s", record)
+        return False
 
-    revision_lookup = None
+    if len(revision_data.keys()) < 1:
+        logger.error("Require data to lookup for code %s", record.code)
+        return False
 
     try:
         revision_lookup = (
