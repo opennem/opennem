@@ -62,20 +62,20 @@ def revision_factory(
     revision_data = {}
 
     for field_name in field_names:
-    field_type = get_schema_name(record)
-    field_value = getattr(record, field_name)
+        field_type = get_schema_name(record)
+        field_value = getattr(record, field_name)
 
-    if isinstance(field_value, BaseModel):
-        _value_dict = field_value.dict()
+        if isinstance(field_value, BaseModel):
+            _value_dict = field_value.dict()
 
-        if "id" in _value_dict:
-            field_value = _value_dict["id"]
+            if "id" in _value_dict:
+                field_value = _value_dict["id"]
 
-        elif "code" in _value_dict:
-            field_value = _value_dict["code"]
+            elif "code" in _value_dict:
+                field_value = _value_dict["code"]
 
-        else:
-            logger.error("Could not serialize data value %s", field_value)
+            else:
+                logger.error("Could not serialize data value %s", field_value)
                 field_value = False
 
         if field_value is not False:
@@ -90,9 +90,9 @@ def revision_factory(
         return False
 
     __query = (
-            s.query(Revision)
-            .filter(Revision.schema == field_type)
-            .filter(Revision.code == record.code)
+        s.query(Revision)
+        .filter(Revision.schema == field_type)
+        .filter(Revision.code == record.code)
     )
 
     for data_name, data_value in revision_data.items():
@@ -111,7 +111,7 @@ def revision_factory(
         if isinstance(data_value, float):
             __query = __query.filter(
                 Revision.data[data_name].as_float() == data_value
-        )
+            )
 
     revision_lookup = None
 
@@ -141,9 +141,6 @@ def revision_factory(
 
 def load_revision(records, created_by):
     logger.info("Running db test")
-
-    # all_stations = [i.code for i in s.query(Station.code).distinct()]
-    # all_facilities = [i.code for i in s.query(Facility.code).distinct()]
 
     for station_record in records:
         station_model = (
@@ -193,17 +190,19 @@ def load_revision(records, created_by):
                 if hasattr(station_model, field) and getattr(
                     station_model, field
                 ) != getattr(station_record, field):
-                revision_factory(facility, field, created_by)
+                    revision_factory(facility, field, created_by)
 
 
 def db_test():
-    mms = mms_import()
-    rel = rel_import()
-    gi = gi_import()
+    s.query(Revision).delete()
 
-    load_revision(mms)
+    mms = mms_import()[:10]
+    rel = rel_import()[:10]
+    # gi = gi_import()
+
+    load_revision(mms, "aemo.mms.202006")
     load_revision(rel, "aemo.rel.2020006")
-    load_revision(gi, "aemo.gi.202006")
+    # load_revision(gi, "aemo.gi.202006")
 
 
 def registry_init():
