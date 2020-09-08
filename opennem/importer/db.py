@@ -89,14 +89,34 @@ def revision_factory(
         logger.error("Require data to lookup for code %s", record.code)
         return False
 
-    try:
-        revision_lookup = (
+    __query = (
             s.query(Revision)
             .filter(Revision.schema == field_type)
             .filter(Revision.code == record.code)
-            .filter(Revision.data[field_name].as_string() == str(field_value))
-            .one_or_none()
+    )
+
+    for data_name, data_value in revision_data.items():
+        if isinstance(data_value, str):
+            __query = __query.filter(
+                Revision.data[data_name].as_string() == data_value
+            )
+        if isinstance(data_value, bool):
+            __query = __query.filter(
+                Revision.data[data_name].as_boolean() == data_value
+            )
+        if isinstance(data_value, int):
+            __query = __query.filter(
+                Revision.data[data_name].as_integer() == data_value
+            )
+        if isinstance(data_value, float):
+            __query = __query.filter(
+                Revision.data[data_name].as_float() == data_value
         )
+
+    revision_lookup = None
+
+    try:
+        revision_lookup = __query.one_or_none()
     except MultipleResultsFound:
         logger.info(
             "Revision exists: %s %s %s", record.code, field_name, field_value,
