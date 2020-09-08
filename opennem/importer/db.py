@@ -126,9 +126,6 @@ def revision_factory(
     if revision_lookup:
         return False
 
-    revision_data = {}
-    revision_data[field_name] = field_value
-
     revision = Revision(
         schema=field_type,
         code=record.code,
@@ -142,10 +139,8 @@ def revision_factory(
     return True
 
 
-def load_revision(records, created_by="aemo.mms.202006"):
+def load_revision(records, created_by):
     logger.info("Running db test")
-
-    s.query(Revision).delete()
 
     # all_stations = [i.code for i in s.query(Station.code).distinct()]
     # all_facilities = [i.code for i in s.query(Facility.code).distinct()]
@@ -162,8 +157,9 @@ def load_revision(records, created_by="aemo.mms.202006"):
                 f"New station {station_record.name} {station_record.code}"
             )
 
-            for field in ["code", "name", "network_name"]:
-                revision_factory(station_record, field, created_by)
+            revision_factory(
+                station_record, ["code", "name", "network_name"], created_by,
+            )
 
         else:
             for field in ["name", "network_name"]:
@@ -184,15 +180,19 @@ def load_revision(records, created_by="aemo.mms.202006"):
                     "New facility %s => %s", station_record.name, facility.code
                 )
 
-                revision_factory(facility, "code", created_by)
+                revision_factory(
+                    facility, ["code", "dispatch_type"], created_by
+                )
 
             for field in [
-                "dispatch_type",
                 "fueltech",
                 "status",
                 "network_region",
                 "capacity_registered",
             ]:
+                if hasattr(station_model, field) and getattr(
+                    station_model, field
+                ) != getattr(station_record, field):
                 revision_factory(facility, field, created_by)
 
 
