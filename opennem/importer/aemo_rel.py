@@ -191,9 +191,9 @@ def rel_export():
     nem_rel = rel_import()
 
     with open("data/rel.json", "w") as fh:
-        json.dump(nem_rel, fh, indent=4, cls=OpenNEMJSONEncoder)
+        fh.write(nem_rel.json(indent=4))
 
-    logger.info("Wrote {} records".format(len(nem_rel.keys())))
+    logger.info("Wrote {} records".format(len(nem_rel.length)))
 
 
 if __name__ == "__main__":

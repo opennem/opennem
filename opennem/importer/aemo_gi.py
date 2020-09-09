@@ -305,9 +305,9 @@ def gi_export():
     nem_gi = gi_import()
 
     with open("data/nem_gi.json", "w") as fh:
-        json.dump(nem_gi, fh, indent=4, cls=OpenNEMJSONEncoder)
+        fh.write(nem_gi.json(indent=4))
 
-    logger.info("Wrote {} records".format(len(nem_gi.keys())))
+    logger.info("Wrote {} records".format(len(nem_gi.length)))
 
 
 if __name__ == "__main__":

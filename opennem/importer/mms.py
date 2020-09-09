@@ -398,9 +398,9 @@ def mms_station_map_from_records(mms):
 
     mms_duid_station_map = {}
 
-    for station, station_record in mms.items():
-        for network_code in [i["code"] for i in station_record["facilities"]]:
-            mms_duid_station_map[network_code] = station
+    for station_record in mms.as_list():
+        for network_code in [i.code for i in station_record.facilities]:
+            mms_duid_station_map[network_code] = station_record.code
 
     return mms_duid_station_map
 
@@ -417,12 +417,10 @@ def mms_export():
     mms_duid_station_map = mms_station_map_from_records(mms)
 
     with open("data/mms.json", "w") as fh:
-        json.dump(mms, fh, indent=4, cls=OpenNEMJSONEncoder)
+        fh.write(mms.json(indent=4))
 
     with open("data/mms_duid_station_map.json", "w") as fh:
         json.dump(mms_duid_station_map, fh, indent=4, cls=OpenNEMJSONEncoder)
-
-    logger.info("Wrote {} records".format(len(mms.keys())))
 
 
 if __name__ == "__main__":
