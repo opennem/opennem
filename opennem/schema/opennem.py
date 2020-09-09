@@ -2,9 +2,10 @@
 
 from datetime import datetime
 from decimal import Decimal
+from enum import Enum
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, validator
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.facilitystatus import (
@@ -163,8 +164,15 @@ class LocationSchema(OpennemBaseSchema):
         return value.strip()
 
 
+class RecordTypes(str, Enum):
+    station = "station"
+    facility = "facility"
+    location = "location"
+    revision = "revision"
+
+
 class RevisionSchema(OpennemBaseSchema):
-    schema: str
+    record_type: RecordTypes = Field(..., alias="schema")
     code: str
     data: dict = {}
 
@@ -178,8 +186,9 @@ class RevisionSchema(OpennemBaseSchema):
     discarded_at: Optional[datetime]
 
     @validator("data")
-    def validate_data(cls, value):
-        for field_value in value.values():
+    def validate_data(cls, data_value):
+        for field_value in data_value.values():
+            print(field_value)
             assert isinstance(
                 field_value, (int, str, bool, float)
             ), "Data values have to be int, str, bool or float"
