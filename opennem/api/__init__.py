@@ -18,6 +18,8 @@ from opennem.schema.opennem import StationSchema, StationSubmission
 
 app = FastAPI()
 
+app = FastAPI(title="OpenNEM", debug=True, version="3.0.0-alpha")
+
 origins = [
     "https://admin.opennem.org.au",
     "https://admin.opennem.test",
