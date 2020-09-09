@@ -72,6 +72,9 @@ class StationSet(UserList):
     def as_list(self) -> List[StationSchema]:
         return self.data
 
+    def json(self):
+        return [i.json() for i in self.data]
+
     @property
     def length(self) -> int:
         return len(self.data)
