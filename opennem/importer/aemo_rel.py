@@ -193,7 +193,7 @@ def rel_export():
     with open("data/rel.json", "w") as fh:
         fh.write(nem_rel.json(indent=4))
 
-    logger.info("Wrote {} records".format(len(nem_rel.length)))
+    logger.info("Wrote {} records".format(nem_rel.length))
 
 
 if __name__ == "__main__":

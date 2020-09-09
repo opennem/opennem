@@ -307,7 +307,7 @@ def gi_export():
     with open("data/nem_gi.json", "w") as fh:
         fh.write(nem_gi.json(indent=4))
 
-    logger.info("Wrote {} records".format(len(nem_gi.length)))
+    logger.info("Wrote {} records".format(nem_gi.length))
 
 
 if __name__ == "__main__":
