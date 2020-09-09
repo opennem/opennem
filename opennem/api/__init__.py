@@ -11,7 +11,7 @@ from opennem.controllers.stations import (
     get_stations,
 )
 from opennem.core.loader import load_data
-from opennem.db import db_connect
+from opennem.db import db_connect, get_database_session
 from opennem.db.models.opennem import Facility, Revision, Station
 from opennem.importer.registry import registry_import
 from opennem.schema.opennem import StationSchema, StationSubmission
@@ -37,14 +37,6 @@ app.add_middleware(
 
 engine = db_connect()
 session = sessionmaker(bind=engine, autocommit=False, autoflush=False,)
-
-
-def get_database_session():
-    try:
-        s = session()
-        yield s
-    finally:
-        s.close()
 
 
 @app.get(
