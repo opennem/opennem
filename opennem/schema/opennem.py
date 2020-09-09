@@ -276,8 +276,10 @@ class StationSchema(OpennemBaseSchema):
 
 
 class StationSubmission(BaseModel):
+    code: str
     name: str
-    network_id: str
+    network_id: str = NetworkSchema(code="NEM", label="NEM", country="au")
+    location: LocationSchema
 
     class Config:
         orm_mode = True
