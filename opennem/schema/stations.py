@@ -69,7 +69,7 @@ class StationSet(UserList):
 
         self.add(station)
 
-    def as_list(self):
+    def as_list(self) -> List[StationSchema]:
         return self.data
 
     @property
