@@ -9,7 +9,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.orm.session import make_transient
 
 from opennem.core.loader import load_data
-from opennem.db import engine, session
+from opennem.db import SessionLocal, engine
 from opennem.db.initdb import init_opennem
 from opennem.db.load_fixtures import load_fixtures
 from opennem.db.models.opennem import Facility, Location, Revision, Station
@@ -20,7 +20,7 @@ from opennem.importer.registry import registry_import
 from opennem.schema.opennem import StationSchema
 
 logger = logging.getLogger(__name__)
-s = session()
+s = SessionLocal()
 
 
 def load_revisions(stations):
