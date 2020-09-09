@@ -83,6 +83,7 @@ main.add_command(crawl)
 main.add_command(diff)
 main.add_command(cmd_db, name="db")
 main.add_command(cmd_import, name="import")
+main.add_command(cmd_export, name="export")
 
 cmd_import.add_command(cmd_import_opennem, name="opennem")
 cmd_import.add_command(cmd_import_mms, name="mms")
