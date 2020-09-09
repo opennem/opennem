@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from decimal import Decimal
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, validator
 
@@ -161,6 +161,28 @@ class LocationSchema(OpennemBaseSchema):
     @validator("postcode")
     def clean_postcode(cls, value: str) -> str:
         return value.strip()
+
+
+class RevisionSchema(OpennemBaseSchema):
+    schema: str
+    code: str
+    data: dict = {}
+
+    approved: bool = False
+    approved_by: Optional[str]
+    approved_at: Optional[datetime]
+    approved_comment: Optional[str]
+
+    discarded: bool = False
+    discarded_by: Optional[str]
+    discarded_at: Optional[datetime]
+
+    @validator("data")
+    def validate_data(cls, value):
+        for field_value in value.values():
+            assert isinstance(
+                field_value, (int, str, bool, float)
+            ), "Data values have to be int, str, bool or float"
 
 
 class StationSchema(OpennemBaseSchema):
