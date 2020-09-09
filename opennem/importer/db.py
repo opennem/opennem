@@ -196,13 +196,13 @@ def load_revision(records, created_by):
 def db_test():
     s.query(Revision).delete()
 
-    mms = mms_import()[:10]
-    rel = rel_import()[:10]
-    # gi = gi_import()
+    mms = mms_import()
+    rel = rel_import()
+    gi = gi_import()
 
     load_revision(mms, "aemo.mms.202006")
     load_revision(rel, "aemo.rel.2020006")
-    # load_revision(gi, "aemo.gi.202006")
+    load_revision(gi, "aemo.gi.202006")
 
 
 def registry_init():
