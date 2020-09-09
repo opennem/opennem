@@ -50,10 +50,10 @@ def opennem_serialize(obj: any, indent=None) -> str:
     obj_deserialized = None
 
     # try ujson first because it's faster
-    try:
-        obj_deserialized = ujson.dumps(obj, indent=indent)
-    except TypeError:
-        pass
+    # try:
+    #     obj_deserialized = ujson.dumps(obj, indent=indent)
+    # except TypeError:
+    #     pass
 
     if not obj_deserialized:
         obj_deserialized = json.dumps(
