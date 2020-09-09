@@ -116,6 +116,7 @@ class Revision(Base, BaseModel):
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
+    approved_comment = Column(Text, nullable=True)
 
     discarded = Column(Boolean, default=False)
     discarded_by = Column(Text)
