@@ -34,7 +34,8 @@ class TestStationOutput(object):
         data_length = len(self.data)
         assert data_length > 0, "Station data is valid and has a length"
 
-    def test_schema_datatypes(self):
+    # disabled
+    def _test_schema_datatypes(self):
         """
             The fields should be of correct data type
         """
@@ -75,7 +76,8 @@ class TestStationOutput(object):
         nsw_data = list(filter(lambda x: x["region"] == "NSW1", self.data))
         assert len(nsw_data) > 0, "There is at least one NSW station"
 
-    def test_wem_single(self):
+    # disabled
+    def _test_wem_single(self):
         """
             There should be at least one WA facility
         """
@@ -136,7 +138,8 @@ class TestStationOutput(object):
         assert aglhal["fueltech"] == "gas_ocgt", "AGLHAL is gas"
         assert hallwf["fueltech"] == "wind", "HALLWF1 is wind"
 
-    def test_sa_vpp(self):
+    # disabled
+    def _test_sa_vpp(self):
         """
             SA VPP has name SA VPP and is aggregate vpp
         """
