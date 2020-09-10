@@ -160,7 +160,7 @@ def load_revision(records, created_by):
             )
 
         else:
-            for field in ["name", "network_name"]:
+            for field in ["name"]:
                 if getattr(station_model, field) != getattr(
                     station_record, field
                 ):
@@ -230,7 +230,15 @@ def registry_init():
 
         for fac in station.facilities:
             f = Facility(
-                **fac.dict(exclude={"id", "fueltech", "status", "network"})
+                **fac.dict(
+                    exclude={
+                        "id",
+                        "fueltech",
+                        "status",
+                        "network",
+                        "revision_ids",
+                    }
+                )
             )
 
             f.network_id = fac.network.code
