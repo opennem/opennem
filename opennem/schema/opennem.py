@@ -109,7 +109,6 @@ class RevisionSchema(OpennemBaseSchema):
     @validator("data")
     def validate_data(cls, data_value):
         for field_value in data_value.values():
-            print(field_value)
             assert isinstance(
                 field_value, (int, str, bool, float)
             ), "Data values have to be int, str, bool or float"
