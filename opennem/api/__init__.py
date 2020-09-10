@@ -58,6 +58,8 @@ app.add_middleware(
 )
 def stations(
     session: Session = Depends(get_database_session),
+    revisions_include: Optional[bool] = False,
+    history_include: Optional[bool] = False,
     name: Optional[str] = None,
     limit: Optional[int] = None,
     page: int = 1,
@@ -83,6 +85,29 @@ def stations(
 
     stations = stations.all()
 
+    if not revisions_include:
+        return stations
+
+    revisions = session.query(Revision).all()
+
+    for station in stations:
+        station.revisions = list(
+            filter(
+                lambda rev: rev.schema == "station"
+                and rev.code == station.code,
+                revisions,
+            )
+        )
+
+        for facility in station.facilities:
+            facility.revisions = list(
+                filter(
+                    lambda rev: rev.schema == "facility"
+                    and rev.code == facility.code,
+                    revisions,
+                )
+            )
+
     return stations
 
 
@@ -92,7 +117,10 @@ def stations(
     description="Get a single station by code",
 )
 def station(
-    session: Session = Depends(get_database_session), station_code: str = None
+    session: Session = Depends(get_database_session),
+    station_code: str = None,
+    revisions_include: Optional[bool] = False,
+    history_include: Optional[bool] = False,
 ):
     station = (
         session.query(Station)
@@ -105,37 +133,57 @@ def station(
             status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
         )
 
-    return station
+    if not revisions_include:
+        return station
+
+    revisions = session.query(Revision).all()
+
+    station.revisions = list(
+        filter(
+            lambda rev: rev.schema == "station" and rev.code == station.code,
+            revisions,
+        )
+    )
+
+    for facility in station.facilities:
+        facility.revisions = list(
+            filter(
+                lambda rev: rev.schema == "facility"
+                and rev.code == facility.code,
+                revisions,
+            )
+        )
 
 
-@app.get(
-    "/station",
-    name="station lookup",
-    description="Lookup station by code or network_code. Require one of code or network_code",
-    response_model=List[StationSchema],
-)
-def station_update(
-    session: Session = Depends(get_database_session),
-    station_code: Optional[str] = None,
-    network_code: Optional[str] = None,
-) -> List[StationSchema]:
-    if not station_code and not network_code:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+# @app.get(
+#     "/station",
+#     name="station lookup",
+#     description="""Lookup station by code or network_code. \
+#         Require one of code or network_code""",
+#     response_model=List[StationSchema],
+# )
+# def station_update(
+#     session: Session = Depends(get_database_session),
+#     station_code: Optional[str] = None,
+#     network_code: Optional[str] = None,
+# ) -> List[StationSchema]:
+#     if not station_code and not network_code:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    station = session.query(Station)
+#     station = session.query(Station)
 
-    if station_code:
-        station = station.filter_by(code=station_code)
+#     if station_code:
+#         station = station.filter_by(code=station_code)
 
-    if network_code:
-        station = station.filter_by(network_name=network_code)
+#     if network_code:
+#         station = station.filter_by(network_name=network_code)
 
-    stations = station.all()
+#     stations = station.all()
 
-    if not stations:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+#     if not stations:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    return stations
+#     return stations
 
 
 @app.post(
@@ -188,6 +236,30 @@ def revision(
 
 @app.put("/revision/{revision_id}", name="revision update")
 def revision_update(
+    data: RevisionApproval = {},
+    session: Session = Depends(get_database_session),
+    revision_id: int = None,
+) -> dict:
+    revision = session.query(Revision).get(revision_id)
+
+    if not revision:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Revision not found"
+        )
+
+    revision.approved = True
+    revision.approved_by = "opennem.admin"
+
+    session.add(revision)
+    session.commit()
+
+    response = UpdateResponse(success=True, record=revision)
+
+    return response
+
+
+@app.post("/revision/approve/{revision_id}", name="revision approve")
+def revision_approve(
     data: RevisionApproval = {},
     session: Session = Depends(get_database_session),
     revision_id: int = None,

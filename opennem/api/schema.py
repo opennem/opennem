@@ -42,3 +42,7 @@ class FueltechResponse(ApiBase):
     success: bool = True
 
     records: List[FueltechSchema]
+
+
+class RevisionUpdate(ApiBase):
+    pass

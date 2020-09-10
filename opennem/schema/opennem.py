@@ -85,6 +85,36 @@ class FacilityBaseSchema(OpennemBaseSchema):
     id: int
 
 
+class RecordTypes(str, Enum):
+    station = "station"
+    facility = "facility"
+    location = "location"
+    revision = "revision"
+
+
+class RevisionSchema(OpennemBaseSchema):
+    record_type: RecordTypes = Field(..., alias="schema")
+    code: str
+    data: dict = {}
+
+    approved: bool = False
+    approved_by: Optional[str]
+    approved_at: Optional[datetime]
+    approved_comment: Optional[str]
+
+    discarded: bool = False
+    discarded_by: Optional[str]
+    discarded_at: Optional[datetime]
+
+    @validator("data")
+    def validate_data(cls, data_value):
+        for field_value in data_value.values():
+            print(field_value)
+            assert isinstance(
+                field_value, (int, str, bool, float)
+            ), "Data values have to be int, str, bool or float"
+
+
 class FacilitySchema(OpennemBaseSchema):
     network: NetworkSchema = NetworkSchema(
         code="NEM", country="au", label="NEM"
@@ -96,6 +126,8 @@ class FacilitySchema(OpennemBaseSchema):
 
     # @TODO no longer optional
     code: Optional[str] = ""
+
+    revisions: Optional[List[RevisionSchema]] = []
 
     dispatch_type: DispatchType = "GENERATOR"
 
@@ -164,36 +196,6 @@ class LocationSchema(OpennemBaseSchema):
         return value.strip()
 
 
-class RecordTypes(str, Enum):
-    station = "station"
-    facility = "facility"
-    location = "location"
-    revision = "revision"
-
-
-class RevisionSchema(OpennemBaseSchema):
-    record_type: RecordTypes = Field(..., alias="schema")
-    code: str
-    data: dict = {}
-
-    approved: bool = False
-    approved_by: Optional[str]
-    approved_at: Optional[datetime]
-    approved_comment: Optional[str]
-
-    discarded: bool = False
-    discarded_by: Optional[str]
-    discarded_at: Optional[datetime]
-
-    @validator("data")
-    def validate_data(cls, data_value):
-        for field_value in data_value.values():
-            print(field_value)
-            assert isinstance(
-                field_value, (int, str, bool, float)
-            ), "Data values have to be int, str, bool or float"
-
-
 class StationSchema(OpennemBaseSchema):
     id: Optional[int]
 
@@ -201,6 +203,10 @@ class StationSchema(OpennemBaseSchema):
     participant_id: Optional[str]
 
     facilities: List[FacilitySchema] = []
+
+    # history: Optional[List[__self__]]
+
+    revisions: Optional[List[RevisionSchema]]
 
     code: str
 

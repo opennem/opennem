@@ -4,6 +4,7 @@ from datetime import datetime
 from pprint import pprint
 from typing import List, Union
 
+from dictalchemy.utils import fromdict
 from pydantic import BaseModel
 from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.orm.session import make_transient
@@ -212,11 +213,20 @@ def registry_init():
         station_dict = station.dict(exclude={"id"})
         # pprint(station_dict)
 
-        station_model = Station().fromdict(station_dict)
+        # pylint:disable no-member
+        station_model = fromdict(Station(), station_dict)
         station_model.approved = True
         station_model.approved_at = datetime.now()
         station_model.approved_by = "opennem.registry"
         station_model.created_by = "opennem.registry"
+
+        # location
+        station_model.location = fromdict(Location(), station_dict["location"])
+
+        if station.location.lat and station.location.lng:
+            station_model.location.geom = "SRID=4326;POINT({} {})".format(
+                station.location.lng, station.location.lat
+            )
 
         for fac in station.facilities:
             f = Facility(
@@ -285,4 +295,5 @@ def init():
 
 
 if __name__ == "__main__":
+    init()
     db_test()
