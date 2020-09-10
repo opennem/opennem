@@ -20,6 +20,7 @@ from opennem.importer.registry import registry_import
 from opennem.schema.opennem import (
     FueltechSchema,
     NetworkSchema,
+    RevisionSchema,
     StationSchema,
     StationSubmission,
 )
@@ -87,6 +88,12 @@ def stations(
 
     if not revisions_include:
         return stations
+
+    # stations = [StationSchema.parse_obj(i) for i in stations]
+
+    # revisions = [
+    # RevisionSchema.parse_obj(i) for i in session.query(Revision).all()
+    # ]
 
     revisions = session.query(Revision).all()
 
@@ -214,6 +221,7 @@ def facility(
 @app.get("/revisions")
 def revisions(
     session: Session = Depends(get_database_session),
+    response_model=RevisionSchema,
 ) -> List[Revision]:
     revisions = session.query(Revision).all()
 

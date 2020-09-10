@@ -93,9 +93,10 @@ class RecordTypes(str, Enum):
 
 
 class RevisionSchema(OpennemBaseSchema):
+    id: int
     record_type: RecordTypes = Field(..., alias="schema")
     code: str
-    data: dict = {}
+    data: Optional[dict] = {}
 
     approved: bool = False
     approved_by: Optional[str]
@@ -108,6 +109,9 @@ class RevisionSchema(OpennemBaseSchema):
 
     @validator("data")
     def validate_data(cls, data_value):
+        if not data_value:
+            return data_value
+
         for field_value in data_value.values():
             assert isinstance(
                 field_value, (int, str, bool, float)
