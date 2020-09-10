@@ -130,7 +130,8 @@ class FacilitySchema(OpennemBaseSchema):
     # @TODO no longer optional
     code: Optional[str] = ""
 
-    revisions: Optional[List[RevisionSchema]] = []
+    # revisions: Optional[List[RevisionSchema]] = []
+    revision_ids: Optional[List[int]] = []
 
     dispatch_type: DispatchType = "GENERATOR"
 
@@ -209,7 +210,8 @@ class StationSchema(OpennemBaseSchema):
 
     # history: Optional[List[__self__]]
 
-    revisions: Optional[List[RevisionSchema]]
+    # revisions: Optional[List[RevisionSchema]]
+    revision_ids: Optional[List[int]] = []
 
     code: str
 

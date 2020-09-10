@@ -98,22 +98,28 @@ def stations(
     revisions = session.query(Revision).all()
 
     for station in stations:
-        station.revisions = list(
+        _revisions = list(
             filter(
                 lambda rev: rev.schema == "station"
                 and rev.code == station.code,
                 revisions,
             )
         )
+        # station.revisions = _revisions
+
+        station.revision_ids = [i.id for i in _revisions]
 
         for facility in station.facilities:
-            facility.revisions = list(
+            _revisions = list(
                 filter(
                     lambda rev: rev.schema == "facility"
                     and rev.code == facility.code,
                     revisions,
                 )
             )
+
+            # facility.revisions = _revisions
+            facility.revision_ids = [i.id for i in _revisions]
 
     return stations
 
@@ -196,7 +202,7 @@ def station(
 @app.post(
     "/stations",
     name="station",
-    response_model=StationSchema,
+    # response_model=StationSchema,
     description="Create a station",
 )
 def station_create(
@@ -221,7 +227,6 @@ def facility(
 @app.get("/revisions")
 def revisions(
     session: Session = Depends(get_database_session),
-    response_model=RevisionSchema,
 ) -> List[Revision]:
     revisions = session.query(Revision).all()
 
