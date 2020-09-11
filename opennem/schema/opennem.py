@@ -3,7 +3,7 @@
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field, validator
 
@@ -19,6 +19,56 @@ from opennem.core.normalizers import (
     station_name_cleaner,
 )
 from opennem.core.oid import get_ocode, get_oid
+
+
+class PropertyBaseModel(BaseModel):
+    """
+    Workaround for serializing properties with pydantic until
+    https://github.com/samuelcolvin/pydantic/issues/935
+    is solved
+    """
+
+    @classmethod
+    def get_properties(cls):
+        return [
+            prop
+            for prop in dir(cls)
+            if isinstance(getattr(cls, prop), property)
+            and prop not in ("__values__", "fields")
+        ]
+
+    def dict(
+        self,
+        *,
+        include: Union["AbstractSetIntStr", "MappingIntStrAny"] = None,
+        exclude: Union["AbstractSetIntStr", "MappingIntStrAny"] = None,
+        by_alias: bool = False,
+        skip_defaults: bool = None,
+        exclude_unset: bool = False,
+        exclude_defaults: bool = False,
+        exclude_none: bool = False,
+    ) -> "DictStrAny":
+        attribs = super().dict(
+            include=include,
+            exclude=exclude,
+            by_alias=by_alias,
+            skip_defaults=skip_defaults,
+            exclude_unset=exclude_unset,
+            exclude_defaults=exclude_defaults,
+            exclude_none=exclude_none,
+        )
+        props = self.get_properties()
+        # Include and exclude properties
+        if include:
+            props = [prop for prop in props if prop in include]
+        if exclude:
+            props = [prop for prop in props if prop not in exclude]
+
+        # Update the attribute dict with the properties
+        if props:
+            attribs.update({prop: getattr(self, prop) for prop in props})
+
+        return attribs
 
 
 class BaseConfig(BaseModel):
@@ -94,9 +144,11 @@ class RecordTypes(str, Enum):
 
 class RevisionSchema(OpennemBaseSchema):
     id: int
-    record_type: RecordTypes = Field(..., alias="schema")
-    code: str
-    data: Optional[dict] = {}
+
+    changes: Dict[str, Union[str, int, float, bool]] = {}
+    previous: Optional[Dict[str, Union[str, int, float, bool]]] = {}
+
+    parent_id: Optional[int]
 
     approved: bool = False
     approved_by: Optional[str]
@@ -107,18 +159,20 @@ class RevisionSchema(OpennemBaseSchema):
     discarded_by: Optional[str]
     discarded_at: Optional[datetime]
 
-    @validator("data")
-    def validate_data(cls, data_value):
-        if not data_value:
-            return data_value
+    # @validator("changes")
+    # def validate_data(cls, data_value):
+    #     if not data_value:
+    #         return data_value
 
-        for field_value in data_value.values():
-            assert isinstance(
-                field_value, (int, str, bool, float)
-            ), "Data values have to be int, str, bool or float"
+    #     for field_value in data_value.values():
+    #         assert isinstance(
+    #             field_value, (int, str, bool, float)
+    #         ), "Data values have to be int, str, bool or float"
 
 
 class FacilitySchema(OpennemBaseSchema):
+    id: Optional[int]
+
     network: NetworkSchema = NetworkSchema(
         code="NEM", country="au", label="NEM"
     )
@@ -130,7 +184,7 @@ class FacilitySchema(OpennemBaseSchema):
     # @TODO no longer optional
     code: Optional[str] = ""
 
-    # revisions: Optional[List[RevisionSchema]] = []
+    revisions: Optional[List[RevisionSchema]] = []
     revision_ids: Optional[List[int]] = []
 
     dispatch_type: DispatchType = "GENERATOR"
@@ -210,8 +264,7 @@ class StationSchema(OpennemBaseSchema):
 
     # history: Optional[List[__self__]]
 
-    # revisions: Optional[List[RevisionSchema]]
-    revision_ids: Optional[List[int]] = []
+    revisions: Optional[List[RevisionSchema]]
 
     code: str
 

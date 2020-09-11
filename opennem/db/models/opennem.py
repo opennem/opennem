@@ -99,30 +99,6 @@ class Participant(Base, BaseModel):
     abn = Column(Text)
 
 
-class Revision(Base, BaseModel):
-
-    __tablename__ = "revisions"
-
-    id = Column(
-        Integer,
-        Sequence("seq_revision_id", start=1000, increment=1),
-        primary_key=True,
-    )
-
-    schema = Column(Text, nullable=False, index=True)
-    code = Column(Text, nullable=False, index=True)
-    data = Column(JSON, nullable=True)
-
-    approved = Column(Boolean, default=False)
-    approved_by = Column(Text)
-    approved_at = Column(DateTime(timezone=True), nullable=True)
-    approved_comment = Column(Text, nullable=True)
-
-    discarded = Column(Boolean, default=False)
-    discarded_by = Column(Text)
-    discarded_at = Column(DateTime(timezone=True), nullable=True)
-
-
 class Location(Base):
     __tablename__ = "location"
 
@@ -178,6 +154,8 @@ class Station(Base, BaseModel):
     location = relationship("Location")
 
     facilities = relationship("Facility")
+
+    revisions = relationship("Revision")
 
     code = Column(Text, index=True, nullable=True)
     name = Column(Text)
@@ -310,6 +288,8 @@ class Facility(Base, BaseModel):
     )
     station = relationship("Station", back_populates="facilities")
 
+    revisions = relationship("Revision")
+
     # DUID but modified by opennem as an identifier
     code = Column(Text, index=True)
 
@@ -378,6 +358,47 @@ class Facility(Base, BaseModel):
     @hybrid_property
     def ocode(self) -> str:
         return get_ocode(self)
+
+
+class Revision(Base, BaseModel):
+
+    __tablename__ = "revisions"
+
+    id = Column(
+        Integer,
+        Sequence("seq_revision_id", start=1000, increment=1),
+        primary_key=True,
+    )
+
+    station_id = Column(
+        Integer,
+        ForeignKey("station.id", name="fk_revision_station_id"),
+        nullable=True,
+    )
+    station = relationship("Station", back_populates="revisions")
+
+    facility_id = Column(
+        Integer,
+        ForeignKey("facility.id", name="fk_revision_facility_id"),
+        nullable=True,
+    )
+    facility = relationship("Facility", back_populates="revisions")
+
+    changes = Column(JSON, nullable=True)
+    previous = Column(JSON, nullable=True)
+
+    approved = Column(Boolean, default=False)
+    approved_by = Column(Text)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+    approved_comment = Column(Text, nullable=True)
+
+    discarded = Column(Boolean, default=False)
+    discarded_by = Column(Text)
+    discarded_at = Column(DateTime(timezone=True), nullable=True)
+
+    @hybrid_property
+    def parent_id(self) -> str:
+        return self.station_id or self.facility_id
 
 
 class FacilityScada(Base, BaseModel):

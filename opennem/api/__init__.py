@@ -1,7 +1,8 @@
 from typing import List, Optional
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import Field
 from sqlalchemy.orm import Session, sessionmaker
 from starlette import status
 
@@ -59,20 +60,36 @@ app.add_middleware(
 )
 def stations(
     session: Session = Depends(get_database_session),
-    revisions_include: Optional[bool] = False,
-    history_include: Optional[bool] = False,
+    revisions_include: Optional[bool] = Query(
+        False, description="Include revisions in records"
+    ),
+    history_include: Optional[bool] = Query(
+        False, description="Include history in records"
+    ),
+    only_approved: Optional[bool] = Query(
+        False, description="Include history in records"
+    ),
     name: Optional[str] = None,
     limit: Optional[int] = None,
     page: int = 1,
 ) -> List[StationSchema]:
     stations = (
         session.query(Station)
-        .join(Facility)
-        .join(Location)
-        .join(Facility.fueltech)
-        .filter(Facility.fueltech_id.isnot(None))
-        .filter(Facility.status_id.isnot(None))
+        .join(Station.location)
+        .outerjoin(Facility, Facility.station_id == Station.id)
+        .outerjoin(FuelTech, Facility.fueltech_id == FuelTech.code)
+        # .group_by(Station.code)
+        # .filter(Facility.fueltech_id.isnot(None))
+        # .filter(Facility.status_id.isnot(None))
     )
+
+    if revisions_include:
+        stations = stations.outerjoin(
+            Revision, Revision.station_id == Station.id
+        )
+
+    if only_approved:
+        stations = stations.filter(Station.approved == True)
 
     if name:
         stations = stations.filter(Station.name.like("%{}%".format(name)))
@@ -89,37 +106,37 @@ def stations(
     if not revisions_include:
         return stations
 
-    # stations = [StationSchema.parse_obj(i) for i in stations]
+    # stations = [StationSchema.from_orm(i) for i in stations]
 
     # revisions = [
     # RevisionSchema.parse_obj(i) for i in session.query(Revision).all()
     # ]
 
-    revisions = session.query(Revision).all()
+    # revisions = session.query(Revision).all()
 
-    for station in stations:
-        _revisions = list(
-            filter(
-                lambda rev: rev.schema == "station"
-                and rev.code == station.code,
-                revisions,
-            )
-        )
-        # station.revisions = _revisions
+    # for station in stations:
+    #     _revisions = list(
+    #         filter(
+    #             lambda rev: rev.schema == "station"
+    #             and rev.code == station.code,
+    #             revisions,
+    #         )
+    #     )
+    #     # station.revisions = _revisions
 
-        station.revision_ids = [i.id for i in _revisions]
+    #     station.revision_ids = [i.id for i in _revisions]
 
-        for facility in station.facilities:
-            _revisions = list(
-                filter(
-                    lambda rev: rev.schema == "facility"
-                    and rev.code == facility.code,
-                    revisions,
-                )
-            )
+    #     for facility in station.facilities:
+    #         _revisions = list(
+    #             filter(
+    #                 lambda rev: rev.schema == "facility"
+    #                 and rev.code == facility.code,
+    #                 revisions,
+    #             )
+    #         )
 
-            # facility.revisions = _revisions
-            facility.revision_ids = [i.id for i in _revisions]
+    #         # facility.revisions = _revisions
+    #         facility.revision_ids = [i.id for i in _revisions]
 
     return stations
 

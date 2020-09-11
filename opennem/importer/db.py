@@ -2,7 +2,7 @@ import logging
 import re
 from datetime import datetime
 from pprint import pprint
-from typing import List, Union
+from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
 from pydantic import BaseModel
@@ -53,9 +53,23 @@ def get_schema_name(record: object) -> str:
     return class_name
 
 
+def revision_factory_join_field(record_instance: BaseModel) -> str:
+    class_name = str(record_instance.__class__.__name__)
+
+    FIELD_MAP = {
+        "StationSchema": "station_id",
+        "FacilitySchema": "facility_id",
+    }
+
+    if class_name in FIELD_MAP.keys():
+        return FIELD_MAP[class_name]
+
+    raise Exception("Could not map record %s", record_instance)
+
+
 def revision_factory(
     record: BaseModel, field_names: Union[str, List[str]], created_by: str,
-) -> bool:
+) -> Optional[Revision]:
 
     if isinstance(field_names, str):
         field_names = [field_names]
@@ -63,7 +77,7 @@ def revision_factory(
     revision_data = {}
 
     for field_name in field_names:
-        field_type = get_schema_name(record)
+        # field_type = get_schema_name(record)
         field_value = getattr(record, field_name)
 
         if isinstance(field_value, BaseModel):
@@ -82,36 +96,37 @@ def revision_factory(
         if field_value is not False:
             revision_data[field_name] = field_value
 
-    if not record.code:
+    if not record.id:
         logger.error("Require a code to create a revision: %s", record)
-        return False
+        return None
 
     if len(revision_data.keys()) < 1:
         logger.error("Require data to lookup for code %s", record.code)
-        return False
+        return None
+
+    column_name = revision_factory_join_field(record)
 
     __query = (
-        s.query(Revision)
-        .filter(Revision.schema == field_type)
-        .filter(Revision.code == record.code)
+        s.query(Revision).filter(getattr(Revision, column_name) == record.id)
+        # .filter(Revision.code == record.code)
     )
 
     for data_name, data_value in revision_data.items():
         if isinstance(data_value, str):
             __query = __query.filter(
-                Revision.data[data_name].as_string() == data_value
+                Revision.changes[data_name].as_string() == data_value
             )
         if isinstance(data_value, bool):
             __query = __query.filter(
-                Revision.data[data_name].as_boolean() == data_value
+                Revision.changes[data_name].as_boolean() == data_value
             )
         if isinstance(data_value, int):
             __query = __query.filter(
-                Revision.data[data_name].as_integer() == data_value
+                Revision.changes[data_name].as_integer() == data_value
             )
         if isinstance(data_value, float):
             __query = __query.filter(
-                Revision.data[data_name].as_float() == data_value
+                Revision.changes[data_name].as_float() == data_value
             )
 
     revision_lookup = None
@@ -122,22 +137,17 @@ def revision_factory(
         logger.info(
             "Revision exists: %s %s %s", record.code, field_name, field_value,
         )
-        return False
+        return None
 
     if revision_lookup:
-        return False
+        return None
 
-    revision = Revision(
-        schema=field_type,
-        code=record.code,
-        created_by=created_by,
-        data=revision_data,
-    )
+    revision = Revision(created_by=created_by, changes=revision_data,)
 
-    s.add(revision)
-    s.commit()
+    # s.add(revision)
+    # s.commit()
 
-    return True
+    return revision
 
 
 def load_revision(records, created_by):
@@ -155,9 +165,42 @@ def load_revision(records, created_by):
                 f"New station {station_record.name} {station_record.code}"
             )
 
-            revision_factory(
+            station_dict = station_record.dict(
+                include={"code", "network_name", "name", "location"}
+            )
+            # pprint(station_dict)
+
+            # pylint:disable no-member
+            station_model = fromdict(Station(), station_dict)
+            station_model.approved = False
+            station_model.created_by = created_by
+
+            # location
+            if "location" in station_dict and station_dict["location"]:
+                station_model.location = fromdict(
+                    Location(), station_dict["location"]
+                )
+
+                if station_record.location.lat and station_record.location.lng:
+                    station_model.location.geom = "SRID=4326;POINT({} {})".format(
+                        station_record.location.lng,
+                        station_record.location.lat,
+                    )
+
+            s.add(station_model)
+            s.commit()
+
+            station_record.id = station_model.id
+
+            revision = revision_factory(
                 station_record, ["code", "name", "network_name"], created_by,
             )
+
+            if revision:
+                station_model.revisions.append(revision)
+
+            s.add(station_model)
+            s.commit()
 
         else:
             for field in ["name"]:
@@ -178,20 +221,63 @@ def load_revision(records, created_by):
                     "New facility %s => %s", station_record.name, facility.code
                 )
 
-                revision_factory(
+                facility_dict = facility.dict(
+                    include={
+                        "code",
+                        "network",
+                        # "network_id",
+                        "station",
+                        # "station_id",
+                        "network_code",
+                        "network_region",
+                        "network_name",
+                    }
+                )
+                # pprint(station_dict)
+
+                # pylint:disable no-member
+                facility_model = fromdict(Facility(), facility_dict)
+                facility_model.network_id = facility.network.code
+                facility_model.approved = False
+                facility_model.created_by = created_by
+
+                s.add(facility_model)
+                s.commit()
+
+                facility.id = facility_model.id
+
+                revision = revision_factory(
                     facility, ["code", "dispatch_type"], created_by
                 )
+
+                if revision:
+                    facility_model.revisions.append(revision)
+
+                s.add(facility_model)
+                s.commit()
+
+            else:
+                facility.id = facility_model.id
 
             for field in [
                 "fueltech",
                 "status",
-                "network_region",
                 "capacity_registered",
             ]:
-                if hasattr(station_model, field) and getattr(
-                    station_model, field
-                ) != getattr(station_record, field):
-                    revision_factory(facility, field, created_by)
+                revision = None
+
+                if getattr(facility, field) and (
+                    hasattr(facility_model, field)
+                    and getattr(facility_model, field)
+                    != getattr(facility, field)
+                ):
+                    revision = revision_factory(facility, field, created_by)
+
+                if revision:
+                    facility_model.revisions.append(revision)
+
+            s.add(facility_model)
+            s.commit()
 
 
 def db_test():
