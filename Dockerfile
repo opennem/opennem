@@ -12,7 +12,7 @@ RUN pip install "poetry==$POETRY_VERSION"
 
 FROM poetry as base
 WORKDIR /code
-COPY poetry.lock /code/
+COPY pyproject.toml poetry.lock /code/
 
 # Project initialization:
 RUN poetry config virtualenvs.in-project true && \
