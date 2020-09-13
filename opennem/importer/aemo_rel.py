@@ -22,6 +22,7 @@ from opennem.core.unit_codes import get_unit_code
 from opennem.core.unit_parser import parse_unit_duid
 from opennem.db.load_fixtures import load_fixture
 from opennem.exporter.encoders import OpenNEMJSONEncoder
+from opennem.schema.stations import StationSet
 from opennem.utils.log_config import logging
 
 logger = logging.getLogger("opennem.importer.mms")
@@ -178,16 +179,21 @@ def rel_import():
     nem_rel = load_rel()
     nem_rel = rel_grouper(nem_rel, mms_duid_station_map)
 
-    return nem_rel
+    rel = StationSet()
+
+    for s in nem_rel.values():
+        rel.add_dict(s)
+
+    return rel
 
 
 def rel_export():
     nem_rel = rel_import()
 
     with open("data/rel.json", "w") as fh:
-        json.dump(nem_rel, fh, indent=4, cls=OpenNEMJSONEncoder)
+        fh.write(nem_rel.json(indent=4))
 
-    logger.info("Wrote {} records".format(len(nem_rel.keys())))
+    logger.info("Wrote {} records".format(nem_rel.length))
 
 
 if __name__ == "__main__":

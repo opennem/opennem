@@ -6,6 +6,7 @@
 from collections import UserList
 from typing import List, Optional
 
+from opennem.exporter.encoders import opennem_serialize
 from opennem.schema.opennem import StationSchema
 
 
@@ -68,6 +69,14 @@ class StationSet(UserList):
         station = StationSchema(**station_dict)
 
         self.add(station)
+
+    def as_list(self) -> List[StationSchema]:
+        return self.data
+
+    def json(self, indent=None):
+        _data = [i.dict() for i in self.data]
+
+        return opennem_serialize(_data, indent=indent)
 
     @property
     def length(self) -> int:

@@ -32,6 +32,8 @@ def registry_to_station(registry_station: dict, _id: int) -> StationSchema:
 
     station.location = LocationSchema(
         state=registry_station.get("location", {}).get("state", None),
+        geocode_by="opennem.registry",
+        geocode_approved=True,
         lat=registry_station.get("location", {}).get("latitude", None),
         lng=registry_station.get("location", {}).get("longitude", None),
     )
@@ -115,7 +117,7 @@ def registry_export():
     stations = registry_import()
 
     with open("data/registry.json", "w") as fh:
-        json.dump(stations, fh, indent=4, cls=OpenNEMJSONEncoder)
+        fh.write(stations.json(indent=4))
 
     logger.info("Wrote {} records".format(stations.length))
 

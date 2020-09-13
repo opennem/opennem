@@ -145,7 +145,7 @@ def opennem_import():
                             rel_facility_duid, rel_facility["fueltech"],
                         )
                     )
-                    om_facility["fueltech_id"] = rel_facility["fueltech"]
+                    om_facility["fueltech"] = rel_facility["fueltech"]
 
                 if (
                     rel_facility["capacity_registered"]
@@ -153,10 +153,9 @@ def opennem_import():
                     != om_facility["capacity_registered"]
                 ):
                     logger.info(
-                        "REL: Set capacity for {} to {}".format(
-                            rel_facility_duid,
-                            rel_facility["capacity_registered"],
-                        )
+                        "REL: Set capacity for %s to %s",
+                        rel_facility_duid,
+                        rel_facility["capacity_registered"],
                     )
                     om_facility["capacity_registered"] = rel_facility[
                         "capacity_registered"
@@ -175,7 +174,7 @@ def opennem_import():
         station_name = gi_station["name"]
 
         station_name_existing = list(
-            filter(lambda x: x["name"] == station_name, opennem.values())
+            filter(lambda x: x["name"] == gi_station["name"], opennem.values())
         )
 
         if len(station_name_existing) and facility_station_join_by_name(
@@ -216,7 +215,7 @@ def opennem_import():
             ):
                 logger.info(
                     "GI Set status for {} to {}".format(
-                        rel_facility_duid, gi_facility["status"],
+                        gi_facility_duid, gi_facility["status"],
                     )
                 )
                 om_facility["status"] = gi_facility["status"]
