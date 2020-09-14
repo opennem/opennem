@@ -114,6 +114,8 @@ class Location(Base):
     state = Column(Text)
     postcode = Column(Text, nullable=True)
 
+    revisions = relationship("Revision")
+
     # Geo fields
     place_id = Column(Text, nullable=True, index=True)
     geocode_approved = Column(Boolean, default=False)
@@ -383,6 +385,13 @@ class Revision(Base, BaseModel):
         nullable=True,
     )
     facility = relationship("Facility", back_populates="revisions")
+
+    location_id = Column(
+        Integer,
+        ForeignKey("location.id", name="fk_revision_location_id"),
+        nullable=True,
+    )
+    location = relationship("Location", back_populates="revisions")
 
     changes = Column(JSON, nullable=True)
     previous = Column(JSON, nullable=True)
