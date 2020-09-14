@@ -25,10 +25,7 @@ def compare_record_differs(
 
         result = subject_value != target_value
 
-        print(field, subject_value, target_value, result)
         comparator_results.append(result)
-
-    print(comparator_results)
 
     return all(comparator_results)
 
