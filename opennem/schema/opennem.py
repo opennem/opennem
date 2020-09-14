@@ -198,7 +198,7 @@ class FacilitySchema(OpennemBaseSchema):
     registered: Optional[datetime]
     deregistered: Optional[datetime]
 
-    network_region: str
+    network_region: Optional[str]
 
     unit_id: Optional[int]
     unit_number: Optional[int]
