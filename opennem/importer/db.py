@@ -271,7 +271,7 @@ def load_revision(records, created_by):
             ]:
                 revision = None
 
-                if compare_record_differs(facility, facility_model, field):
+                if compare_record_differs(facility_model, facility, field):
                     logger.info(
                         "%s and %s differ",
                         getattr(facility, field),
