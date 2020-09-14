@@ -23,7 +23,7 @@ def compare_record_differs(
         subject_value = field_getter(subject, field)
         target_value = field_getter(target, field)
 
-        if target_value is None:
+        if target_value in [None, {}, ""]:
             return False
 
         result = subject_value != target_value
