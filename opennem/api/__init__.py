@@ -312,6 +312,32 @@ def revision_approve(
     return response
 
 
+@app.post("/revision/reject/{revision_id}", name="revision reject")
+def revision_approve(
+    data: RevisionApproval = {},
+    session: Session = Depends(get_database_session),
+    revision_id: int = None,
+) -> dict:
+    revision: Revision = session.query(Revision).get(revision_id)
+
+    if not revision:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Revision not found"
+        )
+
+    revision.approved = False
+    revision.discarded = False
+    revision.discarded_by = "opennem.admin"
+    revision.discarded_at = datetime.now()
+
+    session.add(revision)
+    session.commit()
+
+    response = UpdateResponse(success=True, record=revision)
+
+    return response
+
+
 @app.get("/networks", response_model=List[NetworkSchema])
 def networks(
     session: Session = Depends(get_database_session),
