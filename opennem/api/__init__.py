@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -28,7 +29,7 @@ from opennem.schema.opennem import (
 
 from .schema import (
     FueltechResponse,
-    RevisionApproval,
+    RevisionModification,
     StationResponse,
     UpdateResponse,
 )
@@ -266,7 +267,7 @@ def revision(
 
 @app.put("/revision/{revision_id}", name="revision update")
 def revision_update(
-    data: RevisionApproval = {},
+    data: RevisionModification = {},
     session: Session = Depends(get_database_session),
     revision_id: int = None,
 ) -> dict:
@@ -290,7 +291,7 @@ def revision_update(
 
 @app.post("/revision/approve/{revision_id}", name="revision approve")
 def revision_approve(
-    data: RevisionApproval = {},
+    data: RevisionModification = {},
     session: Session = Depends(get_database_session),
     revision_id: int = None,
 ) -> dict:
@@ -313,8 +314,8 @@ def revision_approve(
 
 
 @app.post("/revision/reject/{revision_id}", name="revision reject")
-def revision_approve(
-    data: RevisionApproval = {},
+def revision_reject(
+    data: RevisionModification = {},
     session: Session = Depends(get_database_session),
     revision_id: int = None,
 ) -> dict:

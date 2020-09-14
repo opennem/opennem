@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel, Field
@@ -13,7 +14,7 @@ class ApiBase(BaseModel):
     class Config:
         orm_mode = True
         anystr_strip_whitespace = True
-
+        use_enum_values = True
         arbitrary_types_allowed = True
         validate_assignment = True
 
@@ -29,8 +30,14 @@ class StationResponse(BaseModel):
     records: Optional[List[StationSchema]]
 
 
-class RevisionApproval(ApiBase):
+class RevisionModificationTypes(str, Enum):
+    approve = "approve"
+    reject = "reject"
+
+
+class RevisionModification(ApiBase):
     comment: Optional[str] = Field(None)
+    modification: RevisionModificationTypes
 
 
 class UpdateResponse(ApiBase):
