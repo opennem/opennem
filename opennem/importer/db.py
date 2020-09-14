@@ -20,7 +20,7 @@ from opennem.importer.mms import mms_import
 from opennem.importer.registry import registry_import
 from opennem.schema.opennem import StationSchema
 
-from .comparator import compare_record
+from .comparator import compare_record_differs
 
 logger = logging.getLogger(__name__)
 s = SessionLocal()
@@ -269,7 +269,7 @@ def load_revision(records, created_by):
             ]:
                 revision = None
 
-                if compare_record(facility, facility_model, field):
+                if compare_record_differs(facility, facility_model, field):
                     logger.info(
                         "%s and %s are equal",
                         getattr(facility, field),
