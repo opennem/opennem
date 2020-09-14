@@ -145,7 +145,7 @@ class RecordTypes(str, Enum):
 class RevisionSchema(OpennemBaseSchema):
     id: int
 
-    changes: Dict[str, Union[str, int, float, bool]] = {}
+    changes: Dict[str, Union[str, int, float, bool, None]] = {}
     previous: Optional[Dict[str, Union[str, int, float, bool]]] = {}
 
     parent_id: Optional[int]
