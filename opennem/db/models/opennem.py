@@ -387,6 +387,8 @@ class Revision(Base, BaseModel):
     changes = Column(JSON, nullable=True)
     previous = Column(JSON, nullable=True)
 
+    is_update = Column(Boolean, default=False)
+
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)

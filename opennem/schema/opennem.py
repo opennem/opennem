@@ -150,6 +150,8 @@ class RevisionSchema(OpennemBaseSchema):
 
     parent_id: Optional[int]
 
+    is_update: bool = False
+
     approved: bool = False
     approved_by: Optional[str]
     approved_at: Optional[datetime]
