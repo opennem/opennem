@@ -129,6 +129,8 @@ class Location(Base):
 class Station(Base, BaseModel):
     __tablename__ = "station"
 
+    # __table_args__ = (UniqueConstraint('customer_id', 'location_code', name='_customer_location_uc'),)
+
     def __str__(self):
         return "{} <{}>".format(self.name, self.code)
 

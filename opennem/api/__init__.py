@@ -68,7 +68,7 @@ def stations(
         False, description="Include history in records"
     ),
     only_approved: Optional[bool] = Query(
-        False, description="Include history in records"
+        False, description="Only show approved stations not those pending"
     ),
     name: Optional[str] = None,
     limit: Optional[int] = None,
@@ -90,7 +90,7 @@ def stations(
         )
 
     if only_approved:
-        stations = stations.filter(Station.approved == True)
+        stations = stations.filter(Station.approved.is(True))
 
     if name:
         stations = stations.filter(Station.name.like("%{}%".format(name)))
@@ -150,8 +150,12 @@ def stations(
 def station(
     session: Session = Depends(get_database_session),
     station_code: str = None,
-    revisions_include: Optional[bool] = False,
-    history_include: Optional[bool] = False,
+    revisions_include: Optional[bool] = Query(
+        False, description="Include revisions in records"
+    ),
+    history_include: Optional[bool] = Query(
+        False, description="Include history in records"
+    ),
 ):
     station = (
         session.query(Station)
@@ -217,8 +221,8 @@ def station_history(
 )
 def station_update(
     session: Session = Depends(get_database_session),
-    station_code: Optional[str] = None,
-    network_code: Optional[str] = None,
+    station_code: Optional[str] = Field(None, description="Code of the station to lookup"),
+    network_code: Optional[str] = Field(None, description="The network code to lookup"),
 ) -> List[StationSchema]:
     if not station_code and not network_code:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
