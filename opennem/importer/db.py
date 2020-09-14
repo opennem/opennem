@@ -20,6 +20,8 @@ from opennem.importer.mms import mms_import
 from opennem.importer.registry import registry_import
 from opennem.schema.opennem import StationSchema
 
+from .comparator import compare_record
+
 logger = logging.getLogger(__name__)
 s = SessionLocal()
 
@@ -59,6 +61,7 @@ def revision_factory_join_field(record_instance: BaseModel) -> str:
     FIELD_MAP = {
         "StationSchema": "station_id",
         "FacilitySchema": "facility_id",
+        "LocationSchema": "location_id",
     }
 
     if class_name in FIELD_MAP.keys():
@@ -266,11 +269,13 @@ def load_revision(records, created_by):
             ]:
                 revision = None
 
-                if getattr(facility, field) and (
-                    hasattr(facility_model, field)
-                    and getattr(facility_model, field)
-                    != getattr(facility, field)
-                ):
+                if compare_record(facility, facility_model, field):
+                    logger.info(
+                        "%s and %s are equal",
+                        getattr(facility, field),
+                        getattr(facility_model, field),
+                    )
+
                     revision = revision_factory(facility, field, created_by)
 
                 if revision:
@@ -389,5 +394,9 @@ def init():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
+    logger.setLevel(logging.INFO)
+
     init()
     db_test()
