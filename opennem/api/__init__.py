@@ -186,35 +186,57 @@ def station(
         )
 
 
-# @app.get(
-#     "/station",
-#     name="station lookup",
-#     description="""Lookup station by code or network_code. \
-#         Require one of code or network_code""",
-#     response_model=List[StationSchema],
-# )
-# def station_update(
-#     session: Session = Depends(get_database_session),
-#     station_code: Optional[str] = None,
-#     network_code: Optional[str] = None,
-# ) -> List[StationSchema]:
-#     if not station_code and not network_code:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+@app.get(
+    "/station/history",
+    name="station all history",
+    description="""Get history for all stations""",
+    response_model=List[StationSchema],
+)
+def stations_history(session: Session = Depends(get_database_session)):
+    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
-#     station = session.query(Station)
 
-#     if station_code:
-#         station = station.filter_by(code=station_code)
+@app.get(
+    "/station/history/{station_code}",
+    name="station history",
+    description="""Get history for a station""",
+    response_model=StationSchema,
+)
+def station_history(
+    station_code: str, session: Session = Depends(get_database_session)
+):
+    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
-#     if network_code:
-#         station = station.filter_by(network_name=network_code)
 
-#     stations = station.all()
+@app.get(
+    "/station",
+    name="station lookup",
+    description="""Lookup station by code or network_code. \
+        Require one of code or network_code""",
+    response_model=List[StationSchema],
+)
+def station_update(
+    session: Session = Depends(get_database_session),
+    station_code: Optional[str] = None,
+    network_code: Optional[str] = None,
+) -> List[StationSchema]:
+    if not station_code and not network_code:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-#     if not stations:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    station = session.query(Station)
 
-#     return stations
+    if station_code:
+        station = station.filter_by(code=station_code)
+
+    if network_code:
+        station = station.filter_by(network_name=network_code)
+
+    stations = station.all()
+
+    if not stations:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    return stations
 
 
 @app.post(
