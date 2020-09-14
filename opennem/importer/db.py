@@ -86,6 +86,8 @@ def revision_factory(
         if isinstance(field_value, BaseModel):
             _value_dict = field_value.dict()
 
+            # we only store the primary keys in associations rather
+            # than the full record.
             if "id" in _value_dict:
                 field_value = _value_dict["id"]
 
@@ -271,7 +273,7 @@ def load_revision(records, created_by):
 
                 if compare_record_differs(facility, facility_model, field):
                     logger.info(
-                        "%s and %s are equal",
+                        "%s and %s differ",
                         getattr(facility, field),
                         getattr(facility_model, field),
                     )

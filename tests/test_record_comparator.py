@@ -53,11 +53,11 @@ class TestRecordComparator(object):
         target = {"field": None}
 
         assert (
-            compare_record_differs(subject, target, "field") is True
-        ), "No field means it changed"
+            compare_record_differs(subject, target, "field") is False
+        ), "Setting a field to blank is not a change"
         assert (
-            compare_record_differs(subject, {}, "field") is True
-        ), "Empty means it changed"
+            compare_record_differs(subject, {}, "field") is False
+        ), "Empty means it hasn't changed"
 
     def test_boolean(self):
         subject = {
