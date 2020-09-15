@@ -255,7 +255,7 @@ class LocationSchema(OpennemBaseSchema):
     def clean_postcode(cls, value: str) -> str:
         return value.strip()
 
-    @propery
+    @property
     def geom(self) -> Optional[str]:
         if not self.lng or not self.lat:
             return None
