@@ -34,7 +34,7 @@ from .schema import (
     UpdateResponse,
 )
 
-app = FastAPI(title="OpenNEM", debug=True, version="3.0.0-alpha")
+app = FastAPI(title="OpenNEM", debug=True, version="3.0.0-alpha.2")
 
 origins = [
     "https://admin.opennem.org.au",
@@ -90,7 +90,7 @@ def stations(
         )
 
     if only_approved:
-        stations = stations.filter(Station.approved.is(True))
+        stations = stations.filter(Station.approved == True)
 
     if name:
         stations = stations.filter(Station.name.like("%{}%".format(name)))
@@ -103,41 +103,6 @@ def stations(
     )
 
     stations = stations.all()
-
-    if not revisions_include:
-        return stations
-
-    # stations = [StationSchema.from_orm(i) for i in stations]
-
-    # revisions = [
-    # RevisionSchema.parse_obj(i) for i in session.query(Revision).all()
-    # ]
-
-    # revisions = session.query(Revision).all()
-
-    # for station in stations:
-    #     _revisions = list(
-    #         filter(
-    #             lambda rev: rev.schema == "station"
-    #             and rev.code == station.code,
-    #             revisions,
-    #         )
-    #     )
-    #     # station.revisions = _revisions
-
-    #     station.revision_ids = [i.id for i in _revisions]
-
-    #     for facility in station.facilities:
-    #         _revisions = list(
-    #             filter(
-    #                 lambda rev: rev.schema == "facility"
-    #                 and rev.code == facility.code,
-    #                 revisions,
-    #             )
-    #         )
-
-    #         # facility.revisions = _revisions
-    #         facility.revision_ids = [i.id for i in _revisions]
 
     return stations
 
@@ -221,8 +186,12 @@ def station_history(
 )
 def station_update(
     session: Session = Depends(get_database_session),
-    station_code: Optional[str] = Field(None, description="Code of the station to lookup"),
-    network_code: Optional[str] = Field(None, description="The network code to lookup"),
+    station_code: Optional[str] = Query(
+        None, description="Code of the station to lookup"
+    ),
+    network_code: Optional[str] = Query(
+        None, description="The network code to lookup"
+    ),
 ) -> List[StationSchema]:
     if not station_code and not network_code:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
