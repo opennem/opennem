@@ -411,7 +411,31 @@ class Revision(Base, BaseModel):
 
     @hybrid_property
     def parent_id(self) -> str:
-        return self.station_id or self.facility_id
+        return self.station_id or self.facility_id or self.location_id
+
+    @hybrid_property
+    def parent_type(self) -> str:
+        if self.station_id:
+            return "station"
+
+        if self.facility_id:
+            return "facility"
+
+        if self.location_id:
+            return "location"
+
+        return ""
+
+    @hybrid_property
+    def station_owner_id(self) -> int:
+        if self.station_id:
+            return self.station_id
+
+        if self.facility_id:
+            return self.facility.station.id
+
+        if self.location:
+            return self.location.station.id
 
 
 class FacilityScada(Base, BaseModel):

@@ -149,6 +149,8 @@ class RevisionSchema(OpennemBaseSchema):
     previous: Optional[Dict[str, Union[str, int, float, bool]]] = {}
 
     parent_id: Optional[int]
+    parent_type: Optional[str]
+    station_owner_id: Optional[int]
 
     is_update: bool = False
 
@@ -160,6 +162,10 @@ class RevisionSchema(OpennemBaseSchema):
     discarded: bool = False
     discarded_by: Optional[str]
     discarded_at: Optional[datetime]
+
+    # station_id: Optional[int]
+    # facility_id: Optional[int]
+    # location_id: Optional[int]
 
     # @validator("changes")
     # def validate_data(cls, data_value):
@@ -187,7 +193,7 @@ class FacilitySchema(OpennemBaseSchema):
     code: Optional[str] = ""
 
     revisions: Optional[List[RevisionSchema]] = []
-    revision_ids: Optional[List[int]] = []
+    # revision_ids: Optional[List[int]] = []
 
     dispatch_type: DispatchType = "GENERATOR"
 
