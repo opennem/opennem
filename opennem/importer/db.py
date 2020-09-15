@@ -194,15 +194,15 @@ def load_revision(records, created_by):
 
             station_record.id = station_model.id
 
-            revision = revision_factory(
-                station_record, ["code", "name", "network_name"], created_by,
-            )
+            # revision = revision_factory(
+            #     station_record, ["code", "name", "network_name"], created_by,
+            # )
 
-            if revision:
-                station_model.revisions.append(revision)
+            # if revision:
+            #     station_model.revisions.append(revision)
 
-            s.add(station_model)
-            s.commit()
+            # s.add(station_model)
+            # s.commit()
 
         else:
             for field in ["name"]:
