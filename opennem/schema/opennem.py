@@ -286,6 +286,10 @@ class StationSchema(OpennemBaseSchema):
 
     location: LocationSchema = LocationSchema()
 
+    approved: bool = False
+    approved_by: Optional[str]
+    approved_at: Optional[datetime]
+
     @property
     def capacity_registered(self) -> Optional[int]:
         """
