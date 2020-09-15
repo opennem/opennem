@@ -187,10 +187,7 @@ def load_revision(records, created_by):
                 )
 
                 if station_record.location.lat and station_record.location.lng:
-                    station_model.location.geom = "SRID=4326;POINT({} {})".format(
-                        station_record.location.lng,
-                        station_record.location.lat,
-                    )
+                    station_model.location.geom = station_record.location.geom
 
             s.add(station_model)
             s.commit()
