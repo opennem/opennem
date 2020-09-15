@@ -437,6 +437,28 @@ class Revision(Base, BaseModel):
         if self.location:
             return self.location.station.id
 
+    @hybrid_property
+    def station_owner_name(self) -> str:
+        if self.station_id:
+            return self.station.name
+
+        if self.facility_id:
+            return self.facility.station.name
+
+        if self.location:
+            return self.location.station.name
+
+    @hybrid_property
+    def station_owner_code(self) -> str:
+        if self.station_id:
+            return self.station.code
+
+        if self.facility_id:
+            return self.facility.station.code
+
+        if self.location:
+            return self.location.station.code
+
 
 class FacilityScada(Base, BaseModel):
     """

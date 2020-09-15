@@ -151,6 +151,8 @@ class RevisionSchema(OpennemBaseSchema):
     parent_id: Optional[int]
     parent_type: Optional[str]
     station_owner_id: Optional[int]
+    station_owner_name: Optional[str]
+    station_owner_code: Optional[str]
 
     is_update: bool = False
 
