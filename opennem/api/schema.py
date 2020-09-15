@@ -53,3 +53,14 @@ class FueltechResponse(ApiBase):
 
 class RevisionUpdate(ApiBase):
     pass
+
+
+class StationIDListLocation(ApiBase):
+    state: str
+    country: str = "au"
+
+
+class StationIDList(ApiBase):
+    id: int
+    name: str
+    location: StationIDListLocation

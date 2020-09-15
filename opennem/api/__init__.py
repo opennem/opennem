@@ -30,6 +30,7 @@ from opennem.schema.opennem import (
 from .schema import (
     FueltechResponse,
     RevisionModification,
+    StationIDList,
     StationResponse,
     UpdateResponse,
 )
@@ -101,6 +102,29 @@ def stations(
         Facility.network_code,
         Facility.code,
     )
+
+    stations = stations.all()
+
+    return stations
+
+
+@app.get(
+    "/station/ids",
+    response_model=List[StationIDList],
+    description="Get a list of station ids for dropdowns",
+)
+def station_ids(
+    session: Session = Depends(get_database_session),
+    only_approved: Optional[bool] = Query(
+        True, description="Only show approved stations not those pending"
+    ),
+) -> List[StationIDList]:
+    stations = session.query(Station).join(Station.location)
+
+    if only_approved:
+        stations = stations.filter(Station.approved == True)
+
+    stations = stations.order_by(Station.id,)
 
     stations = stations.all()
 
