@@ -228,8 +228,10 @@ def load_revision(records, created_by):
                         "code",
                         "network",
                         # "network_id",
+                        "dispatch_type",
                         "station",
                         # "station_id",
+                        # "status",
                         "network_code",
                         "network_region",
                         "network_name",
@@ -248,12 +250,13 @@ def load_revision(records, created_by):
 
                 facility.id = facility_model.id
 
-                revision = revision_factory(
-                    facility, ["code", "dispatch_type"], created_by
-                )
+                # @NOTE don't create revisions for new facilities
+                # revision = revision_factory(
+                #     facility, ["code", "dispatch_type"], created_by
+                # )
 
-                if revision:
-                    facility_model.revisions.append(revision)
+                # if revision:
+                #     facility_model.revisions.append(revision)
 
                 s.add(facility_model)
                 s.commit()
@@ -269,11 +272,11 @@ def load_revision(records, created_by):
                 revision = None
 
                 if compare_record_differs(facility_model, facility, field):
-                    logger.info(
-                        "%s and %s differ",
-                        getattr(facility, field),
-                        getattr(facility_model, field),
-                    )
+                    # logger.info(
+                    #     "%s and %s differ",
+                    #     getattr(facility, field),
+                    #     getattr(facility_model, field),
+                    # )
 
                     revision = revision_factory(facility, field, created_by)
 
@@ -281,6 +284,9 @@ def load_revision(records, created_by):
                     facility_model.revisions.append(revision)
 
             s.add(facility_model)
+
+            station_model.facilities.append(facility_model)
+            s.add(station_model)
             s.commit()
 
 
