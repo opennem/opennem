@@ -258,8 +258,8 @@ def load_revision(records, created_by):
                 # if revision:
                 #     facility_model.revisions.append(revision)
 
-                s.add(facility_model)
-                s.commit()
+                # s.add(facility_model)
+                # s.commit()
 
             else:
                 facility.id = facility_model.id
