@@ -181,7 +181,7 @@ class FacilitySchema(OpennemBaseSchema):
 
     fueltech: Optional[FueltechSchema]
 
-    status: FacilityStatusSchema
+    status: Optional[FacilityStatusSchema]
 
     # @TODO no longer optional
     code: Optional[str] = ""
@@ -254,6 +254,15 @@ class LocationSchema(OpennemBaseSchema):
     @validator("postcode")
     def clean_postcode(cls, value: str) -> str:
         return value.strip()
+
+    @propery
+    def geom(self) -> Optional[str]:
+        if not self.lng or not self.lat:
+            return None
+
+        geom = "SRID=4326;POINT({} {})".format(self.lng, self.lat,)
+
+        return geom
 
 
 class StationSchema(OpennemBaseSchema):
