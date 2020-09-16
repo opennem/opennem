@@ -38,6 +38,7 @@ from .schema import (
 app = FastAPI(title="OpenNEM", debug=True, version="3.0.0-alpha.2")
 
 origins = [
+    "https://dev.opennem.org.au",
     "https://admin.opennem.org.au",
     "https://admin.opennem.test",
     "http://localhost",
