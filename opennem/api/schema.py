@@ -19,9 +19,9 @@ class ApiBase(BaseModel):
         validate_assignment = True
 
 
-# all records have a code
+# all records have an id
 class RecordBase(BaseModel):
-    code: str
+    id: int
 
 
 class StationResponse(BaseModel):
