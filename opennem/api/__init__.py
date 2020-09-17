@@ -31,6 +31,7 @@ from .schema import (
     FueltechResponse,
     RevisionModification,
     StationIDList,
+    StationModification,
     StationResponse,
     UpdateResponse,
 )
@@ -209,7 +210,7 @@ def station_history(
         Require one of code or network_code""",
     response_model=List[StationSchema],
 )
-def station_update(
+def station_lookup(
     session: Session = Depends(get_database_session),
     station_code: Optional[str] = Query(
         None, description="Code of the station to lookup"
@@ -285,13 +286,47 @@ def revision(
     return revision
 
 
+@app.put("/station/{station_id}", name="Station update")
+def station_update(
+    station_id: int,
+    data: StationModification = {},
+    session: Session = Depends(get_database_session),
+) -> dict:
+    station = session.query(Station).get(station_id)
+
+    if not station:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
+        )
+
+    if data.modification == "approve":
+
+        if station.approved is True:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Station already approved",
+            )
+
+        station.approved = True
+        station.approved_by = "opennem.admin"
+
+    session.add(station)
+    session.commit()
+
+    response = UpdateResponse(success=True, record=station)
+
+    return response
+
+
+
+
 @app.put("/revision/{revision_id}", name="revision update")
 def revision_update(
     data: RevisionModification = {},
     session: Session = Depends(get_database_session),
     revision_id: int = None,
 ) -> dict:
-    revision = session.query(Revision).get(revision_id)
+    revision: Revision = session.query(Revision).get(revision_id)
 
     if not revision:
         raise HTTPException(
@@ -300,6 +335,10 @@ def revision_update(
 
     revision.approved = True
     revision.approved_by = "opennem.admin"
+
+    revision.parent_type
+
+    revision_target = session.query()
 
     session.add(revision)
     session.commit()

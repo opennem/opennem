@@ -30,6 +30,15 @@ class StationResponse(BaseModel):
     records: Optional[List[StationSchema]]
 
 
+class StationModificationTypes(str, Enum):
+    approve = "approve"
+
+
+class StationModification(ApiBase):
+    comment: Optional[str] = Field(None)
+    modification: StationModificationTypes
+
+
 class RevisionModificationTypes(str, Enum):
     approve = "approve"
     reject = "reject"
