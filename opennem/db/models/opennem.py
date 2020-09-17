@@ -125,6 +125,20 @@ class Location(Base):
     geom = Column(Geometry("POINT", srid=4326))
     boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
 
+    @hybrid_property
+    def lat(self) -> Optional[float]:
+        if self.geom:
+            return wkb.loads(bytes(self.geom.data)).y
+
+        return None
+
+    @hybrid_property
+    def lng(self) -> Optional[float]:
+        if self.geom:
+            return wkb.loads(bytes(self.geom.data)).x
+
+        return None
+
 
 class Station(Base, BaseModel):
     __tablename__ = "station"
@@ -234,20 +248,6 @@ class Station(Base, BaseModel):
     @hybrid_property
     def ocode(self) -> str:
         return get_ocode(self)
-
-    @hybrid_property
-    def lat(self) -> Optional[float]:
-        if self.location.geom:
-            return wkb.loads(bytes(self.location.geom.data)).y
-
-        return None
-
-    @hybrid_property
-    def lng(self) -> Optional[float]:
-        if self.location.geom:
-            return wkb.loads(bytes(self.location.geom.data)).x
-
-        return None
 
 
 class Facility(Base, BaseModel):
