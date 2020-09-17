@@ -135,6 +135,15 @@ class FacilityBaseSchema(OpennemBaseSchema):
     id: int
 
 
+class GeoPoint(BaseModel):
+    lat: float
+    lng: float
+
+
+class GeoBoundary(BaseModel):
+    pass
+
+
 class RecordTypes(str, Enum):
     station = "station"
     facility = "facility"
