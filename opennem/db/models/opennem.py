@@ -320,6 +320,10 @@ class Facility(Base, BaseModel):
     unit_capacity = Column(Numeric, nullable=True)
     # unit_number_max = Column(Numeric, nullable=True)
 
+    approved = Column(Boolean, default=False)
+    approved_by = Column(Text)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+
     @hybrid_property
     def capacity_aggregate(self) -> Optional[int]:
         """

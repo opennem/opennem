@@ -222,7 +222,9 @@ class FacilitySchema(OpennemBaseSchema):
     unit_alias: Optional[str]
     unit_capacity: Optional[float]
 
-    # @validator("network")
+    approved: bool = False
+    approved_by: Optional[str]
+    approved_at: Optional[datetime]
 
     @validator("capacity_registered")
     def _clean_capacity_regisered(cls, value):

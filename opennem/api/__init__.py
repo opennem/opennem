@@ -308,7 +308,11 @@ def station_update(
             )
 
         station.approved = True
+        station.approved_at = datetime.now()
         station.approved_by = "opennem.admin"
+
+    if data.modification == "reject":
+        station.approved = False
 
     session.add(station)
     session.commit()
@@ -318,6 +322,40 @@ def station_update(
     return response
 
 
+@app.put("/facility/{facility_id}", name="Facility update")
+def facility_update(
+    facility_id: int,
+    data: StationModification = {},
+    session: Session = Depends(get_database_session),
+) -> dict:
+    facility = session.query(Station).get(facility_id)
+
+    if not facility:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Facility not found"
+        )
+
+    if data.modification == "approve":
+
+        if facility.approved is True:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Facility already approved",
+            )
+
+        facility.approved = True
+        facility.approved_at = datetime.now()
+        facility.approved_by = "opennem.admin"
+
+    if data.modification == "reject":
+        facility.approved = False
+
+    session.add(facility)
+    session.commit()
+
+    response = UpdateResponse(success=True, record=facility)
+
+    return response
 
 
 @app.put("/revision/{revision_id}", name="revision update")

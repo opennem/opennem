@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 
@@ -20,8 +21,12 @@ class ApiBase(BaseModel):
 
 
 # all records have an id
-class RecordBase(BaseModel):
+class UpdateRecordBase(BaseModel):
     id: int
+
+    approved: bool = False
+    approved_by: Optional[str]
+    approved_at: Optional[datetime]
 
 
 class StationResponse(BaseModel):
@@ -51,7 +56,7 @@ class RevisionModification(ApiBase):
 
 class UpdateResponse(ApiBase):
     success: bool = False
-    record: Optional[RecordBase]
+    record: UpdateRecordBase
 
 
 class FueltechResponse(ApiBase):
