@@ -3,13 +3,10 @@ from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import Field
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session
 from starlette import status
 
-from opennem.controllers.stations import get_stations
-from opennem.core.loader import load_data
-from opennem.db import db_connect, get_database_session
+from opennem.db import get_database_session
 from opennem.db.models.opennem import (
     Facility,
     FuelTech,
@@ -18,13 +15,12 @@ from opennem.db.models.opennem import (
     Revision,
     Station,
 )
-from opennem.importer.registry import registry_import
 from opennem.schema.opennem import (
+    FacilitySchema,
     FueltechSchema,
     NetworkSchema,
     RevisionSchema,
     StationSchema,
-    StationSubmission,
 )
 
 from .schema import (
@@ -37,7 +33,7 @@ from .schema import (
     UpdateResponse,
 )
 
-app = FastAPI(title="OpenNEM", debug=True, version="3.0.0-alpha.2")
+app = FastAPI(title="OpenNEM", debug=True, version="3.0.0-alpha.3")
 
 origins = [
     "https://dev.opennem.org.au",
@@ -58,11 +54,14 @@ app.add_middleware(
 
 @app.get(
     "/stations",
-    response_model=List[StationSchema],
+    # response_model=List[StationSchema],
     description="Get a list of all stations",
 )
 def stations(
     session: Session = Depends(get_database_session),
+    facilities_include: Optional[bool] = Query(
+        False, description="Include facilities in records"
+    ),
     revisions_include: Optional[bool] = Query(
         False, description="Include revisions in records"
     ),
@@ -75,16 +74,21 @@ def stations(
     name: Optional[str] = None,
     limit: Optional[int] = None,
     page: int = 1,
-) -> List[StationSchema]:
+):
     stations = (
         session.query(Station)
-        .join(Station.location)
-        .outerjoin(Facility, Facility.station_id == Station.id)
-        .outerjoin(FuelTech, Facility.fueltech_id == FuelTech.code)
+        .join(Location)
+        .enable_eagerloads(True)
+        #
         # .group_by(Station.code)
         # .filter(Facility.fueltech_id.isnot(None))
         # .filter(Facility.status_id.isnot(None))
     )
+
+    if facilities_include:
+        stations = stations.outerjoin(
+            Facility, Facility.station_id == Station.id
+        ).outerjoin(FuelTech, Facility.fueltech_id == FuelTech.code)
 
     if revisions_include:
         stations = stations.outerjoin(
@@ -98,10 +102,10 @@ def stations(
         stations = stations.filter(Station.name.like("%{}%".format(name)))
 
     stations = stations.order_by(
-        Facility.network_region,
+        # Facility.network_region,
         Station.name,
-        Facility.network_code,
-        Facility.code,
+        # Facility.network_code,
+        # Facility.code,
     )
 
     stations = stations.all()
@@ -245,14 +249,21 @@ def station_lookup(
 )
 def station_create(
     session: Session = Depends(get_database_session),
-    station: StationSubmission = None,
+    # station: StationSubmission = None,
 ):
     raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
 
-@app.get("/facilities", name="facilities")
+@app.get(
+    "/facilities",
+    name="facilities",
+    description="Get facilities",
+    response_model=List[FacilitySchema],
+)
 def facilities(session: Session = Depends(get_database_session)):
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
+    facilities = session.query(Facility).all()
+
+    return facilities
 
 
 @app.get("/facility/{facility_code}")

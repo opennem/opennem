@@ -233,7 +233,7 @@ class StationSchema(OpennemBaseSchema):
     participant: Optional[ParticipantSchema] = None
     participant_id: Optional[str]
 
-    facilities: List[FacilitySchema] = []
+    facilities: Optional[List[FacilitySchema]] = []
 
     # history: Optional[List[__self__]]
 
