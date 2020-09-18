@@ -367,6 +367,7 @@ def test_revisions():
     s.add(station)
     s.commit()
 
+    # pylint: disable=no-member
     station_clone = station.asdict()
     station_clone.pop("id")
 

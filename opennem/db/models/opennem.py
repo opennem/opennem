@@ -17,25 +17,18 @@ from sqlalchemy import (
     JSON,
     Boolean,
     Column,
-    Date,
     DateTime,
     Enum,
     ForeignKey,
-    Index,
     Integer,
     Numeric,
     Sequence,
-    String,
-    Table,
     Text,
-    Time,
     func,
 )
-from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
-from sqlalchemy.orm import backref, relationship
-from sqlalchemy.sql import func
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
@@ -143,7 +136,11 @@ class Location(Base):
 class Station(Base, BaseModel):
     __tablename__ = "station"
 
-    # __table_args__ = (UniqueConstraint('customer_id', 'location_code', name='_customer_location_uc'),)
+    # __table_args__ = (
+    #     UniqueConstraint(
+    #         "customer_id", "location_code", name="_customer_location_uc"
+    #     ),
+    # )
 
     def __str__(self):
         return "{} <{}>".format(self.name, self.code)

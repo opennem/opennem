@@ -1,74 +1,17 @@
-# pylint:disable=no-self-argument
-
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, validator
 
 from opennem.core.dispatch_type import DispatchType
-from opennem.core.facilitystatus import (
-    map_aemo_facility_status,
-    parse_facility_status,
-)
-from opennem.core.normalizers import (
-    clean_capacity,
-    clean_numbers,
-    normalize_string,
-    station_name_cleaner,
-)
 from opennem.core.oid import get_ocode, get_oid
 
-
-class PropertyBaseModel(BaseModel):
-    """
-    Workaround for serializing properties with pydantic until
-    https://github.com/samuelcolvin/pydantic/issues/935
-    is solved
-    """
-
-    @classmethod
-    def get_properties(cls):
-        return [
-            prop
-            for prop in dir(cls)
-            if isinstance(getattr(cls, prop), property)
-            and prop not in ("__values__", "fields")
-        ]
-
-    def dict(
-        self,
-        *,
-        include: Union["AbstractSetIntStr", "MappingIntStrAny"] = None,
-        exclude: Union["AbstractSetIntStr", "MappingIntStrAny"] = None,
-        by_alias: bool = False,
-        skip_defaults: bool = None,
-        exclude_unset: bool = False,
-        exclude_defaults: bool = False,
-        exclude_none: bool = False,
-    ) -> "DictStrAny":
-        attribs = super().dict(
-            include=include,
-            exclude=exclude,
-            by_alias=by_alias,
-            skip_defaults=skip_defaults,
-            exclude_unset=exclude_unset,
-            exclude_defaults=exclude_defaults,
-            exclude_none=exclude_none,
-        )
-        props = self.get_properties()
-        # Include and exclude properties
-        if include:
-            props = [prop for prop in props if prop in include]
-        if exclude:
-            props = [prop for prop in props if prop not in exclude]
-
-        # Update the attribute dict with the properties
-        if props:
-            attribs.update({prop: getattr(self, prop) for prop in props})
-
-        return attribs
+from opennem.core.normalizers import (  # clean_numbers,; station_name_cleaner,
+    clean_capacity,
+    normalize_string,
+)
 
 
 class BaseConfig(BaseModel):
@@ -371,13 +314,3 @@ class StationSchema(OpennemBaseSchema):
 
     def ocode(self) -> str:
         return get_ocode(self)
-
-
-class StationSubmission(BaseModel):
-    code: str
-    name: str
-    network_id: str = NetworkSchema(code="NEM", label="NEM", country="au")
-    location: LocationSchema
-
-    class Config:
-        orm_mode = True
