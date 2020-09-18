@@ -346,7 +346,9 @@ def registry_init():
 
             f.approved = True
             f.approved_by = "opennem.registry"
+            f.created_by = "opennem.registry"
             f.approved_at = datetime.now()
+            f.created_at = datetime.now()
 
             station_model.facilities.append(f)
 

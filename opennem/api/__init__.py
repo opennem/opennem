@@ -327,7 +327,7 @@ def facility_update(
     data: StationModification = {},
     session: Session = Depends(get_database_session),
 ) -> dict:
-    facility = session.query(Station).get(facility_id)
+    facility = session.query(Facility).get(facility_id)
 
     if not facility:
         raise HTTPException(
