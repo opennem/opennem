@@ -1,11 +1,13 @@
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pydantic import BaseModel, Field
 
 from opennem.schema.opennem import (
+    FacilitySchema,
     FueltechSchema,
+    LocationSchema,
     RevisionSchema,
     StationSchema,
 )
@@ -52,6 +54,12 @@ class RevisionModificationTypes(str, Enum):
 class RevisionModification(ApiBase):
     comment: Optional[str] = Field(None)
     modification: RevisionModificationTypes
+
+
+class RevisionModificationResponse(ApiBase):
+    success: bool = False
+    record: RevisionSchema
+    target: Optional[Union[FacilitySchema, StationSchema, LocationSchema]]
 
 
 class UpdateResponse(ApiBase):

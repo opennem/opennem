@@ -344,6 +344,10 @@ def registry_init():
 
             f.status_id = fac.status.code
 
+            f.approved = True
+            f.approved_by = "opennem.registry"
+            f.approved_at = datetime.now()
+
             station_model.facilities.append(f)
 
         s.add(station_model)
