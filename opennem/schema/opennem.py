@@ -135,6 +135,15 @@ class FacilityBaseSchema(OpennemBaseSchema):
     id: int
 
 
+class GeoPoint(BaseModel):
+    lat: float
+    lng: float
+
+
+class GeoBoundary(BaseModel):
+    pass
+
+
 class RecordTypes(str, Enum):
     station = "station"
     facility = "facility"
@@ -145,10 +154,16 @@ class RecordTypes(str, Enum):
 class RevisionSchema(OpennemBaseSchema):
     id: int
 
-    changes: Dict[str, Union[str, int, float, bool]] = {}
+    changes: Dict[str, Union[str, int, float, bool, None]] = {}
     previous: Optional[Dict[str, Union[str, int, float, bool]]] = {}
 
     parent_id: Optional[int]
+    parent_type: Optional[str]
+    station_owner_id: Optional[int]
+    station_owner_name: Optional[str]
+    station_owner_code: Optional[str]
+
+    is_update: bool = False
 
     approved: bool = False
     approved_by: Optional[str]
@@ -158,6 +173,10 @@ class RevisionSchema(OpennemBaseSchema):
     discarded: bool = False
     discarded_by: Optional[str]
     discarded_at: Optional[datetime]
+
+    # station_id: Optional[int]
+    # facility_id: Optional[int]
+    # location_id: Optional[int]
 
     # @validator("changes")
     # def validate_data(cls, data_value):
@@ -179,13 +198,13 @@ class FacilitySchema(OpennemBaseSchema):
 
     fueltech: Optional[FueltechSchema]
 
-    status: FacilityStatusSchema
+    status: Optional[FacilityStatusSchema]
 
     # @TODO no longer optional
     code: Optional[str] = ""
 
     revisions: Optional[List[RevisionSchema]] = []
-    revision_ids: Optional[List[int]] = []
+    # revision_ids: Optional[List[int]] = []
 
     dispatch_type: DispatchType = "GENERATOR"
 
@@ -196,14 +215,16 @@ class FacilitySchema(OpennemBaseSchema):
     registered: Optional[datetime]
     deregistered: Optional[datetime]
 
-    network_region: str
+    network_region: Optional[str]
 
     unit_id: Optional[int]
     unit_number: Optional[int]
     unit_alias: Optional[str]
     unit_capacity: Optional[float]
 
-    # @validator("network")
+    approved: bool = False
+    approved_by: Optional[str]
+    approved_at: Optional[datetime]
 
     @validator("capacity_registered")
     def _clean_capacity_regisered(cls, value):
@@ -253,6 +274,15 @@ class LocationSchema(OpennemBaseSchema):
     def clean_postcode(cls, value: str) -> str:
         return value.strip()
 
+    @property
+    def geom(self) -> Optional[str]:
+        if not self.lng or not self.lat:
+            return None
+
+        geom = "SRID=4326;POINT({} {})".format(self.lng, self.lat,)
+
+        return geom
+
 
 class StationSchema(OpennemBaseSchema):
     id: Optional[int]
@@ -274,6 +304,10 @@ class StationSchema(OpennemBaseSchema):
     network_name: Optional[str]
 
     location: LocationSchema = LocationSchema()
+
+    approved: bool = False
+    approved_by: Optional[str]
+    approved_at: Optional[datetime]
 
     @property
     def capacity_registered(self) -> Optional[int]:

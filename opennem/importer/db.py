@@ -20,6 +20,8 @@ from opennem.importer.mms import mms_import
 from opennem.importer.registry import registry_import
 from opennem.schema.opennem import StationSchema
 
+from .comparator import compare_record_differs
+
 logger = logging.getLogger(__name__)
 s = SessionLocal()
 
@@ -59,6 +61,7 @@ def revision_factory_join_field(record_instance: BaseModel) -> str:
     FIELD_MAP = {
         "StationSchema": "station_id",
         "FacilitySchema": "facility_id",
+        "LocationSchema": "location_id",
     }
 
     if class_name in FIELD_MAP.keys():
@@ -83,6 +86,8 @@ def revision_factory(
         if isinstance(field_value, BaseModel):
             _value_dict = field_value.dict()
 
+            # we only store the primary keys in associations rather
+            # than the full record.
             if "id" in _value_dict:
                 field_value = _value_dict["id"]
 
@@ -182,25 +187,22 @@ def load_revision(records, created_by):
                 )
 
                 if station_record.location.lat and station_record.location.lng:
-                    station_model.location.geom = "SRID=4326;POINT({} {})".format(
-                        station_record.location.lng,
-                        station_record.location.lat,
-                    )
+                    station_model.location.geom = station_record.location.geom
 
             s.add(station_model)
             s.commit()
 
             station_record.id = station_model.id
 
-            revision = revision_factory(
-                station_record, ["code", "name", "network_name"], created_by,
-            )
+            # revision = revision_factory(
+            #     station_record, ["code", "name", "network_name"], created_by,
+            # )
 
-            if revision:
-                station_model.revisions.append(revision)
+            # if revision:
+            #     station_model.revisions.append(revision)
 
-            s.add(station_model)
-            s.commit()
+            # s.add(station_model)
+            # s.commit()
 
         else:
             for field in ["name"]:
@@ -226,8 +228,10 @@ def load_revision(records, created_by):
                         "code",
                         "network",
                         # "network_id",
+                        "dispatch_type",
                         "station",
                         # "station_id",
+                        # "status",
                         "network_code",
                         "network_region",
                         "network_name",
@@ -246,15 +250,16 @@ def load_revision(records, created_by):
 
                 facility.id = facility_model.id
 
-                revision = revision_factory(
-                    facility, ["code", "dispatch_type"], created_by
-                )
+                # @NOTE don't create revisions for new facilities
+                # revision = revision_factory(
+                #     facility, ["code", "dispatch_type"], created_by
+                # )
 
-                if revision:
-                    facility_model.revisions.append(revision)
+                # if revision:
+                #     facility_model.revisions.append(revision)
 
-                s.add(facility_model)
-                s.commit()
+                # s.add(facility_model)
+                # s.commit()
 
             else:
                 facility.id = facility_model.id
@@ -266,17 +271,22 @@ def load_revision(records, created_by):
             ]:
                 revision = None
 
-                if getattr(facility, field) and (
-                    hasattr(facility_model, field)
-                    and getattr(facility_model, field)
-                    != getattr(facility, field)
-                ):
+                if compare_record_differs(facility_model, facility, field):
+                    # logger.info(
+                    #     "%s and %s differ",
+                    #     getattr(facility, field),
+                    #     getattr(facility_model, field),
+                    # )
+
                     revision = revision_factory(facility, field, created_by)
 
                 if revision:
                     facility_model.revisions.append(revision)
 
             s.add(facility_model)
+
+            station_model.facilities.append(facility_model)
+            s.add(station_model)
             s.commit()
 
 
@@ -334,6 +344,12 @@ def registry_init():
 
             f.status_id = fac.status.code
 
+            f.approved = True
+            f.approved_by = "opennem.registry"
+            f.created_by = "opennem.registry"
+            f.approved_at = datetime.now()
+            f.created_at = datetime.now()
+
             station_model.facilities.append(f)
 
         s.add(station_model)
@@ -389,5 +405,9 @@ def init():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
+    logger.setLevel(logging.INFO)
+
     init()
     db_test()

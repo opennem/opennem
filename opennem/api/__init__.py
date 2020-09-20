@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -28,18 +29,20 @@ from opennem.schema.opennem import (
 
 from .schema import (
     FueltechResponse,
-    RevisionApproval,
+    RevisionModification,
+    RevisionModificationResponse,
+    StationIDList,
+    StationModification,
     StationResponse,
     UpdateResponse,
 )
 
-app = FastAPI(title="OpenNEM", debug=True, version="3.0.0-alpha")
+app = FastAPI(title="OpenNEM", debug=True, version="3.0.0-alpha.2")
 
 origins = [
+    "https://dev.opennem.org.au",
     "https://admin.opennem.org.au",
     "https://admin.opennem.test",
-    "http://localhost",
-    "http://localhost:3000",
     "http://localhost:8001",
     "http://127.0.0.1:8001",
 ]
@@ -67,7 +70,7 @@ def stations(
         False, description="Include history in records"
     ),
     only_approved: Optional[bool] = Query(
-        False, description="Include history in records"
+        False, description="Only show approved stations not those pending"
     ),
     name: Optional[str] = None,
     limit: Optional[int] = None,
@@ -103,40 +106,28 @@ def stations(
 
     stations = stations.all()
 
-    if not revisions_include:
-        return stations
+    return stations
 
-    # stations = [StationSchema.from_orm(i) for i in stations]
 
-    # revisions = [
-    # RevisionSchema.parse_obj(i) for i in session.query(Revision).all()
-    # ]
+@app.get(
+    "/station/ids",
+    response_model=List[StationIDList],
+    description="Get a list of station ids for dropdowns",
+)
+def station_ids(
+    session: Session = Depends(get_database_session),
+    only_approved: Optional[bool] = Query(
+        True, description="Only show approved stations not those pending"
+    ),
+) -> List[StationIDList]:
+    stations = session.query(Station).join(Station.location)
 
-    # revisions = session.query(Revision).all()
+    if only_approved:
+        stations = stations.filter(Station.approved == True)
 
-    # for station in stations:
-    #     _revisions = list(
-    #         filter(
-    #             lambda rev: rev.schema == "station"
-    #             and rev.code == station.code,
-    #             revisions,
-    #         )
-    #     )
-    #     # station.revisions = _revisions
+    stations = stations.order_by(Station.id,)
 
-    #     station.revision_ids = [i.id for i in _revisions]
-
-    #     for facility in station.facilities:
-    #         _revisions = list(
-    #             filter(
-    #                 lambda rev: rev.schema == "facility"
-    #                 and rev.code == facility.code,
-    #                 revisions,
-    #             )
-    #         )
-
-    #         # facility.revisions = _revisions
-    #         facility.revision_ids = [i.id for i in _revisions]
+    stations = stations.all()
 
     return stations
 
@@ -149,8 +140,12 @@ def stations(
 def station(
     session: Session = Depends(get_database_session),
     station_code: str = None,
-    revisions_include: Optional[bool] = False,
-    history_include: Optional[bool] = False,
+    revisions_include: Optional[bool] = Query(
+        False, description="Include revisions in records"
+    ),
+    history_include: Optional[bool] = Query(
+        False, description="Include history in records"
+    ),
 ):
     station = (
         session.query(Station)
@@ -185,35 +180,61 @@ def station(
         )
 
 
-# @app.get(
-#     "/station",
-#     name="station lookup",
-#     description="""Lookup station by code or network_code. \
-#         Require one of code or network_code""",
-#     response_model=List[StationSchema],
-# )
-# def station_update(
-#     session: Session = Depends(get_database_session),
-#     station_code: Optional[str] = None,
-#     network_code: Optional[str] = None,
-# ) -> List[StationSchema]:
-#     if not station_code and not network_code:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+@app.get(
+    "/station/history",
+    name="station all history",
+    description="""Get history for all stations""",
+    response_model=List[StationSchema],
+)
+def stations_history(session: Session = Depends(get_database_session)):
+    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
-#     station = session.query(Station)
 
-#     if station_code:
-#         station = station.filter_by(code=station_code)
+@app.get(
+    "/station/history/{station_code}",
+    name="station history",
+    description="""Get history for a station""",
+    response_model=StationSchema,
+)
+def station_history(
+    station_code: str, session: Session = Depends(get_database_session)
+):
+    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
-#     if network_code:
-#         station = station.filter_by(network_name=network_code)
 
-#     stations = station.all()
+@app.get(
+    "/station",
+    name="station lookup",
+    description="""Lookup station by code or network_code. \
+        Require one of code or network_code""",
+    response_model=List[StationSchema],
+)
+def station_lookup(
+    session: Session = Depends(get_database_session),
+    station_code: Optional[str] = Query(
+        None, description="Code of the station to lookup"
+    ),
+    network_code: Optional[str] = Query(
+        None, description="The network code to lookup"
+    ),
+) -> List[StationSchema]:
+    if not station_code and not network_code:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-#     if not stations:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    station = session.query(Station)
 
-#     return stations
+    if station_code:
+        station = station.filter_by(code=station_code)
+
+    if network_code:
+        station = station.filter_by(network_name=network_code)
+
+    stations = station.all()
+
+    if not stations:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    return stations
 
 
 @app.post(
@@ -264,9 +285,166 @@ def revision(
     return revision
 
 
+@app.put("/station/{station_id}", name="Station update")
+def station_update(
+    station_id: int,
+    data: StationModification = {},
+    session: Session = Depends(get_database_session),
+) -> dict:
+    station = session.query(Station).get(station_id)
+
+    if not station:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
+        )
+
+    if data.modification == "approve":
+
+        if station.approved is True:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Station already approved",
+            )
+
+        station.approved = True
+        station.approved_at = datetime.now()
+        station.approved_by = "opennem.admin"
+
+    if data.modification == "reject":
+        station.approved = False
+
+    session.add(station)
+    session.commit()
+
+    response = UpdateResponse(success=True, record=station)
+
+    return response
+
+
+@app.put("/facility/{facility_id}", name="Facility update")
+def facility_update(
+    facility_id: int,
+    data: StationModification = {},
+    session: Session = Depends(get_database_session),
+) -> dict:
+    facility = session.query(Facility).get(facility_id)
+
+    if not facility:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Facility not found"
+        )
+
+    if data.modification == "approve":
+
+        if facility.approved is True:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Facility already approved",
+            )
+
+        facility.approved = True
+        facility.approved_at = datetime.now()
+        facility.approved_by = "opennem.admin"
+
+    if data.modification == "reject":
+        facility.approved = False
+
+    session.add(facility)
+    session.commit()
+
+    response = UpdateResponse(success=True, record=facility)
+
+    return response
+
+
+REVISION_TARGET_MAP = {
+    "station": Station,
+    "facility": Facility,
+    "location": Location,
+}
+
+
 @app.put("/revision/{revision_id}", name="revision update")
 def revision_update(
-    data: RevisionApproval = {},
+    data: RevisionModification = {},
+    session: Session = Depends(get_database_session),
+    revision_id: int = None,
+) -> dict:
+    revision: Revision = session.query(Revision).get(revision_id)
+
+    if not revision:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Revision not found"
+        )
+
+    if data.modification == "reject":
+        revision.discarded = True
+        revision.approved = False
+        revision.discarded_by = "opennem.admin"
+        revision.discarded_at = datetime.now()
+
+        session.add(revision)
+        session.commit()
+
+        response = UpdateResponse(success=True, record=revision)
+
+    revision.approved = True
+    revision.approved_at = datetime.now()
+    revision.approved_by = "opennem.admin"
+
+    if revision.parent_type not in REVISION_TARGET_MAP.keys():
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Revision schema type not supported",
+        )
+
+    revision_target_type = REVISION_TARGET_MAP[revision.parent_type]
+
+    revision_target = session.query(revision_target_type).get(
+        revision.parent_id
+    )
+
+    if not revision_target:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Revision target record not found",
+        )
+
+    for target_field, target_value in revision.changes.items():
+        if hasattr(revision_target, f"{target_field}_code"):
+            target_field = "{}_code".format(target_field)
+
+        if hasattr(revision_target, f"{target_field}_id"):
+            target_field = "{}_id".format(target_field)
+
+        if not hasattr(revision_target, target_field):
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Invalid revision field",
+            )
+
+        try:
+            setattr(revision_target, target_field, target_value)
+        except Exception:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error setting revision",
+            )
+
+    session.add(revision_target)
+    session.add(revision)
+    session.commit()
+
+    response = RevisionModificationResponse(
+        success=True, record=revision, target=revision_target
+    )
+
+    return response
+
+
+@app.post("/revision/approve/{revision_id}", name="revision approve")
+def revision_approve(
+    data: RevisionModification = {},
     session: Session = Depends(get_database_session),
     revision_id: int = None,
 ) -> dict:
@@ -288,21 +466,23 @@ def revision_update(
     return response
 
 
-@app.post("/revision/approve/{revision_id}", name="revision approve")
-def revision_approve(
-    data: RevisionApproval = {},
+@app.post("/revision/reject/{revision_id}", name="revision reject")
+def revision_reject(
+    data: RevisionModification = {},
     session: Session = Depends(get_database_session),
     revision_id: int = None,
 ) -> dict:
-    revision = session.query(Revision).get(revision_id)
+    revision: Revision = session.query(Revision).get(revision_id)
 
     if not revision:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Revision not found"
         )
 
-    revision.approved = True
-    revision.approved_by = "opennem.admin"
+    revision.approved = False
+    revision.discarded = False
+    revision.discarded_by = "opennem.admin"
+    revision.discarded_at = datetime.now()
 
     session.add(revision)
     session.commit()

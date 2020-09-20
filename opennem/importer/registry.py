@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import datetime
 from typing import List
 
 from opennem.core.facility.fueltechs import parse_facility_fueltech
@@ -54,6 +55,8 @@ def registry_to_station(registry_station: dict, _id: int) -> StationSchema:
         facility = FacilitySchema(
             **{
                 "code": duid,
+                "created_by": "opennem.registry",
+                "created_at": datetime.now(),
                 "network": network_from_network_region(network_region),
                 "network_region": network_region,
                 "station_code": registry_station.get("station_id", ""),

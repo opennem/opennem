@@ -114,6 +114,8 @@ class Location(Base):
     state = Column(Text)
     postcode = Column(Text, nullable=True)
 
+    revisions = relationship("Revision")
+
     # Geo fields
     place_id = Column(Text, nullable=True, index=True)
     geocode_approved = Column(Boolean, default=False)
@@ -123,9 +125,25 @@ class Location(Base):
     geom = Column(Geometry("POINT", srid=4326))
     boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
 
+    @hybrid_property
+    def lat(self) -> Optional[float]:
+        if self.geom:
+            return wkb.loads(bytes(self.geom.data)).y
+
+        return None
+
+    @hybrid_property
+    def lng(self) -> Optional[float]:
+        if self.geom:
+            return wkb.loads(bytes(self.geom.data)).x
+
+        return None
+
 
 class Station(Base, BaseModel):
     __tablename__ = "station"
+
+    # __table_args__ = (UniqueConstraint('customer_id', 'location_code', name='_customer_location_uc'),)
 
     def __str__(self):
         return "{} <{}>".format(self.name, self.code)
@@ -231,20 +249,6 @@ class Station(Base, BaseModel):
     def ocode(self) -> str:
         return get_ocode(self)
 
-    @hybrid_property
-    def lat(self) -> Optional[float]:
-        if self.location.geom:
-            return wkb.loads(bytes(self.location.geom.data)).y
-
-        return None
-
-    @hybrid_property
-    def lng(self) -> Optional[float]:
-        if self.location.geom:
-            return wkb.loads(bytes(self.location.geom.data)).x
-
-        return None
-
 
 class Facility(Base, BaseModel):
     __tablename__ = "facility"
@@ -316,6 +320,10 @@ class Facility(Base, BaseModel):
     unit_capacity = Column(Numeric, nullable=True)
     # unit_number_max = Column(Numeric, nullable=True)
 
+    approved = Column(Boolean, default=False)
+    approved_by = Column(Text)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+
     @hybrid_property
     def capacity_aggregate(self) -> Optional[int]:
         """
@@ -384,8 +392,17 @@ class Revision(Base, BaseModel):
     )
     facility = relationship("Facility", back_populates="revisions")
 
+    location_id = Column(
+        Integer,
+        ForeignKey("location.id", name="fk_revision_location_id"),
+        nullable=True,
+    )
+    location = relationship("Location", back_populates="revisions")
+
     changes = Column(JSON, nullable=True)
     previous = Column(JSON, nullable=True)
+
+    is_update = Column(Boolean, default=False)
 
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
@@ -398,7 +415,53 @@ class Revision(Base, BaseModel):
 
     @hybrid_property
     def parent_id(self) -> str:
-        return self.station_id or self.facility_id
+        return self.station_id or self.facility_id or self.location_id
+
+    @hybrid_property
+    def parent_type(self) -> str:
+        if self.station_id:
+            return "station"
+
+        if self.facility_id:
+            return "facility"
+
+        if self.location_id:
+            return "location"
+
+        return ""
+
+    @hybrid_property
+    def station_owner_id(self) -> int:
+        if self.station_id:
+            return self.station_id
+
+        if self.facility_id:
+            return self.facility.station.id
+
+        if self.location:
+            return self.location.station.id
+
+    @hybrid_property
+    def station_owner_name(self) -> str:
+        if self.station_id:
+            return self.station.name
+
+        if self.facility_id:
+            return self.facility.station.name
+
+        if self.location:
+            return self.location.station.name
+
+    @hybrid_property
+    def station_owner_code(self) -> str:
+        if self.station_id:
+            return self.station.code
+
+        if self.facility_id:
+            return self.facility.station.code
+
+        if self.location:
+            return self.location.station.code
 
 
 class FacilityScada(Base, BaseModel):
