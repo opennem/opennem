@@ -66,6 +66,7 @@ class Network(Base, BaseModel):
     code = Column(Text, primary_key=True)
     country = Column(Text, nullable=False)
     label = Column(Text, nullable=True)
+    timezone = Column(Text, nullable=False)
 
 
 class FacilityStatus(Base, BaseModel):

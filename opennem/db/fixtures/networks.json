@@ -2,11 +2,13 @@
   {
     "code": "NEM",
     "country": "au",
-    "label": "NEM"
+    "label": "NEM",
+    "timezone": "Australia/Sydney"
   },
   {
     "code": "WEM",
     "country": "au",
-    "label": "WEM"
+    "label": "WEM",
+    "timezone": "Australia/Perth"
   }
 ]
