@@ -28,7 +28,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
         #  It's faster to do this and bulk insert than it is to
         #  catch integrityerrors
 
-        q = self.engine.execute(text("select code from wem_facility"))
+        q = self.engine.execute(text("select code from facility"))
 
         all_facilities = list(set([i[0] for i in q.fetchall()]))
 
@@ -90,7 +90,7 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
         # Get all facility codes
 
-        q = self.engine.execute(text("select code from wem_facility"))
+        q = self.engine.execute(text("select distinct code from facility"))
 
         all_facilities = list(set([i[0] for i in q.fetchall()]))
 
@@ -139,7 +139,7 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
                 item = FacilityScada(
                     trading_interval=interval,
-                    facility_id=row["FACILITY_CODE"],
+                    facility_code=row["FACILITY_CODE"],
                     generated=val,
                 )
 

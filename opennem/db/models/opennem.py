@@ -470,12 +470,14 @@ class FacilityScada(Base, BaseModel):
 
     trading_interval = Column(DateTime, index=True, primary_key=True)
 
-    facility_id = Column(
-        Integer,
-        ForeignKey("facility.id", name="fk_facility_scada_facility_id"),
-        primary_key=True,
-    )
-    facility = relationship("Facility")
+    # facility_id = Column(
+    #     Integer,
+    #     ForeignKey("facility.id", name="fk_facility_scada_facility_id"),
+    #     primary_key=True,
+    # )
+    # facility = relationship("Facility")
+
+    facility_code = Column(Text, nullable=False, primary_key=True)
 
     generated = Column(Numeric, nullable=True)
     eoi_quantity = Column(Numeric, nullable=True)
@@ -488,6 +490,7 @@ class BalancingSummary(Base, BaseModel):
     network_id = Column(
         Text,
         ForeignKey("network.code", name="fk_balancing_summary_network_code"),
+        primary_key=True,
     )
     network = relationship("Network")
 

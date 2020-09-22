@@ -25,7 +25,9 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
         csvreader = csv.DictReader(item["content"].split("\n"))
 
         q = self.engine.execute(
-            text("select max(trading_interval) from wem_balancing_summary")
+            text(
+                "select max(trading_interval) from balancing_summary where network_id='WEM'"
+            )
         )
 
         interval_max = q.fetchone()[0] or datetime(1900, 1, 1, 0, 0, 0)
