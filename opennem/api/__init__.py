@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from starlette import status
 
+from opennem.api.locations import router as locations_router
 from opennem.api.stats import router as stats_router
 from opennem.db import get_database_session
 from opennem.db.models.opennem import (
@@ -37,6 +38,7 @@ from .schema import (
 app = FastAPI(title="OpenNEM", debug=True, version="3.0.0-alpha.3")
 
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
+app.include_router(locations_router, tags=["Locations"], prefix="/locations")
 
 
 origins = [
