@@ -58,3 +58,4 @@ init.sh
 data/mms/
 data/aemo/
 .mypy_cache/
+wem-stats.sh
