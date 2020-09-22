@@ -217,12 +217,14 @@ class LocationSchema(OpennemBaseSchema):
         return normalize_string(value)
 
     @validator("state")
-    def state_upper(cls, value: str) -> str:
-        return value.upper()
+    def state_upper(cls, value: str) -> Optional[str]:
+        if value:
+            return value.upper()
 
     @validator("postcode")
-    def clean_postcode(cls, value: str) -> str:
-        return value.strip()
+    def clean_postcode(cls, value: str) -> Optional[str]:
+        if value:
+            return value.strip()
 
     @property
     def geom(self) -> Optional[str]:
