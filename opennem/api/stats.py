@@ -35,14 +35,33 @@ class ScadaReadingSet(UserList):
 
 
 @router.get("/power", name="stats:power")
-def stats_power(session: Session = Depends(get_database_session),):
-    stats = (
-        session.query(FacilityScada)
-        # .join(Facility, Facility.code == FacilityScada.facility_code)
-        .orderby(FacilityScada.trading_interval).all()
-    )
+def stats_power(
+    session: Session = Depends(get_database_session),
+    since: datetime = Query(None, description="Since time"),
+):
+    stats = session.query(FacilityScada)
 
-    return stats
+    if since:
+        stats = stats.filter(FacilityScada.trading_interval >= since)
+
+    stats = stats.order_by(FacilityScada.trading_interval).all()
+
+    def append_data(record, scada):
+        if scada.facility_code not in record:
+            record[scada.facility_code] = {
+                "code": scada.facility_code,
+                "data": [],
+            }
+
+        record[scada.facility_code]["data"].append(
+            [scada.trading_interval, scada.generated]
+        )
+
+        return record
+
+    output = reduce(append_data, stats, {},)
+
+    return output
 
 
 @router.get("/power/{station_code}", name="stats:Station Power")
@@ -51,12 +70,12 @@ def power_station(
     since: datetime = Query(None, description="Since time"),
     session: Session = Depends(get_database_session),
 ):
-    stats = (
-        session.query(FacilityScada)
-        .filter_by(facility_code=station_code)
-        .order_by(FacilityScada.trading_interval)
-        .all()
-    )
+    stats = session.query(FacilityScada).filter_by(facility_code=station_code)
+
+    if since:
+        stats = stats.filter(FacilityScada.trading_interval >= since)
+
+    stats = stats.order_by(FacilityScada.trading_interval).all()
 
     if len(stats) < 1:
         raise HTTPException(
@@ -69,7 +88,5 @@ def power_station(
         return record
 
     output = reduce(append_data, stats, {"code": station_code, "data": []},)
-
-    # stats = reduce
 
     return output
