@@ -3,8 +3,6 @@ import logging
 from datetime import datetime, timedelta
 
 import pytz
-from scrapy.exceptions import DropItem
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
 
 from opennem.db.models.opennem import FacilityScada
@@ -43,7 +41,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
         keys = []
 
         for row in csvreader:
-            if not row["Facility Code"] in all_facilities:
+            if row["Facility Code"] not in all_facilities:
                 continue
 
             row_key = "{}_{}".format(
