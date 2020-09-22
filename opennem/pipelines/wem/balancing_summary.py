@@ -35,7 +35,9 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
             )
         )
 
-        interval_max = q.fetchone()[0] or datetime(1900, 1, 1, 0, 0, 0)
+        interval_max = q.fetchone()[0] or wem_timezone.localize(
+            datetime(1900, 1, 1, 0, 0, 0)
+        )
 
         objects = [
             BalancingSummary(
