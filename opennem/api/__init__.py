@@ -272,11 +272,23 @@ def facilities(session: Session = Depends(get_database_session)):
     return facilities
 
 
-@app.get("/facility/{facility_code}")
+@app.get(
+    "/facility/{facility_code}", name="Facility", response_model=FacilitySchema
+)
 def facility(
-    session: Session = Depends(get_database_session), station_code: str = None
-):
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
+    facility_code: str = Query(str, description="Facility code"),
+    session: Session = Depends(get_database_session),
+) -> FacilitySchema:
+    facility = (
+        session.query(Facility).filter_by(code=facility_code).one_or_none()
+    )
+
+    if not facility:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Facility not found"
+        )
+
+    return facility
 
 
 @app.get("/revisions")
