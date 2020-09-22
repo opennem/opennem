@@ -91,6 +91,10 @@ class Participant(Base, BaseModel):
     country = Column(Text)
     abn = Column(Text)
 
+    approved = Column(Boolean, default=False)
+    approved_by = Column(Text)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+
 
 class Location(Base):
     __tablename__ = "location"
@@ -107,7 +111,7 @@ class Location(Base):
     state = Column(Text)
     postcode = Column(Text, nullable=True)
 
-    revisions = relationship("Revision")
+    revisions = relationship("Revision", lazy="joined")
 
     # Geo fields
     place_id = Column(Text, nullable=True, index=True)
@@ -166,11 +170,11 @@ class Station(Base, BaseModel):
         ForeignKey("location.id", name="fk_station_location_id"),
         nullable=True,
     )
-    location = relationship("Location")
+    location = relationship("Location", lazy="joined")
 
-    facilities = relationship("Facility")
+    facilities = relationship("Facility", lazy="joined")
 
-    revisions = relationship("Revision")
+    revisions = relationship("Revision", lazy="joined")
 
     code = Column(Text, index=True, nullable=True)
     name = Column(Text)
@@ -267,20 +271,22 @@ class Facility(Base, BaseModel):
         ForeignKey("network.code", name="fk_station_network_code"),
         nullable=False,
     )
-    network = relationship("Network")
+    network = relationship("Network", lazy="joined")
 
     fueltech_id = Column(
         Text,
         ForeignKey("fueltech.code", name="fk_facility_fueltech_id"),
         nullable=True,
     )
-    fueltech = relationship("FuelTech", back_populates="facilities")
+    fueltech = relationship(
+        "FuelTech", back_populates="facilities", lazy="joined"
+    )
 
     status_id = Column(
         Text,
         ForeignKey("facility_status.code", name="fk_facility_status_code"),
     )
-    status = relationship("FacilityStatus")
+    status = relationship("FacilityStatus", lazy="joined")
 
     station_id = Column(
         Integer,
@@ -289,7 +295,7 @@ class Facility(Base, BaseModel):
     )
     station = relationship("Station", back_populates="facilities")
 
-    revisions = relationship("Revision")
+    revisions = relationship("Revision", lazy="joined")
 
     # DUID but modified by opennem as an identifier
     code = Column(Text, index=True)
@@ -380,21 +386,27 @@ class Revision(Base, BaseModel):
         ForeignKey("station.id", name="fk_revision_station_id"),
         nullable=True,
     )
-    station = relationship("Station", back_populates="revisions")
+    station = relationship(
+        "Station", back_populates="revisions", lazy="joined"
+    )
 
     facility_id = Column(
         Integer,
         ForeignKey("facility.id", name="fk_revision_facility_id"),
         nullable=True,
     )
-    facility = relationship("Facility", back_populates="revisions")
+    facility = relationship(
+        "Facility", back_populates="revisions", lazy="joined"
+    )
 
     location_id = Column(
         Integer,
         ForeignKey("location.id", name="fk_revision_location_id"),
         nullable=True,
     )
-    location = relationship("Location", back_populates="revisions")
+    location = relationship(
+        "Location", back_populates="revisions", lazy="joined"
+    )
 
     changes = Column(JSON, nullable=True)
     previous = Column(JSON, nullable=True)
@@ -471,11 +483,15 @@ class FacilityScada(Base, BaseModel):
     trading_interval = Column(DateTime, index=True, primary_key=True)
 
     # facility_id = Column(
-    #     Integer,
-    #     ForeignKey("facility.id", name="fk_facility_scada_facility_id"),
+    #     Text,
+    #     ForeignKey("facility.id", name="fk_facility_scada_facility_code"),
     #     primary_key=True,
     # )
-    # facility = relationship("Facility")
+    # facility = relationship(
+    #     "Facility",
+    #     # primaryjoin="and_(FacilityScada.facility_code==Facility.code, Facility.approved=TRUE)",
+    #     # backref="scada",
+    # )
 
     facility_code = Column(Text, nullable=False, primary_key=True)
 
