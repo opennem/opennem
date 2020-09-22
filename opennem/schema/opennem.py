@@ -184,6 +184,8 @@ class FacilitySchema(OpennemBaseSchema):
 
 
 class LocationSchema(OpennemBaseSchema):
+    id: Optional[int]
+
     address1: Optional[str] = ""
     address2: Optional[str] = ""
     locality: Optional[str] = ""
@@ -256,6 +258,7 @@ class StationSchema(OpennemBaseSchema):
     network_name: Optional[str]
 
     location: LocationSchema = LocationSchema()
+    location_id: Optional[int]
 
     approved: bool = False
     approved_by: Optional[str]
