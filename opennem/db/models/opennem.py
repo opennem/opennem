@@ -485,7 +485,7 @@ class FacilityScada(Base, BaseModel):
         DateTime(timezone=True), index=True, primary_key=True
     )
 
-    facility_code = Column(Text, nullable=False, primary_key=True)
+    facility_code = Column(Text, nullable=False, primary_key=True, index=True)
 
     generated = Column(Numeric, nullable=True)
     eoi_quantity = Column(Numeric, nullable=True)
