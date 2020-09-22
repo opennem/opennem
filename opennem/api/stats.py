@@ -1,7 +1,7 @@
 from collections import UserList
 from datetime import datetime
 from functools import reduce
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
@@ -64,13 +64,13 @@ def stats_power(
     return output
 
 
-@router.get("/power/{station_code}", name="stats:Station Power")
+@router.get("/power/{unit_code}", name="stats:Unit Power")
 def power_station(
-    station_code: str = Query(..., description="Station code"),
+    unit_code: str = Query(..., description="Unit code"),
     since: datetime = Query(None, description="Since time"),
     session: Session = Depends(get_database_session),
 ):
-    stats = session.query(FacilityScada).filter_by(facility_code=station_code)
+    stats = session.query(FacilityScada).filter_by(facility_code=unit_code)
 
     if since:
         stats = stats.filter(FacilityScada.trading_interval >= since)
@@ -87,6 +87,6 @@ def power_station(
         record["data"].append([scada.trading_interval, scada.generated])
         return record
 
-    output = reduce(append_data, stats, {"code": station_code, "data": []},)
+    output = reduce(append_data, stats, {"code": unit_code, "data": []},)
 
     return output
