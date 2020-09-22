@@ -53,10 +53,13 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not participant:
                 participant = Participant(
+                    approved=True,
+                    approved_by="opennem.wem.facilities",
+                    created_by="opennem.wem.facilities",
+                    approved_at=datetime.now(),
                     code=participant_code,
                     name=participant_name,
                     network_name=participant_network_name,
-                    created_by="pipeline.wem.facilities",
                 )
                 s.add(participant)
                 s.commit()
@@ -80,10 +83,13 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not station:
                 station = Station(
+                    approved=True,
+                    approved_by="opennem.wem.facilities",
+                    created_by="opennem.wem.facilities",
+                    approved_at=datetime.now(),
                     code=station_code,
                     network_code=station_code,
                     participant=participant,
-                    created_by="pipeline.wem.facilities",
                 )
 
                 location = Location(state="WA")
@@ -100,11 +106,14 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not facility:
                 facility = Facility(
+                    approved=True,
+                    approved_by="opennem.wem.facilities",
+                    created_by="opennem.wem.facilities",
+                    approved_at=datetime.now(),
                     code=facility_code,
                     network_id="WEM",
                     network_code=facility_code,
                     network_region="WEM",
-                    created_by="pipeline.wem.facilities",
                 )
 
             capacity_registered = clean_capacity(row["Maximum Capacity (MW)"])
@@ -171,10 +180,13 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             if not participant:
                 participant = Participant(
+                    approved=True,
+                    approved_by="opennem.wem.live.facilities",
+                    created_by="opennem.wem.live.facilities",
+                    approved_at=datetime.now(),
                     code=participant_code,
                     network_code=participant_code,
                     network="WEM",
-                    created_by="pipeline.wem.live_facilities",
                 )
 
                 s.add(participant)
@@ -205,11 +217,14 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             if not station:
                 station = Station(
+                    approved=True,
+                    approved_by="opennem.wem.live.facilities",
+                    created_by="opennem.wem.live.facilities",
+                    approved_at=datetime.now(),
                     code=station_code,
                     network_id="WEM",
                     network_code=station_code,
                     participant=participant,
-                    created_by="pipeline.wem.live.facilities",
                 )
 
                 location = Location(state="WA")
@@ -240,10 +255,13 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             if not facility:
                 facility = Facility(
+                    approved=True,
+                    approved_by="opennem.wem.live.facilities",
+                    created_by="opennem.wem.live.facilities",
+                    approved_at=datetime.now(),
                     code=facility_code,
                     network_code=facility_code,
                     network_region="WEM",
-                    created_by="pipeline.wem.live.facilities",
                 )
 
                 created_facility = True
