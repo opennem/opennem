@@ -15,7 +15,7 @@ from opennem.core.normalizers import (
     participant_name_filter,
     station_name_cleaner,
 )
-from opennem.db.models.opennem import Facility, Participant, Station
+from opennem.db.models.opennem import Facility, Location, Participant, Station
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -32,7 +32,7 @@ class WemStoreFacility(DatabaseStoreBase):
 
         for row in csvreader:
 
-            if not "Participant Code" in row:
+            if "Participant Code" not in row:
                 logger.error("Invalid row")
                 continue
 
@@ -62,9 +62,8 @@ class WemStoreFacility(DatabaseStoreBase):
                 s.commit()
 
                 logger.debug(
-                    "Participant not found created new database entry: {}".format(
-                        participant_code
-                    )
+                    "Participant not found created new database entry: %s",
+                    participant_code,
                 )
 
             station = None
@@ -82,11 +81,14 @@ class WemStoreFacility(DatabaseStoreBase):
             if not station:
                 station = Station(
                     code=station_code,
-                    network_id="WEM",
                     network_code=station_code,
                     participant=participant,
                     created_by="pipeline.wem.facilities",
                 )
+
+                location = Location(state="WA")
+
+                station.location = location
 
                 logger.debug("Added WEM station: {}".format(station_code))
 
@@ -99,6 +101,7 @@ class WemStoreFacility(DatabaseStoreBase):
             if not facility:
                 facility = Facility(
                     code=facility_code,
+                    network_id="WEM",
                     network_code=facility_code,
                     network_region="WEM",
                     created_by="pipeline.wem.facilities",
@@ -152,7 +155,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
         for row in csvreader:
 
-            if not "PARTICIPANT_CODE" in row:
+            if "PARTICIPANT_CODE" not in row:
                 logger.error("Invalid row")
                 continue
 
@@ -173,6 +176,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                     network="WEM",
                     created_by="pipeline.wem.live_facilities",
                 )
+
                 s.add(participant)
                 s.commit()
 
@@ -208,6 +212,10 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                     created_by="pipeline.wem.live.facilities",
                 )
 
+                location = Location(state="WA")
+
+                station.location = location
+
                 created_station = True
                 logger.debug("Added WEM station: {}".format(station_code))
 
@@ -217,10 +225,12 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
             station.name = station_name
             station.network_name = station_network_name
 
-            if lat and lng and not station.geom:
-                station.geom = "SRID=4326;POINT({} {})".format(lat, lng)
-                station.geocode_by = "aemo"
-                station.geocode_approved = True
+            if lat and lng and not station.location.geom:
+                station.location.geom = "SRID=4326;POINT({} {})".format(
+                    lat, lng
+                )
+                station.location.geocode_by = "aemo"
+                station.location.geocode_approved = True
 
             facility = (
                 s.query(Facility)
@@ -249,11 +259,9 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                     registered_date_dt = datetime.strptime(
                         registered_date, date_fmt
                     )
-                except Exception as e:
+                except Exception:
                     logger.error(
-                        "Bad date: {} for format {}".format(
-                            registered_date, date_fmt
-                        )
+                        "Bad date: {} for format {}", registered_date, date_fmt
                     )
 
                 if registered_date_dt:
