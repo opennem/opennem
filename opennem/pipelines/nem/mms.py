@@ -28,7 +28,7 @@ from opennem.db.models.opennem import Facility, FacilityStatus
 from opennem.db.models.opennem import Participant as ParticipantModel
 from opennem.db.models.opennem import Station
 from opennem.pipelines import DatabaseStoreBase
-from opennem.schema.pariticipant import OpennemParticipant
+from opennem.schema.opennem import ParticipantSchema
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
@@ -203,7 +203,7 @@ class NemStoreMMSParticipant(DatabaseStoreBase):
             participant_schema = None
 
             try:
-                participant_schema = OpennemParticipant(
+                participant_schema = ParticipantSchema(
                     **{
                         "code": record["PARTICIPANTID"],
                         "name": record["NAME"],
