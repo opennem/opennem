@@ -261,7 +261,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                     )
                 except Exception:
                     logger.error(
-                        "Bad date: {} for format {}", registered_date, date_fmt
+                        "Bad date: %s for format %s", registered_date, date_fmt
                     )
 
                 if registered_date_dt:

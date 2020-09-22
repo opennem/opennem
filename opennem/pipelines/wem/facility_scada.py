@@ -45,7 +45,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
 
             item = FacilityScada(
                 trading_interval=self.parse_interval(row["Trading Interval"]),
-                facility_id=row["Facility Code"],
+                facility_code=row["Facility Code"],
                 eoi_quantity=row["EOI Quantity (MW)"] or None,
                 generated=row["Energy Generated (MWh)"] or None,
             )
