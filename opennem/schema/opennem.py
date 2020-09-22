@@ -155,7 +155,7 @@ class FacilitySchema(OpennemBaseSchema):
     # @TODO no longer optional
     code: Optional[str] = ""
 
-    revisions: Optional[List[RevisionSchema]] = []
+    # revisions: Optional[List[RevisionSchema]] = []
     # revision_ids: Optional[List[int]] = []
 
     dispatch_type: DispatchType = "GENERATOR"
