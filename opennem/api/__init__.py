@@ -60,7 +60,7 @@ app.add_middleware(
 
 @app.get(
     "/stations",
-    # response_model=List[StationSchema],
+    response_model=List[StationSchema],
     description="Get a list of all stations",
 )
 def stations(
@@ -80,7 +80,7 @@ def stations(
     name: Optional[str] = None,
     limit: Optional[int] = None,
     page: int = 1,
-):
+) -> List[StationSchema]:
     stations = (
         session.query(Station)
         .join(Location)

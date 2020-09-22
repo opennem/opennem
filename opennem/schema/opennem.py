@@ -250,11 +250,11 @@ class StationSchema(OpennemBaseSchema):
 
     # history: Optional[List[__self__]]
 
-    revisions: Optional[List[RevisionSchema]]
+    # revisions: Optional[List[RevisionSchema]]
 
     code: str
 
-    name: str
+    name: Optional[str]
 
     # Original network fields
     network_name: Optional[str]
