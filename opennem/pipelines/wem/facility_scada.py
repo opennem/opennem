@@ -2,6 +2,7 @@ import csv
 import logging
 from datetime import datetime, timedelta
 
+import pytz
 from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
@@ -13,9 +14,15 @@ from opennem.utils.pipelines import check_spider_pipeline
 logger = logging.getLogger(__name__)
 
 
+wem_timezone = pytz.timezone("Australia/Perth")
+
+
 class WemStoreFacilityScada(DatabaseStoreBase):
     def parse_interval(self, date_str):
-        return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt_aware = wem_timezone.localize(dt)
+
+        return dt_aware
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
@@ -72,14 +79,10 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
     """
 
     def parse_interval(self, date_str):
-        return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt_aware = wem_timezone.localize(dt)
 
-        # try:
-        #     return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-        # except Exception:
-        #     pass
-
-        # return datetime.strptime(date_str, "%d/%m/%Y %H:%M:%S %p")
+        return dt_aware
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):

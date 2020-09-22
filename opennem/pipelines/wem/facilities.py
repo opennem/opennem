@@ -19,6 +19,8 @@ from opennem.db.models.opennem import Facility, Location, Participant, Station
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
 
+from .facility_scada import wem_timezone
+
 logger = logging.getLogger(__name__)
 
 
@@ -152,7 +154,10 @@ class WemStoreFacility(DatabaseStoreBase):
 
 class WemStoreLiveFacilities(DatabaseStoreBase):
     def parse_interval(self, date_str):
-        return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt_aware = wem_timezone.localize(dt)
+
+        return dt_aware
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):

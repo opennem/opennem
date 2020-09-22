@@ -53,6 +53,15 @@ class NetworkSchema(BaseConfig):
     code: str
     country: str
     label: str
+    timezone: str
+
+
+NetworkNEM = NetworkSchema(
+    code="NEM", label="NEM", country="au", timezone="Australia/Perth"
+)
+NetworkWEM = NetworkSchema(
+    code="WEM", label="WEM", country="au", timezone="Australia/Sydney"
+)
 
 
 class FacilityStatusSchema(BaseConfig):
@@ -135,9 +144,7 @@ class RevisionSchema(OpennemBaseSchema):
 class FacilitySchema(OpennemBaseSchema):
     id: Optional[int]
 
-    network: NetworkSchema = NetworkSchema(
-        code="NEM", country="au", label="NEM"
-    )
+    network: NetworkSchema = NetworkNEM
 
     fueltech: Optional[FueltechSchema]
 

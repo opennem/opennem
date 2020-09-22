@@ -481,18 +481,9 @@ class FacilityScada(Base, BaseModel):
 
     __tablename__ = "facility_scada"
 
-    trading_interval = Column(DateTime, index=True, primary_key=True)
-
-    # facility_id = Column(
-    #     Text,
-    #     ForeignKey("facility.id", name="fk_facility_scada_facility_code"),
-    #     primary_key=True,
-    # )
-    # facility = relationship(
-    #     "Facility",
-    #     # primaryjoin="and_(FacilityScada.facility_code==Facility.code, Facility.approved=TRUE)",
-    #     # backref="scada",
-    # )
+    trading_interval = Column(
+        DateTime(timezone=True), index=True, primary_key=True
+    )
 
     facility_code = Column(Text, nullable=False, primary_key=True)
 
@@ -511,7 +502,9 @@ class BalancingSummary(Base, BaseModel):
     )
     network = relationship("Network")
 
-    trading_interval = Column(DateTime, index=True, primary_key=True)
+    trading_interval = Column(
+        DateTime(timezone=True), index=True, primary_key=True
+    )
     forecast_load = Column(Numeric, nullable=True)
     generation_scheduled = Column(Numeric, nullable=True)
     generation_non_scheduled = Column(Numeric, nullable=True)

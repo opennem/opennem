@@ -1,11 +1,4 @@
-from opennem.schema.opennem import NetworkSchema
-
-NetworkNEM = NetworkSchema(
-    code="NEM", label="NEM", country="au", timezone="Australia/Perth"
-)
-NetworkWEM = NetworkSchema(
-    code="WEM", label="WEM", country="au", timezone="Australia/Sydney"
-)
+from opennem.schema.opennem import NetworkNEM, NetworkSchema, NetworkWEM
 
 
 def network_from_state(state: str) -> NetworkSchema:
