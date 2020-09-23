@@ -145,6 +145,20 @@ class ScadaReading(Tuple[datetime, Optional[float]]):
     pass
 
 
+class OpennemDataHistory(BaseConfig):
+    start: datetime
+    last: datetime
+    data: List[float]
+
+
+class OpennemData(BaseConfig):
+    region: str
+    network: str
+    data_type: str
+    units: str
+    history: OpennemDataHistory
+
+
 class FacilitySchema(OpennemBaseSchema):
     id: Optional[int]
 
@@ -159,7 +173,7 @@ class FacilitySchema(OpennemBaseSchema):
     # @TODO no longer optional
     code: Optional[str] = ""
 
-    scada_power: Optional[List[ScadaReading]]
+    scada_power: Optional[OpennemData]
 
     # revisions: Optional[List[RevisionSchema]] = []
     # revision_ids: Optional[List[int]] = []
