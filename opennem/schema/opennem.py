@@ -150,7 +150,7 @@ class FacilitySchema(OpennemBaseSchema):
 
     status: Optional[FacilityStatusSchema]
 
-    station_id: int
+    station_id: Optional[int]
 
     # @TODO no longer optional
     code: Optional[str] = ""
