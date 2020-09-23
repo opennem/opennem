@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel, validator
 
@@ -141,6 +141,10 @@ class RevisionSchema(OpennemBaseSchema):
     #         ), "Data values have to be int, str, bool or float"
 
 
+class ScadaReading(Tuple[datetime, Optional[float]]):
+    pass
+
+
 class FacilitySchema(OpennemBaseSchema):
     id: Optional[int]
 
@@ -154,6 +158,8 @@ class FacilitySchema(OpennemBaseSchema):
 
     # @TODO no longer optional
     code: Optional[str] = ""
+
+    scada_power: Optional[List[ScadaReading]]
 
     # revisions: Optional[List[RevisionSchema]] = []
     # revision_ids: Optional[List[int]] = []

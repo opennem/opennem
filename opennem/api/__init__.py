@@ -8,9 +8,11 @@ from starlette import status
 
 from opennem.api.locations import router as locations_router
 from opennem.api.stats import router as stats_router
+from opennem.core.time import human_to_interval
 from opennem.db import get_database_session
 from opennem.db.models.opennem import (
     Facility,
+    FacilityScada,
     FuelTech,
     Location,
     Network,
@@ -150,6 +152,9 @@ def station_ids(
 def station(
     session: Session = Depends(get_database_session),
     station_code: str = None,
+    power_include: Optional[bool] = Query(
+        False, description="Include last week of power output"
+    ),
     revisions_include: Optional[bool] = Query(
         False, description="Include revisions in records"
     ),
@@ -168,26 +173,51 @@ def station(
             status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
         )
 
-    if not revisions_include:
-        return station
+    if revisions_include:
+        revisions = session.query(Revision).all()
 
-    revisions = session.query(Revision).all()
-
-    station.revisions = list(
-        filter(
-            lambda rev: rev.schema == "station" and rev.code == station.code,
-            revisions,
-        )
-    )
-
-    for facility in station.facilities:
-        facility.revisions = list(
+        station.revisions = list(
             filter(
-                lambda rev: rev.schema == "facility"
-                and rev.code == facility.code,
+                lambda rev: rev.schema == "station"
+                and rev.code == station.code,
                 revisions,
             )
         )
+
+        for facility in station.facilities:
+            facility.revisions = list(
+                filter(
+                    lambda rev: rev.schema == "facility"
+                    and rev.code == facility.code,
+                    revisions,
+                )
+            )
+
+    if power_include:
+
+        since = datetime.now() - human_to_interval("7d")
+
+        facility_codes = list(set([f.code for f in station.facilities]))
+
+        stats = (
+            session.query(FacilityScada)
+            .filter(FacilityScada.facility_code.in_(facility_codes))
+            .filter(FacilityScada.trading_interval >= since)
+            .order_by(FacilityScada.facility_code)
+            .order_by(FacilityScada.trading_interval)
+            .all()
+        )
+
+        for facility in station.facilities:
+            facility_power = filter(
+                lambda s: s.facility_code == facility.code, stats
+            )
+
+            facility.scada_power = list(
+                map(lambda x: (x.facility_code, x.generated), facility_power)
+            )
+
+    return station
 
 
 @app.get(
