@@ -214,7 +214,9 @@ def station(
             )
 
             facility.scada_power = list(
-                map(lambda x: (x.facility_code, x.generated), facility_power)
+                map(
+                    lambda x: (x.trading_interval, x.generated), facility_power
+                )
             )
 
     return station
