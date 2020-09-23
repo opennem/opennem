@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
+import pytz
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -224,9 +225,11 @@ def scada_to_opennemdata(scada: List[FacilityScada]) -> Optional[OpennemData]:
     if len(scada) < 1:
         return None
 
+    network_timezone = pytz.timezone(scada[0].network.timezone)
+
     dates = [s.trading_interval for s in scada]
-    start = min(dates)
-    end = max(dates)
+    start = network_timezone.localise(min(dates))
+    end = network_timezone.localise(max(dates))
     network = scada[0].network.code
     interval = scada[0].network.interval
 
