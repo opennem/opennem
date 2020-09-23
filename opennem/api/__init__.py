@@ -211,8 +211,8 @@ def station(
         )
 
         for facility in station.facilities:
-            facility_power = filter(
-                lambda s: s.facility_code == facility.code, stats
+            facility_power = list(
+                filter(lambda s: s.facility_code == facility.code, stats)
             )
 
             facility.scada_power = scada_to_opennemdata(facility_power)
@@ -231,7 +231,10 @@ def scada_to_opennemdata(scada: List[FacilityScada]) -> Optional[OpennemData]:
     interval = scada[0].network.interval
 
     history = OpennemDataHistory(
-        start=start, last=end, interval=interval, data=[s.generated for s in scada]
+        start=start,
+        last=end,
+        interval=interval,
+        data=[s.generated for s in scada],
     )
 
     data = OpennemData(
