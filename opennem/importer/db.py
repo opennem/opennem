@@ -335,6 +335,7 @@ def registry_init():
                         "status",
                         "network",
                         "revision_ids",
+                        "scada_power",
                     }
                 )
             )

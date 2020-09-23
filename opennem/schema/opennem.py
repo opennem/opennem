@@ -157,11 +157,12 @@ class ScadaReading(Tuple[datetime, Optional[float]]):
 class OpennemDataHistory(BaseConfig):
     start: datetime
     last: datetime
+    interval: int
     data: List[float]
 
 
 class OpennemData(BaseConfig):
-    region: str
+    region: str = ""
     network: str
     data_type: str
     units: str

@@ -67,6 +67,7 @@ class Network(Base, BaseModel):
     country = Column(Text, nullable=False)
     label = Column(Text, nullable=True)
     timezone = Column(Text, nullable=False)
+    interval_size = Column(Integer, nullable=False)
 
 
 class FacilityStatus(Base, BaseModel):
@@ -480,6 +481,13 @@ class FacilityScada(Base, BaseModel):
     """
 
     __tablename__ = "facility_scada"
+
+    network_id = Column(
+        Text,
+        ForeignKey("network.code", name="fk_balancing_summary_network_code"),
+        primary_key=True,
+    )
+    network = relationship("Network")
 
     trading_interval = Column(
         DateTime(timezone=True), index=True, primary_key=True

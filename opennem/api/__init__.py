@@ -23,6 +23,8 @@ from opennem.schema.opennem import (
     FacilitySchema,
     FueltechSchema,
     NetworkSchema,
+    OpennemData,
+    OpennemDataHistory,
     RevisionSchema,
     StationSchema,
 )
@@ -213,13 +215,30 @@ def station(
                 lambda s: s.facility_code == facility.code, stats
             )
 
-            facility.scada_power = list(
-                map(
-                    lambda x: (x.trading_interval, x.generated), facility_power
-                )
-            )
+            facility.scada_power = scada_to_opennemdata(facility_power)
 
     return station
+
+
+def scada_to_opennemdata(scada: List[FacilityScada]) -> Optional[OpennemData]:
+    if len(scada) < 1:
+        return None
+
+    dates = [s.trading_interval for s in scada]
+    start = min(dates)
+    end = max(dates)
+    network = scada[0].network.code
+    interval = scada[0].network.interval
+
+    history = OpennemDataHistory(
+        start=start, last=end, interval=interval, data=[s.generated for s in scada]
+    )
+
+    data = OpennemData(
+        network=network, data_type="power", units="MWh", history=history
+    )
+
+    return data
 
 
 @app.get(

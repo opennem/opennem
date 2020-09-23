@@ -53,6 +53,7 @@ def process_unit_scada(table):
             ),
             "facility_code": normalize_duid(record["DUID"]),
             "generated": float(record["SCADAVALUE"]),
+            "network_id": "NEM",
         }
 
         _record_model = FacilityScada(**_record_dict)

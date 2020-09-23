@@ -49,6 +49,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
             )
 
             item = FacilityScada(
+                network_id="WEM",
                 trading_interval=self.parse_interval(row["Trading Interval"]),
                 facility_code=row["Facility Code"],
                 eoi_quantity=row["EOI Quantity (MW)"] or None,
