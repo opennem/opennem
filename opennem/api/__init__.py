@@ -228,14 +228,15 @@ def scada_to_opennemdata(scada: List[FacilityScada]) -> Optional[OpennemData]:
     network_timezone = pytz.timezone(scada[0].network.timezone)
 
     dates = [s.trading_interval for s in scada]
-    start = network_timezone.localise(min(dates))
-    end = network_timezone.localise(max(dates))
+    start = min(dates)
+    end = max(dates)
+
     network = scada[0].network.code
-    interval = scada[0].network.interval
+    interval = scada[0].network.interval_size
 
     history = OpennemDataHistory(
-        start=start,
-        last=end,
+        start=start.astimezone(network_timezone),
+        last=end.astimezone(network_timezone),
         interval=interval,
         data=[s.generated for s in scada],
     )
