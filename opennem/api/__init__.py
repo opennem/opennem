@@ -237,7 +237,7 @@ def scada_to_opennemdata(scada: List[FacilityScada]) -> Optional[OpennemData]:
     history = OpennemDataHistory(
         start=start.astimezone(network_timezone),
         last=end.astimezone(network_timezone),
-        interval=interval,
+        interval="{}m".format(str(interval)),
         data=[s.generated for s in scada],
     )
 

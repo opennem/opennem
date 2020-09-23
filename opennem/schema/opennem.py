@@ -157,7 +157,7 @@ class ScadaReading(Tuple[datetime, Optional[float]]):
 class OpennemDataHistory(BaseConfig):
     start: datetime
     last: datetime
-    interval: int
+    interval: str
     data: List[float]
 
 
