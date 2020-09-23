@@ -3,12 +3,14 @@
     "code": "NEM",
     "country": "au",
     "label": "NEM",
-    "timezone": "Australia/Sydney"
+    "timezone": "Australia/Sydney",
+    "interval_size": 5
   },
   {
     "code": "WEM",
     "country": "au",
     "label": "WEM",
-    "timezone": "Australia/Perth"
+    "timezone": "Australia/Perth",
+    "interval_size": 30
   }
 ]
