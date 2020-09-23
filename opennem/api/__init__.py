@@ -242,7 +242,7 @@ def scada_to_opennemdata(scada: List[FacilityScada]) -> Optional[OpennemData]:
     )
 
     data = OpennemData(
-        network=network, data_type="power", units="MWh", history=history
+        network=network, data_type="power", units="MW", history=history
     )
 
     return data
