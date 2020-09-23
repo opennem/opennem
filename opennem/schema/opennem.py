@@ -54,13 +54,22 @@ class NetworkSchema(BaseConfig):
     country: str
     label: str
     timezone: str
+    interval_size: int
 
 
 NetworkNEM = NetworkSchema(
-    code="NEM", label="NEM", country="au", timezone="Australia/Perth"
+    code="NEM",
+    label="NEM",
+    country="au",
+    timezone="Australia/Perth",
+    interval_size=5,
 )
 NetworkWEM = NetworkSchema(
-    code="WEM", label="WEM", country="au", timezone="Australia/Sydney"
+    code="WEM",
+    label="WEM",
+    country="au",
+    timezone="Australia/Sydney",
+    interval_size=30,
 )
 
 
