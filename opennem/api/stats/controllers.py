@@ -13,9 +13,9 @@ from .schema import OpennemData, OpennemDataHistory, OpennemDataSet
 
 
 def stats_set_factory(
-    stats: List[OpennemData], code: str = None
+    stats: List[OpennemData], code: str = None, network: str = None
 ) -> OpennemDataSet:
-    stat_set = OpennemDataSet(data_type="power", data=stats)
+    stat_set = OpennemDataSet(data_type="power", data=stats, code=code, network=network)
 
     return stat_set
 
@@ -61,7 +61,11 @@ def stats_factory(
     )
 
     data = OpennemData(
-        network=network, data_type="power", units="MW", history=history
+        network=network,
+        data_type="power",
+        units="MW",
+        code=code,
+        history=history,
     )
 
     return data

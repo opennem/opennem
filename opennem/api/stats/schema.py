@@ -46,12 +46,13 @@ class OpennemData(BaseConfig):
     region: str = ""
     network: str
     data_type: str
+    code: str = ""
     units: str
     history: OpennemDataHistory
 
 
 class OpennemDataSet(BaseConfig):
     network: str = ""
-    data_type: str
+    code: str
 
     data: List[OpennemData]

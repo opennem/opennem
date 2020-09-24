@@ -73,7 +73,7 @@ def power_unit(
             detail="Station stats not found",
         )
 
-    output = stats_factory(stats)
+    output = stats_factory(stats, code=unit_code)
 
     return output
 
@@ -140,6 +140,8 @@ def power_station(
         _statset = stats_factory(stats_per_unit, code=code)
         stats_list.append(_statset)
 
-    output = stats_set_factory(stats_list)
+    output = stats_set_factory(
+        stats_list, code=station_code, network=network_code
+    )
 
     return output
