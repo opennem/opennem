@@ -49,3 +49,9 @@ class OpennemData(BaseConfig):
     units: str
     history: OpennemDataHistory
 
+
+class OpennemDataSet(BaseConfig):
+    network: str = ""
+    data_type: str
+
+    data: List[OpennemData]
