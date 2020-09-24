@@ -5,42 +5,21 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel, validator
 
+from opennem.api.stats.schema import OpennemData
 from opennem.core.dispatch_type import DispatchType
-from opennem.core.oid import get_ocode, get_oid
-
 from opennem.core.normalizers import (  # clean_numbers,; station_name_cleaner,
     clean_capacity,
     normalize_string,
 )
+from opennem.core.oid import get_ocode, get_oid
 
-
-class BaseConfig(BaseModel):
-    class Config:
-        orm_mode = True
-        anystr_strip_whitespace = True
-
-        arbitrary_types_allowed = True
-        validate_assignment = True
-
-        json_encoders = {
-            # datetime: lambda v: v.isotime(),
-            # Decimal: lambda v: float(v),
-        }
+from .core import BaseConfig
 
 
 class OpennemBaseSchema(BaseConfig):
 
     created_by: Optional[str]
     created_at: Optional[datetime] = datetime.now()
-
-    class Config:
-        orm_mode = True
-        anystr_strip_whitespace = True
-        use_enum_values = True
-        arbitrary_types_allowed = True
-        validate_assignment = True
-
-        json_encoders = {}
 
 
 class FueltechSchema(BaseConfig):
@@ -152,21 +131,6 @@ class RevisionSchema(OpennemBaseSchema):
 
 class ScadaReading(Tuple[datetime, Optional[float]]):
     pass
-
-
-class OpennemDataHistory(BaseConfig):
-    start: datetime
-    last: datetime
-    interval: str
-    data: List[float]
-
-
-class OpennemData(BaseConfig):
-    region: str = ""
-    network: str
-    data_type: str
-    units: str
-    history: OpennemDataHistory
 
 
 class FacilitySchema(OpennemBaseSchema):
