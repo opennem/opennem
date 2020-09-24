@@ -261,6 +261,17 @@ class StationSchema(OpennemBaseSchema):
     approved_at: Optional[datetime]
 
     @property
+    def network(self) -> Optional[NetworkSchema]:
+        """
+            Return the network from the facility
+
+        """
+        if not self.facilities or not len(self.facilities) > 0:
+            return None
+
+        return self.facilities[0].network
+
+    @property
     def capacity_registered(self) -> Optional[int]:
         """
             This is the sum of registered capacities for all units for
