@@ -38,6 +38,13 @@ class WemStoreFacility(DatabaseStoreBase):
                 logger.error("Invalid row")
                 continue
 
+            if row["Facility Type"] in [
+                "Demand Side Program",
+                "Non-Dispatchable Load",
+                "Network",
+            ]:
+                continue
+
             participant = None
 
             participant_name = participant_name_filter(row["Participant Name"])
