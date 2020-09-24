@@ -190,6 +190,17 @@ class Station(Base, BaseModel):
     approved_at = Column(DateTime(timezone=True), nullable=True)
 
     @hybrid_property
+    def network(self) -> Optional[Network]:
+        """
+            Return the network from the facility
+
+        """
+        if not self.facilities or not len(self.facilities) > 0:
+            return None
+
+        return self.facilities[0].network
+
+    @hybrid_property
     def capacity_registered(self) -> Optional[int]:
         """
             This is the sum of registered capacities for all units for

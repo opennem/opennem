@@ -260,16 +260,7 @@ class StationSchema(OpennemBaseSchema):
     approved_by: Optional[str]
     approved_at: Optional[datetime]
 
-    @property
-    def network(self) -> Optional[NetworkSchema]:
-        """
-            Return the network from the facility
-
-        """
-        if not self.facilities or not len(self.facilities) > 0:
-            return None
-
-        return self.facilities[0].network
+    network: Optional[NetworkSchema] = None
 
     @property
     def capacity_registered(self) -> Optional[int]:
