@@ -9,6 +9,7 @@ from starlette import status
 
 from opennem.api.locations import router as locations_router
 from opennem.api.stats.router import router as stats_router
+from opennem.core.dispatch_type import DispatchType
 from opennem.core.time import human_to_interval
 from opennem.db import get_database_session
 from opennem.db.models.opennem import (
@@ -153,6 +154,7 @@ def station_ids(
 def station(
     session: Session = Depends(get_database_session),
     station_code: str = None,
+    only_generators: bool = Query(True, description="Show only generators"),
     power_include: Optional[bool] = Query(
         False, description="Include last week of power output"
     ),
@@ -165,9 +167,16 @@ def station(
 ):
     station = (
         session.query(Station)
+        .join(Facility)
         .filter(Station.code == station_code)
-        .one_or_none()
     )
+
+    if only_generators:
+        station = station.filter(
+            Facility.dispatch_type == DispatchType.GENERATOR
+        )
+
+    station = station.one_or_none()
 
     if not station:
         raise HTTPException(
