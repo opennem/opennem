@@ -9,7 +9,8 @@ from opennem.core.time import human_to_interval
 from opennem.db import get_database_session
 from opennem.db.models.opennem import Facility, FacilityScada, Station
 
-from .schema import StationScadaReading, UnitScadaReading
+from .controllers import stats_factory
+from .schema import OpennemData, StationScadaReading
 
 router = APIRouter()
 
@@ -28,44 +29,41 @@ def stats_power(
 
     stats = stats.order_by(FacilityScada.trading_interval).all()
 
-    def append_data(record, scada):
-        if scada.facility_code not in record:
-            record[scada.facility_code] = {
-                "code": scada.facility_code,
-                "data": [],
-            }
-
-        record[scada.facility_code]["data"].append(
-            [scada.trading_interval, scada.generated]
-        )
-
-        return record
-
-    output = reduce(append_data, stats, {},)
+    output = stats_factory(stats)
 
     return output
 
 
 @router.get(
-    "/power/unit/{unit_code}",
+    "/power/unit/{network_code}/{unit_code}",
     name="stats:Unit Power",
-    response_model=UnitScadaReading,
+    response_model=OpennemData,
 )
 def power_unit(
     unit_code: str = Query(..., description="Unit code"),
-    since: datetime = Query(None, description="Since time"),
+    network_code: str = Query(..., description="Network code"),
+    since: str = Query(None, description="Since as human interval"),
+    since_dt: datetime = Query(None, description="Since as datetime"),
     session: Session = Depends(get_database_session),
-) -> UnitScadaReading:
+) -> OpennemData:
     if not since:
         since = datetime.now() - human_to_interval("7d")
+
+    network_code = network_code.upper()
+
+    if network_code not in ["WEM", "NEM"]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
+        )
 
     stats = (
         session.query(FacilityScada)
         .filter_by(facility_code=unit_code)
+        .filter_by(network_id=network_code)
         .filter(FacilityScada.trading_interval >= since)
+        .order_by(FacilityScada.trading_interval)
+        .all()
     )
-
-    stats = stats.order_by(FacilityScada.trading_interval).all()
 
     if len(stats) < 1:
         raise HTTPException(
@@ -73,27 +71,31 @@ def power_unit(
             detail="Station stats not found",
         )
 
-    def append_data(record, scada):
-        record["data"].append((scada.trading_interval, scada.generated))
-        return record
-
-    output = reduce(append_data, stats, {"code": unit_code, "data": []},)
+    output = stats_factory(stats)
 
     return output
 
 
 @router.get(
-    "/power/station/{station_code}",
+    "/power/station/{network_code}/{station_code}",
     name="stats:Station Power",
     response_model=StationScadaReading,
 )
 def power_station(
     station_code: str = Query(..., description="Station code"),
+    network_code: str = Query(..., description="Network code"),
     since: datetime = Query(None, description="Since time"),
     session: Session = Depends(get_database_session),
 ) -> StationScadaReading:
     if not since:
         since = datetime.now() - human_to_interval("7d")
+
+    network_code = network_code.upper()
+
+    if network_code not in ["WEM", "NEM"]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
+        )
 
     station = (
         session.query(Station)
