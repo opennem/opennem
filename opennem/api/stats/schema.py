@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 from opennem.schema.core import BaseConfig
 
@@ -34,6 +34,12 @@ class OpennemDataHistory(BaseConfig):
     last: datetime
     interval: str
     data: List[float]
+
+    @validator("data")
+    def validate_data(cls, data_value):
+        data_value = list(map(lambda x: round(x, 2), data_value))
+
+        return data_value
 
 
 class OpennemData(BaseConfig):
