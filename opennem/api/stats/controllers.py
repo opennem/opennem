@@ -9,10 +9,20 @@ from sqlalchemy.orm import Session
 from opennem.core.time import human_to_interval
 from opennem.db.models.opennem import FacilityScada, Station
 
-from .schema import OpennemData, OpennemDataHistory
+from .schema import OpennemData, OpennemDataHistory, OpennemDataSet
 
 
-def stats_factory(scada: List[FacilityScada]) -> Optional[OpennemData]:
+def stats_set_factory(
+    stats: List[OpennemData], code: str = None
+) -> OpennemDataSet:
+    stat_set = OpennemDataSet(data_type="power", data=stats)
+
+    return stat_set
+
+
+def stats_factory(
+    scada: List[FacilityScada], code: str = None
+) -> Optional[OpennemData]:
     if len(scada) < 1:
         return None
 

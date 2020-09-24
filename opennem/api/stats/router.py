@@ -1,5 +1,7 @@
 from datetime import datetime
 from functools import reduce
+from itertools import groupby
+from operator import attrgetter
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -9,8 +11,8 @@ from opennem.core.time import human_to_interval
 from opennem.db import get_database_session
 from opennem.db.models.opennem import Facility, FacilityScada, Station
 
-from .controllers import stats_factory
-from .schema import OpennemData, StationScadaReading
+from .controllers import stats_factory, stats_set_factory
+from .schema import OpennemData, OpennemDataSet, StationScadaReading
 
 router = APIRouter()
 
@@ -79,14 +81,14 @@ def power_unit(
 @router.get(
     "/power/station/{network_code}/{station_code}",
     name="stats:Station Power",
-    response_model=OpennemData,
+    response_model=OpennemDataSet,
 )
 def power_station(
     station_code: str = Query(..., description="Station code"),
     network_code: str = Query(..., description="Network code"),
     since: datetime = Query(None, description="Since time"),
     session: Session = Depends(get_database_session),
-) -> OpennemData:
+) -> OpennemDataSet:
     if not since:
         since = datetime.now() - human_to_interval("7d")
 
@@ -125,6 +127,19 @@ def power_station(
             detail="Station stats not found",
         )
 
-    output = stats_factory(stats)
+    stats_sets = {}
+    stats_list = []
+
+    for code, record in groupby(stats, attrgetter("facility_code")):
+        if code not in stats_sets:
+            stats_sets[code] = []
+
+        stats_sets[code] = list(record)
+
+    for code, stats_per_unit in stats_sets.items():
+        _statset = stats_factory(stats_per_unit, code=code)
+        stats_list.append(_statset)
+
+    output = stats_set_factory(stats_list)
 
     return output
