@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from opennem.api.locations import router as locations_router
-from opennem.api.stats import router as stats_router
+from opennem.api.stats.router import router as stats_router
 from opennem.core.time import human_to_interval
 from opennem.db import get_database_session
 from opennem.db.models.opennem import (
@@ -24,8 +24,6 @@ from opennem.schema.opennem import (
     FacilitySchema,
     FueltechSchema,
     NetworkSchema,
-    OpennemData,
-    OpennemDataHistory,
     RevisionSchema,
     StationSchema,
 )
@@ -198,54 +196,9 @@ def station(
 
     if power_include:
 
-        since = datetime.now() - human_to_interval("7d")
-
-        facility_codes = list(set([f.code for f in station.facilities]))
-
-        stats = (
-            session.query(FacilityScada)
-            .filter(FacilityScada.facility_code.in_(facility_codes))
-            .filter(FacilityScada.trading_interval >= since)
-            .order_by(FacilityScada.facility_code)
-            .order_by(FacilityScada.trading_interval)
-            .all()
-        )
-
-        for facility in station.facilities:
-            facility_power = list(
-                filter(lambda s: s.facility_code == facility.code, stats)
-            )
-
-            facility.scada_power = scada_to_opennemdata(facility_power)
+        pass
 
     return station
-
-
-def scada_to_opennemdata(scada: List[FacilityScada]) -> Optional[OpennemData]:
-    if len(scada) < 1:
-        return None
-
-    network_timezone = pytz.timezone(scada[0].network.timezone)
-
-    dates = [s.trading_interval for s in scada]
-    start = min(dates)
-    end = max(dates)
-
-    network = scada[0].network.code
-    interval = scada[0].network.interval_size
-
-    history = OpennemDataHistory(
-        start=start.astimezone(network_timezone),
-        last=end.astimezone(network_timezone),
-        interval="{}m".format(str(interval)),
-        data=[s.generated for s in scada],
-    )
-
-    data = OpennemData(
-        network=network, data_type="power", units="MW", history=history
-    )
-
-    return data
 
 
 @app.get(

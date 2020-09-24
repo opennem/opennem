@@ -1,9 +1,7 @@
 from datetime import datetime
 from functools import reduce
-from typing import Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -11,32 +9,9 @@ from opennem.core.time import human_to_interval
 from opennem.db import get_database_session
 from opennem.db.models.opennem import Facility, FacilityScada, Station
 
-from .schema import ApiBase
+from .schema import StationScadaReading, UnitScadaReading
 
 router = APIRouter()
-
-
-class ScadaInterval(object):
-    date: datetime
-    value: Optional[float]
-
-    def __init__(self, date: datetime, value: Optional[float] = None):
-        self.date = date
-        self.value = value
-
-
-class ScadaReading(Tuple[datetime, Optional[float]]):
-    pass
-
-
-class UnitScadaReading(BaseModel):
-    code: str
-    data: List[ScadaReading]
-
-
-class StationScadaReading(BaseModel):
-    code: str
-    facilities: Dict[str, UnitScadaReading]
 
 
 @router.get(
