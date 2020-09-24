@@ -55,8 +55,6 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not participant:
                 participant = Participant(
-                    approved=True,
-                    approved_by="opennem.wem.facilities",
                     created_by="opennem.wem.facilities",
                     approved_at=datetime.now(),
                     code=participant_code,
@@ -85,8 +83,6 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not station:
                 station = Station(
-                    approved=True,
-                    approved_by="opennem.wem.facilities",
                     created_by="opennem.wem.facilities",
                     approved_at=datetime.now(),
                     code=station_code,
@@ -108,8 +104,6 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not facility:
                 facility = Facility(
-                    approved=True,
-                    approved_by="opennem.wem.facilities",
                     created_by="opennem.wem.facilities",
                     approved_at=datetime.now(),
                     code=facility_code,
@@ -185,8 +179,6 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             if not participant:
                 participant = Participant(
-                    approved=True,
-                    approved_by="opennem.wem.live.facilities",
                     created_by="opennem.wem.live.facilities",
                     approved_at=datetime.now(),
                     code=participant_code,
@@ -222,8 +214,6 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             if not station:
                 station = Station(
-                    approved=True,
-                    approved_by="opennem.wem.live.facilities",
                     created_by="opennem.wem.live.facilities",
                     approved_at=datetime.now(),
                     code=station_code,
@@ -260,8 +250,6 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             if not facility:
                 facility = Facility(
-                    approved=True,
-                    approved_by="opennem.wem.live.facilities",
                     created_by="opennem.wem.live.facilities",
                     approved_at=datetime.now(),
                     code=facility_code,
