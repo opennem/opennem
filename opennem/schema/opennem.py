@@ -114,20 +114,6 @@ class RevisionSchema(OpennemBaseSchema):
     discarded_by: Optional[str]
     discarded_at: Optional[datetime]
 
-    # station_id: Optional[int]
-    # facility_id: Optional[int]
-    # location_id: Optional[int]
-
-    # @validator("changes")
-    # def validate_data(cls, data_value):
-    #     if not data_value:
-    #         return data_value
-
-    #     for field_value in data_value.values():
-    #         assert isinstance(
-    #             field_value, (int, str, bool, float)
-    #         ), "Data values have to be int, str, bool or float"
-
 
 class ScadaReading(Tuple[datetime, Optional[float]]):
     pass
@@ -262,65 +248,3 @@ class StationSchema(OpennemBaseSchema):
 
     network: Optional[NetworkSchema] = None
 
-    @property
-    def capacity_registered(self) -> Optional[int]:
-        """
-            This is the sum of registered capacities for all units for
-            this station
-
-        """
-        cap_reg = None
-
-        for fac in self.facilities:
-            if (
-                fac.capacity_registered
-                and type(fac.capacity_registered) in [int, float, Decimal]
-                and fac.status
-                and fac.status.code
-                in ["operating", "committed", "commissioning"]
-                and fac.dispatch_type == DispatchType.GENERATOR
-                and fac.active
-            ):
-                if not cap_reg:
-                    cap_reg = 0
-
-                cap_reg += fac.capacity_registered
-
-        if cap_reg:
-            cap_reg = round(cap_reg, 2)
-
-        return cap_reg
-
-    @property
-    def capacity_aggregate(self) -> Optional[int]:
-        """
-            This is the sum of aggregate capacities for all units
-
-        """
-        cap_agg = None
-
-        for fac in self.facilities:
-            if (
-                fac.capacity_aggregate
-                and type(fac.capacity_aggregate) in [int, float, Decimal]
-                and fac.status
-                and fac.status.code
-                in ["operating", "committed", "commissioning"]
-                and fac.dispatch_type == DispatchType.GENERATOR
-                and fac.active
-            ):
-                if not cap_agg:
-                    cap_agg = 0
-
-                cap_agg += fac.capacity_aggregate
-
-        if cap_agg:
-            cap_agg = round(cap_agg, 2)
-
-        return cap_agg
-
-    def oid(self) -> str:
-        return get_oid(self)
-
-    def ocode(self) -> str:
-        return get_ocode(self)
