@@ -97,6 +97,8 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
             )
             participant_name = participant_name_filter(
                 row["PARTICIPANT_DISPLAY_NAME"]
+            ) or participant_name_filter(
+                row.get("PARTICIPANT_FULL_NAME", None)
             )
 
             participant = (
