@@ -1749,6 +1749,18 @@ python-versions = ">=3.6.1"
 version = "8.1"
 
 [[package]]
+category = "main"
+description = "Wikidata client library"
+name = "wikidata"
+optional = false
+python-versions = ">=3.4.0"
+version = "0.7.0"
+
+[package.extras]
+mypy = ["mypy (>=0.782)"]
+tests = ["flake8 (>=3.8.3)", "flake8-import-order-spoqa", "pytest (>=4.6.11,<4.7.0)", "pytest-flake8 (>=1.0.6,<1.1.0)"]
+
+[[package]]
 category = "dev"
 description = "Module for decorators, wrappers and monkey patching."
 name = "wrapt"
@@ -1790,7 +1802,7 @@ postgres = ["psycopg2-binary"]
 server = ["fastapi", "uvicorn"]
 
 [metadata]
-content-hash = "cf90dd942affb3222a54cf9c98ff1fb8e3b1105809d865d12710a4d7e2da7741"
+content-hash = "05a6f438012c9e403ca4986026ec19c5052f577ee0b4014a6b2dbc851b639cee"
 lock-version = "1.0"
 python-versions = "^3.7"
 
@@ -2744,6 +2756,10 @@ websockets = [
     {file = "websockets-8.1-cp38-cp38-win32.whl", hash = "sha256:e898a0863421650f0bebac8ba40840fc02258ef4714cb7e1fd76b6a6354bda36"},
     {file = "websockets-8.1-cp38-cp38-win_amd64.whl", hash = "sha256:f8a7bff6e8664afc4e6c28b983845c5bc14965030e3fb98789734d416af77c4b"},
     {file = "websockets-8.1.tar.gz", hash = "sha256:5c65d2da8c6bce0fca2528f69f44b2f977e06954c8512a952222cea50dad430f"},
+]
+wikidata = [
+    {file = "Wikidata-0.7.0-py3-none-any.whl", hash = "sha256:601ce7b4133c42ca82e63b4653829c4f825eae63fe537b304a418af060c486ec"},
+    {file = "Wikidata-0.7.0.tar.gz", hash = "sha256:32ad4cc2c695435d411c83417b1eac210baa635abaf3ff38779666012daedd47"},
 ]
 wrapt = [
     {file = "wrapt-1.12.1.tar.gz", hash = "sha256:b62ffa81fb85f4332a4f609cab4ac40709470da05643a082ec1eb88e6d9b97d7"},

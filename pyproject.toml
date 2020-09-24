@@ -49,6 +49,7 @@ dictdiffer = "^0.8.1"
 dictalchemy = "^0.1.2"
 ujson = "^3.1.0"
 pytz = "^2020.1"
+Wikidata = "^0.7.0"
 
 [tool.poetry.dev-dependencies]
 black = "19.10b0"
