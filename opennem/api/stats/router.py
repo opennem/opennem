@@ -79,14 +79,14 @@ def power_unit(
 @router.get(
     "/power/station/{network_code}/{station_code}",
     name="stats:Station Power",
-    response_model=StationScadaReading,
+    response_model=OpennemData,
 )
 def power_station(
     station_code: str = Query(..., description="Station code"),
     network_code: str = Query(..., description="Network code"),
     since: datetime = Query(None, description="Since time"),
     session: Session = Depends(get_database_session),
-) -> StationScadaReading:
+) -> OpennemData:
     if not since:
         since = datetime.now() - human_to_interval("7d")
 
@@ -115,9 +115,9 @@ def power_station(
         session.query(FacilityScada)
         .filter(FacilityScada.facility_code.in_(facility_codes))
         .filter(FacilityScada.trading_interval >= since)
+        .order_by(FacilityScada.trading_interval)
+        .all()
     )
-
-    stats = stats.order_by(FacilityScada.trading_interval).all()
 
     if len(stats) < 1:
         raise HTTPException(
@@ -125,21 +125,6 @@ def power_station(
             detail="Station stats not found",
         )
 
-    def append_station_data(record, scada):
-        if scada.facility_code not in record["facilities"]:
-            record["facilities"][scada.facility_code] = {
-                "code": scada.facility_code,
-                "data": [],
-            }
-
-        record["facilities"][scada.facility_code]["data"].append(
-            [scada.trading_interval, scada.generated]
-        )
-
-        return record
-
-    output = reduce(
-        append_station_data, stats, {"code": station_code, "facilities": {}},
-    )
+    output = stats_factory(stats)
 
     return output

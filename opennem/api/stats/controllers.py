@@ -1,4 +1,6 @@
 from datetime import datetime
+from itertools import groupby
+from operator import itemgetter
 from typing import List, Optional
 
 import pytz
@@ -23,11 +25,29 @@ def stats_factory(scada: List[FacilityScada]) -> Optional[OpennemData]:
     network = scada[0].network.code
     interval = scada[0].network.interval_size
 
+    # pluck the list
+    data = [
+        {
+            k: v
+            for k, v in scada_record
+            if k in ["trading_interval", "generated"]
+        }
+        for scada_record in scada
+    ]
+
+    data_grouped = {}
+
+    for key, v in groupby(data, itemgetter("trading_interval")):
+        if key not in data_grouped:
+            data_grouped[key] = 0.0
+
+        data_grouped[key] = float(sum([i["generated"] for i in list(v)]))
+
     history = OpennemDataHistory(
         start=start.astimezone(network_timezone),
         last=end.astimezone(network_timezone),
         interval="{}m".format(str(interval)),
-        data=[s.generated for s in scada],
+        data=list(data_grouped.values()),
     )
 
     data = OpennemData(
