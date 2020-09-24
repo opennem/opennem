@@ -135,7 +135,7 @@ def power_station(
         if code not in stats_sets:
             stats_sets[code] = []
 
-        stats_sets[code] = list(record)
+        stats_sets[code] += list(record)
 
     for code, stats_per_unit in stats_sets.items():
         _statset = stats_factory(stats_per_unit, code=code)
