@@ -116,7 +116,7 @@ def power_station(
     stats = (
         session.query(FacilityScada)
         .filter(FacilityScada.facility_code.in_(facility_codes))
-        .filter(FacilityScada.network_id == network_id)
+        .filter(FacilityScada.network_id == network_code)
         .filter(FacilityScada.trading_interval >= since)
         .order_by(FacilityScada.trading_interval)
         .all()
