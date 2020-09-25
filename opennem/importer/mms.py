@@ -1,6 +1,7 @@
 import csv
 import json
 import logging
+import os
 from datetime import datetime
 from functools import reduce
 from itertools import groupby
@@ -355,6 +356,7 @@ def load_aemo_csv(item, filename):
 
 def load_mms_tables():
     mms_path = Path(__file__).parent.parent.parent / "data" / "mms"
+    os.makedirs(mms_path, exist_ok=True)
 
     mms_files = [
         "mms/{}".format(f.name)
