@@ -181,6 +181,11 @@ class Station(Base, BaseModel):
     code = Column(Text, index=True, nullable=True)
     name = Column(Text)
 
+    # wikipedia links
+    description = Column(Text, nullable=True)
+    wikipedia_link = Column(Text, nullable=True)
+    wikidata_id = Column(Text, nullable=True)
+
     # Original network fields
     network_code = Column(Text, index=True)
     network_name = Column(Text)
