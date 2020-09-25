@@ -66,8 +66,8 @@ def station_reindex(stations: List[dict]) -> List[dict]:
 
     """
     stations_return = {}
-
-    for station_code, station in stations.items():
+    for station in stations:
+        station_code = station['code']
         facs = []
 
         if "facilities" in station:
@@ -294,6 +294,7 @@ def opennem_import():
         facilities = [i for i in station_entry["facilities"].values()]
         opennem[station_code]["facilities"] = facilities
 
+    os.makedirs('data', exist_ok=True)
     with open("data/opennem.json", "w") as fh:
         json.dump(opennem, fh, indent=4, cls=OpenNEMJSONEncoder)
 
