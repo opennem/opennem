@@ -249,4 +249,6 @@ class StationSchema(OpennemBaseSchema):
     network: Optional[NetworkSchema] = None
 
     description: Optional[str]
+    wikipedia_link: Optional[str]
+    wikidata_id: Optional[str]
 
