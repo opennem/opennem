@@ -70,4 +70,4 @@ ITEM_PIPELINES = {
 
 # @TODO if DEBUG
 HTTPCACHE_ENABLED = False
-HTTPCACHE_DIR = ".scrapy"
+# HTTPCACHE_DIR = ".scrapy"
