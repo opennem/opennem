@@ -33,32 +33,87 @@ def dataid_from_url(url: str) -> str:
     return path.split("/")[2]
 
 
-def run():
+import json
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
+def wikidata_join():
     session = SessionLocal()
+
+    wikidata = load_data("wikidata-parsed.json", from_project=True)
+
+    # session.add()
+
+    for entry in wikidata:
+        station_name = entry.get("name")
+
+        station_lookup = (
+            session.query(Station).filter(Station.name == station_name).all()
+        )
+
+        if len(station_lookup) == 0:
+            logger.info("Didn't find a station for {}".format(station_name))
+
+        if len(station_lookup) == 1:
+            station = station_lookup.pop()
+
+            station.description = entry.get("description")
+            station.wikipedia_link = entry.get("wikipedia")
+            station.wikidata_id = entry.get("wikidata_id")
+
+            session.add(station)
+            logger.info("Updated station {}".format(station_name))
+
+        if len(station_lookup) > 1:
+            logger.info("Found multiple for station {}".format(station_name))
+
+    session.commit()
+
+
+def wikidata_parse():
+
+    # query: https://w.wiki/dVi
     wikidata = load_data("wikidata.json", from_project=True)
+
+    out_entries = []
+    total_entries = len(wikidata)
+    current = 0
 
     for entry in wikidata:
         wikilink = article_from_wikipedia(entry["article"])
         wikidata = dataid_from_url(entry["item"])
         station_name = station_name_cleaner(entry["itemLabel"])
 
-        station = (
-            session.query(Station).filter(Station.name == station_name).first()
-        )
+        description = None
 
-        if station:
-            # print("found")
-            print(wikilink, wikidata, station_name)
-
+        try:
             description = wikipedia.summary(wikilink)
-            station.description = description
-            station.wikipedia_link = wikilink
-            station.wikidata_id = wikidata
+        except Exception as e:
+            print(e)
 
-            session.add(station)
+        new_entry = {
+            "wikipedia": entry["article"],
+            "wikidata": entry["item"],
+            "wiki_id": wikilink,
+            "wikidata_id": wikidata,
+            "name": station_name,
+            "name_original": entry["itemLabel"],
+            "description": description,
+        }
 
-    session.commit()
+        out_entries.append(new_entry)
+        current += 1
+
+        print("Done {} of {}".format(current, total_entries))
+
+    with open("data/wikidata-parsed.json", "w") as fh:
+        json.dump(out_entries, fh)
 
 
 if __name__ == "__main__":
-    run()
+    wikidata_join()
