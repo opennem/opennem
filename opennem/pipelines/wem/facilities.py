@@ -15,9 +15,11 @@ from opennem.core.normalizers import (
     participant_name_filter,
     station_name_cleaner,
 )
-from opennem.db.models.opennem import Facility, Participant, Station
+from opennem.db.models.opennem import Facility, Location, Participant, Station
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
+
+from .facility_scada import wem_timezone
 
 logger = logging.getLogger(__name__)
 
@@ -32,8 +34,15 @@ class WemStoreFacility(DatabaseStoreBase):
 
         for row in csvreader:
 
-            if not "Participant Code" in row:
+            if "Participant Code" not in row:
                 logger.error("Invalid row")
+                continue
+
+            if row["Facility Type"] in [
+                "Demand Side Program",
+                "Non-Dispatchable Load",
+                "Network",
+            ]:
                 continue
 
             participant = None
@@ -53,18 +62,18 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not participant:
                 participant = Participant(
+                    created_by="opennem.wem.facilities",
+                    approved_at=datetime.now(),
                     code=participant_code,
                     name=participant_name,
                     network_name=participant_network_name,
-                    created_by="pipeline.wem.facilities",
                 )
                 s.add(participant)
                 s.commit()
 
                 logger.debug(
-                    "Participant not found created new database entry: {}".format(
-                        participant_code
-                    )
+                    "Participant not found created new database entry: %s",
+                    participant_code,
                 )
 
             station = None
@@ -81,12 +90,16 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not station:
                 station = Station(
+                    created_by="opennem.wem.facilities",
+                    approved_at=datetime.now(),
                     code=station_code,
-                    network_id="WEM",
                     network_code=station_code,
                     participant=participant,
-                    created_by="pipeline.wem.facilities",
                 )
+
+                location = Location(state="WA")
+
+                station.location = location
 
                 logger.debug("Added WEM station: {}".format(station_code))
 
@@ -98,10 +111,12 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not facility:
                 facility = Facility(
+                    created_by="opennem.wem.facilities",
+                    approved_at=datetime.now(),
                     code=facility_code,
+                    network_id="WEM",
                     network_code=facility_code,
                     network_region="WEM",
-                    created_by="pipeline.wem.facilities",
                 )
 
             capacity_registered = clean_capacity(row["Maximum Capacity (MW)"])
@@ -140,7 +155,10 @@ class WemStoreFacility(DatabaseStoreBase):
 
 class WemStoreLiveFacilities(DatabaseStoreBase):
     def parse_interval(self, date_str):
-        return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt_aware = wem_timezone.localize(dt)
+
+        return dt_aware
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
@@ -152,7 +170,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
         for row in csvreader:
 
-            if not "PARTICIPANT_CODE" in row:
+            if "PARTICIPANT_CODE" not in row:
                 logger.error("Invalid row")
                 continue
 
@@ -168,11 +186,13 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             if not participant:
                 participant = Participant(
+                    created_by="opennem.wem.live.facilities",
+                    approved_at=datetime.now(),
                     code=participant_code,
                     network_code=participant_code,
                     network="WEM",
-                    created_by="pipeline.wem.live_facilities",
                 )
+
                 s.add(participant)
                 s.commit()
 
@@ -201,12 +221,17 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             if not station:
                 station = Station(
+                    created_by="opennem.wem.live.facilities",
+                    approved_at=datetime.now(),
                     code=station_code,
                     network_id="WEM",
                     network_code=station_code,
                     participant=participant,
-                    created_by="pipeline.wem.live.facilities",
                 )
+
+                location = Location(state="WA")
+
+                station.location = location
 
                 created_station = True
                 logger.debug("Added WEM station: {}".format(station_code))
@@ -217,10 +242,12 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
             station.name = station_name
             station.network_name = station_network_name
 
-            if lat and lng and not station.geom:
-                station.geom = "SRID=4326;POINT({} {})".format(lat, lng)
-                station.geocode_by = "aemo"
-                station.geocode_approved = True
+            if lat and lng and not station.location.geom:
+                station.location.geom = "SRID=4326;POINT({} {})".format(
+                    lat, lng
+                )
+                station.location.geocode_by = "aemo"
+                station.location.geocode_approved = True
 
             facility = (
                 s.query(Facility)
@@ -230,10 +257,11 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             if not facility:
                 facility = Facility(
+                    created_by="opennem.wem.live.facilities",
+                    approved_at=datetime.now(),
                     code=facility_code,
                     network_code=facility_code,
                     network_region="WEM",
-                    created_by="pipeline.wem.live.facilities",
                 )
 
                 created_facility = True
@@ -249,11 +277,9 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                     registered_date_dt = datetime.strptime(
                         registered_date, date_fmt
                     )
-                except Exception as e:
+                except Exception:
                     logger.error(
-                        "Bad date: {} for format {}".format(
-                            registered_date, date_fmt
-                        )
+                        "Bad date: %s for format %s", registered_date, date_fmt
                     )
 
                 if registered_date_dt:

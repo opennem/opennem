@@ -1,7 +1,4 @@
-from opennem.schema.opennem import NetworkSchema
-
-NetworkNEM = NetworkSchema(code="NEM", label="NEM", country="au")
-NetworkWEM = NetworkSchema(code="WEM", label="WEM", country="au")
+from opennem.schema.opennem import NetworkNEM, NetworkSchema, NetworkWEM
 
 
 def network_from_state(state: str) -> NetworkSchema:

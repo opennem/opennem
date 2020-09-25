@@ -111,6 +111,8 @@ def load_networks():
             code=network["code"],
             label=network["label"],
             country=network["country"],
+            timezone=network["timezone"],
+            interval_size=network["interval_size"],
         )
 
         try:

@@ -28,7 +28,7 @@ from opennem.db.models.opennem import Facility, FacilityStatus
 from opennem.db.models.opennem import Participant as ParticipantModel
 from opennem.db.models.opennem import Station
 from opennem.pipelines import DatabaseStoreBase
-from opennem.schema.pariticipant import OpennemParticipant
+from opennem.schema.opennem import ParticipantSchema
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
@@ -40,17 +40,17 @@ class NemMMSSingle(DatabaseStoreBase):
     """
 
     def get_table(self, item):
-        if not "tables" in item:
+        if "tables" not in item:
             logger.error(item)
             raise Exception("No tables passed to pipeline")
 
         table_names = [i["name"] for i in item["tables"]]
 
-        if not self.table in table_names:
+        if self.table not in table_names:
             logger.debug(
-                "Skipping {} pipeline step as table {} not processed".format(
-                    self.__class__, self.table
-                )
+                "Skipping %s pipeline step as table %s not processed",
+                self.__class__,
+                self.table,
             )
             return False
 
@@ -162,7 +162,8 @@ class NemStoreMMSStationStatus(DatabaseStoreBase):
                 logger.error("Could not find station {}".format(duid))
                 continue
 
-            # @TODO station statuses -> facilities should be set to retired if active
+            # @TODO station statuses -> facilities should be
+            # set to retired if active
 
             try:
                 s.add(station)
@@ -203,14 +204,14 @@ class NemStoreMMSParticipant(DatabaseStoreBase):
             participant_schema = None
 
             try:
-                participant_schema = OpennemParticipant(
+                participant_schema = ParticipantSchema(
                     **{
                         "code": record["PARTICIPANTID"],
                         "name": record["NAME"],
                         "network_name": record["NAME"],
                     }
                 )
-            except Exception as e:
+            except Exception:
                 logger.error(
                     "Validation error with record: {}".format(record["NAME"])
                 )

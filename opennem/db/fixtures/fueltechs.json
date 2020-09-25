@@ -98,5 +98,10 @@
     "code": "aggregator_dr",
     "label": "Aggregator (Demand / Response)",
     "renewable": true
+  },
+  {
+    "code": "nuclear",
+    "label": "Nuclear",
+    "renewable": true
   }
 ]

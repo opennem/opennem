@@ -10,12 +10,17 @@ from opennem.db.models.opennem import BalancingSummary
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
 
+from .facility_scada import wem_timezone
+
 logger = logging.getLogger(__name__)
 
 
 class WemStoreBalancingSummary(DatabaseStoreBase):
     def parse_interval(self, date_str):
-        return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt_aware = wem_timezone.localize(dt)
+
+        return dt_aware
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
@@ -25,10 +30,14 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
         csvreader = csv.DictReader(item["content"].split("\n"))
 
         q = self.engine.execute(
-            text("select max(trading_interval) from wem_balancing_summary")
+            text(
+                "select max(trading_interval) from balancing_summary where network_id='WEM'"
+            )
         )
 
-        interval_max = q.fetchone()[0] or datetime(1900, 1, 1, 0, 0, 0)
+        interval_max = q.fetchone()[0] or wem_timezone.localize(
+            datetime(1900, 1, 1, 0, 0, 0)
+        )
 
         objects = [
             BalancingSummary(
@@ -58,7 +67,10 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
 
 class WemStoreBalancingSummaryArchive(DatabaseStoreBase):
     def parse_interval(self, date_str):
-        return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt_aware = wem_timezone.localize(dt)
+
+        return dt_aware
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):

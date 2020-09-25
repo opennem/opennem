@@ -183,7 +183,7 @@ def load_revision(records, created_by):
             # location
             if "location" in station_dict and station_dict["location"]:
                 station_model.location = fromdict(
-                    Location(), station_dict["location"]
+                    Location(), station_dict["location"], exclude=["id"]
                 )
 
                 if station_record.location.lat and station_record.location.lng:
@@ -317,7 +317,9 @@ def registry_init():
         station_model.created_by = "opennem.registry"
 
         # location
-        station_model.location = fromdict(Location(), station_dict["location"])
+        station_model.location = fromdict(
+            Location(), station_dict["location"], exclude=["id"],
+        )
 
         if station.location.lat and station.location.lng:
             station_model.location.geom = "SRID=4326;POINT({} {})".format(
@@ -333,6 +335,7 @@ def registry_init():
                         "status",
                         "network",
                         "revision_ids",
+                        "scada_power",
                     }
                 )
             )
@@ -367,6 +370,7 @@ def test_revisions():
     s.add(station)
     s.commit()
 
+    # pylint: disable=no-member
     station_clone = station.asdict()
     station_clone.pop("id")
 

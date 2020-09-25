@@ -56,3 +56,11 @@ def get_database_session() -> Generator:
         raise e
     finally:
         s.close()
+
+
+def get_database_engine():
+    """
+        Gets a database engine connection
+
+    """
+    return engine

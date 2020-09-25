@@ -2,8 +2,7 @@ import csv
 import logging
 from datetime import datetime, timedelta
 
-from scrapy.exceptions import DropItem
-from sqlalchemy.exc import IntegrityError
+import pytz
 from sqlalchemy.sql import text
 
 from opennem.db.models.opennem import FacilityScada
@@ -13,9 +12,15 @@ from opennem.utils.pipelines import check_spider_pipeline
 logger = logging.getLogger(__name__)
 
 
+wem_timezone = pytz.timezone("Australia/Perth")
+
+
 class WemStoreFacilityScada(DatabaseStoreBase):
     def parse_interval(self, date_str):
-        return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt_aware = wem_timezone.localize(dt)
+
+        return dt_aware
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
@@ -28,7 +33,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
         #  It's faster to do this and bulk insert than it is to
         #  catch integrityerrors
 
-        q = self.engine.execute(text("select code from wem_facility"))
+        q = self.engine.execute(text("select code from facility"))
 
         all_facilities = list(set([i[0] for i in q.fetchall()]))
 
@@ -36,7 +41,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
         keys = []
 
         for row in csvreader:
-            if not row["Facility Code"] in all_facilities:
+            if row["Facility Code"] not in all_facilities:
                 continue
 
             row_key = "{}_{}".format(
@@ -44,8 +49,9 @@ class WemStoreFacilityScada(DatabaseStoreBase):
             )
 
             item = FacilityScada(
+                network_id="WEM",
                 trading_interval=self.parse_interval(row["Trading Interval"]),
-                facility_id=row["Facility Code"],
+                facility_code=row["Facility Code"],
                 eoi_quantity=row["EOI Quantity (MW)"] or None,
                 generated=row["Energy Generated (MWh)"] or None,
             )
@@ -72,14 +78,10 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
     """
 
     def parse_interval(self, date_str):
-        return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        dt_aware = wem_timezone.localize(dt)
 
-        # try:
-        #     return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-        # except Exception:
-        #     pass
-
-        # return datetime.strptime(date_str, "%d/%m/%Y %H:%M:%S %p")
+        return dt_aware
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
@@ -90,7 +92,7 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
         # Get all facility codes
 
-        q = self.engine.execute(text("select code from wem_facility"))
+        q = self.engine.execute(text("select distinct code from facility"))
 
         all_facilities = list(set([i[0] for i in q.fetchall()]))
 
@@ -139,7 +141,7 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
                 item = FacilityScada(
                     trading_interval=interval,
-                    facility_id=row["FACILITY_CODE"],
+                    facility_code=row["FACILITY_CODE"],
                     generated=val,
                 )
 

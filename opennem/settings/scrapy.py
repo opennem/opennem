@@ -47,6 +47,7 @@ ITEM_PIPELINES = {
     "opennem.pipelines.aemo.general_information.GeneralInformationStoragePipeline": 356,
     # Opennem storers
     "opennem.pipelines.nem.DatabaseStore": 400,
+    "opennem.pipelines.nem.opennem.NemwebUnitScadaOpenNEMStorePipeline": 405,
     "opennem.pipelines.wem.facilities.WemStoreFacility": 410,
     "opennem.pipelines.wem.facility_scada.WemStoreFacilityScada": 411,
     "opennem.pipelines.wem.balancing_summary.WemStoreBalancingSummary": 412,
@@ -68,5 +69,5 @@ ITEM_PIPELINES = {
 }
 
 # @TODO if DEBUG
-HTTPCACHE_ENABLED = True
+HTTPCACHE_ENABLED = False
 HTTPCACHE_DIR = ".scrapy"

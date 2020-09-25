@@ -17,25 +17,18 @@ from sqlalchemy import (
     JSON,
     Boolean,
     Column,
-    Date,
     DateTime,
     Enum,
     ForeignKey,
-    Index,
     Integer,
     Numeric,
     Sequence,
-    String,
-    Table,
     Text,
-    Time,
     func,
 )
-from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
-from sqlalchemy.orm import backref, relationship
-from sqlalchemy.sql import func
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
@@ -73,6 +66,8 @@ class Network(Base, BaseModel):
     code = Column(Text, primary_key=True)
     country = Column(Text, nullable=False)
     label = Column(Text, nullable=True)
+    timezone = Column(Text, nullable=False)
+    interval_size = Column(Integer, nullable=False)
 
 
 class FacilityStatus(Base, BaseModel):
@@ -98,6 +93,10 @@ class Participant(Base, BaseModel):
     country = Column(Text)
     abn = Column(Text)
 
+    approved = Column(Boolean, default=False)
+    approved_by = Column(Text)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+
 
 class Location(Base):
     __tablename__ = "location"
@@ -114,7 +113,7 @@ class Location(Base):
     state = Column(Text)
     postcode = Column(Text, nullable=True)
 
-    revisions = relationship("Revision")
+    revisions = relationship("Revision", lazy="joined")
 
     # Geo fields
     place_id = Column(Text, nullable=True, index=True)
@@ -143,7 +142,11 @@ class Location(Base):
 class Station(Base, BaseModel):
     __tablename__ = "station"
 
-    # __table_args__ = (UniqueConstraint('customer_id', 'location_code', name='_customer_location_uc'),)
+    # __table_args__ = (
+    #     UniqueConstraint(
+    #         "customer_id", "location_code", name="_customer_location_uc"
+    #     ),
+    # )
 
     def __str__(self):
         return "{} <{}>".format(self.name, self.code)
@@ -169,14 +172,19 @@ class Station(Base, BaseModel):
         ForeignKey("location.id", name="fk_station_location_id"),
         nullable=True,
     )
-    location = relationship("Location")
+    location = relationship("Location", lazy="joined")
 
-    facilities = relationship("Facility")
+    facilities = relationship("Facility", lazy="joined")
 
-    revisions = relationship("Revision")
+    revisions = relationship("Revision", lazy="joined")
 
     code = Column(Text, index=True, nullable=True)
     name = Column(Text)
+
+    # wikipedia links
+    description = Column(Text, nullable=True)
+    wikipedia_link = Column(Text, nullable=True)
+    wikidata_id = Column(Text, nullable=True)
 
     # Original network fields
     network_code = Column(Text, index=True)
@@ -185,6 +193,17 @@ class Station(Base, BaseModel):
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
+
+    @hybrid_property
+    def network(self) -> Optional[Network]:
+        """
+            Return the network from the facility
+
+        """
+        if not self.facilities or not len(self.facilities) > 0:
+            return None
+
+        return self.facilities[0].network
 
     @hybrid_property
     def capacity_registered(self) -> Optional[int]:
@@ -270,20 +289,22 @@ class Facility(Base, BaseModel):
         ForeignKey("network.code", name="fk_station_network_code"),
         nullable=False,
     )
-    network = relationship("Network")
+    network = relationship("Network", lazy="joined")
 
     fueltech_id = Column(
         Text,
         ForeignKey("fueltech.code", name="fk_facility_fueltech_id"),
         nullable=True,
     )
-    fueltech = relationship("FuelTech", back_populates="facilities")
+    fueltech = relationship(
+        "FuelTech", back_populates="facilities", lazy="joined"
+    )
 
     status_id = Column(
         Text,
         ForeignKey("facility_status.code", name="fk_facility_status_code"),
     )
-    status = relationship("FacilityStatus")
+    status = relationship("FacilityStatus", lazy="joined")
 
     station_id = Column(
         Integer,
@@ -292,7 +313,7 @@ class Facility(Base, BaseModel):
     )
     station = relationship("Station", back_populates="facilities")
 
-    revisions = relationship("Revision")
+    revisions = relationship("Revision", lazy="joined")
 
     # DUID but modified by opennem as an identifier
     code = Column(Text, index=True)
@@ -383,21 +404,27 @@ class Revision(Base, BaseModel):
         ForeignKey("station.id", name="fk_revision_station_id"),
         nullable=True,
     )
-    station = relationship("Station", back_populates="revisions")
+    station = relationship(
+        "Station", back_populates="revisions", lazy="joined"
+    )
 
     facility_id = Column(
         Integer,
         ForeignKey("facility.id", name="fk_revision_facility_id"),
         nullable=True,
     )
-    facility = relationship("Facility", back_populates="revisions")
+    facility = relationship(
+        "Facility", back_populates="revisions", lazy="joined"
+    )
 
     location_id = Column(
         Integer,
         ForeignKey("location.id", name="fk_revision_location_id"),
         nullable=True,
     )
-    location = relationship("Location", back_populates="revisions")
+    location = relationship(
+        "Location", back_populates="revisions", lazy="joined"
+    )
 
     changes = Column(JSON, nullable=True)
     previous = Column(JSON, nullable=True)
@@ -471,14 +498,18 @@ class FacilityScada(Base, BaseModel):
 
     __tablename__ = "facility_scada"
 
-    trading_interval = Column(DateTime, index=True, primary_key=True)
-
-    facility_id = Column(
-        Integer,
-        ForeignKey("facility.id", name="fk_facility_scada_facility_id"),
+    network_id = Column(
+        Text,
+        ForeignKey("network.code", name="fk_balancing_summary_network_code"),
         primary_key=True,
     )
-    facility = relationship("Facility")
+    network = relationship("Network")
+
+    trading_interval = Column(
+        DateTime(timezone=True), index=True, primary_key=True
+    )
+
+    facility_code = Column(Text, nullable=False, primary_key=True, index=True)
 
     generated = Column(Numeric, nullable=True)
     eoi_quantity = Column(Numeric, nullable=True)
@@ -491,10 +522,13 @@ class BalancingSummary(Base, BaseModel):
     network_id = Column(
         Text,
         ForeignKey("network.code", name="fk_balancing_summary_network_code"),
+        primary_key=True,
     )
     network = relationship("Network")
 
-    trading_interval = Column(DateTime, index=True, primary_key=True)
+    trading_interval = Column(
+        DateTime(timezone=True), index=True, primary_key=True
+    )
     forecast_load = Column(Numeric, nullable=True)
     generation_scheduled = Column(Numeric, nullable=True)
     generation_non_scheduled = Column(Numeric, nullable=True)

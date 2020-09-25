@@ -335,7 +335,7 @@ def station_name_cleaner(facility_name: str) -> str:
     return name_clean
 
 
-def participant_name_filter(participant_name: str) -> str:
+def participant_name_filter(participant_name: str) -> Optional[str]:
     participant_name = strip_whitespace(participant_name)
 
     _p = (
@@ -347,7 +347,12 @@ def participant_name_filter(participant_name: str) -> str:
 
     _p = re.sub(" +", " ", _p).strip()
 
-    return _p.strip()
+    _p = _p.strip()
+
+    if _p == "":
+        return None
+
+    return _p
 
 
 def clean_capacity(

@@ -1,103 +1,25 @@
-# pylint:disable=no-self-argument
-
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, validator
 
+from opennem.api.stats.schema import OpennemData
 from opennem.core.dispatch_type import DispatchType
-from opennem.core.facilitystatus import (
-    map_aemo_facility_status,
-    parse_facility_status,
-)
-from opennem.core.normalizers import (
+from opennem.core.normalizers import (  # clean_numbers,; station_name_cleaner,
     clean_capacity,
-    clean_numbers,
     normalize_string,
-    station_name_cleaner,
 )
 from opennem.core.oid import get_ocode, get_oid
 
-
-class PropertyBaseModel(BaseModel):
-    """
-    Workaround for serializing properties with pydantic until
-    https://github.com/samuelcolvin/pydantic/issues/935
-    is solved
-    """
-
-    @classmethod
-    def get_properties(cls):
-        return [
-            prop
-            for prop in dir(cls)
-            if isinstance(getattr(cls, prop), property)
-            and prop not in ("__values__", "fields")
-        ]
-
-    def dict(
-        self,
-        *,
-        include: Union["AbstractSetIntStr", "MappingIntStrAny"] = None,
-        exclude: Union["AbstractSetIntStr", "MappingIntStrAny"] = None,
-        by_alias: bool = False,
-        skip_defaults: bool = None,
-        exclude_unset: bool = False,
-        exclude_defaults: bool = False,
-        exclude_none: bool = False,
-    ) -> "DictStrAny":
-        attribs = super().dict(
-            include=include,
-            exclude=exclude,
-            by_alias=by_alias,
-            skip_defaults=skip_defaults,
-            exclude_unset=exclude_unset,
-            exclude_defaults=exclude_defaults,
-            exclude_none=exclude_none,
-        )
-        props = self.get_properties()
-        # Include and exclude properties
-        if include:
-            props = [prop for prop in props if prop in include]
-        if exclude:
-            props = [prop for prop in props if prop not in exclude]
-
-        # Update the attribute dict with the properties
-        if props:
-            attribs.update({prop: getattr(self, prop) for prop in props})
-
-        return attribs
-
-
-class BaseConfig(BaseModel):
-    class Config:
-        orm_mode = True
-        anystr_strip_whitespace = True
-
-        arbitrary_types_allowed = True
-        validate_assignment = True
-
-        json_encoders = {
-            # datetime: lambda v: v.isotime(),
-            # Decimal: lambda v: float(v),
-        }
+from .core import BaseConfig
 
 
 class OpennemBaseSchema(BaseConfig):
 
     created_by: Optional[str]
     created_at: Optional[datetime] = datetime.now()
-
-    class Config:
-        orm_mode = True
-        anystr_strip_whitespace = True
-        use_enum_values = True
-        arbitrary_types_allowed = True
-        validate_assignment = True
-
-        json_encoders = {}
 
 
 class FueltechSchema(BaseConfig):
@@ -110,6 +32,24 @@ class NetworkSchema(BaseConfig):
     code: str
     country: str
     label: str
+    timezone: str
+    interval_size: int
+
+
+NetworkNEM = NetworkSchema(
+    code="NEM",
+    label="NEM",
+    country="au",
+    timezone="Australia/Perth",
+    interval_size=5,
+)
+NetworkWEM = NetworkSchema(
+    code="WEM",
+    label="WEM",
+    country="au",
+    timezone="Australia/Sydney",
+    interval_size=30,
+)
 
 
 class FacilityStatusSchema(BaseConfig):
@@ -174,36 +114,28 @@ class RevisionSchema(OpennemBaseSchema):
     discarded_by: Optional[str]
     discarded_at: Optional[datetime]
 
-    # station_id: Optional[int]
-    # facility_id: Optional[int]
-    # location_id: Optional[int]
 
-    # @validator("changes")
-    # def validate_data(cls, data_value):
-    #     if not data_value:
-    #         return data_value
-
-    #     for field_value in data_value.values():
-    #         assert isinstance(
-    #             field_value, (int, str, bool, float)
-    #         ), "Data values have to be int, str, bool or float"
+class ScadaReading(Tuple[datetime, Optional[float]]):
+    pass
 
 
 class FacilitySchema(OpennemBaseSchema):
     id: Optional[int]
 
-    network: NetworkSchema = NetworkSchema(
-        code="NEM", country="au", label="NEM"
-    )
+    network: NetworkSchema = NetworkNEM
 
     fueltech: Optional[FueltechSchema]
 
     status: Optional[FacilityStatusSchema]
 
+    station_id: Optional[int]
+
     # @TODO no longer optional
     code: Optional[str] = ""
 
-    revisions: Optional[List[RevisionSchema]] = []
+    scada_power: Optional[OpennemData]
+
+    # revisions: Optional[List[RevisionSchema]] = []
     # revision_ids: Optional[List[int]] = []
 
     dispatch_type: DispatchType = "GENERATOR"
@@ -234,6 +166,8 @@ class FacilitySchema(OpennemBaseSchema):
 
 
 class LocationSchema(OpennemBaseSchema):
+    id: Optional[int]
+
     address1: Optional[str] = ""
     address2: Optional[str] = ""
     locality: Optional[str] = ""
@@ -267,12 +201,14 @@ class LocationSchema(OpennemBaseSchema):
         return normalize_string(value)
 
     @validator("state")
-    def state_upper(cls, value: str) -> str:
-        return value.upper()
+    def state_upper(cls, value: str) -> Optional[str]:
+        if value:
+            return value.upper()
 
     @validator("postcode")
-    def clean_postcode(cls, value: str) -> str:
-        return value.strip()
+    def clean_postcode(cls, value: str) -> Optional[str]:
+        if value:
+            return value.strip()
 
     @property
     def geom(self) -> Optional[str]:
@@ -290,94 +226,29 @@ class StationSchema(OpennemBaseSchema):
     participant: Optional[ParticipantSchema] = None
     participant_id: Optional[str]
 
-    facilities: List[FacilitySchema] = []
+    facilities: Optional[List[FacilitySchema]] = []
 
     # history: Optional[List[__self__]]
 
-    revisions: Optional[List[RevisionSchema]]
+    # revisions: Optional[List[RevisionSchema]]
 
     code: str
 
-    name: str
+    name: Optional[str]
 
     # Original network fields
     network_name: Optional[str]
 
     location: LocationSchema = LocationSchema()
+    location_id: Optional[int]
 
     approved: bool = False
     approved_by: Optional[str]
     approved_at: Optional[datetime]
 
-    @property
-    def capacity_registered(self) -> Optional[int]:
-        """
-            This is the sum of registered capacities for all units for
-            this station
+    network: Optional[NetworkSchema] = None
 
-        """
-        cap_reg = None
+    description: Optional[str]
+    wikipedia_link: Optional[str]
+    wikidata_id: Optional[str]
 
-        for fac in self.facilities:
-            if (
-                fac.capacity_registered
-                and type(fac.capacity_registered) in [int, float, Decimal]
-                and fac.status
-                and fac.status.code
-                in ["operating", "committed", "commissioning"]
-                and fac.dispatch_type == DispatchType.GENERATOR
-                and fac.active
-            ):
-                if not cap_reg:
-                    cap_reg = 0
-
-                cap_reg += fac.capacity_registered
-
-        if cap_reg:
-            cap_reg = round(cap_reg, 2)
-
-        return cap_reg
-
-    @property
-    def capacity_aggregate(self) -> Optional[int]:
-        """
-            This is the sum of aggregate capacities for all units
-
-        """
-        cap_agg = None
-
-        for fac in self.facilities:
-            if (
-                fac.capacity_aggregate
-                and type(fac.capacity_aggregate) in [int, float, Decimal]
-                and fac.status
-                and fac.status.code
-                in ["operating", "committed", "commissioning"]
-                and fac.dispatch_type == DispatchType.GENERATOR
-                and fac.active
-            ):
-                if not cap_agg:
-                    cap_agg = 0
-
-                cap_agg += fac.capacity_aggregate
-
-        if cap_agg:
-            cap_agg = round(cap_agg, 2)
-
-        return cap_agg
-
-    def oid(self) -> str:
-        return get_oid(self)
-
-    def ocode(self) -> str:
-        return get_ocode(self)
-
-
-class StationSubmission(BaseModel):
-    code: str
-    name: str
-    network_id: str = NetworkSchema(code="NEM", label="NEM", country="au")
-    location: LocationSchema
-
-    class Config:
-        orm_mode = True

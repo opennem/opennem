@@ -1,10 +1,5 @@
 import csv
 import logging
-from datetime import datetime
-
-from scrapy.exceptions import DropItem
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.sql import text
 
 from opennem.core.normalizers import (
     normalize_duid,
@@ -30,13 +25,13 @@ class WemStoreParticipant(DatabaseStoreBase):
         csvreader = csv.DictReader(item["content"].split("\n"))
 
         for row in csvreader:
-            if not "Participant Code" in row:
+            if "Participant Code" not in row:
                 logger.error("Invalid row")
                 continue
 
             participant = None
 
-            participant_code = row["Participant Code"]
+            participant_code = normalize_duid(row["Participant Code"])
             participant_name = participant_name_filter(row["Participant Name"])
 
             participant = (
@@ -90,16 +85,20 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
         csvreader = csv.DictReader(item["content"].split("\n"))
 
         for row in csvreader:
-            if not "PARTICIPANT_CODE" in row:
+            if "PARTICIPANT_CODE" not in row:
                 logger.error("Invalid row")
                 continue
 
             participant = None
             created_record = False
 
-            participant_code = normalize_string(row["PARTICIPANT_CODE"])
+            participant_code = normalize_duid(
+                normalize_string(row["PARTICIPANT_CODE"])
+            )
             participant_name = participant_name_filter(
                 row["PARTICIPANT_DISPLAY_NAME"]
+            ) or participant_name_filter(
+                row.get("PARTICIPANT_FULL_NAME", None)
             )
 
             participant = (
