@@ -147,7 +147,7 @@ def station_ids(
 
 
 @app.get(
-    "/station/{station_code}",
+    "/station/{station_code:path}",
     response_model=StationSchema,
     description="Get a single station by code",
 )
@@ -293,7 +293,9 @@ def facilities(session: Session = Depends(get_database_session)):
 
 
 @app.get(
-    "/facility/{facility_code}", name="Facility", response_model=FacilitySchema
+    "/facility/{facility_code:path}",
+    name="Facility",
+    response_model=FacilitySchema,
 )
 def facility(
     facility_code: str = Query(str, description="Facility code"),

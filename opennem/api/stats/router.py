@@ -37,7 +37,7 @@ def stats_power(
 
 
 @router.get(
-    "/power/unit/{network_code}/{unit_code}",
+    "/power/unit/{network_code}/{unit_code:path}",
     name="stats:Unit Power",
     response_model=OpennemData,
 )
@@ -79,7 +79,7 @@ def power_unit(
 
 
 @router.get(
-    "/power/station/{network_code}/{station_code}",
+    "/power/station/{network_code}/{station_code:path}",
     name="stats:Station Power",
     response_model=OpennemDataSet,
 )
