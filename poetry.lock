@@ -2,7 +2,7 @@
 category = "main"
 description = "File support for asyncio."
 name = "aiofiles"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.5.0"
 
@@ -24,7 +24,7 @@ python-editor = ">=0.3"
 category = "main"
 description = "A library for parsing ISO 8601 strings."
 name = "aniso8601"
-optional = false
+optional = true
 python-versions = "*"
 version = "7.0.0"
 
@@ -66,7 +66,7 @@ version = ">=1.4.0,<1.5"
 category = "main"
 description = "AsyncExitStack backport for Python 3.5+"
 name = "async-exit-stack"
-optional = false
+optional = true
 python-versions = ">=3.5"
 version = "1.0.1"
 
@@ -74,7 +74,7 @@ version = "1.0.1"
 category = "main"
 description = "Async generators and context managers for Python 3.5+"
 name = "async-generator"
-optional = false
+optional = true
 python-versions = ">=3.5"
 version = "1.10"
 
@@ -326,7 +326,7 @@ tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock
 category = "main"
 description = "DNS toolkit"
 name = "dnspython"
-optional = false
+optional = true
 python-versions = ">=3.6"
 version = "2.0.0"
 
@@ -357,7 +357,7 @@ version = "0.15.2"
 category = "main"
 description = "A robust email syntax and deliverability validation library for Python 2.x/3.x."
 name = "email-validator"
-optional = false
+optional = true
 python-versions = "*"
 version = "1.1.1"
 
@@ -377,7 +377,7 @@ version = "1.0.1"
 category = "main"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 name = "fastapi"
-optional = false
+optional = true
 python-versions = ">=3.6"
 version = "0.60.1"
 
@@ -483,7 +483,7 @@ version = "2.5.0"
 category = "main"
 description = "GraphQL Framework for Python"
 name = "graphene"
-optional = false
+optional = true
 python-versions = "*"
 version = "2.1.8"
 
@@ -502,7 +502,7 @@ test = ["pytest", "pytest-benchmark", "pytest-cov", "pytest-mock", "snapshottest
 category = "main"
 description = "GraphQL implementation for Python"
 name = "graphql-core"
-optional = false
+optional = true
 python-versions = "*"
 version = "2.3.2"
 
@@ -519,7 +519,7 @@ test = ["six (1.14.0)", "pyannotate (1.2.0)", "pytest (4.6.10)", "pytest-django 
 category = "main"
 description = "Relay implementation for Python"
 name = "graphql-relay"
-optional = false
+optional = true
 python-versions = "*"
 version = "2.0.1"
 
@@ -532,7 +532,7 @@ six = ">=1.12"
 category = "main"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 name = "h11"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.9.0"
 
@@ -541,7 +541,7 @@ category = "main"
 description = "A collection of framework independent HTTP protocol utils."
 marker = "sys_platform != \"win32\" and sys_platform != \"cygwin\" and platform_python_implementation != \"PyPy\""
 name = "httptools"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.1.1"
 
@@ -672,7 +672,7 @@ version = "0.1.0"
 category = "main"
 description = "Various helpers to pass data to untrusted environments and back."
 name = "itsdangerous"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "1.1.0"
 
@@ -715,7 +715,7 @@ dev = ["testpath"]
 category = "main"
 description = "A very fast and expressive template engine."
 name = "jinja2"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "2.11.2"
 
@@ -808,12 +808,12 @@ python-versions = "*"
 version = "0.6.1"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Useful package for creating Markdown files while executing python code."
 name = "mdutils"
 optional = false
 python-versions = "*"
-version = "1.2.2"
+version = "1.3.0"
 
 [[package]]
 category = "dev"
@@ -863,7 +863,7 @@ jdcal = "*"
 category = "main"
 description = "Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy"
 name = "orjson"
-optional = false
+optional = true
 python-versions = ">=3.6"
 version = "3.3.0"
 
@@ -971,7 +971,7 @@ dev = ["pre-commit", "tox"]
 category = "main"
 description = "Promises/A+ implementation for Python"
 name = "promise"
-optional = false
+optional = true
 python-versions = "*"
 version = "2.3"
 
@@ -1002,14 +1002,6 @@ version = "0.1.16"
 
 [package.dependencies]
 six = "*"
-
-[[package]]
-category = "main"
-description = "psycopg2 - Python-PostgreSQL Database Adapter"
-name = "psycopg2"
-optional = true
-python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
-version = "2.8.5"
 
 [[package]]
 category = "main"
@@ -1239,7 +1231,7 @@ version = "1.0.4"
 category = "main"
 description = "A streaming multipart parser for Python"
 name = "python-multipart"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.0.5"
 
@@ -1381,7 +1373,7 @@ dev = ["pytest"]
 category = "main"
 description = "Reactive Extensions (Rx) for Python"
 name = "rx"
-optional = false
+optional = true
 python-versions = "*"
 version = "1.6.1"
 
@@ -1564,7 +1556,7 @@ typing-extensions = ">=3.7.4"
 category = "main"
 description = "The little ASGI library that shines."
 name = "starlette"
-optional = false
+optional = true
 python-versions = ">=3.6"
 version = "0.13.6"
 
@@ -1699,7 +1691,7 @@ socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 category = "main"
 description = "The lightning-fast ASGI server."
 name = "uvicorn"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.11.7"
 
@@ -1718,7 +1710,7 @@ category = "main"
 description = "Fast implementation of asyncio event loop on top of libuv"
 marker = "sys_platform != \"win32\" and sys_platform != \"cygwin\" and platform_python_implementation != \"PyPy\""
 name = "uvloop"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.14.0"
 
@@ -1767,7 +1759,7 @@ version = "0.5.1"
 category = "main"
 description = "An implementation of the WebSocket Protocol (RFC 6455 & 7692)"
 name = "websockets"
-optional = false
+optional = true
 python-versions = ">=3.6.1"
 version = "8.1"
 
@@ -1837,7 +1829,7 @@ postgres = ["psycopg2-binary"]
 server = ["fastapi", "uvicorn"]
 
 [metadata]
-content-hash = "868aa82d8ddcd12c9c3c5cdfa24afa4b498576baa812c79b3511fe481be8012a"
+content-hash = "a49e0243515ca956022e5ddcf6e6c7c311152bcd02e493c5db3761d6b5c96334"
 lock-version = "1.0"
 python-versions = "^3.7"
 
@@ -2161,21 +2153,25 @@ lxml = [
     {file = "lxml-4.5.2-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:bea760a63ce9bba566c23f726d72b3c0250e2fa2569909e2d83cda1534c79443"},
     {file = "lxml-4.5.2-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:c3f511a3c58676147c277eff0224c061dd5a6a8e1373572ac817ac6324f1b1e0"},
     {file = "lxml-4.5.2-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:59daa84aef650b11bccd18f99f64bfe44b9f14a08a28259959d33676554065a1"},
+    {file = "lxml-4.5.2-cp35-cp35m-manylinux2014_aarch64.whl", hash = "sha256:c9d317efde4bafbc1561509bfa8a23c5cab66c44d49ab5b63ff690f5159b2304"},
     {file = "lxml-4.5.2-cp35-cp35m-win32.whl", hash = "sha256:9dc9006dcc47e00a8a6a029eb035c8f696ad38e40a27d073a003d7d1443f5d88"},
     {file = "lxml-4.5.2-cp35-cp35m-win_amd64.whl", hash = "sha256:08fc93257dcfe9542c0a6883a25ba4971d78297f63d7a5a26ffa34861ca78730"},
     {file = "lxml-4.5.2-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:121b665b04083a1e85ff1f5243d4a93aa1aaba281bc12ea334d5a187278ceaf1"},
     {file = "lxml-4.5.2-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:5591c4164755778e29e69b86e425880f852464a21c7bb53c7ea453bbe2633bbe"},
     {file = "lxml-4.5.2-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:cc411ad324a4486b142c41d9b2b6a722c534096963688d879ea6fa8a35028258"},
+    {file = "lxml-4.5.2-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:1fa21263c3aba2b76fd7c45713d4428dbcc7644d73dcf0650e9d344e433741b3"},
     {file = "lxml-4.5.2-cp36-cp36m-win32.whl", hash = "sha256:786aad2aa20de3dbff21aab86b2fb6a7be68064cbbc0219bde414d3a30aa47ae"},
     {file = "lxml-4.5.2-cp36-cp36m-win_amd64.whl", hash = "sha256:e1cacf4796b20865789083252186ce9dc6cc59eca0c2e79cca332bdff24ac481"},
     {file = "lxml-4.5.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:80a38b188d20c0524fe8959c8ce770a8fdf0e617c6912d23fc97c68301bb9aba"},
     {file = "lxml-4.5.2-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:ecc930ae559ea8a43377e8b60ca6f8d61ac532fc57efb915d899de4a67928efd"},
     {file = "lxml-4.5.2-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:a76979f728dd845655026ab991df25d26379a1a8fc1e9e68e25c7eda43004bed"},
+    {file = "lxml-4.5.2-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:cfd7c5dd3c35c19cec59c63df9571c67c6d6e5c92e0fe63517920e97f61106d1"},
     {file = "lxml-4.5.2-cp37-cp37m-win32.whl", hash = "sha256:5a9c8d11aa2c8f8b6043d845927a51eb9102eb558e3f936df494e96393f5fd3e"},
     {file = "lxml-4.5.2-cp37-cp37m-win_amd64.whl", hash = "sha256:4b4a111bcf4b9c948e020fd207f915c24a6de3f1adc7682a2d92660eb4e84f1a"},
     {file = "lxml-4.5.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:5dd20538a60c4cc9a077d3b715bb42307239fcd25ef1ca7286775f95e9e9a46d"},
     {file = "lxml-4.5.2-cp38-cp38-manylinux1_i686.whl", hash = "sha256:2b30aa2bcff8e958cd85d907d5109820b01ac511eae5b460803430a7404e34d7"},
     {file = "lxml-4.5.2-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:aa8eba3db3d8761db161003e2d0586608092e217151d7458206e243be5a43843"},
+    {file = "lxml-4.5.2-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:8f0ec6b9b3832e0bd1d57af41f9238ea7709bbd7271f639024f2fc9d3bb01293"},
     {file = "lxml-4.5.2-cp38-cp38-win32.whl", hash = "sha256:107781b213cf7201ec3806555657ccda67b1fccc4261fb889ef7fc56976db81f"},
     {file = "lxml-4.5.2-cp38-cp38-win_amd64.whl", hash = "sha256:f161af26f596131b63b236372e4ce40f3167c1b5b5d459b29d2514bd8c9dc9ee"},
     {file = "lxml-4.5.2.tar.gz", hash = "sha256:cdc13a1682b2a6241080745b1953719e7fe0850b40a5c71ca574f090a1391df6"},
@@ -2224,7 +2220,7 @@ mccabe = [
     {file = "mccabe-0.6.1.tar.gz", hash = "sha256:dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"},
 ]
 mdutils = [
-    {file = "mdutils-1.2.2.tar.gz", hash = "sha256:21270863b7431d48666ba38299f094d8866717048456db15a17492f3c50ed5bb"},
+    {file = "mdutils-1.3.0.tar.gz", hash = "sha256:098baa99cf80ccb1e98b051c3cda8f85486d4ccc9abeb8742c1cb3903c6862ae"},
 ]
 more-itertools = [
     {file = "more-itertools-8.4.0.tar.gz", hash = "sha256:68c70cc7167bdf5c7c9d8f6954a7837089c6a36bf565383919bb595efb8a17e5"},
@@ -2315,21 +2311,6 @@ prompt-toolkit = [
 ]
 protego = [
     {file = "Protego-0.1.16.tar.gz", hash = "sha256:a682771bc7b51b2ff41466460896c1a5a653f9a1e71639ef365a72e66d8734b4"},
-]
-psycopg2 = [
-    {file = "psycopg2-2.8.5-cp27-cp27m-win32.whl", hash = "sha256:a0984ff49e176062fcdc8a5a2a670c9bb1704a2f69548bce8f8a7bad41c661bf"},
-    {file = "psycopg2-2.8.5-cp27-cp27m-win_amd64.whl", hash = "sha256:acf56d564e443e3dea152efe972b1434058244298a94348fc518d6dd6a9fb0bb"},
-    {file = "psycopg2-2.8.5-cp34-cp34m-win32.whl", hash = "sha256:440a3ea2c955e89321a138eb7582aa1d22fe286c7d65e26a2c5411af0a88ae72"},
-    {file = "psycopg2-2.8.5-cp34-cp34m-win_amd64.whl", hash = "sha256:6b306dae53ec7f4f67a10942cf8ac85de930ea90e9903e2df4001f69b7833f7e"},
-    {file = "psycopg2-2.8.5-cp35-cp35m-win32.whl", hash = "sha256:d3b29d717d39d3580efd760a9a46a7418408acebbb784717c90d708c9ed5f055"},
-    {file = "psycopg2-2.8.5-cp35-cp35m-win_amd64.whl", hash = "sha256:6a471d4d2a6f14c97a882e8d3124869bc623f3df6177eefe02994ea41fd45b52"},
-    {file = "psycopg2-2.8.5-cp36-cp36m-win32.whl", hash = "sha256:27c633f2d5db0fc27b51f1b08f410715b59fa3802987aec91aeb8f562724e95c"},
-    {file = "psycopg2-2.8.5-cp36-cp36m-win_amd64.whl", hash = "sha256:2df2bf1b87305bd95eb3ac666ee1f00a9c83d10927b8144e8e39644218f4cf81"},
-    {file = "psycopg2-2.8.5-cp37-cp37m-win32.whl", hash = "sha256:ac5b23d0199c012ad91ed1bbb971b7666da651c6371529b1be8cbe2a7bf3c3a9"},
-    {file = "psycopg2-2.8.5-cp37-cp37m-win_amd64.whl", hash = "sha256:2c0afb40cfb4d53487ee2ebe128649028c9a78d2476d14a67781e45dc287f080"},
-    {file = "psycopg2-2.8.5-cp38-cp38-win32.whl", hash = "sha256:2327bf42c1744a434ed8ed0bbaa9168cac7ee5a22a9001f6fc85c33b8a4a14b7"},
-    {file = "psycopg2-2.8.5-cp38-cp38-win_amd64.whl", hash = "sha256:132efc7ee46a763e68a815f4d26223d9c679953cd190f1f218187cb60decf535"},
-    {file = "psycopg2-2.8.5.tar.gz", hash = "sha256:f7d46240f7a1ae1dd95aab38bd74f7428d46531f69219954266d669da60c0818"},
 ]
 psycopg2-binary = [
     {file = "psycopg2-binary-2.8.5.tar.gz", hash = "sha256:ccdc6a87f32b491129ada4b87a43b1895cf2c20fdb7f98ad979647506ffc41b6"},

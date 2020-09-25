@@ -48,6 +48,7 @@ install_requires = \
  'geoalchemy2>=0.8.4,<0.9.0',
  'geojson>=2.5.0,<3.0.0',
  'huey>=2.2.0,<3.0.0',
+ 'mdutils>=1.3.0,<2.0.0',
  'openpyxl>=3.0.4,<4.0.0',
  'pydantic>=1.5.1,<2.0.0',
  'pytz>=2020.1,<2021.0',
