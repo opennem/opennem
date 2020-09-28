@@ -5,6 +5,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel, validator
 
+from opennem.api.photo.schema import Photo
 from opennem.api.stats.schema import OpennemData
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.normalizers import (  # clean_numbers,; station_name_cleaner,
@@ -227,6 +228,8 @@ class StationSchema(OpennemBaseSchema):
     participant_id: Optional[str]
 
     facilities: Optional[List[FacilitySchema]] = []
+
+    photos: Optional[List[Photo]]
 
     # history: Optional[List[__self__]]
 

@@ -1,12 +1,15 @@
 from pprint import pprint
 from urllib.parse import urlparse
 
+import requests
 import wikipedia
+from PIL import Image
 
+from opennem.api.photo.controllers import img_to_buffer, write_photo_to_s3
 from opennem.core.loader import load_data
 from opennem.core.normalizers import station_name_cleaner
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Station
+from opennem.db.models.opennem import Photo, Station
 
 
 def article_from_wikipedia(url: str) -> str:
@@ -115,5 +118,85 @@ def wikidata_parse():
         json.dump(out_entries, fh)
 
 
+def get_image(image_url):
+    img = None
+
+    try:
+        img = Image.open(requests.get(image_url, stream=True).raw)
+    except Exception:
+        logger.error("Error parsing: %s", image_url)
+        return None
+
+    return img
+
+
+def wikidata_photos():
+    session = SessionLocal()
+    wikidata = load_data("wikidata-photos.json", from_project=True)
+
+    for entry in wikidata:
+        image_url = entry["thumb"]
+        name = entry["itemLabel"]
+        wiki_id = dataid_from_url(entry["item"])
+
+        station = (
+            session.query(Station)
+            .filter(Station.wikidata_id == wiki_id)
+            .one_or_none()
+        )
+
+        if not station:
+            print("Could not find station {}".format(name))
+            continue
+
+        img = get_image(image_url)
+
+        if not img:
+            print("No image for {}".format(name))
+            continue
+
+        # file_name = urlparse(image_url).path.split("/")[-1:]
+        file_name = "{}_{}.{}".format(
+            name.replace(" ", "_"), "original", "jpeg"
+        )
+
+        photo = Photo(
+            name=file_name,
+            width=img.size[0],
+            height=img.size[1],
+            original_url=image_url,
+        )
+
+        img_buff = img_to_buffer(img)
+
+        write_photo_to_s3(file_name, img_buff)
+
+        station.photos.append(photo)
+
+        img.thumbnail((280, 340))
+
+        file_name = "{}_{}.{}".format(
+            name.replace(" ", "_"), img.size[0], "jpeg"
+        )
+
+        photo_thumb = Photo(
+            name=file_name,
+            width=img.size[0],
+            height=img.size[1],
+            original_url=image_url,
+        )
+
+        img_buff = img_to_buffer(img)
+        write_photo_to_s3(file_name, img_buff)
+
+        station.photos.append(photo_thumb)
+
+        session.add(photo)
+        session.add(photo_thumb)
+        session.add(station)
+        session.commit()
+
+
 if __name__ == "__main__":
-    wikidata_join()
+    # wikidata_join()
+    wikidata_photos()

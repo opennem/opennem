@@ -133,6 +133,13 @@ class Photo(Base):
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
 
+    @hybrid_property
+    def photo_url(self) -> Optional[str]:
+        if self.name:
+            return "https://photos.opennem.org.au/{}".format(self.name)
+
+        return None
+
 
 class Location(Base):
     __tablename__ = "location"

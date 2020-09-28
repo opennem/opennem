@@ -1,16 +1,6 @@
-from datetime import datetime
-from enum import Enum
 from typing import List, Optional, Union
 
 from pydantic import BaseModel, Field
-
-from opennem.schema.opennem import (
-    FacilitySchema,
-    FueltechSchema,
-    LocationSchema,
-    RevisionSchema,
-    StationSchema,
-)
 
 
 class ApiBase(BaseModel):
@@ -30,5 +20,6 @@ class UpdateResponse(BaseModel):
 class FueltechResponse(ApiBase):
     success: bool = True
 
-    records: List[FueltechSchema]
+    # @TODO fix circular references
+    # records: List[FueltechSchema]
 

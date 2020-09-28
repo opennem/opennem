@@ -13,6 +13,7 @@ from opennem.db.models.opennem import (
     FuelTech,
     Location,
     Network,
+    Photo,
     Revision,
     Station,
 )
@@ -170,6 +171,7 @@ def station(
         session.query(Station)
         # .options(joinedload(Station.facilities))
         .outerjoin(Facility, Facility.station_id == Station.id)
+        .join(Station.photos)
         # .join(Network, Facility.network_id == Network.code)
         .filter(Facility.station_id == Station.id)
         .filter(Station.code == station_code)
