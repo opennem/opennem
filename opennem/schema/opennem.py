@@ -40,14 +40,14 @@ NetworkNEM = NetworkSchema(
     code="NEM",
     label="NEM",
     country="au",
-    timezone="Australia/Perth",
+    timezone="Australia/Sydney",
     interval_size=5,
 )
 NetworkWEM = NetworkSchema(
     code="WEM",
     label="WEM",
     country="au",
-    timezone="Australia/Sydney",
+    timezone="Australia/Perth",
     interval_size=30,
 )
 
