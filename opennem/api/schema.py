@@ -27,28 +27,8 @@ class UpdateResponse(BaseModel):
     records: List = []
 
 
-class RevisionModificationTypes(str, Enum):
-    approve = "approve"
-    reject = "reject"
-
-
-class RevisionModification(ApiBase):
-    comment: Optional[str] = Field(None)
-    modification: RevisionModificationTypes
-
-
-class RevisionModificationResponse(ApiBase):
-    success: bool = False
-    record: RevisionSchema
-    target: Optional[Union[FacilitySchema, StationSchema, LocationSchema]]
-
-
 class FueltechResponse(ApiBase):
     success: bool = True
 
     records: List[FueltechSchema]
-
-
-class RevisionUpdate(ApiBase):
-    pass
 
