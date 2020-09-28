@@ -212,7 +212,6 @@ def station(
             )
 
     if power_include:
-
         pass
 
     return station

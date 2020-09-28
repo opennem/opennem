@@ -1,3 +1,5 @@
+import json
+import logging
 from pprint import pprint
 from urllib.parse import urlparse
 
@@ -11,6 +13,10 @@ from opennem.core.normalizers import station_name_cleaner
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Photo, Station
 
+logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 def article_from_wikipedia(url: str) -> str:
     """
@@ -35,14 +41,6 @@ def dataid_from_url(url: str) -> str:
 
     return path.split("/")[2]
 
-
-import json
-import logging
-
-logging.basicConfig(level=logging.INFO)
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 def wikidata_join():

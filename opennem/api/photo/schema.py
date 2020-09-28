@@ -1,7 +1,5 @@
 from typing import Optional
 
-from pydantic import BaseModel
-
 from opennem.api.schema import ApiBase
 
 
