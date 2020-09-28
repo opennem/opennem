@@ -1,5 +1,4 @@
 from datetime import datetime
-from functools import reduce
 from itertools import groupby
 from operator import attrgetter
 
@@ -9,7 +8,7 @@ from starlette import status
 
 from opennem.core.time import human_to_interval
 from opennem.db import get_database_session
-from opennem.db.models.opennem import Facility, FacilityScada, Station
+from opennem.db.models.opennem import FacilityScada, Station
 
 from .controllers import stats_factory, stats_set_factory
 from .schema import OpennemData, OpennemDataSet, StationScadaReading
