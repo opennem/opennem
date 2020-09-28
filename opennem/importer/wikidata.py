@@ -196,5 +196,5 @@ def wikidata_photos():
 
 
 if __name__ == "__main__":
-    # wikidata_join()
+    wikidata_join()
     wikidata_photos()
