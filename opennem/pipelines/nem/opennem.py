@@ -26,8 +26,9 @@ def parse_nemweb_interval(interval: str) -> datetime:
 
     if type(interval) is datetime:
         dt = interval
-    else:
-        dt = datetime.strptime(interval, "%Y/%m/%d %H:%M:%S")
+        return interval
+
+    dt = datetime.strptime(interval, "%Y/%m/%d %H:%M:%S")
 
     dt_aware = nemweb_timezone.localize(dt)
 
