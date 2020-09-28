@@ -9,9 +9,10 @@ import logging
 from datetime import datetime
 
 import pytz
+from sqlalchemy.sql import text
 
 from opennem.core.normalizers import normalize_duid
-from opennem.db import SessionLocal
+from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.schema.opennem import NetworkNEM
 from opennem.utils.pipelines import check_spider_pipeline
@@ -38,6 +39,7 @@ def process_case_solutions(table):
 
 def process_unit_scada(table):
     session = SessionLocal()
+    engine = get_database_engine()
 
     if "records" not in table:
         raise Exception("Invalid table no records")
@@ -46,7 +48,24 @@ def process_unit_scada(table):
 
     records_to_store = []
 
+    q = engine.execute(
+        text(
+            "select trading_interval, facility_code from facility_scada where network_id='NEM'"
+        )
+    )
+
+    records_current = [
+        (parse_nemweb_interval(i[0]), normalize_duid(i[1]))
+        for i in q.fetchall()
+    ]
+
     for record in records:
+        if (
+            parse_nemweb_interval(record["SETTLEMENTDATE"]),
+            normalize_duid(record["DUID"]),
+        ) in records_current:
+            continue
+
         _record_dict = {
             "trading_interval": parse_nemweb_interval(
                 record["SETTLEMENTDATE"]
