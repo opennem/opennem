@@ -22,6 +22,11 @@ class ApiBase(BaseModel):
         validate_assignment = True
 
 
+class UpdateResponse(BaseModel):
+    success: bool = True
+    records: List = []
+
+
 class RevisionModificationTypes(str, Enum):
     approve = "approve"
     reject = "reject"
