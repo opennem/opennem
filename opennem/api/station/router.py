@@ -20,7 +20,6 @@ from .schema import (
     StationIDList,
     StationModification,
     StationRecord,
-    StationResponse,
     StationUpdateResponse,
 )
 
