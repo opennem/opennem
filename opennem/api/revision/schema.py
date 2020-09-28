@@ -6,7 +6,8 @@ from pydantic import BaseModel, Field
 from opennem.api.facility.schema import FacilityRecord
 from opennem.api.schema import ApiBase
 from opennem.api.station.schema import StationRecord
-from opennem.schema.core import BaseConfig
+
+# from opennem.schema.core import BaseConfig
 from opennem.schema.opennem import LocationSchema, RevisionSchema
 
 
