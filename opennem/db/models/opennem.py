@@ -21,6 +21,7 @@ from sqlalchemy import (
     Enum,
     ForeignKey,
     Integer,
+    LargeBinary,
     Numeric,
     Sequence,
     Text,
@@ -92,6 +93,41 @@ class Participant(Base, BaseModel):
     network_code = Column(Text)
     country = Column(Text)
     abn = Column(Text)
+
+    approved = Column(Boolean, default=False)
+    approved_by = Column(Text)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class Photo(Base):
+    __tablename__ = "photo"
+
+    id = Column(
+        Integer, Sequence("seq_photo_id", start=1000), primary_key=True
+    )
+
+    station_id = Column(
+        Integer,
+        ForeignKey("station.id", name="fk_photos_station_id"),
+        nullable=True,
+    )
+    station = relationship("Station", back_populates="photos")
+
+    name = Column(Text)
+    mime_type = Column(Text)
+    original_url = Column(Text, nullable=True)
+    data = Column(LargeBinary, nullable=True)
+    width = Column(Integer)
+    height = Column(Integer)
+
+    license_type = Column(Text, nullable=True)
+    license_link = Column(Text, nullable=True)
+    author = Column(Text, nullable=True)
+    author_link = Column(Text, nullable=True)
+
+    processed = Column(Boolean, default=False)
+    processed_by = Column(Text)
+    processed_at = Column(DateTime(timezone=True), nullable=True)
 
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
@@ -177,6 +213,8 @@ class Station(Base, BaseModel):
     facilities = relationship("Facility", lazy="joined")
 
     revisions = relationship("Revision", lazy="joined")
+
+    photos = relationship("Photo", lazy="joined")
 
     code = Column(Text, index=True, nullable=True)
     name = Column(Text)
