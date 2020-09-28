@@ -1,8 +1,9 @@
 from datetime import datetime
 from typing import List, Optional
 
+import sqlalchemy
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, noload, raiseload
 from starlette import status
 
 from opennem.core.dispatch_type import DispatchType
@@ -11,6 +12,7 @@ from opennem.db.models.opennem import (
     Facility,
     FuelTech,
     Location,
+    Network,
     Revision,
     Station,
 )
@@ -166,8 +168,13 @@ def station(
 ):
     station = (
         session.query(Station)
-        .join(Facility)
+        # .options(joinedload(Station.facilities))
+        .outerjoin(Facility, Facility.station_id == Station.id)
+        # .join(Network, Facility.network_id == Network.code)
+        .filter(Facility.station_id == Station.id)
         .filter(Station.code == station_code)
+        .filter(~Facility.code.endswith("NL1"))
+        .filter(Facility.status_id.isnot(None))
     )
 
     if only_generators:
