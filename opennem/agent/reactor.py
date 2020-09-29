@@ -27,7 +27,7 @@ REDIS_HOST = get_redis_host()
 scheduler = RedisHuey("opennem.scraper", host=REDIS_HOST)
 
 
-@scheduler.periodic_task(crontab(minute="*/5"))
+@scheduler.periodic_task(crontab(minute="*/10"))
 @defer.inlineCallbacks
 def crawl():
     yield runner.crawl(WemParticipantLiveSpider)
