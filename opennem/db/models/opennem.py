@@ -543,6 +543,22 @@ class FacilityScada(Base, BaseModel):
 
     __tablename__ = "facility_scada"
 
+    def __str__(self) -> str:
+        return "<{}: {} {} {}>".format(
+            self.__class__,
+            self.trading_interval,
+            self.network_id,
+            self.facility_code,
+        )
+
+    def __repr__(self) -> str:
+        return "{}: {} {} {}".format(
+            self.__class__,
+            self.trading_interval,
+            self.network_id,
+            self.facility_code,
+        )
+
     network_id = Column(
         Text,
         ForeignKey("network.code", name="fk_balancing_summary_network_code"),
