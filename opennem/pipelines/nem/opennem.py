@@ -9,6 +9,7 @@ import logging
 from datetime import datetime
 
 import pytz
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import text
 
 from opennem.core.normalizers import normalize_duid
@@ -41,6 +42,10 @@ def process_case_solutions(table):
     if "records" not in table:
         raise Exception("Invalid table no records")
 
+    records = table["records"]
+
+    records_to = []
+
 
 def process_unit_scada(table):
     session = SessionLocal()
@@ -53,45 +58,35 @@ def process_unit_scada(table):
 
     records_to_store = []
 
-    q = engine.execute(
-        text(
-            "select trading_interval, facility_code from facility_scada where network_id='NEM'"
-        )
-    )
-
-    records_current = [
-        (parse_nemweb_interval(i[0]), normalize_duid(i[1]))
-        for i in q.fetchall()
-    ]
-
     for record in records:
-        if (
-            parse_nemweb_interval(record["SETTLEMENTDATE"]),
-            normalize_duid(record["DUID"]),
-        ) in records_current:
-            continue
-
-        _record_dict = {
-            "trading_interval": parse_nemweb_interval(
-                record["SETTLEMENTDATE"]
-            ),
-            "facility_code": normalize_duid(record["DUID"]),
-            "generated": float(record["SCADAVALUE"]),
-            "network_id": "NEM",
-        }
-
-        _record_model = FacilityScada(**_record_dict)
-
-        records_to_store.append(_record_model)
+        records_to_store.append(
+            {
+                "trading_interval": parse_nemweb_interval(
+                    record["SETTLEMENTDATE"]
+                ),
+                "facility_code": normalize_duid(record["DUID"]),
+                "generated": float(record["SCADAVALUE"]),
+                "network_id": "NEM",
+            }
+        )
 
     logger.debug("Saving %d records", len(records_to_store))
 
+    stmt = insert(FacilityScada).values(records_to_store)
+    stmt.bind = engine
+    stmt = stmt.on_conflict_do_update(
+        constraint="facility_scada_pkey",
+        set_={
+            "eoi_quantity": stmt.excluded.eoi_quantity,
+            "generated": stmt.excluded.generated,
+        },
+    )
+
     try:
-        session.bulk_save_objects(records_to_store)
+        session.execute(stmt)
         session.commit()
     except Exception as e:
         logger.error("Error: {}".format(e))
-        raise e
     finally:
         session.close()
 
