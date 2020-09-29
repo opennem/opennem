@@ -1,5 +1,6 @@
 import re
-from datetime import timedelta
+from datetime import datetime, timedelta
+from typing import List
 
 UNITS = {
     "s": "seconds",
@@ -19,3 +20,34 @@ def human_to_interval(s: str) -> timedelta:
             )
         }
     )
+
+
+def dt_floor(dt: datetime, interval=5) -> datetime:
+    """
+        Round a datetime down to the nearest interval in minutes
+
+    """
+    return dt - timedelta(
+        minutes=dt.minute % interval,
+        seconds=dt.second,
+        microseconds=dt.microsecond,
+    )
+
+
+def dt_series() -> List[datetime]:
+    """
+        Generate a datetime series
+
+    """
+    end = dt_floor(datetime.now())
+    start = end - timedelta(days=7)
+    interval = timedelta(minutes=5)
+
+    dc_current = start
+    series = []
+
+    while dc_current <= end:
+        series.append(dc_current)
+        dc_current += interval
+
+    return series
