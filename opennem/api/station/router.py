@@ -168,13 +168,14 @@ def station(
     ),
 ):
     station = (
-        session.query(Station).options(joinedload(Station.facilities))
+        session.query(Station)
+        .options(joinedload(Station.facilities))
         # .join(Facility)
         # .outerjoin(Facility, Facility.station_id == Station.id)
         # .join(Station.photos)
         # .join(Network, Facility.network_id == Network.code)
         # .filter(Facility.station_id == Station.id)
-        # .filter(Station.code == station_code)
+        .filter(Station.code == station_code)
         .filter(~Facility.code.endswith("NL1"))
         # .filter(
         # Facility.status_id.isnot(None)
@@ -186,7 +187,7 @@ def station(
             Facility.dispatch_type == DispatchType.GENERATOR
         )
 
-    station = station.first()
+    station = station.one_or_none()
 
     if not station:
         raise HTTPException(
