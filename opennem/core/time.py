@@ -2,6 +2,8 @@ import re
 from datetime import datetime, timedelta
 from typing import List
 
+from pytz import timezone
+
 UNITS = {
     "s": "seconds",
     "m": "minutes",
@@ -34,12 +36,13 @@ def dt_floor(dt: datetime, interval=5) -> datetime:
     )
 
 
-def dt_series() -> List[datetime]:
+def dt_series(tz: timezone = timezone("UTC")) -> List[datetime]:
     """
         Generate a datetime series
 
     """
-    end = dt_floor(datetime.now())
+    end = dt_floor(tz.localize(datetime.now()))
+
     start = end - timedelta(days=7)
     interval = timedelta(minutes=5)
 
