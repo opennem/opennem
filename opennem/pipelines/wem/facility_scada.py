@@ -3,8 +3,10 @@ import logging
 from datetime import datetime, timedelta
 
 import pytz
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import text
 
+from opennem.core.normalizers import normalize_duid
 from opennem.db.models.opennem import FacilityScada
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
@@ -29,46 +31,41 @@ class WemStoreFacilityScada(DatabaseStoreBase):
 
         csvreader = csv.DictReader(item["content"].split("\n"))
 
-        # Get all facility codes
-        #  It's faster to do this and bulk insert than it is to
-        #  catch integrityerrors
-
-        q = self.engine.execute(text("select code from facility"))
-
-        all_facilities = list(set([i[0] for i in q.fetchall()]))
-
         objects = []
-        keys = []
 
         for row in csvreader:
-            if row["Facility Code"] not in all_facilities:
-                continue
+            trading_interval = self.parse_interval(row["Trading Interval"])
+            facility_code = normalize_duid(row["Facility Code"])
 
-            row_key = "{}_{}".format(
-                row["Trading Interval"], row["Facility Code"]
+            objects.append(
+                {
+                    "network_id": "WEM",
+                    "trading_interval": trading_interval,
+                    "facility_code": facility_code,
+                    "eoi_quantity": row["EOI Quantity (MW)"] or None,
+                    "generated": row["Energy Generated (MWh)"] or None,
+                }
             )
 
-            item = FacilityScada(
-                network_id="WEM",
-                trading_interval=self.parse_interval(row["Trading Interval"]),
-                facility_code=row["Facility Code"],
-                eoi_quantity=row["EOI Quantity (MW)"] or None,
-                generated=row["Energy Generated (MWh)"] or None,
-            )
-
-            if row_key not in keys:
-                objects.append(item)
-                keys.append(row_key)
+        stmt = insert(FacilityScada).values(objects)
+        stmt.bind = self.engine
+        stmt = stmt.on_conflict_do_update(
+            constraint="facility_scada_pkey",
+            set_={
+                "eoi_quantity": stmt.excluded.eoi_quantity,
+                "generated": stmt.excluded.generated,
+            },
+        )
 
         try:
-            s.bulk_save_objects(objects)
-            s.commit()
+            r = s.execute(stmt)
+            return r
         except Exception as e:
             logger.error("Error: {}".format(e))
         finally:
             s.close()
 
-        return len(objects)
+        return None
 
 
 class WemStoreLiveFacilityScada(DatabaseStoreBase):
@@ -96,8 +93,15 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
         all_facilities = list(set([i[0] for i in q.fetchall()]))
 
+        q = self.engine.execute(
+            text(
+                "select trading_interval, facility_code from facility_scada where network_id='WEM'"
+            )
+        )
+
+        keys = [(i[0], normalize_duid(i[1])) for i in q.fetchall()]
+
         objects = []
-        keys = []
         last_asat = None
 
         for row in csvreader:
@@ -130,7 +134,9 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
                 else:
                     interval = last_asat
 
-                row_key = "{}_{}".format(interval, row["FACILITY_CODE"])
+                facility_code = normalize_duid(row["FACILITY_CODE"])
+
+                row_key = (interval, facility_code)
 
                 val = None
 
@@ -140,15 +146,16 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
                     pass
 
                 item = FacilityScada(
+                    network_id="WEM",
                     trading_interval=interval,
-                    facility_code=row["FACILITY_CODE"],
+                    facility_code=facility_code,
                     generated=val,
                 )
 
                 if row_key not in keys:
                     # objects.append(item)
-                    s.add(item)
                     # s.save()
+                    s.add(item)
                     keys.append(row_key)
 
         try:
