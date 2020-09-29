@@ -96,7 +96,9 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
         q = self.engine.execute(
             text(
-                "select trading_interval, facility_code from facility_scada where network_id='WEM'"
+                """ select trading_interval, facility_code
+                    from facility_scada where network_id='WEM'
+                """
             )
         )
 
