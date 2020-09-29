@@ -59,6 +59,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
 
         try:
             r = s.execute(stmt)
+            s.commit()
             return r
         except Exception as e:
             logger.error("Error: {}".format(e))
