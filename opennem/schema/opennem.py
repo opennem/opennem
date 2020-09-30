@@ -29,12 +29,18 @@ class FueltechSchema(BaseConfig):
     renewable: bool
 
 
+from pytz import timezone
+
+
 class NetworkSchema(BaseConfig):
     code: str
     country: str
     label: str
     timezone: str
     interval_size: int
+
+    def get_timezone(self) -> timezone:
+        return timezone(self.timezone)
 
 
 NetworkNEM = NetworkSchema(
