@@ -15,9 +15,9 @@ def network_from_network_region(
 ) -> Optional[NetworkSchema]:
     network_region = network_region.upper()
 
-    if network_region in ["WEM"]:
+    if network_region in ["WEM", "WA1"]:
         return NetworkWEM
-    if network_region in ["WEM"]:
+    if network_region in ["NEM", "NSW1", "QLD1", "SA1", "VIC1", "TAS1"]:
         return NetworkNEM
 
-    return None
+    raise Exception("Uknownn network {}".format(network_region))
