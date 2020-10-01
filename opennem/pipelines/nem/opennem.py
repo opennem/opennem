@@ -76,10 +76,48 @@ def process_unit_scada(table):
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
         constraint="facility_scada_pkey",
-        set_={
-            "eoi_quantity": stmt.excluded.eoi_quantity,
-            "generated": stmt.excluded.generated,
-        },
+        set_={"generated": stmt.excluded.generated},
+    )
+
+    try:
+        session.execute(stmt)
+        session.commit()
+    except Exception as e:
+        logger.error("Error: {}".format(e))
+    finally:
+        session.close()
+
+
+def process_unit_solution(table):
+    session = SessionLocal()
+    engine = get_database_engine()
+
+    if "records" not in table:
+        raise Exception("Invalid table no records")
+
+    records = table["records"]
+
+    records_to_store = []
+
+    for record in records:
+        records_to_store.append(
+            {
+                "trading_interval": parse_nemweb_interval(
+                    record["SETTLEMENTDATE"]
+                ),
+                "facility_code": normalize_duid(record["DUID"]),
+                "eoi_quantity": float(record["INITIALMW"]),
+                "network_id": "NEM",
+            }
+        )
+
+    logger.debug("Saving %d records", len(records_to_store))
+
+    stmt = insert(FacilityScada).values(records_to_store)
+    stmt.bind = engine
+    stmt = stmt.on_conflict_do_update(
+        constraint="facility_scada_pkey",
+        set_={"eoi_quantity": stmt.excluded.eoi_quantity},
     )
 
     try:
@@ -94,6 +132,7 @@ def process_unit_scada(table):
 TABLE_PROCESSOR_MAP = {
     "DISPATCH_CASE_SOLUTION": "process_case_solutions",
     "DISPATCH_UNIT_SCADA": "process_unit_scada",
+    "DISPATCH_UNIT_SOLUTION": "process_unit_solution",
 }
 
 
