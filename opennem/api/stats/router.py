@@ -213,8 +213,6 @@ def energy_station(
 
     query = energy_facility(facility_codes, network_code, interval=interval)
 
-    print(query)
-
     with engine.connect() as c:
         results = list(c.execute(query))
 
