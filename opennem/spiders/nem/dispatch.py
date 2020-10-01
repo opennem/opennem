@@ -14,7 +14,7 @@ class NemwebCurrentDispatch(NemwebSpider):
 
 class NemwebArchiveDispatch(NemwebSpider):
     name = "au.nem.archive.dispatch"
-    start_urls = ["http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/"]
+    start_url = "http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/"
     limit = 0
 
     pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
