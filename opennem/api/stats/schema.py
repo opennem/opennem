@@ -33,7 +33,7 @@ class OpennemDataHistory(BaseConfig):
     start: Union[datetime, date]
     last: Union[datetime, date]
     interval: str
-    data: List[float]
+    data: List[Optional[float]]
 
     @validator("data")
     def validate_data(cls, data_value):
