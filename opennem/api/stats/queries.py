@@ -10,6 +10,37 @@ def duid_in_case(facility_codes: List[str]) -> str:
     )
 
 
+def wem_energy_facility(
+    facility_codes: List[str], interval: str = "day", period: str = "7d"
+) -> str:
+
+    __query = """
+        with intervals as (
+            select generate_series(
+                date_trunc('day', now()) - '7 day'::interval,
+                date_trunc('day', now()),
+                '1 day'::interval
+            ) as interval
+        )
+
+        select
+            i.interval AS trading_day,
+            fs.facility_code as facility_code,
+            sum(fs.eoi_quantity) as energy_output
+        from intervals i
+        full join facility_scada fs on date_trunc('day', fs.trading_interval) = i.interval
+        where
+            fs.facility_code in ({facility_codes_parsed})
+            and fs.trading_interval > now() - '7 day'::interval
+            and fs.network_id = 'WEM'
+        group by 1, 2
+        order by 1 asc, 2 asc
+    """
+
+    query = __query.format(facility_codes_parsed=duid_in_case(facility_codes))
+
+    return query
+
 
 def energy_year_network(network_code: str = "WEM", year: int = None) -> str:
     if not year:
@@ -29,7 +60,7 @@ def energy_year_network(network_code: str = "WEM", year: int = None) -> str:
             and extract('year' from fs.trading_interval) = {year}
             and fs.network_id = '{network_code}'
         group by 1, f.fueltech_id
-        order by 1 desc, 2 asc
+        order by 1 asc, 2 asc
     """.format(
         year=year, network_code=network_code
     )
