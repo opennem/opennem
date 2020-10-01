@@ -8,6 +8,7 @@ from twisted.internet import defer, reactor
 
 # from opennem.api.exporter import wem_run_all
 from opennem.settings import get_redis_host
+from opennem.spiders.nem.dispatch import NemwebCurrentDispatch
 from opennem.spiders.nem.scada_dispatch import NemwebCurrentDispatchScada
 from opennem.spiders.wem.facilities import WemLiveFacilities
 from opennem.spiders.wem.facility_scada import (
@@ -47,10 +48,11 @@ def craw_nem_currents():
     yield runner.crawl(NemwebCurrentDispatchScada)
 
 
-@scheduler.periodic_task(crontab(hour="*/2"))
-def crawl_historic():
-    pass
-    # yield runner.crawl()
+# At 6pm UTC start looking for next day dispatches
+@scheduler.periodic_task(crontab(hour="18-20"))
+@defer.inlineCallbacks
+def crawl_dispatch_dailies():
+    yield runner.crawl(NemwebCurrentDispatch)
 
 
 if __name__ == "__main__":
