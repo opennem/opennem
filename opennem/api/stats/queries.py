@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Tuple
 
 from opennem.core.normalizers import normalize_duid
 
@@ -10,22 +10,36 @@ def duid_in_case(facility_codes: List[str]) -> str:
     )
 
 
+INTERVAL_MAP = {
+    "1d": {"trunc": "day", "interval": "1 day"},
+    "1h": {"trunc": "hour", "interval": "1 hour"},
+}
+
+
+def get_interval_map(interval: str) -> Tuple[str, str]:
+    if interval not in INTERVAL_MAP.keys():
+        raise Exception("Invalid interval {} not mapped".format(interval))
+
+    return tuple(INTERVAL_MAP[interval].values())
+
+
 def energy_facility(
     facility_codes: List[str],
     network_code: str,
-    interval: str = "day",
+    interval: str = "1d",
     period: str = "7d",
 ) -> str:
 
     network_code = network_code.upper()
+    trunc, interval_str = get_interval_map(interval)
 
     __query = """
         with intervals as (
             select generate_series(
-                date_trunc('day', now() AT TIME ZONE 'UTC') - '7 day'::interval,
-                date_trunc('day', now() AT TIME ZONE 'UTC'),
-                '1 day'::interval
-            )::date as interval
+                date_trunc('{trunc}', now() AT TIME ZONE 'UTC') - '7 day'::interval,
+                date_trunc('{trunc}', now() AT TIME ZONE 'UTC'),
+                '{interval}'::interval
+            )::timestamp as interval
         )
 
         select
@@ -33,7 +47,7 @@ def energy_facility(
             fs.facility_code as facility_code,
             coalesce(sum(fs.eoi_quantity), NULL) as energy_output
         from intervals i
-        left join facility_scada fs on date_trunc('day', fs.trading_interval AT TIME ZONE 'UTC')::date = i.interval
+        left join facility_scada fs on date_trunc('{trunc}', fs.trading_interval AT TIME ZONE 'UTC')::timestamp = i.interval
         where
             fs.facility_code in ({facility_codes_parsed})
             and fs.trading_interval > now() AT TIME ZONE 'UTC' - '7 day'::interval
@@ -45,6 +59,8 @@ def energy_facility(
     query = __query.format(
         facility_codes_parsed=duid_in_case(facility_codes),
         network_code=network_code,
+        trunc=trunc,
+        interval=interval_str,
     )
 
     return query

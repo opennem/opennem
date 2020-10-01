@@ -155,13 +155,14 @@ SUPPORTED_INTERVALS = ["1d", "1h"]
 
 
 @router.get(
-    "/energy/station/{station_code}",
+    "/energy/station/{network_code}/{station_code}",
     name="Energy Station",
     response_model=OpennemDataSet,
 )
 def energy_station(
     engine=Depends(get_database_engine),
     session: Session = Depends(get_database_session),
+    network_code: str = Query(..., description="Network code"),
     station_code: str = Query(..., description="Station Code"),
     interval: str = Query("1d", description="Interval"),
     period: str = Query("7d", description="Period"),
@@ -183,6 +184,13 @@ def energy_station(
             detail="Period not supported",
         )
 
+    network_code = network_code.upper()
+
+    if network_code not in ["WEM", "NEM"]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
+        )
+
     station = (
         session.query(Station)
         .join(Station.facilities)
@@ -202,10 +210,10 @@ def energy_station(
         )
 
     facility_codes = list(set([f.code for f in station.facilities]))
-    network_code = station.facilities[0].network_id
-    network_schema = network_from_network_region(network_code)
 
-    query = energy_facility(facility_codes, network_code)
+    query = energy_facility(facility_codes, network_code, interval=interval)
+
+    print(query)
 
     with engine.connect() as c:
         results = list(c.execute(query))
