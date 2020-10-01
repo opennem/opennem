@@ -536,6 +536,9 @@ class Revision(Base, BaseModel):
             return self.location.station.code
 
 
+from sqlalchemy.dialects.postgresql import TIMESTAMP
+
+
 class FacilityScada(Base, BaseModel):
     """
         Facility Scada
@@ -567,7 +570,7 @@ class FacilityScada(Base, BaseModel):
     network = relationship("Network")
 
     trading_interval = Column(
-        DateTime(timezone=True), index=True, primary_key=True
+        TIMESTAMP(timezone=True), index=True, primary_key=True
     )
 
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
