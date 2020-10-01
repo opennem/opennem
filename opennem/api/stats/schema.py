@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Dict, List, Optional, Tuple
+from datetime import date, datetime
+from typing import Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel, Field, validator
 
@@ -30,8 +30,8 @@ class StationScadaReading(BaseModel):
 
 
 class OpennemDataHistory(BaseConfig):
-    start: datetime
-    last: datetime
+    start: Union[datetime, date]
+    last: Union[datetime, date]
     interval: str
     data: List[float]
 
