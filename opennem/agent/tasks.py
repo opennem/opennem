@@ -21,6 +21,9 @@ configure_logging()
 
 settings = get_project_settings()
 
+# override settings
+settings["LOG_LEVEL"] = "ERROR"
+
 runner = CrawlerRunner(settings)
 
 REDIS_HOST = get_redis_host()
