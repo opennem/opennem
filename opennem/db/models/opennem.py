@@ -20,13 +20,16 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
+    Index,
     Integer,
     LargeBinary,
     Numeric,
     Sequence,
     Text,
     func,
+    text,
 )
+from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -536,15 +539,31 @@ class Revision(Base, BaseModel):
             return self.location.station.code
 
 
-from sqlalchemy.dialects.postgresql import TIMESTAMP
-
-
 class FacilityScada(Base, BaseModel):
     """
         Facility Scada
     """
 
     __tablename__ = "facility_scada"
+
+    __table_args__ = (
+        Index(
+            "idx_facility_scada_trading_interval_year",
+            text("date_trunc('year', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_facility_scada_trading_interval_month",
+            text("date_trunc('month', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_facility_scada_trading_interval_day",
+            text("date_trunc('day', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_facility_scada_trading_interval_hour",
+            text("date_trunc('hour', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+    )
 
     def __str__(self) -> str:
         return "<{}: {} {} {}>".format(
@@ -583,6 +602,25 @@ class BalancingSummary(Base, BaseModel):
 
     __tablename__ = "balancing_summary"
 
+    __table_args__ = (
+        Index(
+            "idx_balancing_summary_trading_interval_year",
+            text("date_trunc('year', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_balancing_summary_trading_interval_month",
+            text("date_trunc('month', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_balancing_summary_trading_interval_day",
+            text("date_trunc('day', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_balancing_summary_trading_interval_hour",
+            text("date_trunc('hour', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+    )
+
     network_id = Column(
         Text,
         ForeignKey("network.code", name="fk_balancing_summary_network_code"),
@@ -591,10 +629,11 @@ class BalancingSummary(Base, BaseModel):
     network = relationship("Network")
 
     trading_interval = Column(
-        DateTime(timezone=True), index=True, primary_key=True
+        TIMESTAMP(timezone=True), index=True, primary_key=True
     )
     forecast_load = Column(Numeric, nullable=True)
     generation_scheduled = Column(Numeric, nullable=True)
     generation_non_scheduled = Column(Numeric, nullable=True)
     generation_total = Column(Numeric, nullable=True)
     price = Column(Numeric, nullable=True)
+
