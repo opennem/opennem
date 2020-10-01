@@ -10,7 +10,7 @@ def duid_in_case(facility_codes: List[str]) -> str:
     )
 
 
-def wem_energy_facility(
+def energy_facility(
     facility_codes: List[str],
     network_code: str,
     interval: str = "day",
