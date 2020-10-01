@@ -150,7 +150,7 @@ def power_station(
     return output
 
 
-SUPPORTED_PERIODS = ["7d"]
+SUPPORTED_PERIODS = ["7d", "1M"]
 SUPPORTED_INTERVALS = ["1d", "1h"]
 
 
@@ -211,7 +211,9 @@ def energy_station(
 
     facility_codes = list(set([f.code for f in station.facilities]))
 
-    query = energy_facility(facility_codes, network_code, interval=interval)
+    query = energy_facility(
+        facility_codes, network_code, interval=interval, period=period
+    )
 
     with engine.connect() as c:
         results = list(c.execute(query))
