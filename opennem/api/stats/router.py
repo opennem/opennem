@@ -150,8 +150,8 @@ def power_station(
     return output
 
 
-SUPPORTED_PERIODS = ["7d", "1M"]
-SUPPORTED_INTERVALS = ["1d", "1h"]
+SUPPORTED_PERIODS = ["7d", "1M", "1Y"]
+SUPPORTED_INTERVALS = ["1d", "1h", "1M"]
 
 
 @router.get(

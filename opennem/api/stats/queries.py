@@ -13,9 +13,10 @@ def duid_in_case(facility_codes: List[str]) -> str:
 INTERVAL_MAP = {
     "1d": {"trunc": "day", "interval": "1 day"},
     "1h": {"trunc": "hour", "interval": "1 hour"},
+    "1M": {"trunc": "month", "interval": "1 month"},
 }
 
-PERIOD_MAP = {"7d": "7 day", "1M": "1 month"}
+PERIOD_MAP = {"7d": "7 day", "1M": "1 month", "1Y": "1 year"}
 
 
 def get_interval_map(interval: str) -> Tuple[str, str]:
