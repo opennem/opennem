@@ -32,6 +32,8 @@ class BomStation(Base):
     lat = Column(Numeric)
     lng = Column(Numeric)
 
+    observations = relationship("BomObservation")
+
 
 class BomObservation(Base):
     __tablename__ = "bom_observation"
