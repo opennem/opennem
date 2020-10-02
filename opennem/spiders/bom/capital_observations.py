@@ -1,5 +1,4 @@
 import scrapy
-from scrapy import Spider
 
 from opennem.core.loader import load_data
 from opennem.spiders.bom.bom_base import BomJSONObservationSpider
@@ -11,11 +10,24 @@ CAPITAL_FEELDS = list(
 )
 
 
+BOM_REMAINDER = list(
+    filter(lambda s: s["is_capital"] is False, OBSERVATION_DATA)
+)
+
+
 class BomCapitalsSpider(BomJSONObservationSpider):
     name = "bom.capitals"
 
     def start_requests(self):
         for feed in CAPITAL_FEELDS:
+            yield scrapy.Request(feed["feed"], meta=feed)
+
+
+class BomAllSpider(BomJSONObservationSpider):
+    name = "bom.all"
+
+    def start_requests(self):
+        for feed in BOM_REMAINDER:
             yield scrapy.Request(feed["feed"], meta=feed)
 
 
