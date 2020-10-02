@@ -11,6 +11,7 @@ from opennem.api.locations import router as locations_router
 from opennem.api.revision.router import router as revisions_router
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
+from opennem.api.weather.router import router as weather_router
 from opennem.db import get_database_session
 from opennem.db.models.opennem import (
     Facility,
@@ -31,6 +32,7 @@ app.include_router(locations_router, tags=["Locations"], prefix="/locations")
 app.include_router(station_router, tags=["Stations"], prefix="/station")
 app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(revisions_router, tags=["Revisions"], prefix="/revision")
+app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 
 
 origins = [
