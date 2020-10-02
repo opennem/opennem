@@ -8,6 +8,7 @@ from twisted.internet import defer
 
 # from opennem.api.exporter import wem_run_all
 from opennem.settings import get_redis_host
+from opennem.spiders.bom.capital_observations import BomCapitalsSpider
 from opennem.spiders.nem.dispatch import NemwebCurrentDispatch
 from opennem.spiders.nem.scada_dispatch import NemwebCurrentDispatchScada
 from opennem.spiders.wem.facilities import WemLiveFacilities
@@ -37,6 +38,12 @@ def crawl():
     yield runner.crawl(WemParticipantLiveSpider)
     yield runner.crawl(WemLiveFacilities)
     yield runner.crawl(WemLiveFacilityScada)
+
+
+@scheduler.periodic_task(crontab(minute="*/5"))
+@defer.inlineCallbacks
+def bom_capitals():
+    yield runner.crawl(BomCapitalsSpider)
 
 
 @scheduler.periodic_task(crontab(minute="*/30"))
