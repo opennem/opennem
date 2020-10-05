@@ -218,13 +218,13 @@ class Station(Base, BaseModel):
         ForeignKey("location.id", name="fk_station_location_id"),
         nullable=True,
     )
-    location = relationship("Location", lazy="joined")
+    location = relationship("Location", lazy="joined", innerjoin=True)
 
-    facilities = relationship("Facility", lazy="joined")
+    facilities = relationship("Facility", lazy="joined", innerjoin=True)
 
-    revisions = relationship("Revision", lazy="joined")
+    revisions = relationship("Revision")
 
-    photos = relationship("Photo", lazy="joined")
+    photos = relationship("Photo")
 
     code = Column(Text, index=True, nullable=True)
     name = Column(Text)
@@ -337,7 +337,7 @@ class Facility(Base, BaseModel):
         ForeignKey("network.code", name="fk_station_network_code"),
         nullable=False,
     )
-    network = relationship("Network", lazy="joined")
+    network = relationship("Network")
 
     fueltech_id = Column(
         Text,
@@ -345,23 +345,23 @@ class Facility(Base, BaseModel):
         nullable=True,
     )
     fueltech = relationship(
-        "FuelTech", back_populates="facilities", lazy="joined"
+        "FuelTech", back_populates="facilities", lazy="joined", innerjoin=True
     )
 
     status_id = Column(
         Text,
         ForeignKey("facility_status.code", name="fk_facility_status_code"),
     )
-    status = relationship("FacilityStatus", lazy="joined")
+    status = relationship("FacilityStatus", lazy="joined", innerjoin=True)
 
     station_id = Column(
         Integer,
         ForeignKey("station.id", name="fk_station_status_code"),
         nullable=True,
     )
-    station = relationship("Station", back_populates="facilities")
+    # station = relationship("Station", back_populates="facilities")
 
-    revisions = relationship("Revision", lazy="joined")
+    revisions = relationship("Revision")
 
     # DUID but modified by opennem as an identifier
     code = Column(Text, index=True)

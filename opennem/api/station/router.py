@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload, noload, raiseload
 from starlette import status
 
+from opennem.api.facility.schema import FacilityModification
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import get_database_session
 from opennem.db.models.opennem import (
@@ -167,19 +168,12 @@ def station(
         False, description="Include history in records"
     ),
 ):
+
     station = (
         session.query(Station)
-        .options(joinedload(Station.facilities))
-        # .join(Facility)
-        # .outerjoin(Facility, Facility.station_id == Station.id)
-        # .join(Station.photos)
-        # .join(Network, Facility.network_id == Network.code)
-        # .filter(Facility.station_id == Station.id)
         .filter(Station.code == station_code)
+        .filter(Facility.station_id == Station.id)
         .filter(~Facility.code.endswith("NL1"))
-        # .filter(
-        # Facility.status_id.isnot(None)
-        # )
     )
 
     if only_generators:
