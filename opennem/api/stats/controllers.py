@@ -53,7 +53,9 @@ def stats_factory(
         if key not in data_grouped:
             data_grouped[key] = 0.0
 
-        data_grouped[key] = float(sum([i["generated"] for i in list(v)]))
+        total = sum([i["generated"] for i in list(v) if i])
+
+        data_grouped[key] = float(total)
 
     history = OpennemDataHistory(
         start=start.astimezone(network_timezone),
