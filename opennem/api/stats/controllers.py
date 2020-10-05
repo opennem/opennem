@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from itertools import groupby
 from operator import itemgetter
 from typing import List, Optional
@@ -53,7 +54,14 @@ def stats_factory(
         if key not in data_grouped:
             data_grouped[key] = 0.0
 
-        total = sum([i["generated"] for i in list(v) if i])
+        # @TODO abstract this
+        total = sum(
+            [
+                i["generated"]
+                for i in list(v)
+                if type(i["generated"]) in [int, float, Decimal]
+            ]
+        )
 
         data_grouped[key] = float(total)
 
