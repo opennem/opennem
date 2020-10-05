@@ -63,7 +63,9 @@ def stats_factory(
             ]
         )
 
-        data_grouped[key] = float(total)
+        if total:
+            total = float(total)
+            data_grouped[key] = round(total, 2)
 
     history = OpennemDataHistory(
         start=start.astimezone(network_timezone),
