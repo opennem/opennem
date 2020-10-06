@@ -17,6 +17,7 @@ from sqlalchemy import (
     JSON,
     Boolean,
     Column,
+    Date,
     DateTime,
     Enum,
     ForeignKey,
@@ -142,6 +143,37 @@ class Photo(Base):
             return "https://photos.opennem.org.au/{}".format(self.name)
 
         return None
+
+
+class BomStation(Base):
+    __tablename__ = "bom_station"
+
+    code = Column(Text, primary_key=True)
+    state = Column(Text)
+    name = Column(Text)
+    registered = Column(Date)
+    lat = Column(Numeric)
+    lng = Column(Numeric)
+
+    observations = relationship("BomObservation")
+
+
+class BomObservation(Base):
+    __tablename__ = "bom_observation"
+
+    observation_time = Column(DateTime, primary_key=True)
+
+    station_id = Column(
+        Text,
+        ForeignKey("bom_station.code", name="fk_bom_observation_station_code"),
+        primary_key=True,
+    )
+    station = relationship("BomStation")
+    temp_apparent = Column(Numeric)
+    temp_air = Column(Numeric)
+    press_qnh = Column(Numeric)
+    wind_dir = Column(Text, nullable=True)
+    wind_spd = Column(Numeric)
 
 
 class Location(Base):

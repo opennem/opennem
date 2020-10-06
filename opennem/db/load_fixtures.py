@@ -16,8 +16,8 @@ from opennem.core.normalizers import (
     station_name_cleaner,
 )
 from opennem.db import db_connect
-from opennem.db.models.bom import BomStation
 from opennem.db.models.opennem import (
+    BomStation,
     Facility,
     FacilityStatus,
     FuelTech,

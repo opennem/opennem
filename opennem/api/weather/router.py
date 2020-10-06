@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from opennem.db import get_database_session
-from opennem.db.models.bom import BomObservation, BomStation
+from opennem.db.models.opennem import BomObservation, BomStation
 
 from .schema import WeatherObservation, WeatherStation
 
