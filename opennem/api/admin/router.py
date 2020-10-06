@@ -45,8 +45,8 @@ def scraper_stats(
             network=NetworkWEM,
             stats=ScraperStats(
                 scada_intervals=results[0][0],
-                scada_min=results[0][1],
-                scada_max=results[0][2],
+                scada_max=results[0][1],
+                scada_min=results[0][2],
             ),
         )
     )
@@ -56,8 +56,8 @@ def scraper_stats(
             network=NetworkNEM,
             stats=ScraperStats(
                 scada_intervals=results[1][0],
-                scada_min=results[1][1],
-                scada_max=results[1][2],
+                scada_max=results[1][1],
+                scada_min=results[1][2],
             ),
         )
     )
