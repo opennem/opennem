@@ -147,6 +147,11 @@ class Photo(Base):
 class Location(Base):
     __tablename__ = "location"
 
+    __table_args__ = (
+        Index("idx_location_geom", "geom", postgresql_using="gist"),
+        Index("idx_location_boundary", "boundary", postgresql_using="gist"),
+    )
+
     id = Column(
         Integer, Sequence("seq_location_id", start=1000), primary_key=True
     )
@@ -167,8 +172,8 @@ class Location(Base):
     geocode_skip = Column(Boolean, default=False)
     geocode_processed_at = Column(DateTime, nullable=True)
     geocode_by = Column(Text, nullable=True)
-    geom = Column(Geometry("POINT", srid=4326))
-    boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
+    geom = Column(Geometry("POINT", srid=4326, spatial_index=False))
+    boundary = Column(Geometry("MULTIPOLYGON", srid=4326, spatial_index=False))
 
     @hybrid_property
     def lat(self) -> Optional[float]:
@@ -564,12 +569,12 @@ class FacilityScada(Base, BaseModel):
             text("date_trunc('hour', trading_interval AT TIME ZONE 'UTC')"),
         ),
         # new timezone based indicies
-        Index(
-            "idx_facility_scada_trading_interval_perth_hour",
-            text(
-                "date_trunc('hour', trading_interval AT TIME ZONE 'Australia/Perth')"
-            ),
-        ),
+        # Index(
+        #     "idx_facility_scada_trading_interval_perth_hour",
+        #     text(
+        #         "date_trunc('hour', trading_interval AT TIME ZONE 'Australia/Perth')"
+        #     ),
+        # ),
     )
 
     def __str__(self) -> str:
