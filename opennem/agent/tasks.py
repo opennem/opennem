@@ -30,7 +30,7 @@ scrapy_settings["LOG_LEVEL"] = "ERROR"
 
 runner = CrawlerRunner(scrapy_settings)
 
-scheduler = RedisHuey("opennem.scraper", host=settings.cache_url)
+scheduler = RedisHuey("opennem.scraper", host=settings.cache_url.host)
 
 
 @scheduler.periodic_task(crontab(minute="*/10"))
