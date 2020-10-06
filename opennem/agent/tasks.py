@@ -1,12 +1,9 @@
-# @TODO https://docs.scrapy.org/en/latest/topics/practices.html#run-from-script
-# setup scrapy reactor
 from huey import RedisHuey, crontab
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 from twisted.internet import defer
 
-# from opennem.api.exporter import wem_run_all
 from opennem.settings import settings
 from opennem.spiders.bom.capital_observations import (
     BomAllSpider,

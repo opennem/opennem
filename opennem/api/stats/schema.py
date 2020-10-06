@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Dict, List, Optional, Tuple, Union
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, validator
 
 from opennem.schema.core import BaseConfig
 
