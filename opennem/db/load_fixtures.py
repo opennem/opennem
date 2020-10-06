@@ -144,15 +144,16 @@ def load_bom_stations():
     with open(os.path.join(FIXTURE_PATH, "stations_db.txt")) as fh:
         lines = fh.readlines()
         for line in lines:
-            code, state, name, registered, lat, lng = parse_fixed_line(line)
-            station = BomStation(
-                code=code,
-                state=state,
-                name=name,
-                registered=registered,
-                lat=lat,
-                lng=lng,
-            )
+            code, state, name, registered, lng, lat = parse_fixed_line(line)
+
+            station = s.query(BomStation).filter_by(code=code).one_or_none()
+
+            if not station:
+                station = BomStation(
+                    code=code, state=state, name=name, registered=registered,
+                )
+
+            station.geom = "SRID=4326;POINT({} {})".format(lat, lng)
 
             try:
                 s.add(station)
@@ -251,10 +252,10 @@ def update_existing_geos():
 
 
 def load_fixtures():
-    load_fueltechs()
-    load_facilitystatus()
-    load_networks()
-    # load_bom_stations()
+    # load_fueltechs()
+    # load_facilitystatus()
+    # load_networks()
+    load_bom_stations()
 
 
 if __name__ == "__main__":

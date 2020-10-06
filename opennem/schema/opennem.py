@@ -7,6 +7,7 @@ from pydantic import BaseModel, validator
 
 from opennem.api.photo.schema import Photo
 from opennem.api.stats.schema import OpennemData
+from opennem.api.weather.schema import WeatherStation
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.normalizers import (  # clean_numbers,; station_name_cleaner,
     clean_capacity,
@@ -172,8 +173,16 @@ class FacilitySchema(OpennemBaseSchema):
         return value
 
 
+class WeatherStationNearest(BaseModel):
+    code: str
+    distance: float
+
+
 class LocationSchema(OpennemBaseSchema):
     id: Optional[int]
+
+    weather_station: Optional[WeatherStation]
+    weather_nearest: Optional[WeatherStationNearest]
 
     address1: Optional[str] = ""
     address2: Optional[str] = ""

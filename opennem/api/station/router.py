@@ -8,8 +8,9 @@ from starlette import status
 
 from opennem.api.facility.schema import FacilityModification
 from opennem.core.dispatch_type import DispatchType
-from opennem.db import get_database_session
+from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import (
+    BomStation,
     Facility,
     FuelTech,
     Location,
@@ -156,6 +157,7 @@ def station_ids(
 )
 def station(
     session: Session = Depends(get_database_session),
+    engine=Depends(get_database_engine),
     station_code: str = None,
     only_generators: bool = Query(True, description="Show only generators"),
     power_include: Optional[bool] = Query(
@@ -210,6 +212,30 @@ def station(
 
     if power_include:
         pass
+
+    if station.location and station.location.geom:
+        __query = """
+            select
+                code,
+                ST_Distance(l.geom, bs.geom, false) / 1000.0 as dist
+            from bom_station bs, location l
+            where l.id = {id}
+            order by dist
+            limit 1
+        """.format(
+            id=station.location.id
+        )
+
+        result = []
+
+        with engine.connect() as c:
+            result = list(c.execute(__query))
+
+            if len(result):
+                station.location.weather_nearest = {
+                    "code": result[0][0],
+                    "distance": round(result[0][1], 2),
+                }
 
     return station
 

@@ -208,6 +208,21 @@ class Location(Base):
 
     # station_id = Column(Integer, ForeignKey("station.id"))
 
+    # @TODO sort out this join based on this lateral query ..
+
+    #  select l.id, l.locality, l.state, closest_station.state, closest_station.code, closest_station.dist from location l
+    #  left join lateral (
+    # 	select code, state, ST_Distance(l.geom, bom_station.geom) / 1000 as dist from bom_station order by l.geom <-> bom_station.geom limit 1
+    #  ) AS closest_station on TRUE;
+
+    # weather_station = relationship(
+    #     "BomStation",
+    #     primaryjoin="func.ST_ClosestPoint(remote(BomStation.geom), foreign(Location.geom))",
+    #     viewonly=True,
+    #     uselist=True,
+    #     lazy="joined",
+    # )
+
     address1 = Column(Text)
     address2 = Column(Text)
     locality = Column(Text)
