@@ -7,7 +7,7 @@ from scrapy.utils.project import get_project_settings
 from twisted.internet import defer
 
 # from opennem.api.exporter import wem_run_all
-from opennem.settings import get_redis_host
+from opennem.settings import settings
 from opennem.spiders.bom.capital_observations import (
     BomAllSpider,
     BomCapitalsSpider,
@@ -23,16 +23,14 @@ from opennem.spiders.wem.participant import WemParticipantLiveSpider
 
 configure_logging()
 
-settings = get_project_settings()
+scrapy_settings = get_project_settings()
 
 # override settings
-settings["LOG_LEVEL"] = "ERROR"
+scrapy_settings["LOG_LEVEL"] = "ERROR"
 
-runner = CrawlerRunner(settings)
+runner = CrawlerRunner(scrapy_settings)
 
-REDIS_HOST = get_redis_host()
-
-scheduler = RedisHuey("opennem.scraper", host=REDIS_HOST)
+scheduler = RedisHuey("opennem.scraper", host=settings.cache_url)
 
 
 @scheduler.periodic_task(crontab(minute="*/10"))

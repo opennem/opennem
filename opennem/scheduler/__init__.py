@@ -1,11 +1,11 @@
 from huey import RedisHuey, crontab
 
+from opennem.settings import settings
+
 # from opennem.api.exporter import wem_run_all
-from opennem.settings import get_redis_host
 
-REDIS_HOST = get_redis_host()
 
-huey = RedisHuey("opennem.exporter", host=REDIS_HOST)
+huey = RedisHuey("opennem.exporter", host=settings.cache_url)
 
 
 # @huey.periodic_task(crontab(minute="*/10"))

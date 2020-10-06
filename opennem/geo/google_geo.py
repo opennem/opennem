@@ -18,13 +18,13 @@ from datetime import timedelta
 import requests
 import requests_cache
 
-from opennem.settings import GOOGLE_PLACES_API_KEY, REQUESTS_CACHE_PATH
+from opennem.settings import settings
 
 logging.basicConfig(level=logging.INFO)
 
 
 requests_cache.install_cache(
-    REQUESTS_CACHE_PATH, expire_after=timedelta(days=60)
+    settings.requests_cache_path, expire_after=timedelta(days=60)
 )
 
 BACKOFF_TIME = 30
@@ -42,7 +42,7 @@ def google_geocode(
     query_components = {}
 
     url_params = {
-        "key": GOOGLE_PLACES_API_KEY,
+        "key": settings.google_places_api_key,
     }
 
     if region:
@@ -96,7 +96,7 @@ def lookup_placeid(place_id, api_key=None, retry=0):
         "https://maps.googleapis.com/maps/api/place/details/json"
     )
 
-    url_params = {"key": GOOGLE_PLACES_API_KEY, "place_id": place_id}
+    url_params = {"key": settings.google_places_api_key, "place_id": place_id}
 
     results = requests.get(GOOGLE_PLACES_URL, params=url_params).json()
 
@@ -138,7 +138,7 @@ def place_autocomplete(
     query_components = {}
 
     url_params = {
-        "key": GOOGLE_PLACES_API_KEY,
+        "key": settings.google_places_api_key,
         "input": query,
     }
 
@@ -198,7 +198,7 @@ def place_search(query, api_key=None, return_full_response=False):
     query_components = {}
 
     url_params = {
-        "key": GOOGLE_PLACES_API_KEY,
+        "key": settings.google_places_api_key,
         "input": query,
         "inputtype": "textquery",
         "language": "en-AU",

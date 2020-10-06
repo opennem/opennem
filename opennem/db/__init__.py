@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from opennem.exporter.encoders import opennem_deserialize, opennem_serialize
-from opennem.settings import get_database_host
+from opennem.settings import settings
 
 DeclarativeBase = declarative_base()
 
@@ -19,7 +19,7 @@ def db_connect(db_name=None, debug=False):
 
     Returns sqlalchemy engine instance
     """
-    db_conn_str = get_database_host()
+    db_conn_str = settings.db_url
 
     connect_args = {}
 
