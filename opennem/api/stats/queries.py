@@ -56,7 +56,7 @@ def energy_facility(
         select
             i.interval AS trading_day,
             fs.facility_code as facility_code,
-            coalesce(sum(fs.eoi_quantity), NULL) as energy_output
+            coalesce(sum(fs.eoi_quantity), NULL) / 12 as energy_output
         from intervals i
         left join facility_scada fs on date_trunc('{trunc}', fs.trading_interval AT TIME ZONE 'UTC')::timestamp = i.interval
         where
