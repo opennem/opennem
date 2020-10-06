@@ -57,18 +57,35 @@ def process_unit_scada(table):
     records = table["records"]
 
     records_to_store = []
+    records_primary_keys = []
 
     for record in records:
-        records_to_store.append(
-            {
-                "trading_interval": parse_nemweb_interval(
-                    record["SETTLEMENTDATE"]
-                ),
-                "facility_code": normalize_duid(record["DUID"]),
-                "generated": float(record["SCADAVALUE"]),
-                "network_id": "NEM",
-            }
-        )
+        trading_interval = parse_nemweb_interval(record["SETTLEMENTDATE"])
+        facility_code = normalize_duid(record["DUID"])
+
+        if not trading_interval or not facility_code:
+            continue
+
+        # Since this can insert 1M+ records at a time we need to
+        # do a separate in-memory check of primary key constraints
+        # better way of doing this .. @TODO
+        _unique_set = (trading_interval, facility_code, "NEM")
+
+        if _unique_set not in records_primary_keys:
+
+            records_to_store.append(
+                {
+                    "trading_interval": trading_interval,
+                    "facility_code": facility_code,
+                    "generated": float(record["SCADAVALUE"]),
+                    "network_id": "NEM",
+                }
+            )
+
+            records_primary_keys.append(_unique_set)
+
+    # free
+    records_primary_keys = []
 
     logger.debug("Saving %d records", len(records_to_store))
 
@@ -98,18 +115,34 @@ def process_unit_solution(table):
     records = table["records"]
 
     records_to_store = []
+    records_primary_keys = []
 
     for record in records:
-        records_to_store.append(
-            {
-                "trading_interval": parse_nemweb_interval(
-                    record["SETTLEMENTDATE"]
-                ),
-                "facility_code": normalize_duid(record["DUID"]),
-                "eoi_quantity": float(record["INITIALMW"]),
-                "network_id": "NEM",
-            }
-        )
+        trading_interval = parse_nemweb_interval(record["SETTLEMENTDATE"])
+        facility_code = normalize_duid(record["DUID"])
+
+        if not trading_interval or not facility_code:
+            continue
+
+        # Since this can insert 1M+ records at a time we need to
+        # do a separate in-memory check of primary key constraints
+        # better way of doing this .. @TODO
+        _unique_set = (trading_interval, facility_code, "NEM")
+
+        if _unique_set not in records_primary_keys:
+
+            records_to_store.append(
+                {
+                    "trading_interval": trading_interval,
+                    "facility_code": facility_code,
+                    "eoi_quantity": float(record["INITIALMW"]),
+                    "network_id": "NEM",
+                }
+            )
+            records_primary_keys.append(_unique_set)
+
+    # free
+    records_primary_keys = []
 
     logger.debug("Saving %d records", len(records_to_store))
 
