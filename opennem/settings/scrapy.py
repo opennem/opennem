@@ -12,7 +12,7 @@ SPIDER_MODULES = ["opennem.spiders"]
 NEWSPIDER_MODULE = "opennem.spiders"
 
 
-USER_AGENT = "opennem/0.5.0 (+https://opennem.org.au)"
+USER_AGENT = "opennem/v3.0.0 (+https://opennem.org.au)"
 ROBOTSTXT_OBEY = False
 CONCURRENT_REQUESTS = 16
 COOKIES_ENABLED = True
