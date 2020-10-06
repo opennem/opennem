@@ -148,14 +148,32 @@ class Photo(Base):
 class BomStation(Base):
     __tablename__ = "bom_station"
 
+    __table_args__ = (
+        Index("idx_bom_station_geom", "geom", postgresql_using="gist"),
+    )
+
     code = Column(Text, primary_key=True)
     state = Column(Text)
     name = Column(Text)
     registered = Column(Date)
-    lat = Column(Numeric)
-    lng = Column(Numeric)
 
     observations = relationship("BomObservation")
+
+    geom = Column(Geometry("POINT", srid=4326, spatial_index=False))
+
+    @hybrid_property
+    def lat(self) -> Optional[float]:
+        if self.geom:
+            return wkb.loads(bytes(self.geom.data)).y
+
+        return None
+
+    @hybrid_property
+    def lng(self) -> Optional[float]:
+        if self.geom:
+            return wkb.loads(bytes(self.geom.data)).x
+
+        return None
 
 
 class BomObservation(Base):
