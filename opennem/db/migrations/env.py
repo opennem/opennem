@@ -3,14 +3,13 @@ import os
 import re
 import sys
 from logging.config import fileConfig
-from pprint import pprint
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 sys.path = sys.path + [os.getcwd()]
 
-from opennem.db.models import nemweb, nemweb_meta, opennem  # isort:skip
+from opennem.db.models import nemweb, nemweb_meta, opennem, bom  # isort:skip
 
 USE_TWOPHASE = False
 
@@ -25,6 +24,7 @@ target_metadata = {
     "nemweb": nemweb.metadata,
     "nemweb_meta": nemweb_meta.metadata,
     "opennem": opennem.metadata,
+    "bom": bom.metadata,
 }
 
 # my_important_option = config.get_main_option("my_important_option")
