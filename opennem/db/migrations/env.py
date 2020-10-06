@@ -9,7 +9,7 @@ from sqlalchemy import engine_from_config, pool
 
 sys.path = sys.path + [os.getcwd()]
 
-from opennem.db.models import opennem, bom  # isort:skip
+from opennem.db.models import opennem  # isort:skip
 
 # from opennem.db.models import nemweb, nemweb_meta # isort:skip
 
@@ -26,7 +26,7 @@ target_metadata = {
     # "nemweb": nemweb.metadata,
     # "nemweb_meta": nemweb_meta.metadata,
     "opennem": opennem.metadata,
-    "bom": bom.metadata,
+    # "bom": bom.metadata,
 }
 
 
