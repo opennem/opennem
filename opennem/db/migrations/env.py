@@ -1,20 +1,12 @@
 import logging
-import os
-import re
-import sys
 from logging.config import fileConfig
+from typing import List
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from opennem.db.models import opennem
 from opennem.settings import settings
-
-sys.path = sys.path + [os.getcwd()]
-
-from opennem.db.models import opennem  # isort:skip
-
-# from opennem.db.models import nemweb, nemweb_meta # isort:skip
-
 
 config = context.config
 fileConfig(config.config_file_name)
@@ -26,7 +18,8 @@ config.set_main_option("sqlalchemy.url", settings.db_url)
 target_metadata = opennem.metadata
 
 
-def exclude_tables_from_config(config_):
+def exclude_tables_from_config(config_: str) -> List[str]:
+    tables = []
     tables_ = config_.get("tables", None)
     if tables_ is not None:
         tables = tables_.split(",")

@@ -1,13 +1,13 @@
-"""empty message
+"""This is the base migration as of this date. Don't touch this.
 
 Revision ID: 42cdf37a6e3b
-Revises: 
+Revises:
 Create Date: 2020-10-06 13:53:50.693303
 
 """
-from alembic import op
-import sqlalchemy as sa
 import geoalchemy2
+import sqlalchemy as sa
+from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
