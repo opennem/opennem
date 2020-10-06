@@ -601,12 +601,7 @@ class FacilityScada(Base, BaseModel):
             text("date_trunc('hour', trading_interval AT TIME ZONE 'UTC')"),
         ),
         # new timezone based indicies
-        # Index(
-        #     "idx_facility_scada_trading_interval_perth_hour",
-        #     text(
-        #         "date_trunc('hour', trading_interval AT TIME ZONE 'Australia/Perth')"
-        #     ),
-        # ),
+        # @NOTE: other indicies in migration files
     )
 
     def __str__(self) -> str:
@@ -637,7 +632,6 @@ class FacilityScada(Base, BaseModel):
     )
 
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
-
     generated = Column(Numeric, nullable=True)
     eoi_quantity = Column(Numeric, nullable=True)
 
