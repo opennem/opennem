@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 
 from scrapy.exceptions import DropItem
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import text
 
@@ -29,40 +30,51 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
 
         csvreader = csv.DictReader(item["content"].split("\n"))
 
-        q = self.engine.execute(
-            text(
-                "select max(trading_interval) from balancing_summary where network_id='WEM'"
-            )
-        )
+        records_to_store = []
 
-        interval_max = q.fetchone()[0] or wem_timezone.localize(
-            datetime(1900, 1, 1, 0, 0, 0)
-        )
+        for record in csvreader:
+            trading_interval = self.parse_interval(record["Trading Interval"])
 
-        objects = [
-            BalancingSummary(
-                network_id="WEM",
-                trading_interval=self.parse_interval(row["Trading Interval"]),
-                forecast_load=row["Load Forecast (MW)"],
-                generation_scheduled=row["Scheduled Generation (MW)"],
-                generation_non_scheduled=row["Non-Scheduled Generation (MW)"],
-                generation_total=row["Total Generation (MW)"],
-                price=row["Final Price ($/MWh)"],
+            if not trading_interval:
+                continue
+
+            records_to_store.append(
+                {
+                    "network_id": "WEM",
+                    "trading_interval": trading_interval,
+                    "forecast_load": record["Load Forecast (MW)"],
+                    "generation_scheduled": record[
+                        "Scheduled Generation (MW)"
+                    ],
+                    "generation_non_scheduled": record[
+                        "Non-Scheduled Generation (MW)"
+                    ],
+                    "generation_total": record["Total Generation (MW)"],
+                    "price": record["Final Price ($/MWh)"],
+                }
             )
-            for row in csvreader
-            if self.parse_interval(row["Trading Interval"]) > interval_max
-        ]
+
+        stmt = insert(BalancingSummary).values(records_to_store)
+        stmt.bind = self.engine
+        stmt = stmt.on_conflict_do_update(
+            constraint="balancing_summary_pkey",
+            set_={
+                "price": stmt.excluded.price,
+                "generation_total": stmt.excluded.generation_total,
+            },
+        )
 
         try:
-            s.bulk_save_objects(objects)
+            r = s.execute(stmt)
             s.commit()
+            return r
         except Exception as e:
-            logger.error("Error: {}".format(e))
-            raise e
+            logger.error("Error inserting records")
+            logger.error(e)
         finally:
             s.close()
 
-        return len(objects)
+        return len(records_to_store)
 
 
 class WemStoreBalancingSummaryArchive(DatabaseStoreBase):
