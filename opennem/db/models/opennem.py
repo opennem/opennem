@@ -563,6 +563,13 @@ class FacilityScada(Base, BaseModel):
             "idx_facility_scada_trading_interval_hour",
             text("date_trunc('hour', trading_interval AT TIME ZONE 'UTC')"),
         ),
+        # new timezone based indicies
+        Index(
+            "idx_facility_scada_trading_interval_perth_hour",
+            text(
+                "date_trunc('hour', trading_interval AT TIME ZONE 'Australia/Perth')"
+            ),
+        ),
     )
 
     def __str__(self) -> str:

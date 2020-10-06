@@ -9,7 +9,9 @@ from sqlalchemy import engine_from_config, pool
 
 sys.path = sys.path + [os.getcwd()]
 
-from opennem.db.models import nemweb, nemweb_meta, opennem, bom  # isort:skip
+from opennem.db.models import opennem, bom  # isort:skip
+
+# from opennem.db.models import nemweb, nemweb_meta # isort:skip
 
 USE_TWOPHASE = False
 
@@ -21,13 +23,30 @@ logger = logging.getLogger("alembic.env")
 db_names = config.get_main_option("databases")
 
 target_metadata = {
-    "nemweb": nemweb.metadata,
-    "nemweb_meta": nemweb_meta.metadata,
+    # "nemweb": nemweb.metadata,
+    # "nemweb_meta": nemweb_meta.metadata,
     "opennem": opennem.metadata,
     "bom": bom.metadata,
 }
 
-# my_important_option = config.get_main_option("my_important_option")
+
+def exclude_tables_from_config(config_):
+    tables_ = config_.get("tables", None)
+    if tables_ is not None:
+        tables = tables_.split(",")
+    return tables
+
+
+exclude_tables = exclude_tables_from_config(
+    config.get_section("alembic:exclude")
+)
+
+
+def include_object(object, name, type_, reflected, compare_to):
+    if type_ == "table" and name in exclude_tables:
+        return False
+    else:
+        return True
 
 
 def run_migrations_offline():
@@ -61,6 +80,7 @@ def run_migrations_offline():
                 target_metadata=target_metadata.get(name),
                 literal_binds=True,
                 dialect_opts={"paramstyle": "named"},
+                include_object=include_object,
             )
             with context.begin_transaction():
                 context.run_migrations(engine_name=name)
@@ -103,6 +123,7 @@ def run_migrations_online():
                 upgrade_token="%s_upgrades" % name,
                 downgrade_token="%s_downgrades" % name,
                 target_metadata=target_metadata.get(name),
+                include_object=include_object,
             )
             context.run_migrations(engine_name=name)
 
