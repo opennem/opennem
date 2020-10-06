@@ -7,27 +7,23 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from opennem.settings import settings
+
 sys.path = sys.path + [os.getcwd()]
 
 from opennem.db.models import opennem  # isort:skip
 
 # from opennem.db.models import nemweb, nemweb_meta # isort:skip
 
-USE_TWOPHASE = False
-
 
 config = context.config
 fileConfig(config.config_file_name)
 logger = logging.getLogger("alembic.env")
 
-db_names = config.get_main_option("databases")
+config.set_main_option("sqlalchemy.url", settings.db_url)
 
-target_metadata = {
-    # "nemweb": nemweb.metadata,
-    # "nemweb_meta": nemweb_meta.metadata,
-    "opennem": opennem.metadata,
-    # "bom": bom.metadata,
-}
+
+target_metadata = opennem.metadata
 
 
 def exclude_tables_from_config(config_):
@@ -61,29 +57,17 @@ def run_migrations_offline():
     script output.
 
     """
-    # for the --sql use case, run migrations for each URL into
-    # individual files.
+    url = config.get_main_option("sqlalchemy.url")
+    context.configure(
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+        include_object=include_object,
+    )
 
-    engines = {}
-    for name in re.split(r",\s*", db_names):
-        engines[name] = rec = {}
-        rec["url"] = context.config.get_section_option(name, "sqlalchemy.url")
-
-    for name, rec in engines.items():
-        logger.info("Migrating database %s" % name)
-        file_ = "%s.sql" % name
-        logger.info("Writing output to %s" % file_)
-        with open(file_, "w") as buffer:
-            context.configure(
-                url=rec["url"],
-                output_buffer=buffer,
-                target_metadata=target_metadata.get(name),
-                literal_binds=True,
-                dialect_opts={"paramstyle": "named"},
-                include_object=include_object,
-            )
-            with context.begin_transaction():
-                context.run_migrations(engine_name=name)
+    with context.begin_transaction():
+        context.run_migrations()
 
 
 def run_migrations_online():
@@ -93,53 +77,21 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
 
-    # for the direct-to-DB use case, start a transaction on all
-    # engines, then run all migrations, then commit all transactions.
-
-    engines = {}
-    for name in re.split(r",\s*", db_names):
-        engines[name] = rec = {}
-        rec["engine"] = engine_from_config(
-            context.config.get_section(name),
-            prefix="sqlalchemy.",
-            poolclass=pool.NullPool,
+    with connectable.connect() as connection:
+        context.configure(
+            include_object=include_object,
+            connection=connection,
+            target_metadata=target_metadata,
         )
 
-    for name, rec in engines.items():
-        engine = rec["engine"]
-        rec["connection"] = conn = engine.connect()
-
-        if USE_TWOPHASE:
-            rec["transaction"] = conn.begin_twophase()
-        else:
-            rec["transaction"] = conn.begin()
-
-    try:
-        for name, rec in engines.items():
-            logger.info("Migrating database %s" % name)
-            context.configure(
-                connection=rec["connection"],
-                upgrade_token="%s_upgrades" % name,
-                downgrade_token="%s_downgrades" % name,
-                target_metadata=target_metadata.get(name),
-                include_object=include_object,
-            )
-            context.run_migrations(engine_name=name)
-
-        if USE_TWOPHASE:
-            for rec in engines.values():
-                rec["transaction"].prepare()
-
-        for rec in engines.values():
-            rec["transaction"].commit()
-    except:
-        for rec in engines.values():
-            rec["transaction"].rollback()
-        raise
-    finally:
-        for rec in engines.values():
-            rec["connection"].close()
+        with context.begin_transaction():
+            context.run_migrations()
 
 
 if context.is_offline_mode():
