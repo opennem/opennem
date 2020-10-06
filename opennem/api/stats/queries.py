@@ -43,6 +43,10 @@ def energy_facility(
     network_code = network_code.upper()
     trunc, interval_str = get_interval_map(interval)
     period = get_period_map(period)
+    scale = 1
+
+    if network_code == "NEM":
+        scale = 12
 
     __query = """
         with intervals as (
@@ -56,7 +60,7 @@ def energy_facility(
         select
             i.interval AS trading_day,
             fs.facility_code as facility_code,
-            coalesce(sum(fs.eoi_quantity), NULL) / 12 as energy_output
+            coalesce(sum(fs.eoi_quantity), NULL) / {scale} as energy_output
         from intervals i
         left join facility_scada fs on date_trunc('{trunc}', fs.trading_interval AT TIME ZONE 'UTC')::timestamp = i.interval
         where
@@ -73,6 +77,7 @@ def energy_facility(
         trunc=trunc,
         interval=interval_str,
         period=period,
+        scale=scale,
     )
 
     return query
