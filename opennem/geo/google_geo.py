@@ -18,13 +18,13 @@ from datetime import timedelta
 import requests
 import requests_cache
 
-from opennem.settings import settings
+from opennem.settings import scrapy_settings
 
 logging.basicConfig(level=logging.INFO)
 
 
 requests_cache.install_cache(
-    settings.requests_cache_path, expire_after=timedelta(days=60)
+    scrapy_settings.requests_cache_path, expire_after=timedelta(days=60)
 )
 
 BACKOFF_TIME = 30
@@ -42,7 +42,7 @@ def google_geocode(
     query_components = {}
 
     url_params = {
-        "key": settings.google_places_api_key,
+        "key": scrapy_settings.google_places_api_key,
     }
 
     if region:
@@ -96,7 +96,10 @@ def lookup_placeid(place_id, api_key=None, retry=0):
         "https://maps.googleapis.com/maps/api/place/details/json"
     )
 
-    url_params = {"key": settings.google_places_api_key, "place_id": place_id}
+    url_params = {
+        "key": scrapy_settings.google_places_api_key,
+        "place_id": place_id,
+    }
 
     results = requests.get(GOOGLE_PLACES_URL, params=url_params).json()
 
@@ -138,7 +141,7 @@ def place_autocomplete(
     query_components = {}
 
     url_params = {
-        "key": settings.google_places_api_key,
+        "key": scrapy_settings.google_places_api_key,
         "input": query,
     }
 
@@ -198,7 +201,7 @@ def place_search(query, api_key=None, return_full_response=False):
     query_components = {}
 
     url_params = {
-        "key": settings.google_places_api_key,
+        "key": scrapy_settings.google_places_api_key,
         "input": query,
         "inputtype": "textquery",
         "language": "en-AU",
