@@ -254,7 +254,7 @@ def energy_station(
         data = OpennemData(
             network=network_code,
             data_type="energy",
-            units="MW",
+            units="MWh",
             code=facility_code,
             history=history,
         )
