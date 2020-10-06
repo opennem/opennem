@@ -12,6 +12,8 @@ class OpennemSettings(BaseSettings):
     google_places_api_key: str
     requests_cache_path: str = ".requests"
 
+    slack_hook_url: Optional[str]
+
     # @todo overwrite scrapy settings here
     scrapy: Optional[Settings] = get_project_settings()
 
@@ -20,4 +22,5 @@ class OpennemSettings(BaseSettings):
         fields = {
             "db_url": {"env": "DATABASE_HOST_URL"},
             "cache_url": {"env": "REDIS_HOST_URL"},
+            "slack_hook_url": {"env": "WATCHDOG_SLACK_HOOK"},
         }
