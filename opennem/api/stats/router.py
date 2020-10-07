@@ -364,6 +364,11 @@ def price_region(
 
     result_set = {}
 
+    if len(results) < 1:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No data found"
+        )
+
     for res in results:
         price = res[1]
 
