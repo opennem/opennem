@@ -1,4 +1,4 @@
-"""empty message
+"""Add timezone indexes to facility_scada
 
 Revision ID: d45e70a09231
 Revises: 42cdf37a6e3b
