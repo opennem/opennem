@@ -27,6 +27,8 @@ AUTOTHROTTLE_ENABLED = True
 AUTOTHROTTLE_START_DELAY = 5
 AUTOTHROTTLE_MAX_DELAY = 60
 
+SPIDER_MODULES = ["opennem.spiders"]
+SPIDER_LOADER_WARN_ONLY = True
 
 # Pipline docs:
 # 1xx series - download handlers

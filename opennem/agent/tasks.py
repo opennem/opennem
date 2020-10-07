@@ -40,20 +40,22 @@ scrapy_settings["LOG_LEVEL"] = "ERROR"
 
 scheduler = RedisHuey("opennem.scraper", host=settings.cache_url.host)
 
+runner = CrawlerProcess(scrapy_settings)
+
 
 @scheduler.periodic_task(crontab(minute="*/1"))
+@defer.inlineCallbacks
 def every_minute():
-    runner = CrawlerProcess(scrapy_settings)
-    runner.crawl(NemwebLatestPriceSpider)
-    runner.crawl(NemwebLatestDispatchScada)
-    runner.start()
+    # runner = CrawlerProcess(scrapy_settings)
+    yield runner.crawl(NemwebLatestPriceSpider)
+    yield runner.crawl(NemwebLatestDispatchScada)
+    # runner.start()
 
 
 @scheduler.periodic_task(crontab(minute="*/5"))
+@defer.inlineCallbacks
 def every_five():
-    runner = CrawlerProcess(scrapy_settings)
-    runner.crawl(BomCapitalsSpider)
-    runner.start()
+    yield runner.crawl(BomCapitalsSpider)
 
 
 @scheduler.periodic_task(crontab(minute="*/10"))
@@ -91,7 +93,6 @@ def every_hour():
 @scheduler.periodic_task(crontab(hour="18-20"))
 # @defer.inlineCallbacks
 def crawl_dispatch_dailies():
-    runner = CrawlerProcess(scrapy_settings)
     runner.crawl(NemwebCurrentDispatch)
     runner.start()
 
@@ -101,3 +102,5 @@ def run_onstartup():
     runner = CrawlerProcess(scrapy_settings)
     runner.start(stop_after_crawl=False)
 
+
+runner.start(stop_after_crawl=False)

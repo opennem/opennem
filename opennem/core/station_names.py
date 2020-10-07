@@ -1,24 +1,6 @@
-import json
-import os
+from opennem.core.loader import load_data
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
-
-
-def load_facility_stations(fixture_name):
-    fixture_path = os.path.join(DATA_PATH, fixture_name)
-
-    if not os.path.isfile(fixture_path):
-        raise Exception("Not a file: {}".format(fixture_path))
-
-    fixture = None
-
-    with open(fixture_path) as fh:
-        fixture = json.load(fh)
-
-    return fixture
-
-
-STATION_NAME_MAP = load_facility_stations("station_name_maps.json")
+STATION_NAME_MAP = load_data("station_name_maps.json")
 
 
 def station_map_name(station_name):

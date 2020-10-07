@@ -1,13 +1,16 @@
 import csv
 import json
 import os
+import sys
 import zipfile
 from pathlib import Path
+from pkgutil import get_data
 from typing import Any, List, Optional
 
-# DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
-DATA_PATH = Path(__file__).parent / "data"
-PROJECT_DATA_PATH = Path(__file__).parent.parent.parent / "data"
+MODULE_PATH = Path(os.path.dirname(sys.modules["opennem"].__file__))
+DATA_PATH = "core/data"
+FIXTURE_PATH = "db/fixtures"
+PROJECT_DATA_PATH = "data"
 
 JSON_EXTENSIONS = [".json", ".jsonl", ".geojson"]
 
@@ -21,30 +24,43 @@ class FileInvalid(Exception):
 
 
 def load_data(
-    file_name: str, from_project: bool = False, from_fixture: bool = False
+    file_name: str,
+    from_project: bool = False,
+    from_fixture: bool = False,
+    skip_loaders: bool = False,
 ) -> Any:
     """
         Load a CSV or JSON data file from either the library
         or project data directory
 
     """
-    data_path = PROJECT_DATA_PATH if from_project else DATA_PATH
+    data_path = (
+        PROJECT_DATA_PATH
+        if from_project
+        else FIXTURE_PATH
+        if from_fixture
+        else DATA_PATH
+    )
 
-    file_path: Path = data_path / Path(file_name)
+    file_path = Path(file_name)
 
-    if not file_path.exists() and file_path.is_file():
-        raise FileNotFound("Not a file: {}".format(file_path))
+    data_content = get_data(
+        "opennem", os.path.join(data_path, file_name)
+    ).decode("utf-8")
+
+    if skip_loaders:
+        return data_content
 
     if file_path.suffix in [".zip"]:
-        return load_data_zip(file_path)
+        return load_data_zip(data_content)
 
     if file_path.suffix in [".csv"]:
-        return load_data_csv(file_path)
+        return load_data_csv(data_content)
 
     if file_path.suffix in JSON_EXTENSIONS:
-        return load_data_json(file_path)
+        return load_data_json(data_content)
 
-    return load_data_string(file_path)
+    return data_content
 
 
 def load_data_string(file_path: Path) -> str:
@@ -79,11 +95,10 @@ def load_data_zip(file_path: Path) -> str:
             )
 
 
-def load_data_json(file_path: Path) -> Any:
+def load_data_json(file_content: str) -> Any:
     fixture: Any = None
 
-    with file_path.open() as fh:
-        fixture = json.load(fh)
+    fixture = json.loads(file_content)
 
     return fixture
 

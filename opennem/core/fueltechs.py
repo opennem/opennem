@@ -1,6 +1,6 @@
 import csv
 import logging
-import os
+from pkgutil import get_data
 
 logger = logging.getLogger(__name__)
 
@@ -10,9 +10,6 @@ LEGACY_FUELTECH_MAP = {
     "solar": "solar_utility",
     "biomass": "bioenergy_biomass",
 }
-
-
-DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
 
 
 def clean_fueltech(ft):
@@ -54,24 +51,22 @@ def load_fueltech_map(fixture_name):
         "load_type",
     ]
 
-    fixture_path = os.path.join(DATA_PATH, fixture_name)
-
-    if not os.path.isfile(fixture_path):
-        raise Exception("Not a file: {}".format(fixture_path))
+    # Funky encoding because of save from Excel .. leave it
+    csv_data = (
+        get_data("opennem", "core/data/{}".format(fixture_name))
+        .decode("utf-8-sig")
+        .splitlines()
+    )
 
     fueltech_map = {}
 
-    # Funky encoding because of save from Excel .. leave it
-    with open(fixture_path, encoding="utf-8-sig") as fh:
-        csvreader = csv.DictReader(fh)
-        for line in csvreader:
-            record = [
-                i or None for field, i in line.items() if field in MAP_KEYS
-            ]
+    csvreader = csv.DictReader(csv_data)
+    for line in csvreader:
+        record = [i or None for field, i in line.items() if field in MAP_KEYS]
 
-            key = tuple(map(clean_fueltech, record))
+        key = tuple(map(clean_fueltech, record))
 
-            fueltech_map[key] = line["fueltech_map"]
+        fueltech_map[key] = line["fueltech_map"]
 
     return fueltech_map
 
@@ -91,6 +86,7 @@ def lookup_fueltech(
         to opennem fueltechs using the csv file in the data directory
 
     """
+
     ft = clean_fueltech(fueltype)
     tt = clean_fueltech(techtype)
     ftd = clean_fueltech(fueltype_desc)

@@ -55,8 +55,8 @@ db_misc.py
 init-dev.sh
 init.sh
 *.log
-data/mms/
-data/aemo/
+opennem/data/mms/
+opennem/data/aemo/
 .mypy_cache/
 wem-stats.sh
 .env.production

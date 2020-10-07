@@ -1,10 +1,10 @@
-from opennem.db.load_fixtures import load_fixture
+from opennem.core.loader import load_data
 
 from .mms import run_import_mms
 
 
 def run_import_opennem_registry():
-    station_fixture = load_fixture("facility_registry.json")
+    station_fixture = load_data("facility_registry.json", from_fixture=True)
     mms = run_import_mms()
 
     nem_stations = {
