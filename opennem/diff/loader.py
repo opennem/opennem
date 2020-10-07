@@ -4,7 +4,6 @@ from typing import Any, List
 
 from opennem.core.loader import load_data
 from opennem.core.normalizers import clean_capacity, normalize_whitespace
-from opennem.db.load_fixtures import load_fixture
 from opennem.importer.compat import (
     map_compat_facility_state,
     map_compat_fueltech,

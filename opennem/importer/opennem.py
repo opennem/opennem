@@ -1,17 +1,10 @@
 import json
-import os
 from typing import List
 
-import dictdiffer
-from dictdiffer import diff
-
-from opennem.core import load_data_csv
 from opennem.core.facilitystations import facility_station_join_by_name
-from opennem.core.facilitystatus import parse_facility_status
 from opennem.core.loader import load_data
 from opennem.db.models.opennem import Facility, Station
 from opennem.exporter.encoders import OpenNEMJSONEncoder
-from opennem.importer.compat import map_compat_facility_state
 from opennem.schema.opennem import StationSchema
 from opennem.utils.log_config import logging
 
@@ -27,13 +20,13 @@ RECORD_MODEL_MAP = {
 }
 
 
-def opennem_import():
+def opennem_import_patches():
     """
         Reads the OpenNEM data source
 
     """
 
-    opennem_records = load_data_csv("opennem.csv")
+    opennem_records = load_data("opennem.csv", from_project=True)
 
     for rec in opennem_records:
         logger.debug(rec)
