@@ -38,6 +38,7 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
             records_to_store.append(
                 {
                     "network_id": "WEM",
+                    "network_region": "WEM",
                     "trading_interval": trading_interval,
                     "forecast_load": record["Load Forecast (MW)"],
                     "generation_scheduled": record[
