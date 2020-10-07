@@ -1,18 +1,20 @@
 from datetime import datetime
-from functools import reduce
 from itertools import groupby
 from operator import attrgetter
 
+import pytz
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
 
+from opennem.core.networks import network_from_network_region
 from opennem.core.time import human_to_interval
-from opennem.db import get_database_session
-from opennem.db.models.opennem import Facility, FacilityScada, Station
+from opennem.db import get_database_engine, get_database_session
+from opennem.db.models.opennem import FacilityScada, Station
 
 from .controllers import stats_factory, stats_set_factory
-from .schema import OpennemData, OpennemDataSet, StationScadaReading
+from .queries import energy_facility, energy_year_network
+from .schema import OpennemData, OpennemDataHistory, OpennemDataSet
 
 router = APIRouter()
 
@@ -146,3 +148,174 @@ def power_station(
     )
 
     return output
+
+
+SUPPORTED_PERIODS = ["7d", "1M", "1Y"]
+SUPPORTED_INTERVALS = ["1d", "1h", "1M"]
+
+
+@router.get(
+    "/energy/station/{network_code}/{station_code}",
+    name="Energy Station",
+    response_model=OpennemDataSet,
+)
+def energy_station(
+    engine=Depends(get_database_engine),
+    session: Session = Depends(get_database_session),
+    network_code: str = Query(..., description="Network code"),
+    station_code: str = Query(..., description="Station Code"),
+    interval: str = Query("1d", description="Interval"),
+    period: str = Query("7d", description="Period"),
+) -> OpennemDataSet:
+    """
+        Get energy output for a station (list of facilities)
+        over a period
+    """
+
+    if interval not in SUPPORTED_INTERVALS:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Interval not supported",
+        )
+
+    if period not in SUPPORTED_PERIODS:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Period not supported",
+        )
+
+    network_code = network_code.upper()
+
+    if network_code not in ["WEM", "NEM"]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
+        )
+
+    station = (
+        session.query(Station)
+        .join(Station.facilities)
+        .filter(Station.code == station_code)
+        .one_or_none()
+    )
+
+    if not station:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
+        )
+
+    if len(station.facilities) < 1:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Station has no facilities",
+        )
+
+    facility_codes = list(set([f.code for f in station.facilities]))
+
+    query = energy_facility(
+        facility_codes, network_code, interval=interval, period=period
+    )
+
+    with engine.connect() as c:
+        results = list(c.execute(query))
+
+    result_set = {}
+
+    for (facility_code, trading_interval), record in groupby(
+        results, lambda x: (x[1], x[0])
+    ):
+        trading_interval = str(trading_interval)
+
+        if facility_code not in result_set:
+            result_set[facility_code] = {}
+
+        if trading_interval not in result_set[facility_code]:
+            result_set[facility_code][trading_interval] = []
+
+        record = list(record).pop()
+
+        result_set[facility_code][trading_interval] = (
+            round(float(record[2]), 2) if record[2] else None
+        )
+
+    result_output_sets = []
+
+    for facility_code, record in result_set.items():
+        dates = list(record.keys())
+        start = min(dates)
+        end = max(dates)
+
+        history = OpennemDataHistory(
+            start=start,
+            last=end,
+            interval=interval,
+            data=list(record.values()),
+        )
+
+        data = OpennemData(
+            network=network_code,
+            data_type="energy",
+            units="MW",
+            code=facility_code,
+            history=history,
+        )
+
+        result_output_sets.append(data)
+
+    output = OpennemDataSet(
+        data_type="energy", code=station_code, data=result_output_sets
+    )
+
+    return output
+
+
+@router.get("/energy/network/year/{network_code}", name="Energy Network")
+def energy_network(
+    engine=Depends(get_database_engine),
+    network_code: str = Query(..., description="Network code"),
+    year: int = Query(None, description="Year"),
+) -> OpennemDataSet:
+    query = energy_year_network(year=year, network_code=network_code)
+
+    results = []
+
+    network = network_from_network_region(network_code)
+
+    if not network:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Network not found."
+        )
+
+    network_timezone = network.get_timezone()
+
+    with engine.connect() as c:
+        results = list(c.execute(query))
+
+    if len(results) < 1:
+        print(query)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No results"
+        )
+
+    stat_groups = {}
+
+    for fueltech, record in groupby(results, attrgetter("fueltech")):
+        if fueltech not in stat_groups:
+            stat_groups[fueltech] = []
+
+        stat_groups[fueltech] += record
+
+    # history = OpennemDataHistory(
+    #     start=start.astimezone(network_timezone),
+    #     last=end.astimezone(network_timezone),
+    #     interval="{}m".format(str(interval)),
+    #     data=list(data_grouped.values()),
+    # )
+
+    # data = OpennemData(
+    #     network=network,
+    #     data_type="power",
+    #     units="MW",
+    #     code=code,
+    #     history=history,
+    # )
+

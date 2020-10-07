@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem"
-version = "3.0.0-alpha.21"
+version = "3.0.0-alpha.22"
 description = "opennem engine agent"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 license = "MIT"
@@ -51,6 +51,8 @@ pytz = "^2020.1"
 Wikidata = "^0.7.0"
 wikipedia = "^1.4.0"
 mdutils = "^1.3.0"
+pillow = "^7.2.0"
+python-dateutil = "^2.8.1"
 
 [tool.poetry.dev-dependencies]
 black = "19.10b0"

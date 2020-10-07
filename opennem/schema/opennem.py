@@ -5,6 +5,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel, validator
 
+from opennem.api.photo.schema import Photo
 from opennem.api.stats.schema import OpennemData
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.normalizers import (  # clean_numbers,; station_name_cleaner,
@@ -28,6 +29,9 @@ class FueltechSchema(BaseConfig):
     renewable: bool
 
 
+from pytz import timezone
+
+
 class NetworkSchema(BaseConfig):
     code: str
     country: str
@@ -35,19 +39,22 @@ class NetworkSchema(BaseConfig):
     timezone: str
     interval_size: int
 
+    def get_timezone(self) -> timezone:
+        return timezone(self.timezone)
+
 
 NetworkNEM = NetworkSchema(
     code="NEM",
     label="NEM",
     country="au",
-    timezone="Australia/Perth",
+    timezone="Australia/Sydney",
     interval_size=5,
 )
 NetworkWEM = NetworkSchema(
     code="WEM",
     label="WEM",
     country="au",
-    timezone="Australia/Sydney",
+    timezone="Australia/Perth",
     interval_size=30,
 )
 
@@ -227,6 +234,8 @@ class StationSchema(OpennemBaseSchema):
     participant_id: Optional[str]
 
     facilities: Optional[List[FacilitySchema]] = []
+
+    photos: Optional[List[Photo]]
 
     # history: Optional[List[__self__]]
 

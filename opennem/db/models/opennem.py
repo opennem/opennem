@@ -20,12 +20,16 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
+    Index,
     Integer,
+    LargeBinary,
     Numeric,
     Sequence,
     Text,
     func,
+    text,
 )
+from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -96,6 +100,48 @@ class Participant(Base, BaseModel):
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
+
+
+class Photo(Base):
+    __tablename__ = "photo"
+
+    id = Column(
+        Integer, Sequence("seq_photo_id", start=1000), primary_key=True
+    )
+
+    station_id = Column(
+        Integer,
+        ForeignKey("station.id", name="fk_photos_station_id"),
+        nullable=True,
+    )
+    station = relationship("Station", back_populates="photos")
+
+    name = Column(Text)
+    mime_type = Column(Text)
+    original_url = Column(Text, nullable=True)
+    data = Column(LargeBinary, nullable=True)
+    width = Column(Integer)
+    height = Column(Integer)
+
+    license_type = Column(Text, nullable=True)
+    license_link = Column(Text, nullable=True)
+    author = Column(Text, nullable=True)
+    author_link = Column(Text, nullable=True)
+
+    processed = Column(Boolean, default=False)
+    processed_by = Column(Text)
+    processed_at = Column(DateTime(timezone=True), nullable=True)
+
+    approved = Column(Boolean, default=False)
+    approved_by = Column(Text)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+
+    @hybrid_property
+    def photo_url(self) -> Optional[str]:
+        if self.name:
+            return "https://photos.opennem.org.au/{}".format(self.name)
+
+        return None
 
 
 class Location(Base):
@@ -177,6 +223,8 @@ class Station(Base, BaseModel):
     facilities = relationship("Facility", lazy="joined")
 
     revisions = relationship("Revision", lazy="joined")
+
+    photos = relationship("Photo", lazy="joined")
 
     code = Column(Text, index=True, nullable=True)
     name = Column(Text)
@@ -498,6 +546,41 @@ class FacilityScada(Base, BaseModel):
 
     __tablename__ = "facility_scada"
 
+    __table_args__ = (
+        Index(
+            "idx_facility_scada_trading_interval_year",
+            text("date_trunc('year', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_facility_scada_trading_interval_month",
+            text("date_trunc('month', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_facility_scada_trading_interval_day",
+            text("date_trunc('day', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_facility_scada_trading_interval_hour",
+            text("date_trunc('hour', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+    )
+
+    def __str__(self) -> str:
+        return "<{}: {} {} {}>".format(
+            self.__class__,
+            self.trading_interval,
+            self.network_id,
+            self.facility_code,
+        )
+
+    def __repr__(self) -> str:
+        return "{}: {} {} {}".format(
+            self.__class__,
+            self.trading_interval,
+            self.network_id,
+            self.facility_code,
+        )
+
     network_id = Column(
         Text,
         ForeignKey("network.code", name="fk_balancing_summary_network_code"),
@@ -506,7 +589,7 @@ class FacilityScada(Base, BaseModel):
     network = relationship("Network")
 
     trading_interval = Column(
-        DateTime(timezone=True), index=True, primary_key=True
+        TIMESTAMP(timezone=True), index=True, primary_key=True
     )
 
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
@@ -519,6 +602,25 @@ class BalancingSummary(Base, BaseModel):
 
     __tablename__ = "balancing_summary"
 
+    __table_args__ = (
+        Index(
+            "idx_balancing_summary_trading_interval_year",
+            text("date_trunc('year', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_balancing_summary_trading_interval_month",
+            text("date_trunc('month', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_balancing_summary_trading_interval_day",
+            text("date_trunc('day', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+        Index(
+            "idx_balancing_summary_trading_interval_hour",
+            text("date_trunc('hour', trading_interval AT TIME ZONE 'UTC')"),
+        ),
+    )
+
     network_id = Column(
         Text,
         ForeignKey("network.code", name="fk_balancing_summary_network_code"),
@@ -527,10 +629,11 @@ class BalancingSummary(Base, BaseModel):
     network = relationship("Network")
 
     trading_interval = Column(
-        DateTime(timezone=True), index=True, primary_key=True
+        TIMESTAMP(timezone=True), index=True, primary_key=True
     )
     forecast_load = Column(Numeric, nullable=True)
     generation_scheduled = Column(Numeric, nullable=True)
     generation_non_scheduled = Column(Numeric, nullable=True)
     generation_total = Column(Numeric, nullable=True)
     price = Column(Numeric, nullable=True)
+

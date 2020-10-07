@@ -1,7 +1,3 @@
-import csv
-
-import scrapy
-
 from opennem.pipelines.wem.facility_scada import (
     WemStoreFacilityScada,
     WemStoreLiveFacilityScada,

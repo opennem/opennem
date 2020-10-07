@@ -5,6 +5,9 @@ import os
 import click
 from scrapy.utils.python import garbage_collect
 
+from opennem.db import get_database_engine
+from opennem.db.initdb import init_bom
+from opennem.db.load_fixtures import load_bom_stations
 from opennem.diff.facility_diff import run_diff
 from opennem.importer.all import run_all
 from opennem.importer.db import init as db_init
@@ -79,11 +82,27 @@ def cmd_export_all():
     run_all()
 
 
+@click.group()
+def cmd_weather():
+    pass
+
+
+@click.command()
+def cmd_weather_init():
+    engine = get_database_engine()
+
+    init_bom(engine)
+    logger.info("Init weather db")
+    load_bom_stations()
+    logger.info("Loaded stations")
+
+
 main.add_command(crawl)
 main.add_command(diff)
 main.add_command(cmd_db, name="db")
 main.add_command(cmd_import, name="import")
 main.add_command(cmd_export, name="export")
+main.add_command(cmd_weather, name="weather")
 
 cmd_import.add_command(cmd_import_opennem, name="opennem")
 cmd_import.add_command(cmd_import_mms, name="mms")
@@ -94,6 +113,8 @@ cmd_export.add_command(cmd_export_all, name="all")
 
 cmd_db.add_command(cmd_db_init, name="init")
 
+cmd_weather.add_command(cmd_weather_init, name="init")
+
 if __name__ == "__main__":
     try:
         main()
@@ -103,8 +124,8 @@ if __name__ == "__main__":
         logger.error(e)
 
         if DEBUG:
-            from pprint import pprint
             import traceback
+            from pprint import pprint
 
             traceback.print_exc()
 

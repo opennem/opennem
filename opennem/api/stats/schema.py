@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Dict, List, Optional, Tuple
+from datetime import date, datetime
+from typing import Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel, Field, validator
 
@@ -30,14 +30,16 @@ class StationScadaReading(BaseModel):
 
 
 class OpennemDataHistory(BaseConfig):
-    start: datetime
-    last: datetime
+    start: Union[datetime, date]
+    last: Union[datetime, date]
     interval: str
-    data: List[float]
+    data: List[Optional[float]]
 
     @validator("data")
     def validate_data(cls, data_value):
-        data_value = list(map(lambda x: round(x, 2), data_value))
+        data_value = list(
+            map(lambda x: round(x, 2) if x else None, data_value)
+        )
 
         return data_value
 

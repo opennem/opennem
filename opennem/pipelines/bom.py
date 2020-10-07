@@ -1,12 +1,9 @@
-import csv
 import logging
 from datetime import datetime
 
-from scrapy.exceptions import DropItem
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-from opennem.db import db_connect
+from opennem.db import SessionLocal
 from opennem.db.models.bom import BomObservation
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -19,22 +16,18 @@ def parse_date(date_str):
     return dt
 
 
-class DatabaseStoreBase(object):
-    def __init__(self):
-        engine = db_connect()
-        self.session = sessionmaker(bind=engine)
+class StoreBomObservation(object):
+    """
+        Pipeline to store BOM observations into the database
+    """
 
-
-class StoreBomObservation(DatabaseStoreBase):
     @check_spider_pipeline
     def process_item(self, item, spider):
 
-        s = self.session()
-
-        print(item)
+        s = SessionLocal()
 
         observation = BomObservation(
-            station_id=spider.observatory_id,
+            station_id=item["station_id"],
             observation_time=parse_date(item["aifstime_utc"]),
             temp_apparent=item["apparent_t"],
             temp_air=item["air_temp"],

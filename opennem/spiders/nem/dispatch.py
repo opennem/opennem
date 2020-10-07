@@ -2,17 +2,19 @@ from opennem.pipelines.nem.opennem import NemwebUnitScadaOpenNEMStorePipeline
 from opennem.spiders.nemweb import NemwebSpider
 
 
-class NemwebCurrentDispatchScada(NemwebSpider):
-    name = "au.nem.current.dispatch_scada"
-    start_url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
-    limit = 0
+class NemwebCurrentDispatch(NemwebSpider):
+    name = "au.nem.current.dispatch"
+    start_url = "http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/"
+
+    # only get most recent
+    limit = 1
 
     pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
 
 
-class NemwebArchiveDispatchScada(NemwebSpider):
-    name = "au.nem.archive.dispatch_scada"
-    start_url = "http://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/"
+class NemwebArchiveDispatch(NemwebSpider):
+    name = "au.nem.archive.dispatch"
+    start_url = "http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/"
     limit = 0
 
     pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
