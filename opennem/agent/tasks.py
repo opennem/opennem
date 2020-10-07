@@ -1,5 +1,11 @@
+"""
+    Scrapy Crawl Scheduler
+
+    @TODO implement a custom reactor and runner
+
+"""
 from huey import RedisHuey, crontab
-from scrapy.crawler import CrawlerRunner
+from scrapy.crawler import CrawlerProcess
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 from twisted.internet import defer
@@ -26,55 +32,58 @@ scrapy_settings = get_project_settings()
 # override settings
 scrapy_settings["LOG_LEVEL"] = "ERROR"
 
-runner = CrawlerRunner(scrapy_settings)
-
 scheduler = RedisHuey("opennem.scraper", host=settings.cache_url.host)
 
 
-@scheduler.periodic_task(crontab(minute="*/10"))
-@defer.inlineCallbacks
-def crawl():
-    yield runner.crawl(WemParticipantLiveSpider)
-    yield runner.crawl(WemLiveFacilities)
-    yield runner.crawl(WemLiveFacilityScada)
-
-
 @scheduler.periodic_task(crontab(minute="*/5"))
-@defer.inlineCallbacks
-def bom_capitals():
-    yield runner.crawl(BomCapitalsSpider)
+def every_five():
+    runner = CrawlerProcess(scrapy_settings)
+    runner.crawl(BomCapitalsSpider)
+    runner.start()
+
+
+@scheduler.periodic_task(crontab(minute="*/10"))
+def every_ten():
+    runner = CrawlerProcess(scrapy_settings)
+    runner.crawl(WemParticipantLiveSpider)
+    runner.crawl(WemLiveFacilities)
+    runner.crawl(WemLiveFacilityScada)
+    runner.start()
 
 
 @scheduler.periodic_task(crontab(minute="*/15"))
-@defer.inlineCallbacks
-def bom_all():
-    yield runner.crawl(BomAllSpider)
+def every_fifeteen():
+    runner = CrawlerProcess(scrapy_settings)
+    runner.crawl(BomAllSpider)
+    runner.start()
 
 
 @scheduler.periodic_task(crontab(minute="*/30"))
-@defer.inlineCallbacks
-def craw_currents():
-    yield runner.crawl(WemCurrentFacilityScada)
+def every_thirty():
+    runner = CrawlerProcess(scrapy_settings)
+    runner.crawl(WemCurrentFacilityScada)
+    runner.start()
 
 
-@scheduler.periodic_task(crontab(hour="*/2"))
-@defer.inlineCallbacks
-def crawl_nem_currents():
-    yield runner.crawl(NemwebCurrentDispatchScada)
-    yield runner.crawl(NemwebCurrentPriceSpider)
+@scheduler.periodic_task(crontab(hour="*/1"))
+def every_hour():
+    runner = CrawlerProcess(scrapy_settings)
+    runner.crawl(NemwebCurrentDispatchScada)
+    runner.crawl(NemwebCurrentPriceSpider)
+    runner.start()
 
 
 # At 6pm UTC start looking for next day dispatches
 @scheduler.periodic_task(crontab(hour="18-20"))
-@defer.inlineCallbacks
+# @defer.inlineCallbacks
 def crawl_dispatch_dailies():
-    yield runner.crawl(NemwebCurrentDispatch)
+    runner = CrawlerProcess(scrapy_settings)
+    runner.crawl(NemwebCurrentDispatch)
+    runner.start()
 
 
 @scheduler.task()
 def run_onstartup():
-    yield runner.crawl(NemwebCurrentDispatchScada)
+    runner = CrawlerProcess(scrapy_settings)
+    runner.start(stop_after_crawl=False)
 
-
-if __name__ == "__main__":
-    run_onstartup(blocking=True)()
