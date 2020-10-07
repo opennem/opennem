@@ -1,4 +1,4 @@
-from opennem.core import load_data_json
+from opennem.core.loader import load_data_json
 
 FACILITY_DUID_MAP = load_data_json("facility_duid_map.json")
 

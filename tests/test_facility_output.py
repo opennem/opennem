@@ -2,7 +2,7 @@ from random import choice
 
 import pytest
 
-from opennem.db.load_fixtures import load_fixture as load_db_fixture
+from opennem.db.load_fixtures import load_fixtures as load_db_fixture
 from opennem.utils.tests import load_fixture
 
 
