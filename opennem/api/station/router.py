@@ -219,7 +219,9 @@ def station(
                 code,
                 ST_Distance(l.geom, bs.geom, false) / 1000.0 as dist
             from bom_station bs, location l
-            where l.id = {id}
+            where
+                l.id = {id}
+                and bs.priority < 2
             order by dist
             limit 1
         """.format(

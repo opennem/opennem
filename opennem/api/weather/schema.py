@@ -18,8 +18,9 @@ class WeatherObservation(ApiBase):
 class WeatherStation(ApiBase):
     code: str
     state: str
-    name: str
+    name_alias: str
     registered: date
+    website_url: str
     lat: float
     lng: float
 

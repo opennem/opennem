@@ -27,7 +27,7 @@ class StoreBomObservation(object):
         s = SessionLocal()
 
         observation = BomObservation(
-            station_id=item["station_id"],
+            station_id=item["code"],
             observation_time=parse_date(item["aifstime_utc"]),
             temp_apparent=item["apparent_t"],
             temp_air=item["air_temp"],

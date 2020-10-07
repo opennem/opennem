@@ -26,18 +26,18 @@ class BomJSONObservationSpider(scrapy.Spider):
         if "data" not in json_response["observations"]:
             raise Exception("invalid response from bom")
 
-        station_id = None
+        code = None
 
-        if "station_id" in response.meta:
-            station_id = response.meta["station_id"]
+        if "code" in response.meta:
+            code = response.meta["code"]
 
         elif hasattr(self, "station_id") and self.station_id:
-            station_id = self.station_id
+            code = self.station_id
 
-        if not station_id:
+        if not code:
             raise Exception("No station id for this scrape can't join")
 
         for i in json_response["observations"]["data"]:
-            i["station_id"] = station_id
+            i["code"] = code
 
             yield i

@@ -51,7 +51,7 @@ def station(
 
     if not station:
         raise HTTPException(
-            station_code=status.HTTP_404_NOT_FOUND, detail="No station found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="No station found"
         )
 
     return station

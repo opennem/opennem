@@ -1,59 +1,38 @@
+"""
+    Loads database fixtures that are required.
+
+"""
+
 import logging
-import os
-from datetime import date, datetime
+from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import sessionmaker
-
-from opennem.core.facilitystations import facility_station_join_by_name
+from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.loader import load_data
-from opennem.core.normalizers import (
-    clean_capacity,
-    name_normalizer,
-    normalize_duid,
-    station_name_cleaner,
-)
-from opennem.db import db_connect
+from opennem.core.normalizers import normalize_duid, station_name_cleaner
+from opennem.db import SessionLocal
 from opennem.db.models.opennem import (
     BomStation,
     Facility,
     FacilityStatus,
     FuelTech,
     Network,
-    Participant,
     Station,
 )
 from opennem.importer.compat import map_compat_facility_state
-
-engine = db_connect()
-session = sessionmaker(bind=engine)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("opennem.fixtureloader")
 logger.setLevel(logging.INFO)
 
 
-def fueltech_map(fueltech):
-    if fueltech == "brown_coal":
-        return "coal_brown"
-
-    if fueltech == "black_coal":
-        return "coal_black"
-
-    if fueltech == "solar":
-        return "solar_utility"
-
-    if fueltech == "biomass":
-        return "bioenergy_biomass"
-
-    return fueltech
-
-
 def load_fueltechs():
+    """
+        Load the fueltechs fixture
+    """
     fixture = load_data("fueltechs.json", from_fixture=True)
 
-    s = session()
+    s = SessionLocal()
 
     for fueltech in fixture:
         ft = FuelTech(
@@ -70,9 +49,12 @@ def load_fueltechs():
 
 
 def load_facilitystatus():
+    """
+        Load the facility status fixture
+    """
     fixture = load_data("facility_status.json", from_fixture=True)
 
-    s = session()
+    s = SessionLocal()
 
     for status in fixture:
         ft = FacilityStatus(code=status["code"], label=status["label"],)
@@ -85,9 +67,12 @@ def load_facilitystatus():
 
 
 def load_networks():
+    """
+        Load the networks fixture
+    """
     fixture = load_data("networks.json", from_fixture=True)
 
-    s = session()
+    s = SessionLocal()
 
     for network in fixture:
         ft = Network(
@@ -105,12 +90,20 @@ def load_networks():
             logger.error("Have {}".format(ft.code))
 
 
+"""
+    BOM Fixtures
+"""
+
+
 def parse_date(date_str):
     dt = datetime.strptime(date_str, "%Y%m%d")
     return dt.date()
 
 
 def parse_fixed_line(line):
+    """
+        Parses a fixed-width CSV from the funky BOM format
+    """
     return (
         str(line[:6]),
         str(line[8:11]).strip(),
@@ -121,36 +114,89 @@ def parse_fixed_line(line):
     )
 
 
-def load_bom_stations():
-    s = session()
+def load_bom_stations_csv():
+    """
+        Imports the BOM fixed-width stations format
 
-    with open(os.path.join(FIXTURE_PATH, "stations_db.txt")) as fh:
-        lines = fh.readlines()
-        for line in lines:
-            code, state, name, registered, lng, lat = parse_fixed_line(line)
+        Made redundant with the new JSON
+    """
+    s = SessionLocal()
 
-            station = s.query(BomStation).filter_by(code=code).one_or_none()
+    station_csv = load_data("stations_db.txt", from_fixture=True)
 
-            if not station:
-                station = BomStation(
-                    code=code, state=state, name=name, registered=registered,
-                )
+    lines = station_csv.split("\n")
 
-            station.geom = "SRID=4326;POINT({} {})".format(lat, lng)
+    for line in lines:
+        code, state, name, registered, lng, lat = parse_fixed_line(line)
 
-            try:
-                s.add(station)
-                s.commit()
-            except Exception:
-                logger.error("Have {}".format(station.code))
+        station = s.query(BomStation).filter_by(code=code).one_or_none()
+
+        if not station:
+            station = BomStation(
+                code=code, state=state, name=name, registered=registered,
+            )
+
+        station.geom = "SRID=4326;POINT({} {})".format(lat, lng)
+
+        try:
+            s.add(station)
+            s.commit()
+        except Exception:
+            logger.error("Have {}".format(station.code))
+
+
+def load_bom_stations_json():
+    """
+        Imports BOM stations into the database from bom_stations.json
+
+        The json is obtained using scripts/bom_stations.py
+    """
+    session = SessionLocal()
+
+    bom_stations = load_data("bom_stations.json", from_project=True)
+    bom_capitals = load_data("bom_capitals.json", from_project=True)
+
+    for bom_station in bom_stations:
+        station = (
+            session.query(BomStation)
+            .filter_by(code=bom_station["code"])
+            .one_or_none()
+        )
+
+        if not station:
+            logger.info("New station: %s", bom_station["name"])
+
+            station = BomStation(code=bom_station["code"],)
+
+        station.name = bom_station["name_full"]
+        station.name_alias = bom_station["name"]
+        station.website_url = bom_station["url"]
+        station.feed_url = bom_station["json_feed"]
+        station.priority = 5
+
+        if bom_station["code"] in bom_capitals:
+            station.is_capital = True
+            station.priority = 1
+
+        station.geom = "SRID=4326;POINT({} {})".format(
+            bom_station["lng"], bom_station["lat"]
+        )
+
+        session.add(station)
+
+    session.commit()
 
 
 def update_existing_geos():
+    """
+        Old method to update geos from existing facilities file on OpenNEM
+    """
+
     station_fixture = load_data("facility_registry.json", from_fixture=True)
 
     stations = [{"station_code": k, **v} for k, v in station_fixture.items()]
 
-    s = session()
+    s = SessionLocal()
 
     for station_data in stations:
         station = None
@@ -203,7 +249,7 @@ def update_existing_geos():
         # update fueltechs
         for facility_data in facilities:
             facility_duid = facility_data["code"]
-            facility_fueltech = fueltech_map(facility_data["fuel_tech"])
+            facility_fueltech = lookup_fueltech(facility_data["fuel_tech"])
 
             facility = (
                 s.query(Facility)
@@ -238,9 +284,9 @@ def load_fixtures():
     # load_fueltechs()
     # load_facilitystatus()
     # load_networks()
-    load_bom_stations()
+
+    load_bom_stations_json()
 
 
 if __name__ == "__main__":
-    # load_fixtures()
-    pass
+    load_fixtures()
