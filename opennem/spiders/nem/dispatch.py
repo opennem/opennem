@@ -22,6 +22,6 @@ class NemwebArchiveDispatch(NemwebSpider):
     # Archives tend to contain large zips of embedded zips so throttle
     # to limit memory use
     custom_settings = {
-        "CONCURRENT_REQUESTS": 1,
+        "CONCURRENT_REQUESTS": 4,
         "CONCURRENT_ITEMS": 1,
     }

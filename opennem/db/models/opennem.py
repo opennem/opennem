@@ -17,6 +17,7 @@ from sqlalchemy import (
     JSON,
     Boolean,
     Column,
+    Date,
     DateTime,
     Enum,
     ForeignKey,
@@ -144,14 +145,83 @@ class Photo(Base):
         return None
 
 
+class BomStation(Base):
+    __tablename__ = "bom_station"
+
+    __table_args__ = (
+        Index("idx_bom_station_geom", "geom", postgresql_using="gist"),
+    )
+
+    code = Column(Text, primary_key=True)
+    state = Column(Text)
+    name = Column(Text)
+    registered = Column(Date)
+
+    observations = relationship("BomObservation")
+
+    geom = Column(Geometry("POINT", srid=4326, spatial_index=False))
+
+    @hybrid_property
+    def lat(self) -> Optional[float]:
+        if self.geom:
+            return wkb.loads(bytes(self.geom.data)).y
+
+        return None
+
+    @hybrid_property
+    def lng(self) -> Optional[float]:
+        if self.geom:
+            return wkb.loads(bytes(self.geom.data)).x
+
+        return None
+
+
+class BomObservation(Base):
+    __tablename__ = "bom_observation"
+
+    observation_time = Column(DateTime, primary_key=True)
+
+    station_id = Column(
+        Text,
+        ForeignKey("bom_station.code", name="fk_bom_observation_station_code"),
+        primary_key=True,
+    )
+    station = relationship("BomStation")
+    temp_apparent = Column(Numeric)
+    temp_air = Column(Numeric)
+    press_qnh = Column(Numeric)
+    wind_dir = Column(Text, nullable=True)
+    wind_spd = Column(Numeric)
+
+
 class Location(Base):
     __tablename__ = "location"
+
+    __table_args__ = (
+        Index("idx_location_geom", "geom", postgresql_using="gist"),
+        Index("idx_location_boundary", "boundary", postgresql_using="gist"),
+    )
 
     id = Column(
         Integer, Sequence("seq_location_id", start=1000), primary_key=True
     )
 
     # station_id = Column(Integer, ForeignKey("station.id"))
+
+    # @TODO sort out this join based on this lateral query ..
+
+    #  select l.id, l.locality, l.state, closest_station.state, closest_station.code, closest_station.dist from location l
+    #  left join lateral (
+    # 	select code, state, ST_Distance(l.geom, bom_station.geom) / 1000 as dist from bom_station order by l.geom <-> bom_station.geom limit 1
+    #  ) AS closest_station on TRUE;
+
+    # weather_station = relationship(
+    #     "BomStation",
+    #     primaryjoin="func.ST_ClosestPoint(remote(BomStation.geom), foreign(Location.geom))",
+    #     viewonly=True,
+    #     uselist=True,
+    #     lazy="joined",
+    # )
 
     address1 = Column(Text)
     address2 = Column(Text)
@@ -167,8 +237,8 @@ class Location(Base):
     geocode_skip = Column(Boolean, default=False)
     geocode_processed_at = Column(DateTime, nullable=True)
     geocode_by = Column(Text, nullable=True)
-    geom = Column(Geometry("POINT", srid=4326))
-    boundary = Column(Geometry("MULTIPOLYGON", srid=4326))
+    geom = Column(Geometry("POINT", srid=4326, spatial_index=False))
+    boundary = Column(Geometry("MULTIPOLYGON", srid=4326, spatial_index=False))
 
     @hybrid_property
     def lat(self) -> Optional[float]:
@@ -218,13 +288,13 @@ class Station(Base, BaseModel):
         ForeignKey("location.id", name="fk_station_location_id"),
         nullable=True,
     )
-    location = relationship("Location", lazy="joined")
+    location = relationship("Location", lazy="joined", innerjoin=True)
 
-    facilities = relationship("Facility", lazy="joined")
+    facilities = relationship("Facility", lazy="joined", innerjoin=True)
 
-    revisions = relationship("Revision", lazy="joined")
+    revisions = relationship("Revision")
 
-    photos = relationship("Photo", lazy="joined")
+    photos = relationship("Photo")
 
     code = Column(Text, index=True, nullable=True)
     name = Column(Text)
@@ -337,7 +407,7 @@ class Facility(Base, BaseModel):
         ForeignKey("network.code", name="fk_station_network_code"),
         nullable=False,
     )
-    network = relationship("Network", lazy="joined")
+    network = relationship("Network")
 
     fueltech_id = Column(
         Text,
@@ -345,23 +415,23 @@ class Facility(Base, BaseModel):
         nullable=True,
     )
     fueltech = relationship(
-        "FuelTech", back_populates="facilities", lazy="joined"
+        "FuelTech", back_populates="facilities", lazy="joined", innerjoin=True
     )
 
     status_id = Column(
         Text,
         ForeignKey("facility_status.code", name="fk_facility_status_code"),
     )
-    status = relationship("FacilityStatus", lazy="joined")
+    status = relationship("FacilityStatus", lazy="joined", innerjoin=True)
 
     station_id = Column(
         Integer,
         ForeignKey("station.id", name="fk_station_status_code"),
         nullable=True,
     )
-    station = relationship("Station", back_populates="facilities")
+    # station = relationship("Station", back_populates="facilities")
 
-    revisions = relationship("Revision", lazy="joined")
+    revisions = relationship("Revision")
 
     # DUID but modified by opennem as an identifier
     code = Column(Text, index=True)
@@ -563,6 +633,8 @@ class FacilityScada(Base, BaseModel):
             "idx_facility_scada_trading_interval_hour",
             text("date_trunc('hour', trading_interval AT TIME ZONE 'UTC')"),
         ),
+        # new timezone based indicies
+        # @NOTE: other indicies in migration files
     )
 
     def __str__(self) -> str:
@@ -593,7 +665,6 @@ class FacilityScada(Base, BaseModel):
     )
 
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
-
     generated = Column(Numeric, nullable=True)
     eoi_quantity = Column(Numeric, nullable=True)
 
@@ -631,6 +702,7 @@ class BalancingSummary(Base, BaseModel):
     trading_interval = Column(
         TIMESTAMP(timezone=True), index=True, primary_key=True
     )
+    network_region = Column(Text, primary_key=True)
     forecast_load = Column(Numeric, nullable=True)
     generation_scheduled = Column(Numeric, nullable=True)
     generation_non_scheduled = Column(Numeric, nullable=True)

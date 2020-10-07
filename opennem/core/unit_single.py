@@ -1,9 +1,6 @@
-import json
-import os
+from opennem.core.loader import load_data
 
-from opennem.core import load_data_json
-
-SINGLE_UNITS = load_data_json("single_units.json")
+SINGLE_UNITS = load_data("single_units.json")
 
 
 def facility_unit_numbers_are_single(facility_duid: str) -> bool:
@@ -13,6 +10,7 @@ def facility_unit_numbers_are_single(facility_duid: str) -> bool:
         ex. GT 1-2 means unit of alias GT1 and id 2 rather than alias GT and range 1-2
 
     """
+
     if not type(SINGLE_UNITS) is list:
         raise Exception("Error loading facility station map: not a list")
 

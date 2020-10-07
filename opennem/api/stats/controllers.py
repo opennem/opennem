@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from itertools import groupby
 from operator import itemgetter
 from typing import List, Optional
@@ -53,7 +54,18 @@ def stats_factory(
         if key not in data_grouped:
             data_grouped[key] = 0.0
 
-        data_grouped[key] = float(sum([i["generated"] for i in list(v)]))
+        # @TODO abstract this
+        total = sum(
+            [
+                i["generated"]
+                for i in list(v)
+                if type(i["generated"]) in [int, float, Decimal]
+            ]
+        )
+
+        if total:
+            total = float(total)
+            data_grouped[key] = round(total, 2)
 
     history = OpennemDataHistory(
         start=start.astimezone(network_timezone),

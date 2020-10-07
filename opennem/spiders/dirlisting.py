@@ -67,6 +67,8 @@ class DirlistingSpider(Spider):
 
     limit = 0
 
+    start_url = None
+
     def start_requests(self):
         if self.custom_settings is None:
             self.custom_settings = {}

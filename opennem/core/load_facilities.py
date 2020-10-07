@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import MultipleResultsFound
 
 from opennem.core.facilitystations import facility_station_join_by_name
+from opennem.core.loader import load_data
 from opennem.core.normalizers import (
     clean_capacity,
     name_normalizer,
@@ -20,7 +21,6 @@ from opennem.core.station_duid_map import (
     facility_map_station,
 )
 from opennem.db import db_connect
-from opennem.db.load_fixtures import load_fixture
 from opennem.db.models.opennem import Facility, Station
 from opennem.importer.compat import (
     map_compat_facility_state,
@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 def load_opennem_facilities():
-    station_fixture = load_fixture("facility_registry.json")
+    station_fixture = load_data("facility_registry.json", from_fixture=True)
 
     stations = [{"station_code": k, **v} for k, v in station_fixture.items()]
 

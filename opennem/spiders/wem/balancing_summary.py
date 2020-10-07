@@ -1,7 +1,4 @@
-from opennem.pipelines.wem.balancing_summary import (
-    WemStoreBalancingSummary,
-    WemStoreBalancingSummaryArchive,
-)
+from opennem.pipelines.wem.balancing_summary import WemStoreBalancingSummary
 from opennem.spiders.wem import WemCurrentSpider, WemHistoricSpider
 
 
@@ -13,8 +10,8 @@ class WemCurrentBalancingSummary(WemCurrentSpider):
 
 
 class WemHistoricBalancingSummary(WemHistoricSpider):
-    limit = 1
     name = "au.wem.historic.balancing_summary"
     start_url = "http://data.wa.aemo.com.au/public/public-data/datafiles/balancing-summary/"
+    limit = 0
 
-    pipelines_extra = set([WemStoreBalancingSummaryArchive])
+    pipelines_extra = set([WemStoreBalancingSummary])

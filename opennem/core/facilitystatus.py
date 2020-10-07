@@ -1,12 +1,12 @@
 import logging
 
-from opennem.db.load_fixtures import load_fixture
+from opennem.core.loader import load_data
 
 logger = logging.getLogger(__name__)
 
 
 def load_statuses() -> dict:
-    statuses = load_fixture("facility_status.json")
+    statuses = load_data("facility_status.json", from_fixture=True)
 
     status_dict = {}
 
@@ -26,6 +26,7 @@ def map_aemo_facility_status(facility_status: str) -> str:
 
 
     """
+
     unit_status = facility_status.lower().strip()
 
     if unit_status.startswith("in service"):

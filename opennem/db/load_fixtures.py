@@ -1,5 +1,3 @@
-import csv
-import json
 import logging
 import os
 from datetime import date, datetime
@@ -9,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from opennem.core.facilitystations import facility_station_join_by_name
+from opennem.core.loader import load_data
 from opennem.core.normalizers import (
     clean_capacity,
     name_normalizer,
@@ -16,8 +15,8 @@ from opennem.core.normalizers import (
     station_name_cleaner,
 )
 from opennem.db import db_connect
-from opennem.db.models.bom import BomStation
 from opennem.db.models.opennem import (
+    BomStation,
     Facility,
     FacilityStatus,
     FuelTech,
@@ -26,8 +25,6 @@ from opennem.db.models.opennem import (
     Station,
 )
 from opennem.importer.compat import map_compat_facility_state
-
-FIXTURE_PATH = os.path.join(os.path.dirname(__file__), "fixtures")
 
 engine = db_connect()
 session = sessionmaker(bind=engine)
@@ -53,22 +50,8 @@ def fueltech_map(fueltech):
     return fueltech
 
 
-def load_fixture(fixture_name):
-    fixture_path = os.path.join(FIXTURE_PATH, fixture_name)
-
-    if not os.path.isfile(fixture_path):
-        raise Exception("Not a file: {}".format(fixture_path))
-
-    fixture = None
-
-    with open(fixture_path) as fh:
-        fixture = json.load(fh)
-
-    return fixture
-
-
 def load_fueltechs():
-    fixture = load_fixture("fueltechs.json")
+    fixture = load_data("fueltechs.json", from_fixture=True)
 
     s = session()
 
@@ -87,7 +70,7 @@ def load_fueltechs():
 
 
 def load_facilitystatus():
-    fixture = load_fixture("facility_status.json")
+    fixture = load_data("facility_status.json", from_fixture=True)
 
     s = session()
 
@@ -102,7 +85,7 @@ def load_facilitystatus():
 
 
 def load_networks():
-    fixture = load_fixture("networks.json")
+    fixture = load_data("networks.json", from_fixture=True)
 
     s = session()
 
@@ -144,15 +127,16 @@ def load_bom_stations():
     with open(os.path.join(FIXTURE_PATH, "stations_db.txt")) as fh:
         lines = fh.readlines()
         for line in lines:
-            code, state, name, registered, lat, lng = parse_fixed_line(line)
-            station = BomStation(
-                code=code,
-                state=state,
-                name=name,
-                registered=registered,
-                lat=lat,
-                lng=lng,
-            )
+            code, state, name, registered, lng, lat = parse_fixed_line(line)
+
+            station = s.query(BomStation).filter_by(code=code).one_or_none()
+
+            if not station:
+                station = BomStation(
+                    code=code, state=state, name=name, registered=registered,
+                )
+
+            station.geom = "SRID=4326;POINT({} {})".format(lat, lng)
 
             try:
                 s.add(station)
@@ -162,7 +146,7 @@ def load_bom_stations():
 
 
 def update_existing_geos():
-    station_fixture = load_fixture("facility_registry.json")
+    station_fixture = load_data("facility_registry.json", from_fixture=True)
 
     stations = [{"station_code": k, **v} for k, v in station_fixture.items()]
 
@@ -251,11 +235,12 @@ def update_existing_geos():
 
 
 def load_fixtures():
-    load_fueltechs()
-    load_facilitystatus()
-    load_networks()
-    # load_bom_stations()
+    # load_fueltechs()
+    # load_facilitystatus()
+    # load_networks()
+    load_bom_stations()
 
 
 if __name__ == "__main__":
-    load_fixtures()
+    # load_fixtures()
+    pass

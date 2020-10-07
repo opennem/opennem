@@ -12,7 +12,7 @@ SPIDER_MODULES = ["opennem.spiders"]
 NEWSPIDER_MODULE = "opennem.spiders"
 
 
-USER_AGENT = "opennem/0.5.0 (+https://opennem.org.au)"
+USER_AGENT = "opennem/v3.0.0 (+https://opennem.org.au)"
 ROBOTSTXT_OBEY = False
 CONCURRENT_REQUESTS = 16
 COOKIES_ENABLED = True
@@ -27,6 +27,8 @@ AUTOTHROTTLE_ENABLED = True
 AUTOTHROTTLE_START_DELAY = 5
 AUTOTHROTTLE_MAX_DELAY = 60
 
+SPIDER_MODULES = ["opennem.spiders"]
+SPIDER_LOADER_WARN_ONLY = True
 
 # Pipline docs:
 # 1xx series - download handlers
@@ -51,7 +53,6 @@ ITEM_PIPELINES = {
     "opennem.pipelines.wem.facilities.WemStoreFacility": 410,
     "opennem.pipelines.wem.facility_scada.WemStoreFacilityScada": 411,
     "opennem.pipelines.wem.balancing_summary.WemStoreBalancingSummary": 412,
-    "opennem.pipelines.wem.balancing_summary.WemStoreBalancingSummaryArchive": 413,
     "opennem.pipelines.wem.pulse.WemStorePulse": 414,
     "opennem.pipelines.wem.facility_scada.WemStoreLiveFacilityScada": 415,
     "opennem.pipelines.wem.facilities.WemStoreLiveFacilities": 416,

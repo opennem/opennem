@@ -26,7 +26,6 @@ from opennem.core.stations.station_code_from_duids import (
 from opennem.core.stations.station_name_code_map import station_name_code_map
 from opennem.core.unit_codes import get_basecode, get_unit_code
 from opennem.core.unit_parser import parse_unit_duid
-from opennem.db.load_fixtures import load_fixture
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.stations import StationSet
 

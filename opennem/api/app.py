@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from starlette import status
 
+from opennem.api.admin.router import router as admin_router
 from opennem.api.facility.router import router as facility_router
 from opennem.api.locations import router as locations_router
 from opennem.api.revision.router import router as revisions_router
@@ -33,6 +34,7 @@ app.include_router(station_router, tags=["Stations"], prefix="/station")
 app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(revisions_router, tags=["Revisions"], prefix="/revision")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
+app.include_router(admin_router, tags=["Admin"], prefix="/admin")
 
 
 origins = [

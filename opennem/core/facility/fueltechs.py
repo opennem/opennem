@@ -1,13 +1,10 @@
-import logging
 from typing import Optional
 
-from opennem.db.load_fixtures import load_fixture
-
-logger = logging.getLogger(__name__)
+from opennem.core.loader import load_data
 
 
 def load_fueltechs() -> dict:
-    fueltechs = load_fixture("fueltechs.json")
+    fueltechs = load_data("fueltechs.json", from_fixture=True)
 
     fueltechs_dict = {}
 

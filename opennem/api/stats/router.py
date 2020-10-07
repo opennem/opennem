@@ -13,7 +13,7 @@ from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import FacilityScada, Station
 
 from .controllers import stats_factory, stats_set_factory
-from .queries import energy_facility, energy_year_network
+from .queries import energy_facility, energy_year_network, price_network_region
 from .schema import OpennemData, OpennemDataHistory, OpennemDataSet
 
 router = APIRouter()
@@ -254,7 +254,7 @@ def energy_station(
         data = OpennemData(
             network=network_code,
             data_type="energy",
-            units="MW",
+            units="MWh",
             code=facility_code,
             history=history,
         )
@@ -318,4 +318,86 @@ def energy_network(
     #     code=code,
     #     history=history,
     # )
+
+
+@router.get(
+    "/price/{network_code}/{region_code}",
+    name="Price Network Region",
+    response_model=OpennemData,
+)
+def price_region(
+    session: Session = Depends(get_database_session),
+    engine=Depends(get_database_engine),
+    network_code: str = Query(..., description="Network code"),
+    region_code: str = Query(..., description="Region code"),
+    interval: str = Query("1d", description="Interval"),
+    period: str = Query("7d", description="Period"),
+) -> OpennemData:
+    if interval not in SUPPORTED_INTERVALS:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Interval not supported",
+        )
+
+    if period not in SUPPORTED_PERIODS:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Period not supported",
+        )
+
+    network_code = network_code.upper()
+
+    if network_code not in ["WEM", "NEM"]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
+        )
+
+    query = price_network_region(
+        network_code=network_code,
+        region_code=region_code,
+        interval=interval,
+        period=period,
+    )
+
+    # print(query)
+
+    with engine.connect() as c:
+        results = list(c.execute(query))
+
+    result_set = {}
+
+    if len(results) < 1:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No data found"
+        )
+
+    for res in results:
+        price = res[1]
+
+        if price:
+            price = round(price, 2)
+
+        result_set[res[0]] = price
+
+    dates = list(result_set.keys())
+    start = min(dates)
+    end = max(dates)
+
+    history = OpennemDataHistory(
+        start=start,
+        last=end,
+        interval=interval,
+        data=list(result_set.values()),
+    )
+
+    data = OpennemData(
+        network=network_code,
+        data_type="price",
+        units="$ AUD",
+        region=region_code,
+        code=region_code,
+        history=history,
+    )
+
+    return data
 

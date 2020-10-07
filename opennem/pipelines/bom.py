@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 
 from opennem.db import SessionLocal
-from opennem.db.models.bom import BomObservation
+from opennem.db.models.opennem import BomObservation
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)

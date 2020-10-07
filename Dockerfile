@@ -24,5 +24,6 @@ FROM base
 COPY . /code
 EXPOSE 8000
 WORKDIR /code
+ENV PATH="/code/.venv/bin:${PATH}"
 
 ENTRYPOINT [ "./docker-entrypoint.sh" ]

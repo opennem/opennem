@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 
+from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
 
 
@@ -43,12 +44,19 @@ def energy_facility(
     network_code = network_code.upper()
     trunc, interval_str = get_interval_map(interval)
     period = get_period_map(period)
+    scale = 1
+
+    if network_code == "NEM":
+        scale = 12
+
+    network = network_from_network_region(network_code)
+    timezone = network.get_timezone()
 
     __query = """
         with intervals as (
             select generate_series(
-                date_trunc('{trunc}', now() AT TIME ZONE 'UTC') - '{period}'::interval,
-                date_trunc('{trunc}', now() AT TIME ZONE 'UTC'),
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
                 '{interval}'::interval
             )::timestamp as interval
         )
@@ -56,12 +64,12 @@ def energy_facility(
         select
             i.interval AS trading_day,
             fs.facility_code as facility_code,
-            coalesce(sum(fs.eoi_quantity), NULL) as energy_output
+            coalesce(sum(fs.eoi_quantity), NULL) / {scale} as energy_output
         from intervals i
-        left join facility_scada fs on date_trunc('{trunc}', fs.trading_interval AT TIME ZONE 'UTC')::timestamp = i.interval
+        left join facility_scada fs on date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp = i.interval
         where
             fs.facility_code in ({facility_codes_parsed})
-            and fs.trading_interval > now() AT TIME ZONE 'UTC' - '{period}'::interval
+            and fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
             and fs.network_id = '{network_code}'
         group by 1, 2
         order by 2 asc, 1 asc
@@ -73,6 +81,8 @@ def energy_facility(
         trunc=trunc,
         interval=interval_str,
         period=period,
+        scale=scale,
+        timezone=timezone,
     )
 
     return query
@@ -100,3 +110,51 @@ def energy_year_network(network_code: str = "WEM", year: int = None) -> str:
     """.format(
         year=year, network_code=network_code
     )
+
+
+def price_network_region(
+    network_code: str,
+    region_code: str,
+    interval: str = "1d",
+    period: str = "7d",
+) -> str:
+
+    network_code = network_code.upper()
+    trunc, interval_str = get_interval_map(interval)
+    period = get_period_map(period)
+
+    network = network_from_network_region(network_code)
+    timezone = network.get_timezone()
+
+    __query = """
+        with intervals as (
+            select generate_series(
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
+                '{interval}'::interval
+            )::timestamp as interval
+        )
+
+        select
+            i.interval AS trading_day,
+            avg(bs.price) as price
+        from intervals i
+        left join balancing_summary bs on date_trunc('{trunc}', bs.trading_interval AT TIME ZONE '{timezone}')::timestamp = i.interval
+        where
+            bs.network_region = '{region_code}'
+            and bs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
+            and bs.network_id = '{network_code}'
+        group by 1
+        order by 1
+    """
+
+    query = __query.format(
+        region_code=region_code,
+        network_code=network_code,
+        trunc=trunc,
+        interval=interval_str,
+        period=period,
+        timezone=timezone,
+    )
+
+    return query

@@ -6,9 +6,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload, noload, raiseload
 from starlette import status
 
+from opennem.api.facility.schema import FacilityModification
 from opennem.core.dispatch_type import DispatchType
-from opennem.db import get_database_session
+from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import (
+    BomStation,
     Facility,
     FuelTech,
     Location,
@@ -155,6 +157,7 @@ def station_ids(
 )
 def station(
     session: Session = Depends(get_database_session),
+    engine=Depends(get_database_engine),
     station_code: str = None,
     only_generators: bool = Query(True, description="Show only generators"),
     power_include: Optional[bool] = Query(
@@ -167,19 +170,12 @@ def station(
         False, description="Include history in records"
     ),
 ):
+
     station = (
         session.query(Station)
-        .options(joinedload(Station.facilities))
-        # .join(Facility)
-        # .outerjoin(Facility, Facility.station_id == Station.id)
-        # .join(Station.photos)
-        # .join(Network, Facility.network_id == Network.code)
-        # .filter(Facility.station_id == Station.id)
         .filter(Station.code == station_code)
+        .filter(Facility.station_id == Station.id)
         .filter(~Facility.code.endswith("NL1"))
-        # .filter(
-        # Facility.status_id.isnot(None)
-        # )
     )
 
     if only_generators:
@@ -216,6 +212,30 @@ def station(
 
     if power_include:
         pass
+
+    if station.location and station.location.geom:
+        __query = """
+            select
+                code,
+                ST_Distance(l.geom, bs.geom, false) / 1000.0 as dist
+            from bom_station bs, location l
+            where l.id = {id}
+            order by dist
+            limit 1
+        """.format(
+            id=station.location.id
+        )
+
+        result = []
+
+        with engine.connect() as c:
+            result = list(c.execute(__query))
+
+            if len(result):
+                station.location.weather_nearest = {
+                    "code": result[0][0],
+                    "distance": round(result[0][1], 2),
+                }
 
     return station
 
