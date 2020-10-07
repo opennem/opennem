@@ -53,6 +53,10 @@ def photos_process():
 
 def img_to_buffer(img):
     buf = BytesIO()
+
+    if img.mode in ("RGBA", "P"):
+        img = img.convert("RGB")
+
     img.save(buf, format="JPEG")
 
     return buf.getbuffer()
