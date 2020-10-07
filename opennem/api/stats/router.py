@@ -359,6 +359,8 @@ def price_region(
         period=period,
     )
 
+    # print(query)
+
     with engine.connect() as c:
         results = list(c.execute(query))
 
