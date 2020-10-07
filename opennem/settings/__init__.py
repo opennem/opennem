@@ -7,6 +7,7 @@
 
 
 import os
+from typing import Optional
 
 from .schema import OpennemSettings
 
@@ -18,12 +19,9 @@ MYSQL_HOST_URL = os.getenv("MYSQL_HOST_URL", default=False)
 
 # settings default loader
 
-settings = None
+settings: Optional[OpennemSettings] = None
 
-if ENV == "development":
-    settings = OpennemSettings()
+if ENV != "development" and os.path.isfile(".env.production"):
+    settings = OpennemSettings(_env_file=".env.production")
 else:
-    if os.path.isfile(".env.production"):
-        settings = OpennemSettings(_env_file=".env.production")
-    else:
-        settings = OpennemSettings()
+    settings = OpennemSettings()
