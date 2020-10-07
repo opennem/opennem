@@ -10,8 +10,10 @@ from datetime import datetime
 
 import pytz
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.orm.session import Session
 from sqlalchemy.sql import text
 
+from opennem.core.dates import parse_date
 from opennem.core.normalizers import normalize_duid
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
@@ -45,6 +47,54 @@ def process_case_solutions(table):
     records = table["records"]
 
     records_to = []
+
+
+def process_pre_ap_price(table):
+    session = SessionLocal()
+    engine = get_database_engine()
+
+    if "records" not in table:
+        raise Exception("Invalid table no records")
+
+    records = table["records"]
+
+    records_to_store = []
+
+    for record in records:
+        trading_interval = parse_date(
+            record["SETTLEMENTDATE"], network=NetworkNEM
+        )
+
+        if not trading_interval:
+            continue
+
+        records_to_store.append(
+            {
+                "network_id": "NEM",
+                "network_region": record["REGIONID"],
+                "trading_interval": trading_interval,
+                "price": record["PRE_AP_ENERGY_PRICE"],
+            }
+        )
+
+    stmt = insert(BalancingSummary).values(records_to_store)
+    stmt.bind = engine
+    stmt = stmt.on_conflict_do_update(
+        constraint="balancing_summary_pkey",
+        set_={"price": stmt.excluded.price,},
+    )
+
+    try:
+        r = session.execute(stmt)
+        session.commit()
+        return r
+    except Exception as e:
+        logger.error("Error inserting records")
+        logger.error(e)
+    finally:
+        session.close()
+
+    return len(records_to_store)
 
 
 def process_unit_scada(table):
@@ -166,6 +216,7 @@ TABLE_PROCESSOR_MAP = {
     "DISPATCH_CASE_SOLUTION": "process_case_solutions",
     "DISPATCH_UNIT_SCADA": "process_unit_scada",
     "DISPATCH_UNIT_SOLUTION": "process_unit_solution",
+    "DISPATCH_PRE_AP_PRICE": "process_pre_ap_price",
 }
 
 

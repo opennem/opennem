@@ -702,6 +702,7 @@ class BalancingSummary(Base, BaseModel):
     trading_interval = Column(
         TIMESTAMP(timezone=True), index=True, primary_key=True
     )
+    network_region = Column(Text, primary_key=True)
     forecast_load = Column(Numeric, nullable=True)
     generation_scheduled = Column(Numeric, nullable=True)
     generation_non_scheduled = Column(Numeric, nullable=True)
