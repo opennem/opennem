@@ -155,7 +155,15 @@ class BomStation(Base):
     code = Column(Text, primary_key=True)
     state = Column(Text)
     name = Column(Text)
+    name_alias = Column(Text, nullable=True)
     registered = Column(Date)
+
+    # priority from 1-5
+    priority = Column(Integer, default=5)
+    is_capital = Column(Boolean, default=False)
+
+    website_url = Column(Text, nullable=True)
+    feed_url = Column(Text, nullable=True)
 
     observations = relationship("BomObservation")
 
