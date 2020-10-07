@@ -18,6 +18,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 def article_from_wikipedia(url: str) -> str:
     """
         Return the article name from a wikipedia url
@@ -40,7 +41,6 @@ def dataid_from_url(url: str) -> str:
         return ""
 
     return path.split("/")[2]
-
 
 
 def wikidata_join():
@@ -145,7 +145,7 @@ def wikidata_photos():
 
         if not station:
             print("Could not find station {}".format(name))
-            continue
+            # continue
 
         img = get_image(image_url)
 
@@ -169,7 +169,8 @@ def wikidata_photos():
 
         write_photo_to_s3(file_name, img_buff)
 
-        station.photos.append(photo)
+        if station:
+            station.photos.append(photo)
 
         img.thumbnail((280, 340))
 
@@ -187,11 +188,15 @@ def wikidata_photos():
         img_buff = img_to_buffer(img)
         write_photo_to_s3(file_name, img_buff)
 
-        station.photos.append(photo_thumb)
+        if station:
+            station.photos.append(photo_thumb)
 
         session.add(photo)
         session.add(photo_thumb)
-        session.add(station)
+
+        if station:
+            session.add(station)
+
         session.commit()
 
 
