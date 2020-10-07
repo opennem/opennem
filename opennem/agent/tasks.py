@@ -16,8 +16,14 @@ from opennem.spiders.bom.capital_observations import (
     BomCapitalsSpider,
 )
 from opennem.spiders.nem.dispatch import NemwebCurrentDispatch
-from opennem.spiders.nem.price import NemwebCurrentPriceSpider
-from opennem.spiders.nem.scada_dispatch import NemwebCurrentDispatchScada
+from opennem.spiders.nem.price import (
+    NemwebCurrentPriceSpider,
+    NemwebLatestPriceSpider,
+)
+from opennem.spiders.nem.scada_dispatch import (
+    NemwebCurrentDispatchScada,
+    NemwebLatestDispatchScada,
+)
 from opennem.spiders.wem.facilities import WemLiveFacilities
 from opennem.spiders.wem.facility_scada import (
     WemCurrentFacilityScada,
@@ -33,6 +39,14 @@ scrapy_settings = get_project_settings()
 scrapy_settings["LOG_LEVEL"] = "ERROR"
 
 scheduler = RedisHuey("opennem.scraper", host=settings.cache_url.host)
+
+
+@scheduler.periodic_task(crontab(minute="*/1"))
+def every_minute():
+    runner = CrawlerProcess(scrapy_settings)
+    runner.crawl(NemwebLatestPriceSpider)
+    runner.crawl(NemwebLatestDispatchScada)
+    runner.start()
 
 
 @scheduler.periodic_task(crontab(minute="*/5"))

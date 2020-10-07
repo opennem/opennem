@@ -2,6 +2,16 @@ from opennem.pipelines.nem.opennem import NemwebUnitScadaOpenNEMStorePipeline
 from opennem.spiders.nemweb import NemwebSpider
 
 
+class NemwebLatestPriceSpider(NemwebSpider):
+    name = "au.nem.latest.price"
+    start_url = (
+        "http://www.nemweb.com.au/Reports/CURRENT/Dispatchprices_PRE_AP/"
+    )
+    limit = 1
+
+    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+
+
 class NemwebCurrentPriceSpider(NemwebSpider):
     name = "au.nem.current.price"
     start_url = (
