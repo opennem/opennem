@@ -10,6 +10,7 @@ from opennem.spiders.bom.capital_observations import (
     BomCapitalsSpider,
 )
 from opennem.spiders.nem.dispatch import NemwebCurrentDispatch
+from opennem.spiders.nem.price import NemwebCurrentPriceSpider
 from opennem.spiders.nem.scada_dispatch import NemwebCurrentDispatchScada
 from opennem.spiders.wem.facilities import WemLiveFacilities
 from opennem.spiders.wem.facility_scada import (
@@ -60,6 +61,7 @@ def craw_currents():
 @defer.inlineCallbacks
 def crawl_nem_currents():
     yield runner.crawl(NemwebCurrentDispatchScada)
+    yield runner.crawl(NemwebCurrentPriceSpider)
 
 
 # At 6pm UTC start looking for next day dispatches
