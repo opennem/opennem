@@ -55,6 +55,13 @@ class TestUtilDates(object):
         assert subject == comparator, "Parses date correctly"
         assert is_aware(subject) is False, "Date has no timezone info"
 
+    def test_nem_settlementdate(self):
+        subject = parse_date("2020/10/07 10:15:00", dayfirst=False)
+        comparator = datetime(2020, 10, 7, 10, 15, 0)
+
+        assert subject == comparator, "Parses date correctly"
+        assert is_aware(subject) is False, "Date has no timezone info"
+
     def test_nem_excel_formatted(self):
         subject = parse_date("27/9/2019  2:55:00 pm")
         comparator = datetime(2019, 9, 27, 14, 55, 0)
