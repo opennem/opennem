@@ -72,6 +72,8 @@ class Network(Base, BaseModel):
     country = Column(Text, nullable=False)
     label = Column(Text, nullable=True)
     timezone = Column(Text, nullable=False)
+    timezone_database = Column(Text, nullable=True)
+    offset = Column(Integer, nullable=True)
     interval_size = Column(Integer, nullable=False)
 
 

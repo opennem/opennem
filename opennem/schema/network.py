@@ -43,7 +43,7 @@ NetworkWEM = NetworkSchema(
     code="WEM",
     label="WEM",
     country="au",
-    timezone="AWST",
+    timezone_database="AWST",
     offset=480,
     interval_size=30,
 )
