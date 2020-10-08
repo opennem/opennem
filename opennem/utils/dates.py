@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Union
 
 from dateutil.parser import ParserError, parse
@@ -16,6 +16,7 @@ def parse_date(
     dayfirst: bool = True,
     yearfirst: bool = False,
     is_utc: bool = False,
+    timezone: timezone = False,
 ) -> Optional[datetime]:
     dt_return = None
 
@@ -39,5 +40,8 @@ def parse_date(
 
     if is_utc:
         dt_return = make_aware(dt_return, timezone=UTC)
+
+    if timezone:
+        dt_return = make_aware(dt_return, timezone=timezone)
 
     return dt_return
