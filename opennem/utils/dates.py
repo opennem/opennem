@@ -14,6 +14,7 @@ def parse_date(
     date_str: Union[str, datetime],
     network: Optional[NetworkSchema] = None,
     dayfirst: bool = True,
+    yearfirst: bool = False,
     is_utc: bool = False,
 ) -> Optional[datetime]:
     dt_return = None
@@ -23,7 +24,7 @@ def parse_date(
 
     elif isinstance(date_str, str):
         try:
-            dt_return = parse(date_str, dayfirst=dayfirst)
+            dt_return = parse(date_str, dayfirst=dayfirst, yearfirst=yearfirst)
         except ParserError:
             raise ValueError("Invalid date string passed")
 
