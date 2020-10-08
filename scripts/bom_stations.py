@@ -13,7 +13,7 @@ import os
 import re
 import sys
 
-from scrapy import Field, Item, Spider
+from scrapy import Field, Item, Request, Spider
 from scrapy.crawler import CrawlerProcess
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import Join, MapCompose, TakeFirst
@@ -42,10 +42,13 @@ def clean_table_string(code: str = None):
 
     code: str = code.strip()
 
+    if code.endswith(" m"):
+        code = code[:-2]
+
     if code == " " or code == "":
         return None
 
-    if code in ["ID:", "Name:", "Lat:", "Lon:"]:
+    if code in ["ID:", "Name:", "Lat:", "Lon:", "Height:", "m"]:
         return None
 
     return code
@@ -55,10 +58,12 @@ class BomStation(Item):
     code = Field()
     name = Field()
     name_full = Field()
+    state = Field()
     url = Field()
     json_feed = Field()
     lat = Field()
     lng = Field()
+    altitude = Field()
 
 
 class BomStationItemLoader(ItemLoader):
@@ -71,36 +76,49 @@ class BomStationItemLoader(ItemLoader):
     lat_out = TakeFirst()
     lng_in = MapCompose(clean_table_string, lambda x: float(x))
     lng_out = TakeFirst()
+    altitude_in = MapCompose(clean_table_string, lambda x: float(x))
+    altitude_out = TakeFirst()
 
     # name_in = MapCompose(parse_name)
     # state_in = MapCompose(str.strip, str.upper)
 
 
+STATE_SOURCES = {
+    "NSW": "http://www.bom.gov.au/nsw/observations/nswall.shtml",
+    "NT": "http://www.bom.gov.au/nt/observations/ntall.shtml",
+    "QLD": "http://www.bom.gov.au/qld/observations/qldall.shtml",
+    "SA": "http://www.bom.gov.au/sa/observations/saall.shtml",
+    "TAS": "http://www.bom.gov.au/tas/observations/tasall.shtml",
+    "VIC": "http://www.bom.gov.au/vic/observations/vicall.shtml",
+    "WA": "http://www.bom.gov.au/wa/observations/waall.shtml",
+}
+
+
 class StationCrawler(Spider):
     name = "stationcrawler"
-    start_urls = [
-        "http://www.bom.gov.au/nsw/observations/nswall.shtml",
-        "http://www.bom.gov.au/nt/observations/ntall.shtml",
-        "http://www.bom.gov.au/qld/observations/qldall.shtml",
-        "http://www.bom.gov.au/sa/observations/saall.shtml",
-        "http://www.bom.gov.au/tas/observations/tasall.shtml",
-        "http://www.bom.gov.au/vic/observations/vicall.shtml",
-        "http://www.bom.gov.au/wa/observations/waall.shtml",
-    ]
+
     limit = 0
+
+    def start_requests(self):
+        for state, url in STATE_SOURCES.items():
+            yield Request(url, meta={"state": state})
 
     def parse(self, response):
         for sel in response.css("table.tabledata > tbody > tr > th"):
             link = sel.css("a::attr('href')").get()
             name = sel.css("a::text").get()
+            state = response.meta["state"]
 
             yield response.follow(
-                link, self.parse_station_page, meta={"name": name}
+                link,
+                self.parse_station_page,
+                meta={"name": name, "state": state},
             )
 
     def parse_station_page(self, response):
         loader = BomStationItemLoader(BomStation(), response=response)
         loader.add_value("name", response.meta["name"])
+        loader.add_value("state", response.meta["state"])
         loader.add_value("url", response.url)
 
         # if table:
@@ -119,6 +137,10 @@ class StationCrawler(Spider):
         loader.add_xpath(
             "lng",
             "//table[contains(@class, 'stationdetails')]//td[5]//text()",
+        )
+        loader.add_xpath(
+            "altitude",
+            "//table[contains(@class, 'stationdetails')]//td[6]//text()",
         )
 
         # find json link

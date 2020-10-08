@@ -190,6 +190,8 @@ def load_bom_stations_json():
         station.website_url = bom_station["url"]
         station.feed_url = bom_station["json_feed"]
         station.priority = 5
+        station.state = bom_station["state"]
+        station.altitude = bom_station["altitude"]
 
         if bom_station["code"] in bom_capitals:
             station.is_capital = True
