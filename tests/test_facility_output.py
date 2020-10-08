@@ -1,9 +1,6 @@
 from random import choice
 
-import pytest
-
-from opennem.db.load_fixtures import load_fixture as load_db_fixture
-from opennem.utils.tests import load_fixture
+from opennem.core.loader import load_data
 
 
 class TestStationOutput(object):
@@ -20,9 +17,9 @@ class TestStationOutput(object):
         """
             Load the stations fixture for this test suite
         """
-        cls.data = load_fixture("stations.json")
-        cls.statuses = load_db_fixture("fueltechs.json")
-        cls.fueltechs = load_db_fixture("facility_status.json")
+        cls.data = load_data("stations.json", from_project=True)
+        cls.statuses = load_data("fueltechs.json", from_fixture=True)
+        cls.fueltechs = load_data("facility_status.json", from_fixture=True)
 
     def get_random_station(self):
         return choice(self.data)
