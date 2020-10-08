@@ -1,19 +1,11 @@
 import logging
-from datetime import datetime
-
-from sqlalchemy.orm import sessionmaker
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import BomObservation
+from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
-
-
-def parse_date(date_str):
-    dt = datetime.strptime(date_str, "%Y%m%d%H%M%S")
-
-    return dt
 
 
 class StoreBomObservation(object):
@@ -28,7 +20,9 @@ class StoreBomObservation(object):
 
         observation = BomObservation(
             station_id=item["code"],
-            observation_time=parse_date(item["aifstime_utc"]),
+            observation_time=parse_date(
+                item["aifstime_utc"], dayfirst=False, is_utc=True
+            ),
             temp_apparent=item["apparent_t"],
             temp_air=item["air_temp"],
             press_qnh=item["press_qnh"],
