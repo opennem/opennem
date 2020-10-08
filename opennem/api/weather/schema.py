@@ -13,6 +13,10 @@ class WeatherObservation(ApiBase):
     press_qnh: float
     wind_dir: Optional[str]
     wind_spd: float
+    wind_gust: float
+    humidity: Optional[float]
+    cloud: Optional[str]
+    cloud_type: Optional[str]
 
 
 class WeatherStation(ApiBase):
@@ -21,6 +25,7 @@ class WeatherStation(ApiBase):
     name_alias: str
     registered: date
     website_url: str
+    altitude: int
     lat: float
     lng: float
 
