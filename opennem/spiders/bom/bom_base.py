@@ -37,7 +37,10 @@ class BomJSONObservationSpider(scrapy.Spider):
         if not code:
             raise Exception("No station id for this scrape can't join")
 
+        records = []
+
         for i in json_response["observations"]["data"]:
             i["code"] = code
+            records.append(i)
 
-            yield i
+        yield {"records": records}
