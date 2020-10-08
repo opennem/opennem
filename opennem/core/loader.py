@@ -33,6 +33,12 @@ def load_data(
         Load a CSV or JSON data file from either the library
         or project data directory
 
+        default loads from `opennem/core/data/`
+
+        from_project is `opennem/data`
+
+        from_fixture is `opennem/db/fixtures`
+
     """
     data_path = (
         PROJECT_DATA_PATH
