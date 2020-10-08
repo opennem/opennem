@@ -6,47 +6,29 @@ NEMWEB Data ingress into OpenNEM format
 """
 
 import logging
-from datetime import datetime
 
-import pytz
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm.session import Session
-from sqlalchemy.sql import text
 
-from opennem.core.dates import parse_date
 from opennem.core.normalizers import normalize_duid
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.schema.opennem import NetworkNEM
+from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
 
-nemweb_timezone = pytz.timezone(NetworkNEM.timezone)
-
-
-def parse_nemweb_interval(interval: str) -> datetime:
-
-    if type(interval) is datetime:
-        dt = interval
-        return interval
-
-    dt = datetime.strptime(interval, "%Y/%m/%d %H:%M:%S")
-
-    dt_aware = nemweb_timezone.localize(dt)
-
-    return dt_aware
-
 
 def process_case_solutions(table):
-    session = SessionLocal()
+    pass
+    # session = SessionLocal()
 
-    if "records" not in table:
-        raise Exception("Invalid table no records")
+    # if "records" not in table:
+    #     raise Exception("Invalid table no records")
 
-    records = table["records"]
+    # records = table["records"]
 
-    records_to = []
+    # records_to = []
 
 
 def process_pre_ap_price(table):
@@ -62,7 +44,7 @@ def process_pre_ap_price(table):
 
     for record in records:
         trading_interval = parse_date(
-            record["SETTLEMENTDATE"], network=NetworkNEM
+            record["SETTLEMENTDATE"], network=NetworkNEM, dayfirst=False
         )
 
         if not trading_interval:
@@ -110,7 +92,9 @@ def process_unit_scada(table):
     records_primary_keys = []
 
     for record in records:
-        trading_interval = parse_nemweb_interval(record["SETTLEMENTDATE"])
+        trading_interval = parse_date(
+            record["SETTLEMENTDATE"], network=NetworkNEM, dayfirst=False
+        )
         facility_code = normalize_duid(record["DUID"])
 
         if not trading_interval or not facility_code:
@@ -168,7 +152,9 @@ def process_unit_solution(table):
     records_primary_keys = []
 
     for record in records:
-        trading_interval = parse_nemweb_interval(record["SETTLEMENTDATE"])
+        trading_interval = parse_date(
+            record["SETTLEMENTDATE"], network=NetworkNEM, dayfirst=False
+        )
         facility_code = normalize_duid(record["DUID"])
 
         if not trading_interval or not facility_code:
