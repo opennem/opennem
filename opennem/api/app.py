@@ -22,7 +22,8 @@ from opennem.db.models.opennem import (
     Revision,
     Station,
 )
-from opennem.schema.opennem import FueltechSchema, NetworkSchema
+from opennem.schema.network import NetworkSchema
+from opennem.schema.opennem import FueltechSchema
 
 from .schema import FueltechResponse
 

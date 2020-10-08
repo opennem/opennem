@@ -1,4 +1,4 @@
-from opennem.schema.opennem import NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 
 
 def network_from_state(state: str) -> NetworkSchema:

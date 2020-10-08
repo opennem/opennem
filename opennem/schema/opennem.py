@@ -1,5 +1,4 @@
 from datetime import datetime
-from decimal import Decimal
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -13,9 +12,9 @@ from opennem.core.normalizers import (  # clean_numbers,; station_name_cleaner,
     clean_capacity,
     normalize_string,
 )
-from opennem.core.oid import get_ocode, get_oid
 
 from .core import BaseConfig
+from .network import NetworkNEM, NetworkSchema
 
 
 class OpennemBaseSchema(BaseConfig):
@@ -28,36 +27,6 @@ class FueltechSchema(BaseConfig):
     code: str
     label: str
     renewable: bool
-
-
-from pytz import timezone
-
-
-class NetworkSchema(BaseConfig):
-    code: str
-    country: str
-    label: str
-    timezone: str
-    interval_size: int
-
-    def get_timezone(self) -> timezone:
-        return timezone(self.timezone)
-
-
-NetworkNEM = NetworkSchema(
-    code="NEM",
-    label="NEM",
-    country="au",
-    timezone="Australia/Sydney",
-    interval_size=5,
-)
-NetworkWEM = NetworkSchema(
-    code="WEM",
-    label="WEM",
-    country="au",
-    timezone="Australia/Perth",
-    interval_size=30,
-)
 
 
 class FacilityStatusSchema(BaseConfig):
