@@ -69,7 +69,6 @@ def process_pre_ap_price(table):
     try:
         r = session.execute(stmt)
         session.commit()
-        return r
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
@@ -138,6 +137,8 @@ def process_unit_scada(table):
     finally:
         session.close()
 
+    return len(records_to_store)
+
 
 def process_unit_solution(table):
     session = SessionLocal()
@@ -196,6 +197,8 @@ def process_unit_solution(table):
         logger.error("Error: {}".format(e))
     finally:
         session.close()
+
+    return len(records_to_store)
 
 
 TABLE_PROCESSOR_MAP = {

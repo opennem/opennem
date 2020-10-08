@@ -2,42 +2,37 @@ import csv
 import logging
 from datetime import datetime, timedelta
 
-import pytz
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.sql import text
 
 from opennem.core.normalizers import normalize_duid
+from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.pipelines import DatabaseStoreBase
+from opennem.schema.network import NetworkWEM
+from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
 
 
-wem_timezone = pytz.timezone("Australia/Perth")
-
-
 class WemStoreFacilityScada(DatabaseStoreBase):
-    def parse_interval(self, date_str):
-        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-        dt_aware = wem_timezone.localize(dt)
-
-        return dt_aware
-
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
-        s = self.session()
+        session = SessionLocal()
+        engine = get_database_engine()
 
         csvreader = csv.DictReader(item["content"].split("\n"))
 
-        objects = []
+        records_to_store = []
 
         for row in csvreader:
-            trading_interval = self.parse_interval(row["Trading Interval"])
+            trading_interval = parse_date(
+                row["Trading Interval"], dayfirst=True, network=NetworkWEM
+            )
             facility_code = normalize_duid(row["Facility Code"])
 
-            objects.append(
+            records_to_store.append(
                 {
                     "network_id": "WEM",
                     "trading_interval": trading_interval,
@@ -47,8 +42,8 @@ class WemStoreFacilityScada(DatabaseStoreBase):
                 }
             )
 
-        stmt = insert(FacilityScada).values(objects)
-        stmt.bind = self.engine
+        stmt = insert(FacilityScada).values(records_to_store)
+        stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
             constraint="facility_scada_pkey",
             set_={
@@ -58,15 +53,14 @@ class WemStoreFacilityScada(DatabaseStoreBase):
         )
 
         try:
-            r = s.execute(stmt)
-            s.commit()
-            return r
+            session.execute(stmt)
+            session.commit()
         except Exception as e:
             logger.error("Error: {}".format(e))
         finally:
-            s.close()
+            session.close()
 
-        return None
+        return len(records_to_store)
 
 
 class WemStoreLiveFacilityScada(DatabaseStoreBase):
@@ -75,47 +69,22 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
     """
 
-    def parse_interval(self, date_str):
-        dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-        dt_aware = wem_timezone.localize(dt)
-
-        return dt_aware
-
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
-        s = self.session()
+        session = SessionLocal()
+        engine = get_database_engine()
 
         csvreader = csv.DictReader(item["content"].split("\n"))
 
-        # Get all facility codes
-
-        q = self.engine.execute(text("select distinct code from facility"))
-
-        all_facilities = list(set([i[0] for i in q.fetchall()]))
-
-        q = self.engine.execute(
-            text(
-                """ select trading_interval, facility_code
-                    from facility_scada where network_id='WEM'
-                """
-            )
-        )
-
-        keys = [(i[0], normalize_duid(i[1])) for i in q.fetchall()]
-
-        objects = []
+        records_to_store = []
         last_asat = None
 
         for row in csvreader:
-            if not row["FACILITY_CODE"] in all_facilities:
-                logger.error(
-                    "Do not have facility: {}".format(row["FACILITY_CODE"])
-                )
-                continue
-
             if row["AS_AT"] != "":
-                last_asat = self.parse_interval(row["AS_AT"])
+                last_asat = parse_date(
+                    row["AS_AT"], dayfirst=True, network=NetworkWEM
+                )
 
             if not last_asat or type(last_asat) is not datetime:
                 logger.error("Invalid row or no datetime")
@@ -139,8 +108,6 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
                 facility_code = normalize_duid(row["FACILITY_CODE"])
 
-                row_key = (interval, facility_code)
-
                 val = None
 
                 try:
@@ -148,25 +115,29 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
                 except ValueError:
                     pass
 
-                item = FacilityScada(
-                    network_id="WEM",
-                    trading_interval=interval,
-                    facility_code=facility_code,
-                    generated=val,
+                records_to_store.append(
+                    {
+                        "network_id": "WEM",
+                        "trading_interval": interval,
+                        "facility_code": facility_code,
+                        "generated": val,
+                    }
                 )
 
-                if row_key not in keys:
-                    # objects.append(item)
-                    # s.save()
-                    s.add(item)
-                    keys.append(row_key)
+        stmt = insert(FacilityScada).values(records_to_store)
+        stmt.bind = engine
+        stmt = stmt.on_conflict_do_update(
+            constraint="facility_scada_pkey",
+            set_={"generated": stmt.excluded.generated,},
+        )
 
         try:
-            # s.bulk_save_objects(objects)
-            s.commit()
+            session.execute(stmt)
+            session.commit()
         except Exception as e:
-            logger.error("Error: {}".format(e))
+            logger.error("Error inserting records")
+            logger.error(e)
         finally:
-            s.close()
+            session.close()
 
-        return len(objects)
+        return len(records_to_store)
