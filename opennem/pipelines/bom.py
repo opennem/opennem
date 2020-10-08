@@ -28,6 +28,10 @@ class StoreBomObservation(object):
             press_qnh=item["press_qnh"],
             wind_dir=item["wind_dir"],
             wind_spd=item["wind_spd_kmh"],
+            wind_gust=item["gust_kmh"],
+            cloud=item["cloud"],
+            cloud_type=item["cloud_type"],
+            humidity=item["rel_hum"],
         )
 
         try:

@@ -168,6 +168,7 @@ class BomStation(Base):
     feed_url = Column(Text, nullable=True)
 
     observations = relationship("BomObservation")
+    altitude = Column(Integer, nullable=True)
 
     geom = Column(Geometry("POINT", srid=4326, spatial_index=False))
 
@@ -202,6 +203,12 @@ class BomObservation(Base):
     press_qnh = Column(Numeric)
     wind_dir = Column(Text, nullable=True)
     wind_spd = Column(Numeric)
+    wind_gust = Column(Numeric)
+    humidity = Column(Numeric, nullable=True)
+    cloud = Column(Text, nullable=True)
+    cloud_type = Column(Text, nullable=True)
+
+
 
 
 class Location(Base):
