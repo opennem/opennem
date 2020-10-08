@@ -50,7 +50,10 @@ def energy_facility(
         scale = 12
 
     network = network_from_network_region(network_code)
-    timezone = network.get_timezone()
+    timezone = network.timezone_database
+
+    if not timezone:
+        timezone = "UTC"
 
     __query = """
         with intervals as (
@@ -94,21 +97,27 @@ def energy_year_network(network_code: str = "WEM", year: int = None) -> str:
 
     network_code = network_code.upper()
 
+    network = network_from_network_region(network_code)
+    timezone = network.timezone_database
+
+    if not timezone:
+        timezone = "UTC"
+
     return """
         select
-            date_trunc('day', fs.trading_interval) AS trading_day,
+            date_trunc('day', fs.trading_interval AT TIME ZONE '{timezone}') AS trading_day,
             max(fs.eoi_quantity) as energy_output,
             f.fueltech_id as fueltech
         from facility_scada fs
         left join facility f on fs.facility_code = f.code
         where
             f.fueltech_id is not null
-            and extract('year' from fs.trading_interval) = {year}
+            and extract('year' from fs.trading_interval AT TIME ZONE '{timezone}') = {year}
             and fs.network_id = '{network_code}'
         group by 1, f.fueltech_id
         order by 1 asc, 2 asc
     """.format(
-        year=year, network_code=network_code
+        year=year, network_code=network_code, timezone=timezone
     )
 
 
@@ -124,7 +133,10 @@ def price_network_region(
     period = get_period_map(period)
 
     network = network_from_network_region(network_code)
-    timezone = network.get_timezone()
+    timezone = network.timezone_database
+
+    if not timezone:
+        timezone = "UTC"
 
     __query = """
         with intervals as (
