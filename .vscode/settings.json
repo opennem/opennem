@@ -1,7 +1,9 @@
 {
   "files.exclude": {
     "**/__pycache__/": true,
-    ".venv": true
+    ".venv": true,
+    "build": true,
+    "dist": true
   },
   "python.pythonPath": ".venv/bin/python",
   "python.testing.pytestEnabled": true,
