@@ -150,7 +150,7 @@ def power_station(
     return output
 
 
-SUPPORTED_PERIODS = ["7d", "1M", "1Y"]
+SUPPORTED_PERIODS = ["7D", "1M", "1Y", "ALL"]
 SUPPORTED_INTERVALS = ["1d", "1h", "1M"]
 
 
@@ -177,6 +177,8 @@ def energy_station(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Interval not supported",
         )
+
+    period = period.upper()
 
     if period not in SUPPORTED_PERIODS:
         raise HTTPException(
@@ -338,6 +340,8 @@ def price_region(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Interval not supported",
         )
+
+    period = period.upper()
 
     if period not in SUPPORTED_PERIODS:
         raise HTTPException(
