@@ -34,18 +34,20 @@ def load_fueltechs():
 
     s = SessionLocal()
 
-    for fueltech in fixture:
-        ft = FuelTech(
-            code=fueltech["code"],
-            label=fueltech["label"],
-            renewable=fueltech["renewable"],
-        )
+    for ft in fixture:
+        fueltech = s.query(FuelTech).filter_by(code=ft["code"]).one_or_none()
+
+        if not fueltech:
+            fueltech = FuelTech(code=ft["code"],)
+
+        fueltech.label = ft["label"]
+        fueltech.renewable = ft["renewable"]
 
         try:
-            s.add(ft)
+            s.add(fueltech)
             s.commit()
         except Exception:
-            logger.error("Have {}".format(ft.code))
+            logger.error("Have {}".format(fueltech.code))
 
 
 def load_facilitystatus():
@@ -57,13 +59,22 @@ def load_facilitystatus():
     s = SessionLocal()
 
     for status in fixture:
-        ft = FacilityStatus(code=status["code"], label=status["label"],)
+        facility_status = (
+            s.query(FacilityStatus)
+            .filter_by(code=status["code"])
+            .one_or_none()
+        )
+
+        if not facility_status:
+            facility_status = FacilityStatus(code=status["code"],)
+
+        facility_status.label = status["label"]
 
         try:
-            s.add(ft)
+            s.add(facility_status)
             s.commit()
         except Exception:
-            logger.error("Have {}".format(ft.code))
+            logger.error("Have {}".format(facility_status.code))
 
 
 def load_networks():
@@ -75,19 +86,25 @@ def load_networks():
     s = SessionLocal()
 
     for network in fixture:
-        ft = Network(
-            code=network["code"],
-            label=network["label"],
-            country=network["country"],
-            timezone=network["timezone"],
-            interval_size=network["interval_size"],
+        network_model = (
+            s.query(Network).filter_by(code=network["code"]).one_or_none()
         )
 
+        if not network_model:
+            network_model = Network(code=network["code"])
+
+        network_model.label = network["label"]
+        network_model.country = network["country"]
+        network_model.timezone = network["timezone"]
+        network_model.timezone_database = network["timezone_database"]
+        network_model.offset = network["offset"]
+        network_model.interval_size = network["interval_size"]
+
         try:
-            s.add(ft)
+            s.add(network_model)
             s.commit()
         except Exception:
-            logger.error("Have {}".format(ft.code))
+            logger.error("Have {}".format(network_model.code))
 
 
 """
@@ -281,10 +298,9 @@ def update_existing_geos():
 
 
 def load_fixtures():
-    # load_fueltechs()
-    # load_facilitystatus()
-    # load_networks()
-
+    load_fueltechs()
+    load_facilitystatus()
+    load_networks()
     load_bom_stations_json()
 
 

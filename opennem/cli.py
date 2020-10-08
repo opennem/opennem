@@ -5,7 +5,7 @@ import os
 import click
 from scrapy.utils.python import garbage_collect
 
-from opennem.db.load_fixtures import load_bom_stations_json
+from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures
 from opennem.diff.facility_diff import run_diff
 from opennem.importer.all import run_all
 from opennem.importer.db import init as db_init
@@ -43,6 +43,11 @@ def cmd_db():
 @click.command()
 def cmd_db_init():
     db_init()
+
+
+@click.command()
+def cmd_db_fixturer():
+    load_fixtures()
 
 
 @click.group()
@@ -105,6 +110,7 @@ cmd_export.add_command(cmd_export_opennem, name="opennem")
 cmd_export.add_command(cmd_export_all, name="all")
 
 cmd_db.add_command(cmd_db_init, name="init")
+cmd_db.add_command(cmd_db_fixturer, name="load_fixtures")
 
 cmd_weather.add_command(cmd_weather_init, name="init")
 
