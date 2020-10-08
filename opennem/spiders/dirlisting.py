@@ -5,7 +5,7 @@ from datetime import datetime
 import scrapy
 from scrapy import Spider
 
-from opennem.datetimes import parse_date
+from opennem.utils.dates import parse_date
 
 PADDING_WIDTH = 3
 
