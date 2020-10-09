@@ -24,7 +24,7 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
 
         for record in csvreader:
             trading_interval = parse_date(
-                record["Trading Interval"], dayfirst=True, network=NetworkWEM
+                record["Trading Interval"], network=NetworkWEM
             )
 
             if not trading_interval:
@@ -58,11 +58,12 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
         )
 
         try:
-            r = s.execute(stmt)
+            s.execute(stmt)
             s.commit()
         except Exception as e:
             logger.error("Error inserting records")
             logger.error(e)
+            return 0
         finally:
             s.close()
 

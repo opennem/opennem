@@ -2,9 +2,7 @@ import csv
 import logging
 from datetime import datetime
 
-from scrapy.exceptions import DropItem
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.sql import text
 
 from opennem.core.facility_code import parse_wem_facility_code
 from opennem.core.fueltechs import lookup_fueltech
@@ -51,7 +49,6 @@ class WemStoreFacility(DatabaseStoreBase):
                 row["Participant Name"]
             )
             participant_code = normalize_duid(row["Participant Code"])
-            participant_network_code = normalize_duid(row["Participant Code"])
 
             participant = (
                 s.query(Participant)
@@ -204,9 +201,6 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
             station = None
             facility = None
 
-            created_station = False
-            created_facility = False
-
             facility_code = normalize_duid(row["FACILITY_CODE"])
             station_code = parse_wem_facility_code(facility_code)
             station_name = station_name_cleaner(row["DISPLAY_NAME"])
@@ -231,7 +225,6 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
                 station.location = location
 
-                created_station = True
                 logger.debug("Added WEM station: {}".format(station_code))
 
             lat = row["LATITUDE"]
@@ -263,7 +256,6 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                     network_region="WEM",
                 )
 
-                created_facility = True
 
             registered_date = row["YEAR_COMMISSIONED"]
 

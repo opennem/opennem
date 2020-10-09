@@ -90,7 +90,6 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
                 continue
 
             participant = None
-            created_record = False
 
             participant_code = normalize_duid(
                 normalize_string(row["PARTICIPANT_CODE"])
@@ -114,7 +113,6 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
                     created_by="pipeline.wem.live.participant",
                 )
 
-                created_record = True
                 logger.info(
                     "Created new WEM participant: {}".format(participant_code)
                 )

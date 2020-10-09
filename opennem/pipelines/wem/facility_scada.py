@@ -29,7 +29,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
 
         for row in csvreader:
             trading_interval = parse_date(
-                row["Trading Interval"], dayfirst=True, network=NetworkWEM
+                row["Trading Interval"], network=NetworkWEM
             )
             facility_code = normalize_duid(row["Facility Code"])
 
@@ -90,9 +90,7 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
         for row in csvreader:
             if row["AS_AT"] != "":
-                last_asat = parse_date(
-                    row["AS_AT"], dayfirst=True, network=NetworkWEM
-                )
+                last_asat = parse_date(row["AS_AT"], network=NetworkWEM)
 
             if not last_asat or type(last_asat) is not datetime:
                 logger.error("Invalid row or no datetime")

@@ -26,9 +26,7 @@ class WemStorePulse(DatabaseStoreBase):
 
         for row in csvreader:
             trading_interval = parse_date(
-                row["TRADING_DAY_INTERVAL"],
-                dayfirst=False,
-                network=NetworkWEM,
+                row["TRADING_DAY_INTERVAL"], network=NetworkWEM,
             )
 
             if trading_interval not in primary_keys:
@@ -41,7 +39,6 @@ class WemStorePulse(DatabaseStoreBase):
                         "network_region": "WEM",
                         "forecast_load": forecast_load,
                         # generation_scheduled=row["Scheduled Generation (MW)"],
-                        # generation_non_scheduled=row["Non-Scheduled Generation (MW)"],
                         # generation_total=row["Total Generation (MW)"],
                         "price": clean_float(row["PRICE"]),
                     }
