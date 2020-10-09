@@ -178,8 +178,6 @@ def station(
         .filter(~Facility.code.endswith("NL1"))
     )
 
-    division_by_zero = 1 / 0
-
     if only_generators:
         station = station.filter(
             Facility.dispatch_type == DispatchType.GENERATOR
