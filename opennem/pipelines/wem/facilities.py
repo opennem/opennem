@@ -257,6 +257,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                 facility = Facility(
                     created_by="opennem.wem.live.facilities",
                     approved_at=datetime.now(),
+                    network_id="WEM",
                     code=facility_code,
                     network_code=facility_code,
                     network_region="WEM",
