@@ -262,8 +262,11 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
-        if "tables" not in item and type(item["tables"]) is not list:
-            raise Exception("Invalid item - no tables located")
+        if "tables" not in item:
+            logger.error("Invalid item - no tables located")
+
+        if not isinstance(item["tables"], list):
+            logger.error("Invalid item - no tables located")
 
         tables = item["tables"]
 
@@ -275,7 +278,7 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
             table_name = table["name"]
 
             if table_name not in TABLE_PROCESSOR_MAP:
-                logger.info("No processor for table %s", table_name)
+                logger.error("No processor for table %s", table_name)
                 continue
 
             process_meth = TABLE_PROCESSOR_MAP[table_name]
