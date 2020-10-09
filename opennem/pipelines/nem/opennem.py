@@ -67,7 +67,7 @@ def process_meter_data_gen_duid(table):
     )
 
     try:
-        r = session.execute(stmt)
+        session.execute(stmt)
         session.commit()
     except Exception as e:
         logger.error("Error inserting records")
@@ -115,11 +115,12 @@ def process_pre_ap_price(table):
     )
 
     try:
-        r = session.execute(stmt)
+        session.execute(stmt)
         session.commit()
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
+        return 0
     finally:
         session.close()
 
@@ -182,6 +183,7 @@ def process_unit_scada(table):
         session.commit()
     except Exception as e:
         logger.error("Error: {}".format(e))
+        return 0
     finally:
         session.close()
 
@@ -243,6 +245,7 @@ def process_unit_solution(table):
         session.commit()
     except Exception as e:
         logger.error("Error: {}".format(e))
+        return 0
     finally:
         session.close()
 
@@ -264,11 +267,15 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
 
         if "tables" not in item:
             logger.error("Invalid item - no tables located")
+            return 0
 
         if not isinstance(item["tables"], list):
             logger.error("Invalid item - no tables located")
+            return 0
 
         tables = item["tables"]
+
+        ret = 0
 
         for table in tables:
             if "name" not in table:
@@ -287,4 +294,6 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
                 logger.info("Invalid processing function %s", process_meth)
                 continue
 
-            globals()[process_meth](table)
+            ret += globals()[process_meth](table)
+
+        return ret
