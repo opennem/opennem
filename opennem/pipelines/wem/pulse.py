@@ -43,7 +43,7 @@ class WemStorePulse(DatabaseStoreBase):
                         # generation_scheduled=row["Scheduled Generation (MW)"],
                         # generation_non_scheduled=row["Non-Scheduled Generation (MW)"],
                         # generation_total=row["Total Generation (MW)"],
-                        "price": row["PRICE"],
+                        "price": clean_float(row["PRICE"]),
                     }
                 )
                 primary_keys.append(trading_interval)
