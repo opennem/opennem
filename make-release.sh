@@ -4,7 +4,7 @@ VERSION=$(poetry version | sed 's/opennem\ //g')
 
 echo "Building version $VERSION"
 
-poetry export --format requirements.txt -E postgres > requirements
+poetry export --format requirements.txt -E postgres > requirements.txt
 
 git add pyproject.toml
 
