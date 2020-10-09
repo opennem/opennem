@@ -69,6 +69,8 @@ class DirlistingSpider(Spider):
 
     start_url = None
 
+    supported_extensions = [".csv", ".zip"]
+
     def start_requests(self):
         if self.custom_settings is None:
             self.custom_settings = {}
@@ -129,4 +131,12 @@ class DirlistingSpider(Spider):
 
                 parsed += 1
 
-                yield {"link": link, **entry}
+                if link[-4:].lower() in self.supported_extensions:
+                    yield {"link": link, **entry}
+                else:
+                    self.log(
+                        "Not a supported extension: {} {}".format(
+                            link[-4:].lower(),
+                            ", ".join(self.supported_extensions),
+                        )
+                    )
