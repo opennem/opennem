@@ -17,7 +17,13 @@ INTERVAL_MAP = {
     "1M": {"trunc": "month", "interval": "1 month"},
 }
 
-PERIOD_MAP = {"7d": "7 day", "1M": "1 month", "1Y": "1 year", "ALL": "5 Year"}
+PERIOD_MAP = {
+    "7d": "7 day",
+    "1M": "1 month",
+    "1Y": "1 year",
+    "5Y": "5 year",
+    "ALL": "20 Year",
+}
 
 
 def get_interval_map(interval: str) -> Tuple[str, str]:
