@@ -15,6 +15,7 @@ INTERVAL_MAP = {
     "1d": {"trunc": "day", "interval": "1 day"},
     "1h": {"trunc": "hour", "interval": "1 hour"},
     "1M": {"trunc": "month", "interval": "1 month"},
+    "1Y": {"trunc": "year", "interval": "1 year"},
 }
 
 PERIOD_MAP = {
