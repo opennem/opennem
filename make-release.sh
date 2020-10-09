@@ -4,6 +4,15 @@ VERSION=$(poetry version | sed 's/opennem\ //g')
 
 echo "Building version $VERSION"
 
+poetry export --format requirements.txt -E postgres > requirements
+
+git add pyproject.toml
+
+git ci -m "v$VERSION"
+
+git tag v$VERSION
+git push -u origin master v$VERSION
+
 docker build -t opennem/opennem:$VERSION .
 docker push opennem/opennem:$VERSION
 
@@ -15,9 +24,6 @@ poetry build
 
 twine upload dist/*
 
-git add pyproject.toml
+scrapyd-deploy
 
-git ci -m "v$VERSION"
-
-git tag v$VERSION
-git push -u origin master v$VERSION
+rm -rf build/

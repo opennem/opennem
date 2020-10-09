@@ -1,29 +1,31 @@
-FROM python:3.8 as poetry
+FROM python:3.8 as base
 
 ENV PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \
   PYTHONHASHSEED=random \
   PIP_NO_CACHE_DIR=off \
   PIP_DISABLE_PIP_VERSION_CHECK=on \
-  PIP_DEFAULT_TIMEOUT=100 \
-  POETRY_VERSION=1.0.5
+  PIP_DEFAULT_TIMEOUT=100
 
-RUN pip install "poetry==$POETRY_VERSION"
+FROM base as app
 
-FROM poetry as base
 WORKDIR /code
-COPY pyproject.toml poetry.lock /code/
+
+COPY requirements.txt /code/
 
 # Project initialization:
-RUN poetry config virtualenvs.in-project true && \
-  poetry install --no-dev --no-interaction --no-ansi -E postgres -E server
+RUN python -m venv .venv
+RUN . .venv/bin/activate
+RUN pip install -r requirements.txt
 
 # Creating folders, and files for a project:
-FROM base
+FROM app
 
-COPY . /code
+COPY opennem /code/opennem/
+COPY docker-entrypoint.sh /entrypoint.sh
+
 EXPOSE 8000
 WORKDIR /code
 ENV PATH="/code/.venv/bin:${PATH}"
 
-ENTRYPOINT [ "./docker-entrypoint.sh" ]
+ENTRYPOINT [ "/entrypoint.sh" ]
