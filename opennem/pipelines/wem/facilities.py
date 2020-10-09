@@ -223,7 +223,6 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                     created_by="opennem.wem.live.facilities",
                     approved_at=datetime.now(),
                     code=station_code,
-                    network_id="WEM",
                     network_code=station_code,
                     participant=participant,
                 )
