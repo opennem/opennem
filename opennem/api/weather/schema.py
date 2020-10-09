@@ -12,8 +12,8 @@ class WeatherObservation(ApiBase):
     temp_air: float
     press_qnh: float
     wind_dir: Optional[str]
-    wind_spd: float
-    wind_gust: float
+    wind_spd: Optional[float]
+    wind_gust: Optional[float]
     humidity: Optional[float]
     cloud: Optional[str]
     cloud_type: Optional[str]
