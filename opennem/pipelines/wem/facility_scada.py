@@ -25,6 +25,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
         csvreader = csv.DictReader(item["content"].split("\n"))
 
         records_to_store = []
+        primary_keys = []
 
         for row in csvreader:
             trading_interval = parse_date(
@@ -32,15 +33,22 @@ class WemStoreFacilityScada(DatabaseStoreBase):
             )
             facility_code = normalize_duid(row["Facility Code"])
 
-            records_to_store.append(
-                {
-                    "network_id": "WEM",
-                    "trading_interval": trading_interval,
-                    "facility_code": facility_code,
-                    "eoi_quantity": row["EOI Quantity (MW)"] or None,
-                    "generated": row["Energy Generated (MWh)"] or None,
-                }
-            )
+            __key = (trading_interval, facility_code)
+
+            if __key not in primary_keys:
+                records_to_store.append(
+                    {
+                        "network_id": "WEM",
+                        "trading_interval": trading_interval,
+                        "facility_code": facility_code,
+                        "eoi_quantity": row["EOI Quantity (MW)"] or None,
+                        "generated": row["Energy Generated (MWh)"] or None,
+                    }
+                )
+                primary_keys.append(__key)
+
+        # free
+        primary_keys = None
 
         stmt = insert(FacilityScada).values(records_to_store)
         stmt.bind = engine
