@@ -1,4 +1,5 @@
 import re
+from decimal import Decimal
 from typing import Optional, Union
 
 from opennem.core.station_names import station_map_name
@@ -210,6 +211,28 @@ def name_normalizer(name: str) -> str:
 
     return str(name_normalized)
 
+
+def clean_float(number: Union[str, int, float]) -> Optional[float]:
+    num_return = None
+
+    if isinstance(number, str):
+        number = number.replace("-", "").strip()
+
+        if number == "":
+            return None
+
+        num_return = float(number)
+
+    if isinstance(number, int):
+        return float(number)
+
+    if isinstance(number, Decimal):
+        return float(number)
+
+    if isinstance(number, float):
+        return number
+
+    return None
 
 def clean_numbers(part: Union[str, int]) -> Union[str, int, None]:
     """
