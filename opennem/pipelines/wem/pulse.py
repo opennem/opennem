@@ -3,6 +3,7 @@ import logging
 
 from sqlalchemy.dialects.postgresql import insert
 
+from opennem.core.normalizers import clean_float
 from opennem.db.models.opennem import BalancingSummary
 from opennem.pipelines import DatabaseStoreBase
 from opennem.schema.network import NetworkWEM
@@ -31,12 +32,14 @@ class WemStorePulse(DatabaseStoreBase):
             )
 
             if trading_interval not in primary_keys:
+                forecast_load = clean_float(row["FORECAST_EOI_MW"])
+
                 records_to_store.append(
                     {
                         "trading_interval": trading_interval,
                         "network_id": "WEM",
                         "network_region": "WEM",
-                        "forecast_load": row["FORECAST_EOI_MW"],
+                        "forecast_load": forecast_load,
                         # generation_scheduled=row["Scheduled Generation (MW)"],
                         # generation_non_scheduled=row["Non-Scheduled Generation (MW)"],
                         # generation_total=row["Total Generation (MW)"],
