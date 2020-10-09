@@ -31,6 +31,54 @@ def process_case_solutions(table):
     # records_to = []
 
 
+def process_meter_data_gen_duid(table):
+    session = SessionLocal()
+    engine = get_database_engine()
+
+    if "records" not in table:
+        raise Exception("Invalid table no records")
+
+    records = table["records"]
+
+    records_to_store = []
+
+    for record in records:
+        trading_interval = parse_date(
+            record["INTERVAL_DATETIME"], network=NetworkNEM, dayfirst=False
+        )
+
+        if not trading_interval:
+            continue
+
+        records_to_store.append(
+            {
+                "network_id": "NEM",
+                "trading_interval": trading_interval,
+                "facility_code": normalize_duid(record["DUID"]),
+                "eoi_quantity": record["MWH_READING"],
+            }
+        )
+
+    stmt = insert(FacilityScada).values(records_to_store)
+    stmt.bind = engine
+    stmt = stmt.on_conflict_do_update(
+        constraint="facility_scada_pkey",
+        set_={"eoi_quantity": stmt.excluded.eoi_quantity,},
+    )
+
+    try:
+        r = session.execute(stmt)
+        session.commit()
+    except Exception as e:
+        logger.error("Error inserting records")
+        logger.error(e)
+        return 0
+    finally:
+        session.close()
+
+    return len(records_to_store)
+
+
 def process_pre_ap_price(table):
     session = SessionLocal()
     engine = get_database_engine()
@@ -202,6 +250,7 @@ def process_unit_solution(table):
 
 
 TABLE_PROCESSOR_MAP = {
+    "METER_DATA_GEN_DUID": "process_meter_data_gen_duid",
     "DISPATCH_CASE_SOLUTION": "process_case_solutions",
     "DISPATCH_UNIT_SCADA": "process_unit_scada",
     "DISPATCH_UNIT_SOLUTION": "process_unit_solution",
