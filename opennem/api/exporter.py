@@ -2,7 +2,6 @@ import decimal
 import json
 import os
 from datetime import datetime
-from pprint import pprint
 
 from smart_open import open
 
@@ -49,6 +48,11 @@ def wem_export_power():
     json_data.append(price)
     json_data.append(demand)
 
+    response = {
+        "creation_time": datetime.now(),
+        "data": json_data,
+    }
+
     power_path = BASE_EXPORT + "/power/wem.json"
 
     with open(
@@ -56,7 +60,7 @@ def wem_export_power():
         "w",
         transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
     ) as fh:
-        json.dump(json_data, fh, cls=NemEncoder)
+        json.dump(response, fh, cls=NemEncoder)
 
 
 def wem_export_years():
@@ -67,7 +71,10 @@ def wem_export_years():
         energy = wem_energy_year(year)
         market_value = wem_market_value_year(year)
 
-        json_envelope = energy + market_value
+        json_envelope = {
+            "creation_time": datetime.now(),
+            "data": energy + market_value,
+        }
 
         year_path = BASE_EXPORT + f"/wem/energy/daily/{year}.json"
 
@@ -84,9 +91,12 @@ def wem_export_all():
     energy = wem_energy_all()
     market_value = wem_market_value_all()
 
-    json_envelope = energy + market_value
+    json_envelope = {
+        "creation_time": datetime.now(),
+        "data": energy + market_value,
+    }
 
-    all_path = BASE_EXPORT + f"/wem/energy/monthly/all.json"
+    all_path = BASE_EXPORT + "/wem/energy/monthly/all.json"
 
     with open(
         all_path,

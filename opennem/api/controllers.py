@@ -19,7 +19,7 @@ def bom_observation(station_id, region="wa"):
     __query = """
         SELECT
             observation_time,
-            temp_air as value
+            round(temp_air, 2) as value
         FROM bom_observation
         WHERE
             station_id = '{station_id}'
@@ -78,9 +78,9 @@ def wem_price(region="wa"):
 
         select
             i.interval,
-            bs.price,
+            round(bs.price, 2),
             case when bs.price is null then 0 else bs.price end as price_cast,
-            bs.generation_total
+            round(bs.generation_total, 2)
         from intervals i
         left join balancing_summary bs on bs.trading_interval = interval
         where bs.network_id='WEM'
@@ -137,8 +137,8 @@ def wem_demand(region="wa"):
 
         select
             i.interval,
-            wbs.price,
-            wbs.generation_total
+            round(wbs.price, 2),
+            round(wbs.generation_total, 2)
         from intervals i
         left join balancing_summary wbs on wbs.trading_interval = interval
         where wbs.network_id='WEM'
@@ -195,7 +195,7 @@ def wem_power_groups(intervals_per_hour=2):
         select
             i.interval,
             coalesce(f.fueltech_id, 'Unknown') as fueltech,
-            sum(fs.generated) * {intervals_per_hour} as val
+            round(sum(fs.generated) * {intervals_per_hour}, 2) as val
         from intervals i
         left join facility_scada fs on i.interval = fs.trading_interval
         left join facility f on f.code = fs.facility_code
@@ -267,7 +267,7 @@ def wem_energy_year(year="2020"):
     __query = """
         select
             date_trunc('day', fs.trading_interval) AS trading_day,
-            max(fs.eoi_quantity) as energy_output,
+            round(max(fs.eoi_quantity), 2) as energy_output,
             f.fueltech_id
         from facility_scada fs
         left join facility f on fs.facility_code = f.code
@@ -332,7 +332,7 @@ def wem_market_value_year(year="2020"):
     __query = """
         select
             date_trunc('day', fs.trading_interval) AS trading_day,
-            sum(fs.eoi_quantity * bs.price) as energy_interval,
+            round(sum(fs.eoi_quantity * bs.price), 2) as energy_interval,
             f.fueltech_id
         from facility_scada fs
         left join facility f on fs.facility_code = f.code
@@ -398,7 +398,7 @@ def wem_energy_all():
     __query = """
         select
             date_trunc('month', fs.trading_interval) AS trading_day,
-            max(fs.eoi_quantity) as energy_output,
+            round(max(fs.eoi_quantity), 2) as energy_output,
             f.fueltech_id
         from facility_scada fs
         left join facility f on fs.facility_code = f.code
@@ -462,7 +462,7 @@ def wem_market_value_all():
     __query = """
         select
             date_trunc('month', fs.trading_interval) AS trading_day,
-            sum(fs.eoi_quantity * bs.price) as energy_interval,
+            round(sum(fs.eoi_quantity * bs.price), 2) as energy_interval,
             f.fueltech_id
         from facility_scada fs
         left join facility f on fs.facility_code = f.code
