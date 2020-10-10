@@ -194,12 +194,14 @@ def wem_power_groups(intervals_per_hour=2):
         )
         select
             i.interval,
-            coalesce(f.fueltech_id, 'Unknown') as fueltech,
+            f.fueltech_id as fueltech,
             round(sum(fs.generated) * {intervals_per_hour}, 2) as val
         from intervals i
         left join facility_scada fs on i.interval = fs.trading_interval
         left join facility f on f.code = fs.facility_code
-        where fs.network_id='WEM'
+        where
+            fs.network_id='WEM'
+            and f.fueltech_id is not null
         group by 1, 2
         order by 2 asc, 1 desc
         """
