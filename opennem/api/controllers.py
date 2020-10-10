@@ -1,12 +1,6 @@
-import decimal
-import json
-from datetime import datetime
-
 from sqlalchemy.orm import sessionmaker
 
 from opennem.db import db_connect
-from opennem.db.models.opennem import FuelTech
-from opennem.db.models.wem import WemFacility, metadata
 
 engine = db_connect()
 session = sessionmaker(bind=engine)
@@ -84,11 +78,12 @@ def wem_price(region="wa"):
 
         select
             i.interval,
-            wbs.price,
-            case when wbs.price is null then 0 else wbs.price end as price_cast,
-            wbs.generation_total
+            bs.price,
+            case when bs.price is null then 0 else bs.price end as price_cast,
+            bs.generation_total
         from intervals i
-        left join wem_balancing_summary wbs on wbs.trading_interval = interval
+        left join balancing_summary bs on bs.trading_interval = interval
+        where bs.network_id='WEM'
         order by i.interval desc
     """
 
@@ -145,7 +140,8 @@ def wem_demand(region="wa"):
             wbs.price,
             wbs.generation_total
         from intervals i
-        left join wem_balancing_summary wbs on wbs.trading_interval = interval
+        left join balancing_summary wbs on wbs.trading_interval = interval
+        where wbs.network_id='WEM'
         order by i.interval desc
     """
 
@@ -198,11 +194,12 @@ def wem_power_groups(intervals_per_hour=2):
         )
         select
             i.interval,
-            coalesce(wf.fueltech_id, 'Unknown') as fueltech,
-            sum(wfs.generated) * {intervals_per_hour} as val
+            coalesce(f.fueltech_id, 'Unknown') as fueltech,
+            sum(fs.generated) * {intervals_per_hour} as val
         from intervals i
-        left join wem_facility_scada wfs on i.interval = wfs.trading_interval
-        left join wem_facility wf on wf.code = wfs.facility_id
+        left join facility_scada fs on i.interval = fs.trading_interval
+        left join facility f on f.code = fs.facility_code
+        where fs.network_id='WEM'
         group by 1, 2
         order by 2 asc, 1 desc
         """
@@ -269,15 +266,16 @@ def wem_energy_year(year="2020"):
     """
     __query = """
         select
-            date_trunc('day', wfs.trading_interval) AS trading_day,
-            max(wfs.eoi_quantity) as energy_output,
-            wf.fueltech_id
-        from wem_facility_scada wfs
-        left join wem_facility wf on wfs.facility_id = wf.code
+            date_trunc('day', fs.trading_interval) AS trading_day,
+            max(fs.eoi_quantity) as energy_output,
+            f.fueltech_id
+        from facility_scada fs
+        left join facility f on fs.facility_code = f.code
         where
-            wf.fueltech_id is not null
-            and extract('year' from wfs.trading_interval) = {year}
-        group by 1, wf.fueltech_id
+            f.fueltech_id is not null
+            and f.network_id = 'WEM'
+            and extract('year' from fs.trading_interval) = {year}
+        group by 1, f.fueltech_id
         order by 1 desc, 2 asc
         """
 
@@ -333,16 +331,17 @@ def wem_market_value_year(year="2020"):
     """
     __query = """
         select
-            date_trunc('day', wfs.trading_interval) AS trading_day,
-            sum(wfs.eoi_quantity * wbs.price) as energy_interval,
-            wf.fueltech_id
-        from wem_facility_scada wfs
-        left join wem_facility wf on wfs.facility_id = wf.code
-        join wem_balancing_summary wbs on wfs.trading_interval = wbs.trading_interval
+            date_trunc('day', fs.trading_interval) AS trading_day,
+            sum(fs.eoi_quantity * bs.price) as energy_interval,
+            f.fueltech_id
+        from facility_scada fs
+        left join facility f on fs.facility_code = f.code
+        join balancing_summary bs on fs.trading_interval = bs.trading_interval
         where
-            wf.fueltech_id is not null
-            and extract('year' from wfs.trading_interval) = {year}
-        group by 1, wf.fueltech_id
+            f.fueltech_id is not null
+            and fs.network_id='WEM'
+            and extract('year' from fs.trading_interval) = {year}
+        group by 1, f.fueltech_id
         order by 1 desc, 2 asc
         """
 
@@ -398,14 +397,15 @@ def wem_energy_all():
     """
     __query = """
         select
-            date_trunc('month', wfs.trading_interval) AS trading_day,
-            max(wfs.eoi_quantity) as energy_output,
-            wf.fueltech_id
-        from wem_facility_scada wfs
-        left join wem_facility wf on wfs.facility_id = wf.code
+            date_trunc('month', fs.trading_interval) AS trading_day,
+            max(fs.eoi_quantity) as energy_output,
+            f.fueltech_id
+        from facility_scada fs
+        left join facility f on fs.facility_code = f.code
         where
-            wf.fueltech_id is not null
-        group by 1, wf.fueltech_id
+            f.fueltech_id is not null
+            and f.network_id='WEM'
+        group by 1, f.fueltech_id
         order by 1 desc, 2 asc
         """
 
@@ -461,15 +461,16 @@ def wem_market_value_all():
     """
     __query = """
         select
-            date_trunc('month', wfs.trading_interval) AS trading_day,
-            sum(wfs.eoi_quantity * wbs.price) as energy_interval,
-            wf.fueltech_id
-        from wem_facility_scada wfs
-        left join wem_facility wf on wfs.facility_id = wf.code
-        join wem_balancing_summary wbs on wfs.trading_interval = wbs.trading_interval
+            date_trunc('month', fs.trading_interval) AS trading_day,
+            sum(fs.eoi_quantity * bs.price) as energy_interval,
+            f.fueltech_id
+        from facility_scada fs
+        left join facility f on fs.facility_code = f.code
+        join balancing_summary bs on fs.trading_interval = bs.trading_interval
         where
-            wf.fueltech_id is not null
-        group by 1, wf.fueltech_id
+            f.fueltech_id is not null
+            and f.network_id='WEM'
+        group by 1, f.fueltech_id
         order by 1 desc, 2 asc
         """
 
