@@ -173,7 +173,19 @@ def load_bom_stations_json():
     bom_stations = load_data("bom_stations.json", from_project=True)
     bom_capitals = load_data("bom_capitals.json", from_project=True)
 
+    codes = []
+
     for bom_station in bom_stations:
+
+        if not "code" in bom_station:
+            logger.error("Invalida bom station ..")
+            continue
+
+        if bom_station["code"] in codes:
+            continue
+
+        codes.append(bom_station["code"])
+
         station = (
             session.query(BomStation)
             .filter_by(code=bom_station["code"])

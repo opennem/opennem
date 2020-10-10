@@ -220,17 +220,6 @@
     "json_feed": "http://www.bom.gov.au/fwo/IDW60801/IDW60801.95208.json"
   },
   {
-    "name": "Wyndham Airport",
-    "state": "WA",
-    "url": "http://www.bom.gov.au/products/IDW60801/IDW60801.95214.shtml",
-    "code": "001006",
-    "name_full": "WYNDHAM AERO",
-    "lat": -15.51,
-    "lng": 128.15,
-    "altitude": 3.8,
-    "json_feed": "http://www.bom.gov.au/fwo/IDW60801/IDW60801.95214.json"
-  },
-  {
     "name": "West Roebuck",
     "state": "WA",
     "url": "http://www.bom.gov.au/products/IDW60801/IDW60801.95204.shtml",
