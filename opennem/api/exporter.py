@@ -65,7 +65,19 @@ def wem_export_power():
 
 def wem_export_years():
 
-    for year in [2020, 2019]:
+    for year in [
+        2020,
+        2019,
+        2018,
+        2017,
+        2016,
+        2015,
+        2014,
+        2013,
+        2012,
+        2011,
+        2010,
+    ]:
         json_envelope = []
 
         energy = wem_energy_year(year)
