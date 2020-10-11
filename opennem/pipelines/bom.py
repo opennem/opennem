@@ -29,12 +29,18 @@ class StoreBomObservation(object):
         records = item["records"]
 
         for obs in records:
+            observation_time = parse_date(
+                obs["aifstime_utc"], dayfirst=False, is_utc=True
+            )
+            code = obs["code"]
+
+            if not observation_time or not code:
+                continue
+
             records_to_store.append(
                 {
-                    "station_id": obs["code"],
-                    "observation_time": parse_date(
-                        obs["aifstime_utc"], dayfirst=False, is_utc=True
-                    ),
+                    "station_id": code,
+                    "observation_time": observation_time,
                     "temp_apparent": obs["apparent_t"],
                     "temp_air": obs["air_temp"],
                     "press_qnh": obs["press_qnh"],
