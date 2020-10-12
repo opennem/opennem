@@ -91,6 +91,10 @@ class APVIStoreData(object):
 
             state_facility.capacity_registered = state_capacity
 
+            if state.lower() in installations:
+                state_number_units = installations[state.lower()]
+                state_facility.unit_number = state_number_units
+
             session.add(state_facility)
             session.commit()
 
