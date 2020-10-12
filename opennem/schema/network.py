@@ -1,7 +1,8 @@
-from datetime import timezone
-from typing import Optional
+from datetime import timezone as timezone_native
+from typing import Optional, Union
 
 from pydantic import Field
+from pytz import timezone as pytz_timezone
 
 from opennem.utils.timezone import get_current_timezone, get_fixed_timezone
 
@@ -23,11 +24,11 @@ class NetworkSchema(BaseConfig):
         ..., description="Size of network interval in minutes"
     )
 
-    def get_timezone(self) -> timezone:
+    def get_timezone(self) -> Union[timezone_native, pytz_timezone]:
         if self.offset:
             return get_fixed_timezone(self.offset)
         if self.timezone:
-            return timezone(self.timezone)
+            return pytz_timezone(self.timezone)
         return get_current_timezone()
 
 
