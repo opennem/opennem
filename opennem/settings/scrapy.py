@@ -58,7 +58,10 @@ ITEM_PIPELINES = {
     "opennem.pipelines.wem.facilities.WemStoreLiveFacilities": 416,
     "opennem.pipelines.wem.participant.WemStoreParticipant": 417,
     "opennem.pipelines.wem.participant.WemStoreLiveParticipant": 418,
+    # APVI
     "opennem.pipelines.apvi.data.APVIStoreData": 420,
+    # NPI
+    "opennem.pipelines.npi.facilities.NPIStoreFacility": 425,
     # BOM Storers
     "opennem.pipelines.bom.StoreBomObservation": 430,
     # MMS Parsers and Storers
