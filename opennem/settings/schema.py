@@ -16,6 +16,9 @@ class OpennemSettings(BaseSettings):
 
     slack_hook_url: Optional[str]
 
+    interval_default: str = "15m"
+    period_default: str = "7d"
+
     # @todo overwrite scrapy settings here
     scrapy: Optional[Settings] = get_project_settings()
 
