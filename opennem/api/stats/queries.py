@@ -66,6 +66,17 @@ def power_facility(
     if not timezone:
         timezone = "UTC"
 
+    interval_remainder = ""
+
+    if interval == "5M":
+        interval_remainder = " + ((extract(minute FROM fs.trading_interval)::int / 5)::integer * interval '5 minute')::interval "
+
+    if interval == "15M":
+        interval_remainder = " + ((extract(minute FROM fs.trading_interval)::int / 15)::integer * interval '15 minute')::interval "
+
+    if interval == "30M":
+        interval_remainder = " + ((extract(minute FROM fs.trading_interval)::int / 30)::integer * interval '30 minute')::interval "
+
     __query = """
         with intervals as (
             select generate_series(
@@ -80,7 +91,7 @@ def power_facility(
             fs.facility_code as facility_code,
             avg(generated) as generated
         from intervals i
-        left join facility_scada fs on date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp = i.interval
+        left join facility_scada fs on date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp {interval_remainder} = i.interval
         where
             fs.facility_code in ({facility_codes_parsed})
             and fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
@@ -94,6 +105,7 @@ def power_facility(
         network_code=network_code,
         trunc=trunc,
         interval=interval_str,
+        interval_remainder=interval_remainder,
         period=period,
         scale=scale,
         timezone=timezone,
