@@ -4,6 +4,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from opennem.db import SessionLocal, get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, FacilityScada
+from opennem.importer.apvi import ROOFTOP_CODE
 from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
@@ -20,8 +21,6 @@ STATE_POSTCODE_PREFIXES = {
     "TAS": "7",
     "NT": "0",
 }
-
-from opennem.importer.apvi import ROOFTOP_CODE
 
 
 class APVIStoreData(object):
@@ -80,7 +79,7 @@ class APVIStoreData(object):
                 if state not in STATE_CAPACITIES:
                     STATE_CAPACITIES[state] = 0
 
-                if prefix.startswith(postcode_prefix):
+                if postcode_prefix.startswith(prefix):
                     STATE_CAPACITIES[state] += capacity_val
 
         for state, state_capacity in STATE_CAPACITIES.items():
