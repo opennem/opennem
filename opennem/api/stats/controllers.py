@@ -7,8 +7,8 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from opennem.core.networks import network_from_network_region
-from opennem.core.time import human_to_interval
 from opennem.db.models.opennem import FacilityScada, Station
+from opennem.utils.time import human_to_interval
 
 from .queries import get_interval_map
 from .schema import OpennemData, OpennemDataHistory, OpennemDataSet

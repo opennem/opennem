@@ -2,15 +2,14 @@ from datetime import datetime
 from itertools import groupby
 from operator import attrgetter, itemgetter
 
-import pytz
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
 
 from opennem.core.networks import network_from_network_region
-from opennem.core.time import human_to_interval
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import FacilityScada, Station
+from opennem.utils.time import human_to_interval
 
 from .controllers import stats_factory, stats_set_factory
 from .queries import (
