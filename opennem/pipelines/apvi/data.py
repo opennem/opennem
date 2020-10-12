@@ -35,16 +35,25 @@ class APVIStoreData(object):
         if "postcode" not in records:
             logger.error("No postcode data")
 
+        if "installations" not in records:
+            logger.error("No postcode data")
+
+        if "postcodeCapacity" not in records:
+            logger.error("No postcode capacity data")
+
         postcode_gen = records["postcode"]
+        postcode_capacity = records["postcodeCapacity"]
+        installations = records["installations"]
 
         engine = get_database_engine()
         session = SessionLocal()
 
         records_to_store = []
-        primary_keys = []
 
         for record in postcode_gen:
             for state, prefix in STATE_POSTCODE_PREFIXES.items():
+                facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
+
                 network_network = NetworkWEM if state == "WA" else NetworkNEM
 
                 interval_time = parse_date(
@@ -55,8 +64,6 @@ class APVIStoreData(object):
                     [v for k, v in record.items() if k.startswith(prefix)]
                 )
 
-                facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
-
                 records_to_store.append(
                     {
                         "network_id": "WEM" if state == "WA" else "NEM",
@@ -65,6 +72,28 @@ class APVIStoreData(object):
                         "generated": generated,
                     }
                 )
+
+        STATE_CAPACITIES = {}
+
+        for postcode_prefix, capacity_val in postcode_capacity.items():
+            for state, prefix in STATE_POSTCODE_PREFIXES.items():
+                if state not in STATE_CAPACITIES:
+                    STATE_CAPACITIES[state] = 0
+
+                if prefix.startswith(postcode_prefix):
+                    STATE_CAPACITIES[state] += capacity_val
+
+        for state, state_capacity in STATE_CAPACITIES.items():
+            facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
+
+            state_facility: Facility = session.query(Facility).filter_by(
+                code=facility_code
+            ).one_or_none()
+
+            state_facility.capacity_registered = state_capacity
+
+            session.add(state_facility)
+            session.commit()
 
         # free
         primary_keys = None
