@@ -40,12 +40,20 @@ def parse_date(
                 if hasattr(tz, "localize"):
                     dt_return = tz.localize()
                 else:
-                    dt_return.tzinfo = tz
+                    dt_return = dt_return.replace(tzinfo=tz)
             else:
                 dt_return = make_aware(dt_return, timezone=tz)
 
     if is_utc:
-        dt_return = make_aware(dt_return, timezone=UTC)
+        tz = UTC
+
+        if is_aware(dt_return):
+            if hasattr(tz, "localize"):
+                dt_return = tz.localize()
+            else:
+                dt_return = dt_return.replace(tzinfo=tz)
+        else:
+            dt_return = make_aware(dt_return, timezone=tz)
 
     if timezone:
         dt_return = make_aware(dt_return, timezone=timezone)
