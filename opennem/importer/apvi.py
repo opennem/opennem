@@ -1,5 +1,10 @@
+import logging
+
+from opennem.core.dispatch_type import DispatchType
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility, Location, Station
+
+logger = logging.getLogger(__name__)
 
 ROOFTOP_CODE = "ROOFTOP"
 
@@ -24,10 +29,13 @@ def rooftop_facilities():
         )
 
         rooftop_station = (
-            session.query(Station).filter_by(code=ROOFTOP_CODE).one_or_none()
+            session.query(Station)
+            .filter_by(code=state_rooftop_code)
+            .one_or_none()
         )
 
         if not rooftop_station:
+            logger.info("Creating new station {}".format(state_rooftop_code))
             rooftop_station = Station(code=state_rooftop_code,)
 
         rooftop_station.name = "Rooftop Solar {}".format(state_map["state"])
@@ -48,12 +56,15 @@ def rooftop_facilities():
         )
 
         if not rooftop_fac:
+            logger.info("Creating new facility {}".format(state_rooftop_code))
             rooftop_fac = Facility(code=state_rooftop_code)
 
         rooftop_fac.network_id = state_map["network"]
         rooftop_fac.network_region = state_map["network_region"]
         rooftop_fac.fueltech_id = "solar_rooftop"
+        rooftop_fac.status_id = "operating"
         rooftop_fac.active = True
+        rooftop_fac.dispatch_type = DispatchType.GENERATOR
         rooftop_fac.approved_by = "opennem.importer.apvi"
         rooftop_fac.created_by = "opennem.importer.apvi"
 
