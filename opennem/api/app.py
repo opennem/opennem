@@ -13,6 +13,7 @@ from opennem.api.revision.router import router as revisions_router
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.weather.router import router as weather_router
+from opennem.core.time import INTERVALS, PERIODS
 from opennem.db import get_database_session
 from opennem.db.models.opennem import (
     Facility,
@@ -24,6 +25,7 @@ from opennem.db.models.opennem import (
 )
 from opennem.schema.network import NetworkSchema
 from opennem.schema.opennem import FueltechSchema
+from opennem.schema.time import TimeInterval, TimePeriod
 
 from .schema import FueltechResponse
 
@@ -81,3 +83,13 @@ def fueltechs(
     response = [FueltechSchema.parse_obj(i) for i in fueltechs]
 
     return response
+
+
+@app.get("/intervals", response_model=List[TimeInterval])
+def intervals() -> List[TimeInterval]:
+    return INTERVALS
+
+
+@app.get("/periods", response_model=List[TimePeriod])
+def periods() -> List[TimePeriod]:
+    return PERIODS
