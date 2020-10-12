@@ -36,7 +36,13 @@ def parse_date(
         tz = network.get_timezone()
 
         if tz:
-            dt_return = make_aware(dt_return, timezone=tz)
+            if is_aware(dt_return):
+                if hasattr(tz, "localize"):
+                    dt_return = tz.localize()
+                else:
+                    dt_return.tzinfo = tz
+            else:
+                dt_return = make_aware(dt_return, timezone=tz)
 
     if is_utc:
         dt_return = make_aware(dt_return, timezone=UTC)
@@ -45,3 +51,12 @@ def parse_date(
         dt_return = make_aware(dt_return, timezone=timezone)
 
     return dt_return
+
+
+def get_date_component(format_str: str) -> str:
+    """
+        Get a part of a date
+    """
+
+    return datetime.now().strftime(format_str)
+
