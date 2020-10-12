@@ -15,8 +15,8 @@ INTERVAL_MAP = {
     "5M": {"trunc": "hour", "interval": "5 minutes", "interval_out": "5m"},
     "15M": {"trunc": "hour", "interval": "15 minutes", "interval_out": "15m"},
     "30M": {"trunc": "hour", "interval": "30 minutes", "interval_out": "30m"},
-    "1H": {"trunc": "hour", "interval": "1 hour", "interval_out": "1h"},
-    "1D": {"trunc": "day", "interval": "1 day", "interval_out": "1d"},
+    "1H": {"trunc": "hour", "interval": "1 hour", "interval_out": "60m"},
+    "1D": {"trunc": "day", "interval": "1 day", "interval_out": "1D"},
     "1M": {"trunc": "month", "interval": "1 month", "interval_out": "1M"},
     "1Y": {"trunc": "year", "interval": "1 year", "interval_out": "1Y"},
 }
