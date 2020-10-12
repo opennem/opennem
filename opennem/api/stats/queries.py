@@ -12,10 +12,13 @@ def duid_in_case(facility_codes: List[str]) -> str:
 
 
 INTERVAL_MAP = {
-    "1D": {"trunc": "day", "interval": "1 day"},
-    "1H": {"trunc": "hour", "interval": "1 hour"},
-    "1M": {"trunc": "month", "interval": "1 month"},
-    "1Y": {"trunc": "year", "interval": "1 year"},
+    "5M": {"trunc": "hour", "interval": "5 minutes", "interval_out": "5m"},
+    "15M": {"trunc": "hour", "interval": "15 minutes", "interval_out": "15m"},
+    "30M": {"trunc": "hour", "interval": "30 minutes", "interval_out": "30m"},
+    "1H": {"trunc": "hour", "interval": "1 hour", "interval_out": "1h"},
+    "1D": {"trunc": "day", "interval": "1 day", "interval_out": "1d"},
+    "1M": {"trunc": "month", "interval": "1 month", "interval_out": "1M"},
+    "1Y": {"trunc": "year", "interval": "1 year", "interval_out": "1Y"},
 }
 
 PERIOD_MAP = {
@@ -53,7 +56,7 @@ def power_facility(
 ) -> str:
 
     network_code = network_code.upper()
-    trunc, interval_str = get_interval_map(interval)
+    trunc, interval_str, interval_out = get_interval_map(interval)
     period = get_period_map(period)
     scale = 1
 
@@ -107,7 +110,7 @@ def energy_facility(
 ) -> str:
 
     network_code = network_code.upper()
-    trunc, interval_str = get_interval_map(interval)
+    trunc, interval_str, interval_out = get_interval_map(interval)
     period = get_period_map(period)
     scale = 1
 

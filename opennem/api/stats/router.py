@@ -88,7 +88,7 @@ def power_unit(
 
 SUPPORTED_PERIODS = ["7D", "1M", "1Y", "ALL"]
 
-SUPPORTED_INTERVALS = ["1D", "1H", "1M"]
+SUPPORTED_INTERVALS = ["5M", "15M", "30M", "1D", "1H", "1M"]
 
 
 @router.get(
@@ -100,7 +100,7 @@ def power_station(
     station_code: str = Query(..., description="Station code"),
     network_code: str = Query(..., description="Network code"),
     since: datetime = Query(None, description="Since time"),
-    interval: str = Query("1d", description="Interval"),
+    interval: str = Query("1h", description="Interval"),
     period: str = Query("7d", description="Period"),
     session: Session = Depends(get_database_session),
     engine=Depends(get_database_engine),
@@ -108,12 +108,24 @@ def power_station(
     if not since:
         since = datetime.now() - human_to_interval("7d")
 
+    network_code = network_code.upper()
+
+    if network_code not in ["WEM", "NEM"]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
+        )
+
+    network = network_from_network_region(network_code)
+
+    if not interval:
+        interval = "{}M".format(network.interval_size)
+
     interval = interval.upper()
 
     if interval not in SUPPORTED_INTERVALS:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interval not supported",
+            detail="Interval {} not supported".format(interval),
         )
 
     period = period.upper()
@@ -122,13 +134,6 @@ def power_station(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Period not supported",
-        )
-
-    network_code = network_code.upper()
-
-    if network_code not in ["WEM", "NEM"]:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
         )
 
     station = (
@@ -150,6 +155,8 @@ def power_station(
     query = power_facility(
         facility_codes, network_code, interval=interval, period=period
     )
+
+    print(query)
 
     with engine.connect() as c:
         results = list(c.execute(query))
@@ -176,7 +183,10 @@ def power_station(
 
     for code, stats_per_unit in stats_sets.items():
         _statset = stats_factory(
-            stats_per_unit, code=code, network_code=network_code
+            stats_per_unit,
+            code=code,
+            network_code=network_code,
+            interval=interval,
         )
         stats_list.append(_statset)
 

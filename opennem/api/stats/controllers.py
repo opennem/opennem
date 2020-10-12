@@ -4,13 +4,13 @@ from itertools import groupby
 from operator import itemgetter
 from typing import List, Optional
 
-import pytz
 from sqlalchemy.orm import Session
 
 from opennem.core.networks import network_from_network_region
 from opennem.core.time import human_to_interval
 from opennem.db.models.opennem import FacilityScada, Station
 
+from .queries import get_interval_map
 from .schema import OpennemData, OpennemDataHistory, OpennemDataSet
 
 
@@ -25,7 +25,10 @@ def stats_set_factory(
 
 
 def stats_factory(
-    scada: List[FacilityScada], network_code: str, code: str = None,
+    scada: List[FacilityScada],
+    interval: str = "15m",
+    network_code: str = "NEM",
+    code: str = None,
 ) -> Optional[OpennemData]:
     if len(scada) < 1:
         return None
@@ -39,7 +42,7 @@ def stats_factory(
     start = min(dates)
     end = max(dates)
 
-    interval = network.interval_size
+    _, _, interval_out = get_interval_map(interval)
 
     # pluck the list
     data = [
@@ -73,7 +76,7 @@ def stats_factory(
     history = OpennemDataHistory(
         start=start.astimezone(network_timezone),
         last=end.astimezone(network_timezone),
-        interval="{}m".format(str(interval)),
+        interval=interval_out,
         data=list(data_grouped.values()),
     )
 
