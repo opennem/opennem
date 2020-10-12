@@ -8,8 +8,12 @@ from opennem.utils.dates import date_series, get_date_component
 APVI_DATA_URI = "https://pv-map.apvi.org.au/data"
 
 TODAY = datetime.now().date()
+
 YESTERDAY = TODAY - timedelta(days=1)
+
 MONTH_AGO = TODAY - timedelta(days=29)
+
+APVI_DATE_QUERY_FORMAT = "%Y-%m-%d"
 
 
 class APVIDataSpiderBase(scrapy.Spider):
@@ -20,7 +24,8 @@ class APVIDataSpiderBase(scrapy.Spider):
 
     def start_requests(self):
         yield scrapy.FormRequest(
-            APVI_DATA_URI, formdata={"day": get_date_component("%Y-%m-%d")}
+            APVI_DATA_URI,
+            formdata={"day": get_date_component(APVI_DATE_QUERY_FORMAT)},
         )
 
     def parse(self, response):
@@ -33,7 +38,8 @@ class APVIDataCurrentSpider(APVIDataSpiderBase):
     def start_requests(self):
         for date in date_series(YESTERDAY):
             yield scrapy.FormRequest(
-                APVI_DATA_URI, formdata={"day": date.strftime("%Y-%m-%d")}
+                APVI_DATA_URI,
+                formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
             )
 
 
@@ -43,5 +49,6 @@ class APVIDataHistoricSpider(APVIDataSpiderBase):
     def start_requests(self):
         for date in date_series(MONTH_AGO, length=90):
             yield scrapy.FormRequest(
-                APVI_DATA_URI, formdata={"day": date.strftime("%Y-%m-%d")}
+                APVI_DATA_URI,
+                formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
             )
