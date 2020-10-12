@@ -12,14 +12,14 @@ def duid_in_case(facility_codes: List[str]) -> str:
 
 
 INTERVAL_MAP = {
-    "1d": {"trunc": "day", "interval": "1 day"},
-    "1h": {"trunc": "hour", "interval": "1 hour"},
+    "1D": {"trunc": "day", "interval": "1 day"},
+    "1H": {"trunc": "hour", "interval": "1 hour"},
     "1M": {"trunc": "month", "interval": "1 month"},
     "1Y": {"trunc": "year", "interval": "1 year"},
 }
 
 PERIOD_MAP = {
-    "7d": "7 day",
+    "7D": "7 day",
     "1M": "1 month",
     "1Y": "1 year",
     "5Y": "5 year",
@@ -28,6 +28,8 @@ PERIOD_MAP = {
 
 
 def get_interval_map(interval: str) -> Tuple[str, str]:
+    interval = interval.upper()
+
     if interval not in INTERVAL_MAP.keys():
         raise Exception("Invalid interval {} not mapped".format(interval))
 
@@ -35,10 +37,66 @@ def get_interval_map(interval: str) -> Tuple[str, str]:
 
 
 def get_period_map(period: str) -> str:
+    period = period.upper()
+
     if period not in PERIOD_MAP.keys():
         raise Exception("Invalid period {} not supported".format(period))
 
     return PERIOD_MAP[period]
+
+
+def power_facility(
+    facility_codes: List[str],
+    network_code: str,
+    interval: str = "1d",
+    period: str = "7d",
+) -> str:
+
+    network_code = network_code.upper()
+    trunc, interval_str = get_interval_map(interval)
+    period = get_period_map(period)
+    scale = 1
+
+    network = network_from_network_region(network_code)
+    timezone = network.timezone_database
+
+    if not timezone:
+        timezone = "UTC"
+
+    __query = """
+        with intervals as (
+            select generate_series(
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
+                '{interval}'::interval
+            )::timestamp as interval
+        )
+
+        select
+            i.interval AS trading_day,
+            fs.facility_code as facility_code,
+            avg(generated) as generated
+        from intervals i
+        left join facility_scada fs on date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp = i.interval
+        where
+            fs.facility_code in ({facility_codes_parsed})
+            and fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
+            and fs.network_id = '{network_code}'
+        group by 1, 2
+        order by 2 asc, 1 asc
+    """
+
+    query = __query.format(
+        facility_codes_parsed=duid_in_case(facility_codes),
+        network_code=network_code,
+        trunc=trunc,
+        interval=interval_str,
+        period=period,
+        scale=scale,
+        timezone=timezone,
+    )
+
+    return query
 
 
 def energy_facility(

@@ -7,6 +7,7 @@ from typing import List, Optional
 import pytz
 from sqlalchemy.orm import Session
 
+from opennem.core.networks import network_from_network_region
 from opennem.core.time import human_to_interval
 from opennem.db.models.opennem import FacilityScada, Station
 
@@ -24,25 +25,27 @@ def stats_set_factory(
 
 
 def stats_factory(
-    scada: List[FacilityScada], code: str = None
+    scada: List[FacilityScada], network_code: str, code: str = None,
 ) -> Optional[OpennemData]:
     if len(scada) < 1:
         return None
 
-    network_timezone = pytz.timezone(scada[0].network.timezone)
+    network_code = network_code.upper()
 
-    dates = [s.trading_interval for s in scada]
+    network = network_from_network_region(network_code)
+    network_timezone = network.get_timezone()
+
+    dates = [s["trading_interval"] for s in scada]
     start = min(dates)
     end = max(dates)
 
-    network = scada[0].network.code
-    interval = scada[0].network.interval_size
+    interval = network.interval_size
 
     # pluck the list
     data = [
         {
             k: v
-            for k, v in scada_record
+            for k, v in scada_record.items()
             if k in ["trading_interval", "generated"]
         }
         for scada_record in scada
@@ -75,7 +78,7 @@ def stats_factory(
     )
 
     data = OpennemData(
-        network=network,
+        network=network.code,
         data_type="power",
         units="MW",
         code=code,

@@ -1,6 +1,6 @@
 from datetime import datetime
 from itertools import groupby
-from operator import attrgetter
+from operator import attrgetter, itemgetter
 
 import pytz
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -13,7 +13,12 @@ from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import FacilityScada, Station
 
 from .controllers import stats_factory, stats_set_factory
-from .queries import energy_facility, energy_year_network, price_network_region
+from .queries import (
+    energy_facility,
+    energy_year_network,
+    power_facility,
+    price_network_region,
+)
 from .schema import OpennemData, OpennemDataHistory, OpennemDataSet
 
 router = APIRouter()
@@ -49,6 +54,7 @@ def power_unit(
     since: str = Query(None, description="Since as human interval"),
     since_dt: datetime = Query(None, description="Since as datetime"),
     session: Session = Depends(get_database_session),
+    engine=Depends(get_database_engine),
 ) -> OpennemData:
     if not since:
         since = datetime.now() - human_to_interval("7d")
@@ -80,6 +86,11 @@ def power_unit(
     return output
 
 
+SUPPORTED_PERIODS = ["7D", "1M", "1Y", "ALL"]
+
+SUPPORTED_INTERVALS = ["1D", "1H", "1M"]
+
+
 @router.get(
     "/power/station/{network_code}/{station_code:path}",
     name="stats:Station Power",
@@ -89,10 +100,29 @@ def power_station(
     station_code: str = Query(..., description="Station code"),
     network_code: str = Query(..., description="Network code"),
     since: datetime = Query(None, description="Since time"),
+    interval: str = Query("1d", description="Interval"),
+    period: str = Query("7d", description="Period"),
     session: Session = Depends(get_database_session),
+    engine=Depends(get_database_engine),
 ) -> OpennemDataSet:
     if not since:
         since = datetime.now() - human_to_interval("7d")
+
+    interval = interval.upper()
+
+    if interval not in SUPPORTED_INTERVALS:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Interval not supported",
+        )
+
+    period = period.upper()
+
+    if period not in SUPPORTED_PERIODS:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Period not supported",
+        )
 
     network_code = network_code.upper()
 
@@ -115,14 +145,19 @@ def power_station(
 
     facility_codes = list(set([f.code for f in station.facilities]))
 
-    stats = (
-        session.query(FacilityScada)
-        .filter(FacilityScada.facility_code.in_(facility_codes))
-        .filter(FacilityScada.network_id == network_code)
-        .filter(FacilityScada.trading_interval >= since)
-        .order_by(FacilityScada.trading_interval)
-        .all()
+    stats = []
+
+    query = power_facility(
+        facility_codes, network_code, interval=interval, period=period
     )
+
+    with engine.connect() as c:
+        results = list(c.execute(query))
+
+    stats = [
+        {"trading_interval": i[0], "facility_code": i[1], "generated": i[2]}
+        for i in results
+    ]
 
     if len(stats) < 1:
         raise HTTPException(
@@ -133,14 +168,16 @@ def power_station(
     stats_sets = {}
     stats_list = []
 
-    for code, record in groupby(stats, attrgetter("facility_code")):
+    for code, record in groupby(stats, itemgetter("facility_code")):
         if code not in stats_sets:
             stats_sets[code] = []
 
         stats_sets[code] += list(record)
 
     for code, stats_per_unit in stats_sets.items():
-        _statset = stats_factory(stats_per_unit, code=code)
+        _statset = stats_factory(
+            stats_per_unit, code=code, network_code=network_code
+        )
         stats_list.append(_statset)
 
     output = stats_set_factory(
@@ -148,10 +185,6 @@ def power_station(
     )
 
     return output
-
-
-SUPPORTED_PERIODS = ["7D", "1M", "1Y", "ALL"]
-SUPPORTED_INTERVALS = ["1d", "1h", "1M"]
 
 
 @router.get(
@@ -171,6 +204,8 @@ def energy_station(
         Get energy output for a station (list of facilities)
         over a period
     """
+
+    interval = interval.upper()
 
     if interval not in SUPPORTED_INTERVALS:
         raise HTTPException(
@@ -335,6 +370,8 @@ def price_region(
     interval: str = Query("1d", description="Interval"),
     period: str = Query("7d", description="Period"),
 ) -> OpennemData:
+    interval = interval.upper()
+
     if interval not in SUPPORTED_INTERVALS:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
