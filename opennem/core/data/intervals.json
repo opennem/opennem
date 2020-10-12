@@ -1,0 +1,44 @@
+[
+  {
+    "interval": 5,
+    "interval_human": "5m",
+    "trunc": "hour",
+    "interval_sql": "5 minutes"
+  },
+  {
+    "interval": 15,
+    "interval_human": "15m",
+    "trunc": "hour",
+    "interval_sql": "15 minutes"
+  },
+  {
+    "interval": 30,
+    "interval_human": "30m",
+    "trunc": "hour",
+    "interval_sql": "30 minutes"
+  },
+  {
+    "interval": 60,
+    "interval_human": "1h",
+    "trunc": "hour",
+    "interval_sql": "1 hour"
+  },
+  {
+    "interval": 1440,
+    "interval_human": "1d",
+    "trunc": "day",
+    "interval_sql": "1 day"
+  },
+  {
+    "interval": 43800,
+    "interval_human": "1M",
+    "trunc": "month",
+    "interval_sql": "1 month"
+  },
+  {
+    "interval": 525600,
+    "interval_human": "1Y",
+    "trunc": "year",
+    "interval_sql": "1 year"
+  }
+]
