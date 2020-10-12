@@ -15,7 +15,7 @@ class NetworkSchema(BaseConfig):
     label: str
     timezone: Optional[str] = Field(None, description="Network timezone")
     timezone_database: Optional[str] = Field(
-        None, description="Database timezone format"
+        "UTC", description="Database timezone format"
     )
     offset: Optional[int] = Field(
         None, description="Network time offset in minutes"
