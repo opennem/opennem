@@ -3,6 +3,7 @@ from typing import List, Tuple
 
 from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
+from opennem.schema.time import TimeInterval, TimePeriod
 
 
 def duid_in_case(facility_codes: List[str]) -> str:
@@ -11,53 +12,13 @@ def duid_in_case(facility_codes: List[str]) -> str:
     )
 
 
-INTERVAL_MAP = {
-    "5M": {"trunc": "hour", "interval": "5 minutes", "interval_out": "5m"},
-    "15M": {"trunc": "hour", "interval": "15 minutes", "interval_out": "15m"},
-    "30M": {"trunc": "hour", "interval": "30 minutes", "interval_out": "30m"},
-    "1H": {"trunc": "hour", "interval": "1 hour", "interval_out": "1H"},
-    "1D": {"trunc": "day", "interval": "1 day", "interval_out": "1D"},
-    "1M": {"trunc": "month", "interval": "1 month", "interval_out": "1M"},
-    "1Y": {"trunc": "year", "interval": "1 year", "interval_out": "1Y"},
-}
-
-PERIOD_MAP = {
-    "7D": "7 day",
-    "1M": "1 month",
-    "1Y": "1 year",
-    "5Y": "5 year",
-    "ALL": "20 Year",
-}
-
-
-def get_interval_map(interval: str) -> Tuple[str, str]:
-    interval = interval.upper()
-
-    if interval not in INTERVAL_MAP.keys():
-        raise Exception("Invalid interval {} not mapped".format(interval))
-
-    return tuple(INTERVAL_MAP[interval].values())
-
-
-def get_period_map(period: str) -> str:
-    period = period.upper()
-
-    if period not in PERIOD_MAP.keys():
-        raise Exception("Invalid period {} not supported".format(period))
-
-    return PERIOD_MAP[period]
-
-
 def power_facility(
     facility_codes: List[str],
     network_code: str,
-    interval: str = "1d",
-    period: str = "7d",
+    interval: TimeInterval,
+    period: TimePeriod,
 ) -> str:
 
-    network_code = network_code.upper()
-    trunc, interval_str, interval_out = get_interval_map(interval)
-    period = get_period_map(period)
     scale = 1
 
     network = network_from_network_region(network_code)
@@ -65,17 +26,6 @@ def power_facility(
 
     if not timezone:
         timezone = "UTC"
-
-    interval_remainder = ""
-
-    if interval == "5M":
-        interval_remainder = " + ((extract(minute FROM fs.trading_interval)::int / 5)::integer * interval '5 minute')::interval "
-
-    if interval == "15M":
-        interval_remainder = " + ((extract(minute FROM fs.trading_interval)::int / 15)::integer * interval '15 minute')::interval "
-
-    if interval == "30M":
-        interval_remainder = " + ((extract(minute FROM fs.trading_interval)::int / 30)::integer * interval '30 minute')::interval "
 
     __query = """
         with intervals as (
@@ -103,10 +53,10 @@ def power_facility(
     query = __query.format(
         facility_codes_parsed=duid_in_case(facility_codes),
         network_code=network_code,
-        trunc=trunc,
-        interval=interval_str,
-        interval_remainder=interval_remainder,
-        period=period,
+        trunc=interval.trunc,
+        interval=interval.interval_human,
+        interval_remainder=interval.get_sql_join(),
+        period=period.period_sql,
         scale=scale,
         timezone=timezone,
     )
@@ -117,20 +67,17 @@ def power_facility(
 def energy_facility(
     facility_codes: List[str],
     network_code: str,
-    interval: str = "1d",
-    period: str = "7d",
+    interval: TimeInterval,
+    period: TimePeriod,
 ) -> str:
-
-    network_code = network_code.upper()
-    trunc, interval_str, interval_out = get_interval_map(interval)
-    period = get_period_map(period)
-    scale = 1
-
-    if network_code == "NEM":
-        scale = 12
 
     network = network_from_network_region(network_code)
     timezone = network.timezone_database
+
+    scale = 1
+
+    if network.code == "NEM":
+        scale = 12
 
     if not timezone:
         timezone = "UTC"
@@ -161,9 +108,9 @@ def energy_facility(
     query = __query.format(
         facility_codes_parsed=duid_in_case(facility_codes),
         network_code=network_code,
-        trunc=trunc,
-        interval=interval_str,
-        period=period,
+        trunc=interval.trunc,
+        interval=interval.interval_sql,
+        period=period.period_sql,
         scale=scale,
         timezone=timezone,
     )
@@ -204,13 +151,9 @@ def energy_year_network(network_code: str = "WEM", year: int = None) -> str:
 def price_network_region(
     network_code: str,
     region_code: str,
-    interval: str = "1d",
-    period: str = "7d",
+    interval: TimeInterval,
+    period: TimePeriod,
 ) -> str:
-
-    network_code = network_code.upper()
-    trunc, interval_str = get_interval_map(interval)
-    period = get_period_map(period)
 
     network = network_from_network_region(network_code)
     timezone = network.timezone_database
@@ -243,9 +186,9 @@ def price_network_region(
     query = __query.format(
         region_code=region_code,
         network_code=network_code,
-        trunc=trunc,
-        interval=interval_str,
-        period=period,
+        trunc=interval.trunc,
+        interval=interval.interval_sql,
+        period=period.period_sql,
         timezone=timezone,
     )
 

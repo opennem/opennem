@@ -6,9 +6,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
 
-from opennem.core.networks import network_from_network_region
+from opennem.core.networks import network_from_network_code
+from opennem.core.time import get_interval, get_period
 from opennem.db import get_database_engine, get_database_session
-from opennem.db.models.opennem import FacilityScada, Station
+from opennem.db.models.opennem import Facility, FacilityScada, Station
 from opennem.utils.time import human_to_interval
 
 from .controllers import stats_factory, stats_set_factory
@@ -24,25 +25,6 @@ router = APIRouter()
 
 
 @router.get(
-    "/power", name="stats:power",
-)
-def stats_power(
-    session: Session = Depends(get_database_session),
-    since: datetime = Query(None, description="Since time"),
-):
-    stats = session.query(FacilityScada)
-
-    if since:
-        stats = stats.filter(FacilityScada.trading_interval >= since)
-
-    stats = stats.order_by(FacilityScada.trading_interval).all()
-
-    output = stats_factory(stats)
-
-    return output
-
-
-@router.get(
     "/power/unit/{network_code}/{unit_code:path}",
     name="stats:Unit Power",
     response_model=OpennemData,
@@ -52,18 +34,26 @@ def power_unit(
     network_code: str = Query(..., description="Network code"),
     since: str = Query(None, description="Since as human interval"),
     since_dt: datetime = Query(None, description="Since as datetime"),
+    interval: str = Query(None, description="Interval"),
+    period: str = Query("7d", description="Period"),
     session: Session = Depends(get_database_session),
     engine=Depends(get_database_engine),
 ) -> OpennemData:
     if not since:
         since = datetime.now() - human_to_interval("7d")
 
-    network_code = network_code.upper()
+    network = network_from_network_code(network_code)
 
-    if network_code not in ["WEM", "NEM"]:
+    if not network:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
         )
+
+    if not interval:
+        interval = "{}m".format(network.interval_size)
+
+    interval = get_interval(interval)
+    period = get_period(period)
 
     stats = (
         session.query(FacilityScada)
@@ -80,14 +70,11 @@ def power_unit(
             detail="Station stats not found",
         )
 
-    output = stats_factory(stats, code=unit_code)
+    output = stats_factory(
+        stats, code=unit_code, interval=interval, period=period
+    )
 
     return output
-
-
-SUPPORTED_PERIODS = ["7D", "1M", "1Y", "ALL"]
-
-SUPPORTED_INTERVALS = ["5M", "15M", "30M", "1D", "1H", "1M"]
 
 
 @router.get(
@@ -99,7 +86,7 @@ def power_station(
     station_code: str = Query(..., description="Station code"),
     network_code: str = Query(..., description="Network code"),
     since: datetime = Query(None, description="Since time"),
-    interval: str = Query("15m", description="Interval"),
+    interval: str = Query(None, description="Interval"),
     period: str = Query("7d", description="Period"),
     session: Session = Depends(get_database_session),
     engine=Depends(get_database_engine),
@@ -107,37 +94,24 @@ def power_station(
     if not since:
         since = datetime.now() - human_to_interval("7d")
 
-    network_code = network_code.upper()
+    network = network_from_network_code(network_code)
 
-    if network_code not in ["WEM", "NEM"]:
+    if not network:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
         )
 
-    network = network_from_network_region(network_code)
-
     if not interval:
-        interval = "{}M".format(network.interval_size)
+        interval = "{}m".format(network.interval_size)
 
-    interval = interval.upper()
-
-    if interval not in SUPPORTED_INTERVALS:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interval {} not supported".format(interval),
-        )
-
-    period = period.upper()
-
-    if period not in SUPPORTED_PERIODS:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Period not supported",
-        )
+    interval = get_interval(interval)
+    period = get_period(period)
 
     station = (
         session.query(Station)
+        .join(Facility)
         .filter(Station.code == station_code)
+        .filter(Facility.network_id == network.code)
         .filter(Station.approved == True)
         .one_or_none()
     )
@@ -154,8 +128,6 @@ def power_station(
     query = power_facility(
         facility_codes, network_code, interval=interval, period=period
     )
-
-    print(query)
 
     with engine.connect() as c:
         results = list(c.execute(query))
@@ -206,7 +178,7 @@ def energy_station(
     session: Session = Depends(get_database_session),
     network_code: str = Query(..., description="Network code"),
     station_code: str = Query(..., description="Station Code"),
-    interval: str = Query("1d", description="Interval"),
+    interval: str = Query(None, description="Interval"),
     period: str = Query("7d", description="Period"),
 ) -> OpennemDataSet:
     """
@@ -214,33 +186,24 @@ def energy_station(
         over a period
     """
 
-    interval = interval.upper()
+    network = network_from_network_code(network_code)
 
-    if interval not in SUPPORTED_INTERVALS:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interval not supported",
-        )
-
-    period = period.upper()
-
-    if period not in SUPPORTED_PERIODS:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Period not supported",
-        )
-
-    network_code = network_code.upper()
-
-    if network_code not in ["WEM", "NEM"]:
+    if not network:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
         )
+
+    if not interval:
+        interval = "{}m".format(network.interval_size)
+
+    interval = get_interval(interval)
+    period = get_period(period)
 
     station = (
         session.query(Station)
         .join(Station.facilities)
         .filter(Station.code == station_code)
+        .filter(Facility.network_id == network.code)
         .one_or_none()
     )
 
@@ -293,12 +256,12 @@ def energy_station(
         history = OpennemDataHistory(
             start=start,
             last=end,
-            interval=interval,
+            interval=interval.interval_human,
             data=list(record.values()),
         )
 
         data = OpennemData(
-            network=network_code,
+            network=network.code,
             data_type="energy",
             units="MWh",
             code=facility_code,
@@ -308,7 +271,10 @@ def energy_station(
         result_output_sets.append(data)
 
     output = OpennemDataSet(
-        data_type="energy", code=station_code, data=result_output_sets
+        network=network.code,
+        data_type="energy",
+        code=station_code,
+        data=result_output_sets,
     )
 
     return output
@@ -319,25 +285,30 @@ def energy_network(
     engine=Depends(get_database_engine),
     network_code: str = Query(..., description="Network code"),
     year: int = Query(None, description="Year"),
+    interval: str = Query(None, description="Interval"),
+    period: str = Query("7d", description="Period"),
 ) -> OpennemDataSet:
     query = energy_year_network(year=year, network_code=network_code)
 
     results = []
 
-    network = network_from_network_region(network_code)
+    network = network_from_network_code(network_code)
 
     if not network:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Network not found."
+            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
         )
 
-    network_timezone = network.get_timezone()
+    if not interval:
+        interval = "{}m".format(network.interval_size)
+
+    interval = get_interval(interval)
+    period = get_period(period)
 
     with engine.connect() as c:
         results = list(c.execute(query))
 
     if len(results) < 1:
-        print(query)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No results"
         )
@@ -376,31 +347,21 @@ def price_region(
     engine=Depends(get_database_engine),
     network_code: str = Query(..., description="Network code"),
     region_code: str = Query(..., description="Region code"),
-    interval: str = Query("1d", description="Interval"),
+    interval: str = Query(None, description="Interval"),
     period: str = Query("7d", description="Period"),
 ) -> OpennemData:
-    interval = interval.upper()
+    network = network_from_network_code(network_code)
 
-    if interval not in SUPPORTED_INTERVALS:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interval not supported",
-        )
-
-    period = period.upper()
-
-    if period not in SUPPORTED_PERIODS:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Period not supported",
-        )
-
-    network_code = network_code.upper()
-
-    if network_code not in ["WEM", "NEM"]:
+    if not network:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
         )
+
+    if not interval:
+        interval = "{}m".format(network.interval_size)
+
+    interval = get_interval(interval)
+    period = get_period(period)
 
     query = price_network_region(
         network_code=network_code,
@@ -408,8 +369,6 @@ def price_region(
         interval=interval,
         period=period,
     )
-
-    # print(query)
 
     with engine.connect() as c:
         results = list(c.execute(query))
