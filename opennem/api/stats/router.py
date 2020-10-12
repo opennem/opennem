@@ -100,7 +100,7 @@ def power_station(
     station_code: str = Query(..., description="Station code"),
     network_code: str = Query(..., description="Network code"),
     since: datetime = Query(None, description="Since time"),
-    interval: str = Query("1h", description="Interval"),
+    interval: str = Query("30M", description="Interval"),
     period: str = Query("7d", description="Period"),
     session: Session = Depends(get_database_session),
     engine=Depends(get_database_engine),
