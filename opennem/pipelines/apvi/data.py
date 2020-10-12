@@ -73,10 +73,7 @@ class APVIStoreData(object):
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
             constraint="facility_scada_pkey",
-            set_={
-                "eoi_quantity": stmt.excluded.eoi_quantity,
-                "generated": stmt.excluded.generated,
-            },
+            set_={"generated": stmt.excluded.generated,},
         )
 
         try:
