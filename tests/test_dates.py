@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 import pytz
 from pytz import timezone
 
-from opennem.utils.dates import parse_date
+from opennem.utils.dates import date_series, parse_date
 from opennem.utils.timezone import is_aware
 
 UTC = pytz.utc
@@ -82,3 +82,14 @@ class TestUtilDates(object):
 
         assert subject == comparator, "Parses date correctly"
         assert is_aware(subject) is True, "Date has timezone info"
+
+    def test_date_series(self):
+        # defaults to now going back 30 days
+        series = date_series()
+
+        date_today = datetime.now().date()
+        date_30_days_ago = date_today - timedelta(days=29)
+
+        assert len(series) == 30, "There are 30 dates"
+        assert series[0] == date_today, "First entry is today"
+        assert series[29] == date_30_days_ago, "Last entry is 29 days ago"

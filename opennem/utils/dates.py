@@ -1,6 +1,6 @@
 import logging
-from datetime import datetime, timezone
-from typing import Optional, Union
+from datetime import datetime, timedelta, timezone
+from typing import List, Optional, Union
 
 from dateutil.parser import ParserError, parse
 
@@ -68,3 +68,24 @@ def get_date_component(format_str: str) -> str:
 
     return datetime.now().strftime(format_str)
 
+
+def date_series(
+    start: datetime = None,
+    length: int = 30,
+    interval: timedelta = timedelta(days=1),
+) -> List[datetime]:
+    """
+        Generate a datetime series
+
+    """
+    if not start:
+        start = datetime.now().date()
+
+    series = [start]
+    next_record = start
+
+    for i in range(length - 1):
+        next_record = next_record - interval
+        series.append(next_record)
+
+    return series
