@@ -16,9 +16,17 @@ def load_intervals() -> List[TimeInterval]:
     return intervals
 
 
+def load_periods() -> List[TimePeriod]:
+    period_dicts = load_data("periods.json")
+
+    periods = [TimePeriod(**i) for i in period_dicts]
+
+    return periods
+
+
 INTERVALS = load_intervals()
 
-PERIODS = []
+PERIODS = load_periods()
 
 
 def get_interval(interval_human: str) -> TimeInterval:
@@ -30,4 +38,15 @@ def get_interval(interval_human: str) -> TimeInterval:
         return interval_lookup.pop()
 
     raise Exception("Invalid interval {} not mapped".format(interval_human))
+
+
+def get_period(period_human: str) -> TimePeriod:
+    period_lookup = list(
+        filter(lambda x: x.period_human == period_human, PERIODS)
+    )
+
+    if period_lookup:
+        return period_lookup.pop()
+
+    raise Exception("Invalid interval {} not mapped".format(period_human))
 

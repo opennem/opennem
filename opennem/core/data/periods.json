@@ -1,0 +1,27 @@
+[
+  {
+    "period": 10080,
+    "period_human": "7d",
+    "period_sql": "7 days"
+  },
+  {
+    "period": 43800,
+    "period_human": "1M",
+    "period_sql": "1 month"
+  },
+  {
+    "period": 525600,
+    "period_human": "1Y",
+    "period_sql": "1 year"
+  },
+  {
+    "period": 2628000,
+    "period_human": "5Y",
+    "period_sql": "5 years"
+  },
+  {
+    "period": 10512000,
+    "period_human": "all",
+    "period_sql": "20 years"
+  }
+]

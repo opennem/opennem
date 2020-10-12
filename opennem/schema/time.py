@@ -29,4 +29,8 @@ class TimeInterval(BaseConfig):
 
 
 class TimePeriod(BaseConfig):
-    pass
+    period: int = Field(..., description="Period in minutes")
+
+    period_human: str = Field(..., description="Period in human size")
+
+    period_sql: str
