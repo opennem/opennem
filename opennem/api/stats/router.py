@@ -104,7 +104,11 @@ def power_station(
         )
 
     if not interval:
-        interval = "{}m".format(network.interval_size)
+        # @NOTE rooftop data is 15m
+        if station_code.startswith("ROOFTOP"):
+            interval = "15m"
+        else:
+            interval = "{}m".format(network.interval_size)
 
     interval = human_to_interval(interval)
     period = human_to_period(period)
@@ -196,7 +200,11 @@ def energy_station(
         )
 
     if not interval:
-        interval = "{}m".format(network.interval_size)
+        # @NOTE rooftop data is 15m
+        if station_code.startswith("ROOFTOP"):
+            interval = "15m"
+        else:
+            interval = "{}m".format(network.interval_size)
 
     interval = human_to_interval(interval)
     period = human_to_period(period)
