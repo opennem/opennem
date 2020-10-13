@@ -52,7 +52,7 @@ def power_facility(
                     and fs.network_id = '{network_code}'
                 group by 1, 2
             ) as fs on fs.interval = i.interval
-        order by 1 desc, 2 asc"""
+        order by 1 desc, 2 desc"""
 
     query = __query.format(
         facility_codes_parsed=duid_in_case(facility_codes),

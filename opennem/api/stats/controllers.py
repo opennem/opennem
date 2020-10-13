@@ -1,12 +1,11 @@
+from collections import OrderedDict
 from datetime import datetime
-from decimal import Decimal
 from itertools import groupby
-from operator import attrgetter, itemgetter
+from operator import attrgetter
 from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from opennem.core.networks import network_from_network_code
 from opennem.db.models.opennem import FacilityScada, Station
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval
@@ -57,7 +56,7 @@ def stats_factory(
 
     for group_code in group_codes:
 
-        data_grouped = {}
+        data_grouped = dict()
 
         for key, v in groupby(stats, attrgetter("interval")):
             if key not in data_grouped:
@@ -68,11 +67,13 @@ def stats_factory(
             if value.group_by == group_code:
                 data_grouped[key] = value.result
 
+        data_sorted = OrderedDict(sorted(data_grouped.items()))
+
         history = OpennemDataHistory(
             start=start,
             last=end,
             interval=interval.interval_human,
-            data=list(data_grouped.values()),
+            data=list(data_sorted.values()),
         )
 
         data = OpennemData(
