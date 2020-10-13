@@ -8,6 +8,7 @@ from starlette import status
 
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.networks import network_from_network_code
+from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, FacilityScada, Station
 from opennem.utils.time import human_to_timedelta
@@ -363,6 +364,7 @@ def price_region(
 
     interval = human_to_interval(interval)
     period = human_to_period(period)
+    units = get_unit("price")
 
     query = price_network_region(
         network_code=network_code,
@@ -396,14 +398,14 @@ def price_region(
     history = OpennemDataHistory(
         start=start,
         last=end,
-        interval=interval,
+        interval=interval.interval_human,
         data=list(result_set.values()),
     )
 
     data = OpennemData(
-        network=network_code,
-        data_type="price",
-        units="$ AUD",
+        network=network.code,
+        data_type=units.unit_type,
+        units=units.unit,
         region=region_code,
         code=region_code,
         history=history,
