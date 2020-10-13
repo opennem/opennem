@@ -11,6 +11,7 @@ from opennem.core.time import get_interval, get_period
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, FacilityScada, Station
 from opennem.utils.time import human_to_interval
+from opennem.utils.timezone import make_aware
 
 from .controllers import stats_factory, stats_set_factory
 from .queries import (
@@ -250,8 +251,8 @@ def energy_station(
 
     for facility_code, record in result_set.items():
         dates = list(record.keys())
-        start = min(dates)
-        end = max(dates)
+        start = make_aware(min(dates), network.get_timezone())
+        end = make_aware(max(dates), network.get_timezone())
 
         history = OpennemDataHistory(
             start=start,
@@ -389,8 +390,8 @@ def price_region(
         result_set[res[0]] = price
 
     dates = list(result_set.keys())
-    start = min(dates)
-    end = max(dates)
+    start = make_aware(min(dates), network.get_timezone())
+    end = make_aware(max(dates), network.get_timezone())
 
     history = OpennemDataHistory(
         start=start,
