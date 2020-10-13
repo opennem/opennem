@@ -17,6 +17,7 @@ from .queries import (
     energy_facility,
     energy_network,
     power_facility,
+    power_network_fueltech,
     price_network_region,
 )
 from .schema import DataQueryResult, OpennemDataSet
@@ -174,6 +175,70 @@ def power_station(
         interval=interval,
         period=period,
         units=units,
+    )
+
+    return result
+
+
+@router.get(
+    "/power/fueltech/{network_code}/{station_code:path}",
+    name="stats:Network Fueltech Power",
+    response_model=OpennemDataSet,
+)
+def power_network_fueltech_api(
+    network_code: str = Query(..., description="Network code"),
+    network_region: str = Query(None, description="Network region"),
+    interval: str = Query(None, description="Interval"),
+    period: str = Query("7d", description="Period"),
+    engine=Depends(get_database_engine),
+) -> OpennemDataSet:
+    network = network_from_network_code(network_code)
+
+    if not network:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
+        )
+
+    if not interval:
+        interval = "{}m".format(network.interval_size)
+
+    interval = human_to_interval(interval)
+    period = human_to_period(period)
+    units = get_unit("power")
+
+    query = power_network_fueltech(
+        network=network,
+        interval=interval,
+        period=period,
+        network_region=network_region,
+    )
+
+    # print(query)
+
+    with engine.connect() as c:
+        results = list(c.execute(query))
+
+    stats = [
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
+        for i in results
+    ]
+
+    if len(stats) < 1:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Station stats not found",
+        )
+
+    result = stats_factory(
+        stats,
+        code=network.code,
+        network=network,
+        interval=interval,
+        period=period,
+        units=units,
+        region=network_region,
     )
 
     return result
