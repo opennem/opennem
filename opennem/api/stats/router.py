@@ -8,6 +8,7 @@ from starlette import status
 
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.networks import network_from_network_code
+from opennem.core.normalizers import normalize_duid
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, FacilityScada, Station
@@ -61,15 +62,25 @@ def power_unit(
 
     interval = human_to_interval(interval)
     period = human_to_period(period)
+    units = get_unit("energy")
 
-    stats = (
-        session.query(FacilityScada)
-        .filter_by(facility_code=unit_code)
-        .filter_by(network_id=network_code)
-        .filter(FacilityScada.trading_interval >= since)
-        .order_by(FacilityScada.trading_interval)
-        .all()
+    stats = []
+
+    facility_codes = [normalize_duid(unit_code)]
+
+    query = power_facility(
+        facility_codes, network.code, interval=interval, period=period
     )
+
+    with engine.connect() as c:
+        results = list(c.execute(query))
+
+    stats = [
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
+        for i in results
+    ]
 
     if len(stats) < 1:
         raise HTTPException(
@@ -78,7 +89,7 @@ def power_unit(
         )
 
     output = stats_factory(
-        stats, code=unit_code, interval=interval, period=period
+        stats, code=unit_code, interval=interval, period=period, units=units
     )
 
     return output
@@ -117,7 +128,7 @@ def power_station(
 
     interval = human_to_interval(interval)
     period = human_to_period(period)
-    units = get_unit("energy")
+    units = get_unit("power")
 
     station = (
         session.query(Station)
