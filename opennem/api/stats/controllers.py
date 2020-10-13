@@ -21,16 +21,6 @@ from .schema import (
 )
 
 
-def stats_set_factory(
-    stats: List[OpennemData], code: str = None, network: str = None
-) -> OpennemDataSet:
-    stat_set = OpennemDataSet(
-        data_type="power", data=stats, code=code, network=network
-    )
-
-    return stat_set
-
-
 def stats_factory(
     stats: List[DataQueryResult],
     interval: TimeInterval,
@@ -39,6 +29,12 @@ def stats_factory(
     units: UnitDefinition,
     code: str = None,
 ) -> Optional[OpennemDataSet]:
+    """
+        Takes a list of data query results and returns OpennemDataSets
+
+        @TODO optional groupby field
+        @TODO override timezone
+    """
 
     network_timezone = network.get_timezone()
 
@@ -98,6 +94,7 @@ def stats_factory(
 
 
 def station_attach_stats(station: Station, session: Session) -> Station:
+    # @TODO update for new queries
     since = datetime.now() - human_to_timedelta("7d")
 
     facility_codes = list(set([f.code for f in station.facilities]))
