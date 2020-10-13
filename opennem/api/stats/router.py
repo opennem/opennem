@@ -62,7 +62,7 @@ def power_unit(
 
     interval = human_to_interval(interval)
     period = human_to_period(period)
-    units = get_unit("energy")
+    units = get_unit("power")
 
     stats = []
 
@@ -85,11 +85,16 @@ def power_unit(
     if len(stats) < 1:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Station stats not found",
+            detail="Unit stats not found",
         )
 
     output = stats_factory(
-        stats, code=unit_code, interval=interval, period=period, units=units
+        stats,
+        code=unit_code,
+        interval=interval,
+        period=period,
+        units=units,
+        network=network,
     )
 
     return output
@@ -151,6 +156,8 @@ def power_station(
     query = power_facility(
         facility_codes, network_code, interval=interval, period=period
     )
+
+    print(query)
 
     with engine.connect() as c:
         results = list(c.execute(query))
