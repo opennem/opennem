@@ -1,3 +1,5 @@
+set -euxo pipefail
+
 poetry version ${1-prerelease}
 
 VERSION=$(poetry version | sed 's/opennem\ //g')
@@ -6,7 +8,7 @@ echo "Building version $VERSION"
 
 poetry export --format requirements.txt -E postgres > requirements.txt
 
-git add pyproject.toml
+git add pyproject.toml requirements.txt
 
 git ci -m "v$VERSION"
 
