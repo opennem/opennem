@@ -53,14 +53,18 @@ class APVIStoreData(object):
             for state, prefix in STATE_POSTCODE_PREFIXES.items():
                 facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
 
-                network_network = NetworkWEM if state == "WA" else NetworkNEM
+                network_network = NetworkNEM
 
                 interval_time = parse_date(
                     record["ts"], network=network_network, dayfirst=False
                 )
 
                 generated = sum(
-                    [v for k, v in record.items() if k.startswith(prefix)]
+                    [
+                        v
+                        for k, v in record.items()
+                        if k.startswith(prefix) and v
+                    ]
                 )
 
                 records_to_store.append(
