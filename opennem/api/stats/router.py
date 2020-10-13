@@ -29,6 +29,7 @@ router = APIRouter()
     "/power/unit/{network_code}/{unit_code:path}",
     name="stats:Unit Power",
     response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
 )
 def power_unit(
     unit_code: str = Query(..., description="Unit code"),
@@ -97,6 +98,7 @@ def power_unit(
     "/power/station/{network_code}/{station_code:path}",
     name="stats:Station Power",
     response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
 )
 def power_station(
     station_code: str = Query(..., description="Station code"),
@@ -184,6 +186,7 @@ def power_station(
     "/power/fueltech/{network_code}/{station_code:path}",
     name="stats:Network Fueltech Power",
     response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
 )
 def power_network_fueltech_api(
     network_code: str = Query(..., description="Network code"),
@@ -239,6 +242,7 @@ def power_network_fueltech_api(
         period=period,
         units=units,
         region=network_region,
+        fueltech_group=True,
     )
 
     return result
@@ -248,6 +252,7 @@ def power_network_fueltech_api(
     "/energy/station/{network_code}/{station_code}",
     name="Energy Station",
     response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
 )
 def energy_station(
     engine=Depends(get_database_engine),
@@ -337,6 +342,7 @@ def energy_station(
     "/energy/network/{network_code}",
     name="Energy Network",
     response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
 )
 def energy_network_api(
     engine=Depends(get_database_engine),
@@ -394,6 +400,7 @@ def energy_network_api(
     "/price/{network_code}/{region_code}",
     name="Price Network Region",
     response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
 )
 def price_network_region_api(
     engine=Depends(get_database_engine),
