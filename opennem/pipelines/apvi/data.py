@@ -53,11 +53,13 @@ class APVIStoreData(object):
             for state, prefix in STATE_POSTCODE_PREFIXES.items():
                 facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
 
-                network_network = NetworkNEM
+                # network_network = NetworkNEM
 
-                interval_time = parse_date(
-                    record["ts"], network=network_network, dayfirst=False
-                )
+                interval_time = parse_date(record["ts"])
+
+                # interval_time = interval_time.replace(
+                # tzinfo=network_network.get_timezone()
+                # )
 
                 generated = sum(
                     [
