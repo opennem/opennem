@@ -224,44 +224,13 @@ def energy_network(
     return query
 
 
-def energy_year_network(network_code: str = "WEM", year: int = None) -> str:
-    if not year:
-        year = datetime.today().year
-
-    network_code = network_code.upper()
-
-    network = network_from_network_region(network_code)
-    timezone = network.timezone_database
-
-    if not timezone:
-        timezone = "UTC"
-
-    return """
-        select
-            date_trunc('day', fs.trading_interval AT TIME ZONE '{timezone}') AS trading_day,
-            max(fs.eoi_quantity) as energy_output,
-            f.fueltech_id as fueltech
-        from facility_scada fs
-        left join facility f on fs.facility_code = f.code
-        where
-            f.fueltech_id is not null
-            and extract('year' from fs.trading_interval AT TIME ZONE '{timezone}') = {year}
-            and fs.network_id = '{network_code}'
-        group by 1, f.fueltech_id
-        order by 1 asc, 2 asc
-    """.format(
-        year=year, network_code=network_code, timezone=timezone
-    )
-
-
 def price_network_region(
-    network_code: str,
+    network: NetworkSchema,
     region_code: str,
     interval: TimeInterval,
     period: TimePeriod,
 ) -> str:
 
-    network = network_from_network_region(network_code)
     timezone = network.timezone_database
 
     if not timezone:
@@ -289,12 +258,43 @@ def price_network_region(
         order by 1
     """
 
+    __query = """with intervals as (
+            select generate_series(
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
+                '{interval}'::interval
+            )::timestamp as interval
+        )
+
+        select
+            i.interval as trading_day,
+            fs.generated,
+            fs.network_region
+        from intervals i
+        left outer join
+            (select
+                date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
+                fs.network_region,
+                coalesce(avg(fs.price), NULL) as generated
+                from balancing_summary fs
+                where
+                    fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
+                    and fs.network_id = '{network_code}'
+                    and fs.network_region = '{network_region}'
+                group by 1, 2
+            ) as fs on fs.interval = i.interval
+        order by 1 desc, 2 asc"""
+
     query = __query.format(
-        region_code=region_code,
-        network_code=network_code,
+        network_code=network.code,
+        network_region=region_code,
         trunc=interval.trunc,
         interval=interval.interval_sql,
+        interval_remainder=interval.get_sql_join(
+            timezone=network.timezone_database
+        ),
         period=period.period_sql,
+        scale=network.intervals_per_hour,
         timezone=timezone,
     )
 

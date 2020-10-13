@@ -1,6 +1,4 @@
 from datetime import datetime
-from itertools import groupby
-from operator import attrgetter, itemgetter
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -11,11 +9,11 @@ from opennem.core.networks import network_from_network_code
 from opennem.core.normalizers import normalize_duid
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
-from opennem.db.models.opennem import Facility, FacilityScada, Station
+from opennem.db.models.opennem import Facility, Station
 from opennem.utils.time import human_to_timedelta
 from opennem.utils.timezone import make_aware
 
-from .controllers import stats_factory, stats_set_factory
+from .controllers import stats_factory
 from .queries import (
     energy_facility,
     energy_network,
@@ -276,7 +274,11 @@ def energy_station(
     return result
 
 
-@router.get("/energy/network/{network_code}", name="Energy Network")
+@router.get(
+    "/energy/network/{network_code}",
+    name="Energy Network",
+    response_model=OpennemDataSet,
+)
 def energy_network_api(
     engine=Depends(get_database_engine),
     network_code: str = Query(..., description="Network code"),
@@ -310,8 +312,6 @@ def energy_network_api(
             status_code=status.HTTP_404_NOT_FOUND, detail="No results"
         )
 
-    stat_groups = {}
-
     stats = [
         DataQueryResult(
             interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
@@ -334,16 +334,16 @@ def energy_network_api(
 @router.get(
     "/price/{network_code}/{region_code}",
     name="Price Network Region",
-    response_model=OpennemData,
+    response_model=OpennemDataSet,
 )
-def price_region(
+def price_network_region_api(
     session: Session = Depends(get_database_session),
     engine=Depends(get_database_engine),
     network_code: str = Query(..., description="Network code"),
     region_code: str = Query(..., description="Region code"),
     interval: str = Query(None, description="Interval"),
     period: str = Query("7d", description="Period"),
-) -> OpennemData:
+) -> OpennemDataSet:
     network = network_from_network_code(network_code)
 
     if not network:
@@ -359,7 +359,7 @@ def price_region(
     units = get_unit("price")
 
     query = price_network_region(
-        network_code=network_code,
+        network=network,
         region_code=region_code,
         interval=interval,
         period=period,
@@ -368,40 +368,26 @@ def price_region(
     with engine.connect() as c:
         results = list(c.execute(query))
 
-    result_set = {}
-
     if len(results) < 1:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No data found"
         )
 
-    for res in results:
-        price = res[1]
+    stats = [
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
+        for i in results
+    ]
 
-        if price:
-            price = round(price, 2)
-
-        result_set[res[0]] = price
-
-    dates = list(result_set.keys())
-    start = make_aware(min(dates), network.get_timezone())
-    end = make_aware(max(dates), network.get_timezone())
-
-    history = OpennemDataHistory(
-        start=start,
-        last=end,
-        interval=interval.interval_human,
-        data=list(result_set.values()),
-    )
-
-    data = OpennemData(
-        network=network.code,
-        data_type=units.unit_type,
-        units=units.unit,
+    result = stats_factory(
+        stats,
+        code=network.code,
         region=region_code,
-        code=region_code,
-        history=history,
+        network=network,
+        interval=interval,
+        period=period,
+        units=units,
     )
 
-    return data
-
+    return result

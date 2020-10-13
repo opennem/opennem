@@ -28,6 +28,7 @@ def stats_factory(
     network: NetworkSchema,
     units: UnitDefinition,
     code: str = None,
+    region: str = None,
 ) -> Optional[OpennemDataSet]:
     """
         Takes a list of data query results and returns OpennemDataSets
@@ -87,6 +88,7 @@ def stats_factory(
         interval=interval,
         period=period,
         code=code,
+        region_code=region,
         network=network.code,
     )
 

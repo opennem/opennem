@@ -58,6 +58,7 @@ class OpennemData(BaseConfig):
 class OpennemDataSet(BaseConfig):
     network: str = ""
     code: str
+    region: Optional[str]
     interval: TimeIntervalAPI
     period: TimePeriodAPI
 
