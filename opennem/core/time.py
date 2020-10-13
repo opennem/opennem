@@ -26,7 +26,11 @@ def load_periods() -> List[TimePeriod]:
 
 INTERVALS = load_intervals()
 
+INTERVALS_SUPPORTED = [i.interval_human for i in INTERVALS]
+
 PERIODS = load_periods()
+
+PERIODS_SUPPORTED = [i.period_human for i in PERIODS]
 
 
 def get_interval(interval_human: str) -> TimeInterval:
