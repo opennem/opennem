@@ -3,6 +3,7 @@ from typing import List, Tuple
 
 from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
+from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 
 
@@ -80,14 +81,6 @@ def energy_facility(
     network = network_from_network_region(network_code)
     timezone = network.timezone_database
 
-    scale = 1
-
-    if network.code == "NEM":
-        scale = 12
-
-    if not timezone:
-        timezone = "UTC"
-
     __query = """with intervals as (
             select generate_series(
                 date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
@@ -124,7 +117,54 @@ def energy_facility(
             timezone=network.timezone_database
         ),
         period=period.period_sql,
-        scale=scale,
+        scale=network.intervals_per_hour,
+        timezone=timezone,
+    )
+
+    return query
+
+
+def energy_network(
+    network: NetworkSchema, interval: TimeInterval, period: TimePeriod,
+) -> str:
+
+    timezone = network.timezone_database
+
+    __query = """with intervals as (
+            select generate_series(
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
+                '{interval}'::interval
+            )::timestamp as interval
+        )
+
+        select
+            i.interval as trading_day,
+            fs.generated,
+            fs.facility_code as facility_code
+        from intervals i
+        left outer join
+            (select
+                date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
+                fs.facility_code,
+                coalesce(sum(fs.eoi_quantity), NULL) / {scale} as generated
+                from facility_scada fs
+                where
+                    fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
+                    and fs.network_id = '{network_code}'
+                group by 1, 2
+            ) as fs on fs.interval = i.interval
+        order by 1 desc, 2 asc"""
+
+    query = __query.format(
+        network_code=network.code,
+        trunc=interval.trunc,
+        interval=interval.interval_sql,
+        interval_remainder=interval.get_sql_join(
+            timezone=network.timezone_database
+        ),
+        period=period.period_sql,
+        scale=network.intervals_per_hour,
         timezone=timezone,
     )
 
