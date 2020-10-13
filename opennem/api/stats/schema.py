@@ -5,12 +5,7 @@ from typing import Dict, List, Optional, Tuple, Union
 from pydantic import BaseModel, validator
 
 from opennem.schema.core import BaseConfig
-from opennem.schema.time import (
-    TimeInterval,
-    TimeIntervalAPI,
-    TimePeriod,
-    TimePeriodAPI,
-)
+from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
 
 
 class ScadaInterval(object):
