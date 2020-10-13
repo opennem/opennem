@@ -55,7 +55,9 @@ class APVIStoreData(object):
 
                 # network_network = NetworkNEM
 
-                interval_time = parse_date(record["ts"])
+                interval_time = parse_date(
+                    record["ts"], dayfirst=False, yearfirst=True
+                )
 
                 # interval_time = interval_time.replace(
                 # tzinfo=network_network.get_timezone()
