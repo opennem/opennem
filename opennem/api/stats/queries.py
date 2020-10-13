@@ -59,7 +59,9 @@ def power_facility(
         network_code=network_code,
         trunc=interval.trunc,
         interval=interval.interval_human,
-        interval_remainder=interval.get_sql_join(),
+        interval_remainder=interval.get_sql_join(
+            timezone=network.timezone_database
+        ),
         period=period.period_sql,
         scale=scale,
         timezone=timezone,
@@ -118,7 +120,9 @@ def energy_facility(
         network_code=network_code,
         trunc=interval.trunc,
         interval=interval.interval_sql,
-        interval_remainder=interval.get_sql_join(),
+        interval_remainder=interval.get_sql_join(
+            timezone=network.timezone_database
+        ),
         period=period.period_sql,
         scale=scale,
         timezone=timezone,
