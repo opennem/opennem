@@ -31,6 +31,10 @@ class NetworkSchema(BaseConfig):
             return pytz_timezone(self.timezone)
         return get_current_timezone()
 
+    @property
+    def intervals_per_hour(self):
+        return 60 / self.interval_size
+
 
 NetworkNEM = NetworkSchema(
     code="NEM",
