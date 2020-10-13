@@ -115,6 +115,6 @@ def station_attach_stats(station: Station, session: Session) -> Station:
             filter(lambda s: s.facility_code == facility.code, stats)
         )
 
-        facility.scada_power = stats_factory(facility_power)
+        # facility.scada_power = stats_factory(facility_power)
 
     return station

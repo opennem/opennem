@@ -24,7 +24,7 @@ docker push opennem/opennem:$VERSION
 
 poetry build
 
-twine upload dist/*
+twine upload --skip-existing dist/*
 
 scrapyd-deploy
 

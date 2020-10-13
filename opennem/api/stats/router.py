@@ -11,7 +11,6 @@ from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, Station
 from opennem.utils.time import human_to_timedelta
-from opennem.utils.timezone import make_aware
 
 from .controllers import stats_factory
 from .queries import (
@@ -20,12 +19,7 @@ from .queries import (
     power_facility,
     price_network_region,
 )
-from .schema import (
-    DataQueryResult,
-    OpennemData,
-    OpennemDataHistory,
-    OpennemDataSet,
-)
+from .schema import DataQueryResult, OpennemDataSet
 
 router = APIRouter()
 
@@ -33,7 +27,7 @@ router = APIRouter()
 @router.get(
     "/power/unit/{network_code}/{unit_code:path}",
     name="stats:Unit Power",
-    response_model=OpennemData,
+    response_model=OpennemDataSet,
 )
 def power_unit(
     unit_code: str = Query(..., description="Unit code"),
@@ -44,7 +38,7 @@ def power_unit(
     period: str = Query("7d", description="Period"),
     session: Session = Depends(get_database_session),
     engine=Depends(get_database_engine),
-) -> OpennemData:
+) -> OpennemDataSet:
     if not since:
         since = datetime.now() - human_to_timedelta("7d")
 
@@ -337,7 +331,6 @@ def energy_network_api(
     response_model=OpennemDataSet,
 )
 def price_network_region_api(
-    session: Session = Depends(get_database_session),
     engine=Depends(get_database_engine),
     network_code: str = Query(..., description="Network code"),
     region_code: str = Query(..., description="Region code"),

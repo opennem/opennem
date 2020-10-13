@@ -354,7 +354,7 @@ def load_aemo_csv(item, filename):
 
 
 def load_mms_tables():
-    mms_path = Path(__file__).parent.parent.parent / "data" / "mms"
+    mms_path = Path(__file__).parent.parent / "data" / "mms"
 
     mms_files = [
         "mms/{}".format(f.name)
