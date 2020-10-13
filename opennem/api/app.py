@@ -1,4 +1,5 @@
 from datetime import datetime
+from io import UnsupportedOperation
 from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -14,18 +15,13 @@ from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.weather.router import router as weather_router
 from opennem.core.time import INTERVALS, PERIODS
+from opennem.core.units import UNITS
 from opennem.db import get_database_session
-from opennem.db.models.opennem import (
-    Facility,
-    FuelTech,
-    Location,
-    Network,
-    Revision,
-    Station,
-)
+from opennem.db.models.opennem import FuelTech, Network
 from opennem.schema.network import NetworkSchema
 from opennem.schema.opennem import FueltechSchema
 from opennem.schema.time import TimeInterval, TimePeriod
+from opennem.schema.units import UnitDefinition
 
 from .schema import FueltechResponse
 
@@ -93,3 +89,8 @@ def intervals() -> List[TimeInterval]:
 @app.get("/periods", response_model=List[TimePeriod])
 def periods() -> List[TimePeriod]:
     return PERIODS
+
+
+@app.get("/units", response_model=List[UnitDefinition])
+def units() -> List[UnitDefinition]:
+    return UNITS
