@@ -55,14 +55,12 @@ def stats_factory(
 
         data_grouped = dict()
 
-        for key, v in groupby(stats, attrgetter("interval")):
-            if key not in data_grouped:
-                data_grouped[key] = None
+        for stat in stats:
+            if stat.interval not in data_grouped:
+                data_grouped[stat.interval] = None
 
-            value = list(v).pop()
-
-            if value.group_by == group_code:
-                data_grouped[key] = value.result
+            if stat.group_by == group_code:
+                data_grouped[stat.interval] = stat.result
 
         data_sorted = OrderedDict(sorted(data_grouped.items()))
 
