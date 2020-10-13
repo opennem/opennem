@@ -18,7 +18,7 @@ from opennem.utils.timezone import make_aware
 from .controllers import stats_factory, stats_set_factory
 from .queries import (
     energy_facility,
-    energy_year_network,
+    energy_network,
     power_facility,
     price_network_region,
 )
@@ -180,6 +180,7 @@ def power_station(
         code=station_code,
         network=network,
         interval=interval,
+        period=period,
         units=units,
     )
 
@@ -268,21 +269,20 @@ def energy_station(
         code=station_code,
         network=network,
         interval=interval,
+        period=period,
         units=units,
     )
 
     return result
 
 
-@router.get("/energy/network/year/{network_code}", name="Energy Network")
-def energy_network(
+@router.get("/energy/network/{network_code}", name="Energy Network")
+def energy_network_api(
     engine=Depends(get_database_engine),
     network_code: str = Query(..., description="Network code"),
-    year: int = Query(None, description="Year"),
-    interval: str = Query(None, description="Interval"),
-    period: str = Query("7d", description="Period"),
+    interval: str = Query("1d", description="Interval"),
+    period: str = Query("1Y", description="Period"),
 ) -> OpennemDataSet:
-    query = energy_year_network(year=year, network_code=network_code)
 
     results = []
 
@@ -298,6 +298,9 @@ def energy_network(
 
     interval = human_to_interval(interval)
     period = human_to_period(period)
+    units = get_unit("energy")
+
+    query = energy_network(network=network, interval=interval, period=period)
 
     with engine.connect() as c:
         results = list(c.execute(query))
@@ -309,26 +312,23 @@ def energy_network(
 
     stat_groups = {}
 
-    for fueltech, record in groupby(results, attrgetter("fueltech")):
-        if fueltech not in stat_groups:
-            stat_groups[fueltech] = []
+    stats = [
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
+        for i in results
+    ]
 
-        stat_groups[fueltech] += record
+    result = stats_factory(
+        stats,
+        code=network.code,
+        network=network,
+        interval=interval,
+        period=period,
+        units=units,
+    )
 
-    # history = OpennemDataHistory(
-    #     start=start.astimezone(network_timezone),
-    #     last=end.astimezone(network_timezone),
-    #     interval="{}m".format(str(interval)),
-    #     data=list(data_grouped.values()),
-    # )
-
-    # data = OpennemData(
-    #     network=network,
-    #     data_type="power",
-    #     units="MW",
-    #     code=code,
-    #     history=history,
-    # )
+    return result
 
 
 @router.get(

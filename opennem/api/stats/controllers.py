@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from opennem.db.models.opennem import FacilityScada, Station
 from opennem.schema.network import NetworkSchema
-from opennem.schema.time import TimeInterval
+from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.utils.time import human_to_timedelta
 from opennem.utils.timezone import make_aware
@@ -34,6 +34,7 @@ def stats_set_factory(
 def stats_factory(
     stats: List[DataQueryResult],
     interval: TimeInterval,
+    period: TimePeriod,
     network: NetworkSchema,
     units: UnitDefinition,
     code: str = None,
@@ -44,8 +45,6 @@ def stats_factory(
     dates = [s.interval for s in stats]
     start = make_aware(min(dates), network_timezone)
     end = make_aware(max(dates), network_timezone)
-    # start = min(dates)
-    # end = max(dates)
 
     # free
     dates = []
@@ -89,6 +88,8 @@ def stats_factory(
     stat_set = OpennemDataSet(
         data_type=units.unit_type,
         data=stats_grouped,
+        interval=interval,
+        period=period,
         code=code,
         network=network.code,
     )
