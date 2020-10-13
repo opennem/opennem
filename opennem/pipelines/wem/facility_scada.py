@@ -38,6 +38,8 @@ class WemStoreFacilityScada(DatabaseStoreBase):
             if __key not in primary_keys:
                 records_to_store.append(
                     {
+                        "created_by": spider.name,
+                        # "updated_by": None,
                         "network_id": "WEM",
                         "trading_interval": trading_interval,
                         "facility_code": facility_code,
@@ -55,6 +57,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
         stmt = stmt.on_conflict_do_update(
             constraint="facility_scada_pkey",
             set_={
+                # "updated_by": stmt.excluded.created_by,
                 "eoi_quantity": stmt.excluded.eoi_quantity,
                 "generated": stmt.excluded.generated,
             },
@@ -123,6 +126,8 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
                 records_to_store.append(
                     {
+                        "created_by": spider.name,
+                        # "updated_by": None,
                         "network_id": "WEM",
                         "trading_interval": interval,
                         "facility_code": facility_code,
@@ -134,7 +139,10 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
             constraint="facility_scada_pkey",
-            set_={"generated": stmt.excluded.generated,},
+            set_={
+                # "updated_by": stmt.excluded.created_by,
+                "generated": stmt.excluded.generated,
+            },
         )
 
         try:

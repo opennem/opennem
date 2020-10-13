@@ -31,7 +31,7 @@ def process_case_solutions(table):
     # records_to = []
 
 
-def process_meter_data_gen_duid(table):
+def process_meter_data_gen_duid(table, spider):
     session = SessionLocal()
     engine = get_database_engine()
 
@@ -53,6 +53,8 @@ def process_meter_data_gen_duid(table):
         records_to_store.append(
             {
                 "network_id": "NEM",
+                "created_by": spider.name,
+                # "updated_by": None,
                 "trading_interval": trading_interval,
                 "facility_code": normalize_duid(record["DUID"]),
                 "eoi_quantity": record["MWH_READING"],
@@ -79,7 +81,7 @@ def process_meter_data_gen_duid(table):
     return len(records_to_store)
 
 
-def process_pre_ap_price(table):
+def process_pre_ap_price(table, spider):
     session = SessionLocal()
     engine = get_database_engine()
 
@@ -101,6 +103,8 @@ def process_pre_ap_price(table):
         records_to_store.append(
             {
                 "network_id": "NEM",
+                "created_by": spider.name,
+                # "updated_by": None,
                 "network_region": record["REGIONID"],
                 "trading_interval": trading_interval,
                 "price": record["PRE_AP_ENERGY_PRICE"],
@@ -127,7 +131,7 @@ def process_pre_ap_price(table):
     return len(records_to_store)
 
 
-def process_unit_scada(table):
+def process_unit_scada(table, spider):
     session = SessionLocal()
     engine = get_database_engine()
 
@@ -157,10 +161,12 @@ def process_unit_scada(table):
 
             records_to_store.append(
                 {
+                    "network_id": "NEM",
+                    "created_by": spider.name,
+                    # "updated_by": None,
                     "trading_interval": trading_interval,
                     "facility_code": facility_code,
                     "generated": float(record["SCADAVALUE"]),
-                    "network_id": "NEM",
                 }
             )
 
@@ -190,7 +196,7 @@ def process_unit_scada(table):
     return len(records_to_store)
 
 
-def process_unit_solution(table):
+def process_unit_solution(table, spider):
     session = SessionLocal()
     engine = get_database_engine()
 
@@ -220,10 +226,12 @@ def process_unit_solution(table):
 
             records_to_store.append(
                 {
+                    "network_id": "NEM",
+                    "created_by": spider.name,
+                    # "updated_by": None,
                     "trading_interval": trading_interval,
                     "facility_code": facility_code,
                     "eoi_quantity": float(record["INITIALMW"]),
-                    "network_id": "NEM",
                 }
             )
             records_primary_keys.append(_unique_set)
@@ -294,6 +302,6 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
                 logger.info("Invalid processing function %s", process_meth)
                 continue
 
-            ret += globals()[process_meth](table)
+            ret += globals()[process_meth](table, spider=spider)
 
         return ret
