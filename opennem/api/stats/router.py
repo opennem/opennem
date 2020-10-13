@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
 
+from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.networks import network_from_network_code
-from opennem.core.time import get_interval, get_period
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, FacilityScada, Station
 from opennem.utils.time import human_to_timedelta
@@ -53,8 +53,8 @@ def power_unit(
     if not interval:
         interval = "{}m".format(network.interval_size)
 
-    interval = get_interval(interval)
-    period = get_period(period)
+    interval = human_to_interval(interval)
+    period = human_to_period(period)
 
     stats = (
         session.query(FacilityScada)
@@ -105,8 +105,8 @@ def power_station(
     if not interval:
         interval = "{}m".format(network.interval_size)
 
-    interval = get_interval(interval)
-    period = get_period(period)
+    interval = human_to_interval(interval)
+    period = human_to_period(period)
 
     station = (
         session.query(Station)
@@ -197,8 +197,8 @@ def energy_station(
     if not interval:
         interval = "{}m".format(network.interval_size)
 
-    interval = get_interval(interval)
-    period = get_period(period)
+    interval = human_to_interval(interval)
+    period = human_to_period(period)
 
     station = (
         session.query(Station)
@@ -303,8 +303,8 @@ def energy_network(
     if not interval:
         interval = "{}m".format(network.interval_size)
 
-    interval = get_interval(interval)
-    period = get_period(period)
+    interval = human_to_interval(interval)
+    period = human_to_period(period)
 
     with engine.connect() as c:
         results = list(c.execute(query))
@@ -361,8 +361,8 @@ def price_region(
     if not interval:
         interval = "{}m".format(network.interval_size)
 
-    interval = get_interval(interval)
-    period = get_period(period)
+    interval = human_to_interval(interval)
+    period = human_to_period(period)
 
     query = price_network_region(
         network_code=network_code,

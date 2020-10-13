@@ -13,7 +13,7 @@ UNITS = {
 }
 
 
-def human_to_interval(s: str) -> timedelta:
+def human_to_timedelta(s: str) -> timedelta:
     return timedelta(
         **{
             UNITS.get(m.group("unit").lower(), "seconds"): int(m.group("val"))

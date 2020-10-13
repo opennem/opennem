@@ -3,10 +3,6 @@ from typing import List
 from opennem.core.loader import load_data
 from opennem.schema.time import TimeInterval, TimePeriod
 
-SUPPORTED_PERIODS = ["7D", "1M", "1Y", "ALL"]
-
-SUPPORTED_INTERVALS = ["5M", "15M", "30M", "1D", "1H", "1M"]
-
 
 def load_intervals() -> List[TimeInterval]:
     interval_dicts = load_data("intervals.json")

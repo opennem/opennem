@@ -6,13 +6,10 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from opennem.core.networks import (
-    network_from_network_code,
-    network_from_network_region,
-)
+from opennem.core.networks import network_from_network_code
 from opennem.db.models.opennem import FacilityScada, Station
 from opennem.schema.time import TimeInterval
-from opennem.utils.time import human_to_interval
+from opennem.utils.time import human_to_timedelta
 
 from .schema import OpennemData, OpennemDataHistory, OpennemDataSet
 
@@ -93,7 +90,7 @@ def stats_factory(
 
 
 def station_attach_stats(station: Station, session: Session) -> Station:
-    since = datetime.now() - human_to_interval("7d")
+    since = datetime.now() - human_to_timedelta("7d")
 
     facility_codes = list(set([f.code for f in station.facilities]))
 
