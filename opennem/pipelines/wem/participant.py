@@ -110,7 +110,7 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
                 participant = Participant(
                     code=participant_code,
                     name=participant_name,
-                    created_by="pipeline.wem.live.participant",
+                    created_by=spider.name,
                 )
 
                 logger.info(
@@ -119,7 +119,7 @@ class WemStoreLiveParticipant(DatabaseStoreBase):
 
             elif participant.name != participant_name:
                 participant.name = participant_name
-                participant.updated_by = "pipeline.wem.live.participant"
+                participant.updated_by = spider.name
 
                 logger.info(
                     "Updated WEM participant: {}".format(participant_code)

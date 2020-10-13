@@ -32,6 +32,7 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
 
             records_to_store.append(
                 {
+                    "created_by": spider.name,
                     "network_id": "WEM",
                     "network_region": "WEM",
                     "trading_interval": trading_interval,

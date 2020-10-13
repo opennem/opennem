@@ -34,6 +34,7 @@ class WemStorePulse(DatabaseStoreBase):
 
                 records_to_store.append(
                     {
+                        "created_by": spider.name,
                         "trading_interval": trading_interval,
                         "network_id": "WEM",
                         "network_region": "WEM",

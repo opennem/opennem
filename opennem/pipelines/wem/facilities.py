@@ -58,7 +58,7 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not participant:
                 participant = Participant(
-                    created_by="opennem.wem.facilities",
+                    created_by=spider.name,
                     approved_at=datetime.now(),
                     code=participant_code,
                     name=participant_name,
@@ -107,7 +107,7 @@ class WemStoreFacility(DatabaseStoreBase):
 
             if not facility:
                 facility = Facility(
-                    created_by="opennem.wem.facilities",
+                    created_by=spider.name,
                     approved_at=datetime.now(),
                     code=facility_code,
                     network_id="WEM",
@@ -255,7 +255,6 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                     network_code=facility_code,
                     network_region="WEM",
                 )
-
 
             registered_date = row["YEAR_COMMISSIONED"]
 
