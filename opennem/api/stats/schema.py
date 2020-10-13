@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel, validator
@@ -58,3 +59,9 @@ class OpennemDataSet(BaseConfig):
     code: str
 
     data: List[OpennemData]
+
+
+class DataQueryResult(BaseConfig):
+    interval: datetime
+    result: Union[float, int, None, Decimal]
+    group_by: Optional[str]

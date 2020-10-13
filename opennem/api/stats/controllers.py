@@ -1,17 +1,24 @@
 from datetime import datetime
 from decimal import Decimal
 from itertools import groupby
-from operator import itemgetter
+from operator import attrgetter, itemgetter
 from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
 from opennem.core.networks import network_from_network_code
 from opennem.db.models.opennem import FacilityScada, Station
+from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval
 from opennem.utils.time import human_to_timedelta
+from opennem.utils.timezone import make_aware
 
-from .schema import OpennemData, OpennemDataHistory, OpennemDataSet
+from .schema import (
+    DataQueryResult,
+    OpennemData,
+    OpennemDataHistory,
+    OpennemDataSet,
+)
 
 
 def stats_set_factory(
@@ -25,68 +32,60 @@ def stats_set_factory(
 
 
 def stats_factory(
-    scada: List[FacilityScada],
+    stats: List[DataQueryResult],
     interval: TimeInterval,
-    network_code: str = "NEM",
+    network: NetworkSchema,
     code: str = None,
-) -> Optional[OpennemData]:
-    if len(scada) < 1:
-        return None
+) -> Optional[OpennemDataSet]:
 
-    network_code = network_code.upper()
-
-    network = network_from_network_code(network_code)
     network_timezone = network.get_timezone()
 
-    dates = [s["trading_interval"] for s in scada]
-    start = min(dates)
-    end = max(dates)
+    dates = [s.interval for s in stats]
+    start = make_aware(min(dates), network_timezone)
+    end = make_aware(max(dates), network_timezone)
 
-    # pluck the list
-    data = [
-        {
-            k: v
-            for k, v in scada_record.items()
-            if k in ["trading_interval", "generated"]
-        }
-        for scada_record in scada
-    ]
+    # free
+    dates = []
 
-    data_grouped = {}
+    group_codes = list(set([i.group_by for i in stats if i.group_by]))
 
-    for key, v in groupby(data, itemgetter("trading_interval")):
-        if key not in data_grouped:
-            data_grouped[key] = 0.0
+    stats_grouped = []
 
-        # @TODO abstract this
-        total = sum(
-            [
-                i["generated"]
-                for i in list(v)
-                if type(i["generated"]) in [int, float, Decimal]
-            ]
+    for group_code in group_codes:
+
+        data_grouped = {}
+
+        for key, v in groupby(stats, attrgetter("interval")):
+            if key not in data_grouped:
+                data_grouped[key] = None
+
+            value = list(v).pop()
+
+            if value.group_by == group_code:
+                data_grouped[key] = value.result
+
+        history = OpennemDataHistory(
+            start=start,
+            last=end,
+            interval=interval.interval_human,
+            data=list(data_grouped.values()),
         )
 
-        if total:
-            total = float(total)
-            data_grouped[key] = round(total, 2)
+        data = OpennemData(
+            network=network.code,
+            data_type="power",
+            units="MW",
+            code=group_code,
+            history=history,
+        )
 
-    history = OpennemDataHistory(
-        start=start.astimezone(network_timezone),
-        last=end.astimezone(network_timezone),
-        interval=interval.interval_human,
-        data=list(data_grouped.values()),
+        stats_grouped.append(data)
+
+    stat_set = OpennemDataSet(
+        data_type="power", data=stats_grouped, code=code, network=network.code
     )
 
-    data = OpennemData(
-        network=network.code,
-        data_type="power",
-        units="MW",
-        code=code,
-        history=history,
-    )
-
-    return data
+    return stat_set
 
 
 def station_attach_stats(station: Station, session: Session) -> Station:
