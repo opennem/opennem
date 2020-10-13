@@ -157,7 +157,7 @@ def power_station(
         facility_codes, network_code, interval=interval, period=period
     )
 
-    print(query)
+    # print(query)
 
     with engine.connect() as c:
         results = list(c.execute(query))

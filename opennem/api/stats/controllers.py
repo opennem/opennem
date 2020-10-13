@@ -43,8 +43,10 @@ def stats_factory(
     network_timezone = network.get_timezone()
 
     dates = [s.interval for s in stats]
-    start = make_aware(min(dates), network_timezone)
-    end = make_aware(max(dates), network_timezone)
+    # start = make_aware(min(dates), network_timezone)
+    # end = make_aware(max(dates), network_timezone)
+    start = min(dates)
+    end = max(dates)
 
     # free
     dates = []
