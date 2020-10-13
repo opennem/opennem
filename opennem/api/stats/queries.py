@@ -27,8 +27,7 @@ def power_facility(
     if not timezone:
         timezone = "UTC"
 
-    __query = """
-        with intervals as (
+    __query = """with intervals as (
             select generate_series(
                 date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
                 date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
@@ -37,18 +36,23 @@ def power_facility(
         )
 
         select
-            i.interval AS trading_day,
-            fs.facility_code as facility_code,
-            avg(generated) as generated
+            i.interval as trading_day,
+            fs.generated,
+            fs.facility_code as facility_code
         from intervals i
-        left join facility_scada fs on date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp {interval_remainder} = i.interval
-        where
-            fs.facility_code in ({facility_codes_parsed})
-            and fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
-            and fs.network_id = '{network_code}'
-        group by 1, 2
-        order by 2 asc, 1 asc
-    """
+        left outer join
+            (select
+                date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
+                fs.facility_code,
+                coalesce(avg(generated), 0) as generated
+                from facility_scada fs
+                where
+                    fs.facility_code in ({facility_codes_parsed})
+                    and fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
+                    and fs.network_id = '{network_code}'
+                group by 1, 2
+            ) as fs on fs.interval = i.interval
+        order by 1 desc, 2 asc"""
 
     query = __query.format(
         facility_codes_parsed=duid_in_case(facility_codes),
@@ -82,8 +86,7 @@ def energy_facility(
     if not timezone:
         timezone = "UTC"
 
-    __query = """
-        with intervals as (
+    __query = """with intervals as (
             select generate_series(
                 date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
                 date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
@@ -92,24 +95,30 @@ def energy_facility(
         )
 
         select
-            i.interval AS trading_day,
-            fs.facility_code as facility_code,
-            coalesce(sum(fs.eoi_quantity), NULL) / {scale} as energy_output
+            i.interval as trading_day,
+            fs.generated,
+            fs.facility_code as facility_code
         from intervals i
-        left join facility_scada fs on date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp = i.interval
-        where
-            fs.facility_code in ({facility_codes_parsed})
-            and fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
-            and fs.network_id = '{network_code}'
-        group by 1, 2
-        order by 2 asc, 1 asc
-    """
+        left outer join
+            (select
+                date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
+                fs.facility_code,
+                coalesce(sum(fs.eoi_quantity), NULL) / {scale} as generated
+                from facility_scada fs
+                where
+                    fs.facility_code in ({facility_codes_parsed})
+                    and fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
+                    and fs.network_id = '{network_code}'
+                group by 1, 2
+            ) as fs on fs.interval = i.interval
+        order by 1 desc, 2 asc"""
 
     query = __query.format(
         facility_codes_parsed=duid_in_case(facility_codes),
         network_code=network_code,
         trunc=interval.trunc,
         interval=interval.interval_sql,
+        interval_remainder=interval.get_sql_join(),
         period=period.period_sql,
         scale=scale,
         timezone=timezone,
