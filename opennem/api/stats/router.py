@@ -10,7 +10,7 @@ from opennem.core.networks import network_from_network_code
 from opennem.core.time import get_interval, get_period
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, FacilityScada, Station
-from opennem.utils.time import human_to_interval
+from opennem.utils.time import human_to_timedelta
 from opennem.utils.timezone import make_aware
 
 from .controllers import stats_factory, stats_set_factory
@@ -41,7 +41,7 @@ def power_unit(
     engine=Depends(get_database_engine),
 ) -> OpennemData:
     if not since:
-        since = datetime.now() - human_to_interval("7d")
+        since = datetime.now() - human_to_timedelta("7d")
 
     network = network_from_network_code(network_code)
 
@@ -93,7 +93,7 @@ def power_station(
     engine=Depends(get_database_engine),
 ) -> OpennemDataSet:
     if not since:
-        since = datetime.now() - human_to_interval("7d")
+        since = datetime.now() - human_to_timedelta("7d")
 
     network = network_from_network_code(network_code)
 
