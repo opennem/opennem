@@ -5,8 +5,9 @@ from pydantic import Field
 from .core import BaseConfig
 
 JOIN_QUERY = """ +
-    ((extract(minute FROM fs.trading_interval)::int / {interval})::integer
-    * interval '{interval} minute')::interval """
+    ((extract(minute FROM fs.trading_interval AT TIME ZONE '{timezone}')::int / {interval})::integer
+    * interval '{interval} minute')::interval
+"""
 
 
 class TimeInterval(BaseConfig):
@@ -21,11 +22,11 @@ class TimeInterval(BaseConfig):
 
     trunc: str
 
-    def get_sql_join(self) -> Optional[str]:
+    def get_sql_join(self, timezone="UTC") -> Optional[str]:
         if self.interval >= 60:
             return ""
 
-        return JOIN_QUERY.format(interval=self.interval)
+        return JOIN_QUERY.format(interval=self.interval, timezone=timezone)
 
 
 class TimePeriod(BaseConfig):

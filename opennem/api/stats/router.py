@@ -21,7 +21,12 @@ from .queries import (
     power_facility,
     price_network_region,
 )
-from .schema import OpennemData, OpennemDataHistory, OpennemDataSet
+from .schema import (
+    DataQueryResult,
+    OpennemData,
+    OpennemDataHistory,
+    OpennemDataSet,
+)
 
 router = APIRouter()
 
@@ -112,6 +117,7 @@ def power_station(
 
     interval = human_to_interval(interval)
     period = human_to_period(period)
+    units = get_unit("energy")
 
     station = (
         session.query(Station)
@@ -139,7 +145,9 @@ def power_station(
         results = list(c.execute(query))
 
     stats = [
-        {"trading_interval": i[0], "facility_code": i[1], "generated": i[2]}
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
         for i in results
     ]
 
@@ -149,29 +157,15 @@ def power_station(
             detail="Station stats not found",
         )
 
-    stats_sets = {}
-    stats_list = []
-
-    for code, record in groupby(stats, itemgetter("facility_code")):
-        if code not in stats_sets:
-            stats_sets[code] = []
-
-        stats_sets[code] += list(record)
-
-    for code, stats_per_unit in stats_sets.items():
-        _statset = stats_factory(
-            stats_per_unit,
-            code=code,
-            network_code=network_code,
-            interval=interval,
-        )
-        stats_list.append(_statset)
-
-    output = stats_set_factory(
-        stats_list, code=station_code, network=network_code
+    result = stats_factory(
+        stats,
+        code=station_code,
+        network=network,
+        interval=interval,
+        units=units,
     )
 
-    return output
+    return result
 
 
 @router.get(
@@ -208,6 +202,7 @@ def energy_station(
 
     interval = human_to_interval(interval)
     period = human_to_period(period)
+    units = get_unit("energy")
 
     station = (
         session.query(Station)
@@ -237,57 +232,28 @@ def energy_station(
     with engine.connect() as c:
         results = list(c.execute(query))
 
-    result_set = {}
+    stats = [
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
+        for i in results
+    ]
 
-    for (facility_code, trading_interval), record in groupby(
-        results, lambda x: (x[1], x[0])
-    ):
-        trading_interval = str(trading_interval)
-
-        if facility_code not in result_set:
-            result_set[facility_code] = {}
-
-        if trading_interval not in result_set[facility_code]:
-            result_set[facility_code][trading_interval] = []
-
-        record = list(record).pop()
-
-        result_set[facility_code][trading_interval] = (
-            round(float(record[2]), 2) if record[2] else None
+    if len(stats) < 1:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Station stats not found",
         )
 
-    result_output_sets = []
-
-    for facility_code, record in result_set.items():
-        dates = list(record.keys())
-        start = make_aware(min(dates), network.get_timezone())
-        end = make_aware(max(dates), network.get_timezone())
-
-        history = OpennemDataHistory(
-            start=start,
-            last=end,
-            interval=interval.interval_human,
-            data=list(record.values()),
-        )
-
-        data = OpennemData(
-            network=network.code,
-            data_type="energy",
-            units="MWh",
-            code=facility_code,
-            history=history,
-        )
-
-        result_output_sets.append(data)
-
-    output = OpennemDataSet(
-        network=network.code,
-        data_type="energy",
+    result = stats_factory(
+        stats,
         code=station_code,
-        data=result_output_sets,
+        network=network,
+        interval=interval,
+        units=units,
     )
 
-    return output
+    return result
 
 
 @router.get("/energy/network/year/{network_code}", name="Energy Network")

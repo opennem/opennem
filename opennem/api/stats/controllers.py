@@ -10,6 +10,7 @@ from opennem.core.networks import network_from_network_code
 from opennem.db.models.opennem import FacilityScada, Station
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval
+from opennem.schema.units import UnitDefinition
 from opennem.utils.time import human_to_timedelta
 from opennem.utils.timezone import make_aware
 
@@ -35,6 +36,7 @@ def stats_factory(
     stats: List[DataQueryResult],
     interval: TimeInterval,
     network: NetworkSchema,
+    units: UnitDefinition,
     code: str = None,
 ) -> Optional[OpennemDataSet]:
 
@@ -73,8 +75,8 @@ def stats_factory(
 
         data = OpennemData(
             network=network.code,
-            data_type="power",
-            units="MW",
+            data_type=units.unit_type,
+            units=units.unit,
             code=group_code,
             history=history,
         )
@@ -82,7 +84,10 @@ def stats_factory(
         stats_grouped.append(data)
 
     stat_set = OpennemDataSet(
-        data_type="power", data=stats_grouped, code=code, network=network.code
+        data_type=units.unit_type,
+        data=stats_grouped,
+        code=code,
+        network=network.code,
     )
 
     return stat_set
