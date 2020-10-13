@@ -47,7 +47,9 @@ class OpennemDataHistory(BaseConfig):
 
 
 class OpennemData(BaseConfig):
-    region: str = ""
+    region: Optional[str]
+    fuel_tech: Optional[str]
+
     network: str
     data_type: str
     code: str = ""
