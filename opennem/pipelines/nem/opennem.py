@@ -65,7 +65,7 @@ def process_meter_data_gen_duid(table, spider):
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
         constraint="facility_scada_pkey",
-        set_={"eoi_quantity": stmt.excluded.eoi_quantity,},
+        set_={"eoi_quantity": stmt.excluded.eoi_quantity},
     )
 
     try:
@@ -115,7 +115,7 @@ def process_pre_ap_price(table, spider):
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
         constraint="balancing_summary_pkey",
-        set_={"price": stmt.excluded.price,},
+        set_={"price": stmt.excluded.price},
     )
 
     try:
