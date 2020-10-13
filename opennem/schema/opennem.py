@@ -139,6 +139,9 @@ class FacilitySchema(OpennemBaseSchema):
     def _clean_capacity_regisered(cls, value):
         value = clean_capacity(value)
 
+        if isinstance(value, float):
+            value = round(value, 2)
+
         return value
 
 
