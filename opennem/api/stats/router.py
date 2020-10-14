@@ -423,8 +423,11 @@ def energy_network_fueltech_api(
         )
 
     interval = human_to_interval(interval)
-    period = human_to_period(period)
-    units = get_unit("power")
+
+    if period:
+        period = human_to_period(period)
+
+    units = get_unit("energy")
 
     query = ""
 
