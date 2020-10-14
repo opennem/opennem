@@ -1,9 +1,10 @@
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timezone
 from itertools import groupby
 from operator import attrgetter
-from typing import List, Optional
+from typing import List, Optional, Union
 
+from pytz import timezone as pytz_timezone
 from sqlalchemy.orm import Session
 
 from opennem.db.models.opennem import FacilityScada, Station
@@ -25,10 +26,11 @@ def stats_factory(
     stats: List[DataQueryResult],
     interval: TimeInterval,
     period: TimePeriod,
-    network: NetworkSchema,
     units: UnitDefinition,
-    code: str = None,
-    region: str = None,
+    network: Optional[NetworkSchema] = None,
+    timezone: Optional[Union[timezone, pytz_timezone]] = None,
+    code: Optional[str] = None,
+    region: Optional[str] = None,
     fueltech_group: bool = False,
 ) -> Optional[OpennemDataSet]:
     """
@@ -38,11 +40,17 @@ def stats_factory(
         @TODO override timezone
     """
 
-    network_timezone = network.get_timezone()
+    if network:
+        timezone = network.get_timezone()
 
     dates = [s.interval for s in stats]
-    start = make_aware(min(dates), network_timezone)
-    end = make_aware(max(dates), network_timezone)
+
+    start = min(dates)
+    end = max(dates)
+
+    if timezone:
+        start = make_aware(min(dates), timezone)
+        end = make_aware(max(dates), timezone)
 
     # free
     dates = []
@@ -72,7 +80,6 @@ def stats_factory(
         )
 
         data = OpennemData(
-            network=network.code,
             data_type=units.unit_type,
             units=units.unit,
             code=group_code,
@@ -81,8 +88,11 @@ def stats_factory(
             history=history,
         )
 
+        if network:
+            data.network = network.code
+
         # *sigh* - not the most flexible model
-        if fueltech_group:
+        if network and fueltech_group:
             data.fuel_tech = group_code
             data.id = ".".join(
                 [network.code, "fueltech", group_code, units.unit_type]
@@ -100,8 +110,10 @@ def stats_factory(
         data=stats_grouped,
         created_at=datetime.now(),
         code=code,
-        network=network.code,
     )
+
+    if network:
+        stat_set.network = network.code
 
     if region:
         stat_set.region = region
