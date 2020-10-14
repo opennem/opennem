@@ -95,6 +95,7 @@ def wem_export_years():
             network_region="WEM",
             interval="1d",
             year=year,
+            period="1Y",
             engine=engine,
         )
 
