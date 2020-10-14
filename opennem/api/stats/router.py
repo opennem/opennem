@@ -431,7 +431,7 @@ def energy_network_fueltech_api(
 
     query = ""
 
-    if year:
+    if year and isinstance(year, int):
         period = human_to_period("1Y")
 
         if year > datetime.now().year or year < 1996:
