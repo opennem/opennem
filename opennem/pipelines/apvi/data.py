@@ -2,10 +2,9 @@ import logging
 
 from sqlalchemy.dialects.postgresql import insert
 
-from opennem.db import SessionLocal, get_database_engine, get_database_session
+from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import Facility, FacilityScada
 from opennem.importer.apvi import ROOFTOP_CODE
-from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -84,14 +83,14 @@ class APVIStoreData(object):
                 if not generated:
                     continue
 
-                records_to_store.append(
-                    {
-                        "network_id": "WEM" if state == "WA" else "NEM",
-                        "trading_interval": interval_time,
-                        "facility_code": facility_code,
-                        "generated": generated,
-                    }
-                )
+                __record = {
+                    "network_id": "WEM" if state == "WA" else "NEM",
+                    "trading_interval": interval_time,
+                    "facility_code": facility_code,
+                    "generated": generated,
+                }
+
+                records_to_store.append(__record)
 
         STATE_CAPACITIES = {}
 
@@ -114,6 +113,11 @@ class APVIStoreData(object):
                     code=facility_code
                 ).one_or_none()
 
+                if not state_facility:
+                    raise Exception(
+                        "Could not find rooftop facility for %s", facility_code
+                    )
+
                 state_facility.capacity_registered = state_capacity
 
                 if state.lower() in installations:
@@ -123,8 +127,8 @@ class APVIStoreData(object):
                 session.add(state_facility)
                 session.commit()
 
-        # free
-        primary_keys = None
+        if len(records_to_store) < 1:
+            return 0
 
         stmt = insert(FacilityScada).values(records_to_store)
         stmt.bind = engine

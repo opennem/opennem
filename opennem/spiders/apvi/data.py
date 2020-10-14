@@ -44,7 +44,7 @@ class APVIDataCurrentSpider(APVIDataSpiderBase):
     name = "au.apvi.current.data"
 
     def start_requests(self):
-        for date in date_series(YESTERDAY):
+        for date in date_series(YESTERDAY, length=2, reverse=True):
             yield scrapy.FormRequest(
                 APVI_DATA_URI,
                 formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
@@ -55,7 +55,7 @@ class APVIDataHistoricSpider(APVIDataSpiderBase):
     name = "au.apvi.historic.data"
 
     def start_requests(self):
-        for date in date_series(MONTH_AGO, length=90):
+        for date in date_series(MONTH_AGO, length=90, reverse=True):
             yield scrapy.FormRequest(
                 APVI_DATA_URI,
                 formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
@@ -70,7 +70,9 @@ class APVIDataArchiveSpider(APVIDataSpiderBase):
             APVI_EARLIEST_DATE, APVI_DATE_QUERY_FORMAT
         ).date()
 
-        for date in date_series(start=ARCHIVE_START, end=end_date):
+        for date in date_series(
+            start=ARCHIVE_START, end=end_date, reverse=True
+        ):
             yield scrapy.FormRequest(
                 APVI_DATA_URI,
                 formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
