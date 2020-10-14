@@ -161,6 +161,7 @@ def power_network_fueltech(
                 where
                     fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
                     and fs.network_id = '{network_code}'
+                    and f.fueltech_id is not null
                     {network_region_query}
                 group by 1, 2
             ) as fs on fs.interval = i.interval
