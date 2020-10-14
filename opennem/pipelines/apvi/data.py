@@ -31,6 +31,16 @@ class APVIStoreData(object):
 
         records = item["records"]
 
+        is_latest = False
+        record_date = None
+
+        if "meta" in item:
+            if "is_latest" in item["meta"]:
+                is_latest = item["meta"]["is_latest"]
+
+            if "record_date" in item["meta"]:
+                record_date = item["meta"]["record_date"]
+
         if "postcode" not in records:
             logger.error("No postcode data")
 
@@ -71,6 +81,9 @@ class APVIStoreData(object):
                     ]
                 )
 
+                if not generated:
+                    continue
+
                 records_to_store.append(
                     {
                         "network_id": "WEM" if state == "WA" else "NEM",
@@ -82,29 +95,33 @@ class APVIStoreData(object):
 
         STATE_CAPACITIES = {}
 
-        for postcode_prefix, capacity_val in postcode_capacity.items():
-            for state, prefix in STATE_POSTCODE_PREFIXES.items():
-                if state not in STATE_CAPACITIES:
-                    STATE_CAPACITIES[state] = 0
+        if is_latest:
+            # temporariy only run getting capacities on latest
+            logger.info("Updating capacities on %s", record_date)
 
-                if postcode_prefix.startswith(prefix):
-                    STATE_CAPACITIES[state] += capacity_val
+            for postcode_prefix, capacity_val in postcode_capacity.items():
+                for state, prefix in STATE_POSTCODE_PREFIXES.items():
+                    if state not in STATE_CAPACITIES:
+                        STATE_CAPACITIES[state] = 0
 
-        for state, state_capacity in STATE_CAPACITIES.items():
-            facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
+                    if postcode_prefix.startswith(prefix):
+                        STATE_CAPACITIES[state] += capacity_val
 
-            state_facility: Facility = session.query(Facility).filter_by(
-                code=facility_code
-            ).one_or_none()
+            for state, state_capacity in STATE_CAPACITIES.items():
+                facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
 
-            state_facility.capacity_registered = state_capacity
+                state_facility: Facility = session.query(Facility).filter_by(
+                    code=facility_code
+                ).one_or_none()
 
-            if state.lower() in installations:
-                state_number_units = installations[state.lower()]
-                state_facility.unit_number = state_number_units
+                state_facility.capacity_registered = state_capacity
 
-            session.add(state_facility)
-            session.commit()
+                if state.lower() in installations:
+                    state_number_units = installations[state.lower()]
+                    state_facility.unit_number = state_number_units
+
+                session.add(state_facility)
+                session.commit()
 
         # free
         primary_keys = None

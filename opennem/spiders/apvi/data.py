@@ -30,7 +30,10 @@ class APVIDataSpiderBase(scrapy.Spider):
         yield scrapy.FormRequest(
             APVI_DATA_URI,
             formdata={"day": get_date_component(APVI_DATE_QUERY_FORMAT)},
-            meta={"is_latest": True},
+            meta={
+                "is_latest": True,
+                "record_date": get_date_component(APVI_DATE_QUERY_FORMAT),
+            },
         )
 
     def parse(self, response):
