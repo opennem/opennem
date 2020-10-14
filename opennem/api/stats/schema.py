@@ -52,7 +52,7 @@ class OpennemData(BaseConfig):
     region: Optional[str]
     fuel_tech: Optional[str]
 
-    network: str
+    network: Optional[str]
     data_type: str
     code: str = ""
     units: str
@@ -64,7 +64,7 @@ class OpennemData(BaseConfig):
 
 
 class OpennemDataSet(BaseConfig):
-    network: str = ""
+    network: Optional[str]
     code: str
     region: Optional[str]
     created_at: Optional[datetime]
