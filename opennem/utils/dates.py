@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import List, Optional, Union
 
 from dateutil.parser import ParserError, parse
@@ -70,8 +70,8 @@ def get_date_component(format_str: str) -> str:
 
 
 def date_series(
-    start: datetime = None,
-    end: datetime = None,
+    start: Union[datetime, date] = None,
+    end: Union[datetime, date] = None,
     length: int = 30,
     interval: timedelta = timedelta(days=1),
     reverse: bool = False,
@@ -80,6 +80,12 @@ def date_series(
         Generate a datetime series
 
     """
+    if start and isinstance(start, datetime):
+        start = start.date()
+
+    if end and isinstance(end, datetime):
+        end = start.date()
+
     if not start:
         start = datetime.now().date()
 
