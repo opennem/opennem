@@ -32,6 +32,7 @@ def stats_factory(
     code: Optional[str] = None,
     region: Optional[str] = None,
     fueltech_group: bool = False,
+    group_field: str = None,
 ) -> Optional[OpennemDataSet]:
     """
         Takes a list of data query results and returns OpennemDataSets
@@ -92,12 +93,25 @@ def stats_factory(
             data.network = network.code
 
         # *sigh* - not the most flexible model
-        if network and fueltech_group:
+        if fueltech_group:
             data.fuel_tech = group_code
             data.id = ".".join(
                 [network.code, "fueltech", group_code, units.unit_type]
             )
             # @TODO make this an alias
+            data.type = units.unit_type
+
+        if group_field:
+            group_fields = []
+
+            # setattr(data, group_field, group_code)
+
+            if network:
+                group_fields.append(network.code)
+
+            group_fields + [group_field, group_code, units.unit_type]
+
+            data.id = ".".join(group_fields)
             data.type = units.unit_type
 
         if region:
