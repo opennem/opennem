@@ -71,8 +71,10 @@ def get_date_component(format_str: str) -> str:
 
 def date_series(
     start: datetime = None,
+    end: datetime = None,
     length: int = 30,
     interval: timedelta = timedelta(days=1),
+    reverse: bool = False,
 ) -> List[datetime]:
     """
         Generate a datetime series
@@ -81,11 +83,15 @@ def date_series(
     if not start:
         start = datetime.now().date()
 
-    series = [start]
+    if end:
+        raise Exception("end not yet supported")
+
     next_record = start
 
     for i in range(length - 1):
-        next_record = next_record - interval
-        series.append(next_record)
+        if reverse:
+            next_record -= interval
+        else:
+            next_record += interval
 
-    return series
+        yield next_record
