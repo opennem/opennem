@@ -15,11 +15,15 @@ from opennem.api.controllers import (
     wem_power_groups,
     wem_price,
 )
+from opennem.api.stats.queries import energy_network_fueltech_year
 from opennem.api.stats.router import (
+    energy_network_fueltech_api,
     power_network_fueltech_api,
     price_network_region_api,
 )
 from opennem.db import get_database_engine
+
+YEAR_MIN = 2010
 
 BASE_EXPORT = "s3://data.opennem.org.au"
 
@@ -54,7 +58,8 @@ def wem_export_power():
     )
     # json_data = wem_power_groups()
 
-    tempratures = bom_observation("009021")
+    # tempratures = bom_observation("009021")
+
     price = price_network_region_api(
         engine=engine,
         network_code="WEM",
@@ -62,10 +67,11 @@ def wem_export_power():
         interval="30m",
         period="7d",
     )
-    demand = wem_demand()
+
+    # demand = wem_demand()
 
     # stat_set.data.append(tempratures)
-    # stat_set.data.append(price.data[0])
+    stat_set.data = stat_set.data + price.data
     # stat_set.data.append(demand)
 
     power_path = BASE_EXPORT + "/power/wem.json"
@@ -80,29 +86,19 @@ def wem_export_power():
 
 
 def wem_export_years():
+    engine = get_database_engine()
 
-    for year in [
-        2020,
-        2019,
-        2018,
-        2017,
-        2016,
-        2015,
-        2014,
-        2013,
-        2012,
-        2011,
-        2010,
-    ]:
-        json_envelope = []
+    for year in range(datetime.now().year, YEAR_MIN - 1, -1):
 
-        energy = wem_energy_year(year)
-        market_value = wem_market_value_year(year)
+        stat_set = energy_network_fueltech_api(
+            network_code="WEM",
+            network_region="WEM",
+            interval="1d",
+            year=year,
+            engine=engine,
+        )
 
-        json_envelope = {
-            "creation_time": datetime.now(),
-            "data": energy + market_value,
-        }
+        # market_value = wem_market_value_year(year)
 
         year_path = BASE_EXPORT + f"/wem/energy/daily/{year}.json"
 
@@ -111,18 +107,22 @@ def wem_export_years():
             "w",
             transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
         ) as fh:
-            json.dump(json_envelope, fh, cls=NemEncoder)
+            fh.write(stat_set.json())
 
 
 def wem_export_all():
 
-    energy = wem_energy_all()
-    market_value = wem_market_value_all()
+    engine = get_database_engine()
 
-    json_envelope = {
-        "creation_time": datetime.now(),
-        "data": energy + market_value,
-    }
+    stat_set = energy_network_fueltech_api(
+        network_code="WEM",
+        network_region="WEM",
+        interval="1M",
+        period="all",
+        engine=engine,
+    )
+
+    # market_value = wem_market_value_all()
 
     all_path = BASE_EXPORT + "/wem/energy/monthly/all.json"
 
@@ -131,7 +131,7 @@ def wem_export_all():
         "w",
         transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
     ) as fh:
-        json.dump(json_envelope, fh, cls=NemEncoder)
+        fh.write(stat_set.json())
 
 
 def wem_run_all():
@@ -141,9 +141,6 @@ def wem_run_all():
 
 
 if __name__ == "__main__":
-    # j = wem_market_value_year()
-    # pprint(json.dumps(j, cls=NemEncoder))
-
     wem_export_power()
-    # wem_export_years()
-    # wem_export_all()
+    wem_export_years()
+    wem_export_all()
