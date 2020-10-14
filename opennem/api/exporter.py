@@ -119,7 +119,7 @@ def wem_export_all():
         network_code="WEM",
         network_region="WEM",
         interval="1M",
-        period="all",
+        period="10Y",
         engine=engine,
     )
 

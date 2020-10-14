@@ -20,6 +20,11 @@
     "period_sql": "5 years"
   },
   {
+    "period": 5256000,
+    "period_human": "10Y",
+    "period_sql": "10 years"
+  },
+  {
     "period": 10512000,
     "period_human": "all",
     "period_sql": "20 years"
