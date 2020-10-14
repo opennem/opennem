@@ -84,11 +84,11 @@ def date_series(
         start = datetime.now().date()
 
     if end:
-        raise Exception("end not yet supported")
+        length = int(abs((end - start) / interval))
 
     next_record = start
 
-    for i in range(length - 1):
+    for _ in range(length - 1):
         if reverse:
             next_record -= interval
         else:
