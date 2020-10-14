@@ -21,6 +21,7 @@ from opennem.api.stats.router import (
     power_network_fueltech_api,
     price_network_region_api,
 )
+from opennem.api.weather.router import station_observations_api
 from opennem.db import get_database_engine
 
 YEAR_MIN = 2010
@@ -56,9 +57,8 @@ def wem_export_power():
         period="7d",
         engine=engine,
     )
-    # json_data = wem_power_groups()
 
-    # tempratures = bom_observation("009021")
+    weather = station_observations_api("009021")
 
     price = price_network_region_api(
         engine=engine,
@@ -70,12 +70,10 @@ def wem_export_power():
 
     # demand = wem_demand()
 
-    # stat_set.data.append(tempratures)
     stat_set.data = stat_set.data + price.data
-    # stat_set.data.append(demand)
+    stat_set.data = stat_set.data + weather.data
 
     power_path = BASE_EXPORT + "/power/wem.json"
-    # power_path = "wem.json"
 
     with open(
         power_path,
