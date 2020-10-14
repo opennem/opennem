@@ -32,5 +32,10 @@
     "name": "market_value",
     "unit_type": "market_value",
     "unit": "AUD"
+  },
+  {
+    "name": "temprature",
+    "unit_type": "temprature",
+    "unit": "C"
   }
 ]
