@@ -209,8 +209,6 @@ class BomObservation(Base):
     cloud_type = Column(Text, nullable=True)
 
 
-
-
 class Location(Base):
     __tablename__ = "location"
 
@@ -674,11 +672,12 @@ class FacilityScada(Base, BaseModel):
         Text,
         ForeignKey("network.code", name="fk_balancing_summary_network_code"),
         primary_key=True,
+        nullable=False,
     )
     network = relationship("Network")
 
     trading_interval = Column(
-        TIMESTAMP(timezone=True), index=True, primary_key=True
+        TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False
     )
 
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
