@@ -344,7 +344,7 @@ def energy_network_fueltech(
     query = __query.format(
         network_code=network.code,
         trunc=interval.trunc,
-        interval=interval.interval_human,
+        interval=interval.interval_sql,
         interval_remainder=interval.get_sql_join(
             timezone=network.timezone_database
         ),
@@ -411,7 +411,7 @@ def energy_network_fueltech_year(
     query = __query.format(
         network_code=network.code,
         trunc=interval.trunc,
-        interval=interval.interval_human,
+        interval=interval.interval_sql,
         interval_remainder=interval.get_sql_join(
             timezone=network.timezone_database
         ),
