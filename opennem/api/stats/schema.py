@@ -36,9 +36,18 @@ class OpennemDataHistory(BaseConfig):
     last: Union[datetime, date]
     interval: str
     data: List[Optional[float]]
+    history: Optional[List[Optional[float]]]
 
     @validator("data")
     def validate_data(cls, data_value):
+        data_value = list(
+            map(lambda x: round(x, 2) if x else None, data_value)
+        )
+
+        return data_value
+
+    @validator("history")
+    def validate_history(cls, data_value):
         data_value = list(
             map(lambda x: round(x, 2) if x else None, data_value)
         )
