@@ -76,6 +76,8 @@ def stats_factory(
             data_type=units.unit_type,
             units=units.unit,
             code=group_code,
+            interval=interval,
+            period=period,
             history=history,
         )
 
@@ -96,8 +98,7 @@ def stats_factory(
     stat_set = OpennemDataSet(
         data_type=units.unit_type,
         data=stats_grouped,
-        interval=interval,
-        period=period,
+        created_at=datetime.now(),
         code=code,
         network=network.code,
     )

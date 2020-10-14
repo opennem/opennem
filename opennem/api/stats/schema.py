@@ -56,6 +56,10 @@ class OpennemData(BaseConfig):
     data_type: str
     code: str = ""
     units: str
+
+    interval: TimeIntervalAPI
+    period: TimePeriodAPI
+
     history: OpennemDataHistory
 
 
@@ -63,8 +67,7 @@ class OpennemDataSet(BaseConfig):
     network: str = ""
     code: str
     region: Optional[str]
-    interval: TimeIntervalAPI
-    period: TimePeriodAPI
+    created_at: Optional[datetime]
 
     data: List[OpennemData]
 
