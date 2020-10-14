@@ -82,6 +82,11 @@ def stats_factory(
         # *sigh* - not the most flexible model
         if fueltech_group:
             data.fuel_tech = group_code
+            data.id = ".".join(
+                [network.code, "fueltech", group_code, units.unit_type]
+            )
+            # @TODO make this an alias
+            data.type = units.unit_type
 
         if region:
             data.region = region

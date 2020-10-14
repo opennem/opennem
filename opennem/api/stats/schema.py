@@ -35,8 +35,7 @@ class OpennemDataHistory(BaseConfig):
     start: Union[datetime, date]
     last: Union[datetime, date]
     interval: str
-    data: Optional[List[Optional[float]]]
-    history: Optional[List[Optional[float]]]
+    data: List[Optional[float]]
 
     @validator("data")
     def validate_data(cls, data_value):
@@ -46,16 +45,10 @@ class OpennemDataHistory(BaseConfig):
 
         return data_value
 
-    @validator("history")
-    def validate_history(cls, data_value):
-        data_value = list(
-            map(lambda x: round(x, 2) if x else None, data_value)
-        )
-
-        return data_value
-
 
 class OpennemData(BaseConfig):
+    id: Optional[str]
+    type: Optional[str]
     region: Optional[str]
     fuel_tech: Optional[str]
 

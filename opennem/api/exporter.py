@@ -15,6 +15,11 @@ from opennem.api.controllers import (
     wem_power_groups,
     wem_price,
 )
+from opennem.api.stats.router import (
+    power_network_fueltech_api,
+    price_network_region_api,
+)
+from opennem.db import get_database_engine
 
 BASE_EXPORT = "s3://data.opennem.org.au"
 
@@ -38,29 +43,40 @@ UPLOAD_ARGS = {
 
 
 def wem_export_power():
-    json_data = wem_power_groups()
+    engine = get_database_engine()
+
+    stat_set = power_network_fueltech_api(
+        network_code="WEM",
+        network_region="WEM",
+        interval="30m",
+        period="7d",
+        engine=engine,
+    )
+    # json_data = wem_power_groups()
 
     tempratures = bom_observation("009021")
-    price = wem_price()
+    price = price_network_region_api(
+        engine=engine,
+        network_code="WEM",
+        region_code="WEM",
+        interval="30m",
+        period="7d",
+    )
     demand = wem_demand()
 
-    json_data.append(tempratures)
-    json_data.append(price)
-    json_data.append(demand)
-
-    response = {
-        "creation_time": datetime.now(),
-        "data": json_data,
-    }
+    # stat_set.data.append(tempratures)
+    # stat_set.data.append(price.data[0])
+    # stat_set.data.append(demand)
 
     power_path = BASE_EXPORT + "/power/wem.json"
+    # power_path = "wem.json"
 
     with open(
         power_path,
         "w",
         transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
     ) as fh:
-        json.dump(response, fh, cls=NemEncoder)
+        fh.write(stat_set.json())
 
 
 def wem_export_years():
@@ -129,5 +145,5 @@ if __name__ == "__main__":
     # pprint(json.dumps(j, cls=NemEncoder))
 
     wem_export_power()
-    wem_export_years()
-    wem_export_all()
+    # wem_export_years()
+    # wem_export_all()
