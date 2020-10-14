@@ -16,6 +16,8 @@ from .controllers import stats_factory
 from .queries import (
     energy_facility,
     energy_network,
+    energy_network_fueltech,
+    energy_network_fueltech_year,
     power_facility,
     power_network_fueltech,
     price_network_region,
@@ -216,8 +218,6 @@ def power_network_fueltech_api(
         network_region=network_region,
     )
 
-    # print(query)
-
     with engine.connect() as c:
         results = list(c.execute(query))
 
@@ -246,6 +246,11 @@ def power_network_fueltech_api(
     )
 
     return result
+
+
+"""
+    Energy endpoints
+"""
 
 
 @router.get(
@@ -394,6 +399,96 @@ def energy_network_api(
     )
 
     return result
+
+
+@router.get(
+    "/energy/fueltech/{network_code}/{station_code:path}",
+    name="stats:Network Fueltech Energy",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+)
+def energy_network_fueltech_api(
+    network_code: str = Query(..., description="Network code"),
+    network_region: str = Query(None, description="Network region"),
+    interval: str = Query("1d", description="Interval"),
+    year: int = Query(None, description="Year to query"),
+    period: str = Query("1Y", description="Period"),
+    engine=Depends(get_database_engine),
+) -> OpennemDataSet:
+    network = network_from_network_code(network_code)
+
+    if not network:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
+        )
+
+    interval = human_to_interval(interval)
+    period = human_to_period(period)
+    units = get_unit("power")
+
+    query = ""
+
+    if year:
+        period = human_to_period("1Y")
+
+        if year > datetime.now().year or year < 1996:
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Not a valid year",
+            )
+
+        query = energy_network_fueltech_year(
+            network=network,
+            interval=interval,
+            year=year,
+            network_region=network_region,
+        )
+    else:
+        query = energy_network_fueltech(
+            network=network,
+            interval=interval,
+            period=period,
+            network_region=network_region,
+        )
+
+    with engine.connect() as c:
+        results = list(c.execute(query))
+
+    stats = [
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
+        for i in results
+    ]
+
+    if len(stats) < 1:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Energy stats not found",
+        )
+
+    result = stats_factory(
+        stats,
+        code=network.code,
+        network=network,
+        interval=interval,
+        period=period,
+        units=units,
+        region=network_region,
+        fueltech_group=True,
+    )
+
+    if not result or len(result.data) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No stats"
+        )
+
+    return result
+
+
+"""
+    Price endpoints
+"""
 
 
 @router.get(

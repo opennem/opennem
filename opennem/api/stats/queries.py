@@ -1,5 +1,11 @@
-from datetime import datetime
-from typing import List, Tuple
+"""
+    Queries for network data
+
+    @TODO make these pluggable
+    @TODO use sqlalchemy text() compiled queries
+"""
+
+from typing import List
 
 from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
@@ -281,6 +287,137 @@ def energy_network(
         ),
         period=period.period_sql,
         scale=network.intervals_per_hour,
+        timezone=timezone,
+    )
+
+    return query
+
+
+def energy_network_fueltech(
+    network: Network,
+    interval: TimeInterval,
+    period: TimePeriod,
+    network_region: str = None,
+) -> str:
+
+    timezone = network.timezone_database
+
+    if not timezone:
+        timezone = "UTC"
+
+    __query = """with intervals as (
+            select generate_series(
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
+                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
+                '{interval}'::interval
+            )::timestamp as interval
+        )
+
+        select
+            i.interval as trading_day,
+            fs.generated,
+            fs.code
+        from intervals i
+        left outer join
+            (
+                select
+                    date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
+                    ft.code,
+                    coalesce(sum(fs.eoi_quantity), 0) / {scale} as generated
+                from facility_scada fs
+                join facility f on fs.facility_code = f.code
+                join fueltech ft on f.fueltech_id = ft.code
+                where
+                    fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
+                    and fs.network_id = '{network_code}'
+                    and f.fueltech_id is not null
+                    {network_region_query}
+                group by 1, 2
+            ) as fs on fs.interval = i.interval
+        order by 1 desc, 2 desc"""
+
+    network_region_query = ""
+
+    if network_region:
+        network_region_query = f"and f.network_region='{network_region}'"
+
+    query = __query.format(
+        network_code=network.code,
+        trunc=interval.trunc,
+        interval=interval.interval_human,
+        interval_remainder=interval.get_sql_join(
+            timezone=network.timezone_database
+        ),
+        period=period.period_sql,
+        scale=network.intervals_per_hour,
+        network_region_query=network_region_query,
+        timezone=timezone,
+    )
+
+    return query
+
+
+def energy_network_fueltech_year(
+    network: Network,
+    interval: TimeInterval,
+    year: int,
+    network_region: str = None,
+) -> str:
+    """
+        copy + paste ftw .. for now - @TODO
+    """
+
+    timezone = network.timezone_database
+
+    if not timezone:
+        timezone = "UTC"
+
+    __query = """with intervals as (
+            select generate_series(
+                '{year}-01-01'::timestamp AT TIME ZONE '{timezone}',
+                '{year}-12-31'::timestamp AT TIME ZONE '{timezone}',
+                '{interval}'::interval
+            )::timestamp as interval
+        )
+
+        select
+            i.interval as trading_day,
+            fs.generated,
+            fs.code
+        from intervals i
+        left outer join
+            (
+                select
+                    date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
+                    ft.code,
+                    coalesce(sum(fs.eoi_quantity), 0) / {scale} as generated
+                from facility_scada fs
+                join facility f on fs.facility_code = f.code
+                join fueltech ft on f.fueltech_id = ft.code
+                where
+                    date_part('year', fs.trading_interval AT TIME ZONE '{timezone}')::int = {year}
+                    and fs.network_id = '{network_code}'
+                    and f.fueltech_id is not null
+                    {network_region_query}
+                group by 1, 2
+            ) as fs on fs.interval::date = i.interval::date
+        order by 1 desc, 2 desc"""
+
+    network_region_query = ""
+
+    if network_region:
+        network_region_query = f"and f.network_region='{network_region}'"
+
+    query = __query.format(
+        network_code=network.code,
+        trunc=interval.trunc,
+        interval=interval.interval_human,
+        interval_remainder=interval.get_sql_join(
+            timezone=network.timezone_database
+        ),
+        year=year,
+        scale=network.intervals_per_hour,
+        network_region_query=network_region_query,
         timezone=timezone,
     )
 
