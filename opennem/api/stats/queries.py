@@ -401,6 +401,7 @@ def energy_network_fueltech_year(
                     {network_region_query}
                 group by 1, 2
             ) as fs on fs.interval::date = i.interval::date
+        where i.interval::date <= (now() at time zone '{timezone}')::date
         order by 1 desc, 2 desc"""
 
     network_region_query = ""
