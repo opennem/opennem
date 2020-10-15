@@ -1,6 +1,7 @@
 import csv
 import logging
 from datetime import datetime, timedelta
+from io import StringIO
 
 from sqlalchemy.dialects.postgresql import insert
 
@@ -15,7 +16,9 @@ from opennem.utils.pipelines import check_spider_pipeline
 logger = logging.getLogger(__name__)
 
 
-def generate_records(csvreader, spider):
+def generate_records(csvreader, spider=None):
+    created_at = datetime.now()
+
     for row in csvreader:
         trading_interval = parse_date(
             row["Trading Interval"], network=NetworkWEM, dayfirst=False
@@ -34,9 +37,15 @@ def generate_records(csvreader, spider):
         if energy_field in row:
             energy = clean_float(row[energy_field])
 
+        created_by = ""
+
+        if spider and hasattr(spider, "name"):
+            created_by = spider.name
+
         yield {
-            "created_by": spider.name,
-            # "updated_by": None,
+            "created_by": created_by,
+            "created_at": created_at,
+            "updated_at": None,
             "network_id": "WEM",
             "trading_interval": trading_interval,
             "facility_code": facility_code,
@@ -45,38 +54,56 @@ def generate_records(csvreader, spider):
         }
 
 
+sql = """
+CREATE TEMP TABLE __tmp
+(LIKE facility_scada INCLUDING DEFAULTS)
+ON COMMIT DROP;
+
+COPY __tmp FROM STDIN WITH (FORMAT CSV, HEADER FALSE, DELIMITER ',');
+
+INSERT INTO facility_scada
+    SELECT *
+    FROM __tmp
+ON CONFLICT (trading_interval, network_id, facility_code) DO UPDATE set
+    generated = EXCLUDED.generated,
+    eoi_quantity = EXCLUDED.eoi_quantity
+;
+"""
+
+
 class WemStoreFacilityScada(DatabaseStoreBase):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
-        session = SessionAutocommit()
-        engine = get_database_engine()
-
         csvreader = csv.DictReader(item["content"].split("\n"))
 
-        records_stored = 0
+        csv_buffer = StringIO()
+
+        fieldnames = [
+            "created_by",
+            "created_at",
+            "updated_at",
+            "network_id",
+            "trading_interval",
+            "facility_code",
+            "generated",
+            "eoi_quantity",
+        ]
+
+        csvwriter = csv.DictWriter(csv_buffer, fieldnames=fieldnames,)
+        # csvwriter.writeheader()
 
         for record in generate_records(csvreader, spider):
-            stmt = insert(FacilityScada).values(record)
-            stmt.bind = engine
-            stmt = stmt.on_conflict_do_update(
-                constraint="facility_scada_pkey",
-                set_={
-                    # "updated_by": stmt.excluded.created_by,
-                    "eoi_quantity": stmt.excluded.eoi_quantity,
-                    "generated": stmt.excluded.generated,
-                },
-            )
+            csvwriter.writerow(record)
 
-            try:
-                session.execute(stmt)
-                records_stored += 1
-            except Exception as e:
-                logger.error("Error: {}".format(e))
-            finally:
-                session.close()
+        conn = get_database_engine().raw_connection()
 
-        return records_stored
+        cursor = conn.cursor()
+        csv_buffer.seek(0)
+
+        cursor.copy_expert(sql, csv_buffer)
+
+        conn.commit()
 
 
 class WemStoreLiveFacilityScada(DatabaseStoreBase):
