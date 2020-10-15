@@ -195,12 +195,10 @@ class WemStoreFacilityIntervals(object):
             records_to_store.append(
                 {
                     "created_by": spider.name,
-                    # "updated_by": None,
                     "network_id": "WEM",
                     "trading_interval": trading_interval,
                     "facility_code": facility_code,
                     "generated": row["ACTUAL_MW"] or None,
-                    # "eoi_quantity": row["POTENTIAL_MWH"] or None,
                     "eoi_quantity": energy,
                 }
             )
