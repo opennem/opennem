@@ -16,6 +16,8 @@ class OpennemSettings(BaseSettings):
 
     slack_hook_url: Optional[str]
 
+    s3_bucket_path: str = "s3://data.opennem.org.au/v3/"
+
     interval_default: str = "15m"
     period_default: str = "7d"
 
