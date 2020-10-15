@@ -115,6 +115,8 @@ fastapi==0.60.2 \
 geoalchemy2==0.8.4 \
     --hash=sha256:3b83654db15ed807a7bdb2e7dd1c787a47cfc3e4fb92a0558685001fbb7342da \
     --hash=sha256:d9336f17df3e7a10f94d1ea2488dcfb97a8bc23fe7f5edea425ddab553534b0a
+geojson-pydantic==0.2.1 \
+    --hash=sha256:05cef479985ec30de5e57fbee739d3c68a052a3b06f9b6a759ac6e302d17f919
 geojson==2.5.0 \
     --hash=sha256:ccbd13368dd728f4e4f13ffe6aaf725b6e802c692ba0dde628be475040c534ba \
     --hash=sha256:6e4bb7ace4226a45d9c8c8b1348b3fc43540658359f93c3f7e03efa9f15f658a
