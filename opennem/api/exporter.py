@@ -1,21 +1,8 @@
-import decimal
-import json
 import os
 from datetime import datetime
 
 from smart_open import open
 
-from opennem.api.controllers import (
-    bom_observation,
-    wem_demand,
-    wem_energy_all,
-    wem_energy_year,
-    wem_market_value_all,
-    wem_market_value_year,
-    wem_power_groups,
-    wem_price,
-)
-from opennem.api.stats.queries import energy_network_fueltech_year
 from opennem.api.stats.router import (
     energy_network_fueltech_api,
     power_network_fueltech_api,
@@ -31,15 +18,6 @@ BASE_EXPORT = "s3://data.opennem.org.au"
 BASE_EXPORT_LOCAL = os.path.realpath(
     os.path.join(os.path.dirname(__file__), "..", "..", "data")
 )
-
-
-class NemEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, decimal.Decimal):
-            return float(o)
-        if isinstance(o, datetime):
-            return o.isoformat()
-        return super(NemEncoder, self).default(o)
 
 
 UPLOAD_ARGS = {
@@ -140,6 +118,4 @@ def wem_run_all():
 
 
 if __name__ == "__main__":
-    wem_export_power()
-    wem_export_years()
-    wem_export_all()
+    wem_run_all()
