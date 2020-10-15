@@ -1,19 +1,14 @@
 import io
-import logging
 from datetime import datetime
 
 import scrapy
 
-from opennem.pipelines.files import LinkExtract
 from opennem.pipelines.nem import (
     ExtractCSV,
     ReadStringHandle,
     TableRecordSplitter,
     UnzipSingleFilePipeline,
 )
-from opennem.pipelines.wem.balancing_summary import WemStoreBalancingSummary
-from opennem.spiders.dirlisting import DirlistingSpider
-from opennem.utils.handlers import open
 
 
 def get_date_component(format_str):
@@ -21,6 +16,8 @@ def get_date_component(format_str):
 
 
 class NemXLSSpider(scrapy.Spider):
+
+    start_url = ""
 
     url_params = {
         "day": get_date_component("%d"),

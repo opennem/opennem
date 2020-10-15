@@ -7,7 +7,7 @@ class NemwebCurrentDispatchIS(NemwebSpider):
     start_url = "http://nemweb.com.au/Reports/Current/DispatchIS_Reports/"
     limit = 0
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline])
 
 
 class NemwebArchiveDispatchIS(NemwebSpider):
@@ -15,7 +15,7 @@ class NemwebArchiveDispatchIS(NemwebSpider):
     start_url = "http://nemweb.com.au/Reports/Archive/DispatchIS_Reports/"
     limit = 0
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline])
 
     # Archives tend to contain large zips of embedded zips so throttle
     # to limit memory use

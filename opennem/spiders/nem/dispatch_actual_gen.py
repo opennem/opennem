@@ -8,7 +8,7 @@ class NemwebDispatchActualGenLatest(NemwebSpider):
 
     limit = 1
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline])
 
 
 class NemwebDispatchActualGenCurrent(NemwebSpider):
@@ -16,8 +16,9 @@ class NemwebDispatchActualGenCurrent(NemwebSpider):
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/"
 
     limit = 0
+    skip = 1
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline])
 
 
 class NemwebDispatchActualGenArchive(NemwebSpider):
@@ -25,11 +26,11 @@ class NemwebDispatchActualGenArchive(NemwebSpider):
     start_url = "http://www.nemweb.com.au/Reports/ARCHIVE/Next_Day_Actual_Gen/"
     limit = 0
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline])
 
     # Archives tend to contain large zips of embedded zips so throttle
     # to limit memory use
     custom_settings = {
-        "CONCURRENT_REQUESTS": 4,
+        "CONCURRENT_REQUESTS": 1,
         "CONCURRENT_ITEMS": 1,
     }
