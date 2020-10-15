@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.core.normalizers import clean_float, normalize_duid
-from opennem.db import SessionLocal, get_database_engine
+from opennem.db import SessionAutocommit, SessionLocal, get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.pipelines import DatabaseStoreBase
 from opennem.schema.network import NetworkWEM
@@ -49,7 +49,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
-        session = SessionLocal()
+        session = SessionAutocommit()
         engine = get_database_engine()
 
         csvreader = csv.DictReader(item["content"].split("\n"))
@@ -75,13 +75,6 @@ class WemStoreFacilityScada(DatabaseStoreBase):
                 logger.error("Error: {}".format(e))
             finally:
                 session.close()
-
-        try:
-            session.commit()
-        except Exception as e:
-            logger.error("Error: {}".format(e))
-        finally:
-            session.close()
 
         return records_stored
 

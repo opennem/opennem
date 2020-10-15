@@ -42,6 +42,7 @@ def db_connect(db_name=None, debug=False):
 
 engine = db_connect()
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False,)
+SessionAutocommit = sessionmaker(bind=engine, autocommit=True, autoflush=True)
 
 
 def get_database_session() -> Generator:
