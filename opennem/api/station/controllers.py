@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
 
-from opennem.db.models.opennem import Facility, Station
+from opennem.db.models.opennem import Facility, Location, Station
 
 
 def get_stations(
@@ -21,6 +21,7 @@ def get_stations(
     stations = (
         session.query(Station)
         .join(Station.facilities)
+        .join(Station.location)
         .join(Facility.fueltech)
         .filter(Facility.fueltech_id.isnot(None))
         .filter(Facility.status_id.isnot(None))
@@ -30,7 +31,7 @@ def get_stations(
         stations = stations.filter(Station.name.like("%{}%".format(name)))
 
     if only_approved:
-        stations = stations.filter(Station.approved == True)
+        stations = stations.filter(Station.approved.is_(True))
 
     stations = stations.order_by(
         Facility.network_region,
@@ -38,6 +39,9 @@ def get_stations(
         Facility.network_code,
         Facility.code,
     )
+
+    if limit:
+        stations = stations.limit(limit)
 
     stations = stations.all()
 

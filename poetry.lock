@@ -419,6 +419,21 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "geojson-pydantic"
+version = "0.2.1"
+description = "Pydantic data models for the GeoJSON spec"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+pydantic = "*"
+
+[package.extras]
+dev = ["pytest", "pytest-cov", "pre-commit"]
+test = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "graphene"
 version = "2.1.8"
 description = "GraphQL Framework for Python"
@@ -1788,7 +1803,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "f50c39b128b043eec0b1bb4a67d8767e03cdaad41a05ea87e17895096bb842c6"
+content-hash = "b572742b4d033751f6008351b3c15391e15286c6da1ec91bec6719b9fc961d9a"
 
 [metadata.files]
 aiofiles = [
@@ -1979,6 +1994,9 @@ geoalchemy2 = [
 geojson = [
     {file = "geojson-2.5.0-py2.py3-none-any.whl", hash = "sha256:ccbd13368dd728f4e4f13ffe6aaf725b6e802c692ba0dde628be475040c534ba"},
     {file = "geojson-2.5.0.tar.gz", hash = "sha256:6e4bb7ace4226a45d9c8c8b1348b3fc43540658359f93c3f7e03efa9f15f658a"},
+]
+geojson-pydantic = [
+    {file = "geojson-pydantic-0.2.1.tar.gz", hash = "sha256:05cef479985ec30de5e57fbee739d3c68a052a3b06f9b6a759ac6e302d17f919"},
 ]
 graphene = [
     {file = "graphene-2.1.8-py2.py3-none-any.whl", hash = "sha256:09165f03e1591b76bf57b133482db9be6dac72c74b0a628d3c93182af9c5a896"},

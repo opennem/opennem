@@ -54,6 +54,7 @@ pillow = "^7.2.0"
 python-dateutil = "^2.8.1"
 python-dotenv = "^0.14.0"
 Pint = "^0.16.1"
+geojson-pydantic = "^0.2.1"
 
 [tool.poetry.dev-dependencies]
 black = "19.10b0"
