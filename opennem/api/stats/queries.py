@@ -160,7 +160,7 @@ def power_network_fueltech(
             (select
                 date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
                 ft.code,
-                coalesce(avg(generated), 0) as generated
+                coalesce(sum(generated), 0) as generated
                 from facility_scada fs
                 join facility f on fs.facility_code = f.code
                 join fueltech ft on f.fueltech_id = ft.code
