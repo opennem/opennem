@@ -60,3 +60,4 @@ opennem/data/aemo/
 .mypy_cache/
 wem-stats.sh
 .env.production
+data/
