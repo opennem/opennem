@@ -6,6 +6,12 @@
     "interval_sql": "5 minutes"
   },
   {
+    "interval": 10,
+    "interval_human": "10m",
+    "trunc": "hour",
+    "interval_sql": "10 minutes"
+  },
+  {
     "interval": 15,
     "interval_human": "15m",
     "trunc": "hour",
