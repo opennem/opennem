@@ -11,7 +11,6 @@ from geojson_pydantic.geometries import (
     Polygon,
 )
 from pydantic import BaseModel
-from pydantic.fields import Field
 
 Geometry = Union[
     Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
