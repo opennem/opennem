@@ -22,7 +22,7 @@ class FacilityRecord(ApiBase):
 
     status: Optional[FacilityStatusSchema]
 
-    station_id: int
+    station_id: Optional[int]
 
     # @TODO no longer optional
     code: str = ""
