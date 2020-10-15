@@ -44,7 +44,7 @@ class APVIDataCurrentSpider(APVIDataSpiderBase):
     name = "au.apvi.current.data"
 
     def start_requests(self):
-        for date in date_series(YESTERDAY, length=2, reverse=True):
+        for date in date_series(YESTERDAY, length=30, reverse=True):
             yield scrapy.FormRequest(
                 APVI_DATA_URI,
                 formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
