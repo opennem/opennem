@@ -16,7 +16,7 @@ router = APIRouter()
 @router.get(
     "/facilities", name="Facility Geo", response_model=FacilityGeo,
 )
-def facilities_api(
+def geo_facilities_api(
     only_approved: bool = Query(
         True, description="Only show approved stations"
     ),
