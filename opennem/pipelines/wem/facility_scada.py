@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.dialects.postgresql import insert
 
-from opennem.core.normalizers import normalize_duid
+from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.pipelines import DatabaseStoreBase
@@ -180,7 +180,13 @@ class WemStoreFacilityIntervals(object):
             )
             facility_code = normalize_duid(row["FACILITY_CODE"])
 
-            __key = (trading_interval, facility_code)
+            energy = 0.0
+
+            if "POTENTIAL_MWH" in row:
+                energy = clean_float(row["POTENTIAL_MWH"])
+
+                # @NOTE - don't use
+                energy = 0.0
 
             records_to_store.append(
                 {
@@ -190,7 +196,8 @@ class WemStoreFacilityIntervals(object):
                     "trading_interval": trading_interval,
                     "facility_code": facility_code,
                     "generated": row["ACTUAL_MW"] or None,
-                    "eoi_quantity": row["POTENTIAL_MWH"] or None,
+                    # "eoi_quantity": row["POTENTIAL_MWH"] or None,
+                    "eoi_quantity": energy,
                 }
             )
 
