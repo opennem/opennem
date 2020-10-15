@@ -1,10 +1,9 @@
+import pkg_resources
 import sentry_sdk
 
 from opennem.settings import settings
 
-
-def get_sentry_env():
-    pass
+VERSION = pkg_resources.get_distribution(__package__).version
 
 
 if settings.env != "development":
