@@ -67,6 +67,8 @@ class DirlistingSpider(Spider):
 
     limit = 0
 
+    skip = 0
+
     start_url = None
 
     supported_extensions = [".csv", ".zip"]
@@ -130,6 +132,13 @@ class DirlistingSpider(Spider):
                     return None
 
                 parsed += 1
+
+                if self.skip and self.skip >= parsed:
+                    self.log(
+                        f"Skipping entry {link} - {parsed}. Skip set to {self.skip}",
+                        logging.INFO,
+                    )
+                    continue
 
                 if link[-4:].lower() in self.supported_extensions:
                     yield {"link": link, **entry}
