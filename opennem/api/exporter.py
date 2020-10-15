@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import datetime
 
@@ -24,6 +25,8 @@ UPLOAD_ARGS = {
     "ContentType": "application/json",
 }
 
+logger = logging.getLogger(__name__)
+
 
 def wem_export_power():
     engine = get_database_engine()
@@ -36,7 +39,13 @@ def wem_export_power():
         engine=engine,
     )
 
-    weather = station_observations_api("009021")
+    weather = station_observations_api(
+        station_code="009021",
+        interval="10m",
+        period="7d",
+        network_code="WEM",
+        engine=engine,
+    )
 
     price = price_network_region_api(
         engine=engine,
@@ -66,14 +75,24 @@ def wem_export_years():
 
     for year in range(datetime.now().year, YEAR_MIN - 1, -1):
 
-        stat_set = energy_network_fueltech_api(
-            network_code="WEM",
-            network_region="WEM",
-            interval="1d",
-            year=year,
-            period="1Y",
-            engine=engine,
-        )
+        stat_set = None
+
+        try:
+            stat_set = energy_network_fueltech_api(
+                network_code="WEM",
+                network_region="WEM",
+                interval="1d",
+                year=year,
+                period="1Y",
+                engine=engine,
+            )
+        except Exception as e:
+            logger.error(
+                "Could not get energy network fueltech for {} {} : {}".format(
+                    "WEM", year, e
+                )
+            )
+            continue
 
         # market_value = wem_market_value_year(year)
 
