@@ -15,6 +15,8 @@ def get_date_component(format_str):
 
 class WemCurrentSpider(scrapy.Spider):
 
+    start_url = None
+
     url_params = {
         "day": get_date_component("%d"),
         "month": get_date_component("%m"),
@@ -22,9 +24,14 @@ class WemCurrentSpider(scrapy.Spider):
     }
 
     def start_requests(self):
-        request_url = self.start_url.format(**self.url_params)
 
-        yield scrapy.Request(request_url)
+        cache_bust = datetime.now().strftime("%Y%M%d%H%M%S%f")
+
+        if self.start_url:
+            request_url = self.start_url.format(**self.url_params)
+            request_url += "?{}".format(cache_bust)
+
+            yield scrapy.Request(request_url)
 
     def parse(self, response):
         yield {"content": response.text}
