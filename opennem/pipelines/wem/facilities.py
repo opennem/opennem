@@ -275,7 +275,9 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
                 if registered_date_dt:
                     facility.registered = registered_date_dt
 
-            fueltech = lookup_fueltech(row["PRIMARY_FUEL"])
+            fueltech = lookup_fueltech(
+                fueltype=row["PRIMARY_FUEL"], techtype=row["FACILITY_TYPE"]
+            )
 
             if fueltech and not facility.fueltech:
                 facility.fueltech_id = fueltech
