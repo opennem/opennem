@@ -55,15 +55,16 @@ ITEM_PIPELINES = {
     "opennem.pipelines.wem.balancing_summary.WemStoreBalancingSummary": 412,
     "opennem.pipelines.wem.pulse.WemStorePulse": 414,
     "opennem.pipelines.wem.facility_scada.WemStoreLiveFacilityScada": 415,
-    "opennem.pipelines.wem.facilities.WemStoreLiveFacilities": 416,
-    "opennem.pipelines.wem.participant.WemStoreParticipant": 417,
-    "opennem.pipelines.wem.participant.WemStoreLiveParticipant": 418,
+    "opennem.pipelines.wem.facility_scada.WemStoreFacilityIntervals": 416,
+    "opennem.pipelines.wem.facilities.WemStoreLiveFacilities": 417,
+    "opennem.pipelines.wem.participant.WemStoreParticipant": 418,
+    "opennem.pipelines.wem.participant.WemStoreLiveParticipant": 419,
     # APVI
-    "opennem.pipelines.apvi.data.APVIStoreData": 420,
+    "opennem.pipelines.apvi.data.APVIStoreData": 450,
     # NPI
-    "opennem.pipelines.npi.facilities.NPIStoreFacility": 425,
+    "opennem.pipelines.npi.facilities.NPIStoreFacility": 455,
     # BOM Storers
-    "opennem.pipelines.bom.StoreBomObservation": 430,
+    "opennem.pipelines.bom.StoreBomObservation": 470,
     # MMS Parsers and Storers
     "opennem.pipelines.nem.mms_dudetailsummary.AEMOMMSDudetailSummaryGrouper": 504,
     "opennem.pipelines.nem.mms.NemStoreMMSStations": 551,

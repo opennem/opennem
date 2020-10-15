@@ -1,4 +1,5 @@
 from opennem.pipelines.wem.facility_scada import (
+    WemStoreFacilityIntervals,
     WemStoreFacilityScada,
     WemStoreLiveFacilityScada,
 )
@@ -10,6 +11,13 @@ class WemLiveFacilityScada(WemCurrentSpider):
     pipelines_extra = set([WemStoreLiveFacilityScada])
 
     start_url = "https://aemo.com.au/aemo/data/wa/infographic/generation.csv"
+
+
+class WemLiveFacilityIntervals(WemCurrentSpider):
+    name = "au.wem.live.facility_intervals"
+    pipelines_extra = set([WemStoreFacilityIntervals])
+
+    start_url = "https://aemo.com.au/aemo/data/wa/infographic/facility-intervals-last96.csv"
 
 
 class WemCurrentFacilityScada(WemCurrentSpider):

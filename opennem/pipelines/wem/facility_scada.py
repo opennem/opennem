@@ -160,3 +160,57 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
             session.close()
 
         return len(records_to_store)
+
+
+class WemStoreFacilityIntervals(object):
+    @check_spider_pipeline
+    def process_item(self, item, spider=None):
+
+        session = SessionLocal()
+        engine = get_database_engine()
+
+        csvreader = csv.DictReader(item["content"].split("\n"))
+
+        records_to_store = []
+        last_asat = None
+
+        for row in csvreader:
+            trading_interval = parse_date(
+                row["PERIOD"], network=NetworkWEM, dayfirst=False
+            )
+            facility_code = normalize_duid(row["FACILITY_CODE"])
+
+            __key = (trading_interval, facility_code)
+
+            records_to_store.append(
+                {
+                    "created_by": spider.name,
+                    # "updated_by": None,
+                    "network_id": "WEM",
+                    "trading_interval": trading_interval,
+                    "facility_code": facility_code,
+                    "generated": row["ACTUAL_MW"] or None,
+                    "eoi_quantity": row["POTENTIAL_MWH"] or None,
+                }
+            )
+
+        stmt = insert(FacilityScada).values(records_to_store)
+        stmt.bind = engine
+        stmt = stmt.on_conflict_do_update(
+            constraint="facility_scada_pkey",
+            set_={
+                # "updated_by": stmt.excluded.created_by,
+                "generated": stmt.excluded.generated,
+            },
+        )
+
+        try:
+            session.execute(stmt)
+            session.commit()
+        except Exception as e:
+            logger.error("Error inserting records")
+            logger.error(e)
+        finally:
+            session.close()
+
+        return len(records_to_store)
