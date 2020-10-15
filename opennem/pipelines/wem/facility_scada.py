@@ -6,7 +6,7 @@ from io import StringIO
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.core.normalizers import clean_float, normalize_duid
-from opennem.db import SessionAutocommit, SessionLocal, get_database_engine
+from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.pipelines import DatabaseStoreBase
 from opennem.schema.network import NetworkWEM
@@ -18,12 +18,20 @@ logger = logging.getLogger(__name__)
 
 def generate_records(csvreader, spider=None):
     created_at = datetime.now()
+    primary_keys = []
 
     for row in csvreader:
         trading_interval = parse_date(
             row["Trading Interval"], network=NetworkWEM, dayfirst=False
         )
         facility_code = normalize_duid(row["Facility Code"])
+
+        pkey = (trading_interval, facility_code)
+
+        if pkey in primary_keys:
+            continue
+
+        primary_keys.append(pkey)
 
         generated = 0.0
         generated_field = "EOI Quantity (MW)"
@@ -91,7 +99,6 @@ class WemStoreFacilityScada(DatabaseStoreBase):
         ]
 
         csvwriter = csv.DictWriter(csv_buffer, fieldnames=fieldnames,)
-        # csvwriter.writeheader()
 
         for record in generate_records(csvreader, spider):
             csvwriter.writerow(record)
