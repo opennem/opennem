@@ -222,6 +222,7 @@ def clean_float(number: Union[str, int, float]) -> Optional[float]:
             return None
 
         num_return = float(number)
+        return num_return
 
     if isinstance(number, int):
         return float(number)
@@ -233,6 +234,7 @@ def clean_float(number: Union[str, int, float]) -> Optional[float]:
         return number
 
     return None
+
 
 def clean_numbers(part: Union[str, int]) -> Union[str, int, None]:
     """
