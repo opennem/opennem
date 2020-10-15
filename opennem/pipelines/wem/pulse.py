@@ -26,7 +26,7 @@ class WemStorePulse(DatabaseStoreBase):
 
         for row in csvreader:
             trading_interval = parse_date(
-                row["TRADING_DAY_INTERVAL"], network=NetworkWEM,
+                row["TRADING_DAY_INTERVAL"], network=NetworkWEM, dayfirst=False
             )
 
             if trading_interval not in primary_keys:

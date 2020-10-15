@@ -29,7 +29,7 @@ class WemStoreFacilityScada(DatabaseStoreBase):
 
         for row in csvreader:
             trading_interval = parse_date(
-                row["Trading Interval"], network=NetworkWEM
+                row["Trading Interval"], network=NetworkWEM, dayfirst=False
             )
             facility_code = normalize_duid(row["Facility Code"])
 
@@ -43,8 +43,8 @@ class WemStoreFacilityScada(DatabaseStoreBase):
                         "network_id": "WEM",
                         "trading_interval": trading_interval,
                         "facility_code": facility_code,
-                        "eoi_quantity": row["EOI Quantity (MW)"] or None,
-                        "generated": row["Energy Generated (MWh)"] or None,
+                        "generated": row["EOI Quantity (MW)"] or None,
+                        "eoi_quantity": row["Energy Generated (MWh)"] or None,
                     }
                 )
                 primary_keys.append(__key)
@@ -92,8 +92,14 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
         last_asat = None
 
         for row in csvreader:
+
+            # @TODO MAX_GEN_CAPACITY
+            # facility_capacity = row["MAX_GEN_CAPACITY"]
+
             if row["AS_AT"] != "":
-                last_asat = parse_date(row["AS_AT"], network=NetworkWEM)
+                last_asat = parse_date(
+                    row["AS_AT"], network=NetworkWEM, dayfirst=False
+                )
 
             if not last_asat or type(last_asat) is not datetime:
                 logger.error("Invalid row or no datetime")
@@ -127,7 +133,6 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
                 records_to_store.append(
                     {
                         "created_by": spider.name,
-                        # "updated_by": None,
                         "network_id": "WEM",
                         "trading_interval": interval,
                         "facility_code": facility_code,
