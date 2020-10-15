@@ -41,6 +41,8 @@ class WemHistoricSpider(DirlistingSpider):
     allowed_domains = ["wa.nemweb.com.au"]
     pipelines = set([LinkExtract,])
 
+    skip = 1
+
     # Archives tend to contain large zips of embedded zips so throttle
     # to limit memory use
     custom_settings = {
