@@ -13,8 +13,6 @@ YESTERDAY = TODAY - timedelta(days=1)
 
 MONTH_AGO = TODAY - timedelta(days=29)
 
-ARCHIVE_START = TODAY - timedelta(days=118)
-
 APVI_DATE_QUERY_FORMAT = "%Y-%m-%d"
 
 APVI_EARLIEST_DATE = "2013-05-07"
@@ -44,18 +42,7 @@ class APVIDataCurrentSpider(APVIDataSpiderBase):
     name = "au.apvi.current.data"
 
     def start_requests(self):
-        for date in date_series(TODAY, length=30, reverse=True):
-            yield scrapy.FormRequest(
-                APVI_DATA_URI,
-                formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
-            )
-
-
-class APVIDataHistoricSpider(APVIDataSpiderBase):
-    name = "au.apvi.historic.data"
-
-    def start_requests(self):
-        for date in date_series(MONTH_AGO, length=90, reverse=True):
+        for date in date_series(TODAY, length=31, reverse=True):
             yield scrapy.FormRequest(
                 APVI_DATA_URI,
                 formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
@@ -70,9 +57,7 @@ class APVIDataArchiveSpider(APVIDataSpiderBase):
             APVI_EARLIEST_DATE, APVI_DATE_QUERY_FORMAT
         ).date()
 
-        for date in date_series(
-            start=ARCHIVE_START, end=end_date, reverse=True
-        ):
+        for date in date_series(start=MONTH_AGO, end=end_date, reverse=True):
             yield scrapy.FormRequest(
                 APVI_DATA_URI,
                 formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
@@ -80,5 +65,5 @@ class APVIDataArchiveSpider(APVIDataSpiderBase):
 
     custom_settings = {
         "CONCURRENT_REQUESTS": 1,
-        "DOWNLOAD_DELAY": 10,
+        "DOWNLOAD_DELAY": 1,
     }
