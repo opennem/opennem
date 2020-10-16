@@ -11,6 +11,7 @@ from opennem.api.stats.router import (
 )
 from opennem.api.weather.router import station_observations_api
 from opennem.db import get_database_engine
+from opennem.exporter.aws import write_to_s3
 
 YEAR_MIN = 2010
 
@@ -62,12 +63,15 @@ def wem_export_power():
 
     power_path = BASE_EXPORT + "/power/wem.json"
 
+    # @TODO migrate to s3 methods
+    # write_to_s3("/power/wem.json", stat_set.json(exclude_unset=True))
+
     with open(
         power_path,
         "w",
         transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
     ) as fh:
-        fh.write(stat_set.json())
+        fh.write(stat_set.json(exclude_unset=True))
 
 
 def wem_export_years():
@@ -103,7 +107,7 @@ def wem_export_years():
             "w",
             transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
         ) as fh:
-            fh.write(stat_set.json())
+            fh.write(stat_set.json(exclude_unset=True))
 
 
 def wem_export_all():
@@ -127,7 +131,7 @@ def wem_export_all():
         "w",
         transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
     ) as fh:
-        fh.write(stat_set.json())
+        fh.write(stat_set.json(exclude_unset=True))
 
 
 def wem_run_all():
