@@ -68,9 +68,9 @@ class APVIStoreData(object):
                 )
 
                 network = network_from_state(state)
-                # interval_time = interval_time.astimezone(
-                #     network.get_timezone()
-                # )
+                interval_time = interval_time.astimezone(
+                    network.get_timezone()
+                )
 
                 generated = sum(
                     [
