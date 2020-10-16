@@ -34,8 +34,8 @@
     "unit": "AUD"
   },
   {
-    "name": "temprature",
-    "unit_type": "temprature",
+    "name": "temperature",
+    "unit_type": "temperature",
     "unit": "C"
   }
 ]

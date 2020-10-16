@@ -81,7 +81,7 @@ def station_observations_api(
     offset: str = None,
     engine=Depends(get_database_engine),
 ) -> OpennemDataSet:
-    units = get_unit("temprature")
+    units = get_unit("temperature")
 
     if not interval:
         interval = "15m"
@@ -134,7 +134,7 @@ def station_observations_api(
         period=period,
         network=network,
         code="bom",
-        group_field="temprature",
+        group_field="temperature",
     )
 
     return result
