@@ -41,7 +41,7 @@ def wem_export_power():
 
     weather = station_observations_api(
         station_code="009021",
-        interval="10m",
+        interval="30m",
         period="7d",
         network_code="WEM",
         engine=engine,
