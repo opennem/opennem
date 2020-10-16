@@ -16,7 +16,7 @@ from opennem.utils.pipelines import check_spider_pipeline
 logger = logging.getLogger(__name__)
 
 
-def generate_records(csvreader, spider=None):
+def facility_scada_generate_records(csvreader, spider=None):
     created_at = datetime.now()
     primary_keys = []
 
@@ -62,60 +62,107 @@ def generate_records(csvreader, spider=None):
         }
 
 
-sql = """
-CREATE TEMP TABLE __tmp
-(LIKE facility_scada INCLUDING DEFAULTS)
-ON COMMIT DROP;
-
-COPY __tmp FROM STDIN WITH (FORMAT CSV, HEADER FALSE, DELIMITER ',');
-
-INSERT INTO facility_scada
-    SELECT *
-    FROM __tmp
-ON CONFLICT (trading_interval, network_id, facility_code) DO UPDATE set
-    generated = EXCLUDED.generated,
-    eoi_quantity = EXCLUDED.eoi_quantity
-;
-"""
-
-
 class WemStoreFacilityScada(DatabaseStoreBase):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
+        if "content" not in item:
+            logger.error("No item content slipping store facility scada")
+            return item
 
         csvreader = csv.DictReader(item["content"].split("\n"))
 
-        csv_buffer = StringIO()
+        item["table_schema"] = FacilityScada
+        item["update_fields"] = ["generated", "eoi_quantity"]
+        item["records"] = list(
+            facility_scada_generate_records(csvreader, spider)
+        )
+        item["content"] = None
 
-        fieldnames = [
-            "created_by",
-            "created_at",
-            "updated_at",
-            "network_id",
-            "trading_interval",
-            "facility_code",
-            "generated",
-            "eoi_quantity",
-        ]
+        return item
 
-        csvwriter = csv.DictWriter(csv_buffer, fieldnames=fieldnames,)
 
-        for record in generate_records(csvreader, spider):
-            csvwriter.writerow(record)
+def facility_intervals_generate_records(csvreader, spider=None):
+    created_at = datetime.now()
+    primary_keys = []
 
-        conn = get_database_engine().raw_connection()
+    for row in csvreader:
 
-        cursor = conn.cursor()
-        csv_buffer.seek(0)
+        interval_field = "PERIOD"
 
-        cursor.copy_expert(sql, csv_buffer)
+        trading_interval = parse_date(
+            row[interval_field], network=NetworkWEM, dayfirst=False
+        )
 
-        conn.commit()
+        facility_code_field = "FACILITY_CODE"
+
+        if facility_code_field not in row:
+            logger.error("Invalid row no facility_code")
+            continue
+
+        facility_code = normalize_duid(row[facility_code_field])
+
+        pkey = (trading_interval, facility_code)
+
+        if pkey in primary_keys:
+            continue
+
+        primary_keys.append(pkey)
+
+        generated = 0.0
+        generated_field = "ACTUAL_MW"
+
+        if generated_field in row:
+            generated = clean_float(row[generated_field])
+
+        energy = 0.0
+        energy_field = "POTENTIAL_MWH"
+
+        if energy_field in row:
+            # figure out what to do with this
+            # energy = clean_float(row[energy_field])
+            pass
+
+        created_by = ""
+
+        if spider and hasattr(spider, "name"):
+            created_by = spider.name
+
+        yield {
+            "created_by": created_by,
+            "created_at": created_at,
+            "updated_at": None,
+            "network_id": "WEM",
+            "trading_interval": trading_interval,
+            "facility_code": facility_code,
+            "generated": generated,
+            "eoi_quantity": energy,
+        }
+
+
+class WemStoreFacilityIntervals(object):
+    @check_spider_pipeline
+    def process_item(self, item, spider=None):
+        if "content" not in item:
+            logger.error("No item content slipping store facility scada")
+            return item
+
+        csvreader = csv.DictReader(item["content"].split("\n"))
+
+        item["table_schema"] = FacilityScada
+        item["update_fields"] = ["generated", "eoi_quantity"]
+        item["records"] = list(
+            facility_intervals_generate_records(csvreader, spider)
+        )
+        item["content"] = None
+
+        return item
 
 
 class WemStoreLiveFacilityScada(DatabaseStoreBase):
     """
         Store live facility scada data.
+
+        @NOTE no longer used
 
     """
 
@@ -200,61 +247,3 @@ class WemStoreLiveFacilityScada(DatabaseStoreBase):
 
         return len(records_to_store)
 
-
-class WemStoreFacilityIntervals(object):
-    @check_spider_pipeline
-    def process_item(self, item, spider=None):
-
-        session = SessionLocal()
-        engine = get_database_engine()
-
-        csvreader = csv.DictReader(item["content"].split("\n"))
-
-        records_to_store = []
-
-        for row in csvreader:
-            trading_interval = parse_date(
-                row["PERIOD"], network=NetworkWEM, dayfirst=False
-            )
-            facility_code = normalize_duid(row["FACILITY_CODE"])
-
-            energy = 0.0
-
-            if "POTENTIAL_MWH" in row:
-                energy = clean_float(row["POTENTIAL_MWH"])
-
-                # @NOTE - don't use
-                energy = 0.0
-
-            records_to_store.append(
-                {
-                    "created_by": spider.name,
-                    "network_id": "WEM",
-                    "trading_interval": trading_interval,
-                    "facility_code": facility_code,
-                    "generated": row["ACTUAL_MW"] or None,
-                    "eoi_quantity": energy,
-                }
-            )
-
-        stmt = insert(FacilityScada).values(records_to_store)
-        stmt.bind = engine
-        stmt = stmt.on_conflict_do_update(
-            index_elements=["trading_interval", "network_id", "facility_code"],
-            set_={
-                # "updated_by": stmt.excluded.created_by,
-                "generated": stmt.excluded.generated,
-                "eoi_quantity": stmt.excluded.eoi_quantity,
-            },
-        )
-
-        try:
-            session.execute(stmt)
-            session.commit()
-        except Exception as e:
-            logger.error("Error inserting records")
-            logger.error(e)
-        finally:
-            session.close()
-
-        return len(records_to_store)

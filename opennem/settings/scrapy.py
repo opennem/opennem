@@ -72,6 +72,9 @@ ITEM_PIPELINES = {
     "opennem.pipelines.nem.mms.NemStoreMMSDudetail": 553,
     "opennem.pipelines.nem.mms.NemStoreMMSDudetailSummary": 554,
     "opennem.pipelines.nem.mms.NemStoreMMSParticipant": 555,
+    # DB bulk Inserterers
+    "opennem.pipelines.csv.RecordsToCSVPipeline": 610,
+    "opennem.pipelines.bulk_insert.BulkInsertPipeline": 620,
 }
 
 # @TODO if DEBUG
