@@ -80,6 +80,11 @@ class APVIStoreData(object):
                     ]
                 )
 
+                quantity = 0.0
+
+                if generated > 0:
+                    quantity = generated / 2
+
                 if not generated:
                     continue
 
@@ -88,6 +93,7 @@ class APVIStoreData(object):
                     "trading_interval": interval_time,
                     "facility_code": facility_code,
                     "generated": generated,
+                    "eoi_quantity": quantity,
                 }
 
                 records_to_store.append(__record)
@@ -134,7 +140,10 @@ class APVIStoreData(object):
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
             constraint="facility_scada_pkey",
-            set_={"generated": stmt.excluded.generated,},
+            set_={
+                "generated": stmt.excluded.generated,
+                "eoi_quantity": stmt.excluded.eoi_quantity,
+            },
         )
 
         try:
