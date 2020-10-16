@@ -1,8 +1,8 @@
 set -euxo pipefail
 
-# alembic upgrade head
+alembic upgrade head
 
-# python -m opennem.cli db init
+python -m opennem.cli db init
 
 scrapy crawl -L ERROR au.wem.participant
 scrapy crawl -L ERROR au.wem.live.participant
