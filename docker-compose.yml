@@ -18,12 +18,12 @@ services:
     restart: on-failure
 
   database:
-    image: kartoza/postgis
-    restart: always
+    image: timescale/timescaledb-postgis:latest-pg12
+    restart: unless-stopped
     env_file: ./.env
     environment:
       - TZ
-      # - EXISTING_DATA_DIR=true
+      - TIMESCALEDB_TELEMETRY=off
     ports:
       - ${HOST:-127.0.0.1}:15433:5432
     volumes:
@@ -33,3 +33,4 @@ volumes:
   db_data: {}
   pg_data: {}
   postgis_data: {}
+  database_data: {}
