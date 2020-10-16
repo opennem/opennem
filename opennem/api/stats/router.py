@@ -551,6 +551,7 @@ def price_network_region_api(
         interval=interval,
         period=period,
         units=units,
+        group_field="price",
     )
 
     return result

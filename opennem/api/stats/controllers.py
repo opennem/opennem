@@ -109,9 +109,13 @@ def stats_factory(
             if network:
                 group_fields.append(network.code)
 
-            group_fields + [group_field, group_code, units.unit_type]
+            group_fields = group_fields + [
+                group_field,
+                group_code,
+                units.unit_type,
+            ]
 
-            data.id = ".".join(group_fields)
+            data.id = ".".join([f for f in group_fields if f])
             data.type = units.unit_type
 
         if region:
