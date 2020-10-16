@@ -25,7 +25,6 @@ from sqlalchemy import (
     Integer,
     LargeBinary,
     Numeric,
-    Sequence,
     Text,
     func,
     text,
@@ -87,11 +86,7 @@ class FacilityStatus(Base, BaseModel):
 class Participant(Base, BaseModel):
     __tablename__ = "participant"
 
-    id = Column(
-        Integer,
-        Sequence("seq_participant_id", start=1000, increment=1),
-        primary_key=True,
-    )
+    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True,)
 
     code = Column(Text, unique=True, index=True)
     name = Column(Text)
@@ -108,9 +103,7 @@ class Participant(Base, BaseModel):
 class Photo(Base):
     __tablename__ = "photo"
 
-    id = Column(
-        Integer, Sequence("seq_photo_id", start=1000), primary_key=True
-    )
+    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
 
     station_id = Column(
         Integer,
