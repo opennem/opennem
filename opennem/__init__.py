@@ -1,9 +1,10 @@
-# import pkg_resources
 import sentry_sdk
+from pkg_resources import get_distribution
 
 from opennem.settings import settings
 
-# VERSION = pkg_resources.get_distribution("opennem").version
+# VERSION = get_distribution("opennem").version
+# __version__ = VERSION
 
 
 if settings.env != "development":
@@ -11,4 +12,3 @@ if settings.env != "development":
         settings.sentry_url, traces_sample_rate=1.0, environment=settings.env
     )
 
-# __version__ = VERSION
