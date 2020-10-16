@@ -7,18 +7,15 @@ from typing import List, Optional, Union
 from dictalchemy.utils import fromdict
 from pydantic import BaseModel
 from sqlalchemy.orm.exc import MultipleResultsFound
-from sqlalchemy.orm.session import make_transient
 
-from opennem.core.loader import load_data
-from opennem.db import SessionLocal, engine
-from opennem.db.initdb import init_opennem
+# from opennem.core.loader import load_data
+from opennem.db import SessionLocal
 from opennem.db.load_fixtures import load_fixtures
 from opennem.db.models.opennem import Facility, Location, Revision, Station
 from opennem.importer.aemo_gi import gi_import
 from opennem.importer.aemo_rel import rel_import
 from opennem.importer.mms import mms_import
 from opennem.importer.registry import registry_import
-from opennem.schema.opennem import StationSchema
 
 from .comparator import compare_record_differs
 
@@ -398,22 +395,9 @@ def test_revisions():
 
 
 def init():
-    init_opennem(engine)
-    # logger.info("Db initialized")
-
     load_fixtures()
-    # logger.info("Fixtures loaded")
+    logger.info("Fixture loaded")
 
     registry_init()
     logger.info("Registry initialized")
 
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-
-    logger.setLevel(logging.INFO)
-
-    # init()
-    # db_test()
-    registry_init()
-    logger.info("Registry initialized")

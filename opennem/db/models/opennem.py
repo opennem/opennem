@@ -217,9 +217,7 @@ class Location(Base):
         Index("idx_location_boundary", "boundary", postgresql_using="gist"),
     )
 
-    id = Column(
-        Integer, Sequence("seq_location_id", start=1000), primary_key=True
-    )
+    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
 
     # station_id = Column(Integer, ForeignKey("station.id"))
 
@@ -285,11 +283,7 @@ class Station(Base, BaseModel):
     def __repr__(self):
         return "{} {} <{}>".format(self.__class__, self.name, self.code)
 
-    id = Column(
-        Integer,
-        Sequence("seq_station_id", start=1000, increment=1),
-        primary_key=True,
-    )
+    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True,)
 
     participant_id = Column(
         Integer,
@@ -411,11 +405,7 @@ class Facility(Base, BaseModel):
     def __repr__(self):
         return "{} {} <{}>".format(self.__class__, self.code, self.fueltech_id)
 
-    id = Column(
-        Integer,
-        Sequence("seq_facility_id", start=1000, increment=1),
-        primary_key=True,
-    )
+    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True,)
 
     network_id = Column(
         Text,
@@ -526,11 +516,7 @@ class Revision(Base, BaseModel):
 
     __tablename__ = "revisions"
 
-    id = Column(
-        Integer,
-        Sequence("seq_revision_id", start=1000, increment=1),
-        primary_key=True,
-    )
+    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True,)
 
     station_id = Column(
         Integer,
