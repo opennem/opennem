@@ -49,7 +49,11 @@ class WemStorePulse(DatabaseStoreBase):
         stmt = insert(BalancingSummary).values(records_to_store)
         stmt.bind = self.engine
         stmt = stmt.on_conflict_do_update(
-            constraint="balancing_summary_pkey",
+            index_elements=[
+                "trading_interval",
+                "network_id",
+                "network_region",
+            ],
             set_={
                 "price": stmt.excluded.price,
                 "forecast_load": stmt.excluded.forecast_load,

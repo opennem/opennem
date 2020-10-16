@@ -56,7 +56,7 @@ class StoreBomObservation(object):
         stmt = insert(BomObservation).values(records_to_store)
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
-            constraint="bom_observation_pkey",
+            index_elements=["observation_time", "station_id"],
             set_={
                 "temp_apparent": stmt.excluded.temp_apparent,
                 "temp_air": stmt.excluded.temp_air,

@@ -64,7 +64,7 @@ def process_meter_data_gen_duid(table, spider):
     stmt = insert(FacilityScada).values(records_to_store)
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
-        constraint="facility_scada_pkey",
+        index_elements=["trading_interval", "network_id", "facility_code"],
         set_={"eoi_quantity": stmt.excluded.eoi_quantity},
     )
 
@@ -114,7 +114,7 @@ def process_pre_ap_price(table, spider):
     stmt = insert(BalancingSummary).values(records_to_store)
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
-        constraint="balancing_summary_pkey",
+        index_elements=["trading_interval", "network_id", "network_region"],
         set_={"price": stmt.excluded.price},
     )
 
@@ -180,7 +180,7 @@ def process_unit_scada(table, spider):
     stmt = insert(FacilityScada).values(records_to_store)
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
-        constraint="facility_scada_pkey",
+        index_elements=["trading_interval", "network_id", "facility_code"],
         set_={"generated": stmt.excluded.generated},
     )
 
@@ -244,7 +244,7 @@ def process_unit_solution(table, spider):
     stmt = insert(FacilityScada).values(records_to_store)
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
-        constraint="facility_scada_pkey",
+        index_elements=["trading_interval", "network_id", "facility_code"],
         set_={"eoi_quantity": stmt.excluded.eoi_quantity},
     )
 

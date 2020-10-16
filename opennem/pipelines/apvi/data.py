@@ -2,6 +2,7 @@ import logging
 
 from sqlalchemy.dialects.postgresql import insert
 
+from opennem.core.networks import network_from_state
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import Facility, FacilityScada
 from opennem.importer.apvi import ROOFTOP_CODE
@@ -62,14 +63,13 @@ class APVIStoreData(object):
             for state, prefix in STATE_POSTCODE_PREFIXES.items():
                 facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
 
-                # network_network = NetworkNEM
-
                 interval_time = parse_date(
                     record["ts"], dayfirst=False, yearfirst=True
                 )
 
-                # interval_time = interval_time.replace(
-                # tzinfo=network_network.get_timezone()
+                network = network_from_state(state)
+                # interval_time = interval_time.astimezone(
+                #     network.get_timezone()
                 # )
 
                 generated = sum(
@@ -80,20 +80,14 @@ class APVIStoreData(object):
                     ]
                 )
 
-                quantity = 0.0
-
-                if generated > 0:
-                    quantity = generated / 2
-
                 if not generated:
                     continue
 
                 __record = {
-                    "network_id": "WEM" if state == "WA" else "NEM",
+                    "network_id": network.code,
                     "trading_interval": interval_time,
                     "facility_code": facility_code,
                     "generated": generated,
-                    "eoi_quantity": quantity,
                 }
 
                 records_to_store.append(__record)
@@ -139,11 +133,8 @@ class APVIStoreData(object):
         stmt = insert(FacilityScada).values(records_to_store)
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
-            constraint="facility_scada_pkey",
-            set_={
-                "generated": stmt.excluded.generated,
-                "eoi_quantity": stmt.excluded.eoi_quantity,
-            },
+            index_elements=["trading_interval", "network_id", "facility_code"],
+            set_={"generated": stmt.excluded.generated,},
         )
 
         try:

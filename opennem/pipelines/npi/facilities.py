@@ -38,7 +38,7 @@ class NPIStoreFacility(object):
         stmt = insert(FacilityScada).values(records_to_store)
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
-            constraint="facility_scada_pkey",
+            index_elements=["trading_interval", "network_id", "facility_code"],
             set_={"generated": stmt.excluded.generated,},
         )
 
