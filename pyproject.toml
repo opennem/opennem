@@ -33,10 +33,9 @@ smart_open = "^2.0.0"
 pydantic = "^1.5.1"
 alembic = "^1.4.2"
 click = "^7.1.2"
-psycopg2 = {version = "^2.8.5", optional = true}
 huey = "^2.2.0"
 redis = "^3.5.3"
-psycopg2-binary = {version = "^2.8.5", optional = true}
+psycopg2-binary = {version = "^2.8.5"}
 openpyxl = "^3.0.4"
 requests_cache = "^0.5.2"
 geoalchemy2 = "^0.8.4"
@@ -46,7 +45,6 @@ fastapi = {extras = ["all"], version = "^0.60.1"}
 shapely = "^1.7.0"
 pyyaml = "^5.3.1"
 dictalchemy = "^0.1.2"
-ujson = "^3.1.0"
 pytz = "^2020.1"
 Wikidata = "^0.7.0"
 wikipedia = "^1.4.0"
