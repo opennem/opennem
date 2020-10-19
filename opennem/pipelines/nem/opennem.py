@@ -6,13 +6,15 @@ NEMWEB Data ingress into OpenNEM format
 """
 
 import logging
+from datetime import datetime
+from typing import Optional
 
 from sqlalchemy.dialects.postgresql import insert
 
-from opennem.core.normalizers import normalize_duid
+from opennem.core.networks import NetworkNEM
+from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
-from opennem.schema.opennem import NetworkNEM
 from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -21,64 +23,6 @@ logger = logging.getLogger(__name__)
 
 def process_case_solutions(table):
     pass
-    # session = SessionLocal()
-
-    # if "records" not in table:
-    #     raise Exception("Invalid table no records")
-
-    # records = table["records"]
-
-    # records_to = []
-
-
-def process_meter_data_gen_duid(table, spider):
-    session = SessionLocal()
-    engine = get_database_engine()
-
-    if "records" not in table:
-        raise Exception("Invalid table no records")
-
-    records = table["records"]
-
-    records_to_store = []
-
-    for record in records:
-        trading_interval = parse_date(
-            record["INTERVAL_DATETIME"], network=NetworkNEM, dayfirst=False
-        )
-
-        if not trading_interval:
-            continue
-
-        records_to_store.append(
-            {
-                "network_id": "NEM",
-                "created_by": spider.name,
-                # "updated_by": None,
-                "trading_interval": trading_interval,
-                "facility_code": normalize_duid(record["DUID"]),
-                "eoi_quantity": record["MWH_READING"],
-            }
-        )
-
-    stmt = insert(FacilityScada).values(records_to_store)
-    stmt.bind = engine
-    stmt = stmt.on_conflict_do_update(
-        index_elements=["trading_interval", "network_id", "facility_code"],
-        set_={"eoi_quantity": stmt.excluded.eoi_quantity},
-    )
-
-    try:
-        session.execute(stmt)
-        session.commit()
-    except Exception as e:
-        logger.error("Error inserting records")
-        logger.error(e)
-        return 0
-    finally:
-        session.close()
-
-    return len(records_to_store)
 
 
 def process_pre_ap_price(table, spider):
@@ -131,133 +75,128 @@ def process_pre_ap_price(table, spider):
     return len(records_to_store)
 
 
-def process_unit_scada(table, spider):
-    session = SessionLocal()
-    engine = get_database_engine()
+def unit_scada_generate_facility_scada(
+    records,
+    spider=None,
+    interval_field: str = "SETTLEMENTDATE",
+    facility_code_field: str = "DUID",
+    power_field: Optional[str] = None,
+    energy_field: Optional[str] = None,
+):
+    created_at = datetime.now()
+    primary_keys = []
 
+    for row in records:
+
+        trading_interval = parse_date(
+            row[interval_field], network=NetworkNEM, dayfirst=False
+        )
+
+        if facility_code_field not in row:
+            logger.error("Invalid row no facility_code")
+            continue
+
+        facility_code = normalize_duid(row[facility_code_field])
+
+        pkey = (trading_interval, facility_code)
+
+        if pkey in primary_keys:
+            continue
+
+        primary_keys.append(pkey)
+
+        generated = None
+
+        if power_field and power_field in row:
+            generated = clean_float(row[power_field])
+
+        energy = None
+
+        if energy_field and energy_field in row:
+            # figure out what to do with this
+            # energy = clean_float(row[energy_field])
+            pass
+
+        created_by = ""
+
+        if spider and hasattr(spider, "name"):
+            created_by = spider.name
+
+        yield {
+            "created_by": created_by,
+            "created_at": created_at,
+            "updated_at": None,
+            "network_id": "WEM",
+            "trading_interval": trading_interval,
+            "facility_code": facility_code,
+            "generated": generated,
+            "eoi_quantity": energy,
+        }
+
+
+def process_unit_scada(table, spider):
     if "records" not in table:
         raise Exception("Invalid table no records")
 
     records = table["records"]
+    item = dict()
 
-    records_to_store = []
-    records_primary_keys = []
-
-    for record in records:
-        trading_interval = parse_date(
-            record["SETTLEMENTDATE"], network=NetworkNEM, dayfirst=False
+    item["table_schema"] = FacilityScada
+    item["update_fields"] = ["generated"]
+    item["records"] = list(
+        unit_scada_generate_facility_scada(
+            records, spider, power_field="SCADAVALUE"
         )
-        facility_code = normalize_duid(record["DUID"])
-
-        if not trading_interval or not facility_code:
-            continue
-
-        # Since this can insert 1M+ records at a time we need to
-        # do a separate in-memory check of primary key constraints
-        # better way of doing this .. @TODO
-        _unique_set = (trading_interval, facility_code, "NEM")
-
-        if _unique_set not in records_primary_keys:
-
-            records_to_store.append(
-                {
-                    "network_id": "NEM",
-                    "created_by": spider.name,
-                    # "updated_by": None,
-                    "trading_interval": trading_interval,
-                    "facility_code": facility_code,
-                    "generated": float(record["SCADAVALUE"]),
-                }
-            )
-
-            records_primary_keys.append(_unique_set)
-
-    # free
-    records_primary_keys = []
-
-    logger.debug("Saving %d records", len(records_to_store))
-
-    stmt = insert(FacilityScada).values(records_to_store)
-    stmt.bind = engine
-    stmt = stmt.on_conflict_do_update(
-        index_elements=["trading_interval", "network_id", "facility_code"],
-        set_={"generated": stmt.excluded.generated},
     )
+    item["content"] = None
 
-    try:
-        session.execute(stmt)
-        session.commit()
-    except Exception as e:
-        logger.error("Error: {}".format(e))
-        return 0
-    finally:
-        session.close()
-
-    return len(records_to_store)
+    return item
 
 
 def process_unit_solution(table, spider):
-    session = SessionLocal()
-    engine = get_database_engine()
-
     if "records" not in table:
         raise Exception("Invalid table no records")
 
     records = table["records"]
+    item = dict()
 
-    records_to_store = []
-    records_primary_keys = []
-
-    for record in records:
-        trading_interval = parse_date(
-            record["SETTLEMENTDATE"], network=NetworkNEM, dayfirst=False
+    item["table_schema"] = FacilityScada
+    item["update_fields"] = ["generated"]
+    item["records"] = list(
+        unit_scada_generate_facility_scada(
+            records,
+            spider,
+            interval_field="SETTLEMENTDATE",
+            facility_code_field="DUID",
+            power_field="INITIALMW",
         )
-        facility_code = normalize_duid(record["DUID"])
-
-        if not trading_interval or not facility_code:
-            continue
-
-        # Since this can insert 1M+ records at a time we need to
-        # do a separate in-memory check of primary key constraints
-        # better way of doing this .. @TODO
-        _unique_set = (trading_interval, facility_code, "NEM")
-
-        if _unique_set not in records_primary_keys:
-
-            records_to_store.append(
-                {
-                    "network_id": "NEM",
-                    "created_by": spider.name,
-                    # "updated_by": None,
-                    "trading_interval": trading_interval,
-                    "facility_code": facility_code,
-                    "eoi_quantity": float(record["INITIALMW"]),
-                }
-            )
-            records_primary_keys.append(_unique_set)
-
-    # free
-    records_primary_keys = []
-
-    logger.debug("Saving %d records", len(records_to_store))
-
-    stmt = insert(FacilityScada).values(records_to_store)
-    stmt.bind = engine
-    stmt = stmt.on_conflict_do_update(
-        index_elements=["trading_interval", "network_id", "facility_code"],
-        set_={"eoi_quantity": stmt.excluded.eoi_quantity},
     )
+    item["content"] = None
 
-    try:
-        session.execute(stmt)
-        session.commit()
-    except Exception as e:
-        logger.error("Error: {}".format(e))
-        return 0
-    finally:
-        session.close()
+    return item
 
-    return len(records_to_store)
+
+def process_meter_data_gen_duid(table, spider):
+    if "records" not in table:
+        raise Exception("Invalid table no records")
+
+    records = table["records"]
+    item = dict()
+
+    item["table_schema"] = FacilityScada
+    item["update_fields"] = ["eoi_generated"]
+    item["records"] = list(
+        unit_scada_generate_facility_scada(
+            records,
+            spider,
+            interval_field="INTERVAL_DATETIME",
+            facility_code_field="DUID",
+            energy_field="MWH_READING",
+        )
+    )
+    item["content"] = None
+
+    return item
 
 
 TABLE_PROCESSOR_MAP = {
@@ -302,6 +241,6 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
                 logger.info("Invalid processing function %s", process_meth)
                 continue
 
-            ret += globals()[process_meth](table, spider=spider)
+            ret = globals()[process_meth](table, spider=spider)
 
         return ret

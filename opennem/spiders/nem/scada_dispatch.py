@@ -1,3 +1,5 @@
+from opennem.pipelines.bulk_insert import BulkInsertPipeline
+from opennem.pipelines.csv import RecordsToCSVPipeline
 from opennem.pipelines.nem.opennem import NemwebUnitScadaOpenNEMStorePipeline
 from opennem.spiders.nemweb import NemwebSpider
 
@@ -7,7 +9,13 @@ class NemwebLatestDispatchScada(NemwebSpider):
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
     limit = 1
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set(
+        [
+            NemwebUnitScadaOpenNEMStorePipeline,
+            BulkInsertPipeline,
+            RecordsToCSVPipeline,
+        ]
+    )
 
 
 class NemwebCurrentDispatchScada(NemwebSpider):
@@ -15,7 +23,13 @@ class NemwebCurrentDispatchScada(NemwebSpider):
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
     limit = 0
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set(
+        [
+            NemwebUnitScadaOpenNEMStorePipeline,
+            BulkInsertPipeline,
+            RecordsToCSVPipeline,
+        ]
+    )
 
 
 class NemwebArchiveDispatchScada(NemwebSpider):
@@ -23,7 +37,13 @@ class NemwebArchiveDispatchScada(NemwebSpider):
     start_url = "http://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/"
     limit = 0
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set(
+        [
+            NemwebUnitScadaOpenNEMStorePipeline,
+            BulkInsertPipeline,
+            RecordsToCSVPipeline,
+        ]
+    )
 
     # Archives tend to contain large zips of embedded zips so throttle
     # to limit memory use

@@ -56,7 +56,7 @@ class UnzipSingleFilePipeline(object):
 class ReadStringHandle(object):
     @check_spider_pipeline
     def process_item(self, item, spider):
-        if not "file_handle" in item:
+        if "file_handle" not in item:
             return item
 
         fh = item["file_handle"]
@@ -73,7 +73,7 @@ class ExtractCSV(object):
     @check_spider_pipeline
     def process_item(self, item, spider):
 
-        if not "content" in item:
+        if "content" not in item:
             logger.error("No content in item to parse")
             return item
 
