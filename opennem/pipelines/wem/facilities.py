@@ -149,7 +149,7 @@ class WemStoreFacility(object):
         return records_added
 
 
-class WemStoreLiveFacilities(DatabaseStoreBase):
+class WemStoreLiveFacilities(object):
     def parse_interval(self, date_str):
         dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
         dt_aware = NetworkWEM.get_timezone().localize(dt)
@@ -159,7 +159,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
-        s = self.session()
+        s = SessionLocal()
 
         records_added = 0
         csvreader = csv.DictReader(item["content"].split("\n"))
