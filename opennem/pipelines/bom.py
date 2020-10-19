@@ -53,6 +53,9 @@ class StoreBomObservation(object):
                 }
             )
 
+        if not len(records_to_store):
+            return 0
+
         stmt = insert(BomObservation).values(records_to_store)
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
