@@ -1,9 +1,17 @@
+"""
+    Finding the fastest way to insert CSV streams into a database
+    with upserts. Hit on this.
+
+"""
+
 import csv
 from io import StringIO
 from pathlib import Path
 
 from opennem.db import get_database_engine
-from opennem.pipelines.wem.facility_scada import generate_records
+from opennem.pipelines.wem.facility_scada import (
+    facility_scada_generate_records,
+)
 
 scada_test_file = Path(__file__).parent.parent / Path(
     "data/wem/facility-scada-2020-10.csv"
@@ -52,7 +60,7 @@ def test_insert():
 
     csvwriter = csv.DictWriter(csv_buffer, fieldnames=fieldnames,)
 
-    for record in generate_records(csv_reader):
+    for record in facility_scada_generate_records(csv_reader):
         csvwriter.writerow(record)
 
     conn = get_database_engine().raw_connection()
@@ -60,9 +68,9 @@ def test_insert():
     cursor = conn.cursor()
     csv_buffer.seek(0)
 
-    cursor.copy_expert(sql, csv_buffer)
+    # cursor.copy_expert(sql, csv_buffer)
 
-    conn.commit()
+    # conn.commit()
 
 
 if __name__ == "__main__":
