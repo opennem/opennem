@@ -8,7 +8,6 @@ from sqlalchemy.dialects.postgresql import insert
 from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import FacilityScada
-from opennem.pipelines import DatabaseStoreBase
 from opennem.schema.network import NetworkWEM
 from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
@@ -62,7 +61,7 @@ def facility_scada_generate_records(csvreader, spider=None):
         }
 
 
-class WemStoreFacilityScada(DatabaseStoreBase):
+class WemStoreFacilityScada(object):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
         if "content" not in item:
@@ -158,7 +157,7 @@ class WemStoreFacilityIntervals(object):
         return item
 
 
-class WemStoreLiveFacilityScada(DatabaseStoreBase):
+class WemStoreLiveFacilityScada(object):
     """
         Store live facility scada data.
 

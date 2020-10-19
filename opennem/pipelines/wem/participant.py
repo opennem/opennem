@@ -6,6 +6,7 @@ from opennem.core.normalizers import (
     normalize_string,
     participant_name_filter,
 )
+from opennem.db import SessionLocal
 from opennem.db.models.opennem import Participant
 from opennem.pipelines import DatabaseStoreBase
 from opennem.utils.pipelines import check_spider_pipeline
@@ -15,11 +16,11 @@ logger = logging.getLogger(__name__)
 # @TODO we can probably merge these two pipelines now
 
 
-class WemStoreParticipant(DatabaseStoreBase):
+class WemStoreParticipant(object):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
-        s = self.session()
+        s = SessionLocal()
 
         record_count = 0
         csvreader = csv.DictReader(item["content"].split("\n"))
@@ -75,11 +76,11 @@ class WemStoreParticipant(DatabaseStoreBase):
         return record_count
 
 
-class WemStoreLiveParticipant(DatabaseStoreBase):
+class WemStoreLiveParticipant(object):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
-        s = self.session()
+        s = SessionLocal()
 
         record_count = 0
         csvreader = csv.DictReader(item["content"].split("\n"))

@@ -4,8 +4,8 @@ import logging
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.core.normalizers import clean_float
+from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BalancingSummary
-from opennem.pipelines import DatabaseStoreBase
 from opennem.schema.network import NetworkWEM
 from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
@@ -13,11 +13,11 @@ from opennem.utils.pipelines import check_spider_pipeline
 logger = logging.getLogger(__name__)
 
 
-class WemStorePulse(DatabaseStoreBase):
+class WemStorePulse(object):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
 
-        s = self.session()
+        s = SessionLocal()
 
         csvreader = csv.DictReader(item["content"].split("\n"))
 
@@ -47,7 +47,7 @@ class WemStorePulse(DatabaseStoreBase):
                 primary_keys.append(trading_interval)
 
         stmt = insert(BalancingSummary).values(records_to_store)
-        stmt.bind = self.engine
+        stmt.bind = get_database_engine()
         stmt = stmt.on_conflict_do_update(
             index_elements=[
                 "trading_interval",
