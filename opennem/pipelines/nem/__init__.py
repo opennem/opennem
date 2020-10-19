@@ -2,8 +2,6 @@ import csv
 import logging
 import zipfile
 
-from scrapy.exceptions import DropItem
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from opennem.db import db_connect
@@ -32,7 +30,7 @@ class UnzipSingleFilePipeline(object):
     @check_spider_pipeline
     def process_item(self, item, spider):
 
-        if not "body_stream" in item:
+        if "body_stream" not in item:
             return item
 
         rs = item["body_stream"]

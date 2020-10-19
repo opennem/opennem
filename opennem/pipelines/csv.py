@@ -25,7 +25,11 @@ def generate_csv_from_records(table: Table, records):
 
 class RecordsToCSVPipeline(object):
     @check_spider_pipeline
-    def process_item(self, item, spider):
+    def process_item(self, item):
+        if not isinstance(item, dict):
+            logger.error("Invalid item passed to CSV pipeline: %s", item)
+            return item
+
         if "table_schema" not in item:
             logger.error("No table model passed to csv generator")
             logger.error(item)

@@ -22,6 +22,7 @@ class NemwebCurrentDispatchScada(NemwebSpider):
     name = "au.nem.current.dispatch_scada"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
     limit = 0
+    skip = 1
 
     pipelines_extra = set(
         [

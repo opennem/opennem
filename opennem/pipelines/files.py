@@ -27,7 +27,7 @@ class LinkExtract(object):
 
         try:
             fh = open(url)
-        except RequestException as e:
+        except RequestException:
             logger.error("Bad link: {}".format(url))
         except Exception as e:
             logger.error("Error: {}".format(e))
