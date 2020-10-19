@@ -25,7 +25,7 @@ def generate_csv_from_records(table: Table, records):
 
 class RecordsToCSVPipeline(object):
     @check_spider_pipeline
-    def process_item(self, item):
+    def process_item(self, item, spider=None):
         if not isinstance(item, dict):
             logger.error("Invalid item passed to CSV pipeline: %s", item)
             return item
