@@ -13,18 +13,18 @@ from opennem.core.normalizers import (
     participant_name_filter,
     station_name_cleaner,
 )
+from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility, Location, Participant, Station
-from opennem.pipelines import DatabaseStoreBase
 from opennem.schema.network import NetworkWEM
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
 
 
-class WemStoreFacility(DatabaseStoreBase):
+class WemStoreFacility(object):
     @check_spider_pipeline
     def process_item(self, item, spider):
-        s = self.session()
+        s = SessionLocal()
 
         records_added = 0
         csvreader = csv.DictReader(item["content"].split("\n"))
