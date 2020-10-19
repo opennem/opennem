@@ -287,6 +287,7 @@ class WemStoreLiveFacilities(DatabaseStoreBase):
 
             s.add(station)
             s.add(facility)
+            s.commit()
             records_added += 1
 
         try:
