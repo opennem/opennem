@@ -22,14 +22,6 @@ returns numeric[]
 immutable
 language plpgsql
 as $$
-declare
-  current_sum numeric := 0.0;
-  num_elements int := 0;
-  intterval_size int := 0;
-  power_hour float := 0;
-  n float := 10;
-
-  new_el text[];
 begin
 
 	agg_state := agg_state || el;
@@ -94,7 +86,7 @@ begin
 end;
 $$;
 
-create aggregate on_energy_sum (numeric, bucket_size text)
+create aggregate on_energy_sum (numeric)
 (
     sfunc = agg_power,
     stype = numeric[],
