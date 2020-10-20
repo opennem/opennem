@@ -74,7 +74,7 @@ class APVIStoreData(object):
 
                 generated = sum(
                     [
-                        v
+                        float(v) / 100 * postcode_capacity[k]
                         for k, v in record.items()
                         if k.startswith(prefix) and v
                     ]
