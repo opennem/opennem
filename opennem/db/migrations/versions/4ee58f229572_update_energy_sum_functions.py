@@ -17,9 +17,11 @@ depends_on = None
 def upgrade():
     op.execute(
         """
-        drop function if exists agg_power(agg_state point, el numeric, interval_size_minutes int);
+        drop function if exists agg_power(agg_state point, el numeric, interval_size_minutes int) cascade;
+        drop function if exists agg_power(agg_state numeric[], el numeric, text) cascade;
+        drop function if exists agg_power(agg_state numeric[], el numeric) cascade;
 
-        create function agg_power(agg_state numeric[], el numeric, text)
+        create function agg_power(agg_state numeric[], el numeric)
         returns numeric[]
         immutable
         language plpgsql
@@ -35,7 +37,9 @@ def upgrade():
     op.execute(
         """
 
-        drop function if exists function onenergy_finalfunc(agg_state point);
+        drop function if exists onenergy_finalfunc(agg_state point) cascade;
+
+        drop function if exists onenergy_finalfunc(agg_state numeric[]);
 
         create function onenergy_finalfunc(agg_state numeric[])
         returns float8
@@ -97,9 +101,6 @@ def upgrade():
 
     op.execute(
         """
-        drop aggregate if exists on_energy_sum (numeric, int);
-
-
         create aggregate on_energy_sum (numeric)
         (
             sfunc = agg_power,
@@ -112,10 +113,12 @@ def upgrade():
 
 
 def downgrade():
-    op.execute("drop aggregate if exists on_energy_sum (numeric, text)")
     op.execute(
-        "drop function if exists agg_power (agg_state numeric[], el numeric, text)"
+        "drop aggregate if exists on_energy_sum (numeric, text) cascade"
     )
     op.execute(
-        "drop function if exists onenergy_finalfunc (agg_state numeric[])"
+        "drop function if exists agg_power (agg_state numeric[], el numeric) cascade"
+    )
+    op.execute(
+        "drop function if exists onenergy_finalfunc (agg_state numeric[]) cascade"
     )
