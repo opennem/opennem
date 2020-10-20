@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import insert
 from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import FacilityScada
+from opennem.pipelines.nem.opennem import unit_scada_generate_facility_scada
 from opennem.schema.network import NetworkWEM
 from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
@@ -73,69 +74,20 @@ class WemStoreFacilityScada(object):
         item["table_schema"] = FacilityScada
         item["update_fields"] = ["generated", "eoi_quantity"]
         item["records"] = list(
-            facility_scada_generate_records(csvreader, spider)
+            unit_scada_generate_facility_scada(
+                csvreader,
+                spider,
+                interval_field="Trading Interval",
+                facility_code_field="Facility Code",
+                power_field="EOI Quantity (MW)",
+                energy_field="Energy Generated (MWh)"
+            )
         )
         item["content"] = None
 
         return item
 
 
-def facility_intervals_generate_records(csvreader, spider=None):
-    created_at = datetime.now()
-    primary_keys = []
-
-    for row in csvreader:
-
-        interval_field = "PERIOD"
-
-        trading_interval = parse_date(
-            row[interval_field], network=NetworkWEM, dayfirst=False
-        )
-
-        facility_code_field = "FACILITY_CODE"
-
-        if facility_code_field not in row:
-            logger.error("Invalid row no facility_code")
-            continue
-
-        facility_code = normalize_duid(row[facility_code_field])
-
-        pkey = (trading_interval, facility_code)
-
-        if pkey in primary_keys:
-            continue
-
-        primary_keys.append(pkey)
-
-        generated = 0.0
-        generated_field = "ACTUAL_MW"
-
-        if generated_field in row:
-            generated = clean_float(row[generated_field])
-
-        energy = 0.0
-        energy_field = "POTENTIAL_MWH"
-
-        if energy_field in row:
-            # figure out what to do with this
-            # energy = clean_float(row[energy_field])
-            pass
-
-        created_by = ""
-
-        if spider and hasattr(spider, "name"):
-            created_by = spider.name
-
-        yield {
-            "created_by": created_by,
-            "created_at": created_at,
-            "updated_at": None,
-            "network_id": "WEM",
-            "trading_interval": trading_interval,
-            "facility_code": facility_code,
-            "generated": generated,
-            "eoi_quantity": energy,
-        }
 
 
 class WemStoreFacilityIntervals(object):
@@ -150,7 +102,13 @@ class WemStoreFacilityIntervals(object):
         item["table_schema"] = FacilityScada
         item["update_fields"] = ["generated", "eoi_quantity"]
         item["records"] = list(
-            facility_intervals_generate_records(csvreader, spider)
+            unit_scada_generate_facility_scada(
+                csvreader,
+                spider,
+                interval_field="PERIOD",
+                facility_code_field="FACILITY_CODE",
+                power_field="ACTUAL_MW",
+            )
         )
         item["content"] = None
 
