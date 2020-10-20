@@ -18,7 +18,7 @@ services:
     restart: on-failure
 
   database:
-    image: timescale/timescaledb-postgis:latest-pg12
+    image: opennem/database:12
     restart: unless-stopped
     env_file: ./.env
     environment:
