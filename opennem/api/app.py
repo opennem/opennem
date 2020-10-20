@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from opennem.api.admin.router import router as admin_router
+from opennem.api.export.router import router as export_router
 from opennem.api.facility.router import router as facility_router
 from opennem.api.geo.router import router as geo_router
 from opennem.api.locations import router as locations_router
@@ -36,6 +37,7 @@ app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(revisions_router, tags=["Revisions"], prefix="/revision")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(admin_router, tags=["Admin"], prefix="/admin")
+app.include_router(export_router, tags=["Export"], prefix="/export")
 
 
 origins = [
@@ -44,7 +46,7 @@ origins = [
     "https://admin.opennem.test",
     "http://localhost:8001",
     "http://127.0.0.1:8001",
-    "127.0.0.1:8002"
+    "http://127.0.0.1:8002",
 ]
 
 app.add_middleware(
