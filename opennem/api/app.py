@@ -44,6 +44,7 @@ origins = [
     "https://admin.opennem.test",
     "http://localhost:8001",
     "http://127.0.0.1:8001",
+    "127.0.0.1:8002"
 ]
 
 app.add_middleware(
