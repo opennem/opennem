@@ -12,7 +12,7 @@ from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.utils.time import human_to_timedelta
-from opennem.utils.timezone import make_aware
+from opennem.utils.timezone import is_aware, make_aware
 
 from .schema import (
     DataQueryResult,
@@ -49,8 +49,11 @@ def stats_factory(
     start = min(dates)
     end = max(dates)
 
-    if timezone:
+    # should probably make sure these are the same TZ
+    if timezone and not is_aware(start):
         start = make_aware(min(dates), timezone)
+
+    if timezone and not is_aware(end):
         end = make_aware(max(dates), timezone)
 
     # free
