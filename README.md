@@ -13,6 +13,11 @@ Currently supports:
 - Australian NEM: https://www.nemweb.com.au/
 - West Australia Energy Market: http://data.wa.aemo.com.au/
 
+## Requirements
+
+ * Python 3.7+ (see `.python-version` with `pyenv`)
+ * Docker and `docker-compose` if you want to run the local dev stack
+
 ## Quickstart
 
 With poetry:
