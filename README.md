@@ -13,6 +13,24 @@ Currently supports:
 - Australian NEM: https://www.nemweb.com.au/
 - West Australia Energy Market: http://data.wa.aemo.com.au/
 
+## Quickstart
+
+With poetry:
+
+```sh
+$ poetry install
+$ source .venv/bin/activate
+$ ./init.sh
+```
+
+With pip + venv:
+
+```sh
+$ pip -m venv .venv
+$ pip install -r requirements.txt
+$ source .venv/bin/activate
+$ ./init.sh
+```
 
 ## Install
 
