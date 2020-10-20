@@ -115,9 +115,7 @@ def unit_scada_generate_facility_scada(
         energy = None
 
         if energy_field and energy_field in row:
-            # figure out what to do with this
-            # energy = clean_float(row[energy_field])
-            pass
+            energy = clean_float(row[energy_field])
 
         created_by = ""
 
