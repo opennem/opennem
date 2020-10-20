@@ -32,5 +32,4 @@ services:
       - postgis_data:/var/lib/postgresql/data
 
 volumes:
-  grafana_data: {}
   postgis_data: {}
