@@ -5,6 +5,7 @@
     @TODO use sqlalchemy text() compiled queries
 """
 
+from datetime import datetime
 from typing import List
 
 from opennem.core.networks import network_from_network_region
@@ -294,7 +295,7 @@ def energy_network(
 
 
 def energy_network_fueltech(
-    network: Network,
+    network: NetworkSchema,
     interval: TimeInterval,
     period: TimePeriod,
     network_region: str = None,
@@ -358,7 +359,7 @@ def energy_network_fueltech(
 
 
 def energy_network_fueltech_year(
-    network: Network,
+    network: NetworkSchema,
     interval: TimeInterval,
     year: int,
     network_region: str = None,
@@ -367,43 +368,35 @@ def energy_network_fueltech_year(
         copy + paste ftw .. for now - @TODO
     """
 
-    timezone = network.timezone_database
+    timezone = network.get_timezone(postgres_format=True)
 
     if not timezone:
         timezone = "UTC"
 
-    __query = """with intervals as (
-            select generate_series(
-                '{year}-01-01'::timestamp AT TIME ZONE '{timezone}',
-                '{year}-12-31'::timestamp AT TIME ZONE '{timezone}',
-                '{interval}'::interval
-            )::timestamp as interval
-        )
+    year_max = "{}-12-31".format(year)
+
+    if year == datetime.now().year:
+        year_max = "now()"
+
+    __query = """
+        SET SESSION TIME ZONE '{timezone}';
 
         select
-            i.interval as trading_day,
-            fs.generated,
-            fs.code
-        from intervals i
-        left outer join
-            (
-                select
-                    date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
-                    ft.code,
-                    coalesce(sum(fs.eoi_quantity), 0) / {scale} as generated
-                from facility_scada fs
-                join facility f on fs.facility_code = f.code
-                join fueltech ft on f.fueltech_id = ft.code
-                where
-                    date_part('year', fs.trading_interval AT TIME ZONE '{timezone}')::int = {year}
-                    and fs.network_id = '{network_code}'
-                    and f.fueltech_id is not null
-                    {network_region_query}
-                group by 1, 2
-            ) as fs on fs.interval::date = i.interval::date
-        where i.interval::date <= (now() at time zone '{timezone}')::date
-        and date_part('year', i.interval::date) = {year}
-        order by 1 desc, 2 desc"""
+            time_bucket_gapfill('{trunc}', trading_interval) AS trading_day,
+            on_energy_sum(fs.generated, 15) as energy,
+            ft.code
+        from facility_scada fs
+        join facility f on fs.facility_code = f.code
+        join fueltech ft on f.fueltech_id = ft.code
+        where
+            fs.trading_interval >= '{year}-01-01'
+            and fs.trading_interval < {year_max}
+            and fs.network_id = '{network_code}'
+            and f.fueltech_id is not null
+            {network_region_query}
+        group by 1, 3
+        order by 1 desc;
+    """
 
     network_region_query = ""
 
@@ -412,12 +405,9 @@ def energy_network_fueltech_year(
 
     query = __query.format(
         network_code=network.code,
-        trunc=interval.trunc,
-        interval=interval.interval_sql,
-        interval_remainder=interval.get_sql_join(
-            timezone=network.timezone_database
-        ),
+        trunc=interval.interval_sql,
         year=year,
+        year_max=year_max,
         scale=network.intervals_per_hour,
         network_region_query=network_region_query,
         timezone=timezone,
