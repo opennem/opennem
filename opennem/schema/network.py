@@ -24,12 +24,20 @@ class NetworkSchema(BaseConfig):
         ..., description="Size of network interval in minutes"
     )
 
-    def get_timezone(self) -> Union[timezone_native, pytz_timezone]:
+    def get_timezone(
+        self, postgres_format=False
+    ) -> Union[timezone_native, pytz_timezone]:
+        tz = get_current_timezone()
+
         if self.offset:
-            return get_fixed_timezone(self.offset)
+            tz = get_fixed_timezone(self.offset)
         if self.timezone:
-            return pytz_timezone(self.timezone)
-        return get_current_timezone()
+            tz = pytz_timezone(self.timezone)
+
+        if postgres_format:
+            tz = str(tz).rstrip("0")
+
+        return tz
 
     @property
     def intervals_per_hour(self):
