@@ -1,11 +1,10 @@
 import csv
 import logging
 from datetime import datetime, timedelta
-from io import StringIO
 
 from sqlalchemy.dialects.postgresql import insert
 
-from opennem.core.normalizers import clean_float, normalize_duid
+from opennem.core.normalizers import normalize_duid
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.pipelines.nem.opennem import unit_scada_generate_facility_scada
@@ -14,52 +13,6 @@ from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
-
-
-def facility_scada_generate_records(csvreader, spider=None):
-    created_at = datetime.now()
-    primary_keys = []
-
-    for row in csvreader:
-        trading_interval = parse_date(
-            row["Trading Interval"], network=NetworkWEM, dayfirst=False
-        )
-        facility_code = normalize_duid(row["Facility Code"])
-
-        pkey = (trading_interval, facility_code)
-
-        if pkey in primary_keys:
-            continue
-
-        primary_keys.append(pkey)
-
-        generated = 0.0
-        generated_field = "EOI Quantity (MW)"
-
-        if generated_field in row:
-            generated = clean_float(row[generated_field])
-
-        energy = 0.0
-        energy_field = "Energy Generated (MWh)"
-
-        if energy_field in row:
-            energy = clean_float(row[energy_field])
-
-        created_by = ""
-
-        if spider and hasattr(spider, "name"):
-            created_by = spider.name
-
-        yield {
-            "created_by": created_by,
-            "created_at": created_at,
-            "updated_at": None,
-            "network_id": "WEM",
-            "trading_interval": trading_interval,
-            "facility_code": facility_code,
-            "generated": generated,
-            "eoi_quantity": energy,
-        }
 
 
 class WemStoreFacilityScada(object):
@@ -80,14 +33,12 @@ class WemStoreFacilityScada(object):
                 interval_field="Trading Interval",
                 facility_code_field="Facility Code",
                 power_field="EOI Quantity (MW)",
-                energy_field="Energy Generated (MWh)"
+                energy_field="Energy Generated (MWh)",
             )
         )
         item["content"] = None
 
         return item
-
-
 
 
 class WemStoreFacilityIntervals(object):

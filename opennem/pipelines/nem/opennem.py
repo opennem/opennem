@@ -15,6 +15,7 @@ from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
+from opennem.schema.network import NetworkSchema
 from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -78,6 +79,7 @@ def process_pre_ap_price(table, spider):
 def unit_scada_generate_facility_scada(
     records,
     spider=None,
+    network: NetworkSchema = NetworkNEM,
     interval_field: str = "SETTLEMENTDATE",
     facility_code_field: str = "DUID",
     power_field: Optional[str] = None,
@@ -89,7 +91,7 @@ def unit_scada_generate_facility_scada(
     for row in records:
 
         trading_interval = parse_date(
-            row[interval_field], network=NetworkNEM, dayfirst=False
+            row[interval_field], network=network, dayfirst=False
         )
 
         if facility_code_field not in row:
