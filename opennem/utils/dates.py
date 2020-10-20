@@ -95,9 +95,10 @@ def date_series(
     next_record = start
 
     for _ in range(length):
+        yield next_record
+
         if reverse:
             next_record -= interval
         else:
             next_record += interval
 
-        yield next_record
