@@ -46,6 +46,7 @@ class APVIDataCurrentSpider(APVIDataSpiderBase):
             yield scrapy.FormRequest(
                 APVI_DATA_URI,
                 formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
+                meta={"is_latest": True if date == TODAY else False},
             )
 
 
