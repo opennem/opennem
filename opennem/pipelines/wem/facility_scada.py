@@ -34,6 +34,7 @@ class WemStoreFacilityScada(object):
                 facility_code_field="Facility Code",
                 power_field="EOI Quantity (MW)",
                 energy_field="Energy Generated (MWh)",
+                network=NetworkWEM,
             )
         )
         item["content"] = None
@@ -59,6 +60,7 @@ class WemStoreFacilityIntervals(object):
                 interval_field="PERIOD",
                 facility_code_field="FACILITY_CODE",
                 power_field="ACTUAL_MW",
+                network=NetworkWEM,
             )
         )
         item["content"] = None
