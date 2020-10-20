@@ -182,7 +182,8 @@ class WemStoreLiveFacilities(object):
 
             if not participant:
                 participant = Participant(
-                    created_by="opennem.wem.live.facilities",
+                    created_by=spider.name,
+                    approved_by=spider.name,
                     approved_at=datetime.now(),
                     code=participant_code,
                     network_code=participant_code,
@@ -214,7 +215,8 @@ class WemStoreLiveFacilities(object):
 
             if not station:
                 station = Station(
-                    created_by="opennem.wem.live.facilities",
+                    created_by=spider.name,
+                    approved_by=spider.name,
                     approved_at=datetime.now(),
                     code=station_code,
                     network_code=station_code,
@@ -222,6 +224,7 @@ class WemStoreLiveFacilities(object):
                 )
 
                 location = Location(state="WA")
+                s.add(location)
 
                 station.location = location
 
