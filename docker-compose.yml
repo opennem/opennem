@@ -1,18 +1,20 @@
 version: "3.3"
 services:
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:7.2.1
     restart: on-failure
     environment:
       - TZ
     ports:
       - ${HOST:-127.0.0.1}:3000:3000
+    volumes:
+      - ${PWD}/infra/grafana/data/:/var/lib/grafana
 
   redis:
     image: redis:3.2
     hostname: redis
     ports:
-      - 6379:6379
+      - ${HOST:-127.0.0.1}:6379:6379
     env_file:
       - ./.env
     restart: on-failure
@@ -30,7 +32,5 @@ services:
       - postgis_data:/var/lib/postgresql/data
 
 volumes:
-  db_data: {}
-  pg_data: {}
+  grafana_data: {}
   postgis_data: {}
-  database_data: {}
