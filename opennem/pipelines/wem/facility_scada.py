@@ -26,16 +26,14 @@ class WemStoreFacilityScada(object):
 
         item["table_schema"] = FacilityScada
         item["update_fields"] = ["generated", "eoi_quantity"]
-        item["records"] = list(
-            unit_scada_generate_facility_scada(
-                csvreader,
-                spider,
-                interval_field="Trading Interval",
-                facility_code_field="Facility Code",
-                power_field="EOI Quantity (MW)",
-                energy_field="Energy Generated (MWh)",
-                network=NetworkWEM,
-            )
+        item["records"] = unit_scada_generate_facility_scada(
+            csvreader,
+            spider,
+            interval_field="Trading Interval",
+            facility_code_field="Facility Code",
+            power_field="EOI Quantity (MW)",
+            energy_field="Energy Generated (MWh)",
+            network=NetworkWEM,
         )
         item["content"] = None
 

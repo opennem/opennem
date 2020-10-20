@@ -145,10 +145,8 @@ def process_unit_scada(table, spider):
 
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
-    item["records"] = list(
-        unit_scada_generate_facility_scada(
-            records, spider, power_field="SCADAVALUE"
-        )
+    item["records"] = unit_scada_generate_facility_scada(
+        records, spider, power_field="SCADAVALUE"
     )
     item["content"] = None
 
@@ -164,14 +162,12 @@ def process_unit_solution(table, spider):
 
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
-    item["records"] = list(
-        unit_scada_generate_facility_scada(
-            records,
-            spider,
-            interval_field="SETTLEMENTDATE",
-            facility_code_field="DUID",
-            power_field="INITIALMW",
-        )
+    item["records"] = unit_scada_generate_facility_scada(
+        records,
+        spider,
+        interval_field="SETTLEMENTDATE",
+        facility_code_field="DUID",
+        power_field="INITIALMW",
     )
     item["content"] = None
 
@@ -187,14 +183,12 @@ def process_meter_data_gen_duid(table, spider):
 
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["eoi_generated"]
-    item["records"] = list(
-        unit_scada_generate_facility_scada(
-            records,
-            spider,
-            interval_field="INTERVAL_DATETIME",
-            facility_code_field="DUID",
-            energy_field="MWH_READING",
-        )
+    item["records"] = unit_scada_generate_facility_scada(
+        records,
+        spider,
+        interval_field="INTERVAL_DATETIME",
+        facility_code_field="DUID",
+        energy_field="MWH_READING",
     )
     item["content"] = None
 
