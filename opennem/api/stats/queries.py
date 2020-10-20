@@ -383,7 +383,7 @@ def energy_network_fueltech_year(
 
         select
             time_bucket_gapfill('{trunc}', trading_interval) AS trading_day,
-            on_energy_sum(fs.generated, 15) as energy,
+            on_energy_sum(fs.generated) as energy,
             ft.code
         from facility_scada fs
         join facility f on fs.facility_code = f.code
