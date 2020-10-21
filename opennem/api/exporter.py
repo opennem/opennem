@@ -2,6 +2,7 @@ import logging
 import os
 from datetime import datetime
 
+from fastapi import HTTPException
 from smart_open import open
 
 from opennem.api.stats.router import (
@@ -90,8 +91,8 @@ def wem_export_years():
                 period="1Y",
                 engine=engine,
             )
-        except Exception as e:
-            logger.error(
+        except HTTPException as e:
+            logger.info(
                 "Could not get energy network fueltech for {} {} : {}".format(
                     "WEM", year, e
                 )
