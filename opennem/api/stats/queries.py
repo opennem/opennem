@@ -133,46 +133,35 @@ def power_network(
 
 
 def power_network_fueltech(
-    network: Network,
+    network: NetworkSchema,
     interval: TimeInterval,
     period: TimePeriod,
     network_region: str = None,
 ) -> str:
 
-    timezone = network.timezone_database
+    timezone = network.get_timezone(postgres_format=True)
 
     if not timezone:
         timezone = "UTC"
 
-    __query = """with intervals as (
-            select generate_series(
-                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
-                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
-                '{interval}'::interval
-            )::timestamp as interval
-        )
+    __query = """
+        SET SESSION TIME ZONE '{timezone}';
 
         select
-            i.interval as trading_day,
-            fs.generated,
-            fs.code
-        from intervals i
-        left outer join
-            (select
-                date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
-                ft.code,
-                coalesce(sum(generated), 0) as generated
-                from facility_scada fs
-                join facility f on fs.facility_code = f.code
-                join fueltech ft on f.fueltech_id = ft.code
-                where
-                    fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
-                    and fs.network_id = '{network_code}'
-                    and f.fueltech_id is not null
-                    {network_region_query}
-                group by 1, 2
-            ) as fs on fs.interval = i.interval
-        order by 1 desc, 2 desc"""
+            time_bucket_gapfill('{trunc}', trading_interval) AS trading_day,
+            interpolate(sum(fs.generated)) as power,
+            ft.code
+        from facility_scada fs
+        join facility f on fs.facility_code = f.code
+        join fueltech ft on f.fueltech_id = ft.code
+        where
+            fs.trading_interval <= now()
+            and fs.trading_interval >= now() - '{period}'::interval
+            and fs.network_id = '{network_code}'
+            {network_region_query}
+        group by 1, 3
+        order by 1 desc;
+    """
 
     network_region_query = ""
 
@@ -181,11 +170,7 @@ def power_network_fueltech(
 
     query = __query.format(
         network_code=network.code,
-        trunc=interval.trunc,
-        interval=interval.interval_human,
-        interval_remainder=interval.get_sql_join(
-            timezone=network.timezone_database
-        ),
+        trunc=interval.interval_sql,
         period=period.period_sql,
         network_region_query=network_region_query,
         timezone=timezone,
@@ -365,7 +350,8 @@ def energy_network_fueltech_year(
     network_region: str = None,
 ) -> str:
     """
-        copy + paste ftw .. for now - @TODO
+        Get Energy for a network or network + region
+        based on a year
     """
 
     timezone = network.get_timezone(postgres_format=True)
