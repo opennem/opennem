@@ -47,5 +47,4 @@ def observation_query(
         timezone=timezone,
     )
 
-    print(query)
     return query
