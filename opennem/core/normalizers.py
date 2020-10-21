@@ -128,7 +128,7 @@ ACRONYMS = [
 ]
 
 
-__is_number = re.compile(r"^\d+$")
+__is_number = re.compile(r"^[\d\.]+$")
 __is_single_number = re.compile(r"^\d$")
 
 # @TODO put all these helpers in utils/
