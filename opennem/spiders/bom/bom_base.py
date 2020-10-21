@@ -28,6 +28,8 @@ class BomJSONObservationSpider(scrapy.Spider):
 
         code = None
 
+        header = json_response["observations"]["header"][0]
+
         if "code" in response.meta:
             code = response.meta["code"]
 
@@ -43,4 +45,4 @@ class BomJSONObservationSpider(scrapy.Spider):
             i["code"] = code
             records.append(i)
 
-        yield {"records": records}
+        yield {"records": records, "header": header}

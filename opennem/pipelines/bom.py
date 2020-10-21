@@ -1,5 +1,6 @@
 import logging
 
+import pytz
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.db import SessionLocal, get_database_engine
@@ -8,6 +9,16 @@ from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
+
+STATE_TO_TIMEZONE = {
+    "QLD": "Australia/Brisbane",
+    "NSW": "Australia/Sydney",
+    "VIC": "Australia/Melbourne",
+    "TAS": "Australia/Hobart",
+    "SA": "Australia/Adelaide",
+    "NT": "Australia/Darwin",
+    "WA": "Australia/Perth",
+}
 
 
 class StoreBomObservation(object):
@@ -24,14 +35,33 @@ class StoreBomObservation(object):
         records_to_store = []
 
         if "records" not in item:
-
             return 0
+
         records = item["records"]
+
+        if "header" not in item:
+            logger.error("No header in bom observation")
+            return 0
+
+        header = item["header"]
+
+        if "state_time_zone" not in header:
+            print(header)
+            logger.error("No state timezone in header")
+            return 0
+
+        timezone_state: str = header["state_time_zone"].strip().upper()
+
+        if timezone_state not in STATE_TO_TIMEZONE.keys():
+            logger.error("No timezone for state: %s", timezone_state)
+
+        timezone = pytz.timezone(STATE_TO_TIMEZONE[timezone_state])
 
         for obs in records:
             observation_time = parse_date(
                 obs["aifstime_utc"], dayfirst=False, is_utc=True
-            )
+            ).astimezone(timezone)
+
             code = obs["code"]
 
             if not observation_time or not code:
