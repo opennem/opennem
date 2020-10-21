@@ -9,12 +9,19 @@ from opennem.utils.pipelines import check_spider_pipeline
 logger = logging.getLogger(__name__)
 
 
-def generate_csv_from_records(table: Table, records):
+def generate_csv_from_records(table: Table, records, column_names=None):
     csv_buffer = StringIO()
 
-    column_names = [c.name for c in table.__table__.columns.values()]
+    if not column_names:
+        column_names = [c.name for c in table.__table__.columns.values()]
 
     csvwriter = csv.DictWriter(csv_buffer, fieldnames=column_names)
+
+    for field_name in records[0].keys():
+        if field_name not in column_names:
+            raise Exception("Column name not found: {}".format(field_name))
+
+    # @TODO put the columns in the correct order ..
 
     for record in records:
         csvwriter.writerow(record)
