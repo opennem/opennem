@@ -148,19 +148,30 @@ def power_network_fueltech(
         SET SESSION TIME ZONE '{timezone}';
 
         select
-            time_bucket_gapfill('{trunc}', trading_interval) AS trading_day,
-            interpolate(sum(fs.generated)) as power,
-            ft.code
-        from facility_scada fs
-        join facility f on fs.facility_code = f.code
-        join fueltech ft on f.fueltech_id = ft.code
-        where
-            fs.trading_interval <= now()
-            and fs.trading_interval >= now() - '{period}'::interval
-            and fs.network_id = '{network_code}'
-            {network_region_query}
+            t.trading_interval,
+            sum(t.facility_power),
+            t.fueltech_code
+        from (
+            select
+                time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
+                interpolate(
+                    max(fs.generated)
+                ) as facility_power,
+                fs.facility_code,
+                ft.code as fueltech_code
+            from facility_scada fs
+            join facility f on fs.facility_code = f.code
+            join fueltech ft on f.fueltech_id = ft.code
+            where
+                fs.trading_interval <= now()
+                and fs.trading_interval >= now() - '{period}'::interval
+                and fs.network_id = '{network_code}'
+                and f.fueltech_id is not null
+                {network_region_query}
+            group by 1, 3, 4
+        ) as t
         group by 1, 3
-        order by 1 desc;
+        order by 1 desc
     """
 
     network_region_query = ""
