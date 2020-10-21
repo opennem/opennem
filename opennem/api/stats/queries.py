@@ -387,7 +387,7 @@ def energy_network_fueltech_year(
         join fueltech ft on f.fueltech_id = ft.code
         where
             fs.trading_interval >= '{year}-01-01'
-            and fs.trading_interval < {year_max}
+            and fs.trading_interval < '{year_max}'
             and fs.network_id = '{network_code}'
             and f.fueltech_id is not null
             {network_region_query}
