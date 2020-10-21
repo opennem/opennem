@@ -126,7 +126,7 @@ def unit_scada_generate_facility_scada(
             "created_by": created_by,
             "created_at": created_at,
             "updated_at": None,
-            "network_id": "WEM",
+            "network_id": network.id,
             "trading_interval": trading_interval,
             "facility_code": facility_code,
             "generated": generated,
@@ -144,7 +144,7 @@ def process_unit_scada(table, spider):
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
     item["records"] = unit_scada_generate_facility_scada(
-        records, spider, power_field="SCADAVALUE"
+        records, spider, power_field="SCADAVALUE", network=NetworkNEM
     )
     item["content"] = None
 
@@ -163,6 +163,7 @@ def process_unit_solution(table, spider):
     item["records"] = unit_scada_generate_facility_scada(
         records,
         spider,
+        network=NetworkNEM,
         interval_field="SETTLEMENTDATE",
         facility_code_field="DUID",
         power_field="INITIALMW",
@@ -184,6 +185,7 @@ def process_meter_data_gen_duid(table, spider):
     item["records"] = unit_scada_generate_facility_scada(
         records,
         spider,
+        network=NetworkNEM,
         interval_field="INTERVAL_DATETIME",
         facility_code_field="DUID",
         energy_field="MWH_READING",
