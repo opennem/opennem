@@ -183,7 +183,9 @@ class BomStation(Base):
 class BomObservation(Base):
     __tablename__ = "bom_observation"
 
-    observation_time = Column(TIMESTAMP(timezone=True), primary_key=True)
+    observation_time = Column(
+        TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False
+    )
 
     station_id = Column(
         Text,
