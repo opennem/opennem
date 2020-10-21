@@ -379,18 +379,26 @@ def energy_network_fueltech_year(
         SET SESSION TIME ZONE '{timezone}';
 
         select
-            time_bucket_gapfill('{trunc}', trading_interval) AS trading_day,
-            on_energy_sum(fs.generated, '{trunc}') as energy,
-            ft.code
-        from facility_scada fs
-        join facility f on fs.facility_code = f.code
-        join fueltech ft on f.fueltech_id = ft.code
-        where
-            fs.trading_interval >= '{year}-01-01'
-            and fs.trading_interval <= '{year_max}'
-            and fs.network_id = '{network_code}'
-            and f.fueltech_id is not null
-            {network_region_query}
+            t.trading_interval,
+            sum(t.facility_energy),
+            t.fueltech_code
+        from (
+            select
+                time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
+                on_energy_sum(fs.generated, '{trunc}') as facility_energy,
+                f.code,
+                ft.code as fueltech_code
+            from facility_scada fs
+            join facility f on fs.facility_code = f.code
+            join fueltech ft on f.fueltech_id = ft.code
+            where
+                fs.trading_interval >= '{year}-01-01'
+                and fs.trading_interval <= '{year_max}'
+                and fs.network_id = '{network_code}'
+                and f.fueltech_id is not null
+                {network_region_query}
+            group by 1, 3, 4
+        ) as t
         group by 1, 3
         order by 1 desc;
     """
