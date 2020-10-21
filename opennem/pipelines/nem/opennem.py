@@ -126,7 +126,7 @@ def unit_scada_generate_facility_scada(
             "created_by": created_by,
             "created_at": created_at,
             "updated_at": None,
-            "network_id": network.id,
+            "network_id": network.code,
             "trading_interval": trading_interval,
             "facility_code": facility_code,
             "generated": generated,
