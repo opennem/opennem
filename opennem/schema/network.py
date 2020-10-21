@@ -35,7 +35,7 @@ class NetworkSchema(BaseConfig):
             tz = pytz_timezone(self.timezone)
 
         if postgres_format:
-            tz = str(tz).rstrip("0")
+            tz = str(tz)[:3]
 
         return tz
 
