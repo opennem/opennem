@@ -76,7 +76,7 @@ def station_observations_api(
     interval: str = Query("15m", description="Interval"),
     period: str = Query("7d", description="Period"),
     station_codes: List[str] = [],
-    network_code: str = None,
+    network_code: str = "NEM",
     timezone: str = None,
     offset: str = None,
     engine=Depends(get_database_engine),
@@ -107,7 +107,10 @@ def station_observations_api(
         timezone = get_fixed_timezone(offset)
 
     query = observation_query(
-        station_codes=station_codes, interval=interval, period=period,
+        station_codes=station_codes,
+        interval=interval,
+        period=period,
+        network=network,
     )
 
     with engine.connect() as c:
@@ -115,7 +118,7 @@ def station_observations_api(
 
     stats = [
         DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+            interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None
         )
         for i in results
     ]
@@ -129,7 +132,6 @@ def station_observations_api(
     result = stats_factory(
         stats=stats,
         units=units,
-        timezone=timezone,
         interval=interval,
         period=period,
         network=network,
