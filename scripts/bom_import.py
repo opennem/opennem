@@ -16,6 +16,8 @@ from opennem.core.normalizers import is_number
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BomObservation, BomStation
 from opennem.pipelines.bom import STATE_TO_TIMEZONE
+from opennem.pipelines.bulk_insert import build_insert_query
+from opennem.pipelines.csv import generate_csv_from_records
 from opennem.utils.dates import parse_date
 
 logging.basicConfig(level=logging.DEBUG)
@@ -70,14 +72,14 @@ def parse_record(rec: Dict) -> Dict:
         "wind_spd": float(rec["wind_spd"])
         if is_number(rec["wind_spd"])
         else None,
-        "wind_gust": float(rec["wind_gust"])
-        if is_number(rec["wind_gust"])
-        else None,
+        "cloud": rec["cloud"],
+        "cloud_type": rec["cloud_type"],
         "humidity": float(rec["humidity"])
         if is_number(rec["humidity"])
         else None,
-        "cloud": rec["cloud"],
-        "cloud_type": rec["cloud_type"],
+        "wind_gust": float(rec["wind_gust"])
+        if is_number(rec["wind_gust"])
+        else None,
     }
 
 
@@ -95,40 +97,37 @@ def main():
         count_rec = 0
 
         for row in csvreader:
-            records_to_store.append(parse_record(row))
+            parsed_row = parse_record(row)
+            records_to_store.append(parsed_row)
 
             count_rec += 1
             if LIMIT_REC > 0 and count_rec > LIMIT_REC:
                 break
 
-    session = SessionLocal()
-    engine = get_database_engine()
+    update_fields = [
+        "temp_apparent",
+        "temp_air",
+        "press_qnh",
+        "wind_dir",
+        "wind_spd",
+        "wind_gust",
+        "cloud",
+        "cloud_type",
+        "humidity",
+    ]
 
-    stmt = insert(BomObservation).values(records_to_store)
-    stmt.bind = engine
-    stmt = stmt.on_conflict_do_update(
-        index_elements=["observation_time", "station_id"],
-        set_={
-            "temp_apparent": stmt.excluded.temp_apparent,
-            "temp_air": stmt.excluded.temp_air,
-            "press_qnh": stmt.excluded.press_qnh,
-            "wind_dir": stmt.excluded.wind_dir,
-            "wind_spd": stmt.excluded.wind_spd,
-            "wind_gust": stmt.excluded.wind_gust,
-            "cloud": stmt.excluded.cloud,
-            "cloud_type": stmt.excluded.cloud_type,
-            "humidity": stmt.excluded.humidity,
-        },
+    sql_query = build_insert_query(BomObservation, update_fields)
+
+    conn = get_database_engine().raw_connection()
+    cursor = conn.cursor()
+    csv_content = generate_csv_from_records(
+        BomObservation,
+        records_to_store,
+        column_names=records_to_store[0].keys(),
     )
 
-    try:
-        session.execute(stmt)
-        session.commit()
-    except Exception as e:
-        logger.error("Error: {}".format(e))
-        return 0
-    finally:
-        session.close()
+    cursor.copy_expert(sql_query, csv_content)
+    conn.commit()
 
     logger.info("Inserted {} records".format(len(records_to_store)))
 
