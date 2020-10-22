@@ -17,9 +17,9 @@ def generate_csv_from_records(table: Table, records, column_names=None):
 
     csvwriter = csv.DictWriter(csv_buffer, fieldnames=column_names)
 
-    for field_name in records[0].keys():
-        if field_name not in column_names:
-            raise Exception("Column name not found: {}".format(field_name))
+    # for field_name in records[0].keys():
+    #     if field_name not in column_names:
+    #         raise Exception("Column name not found: {}".format(field_name))
 
     # @TODO put the columns in the correct order ..
 
