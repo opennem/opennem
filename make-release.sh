@@ -26,6 +26,7 @@ poetry build
 
 twine upload --skip-existing dist/*
 
-scrapyd-deploy
+scrapyd-deploy dev
+scrapyd-deploy prod
 
 rm -rf build/
