@@ -69,6 +69,7 @@ mypy = "^0.782"
 mdutils = "^1.2.2"
 sqlalchemy-stubs = "^0.3"
 pycodestyle = "^2.6.0"
+py-spy = "^0.3.3"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
