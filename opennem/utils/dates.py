@@ -5,9 +5,43 @@ from typing import List, Optional, Union
 from dateutil.parser import ParserError, parse
 
 from opennem.core.networks import NetworkSchema
+from opennem.core.normalizers import normalize_whitespace
 from opennem.utils.timezone import UTC, is_aware, make_aware
 
 logger = logging.getLogger(__name__)
+
+# Date formats
+# See: https://docs.python.org/3.8/library/datetime.html#strftime-and-strptime-behavior
+DATE_FORMATS = [
+    "%Y/%m/%d,%H:%M:%S",
+    "%Y%m%d",
+    #
+    "%d/%m/%y %H:%M",
+    "%Y/%m/%d %H:%M:%S",
+    "%d/%m/%Y %I:%M:%S %p",  # excel format
+    "%Y%m%d%H%M%S",  # bom format
+]
+
+
+def optimized_data_parser(date_str: str) -> datetime:
+    """
+        Turns out that dateutil's date parser is slow since
+        it does a lot of string parsing. Here we try matching
+        the date using known string formats.
+    """
+    dt_return = None
+
+    date_str = normalize_whitespace(date_str).strip()
+
+    for date_format_str in DATE_FORMATS:
+        try:
+            dt_return = datetime.strptime(date_str, date_format_str)
+        except (KeyError, OverflowError, ValueError, AttributeError):
+            continue
+        if dt_return:
+            return dt_return
+
+    return dt_return
 
 
 def parse_date(
@@ -17,6 +51,7 @@ def parse_date(
     yearfirst: bool = False,
     is_utc: bool = False,
     timezone: timezone = False,
+    use_optimized: bool = True,
 ) -> Optional[datetime]:
     dt_return = None
 
@@ -24,10 +59,16 @@ def parse_date(
         dt_return = date_str
 
     elif isinstance(date_str, str):
-        try:
-            dt_return = parse(date_str, dayfirst=dayfirst, yearfirst=yearfirst)
-        except ParserError:
-            raise ValueError("Invalid date string passed")
+        if use_optimized:
+            dt_return = optimized_data_parser(date_str)
+
+        if not dt_return:
+            try:
+                dt_return = parse(
+                    date_str, dayfirst=dayfirst, yearfirst=yearfirst
+                )
+            except ParserError:
+                raise ValueError("Invalid date string passed")
 
     else:
         raise ValueError("Require a datetime or string object to parse date")

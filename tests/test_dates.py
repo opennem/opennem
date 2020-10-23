@@ -85,11 +85,11 @@ class TestUtilDates(object):
 
     def test_date_series(self):
         # defaults to now going back 30 days
-        series = date_series()
+        series = list(date_series(reverse=True))
 
         date_today = datetime.now().date()
-        date_30_days_ago = date_today - timedelta(days=29)
+        date_29_days_ago = date_today - timedelta(days=29)
 
         assert len(series) == 30, "There are 30 dates"
         assert series[0] == date_today, "First entry is today"
-        assert series[29] == date_30_days_ago, "Last entry is 29 days ago"
+        assert series[29] == date_29_days_ago, "Last entry is 29 days ago"
