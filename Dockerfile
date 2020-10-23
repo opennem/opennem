@@ -23,6 +23,7 @@ FROM app
 
 COPY opennem /code/opennem/
 COPY docker-entrypoint.sh /entrypoint.sh
+COPY scrapy.cfg /code/
 
 EXPOSE 8000
 WORKDIR /code
