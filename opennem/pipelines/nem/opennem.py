@@ -7,7 +7,7 @@ NEMWEB Data ingress into OpenNEM format
 
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import Dict, List, Optional
 
 from sqlalchemy.dialects.postgresql import insert
 
@@ -84,9 +84,10 @@ def unit_scada_generate_facility_scada(
     facility_code_field: str = "DUID",
     power_field: Optional[str] = None,
     energy_field: Optional[str] = None,
-):
+) -> List[Dict]:
     created_at = datetime.now()
     primary_keys = []
+    return_records = []
 
     for row in records:
 
@@ -122,7 +123,7 @@ def unit_scada_generate_facility_scada(
         if spider and hasattr(spider, "name"):
             created_by = spider.name
 
-        yield {
+        __rec = {
             "created_by": created_by,
             "created_at": created_at,
             "updated_at": None,
@@ -132,6 +133,10 @@ def unit_scada_generate_facility_scada(
             "generated": generated,
             "eoi_quantity": energy,
         }
+
+        return_records.append(__rec)
+
+    return return_records
 
 
 def process_unit_scada(table, spider):
