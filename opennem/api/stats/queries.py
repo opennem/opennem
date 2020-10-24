@@ -28,52 +28,42 @@ def power_facility(
     period: TimePeriod,
 ) -> str:
 
-    scale = 1
+    timezone = "UTC"
 
     network = network_from_network_region(network_code)
-    timezone = network.timezone_database
-
-    if not timezone:
-        timezone = "UTC"
+    timezone = network.get_timezone(postgres_format=True)
 
     __query = """
-        with intervals as (
-            select generate_series(
-                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
-                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
-                '{interval}'::interval
-            )::timestamp as interval
-        )
+        SET SESSION TIME ZONE '{timezone}';
 
         select
-            i.interval as trading_day,
-            fs.generated,
-            fs.facility_code as facility_code
-        from intervals i
-        left outer join
-            (select
-                date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
-                fs.facility_code,
-                coalesce(avg(generated), 0) as generated
-                from facility_scada fs
-                where
-                    fs.facility_code in ({facility_codes_parsed})
-                    and fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
-                    and fs.network_id = '{network_code}'
-                group by 1, 2
-            ) as fs on fs.interval = i.interval
-        order by 1 desc, 2 desc"""
+            t.trading_interval,
+            coalesce(avg(t.facility_power), 0),
+            t.facility_code
+        from (
+            select
+                time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
+                interpolate(
+                    max(fs.generated)
+                ) as facility_power,
+                fs.facility_code
+            from facility_scada fs
+            join facility f on fs.facility_code = f.code
+            where
+                fs.trading_interval <= now()
+                and fs.trading_interval >= now() - '{period}'::interval
+                and fs.facility_code in ({facility_codes_parsed})
+            group by 1, 3
+        ) as t
+        group by 1, 3
+        order by 1 desc
+    """
 
     query = __query.format(
         facility_codes_parsed=duid_in_case(facility_codes),
         network_code=network_code,
-        trunc=interval.trunc,
-        interval=interval.interval_human,
-        interval_remainder=interval.get_sql_join(
-            timezone=network.timezone_database
-        ),
+        trunc=interval.interval_sql,
         period=period.period_sql,
-        scale=scale,
         timezone=timezone,
     )
 
