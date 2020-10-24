@@ -7,7 +7,7 @@ from opennem.core.time import (
     get_interval,
     get_period,
 )
-from opennem.schema.time import TimeInterval
+from opennem.schema.time import TimeInterval, TimePeriod
 
 
 def human_to_interval(interval_human: str) -> TimeInterval:
@@ -27,7 +27,9 @@ def human_to_interval(interval_human: str) -> TimeInterval:
     return get_interval(interval_human)
 
 
-def human_to_period(period_human: str) -> TimeInterval:
+def human_to_period(period_human: str) -> TimePeriod:
+    period_human = period_human.strip().lower()
+
     if period_human not in PERIODS_SUPPORTED:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
