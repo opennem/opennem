@@ -122,10 +122,10 @@ def api_export_energy_month(
 
     stats = energy_network_fueltech_api(
         network_code=network.code,
-        network_region="WEM",
-        interval="1M",
-        period="10Y",
+        period="all",
         engine=engine,
+        interval="1M",
+        network_region=None,
     )
 
     return stats

@@ -5,6 +5,7 @@ from datetime import datetime
 from fastapi import HTTPException
 from smart_open import open
 
+from opennem.api.export.router import api_export_energy_month
 from opennem.api.stats.router import (
     energy_network_fueltech_api,
     power_network_fueltech_api,
@@ -115,12 +116,8 @@ def wem_export_all():
 
     engine = get_database_engine()
 
-    stat_set = energy_network_fueltech_api(
-        network_code="WEM",
-        network_region="WEM",
-        interval="1M",
-        period="10Y",
-        engine=engine,
+    stat_set = api_export_energy_month(
+        network_code="WEM", month="all", engine=engine,
     )
 
     # market_value = wem_market_value_all()

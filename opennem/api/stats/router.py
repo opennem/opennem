@@ -10,6 +10,7 @@ from opennem.core.normalizers import normalize_duid
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, Station
+from opennem.schema.time import TimePeriod
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import stats_factory
@@ -17,6 +18,7 @@ from .queries import (
     energy_facility,
     energy_network,
     energy_network_fueltech,
+    energy_network_fueltech_all,
     energy_network_fueltech_year,
     power_facility,
     power_network_fueltech,
@@ -408,7 +410,7 @@ def energy_network_api(
     response_model_exclude_unset=True,
 )
 def energy_network_fueltech_api(
-    network_code: str = Query(..., description="Network code"),
+    network_code: str = Query(None, description="Network code"),
     network_region: str = Query(None, description="Network region"),
     interval: str = Query("1d", description="Interval"),
     year: int = Query(None, description="Year to query"),
@@ -416,16 +418,12 @@ def energy_network_fueltech_api(
     engine=Depends(get_database_engine),
 ) -> OpennemDataSet:
     network = network_from_network_code(network_code)
-
-    if not network:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No such network",
-        )
-
     interval = human_to_interval(interval)
 
+    period_obj = None
+
     if period:
-        period = human_to_period(period)
+        period_obj: TimePeriod = human_to_period(period)
 
     units = get_unit("energy")
 
@@ -446,6 +444,10 @@ def energy_network_fueltech_api(
             year=year,
             network_region=network_region,
         )
+    elif period_obj and period_obj.period_human == "all":
+        query = energy_network_fueltech_all(
+            network=network, network_region=network_region,
+        )
     else:
         query = energy_network_fueltech(
             network=network,
@@ -453,6 +455,8 @@ def energy_network_fueltech_api(
             period=period,
             network_region=network_region,
         )
+
+    # print(query)
 
     with engine.connect() as c:
         results = list(c.execute(query))
