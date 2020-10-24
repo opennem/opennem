@@ -2,6 +2,4 @@
 
 set -e
 
-. .venv/bin/activate
-
 exec "$@"
