@@ -89,15 +89,20 @@ def unit_scada_generate_facility_scada(
     primary_keys = []
     return_records = []
 
+    created_by = ""
+
+    if spider and hasattr(spider, "name"):
+        created_by = spider.name
+
     for row in records:
 
         trading_interval = parse_date(
             row[interval_field], network=network, dayfirst=False
         )
 
-        if facility_code_field not in row:
-            logger.error("Invalid row no facility_code")
-            continue
+        # if facility_code_field not in row:
+        # logger.error("Invalid row no facility_code")
+        # continue
 
         facility_code = normalize_duid(row[facility_code_field])
 
@@ -117,11 +122,6 @@ def unit_scada_generate_facility_scada(
 
         if energy_field and energy_field in row:
             energy = clean_float(row[energy_field])
-
-        created_by = ""
-
-        if spider and hasattr(spider, "name"):
-            created_by = spider.name
 
         __rec = {
             "created_by": created_by,
