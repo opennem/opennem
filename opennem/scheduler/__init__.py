@@ -8,15 +8,15 @@ huey = RedisHuey("opennem.exporter", host=settings.cache_url.host)
 
 
 @huey.periodic_task(crontab(minute="*/5"))
-def wem_export_task():
+def schedule_wem_export_task():
     wem_run_all()
 
 
 @huey.periodic_task(crontab(hour="*/12"))
-def wem_export_all():
+def schedule_wem_export_all():
     wem_export_all()
 
 
 @huey.periodic_task(crontab(minute="*/5"))
-def export_geojson():
+def schedule_export_geojson():
     export_facility_geojson()
