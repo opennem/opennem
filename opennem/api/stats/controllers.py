@@ -126,10 +126,15 @@ def stats_factory(
 
         stats_grouped.append(data)
 
+    dt_now = datetime.now()
+
+    if network:
+        dt_now = dt_now.astimezone(network.get_timezone())
+
     stat_set = OpennemDataSet(
         data_type=units.unit_type,
         data=stats_grouped,
-        created_at=datetime.now(),
+        created_at=dt_now,
         code=code,
     )
 
