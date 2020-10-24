@@ -28,13 +28,13 @@ def human_to_interval(interval_human: str) -> TimeInterval:
 
 
 def human_to_period(period_human: str) -> TimePeriod:
-    period_human = period_human.strip().lower()
+    period_human = period_human.strip()
 
     if period_human not in PERIODS_SUPPORTED:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Period not supported. Select one of: {}".format(
-                ", ".join(PERIODS_SUPPORTED)
+            detail="Period not supported. Select one of: {} not {}".format(
+                ", ".join(PERIODS_SUPPORTED), period_human
             ),
         )
 
