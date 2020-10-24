@@ -86,7 +86,7 @@ def api_export_energy_year(
 
     stats = energy_network_fueltech_api(
         network_code=network.code,
-        network_region="WEM",
+        network_region=None,
         interval="1d",
         year=year,
         period="1Y",
