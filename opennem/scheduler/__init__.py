@@ -13,7 +13,7 @@ def wem_export_task():
 
 
 @huey.periodic_task(crontab(hour="*/12"))
-def wem_export_task():
+def wem_export_all():
     wem_export_all()
 
 
