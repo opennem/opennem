@@ -113,6 +113,10 @@ def wem_export_years():
 
 
 def wem_export_all():
+    """
+
+        @TODO this is slow atm because of on_energy_sum
+    """
 
     engine = get_database_engine()
 
@@ -135,8 +139,7 @@ def wem_export_all():
 def wem_run_all():
     wem_export_power()
     wem_export_years()
-    wem_export_all()
 
 
 if __name__ == "__main__":
-    wem_run_all()
+    wem_export_all()
