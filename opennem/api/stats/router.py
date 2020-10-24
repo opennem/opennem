@@ -452,7 +452,7 @@ def energy_network_fueltech_api(
         query = energy_network_fueltech(
             network=network,
             interval=interval,
-            period=period,
+            period=period_obj,
             network_region=network_region,
         )
 
@@ -479,7 +479,7 @@ def energy_network_fueltech_api(
         code=network.code,
         network=network,
         interval=interval,
-        period=period,
+        period=period_obj,
         units=units,
         region=network_region,
         fueltech_group=True,
