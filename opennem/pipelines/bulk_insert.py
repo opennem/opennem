@@ -2,7 +2,7 @@ import logging
 from io import StringIO
 from typing import List, Union
 
-from sqlalchemy import engine, event
+# from sqlalchemy.exc import StatementError
 from sqlalchemy.sql.schema import Column, Table
 
 from opennem.db import get_database_engine
@@ -26,17 +26,6 @@ BULK_INSERT_QUERY = """
 BULK_INSERT_CONFLICT_UPDATE = """
     ({pk_columns}) DO UPDATE set {update_values}
 """
-
-
-@event.listens_for(engine.Engine, "handle_error")
-def erase_parameters(exception_context):
-    for exc in [
-        exception_context.chained_exception,
-        exception_context.original_exception,
-        exception_context.sqlalchemy_exception,
-    ]:
-        if exc is not None:
-            exc.params = {"no_parameters": "parameters hidden"}
 
 
 def build_insert_query(
@@ -82,39 +71,41 @@ def build_insert_query(
 
 class BulkInsertPipeline(object):
     @check_spider_pipeline
-    def process_item(self, item, spider):
-        if "csv" not in item:
-            logger.error("No csv record passed to bulk inserter")
-            return item
-
-        csv_content: StringIO = item["csv"]
-
-        if "table_schema" not in item:
-            logger.error("No table model passed to bulk inserter")
-            return item
-
-        table: Table = item["table_schema"]
-
-        update_fields = None
-
-        if "update_fields" in item:
-            update_fields: List[str] = item["update_fields"]
-
-        sql_query = build_insert_query(table, update_fields)
-
-        try:
-            conn = get_database_engine().raw_connection()
-            cursor = conn.cursor()
-            cursor.copy_expert(sql_query, csv_content)
-            conn.commit()
-        except Exception as commit_exception:
-            logger.error(commit_exception)
-
+    def process_item(self, item: List[dict], spider):
         num_records = 0
+        conn = get_database_engine().raw_connection()
 
-        try:
-            num_records = len(csv_content.getvalue().split("\n"))
-        except Exception:
-            pass
+        for single_item in item:
+            if "csv" not in single_item:
+                logger.error("No csv record passed to bulk inserter")
+                return 0
 
-        return num_records
+            csv_content: StringIO = single_item["csv"]
+
+            if "table_schema" not in single_item:
+                logger.error("No table model passed to bulk inserter")
+                return item
+
+            table: Table = single_item["table_schema"]
+
+            update_fields = None
+
+            if "update_fields" in single_item:
+                update_fields: List[str] = single_item["update_fields"]
+
+            sql_query = build_insert_query(table, update_fields)
+
+            try:
+                cursor = conn.cursor()
+                cursor.copy_expert(sql_query, csv_content)
+                conn.commit()
+            except Exception as generic_error:
+                generic_error.hide_parameters = True
+                logger.error(generic_error)
+
+            try:
+                num_records += len(csv_content.getvalue().split("\n")) - 1
+            except Exception:
+                pass
+
+        return {"num_records": num_records}
