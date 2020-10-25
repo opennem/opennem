@@ -33,8 +33,8 @@ settings: Optional[OpennemSettings] = None
 
 _env_file = load_env_file(ENV)
 
+# @TODO add logging
 if _env_file:
-    print("locating {}".format(_env_file))
     load_dotenv(dotenv_path=_env_file, override=True)
 
 # @NOTE don't use pydantics env file support since it doesn't support multiple
