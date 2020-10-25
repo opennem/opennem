@@ -428,7 +428,7 @@ def energy_network_fueltech_all(
     __query = """
     with intervals as (
         select generate_series(
-            date_trunc('month', (select min(trading_interval) from facility_scada)),
+            date_trunc('month', (select min(trading_interval) from facility_scada where network_id='{network_code}')),
             date_trunc('month', now() AT TIME ZONE 'AEST'),
             '1 Month'::interval
         )::timestamp as interval
@@ -449,7 +449,7 @@ def energy_network_fueltech_all(
             join facility f on fs.facility_code = f.code
             join fueltech ft on f.fueltech_id = ft.code
             where
-                fs.trading_interval >= (select min(trading_interval) from facility_scada)
+                fs.trading_interval >= (select min(trading_interval) from facility_scada where network_id='{network_code}')
                 and f.fueltech_id is not null
                 {network_query}
                 {network_region_query}
@@ -468,6 +468,7 @@ def energy_network_fueltech_all(
         network_region_query = f"and f.network_region='{network_region}' "
 
     query = __query.format(
+        network_code=network.code,
         network_query=network_query,
         network_region_query=network_region_query,
         timezone=timezone,
