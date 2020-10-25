@@ -2,6 +2,7 @@ import logging
 from io import StringIO
 from typing import List, Union
 
+from sqlalchemy import engine, event
 from sqlalchemy.sql.schema import Column, Table
 
 from opennem.db import get_database_engine
@@ -25,6 +26,17 @@ BULK_INSERT_QUERY = """
 BULK_INSERT_CONFLICT_UPDATE = """
     ({pk_columns}) DO UPDATE set {update_values}
 """
+
+
+@event.listens_for(engine.Engine, "handle_error")
+def erase_parameters(exception_context):
+    for exc in [
+        exception_context.chained_exception,
+        exception_context.original_exception,
+        exception_context.sqlalchemy_exception,
+    ]:
+        if exc is not None:
+            exc.params = {"no_parameters": "parameters hidden"}
 
 
 def build_insert_query(
@@ -90,10 +102,13 @@ class BulkInsertPipeline(object):
 
         sql_query = build_insert_query(table, update_fields)
 
-        conn = get_database_engine().raw_connection()
-        cursor = conn.cursor()
-        cursor.copy_expert(sql_query, csv_content)
-        conn.commit()
+        try:
+            conn = get_database_engine().raw_connection()
+            cursor = conn.cursor()
+            cursor.copy_expert(sql_query, csv_content)
+            conn.commit()
+        except Exception as commit_exception:
+            logger.error(commit_exception)
 
         num_records = 0
 
