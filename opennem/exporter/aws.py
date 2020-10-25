@@ -1,6 +1,7 @@
 import logging
 import os
 from typing import Dict
+from urllib.parse import urljoin
 
 from smart_open import open
 
@@ -19,7 +20,8 @@ def write_to_s3(
     """
         Write data to an s3 path
     """
-    s3_save_path = os.path.join(settings.s3_bucket_path, file_path)
+    s3_save_path = settings.s3_bucket_path + file_path
+
     write_count = 0
     upload_args = get_upload_args(content_type)
 
