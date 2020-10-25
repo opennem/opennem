@@ -41,6 +41,7 @@ app.include_router(export_router, tags=["Export"], prefix="/export")
 
 
 origins = [
+    "https://opennem.org.au",
     "https://dev.opennem.org.au",
     "https://admin.opennem.org.au",
     "https://admin.opennem.test",
