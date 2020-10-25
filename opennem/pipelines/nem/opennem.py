@@ -214,18 +214,16 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
     def process_item(self, item, spider=None):
 
         if "tables" not in item:
-            logger.error("Invalid item - no tables located")
-            return 0
+            raise Exception("Invalid item - no tables located")
 
-        if not isinstance(item["tables"], list):
-            logger.error("Invalid item - no tables located")
-            return 0
+        if not isinstance(item["tables"], dict):
+            raise Exception("Invalid item - no tables located")
 
         tables = item["tables"]
 
-        ret = 0
+        ret = []
 
-        for table in tables:
+        for table in tables.values():
             if "name" not in table:
                 logger.info("Invalid table found")
                 continue
@@ -242,6 +240,9 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
                 logger.info("Invalid processing function %s", process_meth)
                 continue
 
-            ret = globals()[process_meth](table, spider=spider)
+            logger.info("processing table {}".format(table_name))
+            record_item = globals()[process_meth](table, spider=spider)
+
+            ret.append(record_item)
 
         return ret

@@ -78,7 +78,7 @@ class ExtractCSV(object):
         content = item["content"]
         del item["content"]
 
-        item["tables"] = []
+        item["tables"] = {}
         table = {"name": None}
 
         content_split = content.splitlines()
@@ -94,11 +94,25 @@ class ExtractCSV(object):
             if record_type == "C":
                 # @TODO csv meta stored in table
                 if table["name"] is not None:
-                    item["tables"].append(table)
+                    table_name = table["name"]
+
+                    if table_name in item["tables"]:
+                        item["tables"][table_name]["records"] += table[
+                            "records"
+                        ]
+                    else:
+                        item["tables"][table_name] = table
 
             elif record_type == "I":
                 if table["name"] is not None:
-                    item["tables"].append(table)
+                    table_name = table["name"]
+
+                    if table_name in item["tables"]:
+                        item["tables"][table_name]["records"] += table[
+                            "records"
+                        ]
+                    else:
+                        item["tables"][table_name] = table
 
                 table = {}
                 table["name"] = "{}_{}".format(row[1], row[2])

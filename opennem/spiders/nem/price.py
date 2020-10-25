@@ -7,7 +7,7 @@ class NemwebLatestPriceSpider(NemwebSpider):
     start_url = (
         "http://www.nemweb.com.au/Reports/CURRENT/Dispatchprices_PRE_AP/"
     )
-    limit = 1
+    limit = 2
 
     pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
 

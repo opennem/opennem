@@ -7,7 +7,7 @@ from opennem.spiders.nemweb import NemwebSpider
 class NemwebLatestDispatchScada(NemwebSpider):
     name = "au.nem.latest.dispatch_scada"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
-    limit = 1
+    limit = 2
 
     pipelines_extra = set(
         [
@@ -36,7 +36,6 @@ class NemwebCurrentDispatchScada(NemwebSpider):
 class NemwebArchiveDispatchScada(NemwebSpider):
     name = "au.nem.archive.dispatch_scada"
     start_url = "http://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/"
-    limit = 0
 
     pipelines_extra = set(
         [
@@ -49,6 +48,7 @@ class NemwebArchiveDispatchScada(NemwebSpider):
     # Archives tend to contain large zips of embedded zips so throttle
     # to limit memory use
     custom_settings = {
-        "CONCURRENT_REQUESTS": 1,
+        "CONCURRENT_REQUESTS": 4,
         "CONCURRENT_ITEMS": 1,
     }
+
