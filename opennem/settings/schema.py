@@ -25,7 +25,6 @@ class OpennemSettings(BaseSettings):
     scrapy: Optional[Settings] = get_project_settings()
 
     class Config:
-        env_file = ".env"
         fields = {
             "env": {"env": "ENV"},
             "db_url": {"env": "DATABASE_HOST_URL"},

@@ -63,3 +63,4 @@ wem-stats.sh
 data/
 profiles/
 .benchmarks/
+.env.*
