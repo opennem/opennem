@@ -663,7 +663,7 @@ class FacilityScada(Base, BaseModel):
 
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
     generated = Column(Numeric, nullable=True)
-    # is_forecast = Column(Boolean, default=False)
+    is_forecast = Column(Boolean, default=False)
     eoi_quantity = Column(Numeric, nullable=True)
 
 
@@ -706,5 +706,5 @@ class BalancingSummary(Base, BaseModel):
     generation_non_scheduled = Column(Numeric, nullable=True)
     generation_total = Column(Numeric, nullable=True)
     price = Column(Numeric, nullable=True)
-    # is_forecast = Column(Boolean, default=False)
+    is_forecast = Column(Boolean, default=False)
 
