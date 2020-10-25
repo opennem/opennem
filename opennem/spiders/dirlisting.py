@@ -154,7 +154,8 @@ class DirlistingSpider(Spider):
                         "Not a supported extension: {} {}".format(
                             link[-4:].lower(),
                             ", ".join(self.supported_extensions),
-                        )
+                        ),
+                        logging.INFO,
                     )
                     continue
 
@@ -163,7 +164,7 @@ class DirlistingSpider(Spider):
                 if self.skip and self.skip >= parsed:
                     self.log(
                         f"Skipping entry {link} - {parsed}. Skip set to {self.skip}",
-                        logging.INFO,
+                        logging.DEBUG,
                     )
                     continue
 
