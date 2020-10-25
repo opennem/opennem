@@ -13,6 +13,7 @@
 
 
 import os
+from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -21,7 +22,8 @@ from opennem.settings.utils import load_env_file
 
 from .schema import OpennemSettings
 
-load_dotenv()
+if Path(".env").is_file():
+    load_dotenv()
 
 MODULE_DIR = os.path.dirname(__file__)
 
