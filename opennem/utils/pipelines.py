@@ -29,7 +29,7 @@ def check_spider_pipeline(process_item_method):
                 pipelines |= spider.pipelines_extra
 
         if self.__class__ in pipelines:
-            spider.log(msg % "executing", level=logging.DEBUG)
+            spider.log(msg % "executing", level=logging.INFO)
             return process_item_method(self, item, spider)
 
         else:
