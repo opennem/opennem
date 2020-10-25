@@ -5,10 +5,16 @@
 """
 
 import io
+import logging
 import zipfile
-from itertools import chain
 
 from smart_open import open, register_compressor
+
+smart_open_logger = logging.getLogger("smart_open")
+smart_open_logger.setLevel(logging.INFO)
+
+urllib_logger = logging.getLogger("urllib3")
+urllib_logger.setLevel(logging.INFO)
 
 
 def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
@@ -58,7 +64,10 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
                     # No more streams to chain together
                     self.stream = None
                     return 0  # indicate EOF
-            output, self.leftover = chunk[:buffer_length], chunk[buffer_length:]
+            output, self.leftover = (
+                chunk[:buffer_length],
+                chunk[buffer_length:],
+            )
             b[: len(output)] = output
             return len(output)
 
