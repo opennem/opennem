@@ -1,9 +1,7 @@
 import logging
-import os
 from datetime import datetime
 
 from fastapi import HTTPException
-from smart_open import open
 
 from opennem.api.export.router import api_export_energy_month
 from opennem.api.stats.router import (
@@ -16,17 +14,6 @@ from opennem.db import get_database_engine
 from opennem.exporter.aws import write_to_s3
 
 YEAR_MIN = 2010
-
-BASE_EXPORT = "s3://data.opennem.org.au"
-
-BASE_EXPORT_LOCAL = os.path.realpath(
-    os.path.join(os.path.dirname(__file__), "..", "..", "data")
-)
-
-
-UPLOAD_ARGS = {
-    "ContentType": "application/json",
-}
 
 logger = logging.getLogger(__name__)
 
@@ -60,20 +47,10 @@ def wem_export_power():
 
     # demand = wem_demand()
 
-    stat_set.data = stat_set.data + price.data
-    stat_set.data = stat_set.data + weather.data
-
-    power_path = BASE_EXPORT + "/power/wem.json"
+    stat_set.data = stat_set.data + price.data + weather.data
 
     # @TODO migrate to s3 methods
-    # write_to_s3("/power/wem.json", stat_set.json(exclude_unset=True))
-
-    with open(
-        power_path,
-        "w",
-        transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
-    ) as fh:
-        fh.write(stat_set.json(exclude_unset=True))
+    write_to_s3("/power/wem.json", stat_set.json(exclude_unset=True))
 
 
 def wem_export_years():
@@ -102,14 +79,9 @@ def wem_export_years():
 
         # market_value = wem_market_value_year(year)
 
-        year_path = BASE_EXPORT + f"/wem/energy/daily/{year}.json"
-
-        with open(
-            year_path,
-            "w",
-            transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
-        ) as fh:
-            fh.write(stat_set.json(exclude_unset=True))
+        write_to_s3(
+            f"/wem/energy/daily/{year}.json", stat_set.json(exclude_unset=True)
+        )
 
 
 def wem_export_all():
@@ -126,14 +98,9 @@ def wem_export_all():
 
     # market_value = wem_market_value_all()
 
-    all_path = BASE_EXPORT + "/wem/energy/monthly/all.json"
-
-    with open(
-        all_path,
-        "w",
-        transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
-    ) as fh:
-        fh.write(stat_set.json(exclude_unset=True))
+    write_to_s3(
+        "/wem/energy/monthly/all.json", stat_set.json(exclude_unset=True)
+    )
 
 
 def wem_run_all():
@@ -143,3 +110,4 @@ def wem_run_all():
 
 if __name__ == "__main__":
     wem_export_all()
+
