@@ -1,6 +1,7 @@
 import csv
 import logging
 from io import StringIO
+from typing import List
 
 from sqlalchemy.sql.schema import Table
 
@@ -32,26 +33,29 @@ def generate_csv_from_records(table: Table, records, column_names=None):
 
 class RecordsToCSVPipeline(object):
     @check_spider_pipeline
-    def process_item(self, item, spider=None):
-        if not isinstance(item, dict):
-            logger.error("Invalid item passed to CSV pipeline: %s", item)
-            return item
+    def process_item(self, item: List[dict], spider=None):
+        for record_set in item:
+            if not isinstance(record_set, dict):
+                logger.error(
+                    "Invalid record_set passed to CSV pipeline: %s", record_set
+                )
+                return record_set
 
-        if "table_schema" not in item:
-            logger.error("No table model passed to csv generator")
-            logger.error(item)
-            return item
+            if "table_schema" not in record_set:
+                logger.error("No table model passed to csv generator")
+                logger.error(record_set)
+                return record_set
 
-        table = item["table_schema"]
+            table = record_set["table_schema"]
 
-        if "records" not in item:
-            logger.error("No records to generate csv from")
-            return item
+            if "records" not in record_set:
+                logger.error("No records to generate csv from")
+                return record_set
 
-        records = item["records"]
+            records = record_set["records"]
 
-        csv_content = generate_csv_from_records(table, records)
+            csv_content = generate_csv_from_records(table, records)
 
-        item["csv"] = csv_content
+            record_set["csv"] = csv_content
 
         return item
