@@ -14,6 +14,9 @@ WORKDIR /code_install
 COPY requirements.txt /code_install/
 
 # Project initialization:
+RUN python -m venv .venv
+RUN chmod +x .venv/bin/activate
+RUN .venv/bin/activate
 RUN pip install -r requirements.txt
 
 # Creating folders, and files for a project:
@@ -21,9 +24,10 @@ FROM code_install as app
 
 WORKDIR /app
 
+RUN mv /code_install/.venv /app/.venv
 COPY . /app
-COPY docker-entrypoint.sh /entrypoint.sh
+COPY docker-entrypoint.sh /app/entrypoint.sh
 
 EXPOSE 8000
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/app/entrypoint.sh" ]

@@ -11,6 +11,12 @@ project.egg-info
 var
 .env
 build/
+data/
+.benchmarks
+init*
+make-release.sh
+profiles/
+wem-stats.sh
 dist/
 .github/
 *.log
