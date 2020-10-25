@@ -31,5 +31,18 @@ services:
     volumes:
       - postgis_data:/var/lib/postgresql/data
 
+  database_test:
+    image: opennem/database:12
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - TZ
+      - TIMESCALEDB_TELEMETRY=off
+    ports:
+      - ${HOST:-127.0.0.1}:15440:5432
+    volumes:
+      - postgis_data_test:/var/lib/postgresql/data
+
 volumes:
   postgis_data: {}
+  postgis_data_test: {}
