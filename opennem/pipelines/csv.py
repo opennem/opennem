@@ -34,6 +34,9 @@ def generate_csv_from_records(table: Table, records, column_names=None):
 class RecordsToCSVPipeline(object):
     @check_spider_pipeline
     def process_item(self, item: List[dict], spider=None):
+        if not isinstance(item, list):
+            item = [item]
+
         for record_set in item:
             if not isinstance(record_set, dict):
                 logger.error(
