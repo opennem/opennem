@@ -38,11 +38,9 @@ services:
     environment:
       - TZ
       - TIMESCALEDB_TELEMETRY=off
+      - POSTGRES_USER=opennem_testing
     ports:
       - ${HOST:-127.0.0.1}:15440:5432
-    volumes:
-      - postgis_data_test:/var/lib/postgresql/data
 
 volumes:
   postgis_data: {}
-  postgis_data_test: {}
