@@ -1,6 +1,9 @@
 import logging
 import re
 from datetime import datetime
+from pathlib import Path
+from typing import Optional
+from urllib.parse import ParseResult, urlparse
 
 import scrapy
 from scrapy import Spider
@@ -57,6 +60,17 @@ def parse_dirlisting(raw_string):
         "date": dt.isoformat(),
         "type": _ltype,
     }
+
+
+def get_file_extensions(url: str) -> Optional[str]:
+    url_parsed: ParseResult = urlparse(url)
+
+    if not url_parsed.path:
+        return None
+
+    url_path = Path(url_parsed.path)
+
+    return url_path.suffix
 
 
 class DirlistingSpider(Spider):
@@ -135,7 +149,7 @@ class DirlistingSpider(Spider):
                     self.log(f"Reached limit of {self.limit}", logging.INFO)
                     return None
 
-                if link[-4:].lower() not in self.supported_extensions:
+                if get_file_extensions(link) not in self.supported_extensions:
                     self.log(
                         "Not a supported extension: {} {}".format(
                             link[-4:].lower(),
