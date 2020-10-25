@@ -5,6 +5,7 @@ from datetime import datetime
 import scrapy
 from scrapy import Spider
 
+from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import parse_date
 
 PADDING_WIDTH = 3
@@ -43,7 +44,7 @@ def parse_dirlisting(raw_string):
     if is_number(components[1]):
         _ltype = "file"
 
-    dt = parse_date(components[0])
+    dt = parse_date(components[0], network=NetworkNEM)
 
     if type(dt) is not datetime:
         raise Exception(
