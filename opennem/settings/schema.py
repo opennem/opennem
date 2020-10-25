@@ -31,4 +31,5 @@ class OpennemSettings(BaseSettings):
             "cache_url": {"env": "REDIS_HOST_URL"},
             "sentry_url": {"env": "SENTRY_URL"},
             "slack_hook_url": {"env": "WATCHDOG_SLACK_HOOK"},
+            "s3_bucket_path": {"env": "S3_DATA_BUCKET_PATH"},
         }
