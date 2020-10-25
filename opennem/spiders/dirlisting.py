@@ -121,15 +121,27 @@ class DirlistingSpider(Spider):
 
         parsed = 0
 
+        if self.limit > 0 and self.skip > 0:
+            self.limit = self.limit = self.skip
+
         for i, entry in enumerate(metadata):
             if entry["type"] == "file":
                 link = response.urljoin(links[i])
 
                 self.log("Getting {}".format(link), logging.INFO)
 
-                if self.limit and self.limit > 0 and (parsed >= self.limit):
+                if self.limit and self.limit > 0 and (parsed > self.limit):
                     self.log(f"Reached limit of {self.limit}", logging.INFO)
                     return None
+
+                if link[-4:].lower() not in self.supported_extensions:
+                    self.log(
+                        "Not a supported extension: {} {}".format(
+                            link[-4:].lower(),
+                            ", ".join(self.supported_extensions),
+                        )
+                    )
+                    continue
 
                 parsed += 1
 
@@ -140,12 +152,5 @@ class DirlistingSpider(Spider):
                     )
                     continue
 
-                if link[-4:].lower() in self.supported_extensions:
-                    yield {"link": link, **entry}
-                else:
-                    self.log(
-                        "Not a supported extension: {} {}".format(
-                            link[-4:].lower(),
-                            ", ".join(self.supported_extensions),
-                        )
-                    )
+                yield {"link": link, **entry}
+
