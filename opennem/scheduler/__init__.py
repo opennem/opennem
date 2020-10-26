@@ -12,7 +12,7 @@ def schedule_wem_export_task():
     wem_run_all()
 
 
-@huey.periodic_task(crontab(hour="*/1"))
+@huey.periodic_task(crontab(minute="*/15"))
 def schedule_wem_export_all():
     wem_export_all()
 
