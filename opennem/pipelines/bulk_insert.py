@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from io import StringIO
 from typing import List, Union
 
@@ -11,15 +12,15 @@ from opennem.utils.pipelines import check_spider_pipeline
 logger = logging.getLogger(__name__)
 
 BULK_INSERT_QUERY = """
-    CREATE TEMP TABLE __tmp
+    CREATE TEMP TABLE __tmp_{table_name}_{tmp_table_name}
     (LIKE {table_name} INCLUDING DEFAULTS)
     ON COMMIT DROP;
 
-    COPY __tmp FROM STDIN WITH (FORMAT CSV, HEADER FALSE, DELIMITER ',');
+    COPY __tmp_{table_name}_{tmp_table_name} FROM STDIN WITH (FORMAT CSV, HEADER FALSE, DELIMITER ',');
 
     INSERT INTO {table_name}
         SELECT *
-        FROM __tmp
+        FROM __tmp_{table_name}_{tmp_table_name}
     ON CONFLICT {on_conflict}
 """
 
@@ -63,7 +64,9 @@ def build_insert_query(
         )
 
     query = BULK_INSERT_QUERY.format(
-        table_name=table.__table__.name, on_conflict=on_conflict
+        table_name=table.__table__.name,
+        on_conflict=on_conflict,
+        tmp_table_name=datetime.strftime(datetime.now(), "%Y%m%d%H%M%S"),
     )
 
     return query
