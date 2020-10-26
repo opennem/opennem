@@ -144,13 +144,13 @@ def power_network_fueltech(
 
         select
             t.trading_interval,
-            avg(t.facility_power),
+            sum(t.facility_power),
             t.fueltech_code
         from (
             select
                 time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
                 interpolate(
-                    max(fs.generated)
+                    avg(fs.generated)
                 ) as facility_power,
                 fs.facility_code,
                 ft.code as fueltech_code
