@@ -143,7 +143,7 @@ class DirlistingSpider(Spider):
             if entry["type"] == "file":
                 link = response.urljoin(links[i])
 
-                if self.limit and self.limit > 0 and (parsed > self.limit):
+                if self.limit and self.limit > 0 and (parsed >= self.limit):
                     self.log(f"Reached limit of {self.limit}", logging.INFO)
                     return None
 
