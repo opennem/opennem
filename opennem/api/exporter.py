@@ -49,8 +49,12 @@ def wem_export_power():
 
     stat_set.data = stat_set.data + price.data + weather.data
 
+    POWER_ENDPOINT = "/power/wem.json"
+
     # @TODO migrate to s3 methods
-    write_to_s3("/power/wem.json", stat_set.json(exclude_unset=True))
+    byte_count = write_to_s3(POWER_ENDPOINT, stat_set.json(exclude_unset=True))
+
+    logger.info("Wrote {} bytes to {}".format(byte_count, POWER_ENDPOINT))
 
 
 def wem_export_years():
@@ -109,5 +113,5 @@ def wem_run_all():
 
 
 if __name__ == "__main__":
-    wem_export_all()
-
+    # wem_export_all()
+    wem_run_all()
