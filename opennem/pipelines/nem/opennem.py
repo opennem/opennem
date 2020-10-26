@@ -7,6 +7,7 @@ NEMWEB Data ingress into OpenNEM format
 
 import logging
 from datetime import datetime
+from itertools import groupby
 from typing import Dict, List, Optional
 
 from sqlalchemy.dialects.postgresql import insert
@@ -85,6 +86,8 @@ def unit_scada_generate_facility_scada(
     power_field: Optional[str] = None,
     energy_field: Optional[str] = None,
     is_forecast: bool = False,
+    primary_key_track: bool = False,
+    groupby_filter: bool = True,
 ) -> List[Dict]:
     created_at = datetime.now()
     primary_keys = []
@@ -107,12 +110,13 @@ def unit_scada_generate_facility_scada(
 
         facility_code = normalize_duid(row[facility_code_field])
 
-        pkey = (trading_interval, facility_code)
+        if primary_key_track:
+            pkey = (trading_interval, facility_code)
 
-        if pkey in primary_keys:
-            continue
+            if pkey in primary_keys:
+                continue
 
-        primary_keys.append(pkey)
+            primary_keys.append(pkey)
 
         generated = None
 
@@ -138,7 +142,23 @@ def unit_scada_generate_facility_scada(
 
         return_records.append(__rec)
 
-    return return_records
+    if not groupby_filter:
+        return return_records
+
+    return_records_grouped = {}
+
+    for pk_values, rec_value in groupby(
+        return_records,
+        key=lambda r: (
+            r.get("network_id"),
+            r.get("trading_interval"),
+            r.get("facility_code"),
+        ),
+    ):
+        if pk_values not in return_records_grouped:
+            return_records_grouped[pk_values] = list(rec_value).pop()
+
+    return return_records_grouped.values()
 
 
 def process_unit_scada(table, spider):
