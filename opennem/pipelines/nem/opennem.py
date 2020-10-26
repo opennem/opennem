@@ -180,7 +180,7 @@ def process_unit_scada(table, spider):
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
     item["records"] = unit_scada_generate_facility_scada(
-        records, spider, power_field="SCADAVALUE", network=NetworkNEM, limit=10
+        records, spider, power_field="SCADAVALUE", network=NetworkNEM
     )
     item["content"] = None
 
