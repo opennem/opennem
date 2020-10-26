@@ -88,6 +88,7 @@ def unit_scada_generate_facility_scada(
     is_forecast: bool = False,
     primary_key_track: bool = False,
     groupby_filter: bool = True,
+    limit: int = 0,
 ) -> List[Dict]:
     created_at = datetime.now()
     primary_keys = []
@@ -141,6 +142,9 @@ def unit_scada_generate_facility_scada(
         }
 
         return_records.append(__rec)
+
+        if limit > 0 and len(return_records) >= limit:
+            break
 
     if not groupby_filter:
         return return_records
