@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from sqlalchemy.dialects.postgresql import insert
 
@@ -59,6 +60,12 @@ class APVIStoreData(object):
 
         records_to_store = []
 
+        created_at = datetime.now()
+        created_by = ""
+
+        if spider and hasattr(spider, "name"):
+            created_by = spider.name
+
         for record in postcode_gen:
             for state, prefix in STATE_POSTCODE_PREFIXES.items():
                 facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
@@ -86,6 +93,8 @@ class APVIStoreData(object):
                     continue
 
                 __record = {
+                    "created_by": created_by,
+                    "created_at": created_at,
                     "network_id": network.code,
                     "trading_interval": interval_time,
                     "facility_code": facility_code,
@@ -136,7 +145,10 @@ class APVIStoreData(object):
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
             index_elements=["trading_interval", "network_id", "facility_code"],
-            set_={"generated": stmt.excluded.generated,},
+            set_={
+                "generated": stmt.excluded.generated,
+                "created_by": stmt.excluded.created_by,
+            },
         )
 
         try:
