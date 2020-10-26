@@ -84,6 +84,7 @@ def unit_scada_generate_facility_scada(
     facility_code_field: str = "DUID",
     power_field: Optional[str] = None,
     energy_field: Optional[str] = None,
+    is_forecast: bool = False,
 ) -> List[Dict]:
     created_at = datetime.now()
     primary_keys = []
@@ -132,6 +133,7 @@ def unit_scada_generate_facility_scada(
             "facility_code": facility_code,
             "generated": generated,
             "eoi_quantity": energy,
+            "is_forecast": is_forecast,
         }
 
         return_records.append(__rec)
