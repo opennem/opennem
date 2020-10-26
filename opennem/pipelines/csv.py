@@ -5,7 +5,10 @@ from typing import List
 
 from sqlalchemy.sql.schema import Table
 
+from opennem.db.models.opennem import FacilityScada
+from opennem.pipelines.nem.opennem import unit_scada_generate_facility_scada
 from opennem.utils.pipelines import check_spider_pipeline
+from tests.benchmark_facility_scada_generate import load_wem_scada_records
 
 logger = logging.getLogger(__name__)
 
@@ -16,10 +19,7 @@ def generate_csv_from_records(table: Table, records, column_names=None):
 
     csv_buffer = StringIO()
 
-    if not column_names:
-        column_names = [c.name for c in table.__table__.columns.values()]
-
-    csvwriter = csv.DictWriter(csv_buffer, fieldnames=column_names)
+    table_column_names = [c.name for c in table.__table__.columns.values()]
 
     if isinstance(records, list):
         first_record = records[0]
@@ -27,14 +27,22 @@ def generate_csv_from_records(table: Table, records, column_names=None):
         record_field_names = list(first_record.keys())
 
         for field_name in record_field_names:
-            if field_name not in column_names:
+            if field_name not in table_column_names:
                 raise Exception("Column name not found: {}".format(field_name))
 
-        for column_name in column_names:
+        for column_name in table_column_names:
             if column_name not in record_field_names:
                 raise Exception(
                     "Missing value for column {}".format(column_name)
                 )
+
+        column_names = record_field_names
+
+    if not column_names:
+        column_names = table_column_names
+
+    csvwriter = csv.DictWriter(csv_buffer, fieldnames=column_names)
+    csvwriter.writeheader()
 
     # @TODO put the columns in the correct order ..
 
@@ -76,3 +84,17 @@ class RecordsToCSVPipeline(object):
             record_set["csv"] = csv_content
 
         return item
+
+
+if __name__ == "__main__":
+    records = load_wem_scada_records(limit=10)
+    records_passed = unit_scada_generate_facility_scada(
+        records,
+        # network=NetworkWEM,
+        interval_field="Trading Interval",
+        facility_code_field="Facility Code",
+        energy_field="Energy Generated (MWh)",
+        power_field="EOI Quantity (MW)",
+    )
+    csvrec = generate_csv_from_records(FacilityScada, records_passed)
+    print(csvrec.getvalue())

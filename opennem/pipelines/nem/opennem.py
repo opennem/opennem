@@ -6,6 +6,7 @@ NEMWEB Data ingress into OpenNEM format
 """
 
 import logging
+from collections import OrderedDict
 from datetime import datetime
 from itertools import groupby
 from typing import Dict, List, Optional
@@ -129,17 +130,19 @@ def unit_scada_generate_facility_scada(
         if energy_field and energy_field in row:
             energy = clean_float(row[energy_field])
 
-        __rec = {
-            "created_by": created_by,
-            "created_at": created_at,
-            "updated_at": None,
-            "network_id": network.code,
-            "trading_interval": trading_interval,
-            "facility_code": facility_code,
-            "generated": generated,
-            "eoi_quantity": energy,
-            "is_forecast": is_forecast,
-        }
+        __rec = OrderedDict(
+            {
+                "created_by": created_by,
+                "created_at": created_at,
+                "updated_at": None,
+                "network_id": network.code,
+                "trading_interval": trading_interval,
+                "facility_code": facility_code,
+                "generated": generated,
+                "eoi_quantity": energy,
+                "is_forecast": is_forecast,
+            }
+        )
 
         return_records.append(__rec)
 
@@ -162,7 +165,9 @@ def unit_scada_generate_facility_scada(
         if pk_values not in return_records_grouped:
             return_records_grouped[pk_values] = list(rec_value).pop()
 
-    return return_records_grouped.values()
+    return_records = list(return_records_grouped.values())
+
+    return return_records
 
 
 def process_unit_scada(table, spider):
@@ -175,7 +180,7 @@ def process_unit_scada(table, spider):
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
     item["records"] = unit_scada_generate_facility_scada(
-        records, spider, power_field="SCADAVALUE", network=NetworkNEM
+        records, spider, power_field="SCADAVALUE", network=NetworkNEM, limit=10
     )
     item["content"] = None
 

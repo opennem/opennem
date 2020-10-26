@@ -16,7 +16,7 @@ BULK_INSERT_QUERY = """
     (LIKE {table_name} INCLUDING DEFAULTS)
     ON COMMIT DROP;
 
-    COPY __tmp_{table_name}_{tmp_table_name} FROM STDIN WITH (FORMAT CSV, HEADER FALSE, DELIMITER ',');
+    COPY __tmp_{table_name}_{tmp_table_name} FROM STDIN WITH (FORMAT CSV, HEADER TRUE, DELIMITER ',');
 
     INSERT INTO {table_name}
         SELECT *
