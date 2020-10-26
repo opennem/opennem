@@ -51,15 +51,13 @@ class WemStoreFacilityIntervals(object):
 
         item["table_schema"] = FacilityScada
         item["update_fields"] = ["generated", "eoi_quantity"]
-        item["records"] = list(
-            unit_scada_generate_facility_scada(
-                csvreader,
-                spider,
-                interval_field="PERIOD",
-                facility_code_field="FACILITY_CODE",
-                power_field="ACTUAL_MW",
-                network=NetworkWEM,
-            )
+        item["records"] = unit_scada_generate_facility_scada(
+            csvreader,
+            spider,
+            interval_field="PERIOD",
+            facility_code_field="FACILITY_CODE",
+            power_field="ACTUAL_MW",
+            network=NetworkWEM,
         )
         item["content"] = None
 
