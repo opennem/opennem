@@ -448,12 +448,16 @@ def energy_network_fueltech_api(
         with engine.connect() as c:
             scada_min_result = list(
                 c.execute(
-                    f"select min(trading_interval)::date from facility_scada where network_id='{network.code}'  and generated is not null"
+                    f"select min(trading_interval)::date, max(trading_interval)::date from facility_scada where network_id='{network.code}'  and generated is not null"
                 )
             )
             scada_min = scada_min_result[0][0]
+            scada_max = scada_min_result[0][1]
         query = energy_network_fueltech_all(
-            network=network, network_region=network_region, scada_min=scada_min
+            network=network,
+            network_region=network_region,
+            scada_min=scada_min,
+            scada_max=scada_max,
         )
     else:
         query = energy_network_fueltech(

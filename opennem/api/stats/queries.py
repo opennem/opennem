@@ -421,6 +421,7 @@ def energy_network_fueltech_all(
     network: Optional[NetworkSchema],
     network_region: Optional[str],
     scada_min: Optional[str] = None,
+    scada_max: Optional[str] = None,
 ):
     timezone = "AEST"
 
@@ -446,7 +447,7 @@ def energy_network_fueltech_all(
             join fueltech ft on f.fueltech_id = ft.code
             where
                 fs.trading_interval >= '{scada_min}'
-                and fs.trading_interval <= now()
+                and fs.trading_interval <= '{scada_max}'
                 and f.fueltech_id is not null
                 {network_query}
                 {network_region_query}
@@ -473,6 +474,7 @@ def energy_network_fueltech_all(
         network_query=network_query,
         network_region_query=network_region_query,
         scada_min=scada_min,
+        scada_max=scada_max,
         timezone=timezone,
     )
 
