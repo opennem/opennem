@@ -96,15 +96,17 @@ def wem_export_all():
 
     engine = get_database_engine()
 
-    stat_set = api_export_energy_month(
-        network_code="WEM", month="all", engine=engine,
+    stats = energy_network_fueltech_api(
+        network_code="WEM",
+        period="all",
+        engine=engine,
+        interval="1M",
+        network_region=None,
     )
 
     # market_value = wem_market_value_all()
 
-    write_to_s3(
-        "/wem/energy/monthly/all.json", stat_set.json(exclude_unset=True)
-    )
+    write_to_s3("/wem/energy/monthly/all.json", stats.json(exclude_unset=True))
 
 
 def wem_run_all():
