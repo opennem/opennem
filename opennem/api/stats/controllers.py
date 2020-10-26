@@ -157,14 +157,14 @@ def get_scada_range(
 
     __query = """
         select
-            min(trading_interval)::timestamp,
-            max(trading_interval)::timestamp
+            min(trading_interval)::timestamp AT TIME ZONE 'UTC',
+            max(trading_interval)::timestamp AT TIME ZONE 'UTC'
         from facility_scada
         where
             {network_query}
             {network_region_query}
             generated is not null  and
-            facility_code not like 'ROOFTOP_%%'"
+            facility_code not like 'ROOFTOP_%%'
     """
 
     network_query = ""
@@ -179,7 +179,9 @@ def get_scada_range(
         network_region_query = f"network_id = '{network.code}' and"
 
     scada_range_query = __query.format(
-        network_query=network_query, network_region_query=network_region_query,
+        network_query=network_query,
+        network_region_query=network_region_query,
+        timezone=network.timezone_database,
     )
 
     with engine.connect() as c:
@@ -191,7 +193,9 @@ def get_scada_range(
         scada_min = scada_range_result[0][0]
         scada_max = scada_range_result[0][1]
 
-    scada_range = ScadaDateRange(start=scada_min, end=scada_max,)
+    scada_range = ScadaDateRange(
+        start=scada_min, end=scada_max, network=network
+    )
 
     return scada_range
 

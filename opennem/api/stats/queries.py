@@ -159,7 +159,7 @@ def power_network_fueltech(
             join fueltech ft on f.fueltech_id = ft.code
             where
                 fs.trading_interval <= {date_end}
-                and fs.trading_interval >= {date_end} - '{period}'::interval
+                and fs.trading_interval >= {date_end}::timestamp - '{period}'::interval
                 and fs.network_id = '{network_code}'
                 and f.fueltech_id is not null
                 {network_region_query}
@@ -177,7 +177,7 @@ def power_network_fueltech(
     date_end = "now()"
 
     if scada_range:
-        date_end = scada_range.end
+        date_end = scada_range.get_end_sql()
 
     query = __query.format(
         network_code=network.code,
@@ -185,6 +185,7 @@ def power_network_fueltech(
         period=period.period_sql,
         network_region_query=network_region_query,
         timezone=timezone,
+        date_end=date_end,
     )
 
     return query
@@ -362,6 +363,7 @@ def energy_network_fueltech_year(
     interval: TimeInterval,
     year: int,
     network_region: str = None,
+    scada_range: ScadaDateRange = None,
 ) -> str:
     """
         Get Energy for a network or network + region
@@ -373,10 +375,10 @@ def energy_network_fueltech_year(
     if not timezone:
         timezone = "UTC"
 
-    year_max = "{}-12-31".format(year)
+    year_max = "'{}-12-31'".format(year)
 
     if year == datetime.now().year:
-        year_max = "now()"
+        year_max = scada_range.get_end_sql(as_date=False)
 
     __query = """
         SET SESSION TIME ZONE '{timezone}';
@@ -396,7 +398,7 @@ def energy_network_fueltech_year(
             join fueltech ft on f.fueltech_id = ft.code
             where
                 fs.trading_interval >= '{year}-01-01'
-                and fs.trading_interval <= '{year_max}'
+                and fs.trading_interval <= {year_max}
                 and fs.network_id = '{network_code}'
                 and f.fueltech_id is not null
                 {network_region_query}
@@ -452,8 +454,8 @@ def energy_network_fueltech_all(
             join facility f on fs.facility_code = f.code
             join fueltech ft on f.fueltech_id = ft.code
             where
-                fs.trading_interval >= '{scada_min}'
-                and fs.trading_interval <= '{scada_max}'
+                fs.trading_interval >= {scada_min}
+                and fs.trading_interval <= {scada_max}
                 and f.fueltech_id is not null
                 {network_query}
                 {network_region_query}
@@ -476,8 +478,8 @@ def energy_network_fueltech_all(
         network_code=network.code,
         network_query=network_query,
         network_region_query=network_region_query,
-        scada_min=scada_range.start.date(),
-        scada_max=scada_range.end.date(),
+        scada_min=scada_range.get_start_sql(as_date=True),
+        scada_max=scada_range.get_end_sql(as_date=True),
         timezone=timezone,
     )
 

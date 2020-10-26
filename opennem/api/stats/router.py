@@ -441,11 +441,14 @@ def energy_network_fueltech_api(
                 detail="Not a valid year",
             )
 
+        scada_range = get_scada_range(network=network)
+
         query = energy_network_fueltech_year(
             network=network,
             interval=interval,
             year=year,
             network_region=network_region,
+            scada_range=scada_range,
         )
     elif period_obj and period_obj.period_human == "all":
         scada_range = get_scada_range(network=network)
