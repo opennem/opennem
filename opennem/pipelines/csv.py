@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 
 
 def generate_csv_from_records(table: Table, records, column_names=None):
+    if len(records) < 1:
+        raise Exception("No records")
+
     csv_buffer = StringIO()
 
     if not column_names:
@@ -18,9 +21,20 @@ def generate_csv_from_records(table: Table, records, column_names=None):
 
     csvwriter = csv.DictWriter(csv_buffer, fieldnames=column_names)
 
-    # for field_name in records[0].keys():
-    #     if field_name not in column_names:
-    #         raise Exception("Column name not found: {}".format(field_name))
+    if isinstance(records, list):
+        first_record = records[0]
+
+        record_field_names = list(first_record.keys())
+
+        for field_name in record_field_names:
+            if field_name not in column_names:
+                raise Exception("Column name not found: {}".format(field_name))
+
+        for column_name in column_names:
+            if column_name not in record_field_names:
+                raise Exception(
+                    "Missing value for column {}".format(column_name)
+                )
 
     # @TODO put the columns in the correct order ..
 
