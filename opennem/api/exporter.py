@@ -113,5 +113,4 @@ def wem_run_all():
 
 
 if __name__ == "__main__":
-    # wem_export_all()
-    wem_run_all()
+    wem_export_all()

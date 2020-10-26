@@ -418,44 +418,42 @@ def energy_network_fueltech_year(
 
 
 def energy_network_fueltech_all(
-    network: Optional[NetworkSchema], network_region: Optional[str],
+    network: Optional[NetworkSchema],
+    network_region: Optional[str],
+    scada_min: Optional[str] = None,
 ):
     timezone = "AEST"
 
     if network:
-        timezone = network.timezone_database
+        timezone = network.get_timezone(postgres_format=True)
 
     __query = """
-    with intervals as (
-        select generate_series(
-            date_trunc('month', (select min(trading_interval) from facility_scada where network_id='{network_code}')),
-            date_trunc('month', now() AT TIME ZONE 'AEST'),
-            '1 Month'::interval
-        )::timestamp as interval
-    )
 
-    select
-        i.interval as trading_day,
-        fs.energy,
-        fs.code
-    from intervals i
-    left outer join
-        (
+        SET SESSION TIME ZONE '{timezone}';
+
+        select
+            date_trunc('month', t.trading_interval),
+            sum(t.facility_energy),
+            t.fueltech_code
+        from (
             select
-                date_trunc('month', fs.trading_interval AT TIME ZONE 'AEST')::timestamp as interval,
-                ft.code,
-                coalesce(on_energy_sum(fs.generated, '1 Month'), 0) as energy
+                time_bucket_gapfill('1 day', trading_interval) AS trading_interval,
+                on_energy_sum(fs.generated, '1 day') as facility_energy,
+                f.code,
+                ft.code as fueltech_code
             from facility_scada fs
             join facility f on fs.facility_code = f.code
             join fueltech ft on f.fueltech_id = ft.code
             where
-                fs.trading_interval >= (select min(trading_interval) from facility_scada where network_id='{network_code}')
+                fs.trading_interval >= {scada_min}
+                and fs.trading_interval <= now()
                 and f.fueltech_id is not null
                 {network_query}
                 {network_region_query}
-            group by 1, 2
-        ) as fs on fs.interval = i.interval
-    order by 1 desc, 2 desc;
+            group by 1, 3, 4
+        ) as t
+        group by 1, 3
+        order by 1 desc;
     """
 
     network_query = ""
@@ -466,6 +464,9 @@ def energy_network_fueltech_all(
 
     if network_region:
         network_region_query = f"and f.network_region='{network_region}' "
+
+    if not scada_min:
+        scada_min = "now() - interval '2 months'"
 
     query = __query.format(
         network_code=network.code,

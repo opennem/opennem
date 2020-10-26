@@ -445,8 +445,15 @@ def energy_network_fueltech_api(
             network_region=network_region,
         )
     elif period_obj and period_obj.period_human == "all":
+        with engine.connect() as c:
+            scada_min_result = list(
+                c.execute(
+                    f"select min(trading_interval)::date from facility_scada where network_id='{network.code}'"
+                )
+            )
+            scada_min = scada_min_result[0][0]
         query = energy_network_fueltech_all(
-            network=network, network_region=network_region,
+            network=network, network_region=network_region, scada_min=scada_min
         )
     else:
         query = energy_network_fueltech(
