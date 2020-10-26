@@ -144,7 +144,7 @@ def power_network_fueltech(
 
         select
             t.trading_interval,
-            sum(t.facility_power),
+            avg(t.facility_power),
             t.fueltech_code
         from (
             select
