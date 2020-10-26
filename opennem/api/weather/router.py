@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
 
-from opennem.api.stats.controllers import stats_factory
+from opennem.api.stats.controllers import get_scada_range, stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.api.weather.queries import observation_query
@@ -106,11 +106,17 @@ def station_observations_api(
     if offset:
         timezone = get_fixed_timezone(offset)
 
+    scada_range = None
+
+    if network:
+        scada_range = get_scada_range(network=network)
+
     query = observation_query(
         station_codes=station_codes,
         interval=interval,
         period=period,
         network=network,
+        scada_range=scada_range,
     )
 
     with engine.connect() as c:

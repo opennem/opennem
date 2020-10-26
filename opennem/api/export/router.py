@@ -49,7 +49,7 @@ def api_export_power_wem(
     price = price_network_region_api(
         engine=engine,
         network_code="WEM",
-        region_code="WEM",
+        network_region_code="WEM",
         interval="30m",
         period="7d",
     )
