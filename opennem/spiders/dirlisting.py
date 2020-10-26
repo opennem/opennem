@@ -137,7 +137,7 @@ class DirlistingSpider(Spider):
         parsed = 0
 
         if self.limit > 0 and self.skip > 0:
-            self.limit = self.limit = self.skip
+            self.limit = self.limit + self.skip
 
         for i, entry in enumerate(metadata):
             if entry["type"] == "file":
