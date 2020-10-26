@@ -509,7 +509,7 @@ def energy_network_fueltech_api(
 
 
 @router.get(
-    "/price/{network_code}/{region_code}",
+    "/price/{network_code}/{network_region_code}",
     name="Price Network Region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
@@ -517,7 +517,7 @@ def energy_network_fueltech_api(
 def price_network_region_api(
     engine=Depends(get_database_engine),
     network_code: str = Query(..., description="Network code"),
-    region_code: str = Query(..., description="Region code"),
+    network_region_code: str = Query(..., description="Region code"),
     interval: str = Query(None, description="Interval"),
     period: str = Query("7d", description="Period"),
 ) -> OpennemDataSet:
@@ -534,12 +534,14 @@ def price_network_region_api(
     interval = human_to_interval(interval)
     period = human_to_period(period)
     units = get_unit("price")
+    scada_range = get_scada_range(network=network)
 
     query = price_network_region(
         network=network,
-        region_code=region_code,
+        network_region_code=network_region_code,
         interval=interval,
         period=period,
+        scada_range=scada_range,
     )
 
     with engine.connect() as c:
@@ -560,7 +562,7 @@ def price_network_region_api(
     result = stats_factory(
         stats,
         code=network.code,
-        region=region_code,
+        region=network_region_code,
         network=network,
         interval=interval,
         period=period,

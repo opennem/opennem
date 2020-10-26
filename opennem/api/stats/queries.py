@@ -489,9 +489,10 @@ def energy_network_fueltech_all(
 
 def price_network_region(
     network: NetworkSchema,
-    region_code: str,
+    network_region_code: str,
     interval: TimeInterval,
     period: TimePeriod,
+    scada_range: ScadaDateRange,
 ) -> str:
 
     timezone = network.timezone_database
@@ -499,44 +500,44 @@ def price_network_region(
     if not timezone:
         timezone = "UTC"
 
-    __query = """with intervals as (
-            select generate_series(
-                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
-                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
-                '{interval}'::interval
-            )::timestamp as interval
-        )
+    __query = """
+        SET SESSION TIME ZONE '{timezone}';
+
 
         select
-            i.interval as trading_day,
-            fs.generated,
-            fs.network_region
-        from intervals i
-        left outer join
-            (select
-                date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
-                fs.network_region,
-                coalesce(avg(fs.price), NULL) as generated
-                from balancing_summary fs
-                where
-                    fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
-                    and fs.network_id = '{network_code}'
-                    and fs.network_region = '{network_region}'
-                group by 1, 2
-            ) as fs on fs.interval = i.interval
-        order by 1 desc, 2 asc"""
+            time_bucket_gapfill('{trunc}', bs.trading_interval) AS trading_interval,
+            bs.network_region,
+            interpolate(bs.price) as price,
+        from balancing_summary bs
+        join facility f on fs.facility_code = f.code
+        join fueltech ft on f.fueltech_id = ft.code
+        where
+            bs.trading_interval >= {scada_max} - interval '{period}'::interval
+            and bs.trading_interval <= {scada_max}
+            {network_query}
+            {network_region_query}
+        group by 1, 3, 4
+        order by 1 desc
+    """
+
+    network_query = ""
+    network_region_query = ""
+
+    if network:
+        network_query = f"and bs.network_id = '{network.code}' "
+
+    if network_region_code:
+        network_region_query = (
+            f"and bs.network_region='{network_region_code}' "
+        )
 
     query = __query.format(
-        network_code=network.code,
-        network_region=region_code,
-        trunc=interval.trunc,
-        interval=interval.interval_sql,
-        interval_remainder=interval.get_sql_join(
-            timezone=network.timezone_database
-        ),
+        trunc=interval.interval_sql,
         period=period.period_sql,
-        scale=network.intervals_per_hour,
         timezone=timezone,
+        network_query=network_query,
+        network_region_query=network_region_query,
     )
 
     return query
+
