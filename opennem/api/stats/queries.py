@@ -144,7 +144,7 @@ def power_network_fueltech(
 
         select
             t.trading_interval,
-            sum(t.facility_power),
+            sum(t.facility_power) / max(t.generation_samples),
             t.fueltech_code
         from (
             select
@@ -153,7 +153,8 @@ def power_network_fueltech(
                     avg(fs.generated)
                 ) as facility_power,
                 fs.facility_code,
-                ft.code as fueltech_code
+                ft.code as fueltech_code,
+                count(fs.generated) as generation_samples
             from facility_scada fs
             join facility f on fs.facility_code = f.code
             join fueltech ft on f.fueltech_id = ft.code
