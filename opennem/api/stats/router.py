@@ -554,7 +554,7 @@ def price_network_region_api(
 
     stats = [
         DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+            interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None
         )
         for i in results
     ]

@@ -11,7 +11,6 @@ from typing import List, Optional
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
-from opennem.db.models.opennem import Network
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 
@@ -495,7 +494,7 @@ def price_network_region(
     scada_range: ScadaDateRange,
 ) -> str:
 
-    timezone = network.timezone_database
+    timezone = network.get_timezone(postgres_format=True)
 
     if not timezone:
         timezone = "UTC"
@@ -503,20 +502,17 @@ def price_network_region(
     __query = """
         SET SESSION TIME ZONE '{timezone}';
 
-
         select
             time_bucket_gapfill('{trunc}', bs.trading_interval) AS trading_interval,
             bs.network_region,
-            interpolate(bs.price) as price,
+            interpolate(avg(bs.price)) as price
         from balancing_summary bs
-        join facility f on fs.facility_code = f.code
-        join fueltech ft on f.fueltech_id = ft.code
         where
-            bs.trading_interval >= {scada_max} - interval '{period}'::interval
+            bs.trading_interval >= {scada_max}::timestamp - interval '{period}'::interval
             and bs.trading_interval <= {scada_max}
             {network_query}
             {network_region_query}
-        group by 1, 3, 4
+        group by 1, 2
         order by 1 desc
     """
 
@@ -537,6 +533,7 @@ def price_network_region(
         timezone=timezone,
         network_query=network_query,
         network_region_query=network_region_query,
+        scada_max=scada_range.get_end_sql(),
     )
 
     return query
