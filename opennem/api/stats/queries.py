@@ -143,17 +143,16 @@ def power_network_fueltech(
 
         select
             t.trading_interval,
-            sum(t.facility_power) / max(t.generation_samples),
+            sum(t.facility_power),
             t.fueltech_code
         from (
             select
                 time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
                 interpolate(
-                    avg(fs.generated)
+                    max(fs.generated)
                 ) as facility_power,
                 fs.facility_code,
-                ft.code as fueltech_code,
-                count(fs.generated) as generation_samples
+                ft.code as fueltech_code
             from facility_scada fs
             join facility f on fs.facility_code = f.code
             join fueltech ft on f.fueltech_id = ft.code
