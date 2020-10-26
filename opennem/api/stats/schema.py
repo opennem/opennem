@@ -76,3 +76,8 @@ class DataQueryResult(BaseConfig):
     interval: datetime
     result: Union[float, int, None, Decimal]
     group_by: Optional[str]
+
+
+class ScadaDateRange(BaseConfig):
+    start: datetime
+    end: datetime

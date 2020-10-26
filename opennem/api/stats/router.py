@@ -13,7 +13,7 @@ from opennem.db.models.opennem import Facility, Station
 from opennem.schema.time import TimePeriod
 from opennem.utils.time import human_to_timedelta
 
-from .controllers import stats_factory
+from .controllers import get_scada_range, stats_factory
 from .queries import (
     energy_facility,
     energy_network,
@@ -213,11 +213,14 @@ def power_network_fueltech_api(
     period = human_to_period(period)
     units = get_unit("power")
 
+    scada_range = get_scada_range(network=network)
+
     query = power_network_fueltech(
         network=network,
         interval=interval,
         period=period,
         network_region=network_region,
+        scada_range=scada_range,
     )
 
     with engine.connect() as c:
@@ -445,19 +448,12 @@ def energy_network_fueltech_api(
             network_region=network_region,
         )
     elif period_obj and period_obj.period_human == "all":
-        with engine.connect() as c:
-            scada_min_result = list(
-                c.execute(
-                    f"select min(trading_interval)::date, max(trading_interval)::date from facility_scada where network_id='{network.code}'  and generated is not null  and facility_code not like 'ROOFTOP_%%'"
-                )
-            )
-            scada_min = scada_min_result[0][0]
-            scada_max = scada_min_result[0][1]
+        scada_range = get_scada_range(network=network)
+
         query = energy_network_fueltech_all(
             network=network,
             network_region=network_region,
-            scada_min=scada_min,
-            scada_max=scada_max,
+            scada_range=scada_range,
         )
     else:
         query = energy_network_fueltech(

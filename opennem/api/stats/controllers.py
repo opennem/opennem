@@ -7,6 +7,7 @@ from typing import List, Optional, Union
 from pytz import timezone as pytz_timezone
 from sqlalchemy.orm import Session
 
+from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada, Station
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
@@ -19,6 +20,7 @@ from .schema import (
     OpennemData,
     OpennemDataHistory,
     OpennemDataSet,
+    ScadaDateRange,
 )
 
 
@@ -145,6 +147,53 @@ def stats_factory(
         stat_set.region = region
 
     return stat_set
+
+
+def get_scada_range(
+    network: Optional[NetworkSchema] = None,
+    network_region: Optional[str] = None,
+) -> ScadaDateRange:
+    engine = get_database_engine()
+
+    __query = """
+        select
+            min(trading_interval)::timestamp,
+            max(trading_interval)::timestamp
+        from facility_scada
+        where
+            {network_query}
+            {network_region_query}
+            generated is not null  and
+            facility_code not like 'ROOFTOP_%%'"
+    """
+
+    network_query = ""
+
+    if network:
+        network_query = f"network_id = '{network.code}' and"
+
+    network_region_query = ""
+
+    if network_region:
+        # @TODO support network regions in scada_range
+        network_region_query = f"network_id = '{network.code}' and"
+
+    scada_range_query = __query.format(
+        network_query=network_query, network_region_query=network_region_query,
+    )
+
+    with engine.connect() as c:
+        scada_range_result = list(c.execute(scada_range_query))
+
+        if len(scada_range_result) < 1:
+            raise Exception("No scada range result")
+
+        scada_min = scada_range_result[0][0]
+        scada_max = scada_range_result[0][1]
+
+    scada_range = ScadaDateRange(start=scada_min, end=scada_max,)
+
+    return scada_range
 
 
 def station_attach_stats(station: Station, session: Session) -> Station:

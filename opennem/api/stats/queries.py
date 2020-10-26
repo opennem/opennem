@@ -8,6 +8,7 @@
 from datetime import datetime
 from typing import List, Optional
 
+from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
 from opennem.db.models.opennem import Network
@@ -129,7 +130,8 @@ def power_network_fueltech(
     network: NetworkSchema,
     interval: TimeInterval,
     period: TimePeriod,
-    network_region: str = None,
+    network_region: Optional[str] = None,
+    scada_range: Optional[ScadaDateRange] = None,
 ) -> str:
 
     timezone = network.get_timezone(postgres_format=True)
@@ -156,8 +158,8 @@ def power_network_fueltech(
             join facility f on fs.facility_code = f.code
             join fueltech ft on f.fueltech_id = ft.code
             where
-                fs.trading_interval <= now()
-                and fs.trading_interval >= now() - '{period}'::interval
+                fs.trading_interval <= {date_end}
+                and fs.trading_interval >= {date_end} - '{period}'::interval
                 and fs.network_id = '{network_code}'
                 and f.fueltech_id is not null
                 {network_region_query}
@@ -171,6 +173,11 @@ def power_network_fueltech(
 
     if network_region:
         network_region_query = f"and f.network_region='{network_region}'"
+
+    date_end = "now()"
+
+    if scada_range:
+        date_end = scada_range.end
 
     query = __query.format(
         network_code=network.code,
@@ -420,8 +427,7 @@ def energy_network_fueltech_year(
 def energy_network_fueltech_all(
     network: Optional[NetworkSchema],
     network_region: Optional[str],
-    scada_min: Optional[str] = None,
-    scada_max: Optional[str] = None,
+    scada_range: ScadaDateRange,
 ):
     timezone = "AEST"
 
@@ -466,15 +472,12 @@ def energy_network_fueltech_all(
     if network_region:
         network_region_query = f"and f.network_region='{network_region}' "
 
-    if not scada_min:
-        scada_min = "now() - interval '2 months'"
-
     query = __query.format(
         network_code=network.code,
         network_query=network_query,
         network_region_query=network_region_query,
-        scada_min=scada_min,
-        scada_max=scada_max,
+        scada_min=scada_range.start.date(),
+        scada_max=scada_range.end.date(),
         timezone=timezone,
     )
 
