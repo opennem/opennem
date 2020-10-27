@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -520,6 +521,7 @@ def price_network_region_api(
     network_region_code: str = Query(..., description="Region code"),
     interval: str = Query(None, description="Interval"),
     period: str = Query("7d", description="Period"),
+    year: Optional[int] = None,
 ) -> OpennemDataSet:
     network = network_from_network_code(network_code)
 
@@ -532,7 +534,10 @@ def price_network_region_api(
         interval = "{}m".format(network.interval_size)
 
     interval = human_to_interval(interval)
-    period = human_to_period(period)
+
+    if period:
+        period = human_to_period(period)
+
     units = get_unit("price")
     scada_range = get_scada_range(network=network)
 
@@ -542,6 +547,7 @@ def price_network_region_api(
         interval=interval,
         period=period,
         scada_range=scada_range,
+        year=year,
     )
 
     with engine.connect() as c:

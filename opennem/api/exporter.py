@@ -87,18 +87,21 @@ def wem_export_years():
             year=year,
             network_code="WEM",
             engine=engine,
+            period=None,
         )
 
-        # price = price_network_region_api(
-        #     engine=engine,
-        #     network_code="WEM",
-        #     network_region_code="WEM",
-        #     interval="30m",
-        #     period="7d",
-        # )
+        price = price_network_region_api(
+            engine=engine,
+            network_code="WEM",
+            network_region_code="WEM",
+            interval="1d",
+            period=None,
+            year=year,
+        )
+
         # market_value = wem_market_value_year(year)
 
-        stat_set.data += weather.data
+        stat_set.data += weather.data + price.data
 
         write_to_s3(
             f"/wem/energy/daily/{year}.json", stat_set.json(exclude_unset=True)

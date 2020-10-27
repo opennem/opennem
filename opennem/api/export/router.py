@@ -102,7 +102,16 @@ def api_export_energy_year(
         period=None,
     )
 
-    stats.data += weather.data
+    price = price_network_region_api(
+        engine=engine,
+        network_code="WEM",
+        network_region_code="WEM",
+        interval="1d",
+        period=None,
+        year=year,
+    )
+
+    stats.data += weather.data + price.data
 
     return stats
 

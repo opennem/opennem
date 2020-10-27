@@ -8,6 +8,9 @@
 from datetime import datetime
 from typing import List, Optional
 
+from fastapi.exceptions import HTTPException
+from starlette import status
+
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
@@ -491,6 +494,7 @@ def price_network_region(
     interval: TimeInterval,
     period: TimePeriod,
     scada_range: ScadaDateRange,
+    year: Optional[int] = None,
 ) -> str:
 
     timezone = network.get_timezone(postgres_format=True)
@@ -507,7 +511,7 @@ def price_network_region(
             interpolate(avg(bs.price)) as price
         from balancing_summary bs
         where
-            bs.trading_interval >= {scada_max}::timestamp - interval '{period}'::interval
+            bs.trading_interval >= {date_min_query}
             and bs.trading_interval <= {scada_max}
             {network_query}
             {network_region_query}
@@ -526,13 +530,29 @@ def price_network_region(
             f"and bs.network_region='{network_region_code}' "
         )
 
+    date_min_query = ""
+
+    if period:
+        date_min_query = "{scada_max}::timestamp - interval '{period}'::interval".format(
+            scada_max=scada_range.get_end_sql(), period=period.period_sql
+        )
+
+    if year:
+        date_min_query = "'{year}-01-01'::date ".format(year=year)
+
+    if not period and not year:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Require one of period or year",
+        )
+
     query = __query.format(
         trunc=interval.interval_sql,
-        period=period.period_sql,
         timezone=timezone,
         network_query=network_query,
         network_region_query=network_region_query,
         scada_max=scada_range.get_end_sql(),
+        date_min_query=date_min_query,
     )
 
     return query
