@@ -1,7 +1,5 @@
 from collections import OrderedDict
 from datetime import datetime, timezone
-from itertools import groupby
-from operator import attrgetter
 from typing import List, Optional, Union
 
 from pytz import timezone as pytz_timezone
@@ -27,14 +25,14 @@ from .schema import (
 def stats_factory(
     stats: List[DataQueryResult],
     interval: TimeInterval,
-    period: Optional[TimePeriod] = None,
     units: UnitDefinition,
+    period: Optional[TimePeriod] = None,
     network: Optional[NetworkSchema] = None,
     timezone: Optional[Union[timezone, pytz_timezone]] = None,
     code: Optional[str] = None,
     region: Optional[str] = None,
-    fueltech_group: bool = False,
-    group_field: str = None,
+    fueltech_group: Optional[bool] = False,
+    group_field: Optional[str] = None,
 ) -> Optional[OpennemDataSet]:
     """
         Takes a list of data query results and returns OpennemDataSets
