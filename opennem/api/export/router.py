@@ -93,6 +93,17 @@ def api_export_energy_year(
         engine=engine,
     )
 
+    weather = station_observations_api(
+        station_code="009021",
+        interval="1d",
+        year=year,
+        network_code="WEM",
+        engine=engine,
+        period=None,
+    )
+
+    stats.data += weather.data
+
     return stats
 
 

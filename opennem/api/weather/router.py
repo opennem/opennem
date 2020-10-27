@@ -79,6 +79,7 @@ def station_observations_api(
     network_code: str = "NEM",
     timezone: str = None,
     offset: str = None,
+    year: int = None,
     engine=Depends(get_database_engine),
 ) -> OpennemDataSet:
     units = get_unit("temperature")
@@ -117,6 +118,7 @@ def station_observations_api(
         period=period,
         network=network,
         scada_range=scada_range,
+        year=year,
     )
 
     with engine.connect() as c:

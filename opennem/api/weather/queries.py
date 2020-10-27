@@ -19,6 +19,7 @@ def observation_query(
     network: NetworkSchema = NetworkNEM,
     timezone: str = "UTC",
     scada_range: Optional[ScadaDateRange] = None,
+    year: Optional[str] = None,
 ):
 
     timezone = network.get_timezone(postgres_format=True)
@@ -37,7 +38,7 @@ def observation_query(
     where
         fs.station_id in ({station_codes})
         and fs.observation_time <= {date_end}
-        and fs.observation_time >= {date_end}::timestamp - '{period}'::interval
+        and fs.observation_time >= {date_start_condition}
     group by 1, 2
     order by 1 desc, 2 desc
     """
@@ -47,11 +48,18 @@ def observation_query(
     if scada_range:
         date_end = scada_range.get_end_sql()
 
+    date_start_condition = "{date_end}::timestamp - '{period}'::interval".format(
+        date_end=date_end, period=period.period_sql
+    )
+
+    if year:
+        date_start_condition = "'{year}-01-01'::date".format(year=year)
+
     query = __query.format(
         station_codes=station_id_case(station_codes),
         trunc=interval.interval_sql,
-        period=period.period_sql,
         timezone=timezone,
+        date_start_condition=date_start_condition,
         date_end=date_end,
     )
 
