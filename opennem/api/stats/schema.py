@@ -60,7 +60,7 @@ class OpennemData(BaseConfig):
     units: str
 
     interval: TimeIntervalAPI
-    period: TimePeriodAPI
+    period: Optional[TimePeriodAPI]
 
     history: OpennemDataHistory
 

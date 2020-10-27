@@ -27,7 +27,7 @@ from .schema import (
 def stats_factory(
     stats: List[DataQueryResult],
     interval: TimeInterval,
-    period: TimePeriod,
+    period: Optional[TimePeriod] = None,
     units: UnitDefinition,
     network: Optional[NetworkSchema] = None,
     timezone: Optional[Union[timezone, pytz_timezone]] = None,
