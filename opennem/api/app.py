@@ -24,10 +24,11 @@ from opennem.schema.network import NetworkSchema
 from opennem.schema.opennem import FueltechSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
+from opennem.settings import settings
 
 from .schema import FueltechResponse
 
-app = FastAPI(title="OpenNEM", debug=True, version="3.0.0-alpha.3")
+app = FastAPI(title="OpenNEM", debug=settings.debug, version="3.0.0-alpha.3")
 
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(locations_router, tags=["Locations"], prefix="/locations")

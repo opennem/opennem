@@ -19,10 +19,17 @@ class OpennemSettings(BaseSettings):
     s3_bucket_path: str = "s3://data.opennem.org.au/"
 
     interval_default: str = "15m"
+
     period_default: str = "7d"
 
     # @todo overwrite scrapy settings here
     scrapy: Optional[Settings] = get_project_settings()
+
+    @property
+    def debug(self) -> bool:
+        if self.env in ["development", "staging"]:
+            return True
+        return False
 
     class Config:
         fields = {
