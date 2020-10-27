@@ -5,10 +5,7 @@ from typing import List
 
 from sqlalchemy.sql.schema import Table
 
-from opennem.db.models.opennem import FacilityScada
-from opennem.pipelines.nem.opennem import unit_scada_generate_facility_scada
 from opennem.utils.pipelines import check_spider_pipeline
-from tests.benchmark_facility_scada_generate import load_wem_scada_records
 
 logger = logging.getLogger(__name__)
 
@@ -84,17 +81,3 @@ class RecordsToCSVPipeline(object):
             record_set["csv"] = csv_content
 
         return item
-
-
-if __name__ == "__main__":
-    records = load_wem_scada_records(limit=10)
-    records_passed = unit_scada_generate_facility_scada(
-        records,
-        # network=NetworkWEM,
-        interval_field="Trading Interval",
-        facility_code_field="Facility Code",
-        energy_field="Energy Generated (MWh)",
-        power_field="EOI Quantity (MW)",
-    )
-    csvrec = generate_csv_from_records(FacilityScada, records_passed)
-    print(csvrec.getvalue())
