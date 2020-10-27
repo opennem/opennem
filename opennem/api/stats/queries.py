@@ -557,3 +557,56 @@ def price_network_region(
 
     return query
 
+
+def price_network_monthly(
+    network: Optional[NetworkSchema],
+    network_region_code: Optional[str],
+    scada_range: ScadaDateRange,
+):
+    timezone = "AEST"
+
+    networks = [network.code]
+
+    if network.code == "au":
+        networks = ["WEM", "NEM"]
+
+    if network:
+        timezone = network.get_timezone(postgres_format=True)
+
+    __query = """
+
+        SET SESSION TIME ZONE '{timezone}';
+
+        select
+            date_trunc('month', t.trading_interval),
+            avg(t.price),
+            t.network_id
+        from (
+            select
+                time_bucket_gapfill('1 day', trading_interval) AS trading_interval,
+                avg(bs.price) as price,
+                bs.network_id as network_id
+            from balancing_summary bs
+            where
+                bs.trading_interval >= {scada_min}
+                and bs.trading_interval <= {scada_max}
+                and bs.network_id IN ({network_codes})
+            group by 1, 3
+        ) as t
+        group by 1, 3
+        order by 1 desc;
+    """
+
+    network_codes = ""
+
+    for network_code in networks:
+        network_codes = ", ".join("'{}'".format(network_code.upper()))
+
+    query = __query.format(
+        network_codes=network_codes,
+        scada_min=scada_range.get_start_sql(as_date=True),
+        scada_max=scada_range.get_end_sql(as_date=True),
+        timezone=timezone,
+    )
+
+    return query

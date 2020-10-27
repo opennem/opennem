@@ -130,6 +130,17 @@ def wem_export_all():
         network_region=None,
     )
 
+    try:
+        price = price_network_region_api(
+            engine=engine,
+            network_code="WEM",
+            network_region_code="WEM",
+            interval="1M",
+            period="all",
+        )
+        stats.data += price.data
+    except HTTPException:
+        pass
     # market_value = wem_market_value_all()
 
     write_to_s3("/wem/energy/monthly/all.json", stats.json(exclude_unset=True))
@@ -141,4 +152,5 @@ def wem_run_all():
 
 
 if __name__ == "__main__":
+    wem_run_all()
     wem_export_all()

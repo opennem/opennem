@@ -23,6 +23,7 @@ from .queries import (
     energy_network_fueltech_year,
     power_facility,
     power_network_fueltech,
+    price_network_monthly,
     price_network_region,
 )
 from .schema import DataQueryResult, OpennemDataSet
@@ -535,20 +536,34 @@ def price_network_region_api(
 
     interval = human_to_interval(interval)
 
+    period_obj = None
+
     if period:
-        period = human_to_period(period)
+        period_obj = human_to_period(period)
 
     units = get_unit("price")
+
     scada_range = get_scada_range(network=network)
 
-    query = price_network_region(
-        network=network,
-        network_region_code=network_region_code,
-        interval=interval,
-        period=period,
-        scada_range=scada_range,
-        year=year,
-    )
+    if (
+        period_obj
+        and period_obj.period_human == "all"
+        and interval.interval_human == "1M"
+    ):
+        query = price_network_monthly(
+            network=network,
+            network_region_code=network_region_code,
+            scada_range=scada_range,
+        )
+    else:
+        query = price_network_region(
+            network=network,
+            network_region_code=network_region_code,
+            interval=interval,
+            period=period_obj,
+            scada_range=scada_range,
+            year=year,
+        )
 
     with engine.connect() as c:
         results = list(c.execute(query))
@@ -571,7 +586,7 @@ def price_network_region_api(
         region=network_region_code,
         network=network,
         interval=interval,
-        period=period,
+        period=period_obj,
         units=units,
         group_field="price",
     )

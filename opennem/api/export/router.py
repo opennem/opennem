@@ -148,4 +148,13 @@ def api_export_energy_month(
         network_region=None,
     )
 
+    price = price_network_region_api(
+        engine=engine,
+        network_code="WEM",
+        network_region_code="WEM",
+        interval="1M",
+        period="all",
+    )
+    stats.data += price.data
+
     return stats
