@@ -37,5 +37,10 @@
     "name": "temperature",
     "unit_type": "temperature",
     "unit": "C"
+  },
+  {
+    "name": "temperature_mean",
+    "unit_type": "temperature_mean",
+    "unit": "C"
   }
 ]
