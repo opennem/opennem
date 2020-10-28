@@ -192,6 +192,6 @@ def au_export_power():
 
 
 if __name__ == "__main__":
-    # wem_export_all()
-    # au_export_power()
+    wem_export_years()
+    au_export_power()
     wem_export_monthly()
