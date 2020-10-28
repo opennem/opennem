@@ -56,7 +56,7 @@ def observation_query(
     if year:
         date_start_condition = "'{year}-01-01'::date".format(year=year)
 
-    if not period or not year:
+    if not period and not year:
         raise Exception("Require period or year")
 
     query = __query.format(
