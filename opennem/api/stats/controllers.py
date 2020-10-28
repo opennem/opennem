@@ -33,6 +33,7 @@ def stats_factory(
     region: Optional[str] = None,
     fueltech_group: Optional[bool] = False,
     group_field: Optional[str] = None,
+    data_id: Optional[str] = None,
 ) -> Optional[OpennemDataSet]:
     """
         Takes a list of data query results and returns OpennemDataSets
@@ -120,6 +121,9 @@ def stats_factory(
 
             data.id = ".".join([f for f in group_fields if f])
             data.type = units.unit_type
+
+        if data_id:
+            data.id = data_id
 
         if region:
             data.region = region
