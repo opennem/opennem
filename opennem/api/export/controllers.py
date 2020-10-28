@@ -1,6 +1,16 @@
 from sqlalchemy.orm import sessionmaker
 
-from opennem.db import db_connect
+from opennem.api.export.queries import (
+    market_value_year_query,
+    wem_market_value_all_query,
+)
+from opennem.api.stats.controllers import get_scada_range, stats_factory
+from opennem.api.stats.schema import DataQueryResult
+from opennem.api.time import human_to_interval
+from opennem.api.weather.queries import observation_query
+from opennem.core.networks import network_from_network_code
+from opennem.core.units import get_unit
+from opennem.db import db_connect, get_database_engine
 
 engine = db_connect()
 session = sessionmaker(bind=engine)
@@ -326,196 +336,113 @@ def wem_energy_year(year="2020"):
     return [json_envelope[i] for i in json_envelope.keys()]
 
 
-def wem_market_value_year(year="2020"):
-    """
-        WEM market value year
+def weather_daily(year: int, network_code: str, station_code: str):
+    station_codes = []
 
-    """
-    __query = """
-        select
-            date_trunc('day', fs.trading_interval) AS trading_day,
-            round(sum(fs.eoi_quantity * bs.price), 2) as energy_interval,
-            f.fueltech_id
-        from facility_scada fs
-        left join facility f on fs.facility_code = f.code
-        join balancing_summary bs on fs.trading_interval = bs.trading_interval
-        where
-            f.fueltech_id is not null
-            and fs.network_id='WEM'
-            and extract('year' from fs.trading_interval) = {year}
-        group by 1, f.fueltech_id
-        order by 1 desc, 2 asc
-        """
+    if station_code:
+        station_codes = [station_code]
 
-    query = __query.format(year=year)
+    engine = get_database_engine()
+    interval = human_to_interval("1d")
+    network = network_from_network_code(network_code)
+    units = get_unit("temperature_mean")
+    scada_range = get_scada_range(network=network)
 
-    json_envelope = {}
+    query = observation_query(
+        station_codes=station_codes,
+        interval=interval,
+        network=network,
+        scada_range=scada_range,
+        year=year,
+    )
 
     with engine.connect() as c:
-        rows = c.execute(query)
+        row = list(c.execute(query))
 
-        current_tech = None
+    results = [
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
+        for i in row
+    ]
 
-        for row in rows:
+    if len(results) < 1:
+        raise Exception("No results from query: {}".format(query))
 
-            current_tech = row[2]
+    stats = stats_factory(
+        stats=results,
+        units=units,
+        network=network,
+        fueltech_group=True,
+        interval=interval,
+        code=network.code,
+    )
 
-            if current_tech not in json_envelope.keys():
-                json_envelope[current_tech] = {
-                    "id": f"wem.fuel_tech.{current_tech}.market_value",
-                    "fuel_tech": current_tech,
-                    "region": "wa",
-                    "type": "market_value",
-                    "units": "AUD",
-                    "history": {
-                        "interval": "1d",
-                        "start": None,
-                        "last": None,
-                        "data": [],
-                    },
-                }
-
-            if (
-                json_envelope[current_tech]["history"]["start"] == None
-                or row[0] < json_envelope[current_tech]["history"]["start"]
-            ):
-                json_envelope[current_tech]["history"]["start"] = row[0]
-
-            if (
-                json_envelope[current_tech]["history"]["last"] == None
-                or row[0] > json_envelope[current_tech]["history"]["last"]
-            ):
-                json_envelope[current_tech]["history"]["last"] = row[0]
-
-            json_envelope[current_tech]["history"]["data"].append(row[1])
-
-    return [json_envelope[i] for i in json_envelope.keys()]
+    return stats
 
 
-def wem_energy_all():
-    """
-        WEM energy year
+def market_value_year(year: int, network_code: str = "WEM"):
+    network = network_from_network_code(network_code)
+    engine = get_database_engine()
 
-    """
-    __query = """
-        select
-            date_trunc('month', fs.trading_interval) AS trading_day,
-            round(max(fs.eoi_quantity), 2) as energy_output,
-            f.fueltech_id
-        from facility_scada fs
-        left join facility f on fs.facility_code = f.code
-        where
-            f.fueltech_id is not null
-            and f.network_id='WEM'
-        group by 1, f.fueltech_id
-        order by 1 desc, 2 asc
-        """
-
-    query = __query.format()
-
-    json_envelope = {}
+    query = market_value_year_query(network_code="WEM", year=year,)
+    units = get_unit("market_value")
+    interval = human_to_interval("1d")
 
     with engine.connect() as c:
-        rows = c.execute(query)
+        row = list(c.execute(query))
 
-        current_tech = None
+    results = [
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
+        for i in row
+    ]
 
-        for row in rows:
+    if len(results) < 1:
+        raise Exception("No results from query: {}".format(query))
 
-            current_tech = row[2]
+    stats = stats_factory(
+        stats=results,
+        units=units,
+        network=network,
+        fueltech_group=True,
+        interval=interval,
+        code=network.code,
+    )
 
-            if current_tech not in json_envelope.keys():
-                json_envelope[current_tech] = {
-                    "id": f"wem.fuel_tech.{current_tech}.energy",
-                    "fuel_tech": current_tech,
-                    "region": "wa",
-                    "type": "energy",
-                    "units": "MWh",
-                    "history": {
-                        "interval": "1M",
-                        "start": None,
-                        "last": None,
-                        "data": [],
-                    },
-                }
-
-            if (
-                json_envelope[current_tech]["history"]["start"] == None
-                or row[0] < json_envelope[current_tech]["history"]["start"]
-            ):
-                json_envelope[current_tech]["history"]["start"] = row[0]
-
-            if (
-                json_envelope[current_tech]["history"]["last"] == None
-                or row[0] > json_envelope[current_tech]["history"]["last"]
-            ):
-                json_envelope[current_tech]["history"]["last"] = row[0]
-
-            json_envelope[current_tech]["history"]["data"].append(row[1])
-
-    return [json_envelope[i] for i in json_envelope.keys()]
+    return stats
 
 
-def wem_market_value_all():
-    """
-        WEM market value all
+def market_value_all(network_code: str = "WEM"):
+    network = network_from_network_code(network_code)
+    engine = get_database_engine()
 
-    """
-    __query = """
-        select
-            date_trunc('month', fs.trading_interval) AS trading_day,
-            round(sum(fs.eoi_quantity * bs.price), 2) as energy_interval,
-            f.fueltech_id
-        from facility_scada fs
-        left join facility f on fs.facility_code = f.code
-        join balancing_summary bs on fs.trading_interval = bs.trading_interval
-        where
-            f.fueltech_id is not null
-            and f.network_id='WEM'
-        group by 1, f.fueltech_id
-        order by 1 desc, 2 asc
-        """
-
-    query = __query.format()
-
-    json_envelope = {}
+    query = wem_market_value_all_query(network_code="WEM")
+    units = get_unit("market_value")
+    interval = human_to_interval("1M")
 
     with engine.connect() as c:
-        rows = c.execute(query)
+        row = list(c.execute(query))
 
-        current_tech = None
+    results = [
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
+        for i in row
+    ]
 
-        for row in rows:
+    if len(results) < 1:
+        raise Exception("No results from query: {}".format(query))
 
-            current_tech = row[2]
+    stats = stats_factory(
+        stats=results,
+        units=units,
+        network=network,
+        fueltech_group=True,
+        interval=interval,
+        code=network.code,
+    )
 
-            if current_tech not in json_envelope.keys():
-                json_envelope[current_tech] = {
-                    "id": f"wem.fuel_tech.{current_tech}.market_value",
-                    "fuel_tech": current_tech,
-                    "region": "wa",
-                    "type": "market_value",
-                    "units": "AUD",
-                    "history": {
-                        "interval": "1M",
-                        "start": None,
-                        "last": None,
-                        "data": [],
-                    },
-                }
+    return stats
 
-            if (
-                json_envelope[current_tech]["history"]["start"] == None
-                or row[0] < json_envelope[current_tech]["history"]["start"]
-            ):
-                json_envelope[current_tech]["history"]["start"] = row[0]
-
-            if (
-                json_envelope[current_tech]["history"]["last"] == None
-                or row[0] > json_envelope[current_tech]["history"]["last"]
-            ):
-                json_envelope[current_tech]["history"]["last"] = row[0]
-
-            json_envelope[current_tech]["history"]["data"].append(row[1])
-
-    return [json_envelope[i] for i in json_envelope.keys()]

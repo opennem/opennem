@@ -3,7 +3,11 @@ from datetime import datetime
 
 from fastapi import HTTPException
 
-from opennem.api.export.router import api_export_energy_month
+from opennem.api.export.controllers import (
+    market_value_all,
+    market_value_year,
+    weather_daily,
+)
 from opennem.api.stats.controllers import get_scada_range, stats_factory
 from opennem.api.stats.router import (
     energy_network_fueltech_api,
@@ -18,7 +22,7 @@ from opennem.db import get_database_engine
 from opennem.exporter.aws import write_to_s3
 from opennem.schema.network import NetworkNEM
 
-YEAR_MIN = 2010
+YEAR_MIN = 2011
 
 logger = logging.getLogger(__name__)
 
@@ -87,39 +91,23 @@ def wem_export_years():
             continue
 
         try:
-            weather = station_observations_api(
-                station_code="009021",
-                interval="1d",
-                year=year,
-                network_code="WEM",
-                engine=engine,
-                period=None,
+            weather = weather_daily(
+                station_code="009021", year=year, network_code="WEM",
             )
             stat_set.data += weather.data
         except HTTPException:
             pass
 
-        try:
-            price = price_network_region_api(
-                engine=engine,
-                network_code="WEM",
-                network_region_code="WEM",
-                interval="1d",
-                period=None,
-                year=year,
-            )
-            stat_set.data += price.data
-        except HTTPException:
-            pass
+        market_value = market_value_year(year=year, network_code="WEM")
 
-        # market_value = wem_market_value_year(year)
+        stat_set.data += market_value.data
 
         write_to_s3(
             f"/wem/energy/daily/{year}.json", stat_set.json(exclude_unset=True)
         )
 
 
-def wem_export_all():
+def wem_export_monthly():
     """
 
         @TODO this is slow atm because of on_energy_sum
@@ -135,19 +123,9 @@ def wem_export_all():
         network_region=None,
     )
 
-    try:
-        price = price_network_region_api(
-            engine=engine,
-            network_code="WEM",
-            network_region_code="WEM",
-            interval="1M",
-            period="all",
-        )
-        stats.data += price.data
-    except HTTPException:
-        pass
+    market_value = market_value_all(network_code="WEM")
 
-    # market_value = wem_market_value_all()
+    stats.data += market_value.data
 
     write_to_s3("/wem/energy/monthly/all.json", stats.json(exclude_unset=True))
 
@@ -213,12 +191,7 @@ def au_export_power():
     write_to_s3("/power/au.json", stats.json(exclude_unset=True))
 
 
-def wem_run_all():
-    wem_export_power()
-    wem_export_years()
-
-
 if __name__ == "__main__":
-    # wem_run_all()
     # wem_export_all()
-    au_export_power()
+    # au_export_power()
+    wem_export_monthly()
