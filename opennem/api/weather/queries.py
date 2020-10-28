@@ -15,9 +15,9 @@ def station_id_case(station_codes: List[str]) -> str:
 def observation_query(
     station_codes: List[str],
     interval: TimeInterval,
-    period: TimePeriod,
     network: NetworkSchema = NetworkNEM,
     timezone: str = "UTC",
+    period: Optional[TimePeriod] = None,
     scada_range: Optional[ScadaDateRange] = None,
     year: Optional[str] = None,
 ):
@@ -48,12 +48,16 @@ def observation_query(
     if scada_range:
         date_end = scada_range.get_end_sql()
 
-    date_start_condition = "{date_end}::timestamp - '{period}'::interval".format(
-        date_end=date_end, period=period.period_sql
-    )
+    if period:
+        date_start_condition = "{date_end}::timestamp - '{period}'::interval".format(
+            date_end=date_end, period=period.period_sql
+        )
 
     if year:
         date_start_condition = "'{year}-01-01'::date".format(year=year)
+
+    if not period or not year:
+        raise Exception("Require period or year")
 
     query = __query.format(
         station_codes=station_id_case(station_codes),
