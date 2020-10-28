@@ -146,6 +146,7 @@ def wem_export_all():
         stats.data += price.data
     except HTTPException:
         pass
+
     # market_value = wem_market_value_all()
 
     write_to_s3("/wem/energy/monthly/all.json", stats.json(exclude_unset=True))
