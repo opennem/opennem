@@ -4,6 +4,7 @@ from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -29,6 +30,12 @@ from opennem.settings import settings
 from .schema import FueltechResponse
 
 app = FastAPI(title="OpenNEM", debug=settings.debug, version="3.0.0-alpha.3")
+
+app.mount(
+    "/static",
+    StaticFiles(directory=settings.static_folder_path),
+    name="static",
+)
 
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(locations_router, tags=["Locations"], prefix="/locations")
