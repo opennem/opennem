@@ -64,3 +64,4 @@ data/
 profiles/
 .benchmarks/
 .env.*
+opennem/static/
