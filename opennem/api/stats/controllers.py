@@ -102,7 +102,7 @@ def stats_factory(
             data.id = ".".join(
                 [
                     network.code.lower(),
-                    "fueltech",
+                    "fuel_tech",
                     group_code.lower(),
                     units.unit_type,
                 ]
@@ -116,7 +116,7 @@ def stats_factory(
             # setattr(data, group_field, group_code)
 
             if network:
-                group_fields.append(network.code)
+                group_fields.append(network.code.lower())
 
             group_fields = group_fields + [
                 group_field,
