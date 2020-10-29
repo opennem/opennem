@@ -46,8 +46,8 @@ def power_facility(
         from (
             select
                 time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
-                interpolate(
-                    max(fs.generated)
+                (
+                    avg(fs.generated)
                 ) as facility_power,
                 fs.facility_code
             from facility_scada fs
