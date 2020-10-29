@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from opennem.api.export.controllers import (
     market_value_all,
     market_value_year,
+    power_week,
     weather_daily,
 )
 from opennem.api.stats.controllers import get_scada_range, stats_factory
@@ -30,13 +31,7 @@ logger = logging.getLogger(__name__)
 def wem_export_power():
     engine = get_database_engine()
 
-    stat_set = power_network_fueltech_api(
-        network_code="WEM",
-        network_region="WEM",
-        interval="30m",
-        period="7d",
-        engine=engine,
-    )
+    stat_set = power_week(network_code="WEM")
 
     weather = station_observations_api(
         station_code="009021",
@@ -201,5 +196,5 @@ def au_export_power():
 if __name__ == "__main__":
     # au_export_power()
     wem_export_power()
-    wem_export_daily(limit=2)
-    wem_export_monthly()
+    # wem_export_daily(limit=2)
+    # wem_export_monthly()

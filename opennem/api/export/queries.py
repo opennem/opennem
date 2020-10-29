@@ -1,8 +1,11 @@
 from datetime import datetime
+from typing import Optional
 
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import ScadaDateRange
-from opennem.schema.network import NetworkWEM
+from opennem.api.time import human_to_interval, human_to_period
+from opennem.schema.network import NetworkSchema, NetworkWEM
+from opennem.schema.time import TimeInterval, TimePeriod
 
 
 def wem_demand_all(network_code: str = "WEM"):
@@ -27,6 +30,72 @@ def wem_demand_all(network_code: str = "WEM"):
     """
 
     query = __query.format(network_code=network_code)
+
+    return query
+
+
+def power_network_fueltech_query(
+    interval: TimeInterval,
+    network: NetworkSchema = NetworkWEM,
+    period: TimePeriod = human_to_period("7d"),
+    network_region: Optional[str] = None,
+) -> str:
+
+    scada_range: ScadaDateRange = get_scada_range(network=network)
+
+    timezone = network.get_timezone(postgres_format=True)
+
+    if not timezone:
+        timezone = "UTC"
+
+    __query = """
+        SET SESSION TIME ZONE '{timezone}';
+
+        select
+            t.trading_interval,
+            t.fueltech_code,
+            sum(t.facility_power)
+        from (
+            select
+                time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
+                coalesce(
+                    avg(fs.generated), 0
+                ) as facility_power,
+                fs.facility_code,
+                ft.code as fueltech_code
+            from facility_scada fs
+            join facility f on fs.facility_code = f.code
+            join fueltech ft on f.fueltech_id = ft.code
+            where
+                fs.trading_interval <= {date_end}
+                and fs.trading_interval > {date_end}::timestamp - '{period}'::interval
+                and fs.network_id = '{network_code}'
+                and f.fueltech_id is not null
+                {network_region_query}
+            group by 1, 3, 4
+        ) as t
+        group by 1, 2
+        order by 1 desc
+    """
+
+    network_region_query = ""
+
+    if network_region:
+        network_region_query = f"and f.network_region='{network_region}'"
+
+    date_end = "now()"
+
+    if scada_range:
+        date_end = scada_range.get_end_sql()
+
+    query = __query.format(
+        network_code=network.code,
+        trunc=interval.interval_sql,
+        period=period.period_sql,
+        network_region_query=network_region_query,
+        timezone=timezone,
+        date_end=date_end,
+    )
 
     return query
 
