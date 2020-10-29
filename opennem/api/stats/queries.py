@@ -392,7 +392,7 @@ def energy_network_fueltech_year(
         from (
             select
                 time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
-                on_energy_sum(fs.generated, '{trunc}') / 1000 as facility_energy,
+                energy_sum(fs.generated, '{trunc}') * interval_size('1 day', count(fs.generated)) / 1000 as facility_energy,
                 f.code,
                 ft.code as fueltech_code
             from facility_scada fs
@@ -449,7 +449,7 @@ def energy_network_fueltech_all(
         from (
             select
                 time_bucket_gapfill('1 day', trading_interval) AS trading_interval,
-                on_energy_sum(fs.generated, '1 day') / 1000 as facility_energy,
+                energy_sum(fs.generated, '1 day') * interval_size('1 day', count(fs.generated)) / 1000 as facility_energy,
                 f.code,
                 ft.code as fueltech_code
             from facility_scada fs
