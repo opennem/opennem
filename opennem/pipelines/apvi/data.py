@@ -7,6 +7,7 @@ from opennem.core.networks import network_from_state
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import Facility, FacilityScada
 from opennem.importer.apvi import ROOFTOP_CODE
+from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -71,10 +72,10 @@ class APVIStoreData(object):
                 facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
 
                 interval_time = parse_date(
-                    record["ts"], dayfirst=False, yearfirst=True
+                    record["ts"], dayfirst=False, yearfirst=True,
                 )
 
-                network = network_from_state(state)
+                network = NetworkNEM
                 interval_time = interval_time.astimezone(
                     network.get_timezone()
                 )
