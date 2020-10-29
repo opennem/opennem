@@ -46,8 +46,8 @@ def power_facility(
         from (
             select
                 time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
-                (
-                    avg(fs.generated)
+                coalesce(
+                    avg(fs.generated), 0
                 ) as facility_power,
                 fs.facility_code
             from facility_scada fs
@@ -151,8 +151,8 @@ def power_network_fueltech(
         from (
             select
                 time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
-                interpolate(
-                    max(fs.generated)
+                coalesce(
+                    avg(fs.generated), 0
                 ) as facility_power,
                 fs.facility_code,
                 ft.code as fueltech_code
@@ -508,7 +508,7 @@ def price_network_region(
         select
             time_bucket_gapfill('{trunc}', bs.trading_interval) AS trading_interval,
             bs.network_region,
-            interpolate(avg(bs.price)) as price
+            coalesce(avg(bs.price), 0) as price
         from balancing_summary bs
         where
             bs.trading_interval >= {date_min_query}
