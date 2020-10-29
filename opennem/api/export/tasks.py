@@ -200,5 +200,6 @@ def au_export_power():
 
 if __name__ == "__main__":
     # au_export_power()
+    wem_export_power()
     wem_export_daily(limit=2)
     wem_export_monthly()
