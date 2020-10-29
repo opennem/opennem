@@ -40,7 +40,7 @@ def market_value_year_query(year: int, network_code: str = "WEM",) -> str:
 
         select
             time_bucket_gapfill('1 day', fs.trading_interval) AS trading_day,
-            on_energy_sum(fs.eoi_quantity, '1 day') * avg(bs.price) as energy_interval,
+            energy_sum(generated, '1 day') * interval_size('1 day', count(generated))  * avg(bs.price) as energy_interval,
             f.fueltech_id
         from facility_scada fs
         left join facility f on fs.facility_code = f.code
@@ -84,7 +84,7 @@ def wem_market_value_all_query(network_code: str = "WEM",) -> str:
         from (
             select
                 time_bucket_gapfill('1 day', fs.trading_interval) AS trading_day,
-                on_energy_sum(fs.generated, '1 day') * avg(bs.price) as energy_interval,
+                energy_sum(generated, '1 day') * interval_size('1 day', count(generated)) * avg(bs.price) as energy_interval,
                 f.fueltech_id
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
