@@ -17,7 +17,7 @@ def schedule_wem_export_task():
     wem_export_power()
 
 
-@huey.periodic_task(crontab(minute="*/30"))
+@huey.periodic_task(crontab(hour="*/1"))
 def schedule_wem_export_daily_most_recent():
     wem_export_daily(limit=1)
 
