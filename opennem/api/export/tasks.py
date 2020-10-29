@@ -66,8 +66,10 @@ def wem_export_power():
     logger.info("Wrote {} bytes to {}".format(byte_count, POWER_ENDPOINT))
 
 
-def wem_export_years():
+def wem_export_daily(limit: int = None):
     engine = get_database_engine()
+
+    processed_years = 0
 
     for year in range(datetime.now().year, YEAR_MIN - 1, -1):
 
@@ -105,6 +107,11 @@ def wem_export_years():
         write_to_s3(
             f"/wem/energy/daily/{year}.json", stat_set.json(exclude_unset=True)
         )
+
+        processed_years += 1
+
+        if limit and limit >= processed_years:
+            return None
 
 
 def wem_export_monthly():
@@ -192,6 +199,6 @@ def au_export_power():
 
 
 if __name__ == "__main__":
-    wem_export_years()
-    au_export_power()
+    # au_export_power()
+    wem_export_daily()
     wem_export_monthly()
