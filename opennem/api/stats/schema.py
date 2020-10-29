@@ -66,6 +66,7 @@ class OpennemData(BaseConfig):
 
 
 class OpennemDataSet(BaseConfig):
+    type: Optional[str]
     network: Optional[str]
     code: str
     region: Optional[str]

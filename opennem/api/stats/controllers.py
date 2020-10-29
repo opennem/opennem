@@ -141,10 +141,7 @@ def stats_factory(
         dt_now = dt_now.astimezone(network.get_timezone())
 
     stat_set = OpennemDataSet(
-        data_type=units.unit_type,
-        data=stats_grouped,
-        created_at=dt_now,
-        code=code,
+        type=units.unit_type, data=stats_grouped, created_at=dt_now, code=code,
     )
 
     if network:
