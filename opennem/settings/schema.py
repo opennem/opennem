@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 
 from pydantic import BaseSettings, PostgresDsn, RedisDsn
@@ -22,8 +23,19 @@ class OpennemSettings(BaseSettings):
 
     period_default: str = "7d"
 
+    _static_folder_path: str = "opennem/static/"
+
     # @todo overwrite scrapy settings here
     scrapy: Optional[Settings] = get_project_settings()
+
+    @property
+    def static_folder_path(self) -> str:
+        _path: Path = Path(self._static_folder_path)
+
+        if not _path.is_dir():
+            raise Exception("{} is not a folder".format(_path))
+
+        return str(_path.resolve())
 
     @property
     def debug(self) -> bool:
@@ -34,6 +46,7 @@ class OpennemSettings(BaseSettings):
     class Config:
         fields = {
             "env": {"env": "ENV"},
+            "_static_folder_path": {"env": "STATIC_PATH"},
             "db_url": {"env": "DATABASE_HOST_URL"},
             "cache_url": {"env": "REDIS_HOST_URL"},
             "sentry_url": {"env": "SENTRY_URL"},
