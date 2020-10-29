@@ -23,6 +23,12 @@
     "unit": "MWh"
   },
   {
+    "name": "energy_giga",
+    "name_alias": "energy_giga",
+    "unit_type": "energy",
+    "unit": "GWh"
+  },
+  {
     "name": "price_energy_mega",
     "name_alias": "price",
     "unit_type": "price",
