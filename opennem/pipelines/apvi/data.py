@@ -75,9 +75,10 @@ class APVIStoreData(object):
                     record["ts"], dayfirst=False, yearfirst=True,
                 )
 
-                network = NetworkNEM
+                network = network_from_state(state)
+
                 interval_time = interval_time.astimezone(
-                    network.get_timezone()
+                    NetworkNEM.get_timezone()
                 )
 
                 generated = sum(
