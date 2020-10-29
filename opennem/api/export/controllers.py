@@ -408,7 +408,8 @@ def market_value_year(year: int, network_code: str = "WEM"):
         network=network,
         fueltech_group=True,
         interval=interval,
-        code=network.code,
+        region=network.code.lower(),
+        code=network.code.lower(),
     )
 
     return stats
