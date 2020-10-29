@@ -373,7 +373,6 @@ def weather_daily(year: int, network_code: str, station_code: str):
         stats=results,
         units=units,
         network=network,
-        fueltech_group=True,
         interval=interval,
         code=network.code,
     )
