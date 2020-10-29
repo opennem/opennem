@@ -377,7 +377,7 @@ def energy_network_api(
 
     interval = human_to_interval(interval)
     period = human_to_period(period)
-    units = get_unit("energy")
+    units = get_unit("energy_giga")
 
     query = energy_network(network=network, interval=interval, period=period)
 
@@ -430,7 +430,7 @@ def energy_network_fueltech_api(
     if period:
         period_obj: TimePeriod = human_to_period(period)
 
-    units = get_unit("energy")
+    units = get_unit("energy_giga")
 
     query = ""
 
