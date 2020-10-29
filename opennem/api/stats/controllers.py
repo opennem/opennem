@@ -100,7 +100,12 @@ def stats_factory(
         if fueltech_group:
             data.fuel_tech = group_code
             data.id = ".".join(
-                [network.code, "fueltech", group_code, units.unit_type]
+                [
+                    network.code.lower(),
+                    "fueltech",
+                    group_code.lower(),
+                    units.unit_type,
+                ]
             )
             # @TODO make this an alias
             data.type = units.unit_type
