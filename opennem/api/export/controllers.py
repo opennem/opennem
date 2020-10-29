@@ -374,7 +374,8 @@ def weather_daily(year: int, network_code: str, station_code: str):
         units=units,
         network=network,
         interval=interval,
-        code=network.code,
+        code="bom",
+        group_field="temperature",
     )
 
     return stats
