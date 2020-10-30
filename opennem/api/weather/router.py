@@ -42,6 +42,8 @@ def station(
     "/station/{station_code}",
     description="Weather station record",
     response_model=WeatherStation,
+    response_model_exclude_unset=True,
+    response_model_exclude=set(["observations"]),
 )
 def station_record(
     station_code: str = Query(..., description="Station code"),
