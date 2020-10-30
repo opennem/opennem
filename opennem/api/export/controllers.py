@@ -39,24 +39,56 @@ def weather_daily(year: int, network_code: str, station_code: str):
     with engine.connect() as c:
         row = list(c.execute(query))
 
-    results = [
+    temp_avg = [
         DataQueryResult(
-            interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None
+            interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None
         )
         for i in row
     ]
 
-    if len(results) < 1:
+    temp_min = [
+        DataQueryResult(
+            interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None
+        )
+        for i in row
+    ]
+
+    temp_max = [
+        DataQueryResult(
+            interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None
+        )
+        for i in row
+    ]
+
+    if len(temp_avg) < 1:
         raise Exception("No results from query: {}".format(query))
 
     stats = stats_factory(
-        stats=results,
+        stats=temp_avg,
         units=units,
         network=network,
         interval=interval,
         code="bom",
         group_field="temperature",
     )
+
+    stats.data += stats_factory(
+        stats=temp_min,
+        units=get_unit("temprature_min"),
+        network=network,
+        interval=interval,
+        code="bom",
+        group_field="temperature",
+    ).data
+
+    stats.data += stats_factory(
+        stats=temp_max,
+        units=get_unit("temprature_max"),
+        network=network,
+        interval=interval,
+        code="bom",
+        group_field="temperature",
+    ).data
 
     return stats
 
@@ -74,7 +106,7 @@ def power_week(network_code: str = "WEM"):
         network=network, period=period, interval=interval
     )
 
-    print(query)
+    # print(query)
 
     with engine.connect() as c:
         row = list(c.execute(query))
@@ -122,7 +154,7 @@ def energy_fueltech_daily(
         network_region=network_region_code,
     )
 
-    print(query)
+    # print(query)
 
     with engine.connect() as c:
         row = list(c.execute(query))

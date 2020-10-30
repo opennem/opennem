@@ -33,7 +33,9 @@ def observation_query(
     select
         time_bucket_gapfill('{trunc}', observation_time) as observation_time,
         fs.station_id,
-        interpolate(avg(fs.temp_air)) as generated
+        interpolate(avg(fs.temp_air)) as temp_avg,
+        interpolate(min(fs.temp_air)) as temp_min,
+        interpolate(max(fs.temp_air)) as temp_max
     from bom_observation fs
     where
         fs.station_id in ({station_codes})
