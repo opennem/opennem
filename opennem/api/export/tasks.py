@@ -3,15 +3,11 @@ from datetime import datetime
 
 from opennem.api.export.controllers import (
     energy_fueltech_daily,
-    market_value_all,
     power_week,
     weather_daily,
 )
 from opennem.api.stats.controllers import get_scada_range, stats_factory
-from opennem.api.stats.router import (
-    energy_network_fueltech_api,
-    price_network_region_api,
-)
+from opennem.api.stats.router import price_network_region_api
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval
 from opennem.core.units import get_unit
@@ -67,8 +63,6 @@ def wem_export_daily(limit: int = None, is_local: bool = False):
 
     for year in range(datetime.now().year, YEAR_MIN - 1, -1):
 
-        stat_set = None
-
         stat_set = energy_fueltech_daily(year=year, network_code="WEM")
 
         weather = weather_daily(
@@ -92,24 +86,10 @@ def wem_export_monthly(is_local: bool = False):
         @TODO this is slow atm because of on_energy_sum (or is it?)
     """
 
-    engine = get_database_engine()
-
-    stats = energy_network_fueltech_api(
-        network_code="WEM",
-        period="all",
-        engine=engine,
-        interval="1M",
-        network_region=None,
-    )
-
-    market_value = market_value_all(network_code="WEM")
-
-    stats.data += market_value.data
+    stat_set = energy_fueltech_daily(network_code="WEM", interval_size="1M")
 
     write_output(
-        "/wem/energy/monthly/all.json",
-        stats.json(exclude_unset=True),
-        is_local=is_local,
+        "/wem/energy/monthly/all.json", stat_set, is_local=is_local,
     )
 
 
@@ -178,7 +158,7 @@ def au_export_power():
 
 
 if __name__ == "__main__":
-    if settings.env in ["development", "staging"]:
+    if settings.env in ["development"]:
         wem_export_power(is_local=True)
         wem_export_daily(limit=1, is_local=True)
         wem_export_monthly(is_local=True)

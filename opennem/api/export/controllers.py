@@ -3,7 +3,6 @@ from typing import Optional
 from opennem.api.export.queries import (
     energy_network_fueltech_daily_query,
     power_network_fueltech_query,
-    wem_market_value_all_query,
 )
 from opennem.api.stats.controllers import get_scada_range, stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
@@ -151,25 +150,21 @@ def power_week(network_code: str = "WEM"):
 
 
 def energy_fueltech_daily(
-    year: int,
+    year: Optional[int] = None,
     network_code: str = "WEM",
     network_region_code: Optional[str] = None,
+    interval_size: str = "1d",
 ) -> OpennemDataSet:
     network = network_from_network_code(network_code)
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
     network = network_from_network_code(network_code)
-    interval = human_to_interval("1d")
+    interval = human_to_interval(interval_size)
     units = get_unit("energy_giga")
 
     query = energy_network_fueltech_daily_query(
-        year=year,
-        interval=interval,
-        network=network,
-        network_region=network_region_code,
+        year=year, network=network, network_region=network_region_code,
     )
-
-    # print(query)
 
     with engine.connect() as c:
         row = list(c.execute(query))
@@ -215,39 +210,6 @@ def energy_fueltech_daily(
 
     if stats_market_value:
         stats.data += stats_market_value.data
-
-    return stats
-
-
-def market_value_all(network_code: str = "WEM"):
-    network = network_from_network_code(network_code)
-    engine = get_database_engine()
-
-    query = wem_market_value_all_query(network_code="WEM")
-    units = get_unit("market_value")
-    interval = human_to_interval("1M")
-
-    with engine.connect() as c:
-        row = list(c.execute(query))
-
-    results = [
-        DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
-        )
-        for i in row
-    ]
-
-    if len(results) < 1:
-        raise Exception("No results from query: {}".format(query))
-
-    stats = stats_factory(
-        stats=results,
-        units=units,
-        network=network,
-        fueltech_group=True,
-        interval=interval,
-        code=network.code,
-    )
 
     return stats
 
