@@ -50,13 +50,13 @@
     "unit": "C"
   },
   {
-    "name": "temprature_max",
-    "unit_type": "temprature_max",
+    "name": "temperature_max",
+    "unit_type": "temperature_max",
     "unit": "C"
   },
   {
-    "name": "temprature_min",
-    "unit_type": "temprature_min",
+    "name": "temperature_min",
+    "unit_type": "temperature_min",
     "unit": "C"
   }
 ]
