@@ -119,8 +119,8 @@ def energy_network_fueltech_daily_query(
                 time_bucket_gapfill('{trunc}', fs.trading_interval) as trading_interval,
                 f.fueltech_id,
                 count(fs.generated) as sample_count,
-                avg(fs.generated) as generated,
-                avg(bs.price) as price
+                coalesce(avg(fs.generated), 0) as generated,
+                coalesce(avg(bs.price), 0) as price
             from facility_scada fs
                 left join facility f on fs.facility_code = f.code
                 left join balancing_summary bs on
