@@ -4,6 +4,7 @@ from datetime import datetime
 from fastapi import HTTPException
 
 from opennem.api.export.controllers import (
+    energy_fueltech_daily,
     market_value_all,
     market_value_year,
     power_week,
@@ -15,12 +16,13 @@ from opennem.api.stats.router import (
     power_network_fueltech_api,
     price_network_region_api,
 )
-from opennem.api.stats.schema import DataQueryResult
+from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval
 from opennem.api.weather.router import station_observations_api
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
 from opennem.exporter.aws import write_to_s3
+from opennem.exporter.local import write_to_local
 from opennem.schema.network import NetworkNEM
 
 YEAR_MIN = 2011
@@ -28,7 +30,19 @@ YEAR_MIN = 2011
 logger = logging.getLogger(__name__)
 
 
-def wem_export_power():
+def write_output(path: str, stat_set: OpennemDataSet, is_local: bool = False):
+    # @TODO migrate to s3 methods
+    byte_count = 0
+
+    if is_local:
+        byte_count = write_to_local(path, stat_set.json(exclude_unset=True))
+    else:
+        byte_count = write_to_s3(path, stat_set.json(exclude_unset=True))
+
+    logger.info("Wrote {} bytes to {}".format(byte_count, path))
+
+
+def wem_export_power(is_local: bool = False):
     engine = get_database_engine()
 
     stat_set = power_week(network_code="WEM")
@@ -55,37 +69,17 @@ def wem_export_power():
 
     POWER_ENDPOINT = "/power/wem.json"
 
-    # @TODO migrate to s3 methods
-    byte_count = write_to_s3(POWER_ENDPOINT, stat_set.json(exclude_unset=True))
-
-    logger.info("Wrote {} bytes to {}".format(byte_count, POWER_ENDPOINT))
+    write_output(POWER_ENDPOINT, stat_set, is_local=is_local)
 
 
-def wem_export_daily(limit: int = None):
-    engine = get_database_engine()
-
+def wem_export_daily(limit: int = None, is_local: bool = False):
     processed_years = 0
 
     for year in range(datetime.now().year, YEAR_MIN - 1, -1):
 
         stat_set = None
 
-        try:
-            stat_set = energy_network_fueltech_api(
-                network_code="WEM",
-                network_region="WEM",
-                interval="1d",
-                year=year,
-                period="1Y",
-                engine=engine,
-            )
-        except HTTPException as e:
-            logger.info(
-                "Could not get energy network fueltech for {} {} : {}".format(
-                    "WEM", year, e
-                )
-            )
-            continue
+        stat_set = energy_fueltech_daily(year=year, network_code="WEM")
 
         try:
             weather = weather_daily(
@@ -95,12 +89,8 @@ def wem_export_daily(limit: int = None):
         except HTTPException:
             pass
 
-        market_value = market_value_year(year=year, network_code="WEM")
-
-        stat_set.data += market_value.data
-
-        write_to_s3(
-            f"/wem/energy/daily/{year}.json", stat_set.json(exclude_unset=True)
+        write_output(
+            f"/wem/energy/daily/{year}.json", stat_set, is_local=is_local
         )
 
         processed_years += 1
@@ -195,6 +185,6 @@ def au_export_power():
 
 if __name__ == "__main__":
     # au_export_power()
-    wem_export_power()
-    # wem_export_daily(limit=2)
+    wem_export_power(is_local=True)
+    wem_export_daily(is_local=True)
     # wem_export_monthly()

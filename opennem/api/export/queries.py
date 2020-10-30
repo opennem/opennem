@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from textwrap import dedent
 from typing import Optional
 
 from opennem.api.stats.controllers import get_scada_range
@@ -43,16 +44,11 @@ def power_network_fueltech_query(
 
     scada_range: ScadaDateRange = get_scada_range(network=network)
 
-    timezone = network.get_timezone(postgres_format=True)
-
-    if not timezone:
-        timezone = "UTC"
+    timezone = network.timezone_database
 
     __query = """
-        SET SESSION TIME ZONE '{timezone}';
-
         select
-            t.trading_interval,
+            t.trading_interval at time zone '{timezone}',
             t.fueltech_code,
             sum(t.facility_power)
         from (
@@ -67,10 +63,10 @@ def power_network_fueltech_query(
             join facility f on fs.facility_code = f.code
             join fueltech ft on f.fueltech_id = ft.code
             where
-                fs.trading_interval <= {date_end}
-                and fs.trading_interval > {date_end}::timestamp - '{period}'::interval
-                and fs.network_id = '{network_code}'
+                fs.network_id='{network_code}'
                 and f.fueltech_id is not null
+                and fs.trading_interval <= '{date_max}'
+                and fs.trading_interval > '{date_min}'
                 {network_region_query}
             group by 1, 3, 4
         ) as t
@@ -83,26 +79,109 @@ def power_network_fueltech_query(
     if network_region:
         network_region_query = f"and f.network_region='{network_region}'"
 
-    date_end = "now()"
+    date_max = scada_range.get_end()
+    date_min = scada_range.get_end() - timedelta(days=7)
 
-    if scada_range:
-        date_end = scada_range.get_end_sql()
-
-    query = __query.format(
-        network_code=network.code,
-        trunc=interval.interval_sql,
-        period=period.period_sql,
-        network_region_query=network_region_query,
-        timezone=timezone,
-        date_end=date_end,
+    query = dedent(
+        __query.format(
+            network_code=network.code,
+            trunc=interval.interval_sql,
+            period=period.period_sql,
+            network_region_query=network_region_query,
+            timezone=timezone,
+            date_max=date_max,
+            date_min=date_min,
+        )
     )
 
     return query
 
 
-def market_value_year_query(year: int, network_code: str = "WEM",) -> str:
+def energy_network_fueltech_daily_query(
+    network: NetworkSchema,
+    year: int,
+    interval: TimeInterval,
+    network_region: Optional[str] = None,
+) -> str:
+    """
+        Get Energy for a network or network + region
+        based on a year
+    """
 
-    scada_range: ScadaDateRange = get_scada_range(network=NetworkWEM)
+    __query = """
+        select
+            date_trunc('day', t.trading_interval at time zone '{timezone}') as trading_day,
+            t.fueltech_id,
+            energy_sum(t.generated, '1 day') * interval_size('1 day', t.sample_count) / 1000 as facility_energy,
+            energy_sum(t.generated, '1 day') * interval_size('1 day', t.sample_count) * avg(t.price) as price
+        from
+            (select
+                time_bucket_gapfill('{trunc}', fs.trading_interval) as trading_interval,
+                f.fueltech_id,
+                count(fs.generated) as sample_count,
+                avg(fs.generated) as generated,
+                avg(bs.price) as price
+            from facility_scada fs
+                left join facility f on fs.facility_code = f.code
+                left join balancing_summary bs on
+                    date_trunc('hour', bs.trading_interval) = date_trunc('hour', fs.trading_interval)
+                    and bs.network_id='{network_code}'
+            where
+                fs.network_id='{network_code}'
+                and f.fueltech_id is not null
+                and fs.trading_interval <= '{year_max}'
+                and fs.trading_interval >= '{year_min}'
+                {network_region_query}
+            group by
+                1,
+                f.code,
+                f.fueltech_id
+            ) as t
+        group by 1, 2
+        order by
+            trading_day desc;
+    """
+
+    timezone = network.timezone_database
+    offset = network.get_timezone(postgres_format=True)
+    scada_range: ScadaDateRange = get_scada_range(network=network)
+
+    if not timezone:
+        timezone = "UTC"
+
+    # might have to do +08 times
+    year_max = "{}-12-31 23:59:59{}".format(year, offset)
+    year_min = "{}-01-01 00:00:00{}".format(year, offset)
+
+    if year == datetime.now().year:
+        year_max = scada_range.get_end()
+
+    network_region_query = ""
+
+    if network_region:
+        network_region_query = f"and f.network_region='{network_region}'"
+
+    query = dedent(
+        __query.format(
+            network_code=network.code,
+            trunc="{} minutes".format(network.interval_size),
+            year_min=year_min,
+            year_max=year_max,
+            network_region_query=network_region_query,
+            timezone=timezone,
+        )
+    )
+
+    return query
+
+
+def market_value_daily_query(
+    year: int,
+    network: NetworkSchema = NetworkWEM,
+    network_region: Optional[str] = None,
+) -> str:
+
+    scada_range: ScadaDateRange = get_scada_range(network=network)
 
     __query = """
         SET SESSION TIME ZONE '+08';
@@ -123,6 +202,11 @@ def market_value_year_query(year: int, network_code: str = "WEM",) -> str:
         order by 1 desc, 2 asc
     """
 
+    network_region_query = ""
+
+    if network_region:
+        network_region_query = f"and f.network_region='{network_region}'"
+
     date_min = f"'{year}-01-01'"
     date_max = f"'{year}-12-31'"
 
@@ -133,7 +217,10 @@ def market_value_year_query(year: int, network_code: str = "WEM",) -> str:
         date_min = scada_range.get_start_sql()
 
     query = __query.format(
-        network_code=network_code, date_min=date_min, date_max=date_max,
+        network_code=network.code,
+        date_min=date_min,
+        date_max=date_max,
+        network_region_query=network_region_query,
     )
 
     return query
