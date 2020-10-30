@@ -112,8 +112,8 @@ def energy_network_fueltech_daily_query(
         select
             date_trunc('day', t.trading_interval at time zone '{timezone}') as trading_day,
             t.fueltech_id,
-            energy_sum(t.generated, '1 day') * interval_size('1 day', t.sample_count) / 1000 as facility_energy,
-            energy_sum(t.generated, '1 day') * interval_size('1 day', t.sample_count) * avg(t.price) as price
+            energy_sum(t.generated, '1 day') * interval_size('1 day', count(t.generated)) / 1000 as facility_energy,
+            energy_sum(t.generated, '1 day') * interval_size('1 day', count(t.generated)) * avg(t.price) as price
         from
             (select
                 time_bucket_gapfill('{trunc}', fs.trading_interval) as trading_interval,
