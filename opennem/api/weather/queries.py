@@ -50,6 +50,8 @@ def observation_query(
     if scada_range:
         date_end = scada_range.get_end_sql()
 
+    date_start_condition = ""
+
     if period:
         date_start_condition = "{date_end}::timestamp - '{period}'::interval".format(
             date_end=date_end, period=period.period_sql

@@ -47,13 +47,17 @@ def wem_export_power(is_local: bool = False):
 
     stat_set = power_week(network_code="WEM")
 
-    weather = station_observations_api(
-        station_code="009021",
-        interval="30m",
-        period="7d",
-        network_code="WEM",
-        engine=engine,
-    )
+    stat_set.data += weather_daily(
+        station_code="009021", network_code="WEM",
+    ).data
+
+    # weather = station_observations_api(
+    #     station_code="009021",
+    #     interval="30m",
+    #     period="7d",
+    #     network_code="WEM",
+    #     engine=engine,
+    # )
 
     price = price_network_region_api(
         engine=engine,
@@ -65,7 +69,7 @@ def wem_export_power(is_local: bool = False):
 
     # demand = wem_demand()
 
-    stat_set.data = stat_set.data + price.data + weather.data
+    stat_set.data = stat_set.data + price.data
 
     POWER_ENDPOINT = "/power/wem.json"
 
@@ -186,5 +190,5 @@ def au_export_power():
 if __name__ == "__main__":
     # au_export_power()
     wem_export_power(is_local=True)
-    wem_export_daily(is_local=True)
+    wem_export_daily(limit=1, is_local=True)
     # wem_export_monthly()

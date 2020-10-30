@@ -16,7 +16,9 @@ from opennem.db import get_database_engine
 from opennem.schema.time import TimePeriod
 
 
-def weather_daily(year: int, network_code: str, station_code: str):
+def weather_daily(
+    network_code: str, station_code: str, year: Optional[int] = None
+):
     station_codes = []
 
     if station_code:
@@ -28,13 +30,22 @@ def weather_daily(year: int, network_code: str, station_code: str):
     units = get_unit("temperature_mean")
     scada_range = get_scada_range(network=network)
 
-    query = observation_query(
-        station_codes=station_codes,
-        interval=interval,
-        network=network,
-        scada_range=scada_range,
-        year=year,
-    )
+    if year:
+        query = observation_query(
+            station_codes=station_codes,
+            interval=interval,
+            network=network,
+            scada_range=scada_range,
+            year=year,
+        )
+    else:
+        query = observation_query(
+            station_codes=station_codes,
+            interval=human_to_interval("{}m".format(network.interval_size)),
+            network=network,
+            scada_range=scada_range,
+            period=human_to_period("7d"),
+        )
 
     with engine.connect() as c:
         row = list(c.execute(query))
@@ -74,7 +85,7 @@ def weather_daily(year: int, network_code: str, station_code: str):
 
     stats.data += stats_factory(
         stats=temp_min,
-        units=get_unit("temprature_min"),
+        units=get_unit("temperature_min"),
         network=network,
         interval=interval,
         code="bom",
@@ -83,7 +94,7 @@ def weather_daily(year: int, network_code: str, station_code: str):
 
     stats.data += stats_factory(
         stats=temp_max,
-        units=get_unit("temprature_max"),
+        units=get_unit("temperature_max"),
         network=network,
         interval=interval,
         code="bom",
