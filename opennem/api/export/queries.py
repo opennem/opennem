@@ -112,15 +112,14 @@ def energy_network_fueltech_daily_query(
         select
             date_trunc('day', t.trading_interval at time zone '{timezone}') as trading_day,
             t.fueltech_id,
-            energy_sum(t.generated, '1 day') * interval_size('1 day', count(t.generated)) / 1000 as facility_energy,
-            energy_sum(t.generated, '1 day') * interval_size('1 day', count(t.generated)) * avg(t.price) as price
+            sum(t.energy) as facility_energy,
+            sum(t.market_value) as price
         from
             (select
                 time_bucket_gapfill('{trunc}', fs.trading_interval) as trading_interval,
                 f.fueltech_id,
-                count(fs.generated) as sample_count,
-                coalesce(avg(fs.generated), 0) as generated,
-                coalesce(avg(bs.price), 0) as price
+                energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) / 1000 as energy,
+                energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price) as market_value
             from facility_scada fs
                 left join facility f on fs.facility_code = f.code
                 left join balancing_summary bs on
@@ -170,57 +169,6 @@ def energy_network_fueltech_daily_query(
             network_region_query=network_region_query,
             timezone=timezone,
         )
-    )
-
-    return query
-
-
-def market_value_daily_query(
-    year: int,
-    network: NetworkSchema = NetworkWEM,
-    network_region: Optional[str] = None,
-) -> str:
-
-    scada_range: ScadaDateRange = get_scada_range(network=network)
-
-    __query = """
-        SET SESSION TIME ZONE '+08';
-
-        select
-            time_bucket_gapfill('1 day', fs.trading_interval) AS trading_day,
-            energy_sum(generated, '1 day') * interval_size('1 day', count(generated))  * avg(bs.price) as energy_interval,
-            f.fueltech_id
-        from facility_scada fs
-        left join facility f on fs.facility_code = f.code
-        join balancing_summary bs on fs.trading_interval::date = bs.trading_interval::date
-        where
-            f.fueltech_id is not null and
-            fs.network_id='WEM' and
-            fs.trading_interval <= {date_max} and
-            fs.trading_interval >= {date_min}
-        group by 1, f.fueltech_id
-        order by 1 desc, 2 asc
-    """
-
-    network_region_query = ""
-
-    if network_region:
-        network_region_query = f"and f.network_region='{network_region}'"
-
-    date_min = f"'{year}-01-01'"
-    date_max = f"'{year}-12-31'"
-
-    if year == datetime.now().year:
-        date_max = scada_range.get_end_sql()
-
-    if year == scada_range.start.year:
-        date_min = scada_range.get_start_sql()
-
-    query = __query.format(
-        network_code=network.code,
-        date_min=date_min,
-        date_max=date_max,
-        network_region_query=network_region_query,
     )
 
     return query
