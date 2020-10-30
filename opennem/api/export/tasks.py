@@ -6,19 +6,16 @@ from fastapi import HTTPException
 from opennem.api.export.controllers import (
     energy_fueltech_daily,
     market_value_all,
-    market_value_year,
     power_week,
     weather_daily,
 )
 from opennem.api.stats.controllers import get_scada_range, stats_factory
 from opennem.api.stats.router import (
     energy_network_fueltech_api,
-    power_network_fueltech_api,
     price_network_region_api,
 )
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval
-from opennem.api.weather.router import station_observations_api
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
 from opennem.exporter.aws import write_to_s3
@@ -189,7 +186,8 @@ def au_export_power():
 
 if __name__ == "__main__":
     # au_export_power()
-    wem_export_power(is_local=False)
+    wem_export_power()
+    # wem_export_power(is_local=True)
     wem_export_daily()
-    # wem_export_daily(limit=1, is_local=TrueTrue)
-    # wem_export_monthly()
+    # wem_export_daily(limit=1, is_local=True)
+    wem_export_monthly()
