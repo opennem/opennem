@@ -116,7 +116,7 @@ def energy_network_fueltech_daily_query(
             sum(t.market_value) as price
         from
             (select
-                time_bucket_gapfill('{trunc}', fs.trading_interval) as trading_interval,
+                time_bucket_gapfill('1 hour', fs.trading_interval) as trading_interval,
                 f.fueltech_id,
                 energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) / 1000 as energy,
                 energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price) as market_value
