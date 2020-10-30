@@ -1,8 +1,6 @@
 import logging
 from datetime import datetime
 
-from fastapi import HTTPException
-
 from opennem.api.export.controllers import (
     energy_fueltech_daily,
     market_value_all,
@@ -21,20 +19,19 @@ from opennem.db import get_database_engine
 from opennem.exporter.aws import write_to_s3
 from opennem.exporter.local import write_to_local
 from opennem.schema.network import NetworkNEM
+from opennem.settings import settings
 
+# @TODO q this ..
 YEAR_MIN = 2011
 
 logger = logging.getLogger(__name__)
 
 
-def write_output(path: str, stat_set: OpennemDataSet, is_local: bool = False):
-    # @TODO migrate to s3 methods
-    byte_count = 0
-
-    if is_local:
-        byte_count = write_to_local(path, stat_set.json(exclude_unset=True))
-    else:
-        byte_count = write_to_s3(path, stat_set.json(exclude_unset=True))
+def write_output(
+    path: str, stat_set: OpennemDataSet, is_local: bool = False
+) -> None:
+    write_func = write_to_local if is_local else write_to_s3
+    byte_count = write_func(path, stat_set.json(exclude_unset=True))
 
     logger.info("Wrote {} bytes to {}".format(byte_count, path))
 
@@ -45,16 +42,8 @@ def wem_export_power(is_local: bool = False):
     stat_set = power_week(network_code="WEM")
 
     stat_set.data += weather_daily(
-        station_code="009021", network_code="WEM",
+        station_code="009021", network_code="WEM", include_min_max=True,
     ).data
-
-    # weather = station_observations_api(
-    #     station_code="009021",
-    #     interval="30m",
-    #     period="7d",
-    #     network_code="WEM",
-    #     engine=engine,
-    # )
 
     price = price_network_region_api(
         engine=engine,
@@ -82,13 +71,10 @@ def wem_export_daily(limit: int = None, is_local: bool = False):
 
         stat_set = energy_fueltech_daily(year=year, network_code="WEM")
 
-        try:
-            weather = weather_daily(
-                station_code="009021", year=year, network_code="WEM",
-            )
-            stat_set.data += weather.data
-        except HTTPException:
-            pass
+        weather = weather_daily(
+            station_code="009021", year=year, network_code="WEM",
+        )
+        stat_set.data += weather.data
 
         write_output(
             f"/wem/energy/daily/{year}.json", stat_set, is_local=is_local
@@ -100,10 +86,10 @@ def wem_export_daily(limit: int = None, is_local: bool = False):
             return None
 
 
-def wem_export_monthly():
+def wem_export_monthly(is_local: bool = False):
     """
 
-        @TODO this is slow atm because of on_energy_sum
+        @TODO this is slow atm because of on_energy_sum (or is it?)
     """
 
     engine = get_database_engine()
@@ -120,10 +106,17 @@ def wem_export_monthly():
 
     stats.data += market_value.data
 
-    write_to_s3("/wem/energy/monthly/all.json", stats.json(exclude_unset=True))
+    write_output(
+        "/wem/energy/monthly/all.json",
+        stats.json(exclude_unset=True),
+        is_local=is_local,
+    )
 
 
 def au_export_power():
+    """
+        This is shit.
+    """
     engine = get_database_engine()
 
     scada_range = get_scada_range(network=NetworkNEM)
@@ -185,9 +178,12 @@ def au_export_power():
 
 
 if __name__ == "__main__":
-    # au_export_power()
-    wem_export_power()
-    # wem_export_power(is_local=True)
-    wem_export_daily()
-    # wem_export_daily(limit=1, is_local=True)
-    wem_export_monthly()
+    if settings.env in ["development", "staging"]:
+        wem_export_power(is_local=True)
+        wem_export_daily(limit=1, is_local=True)
+        wem_export_monthly(is_local=True)
+    else:
+        au_export_power()
+        wem_export_power()
+        wem_export_daily()
+        wem_export_monthly()
