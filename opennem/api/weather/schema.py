@@ -10,7 +10,7 @@ class WeatherObservation(ApiBase):
 
     temp_apparent: float
     temp_air: float
-    press_qnh: float
+    press_qnh: Optional[float]
     wind_dir: Optional[str]
     wind_spd: Optional[float]
     wind_gust: Optional[float]
