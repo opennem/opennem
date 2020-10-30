@@ -112,18 +112,18 @@ def energy_network_fueltech_daily_query(
         select
             date_trunc('day', t.trading_interval at time zone '{timezone}') as trading_day,
             t.fueltech_id,
-            sum(t.energy) as facility_energy,
-            sum(t.market_value) as price
+            sum(t.energy) / 1000 as fueltech_energy,
+            sum(t.market_value) as fueltech_market_value
         from
             (select
                 time_bucket_gapfill('1 hour', fs.trading_interval) as trading_interval,
                 f.fueltech_id,
-                energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) / 1000 as energy,
+                energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) as energy,
                 energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price) as market_value
             from facility_scada fs
                 left join facility f on fs.facility_code = f.code
                 left join balancing_summary bs on
-                    date_trunc('hour', bs.trading_interval) = date_trunc('hour', fs.trading_interval)
+                    bs.trading_interval = fs.trading_interval
                     and bs.network_id='{network_code}'
             where
                 fs.network_id='{network_code}'
