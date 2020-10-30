@@ -23,7 +23,7 @@ class WeatherStation(ApiBase):
     code: str
     state: str
     name_alias: str
-    registered: date
+    registered: Optional[date]
     website_url: str
     altitude: int
     lat: float
