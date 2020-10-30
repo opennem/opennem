@@ -46,17 +46,17 @@
   },
   {
     "name": "temperature_mean",
-    "unit_type": "temperature_mean",
+    "unit_type": "temperature.mean",
     "unit": "C"
   },
   {
     "name": "temperature_max",
-    "unit_type": "temperature_max",
+    "unit_type": "temperature.max",
     "unit": "C"
   },
   {
     "name": "temperature_min",
-    "unit_type": "temperature_min",
+    "unit_type": "temperature.min",
     "unit": "C"
   }
 ]
