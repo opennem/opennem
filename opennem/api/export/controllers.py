@@ -2,7 +2,6 @@ from typing import Optional
 
 from opennem.api.export.queries import (
     energy_network_fueltech_daily_query,
-    market_value_daily_query,
     power_network_fueltech_query,
     wem_market_value_all_query,
 )
@@ -211,41 +210,6 @@ def energy_fueltech_daily(
 
     if stats_market_value:
         stats.data += stats_market_value.data
-
-    return stats
-
-
-def market_value_year(year: int, network_code: str = "WEM"):
-    network = network_from_network_code(network_code)
-    engine = get_database_engine()
-
-    units = get_unit("market_value")
-    interval = human_to_interval("1d")
-
-    query = market_value_daily_query(network=network, year=year)
-
-    with engine.connect() as c:
-        row = list(c.execute(query))
-
-    results = [
-        DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
-        )
-        for i in row
-    ]
-
-    if len(results) < 1:
-        raise Exception("No results from query: {}".format(query))
-
-    stats = stats_factory(
-        stats=results,
-        units=units,
-        network=network,
-        fueltech_group=True,
-        interval=interval,
-        region=network.code.lower(),
-        code=network.code.lower(),
-    )
 
     return stats
 
