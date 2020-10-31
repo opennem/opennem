@@ -167,8 +167,8 @@ def au_export_power():
 
 if __name__ == "__main__":
     if settings.env in ["development", "staging"]:
-        # wem_export_power(is_local=True)
-        # wem_export_daily(limit=1, is_local=True)
+        wem_export_power(is_local=True)
+        wem_export_daily(limit=1, is_local=True)
         wem_export_monthly(is_local=True)
     else:
         au_export_power()
