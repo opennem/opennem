@@ -22,12 +22,12 @@ def schedule_wem_export_daily_most_recent():
     wem_export_daily(limit=1)
 
 
-@huey.periodic_task(crontab(hour="*/4"))
+@huey.periodic_task(crontab(hour="*/2"))
 def schedule_wem_export_years():
     wem_export_daily()
 
 
-@huey.periodic_task(crontab(hour="*/6"))
+@huey.periodic_task(crontab(hour="*/2"))
 def schedule_wem_export_all():
     wem_export_monthly()
 
