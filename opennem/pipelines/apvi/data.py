@@ -24,6 +24,8 @@ STATE_POSTCODE_PREFIXES = {
     "NT": "0",
 }
 
+WA_NON_SWIS = ["66", "67"]
+
 
 class APVIStoreData(object):
     @check_spider_pipeline
@@ -88,6 +90,7 @@ class APVIStoreData(object):
                         if k.startswith(prefix)
                         and v
                         and k in postcode_capacity
+                        and k[:2] not in WA_NON_SWIS
                     ]
                 )
 
