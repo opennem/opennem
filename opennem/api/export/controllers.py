@@ -41,9 +41,11 @@ def weather_daily(
             year=year,
         )
     else:
+        interval = human_to_interval("{}m".format(network.interval_size))
+
         query = observation_query(
             station_codes=station_codes,
-            interval=human_to_interval("{}m".format(network.interval_size)),
+            interval=interval,
             network=network,
             scada_range=scada_range,
             period=human_to_period("7d"),
