@@ -38,7 +38,10 @@ def wem_export_power(is_local: bool = False):
     stat_set = power_week(network_code="WEM")
 
     stat_set.data += weather_daily(
-        station_code="009021", network_code="WEM", include_min_max=True,
+        station_code="009021",
+        network_code="WEM",
+        include_min_max=False,
+        unit_name="temperature",
     ).data
 
     price = price_network_region_api(
