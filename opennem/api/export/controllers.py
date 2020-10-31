@@ -7,7 +7,10 @@ from opennem.api.export.queries import (
 from opennem.api.stats.controllers import get_scada_range, stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval, human_to_period
-from opennem.api.weather.queries import observation_query
+from opennem.api.weather.queries import (
+    observation_query,
+    observation_query_all,
+)
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
@@ -19,6 +22,7 @@ def weather_daily(
     station_code: str,
     year: Optional[int] = None,
     unit_name: str = "temperature_mean",
+    period_human: str = None,
     include_min_max: bool = True,
 ):
     station_codes = []
@@ -40,15 +44,24 @@ def weather_daily(
             scada_range=scada_range,
             year=year,
         )
-    else:
+    elif period_human:
         interval = human_to_interval("{}m".format(network.interval_size))
+        period = human_to_period("7d")
 
         query = observation_query(
             station_codes=station_codes,
             interval=interval,
             network=network,
             scada_range=scada_range,
-            period=human_to_period("7d"),
+            period=period,
+        )
+    else:
+        interval = human_to_interval("1M")
+
+        query = observation_query_all(
+            station_codes=station_codes,
+            scada_range=scada_range,
+            network=network,
         )
 
     with engine.connect() as c:

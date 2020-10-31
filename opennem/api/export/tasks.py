@@ -41,6 +41,7 @@ def wem_export_power(is_local: bool = False):
         station_code="009021",
         network_code="WEM",
         include_min_max=False,
+        period_human="7d",
         unit_name="temperature",
     ).data
 
@@ -90,6 +91,10 @@ def wem_export_monthly(is_local: bool = False):
     """
 
     stat_set = energy_fueltech_daily(network_code="WEM", interval_size="1M")
+
+    stat_set.data += weather_daily(
+        station_code="009021", network_code="WEM",
+    ).data
 
     write_output(
         "/wem/energy/monthly/all.json", stat_set, is_local=is_local,
@@ -161,9 +166,9 @@ def au_export_power():
 
 
 if __name__ == "__main__":
-    if settings.env in ["development"]:
-        wem_export_power(is_local=True)
-        wem_export_daily(limit=1, is_local=True)
+    if settings.env in ["development", "staging"]:
+        # wem_export_power(is_local=True)
+        # wem_export_daily(limit=1, is_local=True)
         wem_export_monthly(is_local=True)
     else:
         au_export_power()
