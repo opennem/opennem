@@ -24,7 +24,7 @@ def main():
 
     json_data_ungrouped = []
 
-    for req_date in date_series(TODAY, length=2, reverse=True):
+    for req_date in date_series(TODAY, length=3, reverse=True):
         records = requests.post(
             APVI_DATA_URI,
             data={"day": req_date.strftime(APVI_DATE_QUERY_FORMAT)},
@@ -75,8 +75,6 @@ def main():
 
     json_grouped_date = {}
 
-    from pprint import pprint
-
     for date_grouped_str, v in groupby(
         json_data_ungrouped, lambda k: str(k["trading_interval"].date())
     ):
@@ -90,28 +88,27 @@ def main():
     for grouped_date, trading_day in json_grouped_date.items():
         json_grouped_summed = {}
 
-        for k, v in trading_day.items():
-            if k in ["trading_interval"]:
-                continue
-            json_grouped_summed[grouped_date]
+        if grouped_date not in json_grouped_summed:
+            print(grouped_date)
+            json_grouped_summed[grouped_date] = {}
 
-    # value_dict = list(v).pop()
-    # del value_dict["trading_interval"]
+        print(json_grouped_summed)
 
-    # if not value_dict:
-    #     continue
+        for trading_interval in trading_day:
+            for k, v in trading_interval.items():
+                if k in ["trading_interval"]:
+                    continue
 
-    # print(date_grouped_str)
-    # pprint(value_dict)
+                if k not in json_grouped_summed[grouped_date]:
+                    json_grouped_summed[grouped_date][k] = 0
 
-    # json_grouped_date[date_grouped_str] = {
-    #     dk: round(json_grouped_date[date_grouped_str][dk] + dv, 2)
-    #     for dk, dv in value_dict.items()
-    #     # if dk not in ["date", "trading_interval"]
-    # }
+                json_grouped_summed[grouped_date][k] += v
+                json_grouped_summed[grouped_date][k] = round(
+                    json_grouped_summed[grouped_date][k], 2
+                )
 
     json_serialized = json.dumps(
-        json_grouped_date, indent=4, cls=OpenNEMJSONEncoder
+        json_grouped_summed, indent=4, cls=OpenNEMJSONEncoder
     )
 
     print(json_serialized)
