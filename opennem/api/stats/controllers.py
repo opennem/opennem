@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from datetime import datetime, timezone
+from textwrap import dedent
 from typing import List, Optional, Union
 
 from pytz import timezone as pytz_timezone
@@ -182,10 +183,12 @@ def get_scada_range(
         # @TODO support network regions in scada_range
         network_region_query = f"network_id = '{network.code}' and"
 
-    scada_range_query = __query.format(
+    scada_range_query = dedent(
+        __query.format(
         network_query=network_query,
         network_region_query=network_region_query,
         timezone=network.timezone_database,
+    )
     )
 
     with engine.connect() as c:
