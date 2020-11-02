@@ -185,10 +185,10 @@ def get_scada_range(
 
     scada_range_query = dedent(
         __query.format(
-        network_query=network_query,
-        network_region_query=network_region_query,
-        timezone=network.timezone_database,
-    )
+            network_query=network_query,
+            network_region_query=network_region_query,
+            timezone=network.timezone_database,
+        )
     )
 
     with engine.connect() as c:
