@@ -7,9 +7,12 @@ from opennem.api.export.tasks import (
     wem_export_power,
 )
 from opennem.exporter.geojson import export_facility_geojson
+from opennem.monitors.aemo_intervals import get_wem_interval_delay
 from opennem.settings import settings
 
 huey = RedisHuey("opennem.exporter", host=settings.cache_url.host)
+
+# export tasks
 
 
 @huey.periodic_task(crontab(minute="*/5",))
@@ -40,3 +43,9 @@ def schedule_export_geojson():
 @huey.periodic_task(crontab(minute="*/30"))
 def schedule_export_au():
     au_export_power()
+
+
+# monitoring tasks
+@huey.periodic_task(crontab(minute="*/5"))
+def monitor_wem_interval():
+    get_wem_interval_delay()
