@@ -53,8 +53,6 @@ def wem_export_power(is_local: bool = False):
         period="7d",
     )
 
-    # demand = wem_demand()
-
     stat_set.data = stat_set.data + price.data
 
     POWER_ENDPOINT = "/power/wem.json"
