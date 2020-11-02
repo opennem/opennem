@@ -1,11 +1,8 @@
-import logging
 from datetime import datetime
 
 import scrapy
 
 from opennem.pipelines.files import LinkExtract
-from opennem.pipelines.nem import ExtractCSV
-from opennem.pipelines.wem.balancing_summary import WemStoreBalancingSummary
 from opennem.spiders.dirlisting import DirlistingSpider
 
 
@@ -39,7 +36,7 @@ class WemCurrentSpider(scrapy.Spider):
 
 class WemHistoricSpider(DirlistingSpider):
     allowed_domains = ["wa.nemweb.com.au"]
-    pipelines = set([LinkExtract,])
+    pipelines = set([LinkExtract])
 
     skip = 1
 

@@ -1,7 +1,3 @@
-import csv
-
-from scrapy import Spider
-
 from opennem.pipelines.wem.facilities import (
     WemStoreFacility,
     WemStoreLiveFacilities,
@@ -25,4 +21,4 @@ class WemFacilities(WemCurrentSpider):
         "http://data.wa.aemo.com.au/datafiles/facilities/facilities.csv"
     )
 
-    pipelines_extra = set([WemStoreFacility,])
+    pipelines_extra = set([WemStoreFacility])
