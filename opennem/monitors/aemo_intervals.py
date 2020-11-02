@@ -4,6 +4,9 @@ from datetime import datetime, timedelta
 import requests
 
 from opennem.core.networks import network_from_network_code
+from opennem.monitors.aemo_wem_live_intervals import (
+    get_aemo_wem_live_facility_intervals_recent_date,
+)
 from opennem.notifications.slack import slack_message
 from opennem.utils.dates import parse_date
 
@@ -35,12 +38,23 @@ def get_wem_interval_delay() -> bool:
     history_date = parse_date(history_end_date, dayfirst=False)
     now_date = datetime.now().astimezone(network.get_timezone())
 
+    live_most_recent = get_aemo_wem_live_facility_intervals_recent_date()
+
     time_delta = now_date - history_date
 
     if time_delta > timedelta(hours=3):
         slack_message(
             "WARNING: WEM live interval delay currently: {}\n\nFeed time: {}\nCurrent time: {}\n".format(
                 time_delta, history_date, now_date
+            )
+        )
+
+    live_delta = now_date - live_most_recent
+
+    if live_delta > timedelta(minutes=90):
+        slack_message(
+            "AEMO Live intervals for WEM curently delayed by {}\n\nAEMO feed most recent: {}".format(
+                live_delta, live_most_recent
             )
         )
 
