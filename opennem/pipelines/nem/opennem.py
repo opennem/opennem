@@ -89,6 +89,7 @@ def unit_scada_generate_facility_scada(
     is_forecast: bool = False,
     primary_key_track: bool = False,
     groupby_filter: bool = True,
+    created_by: str = None,
     limit: int = 0,
 ) -> List[Dict]:
     created_at = datetime.now()
@@ -130,19 +131,17 @@ def unit_scada_generate_facility_scada(
         if energy_field and energy_field in row:
             energy = clean_float(row[energy_field])
 
-        __rec = OrderedDict(
-            {
-                "created_by": created_by,
-                "created_at": created_at,
-                "updated_at": None,
-                "network_id": network.code,
-                "trading_interval": trading_interval,
-                "facility_code": facility_code,
-                "generated": generated,
-                "eoi_quantity": energy,
-                "is_forecast": is_forecast,
-            }
-        )
+        __rec = {
+            "created_by": created_by,
+            "created_at": created_at,
+            "updated_at": None,
+            "network_id": network.code,
+            "trading_interval": trading_interval,
+            "facility_code": facility_code,
+            "generated": generated,
+            "eoi_quantity": energy,
+            "is_forecast": is_forecast,
+        }
 
         return_records.append(__rec)
 
