@@ -18,7 +18,7 @@ from opennem.schema.network import NetworkNEM
 from opennem.settings import settings
 
 # @TODO q this ..
-YEAR_MIN = 2011
+YEAR_MIN = 2010
 
 logger = logging.getLogger(__name__)
 
