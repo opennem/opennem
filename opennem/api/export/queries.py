@@ -135,6 +135,7 @@ def energy_network_fueltech_daily_query(
                 left join balancing_summary bs on
                     bs.trading_interval = fs.trading_interval
                     and bs.network_id='{network_code}'
+                    and bs.network_region = f.network_region
             where
                 fs.network_id='{network_code}'
                 and f.fueltech_id is not null
