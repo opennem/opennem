@@ -119,13 +119,17 @@ def energy_network_fueltech_daily_query(
                 time_bucket_gapfill('1 hour', fs.trading_interval) as trading_interval,
                 f.fueltech_id,
                 coalesce(
-                    avg(eoi_quantity),
+                    sum(eoi_quantity),
                     energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated))
                 ) as energy,
-                coalesce(
-                    avg(eoi_quantity) * avg(bs.price),
-                    energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price)
-                ) as market_value
+                case when avg(bs.price) > 0 then
+                    coalesce(
+                        sum(eoi_quantity) * avg(bs.price),
+                        energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price),
+                        NULL
+                    )
+                else null
+                end as market_value
             from facility_scada fs
                 left join facility f on fs.facility_code = f.code
                 left join balancing_summary bs on
