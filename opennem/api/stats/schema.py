@@ -44,7 +44,7 @@ class OpennemDataHistory(BaseConfig):
     @validator("data")
     def validate_data(cls, data_value):
         data_value = list(
-            map(lambda x: round(x, ROUND_DIGITS) if x else 0.0, data_value)
+            map(lambda x: round(x, ROUND_DIGITS) if x else None, data_value)
         )
 
         return data_value
