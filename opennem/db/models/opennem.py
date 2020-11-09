@@ -75,6 +75,8 @@ class Network(Base, BaseModel):
     offset = Column(Integer, nullable=True)
     interval_size = Column(Integer, nullable=False)
 
+    regions = relationship("NetworkRegion")
+
 
 class NetworkRegion(Base, BaseModel):
     __tablename__ = "network_region"
