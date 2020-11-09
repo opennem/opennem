@@ -23,6 +23,8 @@ class OpennemSettings(BaseSettings):
 
     period_default: str = "7d"
 
+    precision_default: int = 4
+
     _static_folder_path: str = "opennem/static/"
 
     # @todo overwrite scrapy settings here
