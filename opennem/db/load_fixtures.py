@@ -17,6 +17,7 @@ from opennem.db.models.opennem import (
     FacilityStatus,
     FuelTech,
     Network,
+    NetworkRegion,
     Station,
 )
 from opennem.importer.compat import map_compat_facility_state
@@ -105,6 +106,33 @@ def load_networks():
             s.commit()
         except Exception:
             logger.error("Have {}".format(network_model.code))
+
+
+def load_network_regions():
+    """
+        Load the network region fixture
+    """
+    fixture = load_data("network_regions.json", from_fixture=True)
+
+    s = SessionLocal()
+
+    for network_region in fixture:
+        network_region_model = (
+            s.query(NetworkRegion)
+            .filter_by(code=network_region["code"])
+            .one_or_none()
+        )
+
+        if not network_region_model:
+            network_region_model = NetworkRegion(code=network_region["code"])
+
+        network_region_model.network_id = network_region["network_id"]
+
+        try:
+            s.add(network_region_model)
+            s.commit()
+        except Exception:
+            logger.error("Have {}".format(network_region_model.code))
 
 
 """
@@ -315,6 +343,7 @@ def load_fixtures():
     load_fueltechs()
     load_facilitystatus()
     load_networks()
+    load_network_regions()
     load_bom_stations_json()
 
 
