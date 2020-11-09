@@ -1,5 +1,5 @@
 from datetime import timezone as timezone_native
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from pydantic import Field
 from pytz import timezone as pytz_timezone
@@ -9,10 +9,16 @@ from opennem.utils.timezone import get_current_timezone, get_fixed_timezone
 from .core import BaseConfig
 
 
+class NetworkNetworkRegion(BaseConfig):
+    code: str
+
+
 class NetworkSchema(BaseConfig):
     code: str
     country: str
     label: str
+
+    regions: Optional[List[NetworkNetworkRegion]]
     timezone: Optional[str] = Field(None, description="Network timezone")
     timezone_database: Optional[str] = Field(
         "UTC", description="Database timezone format"
@@ -42,6 +48,19 @@ class NetworkSchema(BaseConfig):
     @property
     def intervals_per_hour(self):
         return 60 / self.interval_size
+
+
+class NetworkRegion(BaseConfig):
+    code: str
+    network: NetworkSchema
+
+    timezone: Optional[str] = Field(None, description="Network timezone")
+    timezone_database: Optional[str] = Field(
+        "UTC", description="Database timezone format"
+    )
+    offset: Optional[int] = Field(
+        None, description="Network time offset in minutes"
+    )
 
 
 NetworkNEM = NetworkSchema(
