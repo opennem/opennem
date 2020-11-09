@@ -7,9 +7,8 @@ from pydantic import BaseModel, validator
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
+from opennem.utils.numbers import to_precision
 from opennem.utils.timezone import get_current_timezone
-
-ROUND_DIGITS = 4
 
 
 class ScadaInterval(object):
@@ -44,7 +43,7 @@ class OpennemDataHistory(BaseConfig):
     @validator("data")
     def validate_data(cls, data_value):
         data_value = list(
-            map(lambda x: round(x, ROUND_DIGITS) if x else None, data_value)
+            map(lambda x: to_precision(x) if x else None, data_value)
         )
 
         return data_value
