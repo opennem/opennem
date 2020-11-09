@@ -9,6 +9,8 @@ from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
 from opennem.utils.timezone import get_current_timezone
 
+ROUND_DIGITS = 4
+
 
 class ScadaInterval(object):
     date: datetime
@@ -41,7 +43,9 @@ class OpennemDataHistory(BaseConfig):
 
     @validator("data")
     def validate_data(cls, data_value):
-        data_value = list(map(lambda x: round(x, 2) if x else 0.0, data_value))
+        data_value = list(
+            map(lambda x: round(x, ROUND_DIGITS) if x else None, data_value)
+        )
 
         return data_value
 

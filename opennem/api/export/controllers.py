@@ -122,7 +122,7 @@ def weather_daily(
     return stats
 
 
-def power_week(network_code: str = "WEM"):
+def power_week(network_code: str = "WEM", network_region_code: str = None):
     engine = get_database_engine()
 
     network = network_from_network_code(network_code)
@@ -132,7 +132,10 @@ def power_week(network_code: str = "WEM"):
     network_region = None
 
     query = power_network_fueltech_query(
-        network=network, period=period, interval=interval
+        network=network,
+        period=period,
+        interval=interval,
+        network_region=network_region_code,
     )
 
     # print(query)
@@ -152,7 +155,7 @@ def power_week(network_code: str = "WEM"):
 
     result = stats_factory(
         stats,
-        code=network.code,
+        code=network_region_code or network.code,
         network=network,
         interval=interval,
         period=period,

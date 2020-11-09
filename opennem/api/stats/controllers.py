@@ -168,7 +168,6 @@ def get_scada_range(
         where
             {network_query}
             {network_region_query}
-            generated is not null  and
             facility_code not like 'ROOFTOP_%%'
     """
 

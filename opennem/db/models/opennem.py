@@ -75,6 +75,25 @@ class Network(Base, BaseModel):
     offset = Column(Integer, nullable=True)
     interval_size = Column(Integer, nullable=False)
 
+    regions = relationship("NetworkRegion")
+
+
+class NetworkRegion(Base, BaseModel):
+    __tablename__ = "network_region"
+
+    network_id = Column(
+        Text,
+        ForeignKey("network.code", name="fk_network_region_network_code"),
+        primary_key=True,
+        nullable=False,
+    )
+    network = relationship("Network", back_populates="regions")
+
+    code = Column(Text, primary_key=True)
+    timezone = Column(Text, nullable=True)
+    timezone_database = Column(Text, nullable=True)
+    offset = Column(Integer, nullable=True)
+
 
 class FacilityStatus(Base, BaseModel):
     __tablename__ = "facility_status"
