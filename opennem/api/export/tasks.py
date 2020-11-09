@@ -10,8 +10,12 @@ from opennem.api.stats.controllers import get_scada_range, stats_factory
 from opennem.api.stats.router import price_network_region_api
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval
+from opennem.core.network_region_bom_station_map import (
+    get_network_region_weather_station,
+)
 from opennem.core.units import get_unit
-from opennem.db import get_database_engine
+from opennem.db import SessionLocal, get_database_engine
+from opennem.db.models.opennem import Network
 from opennem.exporter.aws import write_to_s3
 from opennem.exporter.local import write_to_local
 from opennem.schema.network import NetworkNEM
@@ -21,6 +25,8 @@ from opennem.settings import settings
 YEAR_MIN = 2010
 
 logger = logging.getLogger(__name__)
+
+# @TODO clean this up
 
 
 def write_output(
@@ -58,6 +64,29 @@ def wem_export_power(is_local: bool = False):
     POWER_ENDPOINT = "/power/wem.json"
 
     write_output(POWER_ENDPOINT, stat_set, is_local=is_local)
+
+
+def get_networks_and_regions():
+    session = SessionLocal()
+
+    networks = session.query(Network).all()
+
+    for network in networks:
+        for region in network.regions:
+            export_power(network.code, region.code)
+
+
+def export_power(network_code: str, region_code: str):
+    stat_set = power_week(
+        network_code=network_code, network_region_code=region_code
+    )
+
+    POWER_ENDPOINT = "/stats/{}/{}/power/week.json".format(
+        network_code, region_code
+    )
+
+    if stat_set:
+        write_output(POWER_ENDPOINT, stat_set=stat_set)
 
 
 def wem_export_daily(limit: int = None, is_local: bool = False):
@@ -165,11 +194,13 @@ def au_export_power():
 
 if __name__ == "__main__":
     if settings.env in ["development"]:
-        wem_export_power(is_local=True)
-        wem_export_daily(limit=1, is_local=True)
-        wem_export_monthly(is_local=True)
+        get_networks_and_regions()
+        # wem_export_power(is_local=True)
+        # wem_export_daily(limit=1, is_local=True)
+        # wem_export_monthly(is_local=True)
     else:
         # au_export_power()
         # wem_export_power()
         # wem_export_daily()
-        wem_export_monthly()
+        # wem_export_monthly()
+        get_networks_and_regions()
