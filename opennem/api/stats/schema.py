@@ -98,6 +98,11 @@ class ScadaDateRange(BaseConfig):
 
         return date_aware
 
+    def get_start_year(self):
+        start_dt = self.get_start()
+
+        return start_dt.year()
+
     def get_start(self):
         return self._get_value_localized("start")
 
