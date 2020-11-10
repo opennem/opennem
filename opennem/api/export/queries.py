@@ -31,13 +31,13 @@ def power_network_fueltech_query(
             avg(t.price)
         from (
             select
-                time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
+                time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
                 coalesce(
                     avg(fs.generated), 0
                 ) as facility_power,
                 fs.facility_code,
                 ft.code as fueltech_code,
-                bs.price as price
+                avg(bs.price) as price
             from facility_scada fs
             join facility f on fs.facility_code = f.code
             join fueltech ft on f.fueltech_id = ft.code
@@ -46,11 +46,11 @@ def power_network_fueltech_query(
                 and bs.network_id=fs.network_id
                 and bs.network_region = f.network_region
             where
-                f.fueltech_id is not null
-                and fs.trading_interval <= '{date_max}'
-                and fs.trading_interval > '{date_min}'
+                f.fueltech_id is not null and
                 {network_query}
                 {network_region_query}
+                fs.trading_interval <= '{date_max}' and
+                fs.trading_interval > '{date_min}'
             group by 1, 3, 4
         ) as t
         group by 1, 2
@@ -61,13 +61,13 @@ def power_network_fueltech_query(
     network_region_query = ""
 
     if network_region:
-        network_region_query = f"and f.network_region='{network_region}'"
+        network_region_query = f"f.network_region='{network_region}' and "
 
     if network:
-        network_query = f"fs.network_id = '{network.code}' and"
+        network_query = f"f.network_id = '{network.code}' and "
 
     if networks:
-        network_query = "fs.network_id IN ({}) and ".format(
+        network_query = "f.network_id IN ({}) and ".format(
             networks_to_in(networks)
         )
 
