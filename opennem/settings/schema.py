@@ -12,10 +12,13 @@ class OpennemSettings(BaseSettings):
     cache_url: RedisDsn = "redis://127.0.0.1"
     sentry_url: Optional[str]
 
-    google_places_api_key: str
+    google_places_api_key: Optional[str] = None
+
     requests_cache_path: str = ".requests"
 
     slack_hook_url: Optional[str]
+
+    export_local: bool = False
 
     s3_bucket_path: str = "s3://data.opennem.org.au/"
 
@@ -49,6 +52,7 @@ class OpennemSettings(BaseSettings):
         fields = {
             "env": {"env": "ENV"},
             "_static_folder_path": {"env": "STATIC_PATH"},
+            "export_local": {"env": "EXPORT_LOCAL"},
             "db_url": {"env": "DATABASE_HOST_URL"},
             "cache_url": {"env": "REDIS_HOST_URL"},
             "sentry_url": {"env": "SENTRY_URL"},
