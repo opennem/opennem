@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from opennem.api.export.queries import (
     energy_network_fueltech_query,
@@ -14,6 +14,7 @@ from opennem.api.weather.queries import (
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
+from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimePeriod
 
 
@@ -126,7 +127,9 @@ def weather_daily(
 
 
 def power_week(
-    network_code: str = "WEM", network_region_code: str = None
+    network_code: str = "WEM",
+    network_region_code: str = None,
+    networks: Optional[List[NetworkSchema]] = None,
 ) -> OpennemDataSet:
     engine = get_database_engine()
 
@@ -138,6 +141,7 @@ def power_week(
 
     query = power_network_fueltech_query(
         network=network,
+        networks=networks,
         period=period,
         interval=interval,
         network_region=network_region_code,

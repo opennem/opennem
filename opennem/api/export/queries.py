@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from textwrap import dedent
-from typing import Optional
+from typing import List, Optional
 
-from opennem.api.stats.controllers import get_scada_range
+from opennem.api.stats.controllers import get_scada_range, networks_to_in
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.api.time import human_to_period
 from opennem.schema.network import NetworkSchema, NetworkWEM
@@ -14,6 +14,7 @@ def power_network_fueltech_query(
     network: NetworkSchema = NetworkWEM,
     period: TimePeriod = human_to_period("7d"),
     network_region: Optional[str] = None,
+    networks: Optional[List[NetworkSchema]] = None,
 ) -> str:
 
     scada_range: ScadaDateRange = get_scada_range(network=network)
@@ -40,13 +41,13 @@ def power_network_fueltech_query(
             join fueltech ft on f.fueltech_id = ft.code
             left join balancing_summary bs on
                 bs.trading_interval = fs.trading_interval
-                and bs.network_id='{network_code}'
+                and bs.network_id=fs.network_id
                 and bs.network_region = f.network_region
             where
-                fs.network_id='{network_code}'
-                and f.fueltech_id is not null
+                f.fueltech_id is not null
                 and fs.trading_interval <= '{date_max}'
                 and fs.trading_interval > '{date_min}'
+                {network_query}
                 {network_region_query}
             group by 1, 3, 4
         ) as t
@@ -54,17 +55,26 @@ def power_network_fueltech_query(
         order by 1 desc
     """
 
+    network_query = ""
     network_region_query = ""
 
     if network_region:
         network_region_query = f"and f.network_region='{network_region}'"
+
+    if network:
+        network_query = f"fs.network_id = '{network.code}' and"
+
+    if networks:
+        network_query = "fs.network_id IN ({}) and ".format(
+            networks_to_in(networks)
+        )
 
     date_max = scada_range.get_end()
     date_min = scada_range.get_end() - timedelta(days=7)
 
     query = dedent(
         __query.format(
-            network_code=network.code,
+            network_query=network_query,
             trunc=interval.interval_sql,
             period=period.period_sql,
             network_region_query=network_region_query,
