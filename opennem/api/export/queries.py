@@ -9,32 +9,6 @@ from opennem.schema.network import NetworkSchema, NetworkWEM
 from opennem.schema.time import TimeInterval, TimePeriod
 
 
-def wem_demand_all(network_code: str = "WEM"):
-
-    __query = """
-        SET SESSION TIME ZONE '+08';
-
-        select(
-            date_trunc('month', t.trading_interval),
-            t.price,
-            t.generated
-        ) from (
-            select
-                time_bucket_gapfill('1 day', bs.trading_interval,
-                round(wbs.price, 2) as price,
-                round(wbs.generation_total, 2) as generated
-            from balancing_summary bs
-            where bs.network_id='{network_code}'
-        ) as t
-        group by 1,
-        order by 1 desc
-    """
-
-    query = __query.format(network_code=network_code)
-
-    return query
-
-
 def power_network_fueltech_query(
     interval: TimeInterval,
     network: NetworkSchema = NetworkWEM,
