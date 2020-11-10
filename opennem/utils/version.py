@@ -1,15 +1,29 @@
 from enum import Enum
+from pathlib import Path
 from typing import Optional, Union
 
+import tomlkit
 from packaging.version import Version, parse
-from pkg_resources import get_distribution
 
-try:
-    VERSION = get_distribution("opennem").version
-except Exception:
-    VERSION = None
 
-__version__ = VERSION
+def _get_project_meta():
+    pyproject = Path(__file__).parent / "../../pyproject.toml"
+
+    if not pyproject.is_file():
+        return None
+
+    with pyproject.open() as pp_file:
+        file_contents = pp_file.read()
+
+    return tomlkit.parse(file_contents)["tool"]["poetry"]
+
+
+pkg_meta = _get_project_meta()
+project = str(pkg_meta["name"])
+copyright = "2020, OpenNEM"
+
+version = str(pkg_meta["version"])
+release = version
 
 
 class VersionPart(Enum):
@@ -21,11 +35,11 @@ class VersionPart(Enum):
 def get_version(
     version_part: Optional[VersionPart] = None, as_string: bool = True
 ) -> Union[str, Version]:
-    version_parsed = parse(VERSION)
+    version_parsed = parse(version)
 
     if not version_part:
         if as_string:
-            return VERSION
+            return version
         return version_parsed
 
     if version_part == VersionPart.MAJOR:
