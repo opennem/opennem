@@ -73,6 +73,7 @@ NetworkNEM = NetworkSchema(
     offset=600,
     interval_size=5,
 )
+
 NetworkWEM = NetworkSchema(
     code="WEM",
     label="WEM",
@@ -81,6 +82,7 @@ NetworkWEM = NetworkSchema(
     offset=480,
     interval_size=30,
 )
+
 NetworkAPVI = NetworkSchema(
     code="APVI",
     label="APVI",
@@ -90,6 +92,13 @@ NetworkAPVI = NetworkSchema(
     interval_size=15,
 )
 
-NetworkAU = NetworkNEM
+NetworkAU = NetworkSchema(
+    code="AU",
+    label="AU",
+    country="au",
+    timezone_database="AEST",
+    offset=600,
+    interval_size=30,
+)
 
 NETWORKS = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAU]
