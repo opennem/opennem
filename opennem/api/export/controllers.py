@@ -101,7 +101,7 @@ def weather_daily(
     )
 
     if include_min_max:
-        stats.data += stats_factory(
+        stats_min = stats_factory(
             stats=temp_min,
             units=get_unit("temperature_min"),
             network=network,
@@ -110,7 +110,7 @@ def weather_daily(
             group_field="temperature",
         ).data
 
-        stats.data += stats_factory(
+        stats_max = stats_factory(
             stats=temp_max,
             units=get_unit("temperature_max"),
             network=network,
@@ -119,10 +119,15 @@ def weather_daily(
             group_field="temperature",
         ).data
 
+        stats.append_set(stats_min)
+        stats.append_set(stats_max)
+
     return stats
 
 
-def power_week(network_code: str = "WEM", network_region_code: str = None):
+def power_week(
+    network_code: str = "WEM", network_region_code: str = None
+) -> OpennemDataSet:
     engine = get_database_engine()
 
     network = network_from_network_code(network_code)
@@ -171,6 +176,9 @@ def power_week(network_code: str = "WEM", network_region_code: str = None):
         fueltech_group=True,
     )
 
+    if not result:
+        raise Exception("No results")
+
     stats_market_value = stats_factory(
         stats=stats_price,
         code=network_region_code or network.code.lower(),
@@ -182,8 +190,7 @@ def power_week(network_code: str = "WEM", network_region_code: str = None):
         period=period,
     )
 
-    if stats_market_value:
-        result.data += stats_market_value.data
+    result.append_set(stats_market_value)
 
     return result
 
@@ -247,8 +254,7 @@ def energy_fueltech_daily(
         code=network.code.lower(),
     )
 
-    if stats_market_value:
-        stats.data += stats_market_value.data
+    stats.append_set(stats_market_value)
 
     return stats
 
