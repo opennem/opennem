@@ -153,6 +153,13 @@ def power_week(network_code: str = "WEM", network_region_code: str = None):
     if len(stats) < 1:
         raise Exception("No results from query: {}".format(query))
 
+    stats_price = [
+        DataQueryResult(
+            interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None
+        )
+        for i in row
+    ]
+
     result = stats_factory(
         stats,
         code=network_region_code or network.code,
@@ -163,6 +170,20 @@ def power_week(network_code: str = "WEM", network_region_code: str = None):
         region=network_region,
         fueltech_group=True,
     )
+
+    stats_market_value = stats_factory(
+        stats=stats_price,
+        code=network_region_code or network.code.lower(),
+        units=get_unit("price_energy_mega"),
+        network=network,
+        fueltech_group=True,
+        interval=interval,
+        region=network_region_code or network.code.lower(),
+        period=period,
+    )
+
+    if stats_market_value:
+        result.data += stats_market_value.data
 
     return result
 

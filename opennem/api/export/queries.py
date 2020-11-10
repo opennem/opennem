@@ -24,7 +24,8 @@ def power_network_fueltech_query(
         select
             t.trading_interval at time zone '{timezone}',
             t.fueltech_code,
-            sum(t.facility_power)
+            sum(t.facility_power),
+            avg(t.price)
         from (
             select
                 time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
@@ -32,10 +33,15 @@ def power_network_fueltech_query(
                     avg(fs.generated), 0
                 ) as facility_power,
                 fs.facility_code,
-                ft.code as fueltech_code
+                ft.code as fueltech_code,
+                bs.price as price
             from facility_scada fs
             join facility f on fs.facility_code = f.code
             join fueltech ft on f.fueltech_id = ft.code
+            left join balancing_summary bs on
+                bs.trading_interval = fs.trading_interval
+                and bs.network_id='{network_code}'
+                and bs.network_region = f.network_region
             where
                 fs.network_id='{network_code}'
                 and f.fueltech_id is not null
