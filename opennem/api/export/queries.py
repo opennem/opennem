@@ -17,7 +17,9 @@ def power_network_fueltech_query(
     networks: Optional[List[NetworkSchema]] = None,
 ) -> str:
 
-    scada_range: ScadaDateRange = get_scada_range(network=network)
+    scada_range: ScadaDateRange = get_scada_range(
+        network=network, networks=networks
+    )
 
     timezone = network.timezone_database
 
