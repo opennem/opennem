@@ -1,25 +1,97 @@
 import logging
 from datetime import datetime
+from typing import List
 
 from opennem.api.export.controllers import (
     energy_fueltech_daily,
     power_week,
     weather_daily,
 )
+from opennem.api.export.map import (
+    PriorityType,
+    StatExport,
+    StatType,
+    get_export_map,
+)
 from opennem.api.export.utils import write_output
-from opennem.api.stats.controllers import get_scada_range, stats_factory
 from opennem.api.stats.router import price_network_region_api
-from opennem.api.stats.schema import DataQueryResult
-from opennem.api.time import human_to_interval
-from opennem.core.units import get_unit
 from opennem.db import get_database_engine
-from opennem.schema.network import NetworkNEM
 from opennem.settings import settings
 
 # @TODO q this ..
+# @NOTE done in new stat export maps
 YEAR_MIN = 2010
 
 logger = logging.getLogger(__name__)
+
+export_map = get_export_map()
+
+
+def export_power():
+    power_stat_sets = export_map.get_by_stat_type(StatType.power)
+
+    for power_stat in power_stat_sets:
+        stat_set = power_week(
+            network_code=power_stat.network.code,
+            network_region_code=power_stat.network_region,
+            networks=power_stat.networks,
+        )
+
+        if power_stat.bom_station:
+            weather_set = weather_daily(
+                station_code=power_stat.bom_station,
+                network_code=power_stat.network.code,
+                include_min_max=False,
+                period_human="7d",
+                unit_name="temperature",
+            )
+
+            stat_set.append_set(weather_set)
+
+        write_output(power_stat.path, stat_set)
+
+
+def export_energy():
+    energy_stat_sets = export_map.get_by_stat_type(StatType.energy)
+
+    for energy_stat in energy_stat_sets:
+        if energy_stat.year:
+            stat_set = energy_fueltech_daily(
+                year=energy_stat.year,
+                network_code=energy_stat.network.code,
+                network_region_code=energy_stat.network_region,
+            )
+
+            if energy_stat.bom_station:
+                weather_stats = weather_daily(
+                    station_code=energy_stat.bom_station,
+                    year=energy_stat.year,
+                    network_code=energy_stat.network.code,
+                )
+                stat_set.append_set(weather_stats)
+
+            write_output(energy_stat.path, stat_set)
+
+        elif energy_stat.period.period_human == "all":
+            stat_set = energy_fueltech_daily(
+                interval_size="1M",
+                network_code=energy_stat.network.code,
+                network_region_code=energy_stat.network_region,
+            )
+
+            if energy_stat.bom_station:
+                weather_stats = weather_daily(
+                    station_code=energy_stat.bom_station,
+                    year=energy_stat.year,
+                    network_code=energy_stat.network.code,
+                )
+                stat_set.append_set(weather_stats)
+
+            write_output(energy_stat.path, stat_set)
+
+
+def export_metadata():
+    write_output("metadata.json", export_map)
 
 
 def wem_export_power(is_local: bool = False):
@@ -48,24 +120,6 @@ def wem_export_power(is_local: bool = False):
     POWER_ENDPOINT = "/power/wem.json"
 
     write_output(POWER_ENDPOINT, stat_set, is_local=is_local)
-
-
-GENERATION_MAP = {}
-
-
-def export_power(network_code: str, region_code: str, country_code: str):
-    stat_set = power_week(
-        network_code=network_code, network_region_code=region_code
-    )
-
-    POWER_ENDPOINT = "/stats/{}/{}/{}/power/week.json".format(
-        country_code, network_code, region_code
-    )
-
-    print(POWER_ENDPOINT)
-
-    # if stat_set:
-    # write_output(POWER_ENDPOINT, stat_set=stat_set)
 
 
 def wem_export_daily(limit: int = None, is_local: bool = False):
@@ -106,73 +160,14 @@ def wem_export_monthly(is_local: bool = False):
     )
 
 
-def au_export_power():
-    """
-        This is shit.
-    """
-    engine = get_database_engine()
-
-    scada_range = get_scada_range(network=NetworkNEM)
-    units = get_unit("power")
-
-    __query = """
-        SET SESSION TIME ZONE '+10';
-
-        select
-            t.trading_interval,
-            sum(t.facility_power),
-            t.fueltech_code
-        from (
-            select
-                time_bucket_gapfill('30m', trading_interval) AS trading_interval,
-                interpolate(
-                    max(fs.generated)
-                ) as facility_power,
-                fs.facility_code,
-                ft.code as fueltech_code
-            from facility_scada fs
-            join facility f on fs.facility_code = f.code
-            join fueltech ft on f.fueltech_id = ft.code
-            where
-                fs.trading_interval <= {date_end}
-                and fs.trading_interval >= {date_end}::timestamp - '7 days'::interval
-                and fs.network_id in ('NEM', 'WEM')
-                and f.fueltech_id is not null
-            group by 1, 3, 4
-        ) as t
-        group by 1, 3
-        order by 1 desc
-    """
-
-    query = __query.format(date_end=scada_range.get_end_sql(),)
-
-    with engine.connect() as c:
-        results = list(c.execute(query))
-
-    stats = [
-        DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
-        )
-        for i in results
-    ]
-
-    interval = human_to_interval("30m")
-
-    stats = stats_factory(
-        stats,
-        code="au",
-        network=NetworkNEM,
-        interval=interval,
-        units=units,
-        fueltech_group=True,
-    )
-
-
 if __name__ == "__main__":
-    if settings.env in ["development"]:
-        wem_export_power(is_local=True)
-        wem_export_daily(limit=1, is_local=True)
-        wem_export_monthly(is_local=True)
+    if settings.env in ["development", "staging"]:
+        export_power()
+        export_energy()
+        export_metadata()
+        # wem_export_power(is_local=True)
+        # wem_export_daily(limit=1, is_local=True)
+        # wem_export_monthly(is_local=True)
     else:
         wem_export_power()
         wem_export_daily()
