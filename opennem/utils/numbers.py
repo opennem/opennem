@@ -1,9 +1,26 @@
-from math import floor, log10, pow
+import decimal
+from math import floor, log, pow
 from typing import Union
+
+import numpy as np
 
 from opennem.settings import settings
 
+__log10 = 2.302585092994046
+
 DEFAULT_PRECISION = settings.precision_default
+
+ctx = decimal.Context()
+ctx.prec = 20
+
+
+def float_to_str(f):
+    """
+    Convert the given float to a string,
+    without resorting to scientific notation
+    """
+    d1 = ctx.create_decimal(repr(f))
+    return format(d1, "f")
 
 
 def cast_number(number: any) -> float:
@@ -13,76 +30,38 @@ def cast_number(number: any) -> float:
     return number_float
 
 
-def _precision(value: float, precision: int) -> Union[float, int]:
-    """ """
-    if value == 0:
-        return 0
-
-    _prec = value
-
-    try:
-        _prec = round(value, -int(floor(log10(value))) + (precision - 1))
-    except ValueError:
-        pass
-
-    return _prec
-
-
-def _count_sigfigs(number) -> int:
-    """Returns the number of significant digits in a number"""
-    number = repr(float(number))
-
-    tokens = number.split(".")
-    whole_num = tokens[0].lstrip("0")
-
-    if len(tokens) > 2:
-        raise ValueError(
-            'Invalid number "%s" only 1 decimal allowed' % (number)
-        )
-
-    if len(tokens) == 2:
-        decimal_num = tokens[1].rstrip("0")
-        return len(whole_num) + len(decimal_num)
-
-    return len(whole_num)
-
-
-def to_precision(
-    value: float, precision: int = DEFAULT_PRECISION,
-) -> Union[float, int]:
+def num_sigfigs(n, sig):
     """
-        Preserve integer all significance and apply remaining precision required to
-        fractional part
+        Adapted significant figure count
+
     """
-    value = cast_number(value)
-    value_int = int(value)
+    multi = pow(10, sig - floor(log(n) / __log10) - 1)
+    return round(n * multi) / multi
 
-    value_int_significance = _count_sigfigs(value_int)
-    value_fractional = value - value_int
 
-    if value == value_int:
-        return value_int
+def sigfig_compact(
+    n: Union[float, int], precision: int = DEFAULT_PRECISION
+) -> float:
+    """
+        Compact significant figure formatting
+    """
 
-    if value_int > pow(10, precision - 1):
-        return value_int
+    if not isinstance(n, float):
+        n = cast_number(n)
 
-    if value_int_significance >= precision:
-        return value_int
+    n_abs = abs(n)
+    is_neg = n < 0
 
-    remaining_precision = precision - value_int_significance
+    if n == 0:
+        return n
 
-    remaining_precision_min = round(
-        pow(0.1, remaining_precision), remaining_precision
-    )
+    if n_abs >= pow(10, precision):
+        n = floor(n_abs)
+    else:
+        n = num_sigfigs(n_abs, precision)
 
-    if value_fractional < remaining_precision_min:
-        return value_int + round(value_fractional, remaining_precision)
+    if is_neg:
+        n *= -1
 
-    value_fractional = _precision(
-        value_fractional, precision - value_int_significance
-    )
-
-    result = value_int + value_fractional
-
-    return result
+    return n
 
