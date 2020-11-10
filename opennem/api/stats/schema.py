@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Dict, List, Optional, Tuple, Union
@@ -74,6 +76,10 @@ class OpennemDataSet(BaseConfig):
     created_at: Optional[datetime]
 
     data: List[OpennemData]
+
+    def append_set(self, subject_set: OpennemDataSet):
+        if subject_set.data and len(subject_set.data):
+            self.data.append(subject_set.data)
 
 
 class DataQueryResult(BaseConfig):
