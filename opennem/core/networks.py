@@ -1,4 +1,9 @@
-from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import (
+    NetworkAU,
+    NetworkNEM,
+    NetworkSchema,
+    NetworkWEM,
+)
 
 
 def network_from_state(state: str) -> NetworkSchema:
@@ -26,6 +31,9 @@ def network_from_network_region(network_region: str,) -> NetworkSchema:
 
 def network_from_network_code(network_code: str) -> NetworkSchema:
     network_code = network_code.upper().strip()
+
+    if network_code in ["AU"]:
+        return NetworkAU
 
     if network_code in ["WEM"]:
         return NetworkWEM
