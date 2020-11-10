@@ -63,6 +63,8 @@ class NetworkRegion(BaseConfig):
     )
 
 
+# @TODO move this to db + fixture
+
 NetworkNEM = NetworkSchema(
     code="NEM",
     label="NEM",
@@ -88,5 +90,6 @@ NetworkAPVI = NetworkSchema(
     interval_size=15,
 )
 
+NetworkAU = NetworkNEM
 
-NETWORKS = [NetworkNEM, NetworkWEM, NetworkAPVI]
+NETWORKS = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAU]
