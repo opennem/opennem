@@ -154,16 +154,23 @@ def stats_factory(
     return stat_set
 
 
+def networks_to_in(networks: List[NetworkSchema]):
+    codes = ["'{}'".format(n.code) for n in networks]
+
+    return ", ".join(codes)
+
+
 def get_scada_range(
     network: Optional[NetworkSchema] = None,
+    networks: Optional[List[NetworkSchema]] = None,
     network_region: Optional[str] = None,
 ) -> ScadaDateRange:
     engine = get_database_engine()
 
     __query = """
         select
-            min(trading_interval)::timestamp AT TIME ZONE 'UTC',
-            max(trading_interval)::timestamp AT TIME ZONE 'UTC'
+            min(trading_interval)::timestamp AT TIME ZONE '{timezone}',
+            max(trading_interval)::timestamp AT TIME ZONE '{timezone}'
         from facility_scada
         where
             {network_query}
@@ -175,6 +182,11 @@ def get_scada_range(
 
     if network:
         network_query = f"network_id = '{network.code}' and"
+
+    if networks:
+        network_query = "network_id IN ({}) and ".format(
+            networks_to_in(networks)
+        )
 
     network_region_query = ""
 
