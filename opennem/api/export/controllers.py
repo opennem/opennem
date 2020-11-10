@@ -1,7 +1,7 @@
 from typing import Optional
 
 from opennem.api.export.queries import (
-    energy_network_fueltech_daily_query,
+    energy_network_fueltech_query,
     power_network_fueltech_query,
 )
 from opennem.api.stats.controllers import get_scada_range, stats_factory
@@ -180,7 +180,7 @@ def energy_fueltech_daily(
     interval = human_to_interval(interval_size)
     units = get_unit("energy_giga")
 
-    query = energy_network_fueltech_daily_query(
+    query = energy_network_fueltech_query(
         year=year, network=network, network_region=network_region_code,
     )
 

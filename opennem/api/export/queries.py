@@ -71,7 +71,7 @@ def power_network_fueltech_query(
     return query
 
 
-def energy_network_fueltech_daily_query(
+def energy_network_fueltech_query(
     network: NetworkSchema,
     year: Optional[int] = None,
     get_all: bool = False,
