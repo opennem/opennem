@@ -2,6 +2,7 @@
     Utility functions for API exporter
 
 """
+import json
 import logging
 
 from opennem.api.stats.schema import OpennemDataSet
@@ -20,7 +21,13 @@ def write_output(
         is_local = True
 
     write_func = write_to_local if is_local else write_to_s3
-    byte_count = write_func(path, stat_set.json(exclude_unset=True))
+
+    if hasattr(stat_set, "json"):
+        write_content = stat_set.json(exclude_unset=True)
+    else:
+        write_content = json.dumps(stat_set)
+
+    byte_count = write_func(path, write_content)
 
     logger.info("Wrote {} bytes to {}".format(byte_count, path))
 
