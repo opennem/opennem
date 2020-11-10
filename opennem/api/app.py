@@ -24,10 +24,13 @@ from opennem.schema.opennem import FueltechSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.settings import settings
+from opennem.utils.version import get_version
 
 from .schema import FueltechResponse
 
-app = FastAPI(title="OpenNEM", debug=settings.debug, version="3.0.0-alpha.3")
+app = FastAPI(
+    title="OpenNEM", debug=settings.debug, version=get_version(as_string=True)
+)
 
 app.mount(
     "/static",
