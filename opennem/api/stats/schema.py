@@ -78,8 +78,16 @@ class OpennemDataSet(BaseConfig):
     data: List[OpennemData]
 
     def append_set(self, subject_set: OpennemDataSet):
-        if subject_set.data and len(subject_set.data):
-            self.data.append(subject_set.data)
+        if not subject_set.data:
+            return None
+
+        if not isinstance(subject_set.data, list):
+            return None
+
+        if len(subject_set.data):
+            self.data += subject_set.data
+
+        return None
 
 
 class DataQueryResult(BaseConfig):
