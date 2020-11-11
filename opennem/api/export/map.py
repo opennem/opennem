@@ -84,7 +84,18 @@ class StatMetadata(BaseModel):
     version: Optional[str]
     resources: List[StatExport]
 
-    def get_by_stat_type(self, stat_type: StatType) -> List[StatExport]:
+    def get_by_stat_type(
+        self, stat_type: StatType, priority: Optional[PriorityType] = None
+    ) -> List[StatExport]:
+        if priority:
+            return list(
+                filter(
+                    lambda s: s.stat_type == stat_type
+                    and s.priority == priority,
+                    self.resources,
+                )
+            )
+
         return list(filter(lambda s: s.stat_type == stat_type, self.resources))
 
 
