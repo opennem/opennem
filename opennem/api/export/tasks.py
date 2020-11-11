@@ -51,11 +51,19 @@ def export_power(priority: Optional[PriorityType] = None):
         write_output(power_stat.path, stat_set)
 
 
-def export_energy(priority: Optional[PriorityType] = None):
+def export_energy(
+    priority: Optional[PriorityType] = None, latest: bool = False
+):
     energy_stat_sets = export_map.get_by_stat_type(StatType.energy, priority)
+
+    CURRENT_YEAR = datetime.now().year
 
     for energy_stat in energy_stat_sets:
         if energy_stat.year:
+
+            if latest and energy_stat.year != CURRENT_YEAR:
+                continue
+
             stat_set = energy_fueltech_daily(
                 year=energy_stat.year,
                 network_code=energy_stat.network.code,
@@ -163,7 +171,7 @@ def wem_export_monthly(is_local: bool = False):
 if __name__ == "__main__":
     if settings.env in ["development", "staging"]:
         export_power(priority=PriorityType.live)
-        # export_energy()
+        export_energy(latest=True)
         # export_metadata()
         # wem_export_power(is_local=True)
         # wem_export_daily(limit=1, is_local=True)
