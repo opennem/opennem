@@ -102,7 +102,15 @@ def export_energy(
 
 
 def export_metadata():
-    write_output("metadata.json", export_map)
+
+    _export_map_out = export_map
+
+    # this is a hack because pydantic doesn't
+    # serialize properties
+    for r in _export_map_out.resources:
+        r.file_path = r.path()
+
+    write_output("metadata.json", _export_map_out)
 
 
 def wem_export_power(is_local: bool = False):
