@@ -13,6 +13,7 @@ from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.utils.time import human_to_timedelta
 from opennem.utils.timezone import is_aware, make_aware
+from opennem.utils.version import get_version
 
 from .schema import (
     DataQueryResult,
@@ -142,7 +143,11 @@ def stats_factory(
         dt_now = dt_now.astimezone(network.get_timezone())
 
     stat_set = OpennemDataSet(
-        type=units.unit_type, data=stats_grouped, created_at=dt_now, code=code,
+        type=units.unit_type,
+        data=stats_grouped,
+        created_at=dt_now,
+        code=code,
+        version=get_version(),
     )
 
     if network:
