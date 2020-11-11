@@ -109,7 +109,7 @@ def weather_daily(
             interval=interval,
             code="bom",
             group_field="temperature",
-        ).data
+        )
 
         stats_max = stats_factory(
             stats=temp_max,
@@ -118,7 +118,7 @@ def weather_daily(
             interval=interval,
             code="bom",
             group_field="temperature",
-        ).data
+        )
 
         stats.append_set(stats_min)
         stats.append_set(stats_max)
