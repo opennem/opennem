@@ -7,10 +7,13 @@ commonly used. You can find more settings consulting the documentation:
 https://docs.scrapy.org/en/latest/topics/settings.html
 """
 
+import logging
+
 BOT_NAME = "opennem"
 SPIDER_MODULES = ["opennem.spiders"]
 NEWSPIDER_MODULE = "opennem.spiders"
 
+LOG_LEVEL = logging.ERROR
 
 USER_AGENT = "opennem/v3.0.0 (+https://opennem.org.au)"
 ROBOTSTXT_OBEY = False
