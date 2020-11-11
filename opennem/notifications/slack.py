@@ -1,6 +1,7 @@
 import logging
 
 import requests
+from validators import ValidationFailure
 from validators.url import url as valid_url
 
 from opennem.settings import settings
@@ -20,7 +21,7 @@ def slack_message(msg: str) -> bool:
         logger.error("No slack notification endpoint configured")
         return False
 
-    if not valid_url(settings.slack_hook_url):
+    if isinstance(valid_url(settings.slack_hook_url), ValidationFailure):
         logger.error("No slack notification endpoint configured")
         return False
 
