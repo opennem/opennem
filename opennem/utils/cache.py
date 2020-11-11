@@ -18,7 +18,13 @@ def cache_scada_result(func):
         networks: Optional[List[NetworkSchema]] = None,
         network_region: Optional[str] = None,
     ):
-        key_list = [network.code, network_region.code]
+        key_list = [network.code]
+
+        if network_region:
+            if hasattr(network_region, "code"):
+                key_list.append(network_region.code)
+            else:
+                key_list.append(network_region)
 
         if networks:
             key_list += [n.code for n in networks]
