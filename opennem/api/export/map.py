@@ -115,6 +115,7 @@ def get_export_map() -> StatMetadata:
 
         export = StatExport(
             stat_type=StatType.power,
+            priority=PriorityType.live,
             country=country,
             date_range=scada_range,
             network=NetworkAU,
@@ -129,6 +130,7 @@ def get_export_map() -> StatMetadata:
         ):
             export = StatExport(
                 stat_type=StatType.energy,
+                priority=PriorityType.daily,
                 country=country,
                 date_range=scada_range,
                 network=NetworkAU,
@@ -138,6 +140,7 @@ def get_export_map() -> StatMetadata:
 
         export = StatExport(
             stat_type=StatType.energy,
+            priority=PriorityType.monthly,
             country=country,
             date_range=scada_range,
             network=NetworkAU,
@@ -152,6 +155,7 @@ def get_export_map() -> StatMetadata:
 
         export = StatExport(
             stat_type=StatType.power,
+            priority=PriorityType.live,
             country=network.country,
             date_range=scada_range,
             network=network_schema,
@@ -165,6 +169,7 @@ def get_export_map() -> StatMetadata:
         ):
             export = StatExport(
                 stat_type=StatType.energy,
+                priority=PriorityType.daily,
                 country=network.country,
                 date_range=scada_range,
                 network=network_schema,
@@ -175,6 +180,7 @@ def get_export_map() -> StatMetadata:
 
         export = StatExport(
             stat_type=StatType.energy,
+            priority=PriorityType.monthly,
             country=network.country,
             date_range=scada_range,
             network=network_schema,
@@ -195,6 +201,7 @@ def get_export_map() -> StatMetadata:
 
             export = StatExport(
                 stat_type=StatType.power,
+                priority=PriorityType.live,
                 country=network.country,
                 date_range=scada_range,
                 network=network_schema,
@@ -210,6 +217,7 @@ def get_export_map() -> StatMetadata:
             ):
                 export = StatExport(
                     stat_type=StatType.energy,
+                    priority=PriorityType.daily,
                     country=network.country,
                     date_range=scada_range,
                     network=network_schema,
@@ -221,6 +229,7 @@ def get_export_map() -> StatMetadata:
 
             export = StatExport(
                 stat_type=StatType.energy,
+                priority=PriorityType.monthly,
                 country=network.country,
                 date_range=scada_range,
                 network=network_schema,
