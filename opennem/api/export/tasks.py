@@ -108,7 +108,7 @@ def export_metadata():
     # this is a hack because pydantic doesn't
     # serialize properties
     for r in _export_map_out.resources:
-        r.file_path = r.path()
+        r.file_path = r.path
 
     write_output("metadata.json", _export_map_out)
 
@@ -149,7 +149,9 @@ def wem_export_daily(limit: int = None, is_local: bool = False):
         stat_set = energy_fueltech_daily(year=year, network=NetworkWEM)
 
         weather = weather_daily(
-            station_code="009021", year=year, network_code="WEM",
+            station_code="009021",
+            year=year,
+            network_code="WEM",
         )
         stat_set.data += weather.data
 
@@ -164,18 +166,19 @@ def wem_export_daily(limit: int = None, is_local: bool = False):
 
 
 def wem_export_monthly(is_local: bool = False):
-    """
-
-    """
+    """"""
 
     stat_set = energy_fueltech_daily(network=NetworkWEM, interval_size="1M")
 
     stat_set.data += weather_daily(
-        station_code="009021", network_code="WEM",
+        station_code="009021",
+        network_code="WEM",
     ).data
 
     write_output(
-        "/wem/energy/monthly/all.json", stat_set, is_local=is_local,
+        "/wem/energy/monthly/all.json",
+        stat_set,
+        is_local=is_local,
     )
 
 
