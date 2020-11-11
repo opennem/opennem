@@ -155,8 +155,8 @@ def energy_network_fueltech_query(
     networks: Optional[List[NetworkSchema]] = None,
 ) -> str:
     """
-        Get Energy for a network or network + region
-        based on a year
+    Get Energy for a network or network + region
+    based on a year
     """
 
     __query = """
@@ -244,7 +244,7 @@ def energy_network_fueltech_query(
     network_region_query = ""
 
     if network_region:
-        network_region_query = f"and f.network_region='{network_region}'"
+        network_region_query = f" f.network_region='{network_region}' and"
 
     query = dedent(
         __query.format(
