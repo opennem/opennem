@@ -176,9 +176,9 @@ def get_scada_range(
 
     __query = """
         select
-            min(trading_interval)::timestamp AT TIME ZONE '{timezone}',
-            max(trading_interval)::timestamp AT TIME ZONE '{timezone}'
-        from facility_scada
+            min(fs.trading_interval)::timestamp AT TIME ZONE '{timezone}',
+            max(fs.trading_interval)::timestamp AT TIME ZONE '{timezone}'
+        from facility_scada fs
         where
             {network_query}
             {network_region_query}
@@ -188,10 +188,10 @@ def get_scada_range(
     network_query = ""
 
     if network:
-        network_query = f"network_id = '{network.code}' and"
+        network_query = f"fs.network_id = '{network.code}' and"
 
     if networks:
-        network_query = "network_id IN ({}) and ".format(
+        network_query = "fs.network_id IN ({}) and ".format(
             networks_to_in(networks)
         )
 
@@ -199,7 +199,11 @@ def get_scada_range(
 
     if network_region:
         # @TODO support network regions in scada_range
-        network_region_query = f"network_id = '{network_region.code}' and"
+        # technically we don't need this atm
+        pass
+        # network_region_query = (
+        # f"f.network_region = '{network_region.code}' and"
+        # )
 
     scada_range_query = dedent(
         __query.format(
