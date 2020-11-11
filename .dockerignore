@@ -23,7 +23,6 @@ dist/
 db_misc.py
 docker-compose.yml
 mypy.ini
-pyproject.toml
 pytest.ini
 scripts/
 test.json
