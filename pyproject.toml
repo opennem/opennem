@@ -55,6 +55,7 @@ Pint = "^0.16.1"
 geojson-pydantic = "^0.2.1"
 tomlkit = "^0.7.0"
 expiringdict = "^1.2.1"
+validators = "^0.18.1"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
