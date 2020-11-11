@@ -39,10 +39,10 @@ def stats_factory(
     data_id: Optional[str] = None,
 ) -> Optional[OpennemDataSet]:
     """
-        Takes a list of data query results and returns OpennemDataSets
+    Takes a list of data query results and returns OpennemDataSets
 
-        @TODO optional groupby field
-        @TODO override timezone
+    @TODO optional groupby field
+    @TODO override timezone
     """
 
     if network:
@@ -209,7 +209,7 @@ def get_scada_range(
         __query.format(
             network_query=network_query,
             network_region_query=network_region_query,
-            timezone=network.timezone_database,
+            timezone="UTC",
         )
     )
 
