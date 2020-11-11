@@ -16,6 +16,7 @@ from opennem.api.export.map import (
 from opennem.api.export.utils import write_output
 from opennem.api.stats.router import price_network_region_api
 from opennem.db import get_database_engine
+from opennem.schema.network import NetworkWEM
 from opennem.settings import settings
 
 # @TODO q this ..
@@ -66,7 +67,8 @@ def export_energy(
 
             stat_set = energy_fueltech_daily(
                 year=energy_stat.year,
-                network_code=energy_stat.network.code,
+                network=energy_stat.network,
+                networks=energy_stat.networks,
                 network_region_code=energy_stat.network_region,
             )
 
@@ -83,7 +85,8 @@ def export_energy(
         elif energy_stat.period.period_human == "all":
             stat_set = energy_fueltech_daily(
                 interval_size="1M",
-                network_code=energy_stat.network.code,
+                network=energy_stat.network,
+                networks=energy_stat.networks,
                 network_region_code=energy_stat.network_region,
             )
 
@@ -135,7 +138,7 @@ def wem_export_daily(limit: int = None, is_local: bool = False):
 
     for year in range(datetime.now().year, YEAR_MIN - 1, -1):
 
-        stat_set = energy_fueltech_daily(year=year, network_code="WEM")
+        stat_set = energy_fueltech_daily(year=year, network=NetworkWEM)
 
         weather = weather_daily(
             station_code="009021", year=year, network_code="WEM",
@@ -157,7 +160,7 @@ def wem_export_monthly(is_local: bool = False):
 
     """
 
-    stat_set = energy_fueltech_daily(network_code="WEM", interval_size="1M")
+    stat_set = energy_fueltech_daily(network=NetworkWEM, interval_size="1M")
 
     stat_set.data += weather_daily(
         station_code="009021", network_code="WEM",

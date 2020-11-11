@@ -211,20 +211,22 @@ def power_week(
 
 
 def energy_fueltech_daily(
+    network: NetworkSchema,
     year: Optional[int] = None,
-    network_code: str = "WEM",
     network_region_code: Optional[str] = None,
     interval_size: str = "1d",
+    networks: Optional[List[NetworkSchema]] = None,
 ) -> OpennemDataSet:
-    network = network_from_network_code(network_code)
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
-    network = network_from_network_code(network_code)
     interval = human_to_interval(interval_size)
     units = get_unit("energy_giga")
 
     query = energy_network_fueltech_query(
-        year=year, network=network, network_region=network_region_code,
+        year=year,
+        network=network,
+        network_region=network_region_code,
+        networks=networks,
     )
 
     with engine.connect() as c:
