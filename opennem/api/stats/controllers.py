@@ -11,6 +11,7 @@ from opennem.db.models.opennem import FacilityScada, Station
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
+from opennem.utils.cache import cache_scada_result
 from opennem.utils.time import human_to_timedelta
 from opennem.utils.timezone import is_aware, make_aware
 from opennem.utils.version import get_version
@@ -165,6 +166,7 @@ def networks_to_in(networks: List[NetworkSchema]):
     return ", ".join(codes)
 
 
+@cache_scada_result
 def get_scada_range(
     network: Optional[NetworkSchema] = None,
     networks: Optional[List[NetworkSchema]] = None,
@@ -197,7 +199,7 @@ def get_scada_range(
 
     if network_region:
         # @TODO support network regions in scada_range
-        network_region_query = f"network_id = '{network.code}' and"
+        network_region_query = f"network_id = '{network_region.code}' and"
 
     scada_range_query = dedent(
         __query.format(

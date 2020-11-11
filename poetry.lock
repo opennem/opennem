@@ -342,6 +342,17 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "expiringdict"
+version = "1.2.1"
+description = "Dictionary with auto-expiring values for caching purposes"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+tests = ["dill", "coverage", "coveralls", "mock", "nose"]
+
+[[package]]
 name = "fastapi"
 version = "0.60.2"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
@@ -1862,7 +1873,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "c27159e3e148a703a05decf1c4433b3d105668243ff82362f692c17eaec37e0e"
+content-hash = "7f14a94bcc32d2f8228ee1846902d6eac817f15c61a9f0cd88c481dad49345e5"
 
 [metadata.files]
 aiofiles = [
@@ -2044,6 +2055,9 @@ email-validator = [
 ]
 et-xmlfile = [
     {file = "et_xmlfile-1.0.1.tar.gz", hash = "sha256:614d9722d572f6246302c4491846d2c393c199cfa4edc9af593437691683335b"},
+]
+expiringdict = [
+    {file = "expiringdict-1.2.1.tar.gz", hash = "sha256:fe2ba427220425c3c8a3d29f6d2e2985bcee323f8bcd4021e68ebefbd90d8250"},
 ]
 fastapi = [
     {file = "fastapi-0.60.2-py3-none-any.whl", hash = "sha256:579c194f78ed3cff1a4e62bbaea79fc1bef05e35294147e41a807f4105a77885"},
