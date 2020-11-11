@@ -2,8 +2,6 @@ import decimal
 from math import floor, log, pow
 from typing import Union
 
-import numpy as np
-
 from opennem.settings import settings
 
 __log10 = 2.302585092994046
@@ -32,7 +30,7 @@ def cast_number(number: any) -> float:
 
 def num_sigfigs(n, sig):
     """
-        Adapted significant figure count
+    Adapted significant figure count
 
     """
     multi = pow(10, sig - floor(log(n) / __log10) - 1)
@@ -43,7 +41,7 @@ def sigfig_compact(
     n: Union[float, int], precision: int = DEFAULT_PRECISION
 ) -> float:
     """
-        Compact significant figure formatting
+    Compact significant figure formatting
     """
 
     if not isinstance(n, float):
@@ -64,4 +62,3 @@ def sigfig_compact(
         n *= -1
 
     return n
-
