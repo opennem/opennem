@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from opennem.api.export.controllers import (
     energy_fueltech_daily,
@@ -27,8 +27,8 @@ logger = logging.getLogger(__name__)
 export_map = get_export_map()
 
 
-def export_power():
-    power_stat_sets = export_map.get_by_stat_type(StatType.power)
+def export_power(priority: Optional[PriorityType] = None):
+    power_stat_sets = export_map.get_by_stat_type(StatType.power, priority)
 
     for power_stat in power_stat_sets:
         stat_set = power_week(
@@ -51,8 +51,8 @@ def export_power():
         write_output(power_stat.path, stat_set)
 
 
-def export_energy():
-    energy_stat_sets = export_map.get_by_stat_type(StatType.energy)
+def export_energy(priority: Optional[PriorityType] = None):
+    energy_stat_sets = export_map.get_by_stat_type(StatType.energy, priority)
 
     for energy_stat in energy_stat_sets:
         if energy_stat.year:
@@ -162,9 +162,9 @@ def wem_export_monthly(is_local: bool = False):
 
 if __name__ == "__main__":
     if settings.env in ["development", "staging"]:
-        export_power()
-        export_energy()
-        export_metadata()
+        export_power(priority=PriorityType.live)
+        # export_energy()
+        # export_metadata()
         # wem_export_power(is_local=True)
         # wem_export_daily(limit=1, is_local=True)
         # wem_export_monthly(is_local=True)
