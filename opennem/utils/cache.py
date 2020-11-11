@@ -6,7 +6,7 @@ from expiringdict import ExpiringDict
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.schema.network import NetworkSchema
 
-CACHE_AGE = 60 * 5
+CACHE_AGE = 60 * 15
 
 scada_cache = ExpiringDict(max_len=100, max_age_seconds=CACHE_AGE)
 
