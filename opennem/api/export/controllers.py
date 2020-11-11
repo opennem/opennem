@@ -3,6 +3,7 @@ from typing import List, Optional
 from opennem.api.export.queries import (
     energy_network_fueltech_query,
     power_network_fueltech_query,
+    price_network_query,
 )
 from opennem.api.stats.controllers import get_scada_range, stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
@@ -147,8 +148,6 @@ def power_week(
         network_region=network_region_code,
     )
 
-    # print(query)
-
     with engine.connect() as c:
         row = list(c.execute(query))
 
@@ -161,13 +160,6 @@ def power_week(
 
     if len(stats) < 1:
         raise Exception("No results from query: {}".format(query))
-
-    stats_price = [
-        DataQueryResult(
-            interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None
-        )
-        for i in row
-    ]
 
     result = stats_factory(
         stats,
@@ -183,14 +175,33 @@ def power_week(
     if not result:
         raise Exception("No results")
 
+    # price
+
+    query = price_network_query(
+        network=network,
+        networks=networks,
+        period=period,
+        interval=interval,
+        network_region=network_region_code,
+    )
+
+    with engine.connect() as c:
+        row = list(c.execute(query))
+
+    stats_price = [
+        DataQueryResult(
+            interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None
+        )
+        for i in row
+    ]
+
     stats_market_value = stats_factory(
         stats=stats_price,
         code=network_region_code or network.code.lower(),
         units=get_unit("price_energy_mega"),
         network=network,
-        fueltech_group=True,
         interval=interval,
-        region=network_region_code or network.code.lower(),
+        region=network_region_code,
         period=period,
     )
 

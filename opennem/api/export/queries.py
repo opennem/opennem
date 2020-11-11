@@ -9,6 +9,70 @@ from opennem.schema.network import NetworkSchema, NetworkWEM
 from opennem.schema.time import TimeInterval, TimePeriod
 
 
+def price_network_query(
+    interval: TimeInterval,
+    network: NetworkSchema = NetworkWEM,
+    period: TimePeriod = human_to_period("7d"),
+    network_region: Optional[str] = None,
+    networks: Optional[List[NetworkSchema]] = None,
+) -> str:
+
+    scada_range: ScadaDateRange = get_scada_range(
+        network=network, networks=networks
+    )
+
+    timezone = network.get_timezone(postgres_format=True)
+
+    __query = """
+        SET SESSION TIME ZONE '{timezone}';
+
+        select
+            time_bucket_gapfill('{trunc}', bs.trading_interval) AS trading_interval,
+            bs.network_region,
+            coalesce(avg(bs.price), 0) as price
+        from balancing_summary bs
+        where
+            bs.trading_interval <= '{date_max}' and
+            bs.trading_interval >= '{date_min}' and
+            {network_query}
+            {network_region_query}
+            1=1
+        group by 1, 2
+        order by 1 desc
+    """
+
+    network_query = ""
+    network_region_query = ""
+
+    if network_region:
+        network_region_query = f"bs.network_region='{network_region}' and "
+
+    if network:
+        network_query = f"bs.network_id = '{network.code}' and "
+
+    if networks:
+        network_query = "bs.network_id IN ({}) and ".format(
+            networks_to_in(networks)
+        )
+
+    date_max = scada_range.get_end()
+    date_min = scada_range.get_end() - timedelta(days=7)
+
+    query = dedent(
+        __query.format(
+            network_query=network_query,
+            trunc=interval.interval_sql,
+            period=period.period_sql,
+            network_region_query=network_region_query,
+            timezone=timezone,
+            date_max=date_max,
+            date_min=date_min,
+        )
+    )
+
+    return query
+
+
 def power_network_fueltech_query(
     interval: TimeInterval,
     network: NetworkSchema = NetworkWEM,
@@ -27,8 +91,7 @@ def power_network_fueltech_query(
         select
             t.trading_interval at time zone '{timezone}',
             t.fueltech_code,
-            sum(t.facility_power),
-            avg(t.price)
+            sum(t.facility_power)
         from (
             select
                 time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
@@ -36,15 +99,10 @@ def power_network_fueltech_query(
                     avg(fs.generated), 0
                 ) as facility_power,
                 fs.facility_code,
-                ft.code as fueltech_code,
-                avg(bs.price) as price
+                ft.code as fueltech_code
             from facility_scada fs
             join facility f on fs.facility_code = f.code
             join fueltech ft on f.fueltech_id = ft.code
-            left join balancing_summary bs on
-                bs.trading_interval = fs.trading_interval
-                and bs.network_id=fs.network_id
-                and bs.network_region = f.network_region
             where
                 f.fueltech_id is not null and
                 {network_query}
