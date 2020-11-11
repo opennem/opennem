@@ -53,6 +53,7 @@ class StatExport(BaseModel):
     bom_station: Optional[str]
     year: Optional[int]
     period: Optional[TimePeriod]
+    file_path: Optional[str]
 
     @property
     def path(self):
