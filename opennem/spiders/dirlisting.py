@@ -24,11 +24,11 @@ def is_number(value):
 
 def parse_dirlisting(raw_string):
     """
-        given a raw text directory listing like "     Saturday 11th June 2020      6789"
-        will parse and return both the date and listing type
+    given a raw text directory listing like "     Saturday 11th June 2020      6789"
+    will parse and return both the date and listing type
 
-        @param raw_string - the raw directory listing string
-        @return dict of the date in iso format and the type (file or directory)
+    @param raw_string - the raw directory listing string
+    @return dict of the date in iso format and the type (file or directory)
     """
     components = raw_string.split(" " * PADDING_WIDTH)
     components = [i.strip() for i in components]
@@ -75,7 +75,7 @@ def get_file_extensions(url: str) -> Optional[str]:
 
 class DirlistingSpider(Spider):
     """
-        spider that parses html directory listings produced by web servers
+    spider that parses html directory listings produced by web servers
 
 
     """
@@ -113,59 +113,54 @@ class DirlistingSpider(Spider):
 
     def parse(self, response):
         links = list(
-            reversed(
-                [
-                    i.get()
-                    for i in response.xpath(
-                        "//body/pre/br/following-sibling::a/@href"
-                    )
-                ]
-            )
+            reversed([i.get() for i in response.xpath("//body/pre/a/@href")])
         )
 
-        metadata = list(
-            reversed(
-                [
-                    parse_dirlisting(i.get())
-                    for i in response.xpath(
-                        "//body/pre/br/following-sibling::text()"
-                    )
-                ]
-            )
-        )
+        # metadata = list(
+        #     reversed(
+        #         [
+        #             parse_dirlisting(i.get())
+        #             for i in response.xpath(
+        #                 "//body/pre/br/following-sibling::text()"
+        #             )
+        #         ]
+        #     )
+        # )
 
         parsed = 0
 
         if self.limit > 0 and self.skip > 0:
             self.limit = self.limit + self.skip
 
-        for i, entry in enumerate(metadata):
-            if entry["type"] == "file":
-                link = response.urljoin(links[i])
+        for link in links:
+            link = response.urljoin(link)
 
-                if self.limit and self.limit > 0 and (parsed >= self.limit):
-                    self.log(f"Reached limit of {self.limit}", logging.INFO)
-                    return None
+            if link.endswith("/"):
+                continue
 
-                if get_file_extensions(link) not in self.supported_extensions:
-                    self.log(
-                        "Not a supported extension: {} {}".format(
-                            link[-4:].lower(),
-                            ", ".join(self.supported_extensions),
-                        ),
-                        logging.INFO,
-                    )
-                    continue
+            if self.limit and self.limit > 0 and (parsed >= self.limit):
+                self.log(f"Reached limit of {self.limit}", logging.INFO)
+                return None
 
-                parsed += 1
+            if get_file_extensions(link) not in self.supported_extensions:
+                self.log(
+                    "Not a supported extension: {} {}".format(
+                        link[-4:].lower(),
+                        ", ".join(self.supported_extensions),
+                    ),
+                    logging.INFO,
+                )
+                continue
 
-                if self.skip and self.skip >= parsed:
-                    self.log(
-                        f"Skipping entry {link}", logging.DEBUG,
-                    )
-                    continue
+            parsed += 1
 
-                self.log("Getting {}".format(link), logging.INFO)
+            if self.skip and self.skip >= parsed:
+                self.log(
+                    f"Skipping entry {link}",
+                    logging.DEBUG,
+                )
+                continue
 
-                yield {"link": link, **entry}
+            self.log("Getting {}".format(link), logging.INFO)
 
+            yield {"link": link}

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class LinkExtract(object):
     """
-        parses and extracts links in items
+    parses and extracts links in items
 
     """
 
@@ -26,6 +26,7 @@ class LinkExtract(object):
         _, file_extension = os.path.splitext(url)
 
         try:
+            logger.info("Grabbing: {}".format(url))
             fh = open(url)
         except RequestException:
             logger.error("Bad link: {}".format(url))
