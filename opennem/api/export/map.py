@@ -124,6 +124,27 @@ def get_export_map() -> StatMetadata:
 
         _exmap.append(export)
 
+        for year in range(
+            datetime.now().year, scada_range.start.year - 1, -1,
+        ):
+            export = StatExport(
+                stat_type=StatType.energy,
+                country=country,
+                date_range=scada_range,
+                network=NetworkAU,
+                year=year,
+            )
+            _exmap.append(export)
+
+        export = StatExport(
+            stat_type=StatType.energy,
+            country=country,
+            date_range=scada_range,
+            network=NetworkAU,
+            period=human_to_period("all"),
+        )
+        _exmap.append(export)
+
     for network in networks:
         network_schema = network_from_network_code(network.code)
         scada_range = get_scada_range(network=network_schema)
