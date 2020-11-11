@@ -152,6 +152,7 @@ def energy_network_fueltech_query(
     year: Optional[int] = None,
     get_all: bool = False,
     network_region: Optional[str] = None,
+    networks: Optional[List[NetworkSchema]] = None,
 ) -> str:
     """
         Get Energy for a network or network + region
@@ -184,14 +185,15 @@ def energy_network_fueltech_query(
                 left join facility f on fs.facility_code = f.code
                 left join balancing_summary bs on
                     bs.trading_interval = fs.trading_interval
-                    and bs.network_id='{network_code}'
+                    and bs.network_id=fs.network_id
                     and bs.network_region = f.network_region
             where
-                fs.network_id='{network_code}'
-                and f.fueltech_id is not null
-                and fs.trading_interval <= '{year_max}'
-                and fs.trading_interval >= '{year_min}'
+                f.fueltech_id is not null and
+                fs.trading_interval <= '{year_max}' and
+                fs.trading_interval >= '{year_min}' and
+                {network_query}
                 {network_region_query}
+                1=1
             group by
                 1,
                 f.code,
@@ -204,7 +206,23 @@ def energy_network_fueltech_query(
 
     timezone = network.timezone_database
     offset = network.get_timezone(postgres_format=True)
-    scada_range: ScadaDateRange = get_scada_range(network=network)
+    scada_range: ScadaDateRange = get_scada_range(
+        network=network, networks=networks
+    )
+
+    network_query = ""
+    network_region_query = ""
+
+    if network_region:
+        network_region_query = f"f.network_region='{network_region}' and "
+
+    if network:
+        network_query = f"fs.network_id = '{network.code}' and "
+
+    if networks:
+        network_query = "fs.network_id IN ({}) and ".format(
+            networks_to_in(networks)
+        )
 
     if not timezone:
         timezone = "UTC"
@@ -231,11 +249,11 @@ def energy_network_fueltech_query(
     query = dedent(
         __query.format(
             trunc=trunc,
-            network_code=network.code,
             year_min=year_min,
             year_max=year_max,
-            network_region_query=network_region_query,
             timezone=timezone,
+            network_query=network_query,
+            network_region_query=network_region_query,
         )
     )
 
