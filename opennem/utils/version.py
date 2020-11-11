@@ -19,10 +19,13 @@ def _get_project_meta():
 
 
 pkg_meta = _get_project_meta()
-project = str(pkg_meta["name"])
-copyright = "2020, OpenNEM"
+version = None
 
-version = str(pkg_meta["version"])
+if pkg_meta:
+    project = str(pkg_meta["name"])
+    copyright = "2020, OpenNEM"
+    version = str(pkg_meta["version"])
+
 release = version
 
 
@@ -35,6 +38,9 @@ class VersionPart(Enum):
 def get_version(
     version_part: Optional[VersionPart] = None, as_string: bool = True
 ) -> Union[str, Version]:
+    if not version:
+        return None
+
     version_parsed = parse(version)
 
     if not version_part:
@@ -50,4 +56,3 @@ def get_version(
 
     if version_part == VersionPart.PATCH:
         return version_parsed.minor
-
