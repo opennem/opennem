@@ -43,7 +43,7 @@ metadata = Base.metadata
 
 class BaseModel(object):
     """
-        Base model for both NEM and WEM
+    Base model for both NEM and WEM
 
     """
 
@@ -105,7 +105,12 @@ class FacilityStatus(Base, BaseModel):
 class Participant(Base, BaseModel):
     __tablename__ = "participant"
 
-    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True,)
+    id = Column(
+        Integer,
+        autoincrement=True,
+        nullable=False,
+        primary_key=True,
+    )
 
     code = Column(Text, unique=True, index=True)
     name = Column(Text)
@@ -297,7 +302,12 @@ class Station(Base, BaseModel):
     def __repr__(self):
         return "{} {} <{}>".format(self.__class__, self.name, self.code)
 
-    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True,)
+    id = Column(
+        Integer,
+        autoincrement=True,
+        nullable=False,
+        primary_key=True,
+    )
 
     participant_id = Column(
         Integer,
@@ -338,7 +348,7 @@ class Station(Base, BaseModel):
     @hybrid_property
     def network(self) -> Optional[Network]:
         """
-            Return the network from the facility
+        Return the network from the facility
 
         """
         if not self.facilities or not len(self.facilities) > 0:
@@ -349,8 +359,8 @@ class Station(Base, BaseModel):
     @hybrid_property
     def capacity_registered(self) -> Optional[int]:
         """
-            This is the sum of registered capacities for all units for
-            this station
+        This is the sum of registered capacities for all units for
+        this station
 
         """
         cap_reg = None
@@ -377,7 +387,7 @@ class Station(Base, BaseModel):
     @hybrid_property
     def capacity_aggregate(self) -> Optional[int]:
         """
-            This is the sum of aggregate capacities for all units
+        This is the sum of aggregate capacities for all units
 
         """
         cap_agg = None
@@ -419,7 +429,12 @@ class Facility(Base, BaseModel):
     def __repr__(self):
         return "{} {} <{}>".format(self.__class__, self.code, self.fueltech_id)
 
-    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True,)
+    id = Column(
+        Integer,
+        autoincrement=True,
+        nullable=False,
+        primary_key=True,
+    )
 
     network_id = Column(
         Text,
@@ -478,6 +493,8 @@ class Facility(Base, BaseModel):
     unit_capacity = Column(Numeric, nullable=True)
     # unit_number_max = Column(Numeric, nullable=True)
 
+    emissions_factor_co2 = Column(Numeric, nullable=True)
+
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
@@ -485,7 +502,7 @@ class Facility(Base, BaseModel):
     @hybrid_property
     def capacity_aggregate(self) -> Optional[int]:
         """
-            This is unit_no * unit_capacity and can differ from registered
+        This is unit_no * unit_capacity and can differ from registered
 
         """
         num_units = 1
@@ -530,7 +547,12 @@ class Revision(Base, BaseModel):
 
     __tablename__ = "revisions"
 
-    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True,)
+    id = Column(
+        Integer,
+        autoincrement=True,
+        nullable=False,
+        primary_key=True,
+    )
 
     station_id = Column(
         Integer,
@@ -626,7 +648,7 @@ class Revision(Base, BaseModel):
 
 class FacilityScada(Base, BaseModel):
     """
-        Facility Scada
+    Facility Scada
     """
 
     __tablename__ = "facility_scada"
@@ -726,4 +748,3 @@ class BalancingSummary(Base, BaseModel):
     generation_total = Column(Numeric, nullable=True)
     price = Column(Numeric, nullable=True)
     is_forecast = Column(Boolean, default=False)
-
