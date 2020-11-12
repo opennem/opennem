@@ -116,17 +116,6 @@ class DirlistingSpider(Spider):
             reversed([i.get() for i in response.xpath("//body/pre/a/@href")])
         )
 
-        # metadata = list(
-        #     reversed(
-        #         [
-        #             parse_dirlisting(i.get())
-        #             for i in response.xpath(
-        #                 "//body/pre/br/following-sibling::text()"
-        #             )
-        #         ]
-        #     )
-        # )
-
         parsed = 0
 
         if self.limit > 0 and self.skip > 0:
