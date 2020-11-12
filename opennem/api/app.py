@@ -1,8 +1,8 @@
+import logging
 from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -28,15 +28,23 @@ from opennem.utils.version import get_version
 
 from .schema import FueltechResponse
 
+logger = logging.getLogger(__name__)
+
 app = FastAPI(
     title="OpenNEM", debug=settings.debug, version=get_version(as_string=True)
 )
 
-app.mount(
-    "/static",
-    StaticFiles(directory=settings.static_folder_path),
-    name="static",
-)
+try:
+    from fastapi.staticfiles import StaticFiles
+
+    app.mount(
+        "/static",
+        StaticFiles(directory=settings.static_folder_path),
+        name="static",
+    )
+except Exception as e:
+    logger.error("Error initializing static hosting: {}".format(e))
+
 
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(locations_router, tags=["Locations"], prefix="/locations")
