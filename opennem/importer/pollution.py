@@ -6,7 +6,12 @@ from opennem.importer.mms import mms_import
 def import_pollution():
     mms = mms_import()
 
-    facility_poll_map = {}
+    facility_poll_map = {
+        "CALL_A_4": 0.93134349,
+        "CALL_B_1": 0.93134349,
+        "CALL_B_2": 0.93134349,
+        "SWAN_E": 0.42795234,
+    }
 
     for station in mms:
         for facility in station.facilities:
