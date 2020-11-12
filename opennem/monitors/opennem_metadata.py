@@ -1,11 +1,9 @@
 import logging
-from datetime import datetime, timedelta
 
 import requests
 from pydantic import ValidationError
 
 from opennem.api.export.map import StatMetadata
-from opennem.notifications.slack import slack_message
 from opennem.settings import settings
 from opennem.utils.url import bucket_to_website, urljoin
 
