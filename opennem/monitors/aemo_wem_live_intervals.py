@@ -30,4 +30,3 @@ def get_aemo_wem_live_facility_intervals_recent_date() -> datetime:
     max_date = max([i["trading_interval"] for i in records])
 
     return max_date
-
