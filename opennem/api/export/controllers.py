@@ -280,19 +280,17 @@ def energy_fueltech_daily(
 
     stats.append_set(stats_market_value)
 
-    if results_emissions:
+    stats_emissions = stats_factory(
+        stats=results_emissions,
+        units=get_unit("emissions"),
+        network=network,
+        fueltech_group=True,
+        interval=interval,
+        region=network.code.lower(),
+        period=period,
+        code=network.code.lower(),
+    )
 
-        stats_emissions = stats_factory(
-            stats=results_emissions,
-            units=get_unit("emissions"),
-            network=network,
-            fueltech_group=True,
-            interval=interval,
-            region=network.code.lower(),
-            period=period,
-            code=network.code.lower(),
-        )
-
-        stats.append_set(stats_emissions)
+    stats.append_set(stats_emissions)
 
     return stats
