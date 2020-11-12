@@ -186,11 +186,13 @@ if __name__ == "__main__":
     if settings.env in ["development", "staging"]:
         export_power(priority=PriorityType.live)
         export_energy(latest=True)
-        # export_metadata()
-        # wem_export_power(is_local=True)
-        # wem_export_daily(limit=1, is_local=True)
-        # wem_export_monthly(is_local=True)
+        export_metadata()
+        wem_export_power()
+        wem_export_daily(limit=1)
+        wem_export_monthly()
     else:
+        export_power()
+        export_energy()
         wem_export_power()
         wem_export_daily()
         wem_export_monthly()
