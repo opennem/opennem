@@ -23,7 +23,7 @@ def write_to_s3(
     file_path: str, data: str, content_type: str = "application/json"
 ) -> int:
     """
-        Write data to an s3 path
+    Write data to an s3 path
     """
     s3_save_path = urljoin(settings.s3_bucket_path, file_path)
 
