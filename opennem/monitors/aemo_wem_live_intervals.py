@@ -30,7 +30,7 @@ def get_aemo_wem_live_facility_intervals_recent_date() -> datetime:
     csv_content = req.content
     csvreader = csv.DictReader(csv_content.decode("utf-8").split("\n"))
 
-    if len(csvreader) < 1:
+    if len(csvreader.fieldnames) < 1:
         logger.error(
             "WEM live facility intervals returning bad CSV: {}".format(
                 LIVE_FACILITIES
