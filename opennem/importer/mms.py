@@ -21,7 +21,7 @@ logger = logging.getLogger("opennem.importer.mms")
 def parse_mms_date(date_string: str) -> Optional[datetime]:
     """
 
-        `25/10/1998  12:00:00 am` => d
+    `25/10/1998  12:00:00 am` => d
 
     """
     date_string_components = date_string.strip().split(" ")
@@ -298,6 +298,59 @@ def dudetail_grouper(tables):
     return tables
 
 
+def genunits_grouper(tables):
+    table_name = "PARTICIPANT_REGISTRATION_GENUNITS"
+
+    if table_name not in tables:
+        raise Exception("no genunits table")
+
+    records = tables[table_name]
+
+    records = [
+        {
+            "network_genset": i["GENSETID"],
+            "emissions_factor_co2": float(i["CO2E_EMISSIONS_FACTOR"]),
+        }
+        for _, i in enumerate(records)
+        if i["CO2E_EMISSIONS_FACTOR"]
+    ]
+
+    mms = tables["mms"] if "mms" in tables else {}
+
+    # grouped_records = {}
+    for record in records:
+        facility_code = record["network_genset"]
+
+        facility = None
+
+        for station_code in mms.keys():
+            for fac in mms[station_code]["facilities"]:
+                if fac["code"] == facility_code:
+
+                    facility = {
+                        **fac,
+                        **record,
+                    }
+                    fac_index = mms[station_code]["facilities"].index(fac)
+                    # print(
+                    #     "{} => {}".format(
+                    #         station_code, record["emissions_factor_co2"]
+                    #     )
+                    # )
+                    mms[station_code]["facilities"][fac_index][
+                        "emissions_factor_co2"
+                    ] = record["emissions_factor_co2"]
+
+        if not facility:
+            print("dudetail: couldn't find facility: {}".format(facility_code))
+
+    tables[table_name] = records
+
+    tables["mms"] = mms
+
+    return tables
+
+
 def load_aemo_csv(item, filename):
 
     if not item:
@@ -308,7 +361,7 @@ def load_aemo_csv(item, filename):
             "Invalid item type expecting a dict so we can fill it "
         )
 
-    current_item = load_data(filename, True)
+    current_item = load_data(filename, True, content_type="latin-1")
 
     if "content" not in current_item:
         logger.error("No content in item to parse")
@@ -380,6 +433,7 @@ def mms_import():
     tables = dudetailsummary_grouper(tables)
     tables = operatingstatus_grouper(tables)
     tables = dudetail_grouper(tables)
+    tables = genunits_grouper(tables)
 
     _mms = tables["mms"]
 
@@ -393,7 +447,7 @@ def mms_import():
 
 def mms_station_map_from_records(mms):
     """
-        Get the station to duid map from MMS and return it
+    Get the station to duid map from MMS and return it
     """
 
     mms_duid_station_map = {}
@@ -408,9 +462,9 @@ def mms_station_map_from_records(mms):
 def mms_export():
     """
 
-        Export MMS records
+    Export MMS records
 
-        @TODO move this to opennem.export and keep modules consistent
+    @TODO move this to opennem.export and keep modules consistent
     """
     mms = mms_import()
 
