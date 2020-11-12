@@ -246,6 +246,13 @@ def energy_fueltech_daily(
         for i in row
     ]
 
+    results_emissions = [
+        DataQueryResult(
+            interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None
+        )
+        for i in row
+    ]
+
     if len(results_energy) < 1:
         raise Exception("No results from query: {}".format(query))
 
@@ -273,5 +280,19 @@ def energy_fueltech_daily(
 
     stats.append_set(stats_market_value)
 
-    return stats
+    if results_emissions:
 
+        stats_emissions = stats_factory(
+            stats=results_emissions,
+            units=get_unit("emissions"),
+            network=network,
+            fueltech_group=True,
+            interval=interval,
+            region=network.code.lower(),
+            period=period,
+            code=network.code.lower(),
+        )
+
+        stats.append_set(stats_emissions)
+
+    return stats

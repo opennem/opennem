@@ -164,7 +164,8 @@ def energy_network_fueltech_query(
             date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
             t.fueltech_id,
             sum(t.energy) / 1000 as fueltech_energy,
-            sum(t.market_value) as fueltech_market_value
+            sum(t.market_value) as fueltech_market_value,
+            sum(t.emissions) as fueltech_emissions
         from
             (select
                 time_bucket_gapfill('1 hour', fs.trading_interval) as trading_interval,
@@ -180,7 +181,15 @@ def energy_network_fueltech_query(
                         NULL
                     )
                 else null
-                end as market_value
+                end as market_value,
+                case when avg(f.emissions_factor_co2) > 0 then
+                    coalesce(
+                        sum(eoi_quantity) * avg(f.emissions_factor_co2) * 1000,
+                        energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(f.emissions_factor_co2) * 1000,
+                        NULL
+                    )
+                else null
+                end as emissions
             from facility_scada fs
                 left join facility f on fs.facility_code = f.code
                 left join balancing_summary bs on
