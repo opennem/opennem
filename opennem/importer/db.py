@@ -15,6 +15,7 @@ from opennem.db.models.opennem import Facility, Location, Revision, Station
 from opennem.importer.aemo_gi import gi_import
 from opennem.importer.aemo_rel import rel_import
 from opennem.importer.mms import mms_import
+from opennem.importer.pollution import import_pollution
 from opennem.importer.registry import registry_import
 
 from .comparator import compare_record_differs
@@ -68,7 +69,9 @@ def revision_factory_join_field(record_instance: BaseModel) -> str:
 
 
 def revision_factory(
-    record: BaseModel, field_names: Union[str, List[str]], created_by: str,
+    record: BaseModel,
+    field_names: Union[str, List[str]],
+    created_by: str,
 ) -> Optional[Revision]:
 
     if isinstance(field_names, str):
@@ -137,14 +140,20 @@ def revision_factory(
         revision_lookup = __query.one_or_none()
     except MultipleResultsFound:
         logger.info(
-            "Revision exists: %s %s %s", record.code, field_name, field_value,
+            "Revision exists: %s %s %s",
+            record.code,
+            field_name,
+            field_value,
         )
         return None
 
     if revision_lookup:
         return None
 
-    revision = Revision(created_by=created_by, changes=revision_data,)
+    revision = Revision(
+        created_by=created_by,
+        changes=revision_data,
+    )
 
     # s.add(revision)
     # s.commit()
@@ -315,7 +324,9 @@ def registry_init():
 
         # location
         station_model.location = fromdict(
-            Location(), station_dict["location"], exclude=["id"],
+            Location(),
+            station_dict["location"],
+            exclude=["id"],
         )
 
         if station.location.lat and station.location.lng:
@@ -363,7 +374,11 @@ def test_revisions():
 
     k = registry.get_code("KWINANA")
 
-    station = Station(code=k.code, name=k.name, network_name=k.network_name,)
+    station = Station(
+        code=k.code,
+        name=k.name,
+        network_name=k.network_name,
+    )
     s.add(station)
     s.commit()
 
@@ -401,3 +416,5 @@ def init():
     registry_init()
     logger.info("Registry initialized")
 
+    import_pollution()
+    logger.info("Pollution data initialized")
