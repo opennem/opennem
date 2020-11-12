@@ -11,6 +11,7 @@ from opennem.api.export.tasks import (
 )
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.aemo_intervals import get_wem_interval_delay
+from opennem.monitors.opennem_metadata import check_metadata_status
 from opennem.settings import settings
 
 huey = RedisHuey("opennem.exporter", host=settings.cache_url.host)
@@ -63,3 +64,9 @@ def schedule_export_metadata():
 @huey.lock_task("monitor_wem_interval")
 def monitor_wem_interval():
     get_wem_interval_delay()
+
+
+@huey.periodic_task(crontab(hour="*/1"))
+@huey.lock_task("monitor_metadata_status")
+def monitor_metadata_status():
+    check_metadata_status()
