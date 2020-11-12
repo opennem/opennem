@@ -131,6 +131,8 @@ class FacilitySchema(OpennemBaseSchema):
     unit_alias: Optional[str]
     unit_capacity: Optional[float]
 
+    emissions_factor_co2: Optional[float]
+
     approved: bool = False
     approved_by: Optional[str]
     approved_at: Optional[datetime]
@@ -142,6 +144,16 @@ class FacilitySchema(OpennemBaseSchema):
         if isinstance(value, float):
             value = round(value, 2)
 
+        return value
+
+    @validator("emissions_factor_co2")
+    def _clean_emissions_factor_co2(cls, value):
+        value = clean_capacity(value)
+
+        if isinstance(value, float):
+            value = round(value, 8)
+
+        print(value)
         return value
 
 
@@ -203,7 +215,10 @@ class LocationSchema(OpennemBaseSchema):
         if not self.lng or not self.lat:
             return None
 
-        geom = "SRID=4326;POINT({} {})".format(self.lng, self.lat,)
+        geom = "SRID=4326;POINT({} {})".format(
+            self.lng,
+            self.lat,
+        )
 
         return geom
 
@@ -241,4 +256,3 @@ class StationSchema(OpennemBaseSchema):
     description: Optional[str]
     wikipedia_link: Optional[str]
     wikidata_id: Optional[str]
-
