@@ -153,7 +153,6 @@ class FacilitySchema(OpennemBaseSchema):
         if isinstance(value, float):
             value = round(value, 8)
 
-        print(value)
         return value
 
 
