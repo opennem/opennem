@@ -80,11 +80,16 @@ def stats_factory(
 
         data_sorted = OrderedDict(sorted(data_grouped.items()))
 
+        data_value = list(data_sorted.values())
+
+        if len([i for i in data_value if i]) == 0:
+            continue
+
         history = OpennemDataHistory(
             start=start,
             last=end,
             interval=interval.interval_human,
-            data=list(data_sorted.values()),
+            data=data_value,
         )
 
         data = OpennemData(
