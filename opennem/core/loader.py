@@ -28,16 +28,17 @@ def load_data(
     from_project: bool = False,
     from_fixture: bool = False,
     skip_loaders: bool = False,
+    content_type: str = "utf-8",
 ) -> Any:
     """
-        Load a CSV or JSON data file from either the library
-        or project data directory
+    Load a CSV or JSON data file from either the library
+    or project data directory
 
-        default loads from `opennem/core/data/`
+    default loads from `opennem/core/data/`
 
-        from_project is `opennem/data`
+    from_project is `opennem/data`
 
-        from_fixture is `opennem/db/fixtures`
+    from_fixture is `opennem/db/fixtures`
 
     """
     data_path = (
@@ -52,7 +53,7 @@ def load_data(
 
     data_content = get_data(
         "opennem", os.path.join(data_path, file_name)
-    ).decode("utf-8")
+    ).decode(content_type)
 
     if skip_loaders:
         return data_content
@@ -111,10 +112,10 @@ def load_data_json(file_content: str) -> Any:
 
 def load_data_csv(file_path: Path) -> Optional[List[dict]]:
     """
-        Load a CSV file
+    Load a CSV file
 
-        @TODO use libmagic to determine encoding types since Excel saves
-        can be funky
+    @TODO use libmagic to determine encoding types since Excel saves
+    can be funky
     """
     records = []
 
