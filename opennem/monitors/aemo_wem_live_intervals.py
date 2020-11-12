@@ -1,4 +1,5 @@
 import csv
+import logging
 from datetime import datetime
 
 import requests
@@ -6,6 +7,8 @@ import requests
 from opennem.pipelines.nem.opennem import unit_scada_generate_facility_scada
 from opennem.schema.network import NetworkWEM
 from opennem.settings.scrapy import USER_AGENT
+
+logger = logging.getLogger(__name__)
 
 LIVE_FACILITIES = "https://aemo.com.au/aemo/data/wa/infographic/facility-intervals-last96.csv"
 
@@ -15,9 +18,24 @@ REQ_HEADERS = {
 
 
 def get_aemo_wem_live_facility_intervals_recent_date() -> datetime:
-    csv_content = requests.get(LIVE_FACILITIES, headers=REQ_HEADERS).content
+    req = requests.get(LIVE_FACILITIES, headers=REQ_HEADERS)
 
+    if req.status_code != 200:
+        logger.error(
+            "WEM live facility intervals returning non 200: {} {}".format(
+                LIVE_FACILITIES, req.status_code
+            )
+        )
+
+    csv_content = req.content
     csvreader = csv.DictReader(csv_content.decode("utf-8").split("\n"))
+
+    if len(csvreader) < 1:
+        logger.error(
+            "WEM live facility intervals returning bad CSV: {}".format(
+                LIVE_FACILITIES
+            )
+        )
 
     records = unit_scada_generate_facility_scada(
         records=csvreader,
