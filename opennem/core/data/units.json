@@ -58,5 +58,10 @@
     "name": "temperature_min",
     "unit_type": "temperature_min",
     "unit": "C"
+  },
+  {
+    "name": "emissions",
+    "unit_type": "emissions",
+    "unit": "tCO2e"
   }
 ]
