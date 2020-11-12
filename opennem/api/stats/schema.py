@@ -78,7 +78,10 @@ class OpennemDataSet(BaseConfig):
 
     data: List[OpennemData]
 
-    def append_set(self, subject_set: OpennemDataSet):
+    def append_set(self, subject_set: Optional[OpennemDataSet] = None):
+        if not subject_set:
+            return None
+
         if not subject_set.data:
             return None
 
