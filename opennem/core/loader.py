@@ -51,21 +51,19 @@ def load_data(
 
     file_path = Path(file_name)
 
-    data_content = get_data(
-        "opennem", os.path.join(data_path, file_name)
-    ).decode(content_type)
+    data_content = get_data("opennem", os.path.join(data_path, file_name))
 
     if skip_loaders:
-        return data_content
+        return data_content.decode(content_type)
 
     if file_path.suffix in [".zip"]:
-        return load_data_zip(data_content)
+        return load_data_zip(os.path.join(data_path, file_name))
 
     if file_path.suffix in [".csv"]:
-        return load_data_csv(data_content)
+        return load_data_csv(data_content.decode(content_type))
 
     if file_path.suffix in JSON_EXTENSIONS:
-        return load_data_json(data_content)
+        return load_data_json(data_content.decode(content_type))
 
     return data_content
 
