@@ -50,6 +50,9 @@ def stats_factory(
 
     dates = [s.interval for s in stats]
 
+    if not dates:
+        return None
+
     start = min(dates)
     end = max(dates)
 
