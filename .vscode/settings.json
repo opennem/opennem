@@ -20,6 +20,7 @@
   "python.linting.pylintPath": ".venv/bin/pylint",
   "python.linting.pycodestyleEnabled": true,
   "python.linting.mypyEnabled": true,
+  "python.linting.mypyPath": ".venv/bin/mypy",
   "python.linting.flake8Enabled": true,
   "python.linting.flake8Path": ".venv/bin/flake8",
   "python.analysis.disabled": ["no-self-argument"]
