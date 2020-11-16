@@ -16,5 +16,14 @@
     "timezone_database": "AWST",
     "offset": 480,
     "interval_size": 30
+  },
+  {
+    "code": "APVI",
+    "country": "au",
+    "label": "APVI",
+    "timezone": "Australia/Sydney",
+    "timezone_database": "AEST",
+    "offset": 600,
+    "interval_size": 15
   }
 ]
