@@ -141,6 +141,11 @@ def stats_factory(
         if data_id:
             data.id = data_id
 
+        if not data.id and region:
+            data.id = ".".join(
+                [network.code.lower(), region.lower(), units.name_alias]
+            )
+
         if region:
             data.region = region
 
