@@ -1,9 +1,9 @@
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 
 import tomlkit
-from packaging.version import LegacyVersion, Version, parse
+from packaging.version import LegacyVersion, parse
 
 
 def _get_project_meta():
