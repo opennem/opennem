@@ -108,6 +108,7 @@ def stats_factory(
             data.network = network.code
 
         # *sigh* - not the most flexible model
+        # @TODO fix this schema and make it more flexible
         if fueltech_group:
             data.fuel_tech = group_code
             data.id = ".".join(
@@ -142,9 +143,18 @@ def stats_factory(
             data.id = data_id
 
         if not data.id and region:
-            data.id = ".".join(
-                [network.code.lower(), region.lower(), units.name_alias]
-            )
+            _id_list = []
+
+            if network:
+                _id_list.append(network.code.lower())
+
+            if region:
+                _id_list.append(region.lower())
+
+            if units:
+                _id_list.append(units.name_alias)
+
+            data.id = ".".join(_id_list)
 
         if region:
             data.region = region
