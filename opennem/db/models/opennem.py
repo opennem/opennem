@@ -247,15 +247,28 @@ class Location(Base):
     # station_id = Column(Integer, ForeignKey("station.id"))
 
     # @TODO sort out this join based on this lateral query ..
+    # @NOTE this might not be the best way to do this as
+    # the closest weather station is not always the most relevant
 
-    #  select l.id, l.locality, l.state, closest_station.state, closest_station.code, closest_station.dist from location l
+    #  select
+    #       l.id,
+    #       l.locality,
+    #       l.state,
+    #       closest_station.state,
+    #       closest_station.code,
+    #       closest_station.dist
+    #  from location l
     #  left join lateral (
-    # 	select code, state, ST_Distance(l.geom, bom_station.geom) / 1000 as dist from bom_station order by l.geom <-> bom_station.geom limit 1
+    # 	select
+    #       code, state, ST_Distance(l.geom, bom_station.geom) / 1000 as dist
+    #   from bom_station order by l.geom <-> bom_station.geom limit 1
     #  ) AS closest_station on TRUE;
 
     # weather_station = relationship(
     #     "BomStation",
-    #     primaryjoin="func.ST_ClosestPoint(remote(BomStation.geom), foreign(Location.geom))",
+    #     primaryjoin=\
+    #       "func.ST_ClosestPoint(remote(BomStation.geom), \
+    #       foreign(Location.geom))",
     #     viewonly=True,
     #     uselist=True,
     #     lazy="joined",
@@ -351,27 +364,27 @@ class Station(Base, BaseModel):
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
 
+    # @hybrid_property
+    # def network(self) -> Optional[Network]:
+    #     """
+    #     Return the network from the facility
+
+    #     """
+    #     if not self.facilities or not len(self.facilities) > 0:
+    #         return None
+
+    #     return self.facilities[0].network
+
     @hybrid_property
-    def network(self) -> Optional[Network]:
-        """
-        Return the network from the facility
-
-        """
-        if not self.facilities or not len(self.facilities) > 0:
-            return None
-
-        return self.facilities[0].network
-
-    @hybrid_property
-    def capacity_registered(self) -> Optional[int]:
+    def capacity_registered(self) -> Optional[float]:
         """
         This is the sum of registered capacities for all units for
         this station
 
         """
-        cap_reg = None
+        cap_reg: Optional[float] = None
 
-        for fac in self.facilities:
+        for fac in self.facilities:  # pylint: disable=no-member
             if (
                 fac.capacity_registered
                 and type(fac.capacity_registered) in [int, float, Decimal]
@@ -383,7 +396,7 @@ class Station(Base, BaseModel):
                 if not cap_reg:
                     cap_reg = 0
 
-                cap_reg += fac.capacity_registered
+                cap_reg += float(fac.capacity_registered)
 
         if cap_reg:
             cap_reg = round(cap_reg, 2)
@@ -391,14 +404,14 @@ class Station(Base, BaseModel):
         return cap_reg
 
     @hybrid_property
-    def capacity_aggregate(self) -> Optional[int]:
+    def capacity_aggregate(self) -> Optional[float]:
         """
         This is the sum of aggregate capacities for all units
 
         """
-        cap_agg = None
+        cap_agg: Optional[float] = None
 
-        for fac in self.facilities:
+        for fac in self.facilities:  # pylint: disable=no-member
             if (
                 fac.capacity_aggregate
                 and type(fac.capacity_aggregate) in [int, float, Decimal]
@@ -408,9 +421,9 @@ class Station(Base, BaseModel):
                 and fac.active
             ):
                 if not cap_agg:
-                    cap_agg = 0
+                    cap_agg = 0.0
 
-                cap_agg += fac.capacity_aggregate
+                cap_agg += float(fac.capacity_aggregate)
 
         if cap_agg:
             cap_agg = round(cap_agg, 2)
@@ -506,7 +519,7 @@ class Facility(Base, BaseModel):
     approved_at = Column(DateTime(timezone=True), nullable=True)
 
     @hybrid_property
-    def capacity_aggregate(self) -> Optional[int]:
+    def capacity_aggregate(self) -> Optional[float]:
         """
         This is unit_no * unit_capacity and can differ from registered
 
@@ -523,14 +536,10 @@ class Facility(Base, BaseModel):
         if self.unit_capacity and type(self.unit_capacity) is Decimal:
             cap_aggr = num_units * self.unit_capacity
 
-        if type(cap_aggr) is Decimal:
+        if cap_aggr and type(cap_aggr) is Decimal:
             cap_aggr = round(cap_aggr, 2)
 
         return cap_aggr
-
-    @hybrid_property
-    def duid(self) -> str:
-        return self.network_code or self.code
 
     @hybrid_property
     def status_label(self) -> Optional[str]:
@@ -602,7 +611,7 @@ class Revision(Base, BaseModel):
     discarded_at = Column(DateTime(timezone=True), nullable=True)
 
     @hybrid_property
-    def parent_id(self) -> str:
+    def parent_id(self) -> int:
         return self.station_id or self.facility_id or self.location_id
 
     @hybrid_property
