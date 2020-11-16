@@ -1,4 +1,5 @@
 from opennem.schema.network import (
+    NETWORKS,
     NetworkAU,
     NetworkNEM,
     NetworkSchema,
@@ -18,7 +19,9 @@ def network_from_state(state: str) -> NetworkSchema:
     raise Exception("Unknown network {}".format(state))
 
 
-def network_from_network_region(network_region: str,) -> NetworkSchema:
+def network_from_network_region(
+    network_region: str,
+) -> NetworkSchema:
     network_region = network_region.upper()
 
     if network_region in ["WEM", "WA1"]:
@@ -40,5 +43,10 @@ def network_from_network_code(network_code: str) -> NetworkSchema:
 
     if network_code in ["NEM"]:
         return NetworkNEM
+
+    network_lookup = list(filter(lambda n: n.code == network_code, NETWORKS))
+
+    if len(network_lookup):
+        return network_lookup.pop()
 
     raise Exception("Unknown network {}".format(network_code))
