@@ -75,6 +75,9 @@ class Network(Base, BaseModel):
     offset = Column(Integer, nullable=True)
     interval_size = Column(Integer, nullable=False)
 
+    # record is exported
+    export_set = Column(Boolean, default=True, nullable=False)
+
     regions = relationship("NetworkRegion")
 
 
@@ -93,6 +96,9 @@ class NetworkRegion(Base, BaseModel):
     timezone = Column(Text, nullable=True)
     timezone_database = Column(Text, nullable=True)
     offset = Column(Integer, nullable=True)
+
+    # record is exported
+    export_set = Column(Boolean, default=True, nullable=False)
 
 
 class FacilityStatus(Base, BaseModel):
