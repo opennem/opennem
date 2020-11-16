@@ -1,5 +1,5 @@
 from textwrap import dedent
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.normalizers import normalize_duid
@@ -17,11 +17,12 @@ def observation_query(
     station_codes: List[str],
     interval: TimeInterval,
     network: NetworkSchema = NetworkNEM,
-    timezone: str = "UTC",
     period: Optional[TimePeriod] = None,
     scada_range: Optional[ScadaDateRange] = None,
-    year: Optional[str] = None,
+    year: Optional[Union[str, int]] = None,
 ):
+    if isinstance(year, int):
+        year = str(year)
 
     timezone = network.get_timezone(postgres_format=True)
 
@@ -54,8 +55,10 @@ def observation_query(
     date_start_condition = ""
 
     if period:
-        date_start_condition = "{date_end}::timestamp - '{period}'::interval".format(
-            date_end=date_end, period=period.period_sql
+        date_start_condition = (
+            "{date_end}::timestamp - '{period}'::interval".format(
+                date_end=date_end, period=period.period_sql
+            )
         )
 
     if year:
@@ -125,4 +128,3 @@ def observation_query_all(
     )
 
     return query
-

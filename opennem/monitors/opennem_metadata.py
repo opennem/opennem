@@ -30,6 +30,9 @@ def check_metadata_status() -> bool:
     except ValidationError as e:
         logger.error("Validation error in metadata: {}".format(e))
 
+    if not metadata:
+        return False
+
     for resource in metadata.resources:
         if not resource.path:
             logger.info("Resource without path")
@@ -47,6 +50,8 @@ def check_metadata_status() -> bool:
                     resource_website_path
                 )
             )
+
+    return True
 
 
 if __name__ == "__main__":

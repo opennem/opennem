@@ -91,7 +91,7 @@ def networks(
 @app.get("/fueltechs", response_model=List[FueltechSchema])
 def fueltechs(
     session: Session = Depends(get_database_session),
-) -> FueltechResponse:
+) -> List[FueltechSchema]:
     fueltechs = session.query(FuelTech).all()
 
     if not fueltechs:

@@ -26,7 +26,7 @@ def weather_daily(
     unit_name: str = "temperature_mean",
     period_human: str = None,
     include_min_max: bool = True,
-):
+) -> Optional[OpennemDataSet]:
     station_codes = []
 
     if station_code:
@@ -102,6 +102,9 @@ def weather_daily(
         group_field="temperature",
     )
 
+    if not stats:
+        return None
+
     if include_min_max:
         stats_min = stats_factory(
             stats=temp_min,
@@ -131,7 +134,7 @@ def power_week(
     network_code: str = "WEM",
     network_region_code: str = None,
     networks: Optional[List[NetworkSchema]] = None,
-) -> OpennemDataSet:
+) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
     network = network_from_network_code(network_code)
@@ -216,7 +219,7 @@ def energy_fueltech_daily(
     network_region_code: Optional[str] = None,
     interval_size: str = "1d",
     networks: Optional[List[NetworkSchema]] = None,
-) -> OpennemDataSet:
+) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
     interval = human_to_interval(interval_size)
@@ -266,6 +269,9 @@ def energy_fueltech_daily(
         period=period,
         code=network.code.lower(),
     )
+
+    if not stats:
+        return None
 
     stats_market_value = stats_factory(
         stats=results_market_value,

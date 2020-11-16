@@ -15,7 +15,7 @@ from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import BomStation
 from opennem.utils.timezone import get_fixed_timezone
 
-from .schema import WeatherObservation, WeatherStation
+from .schema import WeatherStation
 
 router = APIRouter()
 
@@ -30,7 +30,7 @@ def station(
     session: Session = Depends(get_database_session),
 ) -> List[WeatherStation]:
     """
-        Get a list of all stations
+    Get a list of all stations
 
     """
     stations = session.query(BomStation).all()
@@ -50,7 +50,7 @@ def station_record(
     session: Session = Depends(get_database_session),
 ) -> WeatherStation:
     """
-        Get a single weather station by code
+    Get a single weather station by code
 
     """
     station = (
@@ -75,8 +75,8 @@ def station_record(
 )
 def station_observations_api(
     station_code: str = Query(None, description="Station code"),
-    interval: str = Query("15m", description="Interval"),
-    period: str = Query("7d", description="Period"),
+    interval_human: str = Query("15m", description="Interval"),
+    period_human: str = Query("7d", description="Period"),
     station_codes: List[str] = [],
     network_code: str = "NEM",
     timezone: str = None,
@@ -86,10 +86,10 @@ def station_observations_api(
 ) -> OpennemDataSet:
     units = get_unit("temperature")
 
-    if not interval:
+    if not interval_human:
         interval = "15m"
 
-    if not period:
+    if not period_human:
         period = "7d"
 
     network = None
@@ -100,8 +100,8 @@ def station_observations_api(
     if station_code:
         station_codes = [station_code]
 
-    interval = human_to_interval(interval)
-    period = human_to_period(period)
+    interval = human_to_interval(interval_human)
+    period = human_to_period(period_human)
 
     if timezone:
         timezone = pytz.timezone(timezone)

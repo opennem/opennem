@@ -100,12 +100,9 @@ class StatMetadata(BaseModel):
         return list(filter(lambda s: s.stat_type == stat_type, self.resources))
 
 
-EXPORT_MAP = []
-
-
 def get_export_map() -> StatMetadata:
     """
-        Generates a map of all export JSONs
+    Generates a map of all export JSONs
 
     """
     session = SessionLocal()
@@ -138,7 +135,9 @@ def get_export_map() -> StatMetadata:
         _exmap.append(export)
 
         for year in range(
-            datetime.now().year, scada_range.start.year - 1, -1,
+            datetime.now().year,
+            scada_range.start.year - 1,
+            -1,
         ):
             export = StatExport(
                 stat_type=StatType.energy,
@@ -179,7 +178,9 @@ def get_export_map() -> StatMetadata:
         _exmap.append(export)
 
         for year in range(
-            datetime.now().year, scada_range.start.year - 1, -1,
+            datetime.now().year,
+            scada_range.start.year - 1,
+            -1,
         ):
             export = StatExport(
                 stat_type=StatType.energy,
@@ -227,7 +228,9 @@ def get_export_map() -> StatMetadata:
             _exmap.append(export)
 
             for year in range(
-                datetime.now().year, scada_range.start.year - 1, -1,
+                datetime.now().year,
+                scada_range.start.year - 1,
+                -1,
             ):
                 export = StatExport(
                     stat_type=StatType.energy,
@@ -261,10 +264,4 @@ def get_export_map() -> StatMetadata:
 
 
 if __name__ == "__main__":
-    map = get_export_map()
-    map_json = [i.json(exclude_unset=True, indent=4) for i in map]
-
-    for i in map:
-        print(i.path)
-
-    # print(map_json)
+    pass
