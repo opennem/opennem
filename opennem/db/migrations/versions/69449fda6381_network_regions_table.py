@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Network regions table
 
 Revision ID: 69449fda6381

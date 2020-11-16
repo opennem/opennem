@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """energy sum catch div/0
 
 Revision ID: 346125ed062a

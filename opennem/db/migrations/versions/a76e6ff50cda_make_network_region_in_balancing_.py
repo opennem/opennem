@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Make network_region in balancing summary primary
 
 Revision ID: a76e6ff50cda

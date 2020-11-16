@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """observation_time index and not nullable
 
 Revision ID: b16d7153a221

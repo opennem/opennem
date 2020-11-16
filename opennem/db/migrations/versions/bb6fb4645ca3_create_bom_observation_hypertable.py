@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Create bom_observation hypertable
 
 Revision ID: bb6fb4645ca3

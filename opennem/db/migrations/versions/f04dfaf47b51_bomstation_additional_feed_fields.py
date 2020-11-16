@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """BOMStation additional feed fields
 
 Revision ID: f04dfaf47b51

@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """FIX: cast m nulls to 0 in om_energy_sum
 
 Revision ID: f87394cc4c00

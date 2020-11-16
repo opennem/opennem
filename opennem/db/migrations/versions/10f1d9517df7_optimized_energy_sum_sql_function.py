@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Optimized energy_sum sql function
 
 Revision ID: 10f1d9517df7

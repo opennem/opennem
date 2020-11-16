@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """BOM station geom
 
 Revision ID: 8bf30c37cb85

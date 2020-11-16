@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Energy functions for postgres
 
 Revision ID: 7c5a5ddfb9e1

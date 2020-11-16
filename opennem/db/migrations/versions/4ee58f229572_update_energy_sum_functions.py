@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Update energy sum functions
 
 Revision ID: 4ee58f229572

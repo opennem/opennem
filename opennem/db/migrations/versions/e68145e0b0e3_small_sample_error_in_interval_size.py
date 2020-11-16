@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Small sample error in interval size
 
 Revision ID: e68145e0b0e3

@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Trading interval indexes
 
 Revision ID: 659f03439631

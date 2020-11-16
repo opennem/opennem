@@ -1,4 +1,6 @@
-"""${message}
+# pylint: disable=no-member
+"""
+${message}
 
 Revision ID: ${up_revision}
 Revises: ${down_revision | comma,n}

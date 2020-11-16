@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """BOM additional fields on station and observation
 
 Revision ID: 28a206c84987

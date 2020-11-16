@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Network additional timezone_database and offset fields
 
 Revision ID: 3595c70244db

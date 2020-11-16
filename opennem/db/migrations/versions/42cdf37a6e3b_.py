@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """This is the base migration as of this date. Don't touch this.
 
 Revision ID: 42cdf37a6e3b

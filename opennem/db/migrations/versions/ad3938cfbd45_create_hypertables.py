@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Create hypertables
 
 Revision ID: ad3938cfbd45

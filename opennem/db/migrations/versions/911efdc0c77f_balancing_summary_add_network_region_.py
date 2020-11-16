@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Balancing summary add network_region column
 
 Revision ID: 911efdc0c77f

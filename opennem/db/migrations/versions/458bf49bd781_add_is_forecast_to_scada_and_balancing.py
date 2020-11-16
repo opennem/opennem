@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Add is_forecast to scada and balancing
 
 Revision ID: 458bf49bd781

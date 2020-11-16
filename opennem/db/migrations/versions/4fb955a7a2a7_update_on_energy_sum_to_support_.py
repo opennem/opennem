@@ -1,4 +1,6 @@
-"""Update on_energy_sum to support variable interval sizes, custom tenergy type, and calculate using built-in polygon functions
+# pylint: disable=no-member
+"""Update on_energy_sum to support variable interval sizes, custom
+tenergy type, and calculate using built-in polygon functions
 
 Revision ID: 4fb955a7a2a7
 Revises: bb6fb4645ca3
@@ -23,7 +25,8 @@ def upgrade():
         "drop aggregate if exists on_energy_sum (numeric, text) cascade"
     )
     op.execute(
-        "drop function if exists agg_power(agg_state numeric[], el numeric) cascade"
+        """drop function if exists agg_power(agg_state numeric[], el numeric)
+        cascade"""
     )
     op.execute(
         "drop function if exists onenergy_finalfunc(agg_state numeric[])"

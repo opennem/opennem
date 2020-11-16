@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Add timezone indexes to facility_scada
 
 Revision ID: d45e70a09231
@@ -111,4 +112,3 @@ def downgrade():
     op.drop_index("idx_facility_scada_trading_interval_sydney_month")
     op.drop_index("idx_facility_scada_trading_interval_sydney_day")
     op.drop_index("idx_facility_scada_trading_interval_sydney_hour")
-

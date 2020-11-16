@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Updated indexes on balancing summary and facility scada
 
 Revision ID: 9ee998713b18

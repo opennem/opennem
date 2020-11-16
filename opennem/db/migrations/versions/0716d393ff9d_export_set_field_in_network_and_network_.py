@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """export_set field in network and network region
 
 Revision ID: 0716d393ff9d

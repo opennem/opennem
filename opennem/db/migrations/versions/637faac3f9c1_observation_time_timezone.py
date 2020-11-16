@@ -1,3 +1,4 @@
+# pylint: disable=no-member,E501
 """observation_time timezone
 
 Revision ID: 637faac3f9c1
@@ -5,7 +6,6 @@ Revises: f87394cc4c00
 Create Date: 2020-10-22 00:43:25.578149
 
 """
-import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
@@ -25,4 +25,3 @@ def downgrade():
     op.execute(
         "ALTER TABLE bom_observation ALTER COLUMN observation_time TYPE TIMESTAMP WITHOUT TIME ZONE"
     )
-

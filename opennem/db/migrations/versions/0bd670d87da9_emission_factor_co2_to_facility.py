@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """Emission factor co2 to facility
 
 Revision ID: 0bd670d87da9

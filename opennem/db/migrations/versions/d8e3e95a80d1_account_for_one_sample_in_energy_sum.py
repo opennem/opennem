@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 """account for one sample in energy_sum
 
 Revision ID: d8e3e95a80d1
