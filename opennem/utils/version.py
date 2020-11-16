@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import tomlkit
-from packaging.version import Version, parse
+from packaging.version import LegacyVersion, Version, parse
 
 
 def _get_project_meta():
@@ -35,24 +35,25 @@ class VersionPart(Enum):
     PATCH = "patch"
 
 
-def get_version(
-    version_part: Optional[VersionPart] = None, as_string: bool = True
-) -> Union[str, Version]:
+def get_version(version_part: Optional[VersionPart] = None) -> str:
     if not version:
-        return None
+        return ""
 
     version_parsed = parse(version)
 
     if not version_part:
-        if as_string:
-            return version
-        return version_parsed
+        return version
+
+    if isinstance(version_parsed, LegacyVersion):
+        return version
 
     if version_part == VersionPart.MAJOR:
-        return version_parsed.major
+        return str(version_parsed.major)
 
     if version_part == VersionPart.MINOR:
-        return version_parsed.minor
+        return str(version_parsed.minor)
 
     if version_part == VersionPart.PATCH:
-        return version_parsed.minor
+        return str(version_parsed.minor)
+
+    return version

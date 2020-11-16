@@ -30,9 +30,7 @@ from .schema import FueltechResponse
 
 logger = logging.getLogger(__name__)
 
-app = FastAPI(
-    title="OpenNEM", debug=settings.debug, version=get_version(as_string=True)
-)
+app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version())
 
 try:
     from fastapi.staticfiles import StaticFiles
