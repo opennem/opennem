@@ -9,12 +9,12 @@ logger = logging.getLogger(__name__)
 ROOFTOP_CODE = "ROOFTOP"
 
 STATE_NETWORK_REGION_MAP = [
-    {"state": "NSW", "network": "NEM", "network_region": "NSW1"},
-    {"state": "QLD", "network": "NEM", "network_region": "QLD1"},
-    {"state": "VIC", "network": "NEM", "network_region": "VIC1"},
-    {"state": "TAS", "network": "NEM", "network_region": "TAS1"},
-    {"state": "SA", "network": "NEM", "network_region": "SA1"},
-    {"state": "NT", "network": "NEM", "network_region": "NT1"},
+    {"state": "NSW", "network": "APVI", "network_region": "NSW1"},
+    {"state": "QLD", "network": "APVI", "network_region": "QLD1"},
+    {"state": "VIC", "network": "APVI", "network_region": "VIC1"},
+    {"state": "TAS", "network": "APVI", "network_region": "TAS1"},
+    {"state": "SA", "network": "APVI", "network_region": "SA1"},
+    {"state": "NT", "network": "APVI", "network_region": "NT1"},
     {"state": "WA", "network": "WEM", "network_region": "WEM"},
 ]
 
@@ -36,7 +36,9 @@ def rooftop_facilities():
 
         if not rooftop_station:
             logger.info("Creating new station {}".format(state_rooftop_code))
-            rooftop_station = Station(code=state_rooftop_code,)
+            rooftop_station = Station(
+                code=state_rooftop_code,
+            )
 
         rooftop_station.name = "Rooftop Solar {}".format(state_map["state"])
         rooftop_station.description = "Solar rooftop facilities for {}".format(
