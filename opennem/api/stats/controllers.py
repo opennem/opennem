@@ -151,7 +151,7 @@ def stats_factory(
             if region:
                 _id_list.append(region.lower())
 
-            if units:
+            if units and units.name_alias:
                 _id_list.append(units.name_alias)
 
             data.id = ".".join(_id_list)
