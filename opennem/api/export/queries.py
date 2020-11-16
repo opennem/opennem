@@ -185,7 +185,7 @@ def energy_network_fueltech_query(
                 case when avg(f.emissions_factor_co2) > 0 then
                     coalesce(
                         sum(eoi_quantity) * avg(f.emissions_factor_co2),
-                        energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(f.emissions_factor_co2) * 1000,
+                        energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(f.emissions_factor_co2),
                         NULL
                     )
                 else null
