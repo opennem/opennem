@@ -1,5 +1,6 @@
 from opennem.schema.network import (
     NETWORKS,
+    NetworkAPVI,
     NetworkAU,
     NetworkNEM,
     NetworkSchema,

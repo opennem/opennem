@@ -16,6 +16,7 @@ from opennem.core.network_region_bom_station_map import (
     get_network_region_weather_station,
 )
 from opennem.core.networks import (
+    NetworkAPVI,
     NetworkAU,
     NetworkNEM,
     NetworkSchema,
@@ -175,6 +176,11 @@ def get_export_map() -> StatMetadata:
             bom_station=bom_station,
             period=human_to_period("7d"),
         )
+
+        if network.code == "WEM":
+            export.networks = [NetworkWEM, NetworkAPVI]
+            export.network_region = "WEM"
+
         _exmap.append(export)
 
         for year in range(
