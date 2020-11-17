@@ -108,7 +108,9 @@ def get_export_map() -> StatMetadata:
     """
     session = SessionLocal()
 
-    networks = session.query(Network).all()
+    networks = (
+        session.query(Network).filter(Network.export_set.is_(True)).all()
+    )
 
     if not networks:
         raise Exception("No networks")
