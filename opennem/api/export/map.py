@@ -220,7 +220,7 @@ def get_export_map() -> StatMetadata:
             scada_range = get_scada_range(
                 network=network_schema, network_region=region
             )
-            bom_station = get_network_region_weather_station(region)
+            bom_station = get_network_region_weather_station(region.code)
 
             export = StatExport(
                 stat_type=StatType.power,
