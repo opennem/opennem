@@ -24,6 +24,7 @@
     "timezone": "Australia/Sydney",
     "timezone_database": "AEST",
     "offset": 600,
-    "interval_size": 15
+    "interval_size": 15,
+    "export_set": false
   }
 ]
