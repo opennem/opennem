@@ -5,6 +5,7 @@ from typing import List
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from opennem.db import db_connect
 from opennem.db.models import opennem
 from opennem.settings import settings
 
@@ -70,13 +71,15 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    # connectable = engine_from_config(
+    #     config.get_section(config.config_ini_section),
+    #     prefix="sqlalchemy.",
+    #     # poolclass=pool.Pool(),
+    # )
 
-    with connectable.connect() as connection:
+    engine = db_connect()
+
+    with engine.connect() as connection:
         context.configure(
             include_object=include_object,
             connection=connection,
