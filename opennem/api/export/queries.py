@@ -14,11 +14,17 @@ def price_network_query(
     network: NetworkSchema = NetworkWEM,
     period: TimePeriod = human_to_period("7d"),
     network_region: Optional[str] = None,
-    networks: Optional[List[NetworkSchema]] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
 ) -> str:
 
+    if not networks_query:
+        networks_query = [network]
+
+    if network not in networks_query:
+        networks_query.append(network)
+
     scada_range: ScadaDateRange = get_scada_range(
-        network=network, networks=networks
+        network=network, networks=networks_query
     )
 
     timezone = network.get_timezone(postgres_format=True)
@@ -41,19 +47,14 @@ def price_network_query(
         order by 1 desc
     """
 
-    network_query = ""
     network_region_query = ""
 
     if network_region:
         network_region_query = f"bs.network_region='{network_region}' and "
 
-    if network:
-        network_query = f"bs.network_id = '{network.code}' and "
-
-    if networks:
-        network_query = "bs.network_id IN ({}) and ".format(
-            networks_to_in(networks)
-        )
+    network_query = "bs.network_id IN ({}) and ".format(
+        networks_to_in(networks_query)
+    )
 
     date_max = scada_range.get_end()
     date_min = scada_range.get_end() - timedelta(days=7)
@@ -78,11 +79,17 @@ def power_network_fueltech_query(
     network: NetworkSchema = NetworkWEM,
     period: TimePeriod = human_to_period("7d"),
     network_region: Optional[str] = None,
-    networks: Optional[List[NetworkSchema]] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
 ) -> str:
 
+    if not networks_query:
+        networks_query = [network]
+
+    if network not in networks_query:
+        networks_query.append(network)
+
     scada_range: ScadaDateRange = get_scada_range(
-        network=network, networks=networks
+        network=network, networks=networks_query
     )
 
     timezone = network.timezone_database
@@ -115,19 +122,14 @@ def power_network_fueltech_query(
         order by 1 desc
     """
 
-    network_query = ""
     network_region_query = ""
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
 
-    if network:
-        network_query = f"f.network_id = '{network.code}' and "
-
-    if networks:
-        network_query = "f.network_id IN ({}) and ".format(
-            networks_to_in(networks)
-        )
+    network_query = "fs.network_id IN ({}) and ".format(
+        networks_to_in(networks_query)
+    )
 
     date_max = scada_range.get_end()
     date_min = scada_range.get_end() - timedelta(days=7)
@@ -150,14 +152,19 @@ def power_network_fueltech_query(
 def energy_network_fueltech_query(
     network: NetworkSchema,
     year: Optional[int] = None,
-    get_all: bool = False,
     network_region: Optional[str] = None,
-    networks: Optional[List[NetworkSchema]] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
 ) -> str:
     """
     Get Energy for a network or network + region
     based on a year
     """
+
+    if not networks_query:
+        networks_query = [network]
+
+    if network not in networks_query:
+        networks_query.append(network)
 
     __query = """
         select
@@ -216,28 +223,23 @@ def energy_network_fueltech_query(
     timezone = network.timezone_database
     offset = network.get_timezone(postgres_format=True)
     scada_range: ScadaDateRange = get_scada_range(
-        network=network, networks=networks
+        network=network, networks=networks_query
     )
 
-    network_query = ""
     network_region_query = ""
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
 
-    if network:
-        network_query = f"fs.network_id = '{network.code}' and "
-
-    if networks:
-        network_query = "fs.network_id IN ({}) and ".format(
-            networks_to_in(networks)
-        )
+    network_query = "fs.network_id IN ({}) and ".format(
+        networks_to_in(networks_query)
+    )
 
     if not timezone:
         timezone = "UTC"
 
     if year:
-        # might have to do +08 times
+        # might have to do +offset times
         year_max = "{}-12-31 23:59:59{}".format(year, offset)
         year_min = "{}-01-01 00:00:00{}".format(year, offset)
 

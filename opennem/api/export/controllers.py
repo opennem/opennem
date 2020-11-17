@@ -133,7 +133,7 @@ def weather_daily(
 def power_week(
     network_code: str = "WEM",
     network_region_code: str = None,
-    networks: Optional[List[NetworkSchema]] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
@@ -145,7 +145,7 @@ def power_week(
 
     query = power_network_fueltech_query(
         network=network,
-        networks=networks,
+        networks_query=networks_query,
         period=period,
         interval=interval,
         network_region=network_region_code,
@@ -182,7 +182,7 @@ def power_week(
 
     query = price_network_query(
         network=network,
-        networks=networks,
+        networks_query=networks_query,
         period=period,
         interval=interval,
         network_region=network_region_code,
@@ -218,7 +218,7 @@ def energy_fueltech_daily(
     year: Optional[int] = None,
     network_region_code: Optional[str] = None,
     interval_size: str = "1d",
-    networks: Optional[List[NetworkSchema]] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
@@ -229,7 +229,7 @@ def energy_fueltech_daily(
         year=year,
         network=network,
         network_region=network_region_code,
-        networks=networks,
+        networks_query=networks_query,
     )
 
     with engine.connect() as c:
