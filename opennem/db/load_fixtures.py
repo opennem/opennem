@@ -29,7 +29,7 @@ logger.setLevel(logging.INFO)
 
 def load_fueltechs():
     """
-        Load the fueltechs fixture
+    Load the fueltechs fixture
     """
     fixture = load_data("fueltechs.json", from_fixture=True)
 
@@ -39,7 +39,9 @@ def load_fueltechs():
         fueltech = s.query(FuelTech).filter_by(code=ft["code"]).one_or_none()
 
         if not fueltech:
-            fueltech = FuelTech(code=ft["code"],)
+            fueltech = FuelTech(
+                code=ft["code"],
+            )
 
         fueltech.label = ft["label"]
         fueltech.renewable = ft["renewable"]
@@ -53,7 +55,7 @@ def load_fueltechs():
 
 def load_facilitystatus():
     """
-        Load the facility status fixture
+    Load the facility status fixture
     """
     fixture = load_data("facility_status.json", from_fixture=True)
 
@@ -67,7 +69,9 @@ def load_facilitystatus():
         )
 
         if not facility_status:
-            facility_status = FacilityStatus(code=status["code"],)
+            facility_status = FacilityStatus(
+                code=status["code"],
+            )
 
         facility_status.label = status["label"]
 
@@ -80,7 +84,7 @@ def load_facilitystatus():
 
 def load_networks():
     """
-        Load the networks fixture
+    Load the networks fixture
     """
     fixture = load_data("networks.json", from_fixture=True)
 
@@ -101,6 +105,9 @@ def load_networks():
         network_model.offset = network["offset"]
         network_model.interval_size = network["interval_size"]
 
+        if "export_set" in network:
+            network_model.export_set = network["export_set"]
+
         try:
             s.add(network_model)
             s.commit()
@@ -110,7 +117,7 @@ def load_networks():
 
 def load_network_regions():
     """
-        Load the network region fixture
+    Load the network region fixture
     """
     fixture = load_data("network_regions.json", from_fixture=True)
 
@@ -147,7 +154,7 @@ def parse_date(date_str):
 
 def parse_fixed_line(line):
     """
-        Parses a fixed-width CSV from the funky BOM format
+    Parses a fixed-width CSV from the funky BOM format
     """
     return (
         str(line[:6]),
@@ -161,9 +168,9 @@ def parse_fixed_line(line):
 
 def load_bom_stations_csv():
     """
-        Imports the BOM fixed-width stations format
+    Imports the BOM fixed-width stations format
 
-        Made redundant with the new JSON
+    Made redundant with the new JSON
     """
     s = SessionLocal()
 
@@ -178,7 +185,10 @@ def load_bom_stations_csv():
 
         if not station:
             station = BomStation(
-                code=code, state=state, name=name, registered=registered,
+                code=code,
+                state=state,
+                name=name,
+                registered=registered,
             )
 
         station.geom = "SRID=4326;POINT({} {})".format(lat, lng)
@@ -192,9 +202,9 @@ def load_bom_stations_csv():
 
 def load_bom_stations_json():
     """
-        Imports BOM stations into the database from bom_stations.json
+    Imports BOM stations into the database from bom_stations.json
 
-        The json is obtained using scripts/bom_stations.py
+    The json is obtained using scripts/bom_stations.py
     """
     session = SessionLocal()
 
@@ -223,7 +233,9 @@ def load_bom_stations_json():
         if not station:
             logger.info("New station: %s", bom_station["name"])
 
-            station = BomStation(code=bom_station["code"],)
+            station = BomStation(
+                code=bom_station["code"],
+            )
 
         station.name = bom_station["name_full"]
         station.name_alias = bom_station["name"]
@@ -248,7 +260,7 @@ def load_bom_stations_json():
 
 def update_existing_geos():
     """
-        Old method to update geos from existing facilities file on OpenNEM
+    Old method to update geos from existing facilities file on OpenNEM
     """
 
     station_fixture = load_data("facility_registry.json", from_fixture=True)
@@ -297,7 +309,8 @@ def update_existing_geos():
 
         logger.info(
             "Updated station geo location {} ({})".format(
-                station.code, station.name,
+                station.code,
+                station.name,
             )
         )
 
