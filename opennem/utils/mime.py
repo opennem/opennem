@@ -1,0 +1,37 @@
+import logging
+import mimetypes
+from io import BytesIO
+from typing import Optional
+
+try:
+    import magic
+
+    HAVE_MAGIC = True
+except ImportError:
+    HAVE_MAGIC = False
+
+mimetypes.init()
+
+logger = logging.getLogger(__name__)
+
+
+def mime_from_content(content: BytesIO) -> Optional[str]:
+    """
+    Use libmime to get mime type from content stream
+    """
+    if HAVE_MAGIC:
+        return None
+
+    file_mime = magic.from_buffer(content.read(2048), mime=True)
+    logger.debug("Using magic to get mime type {}".format(file_mime))
+
+    return file_mime
+
+
+def mime_from_url(url: str) -> Optional[str]:
+    """
+    Use python mimetypes dir to get mime type from file extension
+    """
+    file_mime, _ = mimetypes.guess_type(url)
+    logger.debug("Using mimetypes to get mime type {}".format(file_mime))
+    return file_mime
