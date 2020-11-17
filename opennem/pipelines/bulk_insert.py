@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from io import StringIO
-from typing import List, Union
+from typing import Any, List, Optional, Union
 
 # from sqlalchemy.exc import StatementError
 from sqlalchemy.sql.schema import Column, Table
@@ -106,10 +106,10 @@ class BulkInsertPipeline(object):
 
             table: Table = single_item["table_schema"]
 
-            update_fields = None
+            update_fields: Optional[List[Union[str, Column[Any]]]] = None
 
             if "update_fields" in single_item:
-                update_fields: List[str] = single_item["update_fields"]
+                update_fields = single_item["update_fields"]
 
             sql_query = build_insert_query(table, update_fields)
 
@@ -118,7 +118,8 @@ class BulkInsertPipeline(object):
                 cursor.copy_expert(sql_query, csv_content)
                 conn.commit()
             except Exception as generic_error:
-                generic_error.hide_parameters = True
+                if hasattr(generic_error, "hide_parameters"):
+                    generic_error.hide_parameters = True
                 logger.error(generic_error)
 
             try:
