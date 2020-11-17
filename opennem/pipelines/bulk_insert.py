@@ -30,10 +30,11 @@ BULK_INSERT_CONFLICT_UPDATE = """
 
 
 def build_insert_query(
-    table: Table, update_cols: List[Union[str, Column]] = None,
+    table: Table,
+    update_cols: List[Union[str, Column]] = None,
 ) -> str:
     """
-        Builds the bulk insert query
+    Builds the bulk insert query
     """
     on_conflict = "DO NOTHING"
 
@@ -77,6 +78,20 @@ class BulkInsertPipeline(object):
     def process_item(self, item: List[dict], spider):
         num_records = 0
         conn = get_database_engine().raw_connection()
+
+        if not isinstance(item, list):
+            spider_name = "unknown"
+
+            if spider and hasattr(spider, "name"):
+                spider_name = spider.name
+
+            logger.error(
+                "Did not get a list of items in bulk inserter from spider {}".format(
+                    spider_name
+                )
+            )
+
+            return {"num_records": "ERROR"}
 
         for single_item in item:
             if "csv" not in single_item:
