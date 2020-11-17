@@ -33,7 +33,7 @@ def db_connect(db_name=None, debug=False):
             json_deserializer=opennem_deserialize,
             echo=debug,
             pool_size=5,
-            pool_timeout=360,
+            pool_timeout=600,
             connect_args=connect_args,
         )
     except Exception as exc:
@@ -41,13 +41,17 @@ def db_connect(db_name=None, debug=False):
 
 
 engine = db_connect()
-SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False,)
+SessionLocal = sessionmaker(
+    bind=engine,
+    autocommit=False,
+    autoflush=False,
+)
 SessionAutocommit = sessionmaker(bind=engine, autocommit=True, autoflush=True)
 
 
 def get_database_session() -> Generator:
     """
-        Gets a database session
+    Gets a database session
 
     """
     try:
@@ -61,7 +65,7 @@ def get_database_session() -> Generator:
 
 def get_database_engine():
     """
-        Gets a database engine connection
+    Gets a database engine connection
 
     """
     return engine
