@@ -24,7 +24,10 @@ def import_pollution():
 
     for fac_code, pol_value in facility_poll_map.items():
         facility = (
-            session.query(Facility).filter_by(code=fac_code).one_or_none()
+            session.query(Facility)
+            .filter_by(code=fac_code)
+            .filter_by(network_id="NEM")
+            .one_or_none()
         )
 
         if not facility:
