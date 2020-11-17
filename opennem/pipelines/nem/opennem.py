@@ -17,6 +17,7 @@ from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
+from opennem.importer.rooftop import rooftop_remap_regionids
 from opennem.schema.network import NetworkSchema
 from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
@@ -230,12 +231,62 @@ def process_meter_data_gen_duid(table, spider):
     return item
 
 
+def process_rooftop_actual(table, spider):
+    if "records" not in table:
+        raise Exception("Invalid table no records")
+
+    records = table["records"]
+    item = dict()
+
+    scada_records = unit_scada_generate_facility_scada(
+        records,
+        spider,
+        network=NetworkNEM,
+        interval_field="INTERVAL_DATETIME",
+        facility_code_field="REGIONID",
+        power_field="POWER",
+        # don't filter down on duid since they'll conflict
+        # we need to sum aggs
+        groupby_filter=False,
+    )
+
+    scada_records = rooftop_remap_regionids(scada_records)
+
+    return_records_grouped = {}
+
+    for pk_values, rec_value in groupby(
+        scada_records,
+        key=lambda r: (
+            r.get("network_id"),
+            r.get("trading_interval"),
+            r.get("facility_code"),
+        ),
+    ):
+        if pk_values not in return_records_grouped:
+            rec_values = list(rec_value)
+            return_records_grouped[pk_values] = rec_values.pop()
+            for _rec in rec_values:
+                return_records_grouped[pk_values]["generated"] += _rec[
+                    "generated"
+                ]
+
+    return_records = list(return_records_grouped.values())
+
+    item["table_schema"] = FacilityScada
+    item["update_fields"] = ["generated"]
+    item["records"] = return_records
+    item["content"] = None
+
+    return item
+
+
 TABLE_PROCESSOR_MAP = {
     "METER_DATA_GEN_DUID": "process_meter_data_gen_duid",
     "DISPATCH_CASE_SOLUTION": "process_case_solutions",
     "DISPATCH_UNIT_SCADA": "process_unit_scada",
     "DISPATCH_UNIT_SOLUTION": "process_unit_solution",
     "DISPATCH_PRE_AP_PRICE": "process_pre_ap_price",
+    "ROOFTOP_ACTUAL": "process_rooftop_actual",
 }
 
 
@@ -244,6 +295,7 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
     def process_item(self, item, spider=None):
 
         if "tables" not in item:
+            print(item)
             raise Exception("Invalid item - no tables located")
 
         if not isinstance(item["tables"], dict):
