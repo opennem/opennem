@@ -77,7 +77,7 @@ def run_migrations_online():
     #     # poolclass=pool.Pool(),
     # )
 
-    engine = db_connect()
+    engine = db_connect(timeout=600)
 
     with engine.connect() as connection:
         context.configure(

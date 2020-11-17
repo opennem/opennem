@@ -13,7 +13,7 @@ DeclarativeBase = declarative_base()
 logger = logging.getLogger(__name__)
 
 
-def db_connect(db_name=None, debug=False):
+def db_connect(db_name=None, debug=False, timeout: int = 300):
     """
     Performs database connection using database settings from settings.py.
 
@@ -33,7 +33,7 @@ def db_connect(db_name=None, debug=False):
             json_deserializer=opennem_deserialize,
             echo=debug,
             pool_size=5,
-            pool_timeout=600,
+            pool_timeout=timeout,
             connect_args=connect_args,
         )
     except Exception as exc:
