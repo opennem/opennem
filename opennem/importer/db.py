@@ -15,7 +15,7 @@ from opennem.db.models.opennem import Facility, Location, Revision, Station
 from opennem.importer.aemo_gi import gi_import
 from opennem.importer.aemo_rel import rel_import
 from opennem.importer.mms import mms_import
-from opennem.importer.pollution import import_pollution
+from opennem.importer.pollution import import_pollution_mms
 from opennem.importer.registry import registry_import
 
 from .comparator import compare_record_differs
@@ -416,5 +416,5 @@ def init():
     registry_init()
     logger.info("Registry initialized")
 
-    import_pollution()
+    import_pollution_mms()
     logger.info("Pollution data initialized")

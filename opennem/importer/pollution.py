@@ -1,9 +1,14 @@
+import csv
+
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility
 from opennem.importer.mms import mms_import
+from opennem.utils.http import http
+
+CER_CSV = "http://www.cleanenergyregulator.gov.au/DocumentAssets/Documents/Greenhouse%20and%20energy%20information%20for%20designated%20generation%20facilities%202018-19%20.csv"
 
 
-def import_pollution():
+def import_pollution_mms():
     mms = mms_import()
 
     facility_poll_map = {
@@ -40,5 +45,9 @@ def import_pollution():
     session.commit()
 
 
+def import_pollution_cer():
+    pass
+
+
 if __name__ == "__main__":
-    import_pollution()
+    import_pollution_cer()
