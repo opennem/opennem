@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import insert
 from opennem.core.networks import network_from_state
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import Facility, FacilityScada
-from opennem.importer.apvi import ROOFTOP_CODE
+from opennem.importer.rooftop import ROOFTOP_CODE
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import parse_date
 from opennem.utils.pipelines import check_spider_pipeline
@@ -71,10 +71,14 @@ class APVIStoreData(object):
 
         for record in postcode_gen:
             for state, prefix in STATE_POSTCODE_PREFIXES.items():
-                facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
+                facility_code = "{}_{}_{}".format(
+                    ROOFTOP_CODE, "apvi".upper(), state.upper()
+                )
 
                 interval_time = parse_date(
-                    record["ts"], dayfirst=False, yearfirst=True,
+                    record["ts"],
+                    dayfirst=False,
+                    yearfirst=True,
                 )
 
                 network = network_from_state(state)
@@ -123,11 +127,15 @@ class APVIStoreData(object):
                         STATE_CAPACITIES[state] += capacity_val
 
             for state, state_capacity in STATE_CAPACITIES.items():
-                facility_code = "{}_{}".format(ROOFTOP_CODE, state.upper())
+                facility_code = "{}_{}_{}".format(
+                    ROOFTOP_CODE, "apvi".upper(), state.upper()
+                )
 
-                state_facility: Facility = session.query(Facility).filter_by(
-                    code=facility_code
-                ).one_or_none()
+                state_facility: Facility = (
+                    session.query(Facility)
+                    .filter_by(code=facility_code)
+                    .one_or_none()
+                )
 
                 if not state_facility:
                     raise Exception(
