@@ -70,6 +70,9 @@ class ReadStringHandle(object):
 class ExtractCSV(object):
     @check_spider_pipeline
     def process_item(self, item, spider):
+        if not item:
+            logger.error("No item to parse")
+            return None
 
         if "content" not in item:
             logger.error("No content in item to parse")
