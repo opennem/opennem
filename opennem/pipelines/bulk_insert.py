@@ -39,7 +39,7 @@ def build_insert_query(
     on_conflict = "DO NOTHING"
 
     def get_column_name(column: Union[str, Column]) -> str:
-        if hasattr(column, "name"):
+        if isinstance(column, Column) and hasattr(column, "name"):
             return column.name
         if isinstance(column, str):
             return column.strip()
