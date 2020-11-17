@@ -21,7 +21,7 @@ class TimeoutHTTPAdapter(HTTPAdapter):
 
 
 retry_strategy = Retry(
-    total=3,
+    total=5,
     backoff_factor=1,
     status_forcelist=[403, 429, 500, 502, 503, 504],
     method_whitelist=["HEAD", "GET", "OPTIONS"],
