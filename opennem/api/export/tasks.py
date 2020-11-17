@@ -28,7 +28,7 @@ def export_power(priority: Optional[PriorityType] = None):
         stat_set = power_week(
             network_code=power_stat.network.code,
             network_region_code=power_stat.network_region,
-            networks=power_stat.networks,
+            networks_query=power_stat.networks,
         )
 
         if not stat_set:
@@ -64,7 +64,7 @@ def export_energy(
             stat_set = energy_fueltech_daily(
                 year=energy_stat.year,
                 network=energy_stat.network,
-                networks=energy_stat.networks,
+                networks_query=energy_stat.networks,
                 network_region_code=energy_stat.network_region,
             )
 
@@ -85,7 +85,7 @@ def export_energy(
             stat_set = energy_fueltech_daily(
                 interval_size="1M",
                 network=energy_stat.network,
-                networks=energy_stat.networks,
+                networks_query=energy_stat.networks,
                 network_region_code=energy_stat.network_region,
             )
 
