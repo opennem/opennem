@@ -14,7 +14,7 @@ scrapy crawl -L ERROR au.wem.live.facilities
 scrapy crawl -L ERROR bom.capitals
 
 # rooftop
-python -m opennem.importer.apvi
+python -m opennem.importer.rooftop
 scrapy crawl -L ERROR au.apvi.current.data
 
 # stats data
