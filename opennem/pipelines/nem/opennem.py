@@ -267,15 +267,18 @@ def process_rooftop_actual(table, spider):
             return_records_grouped[pk_values] = rec_values.pop()
             for _rec in rec_values:
                 _cur_val = return_records_grouped[pk_values]["generated"]
+                _new_val = _rec["generated"]
 
-                if isinstance(_cur_val, float):
+                if isinstance(_cur_val, float) and isinstance(_new_val, float):
                     return_records_grouped[pk_values]["generated"] += _rec[
                         "generated"
                     ]
-                else:
+                elif isinstance(_new_val, float):
                     return_records_grouped[pk_values]["generated"] = _rec[
                         "generated"
                     ]
+                else:
+                    return_records_grouped[pk_values]["generated"] = 0.0
 
     return_records = list(return_records_grouped.values())
 
