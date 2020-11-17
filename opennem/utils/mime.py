@@ -14,6 +14,8 @@ mimetypes.init()
 
 logger = logging.getLogger(__name__)
 
+CONTENT_TYPES = ["utf-8", "utf-8-sig", "latin-1"]
+
 
 def mime_from_content(content: BytesIO) -> Optional[str]:
     """
@@ -35,3 +37,17 @@ def mime_from_url(url: str) -> Optional[str]:
     file_mime, _ = mimetypes.guess_type(url)
     logger.debug("Using mimetypes to get mime type {}".format(file_mime))
     return file_mime
+
+
+def decode_bytes(content: bytes) -> str:
+    """
+    Brute force decode content
+    """
+
+    for enc in CONTENT_TYPES:
+        try:
+            return content.decode(enc)
+        except Exception:
+            pass
+
+    raise Exception("Could not decode")
