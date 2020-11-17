@@ -7,6 +7,8 @@ ENV PYTHONFAULTHANDLER=1 \
   PIP_DISABLE_PIP_VERSION_CHECK=on \
   PIP_DEFAULT_TIMEOUT=100
 
+RUN apt-get update && apt-get install -y --no-install-recommends libmagic1 && rm -rf /var/lib/apt/lists/*
+
 FROM base as code_install
 
 WORKDIR /code_install
