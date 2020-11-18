@@ -50,7 +50,7 @@ def parse_date(
     dayfirst: bool = True,
     yearfirst: bool = False,
     is_utc: bool = False,
-    timezone: timezone = False,
+    timezone: timezone = None,
     use_optimized: bool = True,
 ) -> Optional[datetime]:
     dt_return = None
@@ -88,8 +88,8 @@ def parse_date(
     if is_utc:
         tz = UTC
 
-        if is_aware(dt_return):
-            if hasattr(tz, "localize"):
+        if dt_return and is_aware(dt_return):
+            if tz and hasattr(tz, "localize"):
                 dt_return = tz.localize()
             else:
                 dt_return = dt_return.replace(tzinfo=tz)
