@@ -1,8 +1,13 @@
+"""
+    HTTP module with custom timeout and retry adaptors
+
+"""
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
 DEFAULT_TIMEOUT = 30
+DEFAULT_RETRIES = 5
 
 
 class TimeoutHTTPAdapter(HTTPAdapter):
@@ -21,7 +26,7 @@ class TimeoutHTTPAdapter(HTTPAdapter):
 
 
 retry_strategy = Retry(
-    total=5,
+    total=DEFAULT_RETRIES,
     backoff_factor=1,
     status_forcelist=[403, 429, 500, 502, 503, 504],
     method_whitelist=["HEAD", "GET", "OPTIONS"],
