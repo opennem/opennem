@@ -1,6 +1,6 @@
 import logging
 from datetime import date, datetime, timedelta, timezone
-from typing import List, Optional, Union
+from typing import Generator, List, Optional, Union
 
 from dateutil.parser import ParserError, parse
 
@@ -142,3 +142,26 @@ def date_series(
             next_record -= interval
         else:
             next_record += interval
+
+
+total_months = lambda dt: dt.month + 12 * dt.year
+
+
+def month_series(
+    start: Union[datetime, date],
+    end: Union[datetime, date],
+    length: Optional[int] = None,
+    reverse: bool = False,
+) -> Generator[datetime, None, None]:
+    """
+    Generate a series of months
+    """
+    step = 1
+
+    if end < start:
+        reverse = True
+        step = -1
+
+    for tot_m in range(total_months(start) - 1, total_months(end) - 2, step):
+        y, m = divmod(tot_m, 12)
+        yield datetime(y, m + 1, 1)
