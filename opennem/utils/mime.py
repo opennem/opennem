@@ -21,7 +21,7 @@ def mime_from_content(content: BytesIO) -> Optional[str]:
     """
     Use libmime to get mime type from content stream
     """
-    if HAVE_MAGIC:
+    if not HAVE_MAGIC:
         return None
 
     file_mime = magic.from_buffer(content.read(2048), mime=True)
