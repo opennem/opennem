@@ -25,9 +25,9 @@ DATE_FORMATS = [
 
 def optimized_data_parser(date_str: str) -> datetime:
     """
-        Turns out that dateutil's date parser is slow since
-        it does a lot of string parsing. Here we try matching
-        the date using known string formats.
+    Turns out that dateutil's date parser is slow since
+    it does a lot of string parsing. Here we try matching
+    the date using known string formats.
     """
     dt_return = None
 
@@ -104,7 +104,7 @@ def parse_date(
 
 def get_date_component(format_str: str) -> str:
     """
-        Get a part of a date
+    Get a part of a date
     """
 
     return datetime.now().strftime(format_str)
@@ -118,14 +118,14 @@ def date_series(
     reverse: bool = False,
 ) -> List[datetime]:
     """
-        Generate a datetime series
+    Generate a datetime series
 
     """
     if start and isinstance(start, datetime):
         start = start.date()
 
     if end and isinstance(end, datetime):
-        end = start.date()
+        end = end.date()
 
     if not start:
         start = datetime.now().date()
@@ -142,4 +142,3 @@ def date_series(
             next_record -= interval
         else:
             next_record += interval
-
