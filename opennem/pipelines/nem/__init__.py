@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class TableRecordSplitter(object):
     @check_spider_pipeline
     def process_item(self, item, spider):
-        if not "tables" in item:
+        if "tables" not in item:
             logger.error(item)
             raise Exception("No tables passed to pipeline")
 
