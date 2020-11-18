@@ -5,7 +5,6 @@ from datetime import datetime
 from functools import reduce
 from itertools import groupby
 from pathlib import Path
-from pprint import pprint
 from typing import Optional
 
 from opennem.core.facilitystatus import parse_facility_status
