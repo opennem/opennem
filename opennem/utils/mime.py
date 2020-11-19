@@ -24,7 +24,15 @@ def mime_from_content(content: BytesIO) -> Optional[str]:
     if not HAVE_MAGIC:
         return None
 
-    file_mime = magic.from_buffer(content.read(2048), mime=True)
+    if isinstance(content, bytes):
+        content = BytesIO(content)
+
+    try:
+        file_mime = magic.from_buffer(content.read(2048), mime=True)
+    except Exception as e:
+        logger.error("Error parsing mime from content: {}".format(e))
+        return None
+
     logger.debug("Using magic to get mime type {}".format(file_mime))
 
     return file_mime
