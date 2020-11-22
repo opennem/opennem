@@ -131,7 +131,7 @@ def downgrade():
     op.drop_index("idx_facility_scada_trading_interval_perth_hour")
 
     op.drop_index("idx_balancing_summary_trading_interval_perth_year")
-    op.drop_index("idx_fbalancing_summary_trading_interval_perth_month")
+    op.drop_index("idx_balancing_summary_trading_interval_perth_month")
     op.drop_index("idx_balancing_summary_trading_interval_perth_day")
     op.drop_index("idx_balancing_summary_trading_interval_perth_hour")
 
