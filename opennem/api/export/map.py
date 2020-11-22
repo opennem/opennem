@@ -213,8 +213,8 @@ def get_export_map() -> StatMetadata:
         _exmap.append(export)
 
         # Skip cases like wem/wem where region is supurfelous
-        if len(network.regions) < 2:
-            continue
+        # if len(network.regions) < 2:
+        # continue
 
         for region in network.regions:
             scada_range = get_scada_range(
