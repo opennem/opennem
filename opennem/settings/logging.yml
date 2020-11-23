@@ -35,7 +35,7 @@ root:
   level: ERROR
   handlers: [console, file_debug]
 
-  # Defines descendants of root logger
+# Defines descendants of root logger
 loggers:
   opennem:
     level: DEBUG
