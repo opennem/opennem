@@ -45,6 +45,9 @@ def network_from_network_code(network_code: str) -> NetworkSchema:
     if network_code in ["NEM"]:
         return NetworkNEM
 
+    if network_code in ["APVI"]:
+        return NetworkAPVI
+
     network_lookup = list(filter(lambda n: n.code == network_code, NETWORKS))
 
     if len(network_lookup):
