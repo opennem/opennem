@@ -9,9 +9,6 @@ from opennem.api.export.controllers import (
 )
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.utils import write_output
-from opennem.api.stats.router import price_network_region_api
-from opennem.db import get_database_engine
-from opennem.schema.network import NetworkWEM
 from opennem.settings import settings
 
 YEAR_MIN = 2010
@@ -25,6 +22,7 @@ def export_power(priority: Optional[PriorityType] = None):
     power_stat_sets = export_map.get_by_stat_type(StatType.power, priority)
 
     for power_stat in power_stat_sets:
+
         stat_set = power_week(
             network_code=power_stat.network.code,
             network_region_code=power_stat.network_region,
@@ -115,108 +113,14 @@ def export_metadata():
     write_output("metadata.json", _export_map_out)
 
 
-def wem_export_power(is_local: bool = False):
-    """
-    @TODO remove legacy wem export
-    """
-    engine = get_database_engine()
-
-    stat_set = power_week(network_code="WEM")
-
-    if not stat_set:
-        return False
-
-    weather_stats = weather_daily(
-        station_code="009021",
-        network_code="WEM",
-        include_min_max=False,
-        period_human="7d",
-        unit_name="temperature",
-    )
-
-    stat_set.append_set(weather_stats)
-
-    price_stats = price_network_region_api(
-        engine=engine,
-        network_code="WEM",
-        network_region_code="WEM",
-        interval_human="30m",
-        period_human="7d",
-    )
-
-    stat_set.append_set(price_stats)
-
-    POWER_ENDPOINT = "/power/wem.json"
-
-    write_output(POWER_ENDPOINT, stat_set, is_local=is_local)
-
-
-def wem_export_daily(limit: int = None, is_local: bool = False):
-    """
-    @TODO remove legacy wem export
-    """
-    processed_years = 0
-
-    for year in range(datetime.now().year, YEAR_MIN - 1, -1):
-
-        stat_set = energy_fueltech_daily(year=year, network=NetworkWEM)
-
-        if not stat_set:
-            continue
-
-        weather_stats = weather_daily(
-            station_code="009021",
-            year=year,
-            network_code="WEM",
-        )
-
-        stat_set.append_set(weather_stats)
-
-        write_output(
-            f"/wem/energy/daily/{year}.json", stat_set, is_local=is_local
-        )
-
-        processed_years += 1
-
-        if limit and limit >= processed_years:
-            return None
-
-
-def wem_export_monthly(is_local: bool = False):
-    """
-    @TODO remove legacy wem export
-    """
-
-    stat_set = energy_fueltech_daily(network=NetworkWEM, interval_size="1M")
-
-    if not stat_set:
-        return None
-
-    weather_stats = weather_daily(
-        station_code="009021",
-        network_code="WEM",
-    )
-
-    stat_set.append_set(weather_stats)
-
-    write_output(
-        "/wem/energy/monthly/all.json",
-        stat_set,
-        is_local=is_local,
-    )
-
-
 if __name__ == "__main__":
     if settings.env in ["development", "staging"]:
         export_power(priority=PriorityType.live)
-        export_energy(latest=True)
-        export_metadata()
-        wem_export_power()
-        wem_export_daily(limit=1)
-        wem_export_monthly()
+        # export_energy(latest=True)
+        # export_metadata()
+        # wem_export_power()
+        # wem_export_daily(limit=1)
+        # wem_export_monthly()
     else:
         export_power()
         export_energy()
-        wem_export_power()
-        wem_export_daily()
-        wem_export_monthly()
