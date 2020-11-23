@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional
 
 from opennem.api.export.queries import (
@@ -17,6 +18,8 @@ from opennem.core.units import get_unit
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimePeriod
+
+logger = logging.getLogger(__name__)
 
 
 def weather_daily(
@@ -67,6 +70,7 @@ def weather_daily(
         )
 
     with engine.connect() as c:
+        logger.debug(query)
         row = list(c.execute(query))
 
     temp_avg = [
@@ -152,6 +156,7 @@ def power_week(
     )
 
     with engine.connect() as c:
+        logger.debug(query)
         row = list(c.execute(query))
 
     stats = [
@@ -189,6 +194,7 @@ def power_week(
     )
 
     with engine.connect() as c:
+        logger.debug(query)
         row = list(c.execute(query))
 
     stats_price = [
@@ -233,6 +239,7 @@ def energy_fueltech_daily(
     )
 
     with engine.connect() as c:
+        logger.debug(query)
         row = list(c.execute(query))
 
     results_energy = [
