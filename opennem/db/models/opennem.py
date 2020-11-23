@@ -669,22 +669,6 @@ class FacilityScada(Base, BaseModel):
     __tablename__ = "facility_scada"
 
     __table_args__ = (
-        Index(
-            "idx_facility_scada_trading_interval_year",
-            text("date_trunc('year', trading_interval AT TIME ZONE 'UTC')"),
-        ),
-        Index(
-            "idx_facility_scada_trading_interval_month",
-            text("date_trunc('month', trading_interval AT TIME ZONE 'UTC')"),
-        ),
-        Index(
-            "idx_facility_scada_trading_interval_day",
-            text("date_trunc('day', trading_interval AT TIME ZONE 'UTC')"),
-        ),
-        Index(
-            "idx_facility_scada_trading_interval_hour",
-            text("date_trunc('hour', trading_interval AT TIME ZONE 'UTC')"),
-        ),
         # new timezone based indicies
         # @NOTE: other indicies in migration files
     )
@@ -727,24 +711,7 @@ class BalancingSummary(Base, BaseModel):
 
     __tablename__ = "balancing_summary"
 
-    __table_args__ = (
-        Index(
-            "idx_balancing_summary_trading_interval_year",
-            text("date_trunc('year', trading_interval AT TIME ZONE 'UTC')"),
-        ),
-        Index(
-            "idx_balancing_summary_trading_interval_month",
-            text("date_trunc('month', trading_interval AT TIME ZONE 'UTC')"),
-        ),
-        Index(
-            "idx_balancing_summary_trading_interval_day",
-            text("date_trunc('day', trading_interval AT TIME ZONE 'UTC')"),
-        ),
-        Index(
-            "idx_balancing_summary_trading_interval_hour",
-            text("date_trunc('hour', trading_interval AT TIME ZONE 'UTC')"),
-        ),
-    )
+    __table_args__ = ()
 
     network_id = Column(
         Text,
