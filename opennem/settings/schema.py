@@ -8,10 +8,12 @@ from scrapy.utils.project import get_project_settings
 
 class OpennemSettings(BaseSettings):
     env: str = "development"
+
     db_url: PostgresDsn = (
         "postgresql://opennem:opennem@127.0.0.1:15433/opennem"
     )
     cache_url: RedisDsn = "redis://127.0.0.1"
+
     sentry_url: Optional[str]
 
     google_places_api_key: Optional[str] = None
