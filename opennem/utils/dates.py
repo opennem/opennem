@@ -208,10 +208,7 @@ def date_range_from_week(
     network awareness
     """
     start_date_str = "%s-W%s-1".format(year, week - 1)
-    start_date_dt = datetime.strptime(start_date_str, "%Y-W%W-%w")
-    start_date_dt.hour = 0
-    start_date_dt.minute = 0
-    start_date_dt.second = 0
+    start_date_dt = datetime.strptime(start_date_str, "%Y-W%W-%w 00:00:00")
 
     end_date = start_date_dt + timedelta(days=7)
 
