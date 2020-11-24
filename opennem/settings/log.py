@@ -1,9 +1,8 @@
-import os
 from typing import Optional
 
 import yaml
 
-SETTINGS_DIR = os.path.realpath(os.path.dirname(__file__))
+from opennem.core.loader import load_data
 
 
 class SettingsNotFound(Exception):
@@ -15,18 +14,17 @@ def load_logging_config(
 ) -> Optional[dict]:
     """"""
 
-    settings_filepath = os.path.realpath(os.path.join(SETTINGS_DIR, filename))
+    settings_file_content = load_data(filename, from_settings=True)
 
-    if not os.path.isfile(settings_filepath):
+    if not settings_file_content:
         if fail_silent:
-            return dict()
+            return None
 
         raise SettingsNotFound(
-            "Not a valid logging settings file: {}".format(settings_filepath)
+            "Not a valid logging settings file: {}".format(filename)
         )
 
-    with open(settings_filepath, "rt") as f:
-        config_data = yaml.safe_load(f.read())
+    config_data = yaml.safe_load(settings_file_content)
 
     return config_data
 
