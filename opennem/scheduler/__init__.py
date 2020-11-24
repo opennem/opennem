@@ -1,3 +1,6 @@
+# pylint: disable=no-name-in-module
+# pylint: disable=no-self-argument
+# pylint: disable=no-member
 from huey import RedisHuey, crontab
 
 from opennem.api.export.map import PriorityType
@@ -11,8 +14,12 @@ from opennem.monitors.aemo_intervals import get_wem_interval_delay
 from opennem.monitors.opennem_metadata import check_metadata_status
 from opennem.settings import settings
 
-huey = RedisHuey("opennem.exporter", host=settings.cache_url.host)
+redis_host = None
 
+if settings.cache_url:
+    redis_host = settings.cache_url.host
+
+huey = RedisHuey("opennem.exporter", host=redis_host)
 # export tasks
 
 

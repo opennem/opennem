@@ -1,3 +1,6 @@
+# pylint: disable=no-name-in-module
+# pylint: disable=no-self-argument
+# pylint: disable=no-member
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
