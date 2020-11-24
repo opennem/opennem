@@ -63,7 +63,6 @@ def price_network_query(
         __query.format(
             network_query=network_query,
             trunc=interval.interval_sql,
-            period=period.period_sql,
             network_region_query=network_region_query,
             timezone=timezone,
             date_max=date_max,
