@@ -339,9 +339,9 @@ class Station(Base, BaseModel):
         ForeignKey("location.id", name="fk_station_location_id"),
         nullable=True,
     )
-    location = relationship("Location", lazy="joined", innerjoin=True)
+    location = relationship("Location", lazy="joined", innerjoin=False)
 
-    facilities = relationship("Facility", lazy="joined", innerjoin=True)
+    facilities = relationship("Facility", lazy="joined", innerjoin=False)
 
     revisions = relationship("Revision")
 
