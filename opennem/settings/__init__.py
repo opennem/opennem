@@ -12,11 +12,13 @@
 """
 
 
+import logging.config
 import os
 from pathlib import Path
 
 from dotenv import load_dotenv
 
+from opennem.settings.log import LOGGING_CONFIG
 from opennem.settings.utils import load_env_file
 
 from .schema import OpennemSettings
@@ -36,3 +38,11 @@ if _env_file:
 
 # @NOTE don't use pydantics env file support since it doesn't support multiple
 settings: OpennemSettings = OpennemSettings()
+
+
+# setup logging
+
+if settings.env == "development":
+    LOGGING_CONFIG["root"]["level"] = "DEBUG"
+
+logging.config.dictConfig(LOGGING_CONFIG)
