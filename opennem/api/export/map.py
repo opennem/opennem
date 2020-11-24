@@ -41,6 +41,7 @@ class PriorityType(Enum):
     live = 1
     daily = 2
     monthly = 3
+    history = 4
 
 
 class StatExport(BaseModel):
