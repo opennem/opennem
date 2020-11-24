@@ -4,6 +4,7 @@
 
 """
 
+import logging
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional
@@ -26,7 +27,10 @@ from opennem.core.networks import (
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Network
 from opennem.schema.time import TimePeriod
+from opennem.utils.dates import date_range_from_week, week_series
 from opennem.utils.version import VersionPart, get_version
+
+logger = logging.getLogger(__name__)
 
 VERSION_MAJOR = get_version(version_part=VersionPart.MAJOR)
 STATS_FOLDER = "stats"
@@ -142,6 +146,19 @@ def get_export_map() -> StatMetadata:
 
         _exmap.append(export)
 
+        for year, week in week_series(scada_range.end, scada_range.start):
+            export = StatExport(
+                stat_type=StatType.power,
+                priority=PriorityType.history,
+                country=country,
+                network=NetworkAU,
+                networks=[NetworkNEM, NetworkWEM],
+                year=year,
+                week=week,
+                date_range=date_range_from_week(year, week, NetworkAU),
+            )
+            _exmap.append(export)
+
         for year in range(
             datetime.now().year,
             scada_range.start.year - 1,
@@ -189,6 +206,18 @@ def get_export_map() -> StatMetadata:
             # export.network_region = "WEM"
 
         _exmap.append(export)
+
+        for year, week in week_series(scada_range.end, scada_range.start):
+            export = StatExport(
+                stat_type=StatType.power,
+                priority=PriorityType.history,
+                country=network.country,
+                network=network_schema,
+                year=year,
+                week=week,
+                date_range=date_range_from_week(year, week, NetworkAU),
+            )
+            _exmap.append(export)
 
         for year in range(
             datetime.now().year,
