@@ -1,6 +1,6 @@
 import logging
 from datetime import date, datetime, timedelta, timezone
-from typing import Generator, List, Optional, Union
+from typing import Generator, List, Optional, Tuple, Union
 
 from dateutil.parser import ParserError, parse
 
@@ -147,6 +147,13 @@ def date_series(
 total_months = lambda dt: dt.month + 12 * dt.year
 
 
+def total_weeks(d1: Union[datetime, date], d2: Union[datetime, date]) -> int:
+    monday1 = d1 - timedelta(days=d1.weekday())
+    monday2 = d2 - timedelta(days=d2.weekday())
+
+    return abs(int((monday2 - monday1).days / 7))
+
+
 def month_series(
     start: Union[datetime, date],
     end: Union[datetime, date],
@@ -165,3 +172,29 @@ def month_series(
     for tot_m in range(total_months(start) - 1, total_months(end) - 2, step):
         y, m = divmod(tot_m, 12)
         yield datetime(y, m + 1, 1)
+
+
+def week_series(
+    start: Union[datetime, date],
+    end: Union[datetime, date],
+    length: Optional[int] = None,
+    reverse: bool = False,
+) -> Generator[Tuple[int, int], None, None]:
+    """
+    Generate week series M -> S
+    """
+
+    if end < start:
+        reverse = True
+
+    length = total_weeks(start, end)
+
+    for week_i in range(1, length):
+        if reverse:
+            cur_date = end - timedelta(weeks=week_i)
+        else:
+            cur_date = start + timedelta(weeks=week_i)
+
+        cur_cal = cur_date.isocalendar()
+
+        yield cur_cal[0], cur_cal[1]
