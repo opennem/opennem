@@ -201,14 +201,14 @@ def week_series(
 
 
 def date_range_from_week(
-    year: int, week: int, network: Optional[NetworkSchema]
+    year: int, week: int, network: Optional[NetworkSchema] = None
 ) -> ScadaDateRange:
     """
     Get a scada date range from week number with
     network awareness
     """
-    start_date_str = "%s-W%s-1".format(year, week - 1)
-    start_date_dt = datetime.strptime(start_date_str, "%Y-W%W-%w 00:00:00")
+    start_date_str = f"{year}-W{week - 1}-1"
+    start_date_dt = datetime.strptime(start_date_str, "%Y-W%W-%w")
 
     end_date = start_date_dt + timedelta(days=7)
 
