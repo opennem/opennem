@@ -24,6 +24,8 @@ def export_power(priority: Optional[PriorityType] = None):
     for power_stat in power_stat_sets:
 
         stat_set = power_week(
+            date_range=power_stat.date_range,
+            period=power_stat.period,
             network_code=power_stat.network.code,
             network_region_code=power_stat.network_region,
             networks_query=power_stat.networks,
@@ -43,6 +45,7 @@ def export_power(priority: Optional[PriorityType] = None):
 
             stat_set.append_set(weather_set)
 
+        # print(power_stat.path)
         write_output(power_stat.path, stat_set)
 
 
@@ -115,7 +118,8 @@ def export_metadata():
 
 if __name__ == "__main__":
     if settings.env in ["development", "staging"]:
-        export_power(priority=PriorityType.live)
+        # export_power(priority=PriorityType.live)
+        export_power(priority=PriorityType.history)
         # export_energy(latest=True)
         # export_metadata()
         # wem_export_power()
