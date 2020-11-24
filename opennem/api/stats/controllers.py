@@ -1,3 +1,4 @@
+import logging
 from collections import OrderedDict
 from datetime import datetime, timezone
 from textwrap import dedent
@@ -23,6 +24,8 @@ from .schema import (
     OpennemDataSet,
     ScadaDateRange,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def stats_factory(
@@ -237,6 +240,7 @@ def get_scada_range(
     )
 
     with engine.connect() as c:
+        logger.debug(scada_range_query)
         scada_range_result = list(c.execute(scada_range_query))
 
         if len(scada_range_result) < 1:
