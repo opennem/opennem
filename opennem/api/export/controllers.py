@@ -7,7 +7,11 @@ from opennem.api.export.queries import (
     price_network_query,
 )
 from opennem.api.stats.controllers import get_scada_range, stats_factory
-from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
+from opennem.api.stats.schema import (
+    DataQueryResult,
+    OpennemDataSet,
+    ScadaDateRange,
+)
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.api.weather.queries import (
     observation_query,
@@ -137,13 +141,14 @@ def weather_daily(
 def power_week(
     network_code: str = "WEM",
     network_region_code: str = None,
+    period: Optional[TimePeriod] = None,
+    date_range: Optional[ScadaDateRange] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
     network = network_from_network_code(network_code)
     interval = human_to_interval("{}m".format(network.interval_size))
-    period = human_to_period("7d")
     units = get_unit("power")
     network_region = None
 
@@ -151,6 +156,7 @@ def power_week(
         network=network,
         networks_query=networks_query,
         period=period,
+        date_range=date_range,
         interval=interval,
         network_region=network_region_code,
     )
@@ -189,6 +195,7 @@ def power_week(
         network=network,
         networks_query=networks_query,
         period=period,
+        date_range=date_range,
         interval=interval,
         network_region=network_region_code,
     )
