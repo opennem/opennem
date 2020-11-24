@@ -4,6 +4,7 @@ from typing import Generator, List, Optional, Tuple, Union
 
 from dateutil.parser import ParserError, parse
 
+from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.networks import NetworkSchema
 from opennem.core.normalizers import normalize_whitespace
 from opennem.utils.timezone import UTC, is_aware, make_aware
@@ -197,3 +198,25 @@ def week_series(
         cur_cal = cur_date.isocalendar()
 
         yield cur_cal[0], cur_cal[1]
+
+
+def date_range_from_week(
+    year: int, week: int, network: Optional[NetworkSchema]
+) -> ScadaDateRange:
+    """
+    Get a scada date range from week number with
+    network awareness
+    """
+    start_date_str = "%s-W%s-1".format(year, week - 1)
+    start_date_dt = datetime.strptime(start_date_str, "%Y-W%W-%w")
+    start_date_dt.hour = 0
+    start_date_dt.minute = 0
+    start_date_dt.second = 0
+
+    end_date = start_date_dt + timedelta(days=7)
+
+    scada_range = ScadaDateRange(
+        start=start_date_dt, end=end_date, network=network
+    )
+
+    return scada_range
