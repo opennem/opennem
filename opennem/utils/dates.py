@@ -166,7 +166,6 @@ def month_series(
     step = 1
 
     if end < start:
-        reverse = True
         step = -1
 
     for tot_m in range(total_months(start) - 1, total_months(end) - 2, step):
