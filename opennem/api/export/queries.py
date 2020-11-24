@@ -90,9 +90,7 @@ def power_network_fueltech_query(
         networks_query.append(network)
 
     if not date_range:
-        date_range: ScadaDateRange = get_scada_range(
-            network=network, networks=networks_query
-        )
+        date_range = get_scada_range(network=network, networks=networks_query)
 
     timezone = network.timezone_database
 
