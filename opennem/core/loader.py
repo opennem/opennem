@@ -10,6 +10,7 @@ from typing import Any, List, Optional
 MODULE_PATH = Path(os.path.dirname(sys.modules["opennem"].__file__))
 DATA_PATH = "core/data"
 FIXTURE_PATH = "db/fixtures"
+SETTINGS_PATH = "settings"
 PROJECT_DATA_PATH = "data"
 
 JSON_EXTENSIONS = [".json", ".jsonl", ".geojson"]
@@ -27,6 +28,7 @@ def load_data(
     file_name: str,
     from_project: bool = False,
     from_fixture: bool = False,
+    from_settings: bool = False,
     skip_loaders: bool = False,
     content_type: str = "utf-8",
 ) -> Any:
@@ -46,12 +48,17 @@ def load_data(
         if from_project
         else FIXTURE_PATH
         if from_fixture
+        else SETTINGS_PATH
+        if from_settings
         else DATA_PATH
     )
 
     file_path = Path(file_name)
 
     data_content = get_data("opennem", os.path.join(data_path, file_name))
+
+    if not data_content:
+        return None
 
     if skip_loaders:
         return data_content.decode(content_type)
