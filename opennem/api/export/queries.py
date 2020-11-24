@@ -77,7 +77,8 @@ def price_network_query(
 def power_network_fueltech_query(
     interval: TimeInterval,
     network: NetworkSchema = NetworkWEM,
-    period: TimePeriod = human_to_period("7d"),
+    date_range: Optional[ScadaDateRange] = None,
+    period: Optional[TimePeriod] = None,
     network_region: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> str:
@@ -88,9 +89,10 @@ def power_network_fueltech_query(
     if network not in networks_query:
         networks_query.append(network)
 
-    scada_range: ScadaDateRange = get_scada_range(
-        network=network, networks=networks_query
-    )
+    if not date_range:
+        date_range: ScadaDateRange = get_scada_range(
+            network=network, networks=networks_query
+        )
 
     timezone = network.timezone_database
 
@@ -131,14 +133,16 @@ def power_network_fueltech_query(
         networks_to_in(networks_query)
     )
 
-    date_max = scada_range.get_end()
-    date_min = scada_range.get_end() - timedelta(days=7)
+    date_max = date_range.get_end()
+    date_min = date_range.get_start()
+
+    if period:
+        date_min = date_range.get_end() - timedelta(minutes=period.period)
 
     query = dedent(
         __query.format(
             network_query=network_query,
             trunc=interval.interval_sql,
-            period=period.period_sql,
             network_region_query=network_region_query,
             timezone=timezone,
             date_max=date_max,
