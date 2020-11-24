@@ -473,7 +473,7 @@ class Facility(Base, BaseModel):
         nullable=True,
     )
     fueltech = relationship(
-        "FuelTech", back_populates="facilities", lazy="joined", innerjoin=True
+        "FuelTech", back_populates="facilities", lazy="joined", innerjoin=False
     )
 
     status_id = Column(
