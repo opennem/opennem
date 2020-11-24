@@ -9,10 +9,11 @@ from scrapy.utils.project import get_project_settings
 class OpennemSettings(BaseSettings):
     env: str = "development"
 
-    db_url: PostgresDsn = (
+    db_url: PostgresDsn = PostgresDsn(
         "postgresql://opennem:opennem@127.0.0.1:15433/opennem"
     )
-    cache_url: RedisDsn = "redis://127.0.0.1"
+
+    cache_url: RedisDsn = RedisDsn("redis://127.0.0.1")
 
     sentry_url: Optional[str]
 
