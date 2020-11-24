@@ -3,9 +3,6 @@ from typing import Optional
 
 import yaml
 
-LOGGING_CONFIG = {}
-
-
 SETTINGS_DIR = os.path.realpath(os.path.dirname(__file__))
 
 
@@ -16,10 +13,7 @@ class SettingsNotFound(Exception):
 def load_logging_config(
     filename: str = "logging.yml", fail_silent: bool = True
 ) -> Optional[dict]:
-    """
-
-
-    """
+    """"""
 
     settings_filepath = os.path.realpath(os.path.join(SETTINGS_DIR, filename))
 

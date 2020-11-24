@@ -1,6 +1,6 @@
 # opennem logging setup and config
 version: 1
-disable_existing_loggers: true
+disable_existing_loggers: false
 
 formatters:
   basic:
@@ -49,3 +49,7 @@ loggers:
     level: DEBUG
     handlers: [console]
     propagate: no
+  opennem.api.export:
+    level: DEBUG
+    handlers: [console]
+    propagate: yes
