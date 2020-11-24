@@ -177,20 +177,20 @@ def week_series(
     start: Union[datetime, date],
     end: Union[datetime, date],
     length: Optional[int] = None,
-    reverse: bool = False,
 ) -> Generator[Tuple[int, int], None, None]:
     """
     Generate week series M -> S
     """
+    reverse = False
 
     if end < start:
         reverse = True
 
     length = total_weeks(start, end)
 
-    for week_i in range(1, length):
+    for week_i in range(0, length):
         if reverse:
-            cur_date = end - timedelta(weeks=week_i)
+            cur_date = start - timedelta(weeks=week_i)
         else:
             cur_date = start + timedelta(weeks=week_i)
 
