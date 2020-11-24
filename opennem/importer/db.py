@@ -5,11 +5,13 @@ from pprint import pprint
 from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
-from pydantic import BaseModel
-from sqlalchemy.orm.exc import MultipleResultsFound
 
 # from opennem.core.loader import load_data
-from opennem.db import SessionLocal
+from pydantic import BaseModel
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import MultipleResultsFound
+
+from opennem.db import SessionLocal, get_database_session
 from opennem.db.load_fixtures import load_fixtures
 from opennem.db.models.opennem import Facility, Location, Revision, Station
 from opennem.importer.aemo_gi import gi_import
@@ -310,17 +312,23 @@ def db_test():
 
 def registry_init():
     registry = registry_import()
+    session = SessionLocal()
 
     for station in registry:
         station_dict = station.dict(exclude={"id"})
         # pprint(station_dict)
 
-        # pylint:disable no-member
-        station_model = fromdict(Station(), station_dict)
-        station_model.approved = True
-        station_model.approved_at = datetime.now()
-        station_model.approved_by = "opennem.registry"
-        station_model.created_by = "opennem.registry"
+        station_model = (
+            session.query(Station).filter_by(code=station.code).one_or_none()
+        )
+
+        if not station_model:
+            # pylint:disable no-member
+            station_model = fromdict(Station(), station_dict)
+            station_model.approved = True
+            station_model.approved_at = datetime.now()
+            station_model.approved_by = "opennem.registry"
+            station_model.created_by = "opennem.registry"
 
         # location
         station_model.location = fromdict(
@@ -334,38 +342,60 @@ def registry_init():
                 station.location.lng, station.location.lat
             )
 
+        session.add(station_model)
+        session.commit()
+
         for fac in station.facilities:
-            f = Facility(
-                **fac.dict(
-                    exclude={
-                        "id",
-                        "fueltech",
-                        "status",
-                        "network",
-                        "revision_ids",
-                        "scada_power",
-                    }
-                )
+            f = (
+                session.query(Facility)
+                .filter_by(code=fac.code)
+                .filter_by(network_id=fac.network.code)
+                .one_or_none()
             )
+
+            if not f:
+                print("new facility {} {}".format(fac.code, fac.network.code))
+                f = Facility(
+                    **fac.dict(
+                        exclude={
+                            "id",
+                            "fueltech",
+                            "status",
+                            "network",
+                            "revision_ids",
+                            "scada_power",
+                        }
+                    )
+                )
+                f.approved_by = "opennem.registry"
+                f.created_by = "opennem.registry"
+                f.approved_at = datetime.now()
+                f.created_at = datetime.now()
 
             f.network_id = fac.network.code
 
             if fac.fueltech:
                 f.fueltech_id = fac.fueltech.code
 
+            if fac.network.code:
+                f.network_code = fac.network.code
+
             f.status_id = fac.status.code
 
             f.approved = True
-            f.approved_by = "opennem.registry"
-            f.created_by = "opennem.registry"
-            f.approved_at = datetime.now()
-            f.created_at = datetime.now()
 
-            station_model.facilities.append(f)
+            if station_model.id:
+                f.station_id = station_model.id
+            else:
+                station_model.facilities.append(f)
+                session.add(station_model)
 
-        s.add(station_model)
+            session.add(f)
 
-    s.commit()
+        try:
+            session.commit()
+        except IntegrityError as e:
+            logger.error(e)
 
 
 def test_revisions():
