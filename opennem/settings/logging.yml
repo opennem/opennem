@@ -49,7 +49,7 @@ loggers:
     level: DEBUG
     handlers: [console]
     propagate: no
-  opennem.api.export:
-    level: DEBUG
-    handlers: [console]
-    propagate: yes
+
+  # third party
+  shapely.geos:
+    level: INFO
