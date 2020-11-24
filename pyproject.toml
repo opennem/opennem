@@ -20,7 +20,8 @@ classifiers = [
 ]
 
 include = [
-  'scrapy.cfg'
+  'scrapy.cfg',
+  'opennem/settings/logging.yml'
 ]
 
 [tool.poetry.dependencies]
