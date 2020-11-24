@@ -33,6 +33,7 @@ from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql.schema import UniqueConstraint
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
@@ -309,11 +310,9 @@ class Location(Base):
 class Station(Base, BaseModel):
     __tablename__ = "station"
 
-    # __table_args__ = (
-    #     UniqueConstraint(
-    #         "customer_id", "location_code", name="_customer_location_uc"
-    #     ),
-    # )
+    __table_args__ = (
+        UniqueConstraint("code", name="excl_station_network_duid"),
+    )
 
     def __str__(self):
         return "{} <{}>".format(self.name, self.code)
@@ -348,7 +347,7 @@ class Station(Base, BaseModel):
 
     photos = relationship("Photo")
 
-    code = Column(Text, index=True, nullable=True)
+    code = Column(Text, index=True, nullable=False, unique=True)
     name = Column(Text)
 
     # wikipedia links
@@ -442,6 +441,12 @@ class Station(Base, BaseModel):
 class Facility(Base, BaseModel):
     __tablename__ = "facility"
 
+    __table_args__ = (
+        UniqueConstraint(
+            "network_id", "code", name="excl_facility_network_id_code"
+        ),
+    )
+
     def __str__(self):
         return "{} <{}>".format(self.code, self.fueltech_id)
 
@@ -487,7 +492,7 @@ class Facility(Base, BaseModel):
     revisions = relationship("Revision")
 
     # DUID but modified by opennem as an identifier
-    code = Column(Text, index=True)
+    code = Column(Text, index=True, nullable=False, unique=True)
 
     # Network details
     network_code = Column(Text, nullable=True, index=True)
