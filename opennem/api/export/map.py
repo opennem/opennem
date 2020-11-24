@@ -53,6 +53,7 @@ class StatExport(BaseModel):
     date_range: ScadaDateRange
     bom_station: Optional[str]
     year: Optional[int]
+    week: Optional[int]
     period: Optional[TimePeriod]
     file_path: Optional[str]
 
@@ -75,6 +76,9 @@ class StatExport(BaseModel):
 
         if self.year:
             _path_components.append(self.year)
+
+        if self.week:
+            _path_components.append(self.week)
 
         dir_path = "/".join([str(i) for i in _path_components])
 
