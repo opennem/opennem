@@ -16,7 +16,6 @@ import logging.config
 import os
 from pathlib import Path
 
-import coloredlogs
 from dotenv import load_dotenv
 
 from opennem.settings.log import LOGGING_CONFIG
@@ -43,9 +42,9 @@ settings: OpennemSettings = OpennemSettings()
 
 # setup logging
 
-if settings.env == "development":
-    LOGGING_CONFIG["root"]["level"] = "DEBUG"
+if LOGGING_CONFIG:
+    if settings.env == "development":
+        LOGGING_CONFIG["root"]["level"] = "DEBUG"
+        LOGGING_CONFIG["loggers"]["opennem"]["level"] = "DEBUG"
 
-
-logging.config.dictConfig(LOGGING_CONFIG)
-coloredlogs.install(level="DEBUG")
+    logging.config.dictConfig(LOGGING_CONFIG)
