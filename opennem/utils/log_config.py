@@ -4,10 +4,9 @@
 
 """
 
-import logging
 from logging import config
 
-from opennem.settings.logging import get_logging_config
+from opennem.settings.log import get_logging_config
 
 logging_config = get_logging_config()
 config.dictConfig(logging_config)
