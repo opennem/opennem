@@ -38,7 +38,7 @@ root:
 # Defines descendants of root logger
 loggers:
   opennem:
-    level: DEBUG
+    level: ERROR
     handlers: [console, file_debug]
     propagate: no
   opennem.cli:
@@ -53,3 +53,11 @@ loggers:
   # third party
   shapely.geos:
     level: INFO
+  urllib3:
+    level: ERROR
+  smart_open:
+    level: ERROR
+  boto3:
+    level: ERROR
+  botocore:
+    level: ERROR
