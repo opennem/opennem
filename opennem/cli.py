@@ -1,6 +1,4 @@
-# from opennem.utils.log_config
 import logging
-import os
 
 import click
 from scrapy.utils.python import garbage_collect
@@ -11,13 +9,9 @@ from opennem.importer.all import run_all
 from opennem.importer.db import init as db_init
 from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_export, opennem_import
+from opennem.settings import settings
 
 logger = logging.getLogger("opennem.cli")
-
-DEBUG = bool(os.getenv("DEBUG", default=False))
-
-if DEBUG:
-    logger.setLevel(logging.DEBUG)
 
 
 @click.group()
@@ -122,12 +116,10 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(e)
 
-        if DEBUG:
+        if settings.debug:
             import traceback
-            from pprint import pprint
 
             traceback.print_exc()
 
-            # pprint(e)
     finally:
         garbage_collect()
