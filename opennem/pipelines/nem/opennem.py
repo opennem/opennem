@@ -217,7 +217,7 @@ def process_meter_data_gen_duid(table, spider):
     item = dict()
 
     item["table_schema"] = FacilityScada
-    item["update_fields"] = ["eoi_generated"]
+    item["update_fields"] = ["eoi_quantity"]
     item["records"] = unit_scada_generate_facility_scada(
         records,
         spider,
