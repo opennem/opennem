@@ -59,26 +59,37 @@ def import_pollution_mms() -> None:
     return None
 
 
-def import_pollution_wem() -> None:
+def import_pollution_csv() -> None:
+    POLLUTION_MAPS = [
+        {"filename": "wem_pollutions.csv", "network": "WEM"},
+        {"filename": "nem_pollutions.csv", "network": "NEM"},
+    ]
+
+    for m in POLLUTION_MAPS:
+        import_pollution_map(m["filename"], m["network"])
+
+
+def import_pollution_map(file_name: str, network_id: str) -> None:
     session = SessionLocal()
 
-    content = load_data(
-        "wem_pollutions.csv", from_project=True, skip_loaders=True
-    )
+    content = load_data(file_name, from_project=True, skip_loaders=True)
 
     csv_content = content.splitlines()
     csvreader = csv.DictReader(csv_content)
 
     for rec in csvreader:
         facility_code = normalize_duid(rec["facility_code"])
-        emissions_intensity = clean_float(rec["emission_intensity_c02"])
+        emissions_intensity = clean_float(rec["emissions_factor_co2"])
 
         if not facility_code:
             logger.info("No emissions intensity for {}".format(facility_code))
             continue
 
         facility = (
-            session.query(Facility).filter_by(code=facility_code).one_or_none()
+            session.query(Facility)
+            .filter_by(code=facility_code)
+            .filter_by(network_id=network_id)
+            .one_or_none()
         )
 
         if not facility:
@@ -97,4 +108,4 @@ def import_pollution_wem() -> None:
 
 
 if __name__ == "__main__":
-    import_pollution_mms()
+    import_pollution_csv()
