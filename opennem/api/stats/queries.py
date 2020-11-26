@@ -24,15 +24,12 @@ def duid_in_case(facility_codes: List[str]) -> str:
     )
 
 
-def power_facility(
+def power_facility_query(
     facility_codes: List[str],
     network_code: str,
     interval: TimeInterval,
     period: TimePeriod,
 ) -> str:
-
-    timezone = "UTC"
-
     network = network_from_network_region(network_code)
     timezone = network.get_timezone(postgres_format=True)
 
@@ -74,7 +71,9 @@ def power_facility(
 
 
 def power_network(
-    network_code: str, interval: TimeInterval, period: TimePeriod,
+    network_code: str,
+    interval: TimeInterval,
+    period: TimePeriod,
 ) -> str:
 
     scale = 1
@@ -248,7 +247,9 @@ def energy_facility(
 
 
 def energy_network(
-    network: NetworkSchema, interval: TimeInterval, period: TimePeriod,
+    network: NetworkSchema,
+    interval: TimeInterval,
+    period: TimePeriod,
 ) -> str:
 
     timezone = network.timezone_database
@@ -368,8 +369,8 @@ def energy_network_fueltech_year(
     scada_range: ScadaDateRange = None,
 ) -> str:
     """
-        Get Energy for a network or network + region
-        based on a year
+    Get Energy for a network or network + region
+    based on a year
     """
 
     timezone = network.get_timezone(postgres_format=True)
@@ -533,8 +534,10 @@ def price_network_region(
     date_min_query = ""
 
     if period:
-        date_min_query = "{scada_max}::timestamp - interval '{period}'::interval".format(
-            scada_max=scada_range.get_end_sql(), period=period.period_sql
+        date_min_query = (
+            "{scada_max}::timestamp - interval '{period}'::interval".format(
+                scada_max=scada_range.get_end_sql(), period=period.period_sql
+            )
         )
 
     if year:

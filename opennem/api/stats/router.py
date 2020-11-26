@@ -21,7 +21,7 @@ from .queries import (
     energy_network_fueltech,
     energy_network_fueltech_all,
     energy_network_fueltech_year,
-    power_facility,
+    power_facility_query,
     power_network_fueltech,
     price_network_monthly,
     price_network_region,
@@ -64,7 +64,7 @@ def power_unit(
 
     facility_codes = [normalize_duid(unit_code)]
 
-    query = power_facility(
+    query = power_facility_query(
         facility_codes, network.code, interval=interval, period=period
     )
 
@@ -157,7 +157,7 @@ def power_station(
 
     stats = []
 
-    query = power_facility(
+    query = power_facility_query(
         facility_codes, network_code, interval=interval, period=period
     )
 
