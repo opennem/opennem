@@ -5,16 +5,9 @@
 """
 
 import io
-import logging
 import zipfile
 
 from smart_open import open, register_compressor
-
-smart_open_logger = logging.getLogger("smart_open")
-smart_open_logger.setLevel(logging.INFO)
-
-urllib_logger = logging.getLogger("urllib3")
-urllib_logger.setLevel(logging.INFO)
 
 
 def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
@@ -41,8 +34,6 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
             return True
 
         def _read_next_chunk(self, max_length):
-            # Return 0 or more bytes from the current stream, first returning all
-            # leftover bytes. If the stream is closed returns b''
             if self.leftover:
                 return self.leftover
             elif self.stream is not None:

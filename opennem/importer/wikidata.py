@@ -13,15 +13,12 @@ from opennem.core.normalizers import station_name_cleaner
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Photo, Station
 
-logging.basicConfig(level=logging.INFO)
-
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 def article_from_wikipedia(url: str) -> str:
     """
-        Return the article name from a wikipedia url
+    Return the article name from a wikipedia url
     """
     path = urlparse(url).path
 
@@ -33,7 +30,7 @@ def article_from_wikipedia(url: str) -> str:
 
 def dataid_from_url(url: str) -> str:
     """
-        Return the Q id from a wikidata url
+    Return the Q id from a wikidata url
     """
     path = urlparse(url).path
 
