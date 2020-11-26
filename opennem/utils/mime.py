@@ -1,3 +1,9 @@
+"""
+    mime module - get mime types from url (filename) or bytes
+
+
+"""
+
 import logging
 import mimetypes
 from io import BytesIO
