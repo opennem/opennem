@@ -31,6 +31,13 @@ class OpennemSettings(BaseSettings):
 
     precision_default: int = 4
 
+    # timeout on http requests
+    # see opennem.utils.http
+    http_timeout: int = 30
+
+    # number of retries by default
+    http_retries: int = 5
+
     _static_folder_path: str = "opennem/static/"
 
     # @todo overwrite scrapy settings here
