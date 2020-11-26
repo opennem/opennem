@@ -1,17 +1,17 @@
 import json
 import logging
-from pprint import pprint
 from urllib.parse import urlparse
 
 import requests
 import wikipedia
 from PIL import Image
 
-from opennem.api.photo.controllers import img_to_buffer, write_photo_to_s3
+from opennem.api.photo.controllers import write_photo_to_s3
 from opennem.core.loader import load_data
 from opennem.core.normalizers import station_name_cleaner
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Photo, Station
+from opennem.utils.images import img_to_buffer
 
 logger = logging.getLogger(__name__)
 
