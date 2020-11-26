@@ -465,7 +465,7 @@ class Facility(Base, BaseModel):
         ForeignKey("network.code", name="fk_station_network_code"),
         nullable=False,
     )
-    network = relationship("Network")
+    network = relationship("Network", lazy="joined", innerjoin=True)
 
     fueltech_id = Column(
         Text,
