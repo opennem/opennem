@@ -1,4 +1,4 @@
-﻿station_name,facility_code,emission_intensity_c02,fueltech
+﻿station_name,facility_code,emissions_factor_co2,fueltech
 Rockingham Landfill Generation,ROCKINGHAM,0.05,bioenergy_biogas
 Alinta Pinjarra Generation Facility,ALINTA_PNJ_U1,0.67,gas_ocgt
 Alinta Pinjarra Generation Facility,ALINTA_PNJ_U2,0.67,gas_ocgt
