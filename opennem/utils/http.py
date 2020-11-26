@@ -11,8 +11,10 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-DEFAULT_TIMEOUT = 30
-DEFAULT_RETRIES = 5
+from opennem.settings import settings
+
+DEFAULT_TIMEOUT = settings.http_timeout
+DEFAULT_RETRIES = settings.http_retries
 
 
 class TimeoutHTTPAdapter(HTTPAdapter):
