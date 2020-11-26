@@ -1,6 +1,11 @@
 """
     HTTP module with custom timeout and retry adaptors
 
+    usage:
+
+    from opennem.utils.http import http
+    http.get(`url`) etc.
+
 """
 import requests
 from requests.adapters import HTTPAdapter
