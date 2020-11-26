@@ -1,5 +1,4 @@
 import logging
-import urllib
 from typing import Dict
 
 from smart_open import open
