@@ -5,7 +5,6 @@ from pprint import pprint
 from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
-
 # from opennem.core.loader import load_data
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
@@ -17,7 +16,10 @@ from opennem.db.models.opennem import Facility, Location, Revision, Station
 from opennem.importer.aemo_gi import gi_import
 from opennem.importer.aemo_rel import rel_import
 from opennem.importer.mms import mms_import
-from opennem.importer.pollution import import_pollution_mms
+from opennem.importer.pollution import (
+    import_pollution_mms,
+    import_pollution_wem,
+)
 from opennem.importer.registry import registry_import
 
 from .comparator import compare_record_differs
@@ -447,4 +449,5 @@ def init():
     logger.info("Registry initialized")
 
     import_pollution_mms()
+    import_pollution_wem()
     logger.info("Pollution data initialized")
