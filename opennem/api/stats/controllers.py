@@ -197,7 +197,7 @@ def get_scada_range(
     network: Optional[NetworkSchema] = None,
     networks: Optional[List[NetworkSchema]] = None,
     network_region: Optional[str] = None,
-) -> ScadaDateRange:
+) -> Optional[ScadaDateRange]:
     engine = get_database_engine()
 
     __query = """
@@ -248,6 +248,9 @@ def get_scada_range(
 
         scada_min = scada_range_result[0][0]
         scada_max = scada_range_result[0][1]
+
+    if not scada_min or not scada_max:
+        return None
 
     scada_range = ScadaDateRange(
         start=scada_min, end=scada_max, network=network
