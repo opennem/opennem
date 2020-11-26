@@ -143,7 +143,9 @@ def station_ids(
     if only_approved:
         stations = stations.filter(Station.approved == True)
 
-    stations = stations.order_by(Station.id,)
+    stations = stations.order_by(
+        Station.id,
+    )
 
     stations = stations.all()
 
@@ -169,7 +171,7 @@ def station(
     history_include: Optional[bool] = Query(
         False, description="Include history in records"
     ),
-):
+) -> StationSchema:
 
     station = (
         session.query(Station)
@@ -189,6 +191,8 @@ def station(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
         )
+
+    station.network = station.facilities[0].network
 
     if revisions_include:
         revisions = session.query(Revision).all()
