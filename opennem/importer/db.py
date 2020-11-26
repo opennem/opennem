@@ -11,15 +11,15 @@ from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import MultipleResultsFound
 
-from opennem.db import SessionLocal, get_database_session
+from opennem.db import SessionLocal
 from opennem.db.load_fixtures import load_fixtures
 from opennem.db.models.opennem import Facility, Location, Revision, Station
 from opennem.importer.aemo_gi import gi_import
 from opennem.importer.aemo_rel import rel_import
 from opennem.importer.mms import mms_import
 from opennem.importer.pollution import (
+    import_pollution_csv,
     import_pollution_mms,
-    import_pollution_wem,
 )
 from opennem.importer.registry import registry_import
 
@@ -450,5 +450,5 @@ def init() -> None:
     logger.info("Registry initialized")
 
     import_pollution_mms()
-    import_pollution_wem()
+    import_pollution_csv()
     logger.info("Pollution data initialized")
