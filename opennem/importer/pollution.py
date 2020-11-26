@@ -1,19 +1,16 @@
 import csv
 import logging
 
-from opennem.core.normalizers import station_name_cleaner
+from opennem.core.loader import load_data
+from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility, Station
+from opennem.db.models.opennem import Facility
 from opennem.importer.mms import mms_import
-from opennem.utils.http import http
-from opennem.utils.mime import decode_bytes
-
-CER_CSV = "http://www.cleanenergyregulator.gov.au/DocumentAssets/Documents/Greenhouse%20and%20energy%20information%20for%20designated%20generation%20facilities%202018-19%20.csv"
 
 logger = logging.getLogger(__name__)
 
 
-def import_pollution_mms():
+def import_pollution_mms() -> None:
     mms = mms_import()
 
     facility_poll_map = {
@@ -21,14 +18,21 @@ def import_pollution_mms():
         "CALL_B_1": 0.93134349,
         "CALL_B_2": 0.93134349,
         "SWAN_E": 0.42795234,
+        "OSB-AG": 0.544686,
     }
 
     for station in mms:
         for facility in station.facilities:
-            if facility.emissions_factor_co2:
-                facility_poll_map[
-                    facility.code
-                ] = facility.emissions_factor_co2
+            if facility.emissions_factor_co2 and not facility.code.endswith(
+                "NL1"
+            ):
+                facility_poll_map[facility.code] = {
+                    "intensity": facility.emissions_factor_co2,
+                    "name": station.name,
+                    "fueltech": facility.fueltech.code
+                    if facility.fueltech
+                    else "",
+                }
 
     session = SessionLocal()
 
@@ -41,52 +45,56 @@ def import_pollution_mms():
         )
 
         if not facility:
-            print("could not find facility: {}".format(fac_code))
+            logger.info(
+                "could not find facility: {} {}".format(fac_code, pol_value)
+            )
+
             continue
 
-        facility.emissions_factor_co2 = pol_value
+        facility.emissions_factor_co2 = clean_float(pol_value)
         session.add(facility)
 
     session.commit()
 
+    return None
 
-def import_pollution_cer():
+
+def import_pollution_wem() -> None:
     session = SessionLocal()
 
-    r = http.get(CER_CSV)
-
-    if not r.ok:
-        logger.error("response failed: {}".format(CER_CSV))
-        return False
-
-    csv_content = decode_bytes(r.content).splitlines()
-    csvreader = csv.DictReader(csv_content)
-
-    swis_records = list(
-        filter(
-            lambda r: r["Grid"] == "SWIS"
-            and r["Emission Intensity (t CO2-e/ MWh)"] != "0",
-            csvreader,
-        )
+    content = load_data(
+        "wem_pollutions.csv", from_project=True, skip_loaders=True
     )
 
-    for rec in swis_records:
-        station_name = station_name_cleaner(rec["Facility Name"])
+    csv_content = content.splitlines()
+    csvreader = csv.DictReader(csv_content)
 
-        lookup = (
-            session.query(Station).filter(Station.name == station_name).all()
+    for rec in csvreader:
+        facility_code = normalize_duid(rec["facility_code"])
+        emissions_intensity = clean_float(rec["emission_intensity_c02"])
+
+        if not facility_code:
+            logger.info("No emissions intensity for {}".format(facility_code))
+            continue
+
+        facility = (
+            session.query(Facility).filter_by(code=facility_code).one_or_none()
         )
 
-        if lookup:
-            station = lookup.pop()
-            print(
-                "Found {} with code {} and {} facilities".format(
-                    station.name, station.code, len(station.facilities)
-                )
-            )
-        else:
-            print("Could not find {}".format(station_name))
+        if not facility:
+            logger.info("No stored facility for {}".format(facility_code))
+            continue
+
+        facility.emissions_factor_co2 = emissions_intensity
+        session.add(facility)
+        logger.info(
+            "Updated {} to {}".format(facility_code, emissions_intensity)
+        )
+
+    session.commit()
+
+    return None
 
 
 if __name__ == "__main__":
-    import_pollution_cer()
+    import_pollution_mms()
