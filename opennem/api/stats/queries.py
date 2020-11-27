@@ -5,12 +5,13 @@
     @TODO use sqlalchemy text() compiled queries
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional
 
 from fastapi.exceptions import HTTPException
 from starlette import status
 
+from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
@@ -26,23 +27,26 @@ def duid_in_case(facility_codes: List[str]) -> str:
 
 def power_facility_query(
     facility_codes: List[str],
-    network_code: str,
-    interval: TimeInterval,
+    network: NetworkSchema,
     period: TimePeriod,
+    interval: Optional[TimeInterval] = None,
+    date_range: Optional[ScadaDateRange] = None,
 ) -> str:
-    network = network_from_network_region(network_code)
     timezone = network.get_timezone(postgres_format=True)
 
-    __query = """
-        SET SESSION TIME ZONE '{timezone}';
+    if not date_range:
+        date_range = get_scada_range(network=network)
 
+    timezone = network.timezone_database
+
+    __query = """
         select
-            t.trading_interval,
+            t.trading_interval at time zone '{timezone}',
             coalesce(avg(t.facility_power), 0),
             t.facility_code
         from (
             select
-                time_bucket_gapfill('{trunc}', trading_interval) AS trading_interval,
+                time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
                 coalesce(
                     avg(fs.generated), 0
                 ) as facility_power,
@@ -50,21 +54,34 @@ def power_facility_query(
             from facility_scada fs
             join facility f on fs.facility_code = f.code
             where
-                fs.trading_interval <= now()
-                and fs.trading_interval >= now() - '{period}'::interval
-                and fs.facility_code in ({facility_codes_parsed})
+                fs.trading_interval <= '{date_max}' and
+                fs.trading_interval > '{date_min}' and
+                fs.facility_code in ({facility_codes_parsed})
             group by 1, 3
         ) as t
         group by 1, 3
         order by 1 desc
     """
 
+    if not interval:
+        interval = network.get_interval()
+
+    if not date_range:
+        raise Exception("Require a date range for query")
+
+    date_max = date_range.get_end()
+    date_min = date_range.get_start()
+
+    if period:
+        date_min = date_range.get_end() - timedelta(minutes=period.period)
+
     query = __query.format(
         facility_codes_parsed=duid_in_case(facility_codes),
-        network_code=network_code,
         trunc=interval.interval_sql,
         period=period.period_sql,
         timezone=timezone,
+        date_max=date_max,
+        date_min=date_min,
     )
 
     return query

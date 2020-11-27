@@ -158,10 +158,10 @@ def power_station(
     stats = []
 
     query = power_facility_query(
-        facility_codes, network_code, interval=interval, period=period
+        facility_codes, network=network, interval=interval, period=period
     )
 
-    # print(query)
+    # logger.debug(query)
 
     with engine.connect() as c:
         results = list(c.execute(query))
