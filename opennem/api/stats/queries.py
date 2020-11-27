@@ -336,6 +336,8 @@ def energy_facility_query(
         network=network, facilities=facility_codes
     )
 
+    print(date_range)
+
     if not interval:
         interval = network.get_interval()
 
@@ -362,8 +364,12 @@ def energy_facility_query(
         # might have to do +offset times
         year = datetime.now().year
         date_min = "{}-01-01 00:00:00{}".format(year, offset)
-    else:
+    elif period.period_human in ["7d", "5Y", "10Y"]:
         date_min = date_range.get_end() - timedelta(minutes=period.period)
+
+    # elif period.period_human == "all":
+    # else:
+    # date_min = date_range.get_end() - timedelta(minutes=period.period)
 
     query = dedent(
         __query.format(
