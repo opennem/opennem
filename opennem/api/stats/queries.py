@@ -6,6 +6,7 @@
 """
 
 from datetime import datetime, timedelta
+from textwrap import dedent
 from typing import List, Optional
 
 from fastapi.exceptions import HTTPException
@@ -15,6 +16,7 @@ from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
+from opennem.core.time import get_period
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 
@@ -263,6 +265,116 @@ def energy_facility(
         timezone=timezone,
     )
 
+    return query
+
+
+def energy_facility_query(
+    facility_codes: List[str],
+    network: NetworkSchema,
+    period: TimePeriod,
+    interval: Optional[TimeInterval] = None,
+) -> str:
+    """
+    Get Energy for a list of facility codes
+    """
+
+    __query = """
+        select
+            date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
+            t.facility_code,
+            sum(t.energy) / 1000 as fueltech_energy,
+            sum(t.market_value) as fueltech_market_value,
+            sum(t.emissions) as fueltech_emissions
+        from
+            (select
+                time_bucket_gapfill('1 hour', fs.trading_interval) as trading_interval,
+                f.code as facility_code,
+                coalesce(
+                    sum(eoi_quantity),
+                    energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated))
+                ) as energy,
+                case when avg(bs.price) > 0 then
+                    coalesce(
+                        sum(eoi_quantity) * avg(bs.price),
+                        energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price),
+                        NULL
+                    )
+                else null
+                end as market_value,
+                case when avg(f.emissions_factor_co2) > 0 then
+                    coalesce(
+                        sum(eoi_quantity) * avg(f.emissions_factor_co2),
+                        energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(f.emissions_factor_co2),
+                        NULL
+                    )
+                else null
+                end as emissions
+            from facility_scada fs
+                left join facility f on fs.facility_code = f.code
+                left join balancing_summary bs on
+                    bs.trading_interval = fs.trading_interval
+                    and bs.network_id=fs.network_id
+                    and bs.network_region = f.network_region
+            where
+                fs.trading_interval <= '{date_max}' and
+                fs.trading_interval >= '{date_min}' and
+                fs.facility_code in ({facility_codes_parsed})
+            group by
+                1,
+                f.code
+            ) as t
+        group by 1, 2
+        order by
+            trading_day desc;
+    """
+
+    timezone = network.timezone_database
+    offset = network.get_timezone(postgres_format=True)
+
+    date_range: ScadaDateRange = get_scada_range(network=network)
+
+    if not interval:
+        interval = network.get_interval()
+
+    if not date_range:
+        raise Exception("Require a date range for query")
+
+    if not period:
+        raise Exception("Require a period")
+
+    if not interval:
+        interval = network.get_interval()
+
+    if not interval:
+        raise Exception("Require an interval")
+
+    trunc = interval.trunc
+
+    date_max = date_range.get_end()
+    date_min = date_range.get_start()
+
+    if period == get_period("all"):
+        trunc = "month"
+    elif period == get_period("1M"):
+        date_min = date_range.get_end() - timedelta(minutes=period.period)
+        trunc = "day"
+    elif period == get_period("1Y"):
+        # might have to do +offset times
+        year = datetime.now().year
+        date_min = "{}-01-01 00:00:00{}".format(year, offset)
+        trunc = "month"
+    else:
+        date_min = date_range.get_end() - timedelta(minutes=period.period)
+
+    query = dedent(
+        __query.format(
+            facility_codes_parsed=duid_in_case(facility_codes),
+            trunc=trunc,
+            date_max=date_max,
+            date_min=date_min,
+            timezone=timezone,
+        )
+    )
     return query
 
 

@@ -17,6 +17,7 @@ from opennem.utils.time import human_to_timedelta
 from .controllers import get_scada_range, stats_factory
 from .queries import (
     energy_facility,
+    energy_facility_query,
     energy_network,
     energy_network_fueltech,
     energy_network_fueltech_all,
@@ -335,42 +336,92 @@ def energy_station(
 
     facility_codes = list(set([f.code for f in station.facilities]))
 
-    query = energy_facility(
-        facility_codes, network_code, interval=interval, period=period
+    query = energy_facility_query(
+        facility_codes, network=network, interval=interval, period=period
     )
 
+    # logger.debug(query)
+
     with engine.connect() as c:
-        results = list(c.execute(query))
+        row = list(c.execute(query))
 
-    stats = [
-        DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
-        )
-        for i in results
-    ]
-
-    if len(stats) < 1:
+    if len(row) < 1:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Station stats not found",
         )
 
-    result = stats_factory(
-        stats,
-        code=station_code,
-        network=network,
-        interval=interval,
-        period=period,
-        units=units,
-    )
+    results_energy = [
+        DataQueryResult(
+            interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None
+        )
+        for i in row
+    ]
 
-    if not result:
+    results_market_value = [
+        DataQueryResult(
+            interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None
+        )
+        for i in row
+    ]
+
+    results_emissions = [
+        DataQueryResult(
+            interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None
+        )
+        for i in row
+    ]
+
+    if len(results_energy) < 1:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No results found",
+            detail="Station stats not found",
         )
 
-    return result
+    stats = stats_factory(
+        stats=results_energy,
+        units=units,
+        network=network,
+        fueltech_group=True,
+        interval=interval,
+        region=network.code.lower(),
+        period=period,
+        code=station_code,
+    )
+
+    if not stats:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Station stats not found",
+        )
+
+    stats_market_value = stats_factory(
+        stats=results_market_value,
+        units=get_unit("market_value"),
+        network=network,
+        fueltech_group=True,
+        interval=interval,
+        region=network.code.lower(),
+        period=period,
+        code=station_code,
+    )
+
+    stats.append_set(stats_market_value)
+
+    stats_emissions = stats_factory(
+        stats=results_emissions,
+        units=get_unit("emissions"),
+        network=network,
+        fueltech_group=True,
+        interval=interval,
+        region=network.code.lower(),
+        period=period,
+        code=network.code.lower(),
+    )
+
+    stats.append_set(stats_emissions)
+
+    return stats
 
 
 @router.get(
