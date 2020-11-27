@@ -17,8 +17,12 @@ def cache_scada_result(func):
         network: Optional[NetworkSchema] = None,
         networks: Optional[List[NetworkSchema]] = None,
         network_region: Optional[str] = None,
+        facilities: Optional[List[str]] = None,
     ):
-        key_list = [network.code]
+        key_list = []
+
+        if network:
+            key_list = [network.code]
 
         # if network_region:
         #     if hasattr(network_region, "code"):
@@ -29,6 +33,9 @@ def cache_scada_result(func):
         if networks:
             key_list += [n.code for n in networks]
 
+        if facilities:
+            key_list += facilities
+
         key = frozenset(key_list)
 
         try:
@@ -36,7 +43,9 @@ def cache_scada_result(func):
             ret: ScadaDateRange = ScadaDateRange(**_val)
             return ret
         except KeyError:
-            ret: ScadaDateRange = func(network, networks, network_region)
+            ret: ScadaDateRange = func(
+                network, networks, network_region, facilities
+            )
             scada_cache[key] = ret.dict()
             return ret
 

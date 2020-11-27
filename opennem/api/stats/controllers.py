@@ -7,6 +7,7 @@ from typing import List, Optional, Union
 from pytz import timezone as pytz_timezone
 from sqlalchemy.orm import Session
 
+from opennem.core.normalizers import normalize_duid
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada, Station
 from opennem.schema.network import NetworkSchema
@@ -26,6 +27,12 @@ from .schema import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def duid_in_case(facility_codes: List[str]) -> str:
+    return ",".join(
+        ["'{}'".format(i) for i in map(normalize_duid, facility_codes)]
+    )
 
 
 def stats_factory(
@@ -197,6 +204,7 @@ def get_scada_range(
     network: Optional[NetworkSchema] = None,
     networks: Optional[List[NetworkSchema]] = None,
     network_region: Optional[str] = None,
+    facilities: Optional[List[str]] = None,
 ) -> Optional[ScadaDateRange]:
     engine = get_database_engine()
 
@@ -206,6 +214,7 @@ def get_scada_range(
             max(fs.trading_interval)::timestamp AT TIME ZONE '{timezone}'
         from facility_scada fs
         where
+            {facility_query}
             {network_query}
             {network_region_query}
             facility_code not like 'ROOFTOP_%%'
@@ -231,8 +240,16 @@ def get_scada_range(
         # f"f.network_region = '{network_region.code}' and"
         # )
 
+    facility_query = ""
+
+    if facilities:
+        facility_query = "fs.facility_code IN ({}) and ".format(
+            duid_in_case(facilities)
+        )
+
     scada_range_query = dedent(
         __query.format(
+            facility_query=facility_query,
             network_query=network_query,
             network_region_query=network_region_query,
             timezone="UTC",

@@ -331,7 +331,9 @@ def energy_facility_query(
     timezone = network.timezone_database
     offset = network.get_timezone(postgres_format=True)
 
-    date_range: ScadaDateRange = get_scada_range(network=network)
+    date_range: ScadaDateRange = get_scada_range(
+        network=network, facilities=facility_codes
+    )
 
     if not interval:
         interval = network.get_interval()
@@ -349,8 +351,6 @@ def energy_facility_query(
         raise Exception("Require an interval")
 
     trunc = interval.trunc
-
-    print(period.period_human)
 
     date_max = date_range.get_end()
     date_min = date_range.get_start()
