@@ -37,7 +37,9 @@ def power_facility_query(
     timezone = network.get_timezone(postgres_format=True)
 
     if not date_range:
-        date_range = get_scada_range(network=network)
+        date_range = get_scada_range(
+            network=network, facilities=facility_codes
+        )
 
     timezone = network.timezone_database
 
