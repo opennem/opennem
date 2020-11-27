@@ -1,3 +1,4 @@
+import logging
 from functools import wraps
 from typing import Dict, List, Optional
 
@@ -5,6 +6,8 @@ from expiringdict import ExpiringDict
 
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.schema.network import NetworkSchema
+
+logger = logging.getLogger(__name__)
 
 CACHE_AGE = 60 * 15
 
@@ -37,16 +40,22 @@ def cache_scada_result(func):
             key_list += facilities
 
         key = frozenset(key_list)
+        ret: Optional[ScadaDateRange] = None
 
         try:
             _val: Dict = scada_cache[key]
-            ret: ScadaDateRange = ScadaDateRange(**_val)
+            ret = ScadaDateRange(**_val)
+
+            logger.debug("scada range HIT at key: {}".format(key))
+
             return ret
         except KeyError:
-            ret: ScadaDateRange = func(
-                network, networks, network_region, facilities
-            )
-            scada_cache[key] = ret.dict()
+            ret = func(network, networks, network_region, facilities)
+
+            logger.debug("scada range MISS at key: {}".format(key))
+
+            if ret:
+                scada_cache[key] = ret.dict()
             return ret
 
     return _cache_scada_wrapper
