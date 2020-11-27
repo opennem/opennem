@@ -4,6 +4,9 @@ from typing import List, Optional, Union
 from pydantic import Field
 from pytz import timezone as pytz_timezone
 
+from opennem.api.time import human_to_interval
+from opennem.core.time import get_interval_by_size
+from opennem.schema.time import TimeInterval
 from opennem.utils.timezone import get_current_timezone, get_fixed_timezone
 
 from .core import BaseConfig
@@ -29,6 +32,14 @@ class NetworkSchema(BaseConfig):
     interval_size: int = Field(
         ..., description="Size of network interval in minutes"
     )
+
+    def get_interval(self) -> Optional[TimeInterval]:
+        if not self.interval_size:
+            return None
+
+        interval = get_interval_by_size(self.interval_size)
+
+        return interval
 
     def get_timezone(
         self, postgres_format=False
