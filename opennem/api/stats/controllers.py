@@ -123,7 +123,7 @@ def stats_factory(
             data.fuel_tech = group_code
             data.id = ".".join(
                 [
-                    network.code.lower(),
+                    network.code.lower() if network else "",
                     "fuel_tech",
                     group_code.lower(),
                     units.unit_type,
