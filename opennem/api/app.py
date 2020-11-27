@@ -26,8 +26,6 @@ from opennem.schema.units import UnitDefinition
 from opennem.settings import settings
 from opennem.utils.version import get_version
 
-from .schema import FueltechResponse
-
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version())
