@@ -1,7 +1,10 @@
+import logging
 from typing import List, Optional
 
 from opennem.core.loader import load_data
 from opennem.schema.time import TimeInterval, TimePeriod
+
+logger = logging.getLogger(__name__)
 
 
 def load_intervals() -> List[TimeInterval]:
@@ -41,7 +44,9 @@ def get_interval_by_size(interval_size: int) -> Optional[TimeInterval]:
     if interval_lookup:
         return interval_lookup.pop()
 
-    raise Exception("Invalid interval {} not mapped".format(interval_size))
+    logger.error("Invalid interval {} not mapped".format(interval_size))
+
+    return None
 
 
 def get_interval(interval_human: str) -> TimeInterval:
