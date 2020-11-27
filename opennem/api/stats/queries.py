@@ -350,19 +350,17 @@ def energy_facility_query(
 
     trunc = interval.trunc
 
+    print(period.period_human)
+
     date_max = date_range.get_end()
     date_min = date_range.get_start()
 
-    if period == get_period("all"):
-        trunc = "month"
-    elif period == get_period("1M"):
+    if period.period_human == "1M":
         date_min = date_range.get_end() - timedelta(minutes=period.period)
-        trunc = "day"
-    elif period == get_period("1Y"):
+    elif period.period_human == "1Y":
         # might have to do +offset times
         year = datetime.now().year
         date_min = "{}-01-01 00:00:00{}".format(year, offset)
-        trunc = "month"
     else:
         date_min = date_range.get_end() - timedelta(minutes=period.period)
 

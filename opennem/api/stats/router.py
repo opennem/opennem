@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from typing import Optional
 
@@ -16,7 +17,6 @@ from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_scada_range, stats_factory
 from .queries import (
-    energy_facility,
     energy_facility_query,
     energy_network,
     energy_network_fueltech,
@@ -28,6 +28,8 @@ from .queries import (
     price_network_region,
 )
 from .schema import DataQueryResult, OpennemDataSet
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -288,8 +290,8 @@ def energy_station(
     session: Session = Depends(get_database_session),
     network_code: str = Query(..., description="Network code"),
     station_code: str = Query(..., description="Station Code"),
-    interval_human: str = Query(None, description="Interval"),
-    period_human: str = Query("7d", description="Period"),
+    interval: str = Query(None, description="Interval"),
+    period: str = Query("7d", description="Period"),
 ) -> OpennemDataSet:
     """
     Get energy output for a station (list of facilities)
@@ -304,15 +306,15 @@ def energy_station(
             detail="No such network",
         )
 
-    if not interval_human:
+    if not interval:
         # @NOTE rooftop data is 15m
         if station_code.startswith("ROOFTOP"):
-            interval_human = "15m"
+            interval = "15m"
         else:
-            interval_human = "{}m".format(network.interval_size)
+            interval = "{}m".format(network.interval_size)
 
-    interval = human_to_interval(interval_human)
-    period = human_to_period(period_human)
+    interval_obj = human_to_interval(interval)
+    period_obj = human_to_period(period)
     units = get_unit("energy")
 
     station = (
@@ -337,10 +339,13 @@ def energy_station(
     facility_codes = list(set([f.code for f in station.facilities]))
 
     query = energy_facility_query(
-        facility_codes, network=network, interval=interval, period=period
+        facility_codes,
+        network=network,
+        interval=interval_obj,
+        period=period_obj,
     )
 
-    # logger.debug(query)
+    logger.debug(query)
 
     with engine.connect() as c:
         row = list(c.execute(query))
@@ -382,10 +387,8 @@ def energy_station(
         stats=results_energy,
         units=units,
         network=network,
-        fueltech_group=True,
-        interval=interval,
-        region=network.code.lower(),
-        period=period,
+        interval=interval_obj,
+        period=period_obj,
         code=station_code,
     )
 
@@ -399,10 +402,8 @@ def energy_station(
         stats=results_market_value,
         units=get_unit("market_value"),
         network=network,
-        fueltech_group=True,
-        interval=interval,
-        region=network.code.lower(),
-        period=period,
+        interval=interval_obj,
+        period=period_obj,
         code=station_code,
     )
 
@@ -412,10 +413,8 @@ def energy_station(
         stats=results_emissions,
         units=get_unit("emissions"),
         network=network,
-        fueltech_group=True,
-        interval=interval,
-        region=network.code.lower(),
-        period=period,
+        interval=interval_obj,
+        period=period_obj,
         code=network.code.lower(),
     )
 
