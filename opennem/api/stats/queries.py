@@ -69,6 +69,9 @@ def power_facility_query(
     if not date_range:
         raise Exception("Require a date range for query")
 
+    if not interval:
+        raise Exception("Require an interval")
+
     date_max = date_range.get_end()
     date_min = date_range.get_start()
 
