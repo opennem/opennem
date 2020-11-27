@@ -336,8 +336,6 @@ def energy_facility_query(
         network=network, facilities=facility_codes
     )
 
-    print(date_range)
-
     if not interval:
         interval = network.get_interval()
 
