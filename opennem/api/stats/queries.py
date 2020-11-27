@@ -16,7 +16,6 @@ from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
-from opennem.core.time import get_period
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 
