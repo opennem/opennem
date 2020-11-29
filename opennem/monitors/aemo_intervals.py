@@ -42,7 +42,7 @@ def get_wem_interval_delay() -> bool:
 
     if not history_date:
         logger.error("Could not read history date for wem intervals")
-        return None
+        return False
 
     now_date = datetime.now().astimezone(network.get_timezone())
 
@@ -65,6 +65,9 @@ def get_wem_interval_delay() -> bool:
                 settings.env, live_delta, live_most_recent
             )
         )
+        return True
+
+    return False
 
 
 if __name__ == "__main__":
