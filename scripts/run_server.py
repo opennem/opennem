@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
     Script to run the asgi uvicorn server in dev
     and prod
