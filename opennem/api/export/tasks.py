@@ -116,13 +116,12 @@ def export_metadata() -> None:
 
 if __name__ == "__main__":
     if settings.env in ["development", "staging"]:
-        # export_power(priority=PriorityType.live)
+        export_power(priority=PriorityType.live)
+        export_energy(latest=True)
         export_power(priority=PriorityType.history)
-        # export_energy(latest=True)
-        # export_metadata()
-        # wem_export_power()
-        # wem_export_daily(limit=1)
-        # wem_export_monthly()
+        export_metadata()
     else:
         export_power()
+        export_power(priority=PriorityType.history)
         export_energy()
+        export_metadata()
