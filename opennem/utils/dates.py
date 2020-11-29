@@ -220,4 +220,4 @@ def date_range_from_week(
 
 
 def chop_microseconds(delta: timedelta) -> timedelta:
-    return delta - datetime.timedelta(microseconds=delta.microseconds)
+    return delta - timedelta(microseconds=delta.microseconds)
