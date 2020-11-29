@@ -3,6 +3,7 @@ from typing import Generator
 
 from databases import Database
 from sqlalchemy import create_engine
+from sqlalchemy.engine.base import Engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -17,15 +18,20 @@ logger = logging.getLogger(__name__)
 database = Database(settings.db_url)
 
 
-async def db_connect_async():
+# Methods
+
+
+async def db_connect_async() -> None:
     await database.connect()
 
 
-async def db_disconnect():
+async def db_disconnect() -> None:
     await database.disconnect()
 
 
-def db_connect(db_name=None, debug=False, timeout: int = 300):
+def db_connect(
+    db_name: str = None, debug: bool = False, timeout: int = 300
+) -> Engine:
     """
     Performs database connection using database settings from settings.py.
 
@@ -50,6 +56,7 @@ def db_connect(db_name=None, debug=False, timeout: int = 300):
         )
     except Exception as exc:
         logger.error("Could not connect to database: %s", exc)
+        raise exc
 
 
 engine = db_connect()
@@ -59,24 +66,28 @@ SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
 )
+
 SessionAutocommit = sessionmaker(bind=engine, autocommit=True, autoflush=True)
 
 
-def get_database_session() -> Generator:
+def get_database_session() -> Generator[sessionmaker, None, None]:
     """
     Gets a database session
 
     """
+    s = None
+
     try:
         s = SessionLocal()
         yield s
     except Exception as e:
         raise e
     finally:
-        s.close()
+        if s:
+            s.close()
 
 
-def get_database_engine():
+def get_database_engine() -> Engine:
     """
     Gets a database engine connection
 
