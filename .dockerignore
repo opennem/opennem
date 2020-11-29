@@ -24,7 +24,6 @@ db_misc.py
 docker-compose.yml
 mypy.ini
 pytest.ini
-scripts/
 test.json
 tests/
 tox.ini
