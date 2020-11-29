@@ -15,7 +15,7 @@ git ci -m "v$VERSION"
 git tag v$VERSION
 git push -u origin master v$VERSION
 
-docker build -t opennem/opennem:$VERSION .
+docker build -f infra/container/Dockerfile -t opennem/opennem:$VERSION .
 docker push opennem/opennem:$VERSION
 
 # @TODO check that we're ready for relesae to make it :latest
