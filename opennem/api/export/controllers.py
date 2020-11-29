@@ -99,7 +99,8 @@ def weather_daily(
     ]
 
     if len(temp_avg) < 1:
-        raise Exception("No results from query: {}".format(query))
+        logger.error("No results from query: {}".format(query))
+        return None
 
     stats = stats_factory(
         stats=temp_avg,
