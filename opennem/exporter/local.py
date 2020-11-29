@@ -8,7 +8,7 @@ from opennem.settings import settings
 logger = logging.getLogger(__name__)
 
 
-def write_to_local(file_path, data):
+def write_to_local(file_path, data) -> int:
     save_folder = settings.static_folder_path
 
     save_file_path = Path(save_folder) / file_path.lstrip("/")
@@ -26,4 +26,6 @@ def write_to_local(file_path, data):
     with open(save_file_path, "w") as fh:
         bytes_written += fh.write(data)
 
-    print("Wrote {} to {}".format(bytes_written, save_file_path))
+    logger.info("Wrote {} to {}".format(bytes_written, save_file_path))
+
+    return bytes_written
