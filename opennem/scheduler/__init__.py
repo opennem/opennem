@@ -50,18 +50,20 @@ def schedule_daily_tasks() -> None:
     export_energy(PriorityType.daily)
 
 
-@huey.periodic_task(crontab(hour="*/6"))
-@huey.lock_task("schedule_wem_export_all")
-def schedule_wem_export_all() -> None:
+@huey.periodic_task(crontab(hour="*/12"))
+@huey.lock_task("schedule_energy_monthlies")
+def schedule_energy_monthlies() -> None:
     export_energy(PriorityType.monthly)
 
 
+# geojson maps
 @huey.periodic_task(crontab(minute="*/30"))
 @huey.lock_task("schedule_export_geojson")
 def schedule_export_geojson() -> None:
     export_facility_geojson()
 
 
+# metadata
 @huey.periodic_task(crontab(minute="*/30"))
 @huey.lock_task("schedule_export_metadata")
 def schedule_export_metadata() -> None:
