@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def write_output(
     path: str, stat_set: BaseModel, is_local: bool = False
-) -> None:
+) -> int:
 
     if settings.export_local:
         is_local = True
