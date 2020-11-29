@@ -25,7 +25,7 @@ huey = RedisHuey("opennem.exporter", host=redis_host)
 
 @huey.periodic_task(crontab(minute="*/2"))
 @huey.lock_task("schedule_live_tasks")
-def schedule_live_tasks():
+def schedule_live_tasks() -> None:
     export_power(PriorityType.live)
 
 
@@ -40,42 +40,42 @@ def schedule_power_weeklies() -> None:
 
 @huey.periodic_task(crontab(hour="*/1"))
 @huey.lock_task("schedule_hourly_tasks")
-def schedule_hourly_tasks():
+def schedule_hourly_tasks() -> None:
     export_energy(PriorityType.daily, latest=True)
 
 
 @huey.periodic_task(crontab(hour="*/6"))
 @huey.lock_task("schedule_daily_tasks")
-def schedule_daily_tasks():
+def schedule_daily_tasks() -> None:
     export_energy(PriorityType.daily)
 
 
 @huey.periodic_task(crontab(hour="*/6"))
 @huey.lock_task("schedule_wem_export_all")
-def schedule_wem_export_all():
+def schedule_wem_export_all() -> None:
     export_energy(PriorityType.monthly)
 
 
 @huey.periodic_task(crontab(minute="*/30"))
 @huey.lock_task("schedule_export_geojson")
-def schedule_export_geojson():
+def schedule_export_geojson() -> None:
     export_facility_geojson()
 
 
 @huey.periodic_task(crontab(minute="*/30"))
 @huey.lock_task("schedule_export_metadata")
-def schedule_export_metadata():
+def schedule_export_metadata() -> None:
     export_metadata()
 
 
 # monitoring tasks
 @huey.periodic_task(crontab(minute="*/1"))
 @huey.lock_task("monitor_wem_interval")
-def monitor_wem_interval():
+def monitor_wem_interval() -> None:
     get_wem_interval_delay()
 
 
 @huey.periodic_task(crontab(hour="*/1"))
 @huey.lock_task("monitor_metadata_status")
-def monitor_metadata_status():
+def monitor_metadata_status() -> None:
     check_metadata_status()
