@@ -1,3 +1,13 @@
+"""
+Tasks file to expor JSON's to S3 or locally for the
+opennem website
+
+This is the most frequently accessed content that doesn't
+require the API
+
+
+"""
+
 import logging
 from datetime import datetime
 from typing import Optional
@@ -17,8 +27,13 @@ export_map = get_export_map()
 
 
 def export_power(
-    priority: Optional[PriorityType] = None, latest: bool = False
+    priority: Optional[PriorityType] = None, latest: Optional[bool] = False
 ) -> None:
+    """
+    Export power stats from the export map
+
+
+    """
     power_stat_sets = export_map.get_by_stat_type(StatType.power, priority)
 
     output_count: int = 0
@@ -50,14 +65,18 @@ def export_power(
 
             stat_set.append_set(weather_set)
 
-        # print(power_stat.path)
         write_output(power_stat.path, stat_set)
         output_count += 1
 
 
 def export_energy(
-    priority: Optional[PriorityType] = None, latest: bool = False
+    priority: Optional[PriorityType] = None, latest: Optional[bool] = False
 ) -> None:
+    """
+    Export energy stats from the export map
+
+
+    """
     energy_stat_sets = export_map.get_by_stat_type(StatType.energy, priority)
 
     CURRENT_YEAR = datetime.now().year
@@ -110,8 +129,12 @@ def export_energy(
             write_output(energy_stat.path, stat_set)
 
 
-def export_metadata() -> None:
+def export_metadata() -> bool:
+    """
+    Export metadata
 
+
+    """
     _export_map_out = export_map
 
     # this is a hack because pydantic doesn't
@@ -119,7 +142,9 @@ def export_metadata() -> None:
     for r in _export_map_out.resources:
         r.file_path = r.path
 
-    write_output("metadata.json", _export_map_out)
+    wrote_bytes = write_output("metadata.json", _export_map_out)
+
+    return wrote_bytes and wrote_bytes > 0
 
 
 if __name__ == "__main__":
