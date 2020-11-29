@@ -11,14 +11,12 @@ from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.utils import write_output
 from opennem.settings import settings
 
-YEAR_MIN = 2010
-
 logger = logging.getLogger(__name__)
 
 export_map = get_export_map()
 
 
-def export_power(priority: Optional[PriorityType] = None):
+def export_power(priority: Optional[PriorityType] = None) -> None:
     power_stat_sets = export_map.get_by_stat_type(StatType.power, priority)
 
     for power_stat in power_stat_sets:
@@ -51,7 +49,7 @@ def export_power(priority: Optional[PriorityType] = None):
 
 def export_energy(
     priority: Optional[PriorityType] = None, latest: bool = False
-):
+) -> None:
     energy_stat_sets = export_map.get_by_stat_type(StatType.energy, priority)
 
     CURRENT_YEAR = datetime.now().year
@@ -104,7 +102,7 @@ def export_energy(
             write_output(energy_stat.path, stat_set)
 
 
-def export_metadata():
+def export_metadata() -> None:
 
     _export_map_out = export_map
 
