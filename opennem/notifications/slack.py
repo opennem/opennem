@@ -22,7 +22,7 @@ def slack_message(msg: str) -> bool:
         return False
 
     if isinstance(valid_url(settings.slack_hook_url), ValidationFailure):
-        logger.error("No slack notification endpoint configured")
+        logger.error("No slack notification endpoint configured bad url")
         return False
 
     alert_url = settings.slack_hook_url
