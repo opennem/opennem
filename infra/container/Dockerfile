@@ -28,7 +28,7 @@ WORKDIR /app
 
 RUN mv /code_install/.venv /app/.venv
 COPY . /app
-COPY docker-entrypoint.sh /app/entrypoint.sh
+COPY infra/container/docker-entrypoint.sh /app/entrypoint.sh
 
 RUN wget -O /usr/local/bin/wait-for https://raw.githubusercontent.com/eficode/wait-for/master/wait-for && \
   chmod +x /usr/local/bin/wait-for
