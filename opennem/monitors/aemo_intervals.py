@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_wem_interval_delay() -> bool:
-    resp = requests.get("https://data.opennem.org.au/power/wem.json")
+    resp = requests.get(
+        "https://data.opennem.org.au/v3/stats/au/WEM/power/7d.json"
+    )
 
     if resp.status_code != 200:
         logger.error("Error retrieving wem power")
@@ -37,6 +39,7 @@ def get_wem_interval_delay() -> bool:
     history_end_date = fueltech_data["history"]["last"]
 
     history_date = parse_date(history_end_date, dayfirst=False)
+
     now_date = datetime.now().astimezone(network.get_timezone())
 
     live_most_recent = get_aemo_wem_live_facility_intervals_recent_date()
