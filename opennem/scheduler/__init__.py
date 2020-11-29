@@ -29,6 +29,15 @@ def schedule_live_tasks():
     export_power(PriorityType.live)
 
 
+@huey.periodic_task(crontab(hour="*/6"))
+@huey.lock_task("schedule_power_weeklies")
+def schedule_power_weeklies() -> None:
+    """
+    Run weekly power outputs
+    """
+    export_power(PriorityType.history, latest=True)
+
+
 @huey.periodic_task(crontab(hour="*/1"))
 @huey.lock_task("schedule_hourly_tasks")
 def schedule_hourly_tasks():
