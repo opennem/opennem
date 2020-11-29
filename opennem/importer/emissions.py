@@ -60,12 +60,12 @@ def import_mms_emissions() -> None:
 
 
 def import_emissions_csv() -> None:
-    POLLUTION_MAPS = [
-        {"filename": "wem_pollutions.csv", "network": "WEM"},
-        {"filename": "nem_pollutions.csv", "network": "NEM"},
+    EMISSION_MAPS = [
+        {"filename": "wem_emissions.csv", "network": "WEM"},
+        {"filename": "nem_emissions.csv", "network": "NEM"},
     ]
 
-    for m in POLLUTION_MAPS:
+    for m in EMISSION_MAPS:
         import_emissions_map(m["filename"], m["network"])
 
 
