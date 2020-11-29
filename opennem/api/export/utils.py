@@ -5,7 +5,8 @@
 import json
 import logging
 
-from opennem.api.stats.schema import OpennemDataSet
+from pydantic.main import BaseModel
+
 from opennem.exporter.aws import write_to_s3
 from opennem.exporter.local import write_to_local
 from opennem.settings import settings
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def write_output(
-    path: str, stat_set: OpennemDataSet, is_local: bool = False
+    path: str, stat_set: BaseModel, is_local: bool = False
 ) -> None:
 
     if settings.export_local:
