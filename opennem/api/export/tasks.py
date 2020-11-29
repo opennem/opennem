@@ -144,7 +144,7 @@ def export_metadata() -> bool:
 
     wrote_bytes = write_output("metadata.json", _export_map_out)
 
-    return wrote_bytes and wrote_bytes > 0
+    return wrote_bytes > 0
 
 
 if __name__ == "__main__":
