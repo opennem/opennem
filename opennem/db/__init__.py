@@ -1,6 +1,7 @@
 import logging
 from typing import Generator
 
+from databases import Database
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -11,6 +12,17 @@ from opennem.settings import settings
 DeclarativeBase = declarative_base()
 
 logger = logging.getLogger(__name__)
+
+
+database = Database(settings.db_url)
+
+
+async def db_connect_async():
+    await database.connect()
+
+
+async def db_disconnect():
+    await database.disconnect()
 
 
 def db_connect(db_name=None, debug=False, timeout: int = 300):
@@ -41,6 +53,7 @@ def db_connect(db_name=None, debug=False, timeout: int = 300):
 
 
 engine = db_connect()
+
 SessionLocal = sessionmaker(
     bind=engine,
     autocommit=False,
