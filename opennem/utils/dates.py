@@ -217,3 +217,7 @@ def date_range_from_week(
     )
 
     return scada_range
+
+
+def chop_microseconds(delta: timedelta) -> timedelta:
+    return delta - datetime.timedelta(microseconds=delta.microseconds)
