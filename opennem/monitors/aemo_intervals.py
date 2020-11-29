@@ -52,7 +52,7 @@ def get_wem_interval_delay() -> bool:
 
     if time_delta > timedelta(hours=3):
         slack_message(
-            "WARNING: WEM live interval delay on {} currently: {}\n\nFeed time: {}\nCurrent time: {}\n".format(
+            "*WARNING*: WEM live interval delay on {} currently: {}\n\nFeed time: {}\nCurrent time: {}\n".format(
                 settings.env, time_delta, history_date, now_date
             )
         )
@@ -61,7 +61,7 @@ def get_wem_interval_delay() -> bool:
 
     if live_delta > timedelta(minutes=90):
         slack_message(
-            "AEMO Live intervals for WEM on {} curently delayed by {}\n\nAEMO feed most recent: {}".format(
+            "*WARNING*: AEMO Live intervals for WEM on {} curently delayed by {}\n\nAEMO feed most recent: {}".format(
                 settings.env, live_delta, live_most_recent
             )
         )
