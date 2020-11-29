@@ -31,6 +31,11 @@ class OpennemSettings(BaseSettings):
 
     precision_default: int = 4
 
+    # asgi server settings
+    server_host: str = "0.0.0.0"
+    server_port: int = 8000
+    server_reload: bool = False
+
     # timeout on http requests
     # see opennem.utils.http
     http_timeout: int = 30
@@ -68,4 +73,6 @@ class OpennemSettings(BaseSettings):
             "sentry_url": {"env": "SENTRY_URL"},
             "slack_hook_url": {"env": "MONITORING_SLACK_HOOK"},
             "s3_bucket_path": {"env": "S3_DATA_BUCKET_PATH"},
+            "server_port": {"env": "PORT"},
+            "server_host": {"env": "HOST"},
         }
