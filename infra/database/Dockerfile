@@ -11,5 +11,5 @@ RUN set -eux \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-ADD setup-timescale.sh /setup-timescale.sh
-ADD docker-entrypoint.sh /docker-entrypoint.sh
+ADD infra/container/setup-timescale.sh /setup-timescale.sh
+ADD infra/container/docker-entrypoint.sh /docker-entrypoint.sh
