@@ -40,6 +40,10 @@ def get_wem_interval_delay() -> bool:
 
     history_date = parse_date(history_end_date, dayfirst=False)
 
+    if not history_date:
+        logger.error("Could not read history date for wem intervals")
+        return None
+
     now_date = datetime.now().astimezone(network.get_timezone())
 
     live_most_recent = get_aemo_wem_live_facility_intervals_recent_date()
