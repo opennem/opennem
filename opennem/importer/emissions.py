@@ -10,7 +10,7 @@ from opennem.importer.mms import mms_import
 logger = logging.getLogger(__name__)
 
 
-def import_pollution_mms() -> None:
+def import_mms_emissions() -> None:
     mms = mms_import()
 
     facility_poll_map = {
@@ -59,17 +59,17 @@ def import_pollution_mms() -> None:
     return None
 
 
-def import_pollution_csv() -> None:
+def import_emissions_csv() -> None:
     POLLUTION_MAPS = [
         {"filename": "wem_pollutions.csv", "network": "WEM"},
         {"filename": "nem_pollutions.csv", "network": "NEM"},
     ]
 
     for m in POLLUTION_MAPS:
-        import_pollution_map(m["filename"], m["network"])
+        import_emissions_map(m["filename"], m["network"])
 
 
-def import_pollution_map(file_name: str, network_id: str) -> None:
+def import_emissions_map(file_name: str, network_id: str) -> None:
     session = SessionLocal()
 
     content = load_data(file_name, from_project=True, skip_loaders=True)
@@ -108,4 +108,4 @@ def import_pollution_map(file_name: str, network_id: str) -> None:
 
 
 if __name__ == "__main__":
-    import_pollution_csv()
+    import_emissions_csv()
