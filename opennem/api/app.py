@@ -17,7 +17,7 @@ from opennem.api.stats.router import router as stats_router
 from opennem.api.weather.router import router as weather_router
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
-from opennem.db import get_database_session
+from opennem.db import database, get_database_session
 from opennem.db.models.opennem import FuelTech, Network
 from opennem.schema.network import NetworkSchema
 from opennem.schema.opennem import FueltechSchema
@@ -70,6 +70,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+async def startup() -> None:
+    logger.debug("In startup")
+    await database.connect()
+
+
+@app.on_event("shutdown")
+async def shutdown() -> None:
+    logger.debug("In shutdown")
+    await database.disconnect()
 
 
 @app.get("/networks", response_model=List[NetworkSchema])
