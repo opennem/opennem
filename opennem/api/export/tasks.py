@@ -16,10 +16,17 @@ logger = logging.getLogger(__name__)
 export_map = get_export_map()
 
 
-def export_power(priority: Optional[PriorityType] = None) -> None:
+def export_power(
+    priority: Optional[PriorityType] = None, latest: bool = False
+) -> None:
     power_stat_sets = export_map.get_by_stat_type(StatType.power, priority)
 
+    output_count: int = 0
+
     for power_stat in power_stat_sets:
+
+        if output_count >= 1 and latest:
+            return None
 
         stat_set = power_week(
             date_range=power_stat.date_range,
@@ -45,6 +52,7 @@ def export_power(priority: Optional[PriorityType] = None) -> None:
 
         # print(power_stat.path)
         write_output(power_stat.path, stat_set)
+        output_count += 1
 
 
 def export_energy(
