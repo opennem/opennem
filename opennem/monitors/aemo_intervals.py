@@ -9,7 +9,7 @@ from opennem.monitors.aemo_wem_live_intervals import (
 )
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings
-from opennem.utils.dates import parse_date
+from opennem.utils.dates import chop_microseconds, parse_date
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ def get_wem_interval_delay() -> bool:
 
     live_most_recent = get_aemo_wem_live_facility_intervals_recent_date()
 
-    time_delta = now_date - history_date
+    time_delta = chop_microseconds(now_date - history_date)
 
     if time_delta > timedelta(hours=3):
         slack_message(
@@ -57,7 +57,7 @@ def get_wem_interval_delay() -> bool:
             )
         )
 
-    live_delta = now_date - live_most_recent
+    live_delta = chop_microseconds(now_date - live_most_recent)
 
     if live_delta > timedelta(minutes=90):
         slack_message(
