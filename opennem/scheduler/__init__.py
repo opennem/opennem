@@ -10,7 +10,7 @@ from opennem.api.export.tasks import (
     export_power,
 )
 from opennem.exporter.geojson import export_facility_geojson
-from opennem.monitors.aemo_intervals import get_wem_interval_delay
+from opennem.monitors.aemo_intervals import aemo_wem_live_interval
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.monitors.opennem_metadata import check_metadata_status
 from opennem.settings import settings
@@ -82,7 +82,7 @@ def monitor_opennem_intervals() -> None:
 @huey.periodic_task(crontab(minute="*/15"))
 @huey.lock_task("monitor_wem_interval")
 def monitor_wem_interval() -> None:
-    get_wem_interval_delay()
+    aemo_wem_live_interval()
 
 
 @huey.periodic_task(crontab(hour="*/1"))
