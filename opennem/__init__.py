@@ -1,13 +1,14 @@
-import sentry_sdk
-from sentry_sdk.integrations.redis import RedisIntegration
-from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
-
+# setup sentry
 from opennem.settings import settings
+from opennem.utils.sentry import setup_sentry
 
-if settings.sentry_enabled and settings.debug is False:
-    sentry_sdk.init(
-        settings.sentry_url,
-        traces_sample_rate=1.0,
-        environment=settings.env,
-        integrations=[RedisIntegration(), SqlalchemyIntegration()],
-    )
+if settings.sentry_enabled:
+    setup_sentry()
+
+
+import warnings
+
+# Ignore noisy twisted deprecation warnings
+warnings.filterwarnings(
+    "ignore", category=DeprecationWarning, module="twisted"
+)
