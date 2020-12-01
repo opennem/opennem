@@ -221,9 +221,11 @@ def get_scada_range(
     """
 
     network_query = ""
+    timezone = "UTC"
 
     if network:
         network_query = f"fs.network_id = '{network.code}' and"
+        # timezone = network.timezone_database
 
     if networks:
         network_query = "fs.network_id IN ({}) and ".format(
@@ -252,7 +254,7 @@ def get_scada_range(
             facility_query=facility_query,
             network_query=network_query,
             network_region_query=network_region_query,
-            timezone=network.timezone_database,
+            timezone=timezone,
         )
     )
 
