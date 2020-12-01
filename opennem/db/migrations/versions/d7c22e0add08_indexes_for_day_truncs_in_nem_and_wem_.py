@@ -22,14 +22,12 @@ def upgrade() -> None:
         "idx_facility_scada_trading_interval_perth_day",
         "facility_scada",
         [sa.text("date_trunc('day', trading_interval AT TIME ZONE 'AWST')")],
-        postgresql_concurrently=True,
     )
 
     op.create_index(
         "idx_facility_scada_trading_interval_sydney_day",
         "facility_scada",
         [sa.text("date_trunc('day', trading_interval AT TIME ZONE 'AEST')")],
-        postgresql_concurrently=True,
     )
 
 
