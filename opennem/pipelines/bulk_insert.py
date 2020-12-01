@@ -70,6 +70,8 @@ def build_insert_query(
         tmp_table_name=datetime.strftime(datetime.now(), "%Y%m%d%H%M%S"),
     )
 
+    logger.debug(query)
+
     return query
 
 
