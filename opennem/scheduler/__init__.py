@@ -11,6 +11,7 @@ from opennem.api.export.tasks import (
 )
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.aemo_intervals import get_wem_interval_delay
+from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.monitors.opennem_metadata import check_metadata_status
 from opennem.settings import settings
 
@@ -71,6 +72,13 @@ def schedule_export_metadata() -> None:
 
 
 # monitoring tasks
+@huey.periodic_task(crontab(minute="*/15"))
+@huey.lock_task("monitor_opennem_intervals")
+def monitor_opennem_intervals() -> None:
+    for network_code in ["NEM", "WEM"]:
+        check_opennem_interval_delays(network_code)
+
+
 @huey.periodic_task(crontab(minute="*/15"))
 @huey.lock_task("monitor_wem_interval")
 def monitor_wem_interval() -> None:
