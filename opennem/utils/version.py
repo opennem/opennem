@@ -1,12 +1,16 @@
+import logging
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 import tomlkit
 from packaging.version import LegacyVersion, parse
 
+logger = logging.getLogger(__name__)
 
-def _get_project_meta():
+
+# get metadata from pyproject.toml
+def get_project_meta() -> Optional[Dict]:
     pyproject = Path(__file__).parent / "../../pyproject.toml"
 
     if not pyproject.is_file():
@@ -15,16 +19,46 @@ def _get_project_meta():
     with pyproject.open() as pp_file:
         file_contents = pp_file.read()
 
-    return tomlkit.parse(file_contents)["tool"]["poetry"]
+    project_meta = None
+
+    try:
+        project_meta = tomlkit.parse(file_contents)
+    except Exception as e:
+        logger.error("Error parsing project metadata: {}".format(e))
+        return None
+
+    return project_meta
 
 
-pkg_meta = _get_project_meta()
+# get version from VERSION file
+def get_pkg_version() -> Optional[str]:
+    import pkgutil
+
+    pkg_data = None
+
+    try:
+        pkg_data = pkgutil.get_data(__package__, "VERSION")
+    except Exception:
+        pass
+
+    if not pkg_data:
+        return None
+
+    version = pkg_data.decode("utf-8").strip()
+
+    del pkgutil
+
+    return version
+
+
+pkg_meta = get_project_meta()
 version = None
 
 if pkg_meta:
-    project = str(pkg_meta["name"])
+    poetry_meta = pkg_meta["tool"]["poetry"]
+    project = str(poetry_meta["name"])
     copyright = "2020, OpenNEM"
-    version = str(pkg_meta["version"])
+    version = str(poetry_meta["version"])
 
 release = version
 
