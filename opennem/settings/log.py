@@ -4,6 +4,22 @@ import yaml
 
 from opennem.core.loader import load_data
 
+DEFAULT_LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "loggers": {
+        "opennem": {
+            "level": "DEBUG",
+        },
+        "scrapy": {
+            "level": "ERROR",
+        },
+        "twisted": {
+            "level": "ERROR",
+        },
+    },
+}
+
 
 class SettingsNotFound(Exception):
     pass
@@ -27,10 +43,6 @@ def load_logging_config(
     config_data = yaml.safe_load(settings_file_content)
 
     return config_data
-
-
-def get_logging_config():
-    return LOGGING_CONFIG
 
 
 LOGGING_CONFIG = load_logging_config()

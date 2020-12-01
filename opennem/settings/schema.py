@@ -51,6 +51,10 @@ class OpennemSettings(BaseSettings):
     scrapy: Optional[Settings] = get_project_settings()
 
     @property
+    def sentry_enabled(self) -> bool:
+        return self.sentry_url is not None
+
+    @property
     def log_level(self) -> str:
         return self._log_level
 
