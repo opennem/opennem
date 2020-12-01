@@ -2,11 +2,10 @@ import csv
 import logging
 from datetime import datetime
 
-import requests
-
 from opennem.pipelines.nem.opennem import unit_scada_generate_facility_scada
 from opennem.schema.network import NetworkWEM
 from opennem.settings.scrapy import USER_AGENT
+from opennem.utils.http import http
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +17,7 @@ REQ_HEADERS = {
 
 
 def get_aemo_wem_live_facility_intervals_recent_date() -> datetime:
-    req = requests.get(LIVE_FACILITIES, headers=REQ_HEADERS)
+    req = http.get(LIVE_FACILITIES, headers=REQ_HEADERS)
 
     if req.status_code != 200:
         logger.error(
