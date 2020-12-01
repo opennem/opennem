@@ -10,41 +10,46 @@
         * pydantic settings
 
 """
-
-
+import logging
 import logging.config
 import os
+import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
+from scrapy.utils.log import get_scrapy_root_handler
 
 from opennem.settings.log import LOGGING_CONFIG
 from opennem.settings.utils import load_env_file
+from opennem.utils.proc import running_as_scrapy
 
 from .schema import OpennemSettings
-
-if Path(".env").is_file():
-    load_dotenv()
 
 MODULE_DIR = os.path.dirname(__file__)
 
 ENV = os.getenv("ENV", default="development")
 
-_env_file = load_env_file(ENV)
+env_files = load_env_file(ENV)
 
+# Load the env files
 # @TODO add logging
-if _env_file:
+for _env_file in env_files:
     load_dotenv(dotenv_path=_env_file, override=True)
 
 # @NOTE don't use pydantics env file support since it doesn't support multiple
 settings: OpennemSettings = OpennemSettings()
 
 
-# setup logging
-
-if LOGGING_CONFIG:
-    if settings.env == "development":
-        LOGGING_CONFIG["root"]["level"] = "DEBUG"
-        LOGGING_CONFIG["loggers"]["opennem"]["level"] = "DEBUG"
+# skip if the current cli is scrapy
+if LOGGING_CONFIG and not running_as_scrapy():
+    # don't mess with scrapy logging
 
     logging.config.dictConfig(LOGGING_CONFIG)
+
+    log_level = logging.getLevelName(settings.log_level)
+
+    # set root log level
+    logging.root.setLevel(log_level)
+
+    opennem_logger = logging.getLogger("opennem")
+    opennem_logger.setLevel(log_level)
