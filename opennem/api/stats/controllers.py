@@ -252,7 +252,7 @@ def get_scada_range(
             facility_query=facility_query,
             network_query=network_query,
             network_region_query=network_region_query,
-            timezone="UTC",
+            timezone=network.timezone_database,
         )
     )
 
