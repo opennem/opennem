@@ -13,11 +13,8 @@
 import logging
 import logging.config
 import os
-import sys
-from pathlib import Path
 
 from dotenv import load_dotenv
-from scrapy.utils.log import get_scrapy_root_handler
 
 from opennem.settings.log import LOGGING_CONFIG
 from opennem.settings.utils import load_env_file
