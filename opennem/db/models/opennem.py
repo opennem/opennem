@@ -8,7 +8,7 @@
 """
 
 from decimal import Decimal
-from typing import Optional
+from typing import List, Optional
 
 from dictalchemy import DictableModel
 from geoalchemy2 import Geometry
@@ -341,7 +341,9 @@ class Station(Base, BaseModel):
     )
     location = relationship("Location", lazy="joined", innerjoin=False)
 
-    facilities = relationship("Facility", lazy="joined", innerjoin=False)
+    facilities: List[BaseModel] = relationship(
+        "Facility", lazy="joined", innerjoin=False
+    )
 
     revisions = relationship("Revision")
 
