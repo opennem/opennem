@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 from geojson_pydantic.geometries import Point
 
@@ -14,7 +14,10 @@ def stations_to_geojson(stations: List[Station]) -> FacilityGeo:
         if not station.location:
             continue
 
-        feature_dict = dict(properties=dict(),)
+        if not station.facilities or len(station.facilities) < 1:
+            continue
+
+        feature_dict: Dict = dict(properties=dict())
 
         feature_dict["properties"] = {
             "station_id": station.id,
@@ -31,6 +34,10 @@ def stations_to_geojson(stations: List[Station]) -> FacilityGeo:
         }
 
         for facility in station.facilities:
+
+            if not facility.fueltech:
+                continue
+
             feature_dict["properties"]["duid_data"].append(
                 {
                     # "oid": facility.oid,
