@@ -9,6 +9,8 @@ from scrapy.utils.project import get_project_settings
 class OpennemSettings(BaseSettings):
     env: str = "development"
 
+    _log_level: str = "DEBUG"
+
     db_url: PostgresDsn = "postgres://opennem:opennem@127.0.0.1:15433/opennem"
 
     cache_url: RedisDsn = "redis://127.0.0.1"
@@ -49,6 +51,10 @@ class OpennemSettings(BaseSettings):
     scrapy: Optional[Settings] = get_project_settings()
 
     @property
+    def log_level(self) -> str:
+        return self._log_level
+
+    @property
     def static_folder_path(self) -> str:
         _path: Path = Path(self._static_folder_path)
 
@@ -66,6 +72,7 @@ class OpennemSettings(BaseSettings):
     class Config:
         fields = {
             "env": {"env": "ENV"},
+            "log_level": {"env": "LOG_LEVEL"},
             "_static_folder_path": {"env": "STATIC_PATH"},
             "export_local": {"env": "EXPORT_LOCAL"},
             "db_url": {"env": "DATABASE_HOST_URL"},
