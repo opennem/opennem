@@ -64,3 +64,5 @@ loggers:
   scrapy:
     level: ERROR
     propagate: yes
+  scrapy.utils.log:
+    level: ERROR
