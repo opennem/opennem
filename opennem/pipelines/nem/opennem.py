@@ -217,14 +217,14 @@ def process_meter_data_gen_duid(table, spider):
     item = dict()
 
     item["table_schema"] = FacilityScada
-    item["update_fields"] = ["eoi_quantity"]
+    item["update_fields"] = ["generated"]
     item["records"] = unit_scada_generate_facility_scada(
         records,
         spider,
         network=NetworkNEM,
         interval_field="INTERVAL_DATETIME",
         facility_code_field="DUID",
-        energy_field="MWH_READING",
+        power_field="MWH_READING",
     )
     item["content"] = None
 
