@@ -2,14 +2,17 @@ from pathlib import Path
 from typing import Optional
 
 from pydantic import BaseSettings, PostgresDsn, RedisDsn
+from pydantic.class_validators import validator
 from scrapy.settings import Settings
 from scrapy.utils.project import get_project_settings
+
+SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 
 class OpennemSettings(BaseSettings):
     env: str = "development"
 
-    _log_level: str = "DEBUG"
+    log_level: str = "DEBUG"
 
     db_url: PostgresDsn = "postgres://opennem:opennem@127.0.0.1:15433/opennem"
 
@@ -50,13 +53,19 @@ class OpennemSettings(BaseSettings):
     # @todo overwrite scrapy settings here
     scrapy: Optional[Settings] = get_project_settings()
 
+    @validator("log_level")
+    def validate_log_level(cls, log_value: str) -> Optional[str]:
+
+        _log_value = log_value.upper().strip()
+
+        if _log_value not in SUPPORTED_LOG_LEVEL_NAMES:
+            raise Exception("Invalid log level: {}".format(_log_value))
+
+        return _log_value
+
     @property
     def sentry_enabled(self) -> bool:
         return self.sentry_url is not None
-
-    @property
-    def log_level(self) -> str:
-        return self._log_level
 
     @property
     def static_folder_path(self) -> str:
