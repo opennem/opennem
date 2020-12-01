@@ -71,7 +71,7 @@ def schedule_export_metadata() -> None:
 
 
 # monitoring tasks
-@huey.periodic_task(crontab(minute="*/1"))
+@huey.periodic_task(crontab(minute="*/15"))
 @huey.lock_task("monitor_wem_interval")
 def monitor_wem_interval() -> None:
     get_wem_interval_delay()
