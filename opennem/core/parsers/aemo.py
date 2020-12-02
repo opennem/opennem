@@ -122,6 +122,16 @@ class AEMOTableSet(BaseModel):
 
         return True
 
+    def get_table(self, table_name: str) -> AEMOTableSchema:
+        if not self.has_table(table_name):
+            raise Exception("Table not found: {}".format(table_name))
+
+        table_lookup = list(
+            filter(lambda t: t.name == table_name, self.tables)
+        )
+
+        return table_lookup.pop()
+
 
 class AEMOParserException(Exception):
     pass
