@@ -6,7 +6,7 @@
 
 import csv
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, validator
 from pydantic.error_wrappers import ValidationError
@@ -63,6 +63,9 @@ class AEMOTableSchema(BaseModel):
         self._record_schema = schema
 
         return True
+
+    def get_records(self) -> Any:
+        return self.records
 
     def add_record(self, record: Union[Dict, BaseModel]) -> bool:
         if self._record_schema:
