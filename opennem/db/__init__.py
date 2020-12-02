@@ -50,8 +50,12 @@ def db_connect(
             json_serializer=opennem_serialize,
             json_deserializer=opennem_deserialize,
             echo=debug,
-            pool_size=5,
+            pool_size=10,
+            max_overflow=2,
+            pool_recycle=300,
             pool_timeout=timeout,
+            pool_pre_ping=True,
+            pool_use_lifo=True,
             connect_args=connect_args,
         )
     except Exception as exc:
