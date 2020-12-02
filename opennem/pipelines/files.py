@@ -14,6 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 def _fallback_download_handler(url: str) -> bytes:
+    """
+    This was previously a fallback download handler
+    but the name is redundant as it's now the primary
+    and takes precedence over the legacy downloader
+
+
+    """
     r = http.get(url)
 
     if not r.ok:
@@ -26,6 +33,9 @@ def _fallback_download_handler(url: str) -> bytes:
     if not file_mime:
         file_mime = mime_from_url(url)
 
+    # @TODO handle all this in utils/archive.py
+    # and make it all generic to handle other
+    # mime types
     if file_mime == "application/zip":
         with ZipFile(content) as zf:
             if len(zf.namelist()) == 1:
@@ -48,7 +58,11 @@ def _fallback_download_handler(url: str) -> bytes:
 
 class LinkExtract(object):
     """
-    parses and extracts links in items
+    Parse and extracts links in items.
+
+    If the pipeline item has a "link" it'll download the content
+    and attach it to the item as "content" along with some
+    basic metadata.
 
     """
 
