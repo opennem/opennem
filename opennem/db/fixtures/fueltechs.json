@@ -103,5 +103,15 @@
     "code": "nuclear",
     "label": "Nuclear",
     "renewable": true
+  },
+  {
+    "code": "network_import",
+    "label": "Network Import",
+    "renewable": false
+  },
+  {
+    "code": "network_export",
+    "label": "Network Export",
+    "renewable": false
   }
 ]
