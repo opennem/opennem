@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # pylint: disable=no-self-argument
 class AEMOTableSchema(BaseModel):
     name: str
-    namespace: Optional[str]
+    namespace: str
     fieldnames: List[str]
     records: List[Union[Dict, BaseModel]] = []
 
@@ -36,7 +36,7 @@ class AEMOTableSchema(BaseModel):
 
     @property
     def full_name(self) -> str:
-        return "{}_{}".format(self.name, self.namespace)
+        return "{}_{}".format(self.namespace, self.name)
 
     @validator("name")
     def validate_name(cls, table_name: str) -> str:
@@ -111,8 +111,10 @@ class AEMOTableSet(BaseModel):
         if len(self.tables) < 1:
             return False
 
+        table_name = table_name.upper()
+
         table_lookup = list(
-            filter(lambda t: t.name == table_name, self.tables)
+            filter(lambda t: t.full_name == table_name, self.tables)
         )
 
         return len(table_lookup) > 0
@@ -123,11 +125,13 @@ class AEMOTableSet(BaseModel):
         return True
 
     def get_table(self, table_name: str) -> AEMOTableSchema:
+        table_name = table_name.upper()
+
         if not self.has_table(table_name):
             raise Exception("Table not found: {}".format(table_name))
 
         table_lookup = list(
-            filter(lambda t: t.name == table_name, self.tables)
+            filter(lambda t: t.full_name == table_name, self.tables)
         )
 
         return table_lookup.pop()
@@ -175,8 +179,8 @@ def parse_aemo_csv(content: str) -> AEMOTableSet:
             if table_current:
                 table_set.add_table(table_current)
 
-            table_name = row[1]
-            table_namespace = row[2]
+            table_namespace = row[1]
+            table_name = row[2]
             table_fields = row[4:]
 
             table_current = AEMOTableSchema(
