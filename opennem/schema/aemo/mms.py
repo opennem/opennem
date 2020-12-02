@@ -26,6 +26,19 @@ def mms_alias_generator(name: str) -> str:
     return _name
 
 
+def validate_date(date_value: str) -> datetime:
+    dt = parse_date(date_value)
+
+    if not dt:
+        raise ValueError("Not a valid date: {}".format(date_value))
+
+    return dt
+
+
+def capitalize_string(string_val: str) -> str:
+    return string_val.capitalize()
+
+
 class MMSBase(BaseModel):
     class Config:
         anystr_strip_whitespace = True
@@ -38,24 +51,7 @@ class MMSBase(BaseModel):
 
 # pylint: disable=no-self-argument
 class ParticipantMNSPInterconnector(MMSBase):
-    """
-    "LINKID": "BLNKVIC",
-    "EFFECTIVEDATE": "2020/07/01 00:00:00",
-    "VERSIONNO": "1",
-    "INTERCONNECTORID": "T-V-MNSP1",
-    "FROMREGION": "VIC1",
-    "TOREGION": "TAS1",
-    "MAXCAPACITY": "478",
-    "TLF": "",
-    "LHSFACTOR": "-1",
-    "METERFLOWCONSTANT": "0",
-    "AUTHORISEDDATE": "2012/06/20 12:58:00",
-    "AUTHORISEDBY": "Tom",
-    "LASTCHANGED": "2020/06/23 09:48:36",
-    "FROM_REGION_TLF": "0.962",
-    "TO_REGION_TLF": "1"
-
-    """
+    """"""
 
     linkid: str
     effectivedate: datetime
@@ -98,8 +94,25 @@ class ParticipantMNSPInterconnector(MMSBase):
         return dt
 
 
+# pylint: disable=no-self-argument
+class MarketConfigInterconnector(MMSBase):
+    """"""
+
+    interconnectorid: str
+    regionfrom: str
+    regionto: str
+    description: str
+    lastchanged: datetime
+
+    # validators
+    _validate_description = validator("description")(capitalize_string)
+    _validate_lastchanged = validator("lastchanged", pre=True)(validate_date)
+
+
+# Map AEMO full table names to schemas
 TABLE_TO_SCHEMA_MAP = {
     "PARTICIPANT_REGISTRATION_MNSP_INTERCONNECTOR": ParticipantMNSPInterconnector,
+    "MARKET_CONFIG_INTERCONNECTOR": MarketConfigInterconnector,
 }
 
 
