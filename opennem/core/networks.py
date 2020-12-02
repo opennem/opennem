@@ -7,6 +7,22 @@ from opennem.schema.network import (
     NetworkWEM,
 )
 
+NEM_STATES = ["QLD", "NSW", "VIC", "ACT", "TAS", "SA", "NT"]
+
+
+def state_from_network_region(network_region: str) -> str:
+    _state = network_region
+
+    if _state.endswith("1"):
+        _state = _state[:-1]
+
+    _state = _state.strip().upper()
+
+    if _state in NEM_STATES:
+        return _state
+
+    raise Exception("State {} not found".format(network_region))
+
 
 def network_from_state(state: str) -> NetworkSchema:
     state = state.upper().strip()
