@@ -303,6 +303,12 @@ TABLE_PROCESSOR_MAP = {
 class NemwebUnitScadaOpenNEMStorePipeline(object):
     @check_spider_pipeline
     def process_item(self, item, spider=None):
+        if not item:
+            msg = "NemwebUnitScadaOpenNEMStorePipeline"
+            if spider and hasattr(spider, "name"):
+                msg = spider.name
+            logger.error("No item in pipeline: {}".format(msg))
+            return {}
 
         if "tables" not in item:
             print(item)
