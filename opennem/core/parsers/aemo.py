@@ -6,9 +6,13 @@
 
 import csv
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, validator
+from pydantic.error_wrappers import ValidationError
+from pydantic.fields import PrivateAttr
+
+from opennem.schema.aemo.mms import get_mms_schema_for_table
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +22,10 @@ class AEMOTableSchema(BaseModel):
     name: str
     namespace: Optional[str]
     fieldnames: List[str]
-    records: List[Dict] = []
+    records: List[Union[Dict, BaseModel]] = []
+
+    # optionally it has a schema
+    _record_schema: Optional[BaseModel] = PrivateAttr()
 
     # the url this table was taken from if any
     url_source: Optional[str]
@@ -52,11 +59,46 @@ class AEMOTableSchema(BaseModel):
 
         return _fieldnames
 
-    def add_record(self, record: Dict) -> bool:
-        # @TODO validate + table schemas! should be coool
-        self.records.append(record)
+    def set_schema(self, schema: BaseModel) -> bool:
+        self._record_schema = schema
 
         return True
+
+    def add_record(self, record: Union[Dict, BaseModel]) -> bool:
+        if self._record_schema:
+            _record = None
+
+            try:
+                _record = self._record_schema(**record)  # type: ignore
+            except ValidationError as e:
+                val_errors = e.errors()
+
+                for ve in val_errors:
+                    ve_fieldname = ve["loc"][0]
+                    ve_val = ""
+
+                    if (
+                        record
+                        and isinstance(record, dict)
+                        and ve_fieldname in record
+                    ):
+                        ve_val = record[ve_fieldname]
+
+                    logger.error(
+                        "{} has error: {} '{}'".format(
+                            ve_fieldname, ve["msg"], ve_val
+                        )
+                    )
+                return False
+
+            self.records.append(_record)
+        else:
+            self.records.append(record)
+
+        return True
+
+    class Config:
+        underscore_attrs_are_private = True
 
 
 class AEMOTableSet(BaseModel):
@@ -89,6 +131,11 @@ AEMO_ROW_HEADER_TYPES = ["C", "I", "D"]
 
 
 def parse_aemo_csv(content: str) -> AEMOTableSet:
+    """
+    Parse AEMO CSV's into schemas and return a table set
+
+    Exception raised on error and logs malformed CSVs
+    """
     content_split = content.splitlines()
 
     datacsv = csv.reader(content_split)
@@ -128,6 +175,12 @@ def parse_aemo_csv(content: str) -> AEMOTableSet:
                 fields=table_fields,
                 fieldnames=table_fields,
             )
+
+            # do we have a custom shema for the table?
+            table_schema = get_mms_schema_for_table(table_current.full_name)
+
+            if table_schema:
+                table_current.set_schema(table_schema)
 
         # new record
         elif record_type == "D":
