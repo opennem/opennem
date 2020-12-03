@@ -105,12 +105,12 @@
     "renewable": true
   },
   {
-    "code": "network_import",
+    "code": "imports",
     "label": "Network Import",
     "renewable": false
   },
   {
-    "code": "network_export",
+    "code": "exports",
     "label": "Network Export",
     "renewable": false
   }
