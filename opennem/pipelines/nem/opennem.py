@@ -16,7 +16,7 @@ from sqlalchemy.dialects.postgresql import insert
 from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal, get_database_engine
-from opennem.db.models.opennem import BalancingSummary, FacilityScada
+from opennem.db.models.opennem import BalancingSummary, Facility, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
 from opennem.schema.network import NetworkSchema
 from opennem.utils.dates import parse_date
@@ -129,7 +129,7 @@ def generate_balancing_summary(
     limit: int = 0,
 ) -> List[Dict]:
     created_at = datetime.now()
-    primary_keys = []
+    # primary_keys = []
     return_records = []
 
     created_by = ""
@@ -158,7 +158,7 @@ def generate_balancing_summary(
             "created_at": created_at,
             "updated_at": None,
             "network_id": network.code,
-            "network_region": network_region_field,
+            "network_region": network_region,
             "trading_interval": trading_interval,
             "price": price,
         }
@@ -173,14 +173,98 @@ def generate_balancing_summary(
 
 # Processors
 
-def process_dispatch_interconnectorres(table: Dict, spider: Spider):
-    pass
+
+def get_interconnector_facility(facility_code: str) -> Facility:
+    session = SessionLocal()
+
+    _fac = session.query(Facility).filter_by(code=facility_code).one_or_none()
+
+    if not _fac:
+        raise Exception("Could not find facility {}".format(facility_code))
+
+    return _fac
+
+
+def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
+    session = SessionLocal()
+    engine = get_database_engine()
+
+    if "records" not in table:
+        raise Exception("Invalid table no records")
+
+    records = table["records"]
+
+    records_to_store = []
+
+    for record in records:
+        trading_interval = parse_date(
+            record["SETTLEMENTDATE"], network=NetworkNEM, dayfirst=False
+        )
+
+        if not trading_interval:
+            continue
+
+        facility_code = normalize_duid(record["INTERCONNECTORID"])
+        # facility = get_interconnector_facility(facility_code)
+        power_value = clean_float(record["METEREDMWFLOW"])
+
+        records_to_store.append(
+            {
+                "network_id": "NEM",
+                "created_by": spider.name,
+                # "updated_by": None,
+                "facility_code": facility_code,
+                # "network_region": facility.network_region,
+                "trading_interval": trading_interval,
+                "generated": power_value,
+            }
+        )
+
+        facility_code = "{}-2".format(
+            normalize_duid(record["INTERCONNECTORID"])
+        )
+        # facility = get_interconnector_facility(facility_code)
+
+        if power_value:
+            power_value = -power_value
+
+        records_to_store.append(
+            {
+                "network_id": "NEM",
+                "created_by": spider.name,
+                # "updated_by": None,
+                "facility_code": facility_code,
+                # "network_region": facility.network_region,
+                "trading_interval": trading_interval,
+                "generated": power_value,
+            }
+        )
+
+    stmt = insert(FacilityScada).values(records_to_store)
+    stmt.bind = engine
+    stmt = stmt.on_conflict_do_update(
+        index_elements=["trading_interval", "network_id", "facility_code"],
+        set_={"generated": stmt.excluded.generated},
+    )
+
+    try:
+        session.execute(stmt)
+        session.commit()
+    except Exception as e:
+        logger.error("Error inserting records")
+        logger.error(e)
+        return {"num_records": 0}
+    finally:
+        session.close()
+
+    return {"num_records": len(records_to_store)}
+
 
 def process_case_solutions(table: Dict, spider: Spider):
     pass
 
 
-def process_pre_ap_price(table, spider):
+def process_pre_ap_price(table: Dict, spider: Spider) -> int:
     session = SessionLocal()
     engine = get_database_engine()
 
@@ -230,7 +314,7 @@ def process_pre_ap_price(table, spider):
     return len(records_to_store)
 
 
-def process_unit_scada(table, spider):
+def process_unit_scada(table, spider) -> Dict:
     if "records" not in table:
         raise Exception("Invalid table no records")
 
@@ -247,7 +331,7 @@ def process_unit_scada(table, spider):
     return item
 
 
-def process_unit_solution(table, spider):
+def process_unit_solution(table, spider) -> Dict:
     if "records" not in table:
         raise Exception("Invalid table no records")
 
@@ -269,7 +353,7 @@ def process_unit_solution(table, spider):
     return item
 
 
-def process_meter_data_gen_duid(table, spider):
+def process_meter_data_gen_duid(table, spider) -> Dict:
     if "records" not in table:
         raise Exception("Invalid table no records")
 
@@ -291,7 +375,7 @@ def process_meter_data_gen_duid(table, spider):
     return item
 
 
-def process_rooftop_actual(table, spider):
+def process_rooftop_actual(table, spider) -> Dict:
     if "records" not in table:
         raise Exception("Invalid table no records")
 
@@ -351,6 +435,7 @@ def process_rooftop_actual(table, spider):
 
 
 TABLE_PROCESSOR_MAP = {
+    "DISPATCH_INTERCONNECTORRES": "process_dispatch_interconnectorres",
     "METER_DATA_GEN_DUID": "process_meter_data_gen_duid",
     "DISPATCH_CASE_SOLUTION": "process_case_solutions",
     "DISPATCH_UNIT_SCADA": "process_unit_scada",

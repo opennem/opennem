@@ -525,6 +525,8 @@ class Facility(Base, BaseModel):
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
 
+    # in_export = Column(Boolean, default=True)
+
     @hybrid_property
     def capacity_aggregate(self) -> Optional[float]:
         """
