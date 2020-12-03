@@ -100,19 +100,24 @@ def import_nem_interconnects() -> None:
         if not int_facility:
             int_facility = Facility(
                 code=interconnector.interconnectorid,
-                dispatch_type="generator",
+                dispatch_type=DispatchType.GENERATOR,
                 network_id="NEM",
             )
 
         int_facility.network_region = interconnector.regionfrom
+        int_facility.status_id = "operating"
         int_facility.approved = True
-        int_facility.approved_by = __name__
-        int_facility.created_by = __name__
+        int_facility.approved_by = "opennem.importer.interconnectors"
+        int_facility.created_by = "opennem.importer.interconnectors"
         int_facility.fueltech_id = "exports"
+
+        # logger.debug(
+        #     "Created facility: {}".format(interconnector.interconnectorid)
+        # )
 
         # Fac2
         _code = "{}-2".format(interconnector.interconnectorid)
-        int_facility = (
+        int_facility2 = (
             session.query(Facility)
             .filter_by(code=_code)
             .filter_by(dispatch_type=DispatchType.LOAD)
@@ -120,16 +125,26 @@ def import_nem_interconnects() -> None:
             .one_or_none()
         )
 
-        if not int_facility:
-            int_facility = Facility(
-                code=_code, dispatch_type="load", network_id="NEM"
+        if not int_facility2:
+            int_facility2 = Facility(
+                code=_code, dispatch_type=DispatchType.LOAD, network_id="NEM"
             )
 
-        int_facility.network_region = interconnector.regionto
-        int_facility.approved = True
-        int_facility.approved_by = __name__
-        int_facility.created_by = __name__
-        int_facility.fueltech_id = "imports"
+        int_facility2.network_region = interconnector.regionto
+        int_facility2.status_id = "operating"
+        int_facility2.approved = True
+        int_facility2.approved_by = "opennem.importer.interconnectors"
+        int_facility2.created_by = "opennem.importer.interconnectors"
+        int_facility2.fueltech_id = "imports"
+
+        interconnector_station.facilities.append(int_facility)
+        interconnector_station.facilities.append(int_facility2)
+
+        session.add(interconnector_station)
+
+        logger.debug("Created station: {}".format(interconnector_station.code))
+
+    session.commit()
 
     return None
 
