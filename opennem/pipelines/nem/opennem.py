@@ -6,11 +6,11 @@ NEMWEB Data ingress into OpenNEM format
 """
 
 import logging
-from collections import OrderedDict
 from datetime import datetime
 from itertools import groupby
 from typing import Dict, List, Optional
 
+from scrapy import Spider
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.core.networks import NetworkNEM
@@ -25,58 +25,7 @@ from opennem.utils.pipelines import check_spider_pipeline
 logger = logging.getLogger(__name__)
 
 
-def process_case_solutions(table):
-    pass
-
-
-def process_pre_ap_price(table, spider):
-    session = SessionLocal()
-    engine = get_database_engine()
-
-    if "records" not in table:
-        raise Exception("Invalid table no records")
-
-    records = table["records"]
-
-    records_to_store = []
-
-    for record in records:
-        trading_interval = parse_date(
-            record["SETTLEMENTDATE"], network=NetworkNEM, dayfirst=False
-        )
-
-        if not trading_interval:
-            continue
-
-        records_to_store.append(
-            {
-                "network_id": "NEM",
-                "created_by": spider.name,
-                # "updated_by": None,
-                "network_region": record["REGIONID"],
-                "trading_interval": trading_interval,
-                "price": record["PRE_AP_ENERGY_PRICE"],
-            }
-        )
-
-    stmt = insert(BalancingSummary).values(records_to_store)
-    stmt.bind = engine
-    stmt = stmt.on_conflict_do_update(
-        index_elements=["trading_interval", "network_id", "network_region"],
-        set_={"price": stmt.excluded.price},
-    )
-
-    try:
-        session.execute(stmt)
-        session.commit()
-    except Exception as e:
-        logger.error("Error inserting records")
-        logger.error(e)
-        return 0
-    finally:
-        session.close()
-
-    return len(records_to_store)
+# Helpers
 
 
 def unit_scada_generate_facility_scada(
@@ -168,6 +117,117 @@ def unit_scada_generate_facility_scada(
     return_records = list(return_records_grouped.values())
 
     return return_records
+
+
+def generate_balancing_summary(
+    records: List[Dict],
+    spider: Spider,
+    interval_field: str = "SETTLEMENTDATE",
+    network_region_field: str = "REGIONID",
+    price_field: Optional[str] = None,
+    network: NetworkSchema = NetworkNEM,
+    limit: int = 0,
+) -> List[Dict]:
+    created_at = datetime.now()
+    primary_keys = []
+    return_records = []
+
+    created_by = ""
+
+    if spider and hasattr(spider, "name"):
+        created_by = spider.name
+
+    for row in records:
+
+        trading_interval = parse_date(
+            row[interval_field], network=network, dayfirst=False
+        )
+
+        network_region = None
+
+        if network_region_field and network_region_field in row:
+            network_region = row[network_region_field]
+
+        price = None
+
+        if price_field and price_field in row:
+            price = clean_float(row[price_field])
+
+        __rec = {
+            "created_by": created_by,
+            "created_at": created_at,
+            "updated_at": None,
+            "network_id": network.code,
+            "network_region": network_region_field,
+            "trading_interval": trading_interval,
+            "price": price,
+        }
+
+        return_records.append(__rec)
+
+        if limit > 0 and len(return_records) >= limit:
+            break
+
+    return return_records
+
+
+# Processors
+
+def process_dispatch_interconnectorres(table: Dict, spider: Spider):
+    pass
+
+def process_case_solutions(table: Dict, spider: Spider):
+    pass
+
+
+def process_pre_ap_price(table, spider):
+    session = SessionLocal()
+    engine = get_database_engine()
+
+    if "records" not in table:
+        raise Exception("Invalid table no records")
+
+    records = table["records"]
+
+    records_to_store = []
+
+    for record in records:
+        trading_interval = parse_date(
+            record["SETTLEMENTDATE"], network=NetworkNEM, dayfirst=False
+        )
+
+        if not trading_interval:
+            continue
+
+        records_to_store.append(
+            {
+                "network_id": "NEM",
+                "created_by": spider.name,
+                # "updated_by": None,
+                "network_region": record["REGIONID"],
+                "trading_interval": trading_interval,
+                "price": record["PRE_AP_ENERGY_PRICE"],
+            }
+        )
+
+    stmt = insert(BalancingSummary).values(records_to_store)
+    stmt.bind = engine
+    stmt = stmt.on_conflict_do_update(
+        index_elements=["trading_interval", "network_id", "network_region"],
+        set_={"price": stmt.excluded.price},
+    )
+
+    try:
+        session.execute(stmt)
+        session.commit()
+    except Exception as e:
+        logger.error("Error inserting records")
+        logger.error(e)
+        return 0
+    finally:
+        session.close()
+
+    return len(records_to_store)
 
 
 def process_unit_scada(table, spider):

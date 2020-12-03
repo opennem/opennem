@@ -1,5 +1,5 @@
-from opennem.pipelines.bulk_insert import BulkInsertPipeline
-from opennem.pipelines.csv import RecordsToCSVPipeline
+# from opennem.pipelines.bulk_insert import BulkInsertPipeline
+# from opennem.pipelines.csv import RecordsToCSVPipeline
 from opennem.pipelines.nem.opennem import NemwebUnitScadaOpenNEMStorePipeline
 from opennem.spiders.nemweb import NemwebSpider
 
@@ -15,8 +15,8 @@ class NemwebLatestDispatchIS(NemwebSpider):
     pipelines_extra = set(
         [
             NemwebUnitScadaOpenNEMStorePipeline,
-            BulkInsertPipeline,
-            RecordsToCSVPipeline,
+            # BulkInsertPipeline,
+            # RecordsToCSVPipeline,
         ]
     )
 
@@ -29,8 +29,8 @@ class NemwebCurrentDispatchIS(NemwebSpider):
     pipelines_extra = set(
         [
             NemwebUnitScadaOpenNEMStorePipeline,
-            BulkInsertPipeline,
-            RecordsToCSVPipeline,
+            # BulkInsertPipeline,
+            # RecordsToCSVPipeline,
         ]
     )
 
@@ -43,8 +43,8 @@ class NemwebArchiveDispatchIS(NemwebSpider):
     pipelines_extra = set(
         [
             NemwebUnitScadaOpenNEMStorePipeline,
-            BulkInsertPipeline,
-            RecordsToCSVPipeline,
+            # BulkInsertPipeline,
+            # RecordsToCSVPipeline,
         ]
     )
 
