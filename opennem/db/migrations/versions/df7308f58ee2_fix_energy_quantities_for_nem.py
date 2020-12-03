@@ -17,9 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute(
-        "update facility_scada set eoi_quantity = null where network_id='NEM'"
-    )
+    pass
 
 
 def downgrade() -> None:
