@@ -1,19 +1,13 @@
 import functools
 import logging
-import re
+from typing import Any, Callable, Dict
 
-import six
-
-
-def regex(x):
-    if isinstance(x, six.string_types):
-        return re.compile(x)
-    return x
+from scrapy.spiders import Spider
 
 
-def check_spider_pipeline(process_item_method):
+def check_spider_pipeline(process_item_method: Callable) -> Callable:
     @functools.wraps(process_item_method)
-    def wrapper(self, item, spider):
+    def wrapper(self, item: Dict, spider: Spider) -> Any:  # type: ignore
 
         # message template for debugging
         msg = "%%s %s pipeline step" % (self.__class__.__name__,)
@@ -29,7 +23,7 @@ def check_spider_pipeline(process_item_method):
                 pipelines |= spider.pipelines_extra
 
         if self.__class__ in pipelines:
-            spider.log(msg % "executing", level=logging.INFO)
+            spider.log(msg % "Executing", level=logging.INFO)
             return process_item_method(self, item, spider)
 
         else:
