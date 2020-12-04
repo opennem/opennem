@@ -243,7 +243,7 @@ def energy_facility(
             (select
                 date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
                 fs.facility_code,
-                coalesce(sum(fs.eoi_quantity), NULL) / {scale} as generated
+                coalesce(sum(fs.eoi_quantity), 0.0) / {scale} as generated
                 from facility_scada fs
                 where
                     fs.facility_code in ({facility_codes_parsed})
@@ -292,13 +292,14 @@ def energy_facility_query(
                 f.code as facility_code,
                 coalesce(
                     sum(eoi_quantity),
-                    energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated))
+                    energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)),
+                    0.0
                 ) as energy,
                 case when avg(bs.price) > 0 then
                     coalesce(
                         sum(eoi_quantity) * avg(bs.price),
                         energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price),
-                        NULL
+                        0.0
                     )
                 else 0.0
                 end as market_value,
@@ -306,7 +307,7 @@ def energy_facility_query(
                     coalesce(
                         sum(eoi_quantity) * avg(f.emissions_factor_co2),
                         energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(f.emissions_factor_co2),
-                        NULL
+                        0.0
                     )
                 else 0.0
                 end as emissions
@@ -407,7 +408,7 @@ def energy_network(
             (select
                 date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
                 fs.facility_code,
-                coalesce(sum(fs.eoi_quantity), NULL) / {scale} as generated
+                coalesce(sum(fs.eoi_quantity), 0.0) / {scale} as generated
                 from facility_scada fs
                 where
                     fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
