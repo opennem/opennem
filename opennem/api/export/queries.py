@@ -4,7 +4,6 @@ from typing import List, Optional
 
 from opennem.api.stats.controllers import get_scada_range, networks_to_in
 from opennem.api.stats.schema import ScadaDateRange
-from opennem.api.time import human_to_period
 from opennem.schema.network import NetworkSchema, NetworkWEM
 from opennem.schema.time import TimeInterval, TimePeriod
 
