@@ -1,7 +1,7 @@
 set -euxo pipefail
 
 # fix for containers
-export PYTHONPATH="$PWD:$PYTHONPATH"
+# export PYTHONPATH="$PWD:${PYTHONPATH:}"
 
 # activate venv
 source .venv/bin/activate
