@@ -300,7 +300,7 @@ def energy_facility_query(
                         energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price),
                         NULL
                     )
-                else null
+                else 0.0
                 end as market_value,
                 case when avg(f.emissions_factor_co2) > 0 then
                     coalesce(
@@ -308,7 +308,7 @@ def energy_facility_query(
                         energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(f.emissions_factor_co2),
                         NULL
                     )
-                else null
+                else 0.0
                 end as emissions
             from facility_scada fs
                 left join facility f on fs.facility_code = f.code
