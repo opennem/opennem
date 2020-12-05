@@ -33,6 +33,4 @@ def write_output(
     else:
         byte_count = write_to_s3(path, write_content)
 
-    logger.info("Wrote {} bytes to {}".format(byte_count, path))
-
     return byte_count
