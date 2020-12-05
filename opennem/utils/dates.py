@@ -223,7 +223,7 @@ def chop_microseconds(delta: timedelta) -> timedelta:
     return delta - timedelta(microseconds=delta.microseconds)
 
 
-def get_date_component(format_str, dt: datetime = None):
+def get_date_component(format_str, dt: datetime = None) -> str:
     """
     Get the format string part out of a date
 
