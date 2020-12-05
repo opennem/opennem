@@ -221,3 +221,16 @@ def date_range_from_week(
 
 def chop_microseconds(delta: timedelta) -> timedelta:
     return delta - timedelta(microseconds=delta.microseconds)
+
+
+def get_date_component(format_str, dt: datetime = None):
+    """
+    Get the format string part out of a date
+
+    ex.
+    >>> get_date_component("%Y")
+    > 2020
+    """
+    if dt:
+        return dt.strftime(format_str)
+    return datetime.now().strftime(format_str)

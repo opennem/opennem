@@ -14,15 +14,10 @@ from opennem.pipelines.nem import (
     UnzipSingleFilePipeline,
 )
 from opennem.pipelines.nem.opennem import NemwebUnitScadaOpenNEMStorePipeline
+from opennem.spiders.wem import get_date_component
 from opennem.utils.dates import month_series
 from opennem.utils.handlers import _handle_zip, chain_streams
 from opennem.utils.mime import decode_bytes, mime_from_content, mime_from_url
-
-
-def get_date_component(format_str, dt: datetime = None):
-    if dt:
-        return dt.strftime(format_str)
-    return datetime.now().strftime(format_str)
 
 
 class NemXLSSpider(scrapy.Spider):
