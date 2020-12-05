@@ -103,14 +103,6 @@ def parse_date(
     return dt_return
 
 
-def get_date_component(format_str: str) -> str:
-    """
-    Get a part of a date
-    """
-
-    return datetime.now().strftime(format_str)
-
-
 def date_series(
     start: Union[datetime, date] = None,
     end: Union[datetime, date] = None,
@@ -223,7 +215,7 @@ def chop_microseconds(delta: timedelta) -> timedelta:
     return delta - timedelta(microseconds=delta.microseconds)
 
 
-def get_date_component(format_str, dt: datetime = None) -> str:
+def get_date_component(format_str: str, dt: datetime = None) -> str:
     """
     Get the format string part out of a date
 
