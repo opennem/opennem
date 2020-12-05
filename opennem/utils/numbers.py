@@ -62,3 +62,28 @@ def sigfig_compact(
         n *= -1
 
     return n
+
+
+def human2bytes(s: str) -> int:
+    """
+    >>> human2bytes('1M')
+    1048576
+    >>> human2bytes('1G')
+    1073741824
+    """
+    if s is None:
+        return None
+    try:
+        return int(s)
+    except ValueError:
+        pass
+
+    symbols = "BKMGTPEZY"
+    letter = s[-1:].strip().upper()
+    num = float(s[:-1])
+    prefix = {symbols[0]: 1}
+
+    for i, s in enumerate(symbols[1:]):
+        prefix[s] = 1 << (i + 1) * 10
+
+    return int(num * prefix[letter])
