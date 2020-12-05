@@ -55,6 +55,9 @@ def price_network_query(
         networks_to_in(networks_query)
     )
 
+    if not date_range:
+        raise Exception("Require a date range")
+
     date_max = date_range.get_end()
     date_min = date_range.get_start()
 
@@ -117,6 +120,7 @@ def power_network_fueltech_query(
                 {network_region_query}
                 fs.trading_interval <= '{date_max}' and
                 fs.trading_interval > '{date_min}'
+                {fueltech_filter}
             group by 1, 3, 4
         ) as t
         group by 1, 2
@@ -124,13 +128,19 @@ def power_network_fueltech_query(
     """
 
     network_region_query = ""
+    fueltech_filter = ""
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
+    else:
+        fueltech_filter = "and f.fueltech_id not in ('imports', 'exports')"
 
     network_query = "fs.network_id IN ({}) and ".format(
         networks_to_in(networks_query)
     )
+
+    if not date_range:
+        raise Exception("require a date range")
 
     date_max = date_range.get_end()
     date_min = date_range.get_start()
@@ -146,6 +156,7 @@ def power_network_fueltech_query(
             timezone=timezone,
             date_max=date_max,
             date_min=date_min,
+            fueltech_filter=fueltech_filter,
         )
     )
 
@@ -231,9 +242,12 @@ def energy_network_fueltech_query(
     )
 
     network_region_query = ""
+    fueltech_filter = ""
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
+    else:
+        fueltech_filter = "and f.fueltech_id not in ('imports', 'exports')"
 
     network_query = "fs.network_id IN ({}) and ".format(
         networks_to_in(networks_query)
@@ -269,6 +283,7 @@ def energy_network_fueltech_query(
             timezone=timezone,
             network_query=network_query,
             network_region_query=network_region_query,
+            fueltech_filter=fueltech_filter,
         )
     )
 
