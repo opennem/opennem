@@ -199,7 +199,7 @@ def networks_to_in(networks: List[NetworkSchema]):
     return ", ".join(codes)
 
 
-@cache_scada_result
+# @cache_scada_result
 def get_scada_range(
     network: Optional[NetworkSchema] = None,
     networks: Optional[List[NetworkSchema]] = None,
