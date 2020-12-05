@@ -1,13 +1,11 @@
 from datetime import datetime
+from typing import Dict, Generator
 
 import scrapy
 
 from opennem.pipelines.files import LinkExtract
 from opennem.spiders.dirlisting import DirlistingSpider
-
-
-def get_date_component(format_str):
-    return datetime.now().strftime(format_str)
+from opennem.utils.dates import get_date_component
 
 
 class WemCurrentSpider(scrapy.Spider):
@@ -30,7 +28,7 @@ class WemCurrentSpider(scrapy.Spider):
 
             yield scrapy.Request(request_url)
 
-    def parse(self, response):
+    def parse(self, response) -> Generator[Dict, None, None]:
         yield {"content": response.text}
 
 

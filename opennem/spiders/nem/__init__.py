@@ -14,8 +14,7 @@ from opennem.pipelines.nem import (
     UnzipSingleFilePipeline,
 )
 from opennem.pipelines.nem.opennem import NemwebUnitScadaOpenNEMStorePipeline
-from opennem.spiders.wem import get_date_component
-from opennem.utils.dates import month_series
+from opennem.utils.dates import get_date_component, month_series
 from opennem.utils.handlers import _handle_zip, chain_streams
 from opennem.utils.mime import decode_bytes, mime_from_content, mime_from_url
 
@@ -51,7 +50,7 @@ class NemSingleMMSSpider(scrapy.Spider):
     )
 
     def start_requests(self):
-        if not hasattr(self, "url"):
+        if not hasattr(self, "url") or not self.url:
             raise Exception("{} requires url parameter".format(self.__class__))
 
         yield scrapy.Request(self.url)
