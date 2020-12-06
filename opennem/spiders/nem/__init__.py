@@ -82,8 +82,8 @@ class MMSArchiveSingleSpider(scrapy.Spider):
         for date in month_series(start_month, end_month):
             for table in self.tables:
                 url_params = {
-                    "month": get_date_component("%m", date),
-                    "year": get_date_component("%Y", date),
+                    "month": get_date_component("%m", dt=date),
+                    "year": get_date_component("%Y", dt=date),
                     "table": table.upper(),
                 }
 
