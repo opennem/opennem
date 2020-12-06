@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Any, Dict, Generator
 
 import scrapy
 
@@ -24,7 +25,7 @@ class APVIDataSpiderBase(scrapy.Spider):
 
     pipelines = set([APVIStoreData])
 
-    def start_requests(self):
+    def start_requests(self) -> Generator[scrapy.FormRequest, None, None]:
         yield scrapy.FormRequest(
             APVI_DATA_URI,
             formdata={"day": get_date_component(APVI_DATE_QUERY_FORMAT)},
@@ -34,14 +35,14 @@ class APVIDataSpiderBase(scrapy.Spider):
             },
         )
 
-    def parse(self, response):
+    def parse(self, response: Any) -> Generator[Dict, None, None]:
         yield {"records": response.json(), "meta": response.meta}
 
 
 class APVIDataCurrentSpider(APVIDataSpiderBase):
     name = "au.apvi.current.data"
 
-    def start_requests(self):
+    def start_requests(self) -> Generator[scrapy.FormRequest, None, None]:
         for date in date_series(TODAY, length=31, reverse=True):
             yield scrapy.FormRequest(
                 APVI_DATA_URI,
@@ -53,7 +54,7 @@ class APVIDataCurrentSpider(APVIDataSpiderBase):
 class APVIDataArchiveSpider(APVIDataSpiderBase):
     name = "au.apvi.archive.data"
 
-    def start_requests(self):
+    def start_requests(self) -> Generator[scrapy.FormRequest, None, None]:
         end_date = datetime.strptime(
             APVI_EARLIEST_DATE, APVI_DATE_QUERY_FORMAT
         ).date()
