@@ -94,6 +94,7 @@ def import_nem_interconnects() -> None:
             .filter_by(code=interconnector.interconnectorid)
             .filter_by(dispatch_type=DispatchType.GENERATOR)
             .filter_by(network_id="NEM")
+            .filter_by(network_region=interconnector.regionfrom)
             .one_or_none()
         )
 
@@ -102,9 +103,9 @@ def import_nem_interconnects() -> None:
                 code=interconnector.interconnectorid,
                 dispatch_type=DispatchType.GENERATOR,
                 network_id="NEM",
+                network_region=interconnector.regionfrom,
             )
 
-        int_facility.network_region = interconnector.regionfrom
         int_facility.status_id = "operating"
         int_facility.approved = True
         int_facility.approved_by = "opennem.importer.interconnectors"
@@ -121,16 +122,19 @@ def import_nem_interconnects() -> None:
             session.query(Facility)
             .filter_by(code=_code)
             .filter_by(dispatch_type=DispatchType.LOAD)
+            .filter_by(network_region=interconnector.regionto)
             .filter_by(network_id="NEM")
             .one_or_none()
         )
 
         if not int_facility2:
             int_facility2 = Facility(
-                code=_code, dispatch_type=DispatchType.LOAD, network_id="NEM"
+                code=_code,
+                dispatch_type=DispatchType.LOAD,
+                network_id="NEM",
+                network_region=interconnector.regionto,
             )
 
-        int_facility2.network_region = interconnector.regionto
         int_facility2.status_id = "operating"
         int_facility2.approved = True
         int_facility2.approved_by = "opennem.importer.interconnectors"
