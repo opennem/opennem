@@ -99,7 +99,7 @@ def import_nem_interconnects() -> None:
         )
 
         if not int_facility:
-            int_facility = Facility(
+            int_facility = Facility(  # type: ignore
                 code=interconnector.interconnectorid,
                 dispatch_type=DispatchType.GENERATOR,
                 network_id="NEM",
@@ -128,7 +128,7 @@ def import_nem_interconnects() -> None:
         )
 
         if not int_facility2:
-            int_facility2 = Facility(
+            int_facility2 = Facility(  # type: ignore
                 code=_code,
                 dispatch_type=DispatchType.LOAD,
                 network_id="NEM",
