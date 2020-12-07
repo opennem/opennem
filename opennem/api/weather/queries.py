@@ -20,7 +20,7 @@ def observation_query(
     period: Optional[TimePeriod] = None,
     scada_range: Optional[ScadaDateRange] = None,
     year: Optional[Union[str, int]] = None,
-):
+) -> str:
     if isinstance(year, int):
         year = str(year)
 
@@ -72,6 +72,9 @@ def observation_query(
         date_start_condition = "'{year}-01-01'::date".format(year=year)
 
     if not period and not year:
+        if not scada_range:
+            raise Exception("require a scada range ")
+
         date_start_condition = "'{}'".format(scada_range.get_start())
 
     query = dedent(
@@ -91,7 +94,7 @@ def observation_query_all(
     station_codes: List[str],
     scada_range: ScadaDateRange,
     network: NetworkSchema = NetworkNEM,
-):
+) -> str:
 
     timezone = network.timezone_database
 
