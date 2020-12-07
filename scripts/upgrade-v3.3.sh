@@ -1,10 +1,19 @@
-set -euxo pipefail
+#!/usr/bin/env bash
+set -exo pipefail
 
-# fix for containers
-# export PYTHONPATH="$PWD:${PYTHONPATH:}"
+if [ -z "$PYTHONPATH" ]
+then
+  export PYTHONPATH="$PWD:${PYTHONPATH}"
+else
+  export PYTHONPATH="/app"
+fi
 
-# activate venv
-source .venv/bin/activate
+if [ -z "$VIRTUAL_ENV" ]
+then
+  echo "Running in $VIRTUAL_ENV"
+else
+  source .venv/bin/activate
+fi
 
 alembic upgrade head
 
