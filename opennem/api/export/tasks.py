@@ -10,14 +10,19 @@ require the API
 
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from opennem.api.export.controllers import (
     energy_fueltech_daily,
     power_week,
     weather_daily,
 )
-from opennem.api.export.map import PriorityType, StatType, get_export_map
+from opennem.api.export.map import (
+    PriorityType,
+    StatExport,
+    StatType,
+    get_export_map,
+)
 from opennem.api.export.utils import write_output
 from opennem.settings import settings
 
@@ -27,18 +32,23 @@ export_map = get_export_map()
 
 
 def export_power(
-    priority: Optional[PriorityType] = None, latest: Optional[bool] = False
+    stats: List[StatExport] = None,
+    priority: Optional[PriorityType] = None,
+    latest: Optional[bool] = False,
 ) -> None:
     """
     Export power stats from the export map
 
 
     """
-    power_stat_sets = export_map.get_by_stat_type(StatType.power, priority)
+    if not stats:
+        stats = export_map.get_by_stat_type(StatType.power, priority)
 
     output_count: int = 0
 
-    for power_stat in power_stat_sets:
+    for power_stat in stats:
+        if power_stat.stat_type != StatType.power:
+            continue
 
         if output_count >= 1 and latest:
             return None
@@ -70,18 +80,24 @@ def export_power(
 
 
 def export_energy(
-    priority: Optional[PriorityType] = None, latest: Optional[bool] = False
+    stats: List[StatExport] = None,
+    priority: Optional[PriorityType] = None,
+    latest: Optional[bool] = False,
 ) -> None:
     """
     Export energy stats from the export map
 
 
     """
-    energy_stat_sets = export_map.get_by_stat_type(StatType.energy, priority)
+    if not stats:
+        stats = export_map.get_by_stat_type(StatType.energy, priority)
 
     CURRENT_YEAR = datetime.now().year
 
-    for energy_stat in energy_stat_sets:
+    for energy_stat in stats:
+        if energy_stat.stat_type != StatType.energy:
+            continue
+
         if energy_stat.year:
 
             if latest and energy_stat.year != CURRENT_YEAR:
