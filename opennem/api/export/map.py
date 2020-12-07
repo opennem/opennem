@@ -213,6 +213,9 @@ def get_export_map() -> StatMetadata:
 
         _exmap.append(export)
 
+        if not scada_range:
+            raise Exception("Require a scada range")
+
         for year, week in week_series(scada_range.end, scada_range.start):
             export = StatExport(
                 stat_type=StatType.power,
@@ -261,6 +264,9 @@ def get_export_map() -> StatMetadata:
                 network=network_schema, network_region=region
             )
             bom_station = get_network_region_weather_station(region.code)
+
+            if not scada_range:
+                raise Exception("Require a scada range")
 
             export = StatExport(
                 stat_type=StatType.power,
