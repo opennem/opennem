@@ -137,6 +137,9 @@ def get_export_map() -> StatMetadata:
             network=NetworkAU, networks=[NetworkNEM, NetworkWEM]
         )
 
+        if not scada_range:
+            raise Exception("Require a scada range")
+
         export = StatExport(
             stat_type=StatType.power,
             priority=PriorityType.live,
