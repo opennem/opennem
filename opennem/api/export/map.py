@@ -63,7 +63,7 @@ class StatExport(BaseModel):
     file_path: Optional[str]
 
     @property
-    def path(self):
+    def path(self) -> str:
         _path_components = [
             f"v{VERSION_MAJOR}",
             STATS_FOLDER,
