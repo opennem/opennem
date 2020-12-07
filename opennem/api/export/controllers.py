@@ -45,6 +45,9 @@ def weather_daily(
     units = get_unit(unit_name)
     scada_range = get_scada_range(network=network)
 
+    if not scada_range:
+        raise Exception("Require a scada range")
+
     if year:
         query = observation_query(
             station_codes=station_codes,
