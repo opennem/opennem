@@ -152,19 +152,20 @@ def stats_factory(
         if data_id:
             data.id = data_id
 
-        if not data.id and region:
+        if not data.id:
             _id_list = []
-
-            if network:
-                _id_list.append(network.code.lower())
 
             if region:
                 _id_list.append(region.lower())
 
+            elif network:
+                _id_list.append(network.code)
+
             if units and units.name_alias:
                 _id_list.append(units.name_alias)
 
-            data.id = ".".join(_id_list)
+            data.id = ".".join([f.lower() for f in _id_list if f])
+            data.type = units.unit_type
 
         if region:
             data.region = region
@@ -193,7 +194,7 @@ def stats_factory(
     return stat_set
 
 
-def networks_to_in(networks: List[NetworkSchema]):
+def networks_to_in(networks: List[NetworkSchema]) -> str:
     codes = ["'{}'".format(n.code) for n in networks]
 
     return ", ".join(codes)
