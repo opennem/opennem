@@ -24,3 +24,7 @@ python -m opennem.importer.rooftop
 python -m opennem.importer.emissions
 
 python -m opennem.importer.interconnectors
+
+# since we changed the APVI network we need to
+# run the archive again
+scrapy crawl au.apvi.archive.data

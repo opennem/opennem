@@ -18,7 +18,7 @@ depends_on = None
 
 def upgrade() -> None:
     op.execute(
-        "delete from facility_scada where network_id='NEM' and code like 'ROOFTOP_APVI_%'"
+        "delete from facility_scada where network_id='NEM' and facility_code like 'ROOFTOP_APVI_%'"
     )
 
 
