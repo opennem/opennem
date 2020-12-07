@@ -104,7 +104,7 @@ class APVIStoreData(object):
                 __record = {
                     "created_by": created_by,
                     "created_at": created_at,
-                    "network_id": network.code,
+                    "network_id": "APVI",
                     "trading_interval": interval_time,
                     "facility_code": facility_code,
                     "generated": generated,
