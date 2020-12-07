@@ -33,7 +33,7 @@ def price_network_query(
 
         select
             time_bucket_gapfill('{trunc}', bs.trading_interval) AS trading_interval,
-            bs.network_region,
+            bs.{group_field},
             coalesce(avg(bs.price), 0) as price
         from balancing_summary bs
         where
@@ -46,10 +46,12 @@ def price_network_query(
         order by 1 desc
     """
 
+    group_field = "network_id"
     network_region_query = ""
 
     if network_region:
         network_region_query = f"bs.network_region='{network_region}' and "
+        group_field = "network_region"
 
     network_query = "bs.network_id IN ({}) and ".format(
         networks_to_in(networks_query)
@@ -72,6 +74,7 @@ def price_network_query(
             timezone=timezone,
             date_max=date_max,
             date_min=date_min,
+            group_field=group_field,
         )
     )
 
