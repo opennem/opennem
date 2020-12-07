@@ -44,7 +44,7 @@ def observation_query(
             interpolate(avg(fs.temp_air)) as temp_air
         from bom_observation fs
         where
-            fs.station_id in ('066037')
+            fs.station_id in ({station_codes})
             and fs.observation_time <= {date_end}
             and fs.observation_time >= {date_start_condition}
         group by 1, 2

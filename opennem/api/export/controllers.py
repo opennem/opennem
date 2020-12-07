@@ -57,8 +57,8 @@ def weather_daily(
             year=year,
         )
     elif period_human:
-        interval = human_to_interval("{}m".format(network.interval_size))
-        period = human_to_period("7d")
+        interval = human_to_interval("30m")
+        period = human_to_period(period_human)
 
         query = observation_query(
             station_codes=station_codes,
