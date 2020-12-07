@@ -83,10 +83,10 @@ class StatExport(BaseModel):
             _path_components.append("week")
 
         if self.year:
-            _path_components.append(self.year)
+            _path_components.append(str(self.year))
 
         if self.week:
-            _path_components.append(self.week)
+            _path_components.append(str(self.week))
 
         dir_path = "/".join([str(i) for i in _path_components])
 
