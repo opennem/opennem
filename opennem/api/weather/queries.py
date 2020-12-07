@@ -24,25 +24,32 @@ def observation_query(
     if isinstance(year, int):
         year = str(year)
 
-    timezone = network.get_timezone(postgres_format=True)
+    timezone = network.timezone_database
 
     if not timezone:
-        timezone = "UTC"
+        timezone = "AEST"
 
     __query = """
-    SET SESSION TIME ZONE '{timezone}';
-
     select
-        time_bucket_gapfill('{trunc}', observation_time) as observation_time,
-        fs.station_id,
-        interpolate(avg(fs.temp_air)) as temp_avg,
-        interpolate(min(fs.temp_air)) as temp_min,
-        interpolate(max(fs.temp_air)) as temp_max
-    from bom_observation fs
-    where
-        fs.station_id in ({station_codes})
-        and fs.observation_time <= {date_end}
-        and fs.observation_time >= {date_start_condition}
+        t.observation_time at time zone '{timezone}',
+        t.station_id,
+        avg(t.temp_air) as temp_avg,
+        min(t.temp_air) as temp_min,
+        max(t.temp_air) as temp_max
+    from
+        (
+        select
+            time_bucket_gapfill('{trunc}', observation_time) as observation_time,
+            fs.station_id as station_id,
+            interpolate(avg(fs.temp_air)) as temp_air
+        from bom_observation fs
+        where
+            fs.station_id in ('066037')
+            and fs.observation_time <= {date_end}
+            and fs.observation_time >= {date_start_condition}
+        group by 1, 2
+        )
+    as t
     group by 1, 2
     order by 1 desc, 2 desc
     """
