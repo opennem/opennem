@@ -24,7 +24,7 @@ def _fallback_download_handler(url: str) -> bytes:
     r = http.get(url)
 
     if not r.ok:
-        raise Exception("Bad link: {}".format(url))
+        raise Exception("Bad link returned {}: {}".format(r.status_code, url))
 
     content = BytesIO(r.content)
 
