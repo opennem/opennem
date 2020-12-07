@@ -62,6 +62,13 @@ def export_power(
         )
 
         if not stat_set:
+            logger.info(
+                "No power stat set for {} {} {}".format(
+                    power_stat.period,
+                    power_stat.networks,
+                    power_stat.network_region,
+                )
+            )
             continue
 
         if power_stat.bom_station:
