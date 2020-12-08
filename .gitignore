@@ -65,3 +65,4 @@ profiles/
 .benchmarks/
 .env.*
 opennem/static/
+infra/prometheus/.data/
