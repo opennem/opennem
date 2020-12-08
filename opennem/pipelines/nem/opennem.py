@@ -240,6 +240,23 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
             }
         )
 
+    # remove duplicates
+    return_records_grouped = {}
+
+    for pk_values, rec_value in groupby(
+        records_to_store,
+        key=lambda r: (
+            r.get("trading_interval"),
+            r.get("network_id"),
+            r.get("facility_code"),
+        ),
+    ):
+        if pk_values not in return_records_grouped:
+            return_records_grouped[pk_values] = list(rec_value).pop()
+
+    records_to_store = list(return_records_grouped.values())
+
+    # insert
     stmt = insert(FacilityScada).values(records_to_store)
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
