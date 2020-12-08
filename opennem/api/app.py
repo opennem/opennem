@@ -28,7 +28,10 @@ from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
 
+from prometheus_fastapi_instrumentator import Instrumentator
+
 app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version())
+Instrumentator().instrument(app).expose(app)
 
 try:
     from fastapi.staticfiles import StaticFiles
