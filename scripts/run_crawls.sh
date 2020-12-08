@@ -1,4 +1,12 @@
-set -euxo pipefail
+#!/usr/bin/env bash
+set -exo pipefail
+
+if [ -z "$VIRTUAL_ENV" ]
+then
+  echo "Running in $VIRTUAL_ENV"
+else
+  source .venv/bin/activate
+fi
 
 # apvi
 scrapy crawl -L ERROR au.apvi.current.data
