@@ -11,6 +11,6 @@ scrape_configs:
       - targets: ["localhost:9090"]
 
   - job_name: "opennem_api"
-    scrape_interval: 15s
+    scrape_interval: 30s
     static_configs:
       - targets: ["0.0.0.0:8000"]
