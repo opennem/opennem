@@ -1,4 +1,5 @@
 import logging
+import sys
 
 import requests
 from validators import ValidationFailure
@@ -34,3 +35,12 @@ def slack_message(msg: str) -> bool:
         return False
 
     return True
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        sys.exit(1)
+
+    msg_args = sys.argv[1:]
+    slack_msg = " ".join([str(i) for i in msg_args])
+    slack_message(slack_msg)
