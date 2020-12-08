@@ -3,6 +3,7 @@ from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -28,7 +29,6 @@ from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
 
-from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version())
 Instrumentator().instrument(app).expose(app)
