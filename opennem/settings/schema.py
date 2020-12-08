@@ -20,6 +20,8 @@ class OpennemSettings(BaseSettings):
 
     sentry_url: Optional[str]
 
+    prometheus_url: Optional[str]
+
     google_places_api_key: Optional[str] = None
 
     requests_cache_path: str = ".requests"
@@ -53,6 +55,7 @@ class OpennemSettings(BaseSettings):
     # @todo overwrite scrapy settings here
     scrapy: Optional[Settings] = get_project_settings()
 
+    # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
 
@@ -91,6 +94,7 @@ class OpennemSettings(BaseSettings):
             "db_url": {"env": "DATABASE_HOST_URL"},
             "cache_url": {"env": "REDIS_HOST_URL"},
             "sentry_url": {"env": "SENTRY_URL"},
+            "prometheus_url": {"env": "PROMETHEUS_URL"},
             "slack_hook_url": {"env": "MONITORING_SLACK_HOOK"},
             "s3_bucket_path": {"env": "S3_DATA_BUCKET_PATH"},
             "server_port": {"env": "PORT"},
