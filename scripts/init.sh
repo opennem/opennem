@@ -1,4 +1,12 @@
-set -euxo pipefail
+#!/usr/bin/env bash
+set -exo pipefail
+
+if [ -z "$VIRTUAL_ENV" ]
+then
+  echo "Running in $VIRTUAL_ENV"
+else
+  source .venv/bin/activate
+fi
 
 alembic upgrade head
 
