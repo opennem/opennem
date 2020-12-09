@@ -114,7 +114,7 @@ def queue_spider():
     spiders = get_spiders()
 
     for s in spiders:
-        if "archive" in s and s != "au.mms.archive":
+        if "current" in s and s != "au.mms.archive":
             add_spider(s)
 
 

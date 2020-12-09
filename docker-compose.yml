@@ -19,6 +19,25 @@ services:
       - ./.env
     restart: on-failure
 
+  scrapyd:
+    image: opennem/scrapyd
+    restart: unless-stopped
+    command: scrapyd --pidfile /tmp/scrapyd.pid
+    volumes:
+      - scrapyd_data:/app/dbs
+      - scrapyd_logs:/app/logs
+      - scrapyd_eggs:/app/eggs
+    environment:
+      - TZ
+      - SCRAPYD=1
+      - DATABASE_HOST_URL
+      - REDIS_HOST_URL
+      - GOOGLE_PLACES_API_KEY
+      - ENV
+      - SENTRY_URL
+    ports:
+      - ${HOST:-127.0.0.1}:6800:6800
+
   database:
     image: opennem/database:12
     restart: unless-stopped
@@ -44,3 +63,9 @@ services:
 
 volumes:
   postgis_data: {}
+  scrapyd_data:
+    driver: local
+  scrapyd_logs:
+    driver: local
+  scrapyd_eggs:
+    driver: local
