@@ -36,6 +36,16 @@ class StationScadaReading(BaseModel):
     facilities: Dict[str, UnitScadaReading]
 
 
+def number_output(n: Union[float, int, None]) -> Optional[float]:
+    if n is None:
+        return None
+
+    if n == 0:
+        return 0
+
+    return sigfig_compact(n)
+
+
 class OpennemDataHistory(BaseConfig):
     start: Union[datetime, date]
     last: Union[datetime, date]
@@ -45,7 +55,10 @@ class OpennemDataHistory(BaseConfig):
     @validator("data")
     def validate_data(cls, data_value):
         data_value = list(
-            map(lambda x: sigfig_compact(x) if x else None, data_value)
+            map(
+                number_output,
+                data_value,
+            )
         )
 
         return data_value
