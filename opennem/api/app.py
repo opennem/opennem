@@ -15,6 +15,7 @@ from opennem.api.locations import router as locations_router
 from opennem.api.revision.router import router as revisions_router
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
+from opennem.api.tasks.router import router as tasks_router
 from opennem.api.weather.router import router as weather_router
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
@@ -54,6 +55,7 @@ app.include_router(revisions_router, tags=["Revisions"], prefix="/revision")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(admin_router, tags=["Admin"], prefix="/admin")
 app.include_router(export_router, tags=["Export"], prefix="/export")
+app.include_router(tasks_router, tags=["Tasks"], prefix="/tasks")
 
 
 origins = [
