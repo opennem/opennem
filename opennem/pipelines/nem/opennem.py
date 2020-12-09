@@ -215,16 +215,13 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
             continue
 
         facility_code = normalize_duid(record["INTERCONNECTORID"])
-        # facility = get_interconnector_facility(facility_code)
         power_value = clean_float(record["METEREDMWFLOW"])
 
         records_to_store.append(
             {
                 "network_id": "NEM",
                 "created_by": spider.name,
-                # "updated_by": None,
                 "facility_code": facility_code,
-                # "network_region": facility.network_region,
                 "trading_interval": trading_interval,
                 "generated": power_value,
             }
@@ -233,7 +230,6 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
         facility_code = "{}-2".format(
             normalize_duid(record["INTERCONNECTORID"])
         )
-        # facility = get_interconnector_facility(facility_code)
 
         if power_value:
             power_value = -1 * power_value
@@ -242,9 +238,7 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
             {
                 "network_id": "NEM",
                 "created_by": spider.name,
-                # "updated_by": None,
                 "facility_code": facility_code,
-                # "network_region": facility.network_region,
                 "trading_interval": trading_interval,
                 "generated": power_value,
             }
