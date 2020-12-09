@@ -95,8 +95,9 @@ def stats_factory(
 
         data_value = list(data_sorted.values())
 
-        if len([i for i in data_value if i]) == 0:
-            continue
+        # if len([i for i in data_value if i]) == 0:
+        #     logger.debug("Skipping: {}".format(group_code))
+        #     continue
 
         history = OpennemDataHistory(
             start=start,
