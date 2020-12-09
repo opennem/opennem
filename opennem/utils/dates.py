@@ -161,6 +161,9 @@ def month_series(
     if end < start:
         step = -1
 
+    if start == end:
+        yield datetime(start.year, start.month, 1)
+
     for tot_m in range(total_months(start) - 1, total_months(end) - 2, step):
         y, m = divmod(tot_m, 12)
         yield datetime(y, m + 1, 1)
