@@ -8,7 +8,7 @@ NEMWEB Data ingress into OpenNEM format
 import logging
 from datetime import datetime
 from itertools import groupby
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from scrapy import Spider
 from sqlalchemy.dialects.postgresql import insert
@@ -335,7 +335,7 @@ def process_pre_ap_price(table: Dict, spider: Spider) -> int:
     return len(records_to_store)
 
 
-def process_unit_scada(table, spider) -> Dict:
+def process_unit_scada(table: Dict[str, Any], spider: Spider) -> Dict:
     if "records" not in table:
         raise Exception("Invalid table no records")
 
@@ -347,12 +347,12 @@ def process_unit_scada(table, spider) -> Dict:
     item["records"] = unit_scada_generate_facility_scada(
         records, spider, power_field="SCADAVALUE", network=NetworkNEM
     )
-    item["content"] = None
+    del item["content"]
 
     return item
 
 
-def process_unit_solution(table, spider) -> Dict:
+def process_unit_solution(table: Dict[str, Any], spider: Spider) -> Dict:
     if "records" not in table:
         raise Exception("Invalid table no records")
 
