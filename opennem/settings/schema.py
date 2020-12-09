@@ -22,6 +22,10 @@ class OpennemSettings(BaseSettings):
 
     prometheus_url: Optional[str]
 
+    scrapyd_url: str = "http://scrapyd:6800"
+
+    scrapyd_project_name: str = "opennem"
+
     google_places_api_key: Optional[str] = None
 
     requests_cache_path: str = ".requests"
@@ -94,6 +98,7 @@ class OpennemSettings(BaseSettings):
             "db_url": {"env": "DATABASE_HOST_URL"},
             "cache_url": {"env": "REDIS_HOST_URL"},
             "sentry_url": {"env": "SENTRY_URL"},
+            "scrapyd_url": {"env": "SCRAPYD_URL"},
             "prometheus_url": {"env": "PROMETHEUS_URL"},
             "slack_hook_url": {"env": "MONITORING_SLACK_HOOK"},
             "s3_bucket_path": {"env": "S3_DATA_BUCKET_PATH"},
