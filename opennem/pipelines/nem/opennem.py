@@ -20,6 +20,7 @@ from opennem.db.models.opennem import BalancingSummary, Facility, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
 from opennem.schema.network import NetworkSchema
 from opennem.utils.dates import parse_date
+from opennem.utils.numbers import float_to_str
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
@@ -76,10 +77,16 @@ def unit_scada_generate_facility_scada(
         if power_field and power_field in row:
             generated = clean_float(row[power_field])
 
+            if generated:
+                generated = float_to_str(generated)
+
         energy = None
 
         if energy_field and energy_field in row:
             energy = clean_float(row[energy_field])
+
+            if energy:
+                energy = float_to_str(energy)
 
         __rec = {
             "created_by": created_by,
@@ -153,6 +160,9 @@ def generate_balancing_summary(
         if price_field and price_field in row:
             price = clean_float(row[price_field])
 
+            if price:
+                price = float_to_str(price)
+
         __rec = {
             "created_by": created_by,
             "created_at": created_at,
@@ -207,6 +217,9 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
         facility_code = normalize_duid(record["INTERCONNECTORID"])
         # facility = get_interconnector_facility(facility_code)
         power_value = clean_float(record["METEREDMWFLOW"])
+
+        if power_value:
+            power_value = float_to_str(power_value)
 
         records_to_store.append(
             {
