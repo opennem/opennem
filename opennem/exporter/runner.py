@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import List
 
 from pydantic import ValidationError
@@ -11,7 +12,6 @@ from opennem.exporter.onjson import stations_json_serialize
 from opennem.importer.all import run_all
 from opennem.importer.opennem import opennem_import
 from opennem.schema.opennem import StationSchema
-from opennem.utils.log_config import logging
 
 logger = logging.getLogger("opennem.exporter")
 

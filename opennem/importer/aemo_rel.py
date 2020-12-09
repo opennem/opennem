@@ -1,4 +1,5 @@
 import json
+import logging
 from itertools import groupby
 from typing import List, Optional
 
@@ -22,7 +23,6 @@ from opennem.core.unit_codes import get_unit_code
 from opennem.core.unit_parser import parse_unit_duid
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.stations import StationSet
-from opennem.utils.log_config import logging
 
 logger = logging.getLogger("opennem.importer.mms")
 
@@ -166,7 +166,12 @@ def load_rel():
 
     for row in generator_ws.iter_rows(min_row=2, values_only=True):
         generators.append(
-            dict(zip(FACILITY_KEYS, list(row[: len(FACILITY_KEYS)]),))
+            dict(
+                zip(
+                    FACILITY_KEYS,
+                    list(row[: len(FACILITY_KEYS)]),
+                )
+            )
         )
 
     return generators

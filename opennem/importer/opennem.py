@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import List
 
 from opennem.core.facilitystations import facility_station_join_by_name
@@ -6,7 +7,6 @@ from opennem.core.loader import load_data
 from opennem.db.models.opennem import Facility, Station
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.opennem import StationSchema
-from opennem.utils.log_config import logging
 
 from .aemo_gi import gi_import
 from .aemo_rel import rel_import
@@ -22,7 +22,7 @@ RECORD_MODEL_MAP = {
 
 def opennem_import_patches():
     """
-        Reads the OpenNEM data source
+    Reads the OpenNEM data source
 
     """
 
@@ -54,8 +54,8 @@ def record_diff(subject, comparitor):
 
 def station_reindex(stations: List[dict]) -> List[dict]:
     """
-        reindexes the opnnem formatted facilities from a list
-        to a dict keyed by duid
+    reindexes the opnnem formatted facilities from a list
+    to a dict keyed by duid
 
     """
     stations_return = {}
@@ -83,7 +83,7 @@ def station_reindex(stations: List[dict]) -> List[dict]:
 
 def opennem_import():
     """
-        This is the main method that overlays AEMO data and produces facilities
+    This is the main method that overlays AEMO data and produces facilities
 
     """
     log = []
@@ -126,7 +126,8 @@ def opennem_import():
                 if om_facility["status"]["code"] != "operating":
                     logger.info(
                         "REL: Set status for {} to {}".format(
-                            rel_facility_duid, "operating",
+                            rel_facility_duid,
+                            "operating",
                         )
                     )
                     om_facility["status"]["code"] = "operating"
@@ -135,7 +136,8 @@ def opennem_import():
                 if rel_facility["fueltech"]:
                     logger.info(
                         "REL: Set fueltech for {} to {}".format(
-                            rel_facility_duid, rel_facility["fueltech"],
+                            rel_facility_duid,
+                            rel_facility["fueltech"],
                         )
                     )
                     om_facility["fueltech"] = rel_facility["fueltech"]
@@ -156,8 +158,9 @@ def opennem_import():
 
     # GI
     for station_code, gi_station in nem_gi.items():
-        if station_code not in opennem.keys() and not facility_station_join_by_name(
-            gi_station["name"]
+        if (
+            station_code not in opennem.keys()
+            and not facility_station_join_by_name(gi_station["name"])
         ):
             logger.info("GI: New record {}".format(station_code))
             gi_station["created_by"] = "aemo_gi"
@@ -208,7 +211,8 @@ def opennem_import():
             ):
                 logger.info(
                     "GI Set status for {} to {}".format(
-                        gi_facility_duid, gi_facility["status"],
+                        gi_facility_duid,
+                        gi_facility["status"],
                     )
                 )
                 om_facility["status"] = gi_facility["status"]
