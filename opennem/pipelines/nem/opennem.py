@@ -236,7 +236,7 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
         # facility = get_interconnector_facility(facility_code)
 
         if power_value:
-            power_value = -power_value
+            power_value = -1 * power_value
 
         records_to_store.append(
             {
