@@ -48,6 +48,20 @@ class PriorityType(Enum):
     history = 4
 
 
+def priority_from_name(priority_name: str) -> PriorityType:
+    # @TODO this doesn't feel right
+    if priority_name == "live":
+        return PriorityType.live
+    if priority_name == "daily":
+        return PriorityType.daily
+    if priority_name == "monthly":
+        return PriorityType.monthly
+    if priority_name == "history":
+        return PriorityType.history
+
+    raise Exception("Could not find priority: {}".format(priority_name))
+
+
 class StatExport(BaseModel):
     stat_type: StatType = StatType.energy
     priority: PriorityType = PriorityType.live
