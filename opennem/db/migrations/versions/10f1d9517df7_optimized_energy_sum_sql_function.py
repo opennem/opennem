@@ -18,19 +18,11 @@ depends_on = None
 
 
 def upgrade():
-    ENERGY_FUNCTIONS = load_data("energy_sum_v2.sql", from_fixture=True)
+    ENERGY_FUNCTIONS = load_data(
+        "energy_sum_v2.sql", from_fixture=True, content_type="utf-8"
+    ).decode("utf-8")
     op.execute(ENERGY_FUNCTIONS)
 
 
 def downgrade():
-    op.execute(
-        """
-        drop aggregate if exists energy_sum(numeric, text) cascade;
-
-        drop type if exists agg_state_energy cascade;
-
-        drop function if exists energy_sum_pop(agg_state_energy);
-
-        drop function if exists interval_size(text, numeric);
-    """
-    )
+    pass

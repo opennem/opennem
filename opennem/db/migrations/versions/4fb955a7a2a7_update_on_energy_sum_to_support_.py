@@ -19,7 +19,15 @@ depends_on = None
 
 
 def upgrade():
-    ENERGY_FUNCTIONS = load_data("energy_methods.sql", from_fixture=True)
+    # ENERGY_FUNCTIONS = load_data("energy_methods.sql", from_fixture=True)
+
+    op.execute(
+        """drop type if exists tenergy cascade;
+CREATE TYPE tenergy AS (
+    items       numeric[],
+    bucket_size_minutes    int
+);"""
+    )
 
     op.execute(
         "drop aggregate if exists on_energy_sum (numeric, text) cascade"
@@ -32,7 +40,7 @@ def upgrade():
         "drop function if exists onenergy_finalfunc(agg_state numeric[])"
     )
 
-    op.execute(ENERGY_FUNCTIONS)
+    # op.execute(ENERGY_FUNCTIONS)
 
 
 def downgrade():
