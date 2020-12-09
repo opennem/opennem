@@ -10,7 +10,7 @@ class WemCurrentBalancingSummary(WemCurrentSpider):
 
 
 class WemHistoricBalancingSummary(WemHistoricSpider):
-    name = "au.wem.historic.balancing_summary"
+    name = "au.wem.archive.balancing_summary"
     start_url = "http://data.wa.aemo.com.au/public/public-data/datafiles/balancing-summary/"
     limit = 0
 
