@@ -11,12 +11,12 @@ from opennem.pipelines.aemo.registration_exemption import (
 
 class AEMORegistrationExemptionListSpider(scrapy.Spider):
     """
-        Crawls the current AEMO registration and exemption spreadsheet
-        and extracts participants and generators
+    Crawls the current AEMO registration and exemption spreadsheet
+    and extracts participants and generators
 
     """
 
-    name = "au.aemo.current.registration_exemption"
+    # name = "au.aemo.current.registration_exemption"
 
     start_urls = [
         "https://data.opennem.org.au/v3/data/NEM+Registration+and+Exemption+List+July.xlsx"

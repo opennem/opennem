@@ -9,7 +9,7 @@ from opennem.spiders.wem import WemCurrentSpider, WemHistoricSpider
 
 
 class WemLiveFacilityScada(WemCurrentSpider):
-    name = "au.wem.live.facility_scada"
+    # name = "au.wem.live.facility_scada"
     pipelines_extra = set([WemStoreLiveFacilityScada])
 
     start_url = "https://aemo.com.au/aemo/data/wa/infographic/generation.csv"

@@ -8,7 +8,7 @@ NPI_GEOJSON_URL = "https://data.gov.au/geoserver/npi/wfs?request=GetFeature&type
 
 
 class NPIFacilitySpider(scrapy.Spider):
-    name = "au.npi.facilities"
+    # name = "au.npi.facilities"
 
     start_urls = [NPI_GEOJSON_URL]
 

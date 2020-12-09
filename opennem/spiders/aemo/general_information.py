@@ -11,12 +11,12 @@ from opennem.pipelines.aemo.general_information import (
 
 class AEMOGeneralInformationCurrentSpider(scrapy.Spider):
     """
-        Extracts station and unit data from the AEMO general information spreadsheet
+    Extracts station and unit data from the AEMO general information spreadsheet
 
 
     """
 
-    name = "au.aemo.current.general_information"
+    # name = "au.aemo.current.general_information"
 
     start_urls = [
         # "https://aemo.com.au/-/media/files/electricity/nem/planning_and_forecasting/generation_information/nem-generation-information-april-2020.xlsx?la=en",
