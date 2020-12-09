@@ -87,3 +87,12 @@ def human2bytes(s: str) -> int:
         prefix[s] = 1 << (i + 1) * 10
 
     return int(num * prefix[letter])
+
+
+def float_to_str(f: float) -> str:
+    """
+    Convert the given float to a string,
+    without resorting to scientific notation
+    """
+    d1 = ctx.create_decimal(repr(f))
+    return format(d1, "f")
