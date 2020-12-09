@@ -28,8 +28,6 @@ from opennem.settings import settings
 
 logger = logging.getLogger(__name__)
 
-export_map = get_export_map()
-
 
 def export_power(
     stats: List[StatExport] = None,
@@ -42,6 +40,7 @@ def export_power(
 
     """
     if not stats:
+        export_map = get_export_map()
         stats = export_map.get_by_stat_type(StatType.power, priority)
 
     output_count: int = 0
@@ -97,6 +96,7 @@ def export_energy(
 
     """
     if not stats:
+        export_map = get_export_map()
         stats = export_map.get_by_stat_type(StatType.energy, priority)
 
     CURRENT_YEAR = datetime.now().year
@@ -158,7 +158,7 @@ def export_metadata() -> bool:
 
 
     """
-    _export_map_out = export_map
+    _export_map_out = get_export_map()
 
     # this is a hack because pydantic doesn't
     # serialize properties
