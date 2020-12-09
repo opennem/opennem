@@ -42,6 +42,7 @@ def unit_scada_generate_facility_scada(
     groupby_filter: bool = True,
     created_by: str = None,
     limit: int = 0,
+    duid: str = None,
 ) -> List[Dict]:
     created_at = datetime.now()
     primary_keys = []
@@ -63,6 +64,9 @@ def unit_scada_generate_facility_scada(
         # continue
 
         facility_code = normalize_duid(row[facility_code_field])
+
+        if duid and facility_code != duid:
+            continue
 
         if primary_key_track:
             pkey = (trading_interval, facility_code)
@@ -308,7 +312,6 @@ def process_pre_ap_price(table: Dict, spider: Spider) -> int:
             {
                 "network_id": "NEM",
                 "created_by": spider.name,
-                # "updated_by": None,
                 "network_region": record["REGIONID"],
                 "trading_interval": trading_interval,
                 "price": record["PRE_AP_ENERGY_PRICE"],
@@ -345,9 +348,18 @@ def process_unit_scada(table: Dict[str, Any], spider: Spider) -> Dict:
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
     item["records"] = unit_scada_generate_facility_scada(
-        records, spider, power_field="SCADAVALUE", network=NetworkNEM
+        records,
+        spider,
+        power_field="SCADAVALUE",
+        network=NetworkNEM,
+        duid="GB01",
     )
     del item["content"]
+
+    import json
+
+    with open("test-mms.json", "w") as fh:
+        json.dump(item, fh, indent=4)
 
     return item
 
