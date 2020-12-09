@@ -4,7 +4,7 @@ Srapyd control methods
 
 """
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, List
 from urllib.parse import urljoin
 
 import requests
@@ -83,10 +83,15 @@ def job_cancel_state(state: str = "pending") -> bool:
     return True
 
 
-def job_schedule_all(matches: str = None) -> None:
+def job_schedule_all(matches: str = None) -> List[str]:
     spiders = get_spiders()
+
+    spider_scheduled = []
 
     for s in spiders:
         if matches and matches not in s:
             continue
         job_schedule(s)
+        spider_scheduled.append(s)
+
+    return spider_scheduled
