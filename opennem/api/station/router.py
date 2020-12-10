@@ -192,6 +192,12 @@ def station(
             status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
         )
 
+    if not station.facilities:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Station has no facilities",
+        )
+
     station.network = station.facilities[0].network
 
     if revisions_include:
