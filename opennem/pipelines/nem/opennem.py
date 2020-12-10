@@ -352,14 +352,8 @@ def process_unit_scada(table: Dict[str, Any], spider: Spider) -> Dict:
         spider,
         power_field="SCADAVALUE",
         network=NetworkNEM,
-        duid="GB01",
     )
-    del item["content"]
-
-    import json
-
-    with open("test-mms.json", "w") as fh:
-        json.dump(item, fh, indent=4)
+    item["content"] = ""
 
     return item
 
@@ -517,8 +511,15 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
                 continue
 
             logger.info("processing table {}".format(table_name))
-            record_item = globals()[process_meth](table, spider=spider)
 
-            ret.append(record_item)
+            record_item = None
+
+            try:
+                record_item = globals()[process_meth](table, spider=spider)
+            except Exception as e:
+                logger.error(e)
+
+            if record_item:
+                ret.append(record_item)
 
         return ret
