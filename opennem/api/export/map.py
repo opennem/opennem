@@ -224,6 +224,7 @@ def get_export_map() -> StatMetadata:
 
         if network.code == "WEM":
             export.networks = [NetworkWEM, NetworkAPVI]
+            export.network_region_query = "WEM"
 
         _exmap.append(export)
 
