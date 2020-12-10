@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 from typing import Any, Dict, Generator
 
@@ -5,6 +6,8 @@ import scrapy
 
 from opennem.pipelines.apvi.data import APVIStoreData
 from opennem.utils.dates import date_series, get_date_component
+
+logger = logging.getLogger(__name__)
 
 APVI_DATA_URI = "https://pv-map.apvi.org.au/data"
 
@@ -26,12 +29,16 @@ class APVIDataSpiderBase(scrapy.Spider):
     pipelines = set([APVIStoreData])
 
     def start_requests(self) -> Generator[scrapy.FormRequest, None, None]:
+        day = get_date_component(APVI_DATE_QUERY_FORMAT)
+
+        logger.debug("Getting APVI data for day {}".format(day))
+
         yield scrapy.FormRequest(
             APVI_DATA_URI,
-            formdata={"day": get_date_component(APVI_DATE_QUERY_FORMAT)},
+            formdata={"day": day},
             meta={
                 "is_latest": True,
-                "record_date": get_date_component(APVI_DATE_QUERY_FORMAT),
+                "record_date": day,
             },
         )
 
@@ -44,9 +51,13 @@ class APVIDataCurrentSpider(APVIDataSpiderBase):
 
     def start_requests(self) -> Generator[scrapy.FormRequest, None, None]:
         for date in date_series(TODAY, length=31, reverse=True):
+            day = date.strftime(APVI_DATE_QUERY_FORMAT)
+
+            logger.debug("Getting APVI data for day {}".format(day))
+
             yield scrapy.FormRequest(
                 APVI_DATA_URI,
-                formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
+                formdata={"day": day},
                 meta={"is_latest": True if date == TODAY else False},
             )
 
@@ -60,9 +71,13 @@ class APVIDataArchiveSpider(APVIDataSpiderBase):
         ).date()
 
         for date in date_series(start=MONTH_AGO, end=end_date, reverse=True):
+            day = date.strftime(APVI_DATE_QUERY_FORMAT)
+
+            logger.debug("Getting APVI data for day {}".format(day))
+
             yield scrapy.FormRequest(
                 APVI_DATA_URI,
-                formdata={"day": date.strftime(APVI_DATE_QUERY_FORMAT)},
+                formdata={"day": day},
             )
 
     custom_settings = {
