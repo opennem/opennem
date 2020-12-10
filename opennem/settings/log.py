@@ -1,3 +1,5 @@
+import re
+from logging import Filter
 from typing import Optional
 
 import yaml
@@ -46,3 +48,16 @@ def load_logging_config(
 
 
 LOGGING_CONFIG = load_logging_config()
+
+class ItemMessageFilter(Filter):
+    def filter(self, record):
+        # The message that logs the item actually has raw % operators in it,
+        # which Scrapy presumably formats later on
+        match = re.search(
+            r"(Scraped from %\(src\)s)\n%\(item\)s", record.msg
+        )
+        if match:
+            # Make the message everything but the item itself
+            record.msg = match.group(1)
+        # Don't actually want to filter out this record, so always return 1
+        return 1
