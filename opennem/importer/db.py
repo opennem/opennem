@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import MultipleResultsFound
 
+from opennem.core.loader import load_data
 from opennem.db import SessionLocal
 from opennem.db.load_fixtures import load_fixtures
 from opennem.db.models.opennem import Facility, Location, Revision, Station
@@ -19,6 +20,7 @@ from opennem.importer.aemo_rel import rel_import
 from opennem.importer.emissions import import_emissions_csv
 from opennem.importer.mms import mms_import
 from opennem.importer.registry import registry_import
+from opennem.schema.stations import StationSet
 
 from .comparator import compare_record_differs
 
@@ -310,7 +312,7 @@ def db_test():
     load_revision(gi, "aemo.gi.202006")
 
 
-def registry_init():
+def registry_init() -> None:
     registry = registry_import()
     session = SessionLocal()
 
@@ -398,6 +400,85 @@ def registry_init():
             logger.error(e)
 
 
+def opennem_init() -> None:
+    session = SessionLocal()
+    station_data = load_data("opennem_stations.json", from_project=True)
+    stations = StationSet()
+
+    for s in station_data:
+        stations.add_dict(s)
+
+    for station in stations:
+        logger.debug("Adding station: {}".format(station.code))
+
+        station_model = (
+            session.query(Station).filter_by(code=station.code).one_or_none()
+        )
+
+        if not station_model:
+            station_model = Station(code=station.code)
+            station_model.approved = True
+            station_model.approved_at = datetime.now()
+            station_model.approved_by = "opennem.init"
+            station_model.created_by = "opennem.init"
+
+        station_model.description = station.description
+        station_model.name = station.name
+        station_model.network_name = station.network_name
+
+        if not station_model.location:
+            station_model.location = Location()
+
+        if station.location:
+            station_model.location.locality = station.location.locality
+            station_model.location.state = station.location.state
+            station_model.location.postcode = station.location.postcode
+            station_model.location.country = station.location.country
+
+        if station.location.lat and station.location.lng:
+            station_model.location.geom = "SRID=4326;POINT({} {})".format(
+                station.location.lng, station.location.lat
+            )
+
+        for fac in station.facilities:
+            facility_model = (
+                session.query(Facility)
+                .filter_by(code=fac.code)
+                .filter_by(network_id=fac.network.code)
+                .one_or_none()
+            )
+
+            if not facility_model:
+                facility_model = Facility(
+                    code=fac.code, network_id=fac.network.code
+                )
+
+            facility_model.network_region = fac.network_region
+            facility_model.fueltech_id = fac.fueltech.code
+            facility_model.status_id = fac.status.code
+            facility_model.dispatch_type = fac.dispatch_type
+            facility_model.capacity_registered = fac.capacity_registered
+            facility_model.registered = fac.registered
+            facility_model.unit_id = fac.unit_id
+            facility_model.unit_number = fac.unit_number
+            facility_model.unit_alias = fac.unit_alias
+            facility_model.unit_capacity = fac.unit_capacity
+            facility_model.emissions_factor_co2 = fac.emissions_factor_co2
+            facility_model.approved = fac.approved
+            facility_model.approved_by = fac.approved_by
+
+            facility_model.created_by = "opennem.init"
+            facility_model.approved_by = "opennem.init"
+
+            session.add(facility_model)
+            station_model.facilities.append(facility_model)
+            logger.debug(" => Added facility {}".format(fac.code))
+
+        print(station_model)
+        session.add(station_model)
+        session.commit()
+
+
 def test_revisions():
     registry = registry_import()
     # mms = mms_import()
@@ -445,6 +526,9 @@ def init() -> None:
 
     registry_init()
     logger.info("Registry initialized")
+
+    opennem_init()
+    logger.info("Opennem initialized")
 
     import_emissions_csv()
     logger.info("Pollution data initialized")
