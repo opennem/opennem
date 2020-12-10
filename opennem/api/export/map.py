@@ -241,6 +241,11 @@ def get_export_map() -> StatMetadata:
                 week=week,
                 date_range=date_range_from_week(year, week, NetworkAU),
             )
+
+            if network.code == "WEM":
+                export.networks = [NetworkWEM, NetworkAPVI]
+                export.network_region_query = "WEM"
+
             _exmap.append(export)
 
         for year in range(
@@ -257,6 +262,11 @@ def get_export_map() -> StatMetadata:
                 bom_station=bom_station,
                 year=year,
             )
+
+            if network.code == "WEM":
+                export.networks = [NetworkWEM, NetworkAPVI]
+                export.network_region_query = "WEM"
+
             _exmap.append(export)
 
         export = StatExport(
@@ -268,6 +278,11 @@ def get_export_map() -> StatMetadata:
             bom_station=bom_station,
             period=human_to_period("all"),
         )
+
+        if network.code == "WEM":
+            export.networks = [NetworkWEM, NetworkAPVI]
+            export.network_region_query = "WEM"
+
         _exmap.append(export)
 
         # Skip cases like wem/wem where region is supurfelous

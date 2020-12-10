@@ -56,7 +56,8 @@ def export_power(
             date_range=power_stat.date_range,
             period=power_stat.period,
             network_code=power_stat.network.code,
-            network_region_code=power_stat.network_region,
+            network_region_code=power_stat.network_region_query
+            or power_stat.network_region,
             networks_query=power_stat.networks,
         )
 
@@ -114,7 +115,8 @@ def export_energy(
                 year=energy_stat.year,
                 network=energy_stat.network,
                 networks_query=energy_stat.networks,
-                network_region_code=energy_stat.network_region,
+                network_region_code=energy_stat.network_region_query
+                or energy_stat.network_region,
             )
 
             if not stat_set:
