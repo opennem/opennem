@@ -37,9 +37,6 @@ class MMSArchiveSingleSpider(scrapy.Spider):
         start_month = datetime(2019, 10, 1)
         end_month = datetime(2010, 1, 1)
 
-        start_month = datetime(2016, 8, 1)
-        end_month = datetime(2016, 8, 1)
-
         for date in month_series(start_month, end_month):
             for table in self.tables:
                 url_params = {
