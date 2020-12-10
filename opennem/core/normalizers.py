@@ -216,7 +216,7 @@ def clean_float(number: Union[str, int, float]) -> Optional[float]:
     num_return = None
 
     if isinstance(number, str):
-        number = number.replace("-", "").strip()
+        number = number.strip()
 
         if number == "":
             return None
@@ -238,7 +238,7 @@ def clean_float(number: Union[str, int, float]) -> Optional[float]:
 
 def clean_numbers(part: Union[str, int]) -> Union[str, int, None]:
     """
-        Clean the number part of a station name
+    Clean the number part of a station name
 
     """
     if not is_number(part):
@@ -253,11 +253,11 @@ def clean_numbers(part: Union[str, int]) -> Union[str, int, None]:
 
 
 def station_name_cleaner(facility_name: str) -> str:
-    """"
-        This cleans station names from their messy as hell AEMO names to something
-        we can plug into name_clean and humans can actually read
+    """ "
+    This cleans station names from their messy as hell AEMO names to something
+    we can plug into name_clean and humans can actually read
 
-        It's a bit of a mess and could use a refactor
+    It's a bit of a mess and could use a refactor
 
 
     """
@@ -384,9 +384,9 @@ def clean_capacity(
     capacity: Union[str, int, float], round_to: int = 6
 ) -> Optional[float]:
     """
-        Takes a capacity and cleans it up into a float
+    Takes a capacity and cleans it up into a float
 
-        @TODO support unit conversion
+    @TODO support unit conversion
     """
     cap_clean = None
 
