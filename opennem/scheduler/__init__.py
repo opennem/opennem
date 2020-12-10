@@ -94,7 +94,7 @@ def monitor_wem_interval() -> None:
     aemo_wem_live_interval()
 
 
-@huey.periodic_task(crontab(hour="*/1"))
+@huey.periodic_task(crontab(hour="*/12"))
 @huey.lock_task("monitor_metadata_status")
 def monitor_metadata_status() -> None:
     check_metadata_status()
