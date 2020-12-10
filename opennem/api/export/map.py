@@ -69,6 +69,7 @@ class StatExport(BaseModel):
     network: NetworkSchema
     networks: Optional[List[NetworkSchema]]
     network_region: Optional[str]
+    network_region_query: Optional[str]
     date_range: ScadaDateRange
     bom_station: Optional[str]
     year: Optional[int]
@@ -223,7 +224,6 @@ def get_export_map() -> StatMetadata:
 
         if network.code == "WEM":
             export.networks = [NetworkWEM, NetworkAPVI]
-            export.network_region = "WEM"
 
         _exmap.append(export)
 
