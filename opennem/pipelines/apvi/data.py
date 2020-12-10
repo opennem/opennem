@@ -81,8 +81,6 @@ class APVIStoreData(object):
                     yearfirst=True,
                 )
 
-                network = network_from_state(state)
-
                 interval_time = interval_time.astimezone(
                     NetworkNEM.get_timezone()
                 )
