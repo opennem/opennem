@@ -22,7 +22,7 @@ MMS_URL = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/{year}/
 class MMSArchiveSingleSpider(scrapy.Spider):
     name = "au.mms.archive"
 
-    tables = ["DISPATCH_UNIT_SCADA", "_DISPATCHPRICE"]
+    tables = ["DISPATCH_UNIT_SCADA", "DISPATCHPRICE"]
 
     pipelines = set(
         [
