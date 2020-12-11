@@ -61,6 +61,12 @@ def parse_date(
         dt_return = date_str
 
     elif isinstance(date_str, str):
+        # avoid strptime if we can
+        try:
+            dt_return = datetime.fromisoformat(date_str.replace("/", "-"))
+        except ValueError:
+            pass
+
         if date_format:
             dt_return = datetime.strptime(date_str, date_format)
 
