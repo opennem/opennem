@@ -67,10 +67,10 @@ def parse_date(
         except ValueError:
             pass
 
-        if date_format:
+        if not dt_return and date_format:
             dt_return = datetime.strptime(date_str, date_format)
 
-        if use_optimized:
+        if not dt_return and use_optimized:
             dt_return = optimized_data_parser(date_str)
 
         if not dt_return:
