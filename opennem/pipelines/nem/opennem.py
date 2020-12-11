@@ -35,6 +35,7 @@ def unit_scada_generate_facility_scada(
     network: NetworkSchema = NetworkNEM,
     interval_field: str = "SETTLEMENTDATE",
     facility_code_field: str = "DUID",
+    date_format: Optional[str] = None,
     power_field: Optional[str] = None,
     energy_field: Optional[str] = None,
     is_forecast: bool = False,
@@ -56,7 +57,10 @@ def unit_scada_generate_facility_scada(
     for row in records:
 
         trading_interval = parse_date(
-            row[interval_field], network=network, dayfirst=False
+            row[interval_field],
+            network=network,
+            dayfirst=False,
+            date_format=date_format,
         )
 
         # if facility_code_field not in row:
@@ -352,6 +356,7 @@ def process_unit_scada(table: Dict[str, Any], spider: Spider) -> Dict:
         spider,
         power_field="SCADAVALUE",
         network=NetworkNEM,
+        date_format="%Y/%m/%d %H:%M:%S",
     )
     item["content"] = ""
 
