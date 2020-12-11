@@ -302,7 +302,10 @@ def process_pre_ap_price(table: Dict, spider: Spider) -> int:
 
     records = table["records"]
 
+    limit = None
     records_to_store = []
+    records_processed = 0
+    primary_keys = []
 
     for record in records:
         trading_interval = parse_date(
@@ -315,6 +318,13 @@ def process_pre_ap_price(table: Dict, spider: Spider) -> int:
         if not trading_interval:
             continue
 
+        _pk = set([trading_interval, record["REGIONID"]])
+
+        if _pk in primary_keys:
+            continue
+
+        primary_keys.append(_pk)
+
         records_to_store.append(
             {
                 "network_id": "NEM",
@@ -324,6 +334,14 @@ def process_pre_ap_price(table: Dict, spider: Spider) -> int:
                 "price": record["PRE_AP_ENERGY_PRICE"],
             }
         )
+
+        records_processed += 1
+
+        if limit and records_processed >= limit:
+            logger.info(
+                "Reached limit of: {} {}".format(limit, records_processed)
+            )
+            break
 
     stmt = insert(BalancingSummary).values(records_to_store)
     stmt.bind = engine
@@ -477,6 +495,7 @@ TABLE_PROCESSOR_MAP = {
     "DISPATCH_UNIT_SOLUTION": "process_unit_solution",
     "DISPATCH_PRE_AP_PRICE": "process_pre_ap_price",
     "ROOFTOP_ACTUAL": "process_rooftop_actual",
+    "DISPATCH_PRICE": "process_pre_ap_price",
 }
 
 
