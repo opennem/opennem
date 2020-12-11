@@ -6,6 +6,7 @@
 """
 
 import logging
+from pathlib import Path
 
 import uvicorn
 
@@ -14,6 +15,8 @@ from opennem.settings import settings
 # from uvicorn import Config as UvicornConfig
 
 logger = logging.getLogger("opennem.server")
+
+RELOAD_PATH = Path(__file__).parent.parent.resolve() / "opennem"
 
 
 def run_server() -> None:
@@ -26,7 +29,7 @@ def run_server() -> None:
     if settings.debug:
         reload = True
         log_level = "debug"
-        reload_dirs = "opennem"
+        reload_dirs = [str(RELOAD_PATH)]
         workers = 1
 
     uvicorn.run(
