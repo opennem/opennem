@@ -47,6 +47,7 @@ def optimized_data_parser(date_str: str) -> datetime:
 
 def parse_date(
     date_str: Union[str, datetime],
+    date_format: Optional[str] = None,
     network: Optional[NetworkSchema] = None,
     dayfirst: bool = True,
     yearfirst: bool = False,
@@ -60,6 +61,9 @@ def parse_date(
         dt_return = date_str
 
     elif isinstance(date_str, str):
+        if date_format:
+            dt_return = datetime.strptime(date_str, date_format)
+
         if use_optimized:
             dt_return = optimized_data_parser(date_str)
 
