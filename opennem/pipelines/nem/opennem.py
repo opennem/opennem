@@ -306,7 +306,10 @@ def process_pre_ap_price(table: Dict, spider: Spider) -> int:
 
     for record in records:
         trading_interval = parse_date(
-            record["SETTLEMENTDATE"], network=NetworkNEM, dayfirst=False
+            record["SETTLEMENTDATE"],
+            network=NetworkNEM,
+            dayfirst=False,
+            date_format="%Y/%m/%d %H:%M:%S",
         )
 
         if not trading_interval:
