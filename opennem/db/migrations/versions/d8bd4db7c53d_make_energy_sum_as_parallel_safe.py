@@ -19,7 +19,7 @@ depends_on = None
 def upgrade() -> None:
     op.execute(
         """
-        create function energy_sum_combine_states(agg_state agg_state_energy, agg_state2 agg_state_energy)
+        create or replace function energy_sum_combine_states(agg_state agg_state_energy, agg_state2 agg_state_energy)
         returns agg_state_energy
         immutable
         language plpgsql
