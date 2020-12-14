@@ -22,7 +22,7 @@ MMS_URL = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/{year}/
 class MMSArchiveBulkSpider(scrapy.Spider):
     name = "au.mms.archive.dispatch_scada"
 
-    tables = ["DISPATCH_UNIT_SCADA", "DISPATCHPRICE"]
+    tables = ["DISPATCH_UNIT_SCADA"]
 
     pipelines = set(
         [
@@ -34,8 +34,11 @@ class MMSArchiveBulkSpider(scrapy.Spider):
     )
 
     def start_requests(self) -> Generator[scrapy.Request, None, None]:
-        start_month = datetime(2019, 10, 1)
-        end_month = datetime(2010, 1, 1)
+        # start_month = datetime(2011, 10, 1)
+        # end_month = datetime(2011, 10, 1)
+
+        start_month = datetime(2020, 1, 1)
+        end_month = datetime(2009, 7, 1)
 
         for date in month_series(start_month, end_month):
             for table in self.tables:
