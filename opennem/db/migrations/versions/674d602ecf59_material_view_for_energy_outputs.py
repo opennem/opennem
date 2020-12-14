@@ -19,6 +19,8 @@ depends_on = None
 def upgrade() -> None:
     op.execute(
         """
+    drop view if exists mv_facility_energy_hour cascade;
+
     CREATE OR REPLACE VIEW mv_facility_energy_hour WITH (timescaledb.continuous) AS
     select
         time_bucket('1 hour', fs.trading_interval) as trading_interval,
@@ -35,6 +37,6 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.execute(
         """
-    drop view mv_facility_energy_hour cascade;
+    drop view if exists mv_facility_energy_hour cascade;
     """
     )
