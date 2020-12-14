@@ -330,6 +330,30 @@ def energy_facility_query(
             trading_day desc;
     """
 
+    __query = """
+    select
+        date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
+        t.facility_code,
+        sum(t.energy) / 1000 as fueltech_energy,
+        sum(t.emissions) as fueltech_emissions
+    from
+        (select
+            time_bucket_gapfill('1 hour', fs.trading_interval) as trading_interval,
+            fs.facility_code,
+            fs.energy,
+            fs.energy * f.emissions_factor_co2 as emissions
+        from mv_facility_energy_hour fs
+            left join facility f on fs.facility_code = f.code
+        where
+            fs.trading_interval <= '{date_max}' and
+            fs.trading_interval >= '{date_min}' and
+            fs.facility_code in ({facility_codes_parsed})
+    ) as t
+    group by 1, 2
+    order by
+    trading_day desc;
+    """
+
     timezone = network.timezone_database
     offset = network.get_timezone(postgres_format=True)
 

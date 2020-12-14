@@ -363,19 +363,19 @@ def energy_station(
         for i in row
     ]
 
-    results_market_value = [
+    results_emissions = [
         DataQueryResult(
             interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None
         )
         for i in row
     ]
 
-    results_emissions = [
-        DataQueryResult(
-            interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None
-        )
-        for i in row
-    ]
+    # results_emissions = [
+    #     DataQueryResult(
+    #         interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None
+    #     )
+    #     for i in row
+    # ]
 
     if len(results_energy) < 1:
         raise HTTPException(
@@ -398,16 +398,16 @@ def energy_station(
             detail="Station stats not found",
         )
 
-    stats_market_value = stats_factory(
-        stats=results_market_value,
-        units=get_unit("market_value"),
-        network=network,
-        interval=interval_obj,
-        period=period_obj,
-        code=station_code,
-    )
+    # stats_market_value = stats_factory(
+    #     stats=results_market_value,
+    #     units=get_unit("market_value"),
+    #     network=network,
+    #     interval=interval_obj,
+    #     period=period_obj,
+    #     code=station_code,
+    # )
 
-    stats.append_set(stats_market_value)
+    # stats.append_set(stats_market_value)
 
     stats_emissions = stats_factory(
         stats=results_emissions,
