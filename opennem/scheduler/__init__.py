@@ -41,13 +41,13 @@ def schedule_power_weeklies() -> None:
     export_power(priority=PriorityType.history, latest=True)
 
 
-# @huey.periodic_task(crontab(hour="*/12"))
-# @huey.lock_task("schedule_power_weeklies_archive")
-# def schedule_power_weeklies_archive() -> None:
-#     """
-#     Run weekly power outputs entire archive
-#     """
-#     export_power(priority=PriorityType.history)
+@huey.periodic_task(crontab(hour="*/12"))
+@huey.lock_task("schedule_power_weeklies_archive")
+def schedule_power_weeklies_archive() -> None:
+    """
+    Run weekly power outputs entire archive
+    """
+    export_power(priority=PriorityType.history)
 
 
 @huey.periodic_task(crontab(hour="*/6"))
