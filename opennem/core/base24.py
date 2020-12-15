@@ -1,5 +1,3 @@
-import sys
-
 __all__ = ["dumps", "loads"]
 
 
