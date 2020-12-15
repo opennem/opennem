@@ -259,6 +259,7 @@ def export_metadata() -> bool:
 if __name__ == "__main__":
     export_all_monthly()
     export_all_daily()
+    export_power(priority=PriorityType.history)
 
     # if settings.env in ["development", "staging"]:
     #     export_power(priority=PriorityType.live)
