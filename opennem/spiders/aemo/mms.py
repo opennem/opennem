@@ -117,3 +117,16 @@ class MMSArchiveP5InterconnectorSolutionSpider(MMSArchiveBulkSpider):
             NemwebUnitScadaOpenNEMStorePipeline,
         ]
     )
+
+
+class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
+    name = "au.mms.archive.rooftop_actual"
+
+    tables = ["ROOFTOP_PV_ACTUAL"]
+
+    pipelines = set(
+        [
+            ExtractCSV,
+            NemwebUnitScadaOpenNEMStorePipeline,
+        ]
+    )
