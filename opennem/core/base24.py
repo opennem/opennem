@@ -6,9 +6,8 @@ __all__ = ["dumps", "loads"]
 alphabet = "ZAC2B3EF4GH5TK67P8RS9WXY"
 
 
-def dumps(number):
-    """
-    """
+def dumps(number: int) -> str:
+    """"""
     if not isinstance(number, int):
         raise TypeError("number must be an integer")
 
@@ -24,9 +23,8 @@ def dumps(number):
     return value or "0"
 
 
-def loads(value):
-    """
-    """
+def loads(value: str) -> int:
+    """"""
     if len(value) > 13:
         raise ValueError("base24 input too large")
 
