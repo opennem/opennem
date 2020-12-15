@@ -234,16 +234,21 @@ def energy_fueltech_daily(
     network: NetworkSchema,
     year: Optional[int] = None,
     network_region_code: Optional[str] = None,
-    interval_size: str = "1d",
+    interval_size: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
-    interval = human_to_interval(interval_size)
     units = get_unit("energy_giga")
+
+    interval = None
+
+    if interval_size:
+        interval = human_to_interval(interval_size)
 
     query = energy_network_fueltech_query(
         year=year,
+        interval=interval,
         network=network,
         network_region=network_region_code,
         networks_query=networks_query,
