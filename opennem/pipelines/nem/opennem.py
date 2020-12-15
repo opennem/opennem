@@ -417,7 +417,7 @@ def process_unit_solution(table: Dict[str, Any], spider: Spider) -> Dict:
     return item
 
 
-def process_meter_data_gen_duid(table, spider) -> Dict:
+def process_meter_data_gen_duid(table: Dict[str, Any], spider: Spider) -> Dict:
     if "records" not in table:
         raise Exception("Invalid table no records")
 
@@ -439,7 +439,7 @@ def process_meter_data_gen_duid(table, spider) -> Dict:
     return item
 
 
-def process_rooftop_actual(table, spider) -> Dict:
+def process_rooftop_actual(table: Dict[str, any], spider: Spider) -> Dict:
     if "records" not in table:
         raise Exception("Invalid table no records")
 
