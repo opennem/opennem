@@ -93,10 +93,23 @@ class MMSArchiveBulkSpider(scrapy.Spider):
         yield item
 
 
-class MMSArchiveSpider(MMSArchiveBulkSpider):
+class MMSArchivePriceSpider(MMSArchiveBulkSpider):
     name = "au.mms.archive.dispatch_price"
 
     tables = ["DISPATCHPRICE"]
+
+    pipelines = set(
+        [
+            ExtractCSV,
+            NemwebUnitScadaOpenNEMStorePipeline,
+        ]
+    )
+
+
+class MMSArchiveP5InterconnectorSolutionSpider(MMSArchiveBulkSpider):
+    name = "au.mms.archive.p5_interconnector_solution"
+
+    tables = ["P5MIN_INTERCONNECTORSOLN"]
 
     pipelines = set(
         [
