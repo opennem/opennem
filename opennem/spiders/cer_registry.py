@@ -6,6 +6,3 @@ class CERRegistrySpider(Spider):
     start_urls = [
         "https://www.rec-registry.gov.au/rec-registry/app/public/power-station-register"
     ]
-
-    def parse(self, response):
-        yield {}
