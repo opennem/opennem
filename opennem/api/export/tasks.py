@@ -199,7 +199,7 @@ def export_all_monthly() -> None:
             )
             all_monthly.append_set(weather_stats)
 
-    write_output("v3/au/all/monthly.json", all_monthly)
+    write_output("v3/stats/au/all/monthly.json", all_monthly)
 
 
 def export_all_daily() -> None:
@@ -232,7 +232,7 @@ def export_all_daily() -> None:
             )
             stat_set.append_set(weather_stats)
 
-        write_output(f"v3/au/{network_region.code}/daily.json", stat_set)
+        write_output(f"v3/stats/au/{network_region.code}/daily.json", stat_set)
 
 
 def export_metadata() -> bool:
