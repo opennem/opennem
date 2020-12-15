@@ -202,6 +202,39 @@ def export_all_monthly() -> None:
     write_output("v3/au/all/monthly.json", all_monthly)
 
 
+def export_all_daily() -> None:
+    session = SessionLocal()
+    network_regions = session.query(NetworkRegion).all()
+
+    for network_region in network_regions:
+        network = network_from_network_code(network_region.network.code)
+        networks = None
+
+        if network_region.code == "WEM":
+            networks = [NetworkWEM, NetworkAPVI]
+
+        stat_set = energy_fueltech_daily(
+            interval_size="1d",
+            network=network,
+            networks_query=networks,
+            network_region_code=network_region.code,
+        )
+
+        if not stat_set:
+            continue
+
+        bom_station = get_network_region_weather_station(network_region.code)
+
+        if bom_station:
+            weather_stats = weather_daily(
+                station_code=bom_station,
+                network_code=network.code,
+            )
+            stat_set.append_set(weather_stats)
+
+        write_output(f"v3/au/{network_region.code}/daily.json", stat_set)
+
+
 def export_metadata() -> bool:
     """
     Export metadata
@@ -224,7 +257,7 @@ def export_metadata() -> bool:
 
 
 if __name__ == "__main__":
-    export_all_monthly()
+    export_all_daily()
 
     # if settings.env in ["development", "staging"]:
     #     export_power(priority=PriorityType.live)
