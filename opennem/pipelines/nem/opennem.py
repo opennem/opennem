@@ -215,8 +215,19 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
     records_to_store = []
 
     for record in records:
+        ti_value = None
+
+        if "SETTLEMENTDATE" in record:
+            ti_value = record["SETTLEMENTDATE"]
+
+        if "RUN_DATETIME" in record:
+            ti_value = record["RUN_DATETIME"]
+
+        if not ti_value:
+            raise Exception("Require a trading interval")
+
         trading_interval = parse_date(
-            record["SETTLEMENTDATE"], network=NetworkNEM, dayfirst=False
+            ti_value, network=NetworkNEM, dayfirst=False
         )
 
         if not trading_interval:
@@ -488,6 +499,7 @@ def process_rooftop_actual(table, spider) -> Dict:
 
 
 TABLE_PROCESSOR_MAP = {
+    "P5MIN_INTERCONNECTORSOLN": "process_dispatch_interconnectorres",
     "DISPATCH_INTERCONNECTORRES": "process_dispatch_interconnectorres",
     "METER_DATA_GEN_DUID": "process_meter_data_gen_duid",
     "DISPATCH_CASE_SOLUTION": "process_case_solutions",
