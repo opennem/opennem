@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 BASE_ENV_FILE_NAME = ".env"
 
 
-def replace_database_in_url(db_url, db_name):
+def replace_database_in_url(db_url: str, db_name: str) -> str:
     """
     replaces the database portion of a database connection URL with db_name
 
