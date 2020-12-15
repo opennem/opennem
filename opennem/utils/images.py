@@ -3,7 +3,7 @@ from io import BytesIO
 from PIL import Image
 
 
-def img_to_buffer(img: Image):
+def img_to_buffer(img: Image) -> memoryview:
     """
     Convert image and save as JPEG
 
