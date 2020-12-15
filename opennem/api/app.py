@@ -20,8 +20,8 @@ from opennem.api.weather.router import router as weather_router
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
 from opennem.db import database, get_database_session
-from opennem.db.models.opennem import FuelTech, Network
-from opennem.schema.network import NetworkSchema
+from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
+from opennem.schema.network import NetworkRegionSchema, NetworkSchema
 from opennem.schema.opennem import FueltechSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
@@ -99,6 +99,20 @@ def networks(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     response = [NetworkSchema.parse_obj(i) for i in networks]
+
+    return response
+
+
+@app.get("/networks/regions", response_model=List[NetworkRegionSchema])
+def network_regions(
+    session: Session = Depends(get_database_session),
+) -> List[NetworkRegionSchema]:
+    networks = session.query(NetworkRegion).all()
+
+    if not networks:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    response = [NetworkRegionSchema.parse_obj(i) for i in networks]
 
     return response
 
