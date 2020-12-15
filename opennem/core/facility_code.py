@@ -3,16 +3,18 @@
 
 """
 
+from typing import Optional
+
 WEM_CODE_SUFFIXES = ["plant"]
 
 
-def parse_wem_facility_code(facility_code: str) -> str:
+def parse_wem_facility_code(facility_code: str) -> Optional[str]:
     """
-        Parses WEM facility codes into station_code and facility_code
+    Parses WEM facility codes into station_code and facility_code
 
-        If the suffix is in the map include it
+    If the suffix is in the map include it
 
-        ex. PINJAR_GT7 becomes PINJAR and PINJAR_GT7
+    ex. PINJAR_GT7 becomes PINJAR and PINJAR_GT7
     """
 
     if not type(facility_code) is str:
