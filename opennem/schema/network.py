@@ -16,6 +16,12 @@ class NetworkNetworkRegion(BaseConfig):
     code: str
 
 
+class NetworkRegionSchema(BaseConfig):
+    network_id: str
+    code: str
+    timezone: Optional[str]
+
+
 class NetworkSchema(BaseConfig):
     code: str
     country: str
