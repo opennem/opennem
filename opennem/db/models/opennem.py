@@ -347,7 +347,7 @@ class Station(Base, BaseModel):
 
     revisions = relationship("Revision")
 
-    photos = relationship("Photo")
+    photos = relationship("Photo", lazy="joined", innerjoin=False)
 
     code = Column(Text, index=True, nullable=False, unique=True)
     name = Column(Text)
