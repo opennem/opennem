@@ -166,6 +166,7 @@ def power_network_fueltech_query(
 
 def energy_network_fueltech_query(
     network: NetworkSchema,
+    interval: Optional[TimeInterval] = None,
     year: Optional[int] = None,
     network_region: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
@@ -258,6 +259,11 @@ def energy_network_fueltech_query(
     if not timezone:
         timezone = "UTC"
 
+    trunc = None
+
+    if interval:
+        trunc = interval.trunc
+
     if year:
         # might have to do +offset times
         year_max = "{}-12-31 23:59:59{}".format(year, offset)
@@ -266,11 +272,14 @@ def energy_network_fueltech_query(
         if year == datetime.now().year:
             year_max = scada_range.get_end()
 
-        trunc = "day"
+        if not trunc:
+            trunc = "day"
     else:
         year_min = scada_range.get_start()
         year_max = scada_range.get_end()
-        trunc = "month"
+
+        if not trunc:
+            trunc = "month"
 
     network_region_query = ""
 
