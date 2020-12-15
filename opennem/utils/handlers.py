@@ -6,6 +6,7 @@
 
 import io
 import zipfile
+from typing import Any
 
 from smart_open import open, register_compressor
 
@@ -68,7 +69,7 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
 ZIP_LIMIT = 0
 
 
-def _handle_zip(file_obj, mode):
+def _handle_zip(file_obj: Any, mode: str) -> io.BufferedReader:
     with zipfile.ZipFile(file_obj) as zf:
         if len(zf.namelist()) == 1:
             return zf.open(zf.namelist()[0])
