@@ -6,6 +6,7 @@ from huey import RedisHuey, crontab
 from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import (
     export_all_daily,
+    export_all_monthly,
     export_energy,
     export_metadata,
     export_power,
@@ -53,6 +54,12 @@ def schedule_power_weeklies() -> None:
 @huey.lock_task("schedule_export_all_daily")
 def schedule_export_all_daily() -> None:
     export_all_daily()
+
+
+@huey.periodic_task(crontab(hour="*/6"))
+@huey.lock_task("schedule_export_all_monthly")
+def schedule_export_all_monthly() -> None:
+    export_all_monthly()
 
 
 @huey.periodic_task(crontab(hour="*/1"))
