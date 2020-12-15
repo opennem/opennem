@@ -24,7 +24,16 @@ from opennem.api.export.map import (
     get_export_map,
 )
 from opennem.api.export.utils import write_output
+from opennem.api.stats.schema import OpennemDataSet
+from opennem.core.network_region_bom_station_map import (
+    get_network_region_weather_station,
+)
+from opennem.core.networks import network_from_network_code
+from opennem.db import SessionLocal
+from opennem.db.models.opennem import NetworkRegion
+from opennem.schema.network import NetworkAPVI, NetworkWEM
 from opennem.settings import settings
+from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
 
@@ -154,6 +163,45 @@ def export_energy(
             write_output(energy_stat.path, stat_set)
 
 
+def export_all_monthly() -> None:
+    session = SessionLocal()
+    network_regions = session.query(NetworkRegion).all()
+
+    all_monthly = OpennemDataSet(
+        code="au", data=[], version=get_version(), created_at=datetime.now()
+    )
+
+    for network_region in network_regions:
+        network = network_from_network_code(network_region.network.code)
+        networks = None
+
+        if network_region.code == "WEM":
+            networks = [NetworkWEM, NetworkAPVI]
+
+        stat_set = energy_fueltech_daily(
+            interval_size="1M",
+            network=network,
+            networks_query=networks,
+            network_region_code=network_region.code,
+        )
+
+        if not stat_set:
+            continue
+
+        all_monthly.append_set(stat_set)
+
+        bom_station = get_network_region_weather_station(network_region.code)
+
+        if bom_station:
+            weather_stats = weather_daily(
+                station_code=bom_station,
+                network_code=network.code,
+            )
+            all_monthly.append_set(weather_stats)
+
+    write_output("v3/au/all/monthly.json", all_monthly)
+
+
 def export_metadata() -> bool:
     """
     Export metadata
@@ -176,14 +224,16 @@ def export_metadata() -> bool:
 
 
 if __name__ == "__main__":
-    if settings.env in ["development", "staging"]:
-        export_power(priority=PriorityType.live)
-        export_energy(latest=True)
-        export_metadata()
-        # export_power(priority=PriorityType.history)
-    else:
-        export_power(priority=PriorityType.live)
-        export_energy(latest=True)
-        export_energy()
-        export_metadata()
-        # export_power(priority=PriorityType.history)
+    export_all_monthly()
+
+    # if settings.env in ["development", "staging"]:
+    #     export_power(priority=PriorityType.live)
+    #     export_energy(latest=True)
+    #     export_metadata()
+    #     # export_power(priority=PriorityType.history)
+    # else:
+    #     # export_power(priority=PriorityType.live)
+    #     # export_energy(latest=True)
+    #     export_energy()
+    #     # export_metadata()
+    #     # export_power(priority=PriorityType.history)
