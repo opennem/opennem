@@ -19,4 +19,7 @@ alembic upgrade head
 
 python -m opennem.db.load_fixtures
 
+# load new fictures
+python -m opennem.db.load_fixtures
+
 python -m opennem.api.export.tasks
