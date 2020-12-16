@@ -102,9 +102,11 @@ def stats_factory(
         history = OpennemDataHistory(
             start=start,
             last=end,
-            interval=interval.interval_human,
             data=data_value,
         )
+
+        if interval:
+            history.interval = interval.interval_human
 
         data = OpennemData(
             data_type=units.unit_type,
