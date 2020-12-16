@@ -1,6 +1,12 @@
+#!/usr/bin/env python
 from typing import List
 
-from opennem.api.export.map import PriorityType, StatExport, StatType
+from opennem.api.export.map import (
+    PriorityType,
+    StatExport,
+    StatType,
+    get_export_map,
+)
 from opennem.api.export.tasks import export_energy, export_power
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.time import human_to_period
@@ -12,23 +18,44 @@ from opennem.schema.network import NetworkAPVI, NetworkWEM
 
 
 def run_tests() -> None:
-    network_schema = network_from_network_code("WEM")
-    scada_range = get_scada_range(network=network_schema)
-    bom_station = get_network_region_weather_station("WEM")
+    # network_schema = network_from_network_code("NEM")
+    # scada_range = get_scada_range(network=network_schema)
+    # bom_station = get_network_region_weather_station("NEM")
 
-    export = StatExport(
-        stat_type=StatType.power,
-        priority=PriorityType.live,
-        country="au",
-        date_range=scada_range,
-        network=network_schema,
-        networks=[NetworkAPVI, NetworkWEM],
-        bom_station=bom_station,
-        network_region_query="WEM",
-        period=human_to_period("7d"),
-    )
+    # export_map = get_export_map()
 
-    export_power(stats=[export])
+    # def get_wem(i):
+    #     if (
+    #         i.stat_type == StatType.energy
+    #         and i.priority == PriorityType.monthly
+    #         and i.network == NetworkWEM
+    #     ):
+    #         return i
+
+    # wem_all = list(filter(lambda i: get_wem(i), export_map.resources))
+
+    # for w in wem_all:
+    #     print(w.path)
+
+    exports = export_energy(priority=PriorityType.daily)
+
+    for e in exports:
+        print(e.path)
+
+    # export_energy(stats=wem_all)
+    # export = StatExport(
+    #     stat_type=StatType.power,
+    #     priority=PriorityType.live,
+    #     country="au",
+    #     date_range=scada_range,
+    #     network=network_schema,
+    #     networks=[NetworkAPVI, NetworkWEM],
+    #     bom_station=bom_station,
+    #     network_region_query="WEM",
+    #     period=human_to_period("7d"),
+    # )
+
+    # export_power(stats=[export])
 
     # export = StatExport(
     #     stat_type=StatType.power,
@@ -57,6 +84,18 @@ def run_tests() -> None:
     # export_energy(stats=[export])
 
     # power_stats = export_map.resources
+
+    # export = StatExport(
+    #     stat_type=StatType.energy,
+    #     priority=PriorityType.monthly,
+    #     country="au",
+    #     date_range=scada_range,
+    #     network=network_schema,
+    #     bom_station=bom_station,
+    #     period=human_to_period("all"),
+    # )
+
+    # export_energy(stats=[export])
 
 
 if __name__ == "__main__":
