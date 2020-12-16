@@ -49,7 +49,7 @@ def number_output(n: Union[float, int, None]) -> Optional[float]:
 class OpennemDataHistory(BaseConfig):
     start: Union[datetime, date]
     last: Union[datetime, date]
-    interval: str
+    interval: Optional[str]
     data: List[Optional[float]]
 
     @validator("data")
