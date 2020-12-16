@@ -22,7 +22,12 @@ def write_output(
         is_local = True
 
     if hasattr(stat_set, "json"):
-        write_content = stat_set.json(exclude_unset=True)
+        indent = None
+
+        if settings.debug:
+            indent = 4
+
+        write_content = stat_set.json(exclude_unset=True, indent=indent)
     else:
         write_content = json.dumps(stat_set)
 
