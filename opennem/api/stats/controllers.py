@@ -2,7 +2,7 @@ import logging
 from collections import OrderedDict
 from datetime import datetime, timezone
 from textwrap import dedent
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pytz import timezone as pytz_timezone
 from sqlalchemy.orm import Session
@@ -82,7 +82,7 @@ def stats_factory(
 
     for group_code in group_codes:
 
-        data_grouped = dict()
+        data_grouped: Dict[Any, Any] = dict()
 
         for stat in stats:
             if stat.interval not in data_grouped:
