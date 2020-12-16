@@ -146,7 +146,8 @@ def export_energy(
                 interval_size="1M",
                 network=energy_stat.network,
                 networks_query=energy_stat.networks,
-                network_region_code=energy_stat.network_region,
+                network_region_code=energy_stat.network_region_query
+                or energy_stat.network_region,
             )
 
             if not stat_set:
