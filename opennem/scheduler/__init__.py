@@ -26,7 +26,7 @@ huey = RedisHuey("opennem.exporter", host=redis_host)
 # export tasks
 
 
-@huey.periodic_task(crontab(minute="*/2"))
+@huey.periodic_task(crontab(minute="*/15"))
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
     export_power(priority=PriorityType.live)
@@ -68,7 +68,7 @@ def schedule_hourly_tasks() -> None:
     export_energy(priority=PriorityType.daily, latest=True)
 
 
-@huey.periodic_task(crontab(hour="*/2"))
+@huey.periodic_task(crontab(hour="*/6"))
 @huey.lock_task("schedule_daily_tasks")
 def schedule_daily_tasks() -> None:
     export_energy(priority=PriorityType.daily)
