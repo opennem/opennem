@@ -37,11 +37,11 @@ def duid_in_case(facility_codes: List[str]) -> str:
 
 def stats_factory(
     stats: List[DataQueryResult],
-    interval: TimeInterval,
     units: UnitDefinition,
+    interval: Optional[TimeInterval] = None,
     period: Optional[TimePeriod] = None,
     network: Optional[NetworkSchema] = None,
-    timezone: Optional[Union[timezone, pytz_timezone]] = None,
+    timezone: Optional[Union[timezone, str]] = None,
     code: Optional[str] = None,
     region: Optional[str] = None,
     fueltech_group: Optional[bool] = False,
