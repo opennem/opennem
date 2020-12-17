@@ -1,6 +1,8 @@
 import io
+from typing import Any, Dict, Generator, Optional
 
 import scrapy
+from scrapy.http import Response
 
 from opennem.pipelines.nem import (
     ExtractCSV,
@@ -13,7 +15,7 @@ from opennem.utils.dates import get_date_component
 
 class NemXLSSpider(scrapy.Spider):
 
-    start_url = ""
+    start_url: Optional[str] = None
 
     url_params = {
         "day": get_date_component("%d"),
@@ -21,12 +23,14 @@ class NemXLSSpider(scrapy.Spider):
         "year": get_date_component("%Y"),
     }
 
-    def start_requests(self):
+    def start_requests(self) -> Generator[scrapy.Request, None, None]:
         request_url = self.start_url.format(**self.url_params)
 
         yield scrapy.Request(request_url)
 
-    def parse(self, response):
+    def parse(
+        self, response: Response
+    ) -> Generator[Dict[str, Any], None, None]:
         yield {"content": response.text}
 
 
@@ -41,11 +45,15 @@ class NemSingleMMSSpider(scrapy.Spider):
         ]
     )
 
-    def start_requests(self):
+    url: Optional[str] = None
+
+    def start_requests(self) -> Generator[scrapy.Spider, None, None]:
         if not hasattr(self, "url") or not self.url:
             raise Exception("{} requires url parameter".format(self.__class__))
 
         yield scrapy.Request(self.url)
 
-    def parse(self, response):
+    def parse(
+        self, response: Response
+    ) -> Generator[Dict[str, Any], None, None]:
         yield {"body_stream": io.BytesIO(response.body)}
