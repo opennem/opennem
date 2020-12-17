@@ -11,7 +11,7 @@ from opennem.schema.opennem import StationSchema
 logger = logging.getLogger("opennem.exporter")
 
 
-def load_stations(file_path: str = "opennem.json"):
+def load_stations(file_path: str = "opennem.json") -> List[StationSchema]:
     with open("data/opennem.json") as fh:
         __data = json.load(fh)
 
