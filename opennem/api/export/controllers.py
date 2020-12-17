@@ -288,7 +288,7 @@ def energy_fueltech_daily(
         network=network,
         fueltech_group=True,
         interval=interval,
-        region=network.code.lower(),
+        region=network_region_code,
         period=period,
         code=network.code.lower(),
     )
@@ -302,7 +302,7 @@ def energy_fueltech_daily(
         network=network,
         fueltech_group=True,
         interval=interval,
-        region=network.code.lower(),
+        region=network_region_code,
         period=period,
         code=network.code.lower(),
     )
@@ -315,7 +315,7 @@ def energy_fueltech_daily(
         network=network,
         fueltech_group=True,
         interval=interval,
-        region=network.code.lower(),
+        region=network_region_code,
         period=period,
         code=network.code.lower(),
     )
