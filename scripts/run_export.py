@@ -14,13 +14,18 @@ from opennem.core.network_region_bom_station_map import (
     get_network_region_weather_station,
 )
 from opennem.core.networks import network_from_network_code
-from opennem.schema.network import NetworkAPVI, NetworkWEM
+from opennem.schema.network import (
+    NetworkAPVI,
+    NetworkAU,
+    NetworkNEM,
+    NetworkWEM,
+)
 
 
 def run_tests() -> None:
-    # network_schema = network_from_network_code("NEM")
-    # scada_range = get_scada_range(network=network_schema)
-    # bom_station = get_network_region_weather_station("NEM")
+    network_schema = network_from_network_code("NEM")
+    scada_range = get_scada_range(network=network_schema)
+    bom_station = get_network_region_weather_station("NEM")
 
     # export_map = get_export_map()
 
@@ -37,10 +42,17 @@ def run_tests() -> None:
     # for w in wem_all:
     #     print(w.path)
 
-    exports = export_energy(priority=PriorityType.daily)
+    export = StatExport(
+        stat_type=StatType.power,
+        priority=PriorityType.live,
+        country="au",
+        date_range=scada_range,
+        network=NetworkAU,
+        networks=[NetworkNEM, NetworkWEM],
+        period=human_to_period("7d"),
+    )
 
-    for e in exports:
-        print(e.path)
+    export_power(stats=[export])
 
     # export_energy(stats=wem_all)
     # export = StatExport(
