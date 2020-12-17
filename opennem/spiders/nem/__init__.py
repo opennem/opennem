@@ -24,6 +24,9 @@ class NemXLSSpider(scrapy.Spider):
     }
 
     def start_requests(self) -> Generator[scrapy.Request, None, None]:
+        if not self.start_url:
+            return None
+
         request_url = self.start_url.format(**self.url_params)
 
         yield scrapy.Request(request_url)
