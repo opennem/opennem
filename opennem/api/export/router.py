@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.param_functions import Query
@@ -28,7 +29,7 @@ YEAR_CURRENT = datetime.now().date().year
     response_model=OpennemDataSet,
 )
 def api_export_power_wem(
-    engine=Depends(get_database_engine),
+    engine: Any = Depends(get_database_engine),
 ) -> OpennemDataSet:
     stats = power_network_fueltech_api(
         network_code="WEM",
@@ -68,7 +69,7 @@ def api_export_power_wem(
     response_model=OpennemDataSet,
 )
 def api_export_energy_year(
-    engine=Depends(get_database_engine),
+    engine: Any = Depends(get_database_engine),
     network_code: str = Query("WEM", description="Network code"),
     year: int = Query(YEAR_CURRENT, description="Year to query"),
 ) -> OpennemDataSet:
@@ -81,7 +82,8 @@ def api_export_energy_year(
 
     if not network:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Invalid network",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Invalid network",
         )
 
     stats = energy_network_fueltech_api(
@@ -123,7 +125,7 @@ def api_export_energy_year(
     response_model=OpennemDataSet,
 )
 def api_export_energy_month(
-    engine=Depends(get_database_engine),
+    engine: Any = Depends(get_database_engine),
     network_code: str = Query("WEM", description="Network code"),
     month: str = Query("all", description="Month to query"),
 ) -> OpennemDataSet:
@@ -137,7 +139,8 @@ def api_export_energy_month(
 
     if not network:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Invalid network",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Invalid network",
         )
 
     stats = energy_network_fueltech_api(
