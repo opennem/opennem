@@ -2,7 +2,7 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Generator, Optional
 from urllib.parse import ParseResult, urlparse
 
 import scrapy
@@ -16,13 +16,13 @@ PADDING_WIDTH = 3
 __is_number = re.compile(r"^\d+$")
 
 
-def is_number(value):
+def is_number(value: str) -> bool:
     if re.match(__is_number, value):
         return True
     return False
 
 
-def parse_dirlisting(raw_string):
+def parse_dirlisting(raw_string: str) -> Dict[str, Any]:
     """
     given a raw text directory listing like "     Saturday 11th June 2020      6789"
     will parse and return both the date and listing type
@@ -80,15 +80,15 @@ class DirlistingSpider(Spider):
 
     """
 
-    limit = 0
+    limit: int = 0
 
-    skip = 0
+    skip: int = 0
 
-    start_url = None
+    start_url: Optional[str] = None
 
     supported_extensions = [".csv", ".zip"]
 
-    def start_requests(self):
+    def start_requests(self) -> Generator[scrapy.Request, None, None]:
         if self.custom_settings is None:
             self.custom_settings = {}
 
@@ -111,7 +111,7 @@ class DirlistingSpider(Spider):
         for url in starts:
             yield scrapy.Request(url)
 
-    def parse(self, response):
+    def parse(self, response) -> Generator[Dict[str, Any], None, None]:
         links = list(
             reversed([i.get() for i in response.xpath("//body/pre/a/@href")])
         )
