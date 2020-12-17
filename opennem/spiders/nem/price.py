@@ -9,7 +9,7 @@ class NemwebLatestPriceSpider(NemwebSpider):
     )
     limit = 2
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline])
 
 
 class NemwebCurrentPriceSpider(NemwebSpider):
@@ -19,7 +19,7 @@ class NemwebCurrentPriceSpider(NemwebSpider):
     )
     limit = 0
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline])
 
 
 class NemwebArchivePriceSpider(NemwebSpider):
@@ -29,7 +29,7 @@ class NemwebArchivePriceSpider(NemwebSpider):
     )
     limit = 0
 
-    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline,])
+    pipelines_extra = set([NemwebUnitScadaOpenNEMStorePipeline])
 
     # Archives tend to contain large zips of embedded zips so throttle
     # to limit memory use
