@@ -112,7 +112,7 @@ def power_network_fueltech_query(
         from (
             select
                 time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
-                avg(fs.generated) as facility_power,
+                coalesce(avg(fs.generated), 0) as facility_power,
                 fs.facility_code,
                 ft.code as fueltech_code
             from facility_scada fs
