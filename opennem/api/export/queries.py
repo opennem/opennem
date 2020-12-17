@@ -11,6 +11,7 @@ from opennem.schema.time import TimeInterval, TimePeriod
 def price_network_query(
     interval: TimeInterval,
     network: NetworkSchema = NetworkWEM,
+    group_field: str = "bs.network_id",
     date_range: Optional[ScadaDateRange] = None,
     period: Optional[TimePeriod] = None,
     network_region: Optional[str] = None,
@@ -33,7 +34,7 @@ def price_network_query(
 
         select
             time_bucket_gapfill('{trunc}', bs.trading_interval) AS trading_interval,
-            bs.{group_field},
+            {group_field},
             avg(bs.price) as price
         from balancing_summary bs
         where
@@ -46,16 +47,18 @@ def price_network_query(
         order by 1 desc
     """
 
-    group_field = "network_id"
     network_region_query = ""
 
     if network_region:
         network_region_query = f"bs.network_region='{network_region}' and "
-        group_field = "network_region"
+        group_field = "bs.network_region"
 
     network_query = "bs.network_id IN ({}) and ".format(
         networks_to_in(networks_query)
     )
+
+    if len(networks_query) > 1:
+        group_field = "'AU'"
 
     if not date_range:
         raise Exception("Require a date range")
