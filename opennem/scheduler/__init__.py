@@ -32,7 +32,7 @@ def schedule_live_tasks() -> None:
     export_power(priority=PriorityType.live)
 
 
-@huey.periodic_task(crontab(hour="*/2"))
+@huey.periodic_task(crontab(hour="*/12"))
 @huey.lock_task("schedule_power_weeklies")
 def schedule_power_weeklies() -> None:
     """
@@ -41,7 +41,7 @@ def schedule_power_weeklies() -> None:
     export_power(priority=PriorityType.history, latest=True)
 
 
-@huey.periodic_task(crontab(hour="*/12"))
+@huey.periodic_task(crontab(minute="15", hour="12"))
 @huey.lock_task("schedule_power_weeklies_archive")
 def schedule_power_weeklies_archive() -> None:
     """
@@ -68,13 +68,13 @@ def schedule_hourly_tasks() -> None:
     export_energy(priority=PriorityType.daily, latest=True)
 
 
+# @huey.periodic_task(crontab(hour="14"))
+# @huey.lock_task("schedule_daily_tasks")
+# def schedule_daily_tasks() -> None:
+#     export_energy(priority=PriorityType.daily)
+
+
 @huey.periodic_task(crontab(hour="*/6"))
-@huey.lock_task("schedule_daily_tasks")
-def schedule_daily_tasks() -> None:
-    export_energy(priority=PriorityType.daily)
-
-
-@huey.periodic_task(crontab(hour="*/2"))
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
     export_energy(priority=PriorityType.monthly)
