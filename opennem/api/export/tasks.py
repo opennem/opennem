@@ -124,6 +124,7 @@ def export_energy(
                 year=energy_stat.year,
                 network=energy_stat.network,
                 networks_query=energy_stat.networks,
+                interval_size="1d",
                 network_region_code=energy_stat.network_region_query
                 or energy_stat.network_region,
             )
