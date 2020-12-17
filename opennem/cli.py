@@ -15,77 +15,77 @@ logger = logging.getLogger("opennem.cli")
 
 
 @click.group()
-def main():
+def main() -> None:
     pass
 
 
 @click.command()
-def crawl():
+def crawl() -> None:
     logger.info("crawl @TODO")
 
 
 @click.command()
-def diff():
+def diff() -> None:
     run_diff()
 
 
 @click.group()
-def cmd_db():
+def cmd_db() -> None:
     pass
 
 
 @click.command()
-def cmd_db_init():
+def cmd_db_init() -> None:
     db_init()
 
 
 @click.command()
-def cmd_db_fixturer():
+def cmd_db_fixturer() -> None:
     load_fixtures()
 
 
 @click.group()
-def cmd_import():
+def cmd_import() -> None:
     pass
 
 
 @click.group()
-def cmd_export():
+def cmd_export() -> None:
     pass
 
 
 @click.command()
-def cmd_import_opennem():
+def cmd_import_opennem() -> None:
     opennem_import()
 
 
 @click.command()
-def cmd_import_mms():
+def cmd_import_mms() -> None:
     mms_export()
 
 
 @click.command()
-def cmd_import_all():
+def cmd_import_all() -> None:
     run_all()
 
 
 @click.command()
-def cmd_export_opennem():
+def cmd_export_opennem() -> None:
     opennem_export()
 
 
 @click.command()
-def cmd_export_all():
+def cmd_export_all() -> None:
     run_all()
 
 
 @click.group()
-def cmd_weather():
+def cmd_weather() -> None:
     pass
 
 
 @click.command()
-def cmd_weather_init():
+def cmd_weather_init() -> None:
     load_bom_stations_json()
 
 
