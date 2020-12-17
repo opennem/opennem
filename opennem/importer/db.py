@@ -5,7 +5,6 @@ from pprint import pprint
 from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
-
 # from opennem.core.loader import load_data
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
@@ -479,7 +478,7 @@ def opennem_init() -> None:
         session.commit()
 
 
-def test_revisions():
+def test_revisions() -> None:
     registry = registry_import()
     # mms = mms_import()
 
