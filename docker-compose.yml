@@ -11,7 +11,7 @@ services:
       - ${PWD}/infra/grafana/data/:/var/lib/grafana
 
   redis:
-    image: redis:3.2
+    image: redis:6-alpine
     hostname: redis
     ports:
       - ${HOST:-127.0.0.1}:6379:6379
