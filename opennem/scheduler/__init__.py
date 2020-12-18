@@ -1,7 +1,7 @@
 # pylint: disable=no-name-in-module
 # pylint: disable=no-self-argument
 # pylint: disable=no-member
-from huey import RedisHuey, crontab
+from huey import PriorityRedisHuey, crontab
 
 from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import (
@@ -22,7 +22,7 @@ redis_host = None
 if settings.cache_url:
     redis_host = settings.cache_url.host
 
-huey = RedisHuey("opennem.exporter", host=redis_host)
+huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 # export tasks
 
 
@@ -32,22 +32,22 @@ def schedule_live_tasks() -> None:
     export_power(priority=PriorityType.live)
 
 
-@huey.periodic_task(crontab(hour="*/12"))
-@huey.lock_task("schedule_power_weeklies")
-def schedule_power_weeklies() -> None:
-    """
-    Run weekly power outputs
-    """
-    export_power(priority=PriorityType.history, latest=True)
+# @huey.periodic_task(crontab(hour="*/12"))
+# @huey.lock_task("schedule_power_weeklies")
+# def schedule_power_weeklies() -> None:
+#     """
+#     Run weekly power outputs
+#     """
+#     export_power(priority=PriorityType.history, latest=True)
 
 
-@huey.periodic_task(crontab(minute="15", hour="12"))
-@huey.lock_task("schedule_power_weeklies_archive")
-def schedule_power_weeklies_archive() -> None:
-    """
-    Run weekly power outputs entire archive
-    """
-    export_power(priority=PriorityType.history)
+# @huey.periodic_task(crontab(minute="15", hour="12"))
+# @huey.lock_task("schedule_power_weeklies_archive")
+# def schedule_power_weeklies_archive() -> None:
+#     """
+#     Run weekly power outputs entire archive
+#     """
+#     export_power(priority=PriorityType.history)
 
 
 @huey.periodic_task(crontab(hour="*/6"))
@@ -74,7 +74,7 @@ def schedule_hourly_tasks() -> None:
 #     export_energy(priority=PriorityType.daily)
 
 
-@huey.periodic_task(crontab(hour="*/6"))
+@huey.periodic_task(crontab(hour="*/12"))
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
     export_energy(priority=PriorityType.monthly)
