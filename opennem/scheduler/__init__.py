@@ -1,6 +1,8 @@
 # pylint: disable=no-name-in-module
 # pylint: disable=no-self-argument
 # pylint: disable=no-member
+import platform
+
 from huey import PriorityRedisHuey, crontab
 
 from opennem.api.export.map import PriorityType
@@ -16,6 +18,17 @@ from opennem.monitors.aemo_intervals import aemo_wem_live_interval
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.monitors.opennem_metadata import check_metadata_status
 from opennem.settings import settings
+
+# Py 3.8 on MacOS changed the default multiprocessing model
+if platform.system() == "Darwin":
+    import multiprocessing
+
+    try:
+        multiprocessing.set_start_method("fork")
+    except RuntimeError:
+        # sometimes it has already been set by
+        # other libs
+        pass
 
 redis_host = None
 
