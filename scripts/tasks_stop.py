@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from opennem.scheduler import huey
 
 if __name__ == "__main__":
