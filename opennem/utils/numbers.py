@@ -1,6 +1,6 @@
 import decimal
 from math import floor, log, pow
-from typing import Union
+from typing import List, Union
 
 from opennem.settings import settings
 
@@ -96,3 +96,16 @@ def float_to_str(f: float) -> str:
     """
     d1 = ctx.create_decimal(repr(f))
     return format(d1, "f")
+
+
+def cast_trailing_nulls(series: List) -> List:
+    """
+    Cast trailing None's in a list series to 0's
+    """
+    for i, x in reversed(list(enumerate(series))):
+        if x is None:
+            series[i] = 0
+        else:
+            return series
+
+    return series
