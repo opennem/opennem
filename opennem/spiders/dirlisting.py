@@ -2,7 +2,7 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Generator, Optional
+from typing import Any, Dict, Generator, Optional, Pattern
 from urllib.parse import ParseResult, urlparse
 
 import scrapy
@@ -88,6 +88,8 @@ class DirlistingSpider(Spider):
 
     supported_extensions = [".csv", ".zip"]
 
+    filename_filter: Optional[Pattern]
+
     def start_requests(self) -> Generator[scrapy.Request, None, None]:
         if self.custom_settings is None:
             self.custom_settings = {}
@@ -148,6 +150,14 @@ class DirlistingSpider(Spider):
                     f"Skipping entry {link}",
                     logging.DEBUG,
                 )
+                continue
+
+            if (
+                self.filename_filter
+                and isinstance(self.filename_filter, Pattern)
+                and not self.filename_filter.match(link)
+            ):
+                self.log(f"Filter skip file {link}", logging.DEBUG)
                 continue
 
             self.log("Getting {}".format(link), logging.INFO)
