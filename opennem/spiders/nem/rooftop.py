@@ -42,7 +42,7 @@ class NemwebArchiveRooftopActual(NemwebSpider):
     name = "au.nem.archive.rooftop"
     start_url = "http://www.nemweb.com.au/Reports/ARCHIVE/ROOFTOP_PV/ACTUAL/"
 
-    filename_filter = re.compile(r"\w+_MEASUREMENT_\w+")
+    filename_filter = re.compile(r".*_MEASUREMENT_.*")
 
     pipelines_extra = set(
         [
