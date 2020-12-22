@@ -1,3 +1,5 @@
+import re
+
 from opennem.pipelines.bulk_insert import BulkInsertPipeline
 from opennem.pipelines.csv import RecordsToCSVPipeline
 from opennem.pipelines.nem.opennem import NemwebUnitScadaOpenNEMStorePipeline
@@ -8,6 +10,9 @@ class NemwebLatestRooftopActual(NemwebSpider):
     name = "au.nem.latest.rooftop"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/"
     limit = 2
+
+    # Ignore sat
+    filename_filter = re.compile(r"\w+_MEASUREMENT_\w+")
 
     pipelines_extra = set(
         [
@@ -22,6 +27,8 @@ class NemwebCurrentRooftopActual(NemwebSpider):
     name = "au.nem.current.rooftop"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/"
 
+    filename_filter = re.compile(r"\w+_MEASUREMENT_\w+")
+
     pipelines_extra = set(
         [
             NemwebUnitScadaOpenNEMStorePipeline,
@@ -34,6 +41,8 @@ class NemwebCurrentRooftopActual(NemwebSpider):
 class NemwebArchiveRooftopActual(NemwebSpider):
     name = "au.nem.archive.rooftop"
     start_url = "http://www.nemweb.com.au/Reports/ARCHIVE/ROOFTOP_PV/ACTUAL/"
+
+    filename_filter = re.compile(r"\w+_MEASUREMENT_\w+")
 
     pipelines_extra = set(
         [
