@@ -4,7 +4,6 @@ from typing import List, Optional, Union
 from pydantic import Field
 from pytz import timezone as pytz_timezone
 
-from opennem.api.time import human_to_interval
 from opennem.core.time import get_interval_by_size
 from opennem.schema.time import TimeInterval
 from opennem.utils.timezone import get_current_timezone, get_fixed_timezone
@@ -29,7 +28,7 @@ class NetworkSchema(BaseConfig):
 
     regions: Optional[List[NetworkNetworkRegion]]
     timezone: Optional[str] = Field(None, description="Network timezone")
-    timezone_database: Optional[str] = Field(
+    timezone_database: str = Field(
         "UTC", description="Database timezone format"
     )
     offset: Optional[int] = Field(
