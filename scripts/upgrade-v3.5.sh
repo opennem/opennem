@@ -19,4 +19,8 @@ alembic upgrade head
 
 python -m opennem.db.load_fixtures
 
+scrapy crawl -L ERROR au.mms.archive.rooftop_actual
+scrapy crawl -L ERROR au.nem.archive.rooftop
+scrapy crawl -L ERROR au.nem.current.rooftop
+
 python -m opennem.api.export.tasks
