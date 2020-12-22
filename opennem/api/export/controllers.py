@@ -290,7 +290,7 @@ def energy_fueltech_daily(
         interval=interval,
         region=network_region_code,
         period=period,
-        code=network.code.lower(),
+        # code=network.code.lower(),
     )
 
     if not stats:
