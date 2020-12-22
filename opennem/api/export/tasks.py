@@ -121,10 +121,10 @@ def export_energy(
                 continue
 
             stat_set = energy_fueltech_daily(
+                interval_size="1d",
                 year=energy_stat.year,
                 network=energy_stat.network,
                 networks_query=energy_stat.networks,
-                interval_size="1d",
                 network_region_code=energy_stat.network_region_query
                 or energy_stat.network_region,
             )
@@ -259,9 +259,11 @@ def export_metadata() -> bool:
 
 
 if __name__ == "__main__":
-    # export_energy()
-    export_all_monthly()
     export_all_daily()
+    export_all_monthly()
+    export_energy()
+    # export_all_daily()
+
     # export_power(priority=PriorityType.history)
 
     # if settings.env in ["development", "staging"]:
