@@ -102,7 +102,7 @@ def power_network_fueltech_query(
     if not date_range:
         date_range = get_scada_range(network=network, networks=networks_query)
 
-    timezone = network.timezone_database
+    timezone: str = network.timezone_database
 
     __query = """
         select
@@ -123,22 +123,22 @@ def power_network_fueltech_query(
                 {network_query}
                 {network_region_query}
                 fs.trading_interval <= '{date_max}' and
-                fs.trading_interval > '{date_min}'
+                fs.trading_interval > '{date_min}' and
                 {fueltech_filter}
-                {}
+                1=1
             group by 1, 3, 4
         ) as t
         group by 1, 2
         order by 1 desc
     """
 
-    network_region_query = ""
-    fueltech_filter = ""
+    network_region_query: str = ""
+    fueltech_filter: str = ""
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
     else:
-        fueltech_filter = "and f.fueltech_id not in ('imports', 'exports')"
+        fueltech_filter = "f.fueltech_id not in ('imports', 'exports') and "
 
     network_query = "fs.network_id IN ({}) and ".format(
         networks_to_in(networks_query)
