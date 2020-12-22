@@ -228,6 +228,7 @@ def energy_network_fueltech_query(
                 fs.trading_interval >= '{year_min}' and
                 {network_query}
                 {network_region_query}
+                {fueltech_filter}
                 1=1
             group by
                 1,
@@ -253,7 +254,7 @@ def energy_network_fueltech_query(
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
     else:
-        fueltech_filter = "and f.fueltech_id not in ('imports', 'exports')"
+        fueltech_filter = "f.fueltech_id not in ('imports', 'exports') and "
 
     network_query = "fs.network_id IN ({}) and ".format(
         networks_to_in(networks_query)
