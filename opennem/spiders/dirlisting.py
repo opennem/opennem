@@ -88,7 +88,7 @@ class DirlistingSpider(Spider):
 
     supported_extensions = [".csv", ".zip"]
 
-    filename_filter: Optional[Pattern]
+    filename_filter: Optional[Pattern] = None
 
     # custom_settings
 
