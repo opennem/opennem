@@ -6,7 +6,7 @@ import argparse
 import logging
 import sys
 
-from opennem.api.export.map import PriorityType, priority_from_name
+from opennem.api.export.map import priority_from_name
 from opennem.api.export.tasks import (
     export_all_daily,
     export_all_monthly,
