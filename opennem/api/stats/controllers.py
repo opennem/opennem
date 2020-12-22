@@ -100,7 +100,7 @@ def stats_factory(
             continue
 
         # Skip zero series
-        if sum(data_value) == 0:
+        if sum([i for i in data_value if i]) == 0:
             continue
 
         history = OpennemDataHistory(
