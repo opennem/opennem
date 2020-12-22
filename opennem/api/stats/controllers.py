@@ -183,7 +183,8 @@ def stats_factory(
     # @NOTE this should probably be
     # country.network.region
     if not code:
-        code = network.code.lower()
+        if network:
+            code = network.code.lower()
 
         if region:
             code = region.lower()
