@@ -143,6 +143,14 @@ class DirlistingSpider(Spider):
                 )
                 continue
 
+            if (
+                self.filename_filter
+                and isinstance(self.filename_filter, Pattern)
+                and not self.filename_filter.match(link)
+            ):
+                self.log(f"Filter skip file {link}", logging.DEBUG)
+                continue
+
             parsed += 1
 
             if self.skip and self.skip >= parsed:
@@ -150,14 +158,6 @@ class DirlistingSpider(Spider):
                     f"Skipping entry {link}",
                     logging.DEBUG,
                 )
-                continue
-
-            if (
-                self.filename_filter
-                and isinstance(self.filename_filter, Pattern)
-                and not self.filename_filter.match(link)
-            ):
-                self.log(f"Filter skip file {link}", logging.DEBUG)
                 continue
 
             self.log("Getting {}".format(link), logging.INFO)
