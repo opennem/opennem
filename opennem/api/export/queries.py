@@ -123,9 +123,8 @@ def power_network_fueltech_query(
                 {network_query}
                 {network_region_query}
                 fs.trading_interval <= '{date_max}' and
-                fs.trading_interval > '{date_min}' and
+                fs.trading_interval > '{date_min}'
                 {fueltech_filter}
-                1=1
             group by 1, 3, 4
         ) as t
         group by 1, 2
@@ -134,14 +133,21 @@ def power_network_fueltech_query(
 
     network_region_query: str = ""
     fueltech_filter: str = ""
+    wem_apvi_case: str = ""
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
     else:
-        fueltech_filter = "f.fueltech_id not in ('imports', 'exports') and "
+        fueltech_filter = "and f.fueltech_id not in ('imports', 'exports') "
 
-    network_query = "fs.network_id IN ({}) and ".format(
-        networks_to_in(networks_query)
+    if NetworkWEM in networks_query:
+        # silly single case we'll refactor out
+        # APVI network is used to provide rooftop for WEM so we require it
+        # in country-wide totals
+        wem_apvi_case = "or (fs.network_id='APVI' and f.network_region='WEM')"
+
+    network_query = "(fs.network_id IN ({}) {}) and ".format(
+        networks_to_in(networks_query), wem_apvi_case
     )
 
     if not date_range:
@@ -162,6 +168,7 @@ def power_network_fueltech_query(
             date_max=date_max,
             date_min=date_min,
             fueltech_filter=fueltech_filter,
+            wem_apvi_case=wem_apvi_case,
         )
     )
 
