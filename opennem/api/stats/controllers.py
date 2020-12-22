@@ -14,6 +14,7 @@ from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
+from opennem.utils.numbers import cast_trailing_nulls
 from opennem.utils.time import human_to_timedelta
 from opennem.utils.timezone import is_aware, make_aware
 from opennem.utils.version import get_version
@@ -102,6 +103,9 @@ def stats_factory(
         # Skip zero series
         if sum([i for i in data_value if i]) == 0:
             continue
+
+        # Cast trailing nulls
+        data_value = cast_trailing_nulls(data_value)
 
         history = OpennemDataHistory(
             start=start,
