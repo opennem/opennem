@@ -446,8 +446,14 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
     records = table["records"]
     item = dict()
 
+    # Filter out for only measurements
+    # as opposed to TYPE=SATELLITE
+    records_filtered = list(
+        filter(lambda x: x["TYPE"] == "MEASUREMENT", records)
+    )
+
     scada_records = unit_scada_generate_facility_scada(
-        records,
+        records_filtered,
         spider,
         network=NetworkNEM,
         interval_field="INTERVAL_DATETIME",
