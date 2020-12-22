@@ -2,7 +2,7 @@ import logging
 from functools import wraps
 from typing import Dict, List, Optional
 
-from expiringdict import ExpiringDict
+from cachetools import TTLCache
 
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.schema.network import NetworkSchema
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 CACHE_AGE = 60 * 15
 
-scada_cache = ExpiringDict(max_len=100, max_age_seconds=CACHE_AGE)
+scada_cache = TTLCache(maxsize=100, ttl=CACHE_AGE)
 
 
 def cache_scada_result(func):

@@ -219,7 +219,7 @@ urllib3 = {version = ">=1.25.4,<1.26", markers = "python_version != \"3.4\""}
 
 [[package]]
 name = "cachetools"
-version = "4.1.1"
+version = "4.2.0"
 description = "Extensible memoizing collections and decorators"
 category = "main"
 optional = false
@@ -377,17 +377,6 @@ description = "An implementation of lxml.xmlfile for the standard library"
 category = "main"
 optional = false
 python-versions = "*"
-
-[[package]]
-name = "expiringdict"
-version = "1.2.1"
-description = "Dictionary with auto-expiring values for caching purposes"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.extras]
-tests = ["dill", "coverage", "coveralls", "mock", "nose"]
 
 [[package]]
 name = "fastapi"
@@ -2006,7 +1995,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "363ab21b033bee1ad2a4f1c76c3b80dd327f53ebbe3c3050fe6d4963ce7a3f61"
+content-hash = "cca4d4f79eaed2175d76ef196d38b02d9e9c677a68b10bb403e57e05793d2d60"
 
 [metadata.files]
 aiofiles = [
@@ -2104,8 +2093,8 @@ botocore = [
     {file = "botocore-1.19.15.tar.gz", hash = "sha256:4e9dc37fb3cc47425c6480dc22999d556ca3cf71714f2937df0fc3db2a7f6581"},
 ]
 cachetools = [
-    {file = "cachetools-4.1.1-py3-none-any.whl", hash = "sha256:513d4ff98dd27f85743a8dc0e92f55ddb1b49e060c2d5961512855cda2c01a98"},
-    {file = "cachetools-4.1.1.tar.gz", hash = "sha256:bbaa39c3dede00175df2dc2b03d0cf18dd2d32a7de7beb68072d13043c9edb20"},
+    {file = "cachetools-4.2.0-py3-none-any.whl", hash = "sha256:c6b07a6ded8c78bf36730b3dc452dfff7d95f2a12a2fed856b1a0cb13ca78c61"},
+    {file = "cachetools-4.2.0.tar.gz", hash = "sha256:3796e1de094f0eaca982441c92ce96c68c89cced4cd97721ab297ea4b16db90e"},
 ]
 certifi = [
     {file = "certifi-2020.11.8-py2.py3-none-any.whl", hash = "sha256:1f422849db327d534e3d0c5f02a263458c3955ec0aae4ff09b95f195c59f4edd"},
@@ -2217,9 +2206,6 @@ docutils = [
 ]
 et-xmlfile = [
     {file = "et_xmlfile-1.0.1.tar.gz", hash = "sha256:614d9722d572f6246302c4491846d2c393c199cfa4edc9af593437691683335b"},
-]
-expiringdict = [
-    {file = "expiringdict-1.2.1.tar.gz", hash = "sha256:fe2ba427220425c3c8a3d29f6d2e2985bcee323f8bcd4021e68ebefbd90d8250"},
 ]
 fastapi = [
     {file = "fastapi-0.61.2-py3-none-any.whl", hash = "sha256:8c8517680a221e69eb34073adf46c503092db2f24845b7bdc7f85b54f24ff0df"},
