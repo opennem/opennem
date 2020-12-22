@@ -181,7 +181,7 @@ def power_week(
 
     result = stats_factory(
         stats,
-        code=network_region_code or network.code,
+        # code=network_region_code or network.code,
         network=network,
         interval=interval,
         period=period,
