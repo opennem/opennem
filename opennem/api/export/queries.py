@@ -125,6 +125,7 @@ def power_network_fueltech_query(
                 fs.trading_interval <= '{date_max}' and
                 fs.trading_interval > '{date_min}'
                 {fueltech_filter}
+                {}
             group by 1, 3, 4
         ) as t
         group by 1, 2
@@ -200,15 +201,15 @@ def energy_network_fueltech_query(
                     sum(eoi_quantity),
                     energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated))
                 ) as energy,
-                case when avg(bs.price) >= 0 then
+                case when avg(bs.price) >= 0  and min(fs.generated) >= 0 then
                     coalesce(
                         sum(eoi_quantity) * avg(bs.price),
                         energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price),
                         0.0
                     )
-                else null
+                else 0.0
                 end as market_value,
-                case when avg(f.emissions_factor_co2) >= 0 then
+                case when avg(f.emissions_factor_co2) >= 0  and min(fs.generated) >= 0 then
                     coalesce(
                         sum(eoi_quantity) * avg(f.emissions_factor_co2),
                         energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(f.emissions_factor_co2),
