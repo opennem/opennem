@@ -10,14 +10,15 @@ from cachetools import TTLCache
 
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.schema.network import NetworkSchema
+from opennem.settings import settings
 
 logger = logging.getLogger(__name__)
 
-# @TODO read from settings default 5 minutes
-# might want to increase this on a per-env
-CACHE_AGE = 60 * 15
+CACHE_AGE = settings.cache_scada_values_ttl_sec
 
 scada_cache: TTLCache = TTLCache(maxsize=100, ttl=CACHE_AGE)
+
+print("CACHE_AGE", CACHE_AGE)
 
 
 def cache_scada_result(func: Callable) -> Callable:
