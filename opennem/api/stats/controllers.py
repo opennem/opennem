@@ -221,6 +221,22 @@ def networks_to_in(networks: List[NetworkSchema]) -> str:
     return ", ".join(codes)
 
 
+SCADA_RANGE_EXCLUDE_DUIDS = [
+    "V-SA",
+    "V-SA-2",
+    "N-Q-MNSP1",
+    "N-Q-MNSP1-2",
+    "NSW1-QLD1",
+    "NSW1-QLD1-2",
+    "V-S-MNSP1",
+    "V-S-MNSP1-2",
+    "T-V-MNSP1",
+    "T-V-MNSP1-2",
+    "VIC1-NSW1",
+    "VIC1-NSW1-2",
+]
+
+
 @cache_scada_result
 def get_scada_range(
     network: Optional[NetworkSchema] = None,
@@ -240,7 +256,7 @@ def get_scada_range(
             {network_query}
             {network_region_query}
             facility_code not like 'ROOFTOP_%%'
-            and fueltech_id not in ('imports', 'exports')
+            and facility_code not in ({exclude_duids})
     """
 
     network_query = ""
@@ -272,12 +288,15 @@ def get_scada_range(
             duid_in_case(facilities)
         )
 
+    exclude_duids = duid_in_case(SCADA_RANGE_EXCLUDE_DUIDS)
+
     scada_range_query = dedent(
         __query.format(
             facility_query=facility_query,
             network_query=network_query,
             network_region_query=network_region_query,
             timezone=timezone,
+            exclude_duids=exclude_duids,
         )
     )
 
