@@ -18,8 +18,6 @@ CACHE_AGE = settings.cache_scada_values_ttl_sec
 
 scada_cache: TTLCache = TTLCache(maxsize=100, ttl=CACHE_AGE)
 
-print("CACHE_AGE", CACHE_AGE)
-
 
 def cache_scada_result(func: Callable) -> Callable:
     """
