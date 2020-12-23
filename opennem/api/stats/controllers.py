@@ -240,6 +240,7 @@ def get_scada_range(
             {network_query}
             {network_region_query}
             facility_code not like 'ROOFTOP_%%'
+            and fueltech_id not in ('imports', 'exports')
     """
 
     network_query = ""
