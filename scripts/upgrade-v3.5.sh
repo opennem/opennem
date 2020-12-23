@@ -23,4 +23,6 @@ scrapy crawl -L ERROR au.mms.archive.rooftop_actual
 scrapy crawl -L ERROR au.nem.archive.rooftop
 scrapy crawl -L ERROR au.nem.current.rooftop
 
+python -m opennem.importer.emissions
+
 python -m opennem.api.export.tasks
