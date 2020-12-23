@@ -112,6 +112,10 @@ def import_nem_interconnects() -> None:
         int_facility.created_by = "opennem.importer.interconnectors"
         int_facility.fueltech_id = "exports"
 
+        int_facility3 = int_facility
+        int_facility3.fueltech_id = "imports"
+        int_facility3.code = "{}-3".format(interconnector.interconnectorid)
+
         # logger.debug(
         #     "Created facility: {}".format(interconnector.interconnectorid)
         # )
@@ -141,8 +145,14 @@ def import_nem_interconnects() -> None:
         int_facility2.created_by = "opennem.importer.interconnectors"
         int_facility2.fueltech_id = "imports"
 
+        int_facility4 = int_facility2
+        int_facility4.fueltech_id = "exports"
+        int_facility4.code = "{}-4".format(interconnector.interconnectorid)
+
         interconnector_station.facilities.append(int_facility)
         interconnector_station.facilities.append(int_facility2)
+        interconnector_station.facilities.append(int_facility3)
+        interconnector_station.facilities.append(int_facility4)
 
         session.add(interconnector_station)
 
