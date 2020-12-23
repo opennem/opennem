@@ -34,6 +34,7 @@ def import_mms_emissions() -> None:
         "PLAYFB2": 1.509041,
         "PLAYFB3": 1.509041,
         "PLAYFB4": 1.509041,
+        "PLAYB-AG": 1.509041,
         "COLNSV_4": 1.191769,
         "COLNSV_5": 1.191769,
         "HWPS7": 1.558001,
@@ -50,6 +51,15 @@ def import_mms_emissions() -> None:
         "HWPS6": 1.558001,
         "WW7": 1.030046,
         "WW8": 1.030046,
+        # from wem
+        "KWINANA_C5": 0.877,
+        "KWINANA_C5": 0.877,
+        # from reports
+        "REDBANK1": 1.2,
+        # from https://web.archive.org/web/20111002115520/http://carma.org/company/detail/6264
+        "MOR1": 2.79,
+        "MOR2": 2.79,
+        "MOR3": 2.79,
     }
 
     # for station in mms:
