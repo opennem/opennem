@@ -42,6 +42,9 @@ class OpennemSettings(BaseSettings):
 
     precision_default: int = 4
 
+    # cache scada values for
+    cache_scada_values_ttl_sec: int = 60 * 5
+
     # asgi server settings
     server_host: str = "0.0.0.0"
     server_port: int = 8000
@@ -104,4 +107,5 @@ class OpennemSettings(BaseSettings):
             "s3_bucket_path": {"env": "S3_DATA_BUCKET_PATH"},
             "server_port": {"env": "PORT"},
             "server_host": {"env": "HOST"},
+            "cache_scada_values_ttl_sec": {"env": "CACHE_SCADA_TTL"},
         }
