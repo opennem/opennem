@@ -25,4 +25,11 @@ scrapy crawl -L ERROR au.nem.current.rooftop
 
 python -m opennem.importer.emissions
 
+# reimport interconnectors
+python -m opennem.importer.interconnectors
+
+scrapy crawl -L ERROR au.nem.current.dispatch_is
+scrapy crawl -L ERROR au.nem.archive.dispatch_is
+scrapy crawl -L ERROR au.mms.archive.p5_interconnector_solution
+
 python -m opennem.api.export.tasks
