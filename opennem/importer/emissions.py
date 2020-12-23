@@ -11,9 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 def import_mms_emissions() -> None:
-    mms = mms_import()
+    # mms = mms_import()
 
     facility_poll_map = {
+        "APS": 1.228625,
         "CALL_A_4": 0.93134349,
         "CALL_B_1": 0.93134349,
         "CALL_B_2": 0.93134349,
@@ -51,18 +52,18 @@ def import_mms_emissions() -> None:
         "WW8": 1.030046,
     }
 
-    for station in mms:
-        for facility in station.facilities:
-            if facility.emissions_factor_co2 and not facility.code.endswith(
-                "NL1"
-            ):
-                facility_poll_map[facility.code] = {
-                    "intensity": facility.emissions_factor_co2,
-                    "name": station.name,
-                    "fueltech": facility.fueltech.code
-                    if facility.fueltech
-                    else "",
-                }
+    # for station in mms:
+    #     for facility in station.facilities:
+    #         if facility.emissions_factor_co2 and not facility.code.endswith(
+    #             "NL1"
+    #         ):
+    #             facility_poll_map[facility.code] = {
+    #                 "intensity": facility.emissions_factor_co2,
+    #                 "name": station.name,
+    #                 "fueltech": facility.fueltech.code
+    #                 if facility.fueltech
+    #                 else "",
+    #             }
 
     session = SessionLocal()
 
@@ -83,8 +84,7 @@ def import_mms_emissions() -> None:
 
         facility.emissions_factor_co2 = clean_float(pol_value)
         session.add(facility)
-
-    session.commit()
+        session.commit()
 
     return None
 
@@ -139,3 +139,4 @@ def import_emissions_map(file_name: str, network_id: str) -> None:
 
 if __name__ == "__main__":
     import_emissions_csv()
+    import_mms_emissions()
