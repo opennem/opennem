@@ -20,7 +20,8 @@ def upgrade() -> None:
     op.execute(
         """
             alter table public.facility
-                drop constraint fk_station_status_code,
+                drop constraint if exists fk_station_status_code,
+                drop constraint if exists fk_facility_station_code,
             add constraint fk_facility_station_code
                 foreign key (station_id)
                 references station(id)
