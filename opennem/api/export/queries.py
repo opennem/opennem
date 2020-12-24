@@ -4,7 +4,6 @@ from typing import List, Optional
 
 from sqlalchemy import sql
 from sqlalchemy.sql.selectable import TextAsFrom
-from sqlalchemy.sql.sqltypes import DateTime, Integer, Text
 
 from opennem.api.stats.controllers import get_scada_range, networks_to_in
 from opennem.api.stats.schema import ScadaDateRange
@@ -31,7 +30,7 @@ def interconnector_flow_power_query(
                     fs.trading_interval <= :date_end and
                     fs.trading_interval > :date_end - INTERVAL '7 days'
                 group by 1, 3, 4
-                order by trading_interval desc;
+                order by trading_interval desc
            """
         )
     ).bindparams(
