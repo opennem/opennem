@@ -351,7 +351,7 @@ class Station(Base, BaseModel):
         passive_deletes=True,
     )
 
-    facilities: List[BaseModel] = relationship(
+    facilities: = relationship(
         "Facility",
         lazy="joined",
         innerjoin=False,
