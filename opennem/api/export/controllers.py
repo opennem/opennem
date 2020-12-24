@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from opennem.api.export.queries import (
     energy_network_fueltech_query,
+    interconnector_flow_power_query,
     power_network_fueltech_query,
     price_network_query,
 )
@@ -10,6 +11,7 @@ from opennem.api.stats.controllers import get_scada_range, stats_factory
 from opennem.api.stats.schema import (
     DataQueryResult,
     OpennemDataSet,
+    RegionFlowResult,
     ScadaDateRange,
 )
 from opennem.api.time import human_to_interval, human_to_period
@@ -17,6 +19,7 @@ from opennem.api.weather.queries import (
     observation_query,
     observation_query_all,
 )
+from opennem.core.flows import net_flows
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
@@ -140,6 +143,50 @@ def weather_daily(
         stats.append_set(stats_max)
 
     return stats
+
+
+def power_flows_week(
+    network: NetworkSchema,
+    network_region_code: str,
+    date_range: ScadaDateRange,
+) -> Optional[OpennemDataSet]:
+    engine = get_database_engine()
+
+    query = interconnector_flow_power_query(
+        network_region=network_region_code, date_range=date_range
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    stats = [
+        RegionFlowResult(
+            interval=i[0],
+            generated=i[1],
+            flow_from=i[2],
+            flow_to=i[3] if len(i) > 1 else None,
+        )
+        for i in row
+    ]
+
+    if len(stats) < 1:
+        raise Exception("No results from query: {}".format(query))
+
+    stats_grouped = net_flows(network_region_code, stats)
+
+    result = stats_factory(
+        stats_grouped,
+        # code=network_region_code or network.code,
+        network=network,
+        period=human_to_period("7d"),
+        interval=human_to_interval("5m"),
+        units=get_unit("power"),
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    return result
 
 
 def power_week(
