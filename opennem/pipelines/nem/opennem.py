@@ -246,53 +246,6 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
             }
         )
 
-        facility_code = "{}-3".format(
-            normalize_duid(record["INTERCONNECTORID"])
-        )
-
-        records_to_store.append(
-            {
-                "network_id": "NEM",
-                "created_by": spider.name,
-                "facility_code": facility_code,
-                "trading_interval": trading_interval,
-                "generated": power_value,
-            }
-        )
-
-        # Opps
-
-        if power_value:
-            power_value = -1 * power_value
-
-        facility_code = "{}-2".format(
-            normalize_duid(record["INTERCONNECTORID"])
-        )
-
-        records_to_store.append(
-            {
-                "network_id": "NEM",
-                "created_by": spider.name,
-                "facility_code": facility_code,
-                "trading_interval": trading_interval,
-                "generated": power_value,
-            }
-        )
-
-        facility_code = "{}-4".format(
-            normalize_duid(record["INTERCONNECTORID"])
-        )
-
-        records_to_store.append(
-            {
-                "network_id": "NEM",
-                "created_by": spider.name,
-                "facility_code": facility_code,
-                "trading_interval": trading_interval,
-                "generated": power_value,
-            }
-        )
-
     # remove duplicates
     return_records_grouped = {}
 
