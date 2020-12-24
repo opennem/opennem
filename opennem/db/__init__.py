@@ -44,7 +44,7 @@ def db_connect(
     if db_conn_str.startswith("sqlite"):
         connect_args = {"check_same_thread": False}
 
-    if settings.debug:
+    if settings.db_debug:
         debug = True
 
     try:
