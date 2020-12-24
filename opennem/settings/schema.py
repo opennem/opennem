@@ -42,6 +42,9 @@ class OpennemSettings(BaseSettings):
 
     precision_default: int = 4
 
+    # show database debug
+    db_debug: bool = False
+
     # cache scada values for
     cache_scada_values_ttl_sec: int = 60 * 5
 
@@ -108,4 +111,5 @@ class OpennemSettings(BaseSettings):
             "server_port": {"env": "PORT"},
             "server_host": {"env": "HOST"},
             "cache_scada_values_ttl_sec": {"env": "CACHE_SCADA_TTL"},
+            "db_debug": {"env": "DB_DEBUG"},
         }
