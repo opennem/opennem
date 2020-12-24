@@ -2,10 +2,53 @@ from datetime import datetime, timedelta
 from textwrap import dedent
 from typing import List, Optional
 
+from sqlalchemy import sql
+from sqlalchemy.sql.selectable import TextAsFrom
+from sqlalchemy.sql.sqltypes import DateTime, Integer, Text
+
 from opennem.api.stats.controllers import get_scada_range, networks_to_in
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.schema.network import NetworkSchema, NetworkWEM
 from opennem.schema.time import TimeInterval, TimePeriod
+
+
+def interconnector_flow_power_query(
+    network_region: str, date_range: ScadaDateRange
+) -> TextAsFrom:
+    __query = (
+        sql.text(
+            dedent(
+                """
+                select
+                    trading_interval,
+                    max(fs.facility_power) as facility_power,
+                    f.network_region as flow_from,
+                    f.interconnector_region_to as flow_to
+                from mv_nem_facility_power_5min fs
+                join facility f on fs.facility_code = f.code
+                where
+                    f.interconnector is True and
+                    (f.network_region= :region or f.interconnector_region_to= :region) and
+                    fs.trading_interval <= :date_end and
+                    fs.trading_interval > :date_end - INTERVAL '7 days'
+                group by 1, 3, 4
+                order by trading_interval desc;
+           """
+            )
+        )
+        .bindparams(
+            region=network_region,
+            date_end=date_range.get_end(),
+        )
+        .columns(
+            trading_interval=DateTime,
+            facility_power=Integer,
+            flow_from=Text,
+            flow_to=Text,
+        )
+    )
+
+    return __query
 
 
 def price_network_query(
@@ -106,7 +149,7 @@ def power_network_fueltech_query(
 
     __query = """
         select
-            t.trading_interval at time zone '{timezone}',
+            t.trading_interval {timezone_query},
             t.fueltech_code,
             sum(t.facility_power)
         from (
@@ -131,6 +174,7 @@ def power_network_fueltech_query(
         order by 1 desc
     """
 
+    timezone_query: str = ""
     network_region_query: str = ""
     fueltech_filter: str = ""
     wem_apvi_case: str = ""
@@ -151,7 +195,7 @@ def power_network_fueltech_query(
     )
 
     if not date_range:
-        raise Exception("require a date range")
+        raise Exception("Require a date range")
 
     date_max = date_range.get_end()
     date_min = date_range.get_start()
@@ -164,7 +208,7 @@ def power_network_fueltech_query(
             network_query=network_query,
             trunc=interval.interval_sql,
             network_region_query=network_region_query,
-            timezone=timezone,
+            timezone_query=timezone_query,
             date_max=date_max,
             date_min=date_min,
             fueltech_filter=fueltech_filter,
