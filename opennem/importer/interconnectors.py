@@ -112,51 +112,18 @@ def import_nem_interconnects() -> None:
         int_facility.created_by = "opennem.importer.interconnectors"
         int_facility.fueltech_id = "exports"
 
-        int_facility3 = int_facility
-        int_facility3.fueltech_id = "imports"
-        int_facility3.code = "{}-3".format(interconnector.interconnectorid)
-
-        # logger.debug(
-        #     "Created facility: {}".format(interconnector.interconnectorid)
-        # )
-
-        # Fac2
-        _code = "{}-2".format(interconnector.interconnectorid)
-        int_facility2 = (
-            session.query(Facility)
-            .filter_by(code=_code)
-            .filter_by(dispatch_type=DispatchType.LOAD)
-            .filter_by(network_region=interconnector.regionto)
-            .filter_by(network_id="NEM")
-            .one_or_none()
-        )
-
-        if not int_facility2:
-            int_facility2 = Facility(  # type: ignore
-                code=_code,
-                dispatch_type=DispatchType.LOAD,
-                network_id="NEM",
-                network_region=interconnector.regionto,
-            )
-
-        int_facility2.status_id = "operating"
-        int_facility2.approved = True
-        int_facility2.approved_by = "opennem.importer.interconnectors"
-        int_facility2.created_by = "opennem.importer.interconnectors"
-        int_facility2.fueltech_id = "imports"
-
-        int_facility4 = int_facility2
-        int_facility4.fueltech_id = "exports"
-        int_facility4.code = "{}-4".format(interconnector.interconnectorid)
+        int_facility.interconnector = True
+        int_facility.interconnector_region_to = interconnector.regionto
 
         interconnector_station.facilities.append(int_facility)
-        interconnector_station.facilities.append(int_facility2)
-        interconnector_station.facilities.append(int_facility3)
-        interconnector_station.facilities.append(int_facility4)
 
         session.add(interconnector_station)
 
-        logger.debug("Created station: {}".format(interconnector_station.code))
+        logger.debug(
+            "Created interconnector station: {}".format(
+                interconnector_station.code
+            )
+        )
 
     session.commit()
 
