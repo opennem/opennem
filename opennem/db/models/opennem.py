@@ -506,7 +506,7 @@ class Facility(Base, BaseModel):
 
     station_id = Column(
         Integer,
-        ForeignKey("station.id", name="fk_station_status_code"),
+        ForeignKey("station.id", name="fk_facility_station_code"),
         nullable=True,
     )
     # station = relationship("Station", back_populates="facilities")
