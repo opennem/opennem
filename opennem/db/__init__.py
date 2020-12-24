@@ -44,6 +44,9 @@ def db_connect(
     if db_conn_str.startswith("sqlite"):
         connect_args = {"check_same_thread": False}
 
+    if settings.debug:
+        debug = True
+
     try:
         return create_engine(
             db_conn_str,
