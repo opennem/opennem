@@ -107,6 +107,13 @@ class OpennemDataSet(BaseConfig):
         return None
 
 
+class RegionFlowResult(BaseConfig):
+    interval: datetime
+    flow_from: str
+    flow_to: str
+    generated: Optional[float]
+
+
 class DataQueryResult(BaseConfig):
     interval: datetime
     result: Union[float, int, None, Decimal]
