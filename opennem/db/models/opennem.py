@@ -332,22 +332,42 @@ class Station(Base, BaseModel):
         ForeignKey("participant.id", name="fk_station_participant_id"),
         nullable=True,
     )
-    participant = relationship("Participant")
+    participant = relationship(
+        "Participant",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
 
     location_id = Column(
         Integer,
         ForeignKey("location.id", name="fk_station_location_id"),
         nullable=True,
     )
-    location = relationship("Location", lazy="joined", innerjoin=False)
+    location = relationship(
+        "Location",
+        lazy="joined",
+        innerjoin=False,
+        cascade="all, delete",
+        passive_deletes=True,
+    )
 
     facilities: List[BaseModel] = relationship(
-        "Facility", lazy="joined", innerjoin=False
+        "Facility",
+        lazy="joined",
+        innerjoin=False,
+        cascade="all, delete",
+        passive_deletes=True,
     )
 
     revisions = relationship("Revision")
 
-    photos = relationship("Photo", lazy="joined", innerjoin=False)
+    photos = relationship(
+        "Photo",
+        lazy="joined",
+        innerjoin=False,
+        cascade="all, delete",
+        passive_deletes=True,
+    )
 
     code = Column(Text, index=True, nullable=False, unique=True)
     name = Column(Text)
