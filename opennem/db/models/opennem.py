@@ -541,6 +541,10 @@ class Facility(Base, BaseModel):
 
     emissions_factor_co2 = Column(Numeric, nullable=True)
 
+    # interconnector metadata
+    interconnector = Column(Boolean, default=False, index=True)
+    interconnector_region_to = Column(Text, nullable=True, index=True)
+
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
