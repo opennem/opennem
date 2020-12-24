@@ -15,10 +15,9 @@ from opennem.schema.time import TimeInterval, TimePeriod
 def interconnector_flow_power_query(
     network_region: str, date_range: ScadaDateRange
 ) -> TextAsFrom:
-    __query = (
-        sql.text(
-            dedent(
-                """
+    __query = sql.text(
+        dedent(
+            """
                 select
                     trading_interval,
                     max(fs.facility_power) as facility_power,
@@ -34,18 +33,10 @@ def interconnector_flow_power_query(
                 group by 1, 3, 4
                 order by trading_interval desc;
            """
-            )
         )
-        .bindparams(
-            region=network_region,
-            date_end=date_range.get_end(),
-        )
-        .columns(
-            trading_interval=DateTime,
-            facility_power=Integer,
-            flow_from=Text,
-            flow_to=Text,
-        )
+    ).bindparams(
+        region=network_region,
+        date_end=date_range.get_end(),
     )
 
     return __query
