@@ -3,7 +3,7 @@ from textwrap import dedent
 from typing import List, Optional
 
 from sqlalchemy import sql
-from sqlalchemy.sql.selectable import TextAsFrom
+from sqlalchemy.sql.elements import TextClause
 
 from opennem.api.stats.controllers import get_scada_range, networks_to_in
 from opennem.api.stats.schema import ScadaDateRange
@@ -13,7 +13,7 @@ from opennem.schema.time import TimeInterval, TimePeriod
 
 def interconnector_flow_power_query(
     network_region: str, date_range: ScadaDateRange
-) -> TextAsFrom:
+) -> TextClause:
     __query = sql.text(
         dedent(
             """
