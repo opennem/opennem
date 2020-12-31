@@ -6,10 +6,20 @@ Script to run + export a query against the database
 import csv
 import logging
 from io import StringIO
+from typing import Optional
 
+from opennem.api.export.controllers import power_flows_week
+from opennem.api.export.queries import interconnector_flow_power_query
+from opennem.api.stats.controllers import get_scada_range
 from opennem.db import get_database_engine
+from opennem.schema.network import NetworkNEM
+from opennem.settings import settings
+
+logging.getLogger().setLevel(logging.DEBUG)
 
 logger = logging.getLogger("opennem.run_query")
+
+import psycopg2
 
 QUERY = """
     select
@@ -28,26 +38,22 @@ QUERY = """
 """
 
 
-def run_query() -> StringIO:
+def run_query() -> Optional[StringIO]:
     engine = get_database_engine()
 
     results = []
-    csvbuffer = StringIO()
+    scada_range = get_scada_range(network=NetworkNEM, network_region="VIC1")
 
-    with engine.connect() as c:
-        results = list(c.execute(QUERY))
+    s = power_flows_week(
+        network=NetworkNEM, network_region_code="VIC1", date_range=scada_range
+    )
 
-    csvwriter = csv.writer(csvbuffer)
+    if not s:
+        return None
 
-    for record in results:
-        csvwriter.writerow(record)
-
-    # rewind it back to the start
-    csvbuffer.seek(0)
-
-    return csvbuffer
+    return s.json(indent=4)
 
 
 if __name__ == "__main__":
     r = run_query()
-    print(r.getvalue())
+    print(r)
