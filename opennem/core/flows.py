@@ -35,10 +35,14 @@ def net_flows(
 
     for interval, data in output_set.items():
         imports_list.append(
-            DataQueryResult(interval=interval, result=data["imports"])
+            DataQueryResult(
+                interval=interval, group_by="imports", result=data["imports"]
+            )
         )
         exports_list.append(
-            DataQueryResult(interval=interval, result=data["exports"])
+            DataQueryResult(
+                interval=interval, group_by="exports", result=data["exports"]
+            )
         )
 
     return {"imports": imports_list, "exports": exports_list}
