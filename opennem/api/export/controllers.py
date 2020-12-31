@@ -175,8 +175,11 @@ def power_flows_week(
 
     stats_grouped = net_flows(network_region_code, stats)
 
+    imports = stats_grouped["imports"]
+    exports = stats_grouped["exports"]
+
     result = stats_factory(
-        stats_grouped,
+        imports,
         # code=network_region_code or network.code,
         network=network,
         period=human_to_period("7d"),
@@ -185,6 +188,22 @@ def power_flows_week(
         region=network_region_code,
         fueltech_group=True,
     )
+
+    if not result:
+        raise Exception("No results")
+
+    result_exports = stats_factory(
+        exports,
+        # code=network_region_code or network.code,
+        network=network,
+        period=human_to_period("7d"),
+        interval=human_to_interval("5m"),
+        units=get_unit("power"),
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    result.append_set(result_exports)
 
     return result
 
