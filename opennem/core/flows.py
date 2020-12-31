@@ -28,7 +28,7 @@ def net_flows(
                 output_set[k]["exports"] += es.generated
 
             if es.flow_to == region:
-                output_set[k]["imports"] += es.generated
+                output_set[k]["imports"] -= es.generated
 
     imports_list = []
     exports_list = []
