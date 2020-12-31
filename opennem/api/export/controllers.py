@@ -160,7 +160,7 @@ def power_flows_week(
         logger.debug(query)
         row = list(c.execute(query))
 
-    stats = [
+    stats: List[RegionFlowResult] = [
         RegionFlowResult(
             interval=i[0],
             generated=i[1],
