@@ -19,7 +19,7 @@ depends_on = None
 def upgrade() -> None:
     op.execute(
         """
-    drop view mv_nem_facility_power_5min cascade;
+    drop view if exists mv_nem_facility_power_5min cascade;
 
     CREATE OR REPLACE VIEW mv_nem_facility_power_5min WITH (timescaledb.continuous) AS
     select
