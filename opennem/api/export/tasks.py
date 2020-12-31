@@ -14,6 +14,7 @@ from typing import List, Optional
 
 from opennem.api.export.controllers import (
     energy_fueltech_daily,
+    power_flows_week,
     power_week,
     weather_daily,
 )
@@ -31,7 +32,7 @@ from opennem.core.network_region_bom_station_map import (
 from opennem.core.networks import network_from_network_code
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
-from opennem.schema.network import NetworkAPVI, NetworkWEM
+from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.settings import settings
 from opennem.utils.version import get_version
 
@@ -79,6 +80,16 @@ def export_power(
                 )
             )
             continue
+
+        if power_stat.network_region:
+            flow_set = power_flows_week(
+                network=NetworkNEM,
+                date_range=power_stat.date_range,
+                network_region_code=power_stat.network,
+            )
+
+            if flow_set:
+                stat_set.append_set(flow_set)
 
         if power_stat.bom_station:
             weather_set = weather_daily(
