@@ -91,7 +91,7 @@ class LinkExtract(object):
             logger.info("Grabbing: {}".format(url))
             fh = open(url)
         except RequestException:
-            logger.error("Bad link: {}".format(url))
+            logger.info("Bad link: {}".format(url))
         except Exception as e:
             logger.error("Error: {}".format(e))
 
