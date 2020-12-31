@@ -77,13 +77,13 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
+# @app.on_event("startup")
 async def startup() -> None:
     logger.debug("In startup")
     await database.connect()
 
 
-@app.on_event("shutdown")
+# @app.on_event("shutdown")
 async def shutdown() -> None:
     logger.debug("In shutdown")
     await database.disconnect()
