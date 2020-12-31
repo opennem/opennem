@@ -153,6 +153,7 @@ def power_network_fueltech_query(
             join fueltech ft on f.fueltech_id = ft.code
             where
                 f.fueltech_id is not null and
+                f.fueltech_id not in ('exports', 'imports') and
                 {network_query}
                 {network_region_query}
                 fs.trading_interval <= '{date_max}' and
