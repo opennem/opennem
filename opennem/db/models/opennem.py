@@ -335,7 +335,6 @@ class Station(Base, BaseModel):
     participant = relationship(
         "Participant",
         cascade="all, delete",
-        passive_deletes=True,
     )
 
     location_id = Column(
@@ -348,7 +347,6 @@ class Station(Base, BaseModel):
         lazy="joined",
         innerjoin=False,
         cascade="all, delete",
-        passive_deletes=True,
     )
 
     facilities = relationship(
@@ -356,7 +354,6 @@ class Station(Base, BaseModel):
         lazy="joined",
         innerjoin=False,
         cascade="all, delete",
-        passive_deletes=True,
     )
 
     revisions = relationship("Revision")
@@ -366,7 +363,6 @@ class Station(Base, BaseModel):
         lazy="joined",
         innerjoin=False,
         cascade="all, delete",
-        passive_deletes=True,
     )
 
     code = Column(Text, index=True, nullable=False, unique=True)
