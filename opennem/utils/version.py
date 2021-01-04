@@ -57,7 +57,7 @@ version = None
 if pkg_meta:
     poetry_meta = pkg_meta["tool"]["poetry"]
     project = str(poetry_meta["name"])
-    copyright = "2020, OpenNEM"
+    copyright = "2021, OpenNEM"
     version = str(poetry_meta["version"])
 
 release = version
