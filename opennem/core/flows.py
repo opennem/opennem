@@ -25,10 +25,20 @@ def net_flows(
 
         for es in values:
             if es.flow_from == region:
-                output_set[k]["exports"] += es.generated
+                flow_set = "exports"
+
+                if es.generated <= 0:
+                    flow_set = "imports"
+
+                output_set[k][flow_set] += es.generated
 
             if es.flow_to == region:
-                output_set[k]["imports"] -= es.generated
+                flow_set = "imports"
+
+                if es.generated <= 0:
+                    flow_set = "exports"
+
+                output_set[k][flow_set] += es.generated
 
     imports_list = []
     exports_list = []
