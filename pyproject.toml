@@ -40,7 +40,7 @@ requests_cache = "^0.5.2"
 geoalchemy2 = "^0.8.4"
 geojson = "^2.5.0"
 uvicorn = "^0.12.2"
-fastapi = "^0.61.2"
+fastapi = {extras = ["all"], version = "^0.63.0"}
 shapely = "^1.7.0"
 pyyaml = "^5.3.1"
 dictalchemy = "^0.1.2"
@@ -55,7 +55,6 @@ geojson-pydantic = "^0.2.1"
 tomlkit = "^0.7.0"
 validators = "^0.18.1"
 smart-open = {extras = ["all"], version = "^3.0.0"}
-aiofiles = "^0.6.0"
 python-magic = "^0.4.18"
 databases = {extras = ["postgresql"], version = "^0.4.1"}
 prometheus-fastapi-instrumentator = "^5.6.0"
