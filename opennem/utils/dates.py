@@ -23,6 +23,9 @@ DATE_FORMATS = [
     "%Y%m%d%H%M%S",  # bom format
 ]
 
+DATE_CURRENT = datetime.now()
+DATE_CURRENT_YEAR = DATE_CURRENT.year
+
 
 def optimized_data_parser(date_str: str) -> datetime:
     """
