@@ -24,6 +24,11 @@ def net_flows(
             }
 
         for es in values:
+            # @TODO this could be made neater
+
+            if not es.generated:
+                continue
+
             if es.flow_from == region:
                 flow_set = "exports"
 
