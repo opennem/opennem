@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Dict, Optional
@@ -55,9 +56,10 @@ pkg_meta = get_project_meta()
 version = None
 
 if pkg_meta:
+    CUR_YEAR = datetime.now().year
     poetry_meta = pkg_meta["tool"]["poetry"]
     project = str(poetry_meta["name"])
-    copyright = "2021, OpenNEM"
+    copyright = f"{CUR_YEAR}, OpenNEM"
     version = str(poetry_meta["version"])
 
 release = version
