@@ -8,6 +8,7 @@ from sqlalchemy.sql.elements import TextClause
 from opennem.api.stats.controllers import get_scada_range, networks_to_in
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.schema.network import NetworkSchema, NetworkWEM
+from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimeInterval, TimePeriod
 
 
@@ -36,6 +37,28 @@ def interconnector_flow_power_query(
     ).bindparams(
         region=network_region,
         date_end=date_range.get_end(),
+    )
+
+    return __query
+
+
+def country_stats_query(
+    stat_type: StatTypes, country: str = "au"
+) -> TextClause:
+    __query = sql.text(
+        dedent(
+            """
+                select
+                    s.stat_date,
+                    s.value
+                from stats s
+                where s.stat_type = :stat_type and s.country= :country
+                order by s.stat_date desc
+           """
+        )
+    ).bindparams(
+        stat_type=stat_type,
+        country=country,
     )
 
     return __query
