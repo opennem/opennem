@@ -6,11 +6,14 @@ Script to run + export a query against the database
 import csv
 import logging
 from io import StringIO
-from typing import Optional
+from pathlib import Path
+from typing import Dict, List, Optional
 
-from opennem.api.export.controllers import power_flows_week
+from opennem.api.export.controllers import gov_stats_cpi, power_flows_week
 from opennem.api.export.queries import interconnector_flow_power_query
 from opennem.api.stats.controllers import get_scada_range
+from opennem.api.stats.schema import RegionFlowResult
+from opennem.core.flows import net_flows
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkNEM
 from opennem.settings import settings
@@ -38,20 +41,62 @@ QUERY = """
 """
 
 
-def run_query() -> Optional[StringIO]:
-    engine = get_database_engine()
-
-    results = []
-    scada_range = get_scada_range(network=NetworkNEM, network_region="VIC1")
-
-    s = power_flows_week(
-        network=NetworkNEM, network_region_code="VIC1", date_range=scada_range
+def get_test_fixture() -> List[Dict]:
+    csv_fixture = (
+        Path(__file__).parent.parent
+        / "tests/fixtures/test_interconnector_vic1.csv"
     )
 
-    if not s:
-        return None
+    if not csv_fixture.is_file():
+        raise Exception("not a file")
 
-    return s.json(indent=4)
+    records = []
+
+    with csv_fixture.open() as fh:
+        csvreader = csv.DictReader(fh)
+
+        for r in csvreader:
+            records.append(r)
+
+    return records
+
+
+def run_query_inter() -> Optional[StringIO]:
+    # engine = get_database_engine()
+
+    # results = []
+    # scada_range = get_scada_range(network=NetworkNEM, network_region="VIC1")
+
+    # s = power_flows_week(
+    #     network=NetworkNEM, network_region_code="VIC1", date_range=scada_range
+    # )
+
+    # if not s:
+    #     return None
+    records = get_test_fixture()
+
+    stats: List[RegionFlowResult] = [
+        RegionFlowResult(
+            interval=i["trading_interval"],
+            generated=i["facility_power"],
+            flow_from=i["flow_from"],
+            flow_to=i["flow_to"] if len(i) > 1 else None,
+        )
+        for i in records
+    ]
+
+    stats_grouped = net_flows("VIC1", stats)
+
+    print(stats_grouped)
+
+    return None
+    # return s.json(indent=4)
+
+
+def run_query():
+    s = gov_stats_cpi()
+
+    print(s)
 
 
 if __name__ == "__main__":
