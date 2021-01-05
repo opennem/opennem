@@ -65,6 +65,17 @@ class FuelTech(Base, BaseModel):
     facilities = relationship("Facility")
 
 
+class Stats(Base, BaseModel):
+    __tablename__ = "stats"
+
+    stat_date = Column(
+        TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False
+    )
+    country = Column(Text, nullable=False, primary_key=True)
+    stat_type = Column(Text, nullable=False, primary_key=True)
+    value = Column(Numeric, nullable=True)
+
+
 class Network(Base, BaseModel):
     __tablename__ = "network"
 
