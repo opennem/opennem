@@ -2,6 +2,7 @@ import logging
 from typing import List, Optional
 
 from opennem.api.export.queries import (
+    country_stats_query,
     energy_network_fueltech_query,
     interconnector_flow_power_query,
     power_network_fueltech_query,
@@ -23,7 +24,8 @@ from opennem.core.flows import net_flows
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
-from opennem.schema.network import NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimePeriod
 
 logger = logging.getLogger(__name__)
@@ -143,6 +145,38 @@ def weather_daily(
         stats.append_set(stats_max)
 
     return stats
+
+
+def gov_stats_cpi() -> Optional[OpennemDataSet]:
+    engine = get_database_engine()
+
+    query = country_stats_query(StatTypes.CPI)
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    stats = [
+        DataQueryResult(
+            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
+        )
+        for i in row
+    ]
+
+    if len(stats) < 1:
+        raise Exception("No results from query: {}".format(query))
+
+    result = stats_factory(
+        stats,
+        code="au.cpi",
+        network=NetworkNEM,
+        interval=human_to_interval("1Q"),
+        period=human_to_period("all"),
+        units=get_unit("cpi"),
+        group_field="gov"
+    )
+
+    return result
 
 
 def power_flows_week(
