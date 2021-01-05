@@ -50,14 +50,15 @@ def country_stats_query(
             """
                 select
                     s.stat_date,
-                    s.value
+                    s.value,
+                    s.stat_type
                 from stats s
                 where s.stat_type = :stat_type and s.country= :country
                 order by s.stat_date desc
            """
         )
     ).bindparams(
-        stat_type=stat_type,
+        stat_type=str(stat_type),
         country=country,
     )
 
