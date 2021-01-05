@@ -223,6 +223,8 @@ def export_all_daily() -> None:
     session = SessionLocal()
     network_regions = session.query(NetworkRegion).all()
 
+    cpi = gov_stats_cpi()
+
     for network_region in network_regions:
         network = network_from_network_code(network_region.network.code)
         networks = None
@@ -248,6 +250,9 @@ def export_all_daily() -> None:
                 network_code=network.code,
             )
             stat_set.append_set(weather_stats)
+
+        if cpi:
+            stat_set.append_set(cpi)
 
         write_output(f"v3/stats/au/{network_region.code}/daily.json", stat_set)
 
