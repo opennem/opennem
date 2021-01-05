@@ -14,6 +14,7 @@ from typing import List, Optional
 
 from opennem.api.export.controllers import (
     energy_fueltech_daily,
+    gov_stats_cpi,
     power_flows_week,
     power_week,
     weather_daily,
@@ -183,6 +184,9 @@ def export_all_monthly() -> None:
     all_monthly = OpennemDataSet(
         code="au", data=[], version=get_version(), created_at=datetime.now()
     )
+
+    cpi = gov_stats_cpi()
+    all_monthly.append_set(cpi)
 
     for network_region in network_regions:
         network = network_from_network_code(network_region.network.code)
