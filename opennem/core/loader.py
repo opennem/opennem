@@ -1,11 +1,14 @@
 import csv
 import json
+import logging
 import os
 import sys
 import zipfile
 from pathlib import Path
-from pkgutil import get_data
+from pkgutil import get_data, get_loader
 from typing import Any, List, Optional
+
+logger = logging.getLogger("opennem.core.loader")
 
 MODULE_PATH = Path(os.path.dirname(sys.modules["opennem"].__file__))
 DATA_PATH = "core/data"
@@ -73,6 +76,33 @@ def load_data(
         return load_data_json(data_content.decode(content_type))
 
     return data_content
+
+
+def get_data_path() -> Path:
+    """
+    Get project data path
+    """
+    pkg_path = None
+    p = None
+
+    try:
+        p = get_loader("opennem")
+    except Exception:
+        logger.error("Error could not get data path for opennem package")
+
+    if p:
+        pkg_path = Path(p.get_filename()).parent
+
+    # Fall back to getting data path using directories
+    else:
+        pkg_path = Path(__file__).parent.parent.parent
+
+    data_path = pkg_path / PROJECT_DATA_PATH
+
+    if not data_path.is_dir():
+        raise Exception("No data path: {}".format(data_path))
+
+    return data_path
 
 
 def load_data_string(file_path: Path) -> str:
