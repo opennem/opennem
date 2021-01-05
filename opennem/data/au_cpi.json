@@ -1,0 +1,2371 @@
+{
+    "name": "au.cpi",
+    "source_url": "https://www.rba.gov.au/statistics/tables/xls/g01hist.xls",
+    "fetched_date": "2021-01-05T17:01:04.968272",
+    "stats": [
+        {
+            "stat_date": "1922-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1922-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1922-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.7
+        },
+        {
+            "stat_date": "1923-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.7
+        },
+        {
+            "stat_date": "1923-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1923-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1923-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1924-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1924-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1924-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1924-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1925-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1925-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1925-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1925-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1926-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1926-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1926-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1926-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1927-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1927-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1927-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1927-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1928-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1928-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1928-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1928-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1929-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1929-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1929-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1929-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1930-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1930-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1930-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.7
+        },
+        {
+            "stat_date": "1930-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.6
+        },
+        {
+            "stat_date": "1931-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.6
+        },
+        {
+            "stat_date": "1931-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.5
+        },
+        {
+            "stat_date": "1931-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1931-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1932-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1932-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1932-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1932-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1933-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1933-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1933-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1933-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1934-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1934-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1934-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1934-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1935-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1935-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.3
+        },
+        {
+            "stat_date": "1935-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1935-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1936-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1936-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1936-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1936-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1937-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1937-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.4
+        },
+        {
+            "stat_date": "1937-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.5
+        },
+        {
+            "stat_date": "1937-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.5
+        },
+        {
+            "stat_date": "1938-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.5
+        },
+        {
+            "stat_date": "1938-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.5
+        },
+        {
+            "stat_date": "1938-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.6
+        },
+        {
+            "stat_date": "1938-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.6
+        },
+        {
+            "stat_date": "1939-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.6
+        },
+        {
+            "stat_date": "1939-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.6
+        },
+        {
+            "stat_date": "1939-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.6
+        },
+        {
+            "stat_date": "1939-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.6
+        },
+        {
+            "stat_date": "1940-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.6
+        },
+        {
+            "stat_date": "1940-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.7
+        },
+        {
+            "stat_date": "1940-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.7
+        },
+        {
+            "stat_date": "1940-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1941-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1941-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1941-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.8
+        },
+        {
+            "stat_date": "1941-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 2.9
+        },
+        {
+            "stat_date": "1942-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.0
+        },
+        {
+            "stat_date": "1942-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.1
+        },
+        {
+            "stat_date": "1942-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.1
+        },
+        {
+            "stat_date": "1942-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1943-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1943-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1943-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1943-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1944-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1944-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1944-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1944-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1945-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1945-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1945-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1945-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1946-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1946-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1946-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.2
+        },
+        {
+            "stat_date": "1946-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.3
+        },
+        {
+            "stat_date": "1947-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.3
+        },
+        {
+            "stat_date": "1947-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.3
+        },
+        {
+            "stat_date": "1947-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.4
+        },
+        {
+            "stat_date": "1947-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.4
+        },
+        {
+            "stat_date": "1948-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.5
+        },
+        {
+            "stat_date": "1948-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.6
+        },
+        {
+            "stat_date": "1948-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.7
+        },
+        {
+            "stat_date": "1948-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.8
+        },
+        {
+            "stat_date": "1949-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 3.9
+        },
+        {
+            "stat_date": "1949-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 4.0
+        },
+        {
+            "stat_date": "1949-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 4.1
+        },
+        {
+            "stat_date": "1949-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 4.1
+        },
+        {
+            "stat_date": "1950-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 4.2
+        },
+        {
+            "stat_date": "1950-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 4.3
+        },
+        {
+            "stat_date": "1950-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 4.4
+        },
+        {
+            "stat_date": "1950-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 4.6
+        },
+        {
+            "stat_date": "1951-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 4.8
+        },
+        {
+            "stat_date": "1951-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 5.1
+        },
+        {
+            "stat_date": "1951-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 5.3
+        },
+        {
+            "stat_date": "1951-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 5.7
+        },
+        {
+            "stat_date": "1952-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 5.9
+        },
+        {
+            "stat_date": "1952-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.1
+        },
+        {
+            "stat_date": "1952-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.2
+        },
+        {
+            "stat_date": "1952-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.3
+        },
+        {
+            "stat_date": "1953-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.3
+        },
+        {
+            "stat_date": "1953-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.4
+        },
+        {
+            "stat_date": "1953-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.5
+        },
+        {
+            "stat_date": "1953-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.4
+        },
+        {
+            "stat_date": "1954-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.5
+        },
+        {
+            "stat_date": "1954-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.5
+        },
+        {
+            "stat_date": "1954-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.5
+        },
+        {
+            "stat_date": "1954-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.5
+        },
+        {
+            "stat_date": "1955-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.5
+        },
+        {
+            "stat_date": "1955-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.6
+        },
+        {
+            "stat_date": "1955-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.6
+        },
+        {
+            "stat_date": "1955-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.7
+        },
+        {
+            "stat_date": "1956-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 6.7
+        },
+        {
+            "stat_date": "1956-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.0
+        },
+        {
+            "stat_date": "1956-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.1
+        },
+        {
+            "stat_date": "1956-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.1
+        },
+        {
+            "stat_date": "1957-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.1
+        },
+        {
+            "stat_date": "1957-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.2
+        },
+        {
+            "stat_date": "1957-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.2
+        },
+        {
+            "stat_date": "1957-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.2
+        },
+        {
+            "stat_date": "1958-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.2
+        },
+        {
+            "stat_date": "1958-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.2
+        },
+        {
+            "stat_date": "1958-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.2
+        },
+        {
+            "stat_date": "1958-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.3
+        },
+        {
+            "stat_date": "1959-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.3
+        },
+        {
+            "stat_date": "1959-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.3
+        },
+        {
+            "stat_date": "1959-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.4
+        },
+        {
+            "stat_date": "1959-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.5
+        },
+        {
+            "stat_date": "1960-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.5
+        },
+        {
+            "stat_date": "1960-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.6
+        },
+        {
+            "stat_date": "1960-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.7
+        },
+        {
+            "stat_date": "1960-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.8
+        },
+        {
+            "stat_date": "1961-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.8
+        },
+        {
+            "stat_date": "1961-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.9
+        },
+        {
+            "stat_date": "1961-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.8
+        },
+        {
+            "stat_date": "1961-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.8
+        },
+        {
+            "stat_date": "1962-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.8
+        },
+        {
+            "stat_date": "1962-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.8
+        },
+        {
+            "stat_date": "1962-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.8
+        },
+        {
+            "stat_date": "1962-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.8
+        },
+        {
+            "stat_date": "1963-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.8
+        },
+        {
+            "stat_date": "1963-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.8
+        },
+        {
+            "stat_date": "1963-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.9
+        },
+        {
+            "stat_date": "1963-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 7.9
+        },
+        {
+            "stat_date": "1964-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.0
+        },
+        {
+            "stat_date": "1964-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.0
+        },
+        {
+            "stat_date": "1964-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.1
+        },
+        {
+            "stat_date": "1964-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.2
+        },
+        {
+            "stat_date": "1965-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.2
+        },
+        {
+            "stat_date": "1965-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.3
+        },
+        {
+            "stat_date": "1965-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.4
+        },
+        {
+            "stat_date": "1965-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.5
+        },
+        {
+            "stat_date": "1966-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.6
+        },
+        {
+            "stat_date": "1966-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.6
+        },
+        {
+            "stat_date": "1966-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.6
+        },
+        {
+            "stat_date": "1966-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.7
+        },
+        {
+            "stat_date": "1967-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.8
+        },
+        {
+            "stat_date": "1967-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 8.9
+        },
+        {
+            "stat_date": "1967-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.0
+        },
+        {
+            "stat_date": "1967-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.0
+        },
+        {
+            "stat_date": "1968-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.1
+        },
+        {
+            "stat_date": "1968-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.1
+        },
+        {
+            "stat_date": "1968-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.2
+        },
+        {
+            "stat_date": "1968-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.2
+        },
+        {
+            "stat_date": "1969-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.4
+        },
+        {
+            "stat_date": "1969-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.4
+        },
+        {
+            "stat_date": "1969-09-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.5
+        },
+        {
+            "stat_date": "1969-12-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.5
+        },
+        {
+            "stat_date": "1970-03-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.6
+        },
+        {
+            "stat_date": "1970-06-01T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.7
+        },
+        {
+            "stat_date": "1970-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 9.8
+        },
+        {
+            "stat_date": "1970-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 10.0
+        },
+        {
+            "stat_date": "1971-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 10.1
+        },
+        {
+            "stat_date": "1971-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 10.2
+        },
+        {
+            "stat_date": "1971-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 10.5
+        },
+        {
+            "stat_date": "1971-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 10.7
+        },
+        {
+            "stat_date": "1972-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 10.8
+        },
+        {
+            "stat_date": "1972-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 10.9
+        },
+        {
+            "stat_date": "1972-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 11.1
+        },
+        {
+            "stat_date": "1972-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 11.2
+        },
+        {
+            "stat_date": "1973-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 11.4
+        },
+        {
+            "stat_date": "1973-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 11.8
+        },
+        {
+            "stat_date": "1973-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 12.2
+        },
+        {
+            "stat_date": "1973-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 12.6
+        },
+        {
+            "stat_date": "1974-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 13.0
+        },
+        {
+            "stat_date": "1974-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 13.5
+        },
+        {
+            "stat_date": "1974-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 14.2
+        },
+        {
+            "stat_date": "1974-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 14.7
+        },
+        {
+            "stat_date": "1975-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 15.3
+        },
+        {
+            "stat_date": "1975-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 15.8
+        },
+        {
+            "stat_date": "1975-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 15.9
+        },
+        {
+            "stat_date": "1975-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 16.8
+        },
+        {
+            "stat_date": "1976-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 17.3
+        },
+        {
+            "stat_date": "1976-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 17.7
+        },
+        {
+            "stat_date": "1976-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 18.1
+        },
+        {
+            "stat_date": "1976-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 19.2
+        },
+        {
+            "stat_date": "1977-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 19.6
+        },
+        {
+            "stat_date": "1977-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 20.1
+        },
+        {
+            "stat_date": "1977-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 20.5
+        },
+        {
+            "stat_date": "1977-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 21.0
+        },
+        {
+            "stat_date": "1978-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 21.3
+        },
+        {
+            "stat_date": "1978-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 21.7
+        },
+        {
+            "stat_date": "1978-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 22.1
+        },
+        {
+            "stat_date": "1978-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 22.6
+        },
+        {
+            "stat_date": "1979-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 23.0
+        },
+        {
+            "stat_date": "1979-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 23.6
+        },
+        {
+            "stat_date": "1979-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 24.2
+        },
+        {
+            "stat_date": "1979-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 24.9
+        },
+        {
+            "stat_date": "1980-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 25.4
+        },
+        {
+            "stat_date": "1980-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 26.2
+        },
+        {
+            "stat_date": "1980-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 26.6
+        },
+        {
+            "stat_date": "1980-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 27.2
+        },
+        {
+            "stat_date": "1981-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 27.8
+        },
+        {
+            "stat_date": "1981-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 28.4
+        },
+        {
+            "stat_date": "1981-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 29.0
+        },
+        {
+            "stat_date": "1981-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 30.2
+        },
+        {
+            "stat_date": "1982-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 30.8
+        },
+        {
+            "stat_date": "1982-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 31.5
+        },
+        {
+            "stat_date": "1982-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 32.6
+        },
+        {
+            "stat_date": "1982-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 33.6
+        },
+        {
+            "stat_date": "1983-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 34.3
+        },
+        {
+            "stat_date": "1983-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 35.0
+        },
+        {
+            "stat_date": "1983-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 35.6
+        },
+        {
+            "stat_date": "1983-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 36.5
+        },
+        {
+            "stat_date": "1984-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 36.3
+        },
+        {
+            "stat_date": "1984-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 36.4
+        },
+        {
+            "stat_date": "1984-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 36.9
+        },
+        {
+            "stat_date": "1984-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 37.4
+        },
+        {
+            "stat_date": "1985-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 37.9
+        },
+        {
+            "stat_date": "1985-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 38.8
+        },
+        {
+            "stat_date": "1985-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 39.7
+        },
+        {
+            "stat_date": "1985-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 40.5
+        },
+        {
+            "stat_date": "1986-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 41.4
+        },
+        {
+            "stat_date": "1986-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 42.1
+        },
+        {
+            "stat_date": "1986-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 43.2
+        },
+        {
+            "stat_date": "1986-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 44.4
+        },
+        {
+            "stat_date": "1987-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 45.3
+        },
+        {
+            "stat_date": "1987-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 46.0
+        },
+        {
+            "stat_date": "1987-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 46.8
+        },
+        {
+            "stat_date": "1987-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 47.6
+        },
+        {
+            "stat_date": "1988-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 48.4
+        },
+        {
+            "stat_date": "1988-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 49.3
+        },
+        {
+            "stat_date": "1988-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 50.2
+        },
+        {
+            "stat_date": "1988-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 51.2
+        },
+        {
+            "stat_date": "1989-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 51.7
+        },
+        {
+            "stat_date": "1989-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 53.0
+        },
+        {
+            "stat_date": "1989-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 54.2
+        },
+        {
+            "stat_date": "1989-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 55.2
+        },
+        {
+            "stat_date": "1990-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 56.2
+        },
+        {
+            "stat_date": "1990-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 57.1
+        },
+        {
+            "stat_date": "1990-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 57.5
+        },
+        {
+            "stat_date": "1990-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 59.0
+        },
+        {
+            "stat_date": "1991-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 58.9
+        },
+        {
+            "stat_date": "1991-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 59.0
+        },
+        {
+            "stat_date": "1991-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 59.3
+        },
+        {
+            "stat_date": "1991-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 59.9
+        },
+        {
+            "stat_date": "1992-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 59.9
+        },
+        {
+            "stat_date": "1992-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 59.7
+        },
+        {
+            "stat_date": "1992-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 59.8
+        },
+        {
+            "stat_date": "1992-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 60.1
+        },
+        {
+            "stat_date": "1993-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 60.6
+        },
+        {
+            "stat_date": "1993-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 60.8
+        },
+        {
+            "stat_date": "1993-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 61.1
+        },
+        {
+            "stat_date": "1993-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 61.2
+        },
+        {
+            "stat_date": "1994-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 61.5
+        },
+        {
+            "stat_date": "1994-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 61.9
+        },
+        {
+            "stat_date": "1994-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 62.3
+        },
+        {
+            "stat_date": "1994-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 62.8
+        },
+        {
+            "stat_date": "1995-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 63.8
+        },
+        {
+            "stat_date": "1995-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 64.7
+        },
+        {
+            "stat_date": "1995-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 65.5
+        },
+        {
+            "stat_date": "1995-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 66.0
+        },
+        {
+            "stat_date": "1996-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 66.2
+        },
+        {
+            "stat_date": "1996-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 66.7
+        },
+        {
+            "stat_date": "1996-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 66.9
+        },
+        {
+            "stat_date": "1996-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 67.0
+        },
+        {
+            "stat_date": "1997-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 67.1
+        },
+        {
+            "stat_date": "1997-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 66.9
+        },
+        {
+            "stat_date": "1997-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 66.6
+        },
+        {
+            "stat_date": "1997-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 66.8
+        },
+        {
+            "stat_date": "1998-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 67.0
+        },
+        {
+            "stat_date": "1998-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 67.4
+        },
+        {
+            "stat_date": "1998-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 67.5
+        },
+        {
+            "stat_date": "1998-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 67.8
+        },
+        {
+            "stat_date": "1999-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 67.8
+        },
+        {
+            "stat_date": "1999-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 68.1
+        },
+        {
+            "stat_date": "1999-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 68.7
+        },
+        {
+            "stat_date": "1999-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 69.1
+        },
+        {
+            "stat_date": "2000-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 69.7
+        },
+        {
+            "stat_date": "2000-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 70.2
+        },
+        {
+            "stat_date": "2000-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 72.9
+        },
+        {
+            "stat_date": "2000-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 73.1
+        },
+        {
+            "stat_date": "2001-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 73.9
+        },
+        {
+            "stat_date": "2001-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 74.5
+        },
+        {
+            "stat_date": "2001-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 74.7
+        },
+        {
+            "stat_date": "2001-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 75.4
+        },
+        {
+            "stat_date": "2002-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 76.1
+        },
+        {
+            "stat_date": "2002-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 76.6
+        },
+        {
+            "stat_date": "2002-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 77.1
+        },
+        {
+            "stat_date": "2002-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 77.6
+        },
+        {
+            "stat_date": "2003-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 78.6
+        },
+        {
+            "stat_date": "2003-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 78.6
+        },
+        {
+            "stat_date": "2003-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 79.1
+        },
+        {
+            "stat_date": "2003-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 79.5
+        },
+        {
+            "stat_date": "2004-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 80.2
+        },
+        {
+            "stat_date": "2004-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 80.6
+        },
+        {
+            "stat_date": "2004-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 80.9
+        },
+        {
+            "stat_date": "2004-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 81.5
+        },
+        {
+            "stat_date": "2005-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 82.1
+        },
+        {
+            "stat_date": "2005-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 82.6
+        },
+        {
+            "stat_date": "2005-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 83.4
+        },
+        {
+            "stat_date": "2005-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 83.8
+        },
+        {
+            "stat_date": "2006-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 84.5
+        },
+        {
+            "stat_date": "2006-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 85.9
+        },
+        {
+            "stat_date": "2006-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 86.7
+        },
+        {
+            "stat_date": "2006-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 86.6
+        },
+        {
+            "stat_date": "2007-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 86.6
+        },
+        {
+            "stat_date": "2007-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 87.7
+        },
+        {
+            "stat_date": "2007-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 88.3
+        },
+        {
+            "stat_date": "2007-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 89.1
+        },
+        {
+            "stat_date": "2008-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 90.3
+        },
+        {
+            "stat_date": "2008-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 91.6
+        },
+        {
+            "stat_date": "2008-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 92.7
+        },
+        {
+            "stat_date": "2008-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 92.4
+        },
+        {
+            "stat_date": "2009-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 92.5
+        },
+        {
+            "stat_date": "2009-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 92.9
+        },
+        {
+            "stat_date": "2009-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 93.8
+        },
+        {
+            "stat_date": "2009-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 94.3
+        },
+        {
+            "stat_date": "2010-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 95.2
+        },
+        {
+            "stat_date": "2010-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 95.8
+        },
+        {
+            "stat_date": "2010-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 96.5
+        },
+        {
+            "stat_date": "2010-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 96.9
+        },
+        {
+            "stat_date": "2011-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 98.3
+        },
+        {
+            "stat_date": "2011-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 99.2
+        },
+        {
+            "stat_date": "2011-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 99.8
+        },
+        {
+            "stat_date": "2011-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 99.8
+        },
+        {
+            "stat_date": "2012-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 99.9
+        },
+        {
+            "stat_date": "2012-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 100.4
+        },
+        {
+            "stat_date": "2012-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 101.8
+        },
+        {
+            "stat_date": "2012-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 102.0
+        },
+        {
+            "stat_date": "2013-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 102.4
+        },
+        {
+            "stat_date": "2013-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 102.8
+        },
+        {
+            "stat_date": "2013-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 104.0
+        },
+        {
+            "stat_date": "2013-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 104.8
+        },
+        {
+            "stat_date": "2014-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 105.4
+        },
+        {
+            "stat_date": "2014-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 105.9
+        },
+        {
+            "stat_date": "2014-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 106.4
+        },
+        {
+            "stat_date": "2014-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 106.6
+        },
+        {
+            "stat_date": "2015-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 106.8
+        },
+        {
+            "stat_date": "2015-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 107.5
+        },
+        {
+            "stat_date": "2015-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 108.0
+        },
+        {
+            "stat_date": "2015-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 108.4
+        },
+        {
+            "stat_date": "2016-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 108.2
+        },
+        {
+            "stat_date": "2016-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 108.6
+        },
+        {
+            "stat_date": "2016-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 109.4
+        },
+        {
+            "stat_date": "2016-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 110.0
+        },
+        {
+            "stat_date": "2017-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 110.5
+        },
+        {
+            "stat_date": "2017-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 110.7
+        },
+        {
+            "stat_date": "2017-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 111.4
+        },
+        {
+            "stat_date": "2017-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 112.1
+        },
+        {
+            "stat_date": "2018-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 112.6
+        },
+        {
+            "stat_date": "2018-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 113.0
+        },
+        {
+            "stat_date": "2018-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 113.5
+        },
+        {
+            "stat_date": "2018-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 114.1
+        },
+        {
+            "stat_date": "2019-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 114.1
+        },
+        {
+            "stat_date": "2019-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 114.8
+        },
+        {
+            "stat_date": "2019-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 115.4
+        },
+        {
+            "stat_date": "2019-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 116.2
+        },
+        {
+            "stat_date": "2020-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 116.6
+        },
+        {
+            "stat_date": "2020-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 114.4
+        },
+        {
+            "stat_date": "2020-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 116.2
+        }
+    ]
+}
