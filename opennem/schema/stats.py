@@ -3,7 +3,8 @@ Schemas for stats
 """
 
 from datetime import datetime
-from typing import Any
+from enum import Enum
+from typing import Any, List
 
 from pydantic import BaseModel
 from pydantic.class_validators import validator
@@ -12,10 +13,36 @@ from xlrd.xldate import xldate_as_datetime
 from opennem.core.normalizers import clean_float
 
 
+class StatTypes(Enum):
+    CPI = "CPI"
+
+
+class StatDatabase(BaseModel):
+    stat_date: datetime
+    country: str = "au"
+    stat_type: StatTypes
+    value: float
+
+    @validator("value", pre=True)
+    def parse_cpi_value(cls, value: Any) -> float:
+        v = clean_float(value)
+
+        if not v:
+            raise ValueError("No Value")
+
+        return v
+
+    class Config:
+        orm_mode = True
+        anystr_strip_whitespace = True
+        use_enum_values = True
+
+
 class StatsSet(BaseModel):
     name: str
     source_url: str
     fetched_date: datetime
+    stats: List[StatDatabase]
 
 
 class AUCpiData(BaseModel):
