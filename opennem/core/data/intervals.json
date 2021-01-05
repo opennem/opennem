@@ -42,6 +42,12 @@
     "interval_sql": "1 month"
   },
   {
+    "interval": 131400,
+    "interval_human": "1Q",
+    "trunc": "quarter",
+    "interval_sql": "1 quarter"
+  },
+  {
     "interval": 525600,
     "interval_human": "1Y",
     "trunc": "year",
