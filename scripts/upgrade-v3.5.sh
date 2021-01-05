@@ -31,3 +31,6 @@ scrapy crawl -L ERROR au.nem.current.rooftop
 scrapy crawl -L ERROR au.nem.current.dispatch_is
 scrapy crawl -L ERROR au.nem.archive.dispatch_is
 scrapy crawl -L ERROR au.mms.archive.p5_interconnector_solution
+
+# grab stats
+python -m opennem.core.stats.store
