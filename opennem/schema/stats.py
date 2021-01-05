@@ -15,6 +15,10 @@ from opennem.core.normalizers import clean_float
 
 class StatTypes(Enum):
     CPI = "CPI"
+    Inflation = "INFLATION"
+
+    def __str__(self) -> str:
+        return "%s" % self.value
 
 
 class StatDatabase(BaseModel):
@@ -64,5 +68,28 @@ class AUCpiData(BaseModel):
 
         if not v:
             raise ValueError("No CPI Value")
+
+        return v
+
+
+class AUInflationData(BaseModel):
+    quarter_date: datetime
+    inflation_value: float
+
+    @validator("quarter_date", pre=True)
+    def parse_quarter_date(cls, value) -> datetime:
+        v = xldate_as_datetime(value, 0)
+
+        if not v or not isinstance(v, datetime):
+            raise ValueError("Invalid CPI quarter")
+
+        return v
+
+    @validator("inflation_value", pre=True)
+    def parse_cpi_value(cls, value: Any) -> float:
+        v = clean_float(value)
+
+        if not v:
+            raise ValueError("No inflation Value")
 
         return v
