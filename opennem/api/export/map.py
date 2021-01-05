@@ -39,6 +39,7 @@ STATS_FOLDER = "stats"
 class StatType(Enum):
     power = "power"
     energy = "energy"
+    gov = "gov"
 
 
 class PriorityType(Enum):
