@@ -38,6 +38,7 @@ def weather_daily(
     unit_name: str = "temperature_mean",
     period_human: str = None,
     include_min_max: bool = True,
+    date_range: Optional[ScadaDateRange] = None,
 ) -> Optional[OpennemDataSet]:
     station_codes = []
 
@@ -48,9 +49,11 @@ def weather_daily(
     interval = human_to_interval("1d")
     network = network_from_network_code(network_code)
     units = get_unit(unit_name)
-    scada_range = get_scada_range(network=network)
 
-    if not scada_range:
+    if not date_range:
+        date_range = get_scada_range(network=network)
+
+    if not date_range:
         raise Exception("Require a scada range")
 
     if year:
@@ -58,7 +61,7 @@ def weather_daily(
             station_codes=station_codes,
             interval=interval,
             network=network,
-            scada_range=scada_range,
+            scada_range=date_range,
             year=year,
         )
     elif period_human:
@@ -69,7 +72,7 @@ def weather_daily(
             station_codes=station_codes,
             interval=interval,
             network=network,
-            scada_range=scada_range,
+            scada_range=date_range,
             period=period,
         )
     else:
@@ -77,7 +80,7 @@ def weather_daily(
 
         query = observation_query_all(
             station_codes=station_codes,
-            scada_range=scada_range,
+            scada_range=date_range,
             network=network,
         )
 
@@ -173,7 +176,7 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
         interval=human_to_interval("1Q"),
         period=human_to_period("all"),
         units=get_unit("cpi"),
-        group_field="gov"
+        group_field="gov",
     )
 
     return result
