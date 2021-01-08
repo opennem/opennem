@@ -318,7 +318,7 @@ def energy_network_fueltech_query(
     else:
         fueltech_filter = "f.fueltech_id not in ('imports', 'exports') and "
 
-    network_query = "fs.network_id IN ({}) and ".format(
+    network_query = "f.network_id IN ({}) and ".format(
         networks_to_in(networks_query)
     )
 
