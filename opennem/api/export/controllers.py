@@ -336,6 +336,7 @@ def energy_fueltech_daily(
     network_region_code: Optional[str] = None,
     interval_size: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
+    date_range: Optional[ScadaDateRange] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
@@ -352,6 +353,7 @@ def energy_fueltech_daily(
         network=network,
         network_region=network_region_code,
         networks_query=networks_query,
+        date_range=date_range,
     )
 
     with engine.connect() as c:
