@@ -240,6 +240,7 @@ def energy_network_fueltech_query(
     year: Optional[int] = None,
     network_region: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
+    date_range: Optional[ScadaDateRange] = None,
 ) -> str:
     """
     Get Energy for a network or network + region
@@ -305,9 +306,10 @@ def energy_network_fueltech_query(
     timezone = network.timezone_database
     offset = network.get_timezone(postgres_format=True)
 
-    scada_range = get_scada_range(network=network, networks=networks_query)
+    if not date_range:
+        date_range = get_scada_range(network=network, networks=networks_query)
 
-    if not scada_range:
+    if not date_range:
         raise Exception("Require a scada range for {}".format(network.code))
 
     network_region_query = ""
@@ -336,13 +338,13 @@ def energy_network_fueltech_query(
         year_min = "{}-01-01 00:00:00{}".format(year, offset)
 
         if year == datetime.now().year:
-            year_max = scada_range.get_end()
+            year_max = date_range.get_end()
 
         if not trunc:
             trunc = "day"
     else:
-        year_min = scada_range.get_start()
-        year_max = scada_range.get_end()
+        year_min = date_range.get_start()
+        year_max = date_range.get_end()
 
         if not trunc:
             trunc = "month"
