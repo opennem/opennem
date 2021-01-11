@@ -296,7 +296,7 @@ def station_name_cleaner(facility_name: str) -> str:
     name_clean = name_clean.replace("university of melbourne", "uom")
 
     # @TODO remove these hard codes
-    if not name_clean in ["barcaldine solar farm", "Darling Downs Solar Farm"]:
+    if name_clean not in ["barcaldine solar farm", "Darling Downs Solar Farm"]:
         for w in STRIP_WORDS:
             if name_clean.startswith("todae solar") and w in ["solar"]:
                 continue
@@ -329,7 +329,7 @@ def station_name_cleaner(facility_name: str) -> str:
             comp = comp.capitalize()
 
         # strip numbers greater than 5
-        comp = clean_numbers(comp)
+        comp = str(clean_numbers(comp))
 
         name_components_parsed.append(comp)
 
