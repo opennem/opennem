@@ -84,10 +84,10 @@ def schedule_hourly_tasks() -> None:
     export_energy(priority=PriorityType.daily, latest=True)
 
 
-# @huey.periodic_task(crontab(hour="14"))
-# @huey.lock_task("schedule_daily_tasks")
-# def schedule_daily_tasks() -> None:
-#     export_energy(priority=PriorityType.daily)
+@huey.periodic_task(crontab(hour="14"))
+@huey.lock_task("schedule_daily_tasks")
+def schedule_daily_tasks() -> None:
+    export_energy(priority=PriorityType.daily)
 
 
 @huey.periodic_task(crontab(hour="*/12"), priority=30)
