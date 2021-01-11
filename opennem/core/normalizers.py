@@ -161,14 +161,14 @@ def is_single_number(value: Union[str, int]) -> bool:
 
 
 # @TODO not yet implemented
-def id_unit(facility_name):
+def id_unit(facility_name: str) -> str:
     __n = facility_name
 
     return __n
 
 
 # @TODO not yet implement
-def id_duid(facility_name):
+def id_duid(facility_name: str) -> str:
     __n = facility_name
 
     return __n
@@ -202,7 +202,7 @@ def normalize_string(csv_string: str) -> str:
 
 
 def name_normalizer(name: str) -> str:
-    name_normalized = None
+    name_normalized = ""
 
     if name and type(name) is str:
         name_normalized = name.strip()
@@ -331,18 +331,14 @@ def station_name_cleaner(facility_name: str) -> str:
     if name_components_parsed[0] == "uom":
         name_components_parsed = name_components_parsed[:-1]
 
-    name_clean = " ".join(
-        [str(i) for i in name_components_parsed if i is not None]
-    )
+    name_clean = " ".join([str(i) for i in name_components_parsed if i is not None])
 
     name_clean = re.sub(" +", " ", name_clean)
 
     name_clean = name_clean.strip()
 
     if "/" in name_clean:
-        name_clean = " / ".join(
-            [i.strip().title() for i in name_clean.split("/")]
-        )
+        name_clean = " / ".join([i.strip().title() for i in name_clean.split("/")])
 
     if station_map_name(name_clean) != name_clean:
         return station_map_name(name_clean)
@@ -363,12 +359,7 @@ def station_name_cleaner(facility_name: str) -> str:
 def participant_name_filter(participant_name: str) -> Optional[str]:
     participant_name = strip_whitespace(participant_name)
 
-    _p = (
-        participant_name.strip()
-        .replace("Pty Ltd", "")
-        .replace("Ltd", "")
-        .replace("/", " / ")
-    )
+    _p = participant_name.strip().replace("Pty Ltd", "").replace("Ltd", "").replace("/", " / ")
 
     _p = re.sub(" +", " ", _p).strip()
 
@@ -380,9 +371,7 @@ def participant_name_filter(participant_name: str) -> Optional[str]:
     return _p
 
 
-def clean_capacity(
-    capacity: Union[str, int, float], round_to: int = 6
-) -> Optional[float]:
+def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optional[float]:
     """
     Takes a capacity and cleans it up into a float
 
@@ -420,9 +409,7 @@ def clean_capacity(
             return None
 
         raise Exception(
-            "Capacity clean of type {} not supported: {}".format(
-                type(capacity), capacity
-            )
+            "Capacity clean of type {} not supported: {}".format(type(capacity), capacity)
         )
 
     if cap_clean is None:
