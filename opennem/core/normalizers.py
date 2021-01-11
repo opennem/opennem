@@ -217,6 +217,17 @@ def stem(word: str) -> str:
     return word.lower().rstrip(",.!:;'-\"").lstrip("'\"")
 
 
+def clean_sentence(sentence: str) -> str:
+    """Method to clean up a sentence"""
+    sentence_parts = sentence.strip().split()
+
+    sentence_parts_stemmed = map(stem, sentence_parts)
+
+    sentence_reformed = "".join(sentence_parts_stemmed)
+
+    return sentence_reformed
+
+
 def clean_float(number: Union[str, int, float]) -> Optional[float]:
     num_return = None
 
