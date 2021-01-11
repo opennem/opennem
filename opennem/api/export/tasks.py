@@ -26,6 +26,7 @@ from opennem.api.export.map import (
     get_export_map,
 )
 from opennem.api.export.utils import write_output
+from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import OpennemDataSet
 from opennem.core.network_region_bom_station_map import (
     get_network_region_weather_station,
@@ -127,6 +128,19 @@ def export_energy(
         if energy_stat.stat_type != StatType.energy:
             continue
 
+        # @FIX trim to NEM since it's the one with the shortest
+        # data time span.
+        # @TODO find a better and more flexible way to do this in the
+        # range method
+        date_range_networks = energy_stat.networks or []
+
+        if NetworkNEM in date_range_networks:
+            date_range_networks = [NetworkNEM]
+
+        date_range = get_scada_range(
+            network=energy_stat.network, networks=date_range_networks
+        )
+
         if energy_stat.year:
 
             if latest and energy_stat.year != CURRENT_YEAR:
@@ -137,6 +151,7 @@ def export_energy(
                 year=energy_stat.year,
                 network=energy_stat.network,
                 networks_query=energy_stat.networks,
+                date_range=date_range,
                 network_region_code=energy_stat.network_region_query
                 or energy_stat.network_region,
             )
@@ -155,10 +170,12 @@ def export_energy(
             write_output(energy_stat.path, stat_set)
 
         elif energy_stat.period and energy_stat.period.period_human == "all":
+
             stat_set = energy_fueltech_daily(
                 interval_size="1M",
                 network=energy_stat.network,
                 networks_query=energy_stat.networks,
+                date_range=date_range,
                 network_region_code=energy_stat.network_region_query
                 or energy_stat.network_region,
             )
@@ -169,6 +186,7 @@ def export_energy(
             if energy_stat.bom_station:
                 weather_stats = weather_daily(
                     station_code=energy_stat.bom_station,
+                    date_range=date_range,
                     year=energy_stat.year,
                     network_code=energy_stat.network.code,
                 )
@@ -279,8 +297,8 @@ def export_metadata() -> bool:
 
 
 if __name__ == "__main__":
-    export_all_daily()
-    export_all_monthly()
+    # export_all_daily()
+    # export_all_monthly()
     export_energy()
     # export_all_daily()
 
