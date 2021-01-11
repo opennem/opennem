@@ -218,7 +218,7 @@ def stem(word: str) -> str:
 
 
 def clean_sentence(sentence: str) -> str:
-    """Method to clean up a sentence"""
+    """Method to clean up a sentence into word stems"""
     sentence_parts = sentence.strip().split()
 
     sentence_parts_stemmed = map(stem, sentence_parts)
