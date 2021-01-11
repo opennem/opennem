@@ -307,8 +307,12 @@ def station_name_cleaner(facility_name: str) -> str:
     name_components = [str(i) for i in name_clean.strip().split(" ")]
     name_components_parsed = []
 
-    for comp in name_components:
-        comp = str(comp)
+    for _comp in name_components:
+        comp: Optional[str] = str(_comp)
+
+        if not comp:
+            continue
+
         comp = comp.strip()
         comp = re.sub(r",|-|\(|\)|\–", "", comp)
 
@@ -329,7 +333,10 @@ def station_name_cleaner(facility_name: str) -> str:
             comp = comp.capitalize()
 
         # strip numbers greater than 5
-        comp = str(clean_numbers(comp))
+        comp_clean = clean_numbers(comp)
+
+        if comp_clean:
+            comp = comp_clean
 
         name_components_parsed.append(comp)
 
