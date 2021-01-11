@@ -212,6 +212,11 @@ def name_normalizer(name: str) -> str:
     return str(name_normalized)
 
 
+def stem(word: str) -> str:
+    """Get the stem of a word"""
+    return word.lower().rstrip(",.!:;'-\"").lstrip("'\"")
+
+
 def clean_float(number: Union[str, int, float]) -> Optional[float]:
     num_return = None
 
