@@ -261,33 +261,28 @@ def energy_network_fueltech_query(
             sum(t.emissions) as fueltech_emissions
         from
             (select
-                time_bucket_gapfill('1 hour', fs.trading_interval) as trading_interval,
+                fs.trading_interval,
                 f.fueltech_id,
-                coalesce(
-                    sum(eoi_quantity),
-                    energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated))
-                ) as energy,
-                case when avg(bs.price) >= 0  and min(fs.generated) >= 0 then
+                max(fs.energy) as energy,
+                case when avg(bs.price) >= 0  and min(fs.energy) >= 0 then
                     coalesce(
-                        sum(eoi_quantity) * avg(bs.price),
-                        energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price),
+                        max(fs.energy) * avg(bs.price),
                         0.0
                     )
                 else 0.0
                 end as market_value,
-                case when avg(f.emissions_factor_co2) >= 0  and min(fs.generated) >= 0 then
+                case when avg(f.emissions_factor_co2) >= 0  and min(fs.energy) >= 0 then
                     coalesce(
-                        sum(eoi_quantity) * avg(f.emissions_factor_co2),
-                        energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(f.emissions_factor_co2),
+                        max(fs.energy) * avg(f.emissions_factor_co2),
                         0.0
                     )
                 else 0.0
                 end as emissions
-            from facility_scada fs
+            from mv_facility_energy_hour fs
                 left join facility f on fs.facility_code = f.code
                 left join balancing_summary bs on
                     bs.trading_interval = fs.trading_interval
-                    and bs.network_id=fs.network_id
+                    and bs.network_id=f.network_id
                     and bs.network_region = f.network_region
             where
                 f.fueltech_id is not null and
