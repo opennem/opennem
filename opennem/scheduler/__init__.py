@@ -17,6 +17,7 @@ from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.aemo_intervals import aemo_wem_live_interval
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.monitors.opennem_metadata import check_metadata_status
+from opennem.notifications.slack import slack_message
 from opennem.settings import settings
 
 # Py 3.8 on MacOS changed the default multiprocessing model
@@ -67,12 +68,14 @@ def schedule_live_tasks() -> None:
 @huey.lock_task("schedule_export_all_daily")
 def schedule_export_all_daily() -> None:
     export_all_daily()
+    slack_message("Finished running export_all_daily")
 
 
 @huey.periodic_task(crontab(hour="*/12"), priority=50)
 @huey.lock_task("schedule_export_all_monthly")
 def schedule_export_all_monthly() -> None:
     export_all_monthly()
+    slack_message("Finished running export_all_monthly")
 
 
 @huey.periodic_task(crontab(hour="*/1"), priority=50)
@@ -91,6 +94,7 @@ def schedule_hourly_tasks() -> None:
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
     export_energy(priority=PriorityType.monthly)
+    slack_message("Finished running energy_monthlies")
 
 
 # geojson maps
