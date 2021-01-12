@@ -31,9 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 def duid_in_case(facility_codes: List[str]) -> str:
-    return ",".join(
-        ["'{}'".format(i) for i in map(normalize_duid, facility_codes)]
-    )
+    return ",".join(["'{}'".format(i) for i in map(normalize_duid, facility_codes)])
 
 
 def stats_factory(
@@ -244,6 +242,9 @@ def get_scada_range(
     network_region: Optional[str] = None,
     facilities: Optional[List[str]] = None,
 ) -> Optional[ScadaDateRange]:
+    """Get the start and end dates for a network query. This is more efficient
+    than providing or querying the range at query time
+    """
     engine = get_database_engine()
 
     __query = """
@@ -267,9 +268,8 @@ def get_scada_range(
         # timezone = network.timezone_database
 
     if networks:
-        network_query = "fs.network_id IN ({}) and ".format(
-            networks_to_in(networks)
-        )
+        net_case = networks_to_in(networks)
+        network_query = "fs.network_id IN ({}) and ".format(net_case)
 
     network_region_query = ""
 
@@ -284,9 +284,8 @@ def get_scada_range(
     facility_query = ""
 
     if facilities:
-        facility_query = "fs.facility_code IN ({}) and ".format(
-            duid_in_case(facilities)
-        )
+        fac_case = duid_in_case(facilities)
+        facility_query = "fs.facility_code IN ({}) and ".format(fac_case)
 
     exclude_duids = duid_in_case(SCADA_RANGE_EXCLUDE_DUIDS)
 
@@ -313,9 +312,7 @@ def get_scada_range(
     if not scada_min or not scada_max:
         return None
 
-    scada_range = ScadaDateRange(
-        start=scada_min, end=scada_max, network=network
-    )
+    scada_range = ScadaDateRange(start=scada_min, end=scada_max, network=network)
 
     return scada_range
 
@@ -336,9 +333,7 @@ def station_attach_stats(station: Station, session: Session) -> Station:
     )
 
     for facility in station.facilities:
-        facility_power = list(
-            filter(lambda s: s.facility_code == facility.code, stats)
-        )
+        facility_power = list(filter(lambda s: s.facility_code == facility.code, stats))
 
         # facility.scada_power = stats_factory(facility_power)
 
