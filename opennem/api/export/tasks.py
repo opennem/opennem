@@ -19,18 +19,11 @@ from opennem.api.export.controllers import (
     power_week,
     weather_daily,
 )
-from opennem.api.export.map import (
-    PriorityType,
-    StatExport,
-    StatType,
-    get_export_map,
-)
+from opennem.api.export.map import PriorityType, StatExport, StatType, get_export_map
 from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import OpennemDataSet
-from opennem.core.network_region_bom_station_map import (
-    get_network_region_weather_station,
-)
+from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.core.networks import network_from_network_code
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
@@ -68,8 +61,7 @@ def export_power(
             date_range=power_stat.date_range,
             period=power_stat.period,
             network_code=power_stat.network.code,
-            network_region_code=power_stat.network_region_query
-            or power_stat.network_region,
+            network_region_code=power_stat.network_region_query or power_stat.network_region,
             networks_query=power_stat.networks,
         )
 
@@ -87,7 +79,7 @@ def export_power(
             flow_set = power_flows_week(
                 network=NetworkNEM,
                 date_range=power_stat.date_range,
-                network_region_code=power_stat.network,
+                network_region_code=power_stat.network_region,
             )
 
             if flow_set:
@@ -137,9 +129,7 @@ def export_energy(
         if NetworkNEM in date_range_networks:
             date_range_networks = [NetworkNEM]
 
-        date_range = get_scada_range(
-            network=energy_stat.network, networks=date_range_networks
-        )
+        date_range = get_scada_range(network=energy_stat.network, networks=date_range_networks)
 
         if energy_stat.year:
 
@@ -152,8 +142,7 @@ def export_energy(
                 network=energy_stat.network,
                 networks_query=energy_stat.networks,
                 date_range=date_range,
-                network_region_code=energy_stat.network_region_query
-                or energy_stat.network_region,
+                network_region_code=energy_stat.network_region_query or energy_stat.network_region,
             )
 
             if not stat_set:
@@ -176,8 +165,7 @@ def export_energy(
                 network=energy_stat.network,
                 networks_query=energy_stat.networks,
                 date_range=date_range,
-                network_region_code=energy_stat.network_region_query
-                or energy_stat.network_region,
+                network_region_code=energy_stat.network_region_query or energy_stat.network_region,
             )
 
             if not stat_set:
