@@ -30,7 +30,9 @@ logger = logging.getLogger(__name__)
 
 
 def duid_in_case(facility_codes: List[str]) -> str:
-    return ",".join(["'{}'".format(i) for i in map(normalize_duid, facility_codes)])
+    """Takes a list of duids and returns a formatted sql array for IN"""
+    map_list = ["'{}'".format(i) for i in map(normalize_duid, facility_codes)]
+    return ",".join(map_list)
 
 
 def stats_factory(
