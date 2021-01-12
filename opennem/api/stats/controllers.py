@@ -52,6 +52,8 @@ def stats_factory(
 
     @TODO optional groupby field
     @TODO override timezone
+    @TODO multiple groupings / slight refactor
+
     """
 
     if network:
