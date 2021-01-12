@@ -256,8 +256,8 @@ def energy_network_fueltech_query(
         sum(t.emissions) as fueltech_emissions
     from mv_facility_all t
     where
-        fs.trading_interval <= '{year_max}' and
-        fs.trading_interval >= '{year_min}' and
+        t.trading_interval <= '{year_max}' and
+        t.trading_interval >= '{year_min}' and
         {network_query}
         {network_region_query}
         {fueltech_filter}
@@ -280,9 +280,9 @@ def energy_network_fueltech_query(
     fueltech_filter = ""
 
     if network_region:
-        network_region_query = f"f.network_region='{network_region}' and "
+        network_region_query = f"t.network_region='{network_region}' and "
     else:
-        fueltech_filter = "f.fueltech_id not in ('imports', 'exports') and "
+        fueltech_filter = "t.fueltech_id not in ('imports', 'exports') and "
 
     network_query = "f.network_id IN ({}) and ".format(networks_to_in(networks_query))
 
