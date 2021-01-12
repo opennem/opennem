@@ -12,9 +12,7 @@ from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimeInterval, TimePeriod
 
 
-def interconnector_flow_power_query(
-    network_region: str, date_range: ScadaDateRange
-) -> TextClause:
+def interconnector_flow_power_query(network_region: str, date_range: ScadaDateRange) -> TextClause:
     __query = sql.text(
         dedent(
             """
@@ -42,9 +40,7 @@ def interconnector_flow_power_query(
     return __query
 
 
-def country_stats_query(
-    stat_type: StatTypes, country: str = "au"
-) -> TextClause:
+def country_stats_query(stat_type: StatTypes, country: str = "au") -> TextClause:
     __query = sql.text(
         dedent(
             """
@@ -110,9 +106,7 @@ def price_network_query(
         network_region_query = f"bs.network_region='{network_region}' and "
         group_field = "bs.network_region"
 
-    network_query = "bs.network_id IN ({}) and ".format(
-        networks_to_in(networks_query)
-    )
+    network_query = "bs.network_id IN ({}) and ".format(networks_to_in(networks_query))
 
     if len(networks_query) > 1:
         group_field = "'AU'"
@@ -254,53 +248,23 @@ def energy_network_fueltech_query(
         networks_query.append(network)
 
     __query = """
-        select
-            date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
-            t.fueltech_id,
-            sum(t.energy) / 1000 as fueltech_energy,
-            sum(t.market_value) as fueltech_market_value,
-            sum(t.emissions) as fueltech_emissions
-        from
-            (select
-                fs.trading_interval,
-                f.fueltech_id,
-                max(fs.energy) as energy,
-                case when avg(bs.price) >= 0  and min(fs.energy) >= 0 then
-                    coalesce(
-                        max(fs.energy) * avg(bs.price),
-                        0.0
-                    )
-                else 0.0
-                end as market_value,
-                case when avg(f.emissions_factor_co2) >= 0  and min(fs.energy) >= 0 then
-                    coalesce(
-                        max(fs.energy) * avg(f.emissions_factor_co2),
-                        0.0
-                    )
-                else 0.0
-                end as emissions
-            from mv_facility_energy_hour fs
-                left join facility f on fs.facility_code = f.code
-                left join balancing_summary bs on
-                    bs.trading_interval = fs.trading_interval
-                    and bs.network_id=f.network_id
-                    and bs.network_region = f.network_region
-            where
-                f.fueltech_id is not null and
-                fs.trading_interval <= '{year_max}' and
-                fs.trading_interval >= '{year_min}' and
-                {network_query}
-                {network_region_query}
-                {fueltech_filter}
-                1=1
-            group by
-                1,
-                f.code,
-                f.fueltech_id
-            ) as t
-        group by 1, 2
-        order by
-            trading_day desc;
+    select
+        date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
+        t.fueltech_id,
+        sum(t.energy) / 1000 as fueltech_energy,
+        sum(t.market_value) as fueltech_market_value,
+        sum(t.emissions) as fueltech_emissions
+    from mv_facility_all t
+    where
+        fs.trading_interval <= '{year_max}' and
+        fs.trading_interval >= '{year_min}' and
+        {network_query}
+        {network_region_query}
+        {fueltech_filter}
+        1=1
+    group by 1, 2
+    order by
+        trading_day desc;
     """
 
     timezone = network.timezone_database
@@ -320,9 +284,7 @@ def energy_network_fueltech_query(
     else:
         fueltech_filter = "f.fueltech_id not in ('imports', 'exports') and "
 
-    network_query = "f.network_id IN ({}) and ".format(
-        networks_to_in(networks_query)
-    )
+    network_query = "f.network_id IN ({}) and ".format(networks_to_in(networks_query))
 
     if not timezone:
         timezone = "UTC"
