@@ -284,7 +284,8 @@ def energy_network_fueltech_query(
     else:
         fueltech_filter = "t.fueltech_id not in ('imports', 'exports') and "
 
-    network_query = "f.network_id IN ({}) and ".format(networks_to_in(networks_query))
+    networks_list = networks_to_in(networks_query)
+    network_query = "t.network_id IN ({}) and ".format(networks_list)
 
     if not timezone:
         timezone = "UTC"
@@ -314,7 +315,7 @@ def energy_network_fueltech_query(
     network_region_query = ""
 
     if network_region:
-        network_region_query = f" f.network_region='{network_region}' and"
+        network_region_query = f" t.network_region='{network_region}' and"
 
     query = dedent(
         __query.format(
