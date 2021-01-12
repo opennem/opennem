@@ -1,6 +1,7 @@
 import csv
 import logging
 from pkgutil import get_data
+from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -12,12 +13,12 @@ LEGACY_FUELTECH_MAP = {
 }
 
 
-def clean_fueltech(ft):
+def clean_fueltech(ft: str) -> Optional[str]:
     """
-        Clean the fueltech strings that come out of the spreadsheets
-        or other sources
+    Clean the fueltech strings that come out of the spreadsheets
+    or other sources
 
-        @TODO replace with a compiled regexp
+    @TODO replace with a compiled regexp
     """
     if not type(ft) is str:
         return None
@@ -33,13 +34,13 @@ def clean_fueltech(ft):
     return ft
 
 
-def load_fueltech_map(fixture_name):
+def load_fueltech_map(fixture_name: str) -> Dict:
     """
-        Reads the CSV to load the fueltech map
+    Reads the CSV to load the fueltech map
 
-        Fields are:
+    Fields are:
 
-        fuel_source,fuel_source_desc,tech,tech_desc,fueltech_map,load_type
+    fuel_source,fuel_source_desc,tech,tech_desc,fueltech_map,load_type
 
     """
 
@@ -52,11 +53,12 @@ def load_fueltech_map(fixture_name):
     ]
 
     # Funky encoding because of save from Excel .. leave it
-    csv_data = (
-        get_data("opennem", "core/data/{}".format(fixture_name))
-        .decode("utf-8-sig")
-        .splitlines()
-    )
+    csv_data = get_data("opennem", "core/data/{}".format(fixture_name))
+
+    if not csv_data:
+        raise Exception("Could not load fixture: {}".format(fixture_name))
+
+    csv_data = csv_data.decode("utf-8-sig").splitlines()
 
     fueltech_map = {}
 
@@ -80,10 +82,10 @@ def lookup_fueltech(
     techtype=None,
     techtype_desc=None,
     dispatch_type: str = "generator",
-):
+) -> Optional[str]:
     """
-        Takes fueltech strings from AEMO or other sources and maps them
-        to opennem fueltechs using the csv file in the data directory
+    Takes fueltech strings from AEMO or other sources and maps them
+    to opennem fueltechs using the csv file in the data directory
 
     """
 
@@ -105,10 +107,6 @@ def lookup_fueltech(
     if lookup_set in FUELTECH_MAP:
         return FUELTECH_MAP[lookup_set]
 
-    logger.warning(
-        "Found fueltech {}, {}, {}, {} with no mapping".format(
-            ft, tt, ftd, ttd
-        )
-    )
+    logger.warning("Found fueltech {}, {}, {}, {} with no mapping".format(ft, tt, ftd, ttd))
 
     return None
