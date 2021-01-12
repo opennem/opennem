@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
 
-from pytz import timezone as pytz_timezone
 from sqlalchemy.orm import Session
 
 from opennem.core.normalizers import normalize_duid
