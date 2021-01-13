@@ -52,7 +52,9 @@ def upgrade() -> None:
                 fs.network_id = bs.network_id and
                 bs.network_region = f.network_region
         where
-            f.fueltech_id is not null
+            f.fueltech_id is not null and
+            fs.trading_interval <= now() and
+            fs.trading_interval > '1900-01-01'
         group by
             1,
             f.code,
