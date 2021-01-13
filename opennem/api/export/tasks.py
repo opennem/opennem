@@ -276,6 +276,17 @@ def export_all_daily() -> None:
         if not stat_set:
             continue
 
+        # Hard coded to NEM only atm but we'll put has_interconnectors
+        # in the metadata to automate all this
+        if network == NetworkNEM:
+            interconnector_flows = energy_interconnector_region_daily(
+                interval_size="1d",
+                network=network,
+                networks_query=networks,
+                network_region_code=network_region.code,
+            )
+            stat_set.append_set(interconnector_flows)
+
         bom_station = get_network_region_weather_station(network_region.code)
 
         if bom_station:
