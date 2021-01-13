@@ -16,10 +16,7 @@ from opennem.api.stats.schema import (
     ScadaDateRange,
 )
 from opennem.api.time import human_to_interval, human_to_period
-from opennem.api.weather.queries import (
-    observation_query,
-    observation_query_all,
-)
+from opennem.api.weather.queries import observation_query, observation_query_all
 from opennem.core.flows import net_flows
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
@@ -89,23 +86,17 @@ def weather_daily(
         row = list(c.execute(query))
 
     temp_avg = [
-        DataQueryResult(
-            interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None)
         for i in row
     ]
 
     temp_min = [
-        DataQueryResult(
-            interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None)
         for i in row
     ]
 
     temp_max = [
-        DataQueryResult(
-            interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None)
         for i in row
     ]
 
@@ -160,9 +151,7 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
         row = list(c.execute(query))
 
     stats = [
-        DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
         for i in row
     ]
 
@@ -273,9 +262,7 @@ def power_week(
         row = list(c.execute(query))
 
     stats = [
-        DataQueryResult(
-            interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
         for i in row
     ]
 
@@ -312,9 +299,7 @@ def power_week(
         row = list(c.execute(query))
 
     stats_price = [
-        DataQueryResult(
-            interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
         for i in row
     ]
 
@@ -364,23 +349,17 @@ def energy_fueltech_daily(
         row = list(c.execute(query))
 
     results_energy = [
-        DataQueryResult(
-            interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None)
         for i in row
     ]
 
     results_market_value = [
-        DataQueryResult(
-            interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None)
         for i in row
     ]
 
     results_emissions = [
-        DataQueryResult(
-            interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None)
         for i in row
     ]
 
@@ -428,3 +407,82 @@ def energy_fueltech_daily(
     stats.append_set(stats_emissions)
 
     return stats
+
+
+def energy_interconnector_region_daily(
+    network: NetworkSchema,
+    network_region_code: str,
+    year: Optional[int] = None,
+    interval_size: Optional[str] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
+    date_range: Optional[ScadaDateRange] = None,
+) -> Optional[OpennemDataSet]:
+    engine = get_database_engine()
+    period: TimePeriod = human_to_period("1Y")
+    units = get_unit("energy_giga")
+
+    interval = None
+
+    if interval_size:
+        interval = human_to_interval(interval_size)
+
+    query = energy_network_fueltech_query(
+        interconnector=True,
+        year=year,
+        interval=interval,
+        network=network,
+        network_region=network_region_code,
+        networks_query=networks_query,
+        date_range=date_range,
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    stats: List[RegionFlowResult] = [
+        RegionFlowResult(
+            interval=i[0],
+            generated=i[1],
+            flow_from=i[2],
+            flow_to=i[3] if len(i) > 1 else None,
+        )
+        for i in row
+    ]
+
+    if len(stats) < 1:
+        raise Exception("No results from query: {}".format(query))
+
+    stats_grouped = net_flows(network_region_code, stats)
+
+    imports = stats_grouped["imports"]
+    exports = stats_grouped["exports"]
+
+    result = stats_factory(
+        imports,
+        # code=network_region_code or network.code,
+        network=network,
+        period=human_to_period("7d"),
+        interval=human_to_interval("5m"),
+        units=get_unit("power"),
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    if not result:
+        raise Exception("No results")
+
+    result_exports = stats_factory(
+        exports,
+        # code=network_region_code or network.code,
+        network=network,
+        period=human_to_period("7d"),
+        interval=human_to_interval("5m"),
+        units=get_unit("power"),
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    result.append_set(result_exports)
+
+    return result
