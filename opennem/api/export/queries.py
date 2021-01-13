@@ -330,7 +330,14 @@ def energy_network_fueltech_query(
     fueltech_filter = ""
 
     if network_region:
-        network_region_query = f"t.network_region='{network_region}' and "
+        network_region_interconnector = ""
+
+        if interconnector:
+            network_region_interconnector = f" or t.interconnector_region_to='{network_region}'"
+
+        network_region_query = (
+            f"(t.network_region='{network_region}' {network_region_interconnector}) and"
+        )
 
     fueltech_filter = "t.fueltech_id not in ('imports', 'exports') and "
 
@@ -364,11 +371,6 @@ def energy_network_fueltech_query(
 
         if not trunc:
             trunc = "month"
-
-    network_region_query = ""
-
-    if network_region:
-        network_region_query = f" t.network_region='{network_region}' and"
 
     query = dedent(
         __query.format(
