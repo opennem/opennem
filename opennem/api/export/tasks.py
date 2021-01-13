@@ -239,6 +239,15 @@ def export_all_monthly() -> None:
         if not stat_set:
             continue
 
+        if network == NetworkNEM:
+            interconnector_flows = energy_interconnector_region_daily(
+                interval_size="1M",
+                network=network,
+                networks_query=networks,
+                network_region_code=network_region.code,
+            )
+            stat_set.append_set(interconnector_flows)
+
         all_monthly.append_set(stat_set)
 
         bom_station = get_network_region_weather_station(network_region.code)
