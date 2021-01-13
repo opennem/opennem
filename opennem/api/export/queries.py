@@ -258,6 +258,7 @@ def power_network_fueltech_query(
 
 def energy_network_fueltech_query(
     network: NetworkSchema,
+    interconnector: bool = False,
     interval: Optional[TimeInterval] = None,
     year: Optional[int] = None,
     network_region: Optional[str] = None,
@@ -295,6 +296,27 @@ def energy_network_fueltech_query(
         trading_day desc;
     """
 
+    if interconnector:
+        __query = """
+        select
+            date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
+            sum(t.energy) / 1000 as interconnector_energy,
+            t.network_region as flow_from,
+            t.interconnector_region_to as flow_to
+        from mv_facility_all t
+        where
+            t.interconnector is True and
+            t.trading_interval <= '{year_max}' and
+            t.trading_interval >= '{year_min}' and
+            {network_query}
+            {network_region_query}
+            {fueltech_filter}
+            1=1
+        group by 1, 2
+        order by
+            trading_day desc;
+        """
+
     timezone = network.timezone_database
     offset = network.get_timezone(postgres_format=True)
 
@@ -309,8 +331,11 @@ def energy_network_fueltech_query(
 
     if network_region:
         network_region_query = f"t.network_region='{network_region}' and "
-    else:
-        fueltech_filter = "t.fueltech_id not in ('imports', 'exports') and "
+
+    fueltech_filter = "t.fueltech_id not in ('imports', 'exports') and "
+
+    if interconnector:
+        fueltech_filter = "t.fueltech_id in ('imports', 'exports') and "
 
     networks_list = networks_to_in(networks_query)
     network_query = "t.network_id IN ({}) and ".format(networks_list)
