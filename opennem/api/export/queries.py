@@ -40,6 +40,34 @@ def interconnector_flow_power_query(network_region: str, date_range: ScadaDateRa
     return __query
 
 
+def interconnector_net_energy_flow(network_region: str, date_range: ScadaDateRange) -> TextClause:
+    """Get interconnector energy flows for a region"""
+    __query = sql.text(
+        dedent(
+            """
+            select
+                f.trading_interval,
+                max(f.energy) as facility_energy,
+                f.network_region as flow_from,
+                f.interconnector_region_to as flow_to
+            from mv_facility_all f
+            where
+                f.interconnector is True and
+                (f.network_region= :region or f.interconnector_region_to= :region) and
+                f.trading_interval <= :date_end and
+                f.trading_interval > :date_start
+            group by 1, 3, 4
+           """
+        )
+    ).bindparams(
+        region=network_region,
+        date_start=date_range.get_start(),
+        date_end=date_range.get_end(),
+    )
+
+    return __query
+
+
 def country_stats_query(stat_type: StatTypes, country: str = "au") -> TextClause:
     __query = sql.text(
         dedent(
