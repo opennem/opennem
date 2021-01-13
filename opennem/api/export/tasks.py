@@ -176,8 +176,7 @@ def export_energy(
             # in the metadata to automate all this
             if energy_stat.network == NetworkNEM and energy_stat.network_region:
                 interconnector_flows = energy_interconnector_region_daily(
-                    interval_size="1d",
-                    year=energy_stat.year,
+                    interval_size="1M",
                     network=energy_stat.network,
                     networks_query=energy_stat.networks,
                     date_range=date_range,
