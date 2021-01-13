@@ -40,7 +40,7 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 # export tasks
 
 
-@huey.periodic_task(crontab(minute="*/15"), priority=90)
+@huey.periodic_task(crontab(minute="*/5"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
     export_power(priority=PriorityType.live)
