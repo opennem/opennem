@@ -1,7 +1,7 @@
 # pylint: disable=no-member
 """
-Update materival view facilities_all to exclude
-imports and exports by default
+Update materival view facilities_all to include
+interconnector metadata
 
 Revision ID: fbd4ae450de2
 Revises: 0a7eaccf205e
@@ -28,6 +28,8 @@ def upgrade() -> None:
             f.fueltech_id,
             f.network_id,
             f.network_region,
+            f.interconnector,
+            f.interconnector_region_to,
             max(fs.energy) as energy,
             case when avg(bs.price) >= 0  and min(fs.energy) >= 0 then
                 coalesce(
@@ -50,14 +52,15 @@ def upgrade() -> None:
                 and bs.network_id=f.network_id
                 and bs.network_region = f.network_region
         where
-            f.fueltech_id is not null and
-            f.fueltech_id not in ('imports', 'exports')
+            f.fueltech_id is not null
         group by
             1,
             f.code,
             f.fueltech_id,
             f.network_id,
-            f.network_region
+            f.network_region,
+            f.interconnector,
+            f.interconnector_region_to
         order by 1 desc;
     """
     )
