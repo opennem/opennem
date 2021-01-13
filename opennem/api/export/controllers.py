@@ -462,23 +462,25 @@ def energy_interconnector_region_daily(
         imports,
         # code=network_region_code or network.code,
         network=network,
-        period=human_to_period("7d"),
-        interval=human_to_interval("5m"),
-        units=get_unit("power"),
+        period=period,
+        interval=interval,
+        units=units,
         region=network_region_code,
         fueltech_group=True,
     )
 
+    # Bail early on no interconnector
+    # don't error
     if not result:
-        raise Exception("No results")
+        return result
 
     result_exports = stats_factory(
         exports,
         # code=network_region_code or network.code,
         network=network,
-        period=human_to_period("7d"),
-        interval=human_to_interval("5m"),
-        units=get_unit("power"),
+        period=period,
+        interval=interval,
+        units=units,
         region=network_region_code,
         fueltech_group=True,
     )
