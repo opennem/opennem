@@ -5,9 +5,7 @@ from typing import Dict, List
 from opennem.api.stats.schema import DataQueryResult, RegionFlowResult
 
 
-def net_flows(
-    region: str, data: List[RegionFlowResult]
-) -> Dict[str, List[DataQueryResult]]:
+def net_flows(region: str, data: List[RegionFlowResult]) -> Dict[str, List[DataQueryResult]]:
     """
     Calculates net region flows for a region from a RegionFlowResult
     """
@@ -35,7 +33,7 @@ def net_flows(
                 if es.generated <= 0:
                     flow_set = "imports"
 
-                output_set[k][flow_set] += es.generated
+                output_set[k][flow_set] += abs(es.generated)
 
             if es.flow_to == region:
                 flow_set = "imports"
@@ -43,21 +41,17 @@ def net_flows(
                 if es.generated <= 0:
                     flow_set = "exports"
 
-                output_set[k][flow_set] += es.generated
+                output_set[k][flow_set] += abs(es.generated)
 
     imports_list = []
     exports_list = []
 
     for interval, data in output_set.items():
         imports_list.append(
-            DataQueryResult(
-                interval=interval, group_by="imports", result=data["imports"]
-            )
+            DataQueryResult(interval=interval, group_by="imports", result=data["imports"])
         )
         exports_list.append(
-            DataQueryResult(
-                interval=interval, group_by="exports", result=data["exports"]
-            )
+            DataQueryResult(interval=interval, group_by="exports", result=data["exports"])
         )
 
     return {"imports": imports_list, "exports": exports_list}
