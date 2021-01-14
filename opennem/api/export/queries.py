@@ -311,7 +311,7 @@ def energy_network_fueltech_query(
             {network_region_query}
             {fueltech_filter}
             1=1
-        group by 1, 3, 4
+        group by 1, t.code, 3, 4
         order by
             trading_day desc;
         """
