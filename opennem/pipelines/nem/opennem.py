@@ -482,9 +482,9 @@ TABLE_PROCESSOR_MAP = {
     "DISPATCH_CASE_SOLUTION": "process_case_solutions",
     "DISPATCH_UNIT_SCADA": "process_unit_scada",
     "DISPATCH_UNIT_SOLUTION": "process_unit_solution",
-    "DISPATCH_PRE_AP_PRICE": "process_pre_ap_price",
+    # "DISPATCH_PRE_AP_PRICE": "process_pre_ap_price",
     "ROOFTOP_ACTUAL": "process_rooftop_actual",
-    "DISPATCH_PRICE": "process_pre_ap_price",
+    # "DISPATCH_PRICE": "process_pre_ap_price",
 }
 
 
