@@ -19,7 +19,7 @@ def interconnector_flow_power_query(
         dedent(
             """
                 select
-                    trading_interval at time zone :timezone,
+                    trading_interval at time zone :timezone as trading_interval,
                     max(fs.facility_power) as facility_power,
                     f.network_region as flow_from,
                     f.interconnector_region_to as flow_to
