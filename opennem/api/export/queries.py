@@ -183,11 +183,9 @@ def power_network_fueltech_query(
     if not date_range:
         date_range = get_scada_range(network=network, networks=networks_query)
 
-    timezone: str = network.timezone_database
-
     __query = """
         select
-            t.trading_interval {timezone_query},
+            t.trading_interval at time zone '{timezone}',
             t.fueltech_code,
             sum(t.facility_power)
         from (
@@ -213,10 +211,10 @@ def power_network_fueltech_query(
         order by 1 desc
     """
 
-    timezone_query: str = ""
     network_region_query: str = ""
     fueltech_filter: str = ""
     wem_apvi_case: str = ""
+    timezone: str = network.timezone_database
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
@@ -247,7 +245,7 @@ def power_network_fueltech_query(
             network_query=network_query,
             trunc=interval.interval_sql,
             network_region_query=network_region_query,
-            timezone_query=timezone_query,
+            timezone=timezone,
             date_max=date_max,
             date_min=date_min,
             fueltech_filter=fueltech_filter,
