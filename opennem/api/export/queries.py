@@ -111,13 +111,12 @@ def price_network_query(
     if not date_range:
         date_range = get_scada_range(network=network, networks=networks_query)
 
-    timezone = network.get_timezone(postgres_format=True)
+    # timezone = network.get_timezone(postgres_format=True)
+    timezone = network.timezone_database
 
     __query = """
-        SET SESSION TIME ZONE '{timezone}';
-
         select
-            time_bucket_gapfill('{trunc}', bs.trading_interval) AS trading_interval,
+            trading_interval at time zone '{timezone}',
             {group_field},
             avg(bs.price) as price
         from balancing_summary bs
