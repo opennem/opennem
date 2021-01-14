@@ -21,27 +21,25 @@ def net_flows(region: str, data: List[RegionFlowResult]) -> Dict[str, List[DataQ
                 "exports": 0.0,
             }
 
+        flow_sum = 0.0
+
+        # Sum up
         for es in values:
-            # @TODO this could be made neater
 
             if not es.generated:
                 continue
 
             if es.flow_from == region:
-                flow_set = "exports"
-
-                if es.generated <= 0:
-                    flow_set = "imports"
-
-                output_set[k][flow_set] += abs(es.generated)
+                flow_sum += es.generated
 
             if es.flow_to == region:
-                flow_set = "imports"
+                flow_sum -= es.generated
 
-                if es.generated <= 0:
-                    flow_set = "exports"
-
-                output_set[k][flow_set] += abs(es.generated)
+        # net out
+        if flow_sum < 0:
+            output_set[k]["exports"] = flow_sum
+        else:
+            output_set[k]["imports"] = flow_sum
 
     imports_list = []
     exports_list = []
