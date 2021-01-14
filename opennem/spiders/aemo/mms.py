@@ -107,7 +107,7 @@ class MMSArchivePriceSpider(MMSArchiveBulkSpider):
 
 
 class MMSArchiveP5InterconnectorSolutionSpider(MMSArchiveBulkSpider):
-    name = "au.mms.archive.p5_interconnector_solution"
+    _name = "au.mms.archive.p5_interconnector_solution"
 
     tables = ["P5MIN_INTERCONNECTORSOLN"]
 
