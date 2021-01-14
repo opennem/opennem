@@ -154,9 +154,7 @@ def generate_balancing_summary(
 
     for row in records:
 
-        trading_interval = parse_date(
-            row[interval_field], network=network, dayfirst=False
-        )
+        trading_interval = parse_date(row[interval_field], network=network, dayfirst=False)
 
         network_region = None
 
@@ -226,9 +224,7 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
         if not ti_value:
             raise Exception("Require a trading interval")
 
-        trading_interval = parse_date(
-            ti_value, network=NetworkNEM, dayfirst=False
-        )
+        trading_interval = parse_date(ti_value, network=NetworkNEM, dayfirst=False)
 
         if not trading_interval:
             continue
@@ -332,9 +328,7 @@ def process_pre_ap_price(table: Dict, spider: Spider) -> int:
         records_processed += 1
 
         if limit and records_processed >= limit:
-            logger.info(
-                "Reached limit of: {} {}".format(limit, records_processed)
-            )
+            logger.info("Reached limit of: {} {}".format(limit, records_processed))
             break
 
     stmt = insert(BalancingSummary).values(records_to_store)
@@ -431,9 +425,7 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
 
     # Filter out for only measurements
     # as opposed to TYPE=SATELLITE
-    records_filtered = list(
-        filter(lambda x: x["TYPE"] == "MEASUREMENT", records)
-    )
+    records_filtered = list(filter(lambda x: x["TYPE"] == "MEASUREMENT", records))
 
     scada_records = unit_scada_generate_facility_scada(
         records_filtered,
@@ -467,13 +459,9 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
                 _new_val = _rec["generated"]
 
                 if isinstance(_cur_val, float) and isinstance(_new_val, float):
-                    return_records_grouped[pk_values]["generated"] += _rec[
-                        "generated"
-                    ]
+                    return_records_grouped[pk_values]["generated"] += _rec["generated"]
                 elif isinstance(_new_val, float):
-                    return_records_grouped[pk_values]["generated"] = _rec[
-                        "generated"
-                    ]
+                    return_records_grouped[pk_values]["generated"] = _rec["generated"]
                 else:
                     return_records_grouped[pk_values]["generated"] = 0.0
 
@@ -488,8 +476,8 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
 
 
 TABLE_PROCESSOR_MAP = {
-    "P5MIN_INTERCONNECTORSOLN": "process_dispatch_interconnectorres",
     "DISPATCH_INTERCONNECTORRES": "process_dispatch_interconnectorres",
+    # "P5MIN_INTERCONNECTORSOLN": "process_dispatch_interconnectorres",
     "METER_DATA_GEN_DUID": "process_meter_data_gen_duid",
     "DISPATCH_CASE_SOLUTION": "process_case_solutions",
     "DISPATCH_UNIT_SCADA": "process_unit_scada",
