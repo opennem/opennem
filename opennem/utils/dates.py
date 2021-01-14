@@ -78,9 +78,7 @@ def parse_date(
 
         if not dt_return:
             try:
-                dt_return = parse(
-                    date_str, dayfirst=dayfirst, yearfirst=yearfirst
-                )
+                dt_return = parse(date_str, dayfirst=dayfirst, yearfirst=yearfirst)
             except ParserError:
                 raise ValueError("Invalid date string passed")
 
@@ -220,9 +218,7 @@ def date_range_from_week(
 
     end_date = start_date_dt + timedelta(days=7)
 
-    scada_range = ScadaDateRange(
-        start=start_date_dt, end=end_date, network=network
-    )
+    scada_range = ScadaDateRange(start=start_date_dt, end=end_date, network=network)
 
     return scada_range
 
@@ -242,3 +238,7 @@ def get_date_component(format_str: str, dt: datetime = None) -> str:
     if dt:
         return dt.strftime(format_str)
     return datetime.now().strftime(format_str)
+
+
+def subtract_week(subject: datetime) -> datetime:
+    return subject - timedelta(days=7)
