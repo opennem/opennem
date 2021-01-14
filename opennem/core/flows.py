@@ -22,6 +22,7 @@ def net_flows(region: str, data: List[RegionFlowResult]) -> Dict[str, List[DataQ
             }
 
         flow_sum = 0.0
+        flow_type = "imports"
 
         # Sum up
         for es in values:
@@ -33,13 +34,12 @@ def net_flows(region: str, data: List[RegionFlowResult]) -> Dict[str, List[DataQ
                 flow_sum += es.generated
 
             if es.flow_to == region:
-                flow_sum -= es.generated
+                flow_sum += -1 * es.generated
 
-        # net out
-        if flow_sum < 0:
-            output_set[k]["exports"] = flow_sum
-        else:
-            output_set[k]["imports"] = flow_sum
+        if flow_sum > 0:
+            flow_type = "exports"
+
+        output_set[k][flow_type] = flow_sum
 
     imports_list = []
     exports_list = []
