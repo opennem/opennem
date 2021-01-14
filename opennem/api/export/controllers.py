@@ -179,7 +179,7 @@ def power_flows_week(
     engine = get_database_engine()
 
     query = interconnector_flow_power_query(
-        network_region=network_region_code, date_range=date_range
+        network_region=network_region_code, date_range=date_range, network=network
     )
 
     with engine.connect() as c:
