@@ -121,8 +121,8 @@ def stats_factory(
             data_type=units.unit_type,
             units=units.unit,
             code=group_code,
-            interval=interval,
-            period=period,
+            # interval=interval,
+            # period=period,
             history=history,
         )
 
