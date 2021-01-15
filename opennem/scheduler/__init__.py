@@ -40,7 +40,7 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 # export tasks
 
 
-@huey.periodic_task(crontab(minute="*/5"), priority=90)
+@huey.periodic_task(crontab(minute="*/1"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
     export_power(priority=PriorityType.live)
@@ -78,7 +78,7 @@ def schedule_export_all_monthly() -> None:
     slack_message("Finished running export_all_monthly")
 
 
-@huey.periodic_task(crontab(hour="*/1"), priority=50)
+@huey.periodic_task(crontab(minute="*/15"), priority=50)
 @huey.lock_task("schedule_hourly_tasks")
 def schedule_hourly_tasks() -> None:
     export_energy(priority=PriorityType.daily, latest=True)
@@ -98,7 +98,7 @@ def schedule_energy_monthlies() -> None:
 
 
 # geojson maps
-@huey.periodic_task(crontab(minute="*/30"), priority=50)
+@huey.periodic_task(crontab(minute="*/5"), priority=50)
 @huey.lock_task("schedule_export_geojson")
 def schedule_export_geojson() -> None:
     export_facility_geojson()
