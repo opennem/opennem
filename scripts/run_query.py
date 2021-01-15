@@ -42,10 +42,7 @@ QUERY = """
 
 
 def get_test_fixture() -> List[Dict]:
-    csv_fixture = (
-        Path(__file__).parent.parent
-        / "tests/fixtures/test_interconnector_vic1.csv"
-    )
+    csv_fixture = Path(__file__).parent.parent / "tests/fixtures/test_interconnector_sa1.csv"
 
     if not csv_fixture.is_file():
         raise Exception("not a file")
@@ -67,9 +64,7 @@ def run_query_inter() -> Optional[StringIO]:
     # results = []
     # scada_range = get_scada_range(network=NetworkNEM, network_region="VIC1")
 
-    # s = power_flows_week(
-    #     network=NetworkNEM, network_region_code="VIC1", date_range=scada_range
-    # )
+    # s = power_flows_week(network=NetworkNEM, network_region_code="VIC1", date_range=scada_range)
 
     # if not s:
     #     return None
@@ -85,9 +80,16 @@ def run_query_inter() -> Optional[StringIO]:
         for i in records
     ]
 
-    stats_grouped = net_flows("VIC1", stats)
+    stats_grouped = net_flows("SA1", stats)
 
-    print(stats_grouped)
+    imports = stats_grouped["imports"]
+    exports = stats_grouped["exports"]
+
+    from pprint import pprint
+
+    pprint(imports)
+    print("\nexports\n")
+    pprint(exports)
 
     return None
     # return s.json(indent=4)
@@ -100,5 +102,5 @@ def run_query():
 
 
 if __name__ == "__main__":
-    r = run_query()
+    r = run_query_inter()
     print(r)
