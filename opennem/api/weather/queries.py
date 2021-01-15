@@ -8,9 +8,7 @@ from opennem.schema.time import TimeInterval, TimePeriod
 
 
 def station_id_case(station_codes: List[str]) -> str:
-    return ",".join(
-        ["'{}'".format(i) for i in map(normalize_duid, station_codes)]
-    )
+    return ",".join(["'{}'".format(i) for i in map(normalize_duid, station_codes)])
 
 
 def observation_query(
@@ -62,14 +60,13 @@ def observation_query(
     date_start_condition = ""
 
     if period:
-        date_start_condition = (
-            "{date_end}::timestamp - '{period}'::interval".format(
-                date_end=date_end, period=period.period_sql
-            )
+        date_start_condition = "{date_end}::timestamp - '{period}'::interval".format(
+            date_end=date_end, period=period.period_sql
         )
 
     if year:
         date_start_condition = "'{year}-01-01'::date".format(year=year)
+        date_end = "'{year}-12-31'::date".format(year=year)
 
     if not period and not year:
         if not scada_range:
