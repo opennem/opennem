@@ -20,4 +20,4 @@ alembic upgrade head
 
 python -m opennem.db.load_fixtures
 
-python -m opennem.db.init
+python -m opennem.importer.db
