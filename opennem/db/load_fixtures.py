@@ -60,11 +60,7 @@ def load_facilitystatus():
     s = SessionLocal()
 
     for status in fixture:
-        facility_status = (
-            s.query(FacilityStatus)
-            .filter_by(code=status["code"])
-            .one_or_none()
-        )
+        facility_status = s.query(FacilityStatus).filter_by(code=status["code"]).one_or_none()
 
         if not facility_status:
             facility_status = FacilityStatus(
@@ -89,9 +85,7 @@ def load_networks():
     s = SessionLocal()
 
     for network in fixture:
-        network_model = (
-            s.query(Network).filter_by(code=network["code"]).one_or_none()
-        )
+        network_model = s.query(Network).filter_by(code=network["code"]).one_or_none()
 
         if not network_model:
             network_model = Network(code=network["code"])
@@ -123,9 +117,7 @@ def load_network_regions():
 
     for network_region in fixture:
         network_region_model = (
-            s.query(NetworkRegion)
-            .filter_by(code=network_region["code"])
-            .one_or_none()
+            s.query(NetworkRegion).filter_by(code=network_region["code"]).one_or_none()
         )
 
         if not network_region_model:
@@ -222,11 +214,7 @@ def load_bom_stations_json():
 
         codes.append(bom_station["code"])
 
-        station = (
-            session.query(BomStation)
-            .filter_by(code=bom_station["code"])
-            .one_or_none()
-        )
+        station = session.query(BomStation).filter_by(code=bom_station["code"]).one_or_none()
 
         if not station:
             logger.info("New station: %s", bom_station["name"])
@@ -247,9 +235,7 @@ def load_bom_stations_json():
             station.is_capital = True
             station.priority = 1
 
-        station.geom = "SRID=4326;POINT({} {})".format(
-            bom_station["lng"], bom_station["lat"]
-        )
+        station.geom = "SRID=4326;POINT({} {})".format(bom_station["lng"], bom_station["lat"])
 
         session.add(station)
 
@@ -272,15 +258,9 @@ def update_existing_geos():
 
         station_name = station_name_cleaner(station_data["display_name"])
         station_code = normalize_duid(station_data["station_code"])
-        station_state = map_compat_facility_state(
-            station_data["status"]["state"]
-        )
+        station_state = map_compat_facility_state(station_data["status"]["state"])
 
-        station = (
-            s.query(Station)
-            .filter(Station.network_code == station_code)
-            .one_or_none()
-        )
+        station = s.query(Station).filter(Station.network_code == station_code).one_or_none()
 
         if not station:
             logger.info("Could not find station {}".format(station_code))
@@ -312,20 +292,14 @@ def update_existing_geos():
             )
         )
 
-        facilities = [
-            {"code": k, **v} for k, v in stations[0]["duid_data"].items()
-        ]
+        facilities = [{"code": k, **v} for k, v in stations[0]["duid_data"].items()]
 
         # update fueltechs
         for facility_data in facilities:
             facility_duid = facility_data["code"]
             facility_fueltech = lookup_fueltech(facility_data["fuel_tech"])
 
-            facility = (
-                s.query(Facility)
-                .filter(Facility.network_code == facility_duid)
-                .first()
-            )
+            facility = s.query(Facility).filter(Facility.network_code == facility_duid).first()
 
             if not facility:
                 logger.error(
