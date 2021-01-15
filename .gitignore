@@ -65,3 +65,4 @@ profiles/
 .env.*
 opennem/static/
 infra/prometheus/.data/
+infra/grafana/data/grafana.db
