@@ -4,9 +4,9 @@
     CSV files
 
 """
-
 import csv
 import logging
+import re
 import sys
 from pathlib import Path
 from typing import Dict
@@ -175,9 +175,10 @@ BOM_DB_UPDATE_FIELDS = [
     "humidity",
 ]
 
+BOM_STATION_CODE_REMAP = {"066062": "066214"}
+
 DELIMITER = chr(255)
 
-import re
 
 __bom_date_match = re.compile(r"(\d{4})\,(\d{2}),(\d{2}),(\d{2}),(\d{2})")
 
@@ -187,6 +188,13 @@ def bom_pad_stationid(station_id: str) -> str:
 
     if len(station_id) == 5:
         station_id = f"0{station_id}"
+
+    return station_id
+
+
+def bom_station_id_remap(station_id: str) -> str:
+    if station_id in BOM_STATION_CODE_REMAP.keys():
+        return BOM_STATION_CODE_REMAP[station_id]
 
     return station_id
 
@@ -214,6 +222,7 @@ def parse_bom(file: FilePath) -> int:
         for row in csvreader:
 
             row["station_id"] = bom_pad_stationid(row["station_id"])
+            row["station_id"] = bom_station_id_remap(row["station_id"])
 
             record = parse_record_bom(row)
 
