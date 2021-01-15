@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 MMS_URL = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/{year}/MMSDM_{year}_{month}/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_{table}_{year}{month}010000.zip"
 
 
-class MMSArchiveBulkSpider2(scrapy.Spider):
+class MMSArchiveBulkSpider(scrapy.Spider):
     name = "au.mms.archive.dispatch_scada"
 
     tables = ["DISPATCH_UNIT_SCADA"]
@@ -106,17 +106,17 @@ class MMSArchivePriceSpider(MMSArchiveBulkSpider):
     )
 
 
-class MMSArchiveP5InterconnectorSolutionSpider(MMSArchiveBulkSpider):
-    _name = "au.mms.archive.p5_interconnector_solution"
+# class MMSArchiveP5InterconnectorSolutionSpider(MMSArchiveBulkSpider):
+#     name = "au.mms.archive.p5_interconnector_solution"
 
-    tables = ["P5MIN_INTERCONNECTORSOLN"]
+#     tables = ["P5MIN_INTERCONNECTORSOLN"]
 
-    pipelines = set(
-        [
-            ExtractCSV,
-            NemwebUnitScadaOpenNEMStorePipeline,
-        ]
-    )
+#     pipelines = set(
+#         [
+#             ExtractCSV,
+#             NemwebUnitScadaOpenNEMStorePipeline,
+#         ]
+#     )
 
 
 class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
