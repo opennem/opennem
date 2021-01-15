@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 MMS_URL = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/{year}/MMSDM_{year}_{month}/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_{table}_{year}{month}010000.zip"
 
 
-class MMSArchiveBulkSpider(scrapy.Spider):
+class MMSArchiveBulkSpider2(scrapy.Spider):
     name = "au.mms.archive.dispatch_scada"
 
     tables = ["DISPATCH_UNIT_SCADA"]
