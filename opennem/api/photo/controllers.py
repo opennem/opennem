@@ -6,6 +6,9 @@ import requests
 from PIL import Image
 from smart_open import open
 
+from opennem.utils.http import http
+from opennem.utils.url import bucket_to_website
+
 logger = logging.getLogger(__name__)
 
 S3_EXPORT_DEFAULT_BUCKET = "s3://photos.opennem.org.au/"
@@ -16,10 +19,20 @@ UPLOAD_ARGS = {
 }
 
 
-def write_photo_to_s3(file_path: str, data):
+def write_photo_to_s3(file_path: str, data, overwrite: bool = False):
     # @TODO move this to aws.py
     s3_save_path = os.path.join(S3_EXPORT_DEFAULT_BUCKET, file_path)
     write_count = 0
+
+    http_save_path = bucket_to_website(s3_save_path)
+
+    # check if it already exits
+    # @TODO check hashes
+    if not overwrite:
+        r = http.get(http_save_path)
+
+        if r.ok:
+            return len(r.content)
 
     with open(
         s3_save_path,
