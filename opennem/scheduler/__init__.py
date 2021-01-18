@@ -134,6 +134,6 @@ def monitor_metadata_status() -> None:
 
 # database tasks
 @huey.periodic_task(crontab(hour="*/1"))
-@huey.lock_task("database_tasks")
+@huey.lock_task("db_refresh_views")
 def db_refresh_views() -> None:
     refresh_views()
