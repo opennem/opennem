@@ -19,7 +19,7 @@ UPLOAD_ARGS = {
 }
 
 
-def write_photo_to_s3(file_path: str, data, overwrite: bool = False):
+def write_photo_to_s3(file_path: str, data, overwrite: bool = False) -> int:
     # @TODO move this to aws.py
     s3_save_path = os.path.join(S3_EXPORT_DEFAULT_BUCKET, file_path)
     write_count = 0
@@ -46,7 +46,7 @@ def write_photo_to_s3(file_path: str, data, overwrite: bool = False):
     return write_count
 
 
-def photos_process():
+def photos_process() -> None:
     """"""
     pass
     # session = SessionLocal()
@@ -57,7 +57,7 @@ def photos_process():
     #     r = write_photo_to_s3(photo.name, photo.url)
 
 
-def store_photo(photo_url: str):
+def store_photo(photo_url: str) -> None:
     img = Image.open(requests.get(photo_url, stream=True).raw)
 
     save_bugger = BytesIO()
