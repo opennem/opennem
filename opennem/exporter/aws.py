@@ -1,10 +1,10 @@
 import logging
 from typing import Dict
+from urllib.parse import urljoin
 
 from smart_open import open
 
 from opennem.settings import settings
-from opennem.utils.url import urljoin
 
 logger = logging.getLogger(__name__)
 
@@ -13,9 +13,7 @@ def get_upload_args(content_type: str = "application/json") -> Dict:
     return {"ContentType": content_type}
 
 
-def write_to_s3(
-    file_path: str, data: str, content_type: str = "application/json"
-) -> int:
+def write_to_s3(file_path: str, data: str, content_type: str = "application/json") -> int:
     """
     Write data to an s3 path
     """

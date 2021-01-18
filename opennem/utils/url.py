@@ -1,5 +1,5 @@
 import urllib
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 # Support S3 URI's in urllib
 urllib.parse.uses_netloc.append("s3")
