@@ -21,9 +21,7 @@ from opennem.schema.time import TimeInterval, TimePeriod
 
 
 def duid_in_case(facility_codes: List[str]) -> str:
-    return ",".join(
-        ["'{}'".format(i) for i in map(normalize_duid, facility_codes)]
-    )
+    return ",".join(["'{}'".format(i) for i in map(normalize_duid, facility_codes)])
 
 
 def power_facility_query(
@@ -36,9 +34,7 @@ def power_facility_query(
     timezone = network.get_timezone(postgres_format=True)
 
     if not date_range:
-        date_range = get_scada_range(
-            network=network, facilities=facility_codes
-        )
+        date_range = get_scada_range(network=network, facilities=facility_codes)
 
     timezone = network.timezone_database
 
@@ -139,9 +135,7 @@ def power_network(
         network_code=network_code,
         trunc=interval.trunc,
         interval=interval.interval_human,
-        interval_remainder=interval.get_sql_join(
-            timezone=network.timezone_database
-        ),
+        interval_remainder=interval.get_sql_join(timezone=network.timezone_database),
         period=period.period_sql,
         scale=scale,
         timezone=timezone,
@@ -258,9 +252,7 @@ def energy_facility(
         network_code=network_code,
         trunc=interval.trunc,
         interval=interval.interval_sql,
-        interval_remainder=interval.get_sql_join(
-            timezone=network.timezone_database
-        ),
+        interval_remainder=interval.get_sql_join(timezone=network.timezone_database),
         period=period.period_sql,
         scale=network.intervals_per_hour,
         timezone=timezone,
@@ -280,86 +272,26 @@ def energy_facility_query(
     """
 
     __query = """
-        select
-            date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
-            t.facility_code,
-            sum(t.energy) / 1000 as fueltech_energy,
-            sum(t.market_value) as fueltech_market_value,
-            sum(t.emissions) as fueltech_emissions
-        from
-            (select
-                time_bucket_gapfill('1 hour', fs.trading_interval) as trading_interval,
-                f.code as facility_code,
-                coalesce(
-                    sum(eoi_quantity),
-                    energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)),
-                    0.0
-                ) as energy,
-                case when avg(bs.price) > 0 then
-                    coalesce(
-                        sum(eoi_quantity) * avg(bs.price),
-                        energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(bs.price),
-                        0.0
-                    )
-                else 0.0
-                end as market_value,
-                case when avg(f.emissions_factor_co2) > 0 then
-                    coalesce(
-                        sum(eoi_quantity) * avg(f.emissions_factor_co2),
-                        energy_sum(fs.generated, '1 hour') * interval_size('1 hour', count(fs.generated)) * avg(f.emissions_factor_co2),
-                        0.0
-                    )
-                else 0.0
-                end as emissions
-            from facility_scada fs
-                left join facility f on fs.facility_code = f.code
-                left join balancing_summary bs on
-                    bs.trading_interval = fs.trading_interval
-                    and bs.network_id=fs.network_id
-                    and bs.network_region = f.network_region
-            where
-                fs.trading_interval <= '{date_max}' and
-                fs.trading_interval >= '{date_min}' and
-                fs.facility_code in ({facility_codes_parsed})
-            group by
-                1,
-                f.code
-            ) as t
-        group by 1, 2
-        order by
-            trading_day desc;
-    """
-
-    __query = """
     select
         date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
-        t.facility_code,
+        t.code,
         sum(t.energy) / 1000 as fueltech_energy,
+        sum(t.market_value) as fueltech_market_value,
         sum(t.emissions) as fueltech_emissions
-    from
-        (select
-            time_bucket_gapfill('1 hour', fs.trading_interval) as trading_interval,
-            fs.facility_code,
-            fs.energy,
-            fs.energy * f.emissions_factor_co2 as emissions
-        from mv_facility_energy_hour fs
-            left join facility f on fs.facility_code = f.code
-        where
-            fs.trading_interval <= '{date_max}' and
-            fs.trading_interval >= '{date_min}' and
-            fs.facility_code in ({facility_codes_parsed})
-    ) as t
+    from mv_facility_all t
+    where
+        t.trading_interval <= '{date_max}' and
+        t.trading_interval >= '{date_min}' and
+        fs.facility_code in ({facility_codes_parsed})
     group by 1, 2
     order by
-    trading_day desc;
+        trading_day desc;
     """
 
     timezone = network.timezone_database
     offset = network.get_timezone(postgres_format=True)
 
-    date_range: ScadaDateRange = get_scada_range(
-        network=network, facilities=facility_codes
-    )
+    date_range: ScadaDateRange = get_scada_range(network=network, facilities=facility_codes)
 
     if not interval:
         interval = network.get_interval()
@@ -445,9 +377,7 @@ def energy_network(
         network_code=network.code,
         trunc=interval.trunc,
         interval=interval.interval_sql,
-        interval_remainder=interval.get_sql_join(
-            timezone=network.timezone_database
-        ),
+        interval_remainder=interval.get_sql_join(timezone=network.timezone_database),
         period=period.period_sql,
         scale=network.intervals_per_hour,
         timezone=timezone,
@@ -509,9 +439,7 @@ def energy_network_fueltech(
         network_code=network.code,
         trunc=interval.trunc,
         interval=interval.interval_sql,
-        interval_remainder=interval.get_sql_join(
-            timezone=network.timezone_database
-        ),
+        interval_remainder=interval.get_sql_join(timezone=network.timezone_database),
         period=period.period_sql,
         scale=network.intervals_per_hour,
         network_region_query=network_region_query,
@@ -687,17 +615,13 @@ def price_network_region(
         network_query = f"and bs.network_id = '{network.code}' "
 
     if network_region_code:
-        network_region_query = (
-            f"and bs.network_region='{network_region_code}' "
-        )
+        network_region_query = f"and bs.network_region='{network_region_code}' "
 
     date_min_query = ""
 
     if period:
-        date_min_query = (
-            "{scada_max}::timestamp - interval '{period}'::interval".format(
-                scada_max=scada_range.get_end_sql(), period=period.period_sql
-            )
+        date_min_query = "{scada_max}::timestamp - interval '{period}'::interval".format(
+            scada_max=scada_range.get_end_sql(), period=period.period_sql
         )
 
     if year:
