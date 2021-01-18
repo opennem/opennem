@@ -32,21 +32,21 @@ def run_tests() -> None:
     # for w in wem_all:
     #     print(w.path)
 
-    export = StatExport(
-        stat_type=StatType.power,
-        priority=PriorityType.live,
-        country="au",
-        date_range=scada_range,
-        network_region="SA1",
-        network=NetworkNEM,
-        # networks=[NetworkNEM, NetworkWEM],
-        period=human_to_period("7d"),
-    )
+    # export = StatExport(
+    #     stat_type=StatType.power,
+    #     priority=PriorityType.live,
+    #     country="au",
+    #     date_range=scada_range,
+    #     network_region="SA1",
+    #     network=NetworkNEM,
+    #     # networks=[NetworkNEM, NetworkWEM],
+    #     period=human_to_period("7d"),
+    # )
 
-    export_power(stats=[export])
+    # export_power(stats=[export])
 
-    network = network_from_network_code("NEM")
-    networks = None
+    # network = network_from_network_code("NEM")
+    # networks = None
 
     # stat_set = energy_fueltech_daily(
     #     interval_size="1d",
@@ -85,18 +85,18 @@ def run_tests() -> None:
 
     # export_power(stats=[export])
 
-    # export = StatExport(
-    #     stat_type=StatType.energy,
-    #     priority=PriorityType.monthly,
-    #     country="au",
-    #     date_range=scada_range,
-    #     network=network_schema,
-    #     network_region="SA1",
-    #     bom_station=bom_station,
-    #     period=human_to_period("all"),
-    # )
+    export = StatExport(
+        stat_type=StatType.energy,
+        priority=PriorityType.monthly,
+        country="au",
+        date_range=scada_range,
+        network=network_schema,
+        network_region="NSW1",
+        bom_station=bom_station,
+        year=2021,
+    )
 
-    # export_energy(stats=[export])
+    export_energy(stats=[export])
 
     # power_stats = export_map.resources
 
