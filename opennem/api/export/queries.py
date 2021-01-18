@@ -172,6 +172,7 @@ def power_network_fueltech_query(
     network_region: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> str:
+    """Query power stats"""
 
     if not networks_query:
         networks_query = [network]
