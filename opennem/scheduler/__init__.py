@@ -13,6 +13,7 @@ from opennem.api.export.tasks import (
     export_metadata,
     export_power,
 )
+from opennem.db.tasks import refresh_views
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.aemo_intervals import aemo_wem_live_interval
 from opennem.monitors.opennem import check_opennem_interval_delays
@@ -129,3 +130,10 @@ def monitor_wem_interval() -> None:
 @huey.lock_task("monitor_metadata_status")
 def monitor_metadata_status() -> None:
     check_metadata_status()
+
+
+# database tasks
+@huey.periodic_task(crontab(hour="*/1"))
+@huey.lock_task("database_tasks")
+def db_refresh_views() -> None:
+    refresh_views()
