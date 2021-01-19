@@ -1,10 +1,10 @@
 import logging
 from typing import Dict
-from urllib.parse import urljoin
 
 from smart_open import open
 
 from opennem.settings import settings
+from opennem.utils.url import urljoin
 
 logger = logging.getLogger(__name__)
 
