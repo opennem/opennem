@@ -51,7 +51,7 @@ services:
       - postgis_data:/var/lib/postgresql/data
 
   database_test:
-    image: opennem/database:12
+    image: opennem/database
     restart: unless-stopped
     env_file: ./.env
     environment:
