@@ -3,7 +3,7 @@ from opennem.db import get_database_engine
 
 def refresh_views() -> None:
     """Refresh material views"""
-    __query = "REFRESH MATERIALIZED VIEW mv_facility_all with data"
+    __query = "REFRESH MATERIALIZED VIEW CONCURRENTLY {view} with data"
 
     engine = get_database_engine()
 
