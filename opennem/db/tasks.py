@@ -36,7 +36,7 @@ def refresh_material_views() -> None:
 
 
 def refresh_views() -> None:
-    refresh_timescale_views()
+    # refresh_timescale_views()
     refresh_material_views()
 
 
