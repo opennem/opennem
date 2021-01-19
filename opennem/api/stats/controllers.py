@@ -133,15 +133,14 @@ def stats_factory(
         # @TODO fix this schema and make it more flexible
         if fueltech_group:
             data.fuel_tech = group_code
-            data.id = ".".join(
-                [
-                    network.code.lower() if network else "",
-                    region.lower() if region else "",
-                    "fuel_tech",
-                    group_code.lower(),
-                    units.unit_type,
-                ]
-            )
+            data_comps = [
+                network.code.lower() if network else None,
+                region.lower() if region else None,
+                "fuel_tech",
+                group_code.lower(),
+                units.unit_type,
+            ]
+            data.id = ".".join(i for i in data_comps if i)
             # @TODO make this an alias
             data.type = units.unit_type
 
