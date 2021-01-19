@@ -282,7 +282,7 @@ def energy_facility_query(
     where
         t.trading_interval <= '{date_max}' and
         t.trading_interval >= '{date_min}' and
-        t.facility_code in ({facility_codes_parsed})
+        t.code in ({facility_codes_parsed})
     group by 1, 2
     order by
         trading_day desc;
