@@ -4,7 +4,6 @@ import click
 from scrapy.utils.python import garbage_collect
 
 from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures
-from opennem.diff.facility_diff import run_diff
 from opennem.importer.all import run_all
 from opennem.importer.db import init as db_init
 from opennem.importer.mms import mms_export
@@ -22,11 +21,6 @@ def main() -> None:
 @click.command()
 def crawl() -> None:
     logger.info("crawl @TODO")
-
-
-@click.command()
-def diff() -> None:
-    run_diff()
 
 
 @click.group()
@@ -90,7 +84,6 @@ def cmd_weather_init() -> None:
 
 
 main.add_command(crawl)
-main.add_command(diff)
 main.add_command(cmd_db, name="db")
 main.add_command(cmd_import, name="import")
 main.add_command(cmd_export, name="export")
