@@ -9,7 +9,8 @@ RUN set -eux \
   && timescaledb-tune --quiet --yes \
   && apt-get -y --purge autoremove \
   && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+  && echo "v1"
 
 ADD infra/database/setup-timescale.sh /setup-timescale.sh
 ADD infra/database/docker-entrypoint.sh /docker-entrypoint.sh
