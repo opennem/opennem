@@ -2,6 +2,7 @@ import logging
 from datetime import date, datetime, timedelta, timezone
 from typing import Generator, List, Optional, Tuple, Union
 
+import pytz
 from dateutil.parser import ParserError, parse
 
 from opennem.api.stats.schema import ScadaDateRange
@@ -242,3 +243,10 @@ def get_date_component(format_str: str, dt: datetime = None) -> str:
 
 def subtract_week(subject: datetime) -> datetime:
     return subject - timedelta(days=7)
+
+
+def subtract_days(subject: Optional[datetime] = None, days: int = 30) -> datetime:
+    if not subject:
+        subject = datetime.now(pytz.utc)
+
+    return subject - timedelta(days=days)
