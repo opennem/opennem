@@ -12,11 +12,13 @@ def refresh_timescale_views() -> None:
 
     engine = get_database_engine()
 
-    date_from = subtract_days()
+    dt = subtract_days()
+    date_from = dt.strftime("%Y-%m-%d %H:%M:%S+%Z")
+    date_from = date_from.replace("UTC", "00")
 
     with engine.connect() as c:
         for v in TIMESCALE_VIEWS:
-            query = __query.format(view=v, date_from=date_from.strftime("%Y-%m-%d %H:%M:%S+%Z"))
+            query = __query.format(view=v, date_from=date_from)
             print(query)
             c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
 
