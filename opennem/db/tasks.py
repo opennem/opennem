@@ -9,3 +9,7 @@ def refresh_views() -> None:
 
     with engine.connect() as c:
         c.execute(__query)
+
+
+if __name__ == "__main__":
+    refresh_views()
