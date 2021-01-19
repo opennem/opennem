@@ -278,7 +278,7 @@ def energy_network_fueltech_query(
 
     __query = """
     select
-        date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
+        t.ti_{trunc_name} as trading_day,
         t.fueltech_id,
         sum(t.energy) / 1000 as fueltech_energy,
         sum(t.market_value) as fueltech_market_value,
@@ -299,7 +299,7 @@ def energy_network_fueltech_query(
     if interconnector:
         __query = """
         select
-            date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
+            t.ti_{trunc_name} as trading_day,
             sum(t.energy) / 1000 as interconnector_energy,
             t.network_region as flow_from,
             t.interconnector_region_to as flow_to
@@ -372,12 +372,13 @@ def energy_network_fueltech_query(
         if not trunc:
             trunc = "month"
 
+    trunc_name = "{}_{}".format(trunc, timezone).lower()
+
     query = dedent(
         __query.format(
-            trunc=trunc,
+            trunc_name=trunc_name,
             year_min=year_min,
             year_max=year_max,
-            timezone=timezone,
             network_query=network_query,
             network_region_query=network_region_query,
             fueltech_filter=fueltech_filter,
