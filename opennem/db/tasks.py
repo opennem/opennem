@@ -1,5 +1,7 @@
 from opennem.db import get_database_engine
 
+VIEWS = ["mv_facility_energy_hour", "mv_facility_all"]
+
 
 def refresh_views() -> None:
     """Refresh material views"""
@@ -8,7 +10,8 @@ def refresh_views() -> None:
     engine = get_database_engine()
 
     with engine.connect() as c:
-        c.execute(__query)
+        for v in VIEWS:
+            c.execute(__query.format(view=v))
 
 
 if __name__ == "__main__":
