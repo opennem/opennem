@@ -11,7 +11,8 @@ def refresh_views() -> None:
 
     with engine.connect() as c:
         for v in VIEWS:
-            c.execution_options(isolation_level="AUTOCOMMIT").execute(__query.format(view=v))
+            query = __query.format(view=v)
+            c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
 
 
 if __name__ == "__main__":
