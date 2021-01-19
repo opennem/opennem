@@ -25,6 +25,10 @@ if [[ -z "$REPLICATE_FROM" ]]; then
     echo "Setup master database"
     source /setup-database.sh
     entry_point_script
+
+    su - postgres -c "psql -c 'ALTER EXTENSION IF EXISTS timescaledb UPDATE;' template1"
+    su - postgres -c "psql -c 'ALTER EXTENSION IF EXISTS timescaledb UPDATE;' ${POSTGRES_DB}"
+
     kill_postgres
 else
     # This means this is a slave/replication instance.
