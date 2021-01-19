@@ -61,6 +61,7 @@ prometheus-fastapi-instrumentator = "^5.6.0"
 cachetools = "^4.2.0"
 psycopg2 = "^2.8.6"
 xlrd = "^2.0.1"
+requests-cache = "^0.5.2"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"

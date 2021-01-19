@@ -7,14 +7,34 @@
     http.get(`url`) etc.
 
 """
+import logging
+
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
 from opennem.settings import settings
 
+logger = logging.getLogger("opennem.utils.http")
+
 DEFAULT_TIMEOUT = settings.http_timeout
 DEFAULT_RETRIES = settings.http_retries
+
+
+def setup_http_cache() -> bool:
+    """Sets up requests session local cachine using
+    requests-cache if enabled in settings"""
+    if not settings.http_cache_local:
+        return False
+
+    try:
+        import requests_cache
+    except ImportError:
+        logger.error("Request caching requires requests-cache library")
+        return False
+
+    requests_cache.install_cache(".opennem_requests_cache", expire_after=300)
+    return True
 
 
 class TimeoutHTTPAdapter(HTTPAdapter):
@@ -50,3 +70,5 @@ http.mount("http://", adapter_timeout)
 adapter_retry = HTTPAdapter(max_retries=retry_strategy)
 http.mount("https://", adapter_retry)
 http.mount("http://", adapter_retry)
+
+setup_http_cache()
