@@ -60,6 +60,9 @@ class OpennemSettings(BaseSettings):
     # number of retries by default
     http_retries: int = 5
 
+    # cache http requests locally
+    http_cache_local: bool = False
+
     _static_folder_path: str = "opennem/static/"
 
     # @todo overwrite scrapy settings here
@@ -112,4 +115,5 @@ class OpennemSettings(BaseSettings):
             "server_host": {"env": "HOST"},
             "cache_scada_values_ttl_sec": {"env": "CACHE_SCADA_TTL"},
             "db_debug": {"env": "DB_DEBUG"},
+            "http_cache_local": {"env": "HTTP_CACHE_LOCAL"},
         }
