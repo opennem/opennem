@@ -41,7 +41,7 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 # export tasks
 
 
-@huey.periodic_task(crontab(minute="*/1"), priority=90)
+@huey.periodic_task(crontab(minute="*/5"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
     export_power(priority=PriorityType.live)
@@ -133,7 +133,7 @@ def monitor_metadata_status() -> None:
 
 
 # database tasks
-@huey.periodic_task(crontab(hour="*/1"))
+@huey.periodic_task(crontab(hour="*/6"))
 @huey.lock_task("db_refresh_views")
 def db_refresh_views() -> None:
     refresh_views()
