@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Union
 from sqlalchemy.orm import Session
 
 from opennem.core.normalizers import normalize_duid
+from opennem.core.units import get_unit
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada, Station
 from opennem.schema.network import NetworkSchema
@@ -106,7 +107,8 @@ def stats_factory(
             continue
 
         # Cast trailing nulls
-        data_value = cast_trailing_nulls(data_value)
+        if not units.name.startswith("temperature"):
+            data_value = cast_trailing_nulls(data_value)
 
         history = OpennemDataHistory(
             start=start,
