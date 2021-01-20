@@ -26,8 +26,7 @@ if [[ -z "$REPLICATE_FROM" ]]; then
     source /setup-database.sh
     entry_point_script
 
-    su - postgres -c "psql -c 'ALTER EXTENSION IF EXISTS timescaledb UPDATE;' template1"
-    su - postgres -c "psql -c 'ALTER EXTENSION IF EXISTS timescaledb UPDATE;' ${POSTGRES_DB}"
+    su - postgres -c "psql -X -U postgres -d $POSTGRES_DB -c 'ALTER EXTENSION timescaledb UPDATE;'"
 
     kill_postgres
 else
