@@ -440,30 +440,27 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
     )
 
     scada_records = [rooftop_remap_regionids(i) for i in scada_records]
-
     return_records_grouped = {}
 
+    # Merge and group
     for pk_values, rec_value in groupby(
         scada_records,
         key=lambda r: (
+            r.get("facility_code"),
             r.get("network_id"),
             r.get("trading_interval"),
-            r.get("facility_code"),
         ),
     ):
         if pk_values not in return_records_grouped:
             rec_values = list(rec_value)
             return_records_grouped[pk_values] = rec_values.pop()
-            for _rec in rec_values:
-                _cur_val = return_records_grouped[pk_values]["generated"]
-                _new_val = _rec["generated"]
+            return_records_grouped[pk_values]["generated"] = 0.0
 
-                if isinstance(_cur_val, float) and isinstance(_new_val, float):
-                    return_records_grouped[pk_values]["generated"] += _rec["generated"]
-                elif isinstance(_new_val, float):
-                    return_records_grouped[pk_values]["generated"] = _rec["generated"]
-                else:
-                    return_records_grouped[pk_values]["generated"] = 0.0
+            for _rec in rec_values:
+                _new_val = clean_float(_rec["generated"])
+
+                if _new_val:
+                    return_records_grouped[pk_values]["generated"] += _new_val
 
     return_records = list(return_records_grouped.values())
 
