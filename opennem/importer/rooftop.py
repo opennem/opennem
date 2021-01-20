@@ -29,7 +29,7 @@ STATE_NETWORK_REGION_MAP = [
 ]
 
 
-def rooftop_facilities():
+def rooftop_facilities() -> None:
 
     session = SessionLocal()
 
@@ -40,11 +40,7 @@ def rooftop_facilities():
             state_map["state"].upper(),
         )
 
-        rooftop_station = (
-            session.query(Station)
-            .filter_by(code=state_rooftop_code)
-            .one_or_none()
-        )
+        rooftop_station = session.query(Station).filter_by(code=state_rooftop_code).one_or_none()
 
         if not rooftop_station:
             logger.info("Creating new station {}".format(state_rooftop_code))
@@ -53,9 +49,7 @@ def rooftop_facilities():
             )
 
         rooftop_station.name = "Rooftop Solar {}".format(state_map["state"])
-        rooftop_station.description = "Solar rooftop facilities for {}".format(
-            state_map["state"]
-        )
+        rooftop_station.description = "Solar rooftop facilities for {}".format(state_map["state"])
         rooftop_station.approved = True
         rooftop_station.approved_by = "opennem.importer.rooftop"
         rooftop_station.created_by = "opennem.importer.rooftop"
@@ -63,11 +57,7 @@ def rooftop_facilities():
         if not rooftop_station.location:
             rooftop_station.location = Location(state=state_map["state"])
 
-        rooftop_fac = (
-            session.query(Facility)
-            .filter_by(code=state_rooftop_code)
-            .one_or_none()
-        )
+        rooftop_fac = session.query(Facility).filter_by(code=state_rooftop_code).one_or_none()
 
         if not rooftop_fac:
             logger.info("Creating new facility {}".format(state_rooftop_code))
@@ -104,18 +94,15 @@ def remap_aemo_region(region_name: str) -> str:
     return region_name
 
 
-def rooftop_remap_regionids(records: List[Dict]) -> List[Dict]:
-    for _rec in records:
-        fac_code = _rec["facility_code"]
+def rooftop_remap_regionids(rooftop_record: Dict) -> Dict:
+    fac_code = rooftop_record["facility_code"]
 
-        rec_region_code = remap_aemo_region(fac_code)
+    rec_region_code = remap_aemo_region(fac_code)
 
-        rooftop_fac_code = "{}_{}_{}".format(
-            ROOFTOP_CODE, "NEM", rec_region_code.rstrip("1")
-        )
-        _rec["facility_code"] = rooftop_fac_code
+    rooftop_fac_code = "{}_{}_{}".format(ROOFTOP_CODE, "NEM", rec_region_code.rstrip("1"))
+    rooftop_record["facility_code"] = rooftop_fac_code
 
-    return records
+    return rooftop_record
 
 
 if __name__ == "__main__":

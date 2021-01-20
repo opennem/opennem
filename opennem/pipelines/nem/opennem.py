@@ -439,7 +439,7 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
         groupby_filter=False,
     )
 
-    scada_records = rooftop_remap_regionids(scada_records)
+    scada_records = [rooftop_remap_regionids(i) for i in scada_records]
 
     return_records_grouped = {}
 
