@@ -1,6 +1,8 @@
+from typing import Dict
+
 import pytest
 
-from opennem.importer.rooftop import remap_aemo_region
+from opennem.importer.rooftop import remap_aemo_region, rooftop_remap_regionids
 
 
 @pytest.mark.parametrize(
@@ -21,3 +23,15 @@ from opennem.importer.rooftop import remap_aemo_region
 def test_remap_region_code(region_code: str, region_code_expected: str) -> None:
     region_code_remapped = remap_aemo_region(region_code)
     assert region_code_remapped == region_code_expected
+
+
+@pytest.mark.parametrize(
+    "rooftop_record,rooftop_record_expected",
+    [
+        ({"facility_code": "NSW1"}, {"facility_code": "ROOFTOP_NEM_NSW"}),
+        ({"facility_code": "QLDC"}, {"facility_code": "ROOFTOP_NEM_QLD"}),
+    ],
+)
+def test_rooftop_remap_regionids(rooftop_record: Dict, rooftop_record_expected: Dict) -> None:
+    rooftop_record_remapped = rooftop_remap_regionids(rooftop_record)
+    assert rooftop_record_remapped == rooftop_record_expected
