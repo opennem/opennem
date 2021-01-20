@@ -185,30 +185,21 @@ def power_network_fueltech_query(
 
     __query = """
         select
-            t.trading_interval at time zone '{timezone}',
-            t.fueltech_code,
-            sum(t.facility_power)
-        from (
-            select
-                time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
-                locf(max(fs.generated)) as facility_power,
-                fs.facility_code,
-                ft.code as fueltech_code
-            from facility_scada fs
-            join facility f on fs.facility_code = f.code
-            join fueltech ft on f.fueltech_id = ft.code
-            where
-                f.fueltech_id is not null and
-                f.fueltech_id not in ('exports', 'imports') and
-                {network_query}
-                {network_region_query}
-                fs.trading_interval <= '{date_max}' and
-                fs.trading_interval > '{date_min}'
-                {fueltech_filter}
-            group by 1, 3, 4
-        ) as t
+            fs.trading_interval at time zone '{timezone}' AS trading_interval,
+            ft.code as fueltech_code,
+            sum(fs.facility_power) as facility_power
+        from mv_nem_facility_power_5min fs
+        join facility f on fs.facility_code = f.code
+        join fueltech ft on f.fueltech_id = ft.code
+        where
+            f.fueltech_id is not null and
+            f.fueltech_id not in ('exports', 'imports') and
+            {network_query}
+            {network_region_query}
+            fs.trading_interval <= '{date_max}' and
+            fs.trading_interval > '{date_min}'
+            {fueltech_filter}
         group by 1, 2
-        order by 1 desc
     """
 
     network_region_query: str = ""
@@ -225,9 +216,9 @@ def power_network_fueltech_query(
         # silly single case we'll refactor out
         # APVI network is used to provide rooftop for WEM so we require it
         # in country-wide totals
-        wem_apvi_case = "or (fs.network_id='APVI' and f.network_region='WEM')"
+        wem_apvi_case = "or (f.network_id='APVI' and f.network_region='WEM')"
 
-    network_query = "(fs.network_id IN ({}) {}) and ".format(
+    network_query = "(f.network_id IN ({}) {}) and ".format(
         networks_to_in(networks_query), wem_apvi_case
     )
 
