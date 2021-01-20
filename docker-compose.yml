@@ -39,12 +39,13 @@ services:
       - ${HOST:-127.0.0.1}:6800:6800
 
   database:
-    image: opennem/database:12
+    image: opennem/database:12.2
     restart: unless-stopped
     env_file: ./.env
     environment:
       - TZ
       - TIMESCALEDB_TELEMETRY=off
+      - PGPASSWORD=${POSTGRES_PASSWORD}
     ports:
       - ${HOST:-127.0.0.1}:15433:5432
     volumes:
