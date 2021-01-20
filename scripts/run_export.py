@@ -72,31 +72,31 @@ def run_tests() -> None:
 
     # export_power(stats=[export])
 
-    # export = StatExport(
-    #     stat_type=StatType.power,
-    #     priority=PriorityType.live,
-    #     country="au",
-    #     date_range=scada_range,
-    #     network=network_schema,
-    #     network_region="NSW1",
-    #     bom_station=bom_station,
-    #     period=human_to_period("7d"),
-    # )
-
-    # export_power(stats=[export])
-
     export = StatExport(
-        stat_type=StatType.energy,
-        priority=PriorityType.monthly,
+        stat_type=StatType.power,
+        priority=PriorityType.live,
         country="au",
         date_range=scada_range,
         network=network_schema,
         network_region="NSW1",
-        bom_station=bom_station,
-        year=2021,
+        bom_station=get_network_region_weather_station("NSW1"),
+        period=human_to_period("7d"),
     )
 
-    export_energy(stats=[export])
+    export_power(stats=[export])
+
+    # export = StatExport(
+    #     stat_type=StatType.energy,
+    #     priority=PriorityType.monthly,
+    #     country="au",
+    #     date_range=scada_range,
+    #     network=network_schema,
+    #     network_region="NSW1",
+    #     bom_station=get_network_region_weather_station("NSW1"),
+    #     year=2021,
+    # )
+
+    # export_energy(stats=[export])
 
     # power_stats = export_map.resources
 
