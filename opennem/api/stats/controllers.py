@@ -107,7 +107,7 @@ def stats_factory(
             continue
 
         # Cast trailing nulls
-        if not units.name.startswith("temperature"):
+        if not units.name.startswith("temperature") or units.cast_nulls:
             data_value = cast_trailing_nulls(data_value)
 
         history = OpennemDataHistory(
