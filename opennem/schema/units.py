@@ -12,3 +12,5 @@ class UnitDefinition(BaseConfig):
     round_to: int = 2
     unit: str = Field(..., description="Unit abbreviation")
 
+    # should nulls in the unit series be cast
+    cast_nulls: bool = True
