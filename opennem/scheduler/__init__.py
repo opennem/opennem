@@ -41,7 +41,7 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 # export tasks
 
 
-@huey.periodic_task(crontab(minute="*/5"), priority=90)
+@huey.periodic_task(crontab(minute="*/3"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
     export_power(priority=PriorityType.live)
@@ -84,14 +84,14 @@ def schedule_hourly_tasks() -> None:
     export_energy(priority=PriorityType.daily, latest=True)
 
 
-@huey.periodic_task(crontab(hour="*/1"))
+@huey.periodic_task(crontab(minute="*/15"))
 @huey.lock_task("schedule_daily_tasks")
 def schedule_daily_tasks() -> None:
     export_energy(priority=PriorityType.daily)
     slack_message("Finished running energy dailies")
 
 
-@huey.periodic_task(crontab(hour="*/1"), priority=30)
+@huey.periodic_task(crontab(minute="*/15"), priority=30)
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
     export_energy(priority=PriorityType.monthly)
