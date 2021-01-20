@@ -39,7 +39,7 @@ def observation_query(
         select
             time_bucket_gapfill('{trunc}', observation_time) as observation_time,
             fs.station_id as station_id,
-            interpolate(avg(fs.temp_air)) as temp_air
+            avg(fs.temp_air) as temp_air
         from bom_observation fs
         where
             fs.station_id in ({station_codes})
@@ -92,6 +92,7 @@ def observation_query_all(
     scada_range: ScadaDateRange,
     network: NetworkSchema = NetworkNEM,
 ) -> str:
+    #
 
     timezone = network.timezone_database
 
@@ -110,9 +111,9 @@ def observation_query_all(
                 select
                     time_bucket_gapfill('1 day', observation_time) as observation_time,
                     fs.station_id,
-                    interpolate(avg(fs.temp_air)) as temp_avg,
-                    interpolate(min(fs.temp_air)) as temp_min,
-                    interpolate(max(fs.temp_air)) as temp_max
+                    avg(fs.temp_air) as temp_avg,
+                    min(fs.temp_air) as temp_min,
+                    max(fs.temp_air) as temp_max
                 from bom_observation fs
                 where
                     fs.station_id in ({station_codes})
