@@ -136,6 +136,9 @@ def stats_factory(
         if fueltech_group:
             data.fuel_tech = group_code
             data_comps = [
+                # @NOTE disable for now since FE doesn't
+                # support it
+                # network.country if network else None,
                 network.code.lower() if network else None,
                 region.lower() if region else None,
                 "fuel_tech",
