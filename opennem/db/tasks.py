@@ -1,20 +1,25 @@
 from opennem.db import get_database_engine
 from opennem.utils.dates import subtract_days
 
-TIMESCALE_VIEWS = ["mv_facility_energy_hour"]
+TIMESCALE_VIEWS = ["mv_facility_energy_hour", "mv_nem_facility_power_5min"]
 
 MATERIAL_VIEWS = ["mv_facility_all"]
 
 
 def refresh_timescale_views() -> None:
     """refresh timescale views"""
-    __query = "CALL refresh_continuous_aggregate('{view}', '{date_from}'::timestamp with time zone, null);"
+    __query = """
+    CALL refresh_continuous_aggregate(
+        continuous_aggregate => '{view}',
+        window_start         => '{date_from}',
+        window_end           => NULL
+    );
+    """
 
     engine = get_database_engine()
 
-    dt = subtract_days()
-    date_from = dt.strftime("%Y-%m-%d %H:%M:%S+%Z")
-    date_from = date_from.replace("UTC", "00")
+    dt = subtract_days(days=7)
+    date_from = dt.strftime("%Y-%m-%d")
 
     with engine.connect() as c:
         for v in TIMESCALE_VIEWS:
