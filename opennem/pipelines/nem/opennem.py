@@ -315,13 +315,19 @@ def process_pre_ap_price(table: Dict, spider: Spider) -> int:
 
         primary_keys.append(_pk)
 
+        price = None
+
+        if "RRP" in record:
+            price = clean_float(record["PRICE"])
+
         records_to_store.append(
             {
                 "network_id": "NEM",
                 "created_by": spider.name,
                 "network_region": record["REGIONID"],
                 "trading_interval": trading_interval,
-                "price": record["PRE_AP_ENERGY_PRICE"],
+                # "price": record["PRE_AP_ENERGY_PRICE"],
+                "price": price,
             }
         )
 
