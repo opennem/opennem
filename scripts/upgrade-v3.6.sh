@@ -20,3 +20,9 @@ alembic upgrade head
 python -m opennem.cli db init
 
 python -m opennem.importer.wikidata
+
+# run rooftop
+./spider_queue.py rooftop
+
+# run dispatch_id
+./spider_queue.py dispatch_is
