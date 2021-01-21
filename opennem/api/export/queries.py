@@ -266,6 +266,7 @@ def power_network_fueltech_query(
 
     query = dedent(
         __query.format(
+            table_query=table_query,
             network_query=network_query,
             trunc=interval.interval_sql,
             network_region_query=network_region_query,
