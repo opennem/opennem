@@ -316,25 +316,42 @@ def energy_network_fueltech_query(
     """
 
     if interconnector:
+        # __query = """
+        # select
+        #     t.ti_{trunc_name} as trading_day,
+        #     sum(t.energy) / 1000 as interconnector_energy,
+        #     t.network_region as flow_from,
+        #     t.interconnector_region_to as flow_to,
+        #     t.network_region || '->' || t.interconnector_region_to as flow_region
+        # from mv_facility_all t
+        # where
+        #     t.interconnector is True and
+        #     t.trading_interval <= '{year_max}' and
+        #     t.trading_interval >= '{year_min}' and
+        #     {network_query}
+        #     {network_region_query}
+        #     {fueltech_filter}
+        #     1=1
+        # group by 1, 5, 3, 4
+        # order by
+        #     trading_day desc;
+        # """
+
         __query = """
         select
-            t.ti_{trunc_name} as trading_day,
-            sum(t.energy) / 1000 as interconnector_energy,
-            t.network_region as flow_from,
-            t.interconnector_region_to as flow_to,
-            t.network_region || '->' || t.interconnector_region_to as flow_region
-        from mv_facility_all t
+            date_trunc('{trunc}', t.trading_interval) as trading_day,
+            max(t.imports_avg) / 1000,
+            max(t.exports_avg) / 1000
+        from mv_interchange_energy_nem_region t
         where
-            t.interconnector is True and
             t.trading_interval <= '{year_max}' and
             t.trading_interval >= '{year_min}' and
             {network_query}
             {network_region_query}
-            {fueltech_filter}
             1=1
-        group by 1, 5, 3, 4
-        order by
-            trading_day desc;
+        group by 1
+        order by 1 desc
+
         """
 
     timezone = network.timezone_database
@@ -355,14 +372,12 @@ def energy_network_fueltech_query(
         if interconnector:
             network_region_interconnector = f" or t.interconnector_region_to='{network_region}'"
 
-        network_region_query = (
-            f"(t.network_region='{network_region}' {network_region_interconnector}) and"
-        )
+        network_region_query = f"t.network_region='{network_region}' and"
 
     fueltech_filter = "t.fueltech_id not in ('imports', 'exports') and "
 
-    if interconnector:
-        fueltech_filter = "t.fueltech_id in ('imports', 'exports') and "
+    # if interconnector:
+    # fueltech_filter = "t.fueltech_id in ('imports', 'exports') and "
 
     networks_list = networks_to_in(networks_query)
     network_query = "t.network_id IN ({}) and ".format(networks_list)
@@ -396,6 +411,7 @@ def energy_network_fueltech_query(
 
     query = dedent(
         __query.format(
+            trunc=trunc,
             trunc_name=trunc_name,
             year_min=year_min,
             year_max=year_max,
