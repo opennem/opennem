@@ -211,12 +211,17 @@ def power_network_fueltech_query(
     if not date_range:
         date_range = get_scada_range(network=network, networks=networks_query)
 
+    table_query = "mv_nem_facility_power_5min"
+
+    if network == NetworkWEM:
+        table_query = "mv_wem_facility_power_30min"
+
     __query = """
         select
             fs.trading_interval at time zone '{timezone}' AS trading_interval,
             ft.code as fueltech_code,
             sum(fs.facility_power) as facility_power
-        from mv_nem_facility_power_5min fs
+        from {table_query} fs
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
         where
