@@ -435,24 +435,20 @@ def energy_interconnector_region_daily(
         logger.debug(query)
         row = list(c.execute(query))
 
-    stats: List[RegionFlowResult] = [
-        RegionFlowResult(
-            interval=i[0],
-            generated=i[1],
-            flow_from=i[2],
-            flow_to=i[3] if len(i) > 1 else None,
-        )
-        for i in row
-    ]
-
-    if len(stats) < 1:
+    if len(row) < 1:
         raise Exception("No results from query: {}".format(query))
 
-    stats_grouped = net_flows(network_region_code, stats)
+    # stats_grouped = net_flows(network_region_code, stats)
     # stats_grouped = net_flows_energy(network_region_code, stats)
 
-    imports = stats_grouped["imports"]
-    exports = stats_grouped["exports"]
+    imports = [
+        DataQueryResult(interval=i[0], group_by="imports", result=i[1] if len(i) > 1 else None)
+        for i in row
+    ]
+    exports = [
+        DataQueryResult(interval=i[0], group_by="exports", result=i[2] if len(i) > 1 else None)
+        for i in row
+    ]
 
     result = stats_factory(
         imports,
