@@ -66,3 +66,4 @@ profiles/
 opennem/static/
 infra/prometheus/.data/
 infra/grafana/data/grafana.db
+*.ipynb
