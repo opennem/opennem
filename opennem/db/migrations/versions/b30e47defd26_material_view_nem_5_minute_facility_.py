@@ -19,9 +19,9 @@ depends_on = None
 def upgrade() -> None:
     op.execute(
         """
-    drop view if exists mv_nem_facility_power_5min cascade;
+    drop materialized view if exists mv_nem_facility_power_5min cascade;
 
-    CREATE OR REPLACE VIEW mv_nem_facility_power_5min WITH (timescaledb.continuous) AS
+    CREATE MATERIALIZED VIEW mv_nem_facility_power_5min WITH (timescaledb.continuous) AS
     select
         time_bucket('5 minutes', fs.trading_interval) as trading_interval,
         fs.facility_code,
