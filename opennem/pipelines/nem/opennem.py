@@ -350,7 +350,7 @@ def process_pre_ap_price(table: Dict, spider: Spider) -> Dict[str, Any]:
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
-        return 0
+        return {"num_records": 0}
     finally:
         session.close()
 
