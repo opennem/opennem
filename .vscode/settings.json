@@ -23,5 +23,6 @@
   "python.linting.mypyPath": ".venv/bin/mypy",
   "python.linting.flake8Enabled": true,
   "python.linting.flake8Path": ".venv/bin/flake8",
+  "python.linting.pycodestylePath": ".venv/bin/pycodestyle",
   "python.analysis.disabled": ["no-self-argument"]
 }
