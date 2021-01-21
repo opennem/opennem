@@ -318,7 +318,7 @@ def process_pre_ap_price(table: Dict, spider: Spider) -> Dict[str, Any]:
         price = None
 
         if "RRP" in record:
-            price = clean_float(record["PRICE"])
+            price = clean_float(record["RRP"])
 
         records_to_store.append(
             {
