@@ -45,8 +45,6 @@ def upgrade() -> None:
         end as exports_energy
     from balancing_summary bs
     group by 1, 2, 3;
-
-
     """
     )
 
