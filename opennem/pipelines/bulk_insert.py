@@ -1,3 +1,17 @@
+"""
+OpenNEM Bulk Insert Pipeline
+
+Bulk inserts records using temporary tables and CSV imports with copy_from
+
+This is by far the fastest way to bulk insert large records sets of consistent width
+and supports on conflict upserts with postgres
+
+This should be the last step of the pipeline and requires `RecordsToCSVPipeline`
+from `csv.py`
+
+@TODO use pydantic throughout to tidy up the schema that is passed through the pipeline
+
+"""
 import logging
 from datetime import datetime
 from io import StringIO
@@ -52,16 +66,12 @@ def build_insert_query(
 
     update_col_names = list(filter(lambda c: c, update_col_names))
 
-    primary_key_columns = [
-        c.name for c in table.__table__.primary_key.columns.values()
-    ]
+    primary_key_columns = [c.name for c in table.__table__.primary_key.columns.values()]
 
     if len(update_col_names):
         on_conflict = BULK_INSERT_CONFLICT_UPDATE.format(
             pk_columns=",".join(primary_key_columns),
-            update_values=", ".join(
-                [f"{n} = EXCLUDED.{n}" for n in update_col_names]
-            ),
+            update_values=", ".join([f"{n} = EXCLUDED.{n}" for n in update_col_names]),
         )
 
     query = BULK_INSERT_QUERY.format(
@@ -88,9 +98,7 @@ class BulkInsertPipeline(object):
                 spider_name = spider.name
 
             logger.error(
-                "Did not get a list of items in bulk inserter from spider {}".format(
-                    spider_name
-                )
+                "Did not get a list of items in bulk inserter from spider {}".format(spider_name)
             )
 
             return {"num_records": "ERROR"}
