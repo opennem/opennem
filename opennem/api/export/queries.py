@@ -42,6 +42,34 @@ def interconnector_flow_power_query(
     return dedent(__query)
 
 
+def interconnector_power_flow(
+    network_region: str, date_range: ScadaDateRange, network: NetworkSchema
+) -> str:
+    """Get region flows using materialized view"""
+    ___query = """
+        select
+            trading_interval at time zone '{timezone}' as trading_interval,
+            fs.network_region,
+            fs.imports,
+            fs.exports
+        from mv_interchange_power_nem_region fs
+        where
+            fs.network_id = '{network_id}' and
+            fs.network_region= '{region}' and
+            fs.trading_interval <= '{date_end}' and
+            fs.trading_interval > '{date_start}'
+        order by trading_interval desc;
+    """.format(
+        timezone=network.timezone_database,
+        network_id=network.code,
+        region=network_region,
+        date_start=subtract_week(date_range.get_end()),
+        date_end=date_range.get_end(),
+    )
+
+    return dedent(___query)
+
+
 def interconnector_net_energy_flow(network_region: str, date_range: ScadaDateRange) -> TextClause:
     """Get interconnector energy flows for a region"""
     __query = sql.text(
@@ -293,7 +321,8 @@ def energy_network_fueltech_query(
             t.ti_{trunc_name} as trading_day,
             sum(t.energy) / 1000 as interconnector_energy,
             t.network_region as flow_from,
-            t.interconnector_region_to as flow_to
+            t.interconnector_region_to as flow_to,
+            t.network_region || '->' || t.interconnector_region_to as flow_region
         from mv_facility_all t
         where
             t.interconnector is True and
@@ -303,7 +332,7 @@ def energy_network_fueltech_query(
             {network_region_query}
             {fueltech_filter}
             1=1
-        group by 1, t.code, 3, 4
+        group by 1, 5, 3, 4
         order by
             trading_day desc;
         """
