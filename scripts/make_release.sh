@@ -20,7 +20,7 @@ docker push opennem/opennem:$VERSION
 
 # @TODO check that we're ready for relesae to make it :latest
 docker tag  opennem/opennem:$VERSION opennem/opennem
-docker push opennem/opennem
+# docker push opennem/opennem
 
 poetry build
 
