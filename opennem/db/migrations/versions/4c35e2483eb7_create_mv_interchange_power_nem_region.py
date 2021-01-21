@@ -15,12 +15,9 @@ down_revision = "d130be833a0c"
 branch_labels = None
 depends_on = None
 
+stmt_drop = "drop materialized view if exists mv_interchange_power_nem_region cascade;"
 
-def upgrade() -> None:
-    op.execute(
-        """
-    drop materialized view if exists mv_interchange_power_nem_region cascade;
-
+stmt = """
     CREATE MATERIALIZED VIEW mv_interchange_power_nem_region WITH (timescaledb.continuous) AS
     select
         time_bucket(INTERVAL '5 minutes', bs.trading_interval) as trading_interval,
@@ -36,9 +33,14 @@ def upgrade() -> None:
         end as exports
     from balancing_summary bs
     group by 1, 2, 3;
-    """
-    )
+"""
+
+
+def upgrade() -> None:
+    with op.get_context().autocommit_block():
+        op.execute(stmt_drop)
+        op.execute(stmt)
 
 
 def downgrade() -> None:
-    op.execute("drop materialized view if exists mv_interchange_power_nem_region cascade;")
+    op.execute(stmt_drop)
