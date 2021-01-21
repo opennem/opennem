@@ -4,7 +4,7 @@ from typing import List, Optional
 from opennem.api.export.queries import (
     country_stats_query,
     energy_network_fueltech_query,
-    interconnector_flow_power_query,
+    interconnector_power_flow,
     power_network_fueltech_query,
     price_network_query,
 )
@@ -178,7 +178,7 @@ def power_flows_week(
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
-    query = interconnector_flow_power_query(
+    query = interconnector_power_flow(
         network_region=network_region_code, date_range=date_range, network=network
     )
 
@@ -186,23 +186,18 @@ def power_flows_week(
         logger.debug(query)
         row = list(c.execute(query))
 
-    stats: List[RegionFlowResult] = [
-        RegionFlowResult(
-            interval=i[0],
-            generated=i[1],
-            flow_from=i[2],
-            flow_to=i[3] if len(i) > 1 else None,
-        )
+    if len(row) < 1:
+        raise Exception("No results from query: {}".format(query))
+
+    imports = [
+        DataQueryResult(interval=i[0], result=i[2], group_by="imports" if len(i) > 1 else None)
         for i in row
     ]
 
-    if len(stats) < 1:
-        raise Exception("No results from query: {}".format(query))
-
-    stats_grouped = net_flows(network_region_code, stats)
-
-    imports = stats_grouped["imports"]
-    exports = stats_grouped["exports"]
+    exports = [
+        DataQueryResult(interval=i[0], result=i[3], group_by="exports" if len(i) > 1 else None)
+        for i in row
+    ]
 
     result = stats_factory(
         imports,
@@ -454,6 +449,7 @@ def energy_interconnector_region_daily(
         raise Exception("No results from query: {}".format(query))
 
     stats_grouped = net_flows(network_region_code, stats)
+    # stats_grouped = net_flows_energy(network_region_code, stats)
 
     imports = stats_grouped["imports"]
     exports = stats_grouped["exports"]
