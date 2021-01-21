@@ -68,9 +68,7 @@ class FuelTech(Base, BaseModel):
 class Stats(Base, BaseModel):
     __tablename__ = "stats"
 
-    stat_date = Column(
-        TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False
-    )
+    stat_date = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
     country = Column(Text, nullable=False, primary_key=True)
     stat_type = Column(Text, nullable=False, primary_key=True)
     value = Column(Numeric, nullable=True)
@@ -185,9 +183,7 @@ class Photo(Base):
 class BomStation(Base):
     __tablename__ = "bom_station"
 
-    __table_args__ = (
-        Index("idx_bom_station_geom", "geom", postgresql_using="gist"),
-    )
+    __table_args__ = (Index("idx_bom_station_geom", "geom", postgresql_using="gist"),)
 
     code = Column(Text, primary_key=True)
     state = Column(Text)
@@ -321,9 +317,7 @@ class Location(Base):
 class Station(Base, BaseModel):
     __tablename__ = "station"
 
-    __table_args__ = (
-        UniqueConstraint("code", name="excl_station_network_duid"),
-    )
+    __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
 
     def __str__(self):
         return "{} <{}>".format(self.name, self.code)
@@ -416,8 +410,7 @@ class Station(Base, BaseModel):
             if (
                 fac.capacity_registered
                 and type(fac.capacity_registered) in [int, float, Decimal]
-                and fac.status_id
-                in ["operating", "committed", "commissioning"]
+                and fac.status_id in ["operating", "committed", "commissioning"]
                 and fac.dispatch_type == DispatchType.GENERATOR
                 and fac.active
             ):
@@ -443,8 +436,7 @@ class Station(Base, BaseModel):
             if (
                 fac.capacity_aggregate
                 and type(fac.capacity_aggregate) in [int, float, Decimal]
-                and fac.status_id
-                in ["operating", "committed", "commissioning"]
+                and fac.status_id in ["operating", "committed", "commissioning"]
                 and fac.dispatch_type == DispatchType.GENERATOR
                 and fac.active
             ):
@@ -471,9 +463,7 @@ class Facility(Base, BaseModel):
     __tablename__ = "facility"
 
     __table_args__ = (
-        UniqueConstraint(
-            "network_id", "code", name="excl_facility_network_id_code"
-        ),
+        UniqueConstraint("network_id", "code", name="excl_facility_network_id_code"),
     )
 
     def __str__(self):
@@ -530,9 +520,7 @@ class Facility(Base, BaseModel):
 
     active = Column(Boolean, default=True)
 
-    dispatch_type = Column(
-        Enum(DispatchType), nullable=False, default=DispatchType.GENERATOR
-    )
+    dispatch_type = Column(Enum(DispatchType), nullable=False, default=DispatchType.GENERATOR)
 
     # @TODO remove when ref count is 0
     capacity_registered = Column(Numeric, nullable=True)
@@ -614,27 +602,21 @@ class Revision(Base, BaseModel):
         ForeignKey("station.id", name="fk_revision_station_id"),
         nullable=True,
     )
-    station = relationship(
-        "Station", back_populates="revisions", lazy="joined"
-    )
+    station = relationship("Station", back_populates="revisions", lazy="joined")
 
     facility_id = Column(
         Integer,
         ForeignKey("facility.id", name="fk_revision_facility_id"),
         nullable=True,
     )
-    facility = relationship(
-        "Facility", back_populates="revisions", lazy="joined"
-    )
+    facility = relationship("Facility", back_populates="revisions", lazy="joined")
 
     location_id = Column(
         Integer,
         ForeignKey("location.id", name="fk_revision_location_id"),
         nullable=True,
     )
-    location = relationship(
-        "Location", back_populates="revisions", lazy="joined"
-    )
+    location = relationship("Location", back_populates="revisions", lazy="joined")
 
     changes = Column(JSON, nullable=True)
     previous = Column(JSON, nullable=True)
@@ -760,13 +742,13 @@ class BalancingSummary(Base, BaseModel):
     )
     network = relationship("Network")
 
-    trading_interval = Column(
-        TIMESTAMP(timezone=True), index=True, primary_key=True
-    )
+    trading_interval = Column(TIMESTAMP(timezone=True), index=True, primary_key=True)
     network_region = Column(Text, primary_key=True)
     forecast_load = Column(Numeric, nullable=True)
     generation_scheduled = Column(Numeric, nullable=True)
     generation_non_scheduled = Column(Numeric, nullable=True)
     generation_total = Column(Numeric, nullable=True)
+    net_interchange = Column(Numeric, nullable=True)
+    demand_total = Column(Numeric, nullable=True)
     price = Column(Numeric, nullable=True)
     is_forecast = Column(Boolean, default=False)
