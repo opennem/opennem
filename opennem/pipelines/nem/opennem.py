@@ -454,7 +454,15 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
         if pk_values not in return_records_grouped:
             rec_values = list(rec_value)
             return_records_grouped[pk_values] = rec_values.pop()
-            # return_records_grouped[pk_values]["generated"] = 0.0
+
+            _cur_value = return_records_grouped[pk_values]["generated"]
+
+            _cur_val = clean_float(_cur_value)
+
+            if _cur_val:
+                return_records_grouped[pk_values]["generated"] = _cur_val
+            else:
+                return_records_grouped[pk_values]["generated"] = 0.0
 
             for _rec in rec_values:
                 _new_val = clean_float(_rec["generated"])
