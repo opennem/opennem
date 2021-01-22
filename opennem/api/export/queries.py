@@ -317,6 +317,7 @@ def power_network_fueltech_query(
 def energy_network_fueltech_query(
     network: NetworkSchema,
     interconnector: bool = False,
+    emissions: bool = False,
     interval: Optional[TimeInterval] = None,
     year: Optional[int] = None,
     network_region: Optional[str] = None,
@@ -393,6 +394,26 @@ def energy_network_fueltech_query(
 
         """
 
+    if emissions:
+        __query = """
+        select
+            t.trading_interval at time zone '{timezone}' as trading_interval,
+            t.flow_from,
+            t.flow_to,
+            sum(t.flow_energy) as energy,
+            max(t.flow_from_emissions),
+            max(t.flow_from_emissions)
+        from vw_region_flow_emissions t
+        where
+            t.trading_interval <= '{year_max}' and
+            t.trading_interval >= '{year_min}' and
+            {network_region_query}
+            1=1
+        group by 1, t.flow_region, 2, 3
+        order by 1 desc
+
+        """
+
     timezone = network.timezone_database
     offset = network.get_timezone(postgres_format=True)
 
@@ -406,14 +427,19 @@ def energy_network_fueltech_query(
     fueltech_filter = ""
 
     if network_region:
-        network_region_interconnector = ""
+        # network_region_interconnector = ""
 
-        if interconnector:
-            network_region_interconnector = f" or t.interconnector_region_to='{network_region}'"
+        # if interconnector:
+        # network_region_interconnector = f" or t.interconnector_region_to='{network_region}'"
 
         network_region_query = f"t.network_region='{network_region}' and"
 
     fueltech_filter = "t.fueltech_id not in ('imports', 'exports') and "
+
+    if emissions:
+        network_region_query = f"""
+            (t.flow_from='{network_region}' or t.flow_to='{network_region}') and
+        """
 
     # if interconnector:
     # fueltech_filter = "t.fueltech_id in ('imports', 'exports') and "
