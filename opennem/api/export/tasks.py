@@ -211,6 +211,16 @@ def export_energy(
                 )
                 stat_set.append_set(interconnector_flows)
 
+                interconnector_emissions = energy_interconnector_emissions_region_daily(
+                    interval_size="1M",
+                    network=energy_stat.network,
+                    networks_query=energy_stat.networks,
+                    date_range=date_range,
+                    network_region_code=energy_stat.network_region_query
+                    or energy_stat.network_region,
+                )
+                stat_set.append_set(interconnector_emissions)
+
             if energy_stat.bom_station:
                 weather_stats = weather_daily(
                     station_code=energy_stat.bom_station,
