@@ -379,7 +379,7 @@ def energy_network_fueltech_query(
 
         __query = """
         select
-            date_trunc('{trunc}', t.trading_interval) as trading_day,
+            date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
             sum(t.imports_avg) / 1000,
             sum(t.exports_avg) / 1000
         from mv_interchange_energy_nem_region t
