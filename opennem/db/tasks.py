@@ -1,7 +1,11 @@
 from opennem.db import get_database_engine
 from opennem.utils.dates import subtract_days
 
-TIMESCALE_VIEWS = ["mv_facility_energy_hour", "mv_nem_facility_power_5min"]
+TIMESCALE_VIEWS = [
+    "mv_facility_energy_hour",
+    "mv_nem_facility_power_5min",
+    "mv_interchange_energy_nem_region",
+]
 
 MATERIAL_VIEWS = ["mv_facility_all"]
 
