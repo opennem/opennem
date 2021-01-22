@@ -32,7 +32,6 @@ def refresh_timescale_views(all: bool = False) -> None:
     with engine.connect() as c:
         for v in TIMESCALE_VIEWS:
             query = __query.format(view=v, date_from=date_from)
-            print(query)
             c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
 
 
