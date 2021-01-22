@@ -1,6 +1,6 @@
 # pylint: disable=no-member
 """
-create mv_region_flow_emissions
+create vw_region_flow_emissions
 
 Revision ID: 47b8cabac4bb
 Revises: 6100cbbcaf7e
@@ -16,10 +16,10 @@ branch_labels = None
 depends_on = None
 
 
-stmt_drop = "drop view if exists mv_region_flow_emissions;"
+stmt_drop = "drop view if exists vw_region_flow_emissions;"
 
 stmt = """
-create view mv_region_flow_emissions as select
+create view vw_region_flow_emissions as select
     f.trading_interval at time zone 'AEST' as trading_interval,
     date_trunc('day', f.trading_interval) at time zone 'AEST' as ti_day_aest,
     date_trunc('month', f.trading_interval) at time zone 'AEST' as ti_month_aest,
