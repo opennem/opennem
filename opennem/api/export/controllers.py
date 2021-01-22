@@ -12,12 +12,12 @@ from opennem.api.stats.controllers import get_scada_range, stats_factory
 from opennem.api.stats.schema import (
     DataQueryResult,
     OpennemDataSet,
-    RegionFlowResult,
+    RegionFlowEmissionsResult,
     ScadaDateRange,
 )
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.api.weather.queries import observation_query, observation_query_all
-from opennem.core.flows import net_flows
+from opennem.core.flows import net_flows_emissions
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
@@ -449,6 +449,90 @@ def energy_interconnector_region_daily(
         DataQueryResult(interval=i[0], group_by="exports", result=i[2] if len(i) > 1 else None)
         for i in row
     ]
+
+    result = stats_factory(
+        imports,
+        # code=network_region_code or network.code,
+        network=network,
+        period=period,
+        interval=interval,
+        units=units,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    # Bail early on no interconnector
+    # don't error
+    if not result:
+        return result
+
+    result_exports = stats_factory(
+        exports,
+        # code=network_region_code or network.code,
+        network=network,
+        period=period,
+        interval=interval,
+        units=units,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    result.append_set(result_exports)
+
+    return result
+
+
+def energy_interconnector_emissions_region_daily(
+    network: NetworkSchema,
+    network_region_code: str,
+    year: Optional[int] = None,
+    interval_size: Optional[str] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
+    date_range: Optional[ScadaDateRange] = None,
+) -> Optional[OpennemDataSet]:
+    engine = get_database_engine()
+    period: TimePeriod = human_to_period("1Y")
+    units = get_unit("emissions")
+
+    interval = None
+
+    if interval_size:
+        interval = human_to_interval(interval_size)
+
+    query = energy_network_fueltech_query(
+        emissions=True,
+        year=year,
+        interval=interval,
+        network=network,
+        network_region=network_region_code,
+        networks_query=networks_query,
+        date_range=date_range,
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    if len(row) < 1:
+        raise Exception("No results from query: {}".format(query))
+
+    stats = [
+        RegionFlowEmissionsResult(
+            interval=i[0],
+            flow_from=i[1],
+            flow_to=i[2],
+            energy=i[3],
+            flow_from_emissions=i[4],
+            flow_to_emissions=i[5],
+        )
+        for i in row
+    ]
+
+    # stats_grouped = net_flows(network_region_code, stats)
+    stats_grouped = net_flows_emissions(interval, network_region_code, stats)
+
+    imports = stats_grouped["imports"]
+    exports = stats_grouped["exports"]
 
     result = stats_factory(
         imports,
