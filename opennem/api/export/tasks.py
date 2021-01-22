@@ -14,6 +14,7 @@ from typing import List, Optional
 
 from opennem.api.export.controllers import (
     energy_fueltech_daily,
+    energy_interconnector_emissions_region_daily,
     energy_interconnector_region_daily,
     gov_stats_cpi,
     power_flows_week,
@@ -153,6 +154,17 @@ def export_energy(
             # in the metadata to automate all this
             if energy_stat.network == NetworkNEM and energy_stat.network_region:
                 interconnector_flows = energy_interconnector_region_daily(
+                    interval_size="1d",
+                    year=energy_stat.year,
+                    network=energy_stat.network,
+                    networks_query=energy_stat.networks,
+                    date_range=date_range,
+                    network_region_code=energy_stat.network_region_query
+                    or energy_stat.network_region,
+                )
+                stat_set.append_set(interconnector_flows)
+
+                interconnector_emissions = energy_interconnector_emissions_region_daily(
                     interval_size="1d",
                     year=energy_stat.year,
                     network=energy_stat.network,
