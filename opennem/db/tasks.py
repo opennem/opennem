@@ -8,7 +8,7 @@ TIMESCALE_VIEWS = [
     "mv_wem_facility_power_30min",
 ]
 
-MATERIAL_VIEWS = ["mv_facility_all"]
+MATERIAL_VIEWS = ["mv_facility_all", "mv_region_emissions"]
 
 
 def refresh_timescale_views() -> None:
