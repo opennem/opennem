@@ -34,7 +34,7 @@ def db_refresh_views() -> None:
     refresh_views()
 
 
-@huey.periodic_task(crontab(hour="16"), priority=10)
+@huey.periodic_task(crontab(hour="*/2"), priority=10)
 @huey.lock_task("db_refresh_all")
 def db_refresh_all() -> None:
     refresh_timescale_views(True)
