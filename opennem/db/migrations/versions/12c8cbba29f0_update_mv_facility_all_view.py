@@ -15,10 +15,9 @@ down_revision = "3f6867b6de7e"
 branch_labels = None
 depends_on = None
 
+stmt_drop = "drop materialized view if exists mv_facility_all cascade;"
 
-def upgrade() -> None:
-    op.execute(
-        """drop materialized view if exists mv_facility_all;
+stmt = """
 create materialized view mv_facility_all as
 select
     fs.trading_interval,
@@ -63,9 +62,15 @@ group by
     f.network_region,
     f.interconnector,
     f.interconnector_region_to
-order by 1 desc;"""
-    )
+order by 1 desc;
+"""
+
+
+def upgrade() -> None:
+    with op.get_context().autocommit_block():
+        op.execute(stmt_drop)
+        op.execute(stmt)
 
 
 def downgrade() -> None:
-    pass
+    op.execute(stmt_drop)
