@@ -33,9 +33,7 @@ from mv_facility_all f
 left join mv_region_emissions ef on ef.trading_interval = f.trading_interval and ef.network_region = f.network_region
 left join mv_region_emissions et on et.trading_interval = f.trading_interval and et.network_region = f.interconnector_region_to
 where
-    f.interconnector is True and
-    f.trading_interval <= now() and
-    f.trading_interval > '2021-01-18 00:00:00+10'
+    f.interconnector is True
 group by 1, 2, 3, flow_region, 5, 6, f.interconnector_region_to
 order by trading_interval desc, flow_from asc, flow_to asc;
 """
