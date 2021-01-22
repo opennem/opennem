@@ -36,6 +36,7 @@ def weather_daily(
     period_human: str = None,
     include_min_max: bool = True,
     date_range: Optional[ScadaDateRange] = None,
+    network_region: Optional[str] = None,
 ) -> Optional[OpennemDataSet]:
     station_codes = []
 
@@ -109,6 +110,7 @@ def weather_daily(
         units=units,
         network=network,
         interval=interval,
+        region=network_region,
         code="bom",
         group_field="temperature",
     )
