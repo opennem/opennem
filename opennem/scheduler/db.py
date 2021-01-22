@@ -24,7 +24,7 @@ redis_host = None
 if settings.cache_url:
     redis_host = settings.cache_url.host
 
-huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
+huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
 
 # database tasks
