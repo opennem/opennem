@@ -5,7 +5,7 @@ import platform
 
 from huey import PriorityRedisHuey, crontab
 
-from opennem.db.tasks import refresh_timescale_views, refresh_views
+from opennem.db.tasks import refresh_material_views, refresh_timescale_views
 from opennem.settings import settings
 
 # Py 3.8 on MacOS changed the default multiprocessing model
@@ -28,10 +28,16 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
 
 # database tasks
+@huey.periodic_task(crontab(minute="*/15"))
+@huey.lock_task("db_refresh_ts_views")
+def db_refresh_ts_views() -> None:
+    refresh_timescale_views()
+
+
 @huey.periodic_task(crontab(hour="*/1"))
-@huey.lock_task("db_refresh_views")
-def db_refresh_views() -> None:
-    refresh_views()
+@huey.lock_task("db_refresh_material_views")
+def db_refresh_material_views() -> None:
+    refresh_material_views()
 
 
 @huey.periodic_task(crontab(hour="*/2"), priority=10)
