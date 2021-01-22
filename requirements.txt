@@ -138,6 +138,9 @@ cssselect==1.1.0; python_version >= "3.6" and python_full_version < "3.0.0" or p
 databases==0.4.1; python_version >= "3.6" \
     --hash=sha256:853c7fa9a0d9b8af8d58cfa15aae00ec0a4fa73b31df4331192308e00c5b6345 \
     --hash=sha256:799febb8fc0ad1e9ac47b5510b91e971d35be205aa99b9a00b3811b4cb5e5254
+datetime-truncate==1.1.1 \
+    --hash=sha256:aa8cafd313caeb2c4614018e9096f82c98fa7dd87635148f51118aecc25965aa \
+    --hash=sha256:00210b54f63f23054c5110801baf53a941df10e3e845e7b8239ccf399bd1e064
 decorator==4.4.2; python_version >= "3.4" and python_full_version < "3.0.0" or python_full_version >= "3.2.0" and python_version >= "3.4" \
     --hash=sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760 \
     --hash=sha256:e3a62f0520172440ca0dcc823749319382e377f37f140a0b99ef45fecb84bfe7
