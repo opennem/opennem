@@ -270,6 +270,14 @@ def export_all_monthly() -> None:
             )
             stat_set.append_set(interconnector_flows)
 
+            interconnector_emissions = energy_interconnector_emissions_region_daily(
+                interval_size="1M",
+                network=network,
+                networks_query=networks,
+                network_region_code=network_region.code,
+            )
+            stat_set.append_set(interconnector_emissions)
+
         all_monthly.append_set(stat_set)
 
         bom_station = get_network_region_weather_station(network_region.code)
