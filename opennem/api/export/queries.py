@@ -13,6 +13,39 @@ from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.utils.dates import subtract_week
 
 
+def interconnector_flow_emissions_query(
+    network_region: str, date_range: ScadaDateRange, network: NetworkSchema
+) -> str:
+    """Get emissions for flows for a region"""
+    __query = """
+        select
+            f.trading_interval at time zone '{timezone}' as trading_interval,
+            sum(f.energy) as flow_energy,
+            f.network_region || '->' || f.interconnector_region_to as flow_region,
+            f.network_region as flow_from,
+            f.interconnector_region_to as flow_to,
+            abs(sum(ef.emissions_per_kw) * sum(f.energy)) as flow_from_emissions,
+            abs(sum(et.emissions_per_kw) * sum(f.energy)) as flow_to_emissions
+        from mv_facility_all f
+        left join mv_region_emissions ef on ef.trading_interval = f.trading_interval and ef.network_region = f.network_region
+        left join mv_region_emissions et on et.trading_interval = f.trading_interval and et.network_region = f.interconnector_region_to
+        where
+            f.interconnector is True and
+            (f.network_region= '{region}' or f.interconnector_region_to= '{region}') and
+            fs.trading_interval <= '{date_end}' and
+            fs.trading_interval > '{date_start}'
+        group by 1, flow_region, 3, 4, f.interconnector_region_to
+        order by trading_interval desc, flow_from asc, flow_to asc;
+    """.format(
+        timezone=network.timezone_database,
+        region=network_region,
+        date_start=subtract_week(date_range.get_end()),
+        date_end=date_range.get_end(),
+    )
+
+    return dedent(__query)
+
+
 def interconnector_flow_power_query(
     network_region: str, date_range: ScadaDateRange, network: NetworkSchema
 ) -> str:
