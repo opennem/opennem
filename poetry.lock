@@ -346,6 +346,14 @@ postgresql_aiopg = ["aiopg"]
 sqlite = ["aiosqlite"]
 
 [[package]]
+name = "datetime-truncate"
+version = "1.1.1"
+description = "Truncate datetime objects to a set level of precision"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "decorator"
 version = "4.4.2"
 description = "Decorators for Humans"
@@ -2192,7 +2200,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "ceb482d3331335656cc942b085e8fb434d628f67e7e5a58055e1ef195fd9eaa0"
+content-hash = "10e018d15f25d98a0514dec87033aca4cf742a06044f596d07dfb4efb6b678a3"
 
 [metadata.files]
 aiofiles = [
@@ -2385,6 +2393,10 @@ cssselect = [
 databases = [
     {file = "databases-0.4.1-py3-none-any.whl", hash = "sha256:853c7fa9a0d9b8af8d58cfa15aae00ec0a4fa73b31df4331192308e00c5b6345"},
     {file = "databases-0.4.1.tar.gz", hash = "sha256:799febb8fc0ad1e9ac47b5510b91e971d35be205aa99b9a00b3811b4cb5e5254"},
+]
+datetime-truncate = [
+    {file = "datetime_truncate-1.1.1-py2.py3-none-any.whl", hash = "sha256:aa8cafd313caeb2c4614018e9096f82c98fa7dd87635148f51118aecc25965aa"},
+    {file = "datetime_truncate-1.1.1.tar.gz", hash = "sha256:00210b54f63f23054c5110801baf53a941df10e3e845e7b8239ccf399bd1e064"},
 ]
 decorator = [
     {file = "decorator-4.4.2-py2.py3-none-any.whl", hash = "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760"},
