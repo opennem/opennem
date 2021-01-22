@@ -86,10 +86,12 @@ def net_flows_emissions(
                 continue
 
             if es.flow_from == region:
-                flow_sum += es.flow_from_emissions
+                if es.flow_from_emissions:
+                    flow_sum += es.flow_from_emissions
 
             if es.flow_to == region:
-                flow_sum += es.flow_to_emissions
+                if es.flow_to_emissions:
+                    flow_sum += es.flow_to_emissions
 
         if flow_sum > 0:
             flow_type = "exports"
