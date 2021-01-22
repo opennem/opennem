@@ -380,8 +380,8 @@ def energy_network_fueltech_query(
         __query = """
         select
             date_trunc('{trunc}', t.trading_interval) as trading_day,
-            max(t.imports_avg) / 1000,
-            max(t.exports_avg) / 1000
+            max(t.imports_avg),
+            max(t.exports_avg)
         from mv_interchange_energy_nem_region t
         where
             t.trading_interval <= '{year_max}' and
