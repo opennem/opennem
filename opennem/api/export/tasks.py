@@ -180,6 +180,7 @@ def export_energy(
                     station_code=energy_stat.bom_station,
                     year=energy_stat.year,
                     network_code=energy_stat.network.code,
+                    network_region=energy_stat.network_region,
                 )
                 stat_set.append_set(weather_stats)
 
@@ -227,6 +228,7 @@ def export_energy(
                     date_range=date_range,
                     year=energy_stat.year,
                     network_code=energy_stat.network.code,
+                    network_region=energy_stat.network_region,
                 )
                 stat_set.append_set(weather_stats)
 
@@ -284,8 +286,7 @@ def export_all_monthly() -> None:
 
         if bom_station:
             weather_stats = weather_daily(
-                station_code=bom_station,
-                network_code=network.code,
+                station_code=bom_station, network_code=network.code, network_region=network_region
             )
             all_monthly.append_set(weather_stats)
 
@@ -338,8 +339,7 @@ def export_all_daily() -> None:
 
         if bom_station:
             weather_stats = weather_daily(
-                station_code=bom_station,
-                network_code=network.code,
+                station_code=bom_station, network_code=network.code, network_region=network_region
             )
             stat_set.append_set(weather_stats)
 
