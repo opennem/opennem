@@ -173,7 +173,7 @@ def export_energy(
                     network_region_code=energy_stat.network_region_query
                     or energy_stat.network_region,
                 )
-                stat_set.append_set(interconnector_flows)
+                stat_set.append_set(interconnector_emissions)
 
             if energy_stat.bom_station:
                 weather_stats = weather_daily(
