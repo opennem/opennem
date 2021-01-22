@@ -114,6 +114,15 @@ class RegionFlowResult(BaseConfig):
     generated: Optional[float]
 
 
+class RegionFlowEmissionsResult(BaseConfig):
+    interval: datetime
+    flow_from: str
+    flow_to: str
+    energy: float
+    flow_from_emissions: Optional[float]
+    flow_to_emissions: Optional[float]
+
+
 class DataQueryResult(BaseConfig):
     interval: datetime
     result: Union[float, int, None, Decimal]
@@ -146,11 +155,7 @@ class ScadaDateRange(BaseConfig):
         return self._get_value_localized("end")
 
     def get_start_sql(self, as_date: bool = False) -> str:
-        return "'{}'".format(
-            self.get_start() if not as_date else self.get_start().date()
-        )
+        return "'{}'".format(self.get_start() if not as_date else self.get_start().date())
 
     def get_end_sql(self, as_date: bool = False) -> str:
-        return "'{}'".format(
-            self.get_end() if not as_date else self.get_end().date()
-        )
+        return "'{}'".format(self.get_end() if not as_date else self.get_end().date())
