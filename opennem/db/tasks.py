@@ -48,9 +48,9 @@ def refresh_material_views() -> None:
 
 
 def refresh_views() -> None:
-    refresh_timescale_views()
+    refresh_timescale_views(True)
     refresh_material_views()
 
 
 if __name__ == "__main__":
-    refresh_timescale_views()
+    refresh_views()
