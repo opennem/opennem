@@ -76,8 +76,8 @@ def net_flows_emissions(
                 "exports": 0.0,
             }
 
-        flow_sum = 0.0
-        flow_type = "imports"
+        export_emissions_sum = 0.0
+        import_emissions_sum = 0.0
 
         # Sum up
         for es in values:
@@ -87,16 +87,20 @@ def net_flows_emissions(
 
             if es.flow_from == region:
                 if es.flow_from_emissions:
-                    flow_sum += es.flow_from_emissions
+                    if es.energy < 0:
+                        export_emissions_sum += es.flow_from_emissions
+                    else:
+                        import_emissions_sum += es.flow_from_emissions
 
             if es.flow_to == region:
-                if es.flow_to_emissions:
-                    flow_sum += es.flow_to_emissions
+                if es.flow_from_emissions:
+                    if es.energy > 0:
+                        export_emissions_sum += es.flow_from_emissions
+                    else:
+                        import_emissions_sum += es.flow_from_emissions
 
-        if flow_sum > 0:
-            flow_type = "exports"
-
-        output_set[k][flow_type] = flow_sum
+        output_set[k]["imports"] = import_emissions_sum
+        output_set[k]["exports"] = export_emissions_sum
 
     imports_list = []
     exports_list = []
