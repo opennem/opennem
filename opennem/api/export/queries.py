@@ -476,6 +476,7 @@ def energy_network_fueltech_query(
 
     query = dedent(
         __query.format(
+            timezone=network.timezone_database,
             trunc=trunc,
             trunc_name=trunc_name,
             year_min=year_min,
