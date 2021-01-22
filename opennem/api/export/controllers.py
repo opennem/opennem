@@ -124,6 +124,7 @@ def weather_daily(
             units=get_unit("temperature_min"),
             network=network,
             interval=interval,
+            region=network_region,
             code="bom",
             group_field="temperature",
         )
@@ -133,6 +134,7 @@ def weather_daily(
             units=get_unit("temperature_max"),
             network=network,
             interval=interval,
+            region=network_region,
             code="bom",
             group_field="temperature",
         )
