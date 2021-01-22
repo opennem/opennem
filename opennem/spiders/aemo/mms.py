@@ -106,6 +106,19 @@ class MMSArchivePriceSpider(MMSArchiveBulkSpider):
     )
 
 
+class MMSArchiveDispatchISSpider(MMSArchiveBulkSpider):
+    name = "au.mms.archive.dispatch_is"
+
+    tables = ["DISPATCHREGIONSUM"]
+
+    pipelines = set(
+        [
+            ExtractCSV,
+            NemwebUnitScadaOpenNEMStorePipeline,
+        ]
+    )
+
+
 # class MMSArchiveP5InterconnectorSolutionSpider(MMSArchiveBulkSpider):
 #     name = "au.mms.archive.p5_interconnector_solution"
 
