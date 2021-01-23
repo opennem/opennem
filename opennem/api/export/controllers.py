@@ -271,7 +271,7 @@ def demand_week(
         # code=network_region_code or network.code,
         network=network,
         period=human_to_period("7d"),
-        interval=human_to_interval("30m"),
+        interval=human_to_interval("5m"),
         units=get_unit("demand"),
         region=network_region_code,
     )
