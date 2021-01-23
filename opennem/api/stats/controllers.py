@@ -195,7 +195,7 @@ def stats_factory(
             data.type = units.unit_type
 
         if region:
-            data.region = region
+            data.region = region.lower()
 
         stats_grouped.append(data)
 
