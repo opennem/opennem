@@ -518,7 +518,7 @@ def energy_interconnector_emissions_region_daily(
         row = list(c.execute(query))
 
     if len(row) < 1:
-        raise Exception("No results from query: {}".format(query))
+        return None
 
     stats = [
         RegionFlowEmissionsResult(
