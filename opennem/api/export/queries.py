@@ -249,7 +249,7 @@ def network_demand_query(
     from balancing_summary bs
     where
         bs.trading_interval <= '{date_max}' and bs.trading_interval >= '{date_min}' and
-        bs.network_id = '{network_id}' and
+        {network_query}
         {network_region_query}
         1=1
     group by
@@ -266,6 +266,8 @@ def network_demand_query(
 
     groups_additional = ", ".join(group_keys)
 
+    network_query = "bs.network_id IN ({}) and ".format(networks_to_in(networks_query))
+
     if not date_range:
         raise Exception("Require a date range")
 
@@ -280,6 +282,7 @@ def network_demand_query(
         date_max=date_max,
         date_min=date_min,
         network_id=network.code,
+        network_query=network_query,
         network_region_query=network_region_query,
         groups_additional=groups_additional,
     )

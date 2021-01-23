@@ -239,6 +239,7 @@ def demand_week(
     date_range: ScadaDateRange,
     network_region_code: Optional[str],
     period: Optional[TimePeriod] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
@@ -246,7 +247,11 @@ def demand_week(
         period = human_to_period("7d")
 
     query = network_demand_query(
-        network_region=network_region_code, date_range=date_range, network=network, period=period
+        network_region=network_region_code,
+        date_range=date_range,
+        network=network,
+        period=period,
+        networks_query=networks_query,
     )
 
     with engine.connect() as c:

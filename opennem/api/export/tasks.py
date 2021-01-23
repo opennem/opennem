@@ -82,6 +82,7 @@ def export_power(
             network=power_stat.network,
             date_range=power_stat.date_range,
             period=power_stat.period,
+            networks_query=power_stat.networks,
             network_region_code=power_stat.network_region_query or power_stat.network_region,
         )
 
