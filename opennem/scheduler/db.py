@@ -34,6 +34,12 @@ def db_refresh_ts_views() -> None:
     refresh_timescale_views()
 
 
+@huey.periodic_task(crontab(minute="*/5"))
+@huey.lock_task("db_refresh_interchange")
+def db_refresh_interchange() -> None:
+    refresh_material_views("mv_interchange_power_nem_region")
+
+
 @huey.periodic_task(crontab(hour="*/6"))
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
