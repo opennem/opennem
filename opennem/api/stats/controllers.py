@@ -103,8 +103,8 @@ def stats_factory(
             continue
 
         # Skip zero series
-        if sum([i for i in data_value if i]) == 0:
-            continue
+        # if sum([i for i in data_value if i]) == 0:
+        # continue
 
         # Cast trailing nulls
         if not units.name.startswith("temperature") or units.cast_nulls:
