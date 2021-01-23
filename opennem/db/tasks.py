@@ -13,7 +13,9 @@ TIMESCALE_VIEWS = [
 MATERIAL_VIEWS = ["mv_facility_all", "mv_region_emissions"]
 
 
-def refresh_timescale_views(all: bool = False) -> None:
+def refresh_timescale_views(
+    view_name: Optional[str] = None, all: bool = False, days: int = 7
+) -> None:
     """refresh timescale views"""
     __query = """
     CALL refresh_continuous_aggregate(
@@ -24,12 +26,18 @@ def refresh_timescale_views(all: bool = False) -> None:
     """
 
     engine = get_database_engine()
-
-    dt = subtract_days(days=7)
+    dt = subtract_days(days=days)
     date_from = "'{}'".format(dt.strftime("%Y-%m-%d"))
 
     if all:
         date_from = "NULL"
+
+    views = []
+
+    if view_name:
+        views.append(view_name)
+    else:
+        views = TIMESCALE_VIEWS
 
     with engine.connect() as c:
         for v in TIMESCALE_VIEWS:
