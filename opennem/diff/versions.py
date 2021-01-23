@@ -11,7 +11,7 @@ from opennem.api.export.map import StatType
 from opennem.core.compat import translate_id_v3_to_v2
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
-from opennem.schema.core import BaseModel
+from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.http import http
 
@@ -98,40 +98,50 @@ def get_v3_url(
     return url
 
 
-def get_url_map(regions: List[str]) -> List[Dict[str, Any]]:
+class DiffComparisonSet(BaseConfig):
+    stat_type: StatType
+    network_region: str
+    bucket_size: Optional[str]
+
+    @property
+    def urlv2(self) -> str:
+        return get_v2_url(self.stat_type, self.network_region, self.bucket_size)
+
+    @property
+    def urlv3(self) -> str:
+        return get_v3_url(self.stat_type, self.network_region, self.bucket_size)
+
+
+def get_url_map(regions: List[NetworkRegion]) -> List[DiffComparisonSet]:
     urls = []
 
     for region in regions:
-        url_set = {
-            "v2": get_v2_url(StatType.power, region),
-            "v3": get_v3_url(StatType.power, region),
-        }
-        urls.append(url_set)
+        a = DiffComparisonSet(stat_type=StatType.power, network_region=region.code, bucket_size="7d")
+        urls.append(a)
 
-        url_set = {
-            "v2": get_v2_url(StatType.energy, region),
-            "v3": get_v3_url(StatType.energy, region),
-        }
-        urls.append(url_set)
+        a = DiffComparisonSet(
+            stat_type=StatType.energy, network_region=region.code, bucket_size="daily"
+        )
+        urls.append(a)
 
-        url_set = {
-            "v2": get_v2_url(StatType.energy, region, "monthly"),
-            "v3": get_v3_url(StatType.energy, region, "monthly"),
-        }
-        urls.append(url_set)
+        a = DiffComparisonSet(
+            stat_type=StatType.energy, network_region=region.code, bucket_size="monthly"
+        )
+        urls.append(a)
 
     return urls
 
 
-def validate_url_map(url_map: List[Dict[str, Any]]) -> bool:
+def validate_url_map(url_map: List[DiffComparisonSet]) -> bool:
     success = True
 
     for us in url_map:
         for version in ["v2", "v3"]:
-            r = http.get(us[version])
+            req_url = getattr(us, f"url{version}")
+            r = http.get(req_url)
 
             if not r.ok:
-                logger.error("invalid {} url: {}".format(version, us[version]))
+                logger.error("invalid {} url: {}".format(version, req_url))
                 success = False
 
     return success
@@ -171,30 +181,35 @@ def get_data_by_id(id: str, series: List[Dict]) -> Optional[Dict]:
 
 def run_diff() -> None:
     regions = get_network_regions(NetworkNEM)
-    url_map = get_url_map(regions)
-    # validate_url_map(url_map)
+    statsetmap = get_url_map(regions)
 
-    network_region = "tas1"
+    # validate all urls are valid
+    validate_url_map(statsetmap)
 
-    v2_power = http.get(get_v2_url(StatType.power, network_region)).json()
-    v3_power = http.get(get_v3_url(StatType.power, network_region)).json()["data"]
+    for statset in statsetmap:
+        v2_power = http.get(statset.urlv2).json()
+        v3_power = http.get(statset.urlv3).json()["data"]
 
-    if len(v2_power) != len(v3_power):
-        logger.info(
-            "Series {} for {} is missing ids. v2 has {} v3 has {}".format(
-                StatType.power.value, network_region, len(v2_power), len(v3_power)
-            )
-        )
-
-    id_diff = get_id_diff(v2_power, v3_power)
-
-    if id_diff:
-        for i in id_diff:
+        if len(v2_power) != len(v3_power):
             logger.info(
-                "Series {} for {} is missing ids. v3 doesn't have {}".format(
-                    StatType.power.value, network_region, i, (v3_power)
+                "Series {} {} for {} is missing ids. v2 has {} v3 has {}".format(
+                    statset.stat_type.value,
+                    statset.bucket_size,
+                    statset.network_region,
+                    len(v2_power),
+                    len(v3_power),
                 )
             )
+
+        id_diff = get_id_diff(v2_power, v3_power)
+
+        if id_diff:
+            for i in id_diff:
+                logger.info(
+                    "Series {} {} for {} is missing ids. v3 doesn't have {}".format(
+                        statset.stat_type.value, statset.bucket_size, statset.network_region, i
+                    )
+                )
 
 
 if __name__ == "__main__":
