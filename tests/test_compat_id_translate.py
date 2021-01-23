@@ -10,8 +10,8 @@ from opennem.core.compat import translate_id_v2_to_v3, translate_id_v3_to_v2
         ("nem.tas1.fuel_tech.coal_black.power", "tas1.fuel_tech.black_coal.power"),
         ("nem.tas1.fuel_tech.wind.power", "tas1.fuel_tech.wind.power"),
         ("nem.tas1.price", "tas1.price"),
-        ("nem.tas1.temperature.094029.temperature", "tas1.temperature"),
-        ("nem.tas1.temperature.094029.temperature_mean", "tas1.temperature_mean"),
+        ("nem.tas1.temperature", "tas1.temperature"),
+        ("nem.tas1.temperature_mean", "tas1.temperature_mean"),
         ("nem.tas1.fuel_tech.gas_ocgt.market_value", "tas1.fuel_tech.gas_ocgt.market_value"),
         ("nem.tas1.fuel_tech.coal_black.market_value", "tas1.fuel_tech.black_coal.market_value"),
         ("nem.tas1.fuel_tech.solar_rooftop.energy", "tas1.fuel_tech.rooftop_solar.energy"),
@@ -22,8 +22,8 @@ from opennem.core.compat import translate_id_v2_to_v3, translate_id_v3_to_v2
         ("nem.nsw1.fuel_tech.coal_black.power", "nsw1.fuel_tech.black_coal.power"),
         ("nem.nsw1.fuel_tech.wind.power", "nsw1.fuel_tech.wind.power"),
         ("nem.nsw1.price", "nsw1.price"),
-        ("nem.nsw1.temperature.094029.temperature", "nsw1.temperature"),
-        ("nem.nsw1.temperature.094029.temperature_mean", "nsw1.temperature_mean"),
+        ("nem.nsw1.temperature", "nsw1.temperature"),
+        ("nem.nsw1.temperature_mean", "nsw1.temperature_mean"),
         ("nem.nsw1.fuel_tech.gas_ocgt.market_value", "nsw1.fuel_tech.gas_ocgt.market_value"),
         ("nem.nsw1.fuel_tech.coal_black.market_value", "nsw1.fuel_tech.black_coal.market_value"),
         ("nem.nsw1.fuel_tech.solar_rooftop.energy", "nsw1.fuel_tech.rooftop_solar.energy"),
@@ -43,8 +43,8 @@ def test_translate_id_v3_to_v2(id: str, id_expected: str) -> None:
         ("nem.tas1.fuel_tech.coal_black.power", "tas1.fuel_tech.black_coal.power"),
         ("nem.tas1.fuel_tech.wind.power", "tas1.fuel_tech.wind.power"),
         ("nem.tas1.price", "tas1.price"),
-        ("nem.tas1.temperature.094029.temperature", "tas1.temperature"),
-        ("nem.tas1.temperature.094029.temperature_mean", "tas1.temperature_mean"),
+        ("nem.tas1.temperature", "tas1.temperature"),
+        ("nem.tas1.temperature_mean", "tas1.temperature_mean"),
         ("nem.tas1.fuel_tech.gas_ocgt.market_value", "tas1.fuel_tech.gas_ocgt.market_value"),
         ("nem.tas1.fuel_tech.coal_black.market_value", "tas1.fuel_tech.black_coal.market_value"),
         ("nem.tas1.fuel_tech.solar_rooftop.energy", "tas1.fuel_tech.rooftop_solar.energy"),
@@ -55,8 +55,8 @@ def test_translate_id_v3_to_v2(id: str, id_expected: str) -> None:
         ("nem.nsw1.fuel_tech.coal_black.power", "nsw1.fuel_tech.black_coal.power"),
         ("nem.nsw1.fuel_tech.wind.power", "nsw1.fuel_tech.wind.power"),
         ("nem.nsw1.price", "nsw1.price"),
-        ("nem.nsw1.temperature.066214.temperature", "nsw1.temperature"),
-        ("nem.nsw1.temperature.066214.temperature_mean", "nsw1.temperature_mean"),
+        ("nem.nsw1.temperature", "nsw1.temperature"),
+        ("nem.nsw1.temperature_mean", "nsw1.temperature_mean"),
         ("nem.nsw1.fuel_tech.gas_ocgt.market_value", "nsw1.fuel_tech.gas_ocgt.market_value"),
         ("nem.nsw1.fuel_tech.coal_black.market_value", "nsw1.fuel_tech.black_coal.market_value"),
         ("nem.nsw1.fuel_tech.solar_rooftop.energy", "nsw1.fuel_tech.rooftop_solar.energy"),
@@ -64,6 +64,6 @@ def test_translate_id_v3_to_v2(id: str, id_expected: str) -> None:
         ("nem.nsw1.demand", "nsw1.demand"),
     ],
 )
-def test_translate_id_v3_to_v2(id_expected: str, id: str) -> None:
+def test_translate_id_v2_to_v3(id_expected: str, id: str) -> None:
     id_translated = translate_id_v2_to_v3(id)
     assert id_translated == id_expected
