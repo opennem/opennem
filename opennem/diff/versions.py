@@ -16,7 +16,8 @@ from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.diff.versions")
 
-BASE_URL = "https://data.opennem.org.au"
+BASE_URL_V2 = "https://data.opennem.org.au"
+BASE_URL_V3 = "https://data.dev.opennem.org.au"
 
 CUR_YEAR = datetime.now().year
 
@@ -49,7 +50,7 @@ def get_v2_url(
     url_path = "/".join(url_components)
     url_path += ".json"
 
-    url = urljoin(BASE_URL, url_path)
+    url = urljoin(BASE_URL_V2, url_path)
 
     return url
 
@@ -91,7 +92,7 @@ def get_v3_url(
     url_path = "/".join(url_components)
     url_path += ".json"
 
-    url = urljoin(BASE_URL, url_path)
+    url = urljoin(BASE_URL_V3, url_path)
 
     return url
 
@@ -155,8 +156,14 @@ def run_diff():
 
     print(len(v2_power), len(v3_power))
 
-    id2_diffs = [i["id"] for i in v2_power]
-    id3_diffs = [i["id"] for i in v3_power]
+    id2_diffs = sorted([i["id"] for i in v2_power])
+    id3_diffs = sorted([i["id"] for i in v3_power])
+
+    from pprint import pprint
+
+    pprint(id2_diffs)
+    print("-" * 15)
+    pprint(id3_diffs)
 
     print(list(set(id2_diffs) - set(id3_diffs)))
 
