@@ -3,7 +3,6 @@ OpenNEM v2 -> v3 compatability methods
 
 """
 
-from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.schema.network import NetworkNEM
 
 from .fueltechs import map_v2_fueltech, map_v3_fueltech
@@ -45,15 +44,6 @@ def translate_id_v2_to_v3(v2_id: str) -> str:
         fueltech = map_v2_fueltech(fueltech_old)
         # id2 = [idc[1], "fuel_tech", fueltech, stat_type]
         idc[-2] = fueltech
-
-    if stat_type in ["temperature", "temperature_mean", "temperature_max"]:
-        idc.insert(2, "temperature")
-        bom_station = get_network_region_weather_station(network_region)
-
-        if not bom_station:
-            bom_station = "000000"
-
-        idc.insert(3, bom_station)
 
     return ".".join([i for i in idc if i])
 
