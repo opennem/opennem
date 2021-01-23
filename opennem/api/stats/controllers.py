@@ -135,6 +135,7 @@ def stats_factory(
         # @TODO fix this schema and make it more flexible
         if fueltech_group:
             data.fuel_tech = group_code
+
             data_comps = [
                 # @NOTE disable for now since FE doesn't
                 # support it
@@ -145,6 +146,7 @@ def stats_factory(
                 group_code.lower(),
                 units.unit_type,
             ]
+
             data.id = ".".join(i for i in data_comps if i)
             # @TODO make this an alias
             data.type = units.unit_type
@@ -185,9 +187,6 @@ def stats_factory(
             if region:
                 _id_list.append(region.lower())
 
-            elif network:
-                _id_list.append(network.code)
-
             if units and units.name_alias:
                 _id_list.append(units.name_alias)
 
@@ -196,6 +195,8 @@ def stats_factory(
 
         if region:
             data.region = region
+
+        print("TEST:::", data.id, region)
 
         stats_grouped.append(data)
 
