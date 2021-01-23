@@ -110,3 +110,20 @@ def lookup_fueltech(
     logger.warning("Found fueltech {}, {}, {}, {} with no mapping".format(ft, tt, ftd, ttd))
 
     return None
+
+
+def map_v2_fueltech(
+    fueltech: str,
+) -> Optional[str]:
+    """
+    Takes a v2 fueltech and maps it to v3
+
+    """
+
+    ft = clean_fueltech(fueltech)
+
+    # Lookup legacy fuel tech types and map them
+    if ft in LEGACY_FUELTECH_MAP.keys():
+        return LEGACY_FUELTECH_MAP[ft]
+
+    return ft
