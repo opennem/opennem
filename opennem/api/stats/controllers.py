@@ -102,6 +102,7 @@ def stats_factory(
         if len([i for i in data_value if i]) == 0:
             continue
 
+        # @TODO possible bring this back
         # Skip zero series
         # if sum([i for i in data_value if i]) == 0:
         # continue
