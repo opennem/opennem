@@ -3,7 +3,7 @@ OpenNEM v2 -> v3 compatability methods
 
 """
 
-from .fueltechs import map_v2_fueltech
+from .fueltechs import map_v3_fueltech
 
 
 def translate_id_v3_to_v2(v3_id: str) -> str:
@@ -17,7 +17,7 @@ def translate_id_v3_to_v2(v3_id: str) -> str:
 
     if stat_type in ["energy", "power"]:
         fueltech_old = idc[-2]
-        fueltech = map_v2_fueltech(fueltech_old)
+        fueltech = map_v3_fueltech(fueltech_old)
         id2 = [idc[1], "fuel_tech", fueltech, stat_type]
 
     if stat_type in ["temperature"]:
