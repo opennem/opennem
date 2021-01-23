@@ -569,6 +569,42 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
     return item
 
 
+def process_rooftop_forecast(table: Dict[str, Any], spider: Spider) -> Dict:
+    if "records" not in table:
+        raise Exception("Invalid table no records")
+
+    records = table["records"]
+    item = dict()
+
+    scada_records = unit_scada_generate_facility_scada(
+        records,
+        spider,
+        network=NetworkNEM,
+        interval_field="INTERVAL_DATETIME",
+        facility_code_field="REGIONID",
+        power_field="POWERMEAN",
+        # don't filter down on duid since they'll conflict
+        # we need to sum aggs
+        groupby_filter=False,
+    )
+
+    # remap duids
+    scada_records = [rooftop_remap_regionids(i) for i in scada_records]
+
+    def set_is_forecast(record: Dict, is_forecast: bool = True) -> Dict:
+        record["is_forecast"] = is_forecast
+        return record
+
+    scada_records = [set_is_forecast(i) for i in scada_records]
+
+    item["table_schema"] = FacilityScada
+    item["update_fields"] = ["generated"]
+    item["records"] = scada_records
+    item["content"] = None
+
+    return item
+
+
 TABLE_PROCESSOR_MAP = {
     "DISPATCH_INTERCONNECTORRES": "process_dispatch_interconnectorres",
     # "P5MIN_INTERCONNECTORSOLN": "process_dispatch_interconnectorres",
@@ -578,6 +614,7 @@ TABLE_PROCESSOR_MAP = {
     "DISPATCH_UNIT_SOLUTION": "process_unit_solution",
     # "DISPATCH_PRE_AP_PRICE": "process_pre_ap_price",
     "ROOFTOP_ACTUAL": "process_rooftop_actual",
+    "ROOFTOP_FORECAST": "process_rooftop_forecast",
     "DISPATCH_PRICE": "process_pre_ap_price",
     "DISPATCH_REGIONSUM": "process_dispatch_regionsum",
 }
