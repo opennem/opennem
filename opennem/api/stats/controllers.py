@@ -196,8 +196,6 @@ def stats_factory(
         if region:
             data.region = region
 
-        print("TEST:::", data.id, region)
-
         stats_grouped.append(data)
 
     dt_now = datetime.now()
