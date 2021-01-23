@@ -266,7 +266,6 @@ def demand_week(
         interval=human_to_interval("30m"),
         units=get_unit("demand"),
         region=network_region_code,
-        fueltech_group=True,
     )
 
     if not result:
