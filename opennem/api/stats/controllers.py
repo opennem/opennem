@@ -130,7 +130,7 @@ def stats_factory(
         )
 
         if network:
-            data.network = network.code
+            data.network = network.code.lower()
 
         # *sigh* - not the most flexible model
         # @TODO fix this schema and make it more flexible
@@ -183,7 +183,7 @@ def stats_factory(
             # network.country if network else None,
 
             if network:
-                _id_list.append(network.code)
+                _id_list.append(network.code.lower())
 
             if region:
                 _id_list.append(region.lower())
