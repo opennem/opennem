@@ -15,7 +15,7 @@ def translate_id_v3_to_v2(v3_id: str) -> str:
 
     stat_type = idc[-1]
 
-    if stat_type in ["energy", "power"]:
+    if stat_type in ["energy", "power", "market_value", "emissions"]:
         fueltech_old = idc[-2]
         fueltech = map_v3_fueltech(fueltech_old)
         id2 = [idc[1], "fuel_tech", fueltech, stat_type]
