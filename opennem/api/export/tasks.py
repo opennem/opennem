@@ -91,6 +91,7 @@ def export_power(
             weather_set = weather_daily(
                 station_code=power_stat.bom_station,
                 network_code=power_stat.network.code,
+                network_region=power_stat.network_region,
                 include_min_max=False,
                 period_human="7d",
                 unit_name="temperature",
