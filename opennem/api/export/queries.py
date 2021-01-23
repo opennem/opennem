@@ -225,6 +225,68 @@ def price_network_query(
     return query
 
 
+def network_demand_query(
+    network: NetworkSchema = NetworkWEM,
+    date_range: Optional[ScadaDateRange] = None,
+    period: Optional[TimePeriod] = None,
+    network_region: Optional[str] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
+) -> str:
+    if not networks_query:
+        networks_query = [network]
+
+    if network not in networks_query:
+        networks_query.append(network)
+
+    if not date_range:
+        date_range = get_scada_range(network=network, networks=networks_query)
+
+    __query = """
+    select
+        trading_interval at time zone '{timezone}',
+        network_id,
+        sum(demand_total) as demand
+    from balancing_summary bs
+    where
+        bs.trading_interval <= '{date_max}' and bs.trading_interval > '{date_min}' and
+        bs.network_id = '{network_id}' and
+        {network_region_query}
+        1=1
+    group by
+        1, {groups_additional}
+    order by 1 desc;
+    """
+
+    group_keys = ["network_id"]
+    network_region_query = ""
+
+    if network_region:
+        group_keys.append("network_region")
+        network_region_query = f"bs.network_region = '{network_region}' and "
+
+    groups_additional = ", ".join(group_keys)
+
+    if not date_range:
+        raise Exception("Require a date range")
+
+    date_max = date_range.get_end()
+    date_min = date_range.get_start()
+
+    if period:
+        date_min = date_range.get_end() - timedelta(minutes=period.period)
+
+    query = __query.format(
+        timezone=network.timezone_database,
+        date_max=date_max,
+        date_min=date_min,
+        network_id=network.code,
+        network_region_query=network_region_query,
+        groups_additional=groups_additional,
+    )
+
+    return dedent(query)
+
+
 def power_network_fueltech_query(
     interval: TimeInterval,
     network: NetworkSchema = NetworkWEM,
