@@ -79,6 +79,7 @@ class OpennemData(BaseConfig):
     period: Optional[TimePeriodAPI]
 
     history: OpennemDataHistory
+    forecast: Optional[OpennemDataHistory]
 
 
 class OpennemDataSet(BaseConfig):
