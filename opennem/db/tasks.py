@@ -70,7 +70,7 @@ def refresh_material_views(view_name: Optional[str] = None) -> None:
 
 
 def refresh_views() -> None:
-    refresh_timescale_views(True)
+    refresh_timescale_views(all=True)
     refresh_material_views()
 
 
