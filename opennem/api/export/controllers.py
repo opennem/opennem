@@ -245,7 +245,6 @@ def power_week(
     network = network_from_network_code(network_code)
     interval = human_to_interval("{}m".format(network.interval_size))
     units = get_unit("power")
-    network_region = None
 
     query = power_network_fueltech_query(
         network=network,
@@ -275,7 +274,7 @@ def power_week(
         interval=interval,
         period=period,
         units=units,
-        region=network_region,
+        region=network_region_code,
         fueltech_group=True,
     )
 
