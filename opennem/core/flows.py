@@ -1,10 +1,11 @@
 from itertools import groupby
 from operator import attrgetter
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from datetime_truncate import truncate
 
 from opennem.api.stats.schema import DataQueryResult, RegionFlowEmissionsResult, RegionFlowResult
+from opennem.api.time import human_to_interval
 from opennem.schema.time import TimeInterval
 
 
@@ -59,11 +60,14 @@ def net_flows(region: str, data: List[RegionFlowResult]) -> Dict[str, List[DataQ
 
 
 def net_flows_emissions(
-    interval: TimeInterval, region: str, data: List[RegionFlowEmissionsResult]
+    region: str, data: List[RegionFlowEmissionsResult], interval: Optional[TimeInterval] = None
 ) -> Dict[str, List[DataQueryResult]]:
     """
     Calculates net region flow emissions for a region from a RegionFlowResult
     """
+
+    if not interval:
+        interval = human_to_interval("1d")
 
     output_set = {}
 

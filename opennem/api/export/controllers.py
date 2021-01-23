@@ -533,7 +533,7 @@ def energy_interconnector_emissions_region_daily(
     ]
 
     # stats_grouped = net_flows(network_region_code, stats)
-    stats_grouped = net_flows_emissions(interval, network_region_code, stats)
+    stats_grouped = net_flows_emissions(network_region_code, stats, interval)
 
     imports = stats_grouped["imports"]
     exports = stats_grouped["exports"]
