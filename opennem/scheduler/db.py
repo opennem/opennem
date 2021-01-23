@@ -40,13 +40,13 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 #     refresh_timescale_views("mv_interchange_power_nem_region", days=1)
 
 
-@huey.periodic_task(crontab(hour="*/1"))
+@huey.periodic_task(crontab(hour="*/6"))
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
     refresh_material_views()
 
 
-@huey.periodic_task(crontab(hour="*/6"), priority=10)
+@huey.periodic_task(crontab(hour="/6"), priority=10)
 @huey.lock_task("db_refresh_all")
 def db_refresh_all() -> None:
     refresh_timescale_views(all=True)
