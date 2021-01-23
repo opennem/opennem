@@ -9,6 +9,7 @@ LEGACY_FUELTECH_MAP = {
     "brown_coal": "coal_brown",
     "black_coal": "coal_black",
     "solar": "solar_utility",
+    "rooftop_solar": "solar_rooftop",
     "biomass": "bioenergy_biomass",
 }
 
