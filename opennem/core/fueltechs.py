@@ -114,7 +114,7 @@ def lookup_fueltech(
 
 def map_v2_fueltech(
     fueltech: str,
-) -> Optional[str]:
+) -> str:
     """
     Takes a v2 fueltech and maps it to v3
 
