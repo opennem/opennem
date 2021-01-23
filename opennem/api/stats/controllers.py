@@ -164,9 +164,9 @@ def stats_factory(
                 group_fields.append(region.lower())
 
             group_fields = group_fields + [
-                group_field,
-                group_code,
                 units.unit_type,
+                # group_field,
+                # group_code,
             ]
 
             data.id = ".".join([f for f in group_fields if f])
