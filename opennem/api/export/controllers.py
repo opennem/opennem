@@ -440,7 +440,7 @@ def energy_interconnector_region_daily(
         row = list(c.execute(query))
 
     if len(row) < 1:
-        raise Exception("No results from query: {}".format(query))
+        return None
 
     # stats_grouped = net_flows(network_region_code, stats)
     # stats_grouped = net_flows_energy(network_region_code, stats)
