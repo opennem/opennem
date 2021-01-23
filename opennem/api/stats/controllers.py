@@ -222,10 +222,10 @@ def stats_factory(
     )
 
     if network:
-        stat_set.network = network.code
+        stat_set.network = network.code.lower()
 
     if region:
-        stat_set.region = region
+        stat_set.region = region.lower()
 
     return stat_set
 
