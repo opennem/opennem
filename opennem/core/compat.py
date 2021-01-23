@@ -20,7 +20,7 @@ def translate_id_v3_to_v2(v3_id: str) -> str:
         fueltech = map_v3_fueltech(fueltech_old)
         id2 = [idc[1], "fuel_tech", fueltech, stat_type]
 
-    if stat_type in ["temperature"]:
+    if stat_type in ["temperature", "temperature_mean", "temperature_max"]:
         id2 = [idc[1], idc[-1]]
 
     return ".".join([i for i in id2 if i])
