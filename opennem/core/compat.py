@@ -56,3 +56,11 @@ def translate_id_v2_to_v3(v2_id: str) -> str:
         idc.insert(3, bom_station)
 
     return ".".join([i for i in idc if i])
+
+
+def fix_date_v2(date_str: str) -> str:
+    """Fix v2 dates so they're ISO"""
+    if date_str.endswith("+1000"):
+        date_str = date_str[:-2]
+
+    return date_str
