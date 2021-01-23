@@ -1,3 +1,5 @@
+from typing import Optional
+
 from opennem.db import get_database_engine
 from opennem.utils.dates import subtract_days
 
@@ -35,14 +37,21 @@ def refresh_timescale_views(all: bool = False) -> None:
             c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
 
 
-def refresh_material_views() -> None:
+def refresh_material_views(view_name: Optional[str] = None) -> None:
     """Refresh material views"""
     __query = "REFRESH MATERIALIZED VIEW CONCURRENTLY {view} with data"
 
     engine = get_database_engine()
 
+    views = []
+
+    if view_name:
+        views.append(view_name)
+    else:
+        views = MATERIAL_VIEWS
+
     with engine.connect() as c:
-        for v in MATERIAL_VIEWS:
+        for v in views:
             query = __query.format(view=v)
             c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
 
