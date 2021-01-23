@@ -279,8 +279,6 @@ def demand_week(
     if not result:
         raise Exception("No results")
 
-    result.append_set(result)
-
     return result
 
 
