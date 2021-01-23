@@ -402,7 +402,7 @@ def energy_network_fueltech_query(
             t.flow_to,
             sum(t.flow_energy) as energy,
             max(t.flow_from_emissions),
-            max(t.flow_from_emissions)
+            max(t.flow_to_emissions)
         from vw_region_flow_emissions t
         where
             t.trading_interval <= '{year_max}' and
