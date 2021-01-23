@@ -175,6 +175,13 @@ def stats_factory(
         if not data.id:
             _id_list = []
 
+            # @NOTE disable for now since FE doesn't
+            # support it
+            # network.country if network else None,
+
+            if network:
+                _id_list.append(network.code)
+
             if region:
                 _id_list.append(region.lower())
 
