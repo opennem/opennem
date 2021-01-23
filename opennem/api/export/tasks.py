@@ -13,6 +13,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from opennem.api.export.controllers import (
+    demand_week,
     energy_fueltech_daily,
     energy_interconnector_emissions_region_daily,
     energy_interconnector_region_daily,
@@ -76,6 +77,15 @@ def export_power(
                 )
             )
             continue
+
+        demand_set = demand_week(
+            network=power_stat.network,
+            date_range=power_stat.date_range,
+            period=power_stat.period,
+            network_region_code=power_stat.network_region_query or power_stat.network_region,
+        )
+
+        stat_set.append_set(demand_set)
 
         if power_stat.network_region:
             flow_set = power_flows_week(

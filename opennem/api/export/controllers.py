@@ -5,6 +5,7 @@ from opennem.api.export.queries import (
     country_stats_query,
     energy_network_fueltech_query,
     interconnector_power_flow,
+    network_demand_query,
     power_network_fueltech_query,
     price_network_query,
 )
@@ -229,6 +230,49 @@ def power_flows_week(
     )
 
     result.append_set(result_exports)
+
+    return result
+
+
+def demand_week(
+    network: NetworkSchema,
+    date_range: ScadaDateRange,
+    network_region_code: Optional[str],
+    period: Optional[TimePeriod] = None,
+) -> Optional[OpennemDataSet]:
+    engine = get_database_engine()
+
+    query = network_demand_query(
+        network_region=network_region_code, date_range=date_range, network=network
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    if len(row) < 1:
+        raise Exception("No results from query: {}".format(query))
+
+    demand = [
+        DataQueryResult(interval=i[0], result=i[2], group_by="demand" if len(i) > 1 else None)
+        for i in row
+    ]
+
+    result = stats_factory(
+        demand,
+        # code=network_region_code or network.code,
+        network=network,
+        period=human_to_period("7d"),
+        interval=human_to_interval("30m"),
+        units=get_unit("demand"),
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    if not result:
+        raise Exception("No results")
+
+    result.append_set(result)
 
     return result
 
