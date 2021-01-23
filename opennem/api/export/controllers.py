@@ -242,8 +242,11 @@ def demand_week(
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
+    if not period:
+        period = human_to_period("7d")
+
     query = network_demand_query(
-        network_region=network_region_code, date_range=date_range, network=network
+        network_region=network_region_code, date_range=date_range, network=network, period=period
     )
 
     with engine.connect() as c:
