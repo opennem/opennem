@@ -33,7 +33,7 @@ def interconnector_flow_emissions_query(
             f.interconnector is True and
             (f.network_region= '{region}' or f.interconnector_region_to= '{region}') and
             fs.trading_interval <= '{date_end}' and
-            fs.trading_interval > '{date_start}'
+            fs.trading_interval >= '{date_start}'
         group by 1, flow_region, 3, 4, f.interconnector_region_to
         order by trading_interval desc, flow_from asc, flow_to asc;
     """.format(
@@ -62,7 +62,7 @@ def interconnector_flow_power_query(
                 f.interconnector is True and
                 (f.network_region= '{region}' or f.interconnector_region_to= '{region}') and
                 fs.trading_interval <= '{date_end}' and
-                fs.trading_interval > '{date_start}'
+                fs.trading_interval >= '{date_start}'
             group by 1, f.code, 3, 4
             order by trading_interval desc;
            """.format(
@@ -90,7 +90,7 @@ def interconnector_power_flow(
             fs.network_id = '{network_id}' and
             fs.network_region= '{region}' and
             fs.trading_interval <= '{date_end}' and
-            fs.trading_interval > '{date_start}'
+            fs.trading_interval >= '{date_start}'
         order by trading_interval desc;
     """.format(
         timezone=network.timezone_database,
@@ -118,7 +118,7 @@ def interconnector_net_energy_flow(network_region: str, date_range: ScadaDateRan
                 f.interconnector is True and
                 (f.network_region= :region or f.interconnector_region_to= :region) and
                 f.trading_interval <= :date_end and
-                f.trading_interval > :date_start
+                f.trading_interval >= :date_start
             group by 1, 3, 4
            """
         )
@@ -248,7 +248,7 @@ def network_demand_query(
         sum(demand_total) as demand
     from balancing_summary bs
     where
-        bs.trading_interval <= '{date_max}' and bs.trading_interval > '{date_min}' and
+        bs.trading_interval <= '{date_max}' and bs.trading_interval >= '{date_min}' and
         bs.network_id = '{network_id}' and
         {network_region_query}
         1=1
@@ -325,7 +325,7 @@ def power_network_fueltech_query(
             {network_query}
             {network_region_query}
             fs.trading_interval <= '{date_max}' and
-            fs.trading_interval > '{date_min}'
+            fs.trading_interval >= '{date_min}'
             {fueltech_filter}
         group by 1, 2
     """
