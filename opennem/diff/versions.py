@@ -4,11 +4,12 @@ OpenNEM Diff Versions
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from opennem.api.export.map import StatType
-from opennem.db import SessionLocal, get_database_engine
+from opennem.core.compat import translate_id_v3_to_v2
+from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.core import BaseModel
 from opennem.schema.network import NetworkNEM, NetworkSchema
@@ -146,26 +147,54 @@ def get_network_regions(network: NetworkSchema) -> List[NetworkRegion]:
     return codes
 
 
-def run_diff():
-    # regions = get_network_regions(NetworkNEM)
-    # url_map = get_url_map(regions)
+def get_id_diff(seriesv2: Dict, seriesv3: Dict) -> Optional[List[str]]:
+    id2_diffs = sorted([i["id"] for i in seriesv2])
+    id3_diffs = sorted([translate_id_v3_to_v2(i["id"]) for i in seriesv3])
+
+    diff = list(set(id2_diffs) - set(id3_diffs))
+
+    if len(diff) < 1:
+        return None
+
+    return diff
+
+
+def get_data_by_id(id: str, series: List[Dict]) -> Optional[Dict]:
+    id_s = list(filter(lambda x: x["id"] == id, series))
+
+    if len(id_s) < 1:
+        logger.error("Could not find id {} in series".format(id))
+        return None
+
+    return id_s.pop()
+
+
+def run_diff() -> None:
+    regions = get_network_regions(NetworkNEM)
+    url_map = get_url_map(regions)
     # validate_url_map(url_map)
 
-    v2_power = http.get(get_v2_url(StatType.power, "tas1")).json()
-    v3_power = http.get(get_v3_url(StatType.power, "tas1")).json()["data"]
+    network_region = "tas1"
 
-    print(len(v2_power), len(v3_power))
+    v2_power = http.get(get_v2_url(StatType.power, network_region)).json()
+    v3_power = http.get(get_v3_url(StatType.power, network_region)).json()["data"]
 
-    id2_diffs = sorted([i["id"] for i in v2_power])
-    id3_diffs = sorted([i["id"] for i in v3_power])
+    if len(v2_power) != len(v3_power):
+        logger.info(
+            "Series {} for {} is missing ids. v2 has {} v3 has {}".format(
+                StatType.power.value, network_region, len(v2_power), len(v3_power)
+            )
+        )
 
-    from pprint import pprint
+    id_diff = get_id_diff(v2_power, v3_power)
 
-    pprint(id2_diffs)
-    print("-" * 15)
-    pprint(id3_diffs)
-
-    print(list(set(id2_diffs) - set(id3_diffs)))
+    if id_diff:
+        for i in id_diff:
+            logger.info(
+                "Series {} for {} is missing ids. v3 doesn't have {}".format(
+                    StatType.power.value, network_region, i, (v3_power)
+                )
+            )
 
 
 if __name__ == "__main__":
