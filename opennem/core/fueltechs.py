@@ -128,3 +128,21 @@ def map_v2_fueltech(
         return LEGACY_FUELTECH_MAP[ft]
 
     return ft
+
+
+def map_v3_fueltech(
+    fueltech: str,
+) -> str:
+    """
+    Takes a v3 fueltech and maps it to v2
+
+    """
+
+    ft = clean_fueltech(fueltech)
+
+    # Lookup legacy fuel tech types and map them
+    for v2_fueltech, v3_fueltech in LEGACY_FUELTECH_MAP.items():
+        if v3_fueltech == fueltech:
+            return v2_fueltech
+
+    return ft
