@@ -10,6 +10,7 @@ TIMESCALE_VIEWS = [
     "mv_facility_energy_hour",
     "mv_nem_facility_power_5min",
     "mv_interchange_energy_nem_region",
+    "mv_interchange_power_nem_region",
     "mv_wem_facility_power_30min",
 ]
 
