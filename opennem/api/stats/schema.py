@@ -77,10 +77,10 @@ class OpennemDataHistory(BaseConfig):
 class OpennemData(BaseConfig):
     id: Optional[str]
     type: Optional[str]
-    region: Optional[str]
     fuel_tech: Optional[str]
 
     network: Optional[str]
+    region: Optional[str]
     data_type: str
     code: str = ""
     units: str
@@ -90,6 +90,13 @@ class OpennemData(BaseConfig):
 
     history: OpennemDataHistory
     forecast: Optional[OpennemDataHistory]
+
+    # validators
+    _code_lowercase = validator("code", allow_reuse=True, pre=True)(optionaly_lowercase_string)
+    _network_lowercase = validator("network", allow_reuse=True, pre=True)(
+        optionaly_lowercase_string
+    )
+    _region_lowercase = validator("region", allow_reuse=True, pre=True)(optionaly_lowercase_string)
 
 
 class OpennemDataSet(BaseConfig):
