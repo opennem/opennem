@@ -65,6 +65,9 @@ class OpennemSettings(BaseSettings):
 
     _static_folder_path: str = "opennem/static/"
 
+    # output schema options
+    schema_output_lowercase_strings: bool = True
+
     # @todo overwrite scrapy settings here
     scrapy: Optional[Settings] = get_project_settings()
 
