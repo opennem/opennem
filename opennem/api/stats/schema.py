@@ -126,6 +126,7 @@ class OpennemDataSet(BaseConfig):
     _region_lowercase = validator("region", allow_reuse=True, pre=True)(optionaly_lowercase_string)
     _code_lowercase = validator("code", allow_reuse=True, pre=True)(optionaly_lowercase_string)
 
+
 class RegionFlowResult(BaseConfig):
     interval: datetime
     flow_from: str
