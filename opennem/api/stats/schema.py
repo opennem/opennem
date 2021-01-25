@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel, validator
 
@@ -130,7 +130,7 @@ class ScadaDateRange(BaseConfig):
     end: datetime
     network: Optional[NetworkSchema]
 
-    def _get_value_localized(self, field_name: str = "start"):
+    def _get_value_localized(self, field_name: str = "start") -> Any:
         timezone = get_current_timezone()
         date_aware = getattr(self, field_name)
 
@@ -141,13 +141,13 @@ class ScadaDateRange(BaseConfig):
 
         return date_aware
 
-    def get_start_year(self):
+    def get_start_year(self) -> int:
         return self.start.year
 
-    def get_start(self):
+    def get_start(self) -> datetime:
         return self._get_value_localized("start")
 
-    def get_end(self):
+    def get_end(self) -> datetime:
         return self._get_value_localized("end")
 
     def get_start_sql(self, as_date: bool = False) -> str:
