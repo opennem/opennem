@@ -17,6 +17,8 @@ depends_on = None
 
 
 def upgrade() -> None:
+    op.execute("SET LOCAL synchronize_seqscans = off;")
+
     op.execute("ALTER TABLE facility_scada DROP CONSTRAINT facility_scada_pkey CASCADE")
 
     # ensure is_forecast has values
@@ -30,6 +32,8 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    op.execute("SET LOCAL synchronize_seqscans = off;")
+
     op.execute("ALTER TABLE facility_scada DROP CONSTRAINT facility_scada_pkey CASCADE")
     op.create_primary_key(
         "facility_scada_pkey",
