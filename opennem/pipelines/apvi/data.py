@@ -71,9 +71,7 @@ class APVIStoreData(object):
 
         for record in postcode_gen:
             for state, prefix in STATE_POSTCODE_PREFIXES.items():
-                facility_code = "{}_{}_{}".format(
-                    ROOFTOP_CODE, "apvi".upper(), state.upper()
-                )
+                facility_code = "{}_{}_{}".format(ROOFTOP_CODE, "apvi".upper(), state.upper())
 
                 interval_time = parse_date(
                     record["ts"],
@@ -81,9 +79,7 @@ class APVIStoreData(object):
                     yearfirst=True,
                 )
 
-                interval_time = interval_time.astimezone(
-                    NetworkNEM.get_timezone()
-                )
+                interval_time = interval_time.astimezone(NetworkNEM.get_timezone())
 
                 generated = sum(
                     [
@@ -125,20 +121,14 @@ class APVIStoreData(object):
                         STATE_CAPACITIES[state] += capacity_val
 
             for state, state_capacity in STATE_CAPACITIES.items():
-                facility_code = "{}_{}_{}".format(
-                    ROOFTOP_CODE, "apvi".upper(), state.upper()
-                )
+                facility_code = "{}_{}_{}".format(ROOFTOP_CODE, "apvi".upper(), state.upper())
 
                 state_facility: Facility = (
-                    session.query(Facility)
-                    .filter_by(code=facility_code)
-                    .one_or_none()
+                    session.query(Facility).filter_by(code=facility_code).one_or_none()
                 )
 
                 if not state_facility:
-                    raise Exception(
-                        "Could not find rooftop facility for %s", facility_code
-                    )
+                    raise Exception("Could not find rooftop facility for %s", facility_code)
 
                 state_facility.capacity_registered = state_capacity
 
@@ -155,7 +145,7 @@ class APVIStoreData(object):
         stmt = insert(FacilityScada).values(records_to_store)
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
-            index_elements=["trading_interval", "network_id", "facility_code"],
+            index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
             set_={
                 "generated": stmt.excluded.generated,
                 "created_by": stmt.excluded.created_by,

@@ -262,7 +262,7 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
     stmt = insert(FacilityScada).values(records_to_store)
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
-        index_elements=["trading_interval", "network_id", "facility_code"],
+        index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
         set_={"generated": stmt.excluded.generated},
     )
 

@@ -66,9 +66,9 @@ class WemStoreFacilityIntervals(object):
 
 class WemStoreLiveFacilityScada(object):
     """
-        Store live facility scada data.
+    Store live facility scada data.
 
-        @NOTE no longer used
+    @NOTE no longer used
 
     """
 
@@ -89,9 +89,7 @@ class WemStoreLiveFacilityScada(object):
             # facility_capacity = row["MAX_GEN_CAPACITY"]
 
             if row["AS_AT"] != "":
-                last_asat = parse_date(
-                    row["AS_AT"], network=NetworkWEM, dayfirst=False
-                )
+                last_asat = parse_date(row["AS_AT"], network=NetworkWEM, dayfirst=False)
 
             if not last_asat or type(last_asat) is not datetime:
                 logger.error("Invalid row or no datetime")
@@ -103,9 +101,7 @@ class WemStoreLiveFacilityScada(object):
                 column = f"I{i:02}"
 
                 if column not in row:
-                    logger.error(
-                        "Do not have data for interval {}".format(column)
-                    )
+                    logger.error("Do not have data for interval {}".format(column))
                     continue
 
                 if i > 0:
@@ -135,7 +131,7 @@ class WemStoreLiveFacilityScada(object):
         stmt = insert(FacilityScada).values(records_to_store)
         stmt.bind = engine
         stmt = stmt.on_conflict_do_update(
-            index_elements=["trading_interval", "network_id", "facility_code"],
+            index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
             set_={
                 # "updated_by": stmt.excluded.created_by,
                 "eoi_quantity": stmt.excluded.eoi_quantity,
@@ -152,4 +148,3 @@ class WemStoreLiveFacilityScada(object):
             session.close()
 
         return len(records_to_store)
-
