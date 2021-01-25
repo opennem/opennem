@@ -386,6 +386,87 @@ def power_network_fueltech_query(
     return query
 
 
+def power_network_rooftop_query(
+    network: NetworkSchema = NetworkWEM,
+    date_range: Optional[ScadaDateRange] = None,
+    period: Optional[TimePeriod] = None,
+    network_region: Optional[str] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
+) -> str:
+    """Query power stats"""
+
+    if not networks_query:
+        networks_query = [network]
+
+    if network not in networks_query:
+        networks_query.append(network)
+
+    if not date_range:
+        date_range = get_scada_range(network=network, networks=networks_query)
+
+    table_query = "mv_nem_facility_power_30min"
+
+    if network == NetworkWEM:
+        table_query = "mv_wem_facility_power_30min"
+
+    __query = """
+        select
+            fs.trading_interval at time zone '{timezone}' AS trading_interval,
+            ft.code as fueltech_code,
+            sum(fs.facility_power) as facility_power
+        from {table_query} fs
+        join facility f on fs.facility_code = f.code
+        join fueltech ft on f.fueltech_id = ft.code
+        where
+            f.fueltech_id = 'solar_rooftop' and
+            {network_query}
+            {network_region_query}
+            fs.trading_interval <= '{date_max}' and
+            fs.trading_interval >= '{date_min}'
+        group by 1, 2
+        order by 1 desc
+    """
+
+    network_region_query: str = ""
+    wem_apvi_case: str = ""
+    timezone: str = network.timezone_database
+
+    if network_region:
+        network_region_query = f"f.network_region='{network_region}' and "
+
+    if NetworkWEM in networks_query:
+        # silly single case we'll refactor out
+        # APVI network is used to provide rooftop for WEM so we require it
+        # in country-wide totals
+        wem_apvi_case = "or (f.network_id='APVI' and f.network_region='WEM')"
+
+    network_query = "(f.network_id IN ({}) {}) and ".format(
+        networks_to_in(networks_query), wem_apvi_case
+    )
+
+    if not date_range:
+        raise Exception("Require a date range")
+
+    date_max = date_range.get_end()
+    date_min = date_range.get_start()
+
+    if period:
+        date_min = date_range.get_end() - timedelta(minutes=period.period)
+
+    query = dedent(
+        __query.format(
+            table_query=table_query,
+            network_query=network_query,
+            network_region_query=network_region_query,
+            timezone=timezone,
+            date_max=date_max,
+            date_min=date_min,
+        )
+    )
+
+    return query
+
+
 def energy_network_fueltech_query(
     network: NetworkSchema,
     interconnector: bool = False,
