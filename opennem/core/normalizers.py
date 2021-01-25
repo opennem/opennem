@@ -228,6 +228,14 @@ def clean_sentence(sentence: str) -> str:
     return sentence_reformed
 
 
+def is_lowercase(subject: str) -> bool:
+    return subject.lower() == subject
+
+
+def is_uppercase(subject: str) -> bool:
+    return subject.upper() == subject
+
+
 def clean_float(number: Union[str, int, float]) -> Optional[float]:
     num_return = None
 
