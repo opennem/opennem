@@ -7,6 +7,7 @@ from opennem.api.export.queries import (
     interconnector_power_flow,
     network_demand_query,
     power_network_fueltech_query,
+    power_network_rooftop_forecast_query,
     power_network_rooftop_query,
     price_network_query,
 )
@@ -382,11 +383,6 @@ def power_week(
         for i in row
     ]
 
-    # rooftop_forecast = [
-    #     DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-    #     for i in row
-    # ]
-
     rooftop = stats_factory(
         rooftop_power,
         # code=network_region_code or network.code,
@@ -397,6 +393,38 @@ def power_week(
         region=network_region_code,
         fueltech_group=True,
     )
+
+    # rooftop forecast
+    query = power_network_rooftop_forecast_query(
+        network=network,
+        networks_query=networks_query,
+        period=period,
+        date_range=date_range,
+        network_region=network_region_code,
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    rooftop_forecast_power = [
+        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
+        for i in row
+    ]
+
+    rooftop_forecast = stats_factory(
+        rooftop_power,
+        # code=network_region_code or network.code,
+        network=network,
+        interval=human_to_interval("30m"),
+        period=period,
+        units=units,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    if len(rooftop.data) > 0 and len(rooftop_forecast.data) > 0:
+        rooftop.data[0].forecast = rooftop_forecast.data[0].history
 
     result.append_set(rooftop)
 
