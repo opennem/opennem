@@ -7,6 +7,7 @@ from opennem.api.export.queries import (
     interconnector_power_flow,
     network_demand_query,
     power_network_fueltech_query,
+    power_network_rooftop_query,
     price_network_query,
 )
 from opennem.api.stats.controllers import get_scada_range, stats_factory
@@ -361,6 +362,43 @@ def power_week(
     )
 
     result.append_set(stats_market_value)
+
+    # rooftop solar
+
+    query = power_network_rooftop_query(
+        network=network,
+        networks_query=networks_query,
+        period=period,
+        date_range=date_range,
+        network_region=network_region_code,
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    rooftop_power = [
+        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
+        for i in row
+    ]
+
+    # rooftop_forecast = [
+    #     DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
+    #     for i in row
+    # ]
+
+    rooftop = stats_factory(
+        rooftop_power,
+        # code=network_region_code or network.code,
+        network=network,
+        interval=human_to_interval("30m"),
+        period=period,
+        units=units,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    result.append_set(rooftop)
 
     return result
 
