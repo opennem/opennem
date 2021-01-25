@@ -23,6 +23,7 @@ scrapy crawl -L ERROR au.nem.current.dispatch
 scrapy crawl -L ERROR au.nem.current.dispatch_is
 scrapy crawl -L ERROR au.nem.current.dispatch_actual_gen
 scrapy crawl -L ERROR au.nem.current.rooftop
+scrapy crawl -L ERROR au.nem.current.rooftop_forecast
 scrapy crawl -L ERROR au.nem.current.price
 
 # bom
