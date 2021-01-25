@@ -85,18 +85,20 @@ def stats_factory(
 
     for group_code in group_codes:
 
-        data_grouped: Dict[Any, Any] = dict()
+        data_grouped: Dict[Any, Any] = OrderedDict()
 
         for stat in stats:
+            if stat.group_by != group_code:
+                continue
+
             if stat.interval not in data_grouped:
                 data_grouped[stat.interval] = None
 
-            if stat.group_by == group_code:
-                data_grouped[stat.interval] = stat.result
+            data_grouped[stat.interval] = stat.result
 
-        data_sorted = OrderedDict(sorted(data_grouped.items()))
+        # data_sorted = OrderedDict(sorted(data_grouped.items()))
 
-        data_value = list(data_sorted.values())
+        data_value = list(data_grouped.values())
 
         # Skip null series
         if len([i for i in data_value if i]) == 0:
