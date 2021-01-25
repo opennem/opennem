@@ -9,8 +9,18 @@ from pydantic import BaseModel, validator
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
+from opennem.settings import settings
 from opennem.utils.numbers import sigfig_compact
 from opennem.utils.timezone import get_current_timezone
+
+
+def optionaly_lowercase_string(value: str) -> str:
+    """Read from settings if we want output schema string
+    values to be lowercased or not and perform"""
+    if settings.schema_output_lowercase_strings:
+        value = value.lower()
+
+    return value
 
 
 class ScadaInterval(object):
