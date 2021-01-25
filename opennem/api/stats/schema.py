@@ -10,6 +10,7 @@ from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
 from opennem.settings import settings
+from opennem.utils.dates import chop_microseconds
 from opennem.utils.numbers import sigfig_compact
 from opennem.utils.timezone import get_current_timezone
 
@@ -85,11 +86,11 @@ class OpennemData(BaseConfig):
 
     # validators
     _id_lowercase = validator("id", allow_reuse=True, pre=True)(optionaly_lowercase_string)
-    _code_lowercase = validator("code", allow_reuse=True, pre=True)(optionaly_lowercase_string)
     _network_lowercase = validator("network", allow_reuse=True, pre=True)(
         optionaly_lowercase_string
     )
     _region_lowercase = validator("region", allow_reuse=True, pre=True)(optionaly_lowercase_string)
+    _code_lowercase = validator("code", allow_reuse=True, pre=True)(optionaly_lowercase_string)
 
 
 class OpennemDataSet(BaseConfig):
@@ -116,6 +117,9 @@ class OpennemDataSet(BaseConfig):
             self.data += subject_set.data
 
         return None
+
+    # validators
+    _created_at_trim = validator("created_at", allow_reuse=True, pre=True)(chop_microseconds)
 
 
 class RegionFlowResult(BaseConfig):
