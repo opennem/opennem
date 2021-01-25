@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Union
 
-from pydantic import BaseModel, validator
+from pydantic import validator
 
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
