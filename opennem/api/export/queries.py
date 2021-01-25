@@ -7,7 +7,7 @@ from sqlalchemy.sql.elements import TextClause
 
 from opennem.api.stats.controllers import get_scada_range, networks_to_in
 from opennem.api.stats.schema import ScadaDateRange
-from opennem.schema.network import NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.utils.dates import subtract_week
@@ -324,7 +324,7 @@ def power_network_fueltech_query(
         join fueltech ft on f.fueltech_id = ft.code
         where
             f.fueltech_id is not null and
-            f.fueltech_id not in ('exports', 'imports') and
+            f.fueltech_id not in ({fueltechs_exclude}) and
             {network_query}
             {network_region_query}
             fs.trading_interval <= '{date_max}' and
@@ -338,10 +338,13 @@ def power_network_fueltech_query(
     wem_apvi_case: str = ""
     timezone: str = network.timezone_database
 
+    fueltechs_excluded = ["exports", "imports"]
+
+    if NetworkNEM in networks_query:
+        fueltechs_excluded.append("solar_rooftop")
+
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
-    else:
-        fueltech_filter = "and f.fueltech_id not in ('imports', 'exports') "
 
     if NetworkWEM in networks_query:
         # silly single case we'll refactor out
@@ -362,6 +365,8 @@ def power_network_fueltech_query(
     if period:
         date_min = date_range.get_end() - timedelta(minutes=period.period)
 
+    fueltechs_exclude = ", ".join("'{}'".format(i) for i in fueltechs_excluded)
+
     query = dedent(
         __query.format(
             table_query=table_query,
@@ -373,6 +378,7 @@ def power_network_fueltech_query(
             date_min=date_min,
             fueltech_filter=fueltech_filter,
             wem_apvi_case=wem_apvi_case,
+            fueltechs_exclude=fueltechs_exclude,
         )
     )
 
