@@ -413,7 +413,7 @@ def power_week(
     ]
 
     rooftop_forecast = stats_factory(
-        rooftop_power,
+        rooftop_forecast_power,
         # code=network_region_code or network.code,
         network=network,
         interval=human_to_interval("30m"),
@@ -423,7 +423,7 @@ def power_week(
         fueltech_group=True,
     )
 
-    if len(rooftop.data) > 0 and len(rooftop_forecast.data) > 0:
+    if rooftop and rooftop_forecast and len(rooftop.data) > 0 and len(rooftop_forecast.data) > 0:
         rooftop.data[0].forecast = rooftop_forecast.data[0].history
 
     result.append_set(rooftop)
