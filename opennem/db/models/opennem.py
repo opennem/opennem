@@ -725,7 +725,7 @@ class FacilityScada(Base, BaseModel):
 
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
     generated = Column(Numeric, nullable=True)
-    is_forecast = Column(Boolean, default=False)
+    is_forecast = Column(Boolean, default=False, primary_key=True)
     eoi_quantity = Column(Numeric, nullable=True)
 
 
