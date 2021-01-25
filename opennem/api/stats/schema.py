@@ -120,7 +120,11 @@ class OpennemDataSet(BaseConfig):
 
     # validators
     _created_at_trim = validator("created_at", allow_reuse=True, pre=True)(chop_microseconds)
-
+    _network_lowercase = validator("network", allow_reuse=True, pre=True)(
+        optionaly_lowercase_string
+    )
+    _region_lowercase = validator("region", allow_reuse=True, pre=True)(optionaly_lowercase_string)
+    _code_lowercase = validator("code", allow_reuse=True, pre=True)(optionaly_lowercase_string)
 
 class RegionFlowResult(BaseConfig):
     interval: datetime
