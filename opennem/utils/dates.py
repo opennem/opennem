@@ -253,12 +253,10 @@ def subtract_days(subject: Optional[datetime] = None, days: int = 30) -> datetim
 
 def is_valid_isodate(date: str, check_timezone: bool = False) -> bool:
     """Check if a string is a valid ISO formatted datestring"""
-    is_valid = False
     dt = None
 
     try:
         dt = datetime.fromisoformat(date)
-        is_valid = True
     except ValueError:
         return False
 
