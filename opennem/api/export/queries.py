@@ -323,6 +323,7 @@ def power_network_fueltech_query(
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
         where
+            fs.is_forecast is False and
             f.fueltech_id is not null and
             f.fueltech_id not in ({fueltechs_exclude}) and
             {network_query}
