@@ -14,8 +14,8 @@ from opennem.utils.numbers import sigfig_compact
 from opennem.utils.timezone import get_current_timezone
 
 
-def chop_microseconds(delta: timedelta) -> timedelta:
-    return delta - timedelta(microseconds=delta.microseconds)
+def chop_microseconds(dt: datetime) -> datetime:
+    return dt - timedelta(microseconds=dt.microsecond)
 
 
 def optionaly_lowercase_string(value: str) -> str:
