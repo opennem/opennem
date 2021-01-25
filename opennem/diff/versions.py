@@ -284,7 +284,7 @@ def run_diff() -> None:
                                 )
                             continue
 
-                        if hv2i in ["start", "end"]:
+                        if hv2i in ["start", "end", "last"]:
                             dt2 = hv2[hv2i]
                             dt3 = hv3[hv2i]
 
@@ -301,6 +301,16 @@ def run_diff() -> None:
                                         hv2i, dt3
                                     )
                                 )
+                            continue
+
+                        data_matches = hv2[hv2i] == hv3[hv2i]
+
+                        if not data_matches:
+                            logger.error(
+                                "    - key {} DOESNT MATCH. values: v2'{}' and v3'{}'".format(
+                                    hv2i, hv2[hv2i], hv3[hv2i]
+                                )
+                            )
 
                     continue
 
