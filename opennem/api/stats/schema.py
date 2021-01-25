@@ -23,6 +23,17 @@ def optionaly_lowercase_string(value: str) -> str:
     return value
 
 
+def number_output(n: Union[float, int, None]) -> Optional[float]:
+    """Format numbers for data series outputs"""
+    if n is None:
+        return None
+
+    if n == 0:
+        return 0
+
+    return sigfig_compact(n)
+
+
 class ScadaInterval(object):
     date: datetime
     value: Optional[float]
@@ -44,16 +55,6 @@ class UnitScadaReading(BaseModel):
 class StationScadaReading(BaseModel):
     code: str
     facilities: Dict[str, UnitScadaReading]
-
-
-def number_output(n: Union[float, int, None]) -> Optional[float]:
-    if n is None:
-        return None
-
-    if n == 0:
-        return 0
-
-    return sigfig_compact(n)
 
 
 class OpennemDataHistory(BaseConfig):
