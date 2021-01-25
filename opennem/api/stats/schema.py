@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -10,9 +10,12 @@ from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
 from opennem.settings import settings
-from opennem.utils.dates import chop_microseconds
 from opennem.utils.numbers import sigfig_compact
 from opennem.utils.timezone import get_current_timezone
+
+
+def chop_microseconds(delta: timedelta) -> timedelta:
+    return delta - timedelta(microseconds=delta.microseconds)
 
 
 def optionaly_lowercase_string(value: str) -> str:
