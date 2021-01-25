@@ -130,7 +130,7 @@ def stats_factory(
         )
 
         if network:
-            data.network = network.code.lower()
+            data.network = network.code
 
         # *sigh* - not the most flexible model
         # @TODO fix this schema and make it more flexible
@@ -141,10 +141,10 @@ def stats_factory(
                 # @NOTE disable for now since FE doesn't
                 # support it
                 # network.country if network else None,
-                network.code.lower() if network else None,
-                region.lower() if region else None,
+                network.code if network else None,
+                region if region else None,
                 "fuel_tech",
-                group_code.lower(),
+                group_code,
                 units.unit_type,
             ]
 
@@ -158,10 +158,10 @@ def stats_factory(
             # setattr(data, group_field, group_code)
 
             if network:
-                group_fields.append(network.code.lower())
+                group_fields.append(network.code)
 
             if region:
-                group_fields.append(region.lower())
+                group_fields.append(region)
 
             group_fields = group_fields + [
                 units.unit_type,
@@ -183,19 +183,19 @@ def stats_factory(
             # network.country if network else None,
 
             if network:
-                _id_list.append(network.code.lower())
+                _id_list.append(network.code)
 
             if region:
-                _id_list.append(region.lower())
+                _id_list.append(region)
 
             if units and units.name_alias:
                 _id_list.append(units.name_alias)
 
-            data.id = ".".join([f.lower() for f in _id_list if f])
+            data.id = ".".join([f for f in _id_list if f])
             data.type = units.unit_type
 
         if region:
-            data.region = region.lower()
+            data.region = region
 
         stats_grouped.append(data)
 
@@ -208,10 +208,10 @@ def stats_factory(
     # country.network.region
     if not code:
         if network:
-            code = network.code.lower()
+            code = network.code
 
         if region:
-            code = region.lower()
+            code = region
 
     stat_set = OpennemDataSet(
         type=units.unit_type,
@@ -222,10 +222,10 @@ def stats_factory(
     )
 
     if network:
-        stat_set.network = network.code.lower()
+        stat_set.network = network.code
 
     if region:
-        stat_set.region = region.lower()
+        stat_set.region = region
 
     return stat_set
 
