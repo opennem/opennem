@@ -504,7 +504,7 @@ def power_network_rooftop_forecast_query(
             f.fueltech_id = 'solar_rooftop' and
             {network_query}
             {network_region_query}
-            fs.trading_interval > '{date_min}'
+            fs.trading_interval > '{date_max}'
         group by 1, 2
         order by 1 desc
     """
@@ -532,7 +532,7 @@ def power_network_rooftop_forecast_query(
     date_min = date_range.get_end()
 
     if period:
-        date_min = date_range.get_end() - timedelta(minutes=period.period)
+        date_max = date_range.get_end()
 
     query = dedent(
         __query.format(
@@ -540,7 +540,7 @@ def power_network_rooftop_forecast_query(
             network_query=network_query,
             network_region_query=network_region_query,
             timezone=timezone,
-            date_min=date_min,
+            date_max=date_max,
         )
     )
 
