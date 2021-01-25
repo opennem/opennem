@@ -37,7 +37,6 @@ def translate_id_v2_to_v3(v2_id: str) -> str:
         idc.insert(0, network.code.lower())
 
     stat_type = idc[-1]
-    network_region = idc[1]
 
     if stat_type in ["energy", "power", "market_value", "emissions"]:
         fueltech_old = idc[-2]
