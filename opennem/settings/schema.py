@@ -66,7 +66,10 @@ class OpennemSettings(BaseSettings):
     _static_folder_path: str = "opennem/static/"
 
     # output schema options
+    # output values for region, network etc. in lower case
     schema_output_lowercase_strings: bool = True
+    # prepend the country code in the id
+    schema_output_id_country: bool = False
 
     # @todo overwrite scrapy settings here
     scrapy: Optional[Settings] = get_project_settings()
