@@ -61,24 +61,6 @@ def stats_factory(
     if network:
         timezone = network.get_timezone()
 
-    dates = [s.interval for s in stats]
-
-    if not dates:
-        return None
-
-    start = min(dates)
-    end = max(dates)
-
-    # should probably make sure these are the same TZ
-    if timezone and not is_aware(start):
-        start = make_aware(min(dates), timezone)
-
-    if timezone and not is_aware(end):
-        end = make_aware(max(dates), timezone)
-
-    # free
-    dates = []
-
     group_codes = list(set([i.group_by for i in stats if i.group_by]))
 
     stats_grouped = []
@@ -112,6 +94,25 @@ def stats_factory(
         # Cast trailing nulls
         if not units.name.startswith("temperature") or units.cast_nulls:
             data_value = cast_trailing_nulls(data_value)
+
+        # Find start/end dates
+        dates = list(data_grouped.keys())
+
+        if not dates:
+            return None
+
+        start = min(dates)
+        end = max(dates)
+
+        # should probably make sure these are the same TZ
+        if timezone and not is_aware(start):
+            start = make_aware(min(dates), timezone)
+
+        if timezone and not is_aware(end):
+            end = make_aware(max(dates), timezone)
+
+        # free
+        dates = []
 
         history = OpennemDataHistory(
             start=start,
