@@ -66,6 +66,7 @@ ITEM_PIPELINES = {
     "opennem.pipelines.wem.facilities.WemStoreLiveFacilities": 417,
     "opennem.pipelines.wem.participant.WemStoreParticipant": 418,
     "opennem.pipelines.wem.participant.WemStoreLiveParticipant": 419,
+    "opennem.pipelines.nem.summary.NemwebSummaryPipeline": 420,
     # APVI
     "opennem.pipelines.apvi.data.APVIStoreData": 450,
     # NPI
