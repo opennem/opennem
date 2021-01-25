@@ -34,6 +34,20 @@ def number_output(n: Union[float, int, None]) -> Optional[float]:
     return sigfig_compact(n)
 
 
+def get_data_id(
+    network: NetworkSchema,
+) -> str:
+    """Method to build the data id for a stat export"""
+    id_components = []
+
+    if settings.schema_output_id_country:
+        id_components.append(network.country)
+
+    id_str = ".".join([i.lower() for i in id_components if i])
+
+    return id_str
+
+
 class OpennemDataHistory(BaseConfig):
     start: Union[datetime, date]
     last: Union[datetime, date]
