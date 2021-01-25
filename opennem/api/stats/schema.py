@@ -34,29 +34,6 @@ def number_output(n: Union[float, int, None]) -> Optional[float]:
     return sigfig_compact(n)
 
 
-class ScadaInterval(object):
-    date: datetime
-    value: Optional[float]
-
-    def __init__(self, date: datetime, value: Optional[float] = None):
-        self.date = date
-        self.value = value
-
-
-class ScadaReading(Tuple[datetime, Optional[float]]):
-    pass
-
-
-class UnitScadaReading(BaseModel):
-    code: str
-    data: List[ScadaReading]
-
-
-class StationScadaReading(BaseModel):
-    code: str
-    facilities: Dict[str, UnitScadaReading]
-
-
 class OpennemDataHistory(BaseConfig):
     start: Union[datetime, date]
     last: Union[datetime, date]
