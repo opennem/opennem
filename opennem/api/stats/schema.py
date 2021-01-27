@@ -6,6 +6,7 @@ from typing import Any, List, Optional, Union
 
 from pydantic import validator
 
+from opennem.core.compat import translate_id_v2_to_v3, translate_id_v3_to_v2
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
@@ -111,6 +112,10 @@ class OpennemData(BaseConfig):
     )
     _region_lowercase = validator("region", allow_reuse=True, pre=True)(optionaly_lowercase_string)
     _code_lowercase = validator("code", allow_reuse=True, pre=True)(optionaly_lowercase_string)
+
+    # conveniance methods
+    def id_v2(self) -> str:
+        return translate_id_v3_to_v2(self.id)
 
 
 class OpennemDataSet(BaseConfig):
