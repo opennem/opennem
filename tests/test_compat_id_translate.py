@@ -29,6 +29,8 @@ from opennem.core.compat import translate_id_v2_to_v3, translate_id_v3_to_v2
         ("nem.nsw1.fuel_tech.solar_rooftop.energy", "nsw1.fuel_tech.rooftop_solar.energy"),
         ("nem.nsw1.fuel_tech.imports.emissions", "nsw1.fuel_tech.imports.emissions"),
         ("nem.nsw1.demand", "nsw1.demand"),
+        #
+        ("nem.nsw1.fuel_tech.coal_brown.power", "nsw1.fuel_tech.brown_coal.power"),
     ],
 )
 def test_translate_id_v3_to_v2(id: str, id_expected: str) -> None:
