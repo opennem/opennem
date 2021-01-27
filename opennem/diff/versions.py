@@ -8,6 +8,10 @@ from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
 from opennem.api.export.map import StatType
+from opennem.api.stats.loader import load_statset
+from opennem.api.stats.schema import OpennemDataSet
+from opennem.core.compat.loader import load_statset_v2
+from opennem.core.compat.schema import OpennemDataSetV2, OpennemDataV2
 from opennem.core.compat.utils import translate_id_v2_to_v3, translate_id_v3_to_v2
 from opennem.core.fueltechs import map_v3_fueltech
 from opennem.db import SessionLocal
@@ -105,6 +109,9 @@ class DiffComparisonSet(BaseConfig):
     network_region: str
     bucket_size: Optional[str]
 
+    v2: Optional[OpennemDataSetV2]
+    v3: Optional[OpennemDataSet]
+
     @property
     def urlv2(self) -> str:
         return get_v2_url(self.stat_type, self.network_region, self.bucket_size)
@@ -151,6 +158,29 @@ def validate_url_map(url_map: List[DiffComparisonSet]) -> bool:
     return success
 
 
+def load_url_map(url_map: List[DiffComparisonSet]) -> List[DiffComparisonSet]:
+
+    for us in url_map:
+        for version in ["v2", "v3"]:
+            req_url = getattr(us, f"url{version}")
+            r = http.get(req_url)
+
+            if not r.ok:
+                logger.error("invalid {} url: {}".format(version, req_url))
+
+            statset = None
+
+            if version == "v2":
+                statset = load_statset_v2(r.json())
+                us.v2 = statset
+
+            else:
+                statset = load_statset(r.json())
+                us.v3 = statset
+
+    return url_map
+
+
 def get_network_regions(
     network: NetworkSchema, network_region: Optional[str] = None
 ) -> List[NetworkRegion]:
@@ -194,6 +224,7 @@ def run_diff() -> None:
 
     # validate all urls are valid
     validate_url_map(statsetmap)
+    # statsetmap = load_url_map(statsetmap)
 
     for statset in statsetmap:
         v2_power = http.get(statset.urlv2).json()
@@ -331,5 +362,19 @@ def run_diff() -> None:
         logger.info("=" * 50)
 
 
+def run_data_diff() -> None:
+    regions = get_network_regions(NetworkNEM, "NSW1")
+    statsetmap = get_url_map(regions)
+
+    # validate all urls are valid
+    validate_url_map(statsetmap)
+    statsetmap = load_url_map(statsetmap)
+
+    for statset in statsetmap:
+        print("{} {} {} ".format(statset.stat_type, statset.bucket_size, statset.network_region))
+        print(statset.v2)
+        print(statset.v3)
+
+
 if __name__ == "__main__":
-    run_diff()
+    run_data_diff()
