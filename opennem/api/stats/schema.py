@@ -7,6 +7,7 @@ from typing import Any, List, Optional, Union
 from pydantic import validator
 
 from opennem.core.compat import translate_id_v2_to_v3, translate_id_v3_to_v2
+from opennem.core.fueltechs import map_v3_fueltech
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
@@ -116,6 +117,10 @@ class OpennemData(BaseConfig):
     # conveniance methods
     def id_v2(self) -> str:
         return translate_id_v3_to_v2(self.id)
+
+    def fueltech_v2(self) -> str:
+        if self.fuel_tech:
+            return map_v3_fueltech(self.fuel_tech)
 
 
 class OpennemDataSet(BaseConfig):
