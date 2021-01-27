@@ -15,7 +15,7 @@ from opennem.utils.interval import get_human_interval
 
 class OpennemDataHistoryV2(BaseConfig):
     start: Union[datetime, date]
-    end: Union[datetime, date]
+    last: Union[datetime, date]
     interval: str
     data: List[Optional[float]]
 
