@@ -92,7 +92,7 @@ def series_not_close(
     for k in s1d.keys():
         if k in s2d:
             if not are_approx_equal(s1d[k], s2d[k]):
-                d[k.isoformat()] = (s1d[k], s2d[k])
+                d[k.isoformat()] = {"v2": s1d[k], "v3": s2d[k]}
 
     return d
 
