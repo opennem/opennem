@@ -90,7 +90,7 @@ def interconnector_power_flow(
             fs.network_id = '{network_id}' and
             fs.network_region= '{region}' and
             fs.trading_interval <= '{date_end}' and
-            fs.trading_interval >= '{date_start}'
+            fs.trading_interval > '{date_start}'
         order by trading_interval desc;
     """.format(
         timezone=network.timezone_database,
