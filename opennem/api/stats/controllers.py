@@ -68,7 +68,7 @@ def stats_factory(
 
     for group_code in group_codes:
 
-        data_grouped: Dict[Any, Any] = OrderedDict()
+        data_grouped: Dict[Any, Any] = dict()
 
         for stat in stats:
             if stat.group_by != group_code:
