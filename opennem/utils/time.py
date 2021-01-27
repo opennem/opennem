@@ -1,6 +1,6 @@
 import re
 from datetime import datetime, timedelta
-from typing import List
+from typing import Callable, List
 
 from pytz import timezone
 
@@ -17,16 +17,14 @@ def human_to_timedelta(s: str) -> timedelta:
     return timedelta(
         **{
             UNITS.get(m.group("unit").lower(), "seconds"): int(m.group("val"))
-            for m in re.finditer(
-                r"(?P<val>\d+)(?P<unit>[smhdw]?)", s, flags=re.I
-            )
+            for m in re.finditer(r"(?P<val>\d+)(?P<unit>[smhdw]?)", s, flags=re.I)
         }
     )
 
 
-def dt_floor(dt: datetime, interval=5) -> datetime:
+def dt_floor(dt: datetime, interval: int = 5) -> datetime:
     """
-        Round a datetime down to the nearest interval in minutes
+    Round a datetime down to the nearest interval in minutes
 
     """
     return dt - timedelta(
@@ -36,9 +34,9 @@ def dt_floor(dt: datetime, interval=5) -> datetime:
     )
 
 
-def dt_series(tz: timezone = timezone("UTC")) -> List[datetime]:
+def dt_series(tz: Callable = timezone("UTC")) -> List[datetime]:
     """
-        Generate a datetime series
+    Generate a datetime series
 
     """
     end = dt_floor(tz.localize(datetime.now()))
