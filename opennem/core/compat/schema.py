@@ -45,3 +45,8 @@ class OpennemDataV2(BaseConfig):
 
     history: OpennemDataHistoryV2
     forecast: Optional[OpennemDataHistoryV2]
+
+
+class OpennemDataSetV2(BaseConfig):
+    version: str = "v2"
+    data: List[OpennemDataV2]
