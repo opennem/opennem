@@ -30,8 +30,8 @@ class OpennemDataHistoryV2(BaseConfig):
         xy_values = []
 
         for v in self.data:
-            xy_values.append((dt, v))
             dt = dt + interval_obj
+            xy_values.append((dt, v))
 
         return xy_values
 
