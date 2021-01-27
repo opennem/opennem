@@ -172,6 +172,14 @@ class OpennemDataSet(BaseConfig):
 
         return None
 
+    def get_id(self, id: str) -> Optional[OpennemData]:
+        _ds = list(filter(lambda x: x.id == id, self.data))
+
+        if len(_ds) < 1:
+            return None
+
+        return _ds.pop()
+
     # validators
     _version_fromstr = validator("created_at", allow_reuse=True, pre=True)(
         optionally_parse_string_datetime

@@ -50,3 +50,11 @@ class OpennemDataV2(BaseConfig):
 class OpennemDataSetV2(BaseConfig):
     version: str = "v2"
     data: List[OpennemDataV2]
+
+    def get_id(self, id: str) -> Optional[OpennemDataV2]:
+        _ds = list(filter(lambda x: x.id == id, self.data))
+
+        if len(_ds) < 1:
+            return None
+
+        return _ds.pop()
