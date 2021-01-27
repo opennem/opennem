@@ -110,10 +110,10 @@ def stats_factory(
 
         # should probably make sure these are the same TZ
         if timezone and not is_aware(start):
-            start = make_aware(min(dates), timezone)
+            start = make_aware(start, timezone)
 
         if timezone and not is_aware(end):
-            end = make_aware(max(dates), timezone)
+            end = make_aware(end, timezone)
 
         # free
         dates = []
