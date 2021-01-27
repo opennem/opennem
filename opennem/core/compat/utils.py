@@ -3,9 +3,8 @@ OpenNEM v2 -> v3 compatability methods
 
 """
 
+from opennem.core.fueltechs import map_v2_fueltech, map_v3_fueltech
 from opennem.schema.network import NetworkNEM
-
-from .fueltechs import map_v2_fueltech, map_v3_fueltech
 
 
 def translate_id_v3_to_v2(v3_id: str) -> str:
