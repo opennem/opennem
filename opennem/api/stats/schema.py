@@ -38,6 +38,16 @@ def number_output(n: Union[float, int, None]) -> Optional[float]:
     return sigfig_compact(n)
 
 
+def data_validate(values: List[Union[float, int, None]]) -> List[float]:
+    """Validate and format list of numeric data values"""
+    return list(
+        map(
+            number_output,
+            values,
+        )
+    )
+
+
 def get_data_id(
     network: NetworkSchema,
 ) -> str:
@@ -58,16 +68,8 @@ class OpennemDataHistory(BaseConfig):
     interval: Optional[str]
     data: List[Optional[float]]
 
-    @validator("data")
-    def validate_data(cls, data_value):
-        data_value = list(
-            map(
-                number_output,
-                data_value,
-            )
-        )
-
-        return data_value
+    # validators
+    _data_valid = validator("data", allow_reuse=True, pre=True)()
 
 
 class OpennemData(BaseConfig):
