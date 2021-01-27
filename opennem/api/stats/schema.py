@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 from pydantic import validator
 
@@ -12,6 +12,7 @@ from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
 from opennem.settings import settings
+from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import sigfig_compact
 from opennem.utils.timezone import get_current_timezone
 
@@ -87,6 +88,27 @@ class OpennemDataHistory(BaseConfig):
 
     # validators
     _data_valid = validator("data", allow_reuse=True, pre=True)(data_validate)
+
+    def values(self) -> List[Tuple[datetime, float]]:
+        interval_obj = get_human_interval(self.interval)
+        dt = self.start
+
+        # return as list rather than generate
+        xy_values = []
+
+        for v in self.data:
+            xy_values.append((dt, v))
+            dt = dt + interval_obj
+
+        # @TODO do some sanity checking here
+        # if dt != self.last:
+        #     raise Exception(
+        #         "Mismatch between start, last and interval size. Got {} and {}".format(
+        #             dt, self.last
+        #         )
+        #     )
+
+        return xy_values
 
 
 class OpennemData(BaseConfig):

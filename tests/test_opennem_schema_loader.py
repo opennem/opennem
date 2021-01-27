@@ -34,3 +34,7 @@ def test_schema_loader() -> None:
 
     assert a.data[0].id == "nem.nsw1.fuel_tech.coal_brown.power", "Has an id"
     assert a.data[0].id_v2() == "nsw1.fuel_tech.brown_coal.power", "Has correct v2 id"
+
+    values = a.data[0].history.values()
+
+    assert len(values) == 3, "Has 3 generated values"
