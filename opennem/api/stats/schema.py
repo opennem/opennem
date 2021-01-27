@@ -51,6 +51,18 @@ def data_validate(values: List[Union[float, int, None]]) -> List[float]:
     )
 
 
+def optionally_parse_string_datetime(
+    value: Optional[Union[str, datetime, date]] = None
+) -> Optional[datetime]:
+    if not value:
+        return value
+
+    if isinstance(value, str):
+        return datetime.fromisoformat(value)
+
+    return value
+
+
 def get_data_id(
     network: NetworkSchema,
 ) -> str:
@@ -127,6 +139,10 @@ class OpennemDataSet(BaseConfig):
         return None
 
     # validators
+    _version_fromstr = validator("created_at", allow_reuse=True, pre=True)(
+        optionally_parse_string_datetime
+    )
+
     _created_at_trim = validator("created_at", allow_reuse=True, pre=True)(chop_microseconds)
     _network_lowercase = validator("network", allow_reuse=True, pre=True)(
         optionaly_lowercase_string
