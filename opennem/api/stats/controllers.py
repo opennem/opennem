@@ -14,6 +14,7 @@ from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
+from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import cast_trailing_nulls
 from opennem.utils.time import human_to_timedelta
 from opennem.utils.timezone import is_aware, make_aware
@@ -103,6 +104,9 @@ def stats_factory(
 
         start = min(dates)
         end = max(dates)
+
+        if interval:
+            start = start - get_human_interval(interval.interval_human)
 
         # should probably make sure these are the same TZ
         if timezone and not is_aware(start):
