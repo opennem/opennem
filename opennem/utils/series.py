@@ -63,7 +63,7 @@ def are_approx_equal(actual: float, desired: float) -> bool:
     if not desired or not actual:
         return False
 
-    return isclose(actual, desired)
+    return isclose(actual, desired, abs_tol=0.4, rel_tol=0.0001)
 
 
 def series_are_equal(
@@ -76,10 +76,7 @@ def series_are_equal(
     d = dict()
     for k in s1d.keys():
         if k in s2d:
-            if absolute_equal:
-                d[k] = s1d[k] == s2d[k]
-            else:
-                d[k] = are_approx_equal(s1d[k], s2d[k])
+            d[k] = are_approx_equal(s1d[k], s2d[k])
 
     return d
 
