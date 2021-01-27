@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from opennem.api.export.map import StatType
-from opennem.core.compat import translate_id_v2_to_v3, translate_id_v3_to_v2
+from opennem.core.compat.utils import translate_id_v2_to_v3, translate_id_v3_to_v2
 from opennem.core.fueltechs import map_v3_fueltech
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
