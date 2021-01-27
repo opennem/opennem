@@ -69,11 +69,11 @@ def are_approx_equal(actual: float, desired: float) -> bool:
 def series_are_equal(
     s1: List[Tuple[datetime, float]],
     s2: List[Tuple[datetime, float]],
-    absolute_equal: bool = False,
 ) -> Dict:
     s2d = {i[0]: i[1] for i in s2}
     s1d = {i[0]: i[1] for i in s1}
     d = dict()
+
     for k in s1d.keys():
         if k in s2d:
             d[k] = are_approx_equal(s1d[k], s2d[k])
@@ -88,6 +88,7 @@ def series_not_close(
     s2d = {i[0]: i[1] for i in s2}
     s1d = {i[0]: i[1] for i in s1}
     d = dict()
+
     for k in s1d.keys():
         if k in s2d:
             if not are_approx_equal(s1d[k], s2d[k]):
@@ -104,6 +105,7 @@ def series_trim_to_date(
     s1d = {i[0]: i[1] for i in s1}
     d1 = []
     d2 = []
+
     for k in s1d.keys():
         if k in s2d:
             if s1d[k] and s2d[k]:
