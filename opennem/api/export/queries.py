@@ -182,7 +182,7 @@ def price_network_query(
         from balancing_summary bs
         where
             bs.trading_interval <= '{date_max}' and
-            bs.trading_interval >= '{date_min}' and
+            bs.trading_interval > '{date_min}' and
             {network_query}
             {network_region_query}
             1=1
@@ -248,7 +248,7 @@ def network_demand_query(
         sum(demand_total) as demand
     from balancing_summary bs
     where
-        bs.trading_interval <= '{date_max}' and bs.trading_interval >= '{date_min}' and
+        bs.trading_interval <= '{date_max}' and bs.trading_interval > '{date_min}' and
         {network_query}
         {network_region_query}
         1=1
@@ -329,7 +329,7 @@ def power_network_fueltech_query(
             {network_query}
             {network_region_query}
             fs.trading_interval <= '{date_max}' and
-            fs.trading_interval >= '{date_min}'
+            fs.trading_interval > '{date_min}'
             {fueltech_filter}
         group by 1, 2
     """
@@ -423,7 +423,7 @@ def power_network_rooftop_query(
             {network_query}
             {network_region_query}
             fs.trading_interval <= '{date_max}' and
-            fs.trading_interval >= '{date_min}'
+            fs.trading_interval > '{date_min}'
         group by 1, 2
         order by 1 desc
     """
