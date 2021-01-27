@@ -97,8 +97,8 @@ class OpennemDataHistory(BaseConfig):
         xy_values = []
 
         for v in self.data:
-            dt = dt + interval_obj
             xy_values.append((dt, v))
+            dt = dt + interval_obj
 
         # @TODO do some sanity checking here
         # if dt != self.last:
