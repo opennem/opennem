@@ -2,6 +2,7 @@
 OpenNEM Diff Versions
 """
 
+import json
 import logging
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -9,17 +10,19 @@ from urllib.parse import urljoin
 
 from opennem.api.export.map import StatType
 from opennem.api.stats.loader import load_statset
-from opennem.api.stats.schema import OpennemDataSet
+from opennem.api.stats.schema import OpennemData, OpennemDataSet
 from opennem.core.compat.loader import load_statset_v2
 from opennem.core.compat.schema import OpennemDataSetV2, OpennemDataV2
 from opennem.core.compat.utils import translate_id_v2_to_v3, translate_id_v3_to_v2
 from opennem.core.fueltechs import map_v3_fueltech
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
+from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import is_valid_isodate
 from opennem.utils.http import http
+from opennem.utils.series import series_are_equal, series_not_close
 
 logger = logging.getLogger("opennem.diff.versions")
 
@@ -196,9 +199,9 @@ def get_network_regions(
     return regions
 
 
-def get_id_diff(seriesv2: Dict, seriesv3: Dict) -> Optional[List[str]]:
-    id2_diffs = sorted([i["id"] for i in seriesv2])
-    id3_diffs = sorted([translate_id_v3_to_v2(i["id"]) for i in seriesv3])
+def get_id_diff(seriesv2: OpennemDataV2, seriesv3: OpennemData) -> Optional[List[str]]:
+    id2_diffs = sorted([i.id for i in seriesv2])
+    id3_diffs = sorted([i.id_v2() for i in seriesv3])
 
     diff = list(set(id2_diffs) - set(id3_diffs))
 
@@ -222,13 +225,16 @@ def run_diff() -> None:
     regions = get_network_regions(NetworkNEM, "NSW1")
     statsetmap = get_url_map(regions)
 
-    # validate all urls are valid
-    validate_url_map(statsetmap)
-    # statsetmap = load_url_map(statsetmap)
+    # load urls
+    statsetmap = load_url_map(statsetmap)
 
-    for statset in statsetmap:
-        v2_power = http.get(statset.urlv2).json()
-        v3_power = http.get(statset.urlv3).json()["data"]
+    # filter it down for now
+    statsetmap_power = list(filter(lambda x: x.stat_type == StatType.power, statsetmap))
+
+    for statset in statsetmap_power:
+        if not statset.v2 or not statset.v3:
+            logger.error("Error getting schemas for v2 or v3")
+            continue
 
         logger.info(
             "Comparing {} {} for {}".format(
@@ -238,19 +244,19 @@ def run_diff() -> None:
         logger.info(statset.urlv2)
         logger.info(statset.urlv3)
 
-        if len(v2_power) != len(v3_power):
+        if len(statset.v2.data) != len(statset.v2.data):
             logger.info(
                 "Series {} {} for {} is missing ids. v2 has {} v3 has {}".format(
                     statset.stat_type.value,
                     statset.bucket_size,
                     statset.network_region,
-                    len(v2_power),
-                    len(v3_power),
+                    len(statset.v2.data),
+                    len(statset.v3.data),
                 )
             )
 
-        id2_diffs = sorted([i["id"] for i in v2_power])
-        id3_diffs = sorted([translate_id_v3_to_v2(i["id"]) for i in v3_power])
+        id2_diffs = sorted([i.id for i in statset.v2.data])
+        id3_diffs = sorted([i.id_v2() for i in statset.v3.data])
 
         logger.info("v2 has ids:")
         for i in id2_diffs:
@@ -260,9 +266,9 @@ def run_diff() -> None:
         for i in id3_diffs:
             logger.info("\t{}".format(i))
 
-        id_diff = get_id_diff(v2_power, v3_power)
+        id_diff = list(set(id2_diffs) - set(id3_diffs))
 
-        if id_diff:
+        if len(id_diff) > 0:
             for i in id_diff:
                 logger.info(
                     "Series {} {} for {} is missing ids. v3 doesn't have {}".format(
@@ -274,88 +280,84 @@ def run_diff() -> None:
 
         for i in id2_diffs:
             logger.info(" = comparing {}".format(i))
-            v2i = get_data_by_id(i, v2_power)
-            v3i = get_data_by_id(translate_id_v2_to_v3(i), v3_power)
+
+            v2i = statset.v2.get_id(i)
+            v3i = statset.v3.get_id(translate_id_v2_to_v3(i))
 
             if not v3i:
-                logger.error(" missing in v3: {}".format(translate_id_v2_to_v3(i)))
+                logger.error("   missing in v3: {}".format(translate_id_v2_to_v3(i)))
                 continue
 
-            for v2ikey in v2i:
-                if v2ikey == "id":
-                    continue
+            if not v2i:
+                logger.error("    error getting id {} from v2".format(i))
+                continue
 
-                if v2ikey == "fuel_tech":
-                    if v2i[v2ikey] == map_v3_fueltech(v3i[v2ikey]):
-                        logger.info("  * fueltech matches")
-                    else:
-                        logger.error(
-                            "  * fueltech DOESNT MATCH: {} and {}".format(
-                                v2i[v2ikey], map_v3_fueltech(v3i[v2ikey])
-                            )
+            if v2i.fuel_tech:
+                if v2i.fuel_tech == v3i.fueltech_v2():
+                    logger.info("  * fueltech matches")
+                else:
+                    logger.error(
+                        "  * fueltech DOESNT MATCH: {} and {}".format(
+                            v2i.fuel_tech, v3i.fueltech_v2()
                         )
+                    )
+
+            if v2i.history:
+                logger.info("  * comparing history:")
+
+                if len(v2i.history.data) != len(v3i.history.data):
+                    logger.error(
+                        "    - data length mismatch v2 {} v3 {}".format(
+                            len(v2i.history.data), len(v3i.history.data)
+                        )
+                    )
+
+                data_matches = series_are_equal(v2i.history.values(), v3i.history.values())
+
+                if False in list(data_matches.values()):
+                    logger.error("    - values don't match ")
+
+                    # else:
+                    # logger.info("    - series values match")
+                    mismatch_values = series_not_close(v2i.history.values(), v3i.history.values())
+
+                    with open(
+                        f"diff_outs/{statset.stat_type.value}-{statset.network_region}-{statset.bucket_size}-{v2i.fuel_tech}-v2.json",
+                        "w",
+                    ) as fh:
+                        json.dump(v2i.history.values(), fh, cls=OpenNEMJSONEncoder, indent=4)
+
+                    with open(
+                        f"diff_outs/{statset.stat_type.value}-{statset.network_region}-{statset.bucket_size}-{v3i.fueltech_v2()}-v3.json",
+                        "w",
+                    ) as fh:
+                        json.dump(v3i.history.values(), fh, cls=OpenNEMJSONEncoder, indent=4)
+
+                    with open(
+                        f"diff_outs/{statset.stat_type.value}-{statset.network_region}-{statset.bucket_size}-{v3i.fueltech_v2()}-diff.json",
+                        "w",
+                    ) as fh:
+                        json.dump(mismatch_values, fh, cls=OpenNEMJSONEncoder, indent=4)
+
+                else:
+                    logger.info("     - series values match")
+
+            # remaining attributes
+            for v2ikey in v2i.dict().keys():
+                if v2ikey in ["id", "fuel_tech", "history", "forecast"]:
                     continue
 
-                if v2ikey == "history":
-                    logger.info("  * comparing history:")
-                    hv2 = v2i["history"]
-                    hv3 = v3i["history"]
-
-                    for hv2i in hv2.keys():
-                        if hv2i not in hv3:
-                            logger.error("    - key missing: {}".format(hv2i))
-                            continue
-
-                        if hv2i == "data":
-                            if len(hv2["data"]) != len(hv2["data"]):
-                                logger.error(
-                                    "    - data length mismatch v2 {} v3 {}".format(
-                                        len(hv2["data"]), len(hv2["data"])
-                                    )
-                                )
-                            continue
-
-                        if hv2i in ["start", "end", "last"]:
-                            dt2 = hv2[hv2i]
-                            dt3 = hv3[hv2i]
-
-                            if not is_valid_isodate(dt2, check_timezone=True):
-                                logger.error(
-                                    "    - v2 has invalid datetime format for {}: {}".format(
-                                        hv2i, dt2
-                                    )
-                                )
-
-                            if not is_valid_isodate(dt3, check_timezone=True):
-                                logger.error(
-                                    "    - v3 has invalid datetime format for {}: {}".format(
-                                        hv2i, dt3
-                                    )
-                                )
-                            continue
-
-                        data_matches = hv2[hv2i] == hv3[hv2i]
-
-                        if not data_matches:
-                            logger.error(
-                                "    - key {} DOESNT MATCH. values: v2'{}' and v3'{}'".format(
-                                    hv2i, hv2[hv2i], hv3[hv2i]
-                                )
-                            )
-
-                    continue
-
-                if v2ikey not in v3i:
+                if not hasattr(v3i, v2ikey):
                     logger.error("  * key {} is missing".format(v2ikey))
                 else:
-                    data_matches = v2i[v2ikey] == v3i[v2ikey]
+                    data_matches = getattr(v2i, v2ikey) == getattr(v3i, v2ikey)
 
                     if data_matches:
                         logger.info("  * key {} exists and matches ".format(v2ikey))
                     else:
                         logger.error(
                             "  * key {} DOESNT MATCH. values: v2'{}' and v3'{}'".format(
-                                v2ikey, v2i[v2ikey], v3i[v2ikey]
+                                v2ikey, getattr(v2i, v2ikey), getattr(v3i, v2ikey)
                             )
                         )
 
@@ -377,4 +379,4 @@ def run_data_diff() -> None:
 
 
 if __name__ == "__main__":
-    run_data_diff()
+    run_diff()
