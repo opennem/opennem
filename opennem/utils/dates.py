@@ -1,4 +1,5 @@
 import logging
+import math
 from datetime import date, datetime, timedelta, timezone
 from typing import Generator, List, Optional, Tuple, Union
 
@@ -267,3 +268,8 @@ def is_valid_isodate(date: str, check_timezone: bool = False) -> bool:
             return False
 
     return True
+
+
+def get_quarter(dt: datetime) -> int:
+    """Get the quarter from a datetime"""
+    return math.ceil(dt.month / 3.0)
