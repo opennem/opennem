@@ -118,9 +118,11 @@ class OpennemData(BaseConfig):
     def id_v2(self) -> str:
         return translate_id_v3_to_v2(self.id)
 
-    def fueltech_v2(self) -> str:
+    def fueltech_v2(self) -> Optional[str]:
         if self.fuel_tech:
             return map_v3_fueltech(self.fuel_tech)
+
+        return None
 
 
 class OpennemDataSet(BaseConfig):
