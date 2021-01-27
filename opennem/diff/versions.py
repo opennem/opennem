@@ -4,7 +4,7 @@ OpenNEM Diff Versions
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
 from opennem.api.export.map import StatType
