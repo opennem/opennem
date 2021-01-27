@@ -25,7 +25,7 @@ _interval_parser = re.compile(r"(?P<value>\d+)(?P<unit>[smhdwMY]?)", re.IGNORECA
 
 
 def get_human_interval(interval_human: str) -> Union[timedelta, datedelta]:
-
+    """Parses a human interval like 1m or 1Y into a timedelta or datedelta"""
     interval_match = re.match(_interval_parser, interval_human.strip())
 
     if not interval_match:
