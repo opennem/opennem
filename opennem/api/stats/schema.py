@@ -15,6 +15,9 @@ from opennem.utils.timezone import get_current_timezone
 
 
 def chop_microseconds(dt: datetime) -> datetime:
+    if not dt.microsecond:
+        return dt
+
     return dt - timedelta(microseconds=dt.microsecond)
 
 
@@ -69,7 +72,7 @@ class OpennemDataHistory(BaseConfig):
     data: List[Optional[float]]
 
     # validators
-    _data_valid = validator("data", allow_reuse=True, pre=True)()
+    _data_valid = validator("data", allow_reuse=True, pre=True)(data_validate)
 
 
 class OpennemData(BaseConfig):
