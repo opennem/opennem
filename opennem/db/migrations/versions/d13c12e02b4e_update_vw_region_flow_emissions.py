@@ -15,9 +15,26 @@ down_revision = "4503ef797f3a"
 branch_labels = None
 depends_on = None
 
-stmt_drop = "drop view if exists vw_region_flow_emissions;"
+
+stmt_drop = "drop materialized view if exists mv_region_emissions;"
 
 stmt = """
+create materialized view mv_region_emissions as select
+    f.trading_interval,
+    f.network_region,
+    case
+        when sum(f.energy) > 0 then
+            sum(f.emissions) / sum(f.energy)
+        else 0
+    end as emissions_per_kw
+from mv_facility_all f
+group by 1, f.network_region
+order by 1 desc;
+"""
+
+stmt_drop2 = "drop view if exists vw_region_flow_emissions;"
+
+stmt2 = """
 create view vw_region_flow_emissions as select
     f.trading_interval at time zone 'AEST' as trading_interval,
     date_trunc('day', f.trading_interval) at time zone 'AEST' as ti_day_aest,
@@ -42,7 +59,10 @@ def upgrade() -> None:
     with op.get_context().autocommit_block():
         op.execute(stmt_drop)
         op.execute(stmt)
+        op.execute(stmt_drop2)
+        op.execute(stmt2)
 
 
 def downgrade() -> None:
     op.execute(stmt_drop)
+    op.execute(stmt_drop2)
