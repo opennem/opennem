@@ -63,7 +63,7 @@ def are_approx_equal(actual: float, desired: float) -> bool:
     if not desired or not actual:
         return False
 
-    return isclose(actual, desired, abs_tol=0.4, rel_tol=0.0001)
+    return isclose(actual, desired, abs_tol=0.5, rel_tol=0.0001)
 
 
 def series_are_equal(
