@@ -5,6 +5,7 @@ from pprint import pprint
 from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
+
 # from opennem.core.loader import load_data
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
@@ -121,21 +122,13 @@ def revision_factory(
 
     for data_name, data_value in revision_data.items():
         if isinstance(data_value, str):
-            __query = __query.filter(
-                Revision.changes[data_name].as_string() == data_value
-            )
+            __query = __query.filter(Revision.changes[data_name].as_string() == data_value)
         if isinstance(data_value, bool):
-            __query = __query.filter(
-                Revision.changes[data_name].as_boolean() == data_value
-            )
+            __query = __query.filter(Revision.changes[data_name].as_boolean() == data_value)
         if isinstance(data_value, int):
-            __query = __query.filter(
-                Revision.changes[data_name].as_integer() == data_value
-            )
+            __query = __query.filter(Revision.changes[data_name].as_integer() == data_value)
         if isinstance(data_value, float):
-            __query = __query.filter(
-                Revision.changes[data_name].as_float() == data_value
-            )
+            __query = __query.filter(Revision.changes[data_name].as_float() == data_value)
 
     revision_lookup = None
 
@@ -168,16 +161,10 @@ def load_revision(records, created_by):
     logger.info("Running db test")
 
     for station_record in records:
-        station_model = (
-            s.query(Station)
-            .filter(Station.code == station_record.code)
-            .one_or_none()
-        )
+        station_model = s.query(Station).filter(Station.code == station_record.code).one_or_none()
 
         if not station_model:
-            logger.info(
-                f"New station {station_record.name} {station_record.code}"
-            )
+            logger.info(f"New station {station_record.name} {station_record.code}")
 
             station_dict = station_record.dict(
                 include={"code", "network_name", "name", "location"}
@@ -215,22 +202,14 @@ def load_revision(records, created_by):
 
         else:
             for field in ["name"]:
-                if getattr(station_model, field) != getattr(
-                    station_record, field
-                ):
+                if getattr(station_model, field) != getattr(station_record, field):
                     revision_factory(station_record, field, created_by)
 
         for facility in station_record.facilities:
-            facility_model = (
-                s.query(Facility)
-                .filter(Facility.code == facility.code)
-                .first()
-            )
+            facility_model = s.query(Facility).filter(Facility.code == facility.code).first()
 
             if not facility_model:
-                logger.info(
-                    "New facility %s => %s", station_record.name, facility.code
-                )
+                logger.info("New facility %s => %s", station_record.name, facility.code)
 
                 facility_dict = facility.dict(
                     include={
@@ -319,9 +298,7 @@ def registry_init() -> None:
         station_dict = station.dict(exclude={"id"})
         # pprint(station_dict)
 
-        station_model = (
-            session.query(Station).filter_by(code=station.code).one_or_none()
-        )
+        station_model = session.query(Station).filter_by(code=station.code).one_or_none()
 
         if not station_model:
             # pylint:disable no-member
@@ -410,9 +387,7 @@ def opennem_init() -> None:
     for station in stations:
         logger.debug("Adding station: {}".format(station.code))
 
-        station_model = (
-            session.query(Station).filter_by(code=station.code).one_or_none()
-        )
+        station_model = session.query(Station).filter_by(code=station.code).one_or_none()
 
         if not station_model:
             station_model = Station(code=station.code)
@@ -448,9 +423,7 @@ def opennem_init() -> None:
             )
 
             if not facility_model:
-                facility_model = Facility(
-                    code=fac.code, network_id=fac.network.code
-                )
+                facility_model = Facility(code=fac.code, network_id=fac.network.code)
 
             facility_model.network_region = fac.network_region
             facility_model.fueltech_id = fac.fueltech.code
