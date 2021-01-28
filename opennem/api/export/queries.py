@@ -411,9 +411,9 @@ def power_network_rooftop_query(
 
     __query = """
         select
-            fs.trading_interval at time zone '{timezone}' AS trading_interval,
+            time_bucket_gapfill('30 minutes', fs.trading_interval) AS trading_interval,
             ft.code as fueltech_code,
-            sum(fs.facility_power) as facility_power
+            coalesce(sum(fs.facility_power), 0) as facility_power
         from {table_query} fs
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
