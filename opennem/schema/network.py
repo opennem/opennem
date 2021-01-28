@@ -1,7 +1,9 @@
 from datetime import timezone as timezone_native
 from typing import List, Optional, Union
 
+import pytz
 from pydantic import Field
+from pytz import FixedOffset
 from pytz import timezone as pytz_timezone
 
 from opennem.core.time import get_interval_by_size
@@ -28,15 +30,9 @@ class NetworkSchema(BaseConfig):
 
     regions: Optional[List[NetworkNetworkRegion]]
     timezone: Optional[str] = Field(None, description="Network timezone")
-    timezone_database: str = Field(
-        "UTC", description="Database timezone format"
-    )
-    offset: Optional[int] = Field(
-        None, description="Network time offset in minutes"
-    )
-    interval_size: int = Field(
-        ..., description="Size of network interval in minutes"
-    )
+    timezone_database: str = Field("UTC", description="Database timezone format")
+    offset: Optional[int] = Field(None, description="Network time offset in minutes")
+    interval_size: int = Field(..., description="Size of network interval in minutes")
 
     def get_interval(self) -> Optional[TimeInterval]:
         if not self.interval_size:
@@ -46,9 +42,7 @@ class NetworkSchema(BaseConfig):
 
         return interval
 
-    def get_timezone(
-        self, postgres_format=False
-    ) -> Union[timezone_native, pytz_timezone]:
+    def get_timezone(self, postgres_format=False) -> Union[timezone_native, pytz_timezone]:
         tz = get_current_timezone()
 
         if self.offset:
@@ -61,6 +55,12 @@ class NetworkSchema(BaseConfig):
 
         return tz
 
+    def get_fixed_offset(self) -> FixedOffset:
+        if self.offset:
+            return pytz.FixedOffset(self.offset)
+
+        raise Exception("No offset set")
+
     @property
     def intervals_per_hour(self):
         return 60 / self.interval_size
@@ -71,12 +71,8 @@ class NetworkRegion(BaseConfig):
     network: NetworkSchema
 
     timezone: Optional[str] = Field(None, description="Network timezone")
-    timezone_database: Optional[str] = Field(
-        "UTC", description="Database timezone format"
-    )
-    offset: Optional[int] = Field(
-        None, description="Network time offset in minutes"
-    )
+    timezone_database: Optional[str] = Field("UTC", description="Database timezone format")
+    offset: Optional[int] = Field(None, description="Network time offset in minutes")
 
 
 # @TODO move this to db + fixture
