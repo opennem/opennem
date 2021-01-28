@@ -321,20 +321,29 @@ def run_diff() -> None:
                     # logger.info("    - series values match")
                     mismatch_values = series_not_close(v2i.history.values(), v3i.history.values())
 
-                    with open(
-                        f"diff_outs/{statset.stat_type.value}-{statset.network_region}-{statset.bucket_size}-{v2i.fuel_tech}-v2.json",
-                        "w",
-                    ) as fh:
-                        json.dump(v2i.history.values(), fh, cls=OpenNEMJSONEncoder, indent=4)
+                    # with open(
+                    #     f"diff_outs/{statset.stat_type.value}-{statset.network_region}-{statset.bucket_size}-{v2i.fuel_tech}-v2.json",
+                    #     "w",
+                    # ) as fh:
+                    #     json.dump(v2i.history.values(), fh, cls=OpenNEMJSONEncoder, indent=4)
+
+                    # with open(
+                    #     f"diff_outs/{statset.stat_type.value}-{statset.network_region}-{statset.bucket_size}-{v3i.fueltech_v2()}-v3.json",
+                    #     "w",
+                    # ) as fh:
+                    #     json.dump(v3i.history.values(), fh, cls=OpenNEMJSONEncoder, indent=4)
+
+                    file_components = [
+                        statset.stat_type.value,
+                        statset.network_region,
+                        statset.bucket_size,
+                        v3i.fueltech_v2(),
+                    ]
+
+                    filename = "-".join([i for i in file_components if i])
 
                     with open(
-                        f"diff_outs/{statset.stat_type.value}-{statset.network_region}-{statset.bucket_size}-{v3i.fueltech_v2()}-v3.json",
-                        "w",
-                    ) as fh:
-                        json.dump(v3i.history.values(), fh, cls=OpenNEMJSONEncoder, indent=4)
-
-                    with open(
-                        f"diff_outs/{statset.stat_type.value}-{statset.network_region}-{statset.bucket_size}-{v3i.fueltech_v2()}-diff.json",
+                        f"diff_outs/{filename}-diff.json",
                         "w",
                     ) as fh:
                         json.dump(mismatch_values, fh, cls=OpenNEMJSONEncoder, indent=4)
