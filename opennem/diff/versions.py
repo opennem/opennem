@@ -2,8 +2,10 @@
 OpenNEM Diff Versions
 """
 
+import glob
 import json
 import logging
+import os
 from datetime import datetime
 from typing import Dict, List, Optional
 from urllib.parse import urljoin
@@ -391,4 +393,9 @@ def run_data_diff() -> None:
 
 
 if __name__ == "__main__":
+
+    files = glob.glob("/diff_outs/*")
+    for f in files:
+        os.remove(f)
+
     run_diff()
