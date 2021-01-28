@@ -1,9 +1,9 @@
 import logging
-from collections import OrderedDict
 from datetime import datetime, timezone
 from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
 
+import pytz
 from sqlalchemy.orm import Session
 
 from opennem.core.normalizers import normalize_duid
@@ -110,10 +110,17 @@ def stats_factory(
 
         # should probably make sure these are the same TZ
         if timezone and not is_aware(start):
+
             start = make_aware(start, timezone)
 
         if timezone and not is_aware(end):
             end = make_aware(end, timezone)
+
+        if timezone:
+            tz = pytz.FixedOffset(int(network.offset))
+
+            start = start.astimezone(tz)
+            end = end.astimezone(tz)
 
         # free
         dates = []
