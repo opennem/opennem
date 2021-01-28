@@ -73,7 +73,11 @@ def refresh_material_views(view_name: Optional[str] = None) -> None:
         for v in views:
             query = __query.format(view=v)
             logger.debug(query)
-            c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
+
+            try:
+                c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
+            except Exception as e:
+                logger.error("Could not run material refresh: {}".format(e))
 
 
 def refresh_views() -> None:
