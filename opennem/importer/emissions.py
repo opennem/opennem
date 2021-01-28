@@ -86,9 +86,7 @@ def import_mms_emissions() -> None:
         )
 
         if not facility:
-            logger.info(
-                "could not find facility: {} {}".format(fac_code, pol_value)
-            )
+            logger.info("could not find facility: {} {}".format(fac_code, pol_value))
 
             continue
 
@@ -106,10 +104,10 @@ def import_emissions_csv() -> None:
     ]
 
     for m in EMISSION_MAPS:
-        import_emissions_map(m["filename"], m["network"])
+        import_emissions_map(m["filename"])
 
 
-def import_emissions_map(file_name: str, network_id: str) -> None:
+def import_emissions_map(file_name: str) -> None:
     session = SessionLocal()
 
     content = load_data(file_name, from_project=True, skip_loaders=True)
@@ -118,6 +116,7 @@ def import_emissions_map(file_name: str, network_id: str) -> None:
     csvreader = csv.DictReader(csv_content)
 
     for rec in csvreader:
+        network_id = rec["network_id"]
         facility_code = normalize_duid(rec["facility_code"])
         emissions_intensity = clean_float(rec["emissions_factor_co2"])
 
@@ -138,9 +137,7 @@ def import_emissions_map(file_name: str, network_id: str) -> None:
 
         facility.emissions_factor_co2 = emissions_intensity
         session.add(facility)
-        logger.info(
-            "Updated {} to {}".format(facility_code, emissions_intensity)
-        )
+        logger.info("Updated {} to {}".format(facility_code, emissions_intensity))
 
     session.commit()
 
