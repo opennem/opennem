@@ -233,6 +233,8 @@ class BomObservation(Base):
     station = relationship("BomStation")
     temp_apparent = Column(Numeric)
     temp_air = Column(Numeric)
+    temp_min = Column(Numeric)
+    temp_max = Column(Numeric)
     press_qnh = Column(Numeric)
     wind_dir = Column(Text, nullable=True)
     wind_spd = Column(Numeric)
