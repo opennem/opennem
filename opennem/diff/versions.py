@@ -333,10 +333,13 @@ def run_diff() -> None:
                     # ) as fh:
                     #     json.dump(v3i.history.values(), fh, cls=OpenNEMJSONEncoder, indent=4)
 
+                    extra_part = i.split(".")[1]
+
                     file_components = [
                         statset.stat_type.value,
                         statset.network_region,
                         statset.bucket_size,
+                        extra_part,
                         v3i.fueltech_v2(),
                     ]
 
