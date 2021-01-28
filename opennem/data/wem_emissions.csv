@@ -1,53 +1,53 @@
-﻿station_name,facility_code,emissions_factor_co2,fueltech
-Rockingham Landfill Generation,ROCKINGHAM,0.05,bioenergy_biogas
-Alinta Pinjarra Generation Facility,ALINTA_PNJ_U1,0.67,gas_ocgt
-Alinta Pinjarra Generation Facility,ALINTA_PNJ_U2,0.67,gas_ocgt
-Bluewaters Power 1,BW2_BLUEWATERS_G1,0.91,Black Coal
-Bluewaters Power 2,BW1_BLUEWATERS_G2,0.88,Black Coal
-Kalamunda Power Station,KALAMUNDA_SG,0.57,Diesel
-Red Hill LFG Power Station,RED_HILL,0.05,Landfill Gas
-Tamala Park LFG Power Station,TAMALA_PARK,0.05,Landfill Gas
-Bremer Bay Wind Diesel Power Station,BREMER_BAY_WF1,0.01,Wind
-Cockburn Power Station,COCKBURN_CCG1,0.39,Gas
-Collie Power Station,COLLIE_G1,0.91,Black Coal
-Kalgoorlie Gas Turbine Station,STHRNCRS_EG,0.96,Gas
-Muja Power Station,MUJA_M1,0.92,Black Coal
-Muja Power Station,MUJA_M2,0.92,Black Coal
-Muja Power Station,MUJA_M3,0.92,Black Coal
-Muja Power Station,MUJA_M4,0.92,Black Coal
-Muja Power Station,MUJA_G5,0.92,Black Coal
-Muja Power Station,MUJA_G6,0.92,Black Coal
-Muja Power Station,MUJA_G7,0.92,Black Coal
-Muja Power Station,MUJA_G8,0.92,Black Coal
-Mungarra Gas Turbine Station,MUNGARRA_GT1,0.78,Gas
-Mungarra Gas Turbine Station,MUNGARRA_GT2,0.78,Gas
-Mungarra Gas Turbine Station,MUNGARRA_GT3,0.78,Gas
-Pinjar Gas Turbine Station,PINJAR_GT1,0.82,Gas
-Pinjar Gas Turbine Station,PINJAR_GT2,0.82,Gas
-Pinjar Gas Turbine Station,PINJAR_GT3,0.82,Gas
-Pinjar Gas Turbine Station,PINJAR_GT4,0.82,Gas
-Pinjar Gas Turbine Station,PINJAR_GT5,0.82,Gas
-Pinjar Gas Turbine Station,PINJAR_GT7,0.82,Gas
-Pinjar Gas Turbine Station,PINJAR_GT9,0.82,Gas
-Pinjar Gas Turbine Station,PINJAR_GT10,0.82,Gas
-Pinjar Gas Turbine Station,PINJAR_GT11,0.82,Gas
-Ravensthorpe Power Station,,0.67,Diesel
-Newgen Neerabup Power Station,NEWGEN_NEERABUP_GT1,0.6,Gas
-Parkeston Power Station,PRK_AG,0.6,Gas
-South Cardup Renewable Energy Facility,SOUTH_CARDUP,0.06,Landfill Gas
-Kwinana Power Station,KWINANA_GT2,0.52,Gas
-Kwinana Power Station,KWINANA_GT3,0.52,Gas
-Kwinana Power Station,PPP_KCP_EG1,0.52,Gas
-Kwinana Cogeneration Plant,TIWEST_COG1,0.54,Gas
-Kwinana Cogeneration Plant,NEWGEN_KWINANA_CCG1,0.54,Gas
-Kwinana Gas Fired Power Station,PERTHENERGY_KWINANA_GT1,0.39,Gas
-Kwinana Swift Power Station,TIWEST_COG1,0.58,Gas
-Wagerup Power Station,ALCOA_WGP,0.56,Gas
-Wagerup Power Station,ALINTA_WGP_GT,0.56,Gas
-Wagerup Power Station,ALINTA_WGP_U2,0.56,Gas
-Kemerton Power Station,KEMERTON_GT11,0.7,Gas
-Kemerton Power Station,KEMERTON_GT12,0.7,Gas
-Rockingham Landfill,ROCKINGHAM,0.07,Landfill Gas
-Kalgoorlie Power Station,WEST_KALGOORLIE_GT2,0.57,Gas
-Kalgoorlie Power Station,WEST_KALGOORLIE_GT3,0.57,Gas
-Kambalda Power Station,,0.56,Gas
+﻿station_name,network_id,network_region,facility_code,emissions_factor_co2,fueltech
+Rockingham Landfill Generation,WEM,WEM,ROCKINGHAM,0.05,bioenergy_biogas
+Alinta Pinjarra Generation Facility,WEM,WEM,ALINTA_PNJ_U1,0.67,gas_ocgt
+Alinta Pinjarra Generation Facility,WEM,WEM,ALINTA_PNJ_U2,0.67,gas_ocgt
+Bluewaters Power 1,WEM,WEM,BW2_BLUEWATERS_G1,0.91,Black Coal
+Bluewaters Power 2,WEM,WEM,BW1_BLUEWATERS_G2,0.88,Black Coal
+Kalamunda Power Station,WEM,WEM,KALAMUNDA_SG,0.57,Diesel
+Red Hill LFG Power Station,WEM,WEM,RED_HILL,0.05,Landfill Gas
+Tamala Park LFG Power Station,WEM,WEM,TAMALA_PARK,0.05,Landfill Gas
+Bremer Bay Wind Diesel Power Station,WEM,WEM,BREMER_BAY_WF1,0.01,Wind
+Cockburn Power Station,WEM,WEM,COCKBURN_CCG1,0.39,Gas
+Collie Power Station,WEM,WEM,COLLIE_G1,0.91,Black Coal
+Kalgoorlie Gas Turbine Station,WEM,WEM,STHRNCRS_EG,0.96,Gas
+Muja Power Station,WEM,WEM,MUJA_M1,0.92,Black Coal
+Muja Power Station,WEM,WEM,MUJA_M2,0.92,Black Coal
+Muja Power Station,WEM,WEM,MUJA_M3,0.92,Black Coal
+Muja Power Station,WEM,WEM,MUJA_M4,0.92,Black Coal
+Muja Power Station,WEM,WEM,MUJA_G5,0.92,Black Coal
+Muja Power Station,WEM,WEM,MUJA_G6,0.92,Black Coal
+Muja Power Station,WEM,WEM,MUJA_G7,0.92,Black Coal
+Muja Power Station,WEM,WEM,MUJA_G8,0.92,Black Coal
+Mungarra Gas Turbine Station,WEM,WEM,MUNGARRA_GT1,0.78,Gas
+Mungarra Gas Turbine Station,WEM,WEM,MUNGARRA_GT2,0.78,Gas
+Mungarra Gas Turbine Station,WEM,WEM,MUNGARRA_GT3,0.78,Gas
+Pinjar Gas Turbine Station,WEM,WEM,PINJAR_GT1,0.82,Gas
+Pinjar Gas Turbine Station,WEM,WEM,PINJAR_GT2,0.82,Gas
+Pinjar Gas Turbine Station,WEM,WEM,PINJAR_GT3,0.82,Gas
+Pinjar Gas Turbine Station,WEM,WEM,PINJAR_GT4,0.82,Gas
+Pinjar Gas Turbine Station,WEM,WEM,PINJAR_GT5,0.82,Gas
+Pinjar Gas Turbine Station,WEM,WEM,PINJAR_GT7,0.82,Gas
+Pinjar Gas Turbine Station,WEM,WEM,PINJAR_GT9,0.82,Gas
+Pinjar Gas Turbine Station,WEM,WEM,PINJAR_GT10,0.82,Gas
+Pinjar Gas Turbine Station,WEM,WEM,PINJAR_GT11,0.82,Gas
+Ravensthorpe Power Station,WEM,WEM,,0.67,Diesel
+Newgen Neerabup Power Station,WEM,WEM,NEWGEN_NEERABUP_GT1,0.6,Gas
+Parkeston Power Station,WEM,WEM,PRK_AG,0.6,Gas
+South Cardup Renewable Energy Facility,WEM,WEM,SOUTH_CARDUP,0.06,Landfill Gas
+Kwinana Power Station,WEM,WEM,KWINANA_GT2,0.52,Gas
+Kwinana Power Station,WEM,WEM,KWINANA_GT3,0.52,Gas
+Kwinana Power Station,WEM,WEM,PPP_KCP_EG1,0.52,Gas
+Kwinana Cogeneration Plant,WEM,WEM,TIWEST_COG1,0.54,Gas
+Kwinana Cogeneration Plant,WEM,WEM,NEWGEN_KWINANA_CCG1,0.54,Gas
+Kwinana Gas Fired Power Station,WEM,WEM,PERTHENERGY_KWINANA_GT1,0.39,Gas
+Kwinana Swift Power Station,WEM,WEM,TIWEST_COG1,0.58,Gas
+Wagerup Power Station,WEM,WEM,ALCOA_WGP,0.56,Gas
+Wagerup Power Station,WEM,WEM,ALINTA_WGP_GT,0.56,Gas
+Wagerup Power Station,WEM,WEM,ALINTA_WGP_U2,0.56,Gas
+Kemerton Power Station,WEM,WEM,KEMERTON_GT11,0.7,Gas
+Kemerton Power Station,WEM,WEM,KEMERTON_GT12,0.7,Gas
+Rockingham Landfill,WEM,WEM,ROCKINGHAM,0.07,Landfill Gas
+Kalgoorlie Power Station,WEM,WEM,WEST_KALGOORLIE_GT2,0.57,Gas
+Kalgoorlie Power Station,WEM,WEM,WEST_KALGOORLIE_GT3,0.57,Gas
+Kambalda Power Station,WEM,WEM,,0.56,Gas
