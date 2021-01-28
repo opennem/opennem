@@ -7,10 +7,12 @@ from opennem.utils.dates import subtract_days
 logger = logging.getLogger("opennem.db.tasks")
 
 TIMESCALE_VIEWS = [
+    "mv_balancing_summary_region_hour",
     "mv_facility_energy_hour",
-    "mv_nem_facility_power_5min",
     "mv_interchange_energy_nem_region",
     "mv_interchange_power_nem_region",
+    "mv_nem_facility_power_5min",
+    "mv_nem_facility_power_30min",
     "mv_wem_facility_power_30min",
 ]
 
