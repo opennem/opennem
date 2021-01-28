@@ -411,7 +411,7 @@ def power_network_rooftop_query(
 
     __query = """
         select
-            time_bucket_gapfill('30 minutes', fs.trading_interval) AS trading_interval,
+            time_bucket_gapfill('30 minutes', fs.trading_interval)  AS trading_interval,
             ft.code as fueltech_code,
             coalesce(sum(fs.facility_power), 0) as facility_power
         from {table_query} fs
@@ -529,10 +529,7 @@ def power_network_rooftop_forecast_query(
     if not date_range:
         raise Exception("Require a date range")
 
-    date_min = date_range.get_end()
-
-    if period:
-        date_max = date_range.get_end()
+    date_max = date_range.get_end()
 
     query = dedent(
         __query.format(
