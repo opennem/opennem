@@ -108,6 +108,11 @@ def import_emissions_csv() -> None:
 
 
 def import_emissions_map(file_name: str) -> None:
+    """Import emission factors from CSV files for each network
+    the format of the csv file is
+
+    station_name	network_id	network_region	facility_code	emissions_factor_co2	fueltech_id
+    """
     session = SessionLocal()
 
     content = load_data(file_name, from_project=True, skip_loaders=True)
