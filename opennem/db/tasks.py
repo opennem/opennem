@@ -49,7 +49,11 @@ def refresh_timescale_views(
         for v in TIMESCALE_VIEWS:
             query = __query.format(view=v, date_from=date_from)
             logger.debug(query)
-            c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
+
+            try:
+                c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
+            except Exception as e:
+                logger.error("Could not run refresh: {}".format(e))
 
 
 def refresh_material_views(view_name: Optional[str] = None) -> None:
