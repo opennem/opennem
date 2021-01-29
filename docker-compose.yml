@@ -39,7 +39,7 @@ services:
       - ${HOST:-127.0.0.1}:6800:6800
 
   database:
-    image: opennem/database:12.2
+    image: opennem/database:12.3
     restart: unless-stopped
     env_file: ./.env
     environment:
