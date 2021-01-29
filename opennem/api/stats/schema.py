@@ -33,7 +33,7 @@ def optionaly_lowercase_string(value: str) -> str:
     return value
 
 
-def number_output(n: Union[float, int, None]) -> Optional[Union[float, int]]:
+def number_output(n: Union[float, int, None]) -> Optional[Union[float, int, None]]:
     """Format numbers for data series outputs"""
     if n is None:
         return None
@@ -56,7 +56,7 @@ def data_validate(values: List[Union[float, int, None]]) -> List[Union[float, in
 
 def optionally_parse_string_datetime(
     value: Optional[Union[str, datetime, date]] = None
-) -> Optional[datetime]:
+) -> Optional[Union[str, datetime, date]]:
     if not value:
         return value
 
