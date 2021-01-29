@@ -1,4 +1,5 @@
 import logging
+from collections import OrderedDict
 from datetime import datetime, timezone
 from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
@@ -54,7 +55,6 @@ def stats_factory(
     Takes a list of data query results and returns OpennemDataSets
 
     @TODO optional groupby field
-    @TODO override timezone
     @TODO multiple groupings / slight refactor
 
     """
@@ -68,7 +68,7 @@ def stats_factory(
 
     for group_code in group_codes:
 
-        data_grouped: Dict[Any, Any] = dict()
+        data_grouped: Dict[datetime, Any] = dict()
 
         for stat in stats:
             if stat.group_by != group_code:
@@ -79,9 +79,9 @@ def stats_factory(
 
             data_grouped[stat.interval] = stat.result
 
-        # data_sorted = OrderedDict(sorted(data_grouped.items()))
+        data_sorted = OrderedDict(sorted(data_grouped.items()))
 
-        data_value = list(data_grouped.values())
+        data_value = list(data_sorted.values())
 
         # Skip null series
         if len([i for i in data_value if i]) == 0:
