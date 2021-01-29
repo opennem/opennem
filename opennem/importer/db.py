@@ -503,4 +503,4 @@ def init() -> None:
     logger.info("Opennem initialized")
 
     import_emissions_csv()
-    logger.info("Pollution data initialized")
+    logger.info("Emission data initialized")
