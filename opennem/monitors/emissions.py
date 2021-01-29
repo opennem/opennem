@@ -6,9 +6,8 @@ import logging
 from typing import List, Optional
 
 from opennem.db import get_database_engine
+from opennem.notifications.slack import slack_message
 from opennem.schema.core import BaseConfig
-
-# from opennem.notifications.slack import slack_message
 
 logger = logging.getLogger("opennem.monitors.facility_seen")
 
@@ -74,7 +73,20 @@ def get_facility_no_emission_factor(only_operating: bool = True) -> List[Facilit
     return records
 
 
+def alert_missing_emission_factors() -> None:
+    missing_factors = get_facility_no_emission_factor()
+
+    for rec in missing_factors:
+        slack_message(
+            "{} in {} {} with fueltech {} is missing factor".format(
+                rec.station_name, rec.network_id, rec.network_region, rec.fueltech_id
+            )
+        )
+
+
 if __name__ == "__main__":
+    alert_missing_emission_factors()
+
     missing_factors = get_facility_no_emission_factor()
 
     for rec in missing_factors:
