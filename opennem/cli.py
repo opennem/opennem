@@ -72,7 +72,7 @@ def cmd_import_all() -> None:
 
 @click.command()
 def cmd_import_emissions() -> None:
-    import_emissions_map()
+    import_emissions_map("emission_factors.csv")
 
 
 @click.command()
