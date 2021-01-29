@@ -245,7 +245,7 @@ def network_demand_query(
     select
         trading_interval at time zone '{timezone}',
         network_id,
-        sum(demand_total) as demand
+        max(demand_total) as demand
     from balancing_summary bs
     where
         bs.trading_interval <= '{date_max}' and
