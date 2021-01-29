@@ -5,7 +5,7 @@ from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.normalizers import normalize_duid
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
-from opennem.utils.dates import subtract_week
+from opennem.utils.time import human_to_timedelta
 
 
 def station_id_case(station_codes: List[str]) -> str:
@@ -53,7 +53,7 @@ def observation_query(
         date_start_condition = "{date_end}::timestamp - '{period}'::interval".format(
             date_end=date_end, period=period.period_sql
         )
-        date_start_condition = "'{}'".format(subtract_week(scada_range.end))
+        date_start_condition = "'{}'".format(scada_range.get_end() - human_to_timedelta("7d"))
 
     if year:
         date_start_condition = "'{year}-01-01'::date".format(year=year)
