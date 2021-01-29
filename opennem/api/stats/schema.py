@@ -44,7 +44,7 @@ def number_output(n: Union[float, int, None]) -> Optional[Union[float, int]]:
     return sigfig_compact(n)
 
 
-def data_validate(values: List[Union[float, int, None]]) -> List[float]:
+def data_validate(values: List[Union[float, int, None]]) -> List[Union[float, int, None]]:
     """Validate and format list of numeric data values"""
     return list(
         map(
