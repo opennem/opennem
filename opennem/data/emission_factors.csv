@@ -20,12 +20,12 @@ NEM,NSW1,ER01,Eraring,coal_black,operating,0.910143,AEMO
 NEM,NSW1,ER02,Eraring,coal_black,operating,0.910143,AEMO
 NEM,NSW1,ER03,Eraring,coal_black,operating,0.910143,AEMO
 NEM,NSW1,ER04,Eraring,coal_black,operating,0.910143,AEMO
-NEM,NSW1,ERGT01,Eraring,distillate,operating,,
+NEM,NSW1,ERGT01,Eraring,distillate,operating,,On the exclusion list
 NEM,NSW1,GB01,Broken Hill,distillate,operating,0.706,AEMO
 NEM,NSW1,GLENNCRK,Glennies Creek,gas_wcmg,operating,0.716,AEMO
 NEM,NSW1,GRANGEAV,Grange Avenue,bioenergy_biogas,operating,0.062,AEMO
 NEM,NSW1,HEZ,Hunter Economic Zone,distillate,retired,0.771429,AEMO
-NEM,NSW1,HVGTS,Hunter Valley,distillate,operating,,AEMO
+NEM,NSW1,HVGTS,Hunter Valley,distillate,operating,,
 NEM,NSW1,JACKSGUL,Jacks Gully,bioenergy_biogas,operating,0.062,AEMO
 NEM,NSW1,KINCUM1,Kincumber,bioenergy_biogas,operating,0.062,AEMO
 NEM,NSW1,LD01,Liddell,coal_black,operating,0.980592,AEMO
@@ -40,7 +40,7 @@ NEM,NSW1,MP1,Mt Piper,coal_black,operating,0.908518,AEMO
 NEM,NSW1,MP2,Mt Piper,coal_black,operating,0.908518,AEMO
 NEM,NSW1,NINEWIL1,Willoughby,distillate,operating,0.957,AEMO
 NEM,NSW1,PMATTAEP,Earthpower Biomass,gas_recip,retired,0.022,AEMO
-NEM,NSW1,REDBANK1,Redbank,coal_black,retired,1.18725487,
+NEM,NSW1,REDBANK1,Redbank,coal_black,retired,1.18725487,AEMO
 NEM,NSW1,SITHE01,Smithfield,gas_ccgt,operating,0.58774,AEMO
 NEM,NSW1,STGEORG1,St George Leagues Club,distillate,operating,0.957,AEMO
 NEM,NSW1,TAHMOOR1,Tahmoor,gas_wcmg,operating,0.716,AEMO
@@ -56,7 +56,7 @@ NEM,NSW1,VP6,Vales Point B,coal_black,operating,0.908305,AEMO
 NEM,NSW1,WDLNGN01,Woodlawn Bioreactor,bioenergy_biogas,operating,0.062,AEMO
 NEM,NSW1,WESTCBT1,Western Suburbs League Club,distillate,operating,0.957,AEMO
 NEM,NSW1,WESTILL1,West Illawarra Leagues Club,distillate,operating,0.957,AEMO
-NEM,NSW1,WILGAPK,Wilga Park,gas_recip,operating,,
+NEM,NSW1,WILGAPK,Wilga Park,gas_recip,operating,0.765,AEMO
 NEM,NSW1,WILGB01,Wilga Park B,gas_recip,operating,0.765,AEMO
 NEM,NSW1,WOYWOY1,Woy Woy,bioenergy_biogas,operating,0.062,AEMO
 NEM,NSW1,WW7,Wallerawang,coal_black,retired,1.030046,AEMO
@@ -107,7 +107,7 @@ NEM,QLD1,MSTUART2,Mt Stuart,distillate,operating,0.998633,AEMO
 NEM,QLD1,MSTUART3,Mt Stuart,distillate,operating,0.998633,AEMO
 NEM,QLD1,OAKEY1,Oakey,gas_ocgt,operating,0.845274,AEMO
 NEM,QLD1,OAKEY2,Oakey,gas_ocgt,operating,0.845274,AEMO
-NEM,QLD1,OAKY2,Oaky Creek 2,gas_wcmg,operating,,
+NEM,QLD1,OAKY2,Oaky Creek 2,gas_wcmg,operating,0.716,AEMO
 NEM,QLD1,OAKYCREK,Oaky Creek,gas_recip,operating,,
 NEM,QLD1,PIONEER,Pioneer Sugar Mill,bioenergy_biomass,operating,0.018,AEMO
 NEM,QLD1,RACOMIL1,Racecourse Mill,bioenergy_biomass,operating,0.018,AEMO
@@ -203,8 +203,8 @@ NEM,TAS1,BBTHREE3,Bell Bay Three,gas_ocgt,operating,0.664684,AEMO
 NEM,TAS1,BELLBAY1,Bell Bay,gas_steam,retired,,
 NEM,TAS1,BELLBAY2,Bell Bay,gas_steam,retired,,
 NEM,TAS1,CATAGUN1,Catagunya/Liapootah/Wayatinah,distillate,operating,0.972,AEMO
-NEM,TAS1,GEORGTN1,George Town,distillate,retired,,
-NEM,TAS1,MEADOWB2,Meadowbank,distillate,operating,,
+NEM,TAS1,GEORGTN1,George Town,distillate,retired,0.972,AEMO
+NEM,TAS1,MEADOWB2,Meadowbank,distillate,operating,0.972,AEMO
 NEM,TAS1,PORTLAT1,Port Latta,distillate,retired,0.972,AEMO
 NEM,TAS1,QUERIVE1,Que River,distillate,retired,0.972,AEMO
 NEM,TAS1,REMOUNT,Remount,bioenergy_biogas,operating,0.062,AEMO
