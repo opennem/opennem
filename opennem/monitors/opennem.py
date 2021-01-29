@@ -12,8 +12,13 @@ logger = logging.getLogger("opennem.monitors.opennem")
 
 def check_opennem_interval_delays(network_code: str) -> bool:
     network = network_from_network_code(network_code)
+
+    if settings.debug:
+        env = ".dev"
+
     url = (
         f"https://data.opennem.org.au/v3/stats/au/{network.code}/power/7d.json"
+        f"https://data{env}.opennem.org.au/v3/stats/au/{network.code}/power/7d.json"
     )
 
     resp = http.get(url)
@@ -37,9 +42,7 @@ def check_opennem_interval_delays(network_code: str) -> bool:
     history_date = parse_date(history_end_date, dayfirst=False)
 
     if not history_date:
-        logger.error(
-            "Could not read history date for opennem interval monitor"
-        )
+        logger.error("Could not read history date for opennem interval monitor")
         return False
 
     now_date = datetime.now().astimezone(network.get_timezone())
