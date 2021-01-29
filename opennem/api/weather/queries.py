@@ -5,6 +5,7 @@ from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.normalizers import normalize_duid
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
+from opennem.utils.dates import subtract_week
 
 
 def station_id_case(station_codes: List[str]) -> str:
@@ -29,30 +30,19 @@ def observation_query(
 
     __query = """
     select
-        t.observation_time at time zone '{timezone}',
-        t.station_id,
-        avg(t.temp_air) as temp_avg,
-        min(t.temp_air) as temp_min,
-        max(t.temp_air) as temp_max
-    from
-        (
-        select
-            time_bucket_gapfill('{trunc}', observation_time) as observation_time,
-            fs.station_id as station_id,
-            avg(fs.temp_air) as temp_air
-        from bom_observation fs
-        where
-            fs.station_id in ({station_codes})
-            and fs.observation_time <= {date_end}
-            and fs.observation_time >= {date_start_condition}
-        group by 1, 2
-        )
-    as t
-    group by 1, 2
-    order by 1 desc, 2 desc
+        time_bucket_gapfill('30 minutes', observation_time) as observation_time,
+        fs.station_id as station_id,
+        avg(fs.temp_air) as temp_air,
+        min(fs.temp_air) as temp_min,
+        max(fs.temp_air) as temp_max
+    from bom_observation fs
+    where
+        fs.station_id in ({station_codes})
+        and fs.observation_time <= {date_end}
+        and fs.observation_time > {date_start_condition}
+    group by 1, 2;
     """
-
-    date_end = "now()"
+    date_end = ""
 
     if scada_range:
         date_end = scada_range.get_end_sql()
@@ -63,6 +53,7 @@ def observation_query(
         date_start_condition = "{date_end}::timestamp - '{period}'::interval".format(
             date_end=date_end, period=period.period_sql
         )
+        date_start_condition = "'{}'".format(subtract_week(scada_range.end))
 
     if year:
         date_start_condition = "'{year}-01-01'::date".format(year=year)
@@ -118,7 +109,7 @@ def observation_query_all(
                 where
                     fs.station_id in ({station_codes})
                     and fs.observation_time <= {date_end}
-                    and fs.observation_time >= {date_start}
+                    and fs.observation_time > {date_start}
                 group by 1, 2
             ) as t
         group by 1, 2
