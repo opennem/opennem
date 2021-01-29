@@ -37,9 +37,7 @@ def num_sigfigs(n, sig):
     return round(n * multi) / multi
 
 
-def sigfig_compact(
-    n: Union[float, int], precision: int = DEFAULT_PRECISION
-) -> float:
+def sigfig_compact(n: Union[float, int], precision: int = DEFAULT_PRECISION) -> Union[float, int]:
     """
     Compact significant figure formatting
     """

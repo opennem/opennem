@@ -33,7 +33,7 @@ def optionaly_lowercase_string(value: str) -> str:
     return value
 
 
-def number_output(n: Union[float, int, None]) -> Optional[float]:
+def number_output(n: Union[float, int, None]) -> Optional[Union[float, int]]:
     """Format numbers for data series outputs"""
     if n is None:
         return None
@@ -84,7 +84,7 @@ class OpennemDataHistory(BaseConfig):
     start: Union[datetime, date]
     last: Union[datetime, date]
     interval: Optional[str]
-    data: List[Optional[float]]
+    data: List[Optional[Union[float, int]]]
 
     # validators
     _data_valid = validator("data", allow_reuse=True, pre=True)(data_validate)
