@@ -57,10 +57,6 @@ def import_mms_emissions() -> None:
         "KWINANA_C5": 0.877,
         # from reports
         "REDBANK1": 1.2,
-        # from https://web.archive.org/web/20111002115520/http://carma.org/company/detail/6264
-        "MOR1": 2.79,
-        "MOR2": 2.79,
-        "MOR3": 2.79,
     }
 
     emission_map = []
@@ -142,7 +138,7 @@ def import_emissions_map(file_name: str) -> None:
 
 
 def check_emissions_map() -> None:
-    content = load_data("nem_emissions.csv", from_project=True, skip_loaders=True)
+    content = load_data("opennem_emission_factors.csv", from_project=True, skip_loaders=True)
     mms_emissions = import_mms_emissions()
 
     def get_emissions_for_code(facility_code: str) -> Optional[Dict]:
@@ -197,15 +193,15 @@ def check_emissions_map() -> None:
         csv_out.append(rec)
 
     fieldnames = [
-        "station_name",
         "network_id",
         "network_region",
         "facility_code",
-        "emissions_factor_co2",
+        "station_name",
         "fueltech_id",
+        "status_id",
+        "emissions_factor_co2",
         "emission_factor_source",
     ]
-
     with open("emission_factors.csv", "w") as fh:
         csvwriter = csv.DictWriter(fh, fieldnames=fieldnames)
         csvwriter.writeheader()
