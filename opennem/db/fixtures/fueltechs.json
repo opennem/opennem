@@ -12,12 +12,12 @@
   {
     "code": "bioenergy_biogas",
     "label": "Biogas",
-    "renewable": true
+    "renewable": false
   },
   {
     "code": "bioenergy_biomass",
     "label": "Biomass",
-    "renewable": true
+    "renewable": false
   },
   {
     "code": "coal_black",
