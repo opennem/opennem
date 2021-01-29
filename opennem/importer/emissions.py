@@ -1,5 +1,6 @@
 import csv
 import logging
+from typing import Dict, Optional
 
 from opennem.core.loader import load_data
 from opennem.core.normalizers import clean_float, normalize_duid
@@ -11,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def import_mms_emissions() -> None:
-    # mms = mms_import()
+    mms = mms_import()
 
     facility_poll_map = {
         "APS": 1.228625,
@@ -62,39 +63,30 @@ def import_mms_emissions() -> None:
         "MOR3": 2.79,
     }
 
-    # for station in mms:
-    #     for facility in station.facilities:
-    #         if facility.emissions_factor_co2 and not facility.code.endswith(
-    #             "NL1"
-    #         ):
-    #             facility_poll_map[facility.code] = {
-    #                 "intensity": facility.emissions_factor_co2,
-    #                 "name": station.name,
-    #                 "fueltech": facility.fueltech.code
-    #                 if facility.fueltech
-    #                 else "",
-    #             }
+    emission_map = []
 
-    session = SessionLocal()
+    for station in mms:
+        for facility in station.facilities:
+            emission_factor = facility.emissions_factor_co2
+            factor_source = "AEMO"
 
-    for fac_code, pol_value in facility_poll_map.items():
-        facility = (
-            session.query(Facility)
-            .filter_by(code=fac_code)
-            .filter_by(network_id="NEM")
-            .one_or_none()
-        )
+            if not emission_factor and facility.code in facility_poll_map.keys():
+                emission_factor = facility_poll_map[facility.code]
+                factor_source = "OpenNEM"
 
-        if not facility:
-            logger.info("could not find facility: {} {}".format(fac_code, pol_value))
+            emission_map.append(
+                {
+                    "station_name": station.name,
+                    "network_id": "NEM",
+                    "network_region": facility.network_region,
+                    "facility_code": facility.code,
+                    "emissions_factor_co2": facility.emissions_factor_co2,
+                    "fueltech_id": "",
+                    "emission_factor_source": factor_source,
+                }
+            )
 
-            continue
-
-        facility.emissions_factor_co2 = clean_float(pol_value)
-        session.add(facility)
-        session.commit()
-
-    return None
+    return emission_map
 
 
 def import_emissions_csv() -> None:
@@ -111,7 +103,7 @@ def import_emissions_map(file_name: str) -> None:
     """Import emission factors from CSV files for each network
     the format of the csv file is
 
-    station_name	network_id	network_region	facility_code	emissions_factor_co2	fueltech_id
+    station_name,network_id,network_region,facility_code,emissions_factor_co2,fueltech_id,emission_factor_source
     """
     session = SessionLocal()
 
@@ -149,6 +141,76 @@ def import_emissions_map(file_name: str) -> None:
     return None
 
 
+def check_emissions_map() -> None:
+    content = load_data("nem_emissions.csv", from_project=True, skip_loaders=True)
+    mms_emissions = import_mms_emissions()
+
+    def get_emissions_for_code(facility_code: str) -> Optional[Dict]:
+        facility_lookup = list(
+            filter(lambda x: x["facility_code"] == facility_code, mms_emissions)
+        )
+
+        if not facility_lookup or len(facility_lookup) < 1:
+            logger.error("Could not find facility {} in MMS emmissions data".format(facility_code))
+            return None
+
+        facility = facility_lookup.pop()
+        return facility
+
+    csv_content = content.splitlines()
+    csvreader = csv.DictReader(csv_content)
+
+    csv_out = []
+
+    for rec in csvreader:
+        network_id = rec["network_id"]
+        facility_code = normalize_duid(rec["facility_code"])
+        emissions_intensity = clean_float(rec["emissions_factor_co2"])
+
+        if network_id not in ["NEM"]:
+            rec["emission_factor_source"] = "NPI"
+            csv_out.append(rec)
+
+            continue
+
+        rec["emission_factor_source"] = ""
+
+        mms_emission_record = get_emissions_for_code(facility_code)
+
+        if not mms_emission_record:
+            csv_out.append(rec)
+            continue
+
+        if emissions_intensity != mms_emission_record["emissions_factor_co2"]:
+            logger.error(
+                "Mismatch for {}: {} and {}".format(
+                    facility_code, emissions_intensity, mms_emission_record["emissions_factor_co2"]
+                )
+            )
+
+            if mms_emission_record["emissions_factor_co2"]:
+                rec["emissions_factor_co2"] = mms_emission_record["emissions_factor_co2"]
+            else:
+                rec["emission_factor_source"] = "Lookup"
+
+        rec["emission_factor_source"] = mms_emission_record["emission_factor_source"]
+        csv_out.append(rec)
+
+    fieldnames = [
+        "station_name",
+        "network_id",
+        "network_region",
+        "facility_code",
+        "emissions_factor_co2",
+        "fueltech_id",
+        "emission_factor_source",
+    ]
+
+    with open("emission_factors.csv", "w") as fh:
+        csvwriter = csv.DictWriter(fh, fieldnames=fieldnames)
+        csvwriter.writeheader()
+        csvwriter.writerows(csv_out)
+
+
 if __name__ == "__main__":
-    import_emissions_csv()
-    import_mms_emissions()
+    check_emissions_map()
