@@ -414,8 +414,8 @@ def power_network_rooftop_query(
         select
             time_bucket_gapfill('30 minutes', fs.trading_interval)  AS trading_interval,
             ft.code as fueltech_code,
-            coalesce(sum(fs.facility_power), 0) as facility_power
-        from {table_query} fs
+            coalesce(fs.generated, 0) as facility_power
+        from facility_scada fs
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
         where
@@ -425,7 +425,6 @@ def power_network_rooftop_query(
             {network_region_query}
             fs.trading_interval <= '{date_max}' and
             fs.trading_interval > '{date_min}'
-        group by 1, 2
         order by 1 asc
     """
 
@@ -494,10 +493,10 @@ def power_network_rooftop_forecast_query(
 
     __query = """
         select
-            fs.trading_interval at time zone '{timezone}' AS trading_interval,
+            time_bucket_gapfill('30 minutes', fs.trading_interval) AS trading_interval,
             ft.code as fueltech_code,
-            sum(fs.facility_power) as facility_power
-        from {table_query} fs
+            fs.generated as facility_power
+        from facility_scada fs
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
         where
@@ -506,7 +505,6 @@ def power_network_rooftop_forecast_query(
             {network_query}
             {network_region_query}
             fs.trading_interval > '{date_max}'
-        group by 1, 2
         order by 1 asc
     """
 
