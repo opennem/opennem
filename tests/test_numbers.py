@@ -6,6 +6,7 @@ from opennem.utils.numbers import num_sigfigs, sigfig_compact
 @pytest.mark.parametrize(
     "number,number_expected",
     [
+        (0, 0),
         (0.0, 0),
         (0.012, 0.012),
         (-0.012, -0.012),
