@@ -176,9 +176,9 @@ def price_network_query(
 
     __query = """
         select
-            bs.trading_interval at time zone '{timezone}' as trading_interval,
+            time_bucket_gapfill('{trunc}', bs.trading_interval) as trading_interval,
             {group_field},
-            max(bs.price) as price
+            avg(bs.price) as price
         from balancing_summary bs
         where
             bs.trading_interval <= '{date_max}' and

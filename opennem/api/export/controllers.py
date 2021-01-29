@@ -339,7 +339,7 @@ def power_week(
         networks_query=networks_query,
         period=period,
         date_range=date_range,
-        interval=interval,
+        interval=human_to_interval("30m"),
         network_region=network_region_code,
     )
 
@@ -357,7 +357,7 @@ def power_week(
         code=network_region_code or network.code.lower(),
         units=get_unit("price_energy_mega"),
         network=network,
-        interval=interval,
+        interval=human_to_interval("30m"),
         region=network_region_code,
         period=period,
     )
