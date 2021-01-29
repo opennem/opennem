@@ -21,7 +21,7 @@ class FacilityEmissionsRecord(BaseConfig):
     fueltech_id: str
 
 
-def get_facility_no_emission_factor(only_operating: bool = True) -> List[FacilityEmissionsRecord]:
+def get_facility_no_emission_factor(only_operating: bool = False) -> List[FacilityEmissionsRecord]:
     """Run this and it'll check if there are new facilities in
     that don't have emission factors
     """
