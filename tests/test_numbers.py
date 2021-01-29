@@ -1,6 +1,6 @@
 import pytest
 
-from opennem.utils.numbers import num_sigfigs, sigfig_compact
+from opennem.utils.numbers import sigfig_compact
 
 
 @pytest.mark.parametrize(
@@ -27,6 +27,6 @@ from opennem.utils.numbers import num_sigfigs, sigfig_compact
         (-1234567.89, -1234567),
     ],
 )
-def test_sigfig_compact(number, number_expected):
+def test_sigfig_compact(number, number_expected) -> None:
     number = sigfig_compact(number, 4)
     assert number == number_expected
