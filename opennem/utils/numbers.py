@@ -59,6 +59,9 @@ def sigfig_compact(n: Union[float, int], precision: int = DEFAULT_PRECISION) -> 
     if is_neg:
         n *= -1
 
+    if n == int(n):
+        return int(n)
+
     return n
 
 
