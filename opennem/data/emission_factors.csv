@@ -1,0 +1,203 @@
+station_name,network_id,network_region,facility_code,emissions_factor_co2,fueltech_id,emission_factor_source
+Bayswater,NEM,NSW1,BW02,0.912643,coal_black,AEMO
+Bayswater,NEM,NSW1,BW01,0.912643,coal_black,AEMO
+Bayswater,NEM,NSW1,BW04,0.912643,coal_black,AEMO
+Bayswater,NEM,NSW1,BW03,0.912643,coal_black,AEMO
+Broadwater,NEM,NSW1,BWTR1,0.018,bioenergy_biogas,AEMO
+Colongra,NEM,NSW1,CG2,0.78256,gas_ocgt,AEMO
+Colongra,NEM,NSW1,CG1,0.78256,gas_ocgt,AEMO
+Colongra,NEM,NSW1,CG4,0.78256,gas_ocgt,AEMO
+Colongra,NEM,NSW1,CG3,0.78256,gas_ocgt,AEMO
+Condong,NEM,NSW1,CONDONG1,0.018,bioenergy_biogas,AEMO
+Eastern Creek,NEM,NSW1,EASTCRK,0.062,bioenergy_biogas,AEMO
+Eastern Creek 2,NEM,NSW1,EASTCRK2,0.062,bioenergy_biogas,AEMO
+Eraring,NEM,NSW1,ER03,0.910143,coal_black,AEMO
+Eraring,NEM,NSW1,ER04,0.910143,coal_black,AEMO
+Eraring,NEM,NSW1,ER02,0.910143,coal_black,AEMO
+Eraring,NEM,NSW1,ER01,0.910143,coal_black,AEMO
+Grange Avenue,NEM,NSW1,GRANGEAV,0.062,bioenergy_biogas,AEMO
+Jacks Gully,NEM,NSW1,JACKSGUL,0.062,bioenergy_biogas,AEMO
+Kemps Creek,NEM,NSW1,AGLSITA1,0.062,bioenergy_biogas,AEMO
+Kincumber,NEM,NSW1,KINCUM1,0.062,bioenergy_biogas,AEMO
+Liddell,NEM,NSW1,LD02,0.980592,coal_black,AEMO
+Liddell,NEM,NSW1,LD03,0.980592,coal_black,AEMO
+Liddell,NEM,NSW1,LD04,0.980592,coal_black,AEMO
+Liddell,NEM,NSW1,LD01,0.980592,coal_black,AEMO
+Lucas Heights 2,NEM,NSW1,LUCAS2S2,0.062,bioenergy_biogas,AEMO
+Mt Piper,NEM,NSW1,MP1,0.908518,coal_black,AEMO
+Mt Piper,NEM,NSW1,MP2,0.908518,coal_black,AEMO
+Smithfield,NEM,NSW1,SITHE01,0.58774,gas_ccgt,AEMO
+Tallawarra,NEM,NSW1,TALWA1,0.58774,gas_ccgt,AEMO
+Uranquinty,NEM,NSW1,URANQ12,0.724272,gas_ocgt,AEMO
+Uranquinty,NEM,NSW1,URANQ11,0.724272,gas_ocgt,AEMO
+Uranquinty,NEM,NSW1,URANQ13,0.724272,gas_ocgt,AEMO
+Uranquinty,NEM,NSW1,URANQ14,0.724272,gas_ocgt,AEMO
+Vales Point B,NEM,NSW1,VP5,0.908305,coal_black,AEMO
+Vales Point B,NEM,NSW1,VP6,0.908305,coal_black,AEMO
+West Nowra,NEM,NSW1,AGLNOW1,0.062,bioenergy_biogas,AEMO
+Woodlawn Bioreactor,NEM,NSW1,WDLNGN01,0.062,bioenergy_biogas,AEMO
+Woy Woy,NEM,NSW1,WOYWOY1,0.062,bioenergy_biogas,AEMO
+Barcaldine,NEM,QLD1,BARCALDN,1.099239,gas_ccgt,AEMO
+Braemar,NEM,QLD1,BRAEMAR1,0.663142,gas_ocgt,AEMO
+Braemar,NEM,QLD1,BRAEMAR2,0.663142,gas_ocgt,AEMO
+Braemar,NEM,QLD1,BRAEMAR3,0.663142,gas_ocgt,AEMO
+Braemar 2,NEM,QLD1,BRAEMAR6,0.663142,gas_ocgt,AEMO
+Braemar 2,NEM,QLD1,BRAEMAR5,0.663142,gas_ocgt,AEMO
+Braemar 2,NEM,QLD1,BRAEMAR7,0.663142,gas_ocgt,AEMO
+Browns Plains,NEM,QLD1,BPLANDF1,0.062,bioenergy_biogas,AEMO
+Callide B,NEM,QLD1,CALL_B_2,0.931343,coal_black,AEMO
+Callide B,NEM,QLD1,CALL_B_1,0.931343,coal_black,AEMO
+Callide C,NEM,QLD1,CPP_3,0.906912,coal_black,AEMO
+Callide C,NEM,QLD1,CPP_4,0.906912,coal_black,AEMO
+Condamine  A,NEM,QLD1,CPSA,0.663142,gas_ccgt,AEMO
+Darling Downs,NEM,QLD1,DDPS1,0.477585,gas_ccgt,AEMO
+Gladstone,NEM,QLD1,GSTONE5,0.971761,coal_black,AEMO
+Gladstone,NEM,QLD1,GSTONE3,0.971761,coal_black,AEMO
+Gladstone,NEM,QLD1,GSTONE6,0.971761,coal_black,AEMO
+Gladstone,NEM,QLD1,GSTONE4,0.971761,coal_black,AEMO
+Gladstone,NEM,QLD1,GSTONE1,0.971761,coal_black,AEMO
+Gladstone,NEM,QLD1,GSTONE2,0.971761,coal_black,AEMO
+Invicta Sugar Mill,NEM,QLD1,INVICTA,0.018,bioenergy_biomass,AEMO
+Isis Central Sugar Mill,NEM,QLD1,ICSM,0.018,bioenergy_biomass,AEMO
+Kogan Creek,NEM,QLD1,KPP_1,0.83104,coal_black,AEMO
+Millmerran,NEM,QLD1,MPP_1,0.841598,coal_black,AEMO
+Millmerran,NEM,QLD1,MPP_2,0.841598,coal_black,AEMO
+Oakey,NEM,QLD1,OAKEY1,0.845274,gas_ocgt,AEMO
+Oakey,NEM,QLD1,OAKEY2,0.845274,gas_ocgt,AEMO
+Pioneer Sugar Mill,NEM,QLD1,PIONEER,0.018,bioenergy_biomass,AEMO
+Racecourse Mill,NEM,QLD1,RACOMIL1,0.018,bioenergy_biomass,AEMO
+Rocky Point Co-gen,NEM,QLD1,RPCG,0.023,bioenergy_biomass,AEMO
+Roma,NEM,QLD1,ROMA_7,0.756518,gas_ocgt,AEMO
+Roma,NEM,QLD1,ROMA_8,0.756518,gas_ocgt,AEMO
+Stanwell,NEM,QLD1,STAN-1,0.87219,coal_black,AEMO
+Stanwell,NEM,QLD1,STAN-2,0.87219,coal_black,AEMO
+Stanwell,NEM,QLD1,STAN-3,0.87219,coal_black,AEMO
+Stanwell,NEM,QLD1,STAN-4,0.87219,coal_black,AEMO
+Stapylton,NEM,QLD1,STAPYLTON1,0.062,bioenergy_biogas,AEMO
+Swanbank E,NEM,QLD1,SWAN_E,0.427952,gas_ccgt,AEMO
+Tableland Mill,NEM,QLD1,TABMILL2,0.018,bioenergy_biomass,AEMO
+Tarong,NEM,QLD1,TARONG#2,0.871459,coal_black,AEMO
+Tarong,NEM,QLD1,TARONG#1,0.871459,coal_black,AEMO
+Tarong,NEM,QLD1,TARONG#4,0.871459,coal_black,AEMO
+Tarong,NEM,QLD1,TARONG#3,0.871459,coal_black,AEMO
+Tarong North,NEM,QLD1,TNPS1,0.843756,coal_black,AEMO
+Townsville,NEM,QLD1,YABULU2,0.509212,gas_ccgt,AEMO
+Townsville,NEM,QLD1,YABULU,0.509212,gas_ccgt,AEMO
+Veolia Ti Tree Bio Reactor,NEM,QLD1,TITREE,0.062,bioenergy_biogas,AEMO
+Victoria Mill,NEM,QLD1,VICMILL1,0.018,bioenergy_biomass,AEMO
+Yarwun,NEM,QLD1,YARWUN_1,0.509212,gas_ccgt,AEMO
+Bolivar Waste Water Treatment,NEM,SA1,BOLIVAR1,0.003,bioenergy_biogas,AEMO
+Dry Creek,NEM,SA1,DRYCGT2,1.34256,gas_ocgt,AEMO
+Dry Creek,NEM,SA1,DRYCGT1,1.34256,gas_ocgt,AEMO
+Dry Creek,NEM,SA1,DRYCGT3,1.34256,gas_ocgt,AEMO
+Hallett,NEM,SA1,AGLHAL,1.17444,gas_ocgt,AEMO
+Ladbroke Grove,NEM,SA1,LADBROK2,0.653552,gas_ocgt,AEMO
+Ladbroke Grove,NEM,SA1,LADBROK1,0.653552,gas_ocgt,AEMO
+Mintaro,NEM,SA1,MINTARO,0.952377,gas_ocgt,AEMO
+Pelican Point,NEM,SA1,PPCCGT,0.653552,gas_ccgt,AEMO
+Quarantine,NEM,SA1,QPS3,0.799959,gas_ocgt,AEMO
+Quarantine,NEM,SA1,QPS4,0.799959,gas_ocgt,AEMO
+Quarantine,NEM,SA1,QPS5,0.799959,gas_ocgt,AEMO
+Quarantine,NEM,SA1,QPS1,0.799959,gas_ocgt,AEMO
+Quarantine,NEM,SA1,QPS2,0.799959,gas_ocgt,AEMO
+Wingfield 1,NEM,SA1,WINGF1_1,0.062,bioenergy_biogas,AEMO
+Wingfield 2,NEM,SA1,WINGF2_1,0.062,bioenergy_biogas,AEMO
+Bell Bay Three,NEM,TAS1,BBTHREE3,0.664684,gas_ocgt,AEMO
+Bell Bay Three,NEM,TAS1,BBTHREE2,0.664684,gas_ocgt,AEMO
+Bell Bay Three,NEM,TAS1,TVPP104,0.664684,gas_ocgt,AEMO
+Bell Bay Three,NEM,TAS1,BBTHREE1,0.664684,gas_ocgt,AEMO
+Remount,NEM,TAS1,REMOUNT,0.062,bioenergy_biogas,AEMO
+Tamar Valley,NEM,TAS1,TVCC201,0.509212,gas_ccgt,AEMO
+Bairnsdale,NEM,VIC1,BDL02,0.565208,gas_ocgt,AEMO
+Bairnsdale,NEM,VIC1,BDL01,0.565208,gas_ocgt,AEMO
+Berwick,NEM,VIC1,BERWICK,0.062,bioenergy_biogas,AEMO
+Broadmeadows,NEM,VIC1,BROADMDW,0.062,bioenergy_biogas,AEMO
+Brooklyn,NEM,VIC1,BROOKLYN,0.062,bioenergy_biogas,AEMO
+Clayton,NEM,VIC1,CLAYTON,0.062,bioenergy_biogas,AEMO
+Corio,NEM,VIC1,CORIO1,0.062,bioenergy_biogas,AEMO
+Hallam Road,NEM,VIC1,HALAMRD1,0.062,bioenergy_biogas,AEMO
+Jeeralang A,NEM,VIC1,JLA02,0.879405,gas_ocgt,AEMO
+Jeeralang A,NEM,VIC1,JLA01,0.879405,gas_ocgt,AEMO
+Jeeralang A,NEM,VIC1,JLA04,0.879405,gas_ocgt,AEMO
+Jeeralang A,NEM,VIC1,JLA03,0.879405,gas_ocgt,AEMO
+Jeeralang B,NEM,VIC1,JLB02,0.879405,gas_ocgt,AEMO
+Jeeralang B,NEM,VIC1,JLB01,0.879405,gas_ocgt,AEMO
+Jeeralang B,NEM,VIC1,JLB03,0.879405,gas_ocgt,AEMO
+Laverton North,NEM,VIC1,LNGS2,0.79018,gas_ocgt,AEMO
+Laverton North,NEM,VIC1,LNGS1,0.79018,gas_ocgt,AEMO
+Longford,NEM,VIC1,LONGFORD,0.601,gas_ocgt,AEMO
+Loy Yang A,NEM,VIC1,LYA3,1.154818,coal_brown,AEMO
+Loy Yang A,NEM,VIC1,LYA2,1.154818,coal_brown,AEMO
+Loy Yang A,NEM,VIC1,LYA1,1.154818,coal_brown,AEMO
+Loy Yang A,NEM,VIC1,LYA4,1.154818,coal_brown,AEMO
+Loy Yang B,NEM,VIC1,LOYYB2,1.141021,coal_brown,AEMO
+Loy Yang B,NEM,VIC1,LOYYB1,1.141021,coal_brown,AEMO
+Mortlake,NEM,VIC1,MORTLK11,0.573436,gas_ocgt,AEMO
+Mortlake,NEM,VIC1,MORTLK12,0.573436,gas_ocgt,AEMO
+Shepparton Wastewater Treatment,NEM,VIC1,SHEP1,0.023,bioenergy_biogas,AEMO
+Somerton,NEM,VIC1,AGLSOM,0.817915,gas_ocgt,AEMO
+Springvale,NEM,VIC1,SVALE1,0.062,bioenergy_biogas,AEMO
+Tatura Biomass,NEM,VIC1,TATURA01,0.023,bioenergy_biogas,AEMO
+Valley  Peaking,NEM,VIC1,VPGS1,0.871547,gas_ocgt,AEMO
+Valley  Peaking,NEM,VIC1,VPGS4,0.871547,gas_ocgt,AEMO
+Valley  Peaking,NEM,VIC1,VPGS5,0.871547,gas_ocgt,AEMO
+Valley  Peaking,NEM,VIC1,VPGS2,0.871547,gas_ocgt,AEMO
+Valley  Peaking,NEM,VIC1,VPGS3,0.871547,gas_ocgt,AEMO
+Valley  Peaking,NEM,VIC1,VPGS6,0.871547,gas_ocgt,AEMO
+Wollert,NEM,VIC1,WOLLERT1,0.062,bioenergy_biogas,AEMO
+Yallourn W,NEM,VIC1,YWPS3,1.315515,coal_brown,AEMO
+Yallourn W,NEM,VIC1,YWPS4,1.315515,coal_brown,AEMO
+Yallourn W,NEM,VIC1,YWPS2,1.315515,coal_brown,AEMO
+Yallourn W,NEM,VIC1,YWPS1,1.315515,coal_brown,AEMO
+Newport,NEM,VIC1,NPS,0.570054,gas_steam,AEMO
+Meadowbank,NEM,TAS1,MEADOWB2,,distillate,AEMO
+Catagunya/Liapootah/Wayatinah,NEM,TAS1,CATAGUN1,0.972,distillate,AEMO
+Torrens Island,NEM,SA1,TORRB4,0.68115,gas_steam,AEMO
+Angaston,NEM,SA1,ANGAS2,1.0136,distillate,AEMO
+Angaston,NEM,SA1,ANGAST1,,distillate,AEMO
+Lonsdale,NEM,SA1,LONSDALE,1.4918,distillate,AEMO
+Mintaro,NEM,SA1,MINTNL1,0.952377,gas_ocgt,AEMO
+Port Stanvac,NEM,SA1,STANV1,1.4918,distillate,AEMO
+Port Stanvac,NEM,SA1,STANV2,1.4918,distillate,AEMO
+Tataria Bordertown,NEM,SA1,TATIARA1,0.957,distillate,AEMO
+Torrens Island,NEM,SA1,TORRA1,0.70856,gas_steam,AEMO
+Torrens Island,NEM,SA1,TORRA2,0.70856,gas_steam,AEMO
+Torrens Island,NEM,SA1,TORRA3,0.70856,gas_steam,AEMO
+Torrens Island,NEM,SA1,TORRA4,0.70856,gas_steam,AEMO
+Torrens Island,NEM,SA1,TORRB1,0.68115,gas_steam,AEMO
+Torrens Island,NEM,SA1,TORRB2,0.68115,gas_steam,AEMO
+Torrens Island,NEM,SA1,TORRB3,0.68115,gas_steam,AEMO
+Angaston,NEM,SA1,ANGAS1,1.0136,distillate,AEMO
+Port Lincoln,NEM,SA1,POR01,1.445858,distillate,AEMO
+Port Lincoln,NEM,SA1,POR03,1.445858,distillate,AEMO
+Temporary Generation North,NEM,SA1,SATGN1,0.957,distillate,AEMO
+Temporary Generation South,NEM,SA1,SATGS1,0.957,distillate,AEMO
+Snuggery,NEM,SA1,SNUG1,1.448351,distillate,AEMO
+Snuggery,NEM,SA1,SNUG2,1.448351,distillate,AEMO
+Snuggery,NEM,SA1,SNUG3,1.448351,distillate,AEMO
+Snuggery,NEM,SA1,SNUGNL1,1.448351,distillate,AEMO
+Port Stanvac,NEM,SA1,PTSTAN1,,distillate,AEMO
+Mt Stuart,NEM,QLD1,MSTUART1,0.998633,distillate,AEMO
+Mt Stuart,NEM,QLD1,MSTUART2,0.998633,distillate,AEMO
+Mt Stuart,NEM,QLD1,MSTUART3,0.998633,distillate,AEMO
+Mackay,NEM,QLD1,MACKAYGT,1.045823,distillate,AEMO
+Willoughby,NEM,NSW1,NINEWIL1,0.957,distillate,AEMO
+West Illawarra Leagues Club,NEM,NSW1,WESTILL1,0.957,distillate,AEMO
+Hunter Valley,NEM,NSW1,HVGTS,,distillate,AEMO
+Eraring,NEM,NSW1,ERGT01,,distillate,AEMO
+Broken Hill,NEM,NSW1,GB01,0.706,distillate,AEMO
+Western Suburbs League Club,NEM,NSW1,WESTCBT1,0.957,distillate,AEMO
+St George Leagues Club,NEM,NSW1,STGEORG1,0.957,distillate,AEMO
+Kemerton diesel,WEM,WEM,TESLA_KEMERTON_G1,0.97,distillate,NPI
+Merredin,WEM,WEM,NAMKKN_MERR_SG1,0.879405,gas_ocgt,NPI
+Northam diesel,WEM,WEM,TESLA_NORTHAM_G1,0.97,distillate,NPI
+Picton diesel,WEM,WEM,TESLA_PICTON_G1,0.97,distillate,NPI
+Geraldton diesel,WEM,WEM,TESLA_GERALDTON_G1,0.97,distillate,NPI
+Traralgon Network Support,NEM,VIC1,TGNSS1,0.601,gas_recip,AEMO
+Ballarat Hospital,NEM,VIC1,BBASEHOS,0.601,gas_recip,AEMO
+Barker Inlet,NEM,SA1,BARKIPS1,0.874,gas_recip,AEMO
+Oaky Creek,NEM,QLD1,OAKYCREK,,gas_recip,AEMO
+Moranbah,NEM,QLD1,MORANBAH,0.706,gas_recip,AEMO
+Daandine,NEM,QLD1,DAANDINE,0.706,gas_recip,AEMO
+Wilga Park B,NEM,NSW1,WILGB01,,gas_recip,AEMO
+Wilga Park,NEM,NSW1,WILGAPK,,gas_recip,AEMO
