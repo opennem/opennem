@@ -11,6 +11,7 @@ from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.utils.dates import subtract_week
+from opennem.utils.time import human_to_timedelta
 
 
 def interconnector_flow_emissions_query(
@@ -208,7 +209,7 @@ def price_network_query(
     date_min = date_range.get_start()
 
     if period:
-        date_min = date_range.get_end() - timedelta(minutes=period.period)
+        date_min = date_range.get_end() - human_to_timedelta(period.period_human)
 
     query = dedent(
         __query.format(
@@ -276,7 +277,7 @@ def network_demand_query(
     date_min = date_range.get_start()
 
     if period:
-        date_min = date_range.get_end() - timedelta(minutes=period.period)
+        date_min = date_range.get_end() - human_to_timedelta(period.period_human)
 
     query = __query.format(
         timezone=network.timezone_database,
@@ -365,7 +366,7 @@ def power_network_fueltech_query(
     date_min = date_range.get_start()
 
     if period:
-        date_min = date_range.get_end() - timedelta(minutes=period.period)
+        date_min = date_range.get_end() - human_to_timedelta(period.period_human)
 
     fueltechs_exclude = ", ".join("'{}'".format(i) for i in fueltechs_excluded)
 
@@ -452,7 +453,7 @@ def power_network_rooftop_query(
     date_min = date_range.get_start()
 
     if period:
-        date_min = date_range.get_end() - timedelta(minutes=period.period)
+        date_min = date_range.get_end() - human_to_timedelta(period.period_human)
 
     query = dedent(
         __query.format(
