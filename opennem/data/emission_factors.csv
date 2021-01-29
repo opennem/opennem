@@ -285,8 +285,8 @@ WEM,WEM,HENDERSON_RENEWABLE_IG1,Henderson,bioenergy_biogas,operating,,
 WEM,WEM,KALAMUNDA_SG,Kalamunda,bioenergy_biogas,operating,0.57,NPI
 WEM,WEM,KEMERTON_GT11,Kemerton,gas_ocgt,operating,0.7,NPI
 WEM,WEM,KEMERTON_GT12,Kemerton,gas_ocgt,operating,0.7,NPI
-WEM,WEM,KWINANA_C5,Kwinana 3,coal_black,retired,,
-WEM,WEM,KWINANA_C6,Kwinana 3,coal_black,retired,,
+WEM,WEM,KWINANA_C5,Kwinana 3,coal_black,retired,0.91,
+WEM,WEM,KWINANA_C6,Kwinana 3,coal_black,retired,0.91,
 WEM,WEM,KWINANA_GT2,Kwinana 3,gas_ocgt,operating,0.52,NPI
 WEM,WEM,KWINANA_GT3,Kwinana 3,gas_ocgt,operating,0.52,NPI
 WEM,WEM,MUJA_G5,Muja,coal_black,operating,0.92,NPI
