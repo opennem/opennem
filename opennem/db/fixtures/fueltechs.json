@@ -57,7 +57,7 @@
   {
     "code": "gas_wcmg",
     "label": "Gas (Coal Seam)",
-    "renewable": true
+    "renewable": false
   },
   {
     "code": "hydro",
