@@ -22,12 +22,17 @@ class FacilityEmissionsRecord(BaseConfig):
     fueltech_id: str
 
 
-def get_facility_no_emission_factor() -> List[FacilityEmissionsRecord]:
+def get_facility_no_emission_factor(only_operating: bool = True) -> List[FacilityEmissionsRecord]:
     """Run this and it'll check if there are new facilities in
     that don't have emission factors
     """
 
     engine = get_database_engine()
+
+    operating_filter = ""
+
+    if only_operating:
+        operating_filter = "and f.status_id='operating'"
 
     __query = """
         select
@@ -47,7 +52,7 @@ def get_facility_no_emission_factor() -> List[FacilityEmissionsRecord]:
             {operating_filter}
         order by network_region desc;
     """.format(
-        operating_filter=""
+        operating_filter=operating_filter
     )
 
     with engine.connect() as c:
