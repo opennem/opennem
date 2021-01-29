@@ -43,10 +43,12 @@ def get_facility_no_emission_factor() -> List[FacilityEmissionsRecord]:
         where
             ft.renewable is False and
             ft.code not in ('imports', 'exports') and
-            (f.emissions_factor_co2 is null or f.emissions_factor_co2 is 0) and
-            and f.status_id='operating'
+            (f.emissions_factor_co2 is null or f.emissions_factor_co2 = 0)
+            {operating_filter}
         order by network_region desc;
-    """
+    """.format(
+        operating_filter=""
+    )
 
     with engine.connect() as c:
         logger.debug(__query)
@@ -68,5 +70,11 @@ def get_facility_no_emission_factor() -> List[FacilityEmissionsRecord]:
 
 
 if __name__ == "__main__":
-    r = get_facility_no_emission_factor()
-    print(r)
+    missing_factors = get_facility_no_emission_factor()
+
+    for rec in missing_factors:
+        print(
+            "{} in {} {} with fueltech {} is missing factor".format(
+                rec.station_name, rec.network_id, rec.network_region, rec.fueltech_id
+            )
+        )
