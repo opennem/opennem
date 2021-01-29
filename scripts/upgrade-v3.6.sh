@@ -21,6 +21,9 @@ python -m opennem.cli db init
 
 python -m opennem.importer.wikidata
 
+# import emission maps
+python -m opennem.cli import emissions
+
 # run rooftop
 ./scripts/spider_queue.py rooftop
 
