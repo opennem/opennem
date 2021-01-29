@@ -224,7 +224,7 @@ def get_data_by_id(id: str, series: List[Dict]) -> Optional[Dict]:
 
 
 def run_diff() -> None:
-    regions = get_network_regions(NetworkNEM, "NSW1")
+    regions = get_network_regions(NetworkNEM, "SA1")
     statsetmap = get_url_map(regions)
 
     # load urls
@@ -394,8 +394,10 @@ def run_data_diff() -> None:
 
 if __name__ == "__main__":
 
-    files = glob.glob("/diff_outs/*")
+    files = glob.glob("diff_outs/*")
+
     for f in files:
         os.remove(f)
+        logger.debug(f"Deleted {f}")
 
     run_diff()
