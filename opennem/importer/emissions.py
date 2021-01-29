@@ -15,48 +15,9 @@ def import_mms_emissions() -> None:
     mms = mms_import()
 
     facility_poll_map = {
-        "APS": 1.228625,
-        "CALL_A_4": 0.93134349,
-        "CALL_B_1": 0.93134349,
-        "CALL_B_2": 0.93134349,
-        "SWAN_E": 0.42795234,
-        "OSB-AG": 0.544686,
-        "HWPS1": 1.558001,
-        "HWPS2": 1.558001,
-        "HWPS3": 1.558001,
-        "HWPS4": 1.558001,
-        "COLNSV_3": 1.191769,
-        "MM3": 1.162987,
-        "MM4": 1.162987,
-        "NPS1": 1.130635,
-        "NPS2": 1.130635,
-        "NPSNL2": 1.130635,
-        "PLAYFB1": 1.509041,
-        "PLAYFB2": 1.509041,
-        "PLAYFB3": 1.509041,
-        "PLAYFB4": 1.509041,
-        "PLAYB-AG": 1.509041,
-        "COLNSV_4": 1.191769,
-        "COLNSV_5": 1.191769,
-        "HWPS7": 1.558001,
-        "HWPS8": 1.558001,
-        "SWAN_B_1": 1.091,
-        "SWAN_B_2": 1.091,
-        "SWAN_B_3": 1.091,
-        "SWAN_B_4": 1.091,
-        "CALL_A_2": 1.328,
-        "CALL_A_4": 1.328,
-        "COLNSV_1": 1.191769,
-        "COLNSV_2": 1.191769,
-        "HWPS5": 1.558001,
-        "HWPS6": 1.558001,
-        "WW7": 1.030046,
-        "WW8": 1.030046,
         # from wem
         "KWINANA_C5": 0.877,
         "KWINANA_C5": 0.877,
-        # from reports
-        "REDBANK1": 1.2,
     }
 
     emission_map = []
