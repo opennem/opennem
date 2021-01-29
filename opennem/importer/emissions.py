@@ -91,8 +91,8 @@ def import_mms_emissions() -> None:
 
 def import_emissions_csv() -> None:
     EMISSION_MAPS = [
-        {"filename": "wem_emissions.csv", "network": "WEM"},
-        {"filename": "nem_emissions.csv", "network": "NEM"},
+        {"filename": "emission_factors.csv", "network": "WEM"},
+        # {"filename": "nem_emissions.csv", "network": "NEM"},
     ]
 
     for m in EMISSION_MAPS:
