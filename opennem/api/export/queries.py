@@ -176,9 +176,9 @@ def price_network_query(
 
     __query = """
         select
-            trading_interval at time zone '{timezone}',
+            bs.trading_interval at time zone '{timezone}' as trading_interval,
             {group_field},
-            avg(bs.price) as price
+            max(bs.price) as price
         from balancing_summary bs
         where
             bs.trading_interval <= '{date_max}' and
@@ -248,7 +248,8 @@ def network_demand_query(
         sum(demand_total) as demand
     from balancing_summary bs
     where
-        bs.trading_interval <= '{date_max}' and bs.trading_interval > '{date_min}' and
+        bs.trading_interval <= '{date_max}' and
+        bs.trading_interval > '{date_min}' and
         {network_query}
         {network_region_query}
         1=1
