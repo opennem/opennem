@@ -8,6 +8,9 @@ from opennem.utils.numbers import num_sigfigs, sigfig_compact
     [
         (0, 0),
         (0.0, 0),
+        (1, 1),
+        (1.0, 1),
+        (-1.0, -1),
         (0.012, 0.012),
         (-0.012, -0.012),
         (123.01, 123),
