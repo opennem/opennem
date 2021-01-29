@@ -49,7 +49,7 @@ def sigfig_compact(n: Union[float, int], precision: int = DEFAULT_PRECISION) -> 
     is_neg = n < 0
 
     if n == 0:
-        return n
+        return 0
 
     if n_abs >= pow(10, precision):
         n = floor(n_abs)
