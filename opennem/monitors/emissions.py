@@ -43,7 +43,7 @@ def get_facility_no_emission_factor() -> List[FacilityEmissionsRecord]:
         where
             ft.renewable is False and
             ft.code not in ('imports', 'exports') and
-            f.emissions_factor_co2 is null
+            (f.emissions_factor_co2 is null or f.emissions_factor_co2 is 0) and
             and f.status_id='operating'
         order by network_region desc;
     """
