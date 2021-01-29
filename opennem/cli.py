@@ -7,6 +7,7 @@ from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures
 from opennem.db.tasks import refresh_views
 from opennem.importer.all import run_all
 from opennem.importer.db import init as db_init
+from opennem.importer.emissions import import_emissions_map
 from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_export, opennem_import
 from opennem.settings import settings
@@ -70,6 +71,11 @@ def cmd_import_all() -> None:
 
 
 @click.command()
+def cmd_import_emissions() -> None:
+    import_emissions_map()
+
+
+@click.command()
 def cmd_export_opennem() -> None:
     opennem_export()
 
@@ -98,6 +104,7 @@ main.add_command(cmd_weather, name="weather")
 cmd_import.add_command(cmd_import_opennem, name="opennem")
 cmd_import.add_command(cmd_import_mms, name="mms")
 cmd_import.add_command(cmd_import_all, name="all")
+cmd_import.add_command(cmd_import_emissions, name="emissions")
 
 cmd_export.add_command(cmd_export_opennem, name="opennem")
 cmd_export.add_command(cmd_export_all, name="all")
