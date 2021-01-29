@@ -199,5 +199,5 @@ Barker Inlet,NEM,SA1,BARKIPS1,0.874,gas_recip,AEMO
 Oaky Creek,NEM,QLD1,OAKYCREK,,gas_recip,AEMO
 Moranbah,NEM,QLD1,MORANBAH,0.706,gas_recip,AEMO
 Daandine,NEM,QLD1,DAANDINE,0.706,gas_recip,AEMO
-Wilga Park B,NEM,NSW1,WILGB01,,gas_recip,AEMO
+Wilga Park B,NEM,NSW1,WILGB01,0.765,gas_recip,AEMO
 Wilga Park,NEM,NSW1,WILGAPK,,gas_recip,AEMO
