@@ -91,7 +91,11 @@ if __name__ == "__main__":
 
     for rec in missing_factors:
         print(
-            "{} in {} {} with fueltech {} is missing factor".format(
-                rec.station_name, rec.network_id, rec.network_region, rec.fueltech_id
+            "{} - {} in {} {} with fueltech {} is missing factor".format(
+                rec.facility_code,
+                rec.station_name,
+                rec.network_id,
+                rec.network_region,
+                rec.fueltech_id,
             )
         )
