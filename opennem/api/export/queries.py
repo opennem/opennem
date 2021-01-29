@@ -255,7 +255,7 @@ def network_demand_query(
         1=1
     group by
         1, {groups_additional}
-    order by 1 desc;
+    order by 1 asc;
     """
 
     group_keys = ["network_id"]
