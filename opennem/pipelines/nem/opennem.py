@@ -416,7 +416,6 @@ def process_dispatch_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
         index_elements=["trading_interval", "network_id", "network_region"],
         set_={
             "net_interchange": stmt.excluded.net_interchange,
-            "demand_total": stmt.excluded.demand_total,
         },
     )
 
