@@ -21,10 +21,11 @@ scrapy crawl -L ERROR au.wem.current.balancing_summary
 scrapy crawl -L ERROR au.nem.current.dispatch_scada
 scrapy crawl -L ERROR au.nem.current.dispatch
 scrapy crawl -L ERROR au.nem.current.dispatch_is
+scrapy crawl -L ERROR au.nem.current.trading_is
 scrapy crawl -L ERROR au.nem.current.dispatch_actual_gen
 scrapy crawl -L ERROR au.nem.current.rooftop
 scrapy crawl -L ERROR au.nem.current.rooftop_forecast
-scrapy crawl -L ERROR au.nem.current.price
+# scrapy crawl -L ERROR au.nem.current.price
 
 # bom
 scrapy crawl bom.all
