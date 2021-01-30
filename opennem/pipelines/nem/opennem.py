@@ -283,7 +283,7 @@ def process_case_solutions(table: Dict, spider: Spider):
     pass
 
 
-def process_pre_ap_price(table: Dict, spider: Spider) -> Dict[str, Any]:
+def process_trading_price(table: Dict, spider: Spider) -> Dict[str, Any]:
     session = SessionLocal()
     engine = get_database_engine()
 
@@ -394,6 +394,78 @@ def process_dispatch_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
         if "NETINTERCHANGE" in record:
             net_interchange = clean_float(record["NETINTERCHANGE"])
 
+        records_to_store.append(
+            {
+                "network_id": "NEM",
+                "created_by": spider.name,
+                "network_region": record["REGIONID"],
+                "trading_interval": trading_interval,
+                "net_interchange": net_interchange,
+            }
+        )
+
+        records_processed += 1
+
+        if limit and records_processed >= limit:
+            logger.info("Reached limit of: {} {}".format(limit, records_processed))
+            break
+
+    stmt = insert(BalancingSummary).values(records_to_store)
+    stmt.bind = engine
+    stmt = stmt.on_conflict_do_update(
+        index_elements=["trading_interval", "network_id", "network_region"],
+        set_={
+            "net_interchange": stmt.excluded.net_interchange,
+            "demand_total": stmt.excluded.demand_total,
+        },
+    )
+
+    try:
+        session.execute(stmt)
+        session.commit()
+    except Exception as e:
+        logger.error("Error inserting records")
+        logger.error(e)
+        return {"num_records": 0}
+
+    finally:
+        session.close()
+
+    return {"num_records": len(records_to_store)}
+
+
+def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
+    session = SessionLocal()
+    engine = get_database_engine()
+
+    if "records" not in table:
+        raise Exception("Invalid table no records")
+
+    records = table["records"]
+
+    limit = None
+    records_to_store = []
+    records_processed = 0
+    primary_keys = []
+
+    for record in records:
+        trading_interval = parse_date(
+            record["SETTLEMENTDATE"],
+            network=NetworkNEM,
+            dayfirst=False,
+            date_format="%Y/%m/%d %H:%M:%S",
+        )
+
+        if not trading_interval:
+            continue
+
+        _pk = set([trading_interval, record["REGIONID"]])
+
+        if _pk in primary_keys:
+            continue
+
+        primary_keys.append(_pk)
+
         demand_total = None
 
         if "TOTALDEMAND" in record:
@@ -405,7 +477,6 @@ def process_dispatch_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
                 "created_by": spider.name,
                 "network_region": record["REGIONID"],
                 "trading_interval": trading_interval,
-                "net_interchange": net_interchange,
                 "demand_total": demand_total,
             }
         )
@@ -615,7 +686,8 @@ TABLE_PROCESSOR_MAP = {
     # "DISPATCH_PRE_AP_PRICE": "process_pre_ap_price",
     "ROOFTOP_ACTUAL": "process_rooftop_actual",
     "ROOFTOP_FORECAST": "process_rooftop_forecast",
-    "DISPATCH_PRICE": "process_pre_ap_price",
+    "TRADING_PRICE": "process_trading_price",
+    "TRADING_REGIONSUM": "process_trading_regionsum",
     "DISPATCH_REGIONSUM": "process_dispatch_regionsum",
 }
 
