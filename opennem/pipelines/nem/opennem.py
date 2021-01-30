@@ -394,6 +394,11 @@ def process_dispatch_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
         if "NETINTERCHANGE" in record:
             net_interchange = clean_float(record["NETINTERCHANGE"])
 
+        demand_total = None
+
+        if "TOTALDEMAND" in record:
+            demand_total = clean_float(record["TOTALDEMAND"])
+
         records_to_store.append(
             {
                 "network_id": "NEM",
@@ -401,6 +406,7 @@ def process_dispatch_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
                 "network_region": record["REGIONID"],
                 "trading_interval": trading_interval,
                 "net_interchange": net_interchange,
+                "demand_total": demand_total,
             }
         )
 
@@ -416,6 +422,7 @@ def process_dispatch_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
         index_elements=["trading_interval", "network_id", "network_region"],
         set_={
             "net_interchange": stmt.excluded.net_interchange,
+            "demand_total": stmt.excluded.demand_total,
         },
     )
 
@@ -491,7 +498,6 @@ def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
     stmt = stmt.on_conflict_do_update(
         index_elements=["trading_interval", "network_id", "network_region"],
         set_={
-            "net_interchange": stmt.excluded.net_interchange,
             "demand_total": stmt.excluded.demand_total,
         },
     )
@@ -686,7 +692,7 @@ TABLE_PROCESSOR_MAP = {
     "ROOFTOP_ACTUAL": "process_rooftop_actual",
     "ROOFTOP_FORECAST": "process_rooftop_forecast",
     "TRADING_PRICE": "process_trading_price",
-    "TRADING_REGIONSUM": "process_trading_regionsum",
+    # "TRADING_REGIONSUM": "process_trading_regionsum",
     "DISPATCH_REGIONSUM": "process_dispatch_regionsum",
 }
 
