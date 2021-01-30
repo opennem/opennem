@@ -605,41 +605,13 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
     )
 
     scada_records = [rooftop_remap_regionids(i) for i in scada_records]
-    return_records_grouped = {}
 
-    # Merge and group
-    for pk_values, rec_value in groupby(
-        scada_records,
-        key=lambda r: (
-            r.get("facility_code"),
-            r.get("network_id"),
-            r.get("trading_interval"),
-        ),
-    ):
-        if pk_values not in return_records_grouped:
-            rec_values = list(rec_value)
-            return_records_grouped[pk_values] = rec_values.pop()
-
-            _cur_value = return_records_grouped[pk_values]["generated"]
-
-            _cur_val = clean_float(_cur_value)
-
-            if _cur_val:
-                return_records_grouped[pk_values]["generated"] = _cur_val
-            else:
-                return_records_grouped[pk_values]["generated"] = 0.0
-
-            for _rec in rec_values:
-                _new_val = clean_float(_rec["generated"])
-
-                if _new_val:
-                    return_records_grouped[pk_values]["generated"] += _new_val
-
-    return_records = list(return_records_grouped.values())
+    # remove empties
+    scada_records = [i for i in scada_records if i]
 
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
-    item["records"] = return_records
+    item["records"] = scada_records
     item["content"] = None
 
     return item
@@ -666,6 +638,8 @@ def process_rooftop_forecast(table: Dict[str, Any], spider: Spider) -> Dict:
 
     # remap duids
     scada_records = [rooftop_remap_regionids(i) for i in scada_records]
+
+    scada_records = [i for i in scada_records if i]
 
     def set_is_forecast(record: Dict, is_forecast: bool = True) -> Dict:
         record["is_forecast"] = is_forecast
