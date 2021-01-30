@@ -396,8 +396,8 @@ def process_dispatch_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
 
         demand_total = None
 
-        if "TOTALDEMAND" in record:
-            demand_total = clean_float(record["TOTALDEMAND"])
+        if "DEMAND_AND_NONSCHEDGEN" in record:
+            demand_total = clean_float(record["DEMAND_AND_NONSCHEDGEN"])
 
         records_to_store.append(
             {
