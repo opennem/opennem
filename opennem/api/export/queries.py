@@ -576,9 +576,9 @@ def energy_network_fueltech_query(
     where
         t.trading_interval <= '{year_max}' and
         t.trading_interval >= '{year_min}' and
+        t.fueltech_id not in ('imports', 'exports') and
         {network_query}
         {network_region_query}
-        {fueltech_filter}
         1=1
     group by 1, 2
     order by
@@ -654,17 +654,9 @@ def energy_network_fueltech_query(
         raise Exception("Require a scada range for {}".format(network.code))
 
     network_region_query = ""
-    fueltech_filter = ""
 
     if network_region:
-        # network_region_interconnector = ""
-
-        # if interconnector:
-        # network_region_interconnector = f" or t.interconnector_region_to='{network_region}'"
-
         network_region_query = f"t.network_region='{network_region}' and"
-
-    fueltech_filter = "t.fueltech_id not in ('imports', 'exports') and "
 
     if emissions:
         network_region_query = f"""
@@ -713,7 +705,6 @@ def energy_network_fueltech_query(
             year_max=year_max,
             network_query=network_query,
             network_region_query=network_region_query,
-            fueltech_filter=fueltech_filter,
         )
     )
 
