@@ -10,7 +10,7 @@ from opennem.api.stats.schema import ScadaDateRange
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimeInterval, TimePeriod
-from opennem.utils.dates import subtract_week
+from opennem.utils.dates import get_end_of_last_month, subtract_week
 from opennem.utils.time import human_to_timedelta
 
 
@@ -646,6 +646,8 @@ def energy_network_fueltech_query(
 
     timezone = network.timezone_database
     offset = network.get_timezone(postgres_format=True)
+    year_min: Optional[datetime] = None
+    year_max: Optional[datetime] = None
 
     if not date_range:
         date_range = get_scada_range(network=network, networks=networks_query)
@@ -679,8 +681,8 @@ def energy_network_fueltech_query(
 
     if year:
         # might have to do +offset times
-        year_max = "{}-12-31 23:59:59{}".format(year, offset)
-        year_min = "{}-01-01 00:00:00{}".format(year, offset)
+        year_min = datetime.fromisoformat("{}-12-31 00:00:00{}:00".format(year - 1, offset))
+        year_max = datetime.fromisoformat("{}-12-31 23:59:59{}:00".format(year, offset))
 
         if year == datetime.now().year:
             year_max = date_range.get_end()
@@ -689,7 +691,7 @@ def energy_network_fueltech_query(
             trunc = "day"
     else:
         year_min = date_range.get_start()
-        year_max = date_range.get_end()
+        year_max = get_end_of_last_month(date_range.get_end())
 
         if not trunc:
             trunc = "month"
