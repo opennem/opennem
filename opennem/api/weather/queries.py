@@ -56,7 +56,7 @@ def observation_query(
         date_start_condition = "'{}'".format(scada_range.get_end() - human_to_timedelta("7d"))
 
     if year:
-        date_start_condition = "'{year}-01-01'::date".format(year=year)
+        date_start_condition = "'{year}-12-31'::date".format(year=year - 1)
         date_end = "'{year}-12-31'::date".format(year=year)
 
     if not period and not year:
