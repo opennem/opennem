@@ -273,3 +273,10 @@ def is_valid_isodate(date: str, check_timezone: bool = False) -> bool:
 def get_quarter(dt: datetime) -> int:
     """Get the quarter from a datetime"""
     return math.ceil(dt.month / 3.0)
+
+
+def get_end_of_last_month(dt: datetime) -> datetime:
+    """Get the end of the previous month"""
+    dtn = dt.replace(day=1) - timedelta(days=1)
+
+    return dtn
