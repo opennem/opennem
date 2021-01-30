@@ -47,7 +47,7 @@ class NemwebSummaryPipeline(object):
                     "trading_interval": trading_interval,
                     "network_id": "NEM",
                     "network_region": row["REGIONID"].strip(),
-                    "demand_total": demand_total,
+                    # "demand_total": demand_total,
                     "generation_scheduled": generation_scheduled,
                     "generation_non_scheduled": generation_non_scheduled,
                 }
@@ -62,7 +62,7 @@ class NemwebSummaryPipeline(object):
                 "network_region",
             ],
             set_={
-                "demand_total": stmt.excluded.demand_total,
+                # "demand_total": stmt.excluded.demand_total,
                 "generation_scheduled": stmt.excluded.generation_scheduled,
                 "generation_non_scheduled": stmt.excluded.generation_non_scheduled,
             },
