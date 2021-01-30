@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import SessionLocal
