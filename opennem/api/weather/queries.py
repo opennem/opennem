@@ -30,7 +30,7 @@ def observation_query(
 
     __query = """
     select
-        time_bucket_gapfill('30 minutes', observation_time) as observation_time,
+        time_bucket_gapfill('{trunc}', observation_time) as observation_time,
         fs.station_id as station_id,
         avg(fs.temp_air) as temp_air,
         min(fs.temp_air) as temp_min,
