@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import SessionLocal
@@ -80,26 +80,14 @@ def rooftop_facilities() -> None:
     session.commit()
 
 
-AEMO_REGION_REMAP = {
-    "TAS": "TAS1",
-    "QLD": "QLD1",
-}
-
-
-def remap_aemo_region(region_name: str) -> str:
-    for _region_prefix, region_code in AEMO_REGION_REMAP.items():
-        if region_name.startswith(_region_prefix):
-            return region_code
-
-    return region_name
-
-
-def rooftop_remap_regionids(rooftop_record: Dict) -> Dict:
+def rooftop_remap_regionids(rooftop_record: Dict) -> Optional[Dict]:
+    """Map an AEMO region code to a rooftop station code"""
     fac_code = rooftop_record["facility_code"]
 
-    rec_region_code = remap_aemo_region(fac_code)
+    if fac_code not in ["NSW1", "QLD1", "VIC1", "TAS1", "SA1"]:
+        return None
 
-    rooftop_fac_code = "{}_{}_{}".format(ROOFTOP_CODE, "NEM", rec_region_code.rstrip("1"))
+    rooftop_fac_code = "{}_{}_{}".format(ROOFTOP_CODE, "NEM", fac_code.rstrip("1"))
     rooftop_record["facility_code"] = rooftop_fac_code
 
     return rooftop_record
