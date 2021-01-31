@@ -91,8 +91,8 @@ class StatExport(BaseModel):
 
         _path_components.append(self.stat_type.value)
 
-        if self.period:
-            _path_components.append(self.period.period_human)
+        # if self.period:
+        # _path_components.append(self.period.period_human)
 
         if self.week:
             _path_components.append("week")
