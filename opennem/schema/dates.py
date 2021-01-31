@@ -14,13 +14,12 @@ End is the most recent time chronoligally ordered:
 
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
-from typing import Any, List, Optional, Tuple, Union
+from datetime import date, datetime
+from typing import Optional, Union
 
 from datetime_truncate import truncate as date_trunc
-from pydantic import validator
 
-from opennem.api.time import human_to_interval, human_to_period
+from opennem.api.time import human_to_period
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
