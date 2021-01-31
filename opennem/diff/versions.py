@@ -307,12 +307,12 @@ def run_diff() -> None:
             if v2i.history:
                 logger.info("  * comparing history:")
 
-                if len(v2i.history.data) != len(v3i.history.data):
-                    logger.error(
-                        "    - data length mismatch v2 {} v3 {}".format(
-                            len(v2i.history.data), len(v3i.history.data)
-                        )
-                    )
+                # if len(v2i.history.data) != len(v3i.history.data):
+                #     logger.error(
+                #         "    - data length mismatch v2 {} v3 {}".format(
+                #             len(v2i.history.data), len(v3i.history.data)
+                #         )
+                #     )
 
                 data_matches = series_are_equal(v2i.history.values(), v3i.history.values())
 
@@ -354,7 +354,13 @@ def run_diff() -> None:
                         json.dump(mismatch_values, fh, cls=OpenNEMJSONEncoder, indent=4)
 
                 else:
-                    logger.info("     - series values match")
+                    logger.info(
+                        "     - series values match {} values between {} and {}".format(
+                            len(data_matches.keys()),
+                            min(data_matches.keys()),
+                            max(data_matches.keys()),
+                        )
+                    )
 
             # remaining attributes
             for v2ikey in v2i.dict().keys():
