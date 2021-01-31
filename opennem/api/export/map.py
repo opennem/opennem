@@ -241,6 +241,7 @@ def get_export_map() -> StatMetadata:
                 network=network_schema,
                 year=year,
                 week=week,
+                interval=human_to_interval("1d"),
                 date_range=date_range_from_week(year, week, NetworkAU),
             )
 
