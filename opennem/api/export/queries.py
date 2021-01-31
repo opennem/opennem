@@ -647,8 +647,8 @@ def energy_network_fueltech_query(
             timezone=timezone,
             trunc=date_range.interval.trunc,
             trunc_name=trunc_name,
-            date_min=time_series.start,
-            date_max=time_series.end,
+            date_min=date_range.start,
+            date_max=date_range.end,
             network_query=network_query,
             network_region_query=network_region_query,
         )
