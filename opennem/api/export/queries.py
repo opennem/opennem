@@ -426,7 +426,7 @@ def power_network_rooftop_query(
             {network_query}
             {network_region_query}
             fs.trading_interval <= '{date_max}' and
-            fs.trading_interval > '{date_min}'
+            fs.trading_interval >= '{date_min}'
         group by 1, 2
         order by 1 asc
     """
@@ -507,7 +507,7 @@ def power_network_rooftop_forecast_query(
             f.fueltech_id = 'solar_rooftop' and
             {network_query}
             {network_region_query}
-            fs.trading_interval > '{date_max}' and
+            fs.trading_interval >= '{date_max}' and
             fs.trading_interval < '{year}-12-31'
         group by 1, 2
         order by 1 asc
