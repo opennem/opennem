@@ -205,7 +205,7 @@ def export_energy(
 
         elif energy_stat.period and energy_stat.period.period_human == "all":
             time_series.period = human_to_period("all")
-            time_series.interval = human_to_period("1M")
+            time_series.interval = human_to_interval("1M")
 
             stat_set = energy_fueltech_daily(
                 time_series=time_series,
