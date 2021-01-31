@@ -109,6 +109,7 @@ class TimeSeries(BaseConfig):
         else:
             start = date_trunc(start, self.interval.trunc)
             end = date_trunc(get_end_of_last_month(end), "day")
+            self.year = None
 
         if self.year:
             if self.year > end.year:
