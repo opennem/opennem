@@ -438,7 +438,6 @@ def energy_fueltech_daily(
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
-    period: TimePeriod = human_to_period("1Y")
     units = get_unit("energy_giga")
 
     query = energy_network_fueltech_query(
@@ -476,7 +475,7 @@ def energy_fueltech_daily(
         fueltech_group=True,
         interval=time_series.interval,
         region=network_region_code,
-        period=period,
+        period=time_series.period,
         # code=network.code.lower(),
     )
 
@@ -490,7 +489,7 @@ def energy_fueltech_daily(
         fueltech_group=True,
         interval=time_series.interval,
         region=network_region_code,
-        period=period,
+        period=time_series.period,
         code=time_series.network.code.lower(),
     )
 
@@ -503,7 +502,7 @@ def energy_fueltech_daily(
         fueltech_group=True,
         interval=time_series.interval,
         region=network_region_code,
-        period=period,
+        period=time_series.period,
         code=time_series.network.code.lower(),
     )
 
