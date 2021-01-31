@@ -11,7 +11,7 @@ from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimeInterval, TimePeriod
-from opennem.utils.dates import get_end_of_last_month, subtract_week
+from opennem.utils.dates import DATE_CURRENT_YEAR, get_end_of_last_month, subtract_week
 from opennem.utils.time import human_to_timedelta
 
 
@@ -507,7 +507,8 @@ def power_network_rooftop_forecast_query(
             f.fueltech_id = 'solar_rooftop' and
             {network_query}
             {network_region_query}
-            fs.trading_interval > '{date_max}'
+            fs.trading_interval > '{date_max}' and
+            fs.trading_interval < '{year}-12-31'
         group by 1, 2
         order by 1 asc
     """
@@ -541,6 +542,7 @@ def power_network_rooftop_forecast_query(
             network_region_query=network_region_query,
             timezone=timezone,
             date_max=date_max,
+            year=DATE_CURRENT_YEAR,
         )
     )
 
