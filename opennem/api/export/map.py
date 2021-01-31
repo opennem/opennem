@@ -220,7 +220,7 @@ def get_export_map() -> StatMetadata:
             date_range=scada_range,
             network=network_schema,
             bom_station=bom_station,
-            interval=network.get_interval(),
+            interval=network_schema.get_interval(),
             period=human_to_period("7d"),
         )
 
@@ -310,7 +310,7 @@ def get_export_map() -> StatMetadata:
                 network_region=region.code,
                 bom_station=bom_station,
                 period=human_to_period("7d"),
-                interval=network.get_interval(),
+                interval=network_schema.get_interval(),
             )
 
             if network.code == "WEM":
