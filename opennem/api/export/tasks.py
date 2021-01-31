@@ -25,11 +25,13 @@ from opennem.api.export.controllers import (
 from opennem.api.export.map import PriorityType, StatExport, StatType, get_export_map
 from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range
-from opennem.api.stats.schema import OpennemDataSet
+from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
+from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.core.networks import network_from_network_code
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
+from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.settings import settings
 from opennem.utils.version import get_version
@@ -143,7 +145,19 @@ def export_energy(
         if NetworkNEM in date_range_networks:
             date_range_networks = [NetworkNEM]
 
-        date_range = get_scada_range(network=energy_stat.network, networks=date_range_networks)
+        date_range: ScadaDateRange = get_scada_range(
+            network=energy_stat.network, networks=date_range_networks
+        )
+
+        # Migrate to this time_series
+        time_series = TimeSeries(
+            start=date_range.start,
+            end=date_range.end,
+            network=energy_stat.network,
+            year=energy_stat.year,
+            interval=energy_stat.interval,
+            period=human_to_period("1Y"),
+        )
 
         if energy_stat.year:
 
@@ -151,11 +165,8 @@ def export_energy(
                 continue
 
             stat_set = energy_fueltech_daily(
-                interval_size="1d",
-                year=energy_stat.year,
-                network=energy_stat.network,
+                time_series=time_series,
                 networks_query=energy_stat.networks,
-                date_range=date_range,
                 network_region_code=energy_stat.network_region_query or energy_stat.network_region,
             )
 
@@ -166,22 +177,16 @@ def export_energy(
             # in the metadata to automate all this
             if energy_stat.network == NetworkNEM and energy_stat.network_region:
                 interconnector_flows = energy_interconnector_region_daily(
-                    interval_size="1d",
-                    year=energy_stat.year,
-                    network=energy_stat.network,
+                    time_series=time_series,
                     networks_query=energy_stat.networks,
-                    date_range=date_range,
                     network_region_code=energy_stat.network_region_query
                     or energy_stat.network_region,
                 )
                 stat_set.append_set(interconnector_flows)
 
                 interconnector_emissions = energy_interconnector_emissions_region_daily(
-                    interval_size="1d",
-                    year=energy_stat.year,
-                    network=energy_stat.network,
+                    time_series=time_series,
                     networks_query=energy_stat.networks,
-                    date_range=date_range,
                     network_region_code=energy_stat.network_region_query
                     or energy_stat.network_region,
                 )
@@ -199,12 +204,12 @@ def export_energy(
             write_output(energy_stat.path, stat_set)
 
         elif energy_stat.period and energy_stat.period.period_human == "all":
+            time_series.period = human_to_period("all")
+            time_series.interval = human_to_period("1M")
 
             stat_set = energy_fueltech_daily(
-                interval_size="1M",
-                network=energy_stat.network,
+                time_series=time_series,
                 networks_query=energy_stat.networks,
-                date_range=date_range,
                 network_region_code=energy_stat.network_region_query or energy_stat.network_region,
             )
 
@@ -215,20 +220,16 @@ def export_energy(
             # in the metadata to automate all this
             if energy_stat.network == NetworkNEM and energy_stat.network_region:
                 interconnector_flows = energy_interconnector_region_daily(
-                    interval_size="1M",
-                    network=energy_stat.network,
+                    time_series=time_series,
                     networks_query=energy_stat.networks,
-                    date_range=date_range,
                     network_region_code=energy_stat.network_region_query
                     or energy_stat.network_region,
                 )
                 stat_set.append_set(interconnector_flows)
 
                 interconnector_emissions = energy_interconnector_emissions_region_daily(
-                    interval_size="1M",
-                    network=energy_stat.network,
+                    time_series=time_series,
                     networks_query=energy_stat.networks,
-                    date_range=date_range,
                     network_region_code=energy_stat.network_region_query
                     or energy_stat.network_region,
                 )
@@ -265,8 +266,18 @@ def export_all_monthly() -> None:
         if network_region.code == "WEM":
             networks = [NetworkWEM, NetworkAPVI]
 
+        scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks)
+
+        time_series = TimeSeries(
+            start_dt=scada_range.start,
+            end_dt=scada_range.end,
+            network=network,
+            interval=human_to_interval("1M"),
+            period=human_to_period("all"),
+        )
+
         stat_set = energy_fueltech_daily(
-            interval_size="1M",
+            time_series=time_series,
             network=network,
             networks_query=networks,
             network_region_code=network_region.code,
@@ -277,16 +288,14 @@ def export_all_monthly() -> None:
 
         if network == NetworkNEM:
             interconnector_flows = energy_interconnector_region_daily(
-                interval_size="1M",
-                network=network,
+                time_series=time_series,
                 networks_query=networks,
                 network_region_code=network_region.code,
             )
             stat_set.append_set(interconnector_flows)
 
             interconnector_emissions = energy_interconnector_emissions_region_daily(
-                interval_size="1M",
-                network=network,
+                time_series=time_series,
                 networks_query=networks,
                 network_region_code=network_region.code,
             )
@@ -318,9 +327,18 @@ def export_all_daily() -> None:
         if network_region.code == "WEM":
             networks = [NetworkWEM, NetworkAPVI]
 
-        stat_set = energy_fueltech_daily(
-            interval_size="1d",
+        scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks)
+
+        time_series = TimeSeries(
+            start_dt=scada_range.start,
+            end_dt=scada_range.end,
             network=network,
+            interval=human_to_interval("1d"),
+            period=human_to_period("all"),
+        )
+
+        stat_set = energy_fueltech_daily(
+            time_series=time_series,
             networks_query=networks,
             network_region_code=network_region.code,
         )
@@ -332,16 +350,14 @@ def export_all_daily() -> None:
         # in the metadata to automate all this
         if network == NetworkNEM:
             interconnector_flows = energy_interconnector_region_daily(
-                interval_size="1d",
-                network=network,
+                time_series=time_series,
                 networks_query=networks,
                 network_region_code=network_region.code,
             )
             stat_set.append_set(interconnector_flows)
 
             interconnector_emissions = energy_interconnector_emissions_region_daily(
-                interval_size="1d",
-                network=network,
+                time_series=time_series,
                 networks_query=networks,
                 network_region_code=network_region.code,
             )

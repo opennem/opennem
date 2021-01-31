@@ -7,6 +7,7 @@ from sqlalchemy.sql.elements import TextClause
 
 from opennem.api.stats.controllers import get_scada_range, networks_to_in
 from opennem.api.stats.schema import ScadaDateRange
+from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimeInterval, TimePeriod
@@ -545,14 +546,11 @@ def power_network_rooftop_forecast_query(
 
 
 def energy_network_fueltech_query(
-    network: NetworkSchema,
+    time_series: TimeSeries,
     interconnector: bool = False,
     emissions: bool = False,
-    interval: Optional[TimeInterval] = None,
-    year: Optional[int] = None,
     network_region: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
-    date_range: Optional[ScadaDateRange] = None,
 ) -> str:
     """
     Get Energy for a network or network + region
@@ -560,10 +558,10 @@ def energy_network_fueltech_query(
     """
 
     if not networks_query:
-        networks_query = [network]
+        networks_query = [time_series.network]
 
-    if network not in networks_query:
-        networks_query.append(network)
+    if time_series.network not in networks_query:
+        networks_query.append(time_series.network)
 
     __query = """
     select
@@ -574,8 +572,8 @@ def energy_network_fueltech_query(
         sum(t.emissions) as fueltech_emissions
     from mv_facility_all t
     where
-        t.trading_interval <= '{year_max}' and
-        t.trading_interval >= '{year_min}' and
+        t.trading_interval <= '{date_max}' and
+        t.trading_interval >= '{date_min}' and
         t.fueltech_id not in ('imports', 'exports') and
         {network_query}
         {network_region_query}
@@ -586,27 +584,6 @@ def energy_network_fueltech_query(
     """
 
     if interconnector:
-        # __query = """
-        # select
-        #     t.ti_{trunc_name} as trading_day,
-        #     sum(t.energy) / 1000 as interconnector_energy,
-        #     t.network_region as flow_from,
-        #     t.interconnector_region_to as flow_to,
-        #     t.network_region || '->' || t.interconnector_region_to as flow_region
-        # from mv_facility_all t
-        # where
-        #     t.interconnector is True and
-        #     t.trading_interval <= '{year_max}' and
-        #     t.trading_interval >= '{year_min}' and
-        #     {network_query}
-        #     {network_region_query}
-        #     {fueltech_filter}
-        #     1=1
-        # group by 1, 5, 3, 4
-        # order by
-        #     trading_day desc;
-        # """
-
         __query = """
         select
             date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
@@ -614,8 +591,8 @@ def energy_network_fueltech_query(
             sum(t.exports_avg) / 1000
         from mv_interchange_energy_nem_region t
         where
-            t.trading_interval <= '{year_max}' and
-            t.trading_interval >= '{year_min}' and
+            t.trading_interval <= '{date_max}' and
+            t.trading_interval >= '{date_min}' and
             {network_query}
             {network_region_query}
             1=1
@@ -635,8 +612,8 @@ def energy_network_fueltech_query(
             max(t.flow_to_emissions)
         from vw_region_flow_emissions t
         where
-            t.trading_interval <= '{year_max}' and
-            t.trading_interval >= '{year_min}' and
+            t.trading_interval <= '{date_max}' and
+            t.trading_interval >= '{date_min}' and
             {network_region_query}
             1=1
         group by 1, t.flow_region, 2, 3
@@ -644,16 +621,8 @@ def energy_network_fueltech_query(
 
         """
 
-    timezone = network.timezone_database
-    offset = network.get_timezone(postgres_format=True)
-    year_min: Optional[datetime] = None
-    year_max: Optional[datetime] = None
-
-    if not date_range:
-        date_range = get_scada_range(network=network, networks=networks_query)
-
-    if not date_range:
-        raise Exception("Require a scada range for {}".format(network.code))
+    timezone = time_series.network.timezone_database
+    date_range = time_series.get_range()
 
     network_region_query = ""
 
@@ -671,40 +640,15 @@ def energy_network_fueltech_query(
     networks_list = networks_to_in(networks_query)
     network_query = "t.network_id IN ({}) and ".format(networks_list)
 
-    if not timezone:
-        timezone = "UTC"
-
-    trunc = None
-
-    if interval:
-        trunc = interval.trunc
-
-    if year:
-        # might have to do +offset times
-        year_min = datetime.fromisoformat("{}-12-31 00:00:00{}:00".format(year - 1, offset))
-        year_max = datetime.fromisoformat("{}-12-31 23:59:59{}:00".format(year, offset))
-
-        if year == datetime.now().year:
-            year_max = date_range.get_end()
-
-        if not trunc:
-            trunc = "day"
-    else:
-        year_min = date_range.get_start()
-        year_max = get_end_of_last_month(date_range.get_end())
-
-        if not trunc:
-            trunc = "month"
-
-    trunc_name = "{}_{}".format(trunc, timezone).lower()
+    trunc_name = "{}_{}".format(time_series.interval.trunc, timezone).lower()
 
     query = dedent(
         __query.format(
-            timezone=network.timezone_database,
-            trunc=trunc,
+            timezone=timezone,
+            trunc=date_range.interval.trunc,
             trunc_name=trunc_name,
-            year_min=year_min,
-            year_max=year_max,
+            date_min=time_series.start,
+            date_max=time_series.end,
             network_query=network_query,
             network_region_query=network_region_query,
         )

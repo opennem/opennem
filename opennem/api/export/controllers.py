@@ -24,6 +24,7 @@ from opennem.core.flows import net_flows_emissions
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
+from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimePeriod
@@ -432,29 +433,18 @@ def power_week(
 
 
 def energy_fueltech_daily(
-    network: NetworkSchema,
-    year: Optional[int] = None,
+    time_series: TimeSeries,
     network_region_code: Optional[str] = None,
-    interval_size: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
-    date_range: Optional[ScadaDateRange] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
     units = get_unit("energy_giga")
 
-    interval = None
-
-    if interval_size:
-        interval = human_to_interval(interval_size)
-
     query = energy_network_fueltech_query(
-        year=year,
-        interval=interval,
-        network=network,
+        time_series=time_series,
         network_region=network_region_code,
         networks_query=networks_query,
-        date_range=date_range,
     )
 
     with engine.connect() as c:
@@ -482,9 +472,9 @@ def energy_fueltech_daily(
     stats = stats_factory(
         stats=results_energy,
         units=units,
-        network=network,
+        network=time_series.network,
         fueltech_group=True,
-        interval=interval,
+        interval=time_series.interval,
         region=network_region_code,
         period=period,
         # code=network.code.lower(),
@@ -496,12 +486,12 @@ def energy_fueltech_daily(
     stats_market_value = stats_factory(
         stats=results_market_value,
         units=get_unit("market_value"),
-        network=network,
+        network=time_series.network,
         fueltech_group=True,
-        interval=interval,
+        interval=time_series.interval,
         region=network_region_code,
         period=period,
-        code=network.code.lower(),
+        code=time_series.network.code.lower(),
     )
 
     stats.append_set(stats_market_value)
@@ -509,12 +499,12 @@ def energy_fueltech_daily(
     stats_emissions = stats_factory(
         stats=results_emissions,
         units=get_unit("emissions"),
-        network=network,
+        network=time_series.network,
         fueltech_group=True,
-        interval=interval,
+        interval=time_series.interval,
         region=network_region_code,
         period=period,
-        code=network.code.lower(),
+        code=time_series.network.code.lower(),
     )
 
     stats.append_set(stats_emissions)
@@ -523,30 +513,19 @@ def energy_fueltech_daily(
 
 
 def energy_interconnector_region_daily(
-    network: NetworkSchema,
+    time_series: TimeSeries,
     network_region_code: str,
-    year: Optional[int] = None,
-    interval_size: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
-    date_range: Optional[ScadaDateRange] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
     units = get_unit("energy_giga")
 
-    interval = None
-
-    if interval_size:
-        interval = human_to_interval(interval_size)
-
     query = energy_network_fueltech_query(
         interconnector=True,
-        year=year,
-        interval=interval,
-        network=network,
+        time_series=time_series,
         network_region=network_region_code,
         networks_query=networks_query,
-        date_range=date_range,
     )
 
     with engine.connect() as c:
@@ -571,9 +550,9 @@ def energy_interconnector_region_daily(
     result = stats_factory(
         imports,
         # code=network_region_code or network.code,
-        network=network,
+        network=time_series.network,
         period=period,
-        interval=interval,
+        interval=time_series.interval,
         units=units,
         region=network_region_code,
         fueltech_group=True,
@@ -587,9 +566,9 @@ def energy_interconnector_region_daily(
     result_exports = stats_factory(
         exports,
         # code=network_region_code or network.code,
-        network=network,
+        network=time_series.network,
         period=period,
-        interval=interval,
+        interval=time_series.interval,
         units=units,
         region=network_region_code,
         fueltech_group=True,
@@ -601,30 +580,19 @@ def energy_interconnector_region_daily(
 
 
 def energy_interconnector_emissions_region_daily(
-    network: NetworkSchema,
+    time_series: TimeSeries,
     network_region_code: str,
-    year: Optional[int] = None,
-    interval_size: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
-    date_range: Optional[ScadaDateRange] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
     units = get_unit("emissions")
 
-    interval = None
-
-    if interval_size:
-        interval = human_to_interval(interval_size)
-
     query = energy_network_fueltech_query(
         emissions=True,
-        year=year,
-        interval=interval,
-        network=network,
+        time_series=time_series,
         network_region=network_region_code,
         networks_query=networks_query,
-        date_range=date_range,
     )
 
     with engine.connect() as c:
@@ -647,7 +615,7 @@ def energy_interconnector_emissions_region_daily(
     ]
 
     # stats_grouped = net_flows(network_region_code, stats)
-    stats_grouped = net_flows_emissions(network_region_code, stats, interval)
+    stats_grouped = net_flows_emissions(network_region_code, stats, time_series.interval)
 
     imports = stats_grouped["imports"]
     exports = stats_grouped["exports"]
@@ -655,9 +623,9 @@ def energy_interconnector_emissions_region_daily(
     result = stats_factory(
         imports,
         # code=network_region_code or network.code,
-        network=network,
+        network=time_series.network,
         period=period,
-        interval=interval,
+        interval=time_series.interval,
         units=units,
         region=network_region_code,
         fueltech_group=True,
@@ -671,9 +639,9 @@ def energy_interconnector_emissions_region_daily(
     result_exports = stats_factory(
         exports,
         # code=network_region_code or network.code,
-        network=network,
+        network=time_series.network,
         period=period,
-        interval=interval,
+        interval=time_series.interval,
         units=units,
         region=network_region_code,
         fueltech_group=True,
