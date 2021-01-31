@@ -224,7 +224,7 @@ def get_data_by_id(id: str, series: List[Dict]) -> Optional[Dict]:
 
 
 def run_diff() -> None:
-    regions = get_network_regions(NetworkNEM, "SA1")
+    regions = get_network_regions(NetworkNEM)
     statsetmap = get_url_map(regions)
 
     # load urls
