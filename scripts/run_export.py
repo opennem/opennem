@@ -1,8 +1,8 @@
-"""
-
-"""
-
 #!/usr/bin/env python
+"""
+Scratchpad to export JSON's for unit tests + testing
+"""
+
 from typing import List
 
 from opennem.api.export.controllers import (
