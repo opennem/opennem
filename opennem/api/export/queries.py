@@ -12,34 +12,61 @@ from opennem.schema.stats import StatTypes
 
 def weather_observation_query(time_series: TimeSeries, station_codes: List[str]) -> str:
 
-    trading_interval = f"time_bucket_gapfill('{time_series.interval.interval_sql}', observation_time) as ot,"
-
-    if time_series.interval.interval >= 1440:
-        trading_interval = """date_trunc('{trunc}', observation_time at time zone '{tz}') as ot,""".format(
-            trunc=time_series.interval.trunc, tz=time_series.network.timezone_database
+    if time_series.interval.interval > 1440:
+        # @TODO replace with mv
+        __query = """
+        select
+            date_trunc('{trunc}', t.observation_time at time zone '{tz}') as observation_month,
+            t.station_id,
+            avg(t.temp_avg),
+            min(t.temp_min),
+            max(t.temp_max)
+        from
+            (
+                select
+                    time_bucket_gapfill('1 day', observation_time) as observation_time,
+                    fs.station_id,
+                    avg(fs.temp_air) as temp_avg,
+                    min(fs.temp_air) as temp_min,
+                    max(fs.temp_air) as temp_max
+                from bom_observation fs
+                where
+                    fs.station_id in ({station_codes}) and
+                    fs.observation_time <= '{date_end}' and
+                    fs.observation_time >= '{date_start}'
+                group by 1, 2
+            ) as t
+        group by 1, 2;
+        """.format(
+            trunc=time_series.interval.trunc,
+            tz=time_series.network.timezone_database,
+            station_codes=",".join(["'{}'".format(i) for i in station_codes]),
+            date_start=time_series.get_range().start,
+            date_end=time_series.get_range().end,
         )
 
-    __query = """
-    select
-        {trading_interval}
-        fs.station_id as station_id,
-        avg(fs.temp_air) as temp_air,
-        -- case  @TODO case on temp_max temp_min
-        -- end case
-        min(fs.temp_air) as temp_min,
-        max(fs.temp_air) as temp_max
-    from bom_observation fs
-    where
-        fs.station_id in ({station_codes}) and
-        fs.observation_time <= '{date_end}' and
-        fs.observation_time >= '{date_start}'
-    group by 1, 2;
-    """.format(
-        trading_interval=trading_interval,
-        station_codes=",".join(["'{}'".format(i) for i in station_codes]),
-        date_start=time_series.get_range().start,
-        date_end=time_series.get_range().end,
-    )
+    else:
+        __query = """
+        select
+            time_bucket_gapfill('{interval_sql}', observation_time) as ot,
+            fs.station_id as station_id,
+            avg(fs.temp_air) as temp_air,
+            -- case  @TODO case on temp_max temp_min
+            -- end case
+            min(fs.temp_air) as temp_min,
+            max(fs.temp_air) as temp_max
+        from bom_observation fs
+        where
+            fs.station_id in ({station_codes}) and
+            fs.observation_time <= '{date_end}' and
+            fs.observation_time >= '{date_start}'
+        group by 1, 2;
+        """.format(
+            interval_sql=time_series.interval.interval_sql,
+            station_codes=",".join(["'{}'".format(i) for i in station_codes]),
+            date_start=time_series.get_range().start,
+            date_end=time_series.get_range().end,
+        )
 
     return dedent(__query)
 
