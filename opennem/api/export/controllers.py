@@ -34,11 +34,6 @@ def weather_daily(
     include_min_max: bool = True,
     network_region: Optional[str] = None,
 ) -> Optional[OpennemDataSet]:
-    station_codes = []
-
-    if station_code:
-        station_codes = [station_code]
-
     engine = get_database_engine()
     units = get_unit(unit_name)
 
