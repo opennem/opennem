@@ -33,15 +33,15 @@ end_dt2 = datetime.fromisoformat("2020-02-15 12:45:00+00:00")
         # Test 1 week inclusive
         (
             TimeSeries(
-                start=start_dt,
-                end=end_dt,
+                start=datetime.fromisoformat("1997-05-05 12:45:00+00:00"),
+                end=datetime.fromisoformat("2021-01-15 12:45:00+00:00"),
                 network=NetworkNEM,
                 interval=NetworkNEM.get_interval(),
                 period=human_to_period("7d"),
             ),
             # Also testing timezone shift from UTC to NEM time
-            datetime.fromisoformat("2021-01-08 22:50:00+10:00"),
-            datetime.fromisoformat("2021-01-15 22:50:00+10:00"),
+            datetime.fromisoformat("2021-01-08 22:45:00+10:00"),
+            datetime.fromisoformat("2021-01-15 22:45:00+10:00"),
             "5m",
             2017,  # number of 5 minute intervals in a year
         ),
