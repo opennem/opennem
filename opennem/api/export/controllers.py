@@ -9,7 +9,6 @@ from opennem.api.export.queries import (
     interconnector_power_flow,
     network_demand_query,
     power_network_fueltech_query,
-    power_network_rooftop_forecast_query,
     power_network_rooftop_query,
     price_network_query,
 )
@@ -243,7 +242,6 @@ def demand_week(
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
-
     query = network_demand_query(
         time_series=time_series,
         network_region=network_region_code,
@@ -319,8 +317,11 @@ def power_week(
 
     # price
 
+    time_series_price = time_series.copy()
+    time_series_price.interval = human_to_interval("30m")
+
     query = price_network_query(
-        time_series=time_series,
+        time_series=time_series_price,
         networks_query=networks_query,
         network_region=network_region_code,
     )
@@ -348,8 +349,11 @@ def power_week(
 
     # rooftop solar
 
+    time_series_rooftop = time_series.copy()
+    time_series_rooftop.interval = human_to_interval("30m")
+
     query = power_network_rooftop_query(
-        time_series=time_series,
+        time_series=time_series_rooftop,
         networks_query=networks_query,
         network_region=network_region_code,
     )
@@ -375,10 +379,16 @@ def power_week(
     )
 
     # rooftop forecast
-    query = power_network_rooftop_forecast_query(
-        time_series=time_series,
+
+    time_series_rooftop_forecast = time_series.copy()
+    time_series_rooftop_forecast.interval = human_to_interval("30m")
+    time_series_rooftop_forecast.forecast = True
+
+    query = power_network_rooftop_query(
+        time_series=time_series_rooftop,
         networks_query=networks_query,
         network_region=network_region_code,
+        forecast=True,
     )
 
     with engine.connect() as c:

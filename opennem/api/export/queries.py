@@ -6,12 +6,9 @@ from sqlalchemy import sql
 from sqlalchemy.sql.elements import TextClause
 
 from opennem.api.stats.controllers import get_scada_range, networks_to_in
-from opennem.api.stats.schema import ScadaDateRange
 from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
-from opennem.schema.time import TimeInterval, TimePeriod
-from opennem.utils.time import human_to_timedelta
 
 
 def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> str:
@@ -27,7 +24,7 @@ def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> s
             fs.network_id = '{network_id}' and
             fs.network_region= '{region}' and
             fs.trading_interval <= '{date_end}' and
-            fs.trading_interval > '{date_start}'
+            fs.trading_interval >= '{date_start}'
         order by trading_interval asc;
     """.format(
         timezone=time_series.network.timezone_database,
@@ -82,7 +79,7 @@ def price_network_query(
         from balancing_summary bs
         where
             bs.trading_interval <= '{date_max}' and
-            bs.trading_interval > '{date_min}' and
+            bs.trading_interval >= '{date_min}' and
             {network_query}
             {network_region_query}
             1=1
@@ -257,6 +254,7 @@ def power_network_rooftop_query(
     time_series: TimeSeries,
     network_region: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
+    forecast: bool = False,
 ) -> str:
     """Query power stats"""
 
@@ -275,12 +273,12 @@ def power_network_rooftop_query(
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
         where
-            fs.is_forecast is False and
+            fs.is_forecast is {forecast} and
             f.fueltech_id = 'solar_rooftop' and
             {network_query}
             {network_region_query}
             fs.trading_interval <= '{date_max}' and
-            fs.trading_interval >= '{date_min}'
+            fs.trading_interval > '{date_min}'
         group by 1, 2
         order by 1 asc
     """
@@ -312,75 +310,16 @@ def power_network_rooftop_query(
             timezone=timezone,
             date_max=date_max,
             date_min=date_min,
+            forecast=str(forecast),
         )
     )
 
     return query
 
 
-def power_network_rooftop_forecast_query(
-    time_series: TimeSeries,
-    network_region: Optional[str] = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
-) -> str:
-    """Query power stats"""
-
-    if not networks_query:
-        networks_query = [time_series.network]
-
-    if time_series.network not in networks_query:
-        networks_query.append(time_series.network)
-
-    __query = """
-        select
-            time_bucket_gapfill('30 minutes', fs.trading_interval) AS trading_interval,
-            ft.code as fueltech_code,
-            coalesce(sum(fs.generated), 0) as facility_power
-        from facility_scada fs
-        join facility f on fs.facility_code = f.code
-        join fueltech ft on f.fueltech_id = ft.code
-        where
-            fs.is_forecast is True and
-            f.fueltech_id = 'solar_rooftop' and
-            {network_query}
-            {network_region_query}
-            fs.trading_interval >= '{date_min}' and
-            fs.trading_interval < '{date_max}'
-        group by 1, 2
-        order by 1 asc
-    """
-
-    network_region_query: str = ""
-    wem_apvi_case: str = ""
-    timezone: str = time_series.network.timezone_database
-
-    if network_region:
-        network_region_query = f"f.network_region='{network_region}' and "
-
-    if NetworkWEM in networks_query:
-        # silly single case we'll refactor out
-        # APVI network is used to provide rooftop for WEM so we require it
-        # in country-wide totals
-        wem_apvi_case = "or (f.network_id='APVI' and f.network_region='WEM')"
-
-    network_query = "(f.network_id IN ({}) {}) and ".format(
-        networks_to_in(networks_query), wem_apvi_case
-    )
-
-    date_max = time_series.get_range().end
-    date_min = time_series.get_range().start
-
-    query = dedent(
-        __query.format(
-            network_query=network_query,
-            network_region_query=network_region_query,
-            timezone=timezone,
-            date_min=date_min,
-            date_max=date_max,
-        )
-    )
-
-    return query
+"""
+Energy Queries
+"""
 
 
 def energy_network_fueltech_query(
