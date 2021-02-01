@@ -19,7 +19,7 @@ from typing import Optional, Union
 
 from datetime_truncate import truncate as date_trunc
 
-from opennem.api.time import human_to_period
+from opennem.api.time import human_to_interval, human_to_period
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
@@ -121,8 +121,13 @@ class TimeSeries(BaseConfig):
         # subtract the period (ie. 7d from the end for start if not all)
         if self.period == human_to_period("all"):
             start = date_trunc(start, self.interval.trunc)
-            end = date_trunc(get_end_of_last_month(end), "day")
+
+            # If its all per month take the end of the last month
+            if self.interval == human_to_interval("1M"):
+                end = date_trunc(get_end_of_last_month(end), "day")
+
             self.year = None
+
         else:
             start = self.end - get_human_interval(self.period.period_human)
 
