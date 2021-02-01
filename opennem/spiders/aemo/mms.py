@@ -93,11 +93,25 @@ class MMSArchiveBulkSpider(scrapy.Spider):
 class MMSArchivePriceSpider(MMSArchiveBulkSpider):
     name = "au.mms.archive.dispatch_price"
 
+    pipelines = set(
+        [
+            ExtractCSV,
+            NemwebUnitScadaOpenNEMStorePipeline,
+        ]
+    )
+
     tables = ["DISPATCHPRICE"]
 
 
 class MMSArchiveDispatchISSpider(MMSArchiveBulkSpider):
     name = "au.mms.archive.dispatch_is"
+
+    pipelines = set(
+        [
+            ExtractCSV,
+            NemwebUnitScadaOpenNEMStorePipeline,
+        ]
+    )
 
     tables = ["DISPATCHREGIONSUM"]
 
@@ -110,5 +124,12 @@ class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
 
 class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
     name = "au.mms.archive.trading_price"
+
+    pipelines = set(
+        [
+            ExtractCSV,
+            NemwebUnitScadaOpenNEMStorePipeline,
+        ]
+    )
 
     tables = ["TRADINGPRICE"]
