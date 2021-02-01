@@ -34,9 +34,6 @@ class MMSArchiveBulkSpider(scrapy.Spider):
     )
 
     def start_requests(self) -> Generator[scrapy.Request, None, None]:
-        # start_month = datetime(2011, 10, 1)
-        # end_month = datetime(2011, 10, 1)
-
         start_month = datetime(2020, 1, 1)
         end_month = datetime(2009, 7, 1)
 
@@ -98,35 +95,14 @@ class MMSArchivePriceSpider(MMSArchiveBulkSpider):
 
     tables = ["DISPATCHPRICE"]
 
-    pipelines = set(
-        [
-            ExtractCSV,
-            NemwebUnitScadaOpenNEMStorePipeline,
-        ]
-    )
-
 
 class MMSArchiveDispatchISSpider(MMSArchiveBulkSpider):
     name = "au.mms.archive.dispatch_is"
 
     tables = ["DISPATCHREGIONSUM"]
 
-    pipelines = set(
-        [
-            ExtractCSV,
-            NemwebUnitScadaOpenNEMStorePipeline,
-        ]
-    )
-
 
 class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
     name = "au.mms.archive.rooftop_actual"
 
     tables = ["ROOFTOP_PV_ACTUAL"]
-
-    # pipelines = set(
-    #     [
-    #         ExtractCSV,
-    #         NemwebUnitScadaOpenNEMStorePipeline,
-    #     ]
-    # )
