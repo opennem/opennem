@@ -3,6 +3,7 @@
     for opennem.org.au
 
 """
+from __future__ import annotations
 
 import logging
 from datetime import datetime
@@ -109,7 +110,7 @@ class StatExport(BaseModel):
         return "{}.json".format(dir_path)
 
 
-StatMetadataType = TypeVar("StatMetadataType", bound="StatMetadataType")
+StatMetadataType = TypeVar("StatMetadataType", bound="StatMetadata")
 
 
 class StatMetadata(BaseModel):
@@ -119,14 +120,9 @@ class StatMetadata(BaseModel):
 
     def get_by_stat_type(
         self, stat_type: StatType, priority: Optional[PriorityType] = None
-    ) -> StatMetadataType:
-        if priority:
-            return list(
-                filter(
-                    lambda s: s.stat_type == stat_type and s.priority == priority,
-                    self.resources,
-                )
-            )
+    ) -> StatMetadata:
+        # if priority:
+        #     r
 
         em = self.copy()
         em.resources = list(filter(lambda s: s.stat_type == stat_type, self.resources))
@@ -135,7 +131,7 @@ class StatMetadata(BaseModel):
     def get_by_network_id(
         self,
         network_id: str,
-    ) -> StatMetadataType:
+    ) -> StatMetadata:
         em = self.copy()
         em.resources = list(filter(lambda s: s.network.code == network_id, self.resources))
         return em
