@@ -29,7 +29,7 @@ query_drop = "SELECT remove_continuous_aggregate_policy('{view_name}')"
 
 query_create = """SELECT add_continuous_aggregate_policy('{view_name}',
     start_offset => INTERVAL '{start_offset}',
-    end_offset => {end_offset},
+    end_offset => '{end_offset}',
     schedule_interval => INTERVAL '{schedule_size}');
 """
 
