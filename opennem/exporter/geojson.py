@@ -3,12 +3,12 @@ from opennem.db import SessionLocal
 from opennem.exporter.aws import write_to_s3
 
 
-def export_facility_geojson():
+def export_facility_geojson() -> None:
     session = SessionLocal()
 
     facility_geo = geo_facilities_api(only_approved=True, session=session)
 
-    write_to_s3("geo/au_facilities.json", facility_geo.json())
+    write_to_s3("/v3/geo/au_facilities.json", facility_geo.json())
 
 
 if __name__ == "__main__":
