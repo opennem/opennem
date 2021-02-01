@@ -50,6 +50,7 @@ def stats_factory(
     fueltech_group: Optional[bool] = False,
     group_field: Optional[str] = None,
     data_id: Optional[str] = None,
+    localize: Optional[bool] = True,
 ) -> Optional[OpennemDataSet]:
     """
     Takes a list of data query results and returns OpennemDataSets
@@ -110,13 +111,12 @@ def stats_factory(
 
         # should probably make sure these are the same TZ
         if timezone and not is_aware(start):
-
             start = make_aware(start, timezone)
 
         if timezone and not is_aware(end):
             end = make_aware(end, timezone)
 
-        if timezone:
+        if timezone and localize:
             tz = pytz.FixedOffset(int(network.offset))
 
             start = start.astimezone(tz)
