@@ -36,28 +36,16 @@ def valid_trunc(trunc: str) -> str:
 class DatetimeRange(BaseConfig):
     """Sime start/end date used for sql queries"""
 
-    start_dt: datetime
+    start: datetime
 
     # Alias last
-    end_dt: datetime
+    end: datetime
 
     interval: TimeInterval
 
     @property
     def trunc(self) -> str:
         return self.interval.interval_human
-
-    @property
-    def start(self) -> Union[datetime, date]:
-        if self.interval.interval >= 1440:
-            return self.start_dt.date()
-        return self.start_dt
-
-    @property
-    def end(self) -> Union[datetime, date]:
-        if self.interval.interval >= 1440:
-            return self.end_dt.date()
-        return self.end_dt
 
     @property
     def length(self) -> int:
@@ -116,7 +104,7 @@ class TimeSeries(BaseConfig):
             start = start.astimezone(self.network.get_fixed_offset())
             end = end.astimezone(self.network.get_fixed_offset())
 
-            return DatetimeRange(start_dt=start, end_dt=end, interval=self.interval)
+            return DatetimeRange(start=start, end=end, interval=self.interval)
 
         # subtract the period (ie. 7d from the end for start if not all)
         if self.period == human_to_period("all"):
@@ -143,10 +131,10 @@ class TimeSeries(BaseConfig):
             else:
                 end = date_trunc(end, "day")
 
-            # localize times
-            start = start.astimezone(self.network.get_fixed_offset())
-            end = end.astimezone(self.network.get_fixed_offset())
+        # localize times
+        start = start.astimezone(self.network.get_fixed_offset())
+        end = end.astimezone(self.network.get_fixed_offset())
 
-        dtr = DatetimeRange(start_dt=start, end_dt=end, interval=self.interval)
+        dtr = DatetimeRange(start=start, end=end, interval=self.interval)
 
         return dtr
