@@ -1,11 +1,10 @@
-from datetime import datetime, timedelta
 from textwrap import dedent
 from typing import List, Optional
 
 from sqlalchemy import sql
 from sqlalchemy.sql.elements import TextClause
 
-from opennem.api.stats.controllers import get_scada_range, networks_to_in
+from opennem.api.stats.controllers import networks_to_in
 from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
