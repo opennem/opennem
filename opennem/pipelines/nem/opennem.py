@@ -104,11 +104,9 @@ def unit_scada_generate_facility_scada(
             "trading_interval": trading_interval,
             "facility_code": facility_code,
             "generated": generated,
+            "eoi_quantity": energy,
             "is_forecast": is_forecast,
         }
-
-        if energy:
-            __rec["eoi_quantity"] = energy
 
         return_records.append(__rec)
 
@@ -717,7 +715,8 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
             try:
                 record_item = globals()[process_meth](table, spider=spider)
             except Exception as e:
-                logger.error(e)
+                print("error running command")
+                # logger.error(e)
 
             if record_item:
                 ret.append(record_item)
