@@ -106,3 +106,9 @@ class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
     name = "au.mms.archive.rooftop_actual"
 
     tables = ["ROOFTOP_PV_ACTUAL"]
+
+
+class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
+    name = "au.mms.archive.trading_price"
+
+    tables = ["TRADINGPRICE"]
