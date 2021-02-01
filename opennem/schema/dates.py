@@ -140,9 +140,8 @@ class TimeSeries(BaseConfig):
 
             if self.year != CUR_YEAR:
                 end = datetime(year=self.year, month=12, day=31, hour=0, minute=0, second=0)
-
-        # if the interval size is less than a day localize dt's
-        if self.interval.interval < 1440:
+            else:
+                end = date_trunc(end, "day")
 
             # localize times
             start = start.astimezone(self.network.get_fixed_offset())
