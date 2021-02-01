@@ -15,14 +15,12 @@ from opennem.api.stats.loader import load_statset
 from opennem.api.stats.schema import OpennemData, OpennemDataSet
 from opennem.core.compat.loader import load_statset_v2
 from opennem.core.compat.schema import OpennemDataSetV2, OpennemDataV2
-from opennem.core.compat.utils import translate_id_v2_to_v3, translate_id_v3_to_v2
-from opennem.core.fueltechs import map_v3_fueltech
+from opennem.core.compat.utils import translate_id_v2_to_v3
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.utils.dates import is_valid_isodate
 from opennem.utils.http import http
 from opennem.utils.series import series_are_equal, series_not_close
 
@@ -224,16 +222,16 @@ def get_data_by_id(id: str, series: List[Dict]) -> Optional[Dict]:
 
 
 def run_diff() -> None:
-    regions = get_network_regions(NetworkNEM)
+    regions = get_network_regions(NetworkNEM, "NSW1")
     statsetmap = get_url_map(regions)
 
     # load urls
     statsetmap = load_url_map(statsetmap)
 
     # filter it down for now
-    statsetmap_power = list(filter(lambda x: x.stat_type == StatType.power, statsetmap))
+    # statsetmap_power = list(filter(lambda x: x.stat_type == StatType.power, statsetmap))
 
-    for statset in statsetmap_power:
+    for statset in statsetmap:
         if not statset.v2 or not statset.v3:
             logger.error("Error getting schemas for v2 or v3")
             continue
@@ -307,33 +305,19 @@ def run_diff() -> None:
             if v2i.history:
                 logger.info("  * comparing history:")
 
-                # if len(v2i.history.data) != len(v3i.history.data):
-                #     logger.error(
-                #         "    - data length mismatch v2 {} v3 {}".format(
-                #             len(v2i.history.data), len(v3i.history.data)
-                #         )
-                #     )
+                if len(v2i.history.data) != len(v3i.history.data):
+                    logger.error(
+                        "    - data length mismatch v2 {} v3 {}".format(
+                            len(v2i.history.data), len(v3i.history.data)
+                        )
+                    )
 
                 data_matches = series_are_equal(v2i.history.values(), v3i.history.values())
 
                 if False in list(data_matches.values()):
                     logger.error("    - values don't match ")
 
-                    # else:
-                    # logger.info("    - series values match")
                     mismatch_values = series_not_close(v2i.history.values(), v3i.history.values())
-
-                    # with open(
-                    #     f"diff_outs/{statset.stat_type.value}-{statset.network_region}-{statset.bucket_size}-{v2i.fuel_tech}-v2.json",
-                    #     "w",
-                    # ) as fh:
-                    #     json.dump(v2i.history.values(), fh, cls=OpenNEMJSONEncoder, indent=4)
-
-                    # with open(
-                    #     f"diff_outs/{statset.stat_type.value}-{statset.network_region}-{statset.bucket_size}-{v3i.fueltech_v2()}-v3.json",
-                    #     "w",
-                    # ) as fh:
-                    #     json.dump(v3i.history.values(), fh, cls=OpenNEMJSONEncoder, indent=4)
 
                     extra_part = i.split(".")[1]
 
@@ -353,7 +337,7 @@ def run_diff() -> None:
                     ) as fh:
                         json.dump(mismatch_values, fh, cls=OpenNEMJSONEncoder, indent=4)
 
-                else:
+                elif data_matches.keys() and len(data_matches.keys()):
                     logger.info(
                         "     - series values match {} values between {} and {}".format(
                             len(data_matches.keys()),
