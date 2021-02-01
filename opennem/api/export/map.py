@@ -69,7 +69,7 @@ class StatExport(BaseModel):
     networks: Optional[List[NetworkSchema]]
     network_region: Optional[str]
     network_region_query: Optional[str]
-    date_range: ScadaDateRange
+    date_range: Optional[ScadaDateRange]
     bom_station: Optional[str]
     year: Optional[int]
     week: Optional[int]
