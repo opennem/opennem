@@ -326,7 +326,6 @@ def process_trading_price(table: Dict, spider: Spider) -> Dict[str, Any]:
                 "created_by": spider.name,
                 "network_region": record["REGIONID"],
                 "trading_interval": trading_interval,
-                # "price": record["PRE_AP_ENERGY_PRICE"],
                 "price": price,
             }
         )
