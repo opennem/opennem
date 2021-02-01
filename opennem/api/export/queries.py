@@ -135,7 +135,7 @@ def network_demand_query(
     from balancing_summary bs
     where
         bs.trading_interval <= '{date_max}' and
-        bs.trading_interval > '{date_min}' and
+        bs.trading_interval >= '{date_min}' and
         {network_query}
         {network_region_query}
         1=1
