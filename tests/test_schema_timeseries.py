@@ -116,9 +116,9 @@ def test_schema_timeseries(
 ) -> None:
     subject_daterange = ts.get_range()
 
-    assert subject_daterange.start == start_expected, "Start matches"
     assert str(subject_daterange.start) == str(start_expected), "Start string matches"
-    assert subject_daterange.end == end_expected, "End matches"
+    assert subject_daterange.start == start_expected, "Start matches"
     assert str(subject_daterange.end) == str(end_expected), "End string matches"
+    assert subject_daterange.end == end_expected, "End matches"
     assert subject_daterange.trunc == interval_expected, "Interval matches"
     assert subject_daterange.length == length_expected, "Correct length"
