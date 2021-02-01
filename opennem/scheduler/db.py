@@ -27,13 +27,13 @@ if settings.cache_url:
 huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
 
-@huey.periodic_task(crontab(minute="*/15"))
-@huey.lock_task("db_refresh_interchange")
-def db_refresh_interchange() -> None:
-    refresh_timescale_views("mv_interchange_power_nem_region", days=1)
+# @huey.periodic_task(crontab(minute="*/5"))
+# @huey.lock_task("db_refresh_interchange")
+# def db_refresh_interchange() -> None:
+#     refresh_timescale_views("mv_interchange_power_nem_region", days=1)
 
 
-@huey.periodic_task(crontab(hour="*/12"))
+@huey.periodic_task(crontab(hour="*/3"))
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
     refresh_material_views()
