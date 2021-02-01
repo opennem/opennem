@@ -63,6 +63,8 @@ def priority_from_name(priority_name: str) -> PriorityType:
 
 
 class StatExport(BaseModel):
+    """Defines an export map - a set of variables that produces a JSON export"""
+
     stat_type: StatType = StatType.energy
     priority: PriorityType = PriorityType.live
     country: str
@@ -111,13 +113,13 @@ class StatExport(BaseModel):
 
 
 class StatMetadata(BaseModel):
+    """Defines a set of export maps with methods to filter"""
+
     date_created: datetime
     version: Optional[str]
     resources: List[StatExport]
 
-    def get_by_stat_type(
-        self, stat_type: StatType
-    ) -> StatMetadata:
+    def get_by_stat_type(self, stat_type: StatType) -> StatMetadata:
         em = self.copy()
         em.resources = list(filter(lambda s: s.stat_type == stat_type, self.resources))
         return em
