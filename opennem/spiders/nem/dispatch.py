@@ -5,7 +5,7 @@ from opennem.spiders.nemweb import NemwebSpider
 
 
 class NemwebCurrentDispatch(NemwebSpider):
-    name = "au.nem.current.dispatch"
+    name = "au.nem.latest.dispatch"
     start_url = "http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/"
 
     # only get most recent
@@ -20,9 +20,22 @@ class NemwebCurrentDispatch(NemwebSpider):
     )
 
 
+class NemwebCurrentDispatch(NemwebSpider):
+    name = "au.nem.current.dispatch"
+    start_url = "http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/"
+
+    pipelines_extra = set(
+        [
+            NemwebUnitScadaOpenNEMStorePipeline,
+            BulkInsertPipeline,
+            RecordsToCSVPipeline,
+        ]
+    )
+
+
 class NemwebArchiveDispatch(NemwebSpider):
     name = "au.nem.archive.dispatch"
-    start_url = "http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/"
+    start_url = "http://nemweb.com.au/Reports/Archive/Next_Day_Dispatch/"
     limit = 0
     skip = 1
 
