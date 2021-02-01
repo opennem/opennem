@@ -119,50 +119,63 @@ def run_tests() -> None:
     # return None
 
     # for region in ["TAS1", "NSW1"]:
-    for region in ["SA1"]:
-        export = StatExport(
-            stat_type=StatType.power,
-            priority=PriorityType.live,
-            country="au",
-            date_range=scada_range,
-            network_region=region,
-            network=NetworkNEM,
-            bom_station=get_network_region_weather_station(region),
-            # networks=[NetworkNEM, NetworkWEM],
-            period=human_to_period("7d"),
-            interval=NetworkNEM.get_interval(),
-        )
+    # for region in ["NSW1"]:
+    #     export = StatExport(
+    #         stat_type=StatType.power,
+    #         priority=PriorityType.live,
+    #         country="au",
+    #         date_range=scada_range,
+    #         network_region=region,
+    #         network=NetworkNEM,
+    #         bom_station=get_network_region_weather_station(region),
+    #         # networks=[NetworkNEM, NetworkWEM],
+    #         period=human_to_period("7d"),
+    #         interval=NetworkNEM.get_interval(),
+    #     )
 
-        # export_power(stats=[export])
+    #     # export_power(stats=[export])
 
-        for y in [2021]:
-            export = StatExport(
-                stat_type=StatType.energy,
-                priority=PriorityType.monthly,
-                country="au",
-                date_range=scada_range,
-                network=network_schema,
-                network_region=region,
-                bom_station=get_network_region_weather_station(region),
-                year=y,
-                interval=human_to_interval("1d"),
-            )
+    #     for y in [2021]:
+    #         export = StatExport(
+    #             stat_type=StatType.energy,
+    #             priority=PriorityType.monthly,
+    #             country="au",
+    #             date_range=scada_range,
+    #             network=network_schema,
+    #             network_region=region,
+    #             bom_station=get_network_region_weather_station(region),
+    #             year=y,
+    #             interval=human_to_interval("1d"),
+    #         )
 
-            export_energy(stats=[export])
+    #         export_energy(stats=[export])
 
-        # export = StatExport(
-        #     stat_type=StatType.energy,
-        #     priority=PriorityType.monthly,
-        #     country="au",
-        #     date_range=scada_range,
-        #     network=network_schema,
-        #     network_region=region,
-        #     bom_station=get_network_region_weather_station(region),
-        #     period=human_to_period("all"),
-        #     interval=human_to_interval("1M"),
-        # )
+    # export = StatExport(
+    #     stat_type=StatType.energy,
+    #     priority=PriorityType.monthly,
+    #     country="au",
+    #     date_range=scada_range,
+    #     network=network_schema,
+    #     network_region=region,
+    #     bom_station=get_network_region_weather_station(region),
+    #     period=human_to_period("all"),
+    #     interval=human_to_interval("1M"),
+    # )
 
-        # export_energy(stats=[export])
+    # export_energy(stats=[export])
+
+    export = StatExport(
+        stat_type=StatType.power,
+        priority=PriorityType.live,
+        country="au",
+        date_range=scada_range,
+        network=network_schema,
+        bom_station=bom_station,
+        interval=network_schema.get_interval(),
+        period=human_to_period("7d"),
+    )
+
+    export_power(stats=[export])
 
     # power_stats = export_map.resources
 

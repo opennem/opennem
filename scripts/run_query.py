@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from opennem.api.export.controllers import gov_stats_cpi, power_flows_week
-from opennem.api.export.queries import interconnector_flow_power_query
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import RegionFlowResult
 from opennem.core.flows import net_flows

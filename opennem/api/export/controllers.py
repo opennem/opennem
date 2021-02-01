@@ -4,6 +4,7 @@ from typing import List, Optional
 from opennem.api.export.queries import (
     country_stats_query,
     energy_network_fueltech_query,
+    energy_network_interconnector_emissions_query,
     energy_network_interconnector_query,
     interconnector_power_flow,
     network_demand_query,
@@ -181,15 +182,12 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
 
 
 def power_flows_week(
-    network: NetworkSchema,
+    time_series: TimeSeries,
     network_region_code: str,
-    date_range: ScadaDateRange,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
-    query = interconnector_power_flow(
-        network_region=network_region_code, date_range=date_range, network=network
-    )
+    query = interconnector_power_flow(time_series=time_series, network_region=network_region_code)
 
     with engine.connect() as c:
         logger.debug(query)
@@ -211,7 +209,7 @@ def power_flows_week(
     result = stats_factory(
         imports,
         # code=network_region_code or network.code,
-        network=network,
+        network=time_series.network,
         period=human_to_period("7d"),
         interval=human_to_interval("5m"),
         units=get_unit("power"),
@@ -225,7 +223,7 @@ def power_flows_week(
     result_exports = stats_factory(
         exports,
         # code=network_region_code or network.code,
-        network=network,
+        network=time_series.network,
         period=human_to_period("7d"),
         interval=human_to_interval("5m"),
         units=get_unit("power"),
@@ -239,22 +237,16 @@ def power_flows_week(
 
 
 def demand_week(
-    network: NetworkSchema,
-    date_range: ScadaDateRange,
+    time_series: TimeSeries,
     network_region_code: Optional[str],
-    period: Optional[TimePeriod] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
-    if not period:
-        period = human_to_period("7d")
 
     query = network_demand_query(
+        time_series=time_series,
         network_region=network_region_code,
-        date_range=date_range,
-        network=network,
-        period=period,
         networks_query=networks_query,
     )
 
@@ -273,7 +265,7 @@ def demand_week(
     result = stats_factory(
         demand,
         # code=network_region_code or network.code,
-        network=network,
+        network=time_series.network,
         period=human_to_period("7d"),
         interval=human_to_interval("5m"),
         units=get_unit("demand"),
@@ -287,24 +279,15 @@ def demand_week(
 
 
 def power_week(
-    network_code: str = "WEM",
+    time_series: TimeSeries,
     network_region_code: str = None,
-    period: Optional[TimePeriod] = None,
-    date_range: Optional[ScadaDateRange] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
-    network = network_from_network_code(network_code)
-    interval = human_to_interval("{}m".format(network.interval_size))
-    units = get_unit("power")
-
     query = power_network_fueltech_query(
-        network=network,
+        time_series=time_series,
         networks_query=networks_query,
-        period=period,
-        date_range=date_range,
-        interval=interval,
         network_region=network_region_code,
     )
 
@@ -323,10 +306,10 @@ def power_week(
     result = stats_factory(
         stats,
         # code=network_region_code or network.code,
-        network=network,
-        interval=interval,
-        period=period,
-        units=units,
+        network=time_series.network,
+        interval=time_series.interval,
+        period=time_series.period,
+        units=get_unit("power"),
         region=network_region_code,
         fueltech_group=True,
     )
@@ -337,11 +320,8 @@ def power_week(
     # price
 
     query = price_network_query(
-        network=network,
+        time_series=time_series,
         networks_query=networks_query,
-        period=period,
-        date_range=date_range,
-        interval=human_to_interval("30m"),
         network_region=network_region_code,
     )
 
@@ -356,12 +336,12 @@ def power_week(
 
     stats_market_value = stats_factory(
         stats=stats_price,
-        code=network_region_code or network.code.lower(),
+        code=network_region_code or time_series.network.code.lower(),
         units=get_unit("price_energy_mega"),
-        network=network,
+        network=time_series.network,
         interval=human_to_interval("30m"),
         region=network_region_code,
-        period=period,
+        period=time_series.period,
     )
 
     result.append_set(stats_market_value)
@@ -369,10 +349,8 @@ def power_week(
     # rooftop solar
 
     query = power_network_rooftop_query(
-        network=network,
+        time_series=time_series,
         networks_query=networks_query,
-        period=period,
-        date_range=date_range,
         network_region=network_region_code,
     )
 
@@ -388,20 +366,18 @@ def power_week(
     rooftop = stats_factory(
         rooftop_power,
         # code=network_region_code or network.code,
-        network=network,
+        network=time_series.network,
         interval=human_to_interval("30m"),
-        period=period,
-        units=units,
+        period=time_series.period,
+        units=get_unit("power"),
         region=network_region_code,
         fueltech_group=True,
     )
 
     # rooftop forecast
     query = power_network_rooftop_forecast_query(
-        network=network,
+        time_series=time_series,
         networks_query=networks_query,
-        period=period,
-        date_range=date_range,
         network_region=network_region_code,
     )
 
@@ -417,10 +393,10 @@ def power_week(
     rooftop_forecast = stats_factory(
         rooftop_forecast_power,
         # code=network_region_code or network.code,
-        network=network,
+        network=time_series.network,
         interval=human_to_interval("30m"),
-        period=period,
-        units=units,
+        period=time_series.period,
+        units=get_unit("power"),
         region=network_region_code,
         fueltech_group=True,
     )
@@ -587,8 +563,7 @@ def energy_interconnector_emissions_region_daily(
     period: TimePeriod = human_to_period("1Y")
     units = get_unit("emissions")
 
-    query = energy_network_fueltech_query(
-        emissions=True,
+    query = energy_network_interconnector_emissions_query(
         time_series=time_series,
         network_region=network_region_code,
         networks_query=networks_query,

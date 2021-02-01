@@ -62,10 +62,27 @@ def export_power(
         if output_count >= 1 and latest:
             return None
 
-        stat_set = power_week(
-            date_range=power_stat.date_range,
+        date_range_networks = power_stat.networks or []
+
+        if NetworkNEM in date_range_networks:
+            date_range_networks = [NetworkNEM]
+
+        date_range: ScadaDateRange = get_scada_range(
+            network=power_stat.network, networks=date_range_networks
+        )
+
+        # Migrate to this time_series
+        time_series = TimeSeries(
+            start=date_range.start,
+            end=date_range.end,
+            network=power_stat.network,
+            year=power_stat.year,
+            interval=power_stat.interval,
             period=power_stat.period,
-            network_code=power_stat.network.code,
+        )
+
+        stat_set = power_week(
+            time_series=time_series,
             network_region_code=power_stat.network_region_query or power_stat.network_region,
             networks_query=power_stat.networks,
         )
@@ -81,9 +98,7 @@ def export_power(
             continue
 
         demand_set = demand_week(
-            network=power_stat.network,
-            date_range=power_stat.date_range,
-            period=power_stat.period,
+            time_series=time_series,
             networks_query=power_stat.networks,
             network_region_code=power_stat.network_region_query or power_stat.network_region,
         )
@@ -92,8 +107,7 @@ def export_power(
 
         if power_stat.network_region:
             flow_set = power_flows_week(
-                network=NetworkNEM,
-                date_range=power_stat.date_range,
+                time_series=time_series,
                 network_region_code=power_stat.network_region,
             )
 
@@ -401,7 +415,7 @@ def export_metadata() -> bool:
 
 if __name__ == "__main__":
     export_power(priority=PriorityType.live)
-    export_energy(latest=True)
+    # export_energy(latest=True)
     # export_all_daily()
     # export_all_monthly()
     # export_energy()
