@@ -81,8 +81,8 @@ def get_data_id(
 
 
 class OpennemDataHistory(BaseConfig):
-    start: Union[datetime, date]
-    last: Union[datetime, date]
+    start: datetime
+    last: datetime
     interval: str
     data: List
 
