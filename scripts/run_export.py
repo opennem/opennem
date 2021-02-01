@@ -1,3 +1,7 @@
+"""
+
+"""
+
 #!/usr/bin/env python
 from typing import List
 
@@ -17,9 +21,19 @@ from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkNEM, NetworkWE
 
 
 def run_tests() -> None:
-    network_schema = network_from_network_code("NEM")
-    scada_range = get_scada_range(network=network_schema)
-    bom_station = get_network_region_weather_station("NEM")
+    # network_schema = network_from_network_code("NEM")
+    # scada_range = get_scada_range(network=network_schema)
+    # bom_station = get_network_region_weather_station("NEM")
+
+    export_map = get_export_map()
+
+    nem_energy = export_map.get_by_network_id("NEM").get_by_stat_type(StatType.energy)
+
+    export_energy(nem_energy.resources, latest=True)
+
+    nem_power = export_map.get_by_network_id("NEM").get_by_stat_type(StatType.power)
+
+    export_power(nem_power.resources)
 
     # interconnector_flows = energy_interconnector_emissions_region_daily(
     #     interval_size="1d",
@@ -124,7 +138,6 @@ def run_tests() -> None:
     #         stat_type=StatType.power,
     #         priority=PriorityType.live,
     #         country="au",
-    #         date_range=scada_range,
     #         network_region=region,
     #         network=NetworkNEM,
     #         bom_station=get_network_region_weather_station(region),
@@ -135,12 +148,11 @@ def run_tests() -> None:
 
     #     # export_power(stats=[export])
 
-    #     for y in [2021]:
+    #     for y in [2020, 2021]:
     #         export = StatExport(
     #             stat_type=StatType.energy,
     #             priority=PriorityType.monthly,
     #             country="au",
-    #             date_range=scada_range,
     #             network=network_schema,
     #             network_region=region,
     #             bom_station=get_network_region_weather_station(region),
@@ -164,18 +176,18 @@ def run_tests() -> None:
 
     # export_energy(stats=[export])
 
-    export = StatExport(
-        stat_type=StatType.power,
-        priority=PriorityType.live,
-        country="au",
-        date_range=scada_range,
-        network=network_schema,
-        bom_station=bom_station,
-        interval=network_schema.get_interval(),
-        period=human_to_period("7d"),
-    )
+    # export = StatExport(
+    #     stat_type=StatType.power,
+    #     priority=PriorityType.live,
+    #     country="au",
+    #     date_range=scada_range,
+    #     network=network_schema,
+    #     bom_station=bom_station,
+    #     interval=network_schema.get_interval(),
+    #     period=human_to_period("7d"),
+    # )
 
-    export_power(stats=[export])
+    # export_power(stats=[export])
 
     # power_stats = export_map.resources
 
