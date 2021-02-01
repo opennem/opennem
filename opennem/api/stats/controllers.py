@@ -113,7 +113,7 @@ def stats_factory(
         if timezone and not is_aware(end):
             end = make_aware(end, timezone)
 
-        if timezone and localize:
+        if timezone and localize and network:
             tz = pytz.FixedOffset(int(network.offset))
 
             start = start.astimezone(tz)
