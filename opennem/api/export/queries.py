@@ -10,6 +10,32 @@ from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 
 
+def weather_observation_query(time_series: TimeSeries, station_codes: List[str]) -> str:
+    __query = """
+    select
+        time_bucket_gapfill('{trunc}', observation_time) as observation_time,
+        fs.station_id as station_id,
+        avg(fs.temp_air) as temp_air,
+        -- case  @TODO case on temp_max temp_min
+        -- end case
+        min(fs.temp_air) as temp_min,
+        max(fs.temp_air) as temp_max
+    from bom_observation fs
+    where
+        fs.station_id in ({station_codes}) and
+        fs.observation_time <= '{date_end}' and
+        fs.observation_time >= '{date_start}'
+    group by 1, 2;
+    """.format(
+        trunc=time_series.interval.interval_sql,
+        station_codes=",".join(["'{}'".format(i) for i in station_codes]),
+        date_start=time_series.get_range().start,
+        date_end=time_series.get_range().end,
+    )
+
+    return dedent(__query)
+
+
 def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> str:
     """Get interconnector region flows using materialized view"""
     ___query = """
