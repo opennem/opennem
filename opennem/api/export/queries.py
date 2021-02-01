@@ -347,7 +347,7 @@ def energy_network_fueltech_query(
     from mv_facility_all t
     where
         t.trading_interval <= '{date_max}' and
-        t.trading_interval > '{date_min}' and
+        t.trading_interval >= '{date_min}' and
         t.fueltech_id not in ('imports', 'exports') and
         {network_query}
         {network_region_query}
@@ -408,7 +408,7 @@ def energy_network_interconnector_query(
     from mv_interchange_energy_nem_region t
     where
         t.trading_interval <= '{date_max}' and
-        t.trading_interval > '{date_min}' and
+        t.trading_interval >= '{date_min}' and
         {network_query}
         {network_region_query}
         1=1
@@ -467,7 +467,7 @@ def energy_network_interconnector_emissions_query(
     from vw_region_flow_emissions t
     where
         t.trading_interval <= '{date_max}' and
-        t.trading_interval > '{date_min}' and
+        t.trading_interval >= '{date_min}' and
         {network_region_query}
         1=1
     group by 1, t.flow_region, 2, 3
