@@ -119,27 +119,14 @@ class MMSArchiveDispatchISSpider(MMSArchiveBulkSpider):
     )
 
 
-# class MMSArchiveP5InterconnectorSolutionSpider(MMSArchiveBulkSpider):
-#     name = "au.mms.archive.p5_interconnector_solution"
-
-#     tables = ["P5MIN_INTERCONNECTORSOLN"]
-
-#     pipelines = set(
-#         [
-#             ExtractCSV,
-#             NemwebUnitScadaOpenNEMStorePipeline,
-#         ]
-#     )
-
-
 class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
     name = "au.mms.archive.rooftop_actual"
 
     tables = ["ROOFTOP_PV_ACTUAL"]
 
-    pipelines = set(
-        [
-            ExtractCSV,
-            NemwebUnitScadaOpenNEMStorePipeline,
-        ]
-    )
+    # pipelines = set(
+    #     [
+    #         ExtractCSV,
+    #         NemwebUnitScadaOpenNEMStorePipeline,
+    #     ]
+    # )
