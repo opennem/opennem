@@ -41,7 +41,7 @@ def duid_in_case(facility_codes: List[str]) -> str:
 def stats_factory(
     stats: List[DataQueryResult],
     units: UnitDefinition,
-    interval: Optional[TimeInterval] = None,
+    interval: TimeInterval,
     period: Optional[TimePeriod] = None,
     network: Optional[NetworkSchema] = None,
     timezone: Optional[Union[timezone, str]] = None,
@@ -125,11 +125,9 @@ def stats_factory(
         history = OpennemDataHistory(
             start=start,
             last=end,
+            interval=interval.interval_human,
             data=data_value,
         )
-
-        if interval:
-            history.interval = interval.interval_human
 
         data = OpennemData(
             data_type=units.unit_type,

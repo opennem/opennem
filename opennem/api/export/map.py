@@ -192,8 +192,8 @@ def get_export_map() -> StatMetadata:
                 network=NetworkAU,
                 networks=[NetworkNEM, NetworkWEM],
                 year=year,
-                period=human_to_period("1Y"),
                 interval=human_to_interval("1d"),
+                period=human_to_period("1Y"),
             )
             _exmap.append(export)
 
@@ -204,8 +204,8 @@ def get_export_map() -> StatMetadata:
             date_range=scada_range,
             network=NetworkAU,
             networks=[NetworkNEM, NetworkWEM],
-            period=human_to_period("all"),
             interval=human_to_interval("1M"),
+            period=human_to_period("all"),
         )
         _exmap.append(export)
 
