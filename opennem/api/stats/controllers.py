@@ -106,9 +106,6 @@ def stats_factory(
         start = min(dates)
         end = max(dates)
 
-        if interval:
-            start = start - get_human_interval(interval.interval_human)
-
         # should probably make sure these are the same TZ
         if timezone and not is_aware(start):
             start = make_aware(start, timezone)
