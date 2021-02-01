@@ -83,7 +83,7 @@ def get_data_id(
 class OpennemDataHistory(BaseConfig):
     start: Union[datetime, date]
     last: Union[datetime, date]
-    interval: Optional[str]
+    interval: str
     data: List
 
     # validators
