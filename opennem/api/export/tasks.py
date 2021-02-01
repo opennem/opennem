@@ -49,8 +49,12 @@ def export_power(
 
     """
     if not stats:
-        export_map = get_export_map()
-        stats = export_map.get_by_stat_type(StatType.power, priority)
+        export_map = get_export_map().get_by_stat_type(StatType.power)
+
+        if priority:
+            export_map = export_map.get_by_priority(priority)
+
+        stats = export_map.resources
 
     output_count: int = 0
 
@@ -139,8 +143,12 @@ def export_energy(
 
     """
     if not stats:
-        export_map = get_export_map()
-        stats = export_map.get_by_stat_type(StatType.energy, priority)
+        export_map = get_export_map().get_by_stat_type(StatType.energy)
+
+        if priority:
+            export_map = export_map.get_by_priority(priority)
+
+        stats = export_map.resources
 
     CURRENT_YEAR = datetime.now().year
 
@@ -279,8 +287,8 @@ def export_all_monthly() -> None:
         scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks)
 
         time_series = TimeSeries(
-            start_dt=scada_range.start,
-            end_dt=scada_range.end,
+            start=scada_range.start,
+            end=scada_range.end,
             network=network,
             interval=human_to_interval("1M"),
             period=human_to_period("all"),
@@ -288,7 +296,6 @@ def export_all_monthly() -> None:
 
         stat_set = energy_fueltech_daily(
             time_series=time_series,
-            network=network,
             networks_query=networks,
             network_region_code=network_region.code,
         )
@@ -340,8 +347,8 @@ def export_all_daily() -> None:
         scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks)
 
         time_series = TimeSeries(
-            start_dt=scada_range.start,
-            end_dt=scada_range.end,
+            start=scada_range.start,
+            end=scada_range.end,
             network=network,
             interval=human_to_interval("1d"),
             period=human_to_period("all"),
@@ -409,7 +416,7 @@ def export_metadata() -> bool:
 
 
 if __name__ == "__main__":
-    # export_power(priority=PriorityType.live)
+    export_power(priority=PriorityType.live)
     export_energy(latest=True)
     # export_all_daily()
     # export_all_monthly()
