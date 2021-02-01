@@ -11,9 +11,17 @@ from opennem.schema.stats import StatTypes
 
 
 def weather_observation_query(time_series: TimeSeries, station_codes: List[str]) -> str:
+
+    trading_interval = f"time_bucket_gapfill('{time_series.interval.interval_sql}', observation_time) as ot,"
+
+    if time_series.interval.interval >= 1440:
+        trading_interval = """date_trunc('{trunc}', observation_time at time zone '{tz}') as ot,""".format(
+            trunc=time_series.interval.trunc, tz=time_series.network.timezone_database
+        )
+
     __query = """
     select
-        time_bucket_gapfill('{trunc}', observation_time) as observation_time,
+        {trading_interval}
         fs.station_id as station_id,
         avg(fs.temp_air) as temp_air,
         -- case  @TODO case on temp_max temp_min
@@ -27,7 +35,7 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
         fs.observation_time >= '{date_start}'
     group by 1, 2;
     """.format(
-        trunc=time_series.interval.interval_sql,
+        trading_interval=trading_interval,
         station_codes=",".join(["'{}'".format(i) for i in station_codes]),
         date_start=time_series.get_range().start,
         date_end=time_series.get_range().end,
