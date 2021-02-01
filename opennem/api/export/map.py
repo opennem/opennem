@@ -7,7 +7,7 @@
 import logging
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Type, TypeVar
 
 from pydantic import BaseModel
 
@@ -109,6 +109,9 @@ class StatExport(BaseModel):
         return "{}.json".format(dir_path)
 
 
+StatMetadataType = TypeVar("StatMetadataType", bound="StatMetadataType")
+
+
 class StatMetadata(BaseModel):
     date_created: datetime
     version: Optional[str]
@@ -116,7 +119,7 @@ class StatMetadata(BaseModel):
 
     def get_by_stat_type(
         self, stat_type: StatType, priority: Optional[PriorityType] = None
-    ) -> List[StatExport]:
+    ) -> StatMetadataType:
         if priority:
             return list(
                 filter(
@@ -125,7 +128,17 @@ class StatMetadata(BaseModel):
                 )
             )
 
-        return list(filter(lambda s: s.stat_type == stat_type, self.resources))
+        em = self.copy()
+        em.resources = list(filter(lambda s: s.stat_type == stat_type, self.resources))
+        return em
+
+    def get_by_network_id(
+        self,
+        network_id: str,
+    ) -> StatMetadataType:
+        em = self.copy()
+        em.resources = list(filter(lambda s: s.network.code == network_id, self.resources))
+        return em
 
 
 def get_export_map() -> StatMetadata:
