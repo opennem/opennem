@@ -96,6 +96,12 @@ class TimeSeries(BaseConfig):
     # extract a particular year
     year: Optional[int]
 
+    # Forecast means the time series goes forward from now
+    forecast: bool = False
+
+    # Default forward forecast time period
+    forecast_period: TimePeriod = human_to_period("7d")
+
     def get_range(self) -> DatetimeRange:
         """Return a DatetimeRange from the time series for queries"""
         start = self.start
