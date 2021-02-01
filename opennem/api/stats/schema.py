@@ -6,6 +6,7 @@ from typing import Any, List, Optional, Tuple, Union
 
 from pydantic import validator
 
+from opennem.api.time import human_to_interval
 from opennem.core.compat.utils import translate_id_v3_to_v2
 from opennem.core.fueltechs import map_v3_fueltech
 from opennem.schema.core import BaseConfig
@@ -91,14 +92,23 @@ class OpennemDataHistory(BaseConfig):
 
     def values(self) -> List[Tuple[datetime, float]]:
         interval_obj = get_human_interval(self.interval)
+        interval_def = human_to_interval(self.interval)
+        inclusive = False
         dt = self.start
 
+        if interval_def.interval < 1440:
+            inclusive = True
+
         # return as list rather than generate
-        xy_values = []
+        timeseries_data = []
+
+        # rewind back one interval
+        if inclusive:
+            dt -= interval_obj
 
         for v in self.data:
             dt = dt + interval_obj
-            xy_values.append((dt, v))
+            timeseries_data.append((dt, v))
 
         # @TODO do some sanity checking here
         # if dt != self.last:
@@ -108,7 +118,7 @@ class OpennemDataHistory(BaseConfig):
         #         )
         #     )
 
-        return xy_values
+        return timeseries_data
 
 
 class OpennemData(BaseConfig):
