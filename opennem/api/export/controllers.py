@@ -411,8 +411,14 @@ def power_week(
         fueltech_group=True,
     )
 
-    if rooftop and rooftop_forecast and len(rooftop.data) > 0 and len(rooftop_forecast.data) > 0:
-        rooftop.data[0].forecast = rooftop_forecast.data[0].history
+    if rooftop and rooftop_forecast:
+        if (
+            hasattr(rooftop, "data")
+            and len(rooftop.data) > 0
+            and rooftop_forecast.data
+            and len(rooftop_forecast.data) > 0
+        ):
+            rooftop.data[0].forecast = rooftop_forecast.data[0].history
 
     result.append_set(rooftop)
 
