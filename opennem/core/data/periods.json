@@ -1,5 +1,15 @@
 [
   {
+    "period": 60,
+    "period_human": "1h",
+    "period_sql": "1 hour"
+  },
+  {
+    "period": 1440,
+    "period_human": "1d",
+    "period_sql": "1 days"
+  },
+  {
     "period": 10080,
     "period_human": "7d",
     "period_sql": "7 days"
