@@ -11,18 +11,12 @@ from opennem.api.export.queries import (
     power_network_fueltech_query,
     power_network_rooftop_query,
     price_network_query,
+    weather_observation_query,
 )
-from opennem.api.stats.controllers import get_scada_range, stats_factory
-from opennem.api.stats.schema import (
-    DataQueryResult,
-    OpennemDataSet,
-    RegionFlowEmissionsResult,
-    ScadaDateRange,
-)
+from opennem.api.stats.controllers import stats_factory
+from opennem.api.stats.schema import DataQueryResult, OpennemDataSet, RegionFlowEmissionsResult
 from opennem.api.time import human_to_interval, human_to_period
-from opennem.api.weather.queries import observation_query, observation_query_all
 from opennem.core.flows import net_flows_emissions
-from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
 from opennem.schema.dates import TimeSeries
@@ -34,13 +28,10 @@ logger = logging.getLogger(__name__)
 
 
 def weather_daily(
-    network_code: str,
+    time_series: TimeSeries,
     station_code: str,
-    year: Optional[int] = None,
     unit_name: str = "temperature_mean",
-    period_human: str = None,
     include_min_max: bool = True,
-    date_range: Optional[ScadaDateRange] = None,
     network_region: Optional[str] = None,
 ) -> Optional[OpennemDataSet]:
     station_codes = []
@@ -49,43 +40,12 @@ def weather_daily(
         station_codes = [station_code]
 
     engine = get_database_engine()
-    interval = human_to_interval("1d")
-    network = network_from_network_code(network_code)
     units = get_unit(unit_name)
 
-    if not date_range:
-        date_range = get_scada_range(network=network)
-
-    if not date_range:
-        raise Exception("Require a scada range")
-
-    if year:
-        query = observation_query(
-            station_codes=station_codes,
-            interval=interval,
-            network=network,
-            scada_range=date_range,
-            year=year,
-        )
-    elif period_human:
-        interval = human_to_interval("30m")
-        period = human_to_period(period_human)
-
-        query = observation_query(
-            station_codes=station_codes,
-            interval=interval,
-            network=network,
-            scada_range=date_range,
-            period=period,
-        )
-    else:
-        interval = human_to_interval("1M")
-
-        query = observation_query_all(
-            station_codes=station_codes,
-            scada_range=date_range,
-            network=network,
-        )
+    query = weather_observation_query(
+        time_series=time_series,
+        station_codes=[station_code],
+    )
 
     with engine.connect() as c:
         logger.debug(query)
@@ -113,8 +73,8 @@ def weather_daily(
     stats = stats_factory(
         stats=temp_avg,
         units=units,
-        network=network,
-        interval=interval,
+        network=time_series.network,
+        interval=time_series.interval,
         region=network_region,
         code="bom",
         group_field="temperature",
@@ -127,8 +87,8 @@ def weather_daily(
         stats_min = stats_factory(
             stats=temp_min,
             units=get_unit("temperature_min"),
-            network=network,
-            interval=interval,
+            network=time_series.network,
+            interval=time_series.interval,
             region=network_region,
             code="bom",
             group_field="temperature",
@@ -137,8 +97,8 @@ def weather_daily(
         stats_max = stats_factory(
             stats=temp_max,
             units=get_unit("temperature_max"),
-            network=network,
-            interval=interval,
+            network=time_series.network,
+            interval=time_series.interval,
             region=network_region,
             code="bom",
             group_field="temperature",
