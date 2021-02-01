@@ -11,7 +11,7 @@ from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimeInterval, TimePeriod
-from opennem.utils.dates import DATE_CURRENT_YEAR, get_end_of_last_month, subtract_week
+from opennem.utils.dates import DATE_CURRENT_YEAR, subtract_week
 from opennem.utils.time import human_to_timedelta
 
 
@@ -312,29 +312,24 @@ def power_network_fueltech_query(
     if not date_range:
         date_range = get_scada_range(network=network, networks=networks_query)
 
-    table_query = "mv_nem_facility_power_5min"
-
-    if network == NetworkWEM:
-        table_query = "mv_wem_facility_power_30min"
-
     __query = """
-        select
-            fs.trading_interval at time zone '{timezone}' AS trading_interval,
-            ft.code as fueltech_code,
-            sum(fs.facility_power) as facility_power
-        from {table_query} fs
-        join facility f on fs.facility_code = f.code
-        join fueltech ft on f.fueltech_id = ft.code
-        where
-            fs.is_forecast is False and
-            f.fueltech_id is not null and
-            f.fueltech_id not in ({fueltechs_exclude}) and
-            {network_query}
-            {network_region_query}
-            fs.trading_interval <= '{date_max}' and
-            fs.trading_interval > '{date_min}'
-            {fueltech_filter}
-        group by 1, 2
+    select
+        time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
+        ft.code as fueltech_code,
+        sum(fs.generated) as facility_power
+    from facility_scada fs
+    join facility f on fs.facility_code = f.code
+    join fueltech ft on f.fueltech_id = ft.code
+    where
+        fs.is_forecast is False and
+        f.fueltech_id is not null and
+        f.fueltech_id not in ({fueltechs_exclude}) and
+        {network_query}
+        {network_region_query}
+        fs.trading_interval <= '{date_max}' and
+        fs.trading_interval > '{date_min}'
+        {fueltech_filter}
+    group by 1, 2
     """
 
     network_region_query: str = ""
@@ -373,7 +368,6 @@ def power_network_fueltech_query(
 
     query = dedent(
         __query.format(
-            table_query=table_query,
             network_query=network_query,
             trunc=interval.interval_sql,
             network_region_query=network_region_query,
