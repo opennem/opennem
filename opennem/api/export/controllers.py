@@ -4,6 +4,7 @@ from typing import List, Optional
 from opennem.api.export.queries import (
     country_stats_query,
     energy_network_fueltech_query,
+    energy_network_interconnector_query,
     interconnector_power_flow,
     network_demand_query,
     power_network_fueltech_query,
@@ -520,8 +521,7 @@ def energy_interconnector_region_daily(
     period: TimePeriod = human_to_period("1Y")
     units = get_unit("energy_giga")
 
-    query = energy_network_fueltech_query(
-        interconnector=True,
+    query = energy_network_interconnector_query(
         time_series=time_series,
         network_region=network_region_code,
         networks_query=networks_query,
