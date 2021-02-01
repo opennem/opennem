@@ -398,25 +398,54 @@ def energy_network_fueltech_query(
     if time_series.network not in networks_query:
         networks_query.append(time_series.network)
 
-    __query = """
-    select
-        t.ti_{trunc_name} as trading_day,
-        t.fueltech_id,
-        sum(t.energy) / 1000 as fueltech_energy,
-        sum(t.market_value) as fueltech_market_value,
-        sum(t.emissions) as fueltech_emissions
-    from mv_facility_all t
-    where
-        t.trading_interval <= '{date_max}' and
-        t.trading_interval >= '{date_min}' and
-        t.fueltech_id not in ('imports', 'exports') and
-        {network_query}
-        {network_region_query}
-        1=1
-    group by 1, 2
-    order by
-        trading_day desc;
-    """
+    if time_series.interval.interval > 1440:
+        __query = """
+        select
+            date_trunc('{trunc}', t.trading_day) as trading_month,
+            t.fueltech_id,
+            coalesce(max(t.fueltech_energy), 0) as fueltech_energy,
+            coalesce(max(t.fueltech_market_value), 0) as fueltech_market_value,
+            coalesce(max(t.fueltech_emissions), 0) as fueltech_emissions
+        from
+            (select
+                time_bucket_gapfill('1 day', t.ti_day_aest) as trading_day,
+                t.fueltech_id,
+                sum(t.energy) / 1000 as fueltech_energy,
+                sum(t.market_value) as fueltech_market_value,
+                sum(t.emissions) as fueltech_emissions
+            from mv_facility_all t
+            where
+                t.ti_day_aest <= '{date_max}' and
+                t.ti_day_aest >= '{date_min}' and
+                t.fueltech_id not in ('imports', 'exports') and
+                {network_query}
+                {network_region_query}
+                1=1
+            group by 1, 2) as t
+        group by 1, 2
+        order by
+            1 desc;
+        """
+    else:
+        __query = """
+        select
+            t.ti_{trunc_name} as trading_day,
+            t.fueltech_id,
+            coalesce(sum(t.energy) / 1000, 0) as fueltech_energy,
+            coalesce(sum(t.market_value), 0) as fueltech_market_value,
+            coalesce(sum(t.emissions), 0) as fueltech_emissions
+        from mv_facility_all t
+        where
+            t.trading_interval <= '{date_max}' and
+            t.trading_interval >= '{date_min}' and
+            t.fueltech_id not in ('imports', 'exports') and
+            {network_query}
+            {network_region_query}
+            1=1
+        group by 1, 2
+        order by
+            trading_day desc;
+        """
 
     network_region_query = ""
     date_range = time_series.get_range()
@@ -433,7 +462,7 @@ def energy_network_fueltech_query(
 
     query = dedent(
         __query.format(
-            # trunc=date_range.interval.trunc,
+            trunc=date_range.interval.trunc,
             trunc_name=trunc_name,
             date_min=date_range.start,
             date_max=date_range.end,
