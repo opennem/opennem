@@ -99,7 +99,7 @@ def schedule_energy_monthlies() -> None:
 
 
 # geojson maps
-@huey.periodic_task(crontab(minute="*/5"), priority=50)
+@huey.periodic_task(crontab(minute="*/30"), priority=50)
 @huey.lock_task("schedule_export_geojson")
 def schedule_export_geojson() -> None:
     export_facility_geojson()
