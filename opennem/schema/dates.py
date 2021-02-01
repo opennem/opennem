@@ -62,9 +62,9 @@ class DatetimeRange(BaseConfig):
     @property
     def length(self) -> int:
         """Return the number of buckets in the range"""
-        count = 1
         _comp = self.start
         _delta = get_human_interval(self.trunc)
+        count = 1
 
         while _comp < self.end:
             _comp += _delta
@@ -100,21 +100,31 @@ class TimeSeries(BaseConfig):
     forecast: bool = False
 
     # Default forward forecast time period
-    forecast_period: TimePeriod = human_to_period("7d")
+    forecast_period: str = "7d"
 
     def get_range(self) -> DatetimeRange:
         """Return a DatetimeRange from the time series for queries"""
         start = self.start
         end = self.end
 
-        # subtract the period (ie. 7d from the end for start if not all)
-        if self.period != human_to_period("all"):
-            start = self.end - get_human_interval(self.period.period_human)
+        # If its a forward looking forecast
+        # jump out early
+        if self.forecast:
+            start = self.end
+            end = self.end + get_human_interval(self.forecast_period)
 
-        else:
+            start = start.astimezone(self.network.get_fixed_offset())
+            end = end.astimezone(self.network.get_fixed_offset())
+
+            return DatetimeRange(start_dt=start, end_dt=end, interval=self.interval)
+
+        # subtract the period (ie. 7d from the end for start if not all)
+        if self.period == human_to_period("all"):
             start = date_trunc(start, self.interval.trunc)
             end = date_trunc(get_end_of_last_month(end), "day")
             self.year = None
+        else:
+            start = self.end - get_human_interval(self.period.period_human)
 
         if self.year:
             if self.year > end.year:
@@ -126,14 +136,8 @@ class TimeSeries(BaseConfig):
             if self.year != CUR_YEAR:
                 end = datetime(year=self.year, month=12, day=31, hour=0, minute=0, second=0)
 
-        # if the interval size is a day or greater
-        if self.interval.interval >= 1440:
-            pass
-
-        # Don't localize timezone for day, month, year truncs
-        else:
-            # Add one interval to make it inclusive
-            start += get_human_interval(self.interval.interval_human)
+        # if the interval size is less than a day localize dt's
+        if self.interval.interval < 1440:
 
             # localize times
             start = start.astimezone(self.network.get_fixed_offset())
