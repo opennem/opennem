@@ -15,6 +15,22 @@ end_dt2 = datetime.fromisoformat("2020-02-15 12:45:00+00:00")
 @pytest.mark.parametrize(
     ["ts", "start_expected", "end_expected", "interval_expected", "length_expected"],
     [
+        # Test 1 hour inclusive
+        (
+            TimeSeries(
+                start=datetime.fromisoformat("2021-01-15 12:00:00+00:00"),
+                end=datetime.fromisoformat("2021-01-15 13:00:00+00:00"),
+                network=NetworkNEM,
+                interval=NetworkNEM.get_interval(),
+                period=human_to_period("1h"),
+            ),
+            # Also testing timezone shift from UTC to NEM time
+            datetime.fromisoformat("2021-01-15 22:00:00+10:00"),
+            datetime.fromisoformat("2021-01-15 23:00:00+10:00"),
+            "5m",
+            13,  # number of 5 minute intervals in an hour _inclusive_
+        ),
+        # Test 1 week inclusive
         (
             TimeSeries(
                 start=start_dt,
@@ -25,9 +41,9 @@ end_dt2 = datetime.fromisoformat("2020-02-15 12:45:00+00:00")
             ),
             # Also testing timezone shift from UTC to NEM time
             datetime.fromisoformat("2021-01-08 22:50:00+10:00"),
-            datetime.fromisoformat("2021-01-15 22:45:00+10:00"),
+            datetime.fromisoformat("2021-01-15 22:50:00+10:00"),
             "5m",
-            2016,  # number of 5 minute intervals in a week
+            2017,  # number of 5 minute intervals in a year
         ),
         # Years
         (
