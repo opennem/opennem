@@ -5,7 +5,6 @@ from pprint import pprint
 from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
-
 # from opennem.core.loader import load_data
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
@@ -491,6 +490,9 @@ def test_revisions() -> None:
     s.add(station)
     s.commit()
 
+def import_facilities() -> None:
+    opennem_init()
+    logger.info("Opennem stations imported")
 
 def init() -> None:
     load_fixtures()
