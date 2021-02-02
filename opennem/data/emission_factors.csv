@@ -169,7 +169,7 @@ NEM,SA1,PLAYFB3,Playford B,coal_brown,retired,1.509041,AEMO
 NEM,SA1,PLAYFB4,Playford B,coal_brown,retired,1.509041,AEMO
 NEM,SA1,POR01,Port Lincoln,distillate,operating,1.445858,AEMO
 NEM,SA1,POR03,Port Lincoln,distillate,operating,1.445858,AEMO
-NEM,SA1,PPCCGT,Pelican Point,gas_ccgt,operating,0.653552,AEMO
+NEM,SA1,PPCCGT,Pelican Point,gas_ccgt,operating,0.4737075,AEMO
 NEM,SA1,PTSTAN1,Port Stanvac,distillate,operating,,
 NEM,SA1,QPS1,Quarantine,gas_ocgt,operating,0.799959,AEMO
 NEM,SA1,QPS2,Quarantine,gas_ocgt,operating,0.799959,AEMO
