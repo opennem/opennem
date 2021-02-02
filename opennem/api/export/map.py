@@ -132,6 +132,15 @@ class StatMetadata(BaseModel):
         em.resources = list(filter(lambda s: s.network.code == network_id, self.resources))
         return em
 
+
+    def get_by_network_region(
+        self,
+        network_region: str,
+    ) -> StatMetadata:
+        em = self.copy()
+        em.resources = list(filter(lambda s: s.network_region == network_region, self.resources))
+        return em
+
     def get_by_priority(self, priority: PriorityType) -> StatMetadata:
         em = self.copy()
         em.resources = list(
