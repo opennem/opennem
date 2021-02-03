@@ -551,16 +551,15 @@ def energy_network_interconnector_emissions_query(
         t.trading_interval at time zone '{timezone}' as trading_interval,
         t.flow_from,
         t.flow_to,
-        sum(t.flow_energy) as energy,
-        sum(t.flow_from_emissions),
-        sum(t.flow_to_emissions)
+        t.flow_energy as energy,
+        t.flow_from_emissions,
+        t.flow_to_emissions
     from vw_region_flow_emissions t
     where
         t.trading_interval <= '{date_max}' and
         t.trading_interval >= '{date_min}' and
         {network_region_query}
         1=1
-    group by 1, t.flow_region, 2, 3
     order by 1 desc
 
     """
