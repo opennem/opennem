@@ -474,7 +474,7 @@ def energy_network_fueltech_query(
     return query
 
 
-def energy_network_interconnector_query(
+def energy_network_region_net_flows_query(
     time_series: TimeSeries,
     network_region: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
