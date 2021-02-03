@@ -1,12 +1,10 @@
 from datetime import datetime
 from itertools import groupby
-from operator import attrgetter
 from typing import Dict, List, Optional
 
 from datetime_truncate import truncate
 
 from opennem.api.stats.schema import DataQueryResult, RegionFlowEmissionsResult, RegionFlowResult
-from opennem.api.time import human_to_interval
 from opennem.schema.time import TimeInterval
 
 
@@ -14,7 +12,6 @@ def net_flows(
     region: str,
     data: List[RegionFlowResult],
     interval: Optional[TimeInterval] = None,
-    return_as_dataquery: bool = True,
 ) -> Dict[str, List[DataQueryResult]]:
     """
     Calculates net region flows for a region from a RegionFlowResult
@@ -39,7 +36,8 @@ def net_flows(
                 "exports": 0.0,
             }
 
-        flow_sum = 0.0
+        flow_sum_imports = 0.0
+        flow_sum_exports = 0.0
 
         # Sum up
         for es in values:
@@ -48,21 +46,25 @@ def net_flows(
                 continue
 
             if es.flow_from == region:
-                flow_sum += es.generated
+                if es.generated > 0:
+                    flow_sum_exports += es.generated
+                else:
+                    flow_sum_imports += abs(es.generated)
 
             if es.flow_to == region:
-                flow_sum += -1 * es.generated
+                if es.generated < 0:
+                    flow_sum_exports += abs(es.generated)
+                else:
+                    flow_sum_imports += es.generated
 
-        if flow_sum > 0:
-            output_set[k]["exports"] = flow_sum
-        else:
-            output_set[k]["imports"] = 0.0
+        # if flow_sum > 0:
+        # flow_direction = "exports"
+
+        output_set[k]["exports"] = flow_sum_exports / 1000
+        output_set[k]["imports"] = -1 * flow_sum_imports / 1000
 
     imports_list = []
     exports_list = []
-
-    if not return_as_dataquery:
-        return output_set
 
     for interval, data in output_set.items():
         imports_list.append(
