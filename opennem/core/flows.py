@@ -60,7 +60,7 @@ def net_flows(region: str, data: List[RegionFlowResult]) -> Dict[str, List[DataQ
 
 
 def net_flows_emissions(
-    region: str, data: List[RegionFlowEmissionsResult], interval: Optional[TimeInterval] = None
+    region: str, data: List[RegionFlowEmissionsResult], interval: TimeInterval = None
 ) -> Dict[str, List[DataQueryResult]]:
     """
     Calculates net region flow emissions for a region from a RegionFlowResult
