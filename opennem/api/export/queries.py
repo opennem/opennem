@@ -73,19 +73,29 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
 
 def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> str:
     """Get interconnector region flows using materialized view"""
+
     ___query = """
-        select
-            trading_interval at time zone '{timezone}' as trading_interval,
-            fs.network_region,
-            fs.imports,
-            fs.exports
-        from mv_interchange_power_nem_region fs
-        where
-            fs.network_id = '{network_id}' and
-            fs.network_region= '{region}' and
-            fs.trading_interval <= '{date_end}' and
-            fs.trading_interval >= '{date_start}'
-        order by trading_interval asc;
+    select
+        time_bucket_gapfill(INTERVAL '5 minutes', bs.trading_interval) as trading_interval,
+        bs.network_region,
+        case when max(bs.net_interchange) < 0 then
+            max(bs.net_interchange)
+        else 0
+        end as imports,
+        case when max(bs.net_interchange) > 0 then
+            max(bs.net_interchange)
+        else 0
+        end as exports
+    from balancing_summary bs
+    where
+        bs.network_id = '{network_id}' and
+        bs.network_region= '{region}' and
+        bs.trading_interval <= '{date_end}' and
+        bs.trading_interval >= '{date_start}'
+    group by 1, 2
+    order by trading_interval asc;
+
+
     """.format(
         timezone=time_series.network.timezone_database,
         network_id=time_series.network.code,
