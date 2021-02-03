@@ -132,7 +132,6 @@ class StatMetadata(BaseModel):
         em.resources = list(filter(lambda s: s.network.code == network_id, self.resources))
         return em
 
-
     def get_by_network_region(
         self,
         network_region: str,
