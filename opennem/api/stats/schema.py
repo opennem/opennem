@@ -215,6 +215,8 @@ class RegionFlowEmissionsResult(BaseConfig):
     flow_from: str
     flow_to: str
     energy: float
+    flow_from_emissions: Optional[float]
+    flow_to_emissions: Optional[float]
     flow_from_intensity: Optional[float]
     flow_to_intensity: Optional[float]
 
