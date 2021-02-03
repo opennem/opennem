@@ -5,7 +5,6 @@ from opennem.api.export.queries import (
     country_stats_query,
     energy_network_fueltech_query,
     energy_network_interconnector_emissions_query,
-    energy_network_interconnector_query,
     interconnector_power_flow,
     network_demand_query,
     power_network_fueltech_query,
