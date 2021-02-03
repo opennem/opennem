@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 
 from datetime_truncate import truncate
 
-from opennem.api.stats.schema import DataQueryResult, RegionFlowEmissionsResult, RegionFlowResult
+from opennem.api.stats.schema import DataQueryResult, RegionFlowResult
 from opennem.schema.time import TimeInterval
 
 
