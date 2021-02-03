@@ -552,8 +552,8 @@ def energy_network_interconnector_emissions_query(
         t.flow_from,
         t.flow_to,
         sum(t.flow_energy) as energy,
-        max(t.flow_from_emissions),
-        max(t.flow_to_emissions)
+        sum(t.flow_from_emissions),
+        sum(t.flow_to_emissions)
     from vw_region_flow_emissions t
     where
         t.trading_interval <= '{date_max}' and
