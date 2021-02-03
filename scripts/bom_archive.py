@@ -122,10 +122,11 @@ def bom_get_historic(station_code: str, year: int = 2021) -> None:
     if not r.ok:
         raise Exception("Url error in getting observation file")
 
-    print(_unzip_content(r.content).decode("utf-8"))
+    return _unzip_content(r.content).decode("utf-8")
 
-    return None
 
+def import_station(station_code: str):
+    pass
 
 if __name__ == "__main__":
-    bom_get_historic("66037")
+    d = bom_get_historic("66037")
