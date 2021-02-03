@@ -122,7 +122,7 @@ class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
     tables = ["ROOFTOP_PV_ACTUAL"]
 
 
-class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
+class MMSArchiveTradingPriceSpider(MMSArchiveBulkSpider):
     name = "au.mms.archive.trading_price"
 
     pipelines = set(
