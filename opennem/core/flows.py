@@ -1,10 +1,11 @@
 from datetime import datetime
 from itertools import groupby
+from operator import attrgetter
 from typing import Dict, List, Optional
 
 from datetime_truncate import truncate
 
-from opennem.api.stats.schema import DataQueryResult, RegionFlowResult
+from opennem.api.stats.schema import DataQueryResult, RegionFlowEmissionsResult, RegionFlowResult
 from opennem.schema.time import TimeInterval
 
 
@@ -17,8 +18,6 @@ def net_flows(
     Calculates net region flows for a region from a RegionFlowResult
     """
 
-    output_set = {}
-
     def get_interval(flow_result: RegionFlowResult) -> datetime:
         value = flow_result.interval
 
@@ -27,7 +26,45 @@ def net_flows(
 
         return value
 
-    for k, v in groupby(data, get_interval):
+    data_net = []
+
+    # group regular first for net flows per provided
+    # period bucket from query
+    for k, v in groupby(data, attrgetter("interval")):
+        values = list(v)
+
+        fr = RegionFlowResult(
+            interval=values[0].interval,
+            flow_from="",
+            flow_to="",
+            flow_from_energy=0.0,
+            flow_to_energy=0.0,
+        )
+
+        flow_sum = 0.0
+
+        for es in values:
+
+            if not es.generated:
+                continue
+
+            if es.flow_from == region:
+                flow_sum += es.generated
+
+            if es.flow_to == region:
+                flow_sum += -1 * es.generated
+
+        if flow_sum > 0:
+            fr.flow_from_energy = flow_sum
+        else:
+            fr.flow_to_energy = flow_sum
+
+        data_net.append(fr)
+
+    output_set = {}
+
+    # group interval second with provided interval
+    for k, v in groupby(data_net, get_interval):
         values = list(v)
 
         if k not in output_set:
@@ -42,26 +79,14 @@ def net_flows(
         # Sum up
         for es in values:
 
-            if not es.generated:
-                continue
+            if es.flow_to_energy:
+                flow_sum_imports += es.flow_to_energy
 
-            if es.flow_from == region:
-                if es.generated > 0:
-                    flow_sum_exports += es.generated
-                else:
-                    flow_sum_imports += abs(es.generated)
+            if es.flow_from_energy:
+                flow_sum_exports += es.flow_from_energy
 
-            if es.flow_to == region:
-                if es.generated < 0:
-                    flow_sum_exports += abs(es.generated)
-                else:
-                    flow_sum_imports += es.generated
-
-        # if flow_sum > 0:
-        # flow_direction = "exports"
-
+        output_set[k]["imports"] = -1 * abs(flow_sum_imports) / 1000
         output_set[k]["exports"] = flow_sum_exports / 1000
-        output_set[k]["imports"] = -1 * flow_sum_imports / 1000
 
     imports_list = []
     exports_list = []
@@ -79,7 +104,7 @@ def net_flows(
 
 def net_flows_emissions(
     region: str,
-    data: List[RegionFlowResult],
+    data: List[RegionFlowEmissionsResult],
     interval: TimeInterval,
 ) -> Dict[str, List[DataQueryResult]]:
     """
