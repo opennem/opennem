@@ -46,8 +46,12 @@ create view vw_region_flow_emissions as select
     abs(sum(ef.emissions_per_kw) * sum(f.energy)) as flow_from_emissions,
     abs(sum(et.emissions_per_kw) * sum(f.energy)) as flow_to_emissions
 from mv_facility_all f
-left join mv_region_emissions ef on ef.trading_interval = f.trading_interval and ef.network_region = f.network_region
-left join mv_region_emissions et on et.trading_interval = f.trading_interval and et.network_region = f.interconnector_region_to
+left join mv_region_emissions ef on
+    ef.trading_interval = f.trading_interval and
+    ef.network_region = f.network_region
+left join mv_region_emissions et on
+    et.trading_interval = f.trading_interval and
+    et.network_region = f.interconnector_region_to
 where
     f.interconnector is True
 group by 1, 2, 3, flow_region, 5, 6, f.interconnector_region_to
