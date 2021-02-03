@@ -11,7 +11,10 @@ from opennem.schema.time import TimeInterval
 
 
 def net_flows(
-    region: str, data: List[RegionFlowResult], interval: Optional[TimeInterval] = None
+    region: str,
+    data: List[RegionFlowResult],
+    interval: Optional[TimeInterval] = None,
+    return_as_dataquery: bool = True,
 ) -> Dict[str, List[DataQueryResult]]:
     """
     Calculates net region flows for a region from a RegionFlowResult
@@ -37,7 +40,6 @@ def net_flows(
             }
 
         flow_sum = 0.0
-        flow_type = "imports"
 
         # Sum up
         for es in values:
@@ -52,12 +54,15 @@ def net_flows(
                 flow_sum += -1 * es.generated
 
         if flow_sum > 0:
-            flow_type = "exports"
-
-        output_set[k][flow_type] = flow_sum
+            output_set[k]["exports"] = flow_sum
+        else:
+            output_set[k]["imports"] = 0.0
 
     imports_list = []
     exports_list = []
+
+    if not return_as_dataquery:
+        return output_set
 
     for interval, data in output_set.items():
         imports_list.append(
@@ -71,7 +76,9 @@ def net_flows(
 
 
 def net_flows_emissions(
-    region: str, data: List[RegionFlowEmissionsResult], interval: TimeInterval
+    region: str,
+    data: List[RegionFlowResult],
+    interval: TimeInterval,
 ) -> Dict[str, List[DataQueryResult]]:
     """
     Calculates net region flow emissions for a region from a RegionFlowResult
@@ -99,19 +106,19 @@ def net_flows_emissions(
 
             if es.flow_from == region:
                 if es.energy > 0:
-                    if es.flow_from_emissions:
-                        export_emissions_sum += es.flow_from_emissions
+                    if es.flow_from_intensity:
+                        export_emissions_sum += abs(es.flow_from_emissions)
                 else:
                     if es.flow_to_emissions:
-                        import_emissions_sum += es.flow_to_emissions
+                        import_emissions_sum += abs(es.flow_to_emissions)
 
             if es.flow_to == region:
                 if es.energy < 0:
                     if es.flow_from_emissions:
-                        export_emissions_sum += es.flow_from_emissions
+                        export_emissions_sum += abs(es.flow_from_emissions)
                 else:
                     if es.flow_to_emissions:
-                        import_emissions_sum += es.flow_to_emissions
+                        import_emissions_sum += abs(es.flow_to_emissions)
 
         output_set[k]["imports"] = import_emissions_sum
         output_set[k]["exports"] = export_emissions_sum
