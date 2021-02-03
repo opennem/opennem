@@ -5,6 +5,7 @@ from scrapy.utils.python import garbage_collect
 
 from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures
 from opennem.db.tasks import refresh_views
+from opennem.db.views import init_views
 from opennem.importer.all import run_all
 from opennem.importer.db import import_facilities
 from opennem.importer.db import init as db_init
@@ -44,6 +45,11 @@ def cmd_db_fixturer() -> None:
 @click.command()
 def cmd_db_refresh() -> None:
     refresh_views()
+
+
+@click.command()
+def cmd_db_views() -> None:
+    init_views()
 
 
 @click.group()
@@ -119,6 +125,7 @@ cmd_export.add_command(cmd_export_all, name="all")
 cmd_db.add_command(cmd_db_init, name="init")
 cmd_db.add_command(cmd_db_fixturer, name="load_fixtures")
 cmd_db.add_command(cmd_db_refresh, name="refresh")
+cmd_db.add_command(cmd_db_views, name="views")
 
 cmd_weather.add_command(cmd_weather_init, name="init")
 
