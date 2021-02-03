@@ -19,6 +19,8 @@ alembic upgrade head
 
 python -m opennem.cli db init
 
+python -m opennem.cli db views
+
 python -m opennem.importer.wikidata
 
 # import emission maps
