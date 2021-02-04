@@ -139,11 +139,6 @@ class OpennemData(BaseConfig):
     forecast: Optional[OpennemDataHistory]
 
     # validators
-    # _id_lowercase = validator("id", allow_reuse=True, pre=True)(optionaly_lowercase_string)
-    _network_lowercase = validator("network", allow_reuse=True, pre=True)(
-        optionaly_lowercase_string
-    )
-    # _region_lowercase = validator("region", allow_reuse=True, pre=True)(optionaly_lowercase_string)
 
     # conveniance methods
     def id_v2(self) -> str:
