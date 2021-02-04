@@ -2,7 +2,7 @@
 
 
 """
-from typing import Optional
+from typing import List, Optional
 
 from opennem.schema.core import BaseConfig
 
@@ -46,8 +46,13 @@ class ViewDefinition(BaseConfig):
 
     name: str
 
+    materialized: bool = False
+
     filepath: str
 
     view_content: Optional[str]
+
+    # Creates a unique index
+    primary_key: Optional[List[str]]
 
     aggregation_policy: Optional[ContinuousAggregationPolicy]
