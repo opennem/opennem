@@ -47,51 +47,51 @@ def schedule_live_tasks() -> None:
     export_power(priority=PriorityType.live)
 
 
-# @huey.periodic_task(crontab(hour="*/12"))
-# @huey.lock_task("schedule_power_weeklies")
-# def schedule_power_weeklies() -> None:
-#     """
-#     Run weekly power outputs
-#     """
-#     export_power(priority=PriorityType.history, latest=True)
+@huey.periodic_task(crontab(hour="*/12"))
+@huey.lock_task("schedule_power_weeklies")
+def schedule_power_weeklies() -> None:
+    """
+    Run weekly power outputs
+    """
+    export_power(priority=PriorityType.history, latest=True)
 
 
-# @huey.periodic_task(crontab(minute="15", hour="12"))
-# @huey.lock_task("schedule_power_weeklies_archive")
-# def schedule_power_weeklies_archive() -> None:
-#     """
-#     Run weekly power outputs entire archive
-#     """
-#     export_power(priority=PriorityType.history)
+@huey.periodic_task(crontab(minute="15", hour="12"))
+@huey.lock_task("schedule_power_weeklies_archive")
+def schedule_power_weeklies_archive() -> None:
+    """
+    Run weekly power outputs entire archive
+    """
+    export_power(priority=PriorityType.history)
 
 
-@huey.periodic_task(crontab(minute="*/30"), priority=50)
+@huey.periodic_task(crontab(hour="*/12"), priority=50)
 @huey.lock_task("schedule_export_all_daily")
 def schedule_export_all_daily() -> None:
     export_all_daily()
     slack_message("Finished running export_all_daily")
 
 
-@huey.periodic_task(crontab(minute="*/30"), priority=50)
+@huey.periodic_task(crontab(hour="*/12"), priority=50)
 @huey.lock_task("schedule_export_all_monthly")
 def schedule_export_all_monthly() -> None:
     export_all_monthly()
 
 
-@huey.periodic_task(crontab(minute="*/5"), priority=50)
+@huey.periodic_task(crontab(hour="*/2"), priority=50)
 @huey.lock_task("schedule_hourly_tasks")
 def schedule_hourly_tasks() -> None:
     export_energy(priority=PriorityType.daily, latest=True)
 
 
-@huey.periodic_task(crontab(minute="*/15"))
+@huey.periodic_task(crontab(hour="*/6"))
 @huey.lock_task("schedule_daily_tasks")
 def schedule_daily_tasks() -> None:
     export_energy(priority=PriorityType.daily)
     slack_message("Finished running energy dailies")
 
 
-@huey.periodic_task(crontab(minute="*/15"), priority=30)
+@huey.periodic_task(crontab(hour="*/6"), priority=30)
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
     export_energy(priority=PriorityType.monthly)
