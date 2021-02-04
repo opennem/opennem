@@ -9,10 +9,11 @@ import logging
 import re
 import sys
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Optional
 
 import pytz
 from pydantic.types import FilePath
+from sqlalchemy.dialects.postgresql import insert
 
 from opennem.core.normalizers import is_number
 from opennem.db import SessionLocal, get_database_engine
@@ -32,6 +33,8 @@ BOM_BACKUP_FILE = "bom.data"
 BOM_BACKUP_PATH = (
     Path(__file__).resolve().parent.parent.parent / Path("infra/backups") / Path(BOM_BACKUP_FILE)
 )
+
+_valid_csv_line = re.compile("^(\w|\ )+\,(\w|\ )+,", re.I)
 
 
 def load_station_timezone_map() -> Dict:
@@ -180,7 +183,9 @@ BOM_STATION_CODE_REMAP = {"066062": "066214"}
 DELIMITER = chr(255)
 
 
-__bom_date_match = re.compile(r"(\d{4})\,(\d{2}),(\d{2}),(\d{2}),(\d{2})")
+__bom_date_match = re.compile(r"(\d{4})\,(\d{2}),(\d{2})")
+
+__bom_datetime_match = re.compile(r"(\d{4})\,(\d{2}),(\d{2}),(\d{2}),(\d{2})")
 
 
 def bom_pad_stationid(station_id: str) -> str:
@@ -201,7 +206,12 @@ def bom_station_id_remap(station_id: str) -> str:
 
 def bom_parse_date(line: str) -> str:
     """BoM has the worst. date. format. ever."""
-    return re.sub(__bom_date_match, r"\1-\2-\3 \4:\5:00", line)
+    return re.sub(__bom_date_match, r"\1-\2-\3", line)
+
+
+def bom_parse_datetime(line: str) -> str:
+    """BoM has the worst. date. format. ever."""
+    return re.sub(__bom_datetime_match, r"\1-\2-\3 \4:\5:00", line)
 
 
 def parse_bom(file: FilePath) -> int:
@@ -212,32 +222,44 @@ def parse_bom(file: FilePath) -> int:
     observation_times = []
 
     with file.open() as fh:
-        fh.readline()
+        # fh.readline()
 
         csvreader = csv.DictReader(
-            [bom_parse_date(l) for l in fh],
+            [bom_parse_date(l) for l in fh if re.match(_valid_csv_line, l)],
             delimiter=",",
             fieldnames=BOM_FORMAT_FIELDS,
         )
         for row in csvreader:
 
-            row["station_id"] = bom_pad_stationid(row["station_id"])
-            row["station_id"] = bom_station_id_remap(row["station_id"])
+            station_id_field = None
 
-            record = parse_record_bom(row)
+            if "station_id" in row:
+                station_id_field = "station_id"
 
-            ot = record["observation_time"]
+            if "Bureau of Meteorology station number" in row:
+                station_id_field = "Bureau of Meteorology station number"
 
-            if ot in observation_times:
-                continue
+            if not station_id_field:
+                raise Exception("Could not find station id field")
 
-            observation_times.append(ot)
+            row[station_id_field] = bom_pad_stationid(row[station_id_field])
+            row[station_id_field] = bom_station_id_remap(row[station_id_field])
 
-            records_to_store.append(record)
-            read_count += 1
+            if "station_id" in row:
+                record = parse_record_bom(row)
 
-            if limit and limit > 0 and read_count >= limit:
-                break
+                ot = record["observation_time"]
+
+                if ot in observation_times:
+                    continue
+
+                observation_times.append(ot)
+
+                records_to_store.append(record)
+                read_count += 1
+
+                if limit and limit > 0 and read_count >= limit:
+                    break
 
     sql_query = build_insert_query(BomObservation, BOM_DB_UPDATE_FIELDS)
 
@@ -255,6 +277,109 @@ def parse_bom(file: FilePath) -> int:
     return num_inserts
 
 
+BOM_REMAP_TO_OPENNEM = {
+    "Bureau of Meteorology station number": "station_id",
+    "observation_date": "observation_time",
+    "Maximum temperature (Degree C)": "temp_max",
+}
+
+
+def map_observation_time(rec: Dict) -> Dict:
+    date_string = rec["observation_time"]
+
+    od = "{} 12:00:00".format(date_string)
+
+    rec["observation_time"] = od
+
+    return rec
+
+
+def parse_float(fs: str) -> Optional[float]:
+    if not fs or len(fs) == 0:
+        return None
+
+    fv = None
+
+    try:
+        fv = float(fs)
+    except ValueError:
+        pass
+
+    return fv
+
+
+def remap_row(row: Dict) -> Dict:
+    nd = dict()
+
+    for key, value in row.items():
+        if key in BOM_REMAP_TO_OPENNEM:
+            nd[BOM_REMAP_TO_OPENNEM[key]] = value
+
+    nd = map_observation_time(nd)
+
+    if "temp_max" in nd:
+        nd["temp_max"] = parse_float(nd["temp_max"])
+
+    if "temp_min" in nd:
+        nd["temp_min"] = parse_float(nd["temp_min"])
+
+    return nd
+
+
+def parse_bom_download(file) -> None:
+    count = 0
+    records_to_store = []
+
+    with file.open() as fh:
+        top_line: str = fh.readline()
+        top_line = top_line.replace("Year,Month,Day", "observation_date").strip()
+
+        fieldnames = top_line.split(",")
+
+        csvreader = csv.DictReader(
+            [bom_parse_date(l) for l in fh if re.match(_valid_csv_line, l)],
+            delimiter=",",
+            fieldnames=fieldnames,
+        )
+        for row in csvreader:
+            row = remap_row(row)
+
+            row["station_id"] = bom_pad_stationid(row["station_id"])
+            row["station_id"] = bom_station_id_remap(row["station_id"])
+
+            count += 1
+            records_to_store.append(row)
+
+    return records_to_store
+
+
+def store_bom_records_temp_max(recs: List[Dict]) -> None:
+    records_to_store = [i for i in recs if i["temp_max"] is not None]
+
+    engine = get_database_engine()
+    session = SessionLocal()
+
+    # insert
+    stmt = insert(BomObservation).values(records_to_store)
+    stmt.bind = engine
+    stmt = stmt.on_conflict_do_update(
+        index_elements=["observation_time", "station_id"],
+        set_={"temp_max": stmt.excluded.temp_max},
+    )
+
+    try:
+        session.execute(stmt)
+        session.commit()
+    except Exception as e:
+        logger.error("Error inserting records")
+        logger.error(e)
+        return {"num_records": 0}
+    finally:
+        session.close()
+
+    return {"num_records": len(records_to_store)}
+
+
 def cli(files) -> None:
     for f in files:
         fp = Path(f)
@@ -264,7 +389,8 @@ def cli(files) -> None:
 
         print("Parsing: {}".format(fp))
 
-        parse_bom(fp)
+        recs = parse_bom_download(fp)
+        store_bom_records_temp_max(recs)
 
 
 if __name__ == "__main__":
