@@ -44,9 +44,11 @@ def job_cancel(id: str) -> bool:
 def job_schedule(spider_name: str) -> bool:
     schedule_url = urljoin(settings.scrapyd_url, "schedule.json")
 
-    r = http.post(
-        schedule_url, data={"project": "opennem", "spider": spider_name}
-    )
+    try:
+        r = http.post(schedule_url, data={"project": "opennem", "spider": spider_name})
+    except Exception as e:
+        logger.error("Error getting {}: {}".format(schedule_url, e))
+        return False
 
     if not r.ok:
         logger.error("Error: {}".format(r.status_code))
@@ -58,9 +60,7 @@ def job_schedule(spider_name: str) -> bool:
         logger.error("Error: {}".format(resp["message"]))
         return False
 
-    logger.info(
-        "Queued spider {} with task: {}".format(spider_name, resp["jobid"])
-    )
+    logger.info("Queued spider {} with task: {}".format(spider_name, resp["jobid"]))
 
     return True
 
