@@ -50,7 +50,7 @@ _VIEW_MAP = [
         materialized=True,
         filepath="mv_region_emissions.sql",
         aggregation_policy=AggregationPolicy6Hours,
-        primary_key=["trading_interval", "network_region"],
+        primary_key=["trading_interval", "network_id", "network_region"],
     ),
     ViewDefinition(
         priority=4,
@@ -145,7 +145,11 @@ def init_database_views() -> None:
 
             if index_create_query:
                 logger.debug(index_create_query)
-                c.execute(index_create_query)
+
+                try:
+                    c.execute(index_create_query)
+                except Exception as e:
+                    logger.error("Error creating index: {}".format(e))
 
     return None
 
