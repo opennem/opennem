@@ -96,6 +96,11 @@ def _unzip_content(content: Any) -> bytes:
     return content.getvalue()
 
 
+headers = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
+}
+
+
 def bom_get_historic(station_code: str, obs_type: ObservationTypes) -> None:
 
     params = BOM_DIRECTORY_PARAMS.copy()
@@ -127,7 +132,7 @@ def bom_get_historic(station_code: str, obs_type: ObservationTypes) -> None:
         params["p_stn_num"] = station_code
         params["p_c"] = directory_code
 
-        r = http.get(BOM_BASE_URL, params=urlencode(params))
+        r = http.get(BOM_BASE_URL, params=urlencode(params), headers=headers)
 
         if not r.ok:
             raise Exception("Url error in getting observation file")
@@ -135,7 +140,8 @@ def bom_get_historic(station_code: str, obs_type: ObservationTypes) -> None:
         content = _unzip_content(r.content).decode("utf-8")
 
         if "Weather Data temporarily unavailable" in content:
-            logger.error("Could not get {}".format(BOM_BASE_URL))
+            directory_codes_fetched.append(directory_code)
+            logger.error("Could not get {}?{}".format(BOM_BASE_URL, urlencode(params)))
             continue
 
         file_name = "bom_{}_{}_{}.txt".format(
@@ -146,7 +152,6 @@ def bom_get_historic(station_code: str, obs_type: ObservationTypes) -> None:
             fh.write(content)
 
         logger.info("Wrote file: {}".format(file_name))
-
         directory_codes_fetched.append(directory_code)
 
 
@@ -158,5 +163,5 @@ if __name__ == "__main__":
     bom_capitals = load_data("bom_capitals.json", from_project=True)
 
     for station_code in bom_capitals:
-        for observation_type in [ObservationTypes.temp_max, ObservationTypes.temp_min]:
+        for observation_type in [ObservationTypes.temp_min]:
             bom_get_historic(station_code, observation_type)
