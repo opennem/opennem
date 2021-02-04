@@ -24,6 +24,10 @@ AggregationPolicy30Minutes = ContinuousAggregationPolicy(
     interval="30 minutes", start_interval="2 hours"
 )
 
+AggregationPolicy2Hours = ContinuousAggregationPolicy(
+    interval="2 hours", start_interval="6 hours", end_interval="2 hours"
+)
+
 AggregationPolicy6Hours = ContinuousAggregationPolicy(
     interval="6 hours", start_interval="12 hours", end_interval="2 hours"
 )
@@ -34,7 +38,7 @@ _VIEW_MAP = [
         name="mv_facility_energy_hour",
         materialized=True,
         filepath="mv_facility_energy_hour.sql",
-        aggregation_policy=AggregationPolicy30Minutes,
+        aggregation_policy=AggregationPolicy2Hours,
     ),
     ViewDefinition(
         priority=2,
@@ -55,7 +59,7 @@ _VIEW_MAP = [
         name="mv_interchange_energy_nem_region",
         materialized=True,
         filepath="mv_interchange_energy_nem_region.sql",
-        aggregation_policy=AggregationPolicy30Minutes,
+        aggregation_policy=AggregationPolicy6Hours,
     ),
     ViewDefinition(
         priority=10,
