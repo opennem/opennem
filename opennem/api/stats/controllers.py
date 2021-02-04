@@ -139,7 +139,7 @@ def stats_factory(
         )
 
         if network:
-            data.network = network.code
+            data.network = network.code.lower()
 
         # *sigh* - not the most flexible model
         # @TODO fix this schema and make it more flexible
@@ -150,8 +150,8 @@ def stats_factory(
                 # @NOTE disable for now since FE doesn't
                 # support it
                 # network.country if network else None,
-                network.code if network else None,
-                region if region else None,
+                network.code.lower() if network else None,
+                region.lower() if region else None,
                 "fuel_tech",
                 group_code,
                 units.unit_type,
@@ -167,10 +167,10 @@ def stats_factory(
             # setattr(data, group_field, group_code)
 
             if network:
-                group_fields.append(network.code)
+                group_fields.append(network.code.lower())
 
             if region:
-                group_fields.append(region)
+                group_fields.append(region.lower())
 
             group_fields = group_fields + [
                 units.unit_type,
@@ -192,10 +192,10 @@ def stats_factory(
             # network.country if network else None,
 
             if network:
-                _id_list.append(network.code)
+                _id_list.append(network.code.lower())
 
             if region:
-                _id_list.append(region)
+                _id_list.append(region.lower())
 
             if units and units.name_alias:
                 _id_list.append(units.name_alias)
