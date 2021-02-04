@@ -140,6 +140,22 @@ class StatMetadata(BaseModel):
         em.resources = list(filter(lambda s: s.network_region == network_region, self.resources))
         return em
 
+    def get_by_year(
+        self,
+        year: int,
+    ) -> StatMetadata:
+        em = self.copy()
+        em.resources = list(filter(lambda s: s.year == year, self.resources))
+        return em
+
+    def get_by_years(
+        self,
+        years: List[int],
+    ) -> StatMetadata:
+        em = self.copy()
+        em.resources = list(filter(lambda s: s.year in years, self.resources))
+        return em
+
     def get_by_priority(self, priority: PriorityType) -> StatMetadata:
         em = self.copy()
         em.resources = list(
