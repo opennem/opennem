@@ -324,7 +324,9 @@ def export_all_monthly() -> None:
 
         if bom_station:
             weather_stats = weather_daily(
-                time_series=time_series, station_code=bom_station, network_region=network_region
+                time_series=time_series,
+                station_code=bom_station,
+                network_region=network_region.code,
             )
             all_monthly.append_set(weather_stats)
 
@@ -384,7 +386,9 @@ def export_all_daily() -> None:
 
         if bom_station:
             weather_stats = weather_daily(
-                time_series=time_series, station_code=bom_station, network_region=network_region
+                time_series=time_series,
+                station_code=bom_station,
+                network_region=network_region.code,
             )
             stat_set.append_set(weather_stats)
 
