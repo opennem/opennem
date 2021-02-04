@@ -27,8 +27,17 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
                     time_bucket_gapfill('1 day', observation_time) as observation_time,
                     fs.station_id,
                     avg(fs.temp_air) as temp_avg,
-                    min(fs.temp_air) as temp_min,
-                    max(fs.temp_air) as temp_max
+
+                    case when min(fs.temp_min) is not null
+                        then min(fs.temp_min)
+                        else min(fs.temp_air)
+                    end as temp_min,
+
+                    case when max(fs.temp_max) is not null
+                        then max(fs.temp_max)
+                        else max(fs.temp_air)
+                    end as temp_max
+
                 from bom_observation fs
                 where
                     fs.station_id in ({station_codes}) and
@@ -51,10 +60,17 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
             time_bucket_gapfill('{interval_sql}', observation_time) as ot,
             fs.station_id as station_id,
             avg(fs.temp_air) as temp_air,
-            -- case  @TODO case on temp_max temp_min
-            -- end case
-            min(fs.temp_air) as temp_min,
-            max(fs.temp_air) as temp_max
+
+            case when min(fs.temp_min) is not null
+                then min(fs.temp_min)
+                else min(fs.temp_air)
+            end as temp_min,
+
+            case when max(fs.temp_max) is not null
+                then max(fs.temp_max)
+                else max(fs.temp_air)
+            end as temp_max
+
         from bom_observation fs
         where
             fs.station_id in ({station_codes}) and
