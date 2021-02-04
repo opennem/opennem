@@ -53,7 +53,14 @@ _VIEW_MAP = [
         primary_key=["trading_interval", "network_id", "network_region"],
     ),
     ViewDefinition(
-        priority=4,
+        priority=3,
+        name="mv_interchange_energy_nem_region",
+        materialized=True,
+        filepath="mv_interchange_energy_nem_region.sql",
+        aggregation_policy=AggregationPolicy30Minutes,
+    ),
+    ViewDefinition(
+        priority=10,
         name="vw_region_flow_emissions",
         materialized=False,
         filepath="vw_region_flow_emissions.sql",
