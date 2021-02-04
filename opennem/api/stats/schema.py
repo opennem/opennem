@@ -193,8 +193,6 @@ class OpennemDataSet(BaseConfig):
     _network_lowercase = validator("network", allow_reuse=True, pre=True)(
         optionaly_lowercase_string
     )
-    _region_lowercase = validator("region", allow_reuse=True, pre=True)(optionaly_lowercase_string)
-    _code_lowercase = validator("code", allow_reuse=True, pre=True)(optionaly_lowercase_string)
 
 
 class RegionFlowResult(BaseConfig):
