@@ -62,7 +62,8 @@ def schedule_power_weeklies_archive() -> None:
     """
     Run weekly power outputs entire archive
     """
-    export_power(priority=PriorityType.history)
+    # export_power(priority=PriorityType.history)
+    pass
 
 
 @huey.periodic_task(crontab(hour="/12"), priority=50)
