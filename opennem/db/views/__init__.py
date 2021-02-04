@@ -41,7 +41,6 @@ _VIEW_MAP = [
         name="mv_facility_all",
         materialized=True,
         filepath="mv_facility_all.sql",
-        aggregation_policy=AggregationPolicy6Hours,
         primary_key=["trading_interval", "network_id", "code"],
     ),
     ViewDefinition(
@@ -49,7 +48,6 @@ _VIEW_MAP = [
         name="mv_region_emissions",
         materialized=True,
         filepath="mv_region_emissions.sql",
-        aggregation_policy=AggregationPolicy6Hours,
         primary_key=["trading_interval", "network_id", "network_region"],
     ),
     ViewDefinition(
