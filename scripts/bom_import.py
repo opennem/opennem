@@ -8,6 +8,7 @@ import csv
 import logging
 import re
 import sys
+from io import StringIO
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -34,7 +35,7 @@ BOM_BACKUP_PATH = (
     Path(__file__).resolve().parent.parent.parent / Path("infra/backups") / Path(BOM_BACKUP_FILE)
 )
 
-_valid_csv_line = re.compile("^(\w|\ )+\,(\w|\ )+,", re.I)
+_valid_csv_line = re.compile(r"^(\w|\ )+,(\d+),", re.I)
 
 
 def load_station_timezone_map() -> Dict:
@@ -281,6 +282,7 @@ BOM_REMAP_TO_OPENNEM = {
     "Bureau of Meteorology station number": "station_id",
     "observation_date": "observation_time",
     "Maximum temperature (Degree C)": "temp_max",
+    "Minimum temperature (Degree C)": "temp_min",
 }
 
 
@@ -303,6 +305,7 @@ def parse_float(fs: str) -> Optional[float]:
     try:
         fv = float(fs)
     except ValueError:
+        logger.error("Could not parse temp: {}".format(fs))
         pass
 
     return fv
@@ -336,8 +339,16 @@ def parse_bom_download(file) -> None:
 
         fieldnames = top_line.split(",")
 
+        ca = fh.read().splitlines()
+        ca = [i.strip() for i in ca if re.match(_valid_csv_line, i.strip())]
+        ca = [bom_parse_date(i) for i in ca]
+
+        print(len(ca))
+
+        content = "\n".join(ca)
+
         csvreader = csv.DictReader(
-            [bom_parse_date(l) for l in fh if re.match(_valid_csv_line, l)],
+            StringIO(content),
             delimiter=",",
             fieldnames=fieldnames,
         )
@@ -354,7 +365,14 @@ def parse_bom_download(file) -> None:
 
 
 def store_bom_records_temp_max(recs: List[Dict]) -> None:
-    records_to_store = [i for i in recs if i["temp_max"] is not None]
+    # records_to_store = [i for i in recs if i["temp_max"] is not None]
+    records_to_store = recs
+
+    first = recs[0]
+    update_field = "temp_max"
+
+    if "temp_min" in first:
+        update_field = "temp_min"
 
     engine = get_database_engine()
     session = SessionLocal()
@@ -364,7 +382,7 @@ def store_bom_records_temp_max(recs: List[Dict]) -> None:
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
         index_elements=["observation_time", "station_id"],
-        set_={"temp_max": stmt.excluded.temp_max},
+        set_={update_field: getattr(stmt.excluded, update_field)},
     )
 
     try:
@@ -380,6 +398,23 @@ def store_bom_records_temp_max(recs: List[Dict]) -> None:
     return {"num_records": len(records_to_store)}
 
 
+def test_file(file) -> None:
+    count = 0
+    records_to_store = []
+
+    with file.open() as fh:
+        top_line: str = fh.readline()
+        top_line = top_line.replace("Year,Month,Day", "observation_date").strip()
+
+        fieldnames = top_line.split(",")
+
+        content = fh.read()
+
+        for l in fh:
+            if not re.match(_valid_csv_line, l.strip()):
+                print(l)
+
+
 def cli(files) -> None:
     for f in files:
         fp = Path(f)
@@ -390,7 +425,8 @@ def cli(files) -> None:
         print("Parsing: {}".format(fp))
 
         recs = parse_bom_download(fp)
-        store_bom_records_temp_max(recs)
+        r = store_bom_records_temp_max(recs)
+        print(r)
 
 
 if __name__ == "__main__":
