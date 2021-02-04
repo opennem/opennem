@@ -54,7 +54,7 @@ class DatetimeRange(BaseConfig):
         _delta = get_human_interval(self.trunc)
         count = 1
 
-        while _comp < self.end:
+        while _comp <= self.end:
             _comp += _delta
             count += 1
 
@@ -109,10 +109,16 @@ class TimeSeries(BaseConfig):
         # subtract the period (ie. 7d from the end for start if not all)
         if self.period == human_to_period("all"):
             start = date_trunc(start, self.interval.trunc)
+            start = start.replace(
+                hour=0, minute=0, second=0, tzinfo=self.network.get_fixed_offset()
+            )
 
             # If its all per month take the end of the last month
             if self.interval == human_to_interval("1M"):
                 end = date_trunc(get_end_of_last_month(end), "day")
+                end = end.replace(
+                    hour=23, minute=59, second=59, tzinfo=self.network.get_fixed_offset()
+                )
 
             self.year = None
 
@@ -123,17 +129,43 @@ class TimeSeries(BaseConfig):
             if self.year > end.year:
                 raise Exception("Specified year is great than end year")
 
-            start = start.replace(year=self.year, month=1, day=1)
-            start = date_trunc(start, self.interval.trunc)
+            start = start.replace(
+                year=self.year,
+                month=1,
+                day=1,
+                hour=0,
+                minute=0,
+                second=0,
+                tzinfo=self.network.get_fixed_offset(),
+            )
+            # start = date_trunc(start, self.interval.trunc)
 
             if self.year != CUR_YEAR:
-                end = datetime(year=self.year, month=12, day=31, hour=0, minute=0, second=0)
+                end = datetime(
+                    year=self.year,
+                    month=12,
+                    day=31,
+                    hour=23,
+                    minute=59,
+                    second=59,
+                    tzinfo=self.network.get_fixed_offset(),
+                )
             else:
                 end = date_trunc(end, "day")
+                end = end.replace(tzinfo=self.network.get_fixed_offset())
 
         # localize times
-        start = start.astimezone(self.network.get_fixed_offset())
-        end = end.astimezone(self.network.get_fixed_offset())
+        if not start.tzinfo or start.tzinfo != self.network.get_fixed_offset():
+            start = start.astimezone(self.network.get_fixed_offset())
+
+        if not end.tzinfo or end.tzinfo != self.network.get_fixed_offset():
+            end = end.astimezone(self.network.get_fixed_offset())
+
+        # if start.tzinfo != self.network.get_fixed_offset():
+        #     start = start.replace(tzinfo=self.network.get_fixed_offset())
+
+        # if end.tzinfo != self.network.get_fixed_offset():
+        #     end = end.replace(tzinfo=self.network.get_fixed_offset())
 
         dtr = DatetimeRange(start=start, end=end, interval=self.interval)
 
