@@ -17,11 +17,4 @@ class NemSummarySpider(scrapy.Spider):
     )
 
     def parse(self, response: Any) -> Generator[Dict, None, None]:
-        # json_resp = None
-
-        # try:
-        #     json_resp = json.loads(response.text)
-        # except ValueError:
-        #     pass
-
         yield {"content": response.json()}
