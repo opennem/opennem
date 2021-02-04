@@ -83,6 +83,7 @@ pycodestyle = "^2.6.0"
 py-spy = "^0.3.3"
 pytest-benchmark = {extras = ["histogram"], version = "^3.2.3"}
 uvicorn = {extras = ["watchgodreload"], version = "^0.12.3"}
+GitPython = "^3.1.12"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
