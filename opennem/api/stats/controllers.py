@@ -47,6 +47,7 @@ def stats_factory(
     timezone: Optional[Union[timezone, str]] = None,
     code: Optional[str] = None,
     region: Optional[str] = None,
+    include_group_code: bool = False,
     fueltech_group: Optional[bool] = False,
     group_field: Optional[str] = None,
     data_id: Optional[str] = None,
@@ -174,8 +175,8 @@ def stats_factory(
 
             group_fields = group_fields + [
                 units.unit_type,
+                group_code if include_group_code else None,
                 # group_field,
-                # group_code,
             ]
 
             data.id = ".".join([f for f in group_fields if f])

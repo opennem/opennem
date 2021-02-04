@@ -188,6 +188,7 @@ def power_station(
         network=network,
         interval=interval,
         period=period,
+        include_group_code=True,
         units=units,
     )
 
