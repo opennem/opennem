@@ -144,7 +144,6 @@ class OpennemData(BaseConfig):
         optionaly_lowercase_string
     )
     _region_lowercase = validator("region", allow_reuse=True, pre=True)(optionaly_lowercase_string)
-    _code_lowercase = validator("code", allow_reuse=True, pre=True)(optionaly_lowercase_string)
 
     # conveniance methods
     def id_v2(self) -> str:
