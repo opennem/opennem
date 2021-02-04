@@ -76,6 +76,7 @@ def schedule_export_all_daily() -> None:
 @huey.lock_task("schedule_export_all_monthly")
 def schedule_export_all_monthly() -> None:
     export_all_monthly()
+    slack_message("Finished running export_all_monthly")
 
 
 @huey.periodic_task(crontab(hour="*/2"), priority=50)
