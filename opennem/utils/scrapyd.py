@@ -7,9 +7,8 @@ import logging
 from typing import Any, Dict, List
 from urllib.parse import urljoin
 
-import requests
-
 from opennem.settings import settings
+from opennem.utils.http import http
 from opennem.utils.scrapy import get_spiders
 
 logger = logging.getLogger("scrapyd.client")
@@ -21,7 +20,7 @@ def get_jobs() -> Dict[str, Any]:
         "listjobs.json?project={}".format(settings.scrapyd_project_name),
     )
 
-    jobs = requests.get(job_url).json()
+    jobs = http.get(job_url).json()
 
     return jobs
 
@@ -29,7 +28,7 @@ def get_jobs() -> Dict[str, Any]:
 def job_cancel(id: str) -> bool:
     cancel_job_url = urljoin(settings.scrapyd_url, "cancel.json")
 
-    r = requests.post(cancel_job_url, data={"project": "opennem", "job": id})
+    r = http.post(cancel_job_url, data={"project": "opennem", "job": id})
 
     resp = r.json()
 
@@ -45,7 +44,7 @@ def job_cancel(id: str) -> bool:
 def job_schedule(spider_name: str) -> bool:
     schedule_url = urljoin(settings.scrapyd_url, "schedule.json")
 
-    r = requests.post(
+    r = http.post(
         schedule_url, data={"project": "opennem", "spider": spider_name}
     )
 
