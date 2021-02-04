@@ -27,14 +27,14 @@ def run_tests() -> None:
 
     export_map = get_export_map()
 
-    # nem_energy = (
-    #     export_map.get_by_network_id("NEM")
-    #     .get_by_stat_type(StatType.energy)
-    #     .get_by_priority(PriorityType.monthly)
-    #     .get_by_network_region("NSW1")
-    # )
+    nem_energy = (
+        export_map.get_by_network_id("NEM")
+        .get_by_stat_type(StatType.energy)
+        .get_by_priority(PriorityType.monthly)
+        .get_by_network_region("NSW1")
+    )
 
-    # export_energy(nem_energy.resources, latest=True)
+    export_energy(nem_energy.resources, latest=True)
 
     nem_power = (
         export_map.get_by_network_id("NEM")
