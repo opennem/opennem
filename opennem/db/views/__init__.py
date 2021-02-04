@@ -1,54 +1,18 @@
 import logging
 from pathlib import Path
-from typing import Optional
 
 from opennem.db import get_database_engine
-from opennem.schema.core import BaseConfig
+
+from .schema import ContinuousAggregationPolicy, ViewDefinition
 
 logger = logging.getLogger("opennem.db.views")
 
-VIEW_PATH = Path(__file__).parent / "views"
+VIEW_PATH = Path(__file__).parent.parent / "fixtures" / "views"
 
 
-def format_offset(offset: str) -> str:
-    return "INTERVAL '{}'".format(offset)
-
-
-class ContinuousAggregationPolicy(BaseConfig):
-    interval: str
-    start_interval: Optional[str]
-    end_interval: Optional[str]
-
-    @property
-    def schedule_interval(self) -> str:
-        return format_offset(self.interval)
-
-    @property
-    def start_offset(self) -> str:
-        if self.start_interval:
-            return format_offset(self.start_interval)
-
-        return "NULL"
-
-    @property
-    def end_offset(self) -> str:
-        if self.end_interval:
-            return format_offset(self.end_interval)
-
-        return "NULL"
-
-
-class ViewDefinition(BaseConfig):
-    priority: int = 0
-    name: str
-    filepath: str
-    view_content: Optional[str]
-    aggregation_policy: Optional[ContinuousAggregationPolicy]
-
-
-class AggregationPolicy30Minutes(ContinuousAggregationPolicy):
-    interval = "30 minutes"
-    start_interval = "2 hours"
+AggregationPolicy30Minutes = ContinuousAggregationPolicy(
+    interval="30 minutes", start_interval="2 hours"
+)
 
 
 _VIEW_MAP = [
