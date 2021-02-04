@@ -7,8 +7,11 @@ import json
 import logging
 import os
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Optional
 from urllib.parse import urljoin
+
+from git import Actor, Repo, remote
 
 from opennem.api.export.map import StatType
 from opennem.api.stats.loader import load_statset
@@ -123,6 +126,26 @@ class DiffComparisonSet(BaseConfig):
     def urlv3(self) -> str:
         return get_v3_url(self.stat_type, self.network_region, self.bucket_size)
 
+    def load_maps(self) -> None:
+        for version in ["v2", "v3"]:
+            req_url = getattr(self, f"url{version}")
+
+            r = http.get(req_url)
+            logger.debug("Loading: {}".format(req_url))
+
+            if not r.ok:
+                logger.error("invalid {} url: {}".format(version, req_url))
+
+            statset = None
+
+            if version == "v2":
+                statset = load_statset_v2(r.json())
+                self.v2 = statset
+
+            else:
+                statset = load_statset(r.json())
+                self.v3 = statset
+
 
 def get_url_map(regions: List[NetworkRegion]) -> List[DiffComparisonSet]:
     urls = []
@@ -221,12 +244,16 @@ def get_data_by_id(id: str, series: List[Dict]) -> Optional[Dict]:
     return id_s.pop()
 
 
-def run_diff() -> None:
+def run_diff() -> float:
+    score = 0
+    score_tested = 0
+    total_buckets = 0
+
     regions = get_network_regions(NetworkNEM, "NSW1")
     statsetmap = get_url_map(regions)
 
     # load urls
-    statsetmap = load_url_map(statsetmap)
+    [i.load_maps() for i in statsetmap]
 
     # filter it down for now
     # statsetmap_power = list(filter(lambda x: x.stat_type == StatType.power, statsetmap))
@@ -304,6 +331,7 @@ def run_diff() -> None:
 
             if v2i.history:
                 logger.info("  * comparing history:")
+                score_tested += 1
 
                 if len(v2i.history.data) != len(v3i.history.data):
                     logger.error(
@@ -319,6 +347,9 @@ def run_diff() -> None:
 
                     mismatch_values = series_not_close(v2i.history.values(), v3i.history.values())
 
+                    score += 1
+                    total_buckets += len(mismatch_values.keys())
+
                     extra_part = i.split(".")[1]
 
                     file_components = [
@@ -332,7 +363,7 @@ def run_diff() -> None:
                     filename = "-".join([i for i in file_components if i])
 
                     with open(
-                        f"diff_outs/{filename}-diff.json",
+                        f"../dataquality/diff/{filename}-diff.json",
                         "w",
                     ) as fh:
                         json.dump(mismatch_values, fh, cls=OpenNEMJSONEncoder, indent=4)
@@ -367,6 +398,32 @@ def run_diff() -> None:
 
         logger.info("=" * 50)
 
+    if score == 0:
+        return 0.0
+
+    percentage = round(score_tested / (score_tested - score), 2)
+
+    return "{}% match. {} total buckets mismatched.".format(percentage, total_buckets)
+
+
+def commit_diffs(score: str) -> None:
+
+    rw_dir = Path(__file__).parent.parent.parent.parent / "dataquality"
+
+    if not rw_dir.is_dir():
+        raise Exception("not a git directory: {}".format(rw_dir))
+
+    repo = Repo(rw_dir)
+    author = committer = Actor("OpenNEM Data Quality", "sysadmin@opennem.org.au")
+
+    repo.index.add(["diff"])
+    repo.index.commit(
+        "Commit version diffs. Score: {}".format(score), author=author, committer=committer
+    )
+
+    origin = repo.remote(name="origin")
+    origin.push()
+
 
 def run_data_diff() -> None:
     regions = get_network_regions(NetworkNEM, "NSW1")
@@ -384,10 +441,16 @@ def run_data_diff() -> None:
 
 if __name__ == "__main__":
 
-    files = glob.glob("diff_outs/*")
+    files = glob.glob("../dataquality/diff/*")
 
     for f in files:
+        if f in ["empty"]:
+            continue
+
         os.remove(f)
         logger.debug(f"Deleted {f}")
 
-    run_diff()
+    score = run_diff()
+
+    print(score)
+    commit_diffs(score)
