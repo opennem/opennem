@@ -106,17 +106,18 @@ def stats_factory(
         end = max(dates)
 
         # should probably make sure these are the same TZ
-        if timezone and not is_aware(start):
-            start = make_aware(start, timezone)
+        if localize:
+            if timezone and not is_aware(start):
+                start = make_aware(start, timezone)
 
-        if timezone and not is_aware(end):
-            end = make_aware(end, timezone)
+            if timezone and not is_aware(end):
+                end = make_aware(end, timezone)
 
-        if timezone and localize and network and network.offset:
-            tz = pytz.FixedOffset(int(network.offset))
+            if timezone and localize and network and network.offset:
+                tz = pytz.FixedOffset(int(network.offset))
 
-            start = start.astimezone(tz)
-            end = end.astimezone(tz)
+                start = start.astimezone(tz)
+                end = end.astimezone(tz)
 
         # free
         dates = []
