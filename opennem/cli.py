@@ -48,7 +48,7 @@ def cmd_db_refresh() -> None:
 
 
 @click.command()
-@click.option("--purge", default=False, help="Purge unmapped views")
+@click.option("--purge", is_flag=True, help="Purge unmapped views")
 def cmd_db_views(purge: bool) -> None:
     init_views_cli(purge=purge)
 
