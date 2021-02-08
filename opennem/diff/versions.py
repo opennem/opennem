@@ -11,8 +11,6 @@ from pathlib import Path
 from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
-from git import Actor, Repo, remote
-
 from opennem.api.export.map import StatType
 from opennem.api.stats.loader import load_statset
 from opennem.api.stats.schema import OpennemData, OpennemDataSet
@@ -247,7 +245,10 @@ def get_data_by_id(id: str, series: List[Dict]) -> Optional[Dict]:
 def run_diff() -> float:
     score = 0
     score_tested = 0
-    total_buckets = 0
+    buckets_not_match = 0
+
+    buckets_total = 0
+    buckets_matches = 0
 
     regions = get_network_regions(NetworkNEM, "NSW1")
     statsetmap = get_url_map(regions)
@@ -297,7 +298,7 @@ def run_diff() -> float:
 
         if len(id_diff) > 0:
             for i in id_diff:
-                logger.info(
+                logger.error(
                     "Series {} {} for {} is missing ids. v3 doesn't have {}".format(
                         statset.stat_type.value, statset.bucket_size, statset.network_region, i
                     )
@@ -312,7 +313,7 @@ def run_diff() -> float:
             v3i = statset.v3.get_id(translate_id_v2_to_v3(i))
 
             if not v3i:
-                logger.error("   missing in v3: {}".format(translate_id_v2_to_v3(i)))
+                logger.error("    missing in v3: {}".format(translate_id_v2_to_v3(i)))
                 continue
 
             if not v2i:
@@ -340,20 +341,27 @@ def run_diff() -> float:
                         )
                     )
 
-                data_matches = series_are_equal(v2i.history.values(), v3i.history.values())
+                data_matches = series_are_equal(
+                    v2i.history.values(), v3i.history.values(), full_equality=True
+                )
+
+                buckets_total += len(data_matches.keys())
 
                 if False in list(data_matches.values()):
                     logger.error("    - values don't match ")
 
-                    mismatch_values = series_not_close(v2i.history.values(), v3i.history.values())
+                    mismatch_values = series_not_close(
+                        v2i.history.values(), v3i.history.values(), full_equality=True
+                    )
 
                     score += 1
-                    total_buckets += len(mismatch_values.keys())
+                    buckets_not_match += len(mismatch_values.keys())
 
                     extra_part = i.split(".")[1]
+                    units = i.split(".")[-1]
 
                     file_components = [
-                        statset.stat_type.value,
+                        units,
                         statset.network_region,
                         statset.bucket_size,
                         extra_part,
@@ -375,6 +383,10 @@ def run_diff() -> float:
                             min(data_matches.keys()),
                             max(data_matches.keys()),
                         )
+                    )
+                else:
+                    logger.error(
+                        "    - Error matching data values: {}".format(len(data_matches.keys()))
                     )
 
             # remaining attributes
@@ -401,12 +413,18 @@ def run_diff() -> float:
     if score == 0:
         return 0.0
 
-    percentage = round(score_tested / (score_tested - score), 2)
+    if buckets_not_match == 0:
+        percentage = 0.0
+    else:
+        percentage = round(buckets_not_match / buckets_total, 2)
 
-    return "{}% match. {} total buckets mismatched.".format(percentage, total_buckets)
+    return "{}% match. {} total buckets match of {}.".format(
+        percentage, buckets_not_match, buckets_total
+    )
 
 
 def commit_diffs(score: str) -> None:
+    from git import Actor, Repo, remote
 
     rw_dir = Path(__file__).parent.parent.parent.parent / "dataquality"
 
@@ -453,4 +471,4 @@ if __name__ == "__main__":
     score = run_diff()
 
     print(score)
-    commit_diffs(score)
+    # commit_diffs(score)
