@@ -197,8 +197,13 @@ def stats_factory(
             if region:
                 _id_list.append(region.lower())
 
+            if group_code:
+                _id_list.append(group_code.lower())
+
             if units and units.name_alias:
                 _id_list.append(units.name_alias)
+            elif units and units.name:
+                _id_list.append(units.name)
 
             data.id = ".".join([f for f in _id_list if f])
             data.type = units.unit_type

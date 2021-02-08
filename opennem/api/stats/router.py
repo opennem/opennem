@@ -67,17 +67,13 @@ def power_unit(
 
     facility_codes = [normalize_duid(unit_code)]
 
-    query = power_facility_query(
-        facility_codes, network.code, interval=interval, period=period
-    )
+    query = power_facility_query(facility_codes, network.code, interval=interval, period=period)
 
     with engine.connect() as c:
         results = list(c.execute(query))
 
     stats = [
-        DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
         for i in results
     ]
 
@@ -152,17 +148,13 @@ def power_station(
     )
 
     if not station:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
 
     facility_codes = list(set([f.code for f in station.facilities]))
 
     stats = []
 
-    query = power_facility_query(
-        facility_codes, network=network, interval=interval, period=period
-    )
+    query = power_facility_query(facility_codes, network=network, interval=interval, period=period)
 
     logger.debug(query)
 
@@ -170,9 +162,7 @@ def power_station(
         results = list(c.execute(query))
 
     stats = [
-        DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
         for i in results
     ]
 
@@ -243,9 +233,7 @@ def power_network_fueltech_api(
         results = list(c.execute(query))
 
     stats = [
-        DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
         for i in results
     ]
 
@@ -327,9 +315,7 @@ def energy_station(
     )
 
     if not station:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
 
     if len(station.facilities) < 1:
         raise HTTPException(
@@ -358,25 +344,19 @@ def energy_station(
         )
 
     results_energy = [
-        DataQueryResult(
-            interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None)
+        for i in row
+    ]
+
+    results_market_value = [
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None)
         for i in row
     ]
 
     results_emissions = [
-        DataQueryResult(
-            interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None)
         for i in row
     ]
-
-    # results_emissions = [
-    #     DataQueryResult(
-    #         interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None
-    #     )
-    #     for i in row
-    # ]
 
     if len(results_energy) < 1:
         raise HTTPException(
@@ -391,6 +371,7 @@ def energy_station(
         interval=interval_obj,
         period=period_obj,
         code=station_code,
+        include_group_code=True,
     )
 
     if not stats:
@@ -399,16 +380,17 @@ def energy_station(
             detail="Station stats not found",
         )
 
-    # stats_market_value = stats_factory(
-    #     stats=results_market_value,
-    #     units=get_unit("market_value"),
-    #     network=network,
-    #     interval=interval_obj,
-    #     period=period_obj,
-    #     code=station_code,
-    # )
+    stats_market_value = stats_factory(
+        stats=results_market_value,
+        units=get_unit("market_value"),
+        network=network,
+        interval=interval_obj,
+        period=period_obj,
+        code=station_code,
+        include_group_code=True,
+    )
 
-    # stats.append_set(stats_market_value)
+    stats.append_set(stats_market_value)
 
     stats_emissions = stats_factory(
         stats=results_emissions,
@@ -417,6 +399,7 @@ def energy_station(
         interval=interval_obj,
         period=period_obj,
         code=network.code.lower(),
+        include_group_code=True,
     )
 
     stats.append_set(stats_emissions)
@@ -460,14 +443,10 @@ def energy_network_api(
         results = list(c.execute(query))
 
     if len(results) < 1:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No results"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No results")
 
     stats = [
-        DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
         for i in results
     ]
 
@@ -555,9 +534,7 @@ def energy_network_fueltech_api(
         results = list(c.execute(query))
 
     stats = [
-        DataQueryResult(
-            interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
         for i in results
     ]
 
@@ -579,9 +556,7 @@ def energy_network_fueltech_api(
     )
 
     if not result:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No stats"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No stats")
 
     return result
 
@@ -627,11 +602,7 @@ def price_network_region_api(
 
     scada_range = get_scada_range(network=network)
 
-    if (
-        period_obj
-        and period_obj.period_human == "all"
-        and interval.interval_human == "1M"
-    ):
+    if period_obj and period_obj.period_human == "all" and interval.interval_human == "1M":
         query = price_network_monthly(
             network=network,
             network_region_code=network_region_code,
@@ -651,14 +622,10 @@ def price_network_region_api(
         results = list(c.execute(query))
 
     if len(results) < 1:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No data found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No data found")
 
     stats = [
-        DataQueryResult(
-            interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
         for i in results
     ]
 
