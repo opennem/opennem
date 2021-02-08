@@ -280,3 +280,7 @@ def get_end_of_last_month(dt: datetime) -> datetime:
     dtn = dt.replace(day=1) - timedelta(days=1)
 
     return dtn
+
+
+def strip_timezone(dt: datetime) -> datetime:
+    return dt.replace(tzinfo=None)
