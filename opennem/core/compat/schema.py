@@ -6,11 +6,21 @@ OpenNEM v2 formatted output exports as Pydantic schemas
 from datetime import date, datetime
 from typing import List, Optional, Tuple, Union
 
+from pydantic import validator
+
 # from opennem.api.stats.schema import data_validate
 from opennem.schema.core import BaseConfig
 from opennem.utils.interval import get_human_interval
 
 # from pydantic import validator
+
+
+def strip_timezone(dt: datetime) -> datetime:
+    return dt.replace(tzinfo=None)
+
+
+def fix_v2_date(date_str: str) -> str:
+    return date_str.replace("+1000", "+10:00")
 
 
 class OpennemDataHistoryV2(BaseConfig):
@@ -20,7 +30,8 @@ class OpennemDataHistoryV2(BaseConfig):
     data: List[Optional[float]]
 
     # validators
-    # _data_valid = validator("data", allow_reuse=True, pre=True)(data_validate)
+    _start_date = validator("start", allow_reuse=True, pre=True)(fix_v2_date)
+    _end_date = validator("last", allow_reuse=True, pre=True)(fix_v2_date)
 
     def values(self) -> List[Tuple[datetime, float]]:
         interval_obj = get_human_interval(self.interval)
@@ -31,7 +42,7 @@ class OpennemDataHistoryV2(BaseConfig):
 
         for v in self.data:
             dt = dt + interval_obj
-            xy_values.append((dt, v))
+            xy_values.append((strip_timezone(dt), v))
 
         return xy_values
 
