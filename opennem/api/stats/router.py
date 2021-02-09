@@ -304,7 +304,7 @@ def energy_station(
 
     interval_obj = human_to_interval(interval)
     period_obj = human_to_period(period)
-    units = get_unit("energy")
+    units = get_unit("energy_giga")
 
     station = (
         session.query(Station)
