@@ -14,7 +14,7 @@ End is the most recent time chronoligally ordered:
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Optional, Union
 
 from datetime_truncate import truncate as date_trunc
@@ -151,7 +151,11 @@ class TimeSeries(BaseConfig):
                     tzinfo=self.network.get_fixed_offset(),
                 )
             else:
-                end = date_trunc(end, "day")
+                today = datetime.now()
+                end = datetime(
+                    year=CUR_YEAR, month=today.month, day=today.day, hour=23, minute=59, second=59
+                )
+                end = end - timedelta(days=1)
                 end = end.replace(tzinfo=self.network.get_fixed_offset())
 
         # localize times
