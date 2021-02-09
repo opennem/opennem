@@ -330,6 +330,9 @@ def run_diff() -> float:
                         )
                     )
 
+            if "temperature" in v2i:
+                continue
+
             if v2i.history:
                 logger.info("  * comparing history:")
                 score_tested += 1
@@ -342,7 +345,7 @@ def run_diff() -> float:
                     )
 
                 data_matches = series_are_equal(
-                    v2i.history.values(), v3i.history.values(), full_equality=True
+                    v2i.history.values(), v3i.history.values(), full_equality=False
                 )
 
                 buckets_total += len(data_matches.keys())
@@ -351,7 +354,7 @@ def run_diff() -> float:
                     logger.error("    - values don't match ")
 
                     mismatch_values = series_not_close(
-                        v2i.history.values(), v3i.history.values(), full_equality=True
+                        v2i.history.values(), v3i.history.values(), full_equality=False
                     )
 
                     score += 1
@@ -416,10 +419,10 @@ def run_diff() -> float:
     if buckets_not_match == 0:
         percentage = 0.0
     else:
-        percentage = round(buckets_not_match / buckets_total, 2)
+        percentage = round((buckets_total - buckets_not_match) / buckets_total * 100, 2)
 
     return "{}% match. {} total buckets match of {}.".format(
-        percentage, buckets_not_match, buckets_total
+        percentage, (buckets_total - buckets_not_match), buckets_total
     )
 
 
@@ -471,4 +474,4 @@ if __name__ == "__main__":
     score = run_diff()
 
     print(score)
-    # commit_diffs(score)
+    commit_diffs(score)
