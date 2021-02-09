@@ -186,6 +186,7 @@ def init_aggregation_policies() -> None:
 
     for view in _VIEW_MAP:
         if not view.aggregation_policy:
+            logging.debug("Skipping {}".format(view.name))
             continue
 
         with engine.connect() as c:
@@ -196,7 +197,7 @@ def init_aggregation_policies() -> None:
                 logger.debug(drop_query)
                 c.execute(drop_query)
             except Exception as e:
-                logger.warn("Could not drop continuous aggregation query: {}".format(e))
+                logger.warn("Could not drop continuous aggregation query: {}".format(view.name))
                 pass
 
             create_query = create_continuous_aggregation_query(view)
