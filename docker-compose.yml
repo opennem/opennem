@@ -62,6 +62,25 @@ services:
     ports:
       - ${HOST:-127.0.0.1}:15440:5432
 
+  mysql:
+    image: mariadb:10
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - TZ
+      - MYSQL_ROOT_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - ${HOST:-127.0.0.1}:15444:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    env_file: ./.env
+    restart: always
+    ports:
+      - 18080:8080
+
 volumes:
   postgis_data: {}
   scrapyd_data:
@@ -69,4 +88,6 @@ volumes:
   scrapyd_logs:
     driver: local
   scrapyd_eggs:
+    driver: local
+  mysql_data:
     driver: local
