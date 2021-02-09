@@ -1,6 +1,6 @@
 import csv
 import logging
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from opennem.core.loader import load_data
 from opennem.core.normalizers import clean_float, normalize_duid
@@ -44,6 +44,24 @@ def import_mms_emissions() -> None:
             )
 
     return emission_map
+
+
+def import_dump_emissions() -> List[Dict]:
+    content = load_data("emissions_output.csv", from_project=True, skip_loaders=True)
+
+    csv_content = content.splitlines()
+    csvreader = csv.DictReader(csv_content)
+    records = []
+
+    for rec in csvreader:
+        records.append(
+            {
+                "facility_code": rec["DUID"],
+                "emissions_factor_co2": clean_float(rec["CO2E_EMISSIONS_FACTOR"]),
+            }
+        )
+
+    return records
 
 
 def import_emissions_csv() -> None:
@@ -99,8 +117,8 @@ def import_emissions_map(file_name: str) -> None:
 
 
 def check_emissions_map() -> None:
-    content = load_data("opennem_emission_factors.csv", from_project=True, skip_loaders=True)
-    mms_emissions = import_mms_emissions()
+    content = load_data("emission_factors.csv", from_project=True, skip_loaders=True)
+    mms_emissions = import_dump_emissions()
 
     def get_emissions_for_code(facility_code: str) -> Optional[Dict]:
         facility_lookup = list(
@@ -125,12 +143,9 @@ def check_emissions_map() -> None:
         emissions_intensity = clean_float(rec["emissions_factor_co2"])
 
         if network_id not in ["NEM"]:
-            rec["emission_factor_source"] = "NPI"
             csv_out.append(rec)
 
             continue
-
-        rec["emission_factor_source"] = ""
 
         mms_emission_record = get_emissions_for_code(facility_code)
 
@@ -147,10 +162,7 @@ def check_emissions_map() -> None:
 
             if mms_emission_record["emissions_factor_co2"]:
                 rec["emissions_factor_co2"] = mms_emission_record["emissions_factor_co2"]
-            else:
-                rec["emission_factor_source"] = "Lookup"
 
-        rec["emission_factor_source"] = mms_emission_record["emission_factor_source"]
         csv_out.append(rec)
 
     fieldnames = [
@@ -163,7 +175,8 @@ def check_emissions_map() -> None:
         "emissions_factor_co2",
         "emission_factor_source",
     ]
-    with open("emission_factors.csv", "w") as fh:
+
+    with open("emission_factors2.csv", "w") as fh:
         csvwriter = csv.DictWriter(fh, fieldnames=fieldnames)
         csvwriter.writeheader()
         csvwriter.writerows(csv_out)
