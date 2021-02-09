@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import pytest
 
@@ -39,24 +39,41 @@ def test_trapezoid_cal(p1: Point, p2: Point, expected_area: float) -> None:
     assert calculated_area == expected_area, "Area calculation is expected"
 
 
-def test_energy_sum_coal_black() -> None:
-    fixture = load_energy_fixture("coal_black_1_day.json")
+@pytest.mark.parametrize(
+    ["series", "expected"],
+    [
+        ([1, 2], 0.75),
+        ([1, 1, 1], 1 / 3 * 2),
+        ([1.0, 2.0, 1.0], 1),
+        ([2.0, -1.0, 2.0], 1 / 3),
+        ([1, None, 1], 1 / 3),
+    ],
+)
+def test_energy_sum(series: List, expected: float) -> None:
+    energy_value = energy_sum(series, 60)
 
-    assert len(fixture) == 288, "Got correct fixture length"
+    assert energy_value == expected, "Got expected energy value"
+
+
+@pytest.mark.parametrize(
+    ["fixture_name", "actual_value", "p_variation", "test_exact"],
+    [
+        ("coal_black_1_day.json", 248.88 * 1000, 0.2, False),
+        ("23_oct_rooftop.json", 9059.75, 0.2, True),
+        ("battery_charging_1_day.json", -0.21 * 1000, 0.2, False),
+        ("23_oct_wem_gas.json", 10265.32, 0.2, True),
+    ],
+)
+def test_energy_sum_fixtures(
+    fixture_name: str, actual_value: float, p_variation: float, test_exact: bool
+) -> None:
+    fixture = load_energy_fixture(fixture_name)
 
     energy_value = energy_sum(fixture, MINUTES_IN_DAY)
-    actual_value = 248.88 * 1000
     variation = (energy_value - actual_value) / actual_value
 
-    assert variation < 0.2, "Variation in coal_black value is less than 0.2"
+    if p_variation:
+        assert variation < 0.2, "Variation in rooftop value is less than 0.2"
 
-
-def test_energy_sum_rooftop() -> None:
-    fixture = load_energy_fixture("23_oct_rooftop.json")
-
-    energy_value = energy_sum(fixture, MINUTES_IN_DAY)
-    actual_value = 9059.75
-    variation = (energy_value - actual_value) / actual_value
-
-    assert variation < 0.2, "Variation in rooftop value is less than 0.2"
-    assert actual_value == energy_value, "Values are exact"
+    if test_exact:
+        assert actual_value == energy_value, "Values are exact"
