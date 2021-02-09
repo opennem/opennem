@@ -8,6 +8,8 @@ from math import isclose
 from operator import add
 from typing import Dict, List, Tuple
 
+from opennem.utils.dates import strip_timezone
+
 
 def add_series(*args) -> List:
     return list(map(add, *args))
@@ -67,16 +69,18 @@ def are_approx_equal(actual: float, desired: float) -> bool:
 
 
 def series_are_equal(
-    s1: List[Tuple[datetime, float]],
-    s2: List[Tuple[datetime, float]],
+    s1: List[Tuple[datetime, float]], s2: List[Tuple[datetime, float]], full_equality: bool = False
 ) -> Dict:
-    s2d = {i[0]: i[1] for i in s2}
-    s1d = {i[0]: i[1] for i in s1}
+    s2d = {strip_timezone(i[0]): i[1] for i in s2}
+    s1d = {strip_timezone(i[0]): i[1] for i in s1}
     d = dict()
 
     for k in s1d.keys():
         if k in s2d:
-            d[k] = are_approx_equal(s1d[k], s2d[k])
+            if full_equality:
+                d[k] = s1d[k] == s2d[k]
+            else:
+                d[k] = are_approx_equal(s1d[k], s2d[k])
 
     return d
 
@@ -84,16 +88,22 @@ def series_are_equal(
 def series_not_close(
     s1: List[Tuple[datetime, float]],
     s2: List[Tuple[datetime, float]],
+    full_equality: bool = False,
 ) -> Dict:
-    s2d = {i[0]: i[1] for i in s2}
-    s1d = {i[0]: i[1] for i in s1}
+    s2d = {strip_timezone(i[0]): i[1] for i in s2}
+    s1d = {strip_timezone(i[0]): i[1] for i in s1}
     d = dict()
 
     for k in s1d.keys():
         if k in s2d:
-            if not are_approx_equal(s1d[k], s2d[k]):
-                if s2d[k] and s1d[k]:
-                    d[k.isoformat()] = {"v2": s1d[k], "v3": s2d[k]}
+            if full_equality:
+                if s1d[k] != s2d[k]:
+                    if s2d[k] and s1d[k]:
+                        d[k.isoformat()] = {"v2": s1d[k], "v3": s2d[k]}
+            else:
+                if not are_approx_equal(s1d[k], s2d[k]):
+                    if s2d[k] and s1d[k]:
+                        d[k.isoformat()] = {"v2": s1d[k], "v3": s2d[k]}
 
     return d
 
@@ -102,8 +112,8 @@ def series_trim_to_date(
     s1: List[Tuple[datetime, float]],
     s2: List[Tuple[datetime, float]],
 ) -> Tuple[List, List]:
-    s2d = {i[0]: i[1] for i in s2}
-    s1d = {i[0]: i[1] for i in s1}
+    s2d = {strip_timezone(i[0]): i[1] for i in s2}
+    s1d = {strip_timezone(i[0]): i[1] for i in s1}
     d1 = []
     d2 = []
 
