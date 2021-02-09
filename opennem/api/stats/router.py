@@ -304,7 +304,7 @@ def energy_station(
 
     interval_obj = human_to_interval(interval)
     period_obj = human_to_period(period)
-    units = get_unit("energy_giga")
+    units = get_unit("energy")
 
     station = (
         session.query(Station)
@@ -399,7 +399,6 @@ def energy_station(
         interval=interval_obj,
         period=period_obj,
         code=network.code.lower(),
-        include_group_code=True,
     )
 
     stats.append_set(stats_emissions)
