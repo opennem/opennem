@@ -12,9 +12,9 @@ select
     date_trunc('day', fs.trading_interval at time zone 'AWST') as ti_day_awst,
     date_trunc('month', fs.trading_interval at time zone 'AWST') as ti_month_awst,
     max(fs.energy) as energy,
-    case when avg(bs.price) >= 0  and min(fs.energy) >= 0 then
+    case when avg(bs.price_dispatch) >= 0  and min(fs.energy) >= 0 then
         coalesce(
-            max(fs.energy) * avg(bs.price),
+            max(fs.energy) * avg(bs.price_dispatch),
             0.0
         )
     else NULL
