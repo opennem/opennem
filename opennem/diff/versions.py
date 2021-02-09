@@ -330,7 +330,7 @@ def run_diff() -> float:
                         )
                     )
 
-            if "temperature" in v2i:
+            if "temperature" in v2i.id:
                 continue
 
             if v2i.history:
