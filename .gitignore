@@ -68,3 +68,4 @@ infra/prometheus/.data/
 infra/grafana/data/grafana.db
 *.ipynb
 diff_outs/
+tests/fixtures/dumps/
