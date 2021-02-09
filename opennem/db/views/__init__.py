@@ -55,6 +55,13 @@ _VIEW_MAP = [
         primary_key=["trading_interval", "network_id", "code"],
     ),
     ViewDefinition(
+        priority=11,
+        name="mv_facility_30min_all",
+        materialized=True,
+        filepath="mv_facility_30m_all.sql",
+        primary_key=["trading_interval", "network_id", "code"],
+    ),
+    ViewDefinition(
         priority=20,
         name="mv_region_emissions",
         materialized=True,
