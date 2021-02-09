@@ -74,6 +74,11 @@ class OpennemSettings(BaseSettings):
     # @todo overwrite scrapy settings here
     scrapy: Optional[Settings] = get_project_settings()
 
+    # db views used
+
+    # energy view used
+    db_energy_view: str = "mv_facility_all"
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
@@ -122,4 +127,5 @@ class OpennemSettings(BaseSettings):
             "cache_scada_values_ttl_sec": {"env": "CACHE_SCADA_TTL"},
             "db_debug": {"env": "DB_DEBUG"},
             "http_cache_local": {"env": "HTTP_CACHE_LOCAL"},
+            "db_energy_view": {"env": "DB_ENERGY_VIEW"},
         }

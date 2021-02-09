@@ -8,6 +8,7 @@ from opennem.api.stats.controllers import networks_to_in
 from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
+from opennem.settings import settings
 
 
 def weather_observation_query(time_series: TimeSeries, station_codes: List[str]) -> str:
@@ -439,7 +440,7 @@ def energy_network_fueltech_query(
                 sum(t.energy) as fueltech_energy,
                 sum(t.market_value) as fueltech_market_value,
                 sum(t.emissions) as fueltech_emissions
-            from mv_facility_all t
+            from {energy_view} t
             where
                 t.ti_day_aest <= '{date_max}' and
                 t.ti_day_aest >= '{date_min}' and
@@ -460,7 +461,7 @@ def energy_network_fueltech_query(
             coalesce(sum(t.energy) / 1000, 0) as fueltech_energy,
             coalesce(sum(t.market_value), 0) as fueltech_market_value,
             coalesce(sum(t.emissions), 0) as fueltech_emissions
-        from mv_facility_all t
+        from {energy_view} t
         where
             t.trading_interval <= '{date_max}' and
             t.trading_interval >= '{date_min}' and
@@ -488,6 +489,7 @@ def energy_network_fueltech_query(
 
     query = dedent(
         __query.format(
+            energy_view=settings.db_energy_view,
             trunc=date_range.interval.trunc,
             trunc_name=trunc_name,
             date_min=date_range.start,
