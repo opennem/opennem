@@ -325,6 +325,9 @@ def process_trading_price(table: Dict, spider: Spider) -> Dict[str, Any]:
         if "RRP" in record:
             price = clean_float(record["RRP"])
 
+        if not price:
+            continue
+
         records_to_store.append(
             {
                 "network_id": "NEM",
@@ -345,7 +348,7 @@ def process_trading_price(table: Dict, spider: Spider) -> Dict[str, Any]:
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
         index_elements=["trading_interval", "network_id", "network_region"],
-        set_={price_field: stmt.excluded.price},
+        set_={price_field: getattr(stmt.excluded, price_field)},
     )
 
     try:
