@@ -297,6 +297,11 @@ def process_trading_price(table: Dict, spider: Spider) -> Dict[str, Any]:
     records_processed = 0
     primary_keys = []
 
+    price_field = "price"
+
+    if table["name"] == "DISPATCH_PRICE":
+        price_field = "price_dispatch"
+
     for record in records:
         trading_interval = parse_date(
             record["SETTLEMENTDATE"],
@@ -326,7 +331,7 @@ def process_trading_price(table: Dict, spider: Spider) -> Dict[str, Any]:
                 "created_by": spider.name,
                 "network_region": record["REGIONID"],
                 "trading_interval": trading_interval,
-                "price": price,
+                price_field: price,
             }
         )
 
@@ -340,7 +345,7 @@ def process_trading_price(table: Dict, spider: Spider) -> Dict[str, Any]:
     stmt.bind = engine
     stmt = stmt.on_conflict_do_update(
         index_elements=["trading_interval", "network_id", "network_region"],
-        set_={"price": stmt.excluded.price},
+        set_={price_field: stmt.excluded.price},
     )
 
     try:
