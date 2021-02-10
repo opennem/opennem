@@ -310,7 +310,7 @@ def energy_facility_query(
 
     trunc = interval.trunc
 
-    date_max = date_range.get_end()
+    date_max = date_range.get_end() - timedelta(days=1)
     date_min = date_range.get_start()
 
     if period.period_human == "1M":
