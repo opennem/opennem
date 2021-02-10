@@ -47,18 +47,18 @@ _VIEW_MAP = [
         filepath="mv_facility_energy_30min.sql",
         aggregation_policy=AggregationPolicy2Hours,
     ),
-    ViewDefinition(
-        priority=10,
-        name="mv_facility_all",
-        materialized=True,
-        filepath="mv_facility_all.sql",
-        primary_key=["trading_interval", "network_id", "code"],
-    ),
+    # ViewDefinition(
+    #     priority=10,
+    #     name="mv_facility_all",
+    #     materialized=True,
+    #     filepath="mv_facility_all.sql",
+    #     primary_key=["trading_interval", "network_id", "code"],
+    # ),
     ViewDefinition(
         priority=11,
         name="mv_facility_30min_all",
         materialized=True,
-        filepath="mv_facility_30m_all.sql",
+        filepath="mv_facility_30min_all.sql",
         primary_key=["trading_interval", "network_id", "code"],
     ),
     ViewDefinition(
