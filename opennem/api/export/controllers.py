@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from opennem.api.export.queries import (
     country_stats_query,
+    energy_network_flow_query,
     energy_network_fueltech_query,
     energy_network_interconnector_emissions_query,
     interconnector_power_flow,
@@ -13,14 +14,9 @@ from opennem.api.export.queries import (
     weather_observation_query,
 )
 from opennem.api.stats.controllers import stats_factory
-from opennem.api.stats.schema import (
-    DataQueryResult,
-    OpennemDataSet,
-    RegionFlowEmissionsResult,
-    RegionFlowResult,
-)
+from opennem.api.stats.schema import DataQueryResult, OpennemDataSet, RegionFlowEmissionsResult
 from opennem.api.time import human_to_interval, human_to_period
-from opennem.core.flows import net_flows, net_flows_emissions
+from opennem.core.flows import net_flows_emissions
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
 from opennem.schema.dates import TimeSeries
@@ -475,10 +471,9 @@ def energy_interconnector_region_daily(
     period: TimePeriod = human_to_period("1Y")
     units = get_unit("energy_giga")
 
-    query = energy_network_interconnector_emissions_query(
+    query = energy_network_flow_query(
         time_series=time_series,
         network_region=network_region_code,
-        networks_query=networks_query,
     )
 
     with engine.connect() as c:
@@ -488,14 +483,9 @@ def energy_interconnector_region_daily(
     if len(row) < 1:
         return None
 
-    stats = [
-        RegionFlowResult(interval=i[0], flow_from=i[1], flow_to=i[2], generated=i[3]) for i in row
-    ]
+    imports = [DataQueryResult(interval=i[0], group_by="imports", data=i[1]) for i in row]
 
-    stats_grouped = net_flows(network_region_code, stats, interval=time_series.interval)
-
-    imports = stats_grouped["imports"]
-    exports = stats_grouped["exports"]
+    exports = [DataQueryResult(interval=i[0], group_by="exports", data=i[2]) for i in row]
 
     result = stats_factory(
         imports,
