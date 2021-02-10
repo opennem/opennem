@@ -1,6 +1,6 @@
-create materialized view mv_interchange_energy_nem_region as
+create materialized view mv_interchange_energy_nem_region AS
 select
-    date_trunc('day', e.trading_interval) as trading_day,
+    time_bucket('1 hour', e.trading_interval) as trading_interval,
     e.network_id,
     e.network_region,
     sum(e.import_energy) / 1000 as imports_energy,
