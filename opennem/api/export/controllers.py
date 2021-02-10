@@ -483,9 +483,9 @@ def energy_interconnector_region_daily(
     if len(row) < 1:
         return None
 
-    imports = [DataQueryResult(interval=i[0], group_by="imports", data=i[1]) for i in row]
+    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[1]) for i in row]
 
-    exports = [DataQueryResult(interval=i[0], group_by="exports", data=i[2]) for i in row]
+    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[2]) for i in row]
 
     result = stats_factory(
         imports,
@@ -496,12 +496,13 @@ def energy_interconnector_region_daily(
         units=units,
         region=network_region_code,
         fueltech_group=True,
-        localize=False,
+        # localize=False,
     )
 
     # Bail early on no interconnector
     # don't error
     if not result:
+        logger.warn("No interconnector energy result")
         return result
 
     result_exports = stats_factory(
@@ -513,7 +514,7 @@ def energy_interconnector_region_daily(
         units=units,
         region=network_region_code,
         fueltech_group=True,
-        localize=False,
+        # localize=False,
     )
 
     result.append_set(result_exports)
