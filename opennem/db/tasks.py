@@ -11,7 +11,12 @@ TIMESCALE_VIEWS = [
     "mv_interchange_energy_nem_region",
 ]
 
-MATERIAL_VIEWS = ["mv_facility_all", "mv_facility_30min_all", "mv_region_emissions"]
+MATERIAL_VIEWS = [
+    # "mv_facility_all",
+    "mv_facility_30min_all",
+    "mv_region_emissions",
+    "mv_interchange_energy_nem_region",
+]
 
 
 def refresh_timescale_views(
