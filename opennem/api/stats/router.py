@@ -269,7 +269,7 @@ def power_network_fueltech_api(
 
 
 @router.get(
-    "/energy/station/{network_code}/{station_code}",
+    "/energy/station/{network_code}/{station_code:path}",
     name="Energy Station",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
