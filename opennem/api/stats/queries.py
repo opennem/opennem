@@ -310,15 +310,15 @@ def energy_facility_query(
 
     trunc = interval.trunc
 
-    date_max = date_range.get_end() - timedelta(days=1)
+    date_max = date_range.get_end().replace(hour=23, minute=59, second=59) - timedelta(days=1)
     date_min = date_range.get_start()
 
     if period.period_human == "1M":
         date_min = date_range.get_end() - timedelta(minutes=period.period)
     elif period.period_human == "1Y":
         # might have to do +offset times
-        year = datetime.now().year
-        date_min = "{}-01-01 00:00:00{}".format(year, offset)
+        year = datetime.now().year - 1
+        date_min = date_max.replace(year=year)
     elif period.period_human in ["7d", "5Y", "10Y"]:
         date_min = date_range.get_end() - timedelta(minutes=period.period)
 
