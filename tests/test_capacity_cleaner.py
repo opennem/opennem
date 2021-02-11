@@ -1,34 +1,36 @@
+from typing import Any
+
 from opennem.core.normalizers import clean_capacity
 
 
-def is_none(subject) -> bool:
+def is_none(subject: Any) -> bool:
     return isinstance(subject, type(None))
 
 
 class TestCapacityCleaner(object):
-    def test_capacity_blank(self):
+    def test_capacity_blank(self) -> None:
         subject = clean_capacity("")
         assert is_none(subject), "Blank string should return None"
 
-    def test_capacity_none(self):
+    def test_capacity_none(self) -> None:
         subject = clean_capacity(None)
         assert is_none(subject), "None should return None"
 
-    def test_capacity_string_excel_blank(self):
+    def test_capacity_string_excel_blank(self) -> None:
         subject = clean_capacity("-")
         assert is_none(subject), "Blank string should return None"
 
-    def test_capacity_zero_string(self):
+    def test_capacity_zero_string(self) -> None:
         subject = clean_capacity("0")
         assert isinstance(subject, float), "Capacity should be a float"
         assert subject == 0.0, "0 string capacity should be float 0"
 
-    def test_capacity_zero(self):
+    def test_capacity_zero(self) -> None:
         subject = clean_capacity(0)
         assert isinstance(subject, float), "Capacity should be a float"
         assert subject == 0.0, "0 string capacity should be float 0"
 
-    def test_capacity_float(self):
+    def test_capacity_float(self) -> None:
         value = 204.4
         subject = clean_capacity(value)
 
@@ -52,6 +54,4 @@ class TestCapacityCleaner(object):
     def test_capacity_range(self):
         subject = clean_capacity(" 193.76 - 204.4 ")
 
-        assert (
-            subject == 204.4
-        ), "Parse capacity ranges to default to get maximum"
+        assert subject == 204.4, "Parse capacity ranges to default to get maximum"
