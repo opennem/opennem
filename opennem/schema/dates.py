@@ -151,12 +151,15 @@ class TimeSeries(BaseConfig):
                     tzinfo=self.network.get_fixed_offset(),
                 )
             else:
-                today = datetime.now()
+                today = datetime.now(tz=self.network.get_fixed_offset())
                 end = datetime(
                     year=CUR_YEAR, month=today.month, day=today.day, hour=23, minute=59, second=59
                 )
                 end = end - timedelta(days=1)
                 end = end.replace(tzinfo=self.network.get_fixed_offset())
+
+                if self.end < today:
+                    end = self.end
 
         # localize times
         if not start.tzinfo or start.tzinfo != self.network.get_fixed_offset():

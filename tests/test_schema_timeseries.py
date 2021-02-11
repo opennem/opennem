@@ -53,24 +53,9 @@ from opennem.schema.network import NetworkNEM
             ),
             # Expected
             datetime.fromisoformat("2021-01-01 00:00:00+10:00"),
-            datetime.fromisoformat("2021-01-15 00:00:00+10:00"),
+            datetime.fromisoformat("2021-01-15 12:45:00+10:00"),
             "1d",
             15,
-        ),
-        (
-            TimeSeries(
-                start=datetime.fromisoformat("1997-05-05 12:45:00+00:00"),
-                end=datetime.fromisoformat("2021-02-15 02:45:00+00:00"),
-                network=NetworkNEM,
-                year=2021,
-                interval=human_to_interval("1d"),
-                period=human_to_period("1Y"),
-            ),
-            # Expected
-            datetime.fromisoformat("2021-01-01 00:00:00+10:00"),
-            datetime.fromisoformat("2021-02-15 00:00:00+10:00"),
-            "1d",
-            46,
         ),
         (
             TimeSeries(
