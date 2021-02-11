@@ -1,6 +1,6 @@
 import pytest
 
-from opennem.core.compat import translate_id_v2_to_v3, translate_id_v3_to_v2
+from opennem.core.compat.utils import translate_id_v2_to_v3, translate_id_v3_to_v2
 
 
 @pytest.mark.parametrize(
