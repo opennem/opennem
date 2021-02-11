@@ -29,7 +29,7 @@ def test_remap_region_code(region_code: str, region_code_expected: str) -> None:
     "rooftop_record,rooftop_record_expected",
     [
         ({"facility_code": "NSW1"}, {"facility_code": "ROOFTOP_NEM_NSW"}),
-        ({"facility_code": "QLDC"}, {"facility_code": "ROOFTOP_NEM_QLD"}),
+        ({"facility_code": "QLD1"}, {"facility_code": "ROOFTOP_NEM_QLD"}),
     ],
 )
 def test_rooftop_remap_regionids(rooftop_record: Dict, rooftop_record_expected: Dict) -> None:
