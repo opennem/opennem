@@ -46,9 +46,6 @@ def get_power_example() -> OpennemDataSet:
     if not result:
         raise Exception("Bad unit test data")
 
-    with open("power-nsw1.json", "w") as fh:
-        fh.write(result.json(indent=4))
-
     return result
 
 
