@@ -1,11 +1,10 @@
-import csv
 import json
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List
 
 import pytest
 
-from opennem.core.energy import Point, energy_sum, energy_sum_averages, trapozedoid
+from opennem.core.energy import Point, energy_sum, trapozedoid
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "energy"
 
@@ -22,21 +21,6 @@ def load_energy_fixture(fixture_name: str) -> List:
 
     with fixture_file_path.open() as fh:
         fixture_envelope = json.load(fh)
-
-    return fixture_envelope
-
-
-def load_energy_fixture_csv(fixture_name: str) -> List:
-    fixture_file_path = FIXTURE_PATH / fixture_name
-
-    if not fixture_file_path.is_file():
-        raise Exception("Fixture {} not found".format(fixture_name))
-
-    fixture_envelope = None
-
-    with fixture_file_path.open() as fh:
-        csvreader = csv.DictReader(fh)
-        fixture_envelope = list(csvreader)
 
     return fixture_envelope
 
@@ -93,21 +77,3 @@ def test_energy_sum_fixtures(
 
     if test_exact:
         assert actual_value == energy_value, "Values are exact"
-
-
-@pytest.mark.parametrize(
-    ["series", "expected_value", "bucket_size"],
-    [([1] * 14, [0.5, 0.5], 30), ([2] * 14, [1, 1], 30)],
-)
-def test_energy_sum_average(
-    series: List[Union[float, int]], expected_value: List[float], bucket_size: int
-) -> None:
-    calculated_values = energy_sum_averages(series, bucket_size)
-
-    assert calculated_values == expected_value, "Got the correct series value"
-
-
-def test_energy_sum_average_fixture() -> None:
-    records = load_energy_fixture_csv("power_nem_nsw1_coal_black_1_week.csv")
-
-    assert len(records) == 32288, "Right length of records"
