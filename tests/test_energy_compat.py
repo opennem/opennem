@@ -31,7 +31,3 @@ def test_energy_sum_average_fixture() -> None:
     energy_sum = energy_sum_compat(power_results_bw01)
 
     assert len(records) == 32288, "Right length of records"
-
-    assert (
-        energy_sum[datetime.fromisoformat("2021-02-07T00:00:00").date()] == 129.4
-    ), "Data matches for date"

@@ -1,3 +1,4 @@
+# pylint: disable=no-self-argument
 """
 OpenNEM Energy Tools
 
@@ -5,7 +6,7 @@ OpenNEM Energy Tools
 from decimal import Decimal, getcontext
 from operator import attrgetter
 from sys import maxsize
-from typing import Callable, Generator, List, Optional, Union
+from typing import Callable, Generator, List, Union
 
 import numpy as np
 
@@ -39,38 +40,10 @@ def zero_nulls(number: Union[int, float, None]) -> float:
 
 def list_chunk(series: List, chunk_size: int) -> Generator[List[Union[float, int]], None, None]:
     for i in range(0, len(series), chunk_size):
-        yield np.array(series[i : i + chunk_size])
+        start_chunk = i - 1 if i > 0 else 0
+        end_chunk = i + chunk_size + 1
 
-
-def energy_sum_averages(
-    series: List[Union[int, float]], bucket_size_minutes: int, interval_size_minutes: int = 5
-) -> List[float]:
-    intervals_per_bucket = bucket_size_minutes / interval_size_minutes
-
-    if int(intervals_per_bucket) != intervals_per_bucket:
-        raise Exception("Invalid interval and bucket sizes. Interval size must divide into bucket")
-
-    intervals_per_bucket = int(intervals_per_bucket)
-
-    buckets_per_hour = bucket_size_minutes / 60
-
-    intervals_per_hour = 60 / interval_size_minutes
-
-    if int(intervals_per_hour) != intervals_per_hour:
-        raise Exception("Invalid interval size.")
-
-    intervals_per_hour = int(intervals_per_hour)
-
-    return_series = []
-
-    for series_chunk in list_chunk(series, intervals_per_bucket + 1):
-        avg_series = [1] + (len(series_chunk) - 2) * [2] + [1]
-
-        return_series.append(
-            buckets_per_hour * (series_chunk * avg_series).sum() / intervals_per_hour
-        )
-
-    return return_series
+        yield np.array(series[start_chunk:end_chunk])
 
 
 def energy_sum(
