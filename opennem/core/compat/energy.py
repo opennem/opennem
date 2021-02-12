@@ -54,7 +54,7 @@ def __trapezium_integration(d_ti: pd.Series) -> float:
     return bucket_energy
 
 
-def energy_sum_compat(gen_series: List[Dict]) -> List[Dict]:
+def energy_sum_compat(gen_series: List[Dict]) -> pd.DataFrame:
     df = pd.DataFrame(
         gen_series,
         columns=[
