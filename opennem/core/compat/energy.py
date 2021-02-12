@@ -3,7 +3,7 @@ OpenNEM v2 compatible version of energy sums
 
 Uses an average in 30 minute buckets
 """
-from datetime import date, datetime, timedelta, tzinfo
+from datetime import date, datetime, timedelta
 from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import pandas as pd
