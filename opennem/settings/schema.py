@@ -79,6 +79,10 @@ class OpennemSettings(BaseSettings):
     # energy view used
     db_energy_view: str = "mv_facility_all"
 
+    # workers
+    workers_run: bool = True
+    workers_db_run: bool = True
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
@@ -128,4 +132,6 @@ class OpennemSettings(BaseSettings):
             "db_debug": {"env": "DB_DEBUG"},
             "http_cache_local": {"env": "HTTP_CACHE_LOCAL"},
             "db_energy_view": {"env": "DB_ENERGY_VIEW"},
+            "workers_run": {"env": "WORKERS_RUN"},
+            "workers_db_run": {"env": "WORKERS_DB_RUN"},
         }
