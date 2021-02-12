@@ -112,17 +112,18 @@ class DiffComparisonSet(BaseConfig):
     stat_type: StatType
     network_region: str
     bucket_size: Optional[str]
+    year: Optional[int]
 
     v2: Optional[OpennemDataSetV2]
     v3: Optional[OpennemDataSet]
 
     @property
     def urlv2(self) -> str:
-        return get_v2_url(self.stat_type, self.network_region, self.bucket_size)
+        return get_v2_url(self.stat_type, self.network_region, self.bucket_size, self.year)
 
     @property
     def urlv3(self) -> str:
-        return get_v3_url(self.stat_type, self.network_region, self.bucket_size)
+        return get_v3_url(self.stat_type, self.network_region, self.bucket_size, self.year)
 
     def load_maps(self) -> None:
         for version in ["v2", "v3"]:
@@ -154,10 +155,11 @@ def get_url_map(regions: List[NetworkRegion]) -> List[DiffComparisonSet]:
         )
         urls.append(a)
 
-        a = DiffComparisonSet(
-            stat_type=StatType.energy, network_region=region.code, bucket_size="daily"
-        )
-        urls.append(a)
+        for y in range(2017, 2022):
+            a = DiffComparisonSet(
+                stat_type=StatType.energy, network_region=region.code, bucket_size="daily", year=y
+            )
+            urls.append(a)
 
         a = DiffComparisonSet(
             stat_type=StatType.energy, network_region=region.code, bucket_size="monthly"
@@ -333,6 +335,9 @@ def run_diff() -> float:
             if "temperature" in v2i.id:
                 continue
 
+            if "emissions" in v2i.id:
+                continue
+
             if v2i.history:
                 logger.info("  * comparing history:")
                 score_tested += 1
@@ -345,7 +350,7 @@ def run_diff() -> float:
                     )
 
                 data_matches = series_are_equal(
-                    v2i.history.values(), v3i.history.values(), full_equality=False
+                    v2i.history.values(), v3i.history.values(), full_equality=True
                 )
 
                 buckets_total += len(data_matches.keys())
@@ -354,7 +359,7 @@ def run_diff() -> float:
                     logger.error("    - values don't match ")
 
                     mismatch_values = series_not_close(
-                        v2i.history.values(), v3i.history.values(), full_equality=False
+                        v2i.history.values(), v3i.history.values(), full_equality=True
                     )
 
                     score += 1
@@ -369,9 +374,10 @@ def run_diff() -> float:
                         statset.bucket_size,
                         extra_part,
                         v3i.fueltech_v2(),
+                        statset.year,
                     ]
 
-                    filename = "-".join([i for i in file_components if i])
+                    filename = "-".join([str(i) for i in file_components if i])
 
                     with open(
                         f"../dataquality/diff/{filename}-diff.json",
@@ -427,7 +433,7 @@ def run_diff() -> float:
 
 
 def commit_diffs(score: str) -> None:
-    from git import Actor, Repo, remote
+    from git import Actor, Repo
 
     rw_dir = Path(__file__).parent.parent.parent.parent / "dataquality"
 
@@ -474,4 +480,4 @@ if __name__ == "__main__":
     score = run_diff()
 
     print(score)
-    commit_diffs(score)
+    # commit_diffs(score)
