@@ -163,5 +163,5 @@ def run_energy_update() -> None:
 
 
 if __name__ == "__main__":
-    # run_energy_update_archive()
-    run_energy_update()
+    run_energy_update_archive()
+    # run_energy_update()
