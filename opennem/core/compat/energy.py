@@ -20,7 +20,7 @@ class ScadaResultCompat(BaseConfig):
 
 def __trading_energy_generator(
     df: pd.DataFrame, duid: str, sel_date: datetime
-) -> Generator[Tuple[date, str, str, str, float], None, None]:
+) -> Generator[Tuple[date, str, str, float], None, None]:
     df.sort_index(inplace=True)
     t_start = datetime(sel_date.year, sel_date.month, sel_date.day, 0, 5)
 
@@ -38,7 +38,7 @@ def __trading_energy_generator(
 
         yield d_ti.index[-2].replace(tzinfo=FixedOffset(600)), duid, d_ti.network_id.unique()[
             0
-        ], d_ti.network_region.unique()[0], __trapezium_integration(d_ti.generated)
+        ], __trapezium_integration(d_ti.generated)
 
 
 def __trapezium_integration(d_ti: pd.Series) -> float:
@@ -61,7 +61,6 @@ def energy_sum_compat(gen_series: List[Dict]) -> pd.DataFrame:
             "trading_interval",
             "facility_code",
             "network_id",
-            "network_region",
             "generated",
         ],
     )
