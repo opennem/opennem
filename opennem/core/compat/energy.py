@@ -97,4 +97,4 @@ def energy_sum_compat(gen_series: List[Dict]) -> List[Dict]:
     return_frame = return_frame.set_index(return_frame.trading_interval)
     del return_frame["trading_interval"]
 
-    return return_frame.to_csv()
+    return return_frame
