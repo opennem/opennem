@@ -44,7 +44,8 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 @huey.periodic_task(crontab(minute="*/3"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
-    export_power(priority=PriorityType.live)
+    if settings.workers_run:
+        export_power(priority=PriorityType.live)
 
 
 @huey.periodic_task(crontab(hour="*/12"))
@@ -53,7 +54,8 @@ def schedule_power_weeklies() -> None:
     """
     Run weekly power outputs
     """
-    export_power(priority=PriorityType.history, latest=True)
+    if settings.workers_run:
+        export_power(priority=PriorityType.history, latest=True)
 
 
 @huey.periodic_task(crontab(minute="15", hour="12"))
@@ -69,49 +71,56 @@ def schedule_power_weeklies_archive() -> None:
 @huey.periodic_task(crontab(hour="/12"), priority=50)
 @huey.lock_task("schedule_export_all_daily")
 def schedule_export_all_daily() -> None:
-    export_all_daily()
-    slack_message("Finished running export_all_daily")
+    if settings.workers_run:
+        export_all_daily()
+        slack_message("Finished running export_all_daily")
 
 
 @huey.periodic_task(crontab(hour="/12"), priority=50)
 @huey.lock_task("schedule_export_all_monthly")
 def schedule_export_all_monthly() -> None:
-    export_all_monthly()
-    slack_message("Finished running export_all_monthly")
+    if settings.workers_run:
+        export_all_monthly()
+        slack_message("Finished running export_all_monthly")
 
 
 @huey.periodic_task(crontab(hour="*/2"), priority=50)
 @huey.lock_task("schedule_hourly_tasks")
 def schedule_hourly_tasks() -> None:
-    export_energy(priority=PriorityType.daily, latest=True)
+    if settings.workers_run:
+        export_energy(priority=PriorityType.daily, latest=True)
 
 
 @huey.periodic_task(crontab(hour="*/6"))
 @huey.lock_task("schedule_daily_tasks")
 def schedule_daily_tasks() -> None:
-    export_energy(priority=PriorityType.daily)
-    slack_message("Finished running energy dailies")
+    if settings.workers_run:
+        export_energy(priority=PriorityType.daily)
+        slack_message("Finished running energy dailies")
 
 
 @huey.periodic_task(crontab(hour="*/6"), priority=30)
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
-    export_energy(priority=PriorityType.monthly)
-    slack_message("Finished running energy_monthlies")
+    if settings.workers_run:
+        export_energy(priority=PriorityType.monthly)
+        slack_message("Finished running energy_monthlies")
 
 
 # geojson maps
 @huey.periodic_task(crontab(minute="*/30"), priority=50)
 @huey.lock_task("schedule_export_geojson")
 def schedule_export_geojson() -> None:
-    export_facility_geojson()
+    if settings.workers_run:
+        export_facility_geojson()
 
 
 # metadata
 @huey.periodic_task(crontab(minute="*/30"), priority=30)
 @huey.lock_task("schedule_export_metadata")
 def schedule_export_metadata() -> None:
-    export_metadata()
+    if settings.workers_run:
+        export_metadata()
 
 
 # monitoring tasks
@@ -131,10 +140,12 @@ def monitor_wem_interval() -> None:
 @huey.periodic_task(crontab(hour="*/12"), priority=10)
 @huey.lock_task("monitor_metadata_status")
 def monitor_metadata_status() -> None:
-    check_metadata_status()
+    if settings.workers_run:
+        check_metadata_status()
 
 
 @huey.periodic_task(crontab(hour="/12"), priority=10)
 @huey.lock_task("monitor_emission_factors")
 def monitor_emission_factors() -> None:
-    alert_missing_emission_factors()
+    if settings.workers_run:
+        alert_missing_emission_factors()

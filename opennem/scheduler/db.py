@@ -31,10 +31,12 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 @huey.periodic_task(crontab(hour="*/12"))
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
-    refresh_material_views()
+    if settings.workers_db_run:
+        refresh_material_views()
 
 
 @huey.periodic_task(crontab(hour="*/12"))
 @huey.lock_task("db_refrehs_energies_yesterday")
 def db_refrehs_energies_yesterday() -> None:
-    run_energy_update()
+    if settings.workers_db_run:
+        run_energy_update()
