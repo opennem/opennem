@@ -87,10 +87,8 @@ def energy_sum_compat(gen_series: List[Dict]) -> pd.DataFrame:
             "trading_interval",
             "facility_code",
             "network_id",
-            "network_region",
             "eoi_quantity",
         ],
-        # index=["trading_interval"],
     )
 
     return_frame = return_frame.set_index(return_frame.trading_interval)
