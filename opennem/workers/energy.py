@@ -9,6 +9,7 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.compat.energy import energy_sum_compat
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
+from opennem.db.tasks import refresh_timescale_views
 from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
@@ -164,4 +165,5 @@ def run_energy_update() -> None:
 
 if __name__ == "__main__":
     run_energy_update_archive()
+    refresh_timescale_views()
     # run_energy_update()
