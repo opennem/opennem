@@ -115,7 +115,7 @@ def run_energy_calc(region: str, date_min: datetime, date_max: datetime) -> str:
     results = get_generated(region, date_min, date_max)
 
     try:
-        # insert_energies(results)
+        insert_energies(results)
         pass
     except Exception as e:
         logger.error(e)
