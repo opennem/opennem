@@ -13,7 +13,7 @@ from opennem.db.tasks import refresh_timescale_views
 from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
-from opennem.schema.dates import TimeSeries
+from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import NetworkNEM
 
 logger = logging.getLogger(__name__)
@@ -96,7 +96,7 @@ def insert_energies(results: List[Dict]) -> None:
     logger.info("Inserted {} records".format(len(records_to_store)))
 
 
-def get_date_range() -> TimeSeries:
+def get_date_range() -> DatetimeRange:
     date_range = get_scada_range(network=NetworkNEM)
 
     time_series = TimeSeries(
@@ -113,7 +113,7 @@ def get_date_range() -> TimeSeries:
 def run_energy_update_archive() -> None:
     date_range = get_date_range()
 
-    for year in [2020, 2021]:
+    for year in [2020, 2021, 2019, 2018, 2017, 2016]:
         for month in range(1, 12):
             date_min = datetime(
                 year=year, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
@@ -146,6 +146,9 @@ def run_energy_update_archive() -> None:
                 except Exception as e:
                     logger.error(e)
                     slack_message("Energy archive error: {}".format(e))
+
+        refresh_timescale_views()
+        slack_message("Updated energies for {}".format(year))
 
 
 def run_energy_update() -> None:
