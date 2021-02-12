@@ -128,39 +128,39 @@ def worker_done(future) -> None:
     logger.debug(future.result())
 
 
-def run_energy_update_archive() -> None:
+def run_energy_update_archive(year: int = 2021) -> None:
     date_range = get_date_range()
 
-    executor = ThreadPoolExecutor(max_workers=4)
+    # executor = ThreadPoolExecutor(max_workers=4)
 
-    for year in [2020, 2021, 2019, 2018, 2017, 2016]:
-        for month in range(1, 12):
-            date_min = datetime(
-                year=year, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
-            ) - timedelta(minutes=5)
-            date_max = datetime(
-                year=year,
-                month=month + 1,
-                day=1,
-                hour=0,
-                minute=5,
-                second=0,
-                tzinfo=FixedOffset(600),
-            )
+    for month in range(1, 12):
+        date_min = datetime(
+            year=year, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
+        ) - timedelta(minutes=5)
+        date_max = datetime(
+            year=year,
+            month=month + 1,
+            day=1,
+            hour=0,
+            minute=5,
+            second=0,
+            tzinfo=FixedOffset(600),
+        )
 
-            if date_max > date_range.end:
-                date_max = date_range.end
+        if date_max > date_range.end:
+            date_max = date_range.end
 
-            if date_min > date_max:
-                slack_message("Reached end of energy archive")
-                logger.debug("reached end of archive")
-                break
+        if date_min > date_max:
+            slack_message("Reached end of energy archive")
+            logger.debug("reached end of archive")
+            break
 
-            for region in ["QLD1", "NSW1", "VIC1", "TAS1", "SA1"]:
-                future = executor.submit(run_energy_calc, region, date_min, date_max)
-                future.add_done_callback(worker_done)
+        for region in ["QLD1", "NSW1", "VIC1", "TAS1", "SA1"]:
+            # future = executor.submit(run_energy_calc, region, date_min, date_max)
+            run_energy_calc(region, date_min, date_max)
+            # future.add_done_callback(worker_done)
 
-    slack_message("Updated energies for {}".format(year))
+    # slack_message("Updated energies for {}".format(year))
 
 
 def run_energy_update() -> None:
