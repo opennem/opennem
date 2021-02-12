@@ -1,4 +1,5 @@
 import logging
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from typing import Dict, List
 
@@ -9,14 +10,14 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.compat.energy import energy_sum_compat
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
-from opennem.db.tasks import refresh_timescale_views
+from opennem.db.tasks import refresh_timescale_views, refresh_views
 from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import NetworkNEM
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.workers.energy")
 
 
 def get_generated(network_region: str, date_min: datetime, date_max: datetime) -> List[Dict]:
@@ -110,8 +111,27 @@ def get_date_range() -> DatetimeRange:
     return time_series.get_range()
 
 
+def run_energy_calc(region: str, date_min: datetime, date_max: datetime) -> str:
+    results = get_generated(region, date_min, date_max)
+
+    try:
+        # insert_energies(results)
+        pass
+    except Exception as e:
+        logger.error(e)
+        slack_message("Energy archive error: {}".format(e))
+
+    return "Done {} for {} => {}".format(region, date_min, date_max)
+
+
+def worker_done(future) -> None:
+    logger.debug(future.result())
+
+
 def run_energy_update_archive() -> None:
     date_range = get_date_range()
+
+    executor = ThreadPoolExecutor(max_workers=4)
 
     for year in [2020, 2021, 2019, 2018, 2017, 2016]:
         for month in range(1, 12):
@@ -136,19 +156,11 @@ def run_energy_update_archive() -> None:
                 logger.debug("reached end of archive")
                 break
 
-            logger.debug("{} => {}".format(date_min, date_max))
-
             for region in ["QLD1", "NSW1", "VIC1", "TAS1", "SA1"]:
-                results = get_generated(region, date_min, date_max)
+                future = executor.submit(run_energy_calc, region, date_min, date_max)
+                future.add_done_callback(worker_done)
 
-                try:
-                    insert_energies(results)
-                except Exception as e:
-                    logger.error(e)
-                    slack_message("Energy archive error: {}".format(e))
-
-        refresh_timescale_views()
-        slack_message("Updated energies for {}".format(year))
+    slack_message("Updated energies for {}".format(year))
 
 
 def run_energy_update() -> None:
@@ -168,5 +180,5 @@ def run_energy_update() -> None:
 
 if __name__ == "__main__":
     run_energy_update_archive()
-    refresh_timescale_views()
-    # run_energy_update()
+    # refresh_timescale_views()
+    # refresh_views()
