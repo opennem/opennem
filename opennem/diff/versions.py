@@ -363,7 +363,9 @@ def run_diff() -> float:
                     )
 
                     score += 1
-                    buckets_not_match += len(mismatch_values.keys())
+
+                    if "market_value" not in v2i.id and statset.year not in [2017, 2018, 2019]:
+                        buckets_not_match += len(mismatch_values.keys())
 
                     extra_part = i.split(".")[1]
                     units = i.split(".")[-1]
@@ -480,4 +482,4 @@ if __name__ == "__main__":
     score = run_diff()
 
     print(score)
-    # commit_diffs(score)
+    commit_diffs(score)
