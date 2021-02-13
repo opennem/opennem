@@ -30,11 +30,13 @@ def run_tests() -> None:
     nem_energy = (
         export_map.get_by_network_id("NEM")
         .get_by_stat_type(StatType.energy)
-        .get_by_priority(PriorityType.monthly)
+        .get_by_priority(PriorityType.daily)
         .get_by_network_region("NSW1")
+        .get_by_years([2020, 2021])
     )
 
-    export_energy(nem_energy.resources, latest=True)
+    if len(nem_energy.resources):
+        export_energy(nem_energy.resources)
 
     nem_power = (
         export_map.get_by_network_id("NEM")
@@ -42,7 +44,7 @@ def run_tests() -> None:
         .get_by_priority(PriorityType.live)
     )
 
-    export_power(nem_power.resources)
+    # export_power(nem_power.resources)
 
     # interconnector_flows = energy_interconnector_emissions_region_daily(
     #     interval_size="1d",
