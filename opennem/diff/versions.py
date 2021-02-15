@@ -2,6 +2,7 @@
 OpenNEM Diff Versions
 """
 
+import csv
 import glob
 import json
 import logging
@@ -155,7 +156,7 @@ def get_url_map(regions: List[NetworkRegion]) -> List[DiffComparisonSet]:
         )
         urls.append(a)
 
-        for y in range(2017, 2022):
+        for y in [2021]:
             a = DiffComparisonSet(
                 stat_type=StatType.energy, network_region=region.code, bucket_size="daily", year=y
             )
@@ -322,6 +323,15 @@ def run_diff() -> float:
                 logger.error("    error getting id {} from v2".format(i))
                 continue
 
+            if "market_value" in v2i.id:
+                continue
+
+            if "emissions" in v2i.id:
+                continue
+
+            if "temperature" in v2i.id:
+                continue
+
             if v2i.fuel_tech:
                 if v2i.fuel_tech == v3i.fueltech_v2():
                     logger.info("  * fueltech matches")
@@ -331,12 +341,6 @@ def run_diff() -> float:
                             v2i.fuel_tech, v3i.fueltech_v2()
                         )
                     )
-
-            if "temperature" in v2i.id:
-                continue
-
-            if "emissions" in v2i.id:
-                continue
 
             if v2i.history:
                 logger.info("  * comparing history:")
@@ -386,6 +390,20 @@ def run_diff() -> float:
                         "w",
                     ) as fh:
                         json.dump(mismatch_values, fh, cls=OpenNEMJSONEncoder, indent=4)
+
+                    csv_values = [
+                        {
+                            "datetime": diffdate,
+                            **diffvals,
+                        }
+                        for diffdate, diffvals in mismatch_values.items()
+                    ]
+
+                    # write as csv as well
+                    with open(f"../dataquality/csv/{filename}-diff.csv", "w") as fh:
+                        csvwriter = csv.DictWriter(fh, fieldnames=["datetime", "v2", "v3"])
+                        csvwriter.writeheader()
+                        csvwriter.writerows(csv_values)
 
                 elif data_matches.keys() and len(data_matches.keys()):
                     logger.info(
@@ -482,4 +500,4 @@ if __name__ == "__main__":
     score = run_diff()
 
     print(score)
-    commit_diffs(score)
+    # commit_diffs(score)
