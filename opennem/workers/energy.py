@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from pytz import FixedOffset
 
@@ -111,23 +111,32 @@ def get_date_range() -> DatetimeRange:
     return time_series.get_range()
 
 
-def run_energy_calc(region: str, date_min: datetime, date_max: datetime) -> str:
+def run_energy_calc(region: str, date_min: datetime, date_max: datetime) -> int:
     results = get_generated(region, date_min, date_max)
+    num_records = 0
 
     try:
-        insert_energies(results)
-        pass
+        num_records = insert_energies(results)
+        logger.info("Done {} for {} => {}".format(region, date_min, date_max))
     except Exception as e:
         logger.error(e)
         slack_message("Energy archive error: {}".format(e))
 
-    logger.info("Done {} for {} => {}".format(region, date_min, date_max)
+    return num_records
 
 
-def run_energy_update_archive(year: int = 2021) -> None:
+def run_energy_update_archive(
+    year: int = 2021, months: Optional[List[int]] = None, regions: Optional[List[str]] = None
+) -> None:
     date_range = get_date_range()
 
-    for month in range(1, 12):
+    if not months:
+        months = list(range(1, 12))
+
+    if not regions:
+        regions = ["QLD1", "NSW1", "VIC1", "TAS1", "SA1"]
+
+    for month in months:
         date_min = datetime(
             year=year, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
         ) - timedelta(minutes=5)
@@ -149,7 +158,7 @@ def run_energy_update_archive(year: int = 2021) -> None:
             logger.debug("reached end of archive")
             break
 
-        for region in ["QLD1", "NSW1", "VIC1", "TAS1", "SA1"]:
+        for region in regions:
             run_energy_calc(region, date_min, date_max)
 
 
@@ -169,4 +178,4 @@ def run_energy_update() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_archive()
+    run_energy_update_archive(year=2021, months=[2], regions=["NSW"])
