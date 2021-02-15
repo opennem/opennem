@@ -18,6 +18,9 @@ def slack_message(msg: str) -> bool:
     Post a slack message to the watchdog channel
 
     """
+    if not settings.slack_notifications:
+        return False
+
     if not settings.slack_hook_url:
         logger.error("No slack notification endpoint configured")
         return False
