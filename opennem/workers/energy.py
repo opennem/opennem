@@ -96,6 +96,7 @@ def insert_energies(results: List[Dict]) -> int:
 
     return len(records_to_store)
 
+
 def get_date_range() -> DatetimeRange:
     date_range = get_scada_range(network=NetworkNEM)
 
@@ -120,7 +121,7 @@ def run_energy_calc(region: str, date_min: datetime, date_max: datetime) -> str:
         logger.error(e)
         slack_message("Energy archive error: {}".format(e))
 
-    return "Done {} for {} => {}".format(region, date_min, date_max)
+    logger.info("Done {} for {} => {}".format(region, date_min, date_max)
 
 
 def run_energy_update_archive(year: int = 2021) -> None:
