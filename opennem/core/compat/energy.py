@@ -3,13 +3,17 @@ OpenNEM v2 compatible version of energy sums
 
 Uses an average in 30 minute buckets
 """
-from datetime import date, datetime, timedelta
-from typing import Dict, Generator, List, Optional, Tuple, Union
+import logging
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Union
 
+import numpy
 import pandas as pd
 from pytz import FixedOffset
 
 from opennem.schema.core import BaseConfig
+
+logger = logging.getLogger("opennem.compat.energy")
 
 
 class ScadaResultCompat(BaseConfig):
@@ -18,12 +22,11 @@ class ScadaResultCompat(BaseConfig):
     generated: Union[float, int, None]
 
 
-def __trading_energy_generator(
-    df: pd.DataFrame, duid: str, sel_date: datetime
-) -> Generator[Tuple[date, str, str, float], None, None]:
+def __trading_energy_generator(df: pd.DataFrame, duids: List[str], sel_date: datetime) -> List:
     df.sort_index(inplace=True)
     t_start = datetime(sel_date.year, sel_date.month, sel_date.day, 0, 5)
 
+    ret_list = []
     # 48 trading intervals in the day
     # (could be better with groupby function)
     for TI in range(48):
@@ -31,25 +34,47 @@ def __trading_energy_generator(
         t_i = t_start + timedelta(0, 1800 * TI)
         t_f = t_start + timedelta(0, 1800 * (TI + 1))
 
-        d_ti = df[(df.index >= t_i) & (df.index <= t_f) & (df.facility_code == duid)]
+        bucket_all = df[(df.index >= t_i) & (df.index <= t_f)]
 
-        if d_ti.empty or d_ti.size < 7:
+        if bucket_all.empty:
             continue
 
-        yield d_ti.index[-2].replace(tzinfo=FixedOffset(600)), duid, d_ti.network_id.unique()[
-            0
-        ], __trapezium_integration(d_ti.generated)
+        for duid in duids:
+            d_ti = bucket_all[(bucket_all.facility_code == duid)]
+
+            if d_ti.empty or d_ti.size < 7:
+                continue
+
+            ret_list.append(
+                [
+                    d_ti.index[-2].replace(tzinfo=FixedOffset(600)),
+                    duid,
+                    d_ti.network_id.unique()[0],
+                    __trapezium_integration(d_ti.generated, duid, t_i, t_f),
+                ]
+            )
+
+    return ret_list
 
 
-def __trapezium_integration(d_ti: pd.Series) -> float:
-    if d_ti.count() < 7:
-        return 0
+def __trapezium_integration(d_ti: pd.Series, duid: str, t_i: datetime, t_f: datetime) -> float:
 
-    weights = d_ti.values * [1, 2, 2, 2, 2, 2, 1]
+    # Fall back on average but warn to check data
+    if d_ti.count() <= 3:
+        logger.warn(
+            "For duid {} only {} values in range {} => {}".format(duid, d_ti.count(), t_i, t_f)
+        )
+        return 0.5 * d_ti.sum() / d_ti.count()
+
+    bucket_middle = d_ti.count() - 2
+
+    bucket_middle_weights = [1] + [2] * bucket_middle + [1]
+
+    weights = d_ti.values * bucket_middle_weights
 
     weights_sum = weights.sum()
 
-    bucket_energy = 0.5 * weights_sum / 12
+    bucket_energy = 0.5 * weights_sum / ((d_ti.count() - 1) * 2)
 
     return bucket_energy
 
@@ -71,14 +96,14 @@ def energy_sum_compat(gen_series: List[Dict]) -> pd.DataFrame:
     sel_date = df.index.min().date()
     max_date = df.index.max().date()
 
-    return_list = []
+    return_list: List[Dict] = []
 
-    for duid in list(df.facility_code.unique()):
-        sel_date = df.trading_interval.min().date()
+    sel_date = df.trading_interval.min().date()
+    duids = list(df.facility_code.unique())
 
-        while sel_date <= max_date:
-            return_list += __trading_energy_generator(df, duid, sel_date)
-            sel_date = sel_date + timedelta(days=1)
+    while sel_date <= max_date:
+        return_list += __trading_energy_generator(df, duids, sel_date)
+        sel_date = sel_date + timedelta(days=1)
 
     return_frame = pd.DataFrame(
         return_list,
