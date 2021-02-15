@@ -40,9 +40,12 @@ class OpennemDataHistoryV2(BaseConfig):
         # return as list rather than generate
         xy_values = []
 
-        for v in self.data:
+        if self.interval in ["5m", "30m", "1h"]:
             dt = dt + interval_obj
+
+        for v in self.data:
             xy_values.append((strip_timezone(dt), v))
+            dt = dt + interval_obj
 
         return xy_values
 
