@@ -30,6 +30,9 @@ class OpennemSettings(BaseSettings):
 
     requests_cache_path: str = ".requests"
 
+    # Slack notifications
+    slack_notifications: bool = False
+
     slack_hook_url: Optional[str]
 
     export_local: bool = False
@@ -124,6 +127,7 @@ class OpennemSettings(BaseSettings):
             "sentry_url": {"env": "SENTRY_URL"},
             "scrapyd_url": {"env": "SCRAPYD_URL"},
             "prometheus_url": {"env": "PROMETHEUS_URL"},
+            "slack_notifications": {"env": "SLACK_NOTIFICATIONS"},
             "slack_hook_url": {"env": "MONITORING_SLACK_HOOK"},
             "s3_bucket_path": {"env": "S3_DATA_BUCKET_PATH"},
             "server_port": {"env": "PORT"},
