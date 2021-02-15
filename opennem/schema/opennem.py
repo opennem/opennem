@@ -153,9 +153,6 @@ class FacilitySchema(OpennemBaseSchema):
     def _clean_emissions_factor_co2(cls, value):
         value = clean_capacity(value)
 
-        if isinstance(value, float):
-            value = round(value, 8)
-
         return value
 
 
