@@ -85,6 +85,20 @@ def series_are_equal(
     return d
 
 
+def series_joined(
+    s1: List[Tuple[datetime, float]], s2: List[Tuple[datetime, float]], full_equality: bool = False
+) -> Dict:
+    s2d = {strip_timezone(i[0]): i[1] for i in s2}
+    s1d = {strip_timezone(i[0]): i[1] for i in s1}
+    d = dict()
+
+    for k in s1d.keys():
+        if k in s2d:
+            d[k.isoformat()] = {"v2": s1d[k], "v3": s2d[k]}
+
+    return d
+
+
 def series_not_close(
     s1: List[Tuple[datetime, float]],
     s2: List[Tuple[datetime, float]],
