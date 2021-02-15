@@ -355,7 +355,7 @@ def power_network_rooftop_query(
         select
             time_bucket_gapfill('30 minutes', fs.trading_interval)  AS trading_interval,
             ft.code as fueltech_code,
-            coalesce(sum(fs.generated), 0) as facility_power
+            coalesce({agg_func}(fs.generated), 0) as facility_power
         from facility_scada fs
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
@@ -372,6 +372,7 @@ def power_network_rooftop_query(
 
     network_region_query: str = ""
     wem_apvi_case: str = ""
+    agg_func = "sum"
     timezone: str = time_series.network.timezone_database
 
     if network_region:
@@ -382,6 +383,7 @@ def power_network_rooftop_query(
         # APVI network is used to provide rooftop for WEM so we require it
         # in country-wide totals
         wem_apvi_case = "or (f.network_id='APVI' and f.network_region='WEM')"
+        agg_func = "max"
 
     network_query = "(f.network_id IN ({}) {}) and ".format(
         networks_to_in(networks_query), wem_apvi_case
@@ -398,6 +400,7 @@ def power_network_rooftop_query(
             date_max=date_max,
             date_min=date_min,
             forecast=str(forecast),
+            agg_func=agg_func,
         )
     )
 
