@@ -33,7 +33,7 @@ class OpennemDataHistoryV2(BaseConfig):
     _start_date = validator("start", allow_reuse=True, pre=True)(fix_v2_date)
     _end_date = validator("last", allow_reuse=True, pre=True)(fix_v2_date)
 
-    def values(self) -> List[Tuple[datetime, Optional[float]]]:
+    def values(self) -> List[Tuple[date, Optional[float]]]:
         interval_obj = get_human_interval(self.interval)
         dt = self.start
 
@@ -44,7 +44,10 @@ class OpennemDataHistoryV2(BaseConfig):
             dt = dt + interval_obj
 
         for v in self.data:
-            xy_values.append((strip_timezone(dt), v))
+            if isinstance(dt, datetime):
+                dt = strip_timezone(dt)
+
+            xy_values.append((dt, v))
             dt = dt + interval_obj
 
         return xy_values
