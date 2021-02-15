@@ -17,6 +17,8 @@ from opennem.schema.network import NetworkNEM
 
 logger = logging.getLogger("opennem.workers.energy")
 
+DRY_RUN = False
+
 
 def get_generated(network_region: str, date_min: datetime, date_max: datetime) -> List[Dict]:
     __sql = """
@@ -45,7 +47,9 @@ def get_generated(network_region: str, date_min: datetime, date_max: datetime) -
 
     with engine.connect() as c:
         logger.debug(query)
-        results = list(c.execute(query))
+
+        if not DRY_RUN:
+            results = list(c.execute(query))
 
     logger.debug("Got back {} rows".format(len(results)))
 
@@ -83,11 +87,15 @@ def insert_energies(results: List[Dict]) -> int:
     sql_query = build_insert_query(FacilityScada, ["updated_at", "eoi_quantity"])
     conn = get_database_engine().raw_connection()
     cursor = conn.cursor()
+
     csv_content = generate_csv_from_records(
         FacilityScada,
         records_to_store,
         column_names=records_to_store[0].keys(),
     )
+
+    with open("energy-stored.csv", "w") as fh:
+        fh.write(csv_content.decode("utf-8"))
 
     cursor.copy_expert(sql_query, csv_content)
     conn.commit()
@@ -129,7 +137,10 @@ def run_energy_calc(region: str, date_min: datetime, date_max: datetime) -> int:
 
 
 def run_energy_update_archive(
-    year: int = 2021, months: Optional[List[int]] = None, regions: Optional[List[str]] = None
+    year: int = 2021,
+    months: Optional[List[int]] = None,
+    days: Optional[int] = None,
+    regions: Optional[List[str]] = None,
 ) -> None:
     date_range = get_date_range()
 
@@ -143,6 +154,7 @@ def run_energy_update_archive(
         date_min = datetime(
             year=year, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
         ) - timedelta(minutes=5)
+
         date_max = datetime(
             year=year,
             month=month + 1,
@@ -152,6 +164,17 @@ def run_energy_update_archive(
             second=0,
             tzinfo=FixedOffset(600),
         )
+
+        if days:
+            date_max = datetime(
+                year=year,
+                month=month,
+                day=1 + days,
+                hour=0,
+                minute=5,
+                second=0,
+                tzinfo=FixedOffset(600),
+            )
 
         if date_max > date_range.end:
             date_max = date_range.end
@@ -181,4 +204,4 @@ def run_energy_update() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_archive(year=2021, months=[2], regions=["NSW"])
+    run_energy_update_archive(year=2021, months=[1], days=1, regions=["NSW1"])
