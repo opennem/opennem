@@ -24,7 +24,7 @@ from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.http import http
-from opennem.utils.series import series_are_equal, series_not_close
+from opennem.utils.series import series_are_equal, series_joined, series_not_close
 
 logger = logging.getLogger("opennem.diff.versions")
 
@@ -401,6 +401,23 @@ def run_diff() -> float:
 
                     # write as csv as well
                     with open(f"../dataquality/csv/{filename}-diff.csv", "w") as fh:
+                        csvwriter = csv.DictWriter(fh, fieldnames=["datetime", "v2", "v3"])
+                        csvwriter.writeheader()
+                        csvwriter.writerows(csv_values)
+
+                    # all values CSV
+
+                    all_values = series_joined(v2i.history.values(), v3i.history.values())
+                    csv_values = [
+                        {
+                            "datetime": diffdate,
+                            **diffvals,
+                        }
+                        for diffdate, diffvals in all_values.items()
+                    ]
+
+                    # write as csv as well
+                    with open(f"../dataquality/csv/{filename}-full.csv", "w") as fh:
                         csvwriter = csv.DictWriter(fh, fieldnames=["datetime", "v2", "v3"])
                         csvwriter.writeheader()
                         csvwriter.writerows(csv_values)
