@@ -20,7 +20,9 @@ logger = logging.getLogger("opennem.workers.energy")
 DRY_RUN = False
 
 
-def get_generated(network_region: str, date_min: datetime, date_max: datetime) -> List[Dict]:
+def get_generated(
+    network_region: str, date_min: datetime, date_max: datetime, fueltech_id: Optional[str] = None
+) -> List[Dict]:
     __sql = """
     select
         fs.trading_interval at time zone 'AEST' as trading_interval,
@@ -36,10 +38,23 @@ def get_generated(network_region: str, date_min: datetime, date_max: datetime) -
         and fs.trading_interval >= '{date_min}'
         and fs.trading_interval <= '{date_max}'
         and fs.is_forecast is False
-    order by fs.trading_interval asc;
+        and f.fueltech_id not in ('solar_rooftop', 'imports', 'exports')
+        and f.interconnector is False
+        {fueltech_match}
+    order by fs.trading_interval asc, 2;
     """
 
-    query = __sql.format(network_region=network_region, date_min=date_min, date_max=date_max)
+    fueltech_match = ""
+
+    if fueltech_id:
+        fueltech_match = f"and f.fueltech_id = '{fueltech_id}'"
+
+    query = __sql.format(
+        network_region=network_region,
+        date_min=date_min,
+        date_max=date_max,
+        fueltech_match=fueltech_match,
+    )
 
     engine = get_database_engine()
 
@@ -94,9 +109,6 @@ def insert_energies(results: List[Dict]) -> int:
         column_names=records_to_store[0].keys(),
     )
 
-    with open("energy-stored.csv", "w") as fh:
-        fh.write(csv_content.decode("utf-8"))
-
     cursor.copy_expert(sql_query, csv_content)
     conn.commit()
 
@@ -119,8 +131,10 @@ def get_date_range() -> DatetimeRange:
     return time_series.get_range()
 
 
-def run_energy_calc(region: str, date_min: datetime, date_max: datetime) -> int:
-    results = get_generated(region, date_min, date_max)
+def run_energy_calc(
+    region: str, date_min: datetime, date_max: datetime, fueltech_id: Optional[str] = None
+) -> int:
+    results = get_generated(region, date_min, date_max, fueltech_id)
     num_records = 0
 
     try:
@@ -141,6 +155,7 @@ def run_energy_update_archive(
     months: Optional[List[int]] = None,
     days: Optional[int] = None,
     regions: Optional[List[str]] = None,
+    fueltech_id: Optional[str] = None,
 ) -> None:
     date_range = get_date_range()
 
@@ -153,14 +168,14 @@ def run_energy_update_archive(
     for month in months:
         date_min = datetime(
             year=year, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
-        ) - timedelta(minutes=5)
+        )
 
         date_max = datetime(
             year=year,
             month=month + 1,
             day=1,
             hour=0,
-            minute=5,
+            minute=0,
             second=0,
             tzinfo=FixedOffset(600),
         )
@@ -171,10 +186,12 @@ def run_energy_update_archive(
                 month=month,
                 day=1 + days,
                 hour=0,
-                minute=5,
+                minute=0,
                 second=0,
                 tzinfo=FixedOffset(600),
             )
+
+        date_max = date_max + timedelta(minutes=5)
 
         if date_max > date_range.end:
             date_max = date_range.end
@@ -185,7 +202,7 @@ def run_energy_update_archive(
             break
 
         for region in regions:
-            run_energy_calc(region, date_min, date_max)
+            run_energy_calc(region, date_min, date_max, fueltech_id)
 
 
 def run_energy_update() -> None:
@@ -204,4 +221,4 @@ def run_energy_update() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_archive(year=2021, months=[1], days=1, regions=["NSW1"])
+    run_energy_update_archive(year=2020)
