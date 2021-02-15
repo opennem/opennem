@@ -116,6 +116,9 @@ def run_energy_calc(region: str, date_min: datetime, date_max: datetime) -> int:
     num_records = 0
 
     try:
+        if len(results) < 1:
+            raise Exception("No results from get_generated query")
+
         num_records = insert_energies(results)
         logger.info("Done {} for {} => {}".format(region, date_min, date_max))
     except Exception as e:
