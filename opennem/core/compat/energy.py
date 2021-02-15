@@ -7,7 +7,6 @@ import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Union
 
-import numpy
 import pandas as pd
 from pytz import FixedOffset
 
