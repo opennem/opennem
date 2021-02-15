@@ -52,7 +52,7 @@ def get_generated(network_region: str, date_min: datetime, date_max: datetime) -
     return results
 
 
-def insert_energies(results: List[Dict]) -> None:
+def insert_energies(results: List[Dict]) -> int:
     # Get the energy sums
     energy_sum = energy_sum_compat(results)
 
@@ -94,6 +94,7 @@ def insert_energies(results: List[Dict]) -> None:
 
     logger.info("Inserted {} records".format(len(records_to_store)))
 
+    return len(records_to_store)
 
 def get_date_range() -> DatetimeRange:
     date_range = get_scada_range(network=NetworkNEM)
