@@ -1,5 +1,4 @@
 import logging
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from typing import Dict, List
 
@@ -10,7 +9,6 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.compat.energy import energy_sum_compat
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
-from opennem.db.tasks import refresh_timescale_views, refresh_views
 from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
@@ -124,14 +122,8 @@ def run_energy_calc(region: str, date_min: datetime, date_max: datetime) -> str:
     return "Done {} for {} => {}".format(region, date_min, date_max)
 
 
-def worker_done(future) -> None:
-    logger.debug(future.result())
-
-
 def run_energy_update_archive(year: int = 2021) -> None:
     date_range = get_date_range()
-
-    # executor = ThreadPoolExecutor(max_workers=4)
 
     for month in range(1, 12):
         date_min = datetime(
@@ -156,11 +148,7 @@ def run_energy_update_archive(year: int = 2021) -> None:
             break
 
         for region in ["QLD1", "NSW1", "VIC1", "TAS1", "SA1"]:
-            # future = executor.submit(run_energy_calc, region, date_min, date_max)
             run_energy_calc(region, date_min, date_max)
-            # future.add_done_callback(worker_done)
-
-    # slack_message("Updated energies for {}".format(year))
 
 
 def run_energy_update() -> None:
@@ -180,5 +168,3 @@ def run_energy_update() -> None:
 
 if __name__ == "__main__":
     run_energy_update_archive()
-    # refresh_timescale_views()
-    # refresh_views()
