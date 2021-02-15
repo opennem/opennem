@@ -104,11 +104,12 @@ class OpennemDataHistory(BaseConfig):
 
         # rewind back one interval
         if inclusive:
-            dt -= interval_obj
+            # dt -= interval_obj
+            pass
 
         for v in self.data:
-            dt = dt + interval_obj
             timeseries_data.append((dt, v))
+            dt = dt + interval_obj
 
         # @TODO do some sanity checking here
         # if dt != self.last:
