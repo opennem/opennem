@@ -77,8 +77,7 @@ def energy_sum_compat(gen_series: List[Dict]) -> pd.DataFrame:
         sel_date = df.trading_interval.min().date()
 
         while sel_date <= max_date:
-            next_frame = [d for d in __trading_energy_generator(df, duid, sel_date)]
-            return_list += next_frame
+            return_list += __trading_energy_generator(df, duid, sel_date)
             sel_date = sel_date + timedelta(days=1)
 
     return_frame = pd.DataFrame(
