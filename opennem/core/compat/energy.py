@@ -21,7 +21,7 @@ class ScadaResultCompat(BaseConfig):
     generated: Union[float, int, None]
 
 
-def __trapezium_integration_gapfill(d_ti: pd.Series) -> float:
+def bucket_average_fill(d_ti: pd.Series) -> float:
     """Gapfill version of bucket averages - will fill out"""
     # Clear no numbers
     d_ti = d_ti.dropna()
@@ -91,7 +91,7 @@ def energy_sum_compat(gen_series: List[Dict]) -> pd.DataFrame:
 
     # Multigroup by datetime and facility code
     df = df.groupby([pd.Grouper(freq="30min", offset="5m"), "facility_code"]).eoi_quantity.apply(
-        __trapezium_integration_gapfill
+        bucket_average_fill
     )
 
     # Reset back to a simple frame
