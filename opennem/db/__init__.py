@@ -1,5 +1,5 @@
 import logging
-from typing import Generator
+from typing import Generator, Optional
 
 from databases import Database
 from sqlalchemy import create_engine
@@ -30,14 +30,15 @@ async def db_disconnect() -> None:
 
 
 def db_connect(
-    db_name: str = None, debug: bool = False, timeout: int = 300
+    db_conn_str: Optional[str] = None, debug: bool = False, timeout: int = 300
 ) -> Engine:
     """
     Performs database connection using database settings from settings.py.
 
     Returns sqlalchemy engine instance
     """
-    db_conn_str = settings.db_url
+    if not db_conn_str:
+        db_conn_str = settings.db_url
 
     connect_args = {}
 
