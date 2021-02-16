@@ -21,7 +21,7 @@ from opennem.core.compat.energy import __trapezium_integration_gapfill
         ([1, 1, 1, 1, 1, 1, 1, 1, None], 0.5),
     ],
 )
-def test_trap_gapfill(series: List[Union[float, int]], expected_value: int):
+def test_trap_gapfill(series: List[Union[float, int]], expected_value: int) -> None:
     value = __trapezium_integration_gapfill(pd.Series(series))
 
     assert value == expected_value
