@@ -102,7 +102,9 @@ def energy_sum_compat(gen_series: List[Dict]) -> pd.DataFrame:
 
     # Add back the timezone for NEM
     # We use a fixed offset so need to loop
-    df.apply(lambda x: pd.Timestamp(x.trading_interval, tz=FixedOffset(600)), axis=1)
+    df.trading_interval = df.apply(
+        lambda x: pd.Timestamp(x.trading_interval, tz=FixedOffset(600)), axis=1
+    )
 
     df["network_id"] = "NEM"
 
