@@ -28,7 +28,15 @@ def __trapezium_integration_gapfill(d_ti: pd.Series) -> float:
 
     # Fall back on average but warn to check data
     if d_ti.count() <= 3:
-        return 0.5 * d_ti.sum() / d_ti.count()
+        d_sum = d_ti.sum()
+
+        if d_sum == 0:
+            return 0
+
+        if d_ti.count() == 0:
+            return 0
+
+        return 0.5 * d_sum / d_ti.count()
 
     bucket_middle = d_ti.count() - 2
 
