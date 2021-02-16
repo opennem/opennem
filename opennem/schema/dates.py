@@ -98,7 +98,7 @@ class TimeSeries(BaseConfig):
         # If its a forward looking forecast
         # jump out early
         if self.forecast:
-            start = self.end
+            start = self.end + timedelta(minutes=self.interval.interval)
             end = self.end + get_human_interval(self.forecast_period)
 
             start = start.astimezone(self.network.get_fixed_offset())
