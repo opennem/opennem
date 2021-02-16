@@ -98,4 +98,7 @@ def energy_sum_compat(gen_series: List[Dict]) -> pd.DataFrame:
 
     df["network_id"] = "NEM"
 
+    # filter out empties
+    df = df[pd.isnull(df.eoi_quantity) == False]
+
     return df
