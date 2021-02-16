@@ -1,5 +1,7 @@
 set -euxo pipefail
 
+pytest
+
 poetry version ${1-prerelease}
 
 VERSION=$(poetry version | sed 's/opennem\ //g')
