@@ -23,6 +23,9 @@ class ScadaResultCompat(BaseConfig):
 
 def __trapezium_integration_gapfill(d_ti: pd.Series) -> float:
     """Gapfill version of bucket averages - will fill out"""
+    # Clear no numbers
+    d_ti = d_ti.dropna()
+
     # Fall back on average but warn to check data
     if d_ti.count() <= 3:
         return 0.5 * d_ti.sum() / d_ti.count()
@@ -42,6 +45,9 @@ def __trapezium_integration_gapfill(d_ti: pd.Series) -> float:
 
 def __trapezium_integration(d_ti: pd.Series) -> Optional[float]:
     """ Energy for a 30 minute bucket """
+    # Clear no numbers
+    d_ti = d_ti.dropna()
+
     # Fall back on average but warn to check data
     if d_ti.count() != 7:
         return None
