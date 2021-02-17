@@ -434,7 +434,7 @@ def energy_network_fueltech_query(
             date_trunc('{trunc}', t.trading_day) as trading_month,
             t.fueltech_id,
             coalesce(sum(t.fueltech_energy) / 1000 , 0) as fueltech_energy,
-            coalesce(sum(t.fueltech_market_value), 0) as fueltech_market_value,
+            sum(t.fueltech_market_value) as fueltech_market_value,
             coalesce(sum(t.fueltech_emissions), 0) as fueltech_emissions
         from
             (select
@@ -462,7 +462,7 @@ def energy_network_fueltech_query(
             t.ti_{trunc_name} as trading_day,
             t.fueltech_id,
             coalesce(sum(t.energy) / 1000, 0) as fueltech_energy,
-            coalesce(sum(t.market_value), 0) as fueltech_market_value,
+            sum(t.market_value) as fueltech_market_value,
             coalesce(sum(t.emissions), 0) as fueltech_emissions
         from {energy_view} t
         where
