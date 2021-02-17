@@ -212,9 +212,18 @@ def init_aggregation_policies() -> None:
 
 
 def get_materialized_view_names() -> List[str]:
+    """ Returns a list of material view names in priority order """
     return list(
         v.name
         for v in filter(
             lambda x: x.materialized is True and x.aggregation_policy is None, _VIEW_MAP
         )
+    )
+
+
+def get_timescale_view_names() -> List[str]:
+    """ Returns a list of timescale view names in priority order """
+    return list(
+        v.name
+        for v in filter(lambda x: x.materialized is True and x.aggregation_policy, _VIEW_MAP)
     )
