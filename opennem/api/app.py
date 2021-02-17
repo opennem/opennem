@@ -3,6 +3,8 @@ from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.param_functions import File
+from fastapi.responses import FileResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy.orm import Session
 from starlette import status
@@ -87,6 +89,14 @@ async def startup() -> None:
 async def shutdown() -> None:
     logger.debug("In shutdown")
     await database.disconnect()
+
+
+@app.get("/robots.txt", response_class=FileResponse)
+def robots_txt() -> FileResponse:
+    if not settings.debug:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    return FileResponse(settings.static_folder_path + "/robots.txt")
 
 
 @app.get("/networks", response_model=List[NetworkSchema])
