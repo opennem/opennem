@@ -3,7 +3,7 @@ from typing import List, Union
 import pandas as pd
 import pytest
 
-from opennem.core.compat.energy import __trapezium_integration_gapfill
+from opennem.core.compat.energy import bucket_average_fill
 
 
 @pytest.mark.parametrize(
@@ -22,6 +22,6 @@ from opennem.core.compat.energy import __trapezium_integration_gapfill
     ],
 )
 def test_trap_gapfill(series: List[Union[float, int]], expected_value: int) -> None:
-    value = __trapezium_integration_gapfill(pd.Series(series))
+    value = bucket_average_fill(pd.Series(series))
 
     assert value == expected_value
