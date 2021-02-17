@@ -290,6 +290,7 @@ def get_scada_range(
             facility_code not like 'ROOFTOP_%%'
             and facility_code not in ({exclude_duids})
             and is_forecast is False
+            and generated > 0
     """
 
     network_query = ""
