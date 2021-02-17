@@ -73,6 +73,7 @@ _VIEW_MAP = [
         name="mv_interchange_energy_nem_region",
         materialized=True,
         filepath="mv_interchange_energy_nem_region.sql",
+        primary_key=["trading_interval", "network_id", "network_region"],
     ),
     ViewDefinition(
         priority=40,
