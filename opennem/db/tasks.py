@@ -2,21 +2,10 @@ import logging
 from typing import Optional
 
 from opennem.db import get_database_engine
+from opennem.db.views import get_materialized_view_names, get_timescale_view_names
 from opennem.utils.dates import subtract_days
 
 logger = logging.getLogger("opennem.db.tasks")
-
-TIMESCALE_VIEWS = [
-    "mv_facility_energy_hour",
-    "mv_interchange_energy_nem_region",
-]
-
-MATERIAL_VIEWS = [
-    # "mv_facility_all",
-    "mv_facility_30min_all",
-    "mv_region_emissions",
-    "mv_interchange_energy_nem_region",
-]
 
 
 def refresh_timescale_views(
@@ -43,10 +32,10 @@ def refresh_timescale_views(
     if view_name:
         views.append(view_name)
     else:
-        views = TIMESCALE_VIEWS
+        views = get_timescale_view_names()
 
     with engine.connect() as c:
-        for v in TIMESCALE_VIEWS:
+        for v in views:
             query = __query.format(view=v, date_from=date_from)
             logger.debug(query)
 
@@ -67,7 +56,7 @@ def refresh_material_views(view_name: Optional[str] = None) -> None:
     if view_name:
         views.append(view_name)
     else:
-        views = MATERIAL_VIEWS
+        views = get_materialized_view_names()
 
     with engine.connect() as c:
         for v in views:
