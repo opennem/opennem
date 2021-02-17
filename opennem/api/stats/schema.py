@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+from math import isnan
 from typing import Any, List, Optional, Tuple, Union
 
 from pydantic import validator
@@ -41,6 +42,9 @@ def number_output(n: Union[float, int, None]) -> Optional[Union[float, int, None
 
     if n == 0:
         return 0
+
+    if isnan(n):
+        return None
 
     return sigfig_compact(n)
 
