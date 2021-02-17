@@ -34,13 +34,6 @@ AggregationPolicy6Hours = ContinuousAggregationPolicy(
 )
 
 _VIEW_MAP = [
-    # ViewDefinition(
-    #     priority=1,
-    #     name="mv_facility_energy_hour",
-    #     materialized=True,
-    #     filepath="mv_facility_energy_hour.sql",
-    #     aggregation_policy=AggregationPolicy2Hours,
-    # ),
     ViewDefinition(
         priority=2,
         name="mv_facility_energy_30m",
@@ -48,13 +41,6 @@ _VIEW_MAP = [
         filepath="mv_facility_energy_30min.sql",
         aggregation_policy=AggregationPolicy2Hours,
     ),
-    # ViewDefinition(
-    #     priority=10,
-    #     name="mv_facility_all",
-    #     materialized=True,
-    #     filepath="mv_facility_all.sql",
-    #     primary_key=["trading_interval", "network_id", "code"],
-    # ),
     ViewDefinition(
         priority=11,
         name="mv_facility_30m_all",
