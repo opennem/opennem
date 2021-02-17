@@ -64,7 +64,10 @@ def get_generated(
         logger.debug(query)
 
         if not DRY_RUN:
-            results = list(c.execute(query))
+            try:
+                results = list(c.execute(query))
+            except Exception as e:
+                logger.error(e)
 
     logger.debug("Got back {} rows".format(len(results)))
 
@@ -222,3 +225,7 @@ def run_energy_update() -> None:
 
 if __name__ == "__main__":
     run_energy_update_archive(year=2020)
+    run_energy_update_archive(year=2019)
+    run_energy_update_archive(year=2018)
+    run_energy_update_archive(year=2017)
+    run_energy_update_archive(year=2016)
