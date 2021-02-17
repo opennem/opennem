@@ -34,7 +34,7 @@ def optionaly_lowercase_string(value: str) -> str:
     return value
 
 
-def number_output(n: Union[float, int, None]) -> Optional[Union[float, int, None]]:
+def number_output(n: Union[float, int, None]) -> Optional[Union[float, int, None, Decimal]]:
     """Format numbers for data series outputs"""
     if n is None:
         return None
@@ -45,7 +45,7 @@ def number_output(n: Union[float, int, None]) -> Optional[Union[float, int, None
     return sigfig_compact(n)
 
 
-def data_validate(values: List[Union[float, int, None]]) -> List[Union[float, int, None]]:
+def data_validate(values: List[Union[float, int, None, Decimal]]) -> List[Union[float, int, None]]:
     """Validate and format list of numeric data values"""
     return list(
         map(
