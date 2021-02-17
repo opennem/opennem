@@ -57,7 +57,7 @@ _VIEW_MAP = [
     # ),
     ViewDefinition(
         priority=11,
-        name="mv_facility_30min_all",
+        name="mv_facility_30m_all",
         materialized=True,
         filepath="mv_facility_30min_all.sql",
         primary_key=["trading_interval", "network_id", "code"],
