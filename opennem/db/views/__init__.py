@@ -1,6 +1,7 @@
 import logging
 from operator import attrgetter
 from pathlib import Path
+from typing import List
 
 from opennem.db import get_database_engine
 from opennem.db.views.queries import (
@@ -208,3 +209,12 @@ def init_aggregation_policies() -> None:
                 c.execute(create_query)
             except Exception as e:
                 logger.warn("Could not create continuous aggregation query: {}".format(e))
+
+
+def get_materialized_view_names() -> List[str]:
+    return list(
+        v.name
+        for v in filter(
+            lambda x: x.materialized is True and x.aggregation_policy is None, _VIEW_MAP
+        )
+    )
