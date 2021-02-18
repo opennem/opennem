@@ -1,9 +1,12 @@
 import logging
 from typing import List
 
+import aioredis
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy.orm import Session
 from starlette import status
@@ -27,6 +30,7 @@ from opennem.schema.opennem import FueltechSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.settings import settings
+from opennem.utils.http_cache import PydanticCoder
 from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
@@ -78,10 +82,13 @@ app.add_middleware(
 )
 
 
-# @app.on_event("startup")
+@app.on_event("startup")
 async def startup() -> None:
     logger.debug("In startup")
-    await database.connect()
+    # await database.connect()
+
+    redis = await aioredis.create_redis_pool(settings.cache_url, encoding="utf-8")
+    FastAPICache.init(RedisBackend(redis), prefix="api-cache", coder=PydanticCoder)
 
 
 # @app.on_event("shutdown")
