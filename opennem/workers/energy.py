@@ -6,7 +6,7 @@ from pytz import FixedOffset
 
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.time import human_to_interval, human_to_period
-from opennem.core.compat.energy import energy_sum_compat
+from opennem.core.energy import energy_sum
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.notifications.slack import slack_message
@@ -75,15 +75,15 @@ def get_generated(
 
 
 def insert_energies(results: List[Dict]) -> int:
-    # Get the energy sums
-    energy_sum = energy_sum_compat(results)
+    # Get the energy sums as a dataframe
+    esdf = energy_sum(results)
 
     # Add metadata
-    energy_sum["created_by"] = "opennem.worker.energy"
-    energy_sum["created_at"] = ""
-    energy_sum["updated_at"] = datetime.now()
-    energy_sum["generated"] = None
-    energy_sum["is_forecast"] = False
+    esdf["created_by"] = "opennem.worker.energy"
+    esdf["created_at"] = ""
+    esdf["updated_at"] = datetime.now()
+    esdf["generated"] = None
+    esdf["is_forecast"] = False
 
     # reorder columns
     columns = [
@@ -97,9 +97,9 @@ def insert_energies(results: List[Dict]) -> int:
         "eoi_quantity",
         "is_forecast",
     ]
-    energy_sum = energy_sum[columns]
+    esdf = esdf[columns]
 
-    records_to_store: List[Dict] = energy_sum.to_dict("records")
+    records_to_store: List[Dict] = esdf.to_dict("records")
 
     # Build SQL + CSV and bulk-insert
     sql_query = build_insert_query(FacilityScada, ["updated_at", "eoi_quantity"])
