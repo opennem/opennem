@@ -9,7 +9,7 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.energy import energy_sum
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
-from opennem.diff.versions import CUR_YEAR
+from opennem.diff.versions import CUR_YEAR, get_network_regions
 from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
@@ -209,19 +209,27 @@ def run_energy_update_archive(
             run_energy_calc(region, date_min, date_max, fueltech_id)
 
 
-def run_energy_update() -> None:
-    for region in ["QLD1", "NSW1", "VIC1", "TAS1", "SA1"]:
-        now = datetime.now().replace(tzinfo=FixedOffset(600))
-        date_min = now.replace(hour=0, minute=0, second=0)
-        date_max = date_min + timedelta(days=1, minutes=5)
+def run_energy_update_yesterday() -> None:
+    """Run energy sum update for yesterday. This task is scheduled
+    in scheduler/db
 
-        results = get_generated(region, date_min, date_max)
+    This is NEM only atm"""
 
-        try:
-            insert_energies(results)
-        except Exception as e:
-            logger.error(e)
-            slack_message("Energy archive error: {}".format(e))
+    # today_midnight in NEM time
+    # @NOTE multi-network support read in fixed offset from Network
+    today_midnight = datetime.now().replace(
+        tzinfo=FixedOffset(600), microsecond=0, hour=0, minute=0, second=0
+    )
+
+    date_min = today_midnight - timedelta(days=1)
+    date_max = date_min + timedelta(days=1, minutes=5)
+
+    regions = [i.code for i in get_network_regions(NetworkNEM)]
+
+    for region in regions:
+        run_energy_calc(region, date_min, date_max)
+
+    slack_message("Ran energy dailies for regions: {}".format(",".join(regions)))
 
 
 def run_energy_update_all() -> None:
@@ -232,4 +240,4 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_archive(year=2020)
+    run_energy_update_yesterday()

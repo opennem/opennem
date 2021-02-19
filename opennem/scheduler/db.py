@@ -7,7 +7,7 @@ from huey import PriorityRedisHuey, crontab
 
 from opennem.db.tasks import refresh_material_views
 from opennem.settings import settings
-from opennem.workers.energy import run_energy_update
+from opennem.workers.energy import run_energy_update_yesterday
 
 # Py 3.8 on MacOS changed the default multiprocessing model
 if platform.system() == "Darwin":
@@ -39,4 +39,4 @@ def db_refresh_material_views() -> None:
 @huey.lock_task("db_refrehs_energies_yesterday")
 def db_refrehs_energies_yesterday() -> None:
     if settings.workers_db_run:
-        run_energy_update()
+        run_energy_update_yesterday()
