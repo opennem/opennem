@@ -2,96 +2,114 @@
 """
 OpenNEM Energy Tools
 
+Uses an average in 30 minute buckets
 """
-from decimal import Decimal, getcontext
-from operator import attrgetter
-from sys import maxsize
-from typing import Callable, Generator, List, Union
+import logging
+from datetime import datetime
+from typing import Dict, List, Optional, Union
 
-import numpy as np
+import pandas as pd
+from pytz import FixedOffset
 
 from opennem.schema.core import BaseConfig
 
-MAX_INTERVALS = maxsize - 1
-
-context = getcontext()
-context.prec = 9
+logger = logging.getLogger("opennem.compat.energy")
 
 
-class Point(BaseConfig):
-    x: Decimal
-    y: Decimal
+class ScadaResultCompat(BaseConfig):
+    interval: datetime
+    code: Optional[str]
+    generated: Union[float, int, None]
 
 
-def trapozedoid(p1: Point, p2: Point) -> float:
-    """Trapezoidal area between two points"""
-    width = p2.y - p1.y
-    area = p1.x * width + ((p2.x - p1.x) * width) / 2
+def bucket_average_fill(d_ti: pd.Series) -> float:
+    """Gapfill version of bucket averages - will fill out"""
+    # Clear no numbers
+    d_ti = d_ti.dropna()
 
-    return float(area)
+    # Fall back on average but warn to check data
+    if d_ti.count() <= 3:
+        d_sum = d_ti.sum()
+
+        if d_sum == 0:
+            return 0
+
+        if d_ti.count() == 0:
+            return 0
+
+        return 0.5 * d_sum / d_ti.count()
+
+    bucket_middle = d_ti.count() - 2
+
+    bucket_middle_weights = [1] + [2] * bucket_middle + [1]
+
+    weights = d_ti.values * bucket_middle_weights
+
+    weights_sum = weights.sum()
+
+    bucket_energy = 0.5 * weights_sum / ((d_ti.count() - 1) * 2)
+
+    return bucket_energy
 
 
-def zero_nulls(number: Union[int, float, None]) -> float:
-    if not number:
-        return 0.0
+def __trapezium_integration(d_ti: pd.Series) -> Optional[float]:
+    """ Energy for a 30 minute bucket """
+    # Clear no numbers
+    d_ti = d_ti.dropna()
 
-    return number
+    # Fall back on average but warn to check data
+    if d_ti.count() != 7:
+        return None
+
+    weights = d_ti.values * [1, 2, 2, 2, 2, 2, 1]
+
+    weights_sum = weights.sum()
+
+    bucket_energy = 0.5 * weights_sum / 12
+
+    return bucket_energy
 
 
-def list_chunk(series: List, chunk_size: int) -> Generator[List[Union[float, int]], None, None]:
-    for i in range(0, len(series), chunk_size):
-        start_chunk = i - 1 if i > 0 else 0
-        end_chunk = i + chunk_size + 1
+def energy_sum(gen_series: List[Dict]) -> pd.DataFrame:
+    """Takes the energy sum for a series of raw duid intervals
+    and returns a fresh dataframe to be imported"""
+    df = pd.DataFrame(
+        gen_series,
+        columns=[
+            "trading_interval",
+            "facility_code",
+            "network_id",
+            "eoi_quantity",
+        ],
+    )
 
-        yield np.array(series[start_chunk:end_chunk])
+    # Clean up types
+    df.trading_interval = pd.to_datetime(df.trading_interval)
+    df.eoi_quantity = pd.to_numeric(df.eoi_quantity)
 
+    # Index by datetime
+    df = df.set_index(df.trading_interval)
 
-def energy_sum(
-    series: List[Union[int, float, None]],
-    bucket_size_minutes: int,
-    auc_function: Callable = trapozedoid,
-) -> float:
-    """Calcualte the energy sum of a series for an interval
-    using the area under the curve
-    """
+    # Multigroup by datetime and facility code
+    df = df.groupby([pd.Grouper(freq="30min", offset="5m"), "facility_code"]).eoi_quantity.apply(
+        bucket_average_fill
+    )
 
-    number_intervals = len(series) - 1
-    interval_size = bucket_size_minutes / len(series)
+    # Reset back to a simple frame
+    df = df.reset_index()
 
-    if len(series) < 1:
-        raise Exception("Requires at least one value in the series")
+    # Shift back 5 minutes to even up into 30 minute bkocks
+    df.trading_interval = df.trading_interval - pd.Timedelta(minutes=5)
 
-    if bucket_size_minutes <= 0 or bucket_size_minutes > maxsize:
-        raise Exception("Invalid bucket size")
+    # Add back the timezone for NEM
+    # We use a fixed offset so need to loop
+    df.trading_interval = df.apply(
+        lambda x: pd.Timestamp(x.trading_interval, tz=FixedOffset(600)), axis=1
+    )
 
-    if bucket_size_minutes % 1 != 0:
-        raise Exception("Not a round interval size in minutes")
+    df["network_id"] = "NEM"
 
-    if number_intervals < 1 or number_intervals >= MAX_INTERVALS:
-        raise Exception("Invalid number of intervals")
+    # filter out empties
+    df = df[pd.isnull(df.eoi_quantity) == False]
 
-    # 0 out all nulls
-    series = [zero_nulls(n) for n in series]
-
-    y_series = [i * interval_size for i in range(len(series))]
-
-    # build point objects from y_series and zeroed x values
-    series_points = [Point(x=series[i], y=y) for i, y in enumerate(y_series)]
-
-    # sort by y value ascending 0 ... N
-    series_points.sort(key=attrgetter("y"))
-
-    area = 0.0
-    p1 = None
-    p2 = None
-
-    for i in range(number_intervals):
-        p1 = series_points[i]
-        p2 = series_points[i + 1]
-
-        area += auc_function(p1, p2)
-
-    # convert back to hours
-    area = area / 60
-
-    return area
+    return df
