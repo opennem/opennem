@@ -354,7 +354,7 @@ def run_diff() -> float:
                     )
 
                 data_matches = series_are_equal(
-                    v2i.history.values(), v3i.history.values(), full_equality=True
+                    v2i.history.values(), v3i.history.values(), full_equality=False
                 )
 
                 buckets_total += len(data_matches.keys())
@@ -363,7 +363,7 @@ def run_diff() -> float:
                     logger.error("    - values don't match ")
 
                     mismatch_values = series_not_close(
-                        v2i.history.values(), v3i.history.values(), full_equality=True
+                        v2i.history.values(), v3i.history.values(), full_equality=False
                     )
 
                     score += 1
@@ -464,8 +464,8 @@ def run_diff() -> float:
     else:
         percentage = round((buckets_total - buckets_not_match) / buckets_total * 100, 2)
 
-    return "{}% match. {} total buckets match of {}.".format(
-        percentage, (buckets_total - buckets_not_match), buckets_total
+    return "{}% match. {} total buckets match of {}. {} not matching.".format(
+        percentage, (buckets_total - buckets_not_match), buckets_total, buckets_not_match
     )
 
 
