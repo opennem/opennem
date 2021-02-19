@@ -21,8 +21,6 @@ class StationIDList(ApiBase):
 class StationRecord(ApiBase):
     id: int
 
-    participant_id: Optional[str]
-
     code: str
 
     name: Optional[str]
@@ -33,8 +31,6 @@ class StationRecord(ApiBase):
     location_id: Optional[int]
 
     approved: bool = False
-    approved_by: Optional[str]
-    approved_at: Optional[datetime]
 
     # network: Optional[NetworkSchema] = None
 
@@ -44,10 +40,6 @@ class StationRecord(ApiBase):
 
     created_by: Optional[str]
     created_at: Optional[datetime]
-
-    approved: bool = False
-    approved_by: Optional[str]
-    approved_at: Optional[datetime]
 
 
 class StationUpdateResponse(ApiBase):
@@ -69,4 +61,3 @@ class StationModificationTypes(str, Enum):
 class StationModification(ApiBase):
     comment: Optional[str] = Field(None)
     modification: StationModificationTypes
-
