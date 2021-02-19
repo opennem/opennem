@@ -1,24 +1,13 @@
 from datetime import datetime
 from typing import List, Optional
 
-import sqlalchemy
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session, joinedload, noload, raiseload
+from sqlalchemy.orm import Session
 from starlette import status
 
-from opennem.api.facility.schema import FacilityModification
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import get_database_engine, get_database_session
-from opennem.db.models.opennem import (
-    BomStation,
-    Facility,
-    FuelTech,
-    Location,
-    Network,
-    Photo,
-    Revision,
-    Station,
-)
+from opennem.db.models.opennem import Facility, FuelTech, Location, Revision, Station
 from opennem.schema.opennem import StationSchema
 
 from .schema import StationIDList, StationModification, StationRecord, StationUpdateResponse
