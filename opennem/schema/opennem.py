@@ -21,9 +21,9 @@ from .network import NetworkNEM, NetworkSchema
 
 
 class OpennemBaseSchema(BaseConfig):
-
-    created_by: Optional[str]
-    created_at: Optional[datetime] = datetime.now()
+    pass
+    # created_by: Optional[str]
+    # created_at: Optional[datetime] = datetime.now()
 
 
 class FueltechSchema(BaseConfig):
@@ -222,21 +222,20 @@ class LocationSchema(OpennemBaseSchema):
         return geom
 
 
+class FacilityOutputSchema(OpennemBaseSchema):
+    pass
+
+
 class StationSchema(OpennemBaseSchema):
     id: Optional[int]
 
-    participant: Optional[ParticipantSchema] = None
-    participant_id: Optional[str]
+    code: str
 
-    facilities: Optional[List[FacilitySchema]] = []
+    participant: Optional[ParticipantSchema] = None
+
+    facilities: Optional[List[FacilityOutputSchema]] = []
 
     photos: Optional[List[Photo]]
-
-    # history: Optional[List[__self__]]
-
-    # revisions: Optional[List[RevisionSchema]]
-
-    code: str
 
     name: Optional[str]
 
@@ -244,13 +243,8 @@ class StationSchema(OpennemBaseSchema):
     network_name: Optional[str]
 
     location: LocationSchema = LocationSchema()
-    location_id: Optional[int]
 
-    approved: bool = False
-    approved_by: Optional[str]
-    approved_at: Optional[datetime]
-
-    network: Optional[NetworkSchema] = None
+    network: Optional[str] = None
 
     description: Optional[str]
     wikipedia_link: Optional[str]
