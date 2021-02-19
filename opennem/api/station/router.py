@@ -30,6 +30,7 @@ router = APIRouter()
     "/",
     response_model=List[StationRecord],
     description="Get a list of all stations",
+    response_model_exclude_none=True,
 )
 def stations(
     session: Session = Depends(get_database_session),
@@ -85,6 +86,7 @@ def stations(
     description="""Lookup station by code or network_code. \
         Require one of code or network_code""",
     response_model=List[StationRecord],
+    response_model_exclude_none=True,
 )
 def station_lookup(
     session: Session = Depends(get_database_session),
@@ -114,6 +116,7 @@ def station_lookup(
     "/ids",
     response_model=List[StationIDList],
     description="Get a list of station ids for dropdowns",
+    response_model_exclude_none=True,
 )
 def station_ids(
     session: Session = Depends(get_database_session),
@@ -139,6 +142,7 @@ def station_ids(
     "/{station_code:path}",
     response_model=StationSchema,
     description="Get a single station by code",
+    response_model_exclude_none=True,
 )
 def station(
     session: Session = Depends(get_database_session),
