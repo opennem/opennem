@@ -223,7 +223,64 @@ class LocationSchema(OpennemBaseSchema):
 
 
 class FacilityOutputSchema(OpennemBaseSchema):
-    pass
+    id: Optional[int]
+
+    network: str = "NEM"
+
+    fueltech: Optional[str]
+
+    status: Optional[str]
+
+    # @TODO no longer optional
+    code: Optional[str] = ""
+
+    scada_power: Optional[OpennemData]
+
+    # revisions: Optional[List[RevisionSchema]] = []
+    # revision_ids: Optional[List[int]] = []
+
+    dispatch_type: DispatchType = "GENERATOR"
+
+    capacity_registered: Optional[float]
+
+    registered: Optional[datetime]
+    deregistered: Optional[datetime]
+
+    network_region: Optional[str]
+
+    unit_id: Optional[int]
+    unit_number: Optional[int]
+    unit_alias: Optional[str]
+    unit_capacity: Optional[float]
+
+    emissions_factor_co2: Optional[float]
+
+    @validator("network", pre=True)
+    def flatten_network(cls, value) -> str:
+        return value.code if value else ""
+
+    @validator("fueltech", pre=True)
+    def flatten_fueltech(cls, value) -> str:
+        return value.code if value else ""
+
+    @validator("status", pre=True)
+    def flatten_status(cls, value) -> str:
+        return value.code if value else ""
+
+    @validator("capacity_registered")
+    def _clean_capacity_regisered(cls, value):
+        value = clean_capacity(value)
+
+        if isinstance(value, float):
+            value = round(value, 2)
+
+        return value
+
+    @validator("emissions_factor_co2")
+    def _clean_emissions_factor_co2(cls, value):
+        value = clean_capacity(value)
+
+        return value
 
 
 class StationSchema(OpennemBaseSchema):
