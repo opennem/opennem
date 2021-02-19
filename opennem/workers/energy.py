@@ -14,7 +14,7 @@ from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.dates import DatetimeRange, TimeSeries
-from opennem.schema.network import NetworkNEM
+from opennem.schema.network import NetworkNEM, NetworkSchema
 
 logger = logging.getLogger("opennem.workers.energy")
 
@@ -22,8 +22,17 @@ DRY_RUN = False
 
 
 def get_generated(
-    network_region: str, date_min: datetime, date_max: datetime, fueltech_id: Optional[str] = None
+    network_region: str,
+    date_min: datetime,
+    date_max: datetime,
+    network: NetworkSchema,
+    fueltech_id: Optional[str] = None,
 ) -> List[Dict]:
+    """Gets generated values for a date range for a network and network region
+    and optionally for a single fueltech"""
+
+    # @TODO support refresh energies for a single duid or station
+
     __sql = """
     select
         fs.trading_interval at time zone 'AEST' as trading_interval,
@@ -34,7 +43,7 @@ def get_generated(
         facility_scada fs
         left join facility f on fs.facility_code = f.code
     where
-        fs.network_id='NEM'
+        fs.network_id='{network_id}'
         and f.network_region='{network_region}'
         and fs.trading_interval >= '{date_min}'
         and fs.trading_interval <= '{date_max}'
@@ -51,6 +60,7 @@ def get_generated(
         fueltech_match = f"and f.fueltech_id = '{fueltech_id}'"
 
     query = __sql.format(
+        network_id=network.code,
         network_region=network_region,
         date_min=date_min,
         date_max=date_max,
@@ -76,6 +86,9 @@ def get_generated(
 
 
 def insert_energies(results: List[Dict]) -> int:
+    """Takes a list of generation values and calculates energies and bulk-inserts
+    into the database"""
+
     # Get the energy sums as a dataframe
     esdf = energy_sum(results)
 
@@ -121,7 +134,7 @@ def insert_energies(results: List[Dict]) -> int:
     return len(records_to_store)
 
 
-def get_date_range() -> DatetimeRange:
+def get_date_range(network: NetworkSchema) -> DatetimeRange:
     date_range = get_scada_range(network=NetworkNEM)
 
     time_series = TimeSeries(
@@ -129,16 +142,20 @@ def get_date_range() -> DatetimeRange:
         end=date_range.end,
         interval=human_to_interval("1d"),
         period=human_to_period("all"),
-        network=NetworkNEM,
+        network=network,
     )
 
     return time_series.get_range()
 
 
 def run_energy_calc(
-    region: str, date_min: datetime, date_max: datetime, fueltech_id: Optional[str] = None
+    region: str,
+    date_min: datetime,
+    date_max: datetime,
+    network: NetworkSchema,
+    fueltech_id: Optional[str] = None,
 ) -> int:
-    results = get_generated(region, date_min, date_max, fueltech_id)
+    results = get_generated(region, date_min, date_max, network=network, fueltech_id=fueltech_id)
     num_records = 0
 
     try:
@@ -160,14 +177,16 @@ def run_energy_update_archive(
     days: Optional[int] = None,
     regions: Optional[List[str]] = None,
     fueltech_id: Optional[str] = None,
+    network: NetworkSchema = NetworkNEM,
 ) -> None:
-    date_range = get_date_range()
+
+    date_range = get_date_range(network=network)
 
     if not months:
         months = list(range(1, 12))
 
     if not regions:
-        regions = ["QLD1", "NSW1", "VIC1", "TAS1", "SA1"]
+        regions = [i.code for i in get_network_regions(network)]
 
     for month in months:
         date_min = datetime(
@@ -206,28 +225,29 @@ def run_energy_update_archive(
             break
 
         for region in regions:
-            run_energy_calc(region, date_min, date_max, fueltech_id)
+            run_energy_calc(region, date_min, date_max, fueltech_id=fueltech_id, network=network)
 
 
-def run_energy_update_yesterday() -> None:
+def run_energy_update_yesterday(
+    network: NetworkSchema = NetworkNEM,
+) -> None:
     """Run energy sum update for yesterday. This task is scheduled
     in scheduler/db
 
     This is NEM only atm"""
 
     # today_midnight in NEM time
-    # @NOTE multi-network support read in fixed offset from Network
     today_midnight = datetime.now().replace(
-        tzinfo=FixedOffset(600), microsecond=0, hour=0, minute=0, second=0
+        tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
     )
 
     date_min = today_midnight - timedelta(days=1)
     date_max = date_min + timedelta(days=1, minutes=5)
 
-    regions = [i.code for i in get_network_regions(NetworkNEM)]
+    regions = [i.code for i in get_network_regions(network)]
 
     for region in regions:
-        run_energy_calc(region, date_min, date_max)
+        run_energy_calc(region, date_min, date_max, network=network)
 
     slack_message("Ran energy dailies for regions: {}".format(",".join(regions)))
 
