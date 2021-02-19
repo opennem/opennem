@@ -9,6 +9,7 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.energy import energy_sum
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
+from opennem.diff.versions import CUR_YEAR
 from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
@@ -223,9 +224,12 @@ def run_energy_update() -> None:
             slack_message("Energy archive error: {}".format(e))
 
 
+def run_energy_update_all() -> None:
+    """Runs energy update for all regions and all years for one-off
+    inserts"""
+    for year in range(2011, CUR_YEAR + 1):
+        run_energy_update_archive(year=year)
+
+
 if __name__ == "__main__":
     run_energy_update_archive(year=2020)
-    run_energy_update_archive(year=2019)
-    run_energy_update_archive(year=2018)
-    run_energy_update_archive(year=2017)
-    run_energy_update_archive(year=2016)
