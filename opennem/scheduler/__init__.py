@@ -84,14 +84,14 @@ def schedule_export_all_monthly() -> None:
         slack_message("Finished running export_all_monthly")
 
 
-@huey.periodic_task(crontab(hour="*/2"), priority=50)
+@huey.periodic_task(crontab(hour="*/2", minute="45"), priority=50)
 @huey.lock_task("schedule_hourly_tasks")
 def schedule_hourly_tasks() -> None:
     if settings.workers_run:
         export_energy(priority=PriorityType.daily, latest=True)
 
 
-@huey.periodic_task(crontab(hour="*/6"))
+@huey.periodic_task(crontab(hour="*/2", minute="15"))
 @huey.lock_task("schedule_daily_tasks")
 def schedule_daily_tasks() -> None:
     if settings.workers_run:
@@ -99,7 +99,7 @@ def schedule_daily_tasks() -> None:
         slack_message("Finished running energy dailies")
 
 
-@huey.periodic_task(crontab(hour="*/6"), priority=30)
+@huey.periodic_task(crontab(hour="*/2"), priority=30)
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
     if settings.workers_run:
