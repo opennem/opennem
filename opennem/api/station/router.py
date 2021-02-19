@@ -21,12 +21,7 @@ from opennem.db.models.opennem import (
 )
 from opennem.schema.opennem import StationSchema
 
-from .schema import (
-    StationIDList,
-    StationModification,
-    StationRecord,
-    StationUpdateResponse,
-)
+from .schema import StationIDList, StationModification, StationRecord, StationUpdateResponse
 
 router = APIRouter()
 
@@ -38,15 +33,9 @@ router = APIRouter()
 )
 def stations(
     session: Session = Depends(get_database_session),
-    facilities_include: Optional[bool] = Query(
-        False, description="Include facilities in records"
-    ),
-    revisions_include: Optional[bool] = Query(
-        False, description="Include revisions in records"
-    ),
-    history_include: Optional[bool] = Query(
-        False, description="Include history in records"
-    ),
+    facilities_include: Optional[bool] = Query(False, description="Include facilities in records"),
+    revisions_include: Optional[bool] = Query(False, description="Include revisions in records"),
+    history_include: Optional[bool] = Query(False, description="Include history in records"),
     only_approved: Optional[bool] = Query(
         False, description="Only show approved stations not those pending"
     ),
@@ -65,14 +54,12 @@ def stations(
     )
 
     if facilities_include:
-        stations = stations.outerjoin(
-            Facility, Facility.station_id == Station.id
-        ).outerjoin(FuelTech, Facility.fueltech_id == FuelTech.code)
+        stations = stations.outerjoin(Facility, Facility.station_id == Station.id).outerjoin(
+            FuelTech, Facility.fueltech_id == FuelTech.code
+        )
 
     if revisions_include:
-        stations = stations.outerjoin(
-            Revision, Revision.station_id == Station.id
-        )
+        stations = stations.outerjoin(Revision, Revision.station_id == Station.id)
 
     if only_approved:
         stations = stations.filter(Station.approved == True)
@@ -101,12 +88,8 @@ def stations(
 )
 def station_lookup(
     session: Session = Depends(get_database_session),
-    station_code: Optional[str] = Query(
-        None, description="Code of the station to lookup"
-    ),
-    network_code: Optional[str] = Query(
-        None, description="The network code to lookup"
-    ),
+    station_code: Optional[str] = Query(None, description="Code of the station to lookup"),
+    network_code: Optional[str] = Query(None, description="The network code to lookup"),
 ) -> List[StationSchema]:
     if not station_code and not network_code:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -162,15 +145,9 @@ def station(
     engine=Depends(get_database_engine),
     station_code: str = None,
     only_generators: bool = Query(True, description="Show only generators"),
-    power_include: Optional[bool] = Query(
-        False, description="Include last week of power output"
-    ),
-    revisions_include: Optional[bool] = Query(
-        False, description="Include revisions in records"
-    ),
-    history_include: Optional[bool] = Query(
-        False, description="Include history in records"
-    ),
+    power_include: Optional[bool] = Query(False, description="Include last week of power output"),
+    revisions_include: Optional[bool] = Query(False, description="Include revisions in records"),
+    history_include: Optional[bool] = Query(False, description="Include history in records"),
 ) -> StationSchema:
 
     station = (
@@ -181,16 +158,12 @@ def station(
     )
 
     if only_generators:
-        station = station.filter(
-            Facility.dispatch_type == DispatchType.GENERATOR
-        )
+        station = station.filter(Facility.dispatch_type == DispatchType.GENERATOR)
 
     station = station.one_or_none()
 
     if not station:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
 
     if not station.facilities:
         raise HTTPException(
@@ -198,15 +171,14 @@ def station(
             detail="Station has no facilities",
         )
 
-    station.network = station.facilities[0].network
+    station.network = station.facilities[0].network_id
 
     if revisions_include:
         revisions = session.query(Revision).all()
 
         station.revisions = list(
             filter(
-                lambda rev: rev.schema == "station"
-                and rev.code == station.code,
+                lambda rev: rev.schema == "station" and rev.code == station.code,
                 revisions,
             )
         )
@@ -214,8 +186,7 @@ def station(
         for facility in station.facilities:
             facility.revisions = list(
                 filter(
-                    lambda rev: rev.schema == "facility"
-                    and rev.code == facility.code,
+                    lambda rev: rev.schema == "facility" and rev.code == facility.code,
                     revisions,
                 )
             )
@@ -268,9 +239,7 @@ def stations_history(session: Session = Depends(get_database_session)):
     description="""Get history for a station""",
     response_model=StationSchema,
 )
-def station_history(
-    station_code: str, session: Session = Depends(get_database_session)
-):
+def station_history(station_code: str, session: Session = Depends(get_database_session)):
     raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
 
 
@@ -296,9 +265,7 @@ def station_update(
     station = session.query(Station).get(station_id)
 
     if not station:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Station not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
 
     if data.modification == "approve":
 
