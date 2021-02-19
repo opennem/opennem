@@ -7,7 +7,7 @@ from opennem.spiders.nemweb import NemwebSpider
 class NemwebLatestDispatchIS(NemwebSpider):
     name = "au.nem.latest.dispatch_is"
     start_url = "http://nemweb.com.au/Reports/Current/DispatchIS_Reports/"
-    limit = 2
+    limit = 3
 
     # only get most recent
     # limit = 1
