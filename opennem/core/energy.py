@@ -3,6 +3,9 @@
 OpenNEM Energy Tools
 
 Uses an average in 30 minute buckets
+
+@TODO variable bucket sizes
+
 """
 import logging
 from datetime import datetime
@@ -22,8 +25,8 @@ class ScadaResultCompat(BaseConfig):
     generated: Union[float, int, None]
 
 
-def bucket_average_fill(d_ti: pd.Series) -> float:
-    """Gapfill version of bucket averages - will fill out"""
+def _trapezium_integration_variable(d_ti: pd.Series) -> float:
+    """Gapfill version of trap int - will fill out"""
     # Clear no numbers
     d_ti = d_ti.dropna()
 
@@ -52,14 +55,15 @@ def bucket_average_fill(d_ti: pd.Series) -> float:
     return bucket_energy
 
 
-def __trapezium_integration(d_ti: pd.Series) -> Optional[float]:
+def _trapezium_integration(d_ti: pd.Series) -> Optional[float]:
     """ Energy for a 30 minute bucket """
     # Clear no numbers
     d_ti = d_ti.dropna()
 
     # Fall back on average but warn to check data
     if d_ti.count() != 7:
-        return None
+        logger.warn("Series {} has gaps".format(d_ti))
+        return _trapezium_integration_variable(d_ti)
 
     weights = d_ti.values * [1, 2, 2, 2, 2, 2, 1]
 
@@ -92,7 +96,7 @@ def energy_sum(gen_series: List[Dict]) -> pd.DataFrame:
 
     # Multigroup by datetime and facility code
     df = df.groupby([pd.Grouper(freq="30min", offset="5m"), "facility_code"]).eoi_quantity.apply(
-        bucket_average_fill
+        _trapezium_integration
     )
 
     # Reset back to a simple frame
