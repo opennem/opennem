@@ -14,7 +14,7 @@ select
     max(fs.energy) as energy,
     case when avg(bs.price_dispatch) >= 0  and min(fs.energy) >= 0 then
         coalesce(
-            max(fs.energy) * avg(bs.price_dispatch),
+            max(fs.energy) * max(bs.price_dispatch),
             0.0
         )
     else NULL
