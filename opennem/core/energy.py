@@ -92,7 +92,7 @@ def energy_sum(gen_series: List[Dict]) -> pd.DataFrame:
     df.eoi_quantity = pd.to_numeric(df.eoi_quantity)
 
     # Index by datetime
-    df = df.set_index(df.trading_interval)
+    df = df.set_index(["trading_interval", "network_id", "facility_code"])
 
     # Multigroup by datetime and facility code
     df = df.groupby([pd.Grouper(freq="30min", offset="5m"), "facility_code"]).eoi_quantity.apply(
