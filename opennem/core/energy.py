@@ -60,6 +60,10 @@ def _trapezium_integration(d_ti: pd.Series) -> Optional[float]:
     # Clear no numbers
     d_ti = d_ti.dropna()
 
+    # Early return
+    if d_ti.sum() == 0:
+        return 0.0
+
     # Fall back on average but warn to check data
     if d_ti.count() != 7:
         logger.warn("Series {} has gaps".format(d_ti))
@@ -133,9 +137,6 @@ def energy_sum(gen_series: List[Dict]) -> pd.DataFrame:
     df = df.set_index(["trading_interval", "network_id", "facility_code"])
 
     # Multigroup by datetime and facility code
-    # df = df.groupby([pd.Grouper(freq="30min", offset="5m"), "facility_code"]).eoi_quantity.apply(
-    #     _trapezium_integration
-    # )
     df = _energy_aggregate(df)
 
     # Reset back to a simple frame
