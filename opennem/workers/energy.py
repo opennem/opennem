@@ -214,7 +214,8 @@ def run_energy_update_archive(
                 tzinfo=FixedOffset(600),
             )
 
-        date_max = date_max + timedelta(minutes=5)
+        date_min = date_min - timedelta(minutes=10)
+        date_max = date_max + timedelta(minutes=10)
 
         if date_max > date_range.end:
             date_max = date_range.end
@@ -242,7 +243,7 @@ def run_energy_update_yesterday(
     )
 
     date_min = today_midnight - timedelta(days=1)
-    date_max = date_min + timedelta(days=1, minutes=5)
+    date_max = date_min + timedelta(days=1, minutes=10)
 
     regions = [i.code for i in get_network_regions(network)]
 
@@ -260,4 +261,5 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_yesterday()
+    run_energy_update_archive(year=2021, regions=["NSW1"], fueltech_id="coal_black")
+    # run_energy_update_yesterday()
