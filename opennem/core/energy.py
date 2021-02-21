@@ -55,7 +55,7 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> float:
     return bucket_energy
 
 
-def _trapezium_integration(d_ti: pd.Series) -> float:
+def _trapezium_integration(d_ti: pd.Series, gapfill: bool = False) -> Optional[float]:
     """ Energy for a 30 minute bucket """
     # Clear no numbers
     d_ti = d_ti.dropna()
@@ -67,7 +67,11 @@ def _trapezium_integration(d_ti: pd.Series) -> float:
     # Fall back on average but warn to check data
     if d_ti.count() != 7:
         logger.warn("Series {} has gaps".format(d_ti))
-        return _trapezium_integration_variable(d_ti)
+
+        if gapfill:
+            return _trapezium_integration_variable(d_ti)
+
+        return None
 
     weights = d_ti.values * [1, 2, 2, 2, 2, 2, 1]
 
