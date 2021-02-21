@@ -55,7 +55,7 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> float:
     return bucket_energy
 
 
-def _trapezium_integration(d_ti: pd.Series) -> Optional[float]:
+def _trapezium_integration(d_ti: pd.Series) -> float:
     """ Energy for a 30 minute bucket """
     # Clear no numbers
     d_ti = d_ti.dropna()
@@ -71,7 +71,7 @@ def _trapezium_integration(d_ti: pd.Series) -> Optional[float]:
 
     weights = d_ti.values * [1, 2, 2, 2, 2, 2, 1]
 
-    weights_sum = weights.sum()
+    weights_sum: float = weights.sum()
 
     bucket_energy = 0.5 * weights_sum / 12
 
