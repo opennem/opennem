@@ -9,7 +9,7 @@ Uses an average in 30 minute buckets
 """
 import logging
 from datetime import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
 from pytz import FixedOffset
@@ -74,6 +74,44 @@ def _trapezium_integration(d_ti: pd.Series) -> Optional[float]:
     return bucket_energy
 
 
+def _energy_aggregate(df: pd.DataFrame) -> pd.DataFrame:
+    """Energy aggregate that buckets into 30min intervals
+    but takes edges in for 7 total values"""
+    in_cap = {}
+    capture: Dict[str, Any] = {}
+    values = []
+    dt: Optional[datetime] = None
+
+    for index, value in df.iterrows():
+        i, network_id, duid = index
+
+        if duid not in capture:
+            capture[duid] = []
+            in_cap[duid] = True
+
+        if in_cap[duid]:
+            capture[duid].append(value.eoi_quantity)
+
+            if len(capture[duid]) == 7 and dt:
+                energy = _trapezium_integration(pd.Series(capture[duid]))
+                values.append((dt, network_id, duid, energy))
+
+            in_cap[duid] = False
+            capture[duid] = []
+
+        if i.minute in [5, 35]:
+            dt = i
+            capture[duid].append(value.eoi_quantity)
+            in_cap[duid] = True
+
+        else:
+            capture[duid].append(value.eoi_quantity)
+
+    return pd.DataFrame(
+        values, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"]
+    )
+
+
 def energy_sum(gen_series: List[Dict]) -> pd.DataFrame:
     """Takes the energy sum for a series of raw duid intervals
     and returns a fresh dataframe to be imported"""
@@ -95,9 +133,10 @@ def energy_sum(gen_series: List[Dict]) -> pd.DataFrame:
     df = df.set_index(["trading_interval", "network_id", "facility_code"])
 
     # Multigroup by datetime and facility code
-    df = df.groupby([pd.Grouper(freq="30min", offset="5m"), "facility_code"]).eoi_quantity.apply(
-        _trapezium_integration
-    )
+    # df = df.groupby([pd.Grouper(freq="30min", offset="5m"), "facility_code"]).eoi_quantity.apply(
+    #     _trapezium_integration
+    # )
+    df = _energy_aggregate(df)
 
     # Reset back to a simple frame
     df = df.reset_index()
@@ -110,8 +149,6 @@ def energy_sum(gen_series: List[Dict]) -> pd.DataFrame:
     df.trading_interval = df.apply(
         lambda x: pd.Timestamp(x.trading_interval, tz=FixedOffset(600)), axis=1
     )
-
-    df["network_id"] = "NEM"
 
     # filter out empties
     df = df[pd.isnull(df.eoi_quantity) == False]
