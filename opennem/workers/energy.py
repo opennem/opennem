@@ -50,8 +50,6 @@ def get_generated(
         and fs.trading_interval >= '{date_min}'
         and fs.trading_interval <= '{date_max}'
         and fs.is_forecast is False
-        and f.fueltech_id not in ('solar_rooftop')
-        and f.interconnector is False
         {fueltech_match}
     order by fs.trading_interval asc, 2;
     """
