@@ -21,6 +21,23 @@ class NemwebLatestTradingIS(NemwebSpider):
     )
 
 
+class NemwebTodayTradingIS(NemwebSpider):
+    name = "au.nem.day.trading_is"
+    start_url = "http://nemweb.com.au/Reports/Current/TradingIS_Reports/"
+    limit = 12 * 24
+
+    # only get most recent
+    # limit = 1
+
+    pipelines_extra = set(
+        [
+            NemwebUnitScadaOpenNEMStorePipeline,
+            # BulkInsertPipeline,
+            # RecordsToCSVPipeline,
+        ]
+    )
+
+
 class NemwebCurrentTradingIS(NemwebSpider):
     name = "au.nem.current.trading_is"
     start_url = "http://nemweb.com.au/Reports/Current/TradingIS_Reports/"
