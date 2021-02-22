@@ -15,7 +15,7 @@ from opennem.workers.energy import run_energy_update_archive
 logger = logging.getLogger("opennem.worker.energy_multi")
 
 CPU_COUNT = multiprocessing.cpu_count()
-WORKER_COUNT = int(CPU_COUNT / 2)
+WORKER_COUNT = int(CPU_COUNT / 3)
 YEAR_EARLIEST = 2020
 CUR_MONTH = datetime.now().month
 
