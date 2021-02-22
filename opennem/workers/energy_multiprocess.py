@@ -19,7 +19,7 @@ YEAR_EARLIEST = 2020
 CUR_MONTH = datetime.now().month
 
 
-def _build_args_list() -> List[Tuple[int, str, str]]:
+def _build_args_list() -> List[Tuple[int, int, str]]:
     args_list = []
 
     network = NetworkNEM
