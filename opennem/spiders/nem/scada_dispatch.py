@@ -18,6 +18,20 @@ class NemwebLatestDispatchScada(NemwebSpider):
     )
 
 
+class NemwebDayDispatchScada(NemwebSpider):
+    name = "au.nem.day.dispatch_scada"
+    start_url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
+    limit = 12 * 24
+
+    pipelines_extra = set(
+        [
+            NemwebUnitScadaOpenNEMStorePipeline,
+            BulkInsertPipeline,
+            RecordsToCSVPipeline,
+        ]
+    )
+
+
 class NemwebCurrentDispatchScada(NemwebSpider):
     name = "au.nem.current.dispatch_scada"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
