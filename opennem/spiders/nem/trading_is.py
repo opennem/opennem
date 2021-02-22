@@ -9,14 +9,9 @@ class NemwebLatestTradingIS(NemwebSpider):
     start_url = "http://nemweb.com.au/Reports/Current/TradingIS_Reports/"
     limit = 3
 
-    # only get most recent
-    # limit = 1
-
     pipelines_extra = set(
         [
             NemwebUnitScadaOpenNEMStorePipeline,
-            # BulkInsertPipeline,
-            # RecordsToCSVPipeline,
         ]
     )
 
@@ -26,14 +21,9 @@ class NemwebTodayTradingIS(NemwebSpider):
     start_url = "http://nemweb.com.au/Reports/Current/TradingIS_Reports/"
     limit = 12 * 24
 
-    # only get most recent
-    # limit = 1
-
     pipelines_extra = set(
         [
             NemwebUnitScadaOpenNEMStorePipeline,
-            # BulkInsertPipeline,
-            # RecordsToCSVPipeline,
         ]
     )
 
@@ -46,22 +36,20 @@ class NemwebCurrentTradingIS(NemwebSpider):
     pipelines_extra = set(
         [
             NemwebUnitScadaOpenNEMStorePipeline,
-            # BulkInsertPipeline,
-            # RecordsToCSVPipeline,
         ]
     )
 
 
 class NemwebArchiveTradingIS(NemwebSpider):
-    name = "au.nem.archive.trading_is"
+    # This spider is a duper of most of current
+
+    # name = "au.nem.archive.trading_is"
     start_url = "http://nemweb.com.au/Reports/Archive/TradingIS_Reports/"
     limit = 0
 
     pipelines_extra = set(
         [
             NemwebUnitScadaOpenNEMStorePipeline,
-            # BulkInsertPipeline,
-            # RecordsToCSVPipeline,
         ]
     )
 
