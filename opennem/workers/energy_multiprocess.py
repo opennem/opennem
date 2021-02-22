@@ -5,8 +5,7 @@ Multiprocessor for energy workers
 import logging
 import multiprocessing
 from datetime import datetime
-from functools import partial
-from typing import Any, Dict, List, Tuple
+from typing import List, Tuple
 
 from opennem.diff.versions import CUR_YEAR, get_network_regions
 from opennem.schema.network import NetworkNEM
@@ -20,7 +19,7 @@ YEAR_EARLIEST = 2020
 CUR_MONTH = datetime.now().month
 
 
-def _build_args_list() -> List[List]:
+def _build_args_list() -> List[Tuple[int, str, str]]:
     args_list = []
 
     network = NetworkNEM
@@ -32,14 +31,16 @@ def _build_args_list() -> List[List]:
                 if year == CUR_YEAR and month > CUR_MONTH:
                     continue
 
-                args_list.append((year, [month], [region]))
+                args_list.append((year, month, region))
 
     return args_list
 
 
-def _worker_wrap(year, months, regions):
+def _worker_wrap(year, months, region):
     """Map to named args"""
-    return run_energy_update_archive(year=year, months=months, regions=regions)
+    return run_energy_update_archive(
+        year=year, months=[months], regions=[region], fueltech_id="exports"
+    )
 
 
 def energy_process() -> None:
