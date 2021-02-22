@@ -23,6 +23,23 @@ class NemwebLatestRooftopActual(NemwebSpider):
     )
 
 
+class NemwebDayRooftopActual(NemwebSpider):
+    name = "au.nem.day.rooftop"
+    start_url = "http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/"
+    limit = 2 * 24
+
+    # Ignore sat
+    filename_filter = re.compile(r".*_MEASUREMENT_.*")
+
+    pipelines_extra = set(
+        [
+            NemwebUnitScadaOpenNEMStorePipeline,
+            BulkInsertPipeline,
+            RecordsToCSVPipeline,
+        ]
+    )
+
+
 class NemwebCurrentRooftopActual(NemwebSpider):
     name = "au.nem.current.rooftop"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/"

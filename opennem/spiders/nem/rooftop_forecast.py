@@ -20,6 +20,20 @@ class NemwebLatestRooftopForecast(NemwebSpider):
     )
 
 
+class NemwebDayRooftopForecast(NemwebSpider):
+    name = "au.nem.day.rooftop_forecast"
+    start_url = "http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/"
+    limit = 2 * 24
+
+    pipelines_extra = set(
+        [
+            NemwebUnitScadaOpenNEMStorePipeline,
+            BulkInsertPipeline,
+            RecordsToCSVPipeline,
+        ]
+    )
+
+
 class NemwebCurrentRooftopForecast(NemwebSpider):
     name = "au.nem.current.rooftop_forecast"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/"
