@@ -19,7 +19,8 @@ from opennem.utils.interval import get_human_interval
 
 logger = logging.getLogger("opennem.workers.energy")
 
-DRY_RUN = True
+# For debugging queries
+DRY_RUN = False
 
 
 def get_generated(
@@ -86,12 +87,12 @@ def get_generated(
     return results
 
 
-def insert_energies(results: List[Dict]) -> int:
+def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
 
     # Get the energy sums as a dataframe
-    esdf = energy_sum(results)
+    esdf = energy_sum(results, network=network)
 
     # Add metadata
     esdf["created_by"] = "opennem.worker.energy"
@@ -163,7 +164,7 @@ def run_energy_calc(
         if len(results) < 1:
             raise Exception("No results from get_generated query")
 
-        num_records = insert_energies(results)
+        num_records = insert_energies(results, network=network)
         logger.info("Done {} for {} => {}".format(region, date_min, date_max))
     except Exception as e:
         logger.error(e)

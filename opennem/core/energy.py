@@ -12,9 +12,9 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
-from pytz import FixedOffset
 
 from opennem.schema.core import BaseConfig
+from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.compat.energy")
 
@@ -82,13 +82,17 @@ def _trapezium_integration(d_ti: pd.Series, gapfill: bool = False) -> Optional[f
     return bucket_energy
 
 
-def _energy_aggregate(df: pd.DataFrame) -> pd.DataFrame:
+def _energy_aggregate(df: pd.DataFrame, network: NetworkSchema) -> pd.DataFrame:
     """Energy aggregate that buckets into 30min intervals
     but takes edges in for 7 total values"""
     in_cap = {}
     capture: Dict[str, Any] = {}
     values = []
     dt: Optional[datetime] = None
+    reading_stops: List[int] = [0, 30]
+
+    if network.reading_shift:
+        reading_stops = [i + network.reading_shift for i in reading_stops]
 
     for index, value in df.iterrows():
         i, network_id, duid = index
@@ -107,7 +111,7 @@ def _energy_aggregate(df: pd.DataFrame) -> pd.DataFrame:
             in_cap[duid] = False
             capture[duid] = []
 
-        if i.minute in [5, 35]:
+        if i.minute in reading_stops:
             dt = i
             capture[duid].append(value.eoi_quantity)
             in_cap[duid] = True
@@ -120,7 +124,7 @@ def _energy_aggregate(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def energy_sum(gen_series: List[Dict]) -> pd.DataFrame:
+def energy_sum(gen_series: List[Dict], network: NetworkSchema) -> pd.DataFrame:
     """Takes the energy sum for a series of raw duid intervals
     and returns a fresh dataframe to be imported"""
     df = pd.DataFrame(
@@ -141,18 +145,19 @@ def energy_sum(gen_series: List[Dict]) -> pd.DataFrame:
     df = df.set_index(["trading_interval", "network_id", "facility_code"])
 
     # Multigroup by datetime and facility code
-    df = _energy_aggregate(df)
+    df = _energy_aggregate(df, network=network)
 
     # Reset back to a simple frame
     df = df.reset_index()
 
     # Shift back 5 minutes to even up into 30 minute bkocks
-    df.trading_interval = df.trading_interval - pd.Timedelta(minutes=5)
+    if network.reading_shift:
+        df.trading_interval = df.trading_interval - pd.Timedelta(minutes=network.reading_shift)
 
     # Add back the timezone for NEM
     # We use a fixed offset so need to loop
     df.trading_interval = df.apply(
-        lambda x: pd.Timestamp(x.trading_interval, tz=FixedOffset(600)), axis=1
+        lambda x: pd.Timestamp(x.trading_interval, tz=network.get_fixed_offset()), axis=1
     )
 
     # filter out empties
