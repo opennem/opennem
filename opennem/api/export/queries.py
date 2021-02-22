@@ -110,7 +110,7 @@ def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> s
         bs.trading_interval <= '{date_end}' and
         bs.trading_interval >= '{date_start}'
     group by 1, 2
-    order by trading_interval asc;
+    order by trading_interval desc;
 
 
     """.format(
@@ -229,7 +229,7 @@ def network_demand_query(
         1=1
     group by
         1, {groups_additional}
-    order by 1 asc;
+    order by 1 desc;
     """
 
     group_keys = ["network_id"]
@@ -538,7 +538,7 @@ def energy_network_flow_query(
             and ei.network_region='{network_region}'
     ) as t
     group by 1
-    order by 1 asc
+    order by 1 desc
     """
 
     date_range = time_series.get_range()
