@@ -50,7 +50,7 @@ def get_generated(
         and fs.trading_interval >= '{date_min}'
         and fs.trading_interval <= '{date_max}'
         and fs.is_forecast is False
-        and f.fueltech_id not in ('solar_rooftop', 'imports', 'exports')
+        and f.fueltech_id not in ('solar_rooftop')
         and f.interconnector is False
         {fueltech_match}
     order by fs.trading_interval asc, 2;
@@ -255,5 +255,5 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    # run_energy_update_yesterday()
-    run_energy_update_archive(year=2019, regions=["NSW1"], fueltech_id="coal_black")
+    run_energy_update_yesterday()
+    # run_energy_update_archive(year=2021, regions=["NSW1"], fueltech_id="coal_black")
