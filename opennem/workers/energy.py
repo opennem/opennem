@@ -15,10 +15,11 @@ from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.utils.interval import get_human_interval
 
 logger = logging.getLogger("opennem.workers.energy")
 
-DRY_RUN = False
+DRY_RUN = True
 
 
 def get_generated(
@@ -183,7 +184,7 @@ def run_energy_update_archive(
     date_range = get_date_range(network=network)
 
     if not months:
-        months = list(range(1, 12))
+        months = list(range(1, 13))
 
     if not regions:
         regions = [i.code for i in get_network_regions(network)]
@@ -193,15 +194,7 @@ def run_energy_update_archive(
             year=year, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
         )
 
-        date_max = datetime(
-            year=year,
-            month=month + 1,
-            day=1,
-            hour=0,
-            minute=0,
-            second=0,
-            tzinfo=FixedOffset(600),
-        )
+        date_max = date_min + get_human_interval("1M")
 
         if days:
             date_max = datetime(
@@ -261,5 +254,5 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_archive(year=2021, regions=["NSW1"], fueltech_id="coal_black")
     # run_energy_update_yesterday()
+    run_energy_update_archive(year=2019, regions=["NSW1"], fueltech_id="coal_black")
