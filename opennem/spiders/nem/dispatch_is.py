@@ -9,14 +9,21 @@ class NemwebLatestDispatchIS(NemwebSpider):
     start_url = "http://nemweb.com.au/Reports/Current/DispatchIS_Reports/"
     limit = 3
 
-    # only get most recent
-    # limit = 1
+    pipelines_extra = set(
+        [
+            NemwebUnitScadaOpenNEMStorePipeline,
+        ]
+    )
+
+
+class NemwebDayDispatchIS(NemwebSpider):
+    name = "au.nem.day.dispatch_is"
+    start_url = "http://nemweb.com.au/Reports/Current/DispatchIS_Reports/"
+    limit = 12 * 24
 
     pipelines_extra = set(
         [
             NemwebUnitScadaOpenNEMStorePipeline,
-            # BulkInsertPipeline,
-            # RecordsToCSVPipeline,
         ]
     )
 
