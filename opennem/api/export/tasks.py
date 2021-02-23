@@ -426,6 +426,33 @@ def export_flows() -> None:
         write_output(f"v3/stats/au/{interchange_stat.network.code}/flows/7d.json", stat_set)
 
 
+def export_electricitymap() -> None:
+    date_range = get_scada_range(network=NetworkNEM)
+
+    interchange_stat = StatExport(
+        stat_type=StatType.power,
+        priority=PriorityType.live,
+        country="au",
+        date_range=date_range,
+        network=NetworkNEM,
+        interval=NetworkNEM.get_interval(),
+        period=human_to_period("1h"),
+    )
+
+    time_series = TimeSeries(
+        start=date_range.start,
+        end=date_range.end,
+        network=interchange_stat.network,
+        interval=interchange_stat.interval,
+        period=interchange_stat.period,
+    )
+
+    stat_set = power_flows_network_week(time_series=time_series)
+
+    if stat_set:
+        write_output(f"v3/clients/em/latest.json", stat_set)
+
+
 def export_metadata() -> bool:
     """
     Export metadata
@@ -448,8 +475,9 @@ def export_metadata() -> bool:
 
 
 if __name__ == "__main__":
-    export_power(priority=PriorityType.live)
-    export_energy()
+    export_flows()
+    # export_power(priority=PriorityType.live)
+    # export_energy()
     # export_all_daily()
     # export_all_monthly()
     # export_energy()
