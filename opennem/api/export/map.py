@@ -38,6 +38,7 @@ STATS_FOLDER = "stats"
 class StatType(Enum):
     power = "power"
     energy = "energy"
+    interchange = "interchange"
     gov = "gov"
 
 
