@@ -14,6 +14,7 @@ from opennem.api.export.queries import (
     price_network_query,
     weather_observation_query,
 )
+from opennem.api.facility.capacities import get_facility_capacities
 from opennem.api.stats.controllers import stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet, RegionFlowEmissionsResult
 from opennem.api.time import human_to_interval, human_to_period
@@ -273,6 +274,7 @@ def power_week(
     time_series: TimeSeries,
     network_region_code: str = None,
     networks_query: Optional[List[NetworkSchema]] = None,
+    include_capacities: bool = False,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
@@ -307,6 +309,15 @@ def power_week(
 
     if not result:
         raise Exception("No results")
+
+    if include_capacities and network_region_code:
+        region_fueltech_capacities = get_facility_capacities(
+            time_series.network, network_region_code
+        )
+
+        for ft in result.data:
+            if ft.fuel_tech in region_fueltech_capacities:
+                ft.x_capacity_at_present = region_fueltech_capacities[ft.fuel_tech]
 
     # price
 
