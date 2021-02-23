@@ -437,7 +437,7 @@ def export_electricitymap() -> None:
         date_range=date_range,
         network=NetworkNEM,
         interval=NetworkNEM.get_interval(),
-        period=human_to_period("3h"),
+        period=human_to_period("1d"),
     )
 
     time_series = TimeSeries(
