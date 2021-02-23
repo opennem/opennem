@@ -26,7 +26,7 @@ def facility_capacity_network_region_fueltech_query(
     group by 1, 2, 3
     order by 1, 2, 3;
     """.format(
-        network_id=network.code
+        network_id=network.code, network_region=network_region
     )
 
     return dedent(query)
