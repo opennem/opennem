@@ -124,7 +124,9 @@ def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> s
     return dedent(___query)
 
 
-def region_flow_power(time_series: TimeSeries, network_region: Optional[str]) -> str:
+def interconnector_flow_network_regions_query(
+    time_series: TimeSeries, network_region: Optional[str] = None
+) -> str:
     """ """
 
     __query = """

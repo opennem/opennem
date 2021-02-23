@@ -6,6 +6,7 @@ from opennem.api.export.queries import (
     energy_network_flow_query,
     energy_network_fueltech_query,
     energy_network_interconnector_emissions_query,
+    interconnector_flow_network_regions_query,
     interconnector_power_flow,
     network_demand_query,
     power_network_fueltech_query,
@@ -186,6 +187,43 @@ def power_flows_region_week(
     )
 
     result.append_set(result_exports)
+
+    return result
+
+
+def power_flows_network_week(
+    time_series: TimeSeries,
+) -> Optional[OpennemDataSet]:
+    engine = get_database_engine()
+
+    query = interconnector_flow_network_regions_query(time_series=time_series)
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    if len(row) < 1:
+        raise Exception("No results from query: {}".format(query))
+
+    imports = [
+        DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None)
+        for i in row
+    ]
+
+    result = stats_factory(
+        imports,
+        # code=network_region_code or network.code,
+        network=time_series.network,
+        period=human_to_period("7d"),
+        interval=human_to_interval("5m"),
+        units=get_unit("power"),
+        # fueltech_group=True,
+        group_field="flow",
+        include_group_code=True,
+    )
+
+    if not result:
+        raise Exception("No results")
 
     return result
 
