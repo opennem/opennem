@@ -10,6 +10,7 @@ from opennem.api.export.tasks import (
     export_all_daily,
     export_all_monthly,
     export_energy,
+    export_flows,
     export_metadata,
     export_power,
 )
@@ -46,6 +47,7 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 def schedule_live_tasks() -> None:
     if settings.workers_run:
         export_power(priority=PriorityType.live)
+        export_flows()
 
 
 @huey.periodic_task(crontab(hour="*/12"))
