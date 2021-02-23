@@ -11,6 +11,12 @@
     "unit": "GW"
   },
   {
+    "name": "flow_mega",
+    "name_alias": "flow",
+    "unit_type": "flow",
+    "unit": "MW"
+  },
+  {
     "name": "demand_mega",
     "name_alias": "demand",
     "unit_type": "demand",
