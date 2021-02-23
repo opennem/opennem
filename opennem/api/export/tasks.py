@@ -436,7 +436,7 @@ def export_electricitymap() -> None:
         date_range=date_range,
         network=NetworkNEM,
         interval=NetworkNEM.get_interval(),
-        period=human_to_period("1h"),
+        period=human_to_period("3h"),
     )
 
     time_series = TimeSeries(
@@ -449,8 +449,18 @@ def export_electricitymap() -> None:
 
     stat_set = power_flows_network_week(time_series=time_series)
 
-    if stat_set:
-        write_output(f"v3/clients/em/latest.json", stat_set)
+    if not stat_set:
+        raise Exception("No flow results for electricitymap export")
+
+    for region in ["NSW1"]:
+        power_set = power_week(time_series, region, include_capacities=True)
+
+        if power_set:
+            stat_set.append_set(power_set)
+
+    stat_set.type = "custom"
+
+    write_output(f"v3/clients/em/latest.json", stat_set)
 
 
 def export_metadata() -> bool:
@@ -475,7 +485,8 @@ def export_metadata() -> bool:
 
 
 if __name__ == "__main__":
-    export_flows()
+    export_electricitymap()
+    # export_flows()
     # export_power(priority=PriorityType.live)
     # export_energy()
     # export_all_daily()
