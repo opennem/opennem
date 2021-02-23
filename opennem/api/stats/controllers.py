@@ -168,14 +168,18 @@ def stats_factory(
                 group_fields.append(network.country.lower())
                 group_fields.append(network.code.lower())
 
-            if region and (region.lower() != network.code.lower()):
-                group_fields.append(region.lower())
+            if region:
+                if region.lower() != network.code.lower():
+                    group_fields.append(region.lower())
 
             group_fields = group_fields + [
                 units.unit_type,
-                group_code if group_code and include_group_code else None,
                 # group_field,
             ]
+
+            if group_code and include_group_code:
+                group_fields.append(group_code)
+                group_fields.append(group_field)
 
             data.id = ".".join([f for f in group_fields if f])
             data.type = units.unit_type
