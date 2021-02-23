@@ -11,8 +11,8 @@
     "unit": "GW"
   },
   {
-    "name": "flow_mega",
-    "name_alias": "flow",
+    "name": "regional_trade",
+    "name_alias": "regional_trade",
     "unit_type": "flow",
     "unit": "MW"
   },
