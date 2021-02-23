@@ -5,6 +5,11 @@
     "period_sql": "1 hour"
   },
   {
+    "period": 180,
+    "period_human": "3h",
+    "period_sql": "3 hour"
+  },
+  {
     "period": 1440,
     "period_human": "1d",
     "period_sql": "1 days"
