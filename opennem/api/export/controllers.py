@@ -135,7 +135,7 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
     return result
 
 
-def power_flows_week(
+def power_flows_region_week(
     time_series: TimeSeries,
     network_region_code: str,
 ) -> Optional[OpennemDataSet]:

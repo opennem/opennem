@@ -18,7 +18,8 @@ from opennem.api.export.controllers import (
     energy_interconnector_emissions_region_daily,
     energy_interconnector_region_daily,
     gov_stats_cpi,
-    power_flows_week,
+    power_flows_network_week,
+    power_flows_region_week,
     power_week,
     weather_daily,
 )
@@ -109,7 +110,7 @@ def export_power(
         stat_set.append_set(demand_set)
 
         if power_stat.network_region:
-            flow_set = power_flows_week(
+            flow_set = power_flows_region_week(
                 time_series=time_series,
                 network_region_code=power_stat.network_region,
             )
