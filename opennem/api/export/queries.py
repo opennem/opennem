@@ -124,6 +124,47 @@ def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> s
     return dedent(___query)
 
 
+def region_flow_power(time_series: TimeSeries, network_region: Optional[str]) -> str:
+    """ """
+
+    __query = """
+    select
+        fs.trading_interval at time zone '{timezone}' as trading_interval,
+        f.network_region || '->' || f.interconnector_region_to as flow_region,
+        f.network_region,
+        f.interconnector_region_to,
+        sum(fs.generated) as flow_power
+    from facility_scada fs
+    left join facility f on fs.facility_code = f.code
+    where
+        f.interconnector is True
+        and f.network_id='{network_id}'
+        and fs.trading_interval <= '{date_end}'
+        and fs.trading_interval >= '{date_start}'
+        {region_query}
+    group by 1, 2, 3, 4
+    order by
+        1 desc,
+        2 asc
+    limit 100;
+    """
+
+    region_query = ""
+
+    if network_region:
+        region_query = f"and f.network_region='{network_region}'"
+
+    query = __query.format(
+        timezone=time_series.network.timezone_database,
+        network_id=time_series.network.code,
+        region_query=region_query,
+        date_start=time_series.get_range().start,
+        date_end=time_series.get_range().end,
+    )
+
+    return dedent(query)
+
+
 def country_stats_query(stat_type: StatTypes, country: str = "au") -> TextClause:
     __query = sql.text(
         dedent(
