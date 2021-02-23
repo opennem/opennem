@@ -454,7 +454,9 @@ def export_electricitymap() -> None:
         raise Exception("No flow results for electricitymap export")
 
     for region in get_network_regions(NetworkNEM):
-        power_set = power_week(time_series, region.code, include_capacities=True)
+        power_set = power_week(
+            time_series, region.code, include_capacities=True, include_code=False
+        )
 
         if power_set:
             stat_set.append_set(power_set)
@@ -472,7 +474,11 @@ def export_electricitymap() -> None:
     )
 
     power_set = power_week(
-        time_series, "WEM", include_capacities=True, networks_query=[NetworkWEM, NetworkAPVI]
+        time_series,
+        "WEM",
+        include_capacities=True,
+        networks_query=[NetworkWEM, NetworkAPVI],
+        include_code=False,
     )
 
     if power_set:
