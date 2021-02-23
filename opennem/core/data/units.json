@@ -13,7 +13,7 @@
   {
     "name": "regional_trade",
     "name_alias": "regional_trade",
-    "unit_type": "flow",
+    "unit_type": "regional_trade",
     "unit": "MW"
   },
   {
