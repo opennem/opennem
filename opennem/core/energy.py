@@ -105,7 +105,7 @@ def _energy_aggregate(df: pd.DataFrame, network: NetworkSchema) -> pd.DataFrame:
             capture[duid].append(value.eoi_quantity)
 
             if len(capture[duid]) == 7 and dt:
-                energy = _trapezium_integration(pd.Series(capture[duid]))
+                energy = _trapezium_integration(pd.Series(capture[duid]), True)
                 values.append((dt, network_id, duid, energy))
 
             in_cap[duid] = False
