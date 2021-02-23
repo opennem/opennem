@@ -168,7 +168,7 @@ def stats_factory(
                 group_fields.append(network.country.lower())
                 group_fields.append(network.code.lower())
 
-            if region:
+            if region and (region.lower() != network.code.lower()):
                 group_fields.append(region.lower())
 
             group_fields = group_fields + [
@@ -193,7 +193,7 @@ def stats_factory(
             if network:
                 _id_list.append(network.code.lower())
 
-            if region:
+            if region and (region.lower() != network.code.lower()):
                 _id_list.append(region.lower())
 
             if group_code:
