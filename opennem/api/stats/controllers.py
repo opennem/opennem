@@ -50,6 +50,7 @@ def stats_factory(
     group_field: Optional[str] = None,
     data_id: Optional[str] = None,
     localize: Optional[bool] = True,
+    include_code: Optional[bool] = True,
 ) -> Optional[OpennemDataSet]:
     """
     Takes a list of data query results and returns OpennemDataSets
@@ -149,7 +150,7 @@ def stats_factory(
                 # support it
                 network.country if network else None,
                 network.code.lower() if network else None,
-                region.lower() if region else None,
+                region.lower() if region and region.lower() != network.code.lower() else None,
                 "fuel_tech",
                 group_code,
                 units.unit_type,
@@ -229,6 +230,9 @@ def stats_factory(
 
         if region:
             code = region
+
+    if not include_code:
+        code = None
 
     stat_set = OpennemDataSet(
         type=units.unit_type,
