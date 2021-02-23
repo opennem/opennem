@@ -217,9 +217,9 @@ def power_flows_network_week(
         network=time_series.network,
         period=time_series.period,
         interval=time_series.interval,
-        units=get_unit("flow"),
+        units=get_unit("regional_trade"),
         # fueltech_group=True,
-        group_field="flow",
+        group_field="power",
         include_group_code=True,
     )
 
