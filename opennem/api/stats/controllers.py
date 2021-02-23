@@ -175,10 +175,11 @@ def stats_factory(
                 if region.lower() != network.code.lower():
                     group_fields.append(region.lower())
 
-            group_fields = group_fields + [
-                units.unit_type,
-                # group_field,
-            ]
+            if units.name_alias:
+                group_fields.append(units.name_alias)
+
+            elif units.unit_type:
+                group_fields.append(units.unit_type)
 
             if group_code and include_group_code:
                 group_fields.append(group_code)
