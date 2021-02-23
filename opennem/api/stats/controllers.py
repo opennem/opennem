@@ -149,7 +149,7 @@ def stats_factory(
             data_comps = [
                 # @NOTE disable for now since FE doesn't
                 # support it
-                # network.country if network else None,
+                network.country if network else None,
                 network.code.lower() if network else None,
                 region.lower() if region else None,
                 "fuel_tech",
@@ -167,6 +167,7 @@ def stats_factory(
             # setattr(data, group_field, group_code)
 
             if network:
+                group_fields.append(network.country.lower())
                 group_fields.append(network.code.lower())
 
             if region:
@@ -174,7 +175,7 @@ def stats_factory(
 
             group_fields = group_fields + [
                 units.unit_type,
-                group_code if include_group_code else None,
+                group_code if group_code and include_group_code else None,
                 # group_field,
             ]
 
