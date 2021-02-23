@@ -143,6 +143,8 @@ class OpennemData(BaseConfig):
     history: OpennemDataHistory
     forecast: Optional[OpennemDataHistory]
 
+    _capacity_at_present: Optional[str]
+
     # validators
 
     # conveniance methods
