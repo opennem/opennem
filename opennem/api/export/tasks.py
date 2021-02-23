@@ -32,6 +32,7 @@ from opennem.core.network_region_bom_station_map import get_network_region_weath
 from opennem.core.networks import network_from_network_code
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
+from opennem.diff.versions import get_network_regions
 from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.utils.version import get_version
@@ -452,11 +453,30 @@ def export_electricitymap() -> None:
     if not stat_set:
         raise Exception("No flow results for electricitymap export")
 
-    for region in ["NSW1"]:
-        power_set = power_week(time_series, region, include_capacities=True)
+    for region in get_network_regions(NetworkNEM):
+        power_set = power_week(time_series, region.code, include_capacities=True)
 
         if power_set:
             stat_set.append_set(power_set)
+
+    date_range = get_scada_range(network=NetworkWEM)
+
+    # WEM custom
+    time_series = TimeSeries(
+        start=date_range.start,
+        end=date_range.end,
+        network=NetworkWEM,
+        networks=[NetworkWEM, NetworkAPVI],
+        interval=NetworkWEM.get_interval(),
+        period=interchange_stat.period,
+    )
+
+    power_set = power_week(
+        time_series, "WEM", include_capacities=True, networks_query=[NetworkWEM, NetworkAPVI]
+    )
+
+    if power_set:
+        stat_set.append_set(power_set)
 
     stat_set.type = "custom"
 
@@ -485,10 +505,9 @@ def export_metadata() -> bool:
 
 
 if __name__ == "__main__":
-    export_electricitymap()
-    # export_flows()
     # export_power(priority=PriorityType.live)
-    # export_energy()
+    # export_energy(latest=True)
+    export_electricitymap()
     # export_all_daily()
     # export_all_monthly()
     # export_energy()
