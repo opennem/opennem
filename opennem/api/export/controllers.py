@@ -221,6 +221,7 @@ def power_flows_network_week(
         # fueltech_group=True,
         group_field="power",
         include_group_code=True,
+        include_code=False,
     )
 
     if not result:
@@ -275,6 +276,7 @@ def power_week(
     network_region_code: str = None,
     networks_query: Optional[List[NetworkSchema]] = None,
     include_capacities: bool = False,
+    include_code: Optional[bool] = True,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
@@ -305,6 +307,7 @@ def power_week(
         units=get_unit("power"),
         region=network_region_code,
         fueltech_group=True,
+        include_code=include_code,
     )
 
     if not result:
@@ -347,6 +350,7 @@ def power_week(
         interval=human_to_interval("30m"),
         region=network_region_code,
         period=time_series.period,
+        include_code=include_code,
     )
 
     result.append_set(stats_market_value)
@@ -380,6 +384,7 @@ def power_week(
         units=get_unit("power"),
         region=network_region_code,
         fueltech_group=True,
+        include_code=include_code,
     )
 
     # rooftop forecast
@@ -413,6 +418,7 @@ def power_week(
         units=get_unit("power"),
         region=network_region_code,
         fueltech_group=True,
+        include_code=include_code,
     )
 
     if rooftop and rooftop_forecast:
