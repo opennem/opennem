@@ -23,8 +23,8 @@ def facility_capacity_network_region_fueltech_query(
         f.network_id='{network_id}'
         and f.network_region='{network_region}'
         and f.active is True
-    group by 1, 2, 3
-    order by 1, 2, 3;
+    group by 1
+    order by 1;
     """.format(
         network_id=network.code, network_region=network_region
     )
