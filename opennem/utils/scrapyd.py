@@ -88,7 +88,7 @@ def job_schedule_all(matches: str = None) -> List[str]:
     spider_scheduled = []
 
     for s in spiders:
-        if matches and matches not in s:
+        if matches and matches != s:
             continue
         job_schedule(s)
         spider_scheduled.append(s)
