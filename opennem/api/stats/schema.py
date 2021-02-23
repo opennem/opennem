@@ -143,7 +143,7 @@ class OpennemData(BaseConfig):
     history: OpennemDataHistory
     forecast: Optional[OpennemDataHistory]
 
-    x_capacity_at_present: Optional[str]
+    x_capacity_at_present: Optional[float]
 
     # validators
 
