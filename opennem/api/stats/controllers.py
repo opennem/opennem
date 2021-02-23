@@ -75,8 +75,11 @@ def stats_factory(
             if stat.group_by != group_code:
                 continue
 
-            if stat.result:
-                data_grouped[stat.interval] = stat.result
+            if stat.interval not in data_grouped:
+                data_grouped[stat.interval] = None
+
+            # if stat.result:
+            data_grouped[stat.interval] = stat.result
 
         data_sorted = OrderedDict(sorted(data_grouped.items()))
 
