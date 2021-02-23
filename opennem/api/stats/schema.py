@@ -162,7 +162,7 @@ class OpennemDataSet(BaseConfig):
     type: Optional[str]
     version: Optional[str]
     network: Optional[str]
-    code: str
+    code: Optional[str]
     region: Optional[str]
     created_at: Optional[datetime]
 
