@@ -131,11 +131,13 @@ def stats_factory(
         data = OpennemData(
             data_type=units.unit_type,
             units=units.unit,
-            code=group_code,
             # interval=interval,
             # period=period,
             history=history,
         )
+
+        if include_code:
+            data.code = group_code
 
         if network:
             data.network = network.code.lower()
@@ -231,16 +233,15 @@ def stats_factory(
         if region:
             code = region
 
-    if not include_code:
-        code = None
-
     stat_set = OpennemDataSet(
         type=units.unit_type,
         data=stats_grouped,
         created_at=dt_now,
-        code=code,
         version=get_version(),
     )
+
+    if include_code:
+        stat_set.code = code
 
     if network:
         stat_set.network = network.code
