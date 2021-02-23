@@ -134,7 +134,7 @@ class OpennemData(BaseConfig):
     network: Optional[str]
     region: Optional[str]
     data_type: str
-    code: str = ""
+    code: Optional[str]
     units: str
 
     interval: Optional[TimeIntervalAPI]
