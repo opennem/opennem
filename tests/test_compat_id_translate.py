@@ -29,6 +29,21 @@ from opennem.core.compat.utils import translate_id_v2_to_v3, translate_id_v3_to_
         ("nem.nsw1.fuel_tech.solar_rooftop.energy", "nsw1.fuel_tech.rooftop_solar.energy"),
         ("nem.nsw1.fuel_tech.imports.emissions", "nsw1.fuel_tech.imports.emissions"),
         ("nem.nsw1.demand", "nsw1.demand"),
+        # same but with country added changed
+        ("au.nem.nsw1.fuel_tech.coal_black.energy", "nsw1.fuel_tech.black_coal.energy"),
+        ("au.nem.nsw1.fuel_tech.coal_black.power", "nsw1.fuel_tech.black_coal.power"),
+        ("au.nem.nsw1.fuel_tech.wind.power", "nsw1.fuel_tech.wind.power"),
+        ("au.nem.nsw1.price", "nsw1.price"),
+        ("au.nem.nsw1.temperature", "nsw1.temperature"),
+        ("au.nem.nsw1.temperature_mean", "nsw1.temperature_mean"),
+        ("au.nem.nsw1.fuel_tech.gas_ocgt.market_value", "nsw1.fuel_tech.gas_ocgt.market_value"),
+        (
+            "au.nem.nsw1.fuel_tech.coal_black.market_value",
+            "nsw1.fuel_tech.black_coal.market_value",
+        ),
+        ("au.nem.nsw1.fuel_tech.solar_rooftop.energy", "nsw1.fuel_tech.rooftop_solar.energy"),
+        ("au.nem.nsw1.fuel_tech.imports.emissions", "nsw1.fuel_tech.imports.emissions"),
+        ("au.nem.nsw1.demand", "nsw1.demand"),
         #
         ("nem.nsw1.fuel_tech.coal_brown.power", "nsw1.fuel_tech.brown_coal.power"),
     ],
