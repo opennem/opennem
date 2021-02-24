@@ -9,6 +9,9 @@ from opennem.schema.network import NetworkNEM
 
 def translate_id_v3_to_v2(v3_id: str) -> str:
     """Translates v3 ids to v2 ids"""
+    # hack
+    v3_id = v3_id.lstrip("au.")
+
     idc = id2 = v3_id.split(".")
 
     if idc[0].lower() == "nem":
