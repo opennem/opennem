@@ -1,9 +1,16 @@
 import logging
+import sys
 from logging.config import fileConfig
+from pathlib import Path
 from typing import List
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
+
+BASE_DIR = str(Path(__file__).parent.parent.parent.parent)
+
+if BASE_DIR not in sys.path:
+    sys.path.append(BASE_DIR)
 
 from opennem.db import db_connect
 from opennem.db.models import opennem
