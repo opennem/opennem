@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import List
 
 from alembic import context
-from sqlalchemy import engine_from_config, pool
 
 BASE_DIR = str(Path(__file__).parent.parent.parent.parent)
 
