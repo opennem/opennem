@@ -160,7 +160,12 @@ def run_energy_calc(
 
     try:
         if len(results) < 1:
-            raise Exception("No results from get_generated query")
+            logger.warn(
+                "No results from get_generated query for {} {} {}".format(
+                    region, date_max, fueltech_id
+                )
+            )
+            return 0
 
         num_records = insert_energies(results, network=network)
         logger.info("Done {} for {} => {}".format(region, date_min, date_max))
@@ -253,5 +258,5 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_yesterday()
-    # run_energy_update_archive(year=2021, regions=["NSW1"], fueltech_id="coal_black")
+    # run_energy_update_yesterday()
+    run_energy_update_archive(year=2021, regions=["NSW1"])
