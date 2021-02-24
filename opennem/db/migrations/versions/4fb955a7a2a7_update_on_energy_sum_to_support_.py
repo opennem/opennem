@@ -9,8 +9,6 @@ Create Date: 2020-10-21 17:35:48.326616
 """
 from alembic import op
 
-from opennem.core.loader import load_data
-
 # revision identifiers, used by Alembic.
 revision = "4fb955a7a2a7"
 down_revision = "bb6fb4645ca3"
@@ -29,22 +27,16 @@ CREATE TYPE tenergy AS (
 );"""
     )
 
-    op.execute(
-        "drop aggregate if exists on_energy_sum (numeric, text) cascade"
-    )
+    op.execute("drop aggregate if exists on_energy_sum (numeric, text) cascade")
     op.execute(
         """drop function if exists agg_power(agg_state numeric[], el numeric)
         cascade"""
     )
-    op.execute(
-        "drop function if exists onenergy_finalfunc(agg_state numeric[])"
-    )
+    op.execute("drop function if exists onenergy_finalfunc(agg_state numeric[])")
 
     # op.execute(ENERGY_FUNCTIONS)
 
 
 def downgrade():
-    op.execute(
-        "drop aggregate if exists on_energy_sum (numeric, text) cascade"
-    )
+    op.execute("drop aggregate if exists on_energy_sum (numeric, text) cascade")
     op.execute("drop type if exists tenergy cascade")
