@@ -15,7 +15,7 @@ def translate_id_v3_to_v2(v3_id: str) -> str:
     idc = id2 = v3_id.split(".")
 
     if idc[0].lower() == "nem":
-        id2 = id2[1:]
+        id2 = idc[1:]
 
     stat_type = idc[-1]
 
@@ -37,6 +37,9 @@ def translate_id_v2_to_v3(v2_id: str) -> str:
 
     if idc[0] != network.code:
         idc.insert(0, network.code.lower())
+
+    if idc[0] != network.country:
+        idc.insert(0, network.country.lower())
 
     stat_type = idc[-1]
 
