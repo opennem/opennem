@@ -245,13 +245,12 @@ def get_data_by_id(id: str, series: List[Dict]) -> Optional[Dict]:
     return id_s.pop()
 
 
-def run_diff() -> float:
+def run_diff() -> str:
     score = 0
     score_tested = 0
     buckets_not_match = 0
 
     buckets_total = 0
-    buckets_matches = 0
 
     regions = get_network_regions(NetworkNEM, "NSW1")
     statsetmap = get_url_map(regions)
@@ -456,10 +455,7 @@ def run_diff() -> float:
 
         logger.info("=" * 50)
 
-    if score == 0:
-        return 0.0
-
-    if buckets_not_match == 0:
+    if buckets_not_match == 0 or buckets_total == 0:
         percentage = 0.0
     else:
         percentage = round((buckets_total - buckets_not_match) / buckets_total * 100, 2)
