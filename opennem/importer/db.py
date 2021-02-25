@@ -389,7 +389,7 @@ def opennem_init() -> None:
         station_model = session.query(Station).filter_by(code=station.code).one_or_none()
 
         if not station_model:
-            add_or_update: str = "Adding"
+            add_or_update = "Adding"
             station_model = Station(code=station.code)
             station_model.approved = True
             station_model.approved_at = datetime.now()
