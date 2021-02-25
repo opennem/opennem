@@ -284,6 +284,7 @@ def get_scada_range(
     networks: Optional[List[NetworkSchema]] = None,
     network_region: Optional[str] = None,
     facilities: Optional[List[str]] = None,
+    max_only: bool = False,
 ) -> Optional[ScadaDateRange]:
     """Get the start and end dates for a network query. This is more efficient
     than providing or querying the range at query time
@@ -292,7 +293,7 @@ def get_scada_range(
 
     __query = """
         select
-            min(fs.trading_interval)::timestamp AT TIME ZONE '{timezone}',
+            {min_query} AT TIME ZONE '{timezone}',
             max(fs.trading_interval)::timestamp AT TIME ZONE '{timezone}'
         from facility_scada fs
         where
@@ -307,6 +308,10 @@ def get_scada_range(
 
     network_query = ""
     timezone = "UTC"
+    min_query = "min(fs.trading_interval)::timestamp"
+
+    if max_only:
+        min_query = "'2010-01-01 00:00:00'"
 
     if network:
         network_query = f"fs.network_id = '{network.code}' and"
@@ -336,6 +341,7 @@ def get_scada_range(
 
     scada_range_query = dedent(
         __query.format(
+            min_query=min_query,
             facility_query=facility_query,
             network_query=network_query,
             network_region_query=network_region_query,
