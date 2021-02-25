@@ -436,8 +436,8 @@ def opennem_init() -> None:
             facility_model.unit_alias = fac.unit_alias
             facility_model.unit_capacity = fac.unit_capacity
             facility_model.emissions_factor_co2 = fac.emissions_factor_co2
-            facility_model.approved = fac.approved
-            facility_model.approved_by = fac.approved_by
+            facility_model.approved = True
+            facility_model.approved_by = "opennem.importer"
 
             facility_model.created_by = "opennem.init"
             facility_model.approved_by = "opennem.init"
