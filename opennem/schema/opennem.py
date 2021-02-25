@@ -257,14 +257,32 @@ class FacilityOutputSchema(OpennemBaseSchema):
 
     @validator("network", pre=True)
     def flatten_network(cls, value) -> str:
+        if isinstance(value, str):
+            return value
+
+        if "code" in value:
+            return value["code"]
+
         return value.code if value else ""
 
     @validator("fueltech", pre=True)
     def flatten_fueltech(cls, value) -> str:
+        if isinstance(value, str):
+            return value
+
+        if "code" in value:
+            return value["code"]
+
         return value.code if value else ""
 
     @validator("status", pre=True)
     def flatten_status(cls, value) -> str:
+        if isinstance(value, str):
+            return value
+
+        if "code" in value:
+            return value["code"]
+
         return value.code if value else ""
 
     @validator("capacity_registered")
