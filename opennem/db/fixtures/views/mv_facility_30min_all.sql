@@ -11,17 +11,17 @@ select
     date_trunc('month', fs.trading_interval at time zone 'AEST') as ti_month_aest,
     date_trunc('day', fs.trading_interval at time zone 'AWST') as ti_day_awst,
     date_trunc('month', fs.trading_interval at time zone 'AWST') as ti_month_awst,
-    max(fs.energy) as energy,
-    case when avg(bs.price_dispatch) >= 0  and min(fs.energy) >= 0 then
+    round(max(fs.energy), 4) as energy,
+    case when max(bs.price_dispatch) >= 0  and min(fs.energy) >= 0 then
         coalesce(
-            max(fs.energy) * max(bs.price_dispatch),
+            round(max(fs.energy) * max(bs.price_dispatch), 4),
             0.0
         )
     else NULL
     end as market_value,
     case when min(f.emissions_factor_co2) >= 0  and min(fs.energy) >= 0 then
         coalesce(
-            max(fs.energy) * min(f.emissions_factor_co2),
+            round(max(fs.energy) * min(f.emissions_factor_co2), 4),
             0.0
         )
     else 0.0
