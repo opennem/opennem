@@ -71,3 +71,4 @@ diff_outs/
 tests/fixtures/dumps/
 scripts/run_query.py
 TODO
+notebooks/data/
