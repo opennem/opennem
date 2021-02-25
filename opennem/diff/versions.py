@@ -32,6 +32,7 @@ BASE_URL_V2 = "https://data.opennem.org.au"
 BASE_URL_V3 = "https://data.dev.opennem.org.au"
 
 CUR_YEAR = datetime.now().year
+FULL = True
 
 
 def get_v2_url(
@@ -353,7 +354,7 @@ def run_diff() -> str:
                     )
 
                 data_matches = series_are_equal(
-                    v2i.history.values(), v3i.history.values(), full_equality=False
+                    v2i.history.values(), v3i.history.values(), full_equality=FULL
                 )
 
                 buckets_total += len(data_matches.keys())
@@ -362,7 +363,7 @@ def run_diff() -> str:
                     logger.error("    - values don't match ")
 
                     mismatch_values = series_not_close(
-                        v2i.history.values(), v3i.history.values(), full_equality=False
+                        v2i.history.values(), v3i.history.values(), full_equality=FULL
                     )
 
                     score += 1
