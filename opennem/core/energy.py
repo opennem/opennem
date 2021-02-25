@@ -66,7 +66,8 @@ def _trapezium_integration(d_ti: pd.Series, gapfill: bool = False) -> Optional[f
 
     # Fall back on average but warn to check data
     if d_ti.count() != 7:
-        logger.warn("Series {} has gaps".format(d_ti))
+        logger.error("Series {} has gaps".format(d_ti))
+        print("Series {} has gaps".format(d_ti))
 
         if gapfill:
             return _trapezium_integration_variable(d_ti)
@@ -90,9 +91,6 @@ def _energy_aggregate(df: pd.DataFrame, network: NetworkSchema) -> pd.DataFrame:
     values = []
     dt: Optional[datetime] = None
     reading_stops: List[int] = [0, 30]
-
-    if network.reading_shift:
-        reading_stops = [i + network.reading_shift for i in reading_stops]
 
     for index, value in df.iterrows():
         i, network_id, duid = index
