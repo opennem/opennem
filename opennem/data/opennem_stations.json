@@ -1556,5 +1556,87 @@
     "description": "Corowa Solar Farm is a 30 MWac solar farm in NSW just outside of the 5,500 person strong town of Corowa. The project has been in development since 2017 and is currently in the late stages of construction.",
     "wikipedia_link": null,
     "wikidata_id": null
+  },
+  {
+    "created_by": "opennem.stations",
+    "created_at": "2020-11-13T02:47:00.969029",
+    "id": 5054,
+    "participant": null,
+    "participant_id": null,
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": null,
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "solar_utility",
+          "label": "Solar (Utility)",
+          "renewable": true
+        },
+        "status": {
+          "code": "committed",
+          "label": "Committed"
+        },
+        "station_id": null,
+        "code": "COHUNSF1",
+        "network_code": "COHUNSF1",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 31.103,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "VIC1",
+        "unit_id": null,
+        "unit_number": 19,
+        "unit_alias": null,
+        "unit_capacity": 1.637,
+        "emissions_factor_co2": 0.0,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ],
+    "photos": null,
+    "code": "COHUNSF1",
+    "name": "Cohuna Solar Farm",
+    "network_name": "Cohuna Solar Farm",
+    "location": {
+      "created_by": null,
+      "created_at": "2020-11-13T02:47:00.969029",
+      "id": null,
+      "weather_station": null,
+      "weather_nearest": null,
+      "address1": "",
+      "address2": "",
+      "locality": "Horfield",
+      "state": "VIC",
+      "postcode": "3567",
+      "country": "au",
+      "geocode_approved": true,
+      "geocode_skip": false,
+      "geocode_processed_at": null,
+      "geocode_by": null,
+      "lat": -35.88031662559882,
+      "lng": 144.2215308548852
+    },
+    "location_id": null,
+    "approved": true,
+    "approved_by": null,
+    "approved_at": null,
+    "network": null,
+    "description": "Cohuna Solar Farm is situated approximately 8 kilometres south of the town of Cohuna and around 25km east of Kerang in the Shire of Gannawarra in northern Victoria. Cohuna was one of 6 solar projects to score a guernsey in Victoria’s first renewable energy auction. Cohuna Solar Farm is expected to generate up to 77 GWh of electricity each year, avoiding around 71,000 tonnes of CO2 emissions annually. The project will involve the installation of approximately 87,000 bifacial solar panels, which make use of light hitting both the front and rear of the module",
+    "wikipedia_link": null,
+    "wikidata_id": null
   }
 ]
