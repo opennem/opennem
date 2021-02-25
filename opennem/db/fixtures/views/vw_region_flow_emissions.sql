@@ -10,7 +10,7 @@ create view vw_region_flow_emissions as select
     sum(f.energy) * max(eti.emissions_per_mw) as flow_to_emissions,
     max(efi.emissions_per_mw) as flow_from_intensity,
     max(eti.emissions_per_mw) as flow_to_intensity
-from mv_facility_all f
+from mv_facility_30m_all f
 left join mv_interchange_energy_nem_region ef on ef.trading_interval = f.trading_interval and ef.network_region = f.network_region
 left join mv_interchange_energy_nem_region et on et.trading_interval = f.trading_interval and et.network_region = f.interconnector_region_to
 left join mv_region_emissions efi on efi.trading_interval = f.trading_interval and efi.network_region = f.network_region
