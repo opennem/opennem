@@ -5,6 +5,7 @@ from pprint import pprint
 from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
+
 # from opennem.core.loader import load_data
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
@@ -417,16 +418,16 @@ def opennem_init() -> None:
             facility_model = (
                 session.query(Facility)
                 .filter_by(code=fac.code)
-                .filter_by(network_id=fac.network.code)
+                .filter_by(network_id=fac.network)
                 .one_or_none()
             )
 
             if not facility_model:
-                facility_model = Facility(code=fac.code, network_id=fac.network.code)
+                facility_model = Facility(code=fac.code, network_id=fac.network)
 
             facility_model.network_region = fac.network_region
-            facility_model.fueltech_id = fac.fueltech.code
-            facility_model.status_id = fac.status.code
+            facility_model.fueltech_id = fac.fueltech
+            facility_model.status_id = fac.status
             facility_model.dispatch_type = fac.dispatch_type
             facility_model.capacity_registered = fac.capacity_registered
             facility_model.registered = fac.registered
@@ -490,9 +491,11 @@ def test_revisions() -> None:
     s.add(station)
     s.commit()
 
+
 def import_facilities() -> None:
     opennem_init()
     logger.info("Opennem stations imported")
+
 
 def init() -> None:
     load_fixtures()
