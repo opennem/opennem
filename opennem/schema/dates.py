@@ -167,12 +167,6 @@ class TimeSeries(BaseConfig):
         if not end.tzinfo or end.tzinfo != self.network.get_fixed_offset():
             end = end.astimezone(self.network.get_fixed_offset())
 
-        # if start.tzinfo != self.network.get_fixed_offset():
-        #     start = start.replace(tzinfo=self.network.get_fixed_offset())
-
-        # if end.tzinfo != self.network.get_fixed_offset():
-        #     end = end.replace(tzinfo=self.network.get_fixed_offset())
-
         dtr = DatetimeRange(start=start, end=end, interval=self.interval)
 
         return dtr
