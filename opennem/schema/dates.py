@@ -138,19 +138,18 @@ class TimeSeries(BaseConfig):
                 second=0,
                 tzinfo=self.network.get_fixed_offset(),
             )
-            # start = date_trunc(start, self.interval.trunc)
 
-            if self.year != CUR_YEAR:
-                end = datetime(
-                    year=self.year,
-                    month=12,
-                    day=31,
-                    hour=23,
-                    minute=59,
-                    second=59,
-                    tzinfo=self.network.get_fixed_offset(),
-                )
-            else:
+            end = datetime(
+                year=self.year,
+                month=12,
+                day=31,
+                hour=23,
+                minute=59,
+                second=59,
+                tzinfo=self.network.get_fixed_offset(),
+            )
+
+            if self.year == CUR_YEAR:
                 today = datetime.now(tz=self.network.get_fixed_offset())
                 end = datetime(
                     year=CUR_YEAR, month=today.month, day=today.day, hour=23, minute=59, second=59
