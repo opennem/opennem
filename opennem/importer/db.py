@@ -385,16 +385,18 @@ def opennem_init() -> None:
         stations.add_dict(s)
 
     for station in stations:
-        logger.debug("Adding station: {}".format(station.code))
-
+        add_or_update: str = "Updating"
         station_model = session.query(Station).filter_by(code=station.code).one_or_none()
 
         if not station_model:
+            add_or_update: str = "Adding"
             station_model = Station(code=station.code)
             station_model.approved = True
             station_model.approved_at = datetime.now()
             station_model.approved_by = "opennem.init"
             station_model.created_by = "opennem.init"
+
+        logger.debug("{} station: {}".format(add_or_update, station.code))
 
         station_model.description = station.description
         station_model.name = station.name
@@ -446,7 +448,6 @@ def opennem_init() -> None:
             station_model.facilities.append(facility_model)
             logger.debug(" => Added facility {}".format(fac.code))
 
-        print(station_model)
         session.add(station_model)
         session.commit()
 
