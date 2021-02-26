@@ -257,10 +257,9 @@ def run_energy_update_yesterday(
 def run_energy_update_all() -> None:
     """Runs energy update for all regions and all years for one-off
     inserts"""
-    for year in range(2011, CUR_YEAR + 1):
+    for year in range(2010, CUR_YEAR + 1):
         run_energy_update_archive(year=year)
 
 
 if __name__ == "__main__":
-    # run_energy_update_yesterday()
-    run_energy_update_archive(year=2021, regions=["NSW1"], fueltech_id="solar_rooftop")
+    run_energy_update_all()
