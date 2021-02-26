@@ -511,24 +511,5 @@ def export_metadata() -> bool:
 
 
 if __name__ == "__main__":
-    export_power(priority=PriorityType.live)
+    # export_power(priority=PriorityType.live)
     export_energy(latest=True)
-    # export_electricitymap()
-    # export_all_daily()
-    # export_all_monthly()
-    # export_energy()
-    # export_all_daily()
-
-    # export_power(priority=PriorityType.history)
-
-    # if settings.env in ["development", "staging"]:
-    #     export_power(priority=PriorityType.live)
-    #     export_energy(latest=True)
-    #     export_metadata()
-    #     # export_power(priority=PriorityType.history)
-    # else:
-    #     # export_power(priority=PriorityType.live)
-    #     # export_energy(latest=True)
-    #     export_energy()
-    #     # export_metadata()
-    #     # export_power(priority=PriorityType.history)
