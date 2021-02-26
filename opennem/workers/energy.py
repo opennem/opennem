@@ -283,4 +283,5 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_all()
+    run_energy_update_archive(year=2021, regions=["NSW1"], fueltech_id="solar_rooftop")
+    # run_energy_update_all()
