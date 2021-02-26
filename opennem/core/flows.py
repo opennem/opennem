@@ -132,7 +132,7 @@ def net_flows_emissions(
                 continue
 
             if es.flow_from == region:
-                if es.energy > 0:
+                if es.energy and es.energy > 0:
                     if es.flow_from_intensity:
                         export_emissions_sum += abs(es.flow_from_emissions)
                 else:
@@ -140,7 +140,7 @@ def net_flows_emissions(
                         import_emissions_sum += abs(es.flow_to_emissions)
 
             if es.flow_to == region:
-                if es.energy < 0:
+                if es.energy and es.energy < 0:
                     if es.flow_from_emissions:
                         export_emissions_sum += abs(es.flow_from_emissions)
                 else:
