@@ -115,6 +115,10 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
 
     records_to_store: List[Dict] = esdf.to_dict("records")
 
+    if len(records_to_store) < 1:
+        logger.error("No records returned from energy sum")
+        return 0
+
     # Build SQL + CSV and bulk-insert
     sql_query = build_insert_query(FacilityScada, ["updated_at", "eoi_quantity"])
     conn = get_database_engine().raw_connection()
@@ -169,7 +173,7 @@ def run_energy_calc(
 
         num_records = insert_energies(results, network=network)
         logger.info("Done {} for {} => {}".format(region, date_min, date_max))
-    except Exception as e:
+    except ZeroDivisionError as e:
         logger.error(e)
         slack_message("Energy archive error: {}".format(e))
 
@@ -259,4 +263,4 @@ def run_energy_update_all() -> None:
 
 if __name__ == "__main__":
     # run_energy_update_yesterday()
-    run_energy_update_archive(year=2021, regions=["NSW1"])
+    run_energy_update_archive(year=2021, regions=["NSW1"], fueltech_id="solar_rooftop")
