@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timedelta
+from itertools import groupby
 from typing import Dict, List, Optional
 
 from pytz import FixedOffset
@@ -118,6 +119,22 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
     if len(records_to_store) < 1:
         logger.error("No records returned from energy sum")
         return 0
+
+    # dedupe records
+    return_records_grouped = {}
+
+    for pk_values, rec_value in groupby(
+        records_to_store,
+        key=lambda r: (
+            r.get("trading_interval"),
+            r.get("network_id"),
+            r.get("facility_code"),
+        ),
+    ):
+        if pk_values not in return_records_grouped:
+            return_records_grouped[pk_values] = list(rec_value).pop()
+
+    records_to_store = list(return_records_grouped.values())
 
     # Build SQL + CSV and bulk-insert
     sql_query = build_insert_query(FacilityScada, ["updated_at", "eoi_quantity"])
