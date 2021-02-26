@@ -130,8 +130,12 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
         column_names=records_to_store[0].keys(),
     )
 
-    cursor.copy_expert(sql_query, csv_content)
-    conn.commit()
+    try:
+        cursor.copy_expert(sql_query, csv_content)
+        conn.commit()
+    except Exception as e:
+        logger.error("Error inserting records: {}".format(e))
+        return 0
 
     logger.info("Inserted {} records".format(len(records_to_store)))
 
@@ -173,7 +177,7 @@ def run_energy_calc(
 
         num_records = insert_energies(results, network=network)
         logger.info("Done {} for {} => {}".format(region, date_min, date_max))
-    except ZeroDivisionError as e:
+    except Exception as e:
         logger.error(e)
         slack_message("Energy archive error: {}".format(e))
 
