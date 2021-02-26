@@ -66,8 +66,7 @@ def _trapezium_integration(d_ti: pd.Series, gapfill: bool = False) -> Optional[f
 
     # Fall back on average but warn to check data
     if d_ti.count() != 7:
-        logger.error("Series {} has gaps".format(d_ti))
-        print("Series {} has gaps".format(d_ti))
+        # logger.error("Series {} has gaps".format(d_ti))
 
         if gapfill:
             return _trapezium_integration_variable(d_ti)
