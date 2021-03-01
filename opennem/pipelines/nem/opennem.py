@@ -6,7 +6,7 @@ NEMWEB Data ingress into OpenNEM format
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from itertools import groupby
 from typing import Any, Dict, List, Optional
 
@@ -615,6 +615,22 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
 
     # remove empties
     scada_records = [i for i in scada_records if i]
+
+    # Shift intervals
+    def shift_rooftop_interval(scada_record: Dict[str, Any]) -> Dict[str, Any]:
+        if "trading_interval" not in scada_record:
+            return scada_record
+
+        dt = scada_record["trading_interval"]
+
+        if not isinstance(dt, datetime):
+            return scada_record
+
+        scada_record["trading_interval"] = dt - timedelta(minutes=30)
+
+        return scada_record
+
+    scada_records = [shift_rooftop_interval(i) for i in scada_records]
 
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
