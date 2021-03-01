@@ -4,6 +4,7 @@ Multiprocessor for energy workers
 """
 import logging
 import multiprocessing
+import sys
 from datetime import datetime
 from typing import List, Optional, Tuple
 
@@ -93,4 +94,10 @@ def cli(
 
 
 if __name__ == "__main__":
-    cli()
+    try:
+        cli()
+    except KeyboardInterrupt:
+        logger.error("User stopped")
+        sys.exit(-1)
+    except Exception as e:
+        logger.error(e)
