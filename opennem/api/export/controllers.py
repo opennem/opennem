@@ -545,6 +545,10 @@ def energy_interconnector_region_daily(
 
     exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[2]) for i in row]
 
+    imports_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
+
+    exports_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
+
     result = stats_factory(
         imports,
         # code=network_region_code or network.code,
@@ -576,6 +580,32 @@ def energy_interconnector_region_daily(
     )
 
     result.append_set(result_exports)
+
+    result_imports_mv = stats_factory(
+        imports_mv,
+        units=get_unit("market_value"),
+        network=time_series.network,
+        fueltech_group=True,
+        interval=time_series.interval,
+        region=network_region_code,
+        period=time_series.period,
+        code=time_series.network.code.lower(),
+        localize=False,
+    )
+    result.append_set(result_imports_mv)
+
+    result_export_mv = stats_factory(
+        exports_mv,
+        units=get_unit("market_value"),
+        network=time_series.network,
+        fueltech_group=True,
+        interval=time_series.interval,
+        region=network_region_code,
+        period=time_series.period,
+        code=time_series.network.code.lower(),
+        localize=False,
+    )
+    result.append_set(result_imports_mv)
 
     return result
 
