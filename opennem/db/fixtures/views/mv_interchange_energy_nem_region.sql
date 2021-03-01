@@ -22,7 +22,25 @@ select
             0.0
         )
     else NULL
-    end as exports_market_value
+    end as exports_market_value,
+
+    -- import price
+    case when max(e.price_dispatch) >= 0  and min(abs(e.import_energy)) >= 0 then
+        coalesce(
+            round(abs(sum(e.import_energy)) * max(e.price), 4),
+            0.0
+        )
+    else NULL
+    end as imports_market_value_rrp,
+
+    -- export price
+    case when max(e.price_dispatch) >= 0  and min(e.export_energy) >= 0 then
+        coalesce(
+            round(abs(sum(e.export_energy)) * max(e.price), 4),
+            0.0
+        )
+    else NULL
+    end as exports_market_value_rrp
 from (
     select
         time_bucket('30 minutes', t.trading_interval) as trading_interval,
