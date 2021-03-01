@@ -605,7 +605,7 @@ def energy_interconnector_region_daily(
         code=time_series.network.code.lower(),
         localize=False,
     )
-    result.append_set(result_imports_mv)
+    result.append_set(result_export_mv)
 
     return result
 
