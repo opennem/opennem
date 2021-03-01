@@ -570,13 +570,15 @@ def energy_network_flow_query(
         date_trunc('{trunc}', t.trading_interval) as trading_interval,
         sum(t.imports_energy),
         sum(t.exports_energy),
-        sum(t.imporst_market_value),
+        sum(t.imports_market_value),
         sum(t.exports_market_value)
     from (
         select
             ei.trading_interval,
             ei.imports_energy,
-            ei.exports_energy
+            ei.exports_energy,
+            ei.imports_market_value,
+            ei.exports_market_value
         from mv_interchange_energy_nem_region ei
         where
             ei.trading_interval <= '{date_max}'
