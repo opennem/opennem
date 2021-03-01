@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 import click
 from scrapy.utils.python import garbage_collect
@@ -139,8 +140,9 @@ def cmd_task() -> None:
 
 @click.command()
 @click.option("--year", required=True, type=int)
-def cmd_task_energy(year: int) -> None:
-    run_energy_update_archive(year)
+@click.option("--fueltech", required=False, type=str)
+def cmd_task_energy(year: int, fueltech: Optional[str] = None) -> None:
+    run_energy_update_archive(year, fueltech_id=fueltech)
 
 
 main.add_command(crawl)
