@@ -58,7 +58,7 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
     else:
         __query = """
         select
-            time_bucket_gapfill('{interval_sql}', observation_time) as ot,
+            date_trunc('{trunc}', fs.observation_time at time zone '{tz}') as ot,
             fs.station_id as station_id,
             avg(fs.temp_air) as temp_air,
 
@@ -79,7 +79,8 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
             fs.observation_time >= '{date_start}'
         group by 1, 2;
         """.format(
-            interval_sql=time_series.interval.interval_sql,
+            trunc=time_series.interval.trunc,
+            tz=time_series.network.timezone_database,
             station_codes=",".join(["'{}'".format(i) for i in station_codes]),
             date_start=time_series.get_range().start,
             date_end=time_series.get_range().end,
