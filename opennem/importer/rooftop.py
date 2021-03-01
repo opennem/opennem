@@ -86,7 +86,7 @@ def rooftop_remap_regionids(rooftop_record: Optional[Dict]) -> Optional[Dict]:
     if not rooftop_record:
         return None
 
-    if not "facility_code" in rooftop_record:
+    if "facility_code" not in rooftop_record:
         return None
 
     fac_code = rooftop_record["facility_code"]
