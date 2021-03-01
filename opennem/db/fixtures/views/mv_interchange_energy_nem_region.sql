@@ -4,20 +4,38 @@ select
     e.network_id,
     e.network_region,
     sum(e.import_energy) / 1000 as imports_energy,
-    sum(e.export_energy) / 1000 as exports_energy
+    sum(e.export_energy) / 1000 as exports_energy,
+    case when max(e.price_dispatch) >= 0  and min(e.import_energy) >= 0 then
+        coalesce(
+            round(max(e.import_energy) * max(e.price_dispatch), 4),
+            0.0
+        )
+    else NULL
+    end as imporst_market_value,
+    case when max(e.price_dispatch) >= 0  and min(e.export_energy) >= 0 then
+        coalesce(
+            round(max(e.export_energy) * max(e.price_dispatch), 4),
+            0.0
+        )
+    else NULL
+    end as exports_market_value
 from (
     select
         time_bucket('30 minutes', t.trading_interval) as trading_interval,
         t.network_id,
         t.network_region,
         0.5 * avg(t.imports) as import_energy,
-        0.5 * avg(t.exports) as export_energy
+        0.5 * avg(t.exports) as export_energy,
+        avg(t.price) as price,
+        avg(t.price_dispatch) as price_dispatch
     from (select
             bs.trading_interval at time zone 'AEST' as trading_interval,
             bs.network_id,
             bs.network_region,
             case when bs.net_interchange < 0 then bs.net_interchange else 0 end as imports,
-            case when bs.net_interchange > 0 then bs.net_interchange else 0 end as exports
+            case when bs.net_interchange > 0 then bs.net_interchange else 0 end as exports,
+            bs.price,
+            bs.price_dispatch
         from balancing_summary bs
         where
             bs.net_interchange is not null
