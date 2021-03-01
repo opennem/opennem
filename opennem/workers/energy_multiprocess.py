@@ -24,7 +24,7 @@ CUR_MONTH = datetime.now().month
 
 def _build_args_list(
     year: Optional[int], region: Optional[str], fueltech: Optional[str]
-) -> List[Tuple[int, int, Optional[str], Optional[str]]]:
+) -> List[Tuple[Optional[int], int, Optional[str], Optional[str]]]:
     args_list = []
 
     network = NetworkNEM
@@ -59,7 +59,7 @@ def _build_args_list(
     return args_list
 
 
-def _worker_wrap(year: int, months: int, region: str, fueltech_id: Optional[str]) -> None:
+def _worker_wrap(year: Optional[int], months: int, region: str, fueltech_id: Optional[str]) -> None:
     """Map to named args"""
     return run_energy_update_archive(
         year=year, months=[months], regions=[region], fueltech_id=fueltech_id
