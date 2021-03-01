@@ -5,16 +5,20 @@ select
     e.network_region,
     sum(e.import_energy) / 1000 as imports_energy,
     sum(e.export_energy) / 1000 as exports_energy,
-    case when max(e.price_dispatch) >= 0  and min(e.import_energy) >= 0 then
+
+    -- import
+    case when max(e.price_dispatch) >= 0  and min(abs(e.import_energy)) >= 0 then
         coalesce(
-            round(max(e.import_energy) * max(e.price_dispatch), 4),
+            round(abs(sum(e.import_energy)) * max(e.price_dispatch), 4),
             0.0
         )
     else NULL
-    end as imporst_market_value,
+    end as imports_market_value,
+
+    -- export
     case when max(e.price_dispatch) >= 0  and min(e.export_energy) >= 0 then
         coalesce(
-            round(max(e.export_energy) * max(e.price_dispatch), 4),
+            round(abs(sum(e.export_energy)) * max(e.price_dispatch), 4),
             0.0
         )
     else NULL
