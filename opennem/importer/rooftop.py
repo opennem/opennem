@@ -80,8 +80,15 @@ def rooftop_facilities() -> None:
     session.commit()
 
 
-def rooftop_remap_regionids(rooftop_record: Dict) -> Optional[Dict]:
+def rooftop_remap_regionids(rooftop_record: Optional[Dict]) -> Optional[Dict]:
     """Map an AEMO region code to a rooftop station code"""
+
+    if not rooftop_record:
+        return None
+
+    if not "facility_code" in rooftop_record:
+        return None
+
     fac_code = rooftop_record["facility_code"]
 
     if fac_code not in ["NSW1", "QLD1", "VIC1", "TAS1", "SA1"]:
