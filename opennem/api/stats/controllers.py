@@ -121,6 +121,13 @@ def stats_factory(
                 start = start.astimezone(tz)
                 end = end.astimezone(tz)
 
+        # Everything needs a timezone even flat dates
+        if network and timezone and not is_aware(start):
+            start = start.replace(tzinfo=network.get_fixed_offset())
+
+        if network and timezone and not is_aware(end):
+            end = end.replace(tzinfo=network.get_fixed_offset())
+
         # free
         dates = []
 
