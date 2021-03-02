@@ -630,8 +630,6 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
 
         return scada_record
 
-    scada_records = [shift_rooftop_interval(i) for i in scada_records]
-
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
     item["records"] = scada_records
