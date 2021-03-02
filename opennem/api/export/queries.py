@@ -570,8 +570,8 @@ def energy_network_flow_query(
         date_trunc('{trunc}', t.trading_interval) as trading_interval,
         sum(t.imports_energy),
         sum(t.exports_energy),
-        abs(sum(t.imports_market_value)),
-        abs(sum(t.exports_market_value))
+        abs(sum(t.imports_market_value_rrp)),
+        abs(sum(t.exports_market_value_rrp))
     from (
         select
             ei.trading_interval,
