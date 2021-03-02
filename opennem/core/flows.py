@@ -147,8 +147,9 @@ def net_flows_emissions(
                     if es.flow_to_emissions:
                         import_emissions_sum += abs(es.flow_to_emissions)
 
-        output_set[k]["imports"] = import_emissions_sum
-        output_set[k]["exports"] = export_emissions_sum
+        # @NOTE matching on 30m intervals not 1h so divide
+        output_set[k]["imports"] = import_emissions_sum / 2
+        output_set[k]["exports"] = export_emissions_sum / 2
 
     imports_list = []
     exports_list = []
