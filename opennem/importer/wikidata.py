@@ -1,3 +1,4 @@
+import csv
 import json
 import logging
 from urllib.parse import urlparse
@@ -9,7 +10,7 @@ from PIL import Image
 from opennem.api.photo.controllers import write_photo_to_s3
 from opennem.core.loader import load_data
 from opennem.core.normalizers import station_name_cleaner
-from opennem.db import SessionLocal
+from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import Photo, Station
 from opennem.utils.images import img_to_buffer
 
@@ -40,19 +41,25 @@ def dataid_from_url(url: str) -> str:
     return path.split("/")[2]
 
 
-def wikidata_join():
+def wikidata_join() -> None:
+    """Attempts to join the wikidata to OpenNEM stations based
+    on the name"""
+
     session = SessionLocal()
 
     wikidata = load_data("wikidata-parsed.json", from_project=True)
 
-    # session.add()
+    # Use a better query
+    # engine = get_database_engine()
+
+    # station_lookup_query = """
+
+    # """
 
     for entry in wikidata:
         station_name = entry.get("name")
 
-        station_lookup = (
-            session.query(Station).filter(Station.name == station_name).all()
-        )
+        station_lookup = session.query(Station).filter(Station.name == station_name).all()
 
         if len(station_lookup) == 0:
             logger.info("Didn't find a station for {}".format(station_name))
@@ -73,9 +80,63 @@ def wikidata_join():
     session.commit()
 
 
-def wikidata_parse():
+def wikidata_join_mapping() -> None:
+    """Attempts to join the wikidata to OpenNEM stations using the
+    csv file with mappings"""
+
+    session = SessionLocal()
+
+    wikidata = load_data("wikidata-parsed.json", from_project=True)
+
+    wikidata_mappings = None
+
+    with open("opennem/data/wikidata_mappings.csv") as fh:
+        csvreader = csv.DictReader(
+            fh,
+            fieldnames=[
+                "code",
+                "name",
+                "network_id",
+                "network_region",
+                "fueltech_id",
+                "wikidata_id",
+            ],
+        )
+        wikidata_mappings = {
+            i["code"]: i["wikidata_id"]
+            for i in list(csvreader)
+            if i["wikidata_id"] and i["code"] != "code"
+        }
+
+    for station_code, wikidata_id in wikidata_mappings.items():
+        wikidata_record_lookup = list(filter(lambda x: x["wikidata_id"] == wikidata_id, wikidata))
+
+        if len(wikidata_record_lookup) == 0:
+            logger.error("Could not find {}".format(wikidata_id))
+            continue
+
+        wikidata_record = wikidata_record_lookup.pop()
+
+        station = session.query(Station).filter(Station.code == station_code).one_or_none()
+
+        if not station:
+            logger.error("Didn't find a station for {}".format(station_code))
+            continue
+
+        station.description = wikidata_record.get("description")
+        station.wikipedia_link = wikidata_record.get("wikipedia")
+        station.wikidata_id = wikidata_record.get("wikidata_id")
+
+        session.add(station)
+        logger.info("Updated station {}".format(station_code))
+
+    session.commit()
+
+
+def wikidata_parse() -> None:
 
     # query: https://w.wiki/dVi
+    # download the simplified json and save to wikidata.json
     wikidata = load_data("wikidata.json", from_project=True)
 
     out_entries = []
@@ -113,7 +174,7 @@ def wikidata_parse():
         json.dump(out_entries, fh)
 
 
-def get_image(image_url):
+def get_image(image_url: str) -> Image:
     img = None
 
     try:
@@ -125,7 +186,7 @@ def get_image(image_url):
     return img
 
 
-def wikidata_photos():
+def wikidata_photos() -> None:
     session = SessionLocal()
     wikidata = load_data("wikidata-photos.json", from_project=True)
 
@@ -134,11 +195,7 @@ def wikidata_photos():
         name = entry["itemLabel"]
         wiki_id = dataid_from_url(entry["item"])
 
-        station = (
-            session.query(Station)
-            .filter(Station.wikidata_id == wiki_id)
-            .one_or_none()
-        )
+        station = session.query(Station).filter(Station.wikidata_id == wiki_id).one_or_none()
 
         if not station:
             print("Could not find station {}".format(name))
@@ -151,9 +208,7 @@ def wikidata_photos():
             continue
 
         # file_name = urlparse(image_url).path.split("/")[-1:]
-        file_name = "{}_{}.{}".format(
-            name.replace(" ", "_"), "original", "jpeg"
-        )
+        file_name = "{}_{}.{}".format(name.replace(" ", "_"), "original", "jpeg")
 
         photo = Photo(
             name=file_name,
@@ -171,9 +226,7 @@ def wikidata_photos():
 
         img.thumbnail((280, 340))
 
-        file_name = "{}_{}.{}".format(
-            name.replace(" ", "_"), img.size[0], "jpeg"
-        )
+        file_name = "{}_{}.{}".format(name.replace(" ", "_"), img.size[0], "jpeg")
 
         photo_thumb = Photo(
             name=file_name,
@@ -198,5 +251,7 @@ def wikidata_photos():
 
 
 if __name__ == "__main__":
-    wikidata_join()
-    wikidata_photos()
+    # wikidata_parse()
+    # wikidata_join()
+    wikidata_join_mapping()
+    # wikidata_photos()
