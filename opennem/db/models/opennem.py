@@ -154,6 +154,7 @@ class Photo(Base):
 
     name = Column(Text)
     mime_type = Column(Text)
+    hash_id = Column(Text, nullable=True, index=True)
     original_url = Column(Text, nullable=True)
     data = Column(LargeBinary, nullable=True)
     width = Column(Integer)
