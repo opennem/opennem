@@ -31,6 +31,7 @@ def cache_scada_result(func: Callable) -> Callable:
         networks: Optional[List[NetworkSchema]] = None,
         network_region: Optional[str] = None,
         facilities: Optional[List[str]] = None,
+        max_only: bool = False,
     ) -> Optional[ScadaDateRange]:
         key_list = []
 
@@ -54,7 +55,7 @@ def cache_scada_result(func: Callable) -> Callable:
 
             return ret
         except KeyError:
-            ret = func(network, networks, network_region, facilities)
+            ret = func(network, networks, network_region, facilities, max_only)
 
             logger.debug("scada range MISS at key: {}".format(key))
 
