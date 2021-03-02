@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from opennem.core.dispatch_type import DispatchType
-from opennem.db import get_database_engine, get_database_session
+from opennem.db import get_database_session
 from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Revision, Station
 from opennem.schema.opennem import StationSchema
 
