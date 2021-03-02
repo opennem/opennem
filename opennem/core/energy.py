@@ -30,6 +30,13 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> float:
     # Clear no numbers
     d_ti = d_ti.dropna()
 
+    if d_ti.count() == 0:
+        return None
+
+    # One entry
+    if d_ti.count() == 1:
+        return d_ti[0] * 0.5
+
     # Fall back on average but warn to check data
     if d_ti.count() <= 3:
         d_sum = d_ti.sum()
