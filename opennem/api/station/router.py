@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -7,10 +6,10 @@ from starlette import status
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import get_database_engine, get_database_session
-from opennem.db.models.opennem import Facility, FuelTech, Location, Revision, Station
+from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Revision, Station
 from opennem.schema.opennem import StationSchema
 
-from .schema import StationIDList, StationModification, StationRecord, StationUpdateResponse
+from .schema import StationIDList, StationRecord
 
 router = APIRouter()
 
@@ -70,38 +69,6 @@ def stations(
 
 
 @router.get(
-    "/",
-    name="station lookup",
-    description="""Lookup station by code or network_code. \
-        Require one of code or network_code""",
-    response_model=List[StationRecord],
-    response_model_exclude_none=True,
-)
-def station_lookup(
-    session: Session = Depends(get_database_session),
-    station_code: Optional[str] = Query(None, description="Code of the station to lookup"),
-    network_code: Optional[str] = Query(None, description="The network code to lookup"),
-) -> List[StationSchema]:
-    if not station_code and not network_code:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-
-    station = session.query(Station)
-
-    if station_code:
-        station = station.filter_by(code=station_code)
-
-    if network_code:
-        station = station.filter_by(network_name=network_code)
-
-    stations = station.all()
-
-    if not stations:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-
-    return stations
-
-
-@router.get(
     "/ids",
     response_model=List[StationIDList],
     description="Get a list of station ids for dropdowns",
@@ -128,19 +95,17 @@ def station_ids(
 
 
 @router.get(
-    "/{station_code:path}",
+    "/{country_code}/{network_id}/{station_code:path}",
     response_model=StationSchema,
     description="Get a single station by code",
     response_model_exclude_none=True,
 )
 def station(
+    country_code: str,
+    network_id: str,
+    station_code: str,
     session: Session = Depends(get_database_session),
-    engine=Depends(get_database_engine),
-    station_code: str = None,
     only_generators: bool = Query(True, description="Show only generators"),
-    power_include: Optional[bool] = Query(False, description="Include last week of power output"),
-    revisions_include: Optional[bool] = Query(False, description="Include revisions in records"),
-    history_include: Optional[bool] = Query(False, description="Include history in records"),
 ) -> StationSchema:
 
     station = (
@@ -148,6 +113,8 @@ def station(
         .filter(Station.code == station_code)
         .filter(Facility.station_id == Station.id)
         .filter(~Facility.code.endswith("NL1"))
+        .filter(Facility.network_id == network_id)
+        .filter(Network.country == country_code)
     )
 
     if only_generators:
@@ -166,118 +133,4 @@ def station(
 
     station.network = station.facilities[0].network_id
 
-    if revisions_include:
-        revisions = session.query(Revision).all()
-
-        station.revisions = list(
-            filter(
-                lambda rev: rev.schema == "station" and rev.code == station.code,
-                revisions,
-            )
-        )
-
-        for facility in station.facilities:
-            facility.revisions = list(
-                filter(
-                    lambda rev: rev.schema == "facility" and rev.code == facility.code,
-                    revisions,
-                )
-            )
-
-    if power_include:
-        pass
-
-    if station.location and station.location.geom:
-        __query = """
-            select
-                code,
-                ST_Distance(l.geom, bs.geom, false) / 1000.0 as dist
-            from bom_station bs, location l
-            where
-                l.id = {id}
-                and bs.priority < 2
-            order by dist
-            limit 1
-        """.format(
-            id=station.location.id
-        )
-
-        result = []
-
-        with engine.connect() as c:
-            result = list(c.execute(__query))
-
-            if len(result):
-                station.location.weather_nearest = {
-                    "code": result[0][0],
-                    "distance": round(result[0][1], 2),
-                }
-
     return station
-
-
-@router.get(
-    "/history",
-    name="station all history",
-    description="""Get history for all stations""",
-    response_model=List[StationSchema],
-)
-def stations_history(session: Session = Depends(get_database_session)):
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
-
-
-@router.get(
-    "/station/history/{station_code}",
-    name="station history",
-    description="""Get history for a station""",
-    response_model=StationSchema,
-)
-def station_history(station_code: str, session: Session = Depends(get_database_session)):
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
-
-
-@router.post(
-    "/",
-    name="station",
-    # response_model=StationSchema,
-    description="Create a station",
-)
-def station_create(
-    session: Session = Depends(get_database_session),
-    # station: StationSubmission = None,
-):
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED)
-
-
-@router.put("/{station_id}", name="Station update")
-def station_update(
-    station_id: int,
-    data: StationModification = {},
-    session: Session = Depends(get_database_session),
-) -> dict:
-    station = session.query(Station).get(station_id)
-
-    if not station:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
-
-    if data.modification == "approve":
-
-        if station.approved is True:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Station already approved",
-            )
-
-        station.approved = True
-        station.approved_at = datetime.now()
-        station.approved_by = "opennem.admin"
-
-    if data.modification == "reject":
-        station.approved = False
-
-    session.add(station)
-    session.commit()
-
-    response = StationUpdateResponse(success=True, record=station)
-
-    return response
