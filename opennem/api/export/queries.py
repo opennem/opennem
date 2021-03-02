@@ -578,7 +578,9 @@ def energy_network_flow_query(
             ei.imports_energy,
             ei.exports_energy,
             ei.imports_market_value,
-            ei.exports_market_value
+            ei.exports_market_value,
+            ei.imports_market_value_rrp,
+            ei.exports_market_value_rrp
         from mv_interchange_energy_nem_region ei
         where
             ei.trading_interval <= '{date_max}'
