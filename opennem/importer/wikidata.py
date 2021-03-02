@@ -12,7 +12,7 @@ from opennem.core.loader import load_data
 from opennem.core.normalizers import station_name_cleaner
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import Photo, Station
-from opennem.utils.images import img_to_buffer
+from opennem.utils.images import image_get_hash, img_to_buffer
 
 logger = logging.getLogger(__name__)
 
@@ -208,10 +208,12 @@ def wikidata_photos() -> None:
             continue
 
         # file_name = urlparse(image_url).path.split("/")[-1:]
-        file_name = "{}_{}.{}".format(name.replace(" ", "_"), "original", "jpeg")
+        hash_id = image_get_hash(img)
+        file_name = "{}_{}_{}.{}".format(hash_id, name.replace(" ", "_"), "original", "jpeg")
 
         photo = Photo(
             name=file_name,
+            hash_id=hash_id,
             width=img.size[0],
             height=img.size[1],
             original_url=image_url,
@@ -225,11 +227,13 @@ def wikidata_photos() -> None:
             station.photos.append(photo)
 
         img.thumbnail((280, 340))
+        hash_id = image_get_hash(img)
 
-        file_name = "{}_{}.{}".format(name.replace(" ", "_"), img.size[0], "jpeg")
+        file_name = "{}_{}_{}.{}".format(hash_id, name.replace(" ", "_"), img.size[0], "jpeg")
 
         photo_thumb = Photo(
             name=file_name,
+            hash_id=hash_id,
             width=img.size[0],
             height=img.size[1],
             original_url=image_url,
@@ -253,5 +257,5 @@ def wikidata_photos() -> None:
 if __name__ == "__main__":
     # wikidata_parse()
     # wikidata_join()
-    wikidata_join_mapping()
-    # wikidata_photos()
+    # wikidata_join_mapping()
+    wikidata_photos()
