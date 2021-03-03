@@ -1,3 +1,4 @@
+from hashlib import md5
 from io import BytesIO
 
 from PIL import Image
@@ -33,3 +34,14 @@ def image_get_hash(img: Image) -> str:
 
     return hex_representation.lower()
 
+
+def image_get_crypto_hash(img: Image, save_driver: str = "JPEG") -> str:
+    """Get a cryptographic hash of an image"""
+    img_hash = md5()
+
+    with BytesIO() as memobj:
+        img.save(memobj, save_driver)
+        data = memobj.getvalue()
+        img_hash.update(data)
+
+    return img_hash.hexdigest()
