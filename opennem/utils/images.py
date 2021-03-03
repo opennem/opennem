@@ -39,8 +39,11 @@ def image_get_crypto_hash(img: Image, save_driver: str = "JPEG") -> str:
     """Get a cryptographic hash of an image"""
     img_hash = md5()
 
+    # convert to RGB
+    img_rgb = img.convert("RGB")
+
     with BytesIO() as memobj:
-        img.save(memobj, save_driver)
+        img_rgb.save(memobj, save_driver)
         data = memobj.getvalue()
         img_hash.update(data)
 
