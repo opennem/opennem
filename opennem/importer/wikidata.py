@@ -15,6 +15,7 @@ from opennem.db.models.opennem import Photo, Station
 from opennem.utils.images import image_get_crypto_hash, img_to_buffer
 
 logger = logging.getLogger("opennem.importer.wikidata")
+logging.getLogger("PIL").setLevel(logging.ERROR)
 
 
 def article_from_wikipedia(url: str) -> str:
@@ -196,64 +197,66 @@ def wikidata_photos() -> None:
         name = entry["itemLabel"]
         wiki_id = dataid_from_url(entry["item"])
 
-        station = session.query(Station).filter(Station.wikidata_id == wiki_id).one_or_none()
+        stations = session.query(Station).filter(Station.wikidata_id == wiki_id).all()
 
-        if not station:
+        if not stations or len(stations) == 0:
             logger.error("Could not find station {}".format(name))
             continue
 
-        img = get_image(image_url)
+        for station in stations:
 
-        if not img:
-            logger.error("No image for {}".format(name))
-            continue
+            img = get_image(image_url)
 
-        hash_id = image_get_crypto_hash(img)[-8:]
-        file_name = "{}_{}_{}.{}".format(hash_id, name.replace(" ", "_"), "original", "jpeg")
+            if not img:
+                logger.error("No image for {}".format(name))
+                continue
 
-        photo = Photo(
-            name=file_name,
-            hash_id=hash_id,
-            width=img.size[0],
-            height=img.size[1],
-            original_url=image_url,
-        )
+            hash_id = image_get_crypto_hash(img)[-8:]
+            file_name = "{}_{}_{}.{}".format(hash_id, name.replace(" ", "_"), "original", "jpeg")
 
-        img_buff = img_to_buffer(img)
+            photo = Photo(
+                name=file_name,
+                hash_id=hash_id,
+                width=img.size[0],
+                height=img.size[1],
+                original_url=image_url,
+            )
 
-        write_photo_to_s3(file_name, img_buff)
+            img_buff = img_to_buffer(img)
 
-        if station:
-            station.photos.append(photo)
+            write_photo_to_s3(file_name, img_buff)
 
-        # Thumbnail copy (and code copy!)
+            if station:
+                station.photos.append(photo)
 
-        img.thumbnail((280, 340))
-        hash_id = image_get_crypto_hash(img)[-8:]
+            # Thumbnail copy (and code copy!)
 
-        file_name = "{}_{}_{}.{}".format(hash_id, name.replace(" ", "_"), img.size[0], "jpeg")
+            img.thumbnail((280, 340))
+            hash_id = image_get_crypto_hash(img)[-8:]
 
-        photo_thumb = Photo(
-            name=file_name,
-            hash_id=hash_id,
-            width=img.size[0],
-            height=img.size[1],
-            original_url=image_url,
-        )
+            file_name = "{}_{}_{}.{}".format(hash_id, name.replace(" ", "_"), img.size[0], "jpeg")
 
-        img_buff = img_to_buffer(img)
-        write_photo_to_s3(file_name, img_buff)
+            photo_thumb = Photo(
+                name=file_name,
+                hash_id=hash_id,
+                width=img.size[0],
+                height=img.size[1],
+                original_url=image_url,
+            )
 
-        if station:
-            station.photos.append(photo_thumb)
+            img_buff = img_to_buffer(img)
+            write_photo_to_s3(file_name, img_buff)
 
-        session.add(photo)
-        session.add(photo_thumb)
+            if station:
+                station.photos.append(photo_thumb)
 
-        if station:
-            session.add(station)
+            session.add(photo)
+            session.add(photo_thumb)
 
-        session.commit()
+            if station:
+                session.add(station)
+
+            session.commit()
 
 
 if __name__ == "__main__":
