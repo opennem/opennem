@@ -24,7 +24,7 @@ class NemwebDispatchActualGenCurrent(NemwebSpider):
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/"
 
     limit = 0
-    skip = 1
+    skip = 0
 
     pipelines_extra = set(
         [
