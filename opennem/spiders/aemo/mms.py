@@ -35,7 +35,7 @@ class MMSArchiveBulkSpider(scrapy.Spider):
 
     def start_requests(self) -> Generator[scrapy.Request, None, None]:
         start_month = datetime(2020, 1, 1)
-        end_month = datetime(2009, 7, 1)
+        end_month = datetime(2006, 7, 1)
 
         for date in month_series(start_month, end_month):
             for table in self.tables:
@@ -91,6 +91,7 @@ class MMSArchiveBulkSpider(scrapy.Spider):
 
 
 class MMSArchivePriceSpider(MMSArchiveBulkSpider):
+    # price_dispatch
     name = "au.mms.archive.dispatch_price"
 
     pipelines = set(
@@ -104,7 +105,8 @@ class MMSArchivePriceSpider(MMSArchiveBulkSpider):
 
 
 class MMSArchiveDispatchISSpider(MMSArchiveBulkSpider):
-    name = "au.mms.archive.dispatch_is"
+    # net_interchange and demand
+    name = "au.mms.archive.regionsum"
 
     pipelines = set(
         [
@@ -123,6 +125,7 @@ class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
 
 
 class MMSArchiveTradingPriceSpider(MMSArchiveBulkSpider):
+    # price
     name = "au.mms.archive.trading_price"
 
     pipelines = set(
