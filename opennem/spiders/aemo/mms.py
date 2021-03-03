@@ -80,10 +80,10 @@ class MMSArchiveBulkSpider(scrapy.Spider):
             logger.info("No content from scrapy request")
             return None
 
-        content = decode_bytes(content)
+        content_decoded: str = decode_bytes(content)
 
         item = {}
-        item["content"] = content
+        item["content"] = content_decoded
         item["extension"] = ".csv"
         item["mime_type"] = file_mime
 
