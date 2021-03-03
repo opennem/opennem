@@ -10,11 +10,11 @@ from PIL import Image
 from opennem.api.photo.controllers import write_photo_to_s3
 from opennem.core.loader import load_data
 from opennem.core.normalizers import station_name_cleaner
-from opennem.db import SessionLocal, get_database_engine
+from opennem.db import SessionLocal
 from opennem.db.models.opennem import Photo, Station
-from opennem.utils.images import image_get_hash, img_to_buffer
+from opennem.utils.images import image_get_crypto_hash, img_to_buffer
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.importer.wikidata")
 
 
 def article_from_wikipedia(url: str) -> str:
@@ -187,6 +187,7 @@ def get_image(image_url: str) -> Image:
 
 
 def wikidata_photos() -> None:
+    """ Attach wikidata photos to stations """
     session = SessionLocal()
     wikidata = load_data("wikidata-photos.json", from_project=True)
 
@@ -198,17 +199,16 @@ def wikidata_photos() -> None:
         station = session.query(Station).filter(Station.wikidata_id == wiki_id).one_or_none()
 
         if not station:
-            print("Could not find station {}".format(name))
-            # continue
+            logger.error("Could not find station {}".format(name))
+            continue
 
         img = get_image(image_url)
 
         if not img:
-            print("No image for {}".format(name))
+            logger.error("No image for {}".format(name))
             continue
 
-        # file_name = urlparse(image_url).path.split("/")[-1:]
-        hash_id = image_get_hash(img)
+        hash_id = image_get_crypto_hash(img)[-8:]
         file_name = "{}_{}_{}.{}".format(hash_id, name.replace(" ", "_"), "original", "jpeg")
 
         photo = Photo(
@@ -226,8 +226,10 @@ def wikidata_photos() -> None:
         if station:
             station.photos.append(photo)
 
+        # Thumbnail copy (and code copy!)
+
         img.thumbnail((280, 340))
-        hash_id = image_get_hash(img)
+        hash_id = image_get_crypto_hash(img)[-8:]
 
         file_name = "{}_{}_{}.{}".format(hash_id, name.replace(" ", "_"), img.size[0], "jpeg")
 
