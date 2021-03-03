@@ -22,6 +22,7 @@ def img_to_buffer(img: Image) -> memoryview:
 
 
 def image_get_hash(img: Image) -> str:
+    """Image hash based on content"""
     img = img.resize((10, 10), Image.ANTIALIAS)
     img = img.convert("L")
 
@@ -30,4 +31,5 @@ def image_get_hash(img: Image) -> str:
     bits = "".join(["1" if (px >= avg_pixel) else "0" for px in pixel_data])
     hex_representation = str(hex(int(bits, 2)))[2:][::-1].upper()
 
-    return hex_representation
+    return hex_representation.lower()
+
