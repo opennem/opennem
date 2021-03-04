@@ -106,7 +106,7 @@ class MMSArchivePriceSpider(MMSArchiveBulkSpider):
 
 class MMSArchiveDispatchISSpider(MMSArchiveBulkSpider):
     # net_interchange and demand
-    name = "au.mms.archive.regionsum"
+    name = "au.mms.archive.dispatch_regionsum"
 
     pipelines = set(
         [
@@ -116,6 +116,20 @@ class MMSArchiveDispatchISSpider(MMSArchiveBulkSpider):
     )
 
     tables = ["DISPATCHREGIONSUM"]
+
+
+class MMSArchiveTradingRegionsumSpider(MMSArchiveBulkSpider):
+    # net_interchange and demand
+    name = "au.mms.archive.regionsum"
+
+    pipelines = set(
+        [
+            ExtractCSV,
+            NemwebUnitScadaOpenNEMStorePipeline,
+        ]
+    )
+
+    tables = ["TRADINGREGIONSUM"]
 
 
 class MMSArchiveRooftopActualSpider(MMSArchiveBulkSpider):
