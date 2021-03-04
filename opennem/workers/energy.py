@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 from itertools import groupby
+from textwrap import dedent
 from typing import Dict, List, Optional
 
 from pytz import FixedOffset
@@ -24,16 +25,13 @@ logger = logging.getLogger("opennem.workers.energy")
 DRY_RUN = False
 
 
-def get_generated(
+def get_generated_query(
     network_region: str,
     date_min: datetime,
     date_max: datetime,
     network: NetworkSchema,
     fueltech_id: Optional[str] = None,
-) -> List[Dict]:
-    """Gets generated values for a date range for a network and network region
-    and optionally for a single fueltech"""
-
+) -> str:
     # @TODO support refresh energies for a single duid or station
 
     __sql = """
@@ -52,6 +50,7 @@ def get_generated(
         and fs.trading_interval <= '{date_max}'
         and fs.is_forecast is False
         {fueltech_match}
+        and fs.generated is not null
     order by fs.trading_interval asc, 2;
     """
 
@@ -67,6 +66,23 @@ def get_generated(
         date_max=date_max,
         fueltech_match=fueltech_match,
     )
+
+    return dedent(query)
+
+
+def get_generated(
+    network_region: str,
+    date_min: datetime,
+    date_max: datetime,
+    network: NetworkSchema,
+    fueltech_id: Optional[str] = None,
+) -> List[Dict]:
+    """Gets generated values for a date range for a network and network region
+    and optionally for a single fueltech"""
+
+    # @TODO support refresh energies for a single duid or station
+
+    query = get_generated_query(network_region, date_min, date_max, network, fueltech_id)
 
     engine = get_database_engine()
 
@@ -283,5 +299,6 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    # run_energy_update_archive(year=2021, regions=["NSW1"], fueltech_id="solar_rooftop")
-    run_energy_update_all()
+    run_energy_update_archive(year=2021, regions=["NSW1"], fueltech_id="solar_rooftop")
+    # run_energy_update_all()
+    # run_energy_update_yesterday()
