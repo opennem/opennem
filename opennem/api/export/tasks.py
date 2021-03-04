@@ -119,9 +119,12 @@ def export_power(
             if flow_set:
                 stat_set.append_set(flow_set)
 
+        time_series_weather = time_series.copy()
+        time_series_weather.interval = human_to_interval("30m")
+
         if power_stat.bom_station:
             weather_set = weather_daily(
-                time_series=time_series,
+                time_series=time_series_weather,
                 station_code=power_stat.bom_station,
                 network_region=power_stat.network_region,
                 include_min_max=False,
