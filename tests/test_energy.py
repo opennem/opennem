@@ -2,7 +2,7 @@ import csv
 from pathlib import Path
 from typing import List
 
-from opennem.core.energy import energy_sum
+from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.schema.network import NetworkNEM
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "energy"
@@ -28,6 +28,8 @@ def test_energy_sum_average_fixture() -> None:
 
     power_results_bw01 = list(filter(lambda x: x["facility_code"] == "BW01", records))
 
-    es = energy_sum(power_results_bw01, NetworkNEM)
+    power_df = shape_energy_dataframe(power_results_bw01)
+
+    es = energy_sum(power_df, NetworkNEM)
 
     assert len(records) == 32288, "Right length of records"
