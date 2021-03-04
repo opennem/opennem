@@ -62,7 +62,7 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> float:
     return bucket_energy
 
 
-def _energy_aggregate(df: pd.DataFrame, network: NetworkSchema) -> pd.DataFrame:
+def _energy_aggregate(df: pd.DataFrame, power_column: str = "generated") -> pd.DataFrame:
     """Energy aggregate that buckets into 30min intervals
     but takes edges in for 7 total values"""
     in_cap = {}
@@ -79,7 +79,7 @@ def _energy_aggregate(df: pd.DataFrame, network: NetworkSchema) -> pd.DataFrame:
             in_cap[duid] = True
 
         if in_cap[duid]:
-            capture[duid].append(value.eoi_quantity)
+            capture[duid].append(value[power_column])
 
             if dt:
                 energy = _trapezium_integration_variable(pd.Series(capture[duid]))
@@ -90,18 +90,20 @@ def _energy_aggregate(df: pd.DataFrame, network: NetworkSchema) -> pd.DataFrame:
 
         if i.minute in reading_stops:
             dt = i
-            capture[duid].append(value.eoi_quantity)
+            capture[duid].append(value[power_column])
             in_cap[duid] = True
 
         else:
-            capture[duid].append(value.eoi_quantity)
+            capture[duid].append(value[power_column])
 
     return pd.DataFrame(
         values, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"]
     )
 
 
-def energy_sum(gen_series: List[Dict], network: NetworkSchema) -> pd.DataFrame:
+def energy_sum(
+    gen_series: List[Dict], network: NetworkSchema, power_column: str = "generated"
+) -> pd.DataFrame:
     """Takes the energy sum for a series of raw duid intervals
     and returns a fresh dataframe to be imported"""
     df = pd.DataFrame(
@@ -122,7 +124,7 @@ def energy_sum(gen_series: List[Dict], network: NetworkSchema) -> pd.DataFrame:
     df = df.set_index(["trading_interval", "network_id", "facility_code"])
 
     # Multigroup by datetime and facility code
-    df = _energy_aggregate(df, network=network)
+    df = _energy_aggregate(df, power_column=power_column)
 
     # Reset back to a simple frame
     df = df.reset_index()
