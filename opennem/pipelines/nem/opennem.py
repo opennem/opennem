@@ -689,7 +689,7 @@ TABLE_PROCESSOR_MAP = {
     "ROOFTOP_ACTUAL": "process_rooftop_actual",
     "ROOFTOP_FORECAST": "process_rooftop_forecast",
     "TRADING_PRICE": "process_trading_price",
-    # "TRADING_REGIONSUM": "process_trading_regionsum",
+    "TRADING_REGIONSUM": "process_trading_regionsum",
 }
 
 
