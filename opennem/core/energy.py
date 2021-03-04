@@ -62,33 +62,6 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> float:
     return bucket_energy
 
 
-def _trapezium_integration(d_ti: pd.Series, gapfill: bool = False) -> Optional[float]:
-    """ Energy for a 30 minute bucket """
-    # Clear no numbers
-    d_ti = d_ti.dropna()
-
-    # Early return
-    if d_ti.sum() == 0:
-        return 0.0
-
-    # Fall back on average but warn to check data
-    if d_ti.count() != 7:
-        # logger.error("Series {} has gaps".format(d_ti))
-
-        if gapfill:
-            return _trapezium_integration_variable(d_ti)
-
-        return None
-
-    weights = d_ti.values * [1, 2, 2, 2, 2, 2, 1]
-
-    weights_sum: float = weights.sum()
-
-    bucket_energy = 0.5 * weights_sum / 12
-
-    return bucket_energy
-
-
 def _energy_aggregate(df: pd.DataFrame, network: NetworkSchema) -> pd.DataFrame:
     """Energy aggregate that buckets into 30min intervals
     but takes edges in for 7 total values"""
@@ -109,7 +82,7 @@ def _energy_aggregate(df: pd.DataFrame, network: NetworkSchema) -> pd.DataFrame:
             capture[duid].append(value.eoi_quantity)
 
             if dt:
-                energy = _trapezium_integration(pd.Series(capture[duid]), True)
+                energy = _trapezium_integration_variable(pd.Series(capture[duid]))
                 values.append((dt, network_id, duid, energy))
 
             in_cap[duid] = False
