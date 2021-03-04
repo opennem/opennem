@@ -479,6 +479,11 @@ def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
 
         primary_keys.append(_pk)
 
+        net_interchange = None
+
+        if "NETINTERCHANGE" in record:
+            net_interchange = clean_float(record["NETINTERCHANGE"])
+
         demand_total = None
 
         if "TOTALDEMAND" in record:
@@ -489,6 +494,7 @@ def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
                 "network_id": "NEM",
                 "created_by": spider.name,
                 "network_region": record["REGIONID"],
+                "net_interchange": net_interchange,
                 "trading_interval": trading_interval,
                 "demand_total": demand_total,
             }
