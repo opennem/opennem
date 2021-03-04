@@ -41,9 +41,7 @@ class NemwebCurrentTradingIS(NemwebSpider):
 
 
 class NemwebArchiveTradingIS(NemwebSpider):
-    # This spider is a duper of most of current
-
-    # name = "au.nem.archive.trading_is"
+    name = "au.nem.archive.trading_is"
     start_url = "http://nemweb.com.au/Reports/Archive/TradingIS_Reports/"
     limit = 0
 
