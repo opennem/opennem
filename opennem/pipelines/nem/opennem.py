@@ -616,19 +616,21 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
     # remove empties
     scada_records = [i for i in scada_records if i]
 
-    # Shift intervals
-    def shift_rooftop_interval(scada_record: Dict[str, Any]) -> Dict[str, Any]:
-        if "trading_interval" not in scada_record:
-            return scada_record
+    # dedupe
+    return_records_grouped = {}
 
-        dt = scada_record["trading_interval"]
+    for pk_values, rec_value in groupby(
+        scada_records,
+        key=lambda r: (
+            r.get("trading_interval"),
+            r.get("network_id"),
+            r.get("facility_code"),
+        ),
+    ):
+        if pk_values not in return_records_grouped:
+            return_records_grouped[pk_values] = list(rec_value).pop()
 
-        if not isinstance(dt, datetime):
-            return scada_record
-
-        scada_record["trading_interval"] = dt - timedelta(minutes=30)
-
-        return scada_record
+    scada_records = list(return_records_grouped.values())
 
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
