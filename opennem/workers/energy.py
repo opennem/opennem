@@ -8,7 +8,7 @@ from pytz import FixedOffset
 
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.time import human_to_interval, human_to_period
-from opennem.core.energy import energy_sum
+from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.diff.versions import CUR_YEAR, get_network_regions
@@ -39,6 +39,7 @@ def get_generated_query(
         fs.trading_interval at time zone 'AEST' as trading_interval,
         fs.facility_code,
         fs.network_id,
+        f.fueltech_id,
         generated
     from
         facility_scada fs
@@ -196,11 +197,13 @@ def run_energy_calc(
     network: NetworkSchema,
     fueltech_id: Optional[str] = None,
 ) -> int:
-    results = get_generated(region, date_min, date_max, network=network, fueltech_id=fueltech_id)
+    generated_results = get_generated(
+        region, date_min, date_max, network=network, fueltech_id=fueltech_id
+    )
     num_records = 0
 
     try:
-        if len(results) < 1:
+        if len(generated_results) < 1:
             logger.warn(
                 "No results from get_generated query for {} {} {}".format(
                     region, date_max, fueltech_id
@@ -208,7 +211,10 @@ def run_energy_calc(
             )
             return 0
 
-        num_records = insert_energies(results, network=network)
+        generated_frame = shape_energy_dataframe(generated_results)
+
+        num_records = insert_energies(generated_frame, network=network)
+
         logger.info("Done {} for {} => {}".format(region, date_min, date_max))
     except Exception as e:
         logger.error(e)
