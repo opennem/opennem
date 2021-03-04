@@ -101,24 +101,31 @@ def _energy_aggregate(df: pd.DataFrame, power_column: str = "generated") -> pd.D
     )
 
 
-def energy_sum(
-    gen_series: List[Dict], network: NetworkSchema, power_column: str = "generated"
-) -> pd.DataFrame:
-    """Takes the energy sum for a series of raw duid intervals
-    and returns a fresh dataframe to be imported"""
+def shape_energy_dataframe(gen_series: List[Dict]) -> pd.DataFrame:
+    """ Shapes a list of dicts into a dataframe for energy_sum"""
     df = pd.DataFrame(
         gen_series,
         columns=[
             "trading_interval",
             "facility_code",
             "network_id",
-            "eoi_quantity",
+            "fueltech_id",
+            "generated",
         ],
     )
 
     # Clean up types
     df.trading_interval = pd.to_datetime(df.trading_interval)
-    df.eoi_quantity = pd.to_numeric(df.eoi_quantity)
+    df.generated = pd.to_numeric(df.generated)
+
+    return df
+
+
+def energy_sum(
+    df: pd.DataFrame, network: NetworkSchema, power_column: str = "generated"
+) -> pd.DataFrame:
+    """Takes the energy sum for a series of raw duid intervals
+    and returns a fresh dataframe to be imported"""
 
     # Index by datetime
     df = df.set_index(["trading_interval", "network_id", "facility_code"])
