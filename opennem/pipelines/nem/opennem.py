@@ -494,7 +494,7 @@ def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
                 "network_id": "NEM",
                 "created_by": spider.name,
                 "network_region": record["REGIONID"],
-                "net_interchange": net_interchange,
+                "net_interchange_trading": net_interchange,
                 "trading_interval": trading_interval,
                 "demand_total": demand_total,
             }
@@ -512,6 +512,7 @@ def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
         index_elements=["trading_interval", "network_id", "network_region"],
         set_={
             "demand_total": stmt.excluded.demand_total,
+            "net_interchange_trading": stmt.excluded.net_interchange_trading,
         },
     )
 
