@@ -60,10 +60,12 @@ def _build_args_list(
     return args_list
 
 
-def _worker_wrap(year: Optional[int], months: int, region: str, fueltech_id: Optional[str]) -> None:
+def _worker_wrap(
+    year: Optional[int], months: int, region: str, fueltech_id: Optional[str]
+) -> None:
     """Map to named args"""
     return run_energy_update_archive(
-        year=year, months=[months], regions=[region], fueltech_id=fueltech_id
+        year=year, months=[months], regions=[region], fueltech=fueltech_id
     )
 
 
