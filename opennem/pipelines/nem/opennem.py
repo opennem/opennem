@@ -689,7 +689,7 @@ TABLE_PROCESSOR_MAP = {
     "DISPATCH_CASE_SOLUTION": "process_case_solutions",
     "DISPATCH_INTERCONNECTORRES": "process_dispatch_interconnectorres",
     "DISPATCH_PRICE": "process_trading_price",
-    # "DISPATCH_REGIONSUM": "process_dispatch_regionsum",
+    "DISPATCH_REGIONSUM": "process_dispatch_regionsum",
     "DISPATCH_UNIT_SCADA": "process_unit_scada",
     "DISPATCH_UNIT_SOLUTION": "process_unit_solution",
     "METER_DATA_GEN_DUID": "process_meter_data_gen_duid",
