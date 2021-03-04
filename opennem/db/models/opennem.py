@@ -755,4 +755,5 @@ class BalancingSummary(Base, BaseModel):
     demand_total = Column(Numeric, nullable=True)
     price = Column(Numeric, nullable=True)
     price_dispatch = Column(Numeric, nullable=True)
+    net_interchange_trading = Column(Numeric, nullable=True)
     is_forecast = Column(Boolean, default=False)
