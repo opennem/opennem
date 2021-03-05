@@ -25,7 +25,7 @@ class ScadaResultCompat(BaseConfig):
     generated: Union[float, int, None]
 
 
-def _trapezium_integration_variable(d_ti: pd.Series) -> float:
+def _trapezium_integration_variable(d_ti: pd.Series) -> Optional[float]:
     """Gapfill version of trap int - will fill out"""
     # Clear no numbers
     d_ti = d_ti.dropna()
