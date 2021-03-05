@@ -13,8 +13,13 @@
 import logging
 import logging.config
 import os
+import sys
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    logging.error("Could not load required modules. Likely virtualenv not active or installed.")
+    sys.exit(-1)
 
 from opennem.settings.log import LOGGING_CONFIG
 from opennem.settings.utils import load_env_file
