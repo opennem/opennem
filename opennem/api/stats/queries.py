@@ -290,7 +290,6 @@ def energy_facility_query(
     """
 
     timezone = network.timezone_database
-    offset = network.get_timezone(postgres_format=True)
 
     date_range: ScadaDateRange = get_scada_range(network=network, facilities=facility_codes)
 
@@ -322,10 +321,6 @@ def energy_facility_query(
         date_min = date_max.replace(year=year)
     elif period.period_human in ["7d", "5Y", "10Y"]:
         date_min = date_range.get_end() - timedelta(minutes=period.period)
-
-    # elif period.period_human == "all":
-    # else:
-    # date_min = date_range.get_end() - timedelta(minutes=period.period)
 
     query = dedent(
         __query.format(
