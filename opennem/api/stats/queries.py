@@ -18,6 +18,7 @@ from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
+from opennem.settings import settings
 
 
 def duid_in_case(facility_codes: List[str]) -> str:
@@ -278,7 +279,7 @@ def energy_facility_query(
         sum(t.energy) as fueltech_energy,
         sum(t.market_value) as fueltech_market_value,
         sum(t.emissions) as fueltech_emissions
-    from mv_facility_30m_all t
+    from {view_name} t
     where
         t.trading_interval <= '{date_max}' and
         t.trading_interval >= '{date_min}' and
@@ -328,6 +329,7 @@ def energy_facility_query(
 
     query = dedent(
         __query.format(
+            view_name=settings.db_energy_view,
             facility_codes_parsed=duid_in_case(facility_codes),
             trunc=trunc,
             date_max=date_max,
