@@ -31,6 +31,8 @@ MODULE_DIR = os.path.dirname(__file__)
 
 ENV = os.getenv("ENV", default="development")
 
+logging.debug(f"Loading ENV {ENV}")
+
 env_files = load_env_file(ENV)
 
 # Load the env files
