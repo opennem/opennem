@@ -26,7 +26,17 @@ select
         )
     else 0.0
     end as emissions
-from mv_facility_energy_30m fs
+from (
+  select
+      time_bucket('30 minutes', fs.trading_interval) as trading_interval,
+      fs.facility_code,
+      fs.network_id,
+      round(sum(fs.eoi_quantity), 4) as energy
+  from facility_scada fs
+  where fs.is_forecast is False
+  group by
+      1, 2, 3
+) as fs
     left join facility f on fs.facility_code = f.code
     left join balancing_summary bs on
         bs.trading_interval = fs.trading_interval
