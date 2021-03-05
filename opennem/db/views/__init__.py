@@ -35,13 +35,6 @@ AggregationPolicy6Hours = ContinuousAggregationPolicy(
 
 _VIEW_MAP = [
     ViewDefinition(
-        priority=2,
-        name="mv_facility_energy_30m",
-        materialized=True,
-        filepath="mv_facility_energy_30min.sql",
-        aggregation_policy=AggregationPolicy2Hours,
-    ),
-    ViewDefinition(
         priority=11,
         name="mv_facility_30m_all",
         materialized=True,
