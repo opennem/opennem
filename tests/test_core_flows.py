@@ -1,6 +1,6 @@
 import pytest
 
-from opennem.core.flows import FlowDirection, generated_flow_station_id
+from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id
 from opennem.core.networks import get_network_region_schema
 from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
 
@@ -27,3 +27,17 @@ def test_generated_flow_station_id(
         network=network, network_region=network_region, flow_direction=flow_direction
     )
     assert code == code_expected, "Code return matches"
+
+
+@pytest.mark.parametrize(
+    ["fueltech_id", "flow_expected"],
+    [
+        ("imports", FlowDirection.imports),
+        ("exports", FlowDirection.exports),
+        ("coal_black", None),
+    ],
+)
+def test_fueltech_to_flow(fueltech_id: str, flow_expected: FlowDirection) -> None:
+    flow_direction = fueltech_to_flow(fueltech_id)
+
+    assert flow_direction == flow_expected, "Got the expected flow"

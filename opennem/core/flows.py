@@ -7,13 +7,27 @@ from typing import Dict, List, Optional
 from datetime_truncate import truncate
 
 from opennem.api.stats.schema import DataQueryResult, RegionFlowEmissionsResult, RegionFlowResult
-from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
+from opennem.schema.network import NetworkRegionSchema, NetworkSchema
 from opennem.schema.time import TimeInterval
 
 
 class FlowDirection(Enum):
     imports = "imports"
     exports = "exports"
+
+
+def fueltech_to_flow(fueltech_id: str) -> Optional[FlowDirection]:
+    """ Check if a fueltech is a flow and if so return the enum """
+    ft = fueltech_id.lower()
+
+    flow_directions = [i for i in FlowDirection]
+
+    for flow_direction in flow_directions:
+        if flow_direction.value == ft:
+            return flow_direction
+
+    # shouldn't get here?!?
+    return None
 
 
 def generated_flow_station_id(
