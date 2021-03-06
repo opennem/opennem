@@ -18,13 +18,14 @@ scrapy crawl -L ERROR au.wem.current.facility_scada
 scrapy crawl -L ERROR au.wem.current.balancing_summary
 
 # nem
-scrapy crawl -L ERROR au.nem.current.dispatch_scada
-scrapy crawl -L ERROR au.nem.current.dispatch_is
-scrapy crawl -L ERROR au.nem.current.trading_is
+scrapy crawl -L ERROR au.nem.day.dispatch_scada
+scrapy crawl -L ERROR au.nem.day.dispatch_is
+scrapy crawl -L ERROR au.nem.day.trading_is
 scrapy crawl -L ERROR au.nem.current.rooftop
 scrapy crawl -L ERROR au.nem.current.rooftop_forecast
-scrapy crawl -L ERROR au.nem.latest.dispatch_actual_gen
-scrapy crawl -L ERROR au.nem.latest.dispatch
+scrapy crawl -L ERROR au.nem.current.dispatch_actual_gen
+scrapy crawl -L ERROR au.nem.current.dispatch
+scrapy crawl -L ERROR au.nem.current.trading_is
 # scrapy crawl -L ERROR au.nem.current.price
 
 # bom
