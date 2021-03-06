@@ -22,6 +22,7 @@ python -m opennem.cli db init
 python -m opennem.cli db views
 
 python -m opennem.importer.wikidata
+python -m opennem.importer.interconnectors
 
 # import emission maps
 python -m opennem.cli import emissions
