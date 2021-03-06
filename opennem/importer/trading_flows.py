@@ -19,6 +19,9 @@ IMPORTER_NAME = "opennem.importer.trading_flows"
 
 
 def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
+    """Creats a station for each network region and a facility for each of imports
+    exports so that energy values in facility_scada can be matched up per-region"""
+
     session = SessionLocal()
 
     network_regions = get_network_region_schema(network)
