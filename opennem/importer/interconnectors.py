@@ -11,11 +11,7 @@ from typing import List
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
 from opennem.core.networks import network_from_state, state_from_network_region
-from opennem.core.parsers.aemo import (
-    AEMOParserException,
-    AEMOTableSchema,
-    parse_aemo_csv,
-)
+from opennem.core.parsers.aemo import AEMOParserException, AEMOTableSchema, parse_aemo_csv
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility, Location, Station
 from opennem.schema.aemo.mms import MarketConfigInterconnector
@@ -56,9 +52,7 @@ def import_nem_interconnects() -> None:
 
         # skip SNOWY
         # @TODO do these need to be remapped for historical
-        if interconnector.regionfrom in [
-            "SNOWY1"
-        ] or interconnector.regionto in ["SNOWY1"]:
+        if interconnector.regionfrom in ["SNOWY1"] or interconnector.regionto in ["SNOWY1"]:
             continue
 
         logger.debug(interconnector)
@@ -110,7 +104,7 @@ def import_nem_interconnects() -> None:
         int_facility.approved = True
         int_facility.approved_by = "opennem.importer.interconnectors"
         int_facility.created_by = "opennem.importer.interconnectors"
-        int_facility.fueltech_id = "exports"
+        int_facility.fueltech_id = None
 
         int_facility.interconnector = True
         int_facility.interconnector_region_to = interconnector.regionto
@@ -119,11 +113,7 @@ def import_nem_interconnects() -> None:
 
         session.add(interconnector_station)
 
-        logger.debug(
-            "Created interconnector station: {}".format(
-                interconnector_station.code
-            )
-        )
+        logger.debug("Created interconnector station: {}".format(interconnector_station.code))
 
     session.commit()
 
