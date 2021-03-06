@@ -1,8 +1,13 @@
+from typing import List, Optional
+
+from opennem.db import SessionLocal
+from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.network import (
     NETWORKS,
     NetworkAPVI,
     NetworkAU,
     NetworkNEM,
+    NetworkRegionSchema,
     NetworkSchema,
     NetworkWEM,
 )
@@ -70,3 +75,20 @@ def network_from_network_code(network_code: str) -> NetworkSchema:
         return network_lookup.pop()
 
     raise Exception("Unknown network {}".format(network_code))
+
+
+def get_network_region_schema(
+    network: NetworkSchema, network_region_code: Optional[str] = None
+) -> List[NetworkRegionSchema]:
+    """Return regions for a network"""
+    s = SessionLocal()
+    regions_query = s.query(NetworkRegion).filter_by(network_id=network.code)
+
+    if network_region_code:
+        regions_query = regions_query.filter_by(code=network_region_code)
+
+    regions_result = regions_query.all()
+
+    regions = [NetworkRegionSchema.from_orm(i) for i in regions_result]
+
+    return regions
