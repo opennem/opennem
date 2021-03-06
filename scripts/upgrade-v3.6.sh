@@ -19,16 +19,9 @@ alembic upgrade head
 
 python -m opennem.cli db init
 
-python -m opennem.cli db views
+# python -m opennem.cli db views
 
 python -m opennem.importer.wikidata
 python -m opennem.importer.interconnectors
-
-# import emission maps
 python -m opennem.cli import emissions
-
-# run rooftop
-./scripts/spider_queue.py rooftop
-
-# run dispatch_id
-./scripts/spider_queue.py dispatch_is
+python -m opennem.importer.trading_flows
