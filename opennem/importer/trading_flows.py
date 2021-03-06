@@ -6,13 +6,12 @@
 import logging
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.networks import get_network_region_schema, state_from_network_region
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility, Location, Station
-from opennem.diff.versions import get_network_regions
 from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
 
 logger = logging.getLogger("opennem.importer.trading_flows")
