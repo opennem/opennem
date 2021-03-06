@@ -5,10 +5,9 @@
 
 import logging
 from datetime import datetime
-from enum import Enum
-from typing import Optional
 
 from opennem.core.dispatch_type import DispatchType
+from opennem.core.flows import FlowDirection, generated_flow_station_id
 from opennem.core.networks import get_network_region_schema, state_from_network_region
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility, Location, Station
@@ -17,26 +16,6 @@ from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchem
 logger = logging.getLogger("opennem.importer.trading_flows")
 
 IMPORTER_NAME = "opennem.importer.trading_flows"
-
-
-class FlowDirection(Enum):
-    imports = "imports"
-    exports = "exports"
-
-
-def generated_flow_station_id(
-    network: NetworkSchema,
-    network_region: NetworkRegionSchema,
-    flow_direction: Optional[FlowDirection] = None,
-) -> str:
-    name_components = [network.code, "flow", network_region.code]
-
-    if flow_direction:
-        name_components.append(flow_direction.value)
-
-    name_components = [i.upper() for i in name_components]
-
-    return "_".join(name_components)
 
 
 def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:

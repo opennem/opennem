@@ -1,7 +1,7 @@
 import pytest
 
+from opennem.core.flows import FlowDirection, generated_flow_station_id
 from opennem.core.networks import get_network_region_schema
-from opennem.importer.trading_flows import FlowDirection, generated_flow_station_id
 from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
 
 NSW1 = get_network_region_schema(NetworkNEM, "NSW1").pop()

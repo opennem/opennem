@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from itertools import groupby
 from operator import attrgetter
 from typing import Dict, List, Optional
@@ -6,7 +7,28 @@ from typing import Dict, List, Optional
 from datetime_truncate import truncate
 
 from opennem.api.stats.schema import DataQueryResult, RegionFlowEmissionsResult, RegionFlowResult
+from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
 from opennem.schema.time import TimeInterval
+
+
+class FlowDirection(Enum):
+    imports = "imports"
+    exports = "exports"
+
+
+def generated_flow_station_id(
+    network: NetworkSchema,
+    network_region: NetworkRegionSchema,
+    flow_direction: Optional[FlowDirection] = None,
+) -> str:
+    name_components = [network.code, "flow", network_region.code]
+
+    if flow_direction:
+        name_components.append(flow_direction.value)
+
+    name_components = [i.upper() for i in name_components]
+
+    return "_".join(name_components)
 
 
 def net_flows(
