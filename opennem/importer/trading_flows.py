@@ -11,7 +11,7 @@ from opennem.core.flows import FlowDirection, generated_flow_station_id
 from opennem.core.networks import get_network_region_schema, state_from_network_region
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility, Location, Station
-from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema
 
 logger = logging.getLogger("opennem.importer.trading_flows")
 
