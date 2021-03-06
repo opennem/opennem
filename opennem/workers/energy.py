@@ -10,6 +10,8 @@ from opennem.api.stats.controllers import get_scada_range
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.core.facility.fueltechs import load_fueltechs
+from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id
+from opennem.core.networks import get_network_region_schema
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.diff.versions import CUR_YEAR, get_network_regions
@@ -77,21 +79,26 @@ def get_flows_query(
     date_min: datetime,
     date_max: datetime,
     network: NetworkSchema,
-    fueltech_id: str,
+    flow: FlowDirection,
 ) -> str:
-    if fueltech_id not in ["imports", "exports"]:
-        raise Exception("Query only for improts or exports")
-
-    # imports
     flow_direction = "<"
 
-    if fueltech_id == "exports":
+    if flow == FlowDirection.exports:
         flow_direction = ">"
+
+    network_region_schema_lookup = get_network_region_schema(NetworkNEM, network_region)
+
+    if not network_region_schema_lookup or len(network_region_schema_lookup) < 1:
+        raise Exception("Could not get network region schema for {}".format(network_region))
+
+    network_region_schema = network_region_schema_lookup.pop()
+
+    facility_code = generated_flow_station_id(NetworkNEM, network_region_schema, flow)
 
     query = """
     select
         bs.trading_interval at time zone 'AEST' as trading_interval,
-        {fueltech_id} as facility_code,
+        '{facility_code}' as facility_code,
         bs.network_id,
         bs.network_region as facility_code,
         case when bs.net_interchange {flow_direction} 0 then
@@ -106,7 +113,7 @@ def get_flows_query(
         and bs.trading_interval <= '{date_max}'
     order by trading_interval asc;
     """.format(
-        fueltech_id=fueltech_id,
+        facility_code=facility_code,
         flow_direction=flow_direction,
         network_id=network.code,
         network_region=network_region,
@@ -154,11 +161,11 @@ def get_flows(
     date_min: datetime,
     date_max: datetime,
     network: NetworkSchema,
-    fueltech_id: str,
+    flow: FlowDirection,
 ) -> List[Dict]:
     """Gets flows"""
 
-    query = get_flows_query(network_region, date_min, date_max, network, fueltech_id)
+    query = get_flows_query(network_region, date_min, date_max, network, flow)
 
     engine = get_database_engine()
 
@@ -274,10 +281,10 @@ def run_energy_calc(
 ) -> int:
     generated_results: List[Dict] = []
 
-    if fueltech_id in ["_imports", "_exports"]:
-        generated_results = get_flows(
-            region, date_min, date_max, network=network, fueltech_id=fueltech_id
-        )
+    flow = fueltech_to_flow(fueltech_id)
+
+    if flow:
+        generated_results = get_flows(region, date_min, date_max, network=network, flow=flow)
     else:
         generated_results = get_generated(
             region, date_min, date_max, network=network, fueltech_id=fueltech_id
@@ -364,9 +371,7 @@ def run_energy_update_archive(
                 )
 
 
-def run_energy_update_yesterday(
-    network: NetworkSchema = NetworkNEM,
-) -> None:
+def run_energy_update_yesterday(network: NetworkSchema = NetworkNEM, days: int = 1) -> None:
     """Run energy sum update for yesterday. This task is scheduled
     in scheduler/db
 
@@ -396,6 +401,6 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    # run_energy_update_archive(year=2021, regions=["NSW1"], fueltech="coal_black")
-    run_energy_update_all()
+    run_energy_update_archive(year=2021, regions=["NSW1"], fueltech="imports")
+    # run_energy_update_all()
     # run_energy_update_yesterday()
