@@ -26,6 +26,7 @@ logger = logging.getLogger("opennem.workers.energy")
 
 # For debugging queries
 DRY_RUN = False
+YEAR_EARLIEST = 2010
 
 
 def get_generated_query(
@@ -314,7 +315,7 @@ def run_energy_calc(
 
 
 def run_energy_update_archive(
-    year: int = 2021,
+    year: Optional[int] = None,
     months: Optional[List[int]] = None,
     days: Optional[int] = None,
     regions: Optional[List[str]] = None,
@@ -323,6 +324,11 @@ def run_energy_update_archive(
 ) -> None:
 
     date_range = get_date_range(network=network)
+
+    years = [year]
+
+    if not year:
+        years = [i for i in range(CUR_YEAR, YEAR_EARLIEST - 1, -1)]
 
     if not months:
         months = list(range(1, 13))
@@ -335,40 +341,41 @@ def run_energy_update_archive(
     if not fueltech:
         fueltechs = [i for i in load_fueltechs().keys()]
 
-    for month in months:
-        date_min = datetime(
-            year=year, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
-        )
-
-        date_max = date_min + get_human_interval("1M")
-
-        if days:
-            date_max = datetime(
-                year=year,
-                month=month,
-                day=1 + days,
-                hour=0,
-                minute=0,
-                second=0,
-                tzinfo=FixedOffset(600),
+    for year in years:
+        for month in months:
+            date_min = datetime(
+                year=year, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
             )
 
-        date_min = date_min - timedelta(minutes=10)
-        date_max = date_max + timedelta(minutes=10)
+            date_max = date_min + get_human_interval("1M")
 
-        if date_max > date_range.end:
-            date_max = date_range.end
-
-        if date_min > date_max:
-            slack_message("Reached end of energy archive")
-            logger.debug("reached end of archive")
-            break
-
-        for region in regions:
-            for fueltech_id in fueltechs:
-                run_energy_calc(
-                    region, date_min, date_max, fueltech_id=fueltech_id, network=network
+            if days:
+                date_max = datetime(
+                    year=year,
+                    month=month,
+                    day=1 + days,
+                    hour=0,
+                    minute=0,
+                    second=0,
+                    tzinfo=FixedOffset(600),
                 )
+
+            date_min = date_min - timedelta(minutes=10)
+            date_max = date_max + timedelta(minutes=10)
+
+            if date_max > date_range.end:
+                date_max = date_range.end
+
+            if date_min > date_max:
+                slack_message("Reached end of energy archive")
+                logger.debug("reached end of archive")
+                break
+
+            for region in regions:
+                for fueltech_id in fueltechs:
+                    run_energy_calc(
+                        region, date_min, date_max, fueltech_id=fueltech_id, network=network
+                    )
 
 
 def run_energy_update_yesterday(network: NetworkSchema = NetworkNEM, days: int = 1) -> None:
@@ -401,6 +408,7 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_archive(year=2021, regions=["NSW1"], fueltech="imports")
+    run_energy_update_archive(fueltech="imports")
+    run_energy_update_archive(fueltech="exports")
     # run_energy_update_all()
     # run_energy_update_yesterday()
