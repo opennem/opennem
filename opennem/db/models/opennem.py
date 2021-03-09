@@ -143,7 +143,7 @@ class Participant(Base, BaseModel):
 class Photo(Base):
     __tablename__ = "photo"
 
-    id = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
+    hash_id = Column(Text, nullable=False, primary_key=True, index=True)
 
     station_id = Column(
         Integer,
@@ -154,7 +154,6 @@ class Photo(Base):
 
     name = Column(Text)
     mime_type = Column(Text)
-    hash_id = Column(Text, nullable=True, index=True)
     original_url = Column(Text, nullable=True)
     data = Column(LargeBinary, nullable=True)
     width = Column(Integer)
