@@ -67,8 +67,8 @@ def get_generated_query(
     query = __sql.format(
         network_id=network.code,
         network_region=network_region,
-        date_min=date_min,
-        date_max=date_max,
+        date_min=date_min - timedelta(minutes=10),
+        date_max=date_max + timedelta(minutes=10),
         fueltech_match=fueltech_match,
     )
 
@@ -282,7 +282,10 @@ def run_energy_calc(
 ) -> int:
     generated_results: List[Dict] = []
 
-    flow = fueltech_to_flow(fueltech_id)
+    flow = None
+
+    if fueltech_id:
+        flow = fueltech_to_flow(fueltech_id)
 
     if flow:
         generated_results = get_flows(region, date_min, date_max, network=network, flow=flow)
@@ -408,7 +411,7 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_archive(fueltech="imports")
-    run_energy_update_archive(fueltech="exports")
+    # run_energy_update_archive(fueltech="imports")
+    # run_energy_update_archive(fueltech="exports")
     # run_energy_update_all()
-    # run_energy_update_yesterday()
+    run_energy_update_yesterday()
