@@ -18,6 +18,9 @@ class FlowDirection(Enum):
 
 def fueltech_to_flow(fueltech_id: str) -> Optional[FlowDirection]:
     """ Check if a fueltech is a flow and if so return the enum """
+    if not fueltech_id:
+        raise Exception("Require a fueltech")
+
     ft = fueltech_id.lower()
 
     flow_directions = [i for i in FlowDirection]
