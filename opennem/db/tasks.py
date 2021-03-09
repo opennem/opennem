@@ -47,7 +47,7 @@ def refresh_timescale_views(
 
 def refresh_material_views(view_name: Optional[str] = None) -> None:
     """Refresh material views"""
-    __query = "REFRESH MATERIALIZED VIEW {view} with data"
+    __query = "REFRESH MATERIALIZED VIEW concurrently {view} with data"
 
     engine = get_database_engine()
 
