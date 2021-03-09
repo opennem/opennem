@@ -4,9 +4,7 @@ from opennem.api.schema import ApiBase
 
 
 class Photo(ApiBase):
-    id: int
-
-    hash_id: Optional[str]
+    hash_id: str
     width: int
     height: int
     photo_url: Optional[str]
