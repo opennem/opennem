@@ -1165,6 +1165,18 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "osm2geojson"
+version = "0.1.29"
+description = "Parse OSM and Overpass JSON"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+requests = "*"
+shapely = "*"
+
+[[package]]
 name = "osmpythontools"
 version = "0.3.0"
 description = "A library to access OpenStreetMap related services"
@@ -2430,7 +2442,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "1d8c888d65427c7267cd3e86079524578f8fff7c6456dcce14b171bac37dcc63"
+content-hash = "1e9ac75a2f92cfade4b891d784c11d1ec7a46820d09b538d28c60ed96f1bcc56"
 
 [metadata.files]
 aiofiles = [
@@ -3147,6 +3159,9 @@ orjson = [
     {file = "orjson-3.5.0-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:f46876b18d75b158b1d15d8c9e2981587cd99a26f714f64c615966aaf31b5324"},
     {file = "orjson-3.5.0-cp39-none-win_amd64.whl", hash = "sha256:56962c40c5b9654ef58db76eef965f74a51645c809c19811b0a860e04c00bb2e"},
     {file = "orjson-3.5.0.tar.gz", hash = "sha256:b94cc5ca72f328c41caf06757ee65ff3a79d941a1ce86382a86d389740ae3a58"},
+]
+osm2geojson = [
+    {file = "osm2geojson-0.1.29.tar.gz", hash = "sha256:6b0bb588b1e1ba643b6cbe9bc80b2809400501016b049224fbf6cf6f9a753b73"},
 ]
 osmpythontools = [
     {file = "OSMPythonTools-0.3.0.tar.gz", hash = "sha256:b22745ae8111823f0cccde292e7f44d1eb51885c52e61294f77357c9d0e613ad"},
