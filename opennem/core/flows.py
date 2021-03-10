@@ -6,7 +6,12 @@ from typing import Dict, List, Optional
 
 from datetime_truncate import truncate
 
-from opennem.api.stats.schema import DataQueryResult, RegionFlowEmissionsResult, RegionFlowResult
+from opennem.api.stats.schema import (
+    DataQueryResult,
+    OpennemDataSet,
+    RegionFlowEmissionsResult,
+    RegionFlowResult,
+)
 from opennem.schema.network import NetworkRegionSchema, NetworkSchema
 from opennem.schema.time import TimeInterval
 
@@ -202,3 +207,10 @@ def net_flows_emissions(
         )
 
     return {"imports": imports_list, "exports": exports_list}
+
+
+def invert_flow_set() -> OpennemDataSet:
+    """ Takes a flow like NSW1->QLD1 and inverts it to QLD1->NSW1"""
+    # you have VIC1-NSW1, not NSW1-VIC1
+    # and VIC1->SA1 around the wrong way
+    pass
