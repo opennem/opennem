@@ -8,6 +8,7 @@ from datetime_truncate import truncate
 
 from opennem.api.stats.schema import (
     DataQueryResult,
+    OpennemData,
     OpennemDataSet,
     RegionFlowEmissionsResult,
     RegionFlowResult,
@@ -209,8 +210,33 @@ def net_flows_emissions(
     return {"imports": imports_list, "exports": exports_list}
 
 
-def invert_flow_set() -> OpennemDataSet:
+def _invert_flowid(flowid: str) -> str:
+    """ Reverses the flow id """
+    return "->".join(flowid.split("->")[::-1])
+
+
+def invert_flow_set(flow_set: OpennemData) -> OpennemData:
     """ Takes a flow like NSW1->QLD1 and inverts it to QLD1->NSW1"""
     # you have VIC1-NSW1, not NSW1-VIC1
     # and VIC1->SA1 around the wrong way
-    pass
+    flow_set_inverted = flow_set.copy()
+
+    if flow_set.id:
+        id_comps = flow_set.id.split(".")
+        id_comps_out = []
+
+        for _id in id_comps:
+            if "->" in _id:
+                _id = _invert_flowid(_id)
+            id_comps_out.append(_id)
+
+        new_id = ".".join(id_comps_out)
+
+        flow_set_inverted.id = new_id
+
+    if flow_set_inverted.code:
+        flow_set_inverted.code = _invert_flowid(flow_set_inverted.code)
+
+    flow_set_inverted.history.data = [-i for i in flow_set.history.data]
+
+    return flow_set_inverted
