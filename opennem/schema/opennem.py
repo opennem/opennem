@@ -3,9 +3,13 @@
 # pylint: disable=no-member
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
+from geoalchemy2.elements import WKBElement
+from geoalchemy2.shape import from_shape, to_shape
 from pydantic import BaseModel, validator
+from shapely import geometry
+from shapely.geometry import asShape
 
 from opennem.api.photo.schema import Photo
 from opennem.api.stats.schema import OpennemData
@@ -181,7 +185,7 @@ class LocationSchema(OpennemBaseSchema):
     geocode_processed_at: Optional[datetime] = None
     geocode_by: Optional[str]
     # geom: Optional[WKBElement] = None
-    # boundary: Optional[WKBElement] = None
+    boundary: Optional[Any]
 
     # geo fields
     lat: Optional[float]
@@ -208,6 +212,12 @@ class LocationSchema(OpennemBaseSchema):
     def clean_postcode(cls, value: str) -> Optional[str]:
         if value:
             return value.strip()
+
+    @validator("boundary", pre=True)
+    def parse_boundary(cls, value: WKBElement) -> Any:
+
+        if value:
+            return geometry.mapping(to_shape(value))
 
     @property
     def geom(self) -> Optional[str]:
