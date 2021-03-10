@@ -7,8 +7,6 @@ import sys
 import warnings
 from pathlib import Path
 
-from opennem.settings import settings
-
 logger = logging.getLogger("opennem.notebook")
 
 warnings.filterwarnings("ignore")
