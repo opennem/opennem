@@ -33,6 +33,7 @@ def load_data(
     from_fixture: bool = False,
     from_settings: bool = False,
     skip_loaders: bool = False,
+    return_path: bool = False,
     content_type: str = "utf-8",
 ) -> Any:
     """
@@ -57,6 +58,10 @@ def load_data(
     )
 
     file_path = Path(file_name)
+
+    if return_path:
+        module_path = Path(get_loader("opennem").path).parent
+        return module_path / data_path / file_name
 
     data_content = get_data("opennem", os.path.join(data_path, file_name))
 
@@ -131,9 +136,7 @@ def load_data_zip(file_path: Path) -> str:
 
         if len(zip_files) != 1:
             raise Exception(
-                "Zero or more than one file in zip file. Have {}".format(
-                    len(zip_files)
-                )
+                "Zero or more than one file in zip file. Have {}".format(len(zip_files))
             )
 
 
