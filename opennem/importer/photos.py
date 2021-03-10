@@ -97,7 +97,10 @@ def import_photos_from_fixtures() -> None:
         photo.license_link = photo_record.license_link
         photo.author = photo_record.author
         photo.author_link = photo_record.author_link
-        photo.is_primary = photo_record.is_primary
+
+        if photo_record.is_primary:
+            photo.is_primary = True
+
         photo.approved = True
         photo.approved_by = "opennem.importer.photos"
         photo.approved_at = datetime.now()
