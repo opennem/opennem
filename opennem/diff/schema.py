@@ -37,6 +37,6 @@ class StationSchema(SchemaBase):
     @classmethod
     @validator("state")
     def state_clean(cls, v):
-        state = state.upper()
+        state = v.upper()
 
         return state
