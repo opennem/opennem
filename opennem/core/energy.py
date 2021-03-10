@@ -62,7 +62,9 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> Optional[float]:
     return bucket_energy
 
 
-def _energy_aggregate(df: pd.DataFrame, power_column: str = "generated") -> pd.DataFrame:
+def _energy_aggregate(
+    df: pd.DataFrame, power_column: str = "generated", zero_fill: bool = False
+) -> pd.DataFrame:
     """Energy aggregate that buckets into 30min intervals
     but takes edges in for 7 total values"""
     in_cap = {}
