@@ -8,6 +8,7 @@ class PhotoImportSchema(BaseConfig):
 
     network_id: str
     station_code: str
+    is_primary: bool
     image_url: str
 
     author: Optional[str]

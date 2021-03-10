@@ -1,6 +1,7 @@
 import csv
 import json
 import logging
+from datetime import datetime
 from io import StringIO
 from pathlib import Path
 from typing import List
@@ -27,6 +28,7 @@ logger = logging.getLogger("opennem.importer.photos")
 CSV_IMPORT_FORMAT_COLUMNS = [
     "network_id",
     "station_code",
+    "is_primary",
     "image_url",
     "author",
     "author_link",
@@ -95,6 +97,10 @@ def import_photos_from_fixtures() -> None:
         photo.license_link = photo_record.license_link
         photo.author = photo_record.author
         photo.author_link = photo_record.author_link
+        photo.is_primary = photo_record.is_primary
+        photo.approved = True
+        photo.approved_by = "opennem.importer.photos"
+        photo.approved_at = datetime.now()
 
         img_buff = img_to_buffer(img)
 
