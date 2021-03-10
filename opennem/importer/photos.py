@@ -1,0 +1,115 @@
+import csv
+import json
+import logging
+from io import StringIO
+from pathlib import Path
+from typing import List
+from urllib.parse import urlparse
+
+import requests
+import wikipedia
+from PIL import Image
+
+from opennem.api.photo.controllers import write_photo_to_s3
+from opennem.core.loader import load_data
+from opennem.core.normalizers import station_name_cleaner
+from opennem.core.photos.processor import get_image_from_web
+from opennem.core.photos.schema import PhotoImportSchema
+from opennem.db import SessionLocal
+from opennem.db.models.opennem import Photo, Station
+from opennem.utils.images import image_get_crypto_hash, img_to_buffer
+
+logger = logging.getLogger("opennem.importer.photos")
+
+# This can be read dynamically from the pydantic schema
+# come to think of it no reason why a generic CSV->pydantic
+# importer cannot be written
+CSV_IMPORT_FORMAT_COLUMNS = [
+    "network_id",
+    "station_code",
+    "image_url",
+    "author",
+    "author_link",
+    "license",
+    "license_link",
+]
+
+
+def get_import_photo_data(file_name: str = "photos.csv") -> List[PhotoImportSchema]:
+    photo_file_path: Path = load_data("photos.csv", from_project=True, return_path=True)
+
+    if not photo_file_path.is_file():
+        raise Exception("Could not import photo file data: {}".format(str(photo_file_path)))
+
+    photo_records: List[PhotoImportSchema] = []
+
+    with photo_file_path.open() as fh:
+        # skip csv header
+        fh.readline()
+
+        csvreader = csv.DictReader(fh, fieldnames=CSV_IMPORT_FORMAT_COLUMNS)
+
+        # Parse CSV records into schemas
+        photo_records = [PhotoImportSchema(**i) for i in csvreader]
+
+    return photo_records
+
+
+def import_photos_from_fixtures() -> None:
+    """ Import photos to stations """
+    session = SessionLocal()
+    photo_records = get_import_photo_data()
+
+    for photo_record in photo_records:
+        station = (
+            session.query(Station).filter(Station.code == photo_record.station_code).one_or_none()
+        )
+
+        if not station:
+            logger.error("Could not find station {}".format(photo_record.station_code))
+            continue
+
+        img = get_image_from_web(photo_record.image_url)
+
+        if not img:
+            logger.error("No image for {}".format(photo_record.image_url))
+            continue
+
+        hash_id = image_get_crypto_hash(img)[-8:]
+        file_name = "{}_{}_{}.{}".format(
+            hash_id, station.name.replace(" ", "_"), "original", "jpeg"
+        )
+
+        photo = session.query(Photo).filter_by(hash_id=hash_id).one_or_none()
+
+        if not photo:
+            photo = Photo(
+                hash_id=hash_id,
+            )
+
+        photo.name = file_name
+        photo.width = img.size[0]
+        photo.height = img.size[1]
+        photo.original_url = photo_record.image_url
+        photo.license_type = photo_record.license
+        photo.license_link = photo_record.license_link
+        photo.author = photo_record.author
+        photo.author_link = photo_record.author_link
+
+        img_buff = img_to_buffer(img)
+
+        write_photo_to_s3(file_name, img_buff)
+
+        if station:
+            station.photos.append(photo)
+
+        session.add(photo)
+
+        if station:
+            session.add(station)
+
+        session.commit()
+
+
+if __name__ == "__main__":
+    import_photos_from_fixtures()
