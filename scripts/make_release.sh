@@ -31,10 +31,6 @@ docker push opennem/opennem_backend:$VERSION
 docker tag  opennem/opennem_backend:$VERSION opennem/opennem_backend
 # docker push opennem/opennem
 
-poetry build
-
-twine upload --skip-existing dist/*
-
 scrapyd-deploy dev
 # scrapyd-deploy prod
 
