@@ -5,6 +5,7 @@
     "build": true,
     "dist": true
   },
+  "editor.formatOnSave": true,
   "python.pythonPath": ".venv/bin/python",
   "python.testing.pytestEnabled": true,
   "python.testing.pytestPath": ".venv/bin/pytest",
