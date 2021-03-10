@@ -13,3 +13,6 @@ class Photo(ApiBase):
     license_link: Optional[str]
     author: Optional[str]
     author_link: Optional[str]
+
+    is_primary: Optional[bool]
+    order: Optional[int]
