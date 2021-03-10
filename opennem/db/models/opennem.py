@@ -295,6 +295,9 @@ class Location(Base):
 
     revisions = relationship("Revision", lazy="joined")
 
+    # an OSM way id such as 395531577
+    osm_way_id = Column(Text, nullable=True)
+
     # Geo fields
     place_id = Column(Text, nullable=True, index=True)
     geocode_approved = Column(Boolean, default=False)
