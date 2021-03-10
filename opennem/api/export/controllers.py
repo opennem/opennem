@@ -224,7 +224,7 @@ def power_flows_network_week(
         # fueltech_group=True,
         group_field="power",
         include_group_code=True,
-        include_code=False,
+        include_code=True,
     )
 
     if not result:
