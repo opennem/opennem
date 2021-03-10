@@ -93,8 +93,6 @@ def import_osm_ways() -> int:
 
         location: Location = station.location
 
-        print(station.code, station.location.osm_way_id)
-
         geom_boundary = None
 
         try:
@@ -116,5 +114,5 @@ def import_osm_ways() -> int:
 
 
 if __name__ == "__main__":
-    # import_osm_way_data()
+    import_osm_way_data()
     import_osm_ways()
