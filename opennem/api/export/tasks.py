@@ -28,6 +28,7 @@ from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
 from opennem.api.time import human_to_interval, human_to_period
+from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.core.networks import network_from_network_code
 from opennem.db import SessionLocal
@@ -456,6 +457,18 @@ def export_electricitymap() -> None:
     if not stat_set:
         raise Exception("No flow results for electricitymap export")
 
+    INVERT_SETS = ["VIC1->NSW1", "VIC1->SA1"]
+
+    for ds in stat_set.data:
+        if ds.code in INVERT_SETS:
+            ds_inverted = invert_flow_set(ds)
+            stat_set.data.append(ds_inverted)
+            stat_set.data.remove(ds)
+
+    write_output(f"v3/clients/em/latest.json", stat_set)
+
+    return None
+
     for region in get_network_regions(NetworkNEM):
         power_set = power_week(
             time_series, region.code, include_capacities=True, include_code=False
@@ -515,4 +528,5 @@ def export_metadata() -> bool:
 
 if __name__ == "__main__":
     # export_power(priority=PriorityType.live)
-    export_energy(latest=True)
+    # export_energy(latest=True)
+    export_electricitymap()
