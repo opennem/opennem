@@ -1,11 +1,10 @@
 import pytest
 
 from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id
-from opennem.core.networks import get_network_region_schema
 from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
 
-NSW1 = get_network_region_schema(NetworkNEM, "NSW1").pop()
-VIC1 = get_network_region_schema(NetworkNEM, "VIC1").pop()
+NSW1 = NetworkRegionSchema(code="NSW1", network_id="NEM")
+VIC1 = NetworkRegionSchema(code="VIC1", network_id="NEM")
 
 
 @pytest.mark.parametrize(
