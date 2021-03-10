@@ -217,8 +217,6 @@ def _invert_flowid(flowid: str) -> str:
 
 def invert_flow_set(flow_set: OpennemData) -> OpennemData:
     """ Takes a flow like NSW1->QLD1 and inverts it to QLD1->NSW1"""
-    # you have VIC1-NSW1, not NSW1-VIC1
-    # and VIC1->SA1 around the wrong way
     flow_set_inverted = flow_set.copy()
 
     if flow_set.id:
