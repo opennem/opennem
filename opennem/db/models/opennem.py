@@ -305,7 +305,7 @@ class Location(Base):
     geocode_processed_at = Column(DateTime, nullable=True)
     geocode_by = Column(Text, nullable=True)
     geom = Column(Geometry("POINT", srid=4326, spatial_index=False))
-    boundary = Column(Geometry("MULTIPOLYGON", srid=4326, spatial_index=False))
+    boundary = Column(Geometry("POLYGON", srid=4326, spatial_index=True))
 
     @hybrid_property
     def lat(self) -> Optional[float]:
