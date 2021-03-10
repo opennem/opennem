@@ -1,14 +1,10 @@
 import csv
 import logging
-from datetime import datetime
-from os import stat
 from pathlib import Path
 from typing import List
 
-import geoalchemy2
-
 from opennem.core.loader import load_data
-from opennem.core.parsers.osm import get_osm_geom, get_osm_way
+from opennem.core.parsers.osm import get_osm_geom
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Location, Station
 from opennem.schema.core import BaseConfig
