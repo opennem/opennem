@@ -57,3 +57,6 @@ if LOGGING_CONFIG and not running_as_scrapy():
 
     opennem_logger = logging.getLogger("opennem")
     opennem_logger.setLevel(log_level)
+
+    # other misc loggers
+    logging.getLogger("PIL").setLevel(logging.ERROR)
