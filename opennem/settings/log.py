@@ -1,6 +1,6 @@
 import re
 from logging import Filter
-from typing import Optional
+from typing import Any, Optional
 
 import yaml
 
@@ -27,10 +27,8 @@ class SettingsNotFound(Exception):
     pass
 
 
-def load_logging_config(
-    filename: str = "logging.yml", fail_silent: bool = True
-) -> Optional[dict]:
-    """"""
+def load_logging_config(filename: str = "logging.yml", fail_silent: bool = True) -> Optional[dict]:
+    """ Load logging configuration from yml file """
 
     settings_file_content = load_data(filename, from_settings=True)
 
@@ -38,9 +36,7 @@ def load_logging_config(
         if fail_silent:
             return None
 
-        raise SettingsNotFound(
-            "Not a valid logging settings file: {}".format(filename)
-        )
+        raise SettingsNotFound("Not a valid logging settings file: {}".format(filename))
 
     config_data = yaml.safe_load(settings_file_content)
 
@@ -49,13 +45,12 @@ def load_logging_config(
 
 LOGGING_CONFIG = load_logging_config()
 
+
 class ItemMessageFilter(Filter):
-    def filter(self, record):
+    def filter(self, record: Any) -> bool:
         # The message that logs the item actually has raw % operators in it,
         # which Scrapy presumably formats later on
-        match = re.search(
-            r"(Scraped from %\(src\)s)\n%\(item\)s", record.msg
-        )
+        match = re.search(r"(Scraped from %\(src\)s)\n%\(item\)s", record.msg)
         if match:
             # Make the message everything but the item itself
             record.msg = match.group(1)
