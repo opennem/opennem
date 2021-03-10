@@ -168,6 +168,9 @@ class Photo(Base):
     processed_by = Column(Text)
     processed_at = Column(DateTime(timezone=True), nullable=True)
 
+    is_primary = Column(Boolean, default=False)
+    order = Column(Integer, default=1)
+
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
