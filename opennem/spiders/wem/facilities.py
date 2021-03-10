@@ -1,7 +1,4 @@
-from opennem.pipelines.wem.facilities import (
-    WemStoreFacility,
-    WemStoreLiveFacilities,
-)
+from opennem.pipelines.wem.facilities import WemStoreFacility, WemStoreLiveFacilities
 from opennem.spiders.wem import WemCurrentSpider
 
 

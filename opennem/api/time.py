@@ -1,12 +1,7 @@
 from fastapi import HTTPException
 from starlette import status
 
-from opennem.core.time import (
-    INTERVALS_SUPPORTED,
-    PERIODS_SUPPORTED,
-    get_interval,
-    get_period,
-)
+from opennem.core.time import INTERVALS_SUPPORTED, PERIODS_SUPPORTED, get_interval, get_period
 from opennem.schema.time import TimeInterval, TimePeriod
 
 

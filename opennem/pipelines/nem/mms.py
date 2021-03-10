@@ -20,10 +20,7 @@ from opennem.core.normalizers import (
     participant_name_filter,
     station_name_cleaner,
 )
-from opennem.core.station_duid_map import (
-    facility_has_station_remap,
-    facility_map_station,
-)
+from opennem.core.station_duid_map import facility_has_station_remap, facility_map_station
 from opennem.db.models.opennem import Facility, FacilityStatus
 from opennem.db.models.opennem import Participant as ParticipantModel
 from opennem.db.models.opennem import Station

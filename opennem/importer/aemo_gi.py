@@ -8,10 +8,7 @@ from openpyxl import load_workbook
 
 from opennem.core.dispatch_type import parse_dispatch_type
 from opennem.core.facility.fueltechs import parse_facility_fueltech
-from opennem.core.facilitystatus import (
-    map_aemo_facility_status,
-    parse_facility_status,
-)
+from opennem.core.facilitystatus import map_aemo_facility_status, parse_facility_status
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.loader import PROJECT_DATA_PATH, load_data
 from opennem.core.normalizers import (
@@ -20,9 +17,7 @@ from opennem.core.normalizers import (
     normalize_duid,
     station_name_cleaner,
 )
-from opennem.core.stations.station_code_from_duids import (
-    station_code_from_duids,
-)
+from opennem.core.stations.station_code_from_duids import station_code_from_duids
 from opennem.core.stations.station_name_code_map import station_name_code_map
 from opennem.core.unit_codes import get_basecode, get_unit_code
 from opennem.core.unit_parser import parse_unit_duid

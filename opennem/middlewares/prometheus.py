@@ -1,13 +1,13 @@
 import logging
 
+from prometheus_client import Counter, Gauge, Summary
 from prometheus_client.twisted import MetricsResource
-from prometheus_client import Counter, Summary, Gauge
-from twisted.web.server import Site
-from twisted.web import server, resource
-from twisted.internet import task
+from scrapy import signals
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.reactor import listen_tcp
-from scrapy import signals
+from twisted.internet import task
+from twisted.web import resource, server
+from twisted.web.server import Site
 
 logger = logging.getLogger(__name__)
 

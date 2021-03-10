@@ -6,11 +6,7 @@ from pydantic import Field
 
 from opennem.api.schema import ApiBase
 from opennem.core.dispatch_type import DispatchType
-from opennem.schema.opennem import (
-    FacilityStatusSchema,
-    FueltechSchema,
-    NetworkSchema,
-)
+from opennem.schema.opennem import FacilityStatusSchema, FueltechSchema, NetworkSchema
 
 
 class FacilityRecord(ApiBase):

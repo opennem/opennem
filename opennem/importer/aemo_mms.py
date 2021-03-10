@@ -1,8 +1,6 @@
 from pathlib import Path
 from typing import List
 
-from opennem.core.parsers.aemo import AEMOTableSet, parse_aemo_csv
-
 MMS_DATA_DIR = "~/Projects/Opennem/data/mms/"
 MMS_DATA_PREFIX = "MMSDM_"
 MMS_APPEND_DATA_DIR_PATH = "MMSDM_Historical_Data_SQLLoader/DATA"

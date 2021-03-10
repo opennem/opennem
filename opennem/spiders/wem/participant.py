@@ -1,7 +1,4 @@
-from opennem.pipelines.wem.participant import (
-    WemStoreLiveParticipant,
-    WemStoreParticipant,
-)
+from opennem.pipelines.wem.participant import WemStoreLiveParticipant, WemStoreParticipant
 from opennem.spiders.wem import WemCurrentSpider
 
 

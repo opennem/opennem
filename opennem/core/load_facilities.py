@@ -16,10 +16,7 @@ from opennem.core.normalizers import (
     normalize_duid,
     station_name_cleaner,
 )
-from opennem.core.station_duid_map import (
-    facility_has_station_remap,
-    facility_map_station,
-)
+from opennem.core.station_duid_map import facility_has_station_remap, facility_map_station
 from opennem.db import db_connect
 from opennem.db.models.opennem import Facility, Station
 from opennem.importer.compat import (

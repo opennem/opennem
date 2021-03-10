@@ -5,11 +5,7 @@ from typing import Optional
 from pydantic import BaseModel, validator
 from pydantic.error_wrappers import ValidationError
 
-from opennem.core.normalizers import (
-    clean_float,
-    normalize_aemo_region,
-    normalize_duid,
-)
+from opennem.core.normalizers import clean_float, normalize_aemo_region, normalize_duid
 from opennem.utils.dates import parse_date
 
 logger = logging.getLogger(__name__)

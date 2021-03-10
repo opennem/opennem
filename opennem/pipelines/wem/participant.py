@@ -1,11 +1,7 @@
 import csv
 import logging
 
-from opennem.core.normalizers import (
-    normalize_duid,
-    normalize_string,
-    participant_name_filter,
-)
+from opennem.core.normalizers import normalize_duid, normalize_string, participant_name_filter
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Participant
 from opennem.pipelines import DatabaseStoreBase

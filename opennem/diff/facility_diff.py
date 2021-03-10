@@ -6,7 +6,6 @@
 
 import csv
 import json
-
 # from opennem.utils.log_config
 import logging
 import re

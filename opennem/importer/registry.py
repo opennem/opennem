@@ -13,11 +13,7 @@ from opennem.importer.compat import (
     map_compat_fueltech,
     map_compat_network_region,
 )
-from opennem.schema.opennem import (
-    FacilitySchema,
-    LocationSchema,
-    StationSchema,
-)
+from opennem.schema.opennem import FacilitySchema, LocationSchema, StationSchema
 from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.registry")
