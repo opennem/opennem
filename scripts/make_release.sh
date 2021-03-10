@@ -4,7 +4,7 @@ pytest
 
 poetry version ${1-prerelease}
 
-VERSION=$(poetry version | sed 's/opennem_backend\ //g')
+VERSION=$(poetry version | sed 's/opennem-backend\ //g')
 
 echo "Building version $VERSION"
 
