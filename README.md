@@ -2,6 +2,8 @@
 
 **NOTE: This is the backend project** For the client python project see [opennem/opennempy](https://github.com/opennem/opennempy)
 
+![Tests](https://github.com/opennem/opennem/workflows/Tests/badge.svg)
+
 The OpenNEM project aims to make the wealth of public National Electricity Market (NEM) data more accessible to a wider audience.
 
 This toolkit enables downloading, mirroring and accessing energy data from various networks
