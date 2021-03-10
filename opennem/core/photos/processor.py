@@ -1,8 +1,4 @@
-import csv
-import json
 import logging
-from typing import Optional
-from urllib.parse import urlparse
 
 from PIL import Image
 
