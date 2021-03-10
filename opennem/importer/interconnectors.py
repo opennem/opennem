@@ -10,8 +10,8 @@ from typing import List
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
-from opennem.core.networks import network_from_state, state_from_network_region
-from opennem.core.parsers.aemo import AEMOParserException, AEMOTableSchema, parse_aemo_csv
+from opennem.core.networks import state_from_network_region
+from opennem.core.parsers.aemo import AEMOParserException, parse_aemo_csv
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility, Location, Station
 from opennem.schema.aemo.mms import MarketConfigInterconnector
