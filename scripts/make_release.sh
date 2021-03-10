@@ -17,11 +17,11 @@ git ci -m "v$VERSION"
 git tag v$VERSION
 git push -u origin master v$VERSION
 
-docker build -f infra/container/Dockerfile -t opennem/opennem:$VERSION .
-docker push opennem/opennem:$VERSION
+docker build -f infra/container/Dockerfile -t opennem/opennem_backend:$VERSION .
+docker push opennem/opennem_backend:$VERSION
 
 # @TODO check that we're ready for relesae to make it :latest
-docker tag  opennem/opennem:$VERSION opennem/opennem
+docker tag  opennem/opennem_backend:$VERSION opennem/opennem_backend
 # docker push opennem/opennem
 
 poetry build
