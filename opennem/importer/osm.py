@@ -97,11 +97,12 @@ def import_osm_ways() -> int:
 
         try:
             geom_boundary = get_osm_geom(station.location.osm_way_id)
-        except Exception:
+        except Exception as e:
+            logger.error("get osm wkt error: {}".format(e))
             pass
 
         if not geom_boundary:
-            logger.error("Error getting WKT from OSM: {}".format(e))
+            logger.error("Error getting WKT from OSM")
             continue
 
         location.boundary = geom_boundary
