@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "opennem"
+name = "opennem_backend"
 version = "3.6.1-alpha.1"
-description = "OpenNEM Australian Energy Data"
+description = "OpenNEM Australian Energy Data Backend"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 license = "MIT"
 
@@ -67,6 +67,7 @@ datedelta = "^1.3"
 pandas = "^1.2.2"
 fastapi-cache2 = {extras = ["redis"], version = "^0.1.3"}
 aioredis = "^1.3.1"
+OSMPythonTools = "^0.3.0"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
