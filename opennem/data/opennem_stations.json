@@ -1638,5 +1638,87 @@
     "description": "Cohuna Solar Farm is situated approximately 8 kilometres south of the town of Cohuna and around 25km east of Kerang in the Shire of Gannawarra in northern Victoria. Cohuna was one of 6 solar projects to score a guernsey in Victoria’s first renewable energy auction. Cohuna Solar Farm is expected to generate up to 77 GWh of electricity each year, avoiding around 71,000 tonnes of CO2 emissions annually. The project will involve the installation of approximately 87,000 bifacial solar panels, which make use of light hitting both the front and rear of the module",
     "wikipedia_link": null,
     "wikidata_id": null
+  },
+  {
+    "created_by": "opennem.stations",
+    "created_at": "2020-11-13T02:47:00.969029",
+    "id": 5055,
+    "participant": null,
+    "participant_id": null,
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": null,
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "wind",
+          "label": "Wind",
+          "renewable": true
+        },
+        "status": {
+          "code": "committed",
+          "label": "Committed"
+        },
+        "station_id": null,
+        "code": "BRYB1WF1",
+        "network_code": "BRYB1WF1",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 180.6,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "VIC1",
+        "unit_id": null,
+        "unit_number": 43,
+        "unit_alias": null,
+        "unit_capacity": 4.2,
+        "emissions_factor_co2": 0.0,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ],
+    "photos": null,
+    "code": "BRYB1WF1",
+    "name": "Berrybank Wind Farm",
+    "network_name": "Berrybank Wind Farm",
+    "location": {
+      "created_by": null,
+      "created_at": "2020-11-13T02:47:00.969029",
+      "id": null,
+      "weather_station": null,
+      "weather_nearest": null,
+      "address1": "",
+      "address2": "",
+      "locality": "Berrybank",
+      "state": "VIC",
+      "postcode": "3323",
+      "country": "au",
+      "geocode_approved": true,
+      "geocode_skip": false,
+      "geocode_processed_at": null,
+      "geocode_by": null,
+      "lat": -37.98074089349125,
+      "lng": 143.47221708704777
+    },
+    "location_id": null,
+    "approved": true,
+    "approved_by": null,
+    "approved_at": null,
+    "network": null,
+    "description": "The Berrybank 1 Wind Farm site is located in South-Western Victoria approximately 14km east of Lismore and 16km west of Cressy. It is approximately 130km west of Melbourne within the Victorian district known as the Western Plains, located within the Corangamite and Golden Plains Local Government Areas.",
+    "wikipedia_link": null,
+    "wikidata_id": null
   }
 ]
