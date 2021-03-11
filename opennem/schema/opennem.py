@@ -210,7 +210,7 @@ class LocationSchema(OpennemBaseSchema):
             return value.strip()
 
     @validator("geom", pre=True)
-    def parse_boundary(cls, value: WKBElement) -> Any:
+    def parse_geom(cls, value: WKBElement) -> Any:
 
         if value:
             return geometry.mapping(to_shape(value))
