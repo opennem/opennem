@@ -1666,8 +1666,8 @@
           "renewable": true
         },
         "status": {
-          "code": "committed",
-          "label": "Committed"
+          "code": "operating",
+          "label": "Operating"
         },
         "station_id": null,
         "code": "BRYB1WF1",
