@@ -548,6 +548,10 @@ class Facility(Base, BaseModel):
     interconnector = Column(Boolean, default=False, index=True)
     interconnector_region_to = Column(Text, nullable=True, index=True)
 
+    # first seen / last seen in scada data
+    data_first_seen = Column(DateTime(timezone=True), nullable=True, index=True)
+    data_last_seen = Column(DateTime(timezone=True), nullable=True, index=True)
+
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
