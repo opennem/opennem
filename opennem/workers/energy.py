@@ -392,8 +392,8 @@ def run_energy_update_yesterday(network: NetworkSchema = NetworkNEM, days: int =
         tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
     )
 
-    date_max = today_midnight - timedelta(days=1)
-    date_min = today_midnight - timedelta(days=days + 1)
+    date_max = today_midnight
+    date_min = today_midnight - timedelta(days=days)
 
     regions = [i.code for i in get_network_regions(network)]
 
@@ -411,5 +411,5 @@ def run_energy_update_all() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_all()
-    # run_energy_update_yesterday(days=7)
+    # run_energy_update_all()
+    run_energy_update_yesterday(days=1)
