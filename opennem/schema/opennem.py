@@ -184,7 +184,7 @@ class LocationSchema(OpennemBaseSchema):
     geocode_skip: bool = False
     geocode_processed_at: Optional[datetime] = None
     geocode_by: Optional[str]
-    # geom: Optional[WKBElement] = None
+    geom: Optional[Any] = None
     boundary: Optional[Any]
 
     # geo fields
@@ -213,23 +213,17 @@ class LocationSchema(OpennemBaseSchema):
         if value:
             return value.strip()
 
-    @validator("boundary", pre=True)
+    @validator("geom", pre=True)
     def parse_boundary(cls, value: WKBElement) -> Any:
 
         if value:
             return geometry.mapping(to_shape(value))
 
-    @property
-    def geom(self) -> Optional[str]:
-        if not self.lng or not self.lat:
-            return None
+    @validator("boundary", pre=True)
+    def parse_boundary(cls, value: WKBElement) -> Any:
 
-        geom = "SRID=4326;POINT({} {})".format(
-            self.lng,
-            self.lat,
-        )
-
-        return geom
+        if value:
+            return geometry.mapping(to_shape(value))
 
 
 class FacilityOutputSchema(OpennemBaseSchema):
