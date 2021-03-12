@@ -464,6 +464,7 @@ def export_electricitymap() -> None:
             ds_inverted = invert_flow_set(ds)
             stat_set.data.append(ds_inverted)
             stat_set.data.remove(ds)
+            logging.info("Inverted {}".format(ds.code))
 
     for region in get_network_regions(NetworkNEM):
         power_set = power_week(
