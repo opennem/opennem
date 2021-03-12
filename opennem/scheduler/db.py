@@ -36,8 +36,8 @@ def db_refresh_material_views() -> None:
 
 
 # Runs at 8am and 9am and 11am AEST
-@huey.periodic_task(crontab(hour="22,23,1", minute="15,30"))
+@huey.periodic_task(crontab(hour="*/2", minute="15"))
 @huey.lock_task("db_refrehs_energies_yesterday")
 def db_refrehs_energies_yesterday() -> None:
-    if settings.workers_db_run:
+    if settings.workers_run:
         run_energy_update_yesterday()
