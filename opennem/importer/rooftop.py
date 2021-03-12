@@ -50,8 +50,8 @@ def rooftop_facilities() -> None:
 
         rooftop_station.name = "Rooftop Solar {}".format(state_map["state"])
         rooftop_station.description = "Solar rooftop facilities for {}".format(state_map["state"])
-        rooftop_station.approved = True
-        rooftop_station.approved_by = "opennem.importer.rooftop"
+        rooftop_station.approved = False
+        rooftop_station.approved_by = ""
         rooftop_station.created_by = "opennem.importer.rooftop"
 
         if not rooftop_station.location:
