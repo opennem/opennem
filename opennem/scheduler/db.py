@@ -35,8 +35,8 @@ def db_refresh_material_views() -> None:
         refresh_material_views()
 
 
-# Runs at 8am and 9am and 11am AEST
-@huey.periodic_task(crontab(hour="*/2", minute="15"))
+# @NOTE optimized can now run every hour but shouldn't have to
+@huey.periodic_task(crontab(hour="*/1", minute="15"))
 @huey.lock_task("db_refrehs_energies_yesterday")
 def db_refrehs_energies_yesterday() -> None:
     if settings.workers_run:
