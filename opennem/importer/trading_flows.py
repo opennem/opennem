@@ -41,8 +41,7 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
         if not flow_station:
             flow_station = Station(code=flow_station_id, network_code=flow_station_id)
 
-        flow_station.approved = True
-        flow_station.approved_by = IMPORTER_NAME
+        flow_station.approved = False
         flow_station.created_by = IMPORTER_NAME
 
         if not flow_station.location:
@@ -75,8 +74,7 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
                 )
 
             flow_facility_model.status_id = "operating"
-            flow_facility_model.approved = True
-            flow_facility_model.approved_by = IMPORTER_NAME
+            flow_facility_model.approved = False
             flow_facility_model.created_by = IMPORTER_NAME
             flow_facility_model.fueltech_id = flow_direction.value
             flow_facility_model.updated_at = datetime.now()
