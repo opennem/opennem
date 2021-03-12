@@ -327,10 +327,10 @@ class Station(Base, BaseModel):
 
     __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{} <{}>".format(self.name, self.code)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "{} {} <{}>".format(self.__class__, self.name, self.code)
 
     id = Column(
@@ -393,6 +393,9 @@ class Station(Base, BaseModel):
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
+
+    # Website
+    website_url = Column(Text, nullable=True)
 
     # @hybrid_property
     # def network(self) -> Optional[Network]:
