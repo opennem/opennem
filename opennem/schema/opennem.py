@@ -187,6 +187,9 @@ class LocationSchema(OpennemBaseSchema):
     geom: Optional[Any] = None
     boundary: Optional[Any]
 
+    lat: Optional[float]
+    lng: Optional[float]
+
     @validator("address1")
     def clean_address(cls, value):
         return normalize_string(value)

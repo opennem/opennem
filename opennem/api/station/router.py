@@ -99,6 +99,7 @@ def station_ids(
     response_model=StationSchema,
     description="Get a single station by code",
     response_model_exclude_none=True,
+    response_model_exclude={"location": {"lat", "lng"}},
 )
 def station(
     country_code: str,
