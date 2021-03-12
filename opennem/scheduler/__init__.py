@@ -51,7 +51,7 @@ def schedule_live_tasks() -> None:
         export_flows()
 
 
-@huey.periodic_task(crontab(minute="*/15"), priority=90)
+@huey.periodic_task(crontab(minute="*/30"), priority=90)
 @huey.lock_task("schedule_custom_tasks")
 def schedule_custom_tasks() -> None:
     if settings.workers_run:
