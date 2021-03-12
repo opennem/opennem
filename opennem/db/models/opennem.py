@@ -49,8 +49,6 @@ class BaseModel(object):
     """
 
     created_by = Column(Text, nullable=True)
-    # updated_by = Column(Text, nullable=True)
-    # processed_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -397,17 +395,6 @@ class Station(Base, BaseModel):
     # Website
     website_url = Column(Text, nullable=True)
 
-    # @hybrid_property
-    # def network(self) -> Optional[Network]:
-    #     """
-    #     Return the network from the facility
-
-    #     """
-    #     if not self.facilities or not len(self.facilities) > 0:
-    #         return None
-
-    #     return self.facilities[0].network
-
     @hybrid_property
     def capacity_registered(self) -> Optional[float]:
         """
@@ -436,32 +423,6 @@ class Station(Base, BaseModel):
         return cap_reg
 
     @hybrid_property
-    def capacity_aggregate(self) -> Optional[float]:
-        """
-        This is the sum of aggregate capacities for all units
-
-        """
-        cap_agg: Optional[float] = None
-
-        for fac in self.facilities:  # pylint: disable=no-member
-            if (
-                fac.capacity_aggregate
-                and type(fac.capacity_aggregate) in [int, float, Decimal]
-                and fac.status_id in ["operating", "committed", "commissioning"]
-                and fac.dispatch_type == DispatchType.GENERATOR
-                and fac.active
-            ):
-                if not cap_agg:
-                    cap_agg = 0.0
-
-                cap_agg += float(fac.capacity_aggregate)
-
-        if cap_agg:
-            cap_agg = round(cap_agg, 2)
-
-        return cap_agg
-
-    @hybrid_property
     def oid(self) -> str:
         return get_oid(self)
 
@@ -477,10 +438,10 @@ class Facility(Base, BaseModel):
         UniqueConstraint("network_id", "code", name="excl_facility_network_id_code"),
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{} <{}>".format(self.code, self.fueltech_id)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "{} {} <{}>".format(self.__class__, self.code, self.fueltech_id)
 
     id = Column(
@@ -543,7 +504,6 @@ class Facility(Base, BaseModel):
     unit_number = Column(Integer, nullable=True)
     unit_alias = Column(Text, nullable=True)
     unit_capacity = Column(Numeric, nullable=True)
-    # unit_number_max = Column(Numeric, nullable=True)
 
     emissions_factor_co2 = Column(Numeric, nullable=True)
 
@@ -558,8 +518,6 @@ class Facility(Base, BaseModel):
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
-
-    # in_export = Column(Boolean, default=True)
 
     @hybrid_property
     def capacity_aggregate(self) -> Optional[float]:
