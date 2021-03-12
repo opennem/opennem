@@ -13,7 +13,7 @@ from opennem.settings import settings
 
 def weather_observation_query(time_series: TimeSeries, station_codes: List[str]) -> str:
 
-    if time_series.interval.interval > 1440:
+    if time_series.interval.interval >= 1440:
         # @TODO replace with mv
         __query = """
         select
