@@ -8,7 +8,7 @@
 """
 
 from decimal import Decimal
-from typing import List, Optional
+from typing import Optional
 
 from dictalchemy import DictableModel
 from geoalchemy2 import Geometry
@@ -27,7 +27,6 @@ from sqlalchemy import (
     Numeric,
     Text,
     func,
-    text,
 )
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
