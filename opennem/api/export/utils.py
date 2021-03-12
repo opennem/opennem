@@ -15,7 +15,11 @@ logger = logging.getLogger(__name__)
 
 
 def write_output(
-    path: str, stat_set: BaseModel, is_local: bool = False
+    path: str,
+    stat_set: BaseModel,
+    is_local: bool = False,
+    exclude_unset: bool = True,
+    exclude: set = None,
 ) -> int:
 
     if settings.export_local:
@@ -27,7 +31,7 @@ def write_output(
         if settings.debug:
             indent = 4
 
-        write_content = stat_set.json(exclude_unset=True, indent=indent)
+        write_content = stat_set.json(exclude_unset=exclude_unset, indent=indent, exclude=exclude)
     else:
         write_content = json.dumps(stat_set)
 
