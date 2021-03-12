@@ -101,7 +101,7 @@ def schedule_hourly_tasks() -> None:
         export_energy(priority=PriorityType.daily, latest=True)
 
 
-@huey.periodic_task(crontab(hour="*/2", minute="15"))
+@huey.periodic_task(crontab(hour="*/12", minute="15"))
 @huey.lock_task("schedule_daily_tasks")
 def schedule_daily_tasks() -> None:
     if settings.workers_run:
