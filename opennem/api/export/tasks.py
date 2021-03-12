@@ -477,7 +477,7 @@ def export_electricitymap() -> None:
         )
 
         if power_set:
-            stat_set.append_set(power_set)
+            em_set.append_set(power_set)
 
     date_range = get_scada_range(network=NetworkWEM)
 
