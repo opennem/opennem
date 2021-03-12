@@ -457,14 +457,19 @@ def export_electricitymap() -> None:
     if not stat_set:
         raise Exception("No flow results for electricitymap export")
 
+    em_set = OpennemDataSet(
+        type="custom", version=get_version(), created_at=datetime.now(), data=[]
+    )
+
     INVERT_SETS = ["VIC1->NSW1", "VIC1->SA1"]
 
     for ds in stat_set.data:
         if ds.code in INVERT_SETS:
             ds_inverted = invert_flow_set(ds)
-            stat_set.data.append(ds_inverted)
-            stat_set.data.remove(ds)
+            em_set.data.append(ds_inverted)
             logging.info("Inverted {}".format(ds.code))
+        else:
+            em_set.data.append(ds)
 
     for region in get_network_regions(NetworkNEM):
         power_set = power_week(
@@ -495,11 +500,9 @@ def export_electricitymap() -> None:
     )
 
     if power_set:
-        stat_set.append_set(power_set)
+        em_set.append_set(power_set)
 
-    stat_set.type = "custom"
-
-    write_output(f"v3/clients/em/latest.json", stat_set)
+    write_output(f"v3/clients/em/latest.json", em_set)
 
 
 def export_metadata() -> bool:
