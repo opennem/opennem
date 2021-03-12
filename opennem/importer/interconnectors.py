@@ -70,9 +70,8 @@ def import_nem_interconnects() -> None:
                 network_code=interconnector.interconnectorid,
             )
 
-        interconnector_station.approved = True
-        interconnector_station.approved_by = __name__
-        interconnector_station.created_by = __name__
+        interconnector_station.approved = False
+        interconnector_station.created_by = "opennem.importer.interconnectors"
 
         if not interconnector_station.location:
             interconnector_station.location = Location(
@@ -101,8 +100,7 @@ def import_nem_interconnects() -> None:
             )
 
         int_facility.status_id = "operating"
-        int_facility.approved = True
-        int_facility.approved_by = "opennem.importer.interconnectors"
+        int_facility.approved = False
         int_facility.created_by = "opennem.importer.interconnectors"
         int_facility.fueltech_id = None
 
