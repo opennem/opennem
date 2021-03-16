@@ -258,6 +258,9 @@ class FacilityOutputSchema(OpennemBaseSchema):
 
     emissions_factor_co2: Optional[float]
 
+    data_first_seen: Optional[datetime]
+    data_last_seen: Optional[datetime]
+
     @validator("network", pre=True)
     def flatten_network(cls, value) -> str:
         if isinstance(value, str):
