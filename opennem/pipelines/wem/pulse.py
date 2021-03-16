@@ -32,6 +32,11 @@ class WemStorePulse(object):
             if trading_interval not in primary_keys:
                 forecast_load = clean_float(row["FORECAST_EOI_MW"])
 
+                generation_total = None
+
+                if "ACTUAL_TOTAL_GENERATION" in row:
+                    generation_total = clean_float(row["ACTUAL_TOTAL_GENERATION"])
+
                 records_to_store.append(
                     {
                         "created_by": spider.name,
@@ -39,6 +44,7 @@ class WemStorePulse(object):
                         "network_id": "WEM",
                         "network_region": "WEM",
                         "forecast_load": forecast_load,
+                        "generation_total": generation_total,
                         # generation_scheduled=row["Scheduled Generation (MW)"],
                         # generation_total=row["Total Generation (MW)"],
                         "price": clean_float(row["PRICE"]),
@@ -57,6 +63,7 @@ class WemStorePulse(object):
             set_={
                 "price": stmt.excluded.price,
                 "forecast_load": stmt.excluded.forecast_load,
+                "generation_total": stmt.excluded.generation_total,
             },
         )
 
