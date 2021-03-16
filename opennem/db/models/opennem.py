@@ -699,6 +699,7 @@ class FacilityScada(Base, BaseModel):
     generated = Column(Numeric, nullable=True)
     is_forecast = Column(Boolean, default=False, primary_key=True)
     eoi_quantity = Column(Numeric, nullable=True)
+    energy_quality_flag = Column(Numeric, nullable=False, default=0)
 
 
 class BalancingSummary(Base, BaseModel):
