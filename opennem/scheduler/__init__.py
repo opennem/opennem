@@ -43,7 +43,7 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 # export tasks
 
 
-@huey.periodic_task(crontab(minute="*/3"), priority=90)
+@huey.periodic_task(crontab(minute="*/5"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
     if settings.workers_run:
@@ -58,7 +58,7 @@ def schedule_custom_tasks() -> None:
         export_electricitymap()
 
 
-@huey.periodic_task(crontab(hour="*/12"))
+@huey.periodic_task(crontab(hour="12"))
 @huey.lock_task("schedule_power_weeklies")
 def schedule_power_weeklies() -> None:
     """
@@ -94,14 +94,14 @@ def schedule_export_all_monthly() -> None:
         slack_message("Finished running export_all_monthly")
 
 
-@huey.periodic_task(crontab(hour="*/1", minute="45"), priority=50)
+@huey.periodic_task(crontab(hour="*/6", minute="45"), priority=50)
 @huey.lock_task("schedule_hourly_tasks")
 def schedule_hourly_tasks() -> None:
     if settings.workers_run:
         export_energy(priority=PriorityType.daily, latest=True)
 
 
-@huey.periodic_task(crontab(hour="*/12", minute="15"))
+@huey.periodic_task(crontab(hour="22", minute="45"))
 @huey.lock_task("schedule_daily_tasks")
 def schedule_daily_tasks() -> None:
     if settings.workers_run:
@@ -109,7 +109,7 @@ def schedule_daily_tasks() -> None:
         slack_message("Finished running energy dailies")
 
 
-@huey.periodic_task(crontab(hour="*/2"), priority=30)
+@huey.periodic_task(crontab(hour="22"), priority=30)
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
     if settings.workers_run:
@@ -118,7 +118,7 @@ def schedule_energy_monthlies() -> None:
 
 
 # geojson maps
-@huey.periodic_task(crontab(minute="*/30"), priority=50)
+@huey.periodic_task(crontab(hour="*/1"), priority=50)
 @huey.lock_task("schedule_export_geojson")
 def schedule_export_geojson() -> None:
     if settings.workers_run:
@@ -126,7 +126,7 @@ def schedule_export_geojson() -> None:
 
 
 # metadata
-@huey.periodic_task(crontab(minute="*/30"), priority=30)
+@huey.periodic_task(crontab(hour="*/12"), priority=30)
 @huey.lock_task("schedule_export_metadata")
 def schedule_export_metadata() -> None:
     if settings.workers_run:
@@ -134,14 +134,14 @@ def schedule_export_metadata() -> None:
 
 
 # monitoring tasks
-@huey.periodic_task(crontab(minute="*/15"), priority=80)
+@huey.periodic_task(crontab(minute="*/30"), priority=80)
 @huey.lock_task("monitor_opennem_intervals")
 def monitor_opennem_intervals() -> None:
     for network_code in ["NEM", "WEM"]:
         check_opennem_interval_delays(network_code)
 
 
-@huey.periodic_task(crontab(minute="*/15"), priority=50)
+@huey.periodic_task(crontab(minute="*/30"), priority=50)
 @huey.lock_task("monitor_wem_interval")
 def monitor_wem_interval() -> None:
     aemo_wem_live_interval()
@@ -150,7 +150,8 @@ def monitor_wem_interval() -> None:
 @huey.periodic_task(crontab(hour="*/12"), priority=10)
 @huey.lock_task("monitor_metadata_status")
 def monitor_metadata_status() -> None:
-    if settings.workers_run:
+    # disable
+    if settings.workers_run and False == True:
         check_metadata_status()
 
 

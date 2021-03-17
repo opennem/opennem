@@ -29,11 +29,18 @@ if settings.cache_url:
 huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
 
-@huey.periodic_task(crontab(hour="23,3,7,11,15,19", minute="45"))
+@huey.periodic_task(crontab(hour="20", minute="45"))
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
     if settings.workers_db_run:
-        refresh_material_views()
+        refresh_material_views("mv_facility_all")
+
+
+@huey.periodic_task(crontab(hour="*/1", minute="45"))
+@huey.lock_task("db_refresh_material_views_recent")
+def db_refresh_material_views_recent() -> None:
+    if settings.workers_db_run:
+        refresh_material_views("mv_facility_45d")
 
 
 # @NOTE optimized can now run every hour but shouldn't have to
