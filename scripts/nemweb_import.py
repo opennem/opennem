@@ -16,7 +16,7 @@ from dateutil.relativedelta import relativedelta
 from pydantic import validator
 from sqlalchemy.engine.base import Engine
 
-from opennem.core.normalizers import clean_float, normalize_aemo_region
+from opennem.core.normalizers import clean_float, string_to_upper
 from opennem.db import db_connect, get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.pipelines.bulk_insert import build_insert_query
@@ -45,11 +45,9 @@ class DispatchUnitSolutionOld(BaseConfig):
     is_forecast: bool = False
     energy_quality_flag: int = 0
 
-    _normalize_network_id = validator("network_id", pre=True, allow_reuse=True)(
-        normalize_aemo_region
-    )
+    _normalize_network_id = validator("network_id", pre=True, allow_reuse=True)(string_to_upper)
     _normalize_facility_code = validator("facility_code", pre=True, allow_reuse=True)(
-        normalize_aemo_region
+        string_to_upper
     )
     _normalize_generated = validator("generated", pre=True, allow_reuse=True)(clean_float)
     _normalize_energy = validator("eoi_quantity", pre=True, allow_reuse=True)(clean_float)
