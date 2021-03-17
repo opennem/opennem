@@ -662,11 +662,6 @@ class FacilityScada(Base, BaseModel):
 
     __tablename__ = "facility_scada"
 
-    __table_args__ = (
-        # new timezone based indicies
-        # @NOTE: other indicies in migration files
-    )
-
     def __str__(self) -> str:
         return "<{}: {} {} {}>".format(
             self.__class__,
@@ -701,12 +696,17 @@ class FacilityScada(Base, BaseModel):
     eoi_quantity = Column(Numeric, nullable=True)
     energy_quality_flag = Column(Numeric, nullable=False, default=0)
 
+    __table_args__ = (
+        Index("idx_facility_scada_facility_code_trading_interval", facility_code, trading_interval.desc()),
+        Index("idx_facility_scada_network_id", network_id),
+        Index("idx_facility_scada_network_id_trading_interval", network_id, trading_interval.desc()),
+        Index("idx_facility_scada_trading_interval_facility_code", trading_interval, facility_code),
+    )
+
 
 class BalancingSummary(Base, BaseModel):
 
     __tablename__ = "balancing_summary"
-
-    __table_args__ = ()
 
     network_id = Column(
         Text,
@@ -727,3 +727,16 @@ class BalancingSummary(Base, BaseModel):
     price_dispatch = Column(Numeric, nullable=True)
     net_interchange_trading = Column(Numeric, nullable=True)
     is_forecast = Column(Boolean, default=False)
+
+    __table_args__ = (
+        Index(
+            "idx_balancing_summary_network_id_trading_interval",
+            network_id,
+            trading_interval.desc(),
+        ),
+        Index(
+            "idx_balancing_summary_network_region_trading_interval",
+            network_region,
+            trading_interval.desc(),
+        ),
+    )
