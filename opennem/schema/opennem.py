@@ -118,7 +118,7 @@ class FacilitySchema(OpennemBaseSchema):
     # revisions: Optional[List[RevisionSchema]] = []
     # revision_ids: Optional[List[int]] = []
 
-    dispatch_type: DispatchType = "GENERATOR"
+    dispatch_type: DispatchType = DispatchType.GENERATOR
 
     active: bool = True
 
@@ -304,6 +304,31 @@ class FacilityOutputSchema(OpennemBaseSchema):
 
 
 class StationSchema(OpennemBaseSchema):
+    id: Optional[int]
+
+    code: str
+
+    participant: Optional[ParticipantSchema] = None
+
+    facilities: Optional[List[FacilitySchema]] = []
+
+    photos: Optional[List[Photo]]
+
+    name: Optional[str]
+
+    # Original network fields
+    network_name: Optional[str]
+
+    location: LocationSchema = LocationSchema()
+
+    network: Optional[str] = None
+
+    description: Optional[str]
+    wikipedia_link: Optional[str]
+    wikidata_id: Optional[str]
+
+
+class StationOutputSchema(StationSchema):
     id: Optional[int]
 
     code: str
