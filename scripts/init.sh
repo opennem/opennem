@@ -18,13 +18,7 @@ python -m opennem.cli db
 # Initialzies fixtures and all the station, fac, emissions, etc. data
 python -m opennem.cli db init
 
-
-# Crawl initial data to bootstrap
-scrapy crawl -L ERROR au.wem.participant
-scrapy crawl -L ERROR au.wem.live.participant
-
-scrapy crawl -L ERROR au.wem.facilities
-scrapy crawl -L ERROR au.wem.live.facilities
+# CRAWLS
 
 # bom data
 scrapy crawl -L ERROR bom.capitals
@@ -32,12 +26,26 @@ scrapy crawl -L ERROR bom.capitals
 # rooftop
 scrapy crawl -L ERROR au.apvi.current.data
 
-# stats data
+# wem
+scrapy crawl -L ERROR au.wem.participant
+scrapy crawl -L ERROR au.wem.facilities
 scrapy crawl -L ERROR au.wem.live.facility_intervals
 scrapy crawl -L ERROR au.wem.live.pulse
 scrapy crawl -L ERROR au.wem.current.facility_scada
 scrapy crawl -L ERROR au.wem.current.balancing_summary
 
-scrapy crawl -L ERROR au.nem.current.dispatch_scada
+# nem
+scrapy crawl -L ERROR au.nem.day.dispatch_is
+scrapy crawl -L ERROR au.nem.day.dispatch_scada
+scrapy crawl -L ERROR au.nem.current.rooftop
+scrapy crawl -L ERROR au.nem.current.trading_is
 scrapy crawl -L ERROR au.nem.current.dispatch
 scrapy crawl -L ERROR au.nem.current.dispatch_actual_gen
+
+
+
+# update seen ranges
+python -m opennem.workers.facility_data_ranges
+
+# refresh views
+python -m opennem.cli db refresh
