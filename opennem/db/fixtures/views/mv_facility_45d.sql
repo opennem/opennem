@@ -1,4 +1,4 @@
-create materialized view mv_facility_all as
+create materialized view mv_facility_45d as
 select
     fs.trading_interval,
     f.code,
