@@ -122,7 +122,7 @@ def date_series(
     length: int = 30,
     interval: Union[timedelta, relativedelta] = timedelta(days=1),
     reverse: bool = False,
-) -> List[datetime]:
+) -> Generator[datetime, None, None]:
     """
     Generate a datetime series
 
