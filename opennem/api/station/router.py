@@ -7,7 +7,7 @@ from starlette import status
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import get_database_session
 from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Revision, Station
-from opennem.schema.opennem import StationSchema
+from opennem.schema.opennem import StationOutputSchema, StationSchema
 
 from .schema import StationIDList, StationRecord
 
@@ -31,7 +31,7 @@ def stations(
     name: Optional[str] = None,
     limit: Optional[int] = None,
     page: int = 1,
-) -> List[StationSchema]:
+) -> List[StationOutputSchema]:
     stations = (
         session.query(Station)
         .join(Location)
@@ -96,7 +96,7 @@ def station_ids(
 
 @router.get(
     "/{country_code}/{network_id}/{station_code:path}",
-    response_model=StationSchema,
+    response_model=StationOutputSchema,
     description="Get a single station by code",
     response_model_exclude_none=True,
     # response_model_exclude={"location": {"lat", "lng"}},
@@ -107,7 +107,7 @@ def station(
     station_code: str,
     session: Session = Depends(get_database_session),
     only_generators: bool = Query(True, description="Show only generators"),
-) -> StationSchema:
+) -> StationOutputSchema:
 
     station = (
         session.query(Station)
