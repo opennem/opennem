@@ -6,19 +6,15 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from geoalchemy2.elements import WKBElement
-from geoalchemy2.shape import from_shape, to_shape
+from geoalchemy2.shape import to_shape
 from pydantic import BaseModel, validator
 from shapely import geometry
-from shapely.geometry import asShape
 
 from opennem.api.photo.schema import Photo
 from opennem.api.stats.schema import OpennemData
 from opennem.api.weather.schema import WeatherStation
 from opennem.core.dispatch_type import DispatchType
-from opennem.core.normalizers import (  # clean_numbers,; station_name_cleaner,
-    clean_capacity,
-    normalize_string,
-)
+from opennem.core.normalizers import clean_capacity, normalize_string
 
 from .core import BaseConfig
 from .network import NetworkNEM, NetworkSchema
