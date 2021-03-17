@@ -16,13 +16,11 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.add_column("network", sa.Column("offset", sa.Integer(), nullable=True))
-    op.add_column(
-        "network", sa.Column("timezone_database", sa.Text(), nullable=True)
-    )
+    op.add_column("network", sa.Column("timezone_database", sa.Text(), nullable=True))
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_column("network", "timezone_database")
     op.drop_column("network", "offset")

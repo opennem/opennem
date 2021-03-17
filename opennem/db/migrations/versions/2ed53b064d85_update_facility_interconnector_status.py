@@ -1,6 +1,6 @@
 # pylint: disable=no-member
 """
-Update facility interconnector status
+Update facility interconnector to be not nullable
 
 Revision ID: 2ed53b064d85
 Revises: ddb5d2a90896

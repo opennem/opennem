@@ -16,22 +16,18 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     # network table
-    op.add_column(
-        "network", sa.Column("export_set", sa.Boolean(), nullable=True)
-    )
+    op.add_column("network", sa.Column("export_set", sa.Boolean(), nullable=True))
     op.execute("UPDATE network set export_set=True")
     op.alter_column("network", "export_set", nullable=False)
 
     # network region table
-    op.add_column(
-        "network_region", sa.Column("export_set", sa.Boolean(), nullable=True)
-    )
+    op.add_column("network_region", sa.Column("export_set", sa.Boolean(), nullable=True))
     op.execute("UPDATE network_region set export_set=True")
     op.alter_column("network_region", "export_set", nullable=False)
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_column("network_region", "export_set")
     op.drop_column("network", "export_set")

@@ -11,7 +11,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "72a817116434"
-down_revision = "467a3223b204"
+down_revision = "bfb98983b92c"
 branch_labels = None
 depends_on = None
 
@@ -35,15 +35,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.execute(
-        "drop index if exists idx_facility_scada_facility_code_trading_interval"
-    )
-    op.execute(
-        "drop index if exists idx_facility_scada_network_id_trading_interval"
-    )
-    op.execute(
-        "drop index if exists idx_balancing_summary_network_id_trading_interval"
-    )
-    op.execute(
-        "drop index if exists idx_balancing_summary_network_region_trading_interval"
-    )
+    op.execute("drop index if exists idx_facility_scada_facility_code_trading_interval")
+    op.execute("drop index if exists idx_facility_scada_network_id_trading_interval")
+    op.execute("drop index if exists idx_balancing_summary_network_id_trading_interval")
+    op.execute("drop index if exists idx_balancing_summary_network_region_trading_interval")

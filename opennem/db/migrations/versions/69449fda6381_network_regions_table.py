@@ -10,12 +10,12 @@ import sqlalchemy as sa
 from alembic import op
 
 revision = "69449fda6381"
-down_revision = "d8e3e95a80d1"
+down_revision = "458bf49bd781"
 branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.create_table(
         "network_region",
         sa.Column("created_by", sa.Text(), nullable=True),
@@ -40,5 +40,5 @@ def upgrade():
     )
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_table("network_region")

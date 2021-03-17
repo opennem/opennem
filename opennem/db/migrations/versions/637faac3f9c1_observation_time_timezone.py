@@ -10,18 +10,24 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "637faac3f9c1"
-down_revision = "f87394cc4c00"
+down_revision = "bb6fb4645ca3"
 branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.execute(
-        "ALTER TABLE bom_observation ALTER COLUMN observation_time TYPE TIMESTAMP WITH TIME ZONE USING observation_time AT TIME ZONE 'UTC'"
+        """
+        ALTER TABLE bom_observation
+            ALTER COLUMN observation_time TYPE TIMESTAMP WITH TIME ZONE USING observation_time AT TIME ZONE 'UTC'
+        """
     )
 
 
-def downgrade():
+def downgrade() -> None:
     op.execute(
-        "ALTER TABLE bom_observation ALTER COLUMN observation_time TYPE TIMESTAMP WITHOUT TIME ZONE"
+        """
+        ALTER TABLE bom_observation
+            ALTER COLUMN observation_time TYPE TIMESTAMP WITHOUT TIME ZONE
+        """
     )

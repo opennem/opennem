@@ -15,19 +15,17 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.create_index(
         op.f("ix_bom_observation_observation_time"),
         "bom_observation",
         ["observation_time"],
         unique=False,
     )
-    op.drop_index(
-        "bom_observation_observation_time_idx", table_name="bom_observation"
-    )
+    op.drop_index("bom_observation_observation_time_idx", table_name="bom_observation")
 
 
-def downgrade():
+def downgrade() -> None:
     op.create_index(
         "bom_observation_observation_time_idx",
         "bom_observation",

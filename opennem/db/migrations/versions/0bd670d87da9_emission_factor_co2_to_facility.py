@@ -15,12 +15,12 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.add_column(
         "facility",
         sa.Column("emissions_factor_co2", sa.Numeric(), nullable=True),
     )
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_column("facility", "emissions_factor_co2")

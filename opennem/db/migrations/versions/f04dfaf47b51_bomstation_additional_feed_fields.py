@@ -16,25 +16,15 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
-    op.add_column(
-        "bom_station", sa.Column("feed_url", sa.Text(), nullable=True)
-    )
-    op.add_column(
-        "bom_station", sa.Column("is_capital", sa.Boolean(), nullable=True)
-    )
-    op.add_column(
-        "bom_station", sa.Column("name_alias", sa.Text(), nullable=True)
-    )
-    op.add_column(
-        "bom_station", sa.Column("priority", sa.Integer(), nullable=True)
-    )
-    op.add_column(
-        "bom_station", sa.Column("website_url", sa.Text(), nullable=True)
-    )
+def upgrade() -> None:
+    op.add_column("bom_station", sa.Column("feed_url", sa.Text(), nullable=True))
+    op.add_column("bom_station", sa.Column("is_capital", sa.Boolean(), nullable=True))
+    op.add_column("bom_station", sa.Column("name_alias", sa.Text(), nullable=True))
+    op.add_column("bom_station", sa.Column("priority", sa.Integer(), nullable=True))
+    op.add_column("bom_station", sa.Column("website_url", sa.Text(), nullable=True))
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_column("bom_station", "website_url")
     op.drop_column("bom_station", "priority")
     op.drop_column("bom_station", "name_alias")

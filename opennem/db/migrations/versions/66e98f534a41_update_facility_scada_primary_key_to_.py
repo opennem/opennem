@@ -1,6 +1,6 @@
 # pylint: disable=no-member
 """
-update facility_scada primary key to include is_forecast
+Update facility_scada primary key to include is_forecast
 
 Revision ID: 66e98f534a41
 Revises: 07d27793b5e2
@@ -11,7 +11,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "66e98f534a41"
-down_revision = "07d27793b5e2"
+down_revision = "d130be833a0c"
 branch_labels = None
 depends_on = None
 

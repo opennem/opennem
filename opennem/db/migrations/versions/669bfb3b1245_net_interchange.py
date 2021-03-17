@@ -1,6 +1,6 @@
 # pylint: disable=no-member
 """
-net interchange
+Add balancing_summary net_interchange_trading col
 
 Revision ID: 669bfb3b1245
 Revises: 3afcf7bf755c

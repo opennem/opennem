@@ -13,7 +13,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = "889a1453be90"
-down_revision = "b30e47defd26"
+down_revision = "6767d0102992"
 branch_labels = None
 depends_on = None
 
@@ -29,17 +29,13 @@ def upgrade() -> None:
             nullable=True,
         ),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column(
-            "stat_date", postgresql.TIMESTAMP(timezone=True), nullable=False
-        ),
+        sa.Column("stat_date", postgresql.TIMESTAMP(timezone=True), nullable=False),
         sa.Column("country", sa.Text(), nullable=False),
         sa.Column("stat_type", sa.Text(), nullable=False),
         sa.Column("value", sa.Numeric(), nullable=True),
         sa.PrimaryKeyConstraint("stat_date", "country", "stat_type"),
     )
-    op.create_index(
-        op.f("ix_stats_stat_date"), "stats", ["stat_date"], unique=False
-    )
+    op.create_index(op.f("ix_stats_stat_date"), "stats", ["stat_date"], unique=False)
 
 
 def downgrade() -> None:

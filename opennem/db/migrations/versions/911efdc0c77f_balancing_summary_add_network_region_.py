@@ -16,7 +16,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.add_column(
         "balancing_summary",
         sa.Column("network_region", sa.Text(), nullable=True),
@@ -27,5 +27,5 @@ def upgrade():
     )
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_column("balancing_summary", "network_region")

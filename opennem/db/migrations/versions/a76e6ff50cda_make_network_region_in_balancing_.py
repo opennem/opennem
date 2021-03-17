@@ -6,7 +6,6 @@ Revises: 911efdc0c77f
 Create Date: 2020-10-07 11:37:59.674373
 
 """
-import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
@@ -16,19 +15,21 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
+    op.execute("alter table balancing_summary drop constraint balancing_summary_pkey")
     op.execute(
-        "alter table balancing_summary drop constraint balancing_summary_pkey"
-    )
-    op.execute(
-        "alter table balancing_summary add constraint balancing_summary_pkey primary key (trading_interval, network_id, network_region)"
+        """
+        alter table balancing_summary add constraint
+        balancing_summary_pkey primary key (trading_interval, network_id, network_region)
+        """
     )
 
 
-def downgrade():
+def downgrade() -> None:
+    op.execute("alter table balancing_summary drop constraint balancing_summary_pkey")
     op.execute(
-        "alter table balancing_summary drop constraint balancing_summary_pkey"
-    )
-    op.execute(
-        "alter table balancing_summary add constraint balancing_summary_pkey primary key (trading_interval, network_id)"
+        """
+        alter table balancing_summary add constraint
+        balancing_summary_pkey primary key (trading_interval, network_id)
+        """
     )

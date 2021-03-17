@@ -15,16 +15,14 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.add_column(
         "balancing_summary",
         sa.Column("is_forecast", sa.Boolean(), nullable=True),
     )
-    op.add_column(
-        "facility_scada", sa.Column("is_forecast", sa.Boolean(), nullable=True)
-    )
+    op.add_column("facility_scada", sa.Column("is_forecast", sa.Boolean(), nullable=True))
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_column("facility_scada", "is_forecast")
     op.drop_column("balancing_summary", "is_forecast")
