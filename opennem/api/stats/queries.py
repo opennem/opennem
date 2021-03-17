@@ -16,6 +16,7 @@ from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.networks import network_from_network_region
 from opennem.core.normalizers import normalize_duid
+from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.settings import settings
@@ -216,6 +217,7 @@ def energy_facility(
     interval: TimeInterval,
     period: TimePeriod,
 ) -> str:
+    # @TODO remove this
 
     network = network_from_network_region(network_code)
     timezone = network.timezone_database
@@ -262,12 +264,7 @@ def energy_facility(
     return query
 
 
-def energy_facility_query(
-    facility_codes: List[str],
-    network: NetworkSchema,
-    period: TimePeriod,
-    interval: Optional[TimeInterval] = None,
-) -> str:
+def energy_facility_query(time_series: TimeSeries, facility_codes: List[str]) -> str:
     """
     Get Energy for a list of facility codes
     """
@@ -289,47 +286,16 @@ def energy_facility_query(
         trading_day desc;
     """
 
-    timezone = network.timezone_database
-
-    date_range: ScadaDateRange = get_scada_range(network=network, facilities=facility_codes)
-
-    if not interval:
-        interval = network.get_interval()
-
-    if not date_range:
-        raise Exception("Require a date range for query")
-
-    if not period:
-        raise Exception("Require a period")
-
-    if not interval:
-        interval = network.get_interval()
-
-    if not interval:
-        raise Exception("Require an interval")
-
-    trunc = interval.trunc
-
-    date_max = date_range.get_end().replace(hour=23, minute=59, second=59) - timedelta(days=1)
-    date_min = date_range.get_start()
-
-    if period.period_human == "1M":
-        date_min = date_range.get_end() - timedelta(minutes=period.period)
-    elif period.period_human == "1Y":
-        # might have to do +offset times
-        year = datetime.now().year - 1
-        date_min = date_max.replace(year=year)
-    elif period.period_human in ["7d", "5Y", "10Y"]:
-        date_min = date_range.get_end() - timedelta(minutes=period.period)
+    date_range = time_series.get_range()
 
     query = dedent(
         __query.format(
             view_name=settings.db_energy_view,
             facility_codes_parsed=duid_in_case(facility_codes),
-            trunc=trunc,
-            date_max=date_max,
-            date_min=date_min,
-            timezone=timezone,
+            trunc=time_series.interval.trunc,
+            date_max=date_range.end,
+            date_min=date_range.start,
+            timezone=time_series.network.timezone_database,
         )
     )
     return query
