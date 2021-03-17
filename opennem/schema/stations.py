@@ -6,18 +6,13 @@
 from collections import UserList
 from typing import List, Optional
 
+from opennem.core.normalizers import string_to_upper
 from opennem.exporter.encoders import opennem_serialize
 from opennem.schema.opennem import StationSchema
 
 
-def _str_comp(subject: str, value: str) -> bool:
-    return subject.trim().lower() == value.trim().lower()
-
-
 class StationSet(UserList):
-    """
-
-    """
+    """"""
 
     # def __init__(self,):
     #     pass
@@ -34,7 +29,7 @@ class StationSet(UserList):
         print(kwargs)
 
     def get_name(self, name: str) -> List[StationSchema]:
-        _entries = list(filter(lambda s: _str_comp(s.name, name), self.data))
+        _entries = list(filter(lambda s: string_to_upper(s.name, name), self.data))
 
         return _entries
 
