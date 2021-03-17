@@ -80,7 +80,8 @@ class OpennemSettings(BaseSettings):
     # db views used
 
     # energy view used
-    db_energy_view: str = "mv_facility_30m_all"
+    db_energy_view: str = "mv_facility_all"
+    db_energy_view_recent: str = "mv_facility_45d"
 
     # workers
     workers_run: bool = True
