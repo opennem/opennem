@@ -1,9 +1,10 @@
 import logging
 import math
 from datetime import date, datetime, timedelta, timezone
-from typing import Generator, List, Optional, Tuple, Union
+from typing import Generator, Optional, Tuple, Union
 
-from dateutil.parser import ParserError, parse
+# ParserError isn't a concrete type
+from dateutil.parser import ParserError, parse  # type: ignore
 from dateutil.relativedelta import relativedelta
 
 from opennem.api.stats.schema import ScadaDateRange
@@ -29,7 +30,7 @@ DATE_CURRENT = datetime.now()
 DATE_CURRENT_YEAR = DATE_CURRENT.year
 
 
-def optimized_data_parser(date_str: str) -> datetime:
+def optimized_data_parser(date_str: str) -> Optional[datetime]:
     """
     Turns out that dateutil's date parser is slow since
     it does a lot of string parsing. Here we try matching
@@ -104,7 +105,7 @@ def parse_date(
 
         if dt_return and is_aware(dt_return):
             if tz and hasattr(tz, "localize"):
-                dt_return = tz.localize()
+                dt_return = tz.localize()  # type: ignore
             else:
                 dt_return = dt_return.replace(tzinfo=tz)
         else:
