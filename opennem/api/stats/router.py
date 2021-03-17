@@ -12,6 +12,7 @@ from opennem.core.normalizers import normalize_duid
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, Station
+from opennem.schema.dates import TimeSeries
 from opennem.schema.time import TimePeriod
 from opennem.utils.time import human_to_timedelta
 
@@ -324,12 +325,18 @@ def energy_station(
         )
 
     facility_codes = list(set([f.code for f in station.facilities]))
+    facilities_first_seen: datetime = min([f.data_first_seen for f in station.facilities])
 
-    query = energy_facility_query(
-        facility_codes,
+    time_series = TimeSeries(
+        start=facilities_first_seen,
         network=network,
         interval=interval_obj,
-        period=period_obj,
+        period=human_to_period("1Y"),
+    )
+
+    query = energy_facility_query(
+        time_series,
+        facility_codes,
     )
 
     logger.debug(query)
