@@ -17,10 +17,26 @@ depends_on = None
 
 def upgrade():
     op.execute(
-        "select create_hypertable('facility_scada', 'trading_interval', if_not_exists => TRUE, migrate_data => TRUE, chunk_time_interval => INTERVAL '1 week')"
+        """
+        select create_hypertable(
+            'facility_scada',
+            'trading_interval',
+            if_not_exists => TRUE,
+            migrate_data => TRUE,
+            chunk_time_interval => INTERVAL '2 week'
+        )
+        """
     )
     op.execute(
-        "select create_hypertable('balancing_summary', 'trading_interval', if_not_exists => TRUE, migrate_data => TRUE, chunk_time_interval => INTERVAL '1 week')"
+        """
+        select create_hypertable(
+            'balancing_summary',
+            'trading_interval',
+            if_not_exists => TRUE,
+            migrate_data => TRUE,
+            chunk_time_interval => INTERVAL '2 week'
+        )
+        """
     )
 
 
