@@ -7,6 +7,7 @@ run as ./scripts/nemweb_import.py --help
 import logging
 import os
 from datetime import datetime
+from itertools import groupby
 from textwrap import dedent
 from typing import List, Optional
 
@@ -87,8 +88,7 @@ def get_scada_old_query(year: int, month: int) -> str:
     from DISPATCH_UNIT_SOLUTION_OLD duso
     left join DUID d on duso.DUID = d.ID
     where duso.SETTLEMENTDATE between '{date_min}' and '{date_max}'
-    order by duso.SETTLEMENTDATE asc
-    limit 100;
+    order by duso.SETTLEMENTDATE asc;
     """
 
     # One month blocks
@@ -104,6 +104,22 @@ def insert_scada_records(records: List[DispatchUnitSolutionOld]) -> int:
     """ Bulk insert the scada records """
 
     records_to_store = [i.dict() for i in records]
+
+    # dedupe records
+    return_records_grouped = {}
+
+    for pk_values, rec_value in groupby(
+        records_to_store,
+        key=lambda r: (
+            r.get("trading_interval"),
+            r.get("network_id"),
+            r.get("facility_code"),
+        ),
+    ):
+        if pk_values not in return_records_grouped:
+            return_records_grouped[pk_values] = list(rec_value).pop()
+
+    records_to_store = list(return_records_grouped.values())
 
     sql_query = build_insert_query(FacilityScada, ["updated_at", "generated"])
     conn = get_database_engine().raw_connection()
