@@ -43,7 +43,7 @@ class DispatchUnitSolutionOld(BaseConfig):
     generated: Optional[float]
     eoi_quantity: Optional[float]
     is_forecast: bool = False
-    # energy_quality_flag:
+    energy_quality_flag: int = 0
 
     _normalize_network_id = validator("network_id", pre=True, allow_reuse=True)(
         normalize_aemo_region
