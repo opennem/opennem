@@ -33,7 +33,10 @@ from (
       fs.network_id,
       round(sum(fs.eoi_quantity), 4) as energy
   from facility_scada fs
-  where fs.is_forecast is False
+  where
+    fs.is_forecast is False
+    and fs.trading_interval <= now()
+    and fs.trading_interval >= now() - INTERVAL '45 days'
   group by
       1, 2, 3
 ) as fs
