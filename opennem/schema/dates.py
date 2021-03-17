@@ -14,8 +14,8 @@ End is the most recent time chronoligally ordered:
 
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
-from typing import Optional, Union
+from datetime import datetime, timedelta
+from typing import Optional
 
 from datetime_truncate import truncate as date_trunc
 
