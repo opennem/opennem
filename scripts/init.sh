@@ -12,8 +12,14 @@ fi
 
 alembic upgrade head
 
+# Creates the db views
+python -m opennem.cli db
+
+# Initialzies fixtures and all the station, fac, emissions, etc. data
 python -m opennem.cli db init
 
+
+# Crawl initial data to bootstrap
 scrapy crawl -L ERROR au.wem.participant
 scrapy crawl -L ERROR au.wem.live.participant
 
@@ -24,7 +30,6 @@ scrapy crawl -L ERROR au.wem.live.facilities
 scrapy crawl -L ERROR bom.capitals
 
 # rooftop
-python -m opennem.importer.rooftop
 scrapy crawl -L ERROR au.apvi.current.data
 
 # stats data
@@ -36,5 +41,3 @@ scrapy crawl -L ERROR au.wem.current.balancing_summary
 scrapy crawl -L ERROR au.nem.current.dispatch_scada
 scrapy crawl -L ERROR au.nem.current.dispatch
 scrapy crawl -L ERROR au.nem.current.dispatch_actual_gen
-
-python -m opennem.importer.wikidata
