@@ -132,9 +132,9 @@ cryptography==3.4.6; python_version >= "3.6" and python_full_version < "3.0.0" o
 cssselect==1.1.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.6" \
     --hash=sha256:f612ee47b749c877ebae5bb77035d8f4202c6ad0f0fc1271b3c18ad6c4468ecf \
     --hash=sha256:f95f8dedd925fd8f54edb3d2dfb44c190d9d18512377d3c1e2388d16126879bc
-databases==0.4.1; python_version >= "3.6" \
-    --hash=sha256:853c7fa9a0d9b8af8d58cfa15aae00ec0a4fa73b31df4331192308e00c5b6345 \
-    --hash=sha256:799febb8fc0ad1e9ac47b5510b91e971d35be205aa99b9a00b3811b4cb5e5254
+databases==0.4.2; python_version >= "3.6" \
+    --hash=sha256:44788f6fd344f27baa2be9b42c3926222932000a3ba7dce5a305167a2cb1f6bb \
+    --hash=sha256:2ca1b72f0209744e25fababc44c183e5fb6f7dd7af4274379f2ec6f14c00432a
 datedelta==1.3 \
     --hash=sha256:eaf2b332582a083e0db7baab36ab37d5fe98b9de3cfd46a75c45247c59b2f117 \
     --hash=sha256:b69229755ed61ae0a78dc63820a8ed1492a60126edceb430aece212b5ba19575
@@ -394,6 +394,12 @@ markupsafe==1.1.1; python_version >= "3.6" and python_full_version < "3.0.0" or 
 msrest==0.6.21; python_version >= "3.5" \
     --hash=sha256:c840511c845330e96886011a236440fafc2c9aff7b2df9c0a92041ee2dee3782 \
     --hash=sha256:72661bc7bedc2dc2040e8f170b6e9ef226ee6d3892e01affd4d26b06474d68d8
+mysqlclient==2.0.3; python_version >= "3.5" \
+    --hash=sha256:3381ca1a4f37ff1155fcfde20836b46416d66531add8843f6aa6d968982731c3 \
+    --hash=sha256:0ac0dd759c4ca02c35a9fedc24bc982cf75171651e8187c2495ec957a87dfff7 \
+    --hash=sha256:71c4b330cf2313bbda0307fc858cc9055e64493ba9bf28454d25cf8b3ee8d7f5 \
+    --hash=sha256:fc575093cf81b6605bed84653e48b277318b880dc9becf42dd47fa11ffd3e2b6 \
+    --hash=sha256:f6ebea7c008f155baeefe16c56cd3ee6239f7a5a9ae42396c2f1860f08a7c432
 numpy==1.20.1; python_version >= "3.7" and python_full_version >= "3.7.1" \
     --hash=sha256:ae61f02b84a0211abb56462a3b6cd1e7ec39d466d3160eb4e1da8bf6717cdbeb \
     --hash=sha256:65410c7f4398a0047eea5cca9b74009ea61178efd78d1be9847fac1d6716ec1e \
