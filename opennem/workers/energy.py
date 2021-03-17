@@ -412,4 +412,4 @@ def run_energy_update_all() -> None:
 
 if __name__ == "__main__":
     # run_energy_update_all()
-    run_energy_update_yesterday(days=1)
+    run_energy_update_yesterday(days=2)
