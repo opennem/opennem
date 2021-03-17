@@ -27,18 +27,9 @@ def duid_in_case(facility_codes: List[str]) -> str:
 
 
 def power_facility_query(
+    time_series: TimeSeries,
     facility_codes: List[str],
-    network: NetworkSchema,
-    period: TimePeriod,
-    interval: Optional[TimeInterval] = None,
-    date_range: Optional[ScadaDateRange] = None,
 ) -> str:
-    timezone = network.get_timezone(postgres_format=True)
-
-    if not date_range:
-        date_range = get_scada_range(network=network, facilities=facility_codes, max_only=True)
-
-    timezone = network.timezone_database
 
     __query = """
         select
@@ -64,28 +55,15 @@ def power_facility_query(
         order by 1 desc
     """
 
-    if not interval:
-        interval = network.get_interval()
-
-    if not date_range:
-        raise Exception("Require a date range for query")
-
-    if not interval:
-        raise Exception("Require an interval")
-
-    date_max = date_range.get_end()
-    date_min = date_range.get_start()
-
-    if period:
-        date_min = date_range.get_end() - timedelta(minutes=period.period)
+    date_range = time_series.get_range()
 
     query = __query.format(
         facility_codes_parsed=duid_in_case(facility_codes),
-        trunc=interval.interval_sql,
-        period=period.period_sql,
-        timezone=timezone,
-        date_max=date_max,
-        date_min=date_min,
+        trunc=time_series.interval.interval_sql,
+        period=time_series.period.period_sql,
+        timezone=time_series.network.timezone_database,
+        date_max=date_range.end,
+        date_min=date_range.start,
     )
 
     return query
