@@ -5,20 +5,28 @@ from pprint import pprint
 from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
+
 # from opennem.core.loader import load_data
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import MultipleResultsFound
 
 from opennem.core.loader import load_data
+from opennem.core.stats.store import init_stats
 from opennem.db import SessionLocal
 from opennem.db.load_fixtures import load_fixtures
 from opennem.db.models.opennem import Facility, Location, Revision, Station
 from opennem.importer.aemo_gi import gi_import
 from opennem.importer.aemo_rel import rel_import
 from opennem.importer.emissions import import_emissions_csv
+from opennem.importer.fueltechs import init_fueltechs
+from opennem.importer.interconnectors import import_nem_interconnects
 from opennem.importer.mms import mms_import
+from opennem.importer.osm import init_osm
+from opennem.importer.photos import import_photos_from_fixtures
 from opennem.importer.registry import registry_import
+from opennem.importer.rooftop import rooftop_facilities
+from opennem.importer.wikidata import wikidata_join_mapping, wikidata_photos
 from opennem.schema.stations import StationSet
 
 from .comparator import compare_record_differs
@@ -295,7 +303,6 @@ def registry_init() -> None:
 
     for station in registry:
         station_dict = station.dict(exclude={"id"})
-        # pprint(station_dict)
 
         station_model = session.query(Station).filter_by(code=station.code).one_or_none()
 
@@ -331,7 +338,7 @@ def registry_init() -> None:
             )
 
             if not f:
-                print("new facility {} {}".format(fac.code, fac.network.code))
+                logger.info("Added facility {} {}".format(fac.code, fac.network.code))
                 f = Facility(
                     **fac.dict(
                         exclude={
@@ -419,16 +426,16 @@ def opennem_init() -> None:
             facility_model = (
                 session.query(Facility)
                 .filter_by(code=fac.code)
-                .filter_by(network_id=fac.network)
+                .filter_by(network_id=fac.network.code)
                 .one_or_none()
             )
 
             if not facility_model:
-                facility_model = Facility(code=fac.code, network_id=fac.network)
+                facility_model = Facility(code=fac.code, network_id=fac.network.code)
 
             facility_model.network_region = fac.network_region
-            facility_model.fueltech_id = fac.fueltech
-            facility_model.status_id = fac.status
+            facility_model.fueltech_id = fac.fueltech.code
+            facility_model.status_id = fac.status.code
             facility_model.dispatch_type = fac.dispatch_type
             facility_model.capacity_registered = fac.capacity_registered
             facility_model.registered = fac.registered
@@ -498,14 +505,41 @@ def import_facilities() -> None:
 
 
 def init() -> None:
+    """
+    These are all the init steps required after a db has been initialized
+    """
     load_fixtures()
-    logger.info("Fixture loaded")
+    logger.info("Fixtures loaded")
 
     registry_init()
     logger.info("Registry initialized")
 
     opennem_init()
-    logger.info("Opennem initialized")
+    logger.info("Opennem facilities initialized")
+
+    rooftop_facilities()
+    logger.info("Rooftop stations initialized")
 
     import_emissions_csv()
     logger.info("Emission data initialized")
+
+    init_fueltechs()
+    logger.info("Initialized fueltechs")
+
+    import_nem_interconnects()
+    logger.info("Initialized interconnectors")
+
+    wikidata_join_mapping()
+    logger.info("Imported wikidata for stations")
+
+    wikidata_photos()
+    logger.info("Imported wikidata photos")
+
+    import_photos_from_fixtures()
+    logger.info("Imported photos from wikidata")
+
+    init_osm()
+    logger.info("Initialized osm")
+
+    init_stats()
+    logger.info("Stats data initialized")
