@@ -260,7 +260,4 @@ def wikidata_photos() -> None:
 
 
 if __name__ == "__main__":
-    # wikidata_parse()
-    # wikidata_join()
-    # wikidata_join_mapping()
     wikidata_photos()
