@@ -106,6 +106,7 @@ def unit_scada_generate_facility_scada(
             "generated": generated,
             "eoi_quantity": energy,
             "is_forecast": is_forecast,
+            "energy_quality_flag": 0,
         }
 
         return_records.append(__rec)
