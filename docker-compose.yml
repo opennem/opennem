@@ -49,7 +49,7 @@ services:
     ports:
       - ${HOST:-127.0.0.1}:15433:5432
     volumes:
-      - postgis_data:/var/lib/postgresql/data
+      - staging_data:/var/lib/postgresql/data
 
   database_test:
     image: opennem/database
@@ -83,6 +83,7 @@ services:
 
 volumes:
   postgis_data: {}
+  staging_data: {}
   scrapyd_data:
     driver: local
   scrapyd_logs:
