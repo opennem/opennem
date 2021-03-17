@@ -328,7 +328,7 @@ class StationSchema(OpennemBaseSchema):
     wikidata_id: Optional[str]
 
 
-class StationOutputSchema(StationSchema):
+class StationOutputSchema(OpennemBaseSchema):
     id: Optional[int]
 
     code: str
