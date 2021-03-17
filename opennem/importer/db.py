@@ -5,7 +5,6 @@ from pprint import pprint
 from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
-
 # from opennem.core.loader import load_data
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
@@ -28,6 +27,7 @@ from opennem.importer.registry import registry_import
 from opennem.importer.rooftop import rooftop_facilities
 from opennem.importer.wikidata import wikidata_join_mapping, wikidata_photos
 from opennem.schema.stations import StationSet
+from opennem.workers.facility_data_ranges import update_facility_seen_range
 
 from .comparator import compare_record_differs
 
@@ -543,3 +543,6 @@ def init() -> None:
 
     init_stats()
     logger.info("Stats data initialized")
+
+    update_facility_seen_range()
+    logger.info("Ran seen range")
