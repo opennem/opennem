@@ -8,7 +8,6 @@ flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statist
 
 # @TODO run mypy
 
-
 poetry version ${1-prerelease}
 
 VERSION=$(poetry version | sed 's/opennem-backend\ //g')
@@ -24,14 +23,20 @@ git ci -m "v$VERSION"
 git tag v$VERSION
 git push -u origin master v$VERSION
 
-docker build -f infra/container/Dockerfile -t opennem/opennem_backend:$VERSION .
-docker push opennem/opennem_backend:$VERSION
+if [[ $# -eq 0 ]] ; then
+  echo 'Dev release'
+else
+  echo "Building docker release"
 
-# @TODO check that we're ready for relesae to make it :latest
-docker tag  opennem/opennem_backend:$VERSION opennem/opennem_backend
-# docker push opennem/opennem
+  docker build -f infra/container/Dockerfile -t opennem/opennem_backend:$VERSION .
+  docker tag  opennem/opennem_backend:$VERSION opennem/opennem_backend
+  docker push opennem/opennem_backend:$VERSION opennem/opennem_backend
+
+  echo "Deploying crawler to prod"
+
+  scrapyd-deploy prod
+fi
 
 scrapyd-deploy dev
-# scrapyd-deploy prod
 
 rm -rf build/
