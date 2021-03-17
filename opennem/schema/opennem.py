@@ -242,7 +242,7 @@ class FacilityOutputSchema(OpennemBaseSchema):
     # revisions: Optional[List[RevisionSchema]] = []
     # revision_ids: Optional[List[int]] = []
 
-    dispatch_type: DispatchType = "GENERATOR"
+    dispatch_type: DispatchType = DispatchType.GENERATOR
 
     capacity_registered: Optional[float]
 
