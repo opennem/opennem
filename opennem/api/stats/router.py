@@ -46,7 +46,7 @@ def power_unit(
     network_code: str = Query(..., description="Network code"),
     interval_human: str = Query(None, description="Interval"),
     period_human: str = Query("7d", description="Period"),
-    engine=Depends(get_database_engine),
+    engine=Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet:
 
     network = network_from_network_code(network_code)
@@ -115,7 +115,7 @@ def power_station(
     interval_human: str = Query(None, description="Interval"),
     period_human: str = Query("7d", description="Period"),
     session: Session = Depends(get_database_session),
-    engine=Depends(get_database_engine),
+    engine=Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet:
     if not since:
         since = datetime.now() - human_to_timedelta("7d")
@@ -203,7 +203,7 @@ def power_network_fueltech_api(
     network_region: str = Query(None, description="Network region"),
     interval_human: str = Query(None, description="Interval"),
     period_human: str = Query("7d", description="Period"),
-    engine=Depends(get_database_engine),
+    engine=Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet:
     network = network_from_network_code(network_code)
 
@@ -276,7 +276,7 @@ def power_network_fueltech_api(
     response_model_exclude_unset=True,
 )
 def energy_station(
-    engine=Depends(get_database_engine),
+    engine=Depends(get_database_engine),  # type: ignore
     session: Session = Depends(get_database_session),
     network_code: str = Query(..., description="Network code"),
     station_code: str = Query(..., description="Station Code"),
@@ -420,7 +420,7 @@ def energy_station(
     response_model_exclude_unset=True,
 )
 def energy_network_api(
-    engine=Depends(get_database_engine),
+    engine=Depends(get_database_engine),  # type: ignore
     network_code: str = Query(..., description="Network code"),
     interval_human: str = Query("1d", description="Interval"),
     period_human: str = Query("1Y", description="Period"),
@@ -486,7 +486,7 @@ def energy_network_fueltech_api(
     interval_human: str = Query("1d", description="Interval"),
     year: int = Query(None, description="Year to query"),
     period_human: str = Query("1Y", description="Period"),
-    engine=Depends(get_database_engine),
+    engine=Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet:
     network = network_from_network_code(network_code)
     interval = human_to_interval(interval_human)
@@ -579,7 +579,7 @@ def energy_network_fueltech_api(
     response_model_exclude_unset=True,
 )
 def price_network_region_api(
-    engine=Depends(get_database_engine),
+    engine=Depends(get_database_engine),  # type: ignore
     network_code: str = Query(..., description="Network code"),
     network_region_code: str = Query(..., description="Region code"),
     interval_human: str = Query(None, description="Interval"),
