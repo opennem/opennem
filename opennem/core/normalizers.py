@@ -1,8 +1,11 @@
+import logging
 import re
 from decimal import Decimal
 from typing import Optional, Union
 
 from opennem.core.station_names import station_map_name
+
+logger = logging.getLogger("opennem.core.normalizers")
 
 __id_unit_regex = re.compile(r"^(Y|C)[0-9]{1,3}")
 
@@ -174,10 +177,21 @@ def id_duid(facility_name: str) -> str:
     return __n
 
 
-def normalize_aemo_region(region_code: str = "") -> str:
-    region_code = region_code.strip().upper()
+def string_to_upper(subject: str = "") -> str:
+    """ Strips and uppercases strings. Used for ID's """
+    subject_clean = subject.strip().upper()
 
-    return region_code
+    return subject_clean
+
+
+def normalize_aemo_region(region_code: str = "") -> str:
+    logger.warn("normalize_aemo_region is going to be deprecated")
+    return string_to_upper(region_code)
+
+
+def string_is_equal_case_insensitive(subject: str, value: str) -> bool:
+    """ Case insensitive string is equal """
+    return subject.trim().lower() == value.trim().lower()
 
 
 def normalize_duid(duid: str) -> str:
