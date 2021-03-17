@@ -1,3 +1,10 @@
+"""
+OpenNEM Normalization Module
+
+This module provides a set of utilities to normalize, clean and parse passed
+in data from various sources.
+
+"""
 import logging
 import re
 from decimal import Decimal
@@ -11,7 +18,7 @@ __id_unit_regex = re.compile(r"^(Y|C)[0-9]{1,3}")
 
 __id_duid_regex = re.compile(r"[A-Z0-9]{1,6}")
 
-
+# Words that are stripped out of station names
 STRIP_WORDS = [
     "stage 1",
     "stage 2",
@@ -102,6 +109,7 @@ STRIP_WORDS = [
     "bordertown",
 ]
 
+# Words that are acronyms and should be uppercased
 ACRONYMS = [
     "cec",
     "bhp",
@@ -133,8 +141,6 @@ ACRONYMS = [
 
 __is_number = re.compile(r"^[\d\.]+$")
 __is_single_number = re.compile(r"^\d$")
-
-# @TODO put all these helpers in utils/
 
 
 def strip_whitespace(subject: str) -> str:
