@@ -211,59 +211,6 @@ def power_network_fueltech(
     return query
 
 
-def energy_facility(
-    facility_codes: List[str],
-    network_code: str,
-    interval: TimeInterval,
-    period: TimePeriod,
-) -> str:
-    # @TODO remove this
-
-    network = network_from_network_region(network_code)
-    timezone = network.timezone_database
-
-    __query = """
-        with intervals as (
-            select generate_series(
-                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}') - '{period}'::interval,
-                date_trunc('{trunc}', now() AT TIME ZONE '{timezone}'),
-                '{interval}'::interval
-            )::timestamp as interval
-        )
-
-        select
-            i.interval as trading_day,
-            fs.generated,
-            fs.facility_code as facility_code
-        from intervals i
-        left outer join
-            (select
-                date_trunc('{trunc}', fs.trading_interval AT TIME ZONE '{timezone}')::timestamp  {interval_remainder} as interval,
-                fs.facility_code,
-                coalesce(sum(fs.eoi_quantity), 0.0) / {scale} as generated
-                from facility_scada fs
-                where
-                    fs.facility_code in ({facility_codes_parsed})
-                    and fs.trading_interval > now() AT TIME ZONE '{timezone}' - '{period}'::interval
-                    and fs.network_id = '{network_code}'
-                group by 1, 2
-            ) as fs on fs.interval = i.interval
-        order by 1 desc, 2 asc"""
-
-    query = __query.format(
-        facility_codes_parsed=duid_in_case(facility_codes),
-        network_code=network_code,
-        trunc=interval.trunc,
-        interval=interval.interval_sql,
-        interval_remainder=interval.get_sql_join(timezone=network.timezone_database),
-        period=period.period_sql,
-        scale=network.intervals_per_hour,
-        timezone=timezone,
-    )
-
-    return query
-
-
 def energy_facility_query(time_series: TimeSeries, facility_codes: List[str]) -> str:
     """
     Get Energy for a list of facility codes
