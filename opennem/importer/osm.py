@@ -76,7 +76,7 @@ def import_osm_way_data() -> None:
 
 
 def import_osm_ways() -> int:
-    """ Gets the geometries for each OSM way id """
+    """ Gets the geometries for each OSM way id and store them against the station geom """
     session = SessionLocal()
 
     stations_with_ways = (
@@ -114,6 +114,10 @@ def import_osm_ways() -> int:
     return station_count
 
 
-if __name__ == "__main__":
+def init_osm() -> None:
     import_osm_way_data()
     import_osm_ways()
+
+
+if __name__ == "__main__":
+    init_osm()
