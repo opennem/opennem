@@ -4,6 +4,7 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Generator, List, Optional, Tuple, Union
 
 from dateutil.parser import ParserError, parse
+from dateutil.relativedelta import relativedelta
 
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.networks import NetworkSchema
@@ -119,11 +120,13 @@ def date_series(
     start: Union[datetime, date] = None,
     end: Union[datetime, date] = None,
     length: int = 30,
-    interval: timedelta = timedelta(days=1),
+    interval: Union[timedelta, relativedelta] = timedelta(days=1),
     reverse: bool = False,
 ) -> List[datetime]:
     """
     Generate a datetime series
+
+    @NOTE probably don't need reverse since you can provide a negative interval
 
     """
     if start and isinstance(start, datetime):
@@ -136,7 +139,17 @@ def date_series(
         start = datetime.now().date()
 
     if end:
-        length = int(abs((end - start) / interval))
+        # Calculating the number of intervals
+        # is different between timedelta and
+        # relative times
+        if isinstance(interval, timedelta):
+            length = int(abs((end - start) / interval))
+
+        # currently only supports up to granuality months
+        elif isinstance(interval, relativedelta):
+            rd = relativedelta(start, end)
+
+            length = rd.years * 12 + rd.months + 1
 
     next_record = start
 
