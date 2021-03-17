@@ -11,6 +11,7 @@ from itertools import groupby
 from textwrap import dedent
 from typing import List, Optional
 
+from datetime_truncate import truncate as date_trunc
 from dateutil.relativedelta import relativedelta
 from pydantic import validator
 from sqlalchemy.engine.base import Engine
@@ -22,6 +23,7 @@ from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.core import BaseConfig
 from opennem.settings import settings  # noqa: F401
+from opennem.utils.dates import date_series
 
 logger = logging.getLogger("opennem.importer.nemweb")
 
@@ -150,25 +152,33 @@ def import_nemweb_scada() -> None:
     year = NEMWEB_DISPATCH_OLD_MIN_DATE.year
     month = NEMWEB_DISPATCH_OLD_MIN_DATE.month
 
-    query = get_scada_old_query(year=year, month=month)
+    for dt in date_series(
+        date_trunc(NEMWEB_DISPATCH_OLD_MAX_DATE, "month"),
+        date_trunc(NEMWEB_DISPATCH_OLD_MIN_DATE, "month"),
+        interval=relativedelta(months=1),
+        reverse=True,
+    ):
+        query = get_scada_old_query(year=dt.year, month=dt.month)
 
-    with engine_mysql.connect() as c:
-        logger.debug(query)
+        with engine_mysql.connect() as c:
+            logger.debug(query)
 
-        results_raw = list(c.execute(query))
+            results_raw = list(c.execute(query))
 
-        logger.info("Got {} rows for year {} and month {}".format(len(results_raw), year, month))
+            logger.info(
+                "Got {} rows for year {} and month {}".format(len(results_raw), year, month)
+            )
 
-    results_schema = [
-        DispatchUnitSolutionOld(
-            trading_interval=i[0],
-            facility_code=i[1],
-            generated=i[2],
-        )
-        for i in results_raw
-    ]
+        results_schema = [
+            DispatchUnitSolutionOld(
+                trading_interval=i[0],
+                facility_code=i[1],
+                generated=i[2],
+            )
+            for i in results_raw
+        ]
 
-    insert_scada_records(results_schema)
+        insert_scada_records(results_schema)
 
     return None
 
