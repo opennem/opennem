@@ -69,7 +69,7 @@ class TimeSeries(BaseConfig):
 
     # Start and end dates
     start: datetime
-    end: datetime
+    end: datetime = datetime.now()
 
     # The network for this date range
     # used for timezone and offsets
