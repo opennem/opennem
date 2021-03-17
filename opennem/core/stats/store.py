@@ -60,6 +60,10 @@ def store_stats_json(records_to_store: StatsSet) -> bool:
     return True
 
 
-if __name__ == "__main__":
+def init_stats() -> None:
     r = stat_au_cpi()
     store_stats_database(r)
+
+
+if __name__ == "__main__":
+    init_stats()
