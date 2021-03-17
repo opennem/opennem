@@ -93,7 +93,7 @@ def parse_date(
         if tz:
             if is_aware(dt_return):
                 if hasattr(tz, "localize"):
-                    dt_return = tz.localize()
+                    dt_return = tz.localize()  # type: ignore
                 else:
                     dt_return = dt_return.replace(tzinfo=tz)
             else:
@@ -108,10 +108,10 @@ def parse_date(
             else:
                 dt_return = dt_return.replace(tzinfo=tz)
         else:
-            dt_return = make_aware(dt_return, timezone=tz)
+            dt_return = make_aware(dt_return, timezone=tz)  # type: ignore
 
     if timezone:
-        dt_return = make_aware(dt_return, timezone=timezone)
+        dt_return = make_aware(dt_return, timezone=timezone)  # type: ignore
 
     return dt_return
 
