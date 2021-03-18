@@ -302,7 +302,7 @@ def run_energy_calc(
 
     try:
         if len(generated_results) < 1:
-            logger.warn(
+            logger.warning(
                 "No results from get_generated query for {} {} {}".format(
                     region, date_max, fueltech_id
                 )
