@@ -28,6 +28,8 @@ logger = logging.getLogger("opennem.workers.energy")
 DRY_RUN = False
 YEAR_EARLIEST = 2010
 
+NEMWEB_DISPATCH_OLD_MIN_DATE = datetime.fromisoformat("1998-12-07 01:40:00")
+
 
 def get_generated_query(
     network_region: str,
@@ -199,6 +201,7 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
     esdf["updated_at"] = datetime.now()
     esdf["generated"] = None
     esdf["is_forecast"] = False
+    esdf["energy_quality_flag"] = 0
 
     # reorder columns
     columns = [
@@ -211,6 +214,7 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
         "generated",
         "eoi_quantity",
         "is_forecast",
+        "energy_quality_flag",
     ]
     esdf = esdf[columns]
 
@@ -328,7 +332,7 @@ def run_energy_update_archive(
 
     date_range = get_date_range(network=network)
 
-    years = [year]
+    years: List[int] = [year]
 
     if not year:
         years = [i for i in range(CUR_YEAR, YEAR_EARLIEST - 1, -1)]
@@ -344,17 +348,17 @@ def run_energy_update_archive(
     if not fueltech:
         fueltechs = [i for i in load_fueltechs().keys()]
 
-    for year in years:
+    for y in years:
         for month in months:
             date_min = datetime(
-                year=year, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
+                year=y, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
             )
 
             date_max = date_min + get_human_interval("1M")
 
             if days:
                 date_max = datetime(
-                    year=year,
+                    year=y,
                     month=month,
                     day=1 + days,
                     hour=0,
@@ -403,6 +407,10 @@ def run_energy_update_yesterday(network: NetworkSchema = NetworkNEM, days: int =
     slack_message("Ran energy dailies for regions: {}".format(",".join(regions)))
 
 
+def run_energy_update_45d() -> None:
+    run_energy_update_yesterday(days=45)
+
+
 def run_energy_update_all() -> None:
     """Runs energy update for all regions and all years for one-off
     inserts"""
@@ -410,6 +418,14 @@ def run_energy_update_all() -> None:
         run_energy_update_archive(year=year)
 
 
+def run_energy_update_nemweb() -> None:
+    """Runs energy update for all regions and all years for one-off
+    inserts"""
+    for year in range(2009, 1997, -1):
+        run_energy_update_archive(year=year)
+
+
 if __name__ == "__main__":
     # run_energy_update_all()
-    run_energy_update_yesterday(days=2)
+    # run_energy_update_yesterday(days=45)
+    run_energy_update_nemweb()
