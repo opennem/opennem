@@ -36,11 +36,10 @@ def db_refresh_material_views() -> None:
         refresh_material_views("mv_facility_all")
 
 
-@huey.periodic_task(crontab(hour="*/1", minute="45"))
+@huey.periodic_task(crontab(hour="*/1", minute="25"))
 @huey.lock_task("db_refresh_material_views_recent")
 def db_refresh_material_views_recent() -> None:
-    if settings.workers_db_run:
-        refresh_material_views("mv_facility_45d")
+    refresh_material_views("mv_facility_45d")
 
 
 # @NOTE optimized can now run every hour but shouldn't have to
