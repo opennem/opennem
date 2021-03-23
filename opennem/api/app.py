@@ -35,7 +35,9 @@ from opennem.utils.version import get_version
 logger = logging.getLogger(__name__)
 
 
-app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version())
+app = FastAPI(
+    title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None
+)
 Instrumentator().instrument(app).expose(app)
 
 try:
