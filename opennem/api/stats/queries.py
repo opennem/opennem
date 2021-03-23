@@ -212,10 +212,14 @@ def energy_facility_query(time_series: TimeSeries, facility_codes: List[str]) ->
     """
 
     date_range = time_series.get_range()
+    view_name = settings.db_energy_view
+
+    if time_series.period.period_human == "1M":
+        view_name = "mv_facility_45d"
 
     query = dedent(
         __query.format(
-            view_name=settings.db_energy_view,
+            view_name=view_name,
             facility_codes_parsed=duid_in_case(facility_codes),
             trunc=time_series.interval.trunc,
             date_max=date_range.end,
