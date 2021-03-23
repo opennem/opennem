@@ -137,12 +137,12 @@ def network_regions(
 ) -> List[APINetworkRegion]:
     network_id = network_code.upper()
 
-    networks = session.query(NetworkRegion).filter_by(network_id=network_id).all()
+    network_regions = session.query(NetworkRegion).filter_by(network_id=network_id).all()
 
-    if not networks:
+    if not network_regions:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    response = [NetworkRegionSchema.parse_obj(i) for i in networks]
+    response = [APINetworkRegion.parse_obj(i) for i in network_regions]
 
     return response
 
@@ -156,7 +156,7 @@ def fueltechs(
     if not fueltechs:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    return response
+    return fueltechs
 
 
 @app.get("/intervals", response_model=List[TimeInterval])
