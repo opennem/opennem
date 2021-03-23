@@ -58,9 +58,9 @@ app.include_router(geo_router, tags=["Geo"], prefix="/geo")
 app.include_router(station_router, tags=["Stations"], prefix="/station")
 app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
-app.include_router(admin_router, tags=["Admin"], prefix="/admin")
-app.include_router(export_router, tags=["Export"], prefix="/export")
-app.include_router(tasks_router, tags=["Tasks"], prefix="/tasks")
+app.include_router(admin_router, tags=["Admin"], prefix="/admin", include_in_schema=False)
+app.include_router(export_router, tags=["Export"], prefix="/export", include_in_schema=False)
+app.include_router(tasks_router, tags=["Tasks"], prefix="/tasks", include_in_schema=False)
 
 
 origins = [
@@ -98,7 +98,7 @@ async def shutdown() -> None:
     await database.disconnect()
 
 
-@app.get("/robots.txt", response_class=FileResponse)
+@app.get("/robots.txt", response_class=FileResponse, include_in_schema=False)
 def robots_txt() -> FileResponse:
     if not settings.debug:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
