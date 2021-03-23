@@ -13,7 +13,6 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from opennem.api.admin.router import router as admin_router
-from opennem.api.export.router import router as export_router
 from opennem.api.facility.router import router as facility_router
 from opennem.api.geo.router import router as geo_router
 from opennem.api.locations import router as locations_router
@@ -61,7 +60,6 @@ app.include_router(station_router, tags=["Stations"], prefix="/station")
 app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(admin_router, tags=["Admin"], prefix="/admin", include_in_schema=False)
-app.include_router(export_router, tags=["Export"], prefix="/export", include_in_schema=False)
 app.include_router(tasks_router, tags=["Tasks"], prefix="/tasks", include_in_schema=False)
 
 
