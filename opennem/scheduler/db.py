@@ -50,7 +50,7 @@ def db_refresh_energies_yesterday() -> None:
     run_energy_update_yesterday()
 
 
-@huey.periodic_task(crontab(hour="1"))
+@huey.periodic_task(crontab(hour="*/12"))
 def db_facility_seen_update() -> None:
     if settings.workers_db_run:
-        update_facility_seen_range()
+        update_facility_seen_range(False)
