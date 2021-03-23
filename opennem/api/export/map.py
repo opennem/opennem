@@ -26,7 +26,6 @@ from opennem.core.networks import (
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Network
 from opennem.schema.time import TimeInterval, TimePeriod
-from opennem.utils.dates import date_range_from_week, week_series
 from opennem.utils.version import VersionPart, get_version
 
 logger = logging.getLogger(__name__)
