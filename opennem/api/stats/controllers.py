@@ -301,48 +301,38 @@ def get_scada_range(
     __query = """
         select
             {min_query} AT TIME ZONE '{timezone}',
-            max(fs.trading_interval)::timestamp AT TIME ZONE '{timezone}'
-        from facility_scada fs
+            now() at time zone '{timezone}'
+        from facility f
         where
             {facility_query}
             {network_query}
             {network_region_query}
-            facility_code not like 'ROOFTOP_%%'
-            and facility_code not in ({exclude_duids})
-            and is_forecast is False
-            and generated >= 0
+            f.fueltech_id not in ('solar_rooftop')
+            and f.interconnector is FALSE
     """
 
     network_query = ""
     timezone = "UTC"
-    min_query = "min(fs.trading_interval)::timestamp"
-
-    if max_only:
-        min_query = "'2010-01-01 00:00:00'"
+    min_query = "min(f.data_first_seen)"
 
     if network:
-        network_query = f"fs.network_id = '{network.code}' and"
+        network_query = f"f.network_id = '{network.code}' and"
         # timezone = network.timezone_database
 
     if networks:
         net_case = networks_to_in(networks)
-        network_query = "fs.network_id IN ({}) and ".format(net_case)
+        network_query = "f.network_id IN ({}) and ".format(net_case)
 
     network_region_query = ""
 
     if network_region:
-        # @TODO support network regions in scada_range
-        # technically we don't need this atm
-        pass
-        # network_region_query = (
-        # f"f.network_region = '{network_region.code}' and"
-        # )
+        network_region_query = f"f.network_region = '{network_region.code}' and"
 
     facility_query = ""
 
     if facilities:
         fac_case = duid_in_case(facilities)
-        facility_query = "fs.facility_code IN ({}) and ".format(fac_case)
+        facility_query = "f.facility_code IN ({}) and ".format(fac_case)
 
     exclude_duids = duid_in_case(SCADA_RANGE_EXCLUDE_DUIDS)
 
