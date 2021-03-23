@@ -23,3 +23,17 @@ class FueltechResponse(ApiBase):
     # @TODO fix circular references
     # records: List[FueltechSchema]
 
+
+class APINetworkRegion(ApiBase):
+    code: str
+    timezone: Optional[str]
+
+
+class APINetworkSchema(ApiBase):
+    code: str
+    country: str
+    label: str
+
+    regions: Optional[List[APINetworkRegion]]
+    timezone: Optional[str] = Field(None, description="Network timezone")
+    interval_size: int = Field(..., description="Size of network interval in minutes")

@@ -4,6 +4,7 @@ from typing import List
 import aioredis
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.param_functions import Query
 from fastapi.responses import FileResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
@@ -16,6 +17,7 @@ from opennem.api.export.router import router as export_router
 from opennem.api.facility.router import router as facility_router
 from opennem.api.geo.router import router as geo_router
 from opennem.api.locations import router as locations_router
+from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.tasks.router import router as tasks_router
@@ -106,25 +108,36 @@ def robots_txt() -> FileResponse:
     return FileResponse(settings.static_folder_path + "/robots.txt")
 
 
-@app.get("/networks", response_model=List[NetworkSchema])
+@app.get(
+    "/networks",
+    response_model=List[APINetworkSchema],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
+)
 def networks(
     session: Session = Depends(get_database_session),
-) -> List[NetworkSchema]:
-    networks = session.query(Network).all()
+) -> List[APINetworkSchema]:
+    networks = session.query(Network).join(Network.regions).all()
 
     if not networks:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    response = [NetworkSchema.parse_obj(i) for i in networks]
-
-    return response
+    return networks
 
 
-@app.get("/networks/regions", response_model=List[NetworkRegionSchema])
+@app.get(
+    "/networks/regions",
+    response_model=List[APINetworkRegion],
+    response_model_exclude_none=True,
+    response_model_exclude_unset=True,
+)
 def network_regions(
     session: Session = Depends(get_database_session),
-) -> List[NetworkRegionSchema]:
-    networks = session.query(NetworkRegion).all()
+    network_code: str = Query(None, description="Network code"),
+) -> List[APINetworkRegion]:
+    network_id = network_code.upper()
+
+    networks = session.query(NetworkRegion).filter_by(network_id=network_id).all()
 
     if not networks:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -142,8 +155,6 @@ def fueltechs(
 
     if not fueltechs:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-
-    response = [FueltechSchema.parse_obj(i) for i in fueltechs]
 
     return response
 
