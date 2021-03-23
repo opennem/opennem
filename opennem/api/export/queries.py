@@ -508,7 +508,7 @@ def energy_network_fueltech_query(
             coalesce(sum(t.energy) / 1000, 0) as fueltech_energy,
             sum(t.market_value) as fueltech_market_value,
             coalesce(sum(t.emissions), 0) as fueltech_emissions
-        from {energy_view} t
+        from mv_facility_45d t
         where
             t.trading_interval <= '{date_max}' and
             t.trading_interval >= '{date_min}' and
