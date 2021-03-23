@@ -200,21 +200,6 @@ def get_export_map() -> StatMetadata:
 
         _exmap.append(export)
 
-        for year, week in week_series(scada_range.end, scada_range.start):
-            export = StatExport(
-                stat_type=StatType.power,
-                priority=PriorityType.history,
-                country=country,
-                network=NetworkAU,
-                networks=[NetworkNEM, NetworkWEM],
-                year=year,
-                week=week,
-                interval=human_to_interval("1d"),
-                period=human_to_period("7d"),
-                date_range=date_range_from_week(year, week, NetworkAU),
-            )
-            _exmap.append(export)
-
         for year in range(
             datetime.now().year,
             scada_range.start.year - 1,
@@ -269,25 +254,6 @@ def get_export_map() -> StatMetadata:
 
         if not scada_range:
             raise Exception("Require a scada range")
-
-        for year, week in week_series(scada_range.end, scada_range.start):
-            export = StatExport(
-                stat_type=StatType.power,
-                priority=PriorityType.history,
-                country=network.country,
-                network=network_schema,
-                year=year,
-                week=week,
-                interval=human_to_interval("1d"),
-                period=human_to_period("7d"),
-                date_range=date_range_from_week(year, week, NetworkAU),
-            )
-
-            if network.code == "WEM":
-                export.networks = [NetworkWEM, NetworkAPVI]
-                export.network_region_query = "WEM"
-
-            _exmap.append(export)
 
         for year in range(
             datetime.now().year,
