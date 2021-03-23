@@ -17,7 +17,7 @@ select
             round(max(fs.energy) * max(bs.price_dispatch), 4),
             0.0
         )
-    else NULL
+    else 0.0
     end as market_value,
     case when min(f.emissions_factor_co2) >= 0  and min(fs.energy) >= 0 then
         coalesce(
