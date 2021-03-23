@@ -58,4 +58,4 @@ def update_facility_seen_range(last_seen: bool = True) -> bool:
 
 
 if __name__ == "__main__":
-    update_facility_seen_range()
+    update_facility_seen_range(False)
