@@ -64,6 +64,7 @@ app.include_router(tasks_router, tags=["Tasks"], prefix="/tasks")
 origins = [
     "https://opennem.org.au",
     "https://dev.opennem.org.au",
+    "https://staging.opennem.org.au",
     "https://admin.opennem.org.au",
     "https://admin.opennem.test",
     "http://localhost:8001",
