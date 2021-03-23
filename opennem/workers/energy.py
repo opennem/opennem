@@ -4,6 +4,7 @@ from itertools import groupby
 from textwrap import dedent
 from typing import Dict, List, Optional
 
+import pytz
 from pytz import FixedOffset
 
 from opennem.api.stats.controllers import get_scada_range
@@ -391,8 +392,11 @@ def run_energy_update_yesterday(network: NetworkSchema = NetworkNEM, days: int =
 
     This is NEM only atm"""
 
+    # This is Sydney time as the data is published in local time
+    tz = pytz.timezone("Australia/Sydney")
+
     # today_midnight in NEM time
-    today_midnight = datetime.now().replace(
+    today_midnight = datetime.now(tz).replace(
         tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
     )
 
