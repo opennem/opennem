@@ -58,27 +58,7 @@ def schedule_custom_tasks() -> None:
         export_electricitymap()
 
 
-@huey.periodic_task(crontab(hour="12"))
-@huey.lock_task("schedule_power_weeklies")
-def schedule_power_weeklies() -> None:
-    """
-    Run weekly power outputs
-    """
-    if settings.workers_run:
-        export_power(priority=PriorityType.history, latest=True)
-
-
-@huey.periodic_task(crontab(minute="15", hour="12"))
-@huey.lock_task("schedule_power_weeklies_archive")
-def schedule_power_weeklies_archive() -> None:
-    """
-    Run weekly power outputs entire archive
-    """
-    # export_power(priority=PriorityType.history)
-    pass
-
-
-@huey.periodic_task(crontab(hour="/12"), priority=50)
+@huey.periodic_task(crontab(hour="13"), priority=50)
 @huey.lock_task("schedule_export_all_daily")
 def schedule_export_all_daily() -> None:
     if settings.workers_run:
@@ -86,7 +66,7 @@ def schedule_export_all_daily() -> None:
         slack_message("Finished running export_all_daily")
 
 
-@huey.periodic_task(crontab(hour="/12"), priority=50)
+@huey.periodic_task(crontab(hour="12"), priority=50)
 @huey.lock_task("schedule_export_all_monthly")
 def schedule_export_all_monthly() -> None:
     if settings.workers_run:
