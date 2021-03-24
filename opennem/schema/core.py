@@ -11,14 +11,14 @@ class PropertyBaseModel(BaseModel):
     """
 
     @classmethod
-    def get_properties(cls):
+    def get_properties(cls):  # type: ignore
         return [
             prop
             for prop in dir(cls)
             if isinstance(getattr(cls, prop), property) and prop not in ("__values__", "fields")
         ]
 
-    def dict(self, *args, **kwargs) -> Dict:
+    def dict(self, *args, **kwargs) -> Dict:  # type: ignore
         self.__dict__.update({prop: getattr(self, prop) for prop in self.get_properties()})
 
         return super().dict(*args, **kwargs)
