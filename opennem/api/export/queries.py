@@ -1,3 +1,4 @@
+from datetime import timedelta
 from textwrap import dedent
 from typing import List, Optional
 
@@ -149,7 +150,6 @@ def interconnector_flow_network_regions_query(
     order by
         1 desc,
         2 asc
-    limit 100;
     """
 
     region_query = ""
@@ -482,15 +482,15 @@ def energy_network_fueltech_query(
             coalesce(sum(t.fueltech_emissions), 0) as fueltech_emissions
         from
             (select
-                time_bucket_gapfill('1 day', t.ti_day_aest) as trading_day,
+                time_bucket_gapfill('1 day', t.ti_{trunc_name}) as trading_day,
                 t.fueltech_id,
                 sum(t.energy) as fueltech_energy,
                 sum(t.market_value) as fueltech_market_value,
                 sum(t.emissions) as fueltech_emissions
             from {energy_view} t
             where
-                t.ti_day_aest <= '{date_max}' and
-                t.ti_day_aest >= '{date_min}' and
+                t.ti_{trunc_name} <= '{date_max}'::date and
+                t.ti_{trunc_name} >= '{date_min}'::date and
                 t.fueltech_id not in ('imports', 'exports') and
                 {network_query}
                 {network_region_query}
@@ -510,8 +510,8 @@ def energy_network_fueltech_query(
             coalesce(sum(t.emissions), 0) as fueltech_emissions
         from mv_facility_45d t
         where
-            t.trading_interval <= '{date_max}' and
-            t.trading_interval >= '{date_min}' and
+            t.ti_{trunc_name} <= '{date_max}'::date and
+            t.ti_{trunc_name} >= '{date_min}'::date and
             t.fueltech_id not in ('imports', 'exports') and
             {network_query}
             {network_region_query}
@@ -539,8 +539,8 @@ def energy_network_fueltech_query(
             energy_view=settings.db_energy_view,
             trunc=date_range.interval.trunc,
             trunc_name=trunc_name,
-            date_min=date_range.start,
-            date_max=date_range.end,
+            date_min=date_range.start.date(),
+            date_max=date_range.end.date(),
             network_query=network_query,
             network_region_query=network_region_query,
         )
