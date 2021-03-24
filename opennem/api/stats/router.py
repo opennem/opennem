@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
 
+from opennem.api.export.controllers import power_week
 from opennem.api.export.queries import interconnector_flow_network_regions_query
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.flows import invert_flow_set
@@ -369,3 +370,42 @@ def power_flows_network_week(
     result.data = inverted_data
 
     return result
+
+
+@router.get(
+    "/power/network/fueltech/{network_code}/{network_region_code}",
+    name="Power Network Region by Fueltech",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+)
+def power_network_region_fueltech(
+    network_code: str = Query(..., description="Network code"),
+    network_region_code: str = Query(..., description="Network region code"),
+    month: date = Query(datetime.now().date(), description="Month to query"),
+) -> OpennemDataSet:
+    network = network_from_network_code(network_code)
+    interval_obj = network.get_interval()
+    period_obj = human_to_period("1M")
+
+    scada_range = get_scada_range(network=network)
+
+    if not scada_range:
+        raise Exception("Require a scada range")
+
+    if not network:
+        raise Exception("Network not found")
+
+    time_series = TimeSeries(
+        start=scada_range.start,
+        month=month,
+        network=network,
+        interval=interval_obj,
+        period=period_obj,
+    )
+
+    stat_set = power_week(time_series, network_region_code, include_capacities=True)
+
+    if not stat_set:
+        raise Exception("No results")
+
+    return stat_set
