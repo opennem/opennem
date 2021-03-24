@@ -14,7 +14,7 @@ End is the most recent time chronoligally ordered:
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from typing import Optional
 
 from datetime_truncate import truncate as date_trunc
@@ -68,7 +68,7 @@ class TimeSeries(BaseConfig):
     """
 
     # Start and end dates
-    start: datetime
+    start: Optional[datetime]
     end: datetime = datetime.now()
 
     # The network for this date range
@@ -83,6 +83,9 @@ class TimeSeries(BaseConfig):
 
     # extract a particular year
     year: Optional[int]
+
+    # extract a particular month
+    month: Optional[date]
 
     # Forecast means the time series goes forward from now
     forecast: bool = False
@@ -162,6 +165,25 @@ class TimeSeries(BaseConfig):
 
                 if self.end.date() < today.date():
                     end = self.end
+
+        if self.month:
+            start = datetime(
+                year=self.month.year,
+                month=self.month.month,
+                day=1,
+                hour=0,
+                minute=0,
+                second=0,
+                tzinfo=self.network.get_fixed_offset(),
+            )
+
+            end = start + get_human_interval("1M") - timedelta(days=1)
+
+            end = end.replace(
+                hour=23,
+                minute=59,
+                second=59,
+            )
 
         # localize times
         if not start.tzinfo or start.tzinfo != self.network.get_fixed_offset():
