@@ -34,6 +34,7 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 def db_refresh_material_views() -> None:
     if settings.workers_db_run:
         refresh_material_views("mv_facility_all")
+        refresh_material_views("mv_network_fueltech_days")
 
 
 @huey.periodic_task(crontab(hour="*/1", minute="25"))
