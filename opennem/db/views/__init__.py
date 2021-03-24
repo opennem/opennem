@@ -43,6 +43,13 @@ _VIEW_MAP = [
         indexes=[],
     ),
     ViewDefinition(
+        priority=11,
+        name="mv_network_fueltech_days",
+        materialized=True,
+        filepath="mv_network_fueltech_days.sql",
+        primary_key=["trading_day", "network_id", "code"],
+    ),
+    ViewDefinition(
         priority=15,
         name="mv_facility_45d",
         materialized=True,
