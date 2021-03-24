@@ -166,7 +166,7 @@ class OpennemDataSet(BaseConfig):
     region: Optional[str]
     created_at: Optional[datetime]
 
-    data: List[OpennemData]
+    data: List[OpennemData] = []
 
     def append_set(self, subject_set: Optional[OpennemDataSet] = None):
         if not subject_set:
