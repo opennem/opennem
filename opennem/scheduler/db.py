@@ -49,7 +49,8 @@ def db_refresh_energies_yesterday() -> None:
     run_energy_update_yesterday()
 
 
-@huey.periodic_task(crontab(hour="*/12"))
+@huey.periodic_task(crontab(hour="22"))
+@huey.lock_task("db_facility_seen_update")
 def db_facility_seen_update() -> None:
     if settings.workers_db_run:
         update_facility_seen_range(False)
