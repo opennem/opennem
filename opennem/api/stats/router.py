@@ -1,19 +1,19 @@
 import logging
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
 
+from opennem.api.export.queries import interconnector_flow_network_regions_query
 from opennem.api.time import human_to_interval, human_to_period
+from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
-from opennem.core.normalizers import normalize_duid
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, Station
 from opennem.schema.dates import TimeSeries
-from opennem.schema.time import TimePeriod
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_scada_range, stats_factory
@@ -36,77 +36,11 @@ router = APIRouter()
 
 
 @router.get(
-    "/power/unit/{network_code}/{unit_code:path}",
-    name="stats:Unit Power",
-    response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
-)
-def power_unit(
-    unit_code: str = Query(..., description="Unit code"),
-    network_code: str = Query(..., description="Network code"),
-    interval_human: str = Query(None, description="Interval"),
-    period_human: str = Query("7d", description="Period"),
-    engine=Depends(get_database_engine),  # type: ignore
-) -> OpennemDataSet:
-
-    network = network_from_network_code(network_code)
-
-    if not network:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No such network",
-        )
-
-    if not interval_human:
-        interval_human = "{}m".format(network.interval_size)
-
-    interval = human_to_interval(interval_human)
-    period = human_to_period(period_human)
-    units = get_unit("power")
-
-    stats = []
-
-    facility_codes = [normalize_duid(unit_code)]
-
-    query = power_facility_query(facility_codes, network.code, interval=interval, period=period)
-
-    with engine.connect() as c:
-        results = list(c.execute(query))
-
-    stats = [
-        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
-        for i in results
-    ]
-
-    if len(stats) < 1:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Unit stats not found",
-        )
-
-    output = stats_factory(
-        stats,
-        code=unit_code,
-        interval=interval,
-        period=period,
-        units=units,
-        network=network,
-    )
-
-    if not output:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No stats found",
-        )
-
-    return output
-
-
-@router.get(
     "/power/station/{network_code}/{station_code:path}",
-    name="stats:Station Power",
+    name="Station Power",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
+    description="Get the power outputs for a station",
 )
 def power_station(
     station_code: str = Query(..., description="Station code"),
@@ -190,78 +124,6 @@ def power_station(
         period=period,
         include_group_code=True,
         units=units,
-    )
-
-    if not result:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No results found",
-        )
-
-    return result
-
-
-@router.get(
-    "/power/fueltech/{network_code}/{station_code:path}",
-    name="stats:Network Fueltech Power",
-    response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
-)
-def power_network_fueltech_api(
-    network_code: str = Query(..., description="Network code"),
-    network_region: str = Query(None, description="Network region"),
-    interval_human: str = Query(None, description="Interval"),
-    period_human: str = Query("7d", description="Period"),
-    engine=Depends(get_database_engine),  # type: ignore
-) -> OpennemDataSet:
-    network = network_from_network_code(network_code)
-
-    if not network:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No such network",
-        )
-
-    if not interval_human:
-        interval_human = "{}m".format(network.interval_size)
-
-    interval = human_to_interval(interval_human)
-    period = human_to_period(period_human)
-    units = get_unit("power")
-
-    scada_range = get_scada_range(network=network)
-
-    query = power_network_fueltech(
-        network=network,
-        interval=interval,
-        period=period,
-        network_region=network_region,
-        scada_range=scada_range,
-    )
-
-    with engine.connect() as c:
-        results = list(c.execute(query))
-
-    stats = [
-        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
-        for i in results
-    ]
-
-    if len(stats) < 1:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Station stats not found",
-        )
-
-    result = stats_factory(
-        stats,
-        code=network.code,
-        network=network,
-        interval=interval,
-        period=period,
-        units=units,
-        region=network_region,
-        fueltech_group=True,
     )
 
     if not result:
@@ -422,243 +284,88 @@ def energy_station(
     return stats
 
 
-@router.get(
-    "/energy/network/{network_code}",
-    name="Energy Network",
-    response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
-)
-def energy_network_api(
-    engine=Depends(get_database_engine),  # type: ignore
-    network_code: str = Query(..., description="Network code"),
-    interval_human: str = Query("1d", description="Interval"),
-    period_human: str = Query("1Y", description="Period"),
-) -> OpennemDataSet:
-
-    results = []
-
-    network = network_from_network_code(network_code)
-
-    if not network:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No such network",
-        )
-
-    if not interval_human:
-        interval_human = "{}m".format(network.interval_size)
-
-    interval = human_to_interval(interval_human)
-    period = human_to_period(period_human)
-    units = get_unit("energy_giga")
-
-    query = energy_network(network=network, interval=interval, period=period)
-
-    with engine.connect() as c:
-        results = list(c.execute(query))
-
-    if len(results) < 1:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No results")
-
-    stats = [
-        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
-        for i in results
-    ]
-
-    result = stats_factory(
-        stats,
-        code=network.code,
-        network=network,
-        interval=interval,
-        period=period,
-        units=units,
-    )
-
-    if not result:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No results found",
-        )
-
-    return result
-
-
-@router.get(
-    "/energy/fueltech/{network_code}/{station_code:path}",
-    name="stats:Network Fueltech Energy",
-    response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
-)
-def energy_network_fueltech_api(
-    network_code: str = Query(None, description="Network code"),
-    network_region: str = Query(None, description="Network region"),
-    interval_human: str = Query("1d", description="Interval"),
-    year: int = Query(None, description="Year to query"),
-    period_human: str = Query("1Y", description="Period"),
-    engine=Depends(get_database_engine),  # type: ignore
-) -> OpennemDataSet:
-    network = network_from_network_code(network_code)
-    interval = human_to_interval(interval_human)
-
-    period_obj: TimePeriod = human_to_period("1Y")
-
-    if period_human:
-        period_obj = human_to_period(period_human)
-
-    units = get_unit("energy_giga")
-
-    query = ""
-
-    if year and isinstance(year, int):
-        period_obj = human_to_period("1Y")
-
-        if year > datetime.now().year or year < 1996:
-            raise HTTPException(
-                status_code=status.HTTP_406_NOT_ACCEPTABLE,
-                detail="Not a valid year",
-            )
-
-        scada_range = get_scada_range(network=network)
-
-        query = energy_network_fueltech_year(
-            network=network,
-            interval=interval,
-            year=year,
-            network_region=network_region,
-            scada_range=scada_range,
-        )
-    elif period_obj and period_obj.period_human == "all":
-        scada_range = get_scada_range(network=network)
-
-        query = energy_network_fueltech_all(
-            network=network,
-            network_region=network_region,
-            scada_range=scada_range,
-        )
-    else:
-        query = energy_network_fueltech(
-            network=network,
-            interval=interval,
-            period=period_obj,
-            network_region=network_region,
-        )
-
-    # print(query)
-
-    with engine.connect() as c:
-        results = list(c.execute(query))
-
-    stats = [
-        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
-        for i in results
-    ]
-
-    if len(stats) < 1:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Energy stats not found",
-        )
-
-    result = stats_factory(
-        stats,
-        code=network.code,
-        network=network,
-        interval=interval,
-        period=period_obj,
-        units=units,
-        region=network_region,
-        fueltech_group=True,
-    )
-
-    if not result:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No stats")
-
-    return result
-
-
 """
-    Price endpoints
+
+Flows endpoints
+
+
 """
 
 
 @router.get(
-    "/price/{network_code}/{network_region_code}",
-    name="Price Network Region",
+    "/flow/network/{network_code}",
+    name="Flow Region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
-def price_network_region_api(
+def power_flows_network_week(
     engine=Depends(get_database_engine),  # type: ignore
     network_code: str = Query(..., description="Network code"),
-    network_region_code: str = Query(..., description="Region code"),
-    interval_human: str = Query(None, description="Interval"),
-    period_human: str = Query("7d", description="Period"),
-    year: Optional[int] = None,
-) -> OpennemDataSet:
+    month: date = Query(datetime.now().date(), description="Month to query"),
+) -> Optional[OpennemDataSet]:
+    engine = get_database_engine()
+
     network = network_from_network_code(network_code)
-
-    if not network:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No such network",
-        )
-
-    if not interval_human:
-        interval_human = "{}m".format(network.interval_size)
-
-    interval = human_to_interval(interval_human)
-
-    period_obj = None
-
-    if period_human:
-        period_obj = human_to_period(period_human)
-
-    units = get_unit("price")
+    interval_obj = network.get_interval()
+    period_obj = human_to_period("1M")
 
     scada_range = get_scada_range(network=network)
 
-    if period_obj and period_obj.period_human == "all" and interval.interval_human == "1M":
-        query = price_network_monthly(
-            network=network,
-            network_region_code=network_region_code,
-            scada_range=scada_range,
-        )
-    else:
-        query = price_network_region(
-            network=network,
-            network_region_code=network_region_code,
-            interval=interval,
-            period=period_obj,
-            scada_range=scada_range,
-            year=year,
-        )
+    if not scada_range:
+        raise Exception("Require a scada range")
+
+    if not network:
+        raise Exception("Network not found")
+
+    time_series = TimeSeries(
+        start=scada_range.start,
+        month=month,
+        network=network,
+        interval=interval_obj,
+        period=period_obj,
+    )
+
+    query = interconnector_flow_network_regions_query(time_series=time_series)
 
     with engine.connect() as c:
-        results = list(c.execute(query))
+        logger.debug(query)
+        row = list(c.execute(query))
 
-    if len(results) < 1:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No data found")
+    if len(row) < 1:
+        raise Exception("No results from query: {}".format(query))
 
-    stats = [
-        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-        for i in results
+    imports = [
+        DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None)
+        for i in row
     ]
 
     result = stats_factory(
-        stats,
-        code=network.code,
-        region=network_region_code,
-        network=network,
-        interval=interval,
-        period=period_obj,
-        units=units,
-        group_field="price",
+        imports,
+        # code=network_region_code or network.code,
+        network=time_series.network,
+        period=time_series.period,
+        interval=time_series.interval,
+        units=get_unit("regional_trade"),
+        # fueltech_group=True,
+        group_field="power",
+        include_group_code=True,
+        include_code=True,
     )
 
-    if not result:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No results found",
-        )
+    if not result or not result.data:
+        raise Exception("No results")
+
+    INVERT_SETS = ["VIC1->NSW1", "VIC1->SA1"]
+
+    inverted_data = []
+
+    for ds in result.data:
+        if ds.code in INVERT_SETS:
+            ds_inverted = invert_flow_set(ds)
+            inverted_data.append(ds_inverted)
+        else:
+            inverted_data.append(ds)
+
+    result.data = inverted_data
 
     return result
