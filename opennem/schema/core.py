@@ -31,8 +31,3 @@ class BaseConfig(PropertyBaseModel):
 
         arbitrary_types_allowed = True
         validate_assignment = True
-
-        json_encoders = {
-            # datetime: lambda v: v.isotime(),
-            # Decimal: lambda v: float(v),
-        }
