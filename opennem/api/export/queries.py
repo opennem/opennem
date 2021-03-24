@@ -475,30 +475,21 @@ def energy_network_fueltech_query(
     if time_series.interval.interval > 1440:
         __query = """
         select
-            date_trunc('{trunc}', t.trading_day) as trading_month,
+            date_trunc('{trunc}', t.trading_day) as trading_day,
             t.fueltech_id,
-            coalesce(sum(t.fueltech_energy) / 1000 , 0) as fueltech_energy,
-            sum(t.fueltech_market_value) as fueltech_market_value,
-            coalesce(sum(t.fueltech_emissions), 0) as fueltech_emissions
-        from
-            (select
-                time_bucket_gapfill('1 day', t.ti_{trunc_name}) as trading_day,
-                t.fueltech_id,
-                sum(t.energy) as fueltech_energy,
-                sum(t.market_value) as fueltech_market_value,
-                sum(t.emissions) as fueltech_emissions
-            from {energy_view} t
-            where
-                t.ti_{trunc_name} <= '{date_max}'::date and
-                t.ti_{trunc_name} >= '{date_min}'::date and
-                t.fueltech_id not in ('imports', 'exports') and
-                {network_query}
-                {network_region_query}
-                1=1
-            group by 1, 2) as t
+            sum(t.energy) as fueltech_energy,
+            sum(t.market_value) as fueltech_market_value,
+            sum(t.emissions) as fueltech_emissions
+        from mv_network_fueltech_days t
+        where
+            t.trading_day <= '{date_max}'::date and
+            t.trading_day >= '{date_min}'::date and
+            t.fueltech_id not in ('imports', 'exports') and
+            {network_query}
+            {network_region_query}
+            1=1
         group by 1, 2
-        order by
-            1 desc;
+        order by 1 desc;
         """
     else:
         __query = """
