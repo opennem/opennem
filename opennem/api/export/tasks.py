@@ -228,7 +228,7 @@ def export_energy(
 
             write_output(energy_stat.path, stat_set)
 
-        elif energy_stat.period and energy_stat.period.period_human == "all":
+        elif energy_stat.period and energy_stat.period.period_human == "all" and not latest:
             time_series.period = human_to_period("all")
             time_series.interval = human_to_interval("1M")
             time_series.year = None
