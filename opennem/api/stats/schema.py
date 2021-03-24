@@ -148,8 +148,11 @@ class OpennemData(BaseConfig):
     # validators
 
     # conveniance methods
-    def id_v2(self) -> str:
-        return translate_id_v3_to_v2(self.id)
+    def id_v2(self) -> Optional[str]:
+        if self.id:
+            return translate_id_v3_to_v2(self.id)
+
+        return None
 
     def fueltech_v2(self) -> Optional[str]:
         if self.fuel_tech:
@@ -168,7 +171,7 @@ class OpennemDataSet(BaseConfig):
 
     data: List[OpennemData] = []
 
-    def append_set(self, subject_set: Optional[OpennemDataSet] = None):
+    def append_set(self, subject_set: Optional[OpennemDataSet] = None) -> None:
         if not subject_set:
             return None
 
