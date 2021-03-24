@@ -55,4 +55,7 @@ class ViewDefinition(BaseConfig):
     # Creates a unique index
     primary_key: Optional[List[str]]
 
+    # Create other indexes
+    indexes: Optional[List[str]]
+
     aggregation_policy: Optional[ContinuousAggregationPolicy]

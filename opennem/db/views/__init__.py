@@ -40,6 +40,7 @@ _VIEW_MAP = [
         materialized=True,
         filepath="mv_facility_all.sql",
         primary_key=["trading_interval", "network_id", "code"],
+        indexes=[],
     ),
     ViewDefinition(
         priority=15,
