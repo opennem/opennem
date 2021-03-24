@@ -203,7 +203,7 @@ def energy_station(
         start=facilities_first_seen,
         network=network,
         interval=interval_obj,
-        period=human_to_period("1Y"),
+        period=period_obj,
     )
 
     query = energy_facility_query(
