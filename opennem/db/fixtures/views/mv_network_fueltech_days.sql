@@ -10,14 +10,14 @@ select
     max(fs.energy) as energy,
     case when max(bs.price_dispatch) >= 0  and min(fs.energy) >= 0 then
         coalesce(
-            sum(fs.energy) * max(bs.price_dispatch),
+            max(fs.energy) * max(bs.price_dispatch),
             0.0
         )
     else 0.0
     end as market_value,
     case when min(f.emissions_factor_co2) >= 0  and min(fs.energy) >= 0 then
         coalesce(
-            sum(fs.energy) * min(f.emissions_factor_co2),
+            max(fs.energy) * min(f.emissions_factor_co2),
             0.0
         )
     else 0.0
@@ -41,6 +41,7 @@ from (
 where
     f.fueltech_id is not null
 group by
+    fs.trading_interval,
     1,
     f.code,
     f.fueltech_id,
