@@ -42,8 +42,6 @@ from (
         bs.trading_interval = fs.trading_interval
         and bs.network_id=f.network_id
         and bs.network_region = f.network_region
-where
-    f.fueltech_id is not null
 group by
     1,
     f.code,
@@ -53,3 +51,21 @@ group by
     f.interconnector,
     f.interconnector_region_to
 order by 1 desc;
+
+create unique index if not exists idx_mv_facility_all_unique on mv_facility_all (trading_interval, network_id, code);
+
+-- field indexes
+create index if not exists idx_mv_facility_all_trading_interval on mv_facility_all (trading_interval);
+create index if not exists idx_mv_facility_all_code on mv_facility_all (code);
+create index if not exists idx_mv_facility_all_network_id on mv_facility_all (network_id);
+create index if not exists idx_mv_facility_all_network_region on mv_facility_all (network_region);
+create index if not exists idx_mv_facility_all_interconnector on mv_facility_all (interconnector);
+
+-- date indexes
+create index if not exists idx_trading_interval_code_index on mv_facility_all (trading_interval desc, code);
+create index if not exists idx_trading_day_aest_index on mv_facility_all (ti_day_aest desc);
+create index if not exists idx_trading_day_aest_code_index on mv_facility_all (ti_day_aest desc, code);
+create index if not exists idx_trading_month_aest_code_index on mv_facility_all (ti_month_aest desc, code);
+create index if not exists idx_trading_day_awst_index on mv_facility_all (ti_day_awst desc);
+create index if not exists idx_trading_day_awst_code_index on mv_facility_all (ti_day_awst desc, code);
+create index if not exists idx_trading_month_awst_code_index on mv_facility_all (ti_month_awst desc, code);
