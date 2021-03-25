@@ -411,6 +411,29 @@ def run_energy_update_yesterday(network: NetworkSchema = NetworkNEM, days: int =
     slack_message("Ran energy dailies for regions: {}".format(",".join(regions)))
 
 
+def run_energy_update_today(network: NetworkSchema = NetworkNEM, days: int = 1) -> None:
+    """Run energy sum update for yesterday. This task is scheduled
+    in scheduler/db
+
+    This is NEM only atm"""
+
+    # This is Sydney time as the data is published in local time
+    tz = pytz.timezone("Australia/Sydney")
+
+    # today_midnight in NEM time
+    today_midnight = datetime.now(tz).replace(
+        tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
+    )
+
+    date_max = today_midnight + timedelta(days=1)
+    date_min = today_midnight
+
+    regions = [i.code for i in get_network_regions(network)]
+
+    for region in regions:
+        run_energy_calc(region, date_min, date_max, network=network)
+
+
 def run_energy_update_45d() -> None:
     run_energy_update_yesterday(days=45)
 
@@ -430,4 +453,5 @@ def run_energy_update_nemweb() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_yesterday(days=3)
+    # run_energy_update_yesterday(days=3)
+    run_energy_update_today()
