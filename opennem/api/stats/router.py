@@ -18,17 +18,7 @@ from opennem.schema.dates import TimeSeries
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_scada_range, stats_factory
-from .queries import (
-    energy_facility_query,
-    energy_network,
-    energy_network_fueltech,
-    energy_network_fueltech_all,
-    energy_network_fueltech_year,
-    power_facility_query,
-    power_network_fueltech,
-    price_network_monthly,
-    price_network_region,
-)
+from .queries import energy_facility_query, power_facility_query
 from .schema import DataQueryResult, OpennemDataSet
 
 logger = logging.getLogger(__name__)
@@ -38,7 +28,7 @@ router = APIRouter()
 
 @router.get(
     "/power/station/{network_code}/{station_code:path}",
-    name="Station Power",
+    name="Power by Station",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
     description="Get the power outputs for a station",
@@ -143,7 +133,7 @@ def power_station(
 
 @router.get(
     "/energy/station/{network_code}/{station_code:path}",
-    name="Energy Station",
+    name="Energy by Station",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
@@ -295,7 +285,7 @@ Flows endpoints
 
 @router.get(
     "/flow/network/{network_code}",
-    name="Flow Region",
+    name="Interconnector Flow Network",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
