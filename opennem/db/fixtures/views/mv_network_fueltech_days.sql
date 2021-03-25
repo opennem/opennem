@@ -7,7 +7,7 @@ select
     f.network_region,
     f.interconnector,
     f.interconnector_region_to,
-    sum(fs.energy) as energy,
+    max(fs.energy) as energy,
     case when max(bs.price_dispatch) >= 0  and min(fs.energy) >= 0 then
         coalesce(
             sum(fs.energy) * max(bs.price_dispatch),
