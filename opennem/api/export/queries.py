@@ -341,7 +341,7 @@ def power_network_fueltech_query(
     wem_apvi_case: str = ""
     timezone: str = time_series.network.timezone_database
 
-    fueltechs_excluded = ["exports", "imports"]
+    fueltechs_excluded = ["exports", "imports", "interconnector"]
 
     if NetworkNEM in networks_query:
         fueltechs_excluded.append("solar_rooftop")
@@ -484,7 +484,7 @@ def energy_network_fueltech_query(
         where
             t.trading_day <= '{date_max}'::date and
             t.trading_day >= '{date_min}'::date and
-            t.fueltech_id not in ('imports', 'exports') and
+            t.fueltech_id not in ('imports', 'exports', 'interconnector') and
             {network_query}
             {network_region_query}
             1=1
@@ -503,7 +503,7 @@ def energy_network_fueltech_query(
         where
             t.ti_{trunc_name} <= '{date_max}'::date and
             t.ti_{trunc_name} >= '{date_min}'::date and
-            t.fueltech_id not in ('imports', 'exports') and
+            t.fueltech_id not in ('imports', 'exports', 'interconnector') and
             {network_query}
             {network_region_query}
             1=1
