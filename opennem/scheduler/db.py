@@ -40,7 +40,7 @@ def db_refresh_material_views() -> None:
         refresh_material_views("mv_interchange_energy_nem_region")
 
 
-@huey.periodic_task(crontab(hour="*/1", minute="25"))
+@huey.periodic_task(crontab(hour="*/1", minute="15,45"))
 @huey.lock_task("db_refresh_material_views_recent")
 def db_refresh_material_views_recent() -> None:
     refresh_material_views("mv_facility_45d")
@@ -48,7 +48,7 @@ def db_refresh_material_views_recent() -> None:
 
 
 # @NOTE optimized can now run every hour but shouldn't have to
-@huey.periodic_task(crontab(hour="*/1", minute="15"))
+@huey.periodic_task(crontab(hour="*/1", minute="10,40"))
 @huey.lock_task("db_refresh_energies_yesterday")
 def db_refresh_energies_yesterday() -> None:
     run_energy_update_yesterday()
