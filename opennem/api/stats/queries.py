@@ -119,8 +119,8 @@ def emission_factor_region_query(
         select
             f.trading_interval at time zone '{timezone}' as ti,
             f.network_region,
-            avg(f.emissions_per_mw)
-        from mv_region_emissions f
+            avg(f.emissions_per_mw) * 2
+        from mv_region_emissions_45d f
         where
             f.network_id='{network_id}' and
             {network_region_query}
