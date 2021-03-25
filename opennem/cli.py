@@ -5,9 +5,14 @@ import click
 from scrapy.utils.python import garbage_collect
 
 from opennem.api.export.map import PriorityType
-from opennem.api.export.tasks import export_all_monthly, export_energy, export_power
+from opennem.api.export.tasks import (
+    export_all_daily,
+    export_all_monthly,
+    export_energy,
+    export_power,
+)
 from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures
-from opennem.db.tasks import refresh_views
+from opennem.db.tasks import refresh_material_views, refresh_views
 from opennem.db.views import init_aggregation_policies
 from opennem.db.views.init import init_views_cli
 from opennem.importer.all import run_all
@@ -17,7 +22,7 @@ from opennem.importer.emissions import import_emissions_map
 from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_export, opennem_import
 from opennem.settings import settings
-from opennem.workers.energy import run_energy_update_archive
+from opennem.workers.energy import run_energy_update_archive, run_energy_update_yesterday
 
 logger = logging.getLogger("opennem.cli")
 
@@ -120,7 +125,13 @@ def cmd_export_energy_monthly() -> None:
 
 @click.command()
 def cmd_export_all() -> None:
-    run_all()
+    run_energy_update_yesterday(days=2)
+    refresh_material_views("mv_network_fueltech_days")
+    refresh_material_views("mv_facility_45d")
+    export_power()
+    export_energy()
+    export_all_monthly()
+    export_all_daily()
 
 
 @click.group()
