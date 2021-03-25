@@ -56,7 +56,8 @@ def pad_stat_set(stat_set: OpennemDataSet) -> OpennemDataSet:
                 data_set.history.data = [None] * required_padding + data_set.history.data
 
             if required_padding < 0:
-                data_set.history.data = data_set.history.data[1:]
+                required_padding_pos = abs(required_padding)
+                data_set.history.data = data_set.history.data[required_padding_pos:]
 
             data_set.history.start = min_date
 
