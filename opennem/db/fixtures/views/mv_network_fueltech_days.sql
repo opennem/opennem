@@ -10,14 +10,14 @@ create materialized view mv_network_fueltech_days as
       sum(fs.energy) as energy,
       case when max(bs.price_dispatch) >= 0  and min(fs.energy) >= 0 then
           coalesce(
-              sum(fs.energy) * max(bs.price_dispatch),
+              sum(fs.energy) * avg(bs.price_dispatch),
               0.0
           )
       else 0.0
       end as market_value,
       case when max(bs.price) >= 0  and min(fs.energy) >= 0 then
           coalesce(
-              sum(fs.energy) * max(bs.price),
+              sum(fs.energy) * avg(bs.price),
               0.0
           )
       else 0.0
