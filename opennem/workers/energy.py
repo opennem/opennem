@@ -430,6 +430,4 @@ def run_energy_update_nemweb() -> None:
 
 
 if __name__ == "__main__":
-    # run_energy_update_all()
-    # run_energy_update_yesterday(days=45)
-    run_energy_update_nemweb()
+    run_energy_update_yesterday(days=3)
