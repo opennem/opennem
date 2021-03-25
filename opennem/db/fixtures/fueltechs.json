@@ -113,5 +113,10 @@
     "code": "exports",
     "label": "Network Export",
     "renewable": false
+  },
+  {
+    "code": "interconnector",
+    "label": "Interconnector",
+    "renewable": false
   }
 ]
