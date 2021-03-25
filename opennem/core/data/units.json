@@ -75,6 +75,11 @@
     "unit": "tCO2e"
   },
   {
+    "name": "emissions_factor",
+    "unit_type": "emissions_factor",
+    "unit": "tCO2e/MW"
+  },
+  {
     "name": "cpi",
     "unit_type": "cpi",
     "cast_nulls": false,

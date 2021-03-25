@@ -5,7 +5,7 @@
 """
 
 from textwrap import dedent
-from typing import List
+from typing import List, Optional
 
 from opennem.core.normalizers import normalize_duid
 from opennem.schema.dates import TimeSeries
@@ -103,6 +103,44 @@ def energy_facility_query(time_series: TimeSeries, facility_codes: List[str]) ->
     query = dedent(
         __query.format(
             facility_codes_parsed=duid_in_case(facility_codes),
+            trunc=time_series.interval.trunc,
+            date_max=date_range.end,
+            date_min=date_range.start,
+            timezone=time_series.network.timezone_database,
+        )
+    )
+    return query
+
+
+def emission_factor_region_query(
+    time_series: TimeSeries, network_region_code: Optional[str] = None
+) -> str:
+    __query = """
+        select
+            f.trading_interval at time zone '{timezone}' as ti,
+            f.network_region,
+            avg(f.emissions_per_mw)
+        from mv_region_emissions f
+        where
+            f.network_id='{network_id}' and
+            {network_region_query}
+            f.trading_interval <= '{date_max}' and
+            f.trading_interval >= '{date_min}'
+        group by 1, 2
+        order by 1 asc;
+    """
+
+    network_region_query = ""
+
+    if network_region_code:
+        network_region_query = f"f.network_region='{network_region_code}' and"
+
+    date_range = time_series.get_range()
+
+    query = dedent(
+        __query.format(
+            network_region_query=network_region_query,
+            network_id=time_series.network.code,
             trunc=time_series.interval.trunc,
             date_max=date_range.end,
             date_min=date_range.start,

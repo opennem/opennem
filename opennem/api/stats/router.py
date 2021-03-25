@@ -18,7 +18,7 @@ from opennem.schema.dates import TimeSeries
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_scada_range, stats_factory
-from .queries import energy_facility_query, power_facility_query
+from .queries import emission_factor_region_query, energy_facility_query, power_facility_query
 from .schema import DataQueryResult, OpennemDataSet
 
 logger = logging.getLogger(__name__)
@@ -399,3 +399,77 @@ def power_network_region_fueltech(
         raise Exception("No results")
 
     return stat_set
+
+
+@router.get(
+    "/emissionfactor/network/{network_code}",
+    name="Emission Factor per Network Region",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+)
+def emission_factor_per_network(
+    engine=Depends(get_database_engine),  # type: ignore
+    network_code: str = Query(..., description="Network code"),
+) -> Optional[OpennemDataSet]:
+    engine = get_database_engine()
+
+    network = network_from_network_code(network_code)
+    interval_obj = human_to_interval("30m")
+    period_obj = human_to_period("7d")
+
+    scada_range = get_scada_range(network=network)
+
+    if not scada_range:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not find a date range",
+        )
+
+    if not network:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Network not found",
+        )
+
+    time_series = TimeSeries(
+        start=scada_range.start,
+        network=network,
+        interval=interval_obj,
+        period=period_obj,
+    )
+
+    query = emission_factor_region_query(time_series=time_series)
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    if len(row) < 1:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No results",
+        )
+
+    emission_factors = [
+        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
+        for i in row
+    ]
+
+    result = stats_factory(
+        emission_factors,
+        network=time_series.network,
+        period=time_series.period,
+        interval=time_series.interval,
+        units=get_unit("emissions_factor"),
+        group_field="emission_factor",
+        include_group_code=True,
+        include_code=True,
+    )
+
+    if not result or not result.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No results",
+        )
+
+    return result
