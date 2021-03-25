@@ -472,7 +472,8 @@ def energy_fueltech_daily(
     ]
 
     if len(results_energy) < 1:
-        raise Exception("No results from query: {}".format(query))
+        logger.error("No results from query: {}".format(query))
+        return None
 
     stats = stats_factory(
         stats=results_energy,
