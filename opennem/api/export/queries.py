@@ -472,7 +472,7 @@ def energy_network_fueltech_query(
     if time_series.network not in networks_query:
         networks_query.append(time_series.network)
 
-    if time_series.interval.interval > 1440:
+    if time_series.interval.interval >= 1440:
         __query = """
         select
             date_trunc('{trunc}', t.trading_day) as trading_day,
