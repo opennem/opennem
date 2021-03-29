@@ -6,7 +6,7 @@ from opennem.settings import settings
 
 
 def setup_sentry() -> None:
-    if settings.sentry_enabled and settings.debug is False:
+    if settings.sentry_enabled:
         sentry_sdk.init(
             settings.sentry_url,
             traces_sample_rate=1.0,
