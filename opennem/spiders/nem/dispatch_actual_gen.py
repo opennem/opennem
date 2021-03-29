@@ -19,6 +19,21 @@ class NemwebDispatchActualGenLatest(NemwebSpider):
     )
 
 
+class NemwebWeekDispatchActualGenLatest(NemwebSpider):
+    name = "au.nem.week.dispatch_actual_gen"
+    start_url = "http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/"
+
+    limit = 1
+
+    pipelines_extra = set(
+        [
+            NemwebUnitScadaOpenNEMStorePipeline,
+            BulkInsertPipeline,
+            RecordsToCSVPipeline,
+        ]
+    )
+
+
 class NemwebDispatchActualGenCurrent(NemwebSpider):
     name = "au.nem.current.dispatch_actual_gen"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/"
