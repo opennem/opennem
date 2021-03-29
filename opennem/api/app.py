@@ -107,7 +107,7 @@ def robots_txt() -> FileResponse:
 
 
 @app.get("/alert_test", include_in_schema=False)
-def robots_txt() -> None:
+def alert_test() -> None:
     raise Exception("Test Alert Error from {}".format(settings.env))
 
 
