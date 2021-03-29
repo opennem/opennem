@@ -13,6 +13,8 @@ logger = logging.getLogger("opennem.monitors.opennem")
 def check_opennem_interval_delays(network_code: str) -> bool:
     network = network_from_network_code(network_code)
 
+    env = ""
+
     if settings.debug:
         env = ".dev"
 
