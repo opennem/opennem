@@ -132,9 +132,9 @@ cryptography==3.4.6; python_version >= "3.6" and python_full_version < "3.0.0" o
 cssselect==1.1.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.6" \
     --hash=sha256:f612ee47b749c877ebae5bb77035d8f4202c6ad0f0fc1271b3c18ad6c4468ecf \
     --hash=sha256:f95f8dedd925fd8f54edb3d2dfb44c190d9d18512377d3c1e2388d16126879bc
-databases==0.4.2; python_version >= "3.6" \
-    --hash=sha256:44788f6fd344f27baa2be9b42c3926222932000a3ba7dce5a305167a2cb1f6bb \
-    --hash=sha256:2ca1b72f0209744e25fababc44c183e5fb6f7dd7af4274379f2ec6f14c00432a
+databases==0.4.3; python_version >= "3.6" \
+    --hash=sha256:f82b02c28fdddf7ffe7ee1945f5abef44d687ba97b9a1c81492c7f035d4c90e6 \
+    --hash=sha256:1521db7f6d3c581ff81b3552e130b27a13aefea2a57295e65738081831137afc
 datedelta==1.3 \
     --hash=sha256:eaf2b332582a083e0db7baab36ab37d5fe98b9de3cfd46a75c45247c59b2f117 \
     --hash=sha256:b69229755ed61ae0a78dc63820a8ed1492a60126edceb430aece212b5ba19575
@@ -697,9 +697,9 @@ s3transfer==0.3.4; python_version >= "3.5" and python_full_version < "3.0.0" or 
 scrapy==2.4.1; python_version >= "3.6" \
     --hash=sha256:27621ab491706ec8cc41168cdbdff07e7fe8c344c8640e9e9faebd7cf84008e2 \
     --hash=sha256:68c48f01a58636bdf0f6fcd5035a19ecf277b58af24bd70c36dc6e556df3e005
-sentry-sdk==0.19.5 \
-    --hash=sha256:737a094e49a529dd0fdcaafa9e97cf7c3d5eb964bd229821d640bc77f3502b3f \
-    --hash=sha256:0a711ec952441c2ec89b8f5d226c33bc697914f46e876b44a4edd3e7864cf4d0
+sentry-sdk==1.0.0 \
+    --hash=sha256:71de00c9711926816f750bc0f57ef2abbcb1bfbdf5378c601df7ec978f44857a \
+    --hash=sha256:9221e985f425913204989d0e0e1cbb719e8b7fa10540f1bc509f660c06a34e66
 service-identity==18.1.0; python_version >= "3.6" \
     --hash=sha256:001c0707759cb3de7e49c078a7c0c9cd12594161d3bf06b9c254fdcb1a60dc36 \
     --hash=sha256:0858a54aabc5b459d1aafa8a518ed2081a285087f349fe3e55197989232e2e2d
