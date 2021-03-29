@@ -106,6 +106,11 @@ def robots_txt() -> FileResponse:
     return FileResponse(settings.static_folder_path + "/robots.txt")
 
 
+@app.get("/alert_test", response_class=FileResponse, include_in_schema=False)
+def robots_txt() -> None:
+    raise Exception("Test Alert Error from {}".format(settings.env))
+
+
 @app.get(
     "/networks",
     response_model=List[APINetworkSchema],
