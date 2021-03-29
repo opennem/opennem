@@ -23,6 +23,7 @@ from opennem.db.models.opennem import NetworkRegion
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.settings import settings
 from opennem.utils.http import http
 from opennem.utils.series import series_are_equal, series_joined, series_not_close
 
@@ -32,7 +33,7 @@ BASE_URL_V2 = "https://data.opennem.org.au"
 BASE_URL_V3 = "https://data.dev.opennem.org.au"
 
 CUR_YEAR = datetime.now().year
-FULL = True
+FULL = False
 
 
 def get_v2_url(
@@ -253,7 +254,7 @@ def run_diff() -> str:
 
     buckets_total = 0
 
-    regions = get_network_regions(NetworkNEM, "NSW1")
+    regions = get_network_regions(NetworkNEM)
     statsetmap = get_url_map(regions)
 
     # load urls
@@ -323,7 +324,10 @@ def run_diff() -> str:
                 logger.error("    error getting id {} from v2".format(i))
                 continue
 
-            if "market_value" in v2i.id:
+            if "imports" in v2i.id:
+                continue
+
+            if "exports" in v2i.id:
                 continue
 
             if "emissions" in v2i.id:
@@ -479,11 +483,13 @@ def commit_diffs(score: str) -> None:
 
     repo.index.add(["diff"])
     repo.index.commit(
-        "Commit version diffs. Score: {}".format(score), author=author, committer=committer
+        "Commit version diffs for {}. Score: {}".format(settings.env, score),
+        author=author,
+        committer=committer,
     )
 
     origin = repo.remote(name="origin")
-    origin.push()
+    # origin.push()
 
 
 def run_data_diff() -> None:
