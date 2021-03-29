@@ -127,14 +127,6 @@ def monitor_wem_interval() -> None:
     aemo_wem_live_interval()
 
 
-@huey.periodic_task(crontab(hour="*/12"), priority=10)
-@huey.lock_task("monitor_metadata_status")
-def monitor_metadata_status() -> None:
-    # disable
-    if settings.workers_run and False == True:
-        check_metadata_status()
-
-
 @huey.periodic_task(crontab(hour="/12"), priority=10)
 @huey.lock_task("monitor_emission_factors")
 def monitor_emission_factors() -> None:
