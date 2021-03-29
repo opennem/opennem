@@ -23,7 +23,6 @@ from opennem.api.export.controllers import (
     power_week,
     weather_daily,
 )
-from opennem.api.export.hacks import pad_stat_set
 from opennem.api.export.map import PriorityType, StatExport, StatType, get_export_map
 from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range
@@ -269,8 +268,6 @@ def export_energy(
                     network_region=energy_stat.network_region,
                 )
                 stat_set.append_set(weather_stats)
-
-            stat_set = pad_stat_set(stat_set)
 
             write_output(energy_stat.path, stat_set)
 
