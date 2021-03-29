@@ -8,7 +8,6 @@ from fastapi.param_functions import Query
 from fastapi.responses import FileResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -25,7 +24,6 @@ from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
 from opennem.db import database, get_database_session
 from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
-from opennem.schema.network import NetworkRegionSchema, NetworkSchema
 from opennem.schema.opennem import FueltechSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
@@ -39,7 +37,6 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None
 )
-Instrumentator().instrument(app).expose(app)
 
 try:
     from fastapi.staticfiles import StaticFiles
