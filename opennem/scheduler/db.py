@@ -29,7 +29,7 @@ if settings.cache_url:
 huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
 # 6:45AM AEST
-@huey.periodic_task(crontab(hour="20", minute="45"))
+@huey.periodic_task(crontab(hour="20,23", minute="45"))
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
     if settings.workers_db_run:
@@ -38,6 +38,14 @@ def db_refresh_material_views() -> None:
         refresh_material_views("mv_network_fueltech_days")
         refresh_material_views("mv_region_emissions")
         refresh_material_views("mv_interchange_energy_nem_region")
+
+
+# Catchup task
+@huey.periodic_task(crontab(hour="2", minute="45"))
+def db_refresh_catchup() -> None:
+    refresh_material_views("mv_network_fueltech_days")
+    refresh_material_views("mv_region_emissions")
+    refresh_material_views("mv_interchange_energy_nem_region")
 
 
 @huey.periodic_task(crontab(hour="*/1", minute="15,45"))
