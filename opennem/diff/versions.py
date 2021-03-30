@@ -30,7 +30,7 @@ from opennem.utils.series import series_are_equal, series_joined, series_not_clo
 logger = logging.getLogger("opennem.diff.versions")
 
 BASE_URL_V2 = "https://data.opennem.org.au"
-BASE_URL_V3 = "https://data.dev.opennem.org.au"
+BASE_URL_V3 = "https://data.staging.opennem.org.au"
 
 CUR_YEAR = datetime.now().year
 FULL = False
