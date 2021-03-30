@@ -386,7 +386,7 @@ def run_energy_update_archive(
                     )
 
 
-def run_energy_update_days(networks: List[NetworkSchema], days: int = 1) -> None:
+def run_energy_update_days(networks: Optional[List[NetworkSchema]] = None, days: int = 1) -> None:
     """Run energy sum update for yesterday. This task is scheduled
     in scheduler/db
 
