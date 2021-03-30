@@ -4,7 +4,7 @@
     @TODO use sqlalchemy text() compiled queries
 """
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from textwrap import dedent
 from typing import List, Optional
 
