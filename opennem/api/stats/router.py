@@ -18,8 +18,13 @@ from opennem.schema.dates import TimeSeries
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_scada_range, stats_factory
-from .queries import emission_factor_region_query, energy_facility_query, power_facility_query
-from .schema import DataQueryResult, OpennemDataSet
+from .queries import (
+    emission_factor_region_query,
+    energy_facility_query,
+    network_fueltech_demand_query,
+    power_facility_query,
+)
+from .schema import DataQueryResult, OpennemData, OpennemDataSet
 
 logger = logging.getLogger(__name__)
 
@@ -457,6 +462,80 @@ def emission_factor_per_network(
 
     result = stats_factory(
         emission_factors,
+        network=time_series.network,
+        period=time_series.period,
+        interval=time_series.interval,
+        units=get_unit("emissions_factor"),
+        group_field="emission_factor",
+        include_group_code=True,
+        include_code=True,
+    )
+
+    if not result or not result.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No results",
+        )
+
+    return result
+
+
+@router.get(
+    "/fueltech_mix/{network_id}",
+    name="Fueltech mix by network",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+)
+def fueltech_demand_mix(
+    engine=Depends(get_database_engine),  # type: ignore
+    network_code: str = Query(..., description="Network code"),
+) -> OpennemData:
+    engine = get_database_engine()
+
+    network = network_from_network_code(network_code)
+    interval_obj = human_to_interval("5m")
+    period_obj = human_to_period("1d")
+
+    scada_range = get_scada_range(network=network)
+
+    if not scada_range:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not find a date range",
+        )
+
+    if not network:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Network not found",
+        )
+
+    time_series = TimeSeries(
+        start=scada_range.start,
+        network=network,
+        interval=interval_obj,
+        period=period_obj,
+    )
+
+    query = network_fueltech_demand_query(time_series=time_series)
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    if len(row) < 1:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No results",
+        )
+
+    result_set = [
+        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
+        for i in row
+    ]
+
+    result = stats_factory(
+        result_set,
         network=time_series.network,
         period=time_series.period,
         interval=time_series.interval,
