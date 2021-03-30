@@ -645,14 +645,14 @@ def energy_interconnector_emissions_region_daily(
         for i in row
     ]
 
-    # stats_grouped = net_flows_emissions(network_region_code, stats, time_series.interval)
+    stats_grouped = net_flows_emissions(network_region_code, stats, time_series.interval)
 
-    # imports = stats_grouped["imports"]
-    # exports = stats_grouped["exports"]
+    imports = stats_grouped["imports"]
+    exports = stats_grouped["exports"]
 
-    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[5]) for i in row]
+    # imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[5]) for i in row]
 
-    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
+    # exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
 
     result = stats_factory(
         imports,
