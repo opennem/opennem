@@ -20,7 +20,7 @@ from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.dates import DatetimeRange, TimeSeries
-from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.interval import get_human_interval
 
 logger = logging.getLogger("opennem.workers.energy")
@@ -395,7 +395,7 @@ def run_energy_update_yesterday(days: int = 1) -> None:
     # This is Sydney time as the data is published in local time
     tz = pytz.timezone("Australia/Sydney")
 
-    for network in [NetworkNEM, NetworkWEM]:
+    for network in [NetworkNEM, NetworkWEM, NetworkAPVI]:
 
         # today_midnight in NEM time
         today_midnight = datetime.now(tz).replace(
@@ -422,7 +422,7 @@ def run_energy_update_today(network: NetworkSchema = NetworkNEM, days: int = 1) 
     # This is Sydney time as the data is published in local time
     tz = pytz.timezone("Australia/Sydney")
 
-    for network in [NetworkNEM, NetworkWEM]:
+    for network in [NetworkNEM, NetworkWEM, NetworkAPVI]:
 
         # today_midnight in NEM time
         today_midnight = datetime.now(tz).replace(
