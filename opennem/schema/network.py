@@ -29,7 +29,7 @@ class NetworkSchema(BaseConfig):
     label: str
 
     regions: Optional[List[NetworkNetworkRegion]]
-    timezone: Optional[str] = Field(None, description="Network timezone")
+    timezone: str = Field(..., description="Network timezone")
     timezone_database: str = Field("UTC", description="Database timezone format")
     offset: Optional[int] = Field(None, description="Network time offset in minutes")
     interval_size: int = Field(..., description="Size of network interval in minutes")
