@@ -376,7 +376,7 @@ def run_energy_update_archive(
 
             if date_min > date_max:
                 slack_message("Reached end of energy archive")
-                logger.debug("reached end of archive")
+                logger.debug("reached end of archive {} {}".format(date_min, date_max))
                 break
 
             for region in regions:
@@ -405,8 +405,8 @@ def run_energy_update_days(networks: Optional[List[NetworkSchema]] = None, days:
             tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
         )
 
-        date_max = today_midnight + timedelta(days=1)
-        date_min = today_midnight
+        date_max = today_midnight
+        date_min = today_midnight - timedelta(days=days)
 
         regions = [i.code for i in get_network_regions(network)]
 
