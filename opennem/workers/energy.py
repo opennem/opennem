@@ -407,6 +407,9 @@ def run_energy_update_yesterday(days: int = 1) -> None:
 
         regions = [i.code for i in get_network_regions(network)]
 
+        if network == NetworkAPVI:
+            regions = ["WEM"]
+
         for region in regions:
             run_energy_calc(region, date_min, date_max, network=network)
 
@@ -433,6 +436,9 @@ def run_energy_update_today(network: NetworkSchema = NetworkNEM, days: int = 1) 
         date_min = today_midnight
 
         regions = [i.code for i in get_network_regions(network)]
+
+        if network == NetworkAPVI:
+            regions = ["WEM"]
 
         for region in regions:
             run_energy_calc(region, date_min, date_max, network=network)
