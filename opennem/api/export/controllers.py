@@ -570,14 +570,12 @@ def energy_interconnector_region_daily(
 
     result_exports = stats_factory(
         exports,
-        # code=network_region_code or network.code,
         network=time_series.network,
         period=period,
         interval=time_series.interval,
         units=units,
         region=network_region_code,
         fueltech_group=True,
-        # localize=False,
     )
 
     result.append_set(result_exports)
@@ -656,7 +654,6 @@ def energy_interconnector_emissions_region_daily(
 
     result = stats_factory(
         imports,
-        # code=network_region_code or network.code,
         network=time_series.network,
         period=period,
         interval=time_series.interval,
@@ -673,7 +670,6 @@ def energy_interconnector_emissions_region_daily(
 
     result_exports = stats_factory(
         exports,
-        # code=network_region_code or network.code,
         network=time_series.network,
         period=period,
         interval=time_series.interval,
