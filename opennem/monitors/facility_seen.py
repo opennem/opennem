@@ -24,7 +24,7 @@ class FacilitySeen(BaseConfig):
     seen_last: Optional[datetime]
 
 
-def get_facility_first_seen() -> List[FacilitySeen]:
+def get_facility_first_seen(interval: str = "7 days") -> List[FacilitySeen]:
     """Run this and it'll check if there are new facilities in
     scada data and let you know which ones
 
@@ -39,8 +39,11 @@ def get_facility_first_seen() -> List[FacilitySeen]:
             fs.network_id
         from facility_scada fs
         where
-            fs.facility_code not in (select distinct code from facility);
-    """
+            fs.facility_code not in (select distinct code from facility)
+            and fs.trading_interval > now() - interval '{interval}';
+    """.format(
+        interval=interval
+    )
 
     with engine.connect() as c:
         logger.debug(__query)
