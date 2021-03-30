@@ -4,6 +4,7 @@
     @TODO use sqlalchemy text() compiled queries
 """
 
+from datetime import timedelta
 from textwrap import dedent
 from typing import List, Optional
 
@@ -144,6 +145,40 @@ def emission_factor_region_query(
             trunc=time_series.interval.trunc,
             date_max=date_range.end,
             date_min=date_range.start,
+            timezone=time_series.network.timezone_database,
+        )
+    )
+    return query
+
+
+def network_fueltech_demand_query(time_series: TimeSeries) -> str:
+    __query = """
+        select
+            f.fueltech_id,
+            round(sum(fs.eoi_quantity) / 1000, 2) as energy,
+            sum(bs.demand_total) as demand
+        from facility_scada fs
+        left join balancing_summary bs on bs.trading_interval = fs.trading_interval and bs.network_id = fs.network_id
+        left join facility f on fs.facility_code = f.code
+        join fueltech ft on f.fueltech_id = ft.code
+        where
+            fs.trading_interval >= '{date_min}'
+            and fs.trading_interval < '{date_max}'
+            and fs.network_id = '{network_id}'
+            and f.dispatch_type = 'GENERATOR'
+        group by 1;
+    """
+
+    date_range = time_series.get_range()
+
+    date_min: datetime = date_range.end - timedelta(days=1)
+
+    query = dedent(
+        __query.format(
+            network_id=time_series.network.code,
+            trunc=time_series.interval.trunc,
+            date_max=date_range.end,
+            date_min=date_min,
             timezone=time_series.network.timezone_database,
         )
     )
