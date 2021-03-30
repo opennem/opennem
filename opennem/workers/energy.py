@@ -333,7 +333,7 @@ def run_energy_update_archive(
 
     date_range = get_date_range(network=network)
 
-    years: List[int] = [year]
+    years: List[int] = []
 
     if not year:
         years = [i for i in range(CUR_YEAR, YEAR_EARLIEST - 1, -1)]
