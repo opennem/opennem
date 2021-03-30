@@ -392,13 +392,13 @@ def run_energy_update_days(networks: Optional[List[NetworkSchema]] = None, days:
 
     This is NEM only atm"""
 
-    # This is Sydney time as the data is published in local time
-    tz = pytz.timezone("Australia/Sydney")
-
     if not networks:
         networks = [NetworkNEM, NetworkWEM, NetworkAPVI]
 
     for network in networks:
+
+        # This is Sydney time as the data is published in local time
+        tz = pytz.timezone(network.timezone)
 
         # today_midnight in NEM time
         today_midnight = datetime.now(tz).replace(
@@ -437,3 +437,4 @@ def run_energy_update_nemweb() -> None:
 
 if __name__ == "__main__":
     run_energy_update_days(networks=[NetworkWEM], days=14)
+    run_energy_update_archive(network=NetworkAPVI, fueltech="solar_rooftop")
