@@ -41,7 +41,7 @@ def db_refresh_material_views() -> None:
 
 
 # Catchup task
-@huey.periodic_task(crontab(hour="2", minute="45"))
+@huey.periodic_task(crontab(hour="2, 14", minute="45"))
 def db_refresh_catchup() -> None:
     refresh_material_views("mv_network_fueltech_days")
     refresh_material_views("mv_region_emissions")
