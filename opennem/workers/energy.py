@@ -336,13 +336,17 @@ def run_energy_update_archive(
     years: List[int] = []
 
     if not year:
-        years = [i for i in range(CUR_YEAR, YEAR_EARLIEST - 1, -1)]
+        years = [i for i in range(YEAR_EARLIEST, CUR_YEAR + 1)]
 
     if not months:
         months = list(range(1, 13))
 
     if not regions:
         regions = [i.code for i in get_network_regions(network)]
+
+    # @TODO remove this and give APVI regions
+    if network == NetworkAPVI:
+        regions = ["WEM"]
 
     fueltechs = [fueltech]
 
@@ -375,8 +379,8 @@ def run_energy_update_archive(
                 date_max = date_range.end
 
             if date_min > date_max:
-                slack_message("Reached end of energy archive")
-                logger.debug("reached end of archive {} {}".format(date_min, date_max))
+                # slack_message("Reached end of energy archive")
+                logger.debug("Reached end of archive {} {}".format(date_min, date_max))
                 break
 
             for region in regions:
@@ -436,5 +440,5 @@ def run_energy_update_nemweb() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_days(networks=[NetworkWEM], days=14)
+    # run_energy_update_days(networks=[NetworkWEM], days=14)
     run_energy_update_archive(network=NetworkAPVI, fueltech="solar_rooftop")
