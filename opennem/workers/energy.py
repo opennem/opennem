@@ -20,7 +20,7 @@ from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.dates import DatetimeRange, TimeSeries
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.interval import get_human_interval
 
 logger = logging.getLogger("opennem.workers.energy")
@@ -386,7 +386,7 @@ def run_energy_update_archive(
                     )
 
 
-def run_energy_update_yesterday(network: NetworkSchema = NetworkNEM, days: int = 1) -> None:
+def run_energy_update_yesterday(days: int = 1) -> None:
     """Run energy sum update for yesterday. This task is scheduled
     in scheduler/db
 
@@ -395,20 +395,22 @@ def run_energy_update_yesterday(network: NetworkSchema = NetworkNEM, days: int =
     # This is Sydney time as the data is published in local time
     tz = pytz.timezone("Australia/Sydney")
 
-    # today_midnight in NEM time
-    today_midnight = datetime.now(tz).replace(
-        tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
-    )
+    for network in [NetworkNEM, NetworkWEM]:
 
-    date_max = today_midnight
-    date_min = today_midnight - timedelta(days=days)
+        # today_midnight in NEM time
+        today_midnight = datetime.now(tz).replace(
+            tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
+        )
 
-    regions = [i.code for i in get_network_regions(network)]
+        date_max = today_midnight
+        date_min = today_midnight - timedelta(days=days)
 
-    for region in regions:
-        run_energy_calc(region, date_min, date_max, network=network)
+        regions = [i.code for i in get_network_regions(network)]
 
-    slack_message("Ran energy dailies for regions: {}".format(",".join(regions)))
+        for region in regions:
+            run_energy_calc(region, date_min, date_max, network=network)
+
+        slack_message("Ran energy dailies for regions: {}".format(",".join(regions)))
 
 
 def run_energy_update_today(network: NetworkSchema = NetworkNEM, days: int = 1) -> None:
@@ -420,18 +422,20 @@ def run_energy_update_today(network: NetworkSchema = NetworkNEM, days: int = 1) 
     # This is Sydney time as the data is published in local time
     tz = pytz.timezone("Australia/Sydney")
 
-    # today_midnight in NEM time
-    today_midnight = datetime.now(tz).replace(
-        tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
-    )
+    for network in [NetworkNEM, NetworkWEM]:
 
-    date_max = today_midnight + timedelta(days=1)
-    date_min = today_midnight
+        # today_midnight in NEM time
+        today_midnight = datetime.now(tz).replace(
+            tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
+        )
 
-    regions = [i.code for i in get_network_regions(network)]
+        date_max = today_midnight + timedelta(days=1)
+        date_min = today_midnight
 
-    for region in regions:
-        run_energy_calc(region, date_min, date_max, network=network)
+        regions = [i.code for i in get_network_regions(network)]
+
+        for region in regions:
+            run_energy_calc(region, date_min, date_max, network=network)
 
 
 def run_energy_update_45d() -> None:
@@ -453,5 +457,5 @@ def run_energy_update_nemweb() -> None:
 
 
 if __name__ == "__main__":
-    # run_energy_update_yesterday(days=3)
+    run_energy_update_yesterday(days=7)
     run_energy_update_today()
