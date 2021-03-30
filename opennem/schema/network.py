@@ -1,9 +1,9 @@
 from datetime import timezone as timezone_native
-from typing import List, Optional, Union
+from datetime import tzinfo
+from typing import Any, List, Optional, Union
 
 import pytz
 from pydantic import Field
-from pytz import FixedOffset
 from pytz import timezone as pytz_timezone
 
 from opennem.core.time import get_interval_by_size
@@ -56,14 +56,14 @@ class NetworkSchema(BaseConfig):
 
         return tz
 
-    def get_fixed_offset(self) -> FixedOffset:
+    def get_fixed_offset(self) -> Union[Any, tzinfo]:
         if self.offset:
             return pytz.FixedOffset(self.offset)
 
         raise Exception("No offset set")
 
     @property
-    def intervals_per_hour(self):
+    def intervals_per_hour(self) -> float:
         return 60 / self.interval_size
 
 
