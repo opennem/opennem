@@ -490,6 +490,17 @@ def fueltech_demand_mix(
     engine=Depends(get_database_engine),  # type: ignore
     network_code: str = Query(..., description="Network code"),
 ) -> OpennemData:
+    """Return fueltech proportion of demand for a network
+
+    Args:
+        engine ([type], optional): Database engine. Defaults to Depends(get_database_engine).
+
+    Raises:
+        HTTPException: No results
+
+    Returns:
+        OpennemData: data set
+    """
     engine = get_database_engine()
 
     network = network_from_network_code(network_code)
