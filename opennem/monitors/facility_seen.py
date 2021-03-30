@@ -37,6 +37,10 @@ def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
         if fac.network_id == "NEM" and fac.code.startswith("RT_"):
             return None
 
+        # loads for AEMO NEM
+        if fac.network_id == "NEM" and fac.code.endswith("L1"):
+            return None
+
         return fac
 
     fac_filtered = list(filter(fac_is_ignored, fac_records))
@@ -75,7 +79,13 @@ def get_facility_first_seen(interval: str = "7 days") -> List[FacilitySeen]:
 
 
 def facility_first_seen_check() -> None:
-    return None
+    facs = get_facility_first_seen()
+
+    facs_filtered = ignored_duids(facs)
+
+    from pprint import pprint
+
+    pprint(facs_filtered)
 
 
 if __name__ == "__main__":
