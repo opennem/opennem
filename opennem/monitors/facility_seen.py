@@ -24,6 +24,26 @@ class FacilitySeen(BaseConfig):
     seen_last: Optional[datetime]
 
 
+def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
+    """ Filters out ignored records like dummy generators """
+
+    def fac_is_ignored(fac: FacilitySeen) -> Optional[FacilitySeen]:
+
+        # dummy generators for AEMO NEM
+        if fac.network_id == "NEM" and fac.code.startswith("DG_"):
+            return None
+
+        # reserve trader for AEMO NEM
+        if fac.network_id == "NEM" and fac.code.startswith("RT_"):
+            return None
+
+        return fac
+
+    fac_filtered = list(filter(fac_is_ignored, fac_records))
+
+    return fac_filtered
+
+
 def get_facility_first_seen(interval: str = "7 days") -> List[FacilitySeen]:
     """Run this and it'll check if there are new facilities in
     scada data and let you know which ones
