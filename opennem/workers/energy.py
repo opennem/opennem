@@ -386,7 +386,7 @@ def run_energy_update_archive(
                     )
 
 
-def run_energy_update_yesterday(days: int = 1) -> None:
+def run_energy_update_days(networks: List[NetworkSchema], days: int = 1) -> None:
     """Run energy sum update for yesterday. This task is scheduled
     in scheduler/db
 
@@ -395,37 +395,10 @@ def run_energy_update_yesterday(days: int = 1) -> None:
     # This is Sydney time as the data is published in local time
     tz = pytz.timezone("Australia/Sydney")
 
-    for network in [NetworkNEM, NetworkWEM, NetworkAPVI]:
+    if not networks:
+        networks = [NetworkNEM, NetworkWEM, NetworkAPVI]
 
-        # today_midnight in NEM time
-        today_midnight = datetime.now(tz).replace(
-            tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
-        )
-
-        date_max = today_midnight
-        date_min = today_midnight - timedelta(days=days)
-
-        regions = [i.code for i in get_network_regions(network)]
-
-        if network == NetworkAPVI:
-            regions = ["WEM"]
-
-        for region in regions:
-            run_energy_calc(region, date_min, date_max, network=network)
-
-        slack_message("Ran energy dailies for regions: {}".format(",".join(regions)))
-
-
-def run_energy_update_today(network: NetworkSchema = NetworkNEM, days: int = 1) -> None:
-    """Run energy sum update for yesterday. This task is scheduled
-    in scheduler/db
-
-    This is NEM only atm"""
-
-    # This is Sydney time as the data is published in local time
-    tz = pytz.timezone("Australia/Sydney")
-
-    for network in [NetworkNEM, NetworkWEM, NetworkAPVI]:
+    for network in networks:
 
         # today_midnight in NEM time
         today_midnight = datetime.now(tz).replace(
@@ -445,7 +418,7 @@ def run_energy_update_today(network: NetworkSchema = NetworkNEM, days: int = 1) 
 
 
 def run_energy_update_45d() -> None:
-    run_energy_update_yesterday(days=45)
+    run_energy_update_days(days=45)
 
 
 def run_energy_update_all() -> None:
@@ -463,5 +436,4 @@ def run_energy_update_nemweb() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_yesterday(days=7)
-    run_energy_update_today()
+    run_energy_update_days(networks=[NetworkWEM], days=14)
