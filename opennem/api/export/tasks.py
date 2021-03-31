@@ -38,7 +38,7 @@ from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.utils.version import get_version
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.export.tasks")
 
 
 def export_power(
