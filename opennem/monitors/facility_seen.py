@@ -10,9 +10,8 @@ from datetime import datetime
 from typing import List, Optional
 
 from opennem.db import get_database_engine
+from opennem.notifications.slack import slack_message
 from opennem.schema.core import BaseConfig
-
-# from opennem.notifications.slack import slack_message
 
 logger = logging.getLogger("opennem.monitors.facility_seen")
 
@@ -104,13 +103,15 @@ def get_facility_first_seen(period: Optional[str] = None) -> List[FacilitySeen]:
 
 
 def facility_first_seen_check() -> None:
-    facs = get_facility_first_seen("30 days")
+    """ Find new DUIDs and alert on them """
+    facs = get_facility_first_seen()
 
     facs_filtered = ignored_duids(facs)
 
-    from pprint import pprint
-
-    pprint(facs_filtered)
+    for fac in facs_filtered:
+        msg = "Found new facility on network {} with DUID: {}".format(fac.network_id, fac.code)
+        slack_message(msg)
+        logger.info(msg)
 
 
 if __name__ == "__main__":

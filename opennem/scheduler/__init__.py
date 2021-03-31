@@ -18,6 +18,7 @@ from opennem.api.export.tasks import (
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.aemo_intervals import aemo_wem_live_interval
 from opennem.monitors.emissions import alert_missing_emission_factors
+from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings
@@ -131,3 +132,9 @@ def monitor_wem_interval() -> None:
 def monitor_emission_factors() -> None:
     if settings.workers_run:
         alert_missing_emission_factors()
+
+
+@huey.periodic_task(crontab(hour="23"))
+def schedule_facility_first_seen_check() -> None:
+    """ Check for new DUIDS """
+    facility_first_seen_check()
