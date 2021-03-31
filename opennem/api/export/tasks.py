@@ -274,7 +274,6 @@ def export_energy(
 
 def export_all_monthly() -> None:
     session = SessionLocal()
-    network_regions = session.query(NetworkRegion).all()
 
     all_monthly = OpennemDataSet(
         code="au", data=[], version=get_version(), created_at=datetime.now()
@@ -283,58 +282,69 @@ def export_all_monthly() -> None:
     cpi = gov_stats_cpi()
     all_monthly.append_set(cpi)
 
-    for network_region in network_regions:
-        network = network_from_network_code(network_region.network.code)
-        networks = None
+    # Iterate networks and network regions
+    networks = [NetworkNEM, NetworkWEM]
 
-        if network_region.code == "WEM":
-            networks = [NetworkWEM, NetworkAPVI]
-
-        scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks)
-
-        time_series = TimeSeries(
-            start=scada_range.start,
-            end=scada_range.end,
-            network=network,
-            interval=human_to_interval("1M"),
-            period=human_to_period("all"),
+    for network in networks:
+        network_regions = (
+            session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code).all()
         )
 
-        stat_set = energy_fueltech_daily(
-            time_series=time_series,
-            networks_query=networks,
-            network_region_code=network_region.code,
-        )
+        for network_region in network_regions:
+            networks = []
 
-        if not stat_set:
-            continue
+            if network_region.code == "WEM":
+                networks = [NetworkWEM, NetworkAPVI]
 
-        if network == NetworkNEM:
-            interconnector_flows = energy_interconnector_region_daily(
+            logger.debug(
+                "Running monthlies for {} and {}".format(network.code, network_region.code)
+            )
+
+            scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks)
+
+            time_series = TimeSeries(
+                start=scada_range.start,
+                end=scada_range.end,
+                network=network,
+                interval=human_to_interval("1M"),
+                period=human_to_period("all"),
+            )
+
+            stat_set = energy_fueltech_daily(
                 time_series=time_series,
                 networks_query=networks,
                 network_region_code=network_region.code,
             )
-            stat_set.append_set(interconnector_flows)
 
-            interconnector_emissions = energy_interconnector_emissions_region_daily(
-                time_series=time_series,
-                networks_query=networks,
-                network_region_code=network_region.code,
-            )
-            stat_set.append_set(interconnector_emissions)
+            if not stat_set:
+                continue
 
-        all_monthly.append_set(stat_set)
+            if network == NetworkNEM:
+                interconnector_flows = energy_interconnector_region_daily(
+                    time_series=time_series,
+                    networks_query=networks,
+                    network_region_code=network_region.code,
+                )
+                stat_set.append_set(interconnector_flows)
 
-        bom_station = get_network_region_weather_station(network_region.code)
+                interconnector_emissions = energy_interconnector_emissions_region_daily(
+                    time_series=time_series,
+                    networks_query=networks,
+                    network_region_code=network_region.code,
+                )
+                stat_set.append_set(interconnector_emissions)
 
-        if bom_station:
-            weather_stats = weather_daily(
-                time_series=time_series,
-                station_code=bom_station,
-                network_region=network_region.code,
-            )
-            all_monthly.append_set(weather_stats)
+            all_monthly.append_set(stat_set)
+
+            bom_station = get_network_region_weather_station(network_region.code)
+
+            if bom_station:
+                weather_stats = weather_daily(
+                    time_series=time_series,
+                    station_code=bom_station,
+                    network_region=network_region.code,
+                )
+                all_monthly.append_set(weather_stats)
 
     write_output("v3/stats/au/all/monthly.json", all_monthly)
 
@@ -528,7 +538,7 @@ def export_metadata() -> bool:
 
 if __name__ == "__main__":
     export_power(priority=PriorityType.live)
-    export_energy(latest=False)
+    export_energy(latest=True)
     export_all_monthly()
     export_all_daily()
     export_electricitymap()
