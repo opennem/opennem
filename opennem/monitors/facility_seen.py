@@ -104,7 +104,7 @@ def get_facility_first_seen(period: Optional[str] = None) -> List[FacilitySeen]:
 
 def facility_first_seen_check() -> None:
     """ Find new DUIDs and alert on them """
-    facs = get_facility_first_seen()
+    facs = get_facility_first_seen("3 days")
 
     facs_filtered = ignored_duids(facs)
 
