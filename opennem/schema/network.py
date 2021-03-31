@@ -43,7 +43,7 @@ class NetworkSchema(BaseConfig):
 
         return interval
 
-    def get_timezone(self, postgres_format=False) -> Union[timezone_native, pytz_timezone]:
+    def get_timezone(self, postgres_format: bool = False) -> Union[timezone_native, pytz_timezone]:
         tz = get_current_timezone()
 
         if self.offset:
