@@ -8,7 +8,7 @@ from pytz import timezone as pytz_timezone
 
 from opennem.core.time import get_interval_by_size
 from opennem.schema.time import TimeInterval
-from opennem.utils.timezone import get_current_timezone, get_fixed_timezone
+from opennem.utils.timezone import get_current_timezone
 
 from .core import BaseConfig
 
@@ -44,10 +44,18 @@ class NetworkSchema(BaseConfig):
         return interval
 
     def get_timezone(self, postgres_format: bool = False) -> Union[timezone_native, pytz_timezone]:
+        """Get the network timezone
+
+        @TODO define crawl timezones vs network timezone
+        """
+        # Default to current system timezone
         tz = get_current_timezone()
 
+        # If a fixed offset is defined for the network use that
         if self.offset:
-            tz = get_fixed_timezone(self.offset)
+            tz = pytz.FixedOffset(self.offset)
+
+        # If the network alternatively defines a timezone
         if self.timezone:
             tz = pytz_timezone(self.timezone)
 
