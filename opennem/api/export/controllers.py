@@ -552,7 +552,6 @@ def energy_interconnector_region_daily(
 
     result = stats_factory(
         imports,
-        # code=network_region_code or network.code,
         network=time_series.network,
         period=period,
         interval=time_series.interval,
