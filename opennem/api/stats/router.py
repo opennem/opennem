@@ -412,15 +412,19 @@ def power_network_region_fueltech(
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
-def emission_factor_per_network(
+def emission_factor_per_network(  # type: ignore
     engine=Depends(get_database_engine),  # type: ignore
     network_code: str = Query(..., description="Network code"),
+    interval: str = Query("30m", description="Interval size"),
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
     network = network_from_network_code(network_code)
-    interval_obj = human_to_interval("30m")
+    interval_obj = human_to_interval(interval)
     period_obj = human_to_period("7d")
+
+    if not interval_obj:
+        raise Exception(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid interval size")
 
     scada_range = get_scada_range(network=network)
 
