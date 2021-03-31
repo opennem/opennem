@@ -43,7 +43,9 @@ class NetworkSchema(BaseConfig):
 
         return interval
 
-    def get_timezone(self, postgres_format: bool = False) -> Union[timezone_native, pytz_timezone]:
+    def get_timezone(
+        self, postgres_format: bool = False
+    ) -> Union[timezone_native, pytz_timezone, str]:
         """Get the network timezone
 
         @TODO define crawl timezones vs network timezone
