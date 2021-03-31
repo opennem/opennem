@@ -7,7 +7,7 @@ from huey import PriorityRedisHuey, crontab
 
 from opennem.db.tasks import refresh_material_views
 from opennem.settings import settings
-from opennem.workers.energy import run_energy_update_today, run_energy_update_yesterday
+from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 
 # Py 3.8 on MacOS changed the default multiprocessing model
@@ -33,7 +33,7 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
     if settings.workers_db_run:
-        run_energy_update_yesterday()
+        run_energy_update_days(days=2)
         refresh_material_views("mv_facility_all")
         refresh_material_views("mv_network_fueltech_days")
         refresh_material_views("mv_region_emissions")
@@ -59,8 +59,7 @@ def db_refresh_material_views_recent() -> None:
 @huey.periodic_task(crontab(hour="*/1", minute="10,40"))
 @huey.lock_task("db_refresh_energies_yesterday")
 def db_refresh_energies_yesterday() -> None:
-    run_energy_update_yesterday()
-    run_energy_update_today()
+    run_energy_update_days(days=2)
 
 
 @huey.periodic_task(crontab(hour="22"))
