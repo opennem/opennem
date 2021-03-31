@@ -5,7 +5,6 @@ from pprint import pprint
 from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
-
 # from opennem.core.loader import load_data
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
@@ -393,7 +392,7 @@ def opennem_init() -> None:
     import_station_set(stations)
 
 
-def import_station_set(stations: StationSet) -> None:
+def import_station_set(stations: StationSet, only_insert_facilities: bool = False) -> None:
     session = SessionLocal()
 
     for station in stations:
@@ -445,6 +444,10 @@ def import_station_set(stations: StationSet) -> None:
                 .filter_by(network_id=fac.network.code)
                 .one_or_none()
             )
+
+            if facility_model and only_insert_facilities:
+                logger.debug(" => skip updating {}".format(facility_model.code))
+                continue
 
             if not facility_model:
                 facility_model = Facility(code=fac.code, network_id=fac.network.code)
