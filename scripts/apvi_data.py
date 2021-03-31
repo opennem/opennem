@@ -1,18 +1,12 @@
 import json
-from datetime import datetime
 from itertools import groupby
-from urllib.parse import ParseResult
 
 import requests
 
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.pipelines.apvi.data import STATE_POSTCODE_PREFIXES
 from opennem.schema.network import NetworkNEM
-from opennem.spiders.apvi.data import (
-    APVI_DATA_URI,
-    APVI_DATE_QUERY_FORMAT,
-    TODAY,
-)
+from opennem.spiders.apvi.data import APVI_DATA_URI, APVI_DATE_QUERY_FORMAT, TODAY
 from opennem.utils.dates import date_series, parse_date
 
 APVI_BASE = ""
@@ -40,20 +34,18 @@ def main():
                     continue
 
                 interval_time = parse_date(
-                    record["ts"], dayfirst=False, yearfirst=True,
+                    record["ts"],
+                    dayfirst=False,
+                    yearfirst=True,
                 )
 
-                interval_time = interval_time.astimezone(
-                    NetworkNEM.get_timezone()
-                )
+                interval_time = interval_time.astimezone(NetworkNEM.get_timezone())
 
                 generated_state = sum(
                     [
                         float(v) / 100 * postcode_capacity[k]
                         for k, v in record.items()
-                        if k.startswith(prefix)
-                        and v
-                        and k in postcode_capacity
+                        if k.startswith(prefix) and v and k in postcode_capacity
                     ]
                 )
 
@@ -107,9 +99,7 @@ def main():
                     json_grouped_summed[grouped_date][k], 2
                 )
 
-    json_serialized = json.dumps(
-        json_grouped_summed, indent=4, cls=OpenNEMJSONEncoder
-    )
+    json_serialized = json.dumps(json_grouped_summed, indent=4, cls=OpenNEMJSONEncoder)
 
     print(json_serialized)
 
