@@ -37,6 +37,10 @@ def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
         if fac.network_id == "NEM" and fac.code.startswith("RT_"):
             return None
 
+        # V1 are possible FCAS providers for AEMO NEM
+        if fac.network_id == "NEM" and fac.code.endswith("V1"):
+            return None
+
         # loads for AEMO NEM
         if fac.network_id == "NEM" and fac.code.endswith("L1"):
             return None
