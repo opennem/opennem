@@ -439,6 +439,7 @@ def opennem_init() -> None:
             if fac.fueltech:
                 facility_model.fueltech_id = fac.fueltech.code
 
+            facility_model.network_id = fac.network.code
             facility_model.status_id = fac.status.code
             facility_model.dispatch_type = fac.dispatch_type
             facility_model.capacity_registered = fac.capacity_registered
@@ -456,7 +457,11 @@ def opennem_init() -> None:
 
             session.add(facility_model)
             station_model.facilities.append(facility_model)
-            logger.debug(" => Added facility {}".format(fac.code))
+            logger.debug(
+                " => Added facility {} to {} {}".format(
+                    fac.code, facility_model.network_id, facility_model.network_region
+                )
+            )
 
         session.add(station_model)
         session.commit()
