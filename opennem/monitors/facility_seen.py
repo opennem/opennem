@@ -24,6 +24,21 @@ class FacilitySeen(BaseConfig):
     seen_last: Optional[datetime]
 
 
+# This is a list of NEM VPP's that aren't mapped yet
+# they're all currently in demo state
+# info at : https://arena.gov.au/assets/2021/02/aemo-virtual-power-plant-demonstrations-report-3.pdf
+NEM_VPPS = [
+    "VSSEL1V1",
+    "VSSAEV1",
+    "VSSSE1V1",
+    "VSNSN1V1",
+    "VSSSH1S1",
+    "VSVEL2S1",
+    "VSNEL2S1",
+    "VSQHT1V1",
+]
+
+
 def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
     """ Filters out ignored records like dummy generators """
 
@@ -43,6 +58,10 @@ def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
 
         # loads for AEMO NEM
         if fac.network_id == "NEM" and fac.code.endswith("L1"):
+            return None
+
+        # ignore demo VPPs
+        if fac.network_id == "NEM" and fac.code in NEM_VPPS:
             return None
 
         return fac
