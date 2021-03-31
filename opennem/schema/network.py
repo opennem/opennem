@@ -68,6 +68,11 @@ class NetworkSchema(BaseConfig):
 
         return tz
 
+    def get_crawl_timezone(self) -> Any:
+        tz = pytz_timezone(self.timezone)
+
+        return tz
+
     def get_fixed_offset(self) -> Union[Any, tzinfo]:
         if self.offset:
             return pytz.FixedOffset(self.offset)
