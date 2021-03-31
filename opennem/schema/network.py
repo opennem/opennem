@@ -48,16 +48,18 @@ class NetworkSchema(BaseConfig):
 
         @TODO define crawl timezones vs network timezone
         """
-        # Default to current system timezone
-        tz = get_current_timezone()
 
         # If a fixed offset is defined for the network use that
         if self.offset:
             tz = pytz.FixedOffset(self.offset)
 
         # If the network alternatively defines a timezone
-        if self.timezone:
+        if not tz and self.timezone:
             tz = pytz_timezone(self.timezone)
+
+        # Default to current system timezone
+        if not tz:
+            tz = get_current_timezone()
 
         if postgres_format:
             tz = str(tz)[:3]
