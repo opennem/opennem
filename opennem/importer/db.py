@@ -384,12 +384,17 @@ def registry_init() -> None:
 
 
 def opennem_init() -> None:
-    session = SessionLocal()
     station_data = load_data("opennem_stations.json", from_project=True)
     stations = StationSet()
 
     for s in station_data:
         stations.add_dict(s)
+
+    import_station_set(stations)
+
+
+def import_station_set(stations: StationSet) -> None:
+    session = SessionLocal()
 
     for station in stations:
         add_or_update: str = "Updating"
@@ -398,15 +403,25 @@ def opennem_init() -> None:
         if not station_model:
             add_or_update = "Adding"
             station_model = Station(code=station.code)
-            station_model.approved = True
-            station_model.approved_at = datetime.now()
-            station_model.approved_by = "opennem.init"
             station_model.created_by = "opennem.init"
 
         logger.debug("{} station: {}".format(add_or_update, station.code))
 
         station_model.description = station.description
-        station_model.name = station.name
+
+        if station.name:
+            station_model.name = station.name
+
+        station_model.approved = station.approved
+
+        if station.approved:
+            station_model.approved = True
+            station_model.approved_at = datetime.now()
+            station_model.approved_by = "opennem.init"
+        else:
+            station_model.approved_at = None
+            station_model.approved_by = None
+
         station_model.network_name = station.network_name
 
         if not station_model.location:
@@ -442,18 +457,29 @@ def opennem_init() -> None:
             facility_model.network_id = fac.network.code
             facility_model.status_id = fac.status.code
             facility_model.dispatch_type = fac.dispatch_type
-            facility_model.capacity_registered = fac.capacity_registered
-            facility_model.registered = fac.registered
+
+            if fac.capacity_registered:
+                facility_model.capacity_registered = fac.capacity_registered
+
+            if fac.registered:
+                facility_model.registered = fac.registered
+
             facility_model.unit_id = fac.unit_id
             facility_model.unit_number = fac.unit_number
             facility_model.unit_alias = fac.unit_alias
             facility_model.unit_capacity = fac.unit_capacity
-            facility_model.emissions_factor_co2 = fac.emissions_factor_co2
-            facility_model.approved = True
-            facility_model.approved_by = "opennem.importer"
+
+            if fac.emissions_factor_co2:
+                facility_model.emissions_factor_co2 = fac.emissions_factor_co2
+
+            facility_model.approved = fac.approved
+
+            if fac.approved:
+                facility_model.approved_by = "opennem.importer"
+            else:
+                facility_model.approved_by = None
 
             facility_model.created_by = "opennem.init"
-            facility_model.approved_by = "opennem.init"
 
             session.add(facility_model)
             station_model.facilities.append(facility_model)
