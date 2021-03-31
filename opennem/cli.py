@@ -22,7 +22,7 @@ from opennem.importer.emissions import import_emissions_map
 from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_export, opennem_import
 from opennem.settings import settings
-from opennem.workers.energy import run_energy_update_archive, run_energy_update_yesterday
+from opennem.workers.energy import run_energy_update_archive, run_energy_update_days
 
 logger = logging.getLogger("opennem.cli")
 
@@ -125,7 +125,7 @@ def cmd_export_energy_monthly() -> None:
 
 @click.command()
 def cmd_export_all() -> None:
-    run_energy_update_yesterday(days=2)
+    run_energy_update_days(days=2)
     refresh_material_views("mv_network_fueltech_days")
     refresh_material_views("mv_facility_45d")
     export_power()
