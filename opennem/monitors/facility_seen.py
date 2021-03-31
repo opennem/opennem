@@ -71,7 +71,7 @@ def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
     return fac_filtered
 
 
-def get_facility_first_seen(interval: str = "7 days") -> List[FacilitySeen]:
+def get_facility_first_seen(period: Optional[str] = None) -> List[FacilitySeen]:
     """Run this and it'll check if there are new facilities in
     scada data and let you know which ones
 
@@ -87,14 +87,16 @@ def get_facility_first_seen(interval: str = "7 days") -> List[FacilitySeen]:
         from facility_scada fs
         where
             fs.facility_code not in (select distinct code from facility)
-            and fs.trading_interval > now() - interval '{interval}';
-    """.format(
-        interval=interval
-    )
+            {period_query}
+    """
+
+    period_query = f"and fs.trading_interval > now() - interval '{period}'" if period else ""
+
+    query = __query.format(period_query=period_query)
 
     with engine.connect() as c:
-        logger.debug(__query)
-        row = list(c.execute(__query))
+        logger.debug(query)
+        row = list(c.execute(query))
 
     records: List[FacilitySeen] = [FacilitySeen(code=r[0], network_id=r[1]) for r in row]
 
@@ -102,7 +104,7 @@ def get_facility_first_seen(interval: str = "7 days") -> List[FacilitySeen]:
 
 
 def facility_first_seen_check() -> None:
-    facs = get_facility_first_seen()
+    facs = get_facility_first_seen("30 days")
 
     facs_filtered = ignored_duids(facs)
 
