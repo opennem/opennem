@@ -6,6 +6,7 @@ import platform
 from huey import PriorityRedisHuey, crontab
 
 from opennem.db.tasks import refresh_material_views
+from opennem.notifications.slack import slack_message
 from opennem.settings import settings
 from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
@@ -38,6 +39,7 @@ def db_refresh_material_views() -> None:
         refresh_material_views("mv_network_fueltech_days")
         refresh_material_views("mv_region_emissions")
         refresh_material_views("mv_interchange_energy_nem_region")
+        slack_message("Ran daily energy update and material views on {}".format(settings.env))
 
 
 # Catchup task
@@ -67,3 +69,4 @@ def db_refresh_energies_yesterday() -> None:
 def db_facility_seen_update() -> None:
     if settings.workers_db_run:
         update_facility_seen_range(False)
+        slack_message("Ran facility seen range on {}".format(settings.env))
