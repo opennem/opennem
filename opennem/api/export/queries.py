@@ -28,7 +28,14 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
                 select
                     time_bucket_gapfill('1 day', observation_time) as observation_time,
                     fs.station_id,
-                    avg(fs.temp_air) as temp_avg,
+
+                    case
+                        when avg(fs.temp_air) is not null
+                            then avg(fs.temp_air)
+                        when max(fs.temp_max) is not null and max(fs.temp_min) is not null
+                            then ((max(fs.temp_max) + min(fs.temp_min)) / 2)
+                        else NULL
+                    end as temp_avg,
 
                     case when min(fs.temp_min) is not null
                         then min(fs.temp_min)
