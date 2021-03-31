@@ -1,6 +1,6 @@
 import logging
 from collections import OrderedDict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
 
@@ -269,22 +269,6 @@ def networks_to_in(networks: List[NetworkSchema]) -> str:
     return ", ".join(codes)
 
 
-SCADA_RANGE_EXCLUDE_DUIDS = [
-    "V-SA",
-    "V-SA-2",
-    "N-Q-MNSP1",
-    "N-Q-MNSP1-2",
-    "NSW1-QLD1",
-    "NSW1-QLD1-2",
-    "V-S-MNSP1",
-    "V-S-MNSP1-2",
-    "T-V-MNSP1",
-    "T-V-MNSP1-2",
-    "VIC1-NSW1",
-    "VIC1-NSW1-2",
-]
-
-
 @cache_scada_result
 def get_scada_range(
     network: Optional[NetworkSchema] = None,
@@ -311,13 +295,29 @@ def get_scada_range(
             and f.interconnector is FALSE
     """
 
+    __query = """
+    select
+        min(f.data_first_seen) at time zone '{timezone}',
+        max(fs.trading_interval)  at time zone '{timezone}'
+    from facility_scada fs
+    left join facility f on fs.facility_code = f.code
+    where
+        fs.trading_interval >= '{date_min}' and
+        {facility_query}
+        {network_query}
+        {network_region_query}
+        f.fueltech_id not in ('solar_rooftop', 'imports', 'exports')
+        and f.interconnector is FALSE;
+    """
+
     network_query = ""
     timezone = "UTC"
-    min_query = "min(f.data_first_seen)"
+
+    # Only look back 7 days because the query is more optimized
+    date_min = datetime.now() - timedelta(days=7)
 
     if network:
         network_query = f"f.network_id = '{network.code}' and"
-        # timezone = network.timezone_database
 
     if networks:
         net_case = networks_to_in(networks)
@@ -334,16 +334,13 @@ def get_scada_range(
         fac_case = duid_in_case(facilities)
         facility_query = "f.facility_code IN ({}) and ".format(fac_case)
 
-    exclude_duids = duid_in_case(SCADA_RANGE_EXCLUDE_DUIDS)
-
     scada_range_query = dedent(
         __query.format(
-            min_query=min_query,
+            date_min=date_min,
             facility_query=facility_query,
             network_query=network_query,
             network_region_query=network_region_query,
             timezone=timezone,
-            exclude_duids=exclude_duids,
         )
     )
 
