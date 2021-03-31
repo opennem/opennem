@@ -275,25 +275,11 @@ def get_scada_range(
     networks: Optional[List[NetworkSchema]] = None,
     network_region: Optional[str] = None,
     facilities: Optional[List[str]] = None,
-    max_only: bool = False,
 ) -> Optional[ScadaDateRange]:
     """Get the start and end dates for a network query. This is more efficient
     than providing or querying the range at query time
     """
     engine = get_database_engine()
-
-    __query = """
-        select
-            {min_query} AT TIME ZONE '{timezone}',
-            now() at time zone '{timezone}'
-        from facility f
-        where
-            {facility_query}
-            {network_query}
-            {network_region_query}
-            f.fueltech_id not in ('solar_rooftop')
-            and f.interconnector is FALSE
-    """
 
     __query = """
     select
