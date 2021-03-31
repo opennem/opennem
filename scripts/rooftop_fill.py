@@ -10,7 +10,7 @@ select
     now() as updated_at,
     'NEM' as network_id,
     time_bucket_gapfill('30 minutes', fs.trading_interval) as trading_interval,
-    'ROOFTOP_NEM_' || substring(f.network_region for 3) as facility_code,
+    'ROOFTOP_NEM_' ||  rtrim(f.network_region, '1') as facility_code,
     avg(fs.generated) as generated,
     avg(fs.generated) / 2 as eoi_quantity,
     FALSE as is_forecast,
