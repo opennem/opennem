@@ -153,7 +153,7 @@ def cmd_task() -> None:
 @click.option("--year", required=True, type=int)
 @click.option("--fueltech", required=False, type=str)
 def cmd_task_energy(year: int, fueltech: Optional[str] = None) -> None:
-    run_energy_update_archive(year, fueltech_id=fueltech)
+    run_energy_update_archive(year, fueltech=fueltech)
 
 
 main.add_command(crawl)
