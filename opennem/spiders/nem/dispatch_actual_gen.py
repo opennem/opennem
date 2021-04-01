@@ -23,7 +23,7 @@ class NemwebWeekDispatchActualGenLatest(NemwebSpider):
     name = "au.nem.week.dispatch_actual_gen"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/"
 
-    limit = 1
+    limit = 7
 
     pipelines_extra = set(
         [
@@ -37,9 +37,6 @@ class NemwebWeekDispatchActualGenLatest(NemwebSpider):
 class NemwebDispatchActualGenCurrent(NemwebSpider):
     name = "au.nem.current.dispatch_actual_gen"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/"
-
-    limit = 0
-    skip = 0
 
     pipelines_extra = set(
         [
