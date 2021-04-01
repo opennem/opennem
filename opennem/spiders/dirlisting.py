@@ -39,9 +39,7 @@ def parse_dirlisting(raw_string: str) -> Dict[str, Any]:
     if not components or len(components) < 2:
         logging.debug(components)
         raise Exception(
-            "Invalid line string: {}. Components are: {}".format(
-                raw_string, components
-            )
+            "Invalid line string: {}. Components are: {}".format(raw_string, components)
         )
 
     if is_number(components[1]):
@@ -51,9 +49,7 @@ def parse_dirlisting(raw_string: str) -> Dict[str, Any]:
 
     if type(dt) is not datetime:
         raise Exception(
-            "{} is not a valid datetime. Original value was {}".format(
-                dt, components[0]
-            )
+            "{} is not a valid datetime. Original value was {}".format(dt, components[0])
         )
 
     return {
@@ -92,30 +88,26 @@ class DirlistingSpider(Spider):
 
     custom_settings: Optional[Dict] = {}
 
+    # filename: Optional[str] = None
+
     def start_requests(self) -> Generator[scrapy.Request, None, None]:
         starts = []
 
-        if (
-            hasattr(self, "start_url")
-            and self.start_url
-            and type(self.start_url) is str
-        ):
+        if hasattr(self, "start_url") and self.start_url and type(self.start_url) is str:
             starts = [self.start_url]
 
-        if (
-            hasattr(self, "start_urls")
-            and self.start_urls
-            and type(self.start_urls) is list
-        ):
+        if hasattr(self, "start_urls") and self.start_urls and type(self.start_urls) is list:
             starts = [self.start_urls]
 
         for url in starts:
             yield scrapy.Request(url)
 
     def parse(self, response) -> Generator[Dict[str, Any], None, None]:
-        links = list(
-            reversed([i.get() for i in response.xpath("//body/pre/a/@href")])
-        )
+        links = list(reversed([i.get() for i in response.xpath("//body/pre/a/@href")]))
+
+        if self.filename:
+            self.skip = 0
+            self.limit = 0
 
         parsed = 0
 
@@ -147,6 +139,10 @@ class DirlistingSpider(Spider):
                 and isinstance(self.filename_filter, Pattern)
                 and not self.filename_filter.match(link)
             ):
+                self.log(f"Filter skip file {link}", logging.DEBUG)
+                continue
+
+            if self.filename and self.filename not in link:
                 self.log(f"Filter skip file {link}", logging.DEBUG)
                 continue
 
