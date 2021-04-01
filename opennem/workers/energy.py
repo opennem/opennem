@@ -337,6 +337,8 @@ def run_energy_update_archive(
 
     if not year:
         years = [i for i in range(YEAR_EARLIEST, CUR_YEAR + 1)]
+    else:
+        years = [year]
 
     if not months:
         months = list(range(1, 13))
@@ -392,9 +394,7 @@ def run_energy_update_archive(
 
 def run_energy_update_days(networks: Optional[List[NetworkSchema]] = None, days: int = 1) -> None:
     """Run energy sum update for yesterday. This task is scheduled
-    in scheduler/db
-
-    This is NEM only atm"""
+    in scheduler/db"""
 
     if not networks:
         networks = [NetworkNEM, NetworkWEM, NetworkAPVI]
@@ -440,5 +440,4 @@ def run_energy_update_nemweb() -> None:
 
 
 if __name__ == "__main__":
-    # run_energy_update_days(networks=[NetworkWEM], days=14)
-    run_energy_update_archive(network=NetworkAPVI, fueltech="solar_rooftop")
+    run_energy_update_all()
