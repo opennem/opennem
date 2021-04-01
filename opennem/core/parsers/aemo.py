@@ -68,7 +68,7 @@ class AEMOTableSchema(BaseModel):
         return self.records
 
     def add_record(self, record: Union[Dict, BaseModel]) -> bool:
-        if self._record_schema:
+        if hasattr(self, "_record_schema") and self._record_schema:
             _record = None
 
             try:
@@ -80,18 +80,10 @@ class AEMOTableSchema(BaseModel):
                     ve_fieldname = ve["loc"][0]
                     ve_val = ""
 
-                    if (
-                        record
-                        and isinstance(record, dict)
-                        and ve_fieldname in record
-                    ):
+                    if record and isinstance(record, dict) and ve_fieldname in record:
                         ve_val = record[ve_fieldname]
 
-                    logger.error(
-                        "{} has error: {} '{}'".format(
-                            ve_fieldname, ve["msg"], ve_val
-                        )
-                    )
+                    logger.error("{} has error: {} '{}'".format(ve_fieldname, ve["msg"], ve_val))
                 return False
 
             self.records.append(_record)
@@ -107,6 +99,15 @@ class AEMOTableSchema(BaseModel):
 class AEMOTableSet(BaseModel):
     tables: List[AEMOTableSchema] = []
 
+    @property
+    def table_names(self) -> List[str]:
+        _names: List[str] = []
+
+        for _t in self.tables:
+            _names.append(_t.full_name)
+
+        return _names
+
     def has_table(self, table_name: str) -> bool:
         if not self.tables:
             return False
@@ -116,9 +117,7 @@ class AEMOTableSet(BaseModel):
 
         table_name = table_name.upper()
 
-        table_lookup = list(
-            filter(lambda t: t.full_name == table_name, self.tables)
-        )
+        table_lookup = list(filter(lambda t: t.full_name == table_name, self.tables))
 
         return len(table_lookup) > 0
 
@@ -127,15 +126,14 @@ class AEMOTableSet(BaseModel):
 
         return True
 
-    def get_table(self, table_name: str) -> AEMOTableSchema:
+    def get_table(self, table_name: str) -> Optional[AEMOTableSchema]:
         table_name = table_name.upper()
 
         if not self.has_table(table_name):
-            raise Exception("Table not found: {}".format(table_name))
+            return None
+            # raise Exception("Table not found: {}".format(table_name))
 
-        table_lookup = list(
-            filter(lambda t: t.full_name == table_name, self.tables)
-        )
+        table_lookup = list(filter(lambda t: t.full_name == table_name, self.tables))
 
         return table_lookup.pop()
 
@@ -147,7 +145,7 @@ class AEMOParserException(Exception):
 AEMO_ROW_HEADER_TYPES = ["C", "I", "D"]
 
 
-def parse_aemo_csv(content: str) -> AEMOTableSet:
+def parse_aemo_csv(content: str, table_set: AEMOTableSet = AEMOTableSet()) -> AEMOTableSet:
     """
     Parse AEMO CSV's into schemas and return a table set
 
@@ -158,7 +156,6 @@ def parse_aemo_csv(content: str) -> AEMOTableSet:
     datacsv = csv.reader(content_split)
 
     # init all the parser vars
-    table_set = AEMOTableSet()
     table_current = None
 
     for row in datacsv:
@@ -202,17 +199,13 @@ def parse_aemo_csv(content: str) -> AEMOTableSet:
         # new record
         elif record_type == "D":
             if not table_current:
-                logger.error(
-                    "Malformed AEMO csv - field records before table definition"
-                )
+                logger.error("Malformed AEMO csv - field records before table definition")
                 continue
 
             values = row[4:]
 
             if len(values) != len(table_current.fieldnames):
-                logger.error(
-                    "Malformed AEMO csv - length mismatch between records and fields"
-                )
+                logger.error("Malformed AEMO csv - length mismatch between records and fields")
                 continue
 
             record = dict(zip(table_current.fieldnames, values))
