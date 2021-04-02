@@ -311,7 +311,7 @@ def run_energy_calc(
             )
             return 0
 
-        generated_frame = shape_energy_dataframe(generated_results)
+        generated_frame = shape_energy_dataframe(generated_results, network=network)
 
         num_records = insert_energies(generated_frame, network=network)
 
