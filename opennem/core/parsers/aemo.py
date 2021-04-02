@@ -12,6 +12,7 @@ from pydantic import BaseModel, validator
 from pydantic.error_wrappers import ValidationError
 from pydantic.fields import PrivateAttr
 
+from opennem.pipelines.files import _fallback_download_handler
 from opennem.schema.aemo.mms import MMSBase, get_mms_schema_for_table
 
 _HAVE_PANDAS = False
@@ -257,3 +258,20 @@ def parse_aemo_csv(content: str, table_set: AEMOTableSet = AEMOTableSet()) -> AE
             table_current.add_record(record)
 
     return table_set
+
+
+def parse_aemo_urls(urls: List[str]) -> AEMOTableSet:
+    """ Parse a list of URLs into an AEMOTableSet """
+    aemo = AEMOTableSet()
+
+    for url in urls:
+        csv_content = _fallback_download_handler(url)
+
+        if not csv_content:
+            logger.error("Could not parse URL: {}".format(url))
+            continue
+
+        csv_content_decoded = csv_content.decode("utf-8")
+        aemo = parse_aemo_csv(csv_content_decoded, aemo)
+
+    return aemo
