@@ -180,7 +180,9 @@ def _energy_aggregate(
     )
 
 
-def shape_energy_dataframe(gen_series: List[Dict]) -> pd.DataFrame:
+def shape_energy_dataframe(
+    gen_series: List[Dict], network: NetworkSchema = NetworkNEM
+) -> pd.DataFrame:
     """ Shapes a list of dicts into a dataframe for energy_sum"""
     df = pd.DataFrame(
         gen_series,
@@ -196,6 +198,11 @@ def shape_energy_dataframe(gen_series: List[Dict]) -> pd.DataFrame:
     # Clean up types
     df.trading_interval = pd.to_datetime(df.trading_interval)
     df.generated = pd.to_numeric(df.generated)
+
+    # timezone from network
+    df.trading_interval = df.apply(
+        lambda x: pd.Timestamp(x.trading_interval, tz=network.get_fixed_offset()), axis=1
+    )
 
     return df
 
@@ -222,12 +229,6 @@ def energy_sum(
     # Shift back 5 minutes to even up into 30 minute bkocks
     if network.reading_shift:
         df.trading_interval = df.trading_interval - pd.Timedelta(minutes=network.reading_shift)
-
-    # Add back the timezone for NEM
-    # We use a fixed offset so need to loop
-    df.trading_interval = df.apply(
-        lambda x: pd.Timestamp(x.trading_interval, tz=network.get_fixed_offset()), axis=1
-    )
 
     # filter out empties
     df = df[pd.isnull(df.eoi_quantity) == False]
