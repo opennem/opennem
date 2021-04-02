@@ -1,11 +1,13 @@
+# pylint: disable=no-self-argument
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, validator
 from pydantic.error_wrappers import ValidationError
 
 from opennem.core.normalizers import clean_float, normalize_aemo_region, normalize_duid
+from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import parse_date
 
 logger = logging.getLogger(__name__)
@@ -36,6 +38,9 @@ def capitalize_string(string_val: str) -> str:
 
 
 class MMSBase(BaseModel):
+    _interval_field = Optional[str]
+    _primary_keys = Optional[List[str]]
+
     class Config:
         anystr_strip_whitespace = True
         use_enum_values = True
@@ -45,7 +50,6 @@ class MMSBase(BaseModel):
         alias_generator = mms_alias_generator
 
 
-# pylint: disable=no-self-argument
 class ParticipantMNSPInterconnector(MMSBase):
     """"""
 
@@ -90,7 +94,6 @@ class ParticipantMNSPInterconnector(MMSBase):
         return dt
 
 
-# pylint: disable=no-self-argument
 class MarketConfigInterconnector(MMSBase):
     """"""
 
@@ -105,10 +108,26 @@ class MarketConfigInterconnector(MMSBase):
     _validate_lastchanged = validator("lastchanged", pre=True)(validate_date)
 
 
+class DispatchUnitSolutionSchema(MMSBase):
+    _interval_field = "settlementdate"
+    _primary_keys = ["settlementdate", "duid"]
+
+    settlementdate: datetime
+    duid: str
+    initialmw: Optional[float]
+
+    _validate_settlementdate = validator("settlementdate", pre=True)(
+        lambda x: parse_date(x, network=NetworkNEM)
+    )
+    _validate_duid = validator("duid")(normalize_duid)
+    _validate_initialmw = validator("initialmw")(clean_float)
+
+
 # Map AEMO full table names to schemas
 TABLE_TO_SCHEMA_MAP = {
     "PARTICIPANT_REGISTRATION_MNSP_INTERCONNECTOR": ParticipantMNSPInterconnector,
     "MARKET_CONFIG_INTERCONNECTOR": MarketConfigInterconnector,
+    "DISPATCH_UNIT_SOLUTION": DispatchUnitSolutionSchema,
 }
 
 
@@ -117,4 +136,4 @@ def get_mms_schema_for_table(table_name: str) -> Optional[MMSBase]:
         logger.info("No schema found for table: {}".format(table_name))
         return None
 
-    return TABLE_TO_SCHEMA_MAP[table_name]
+    return TABLE_TO_SCHEMA_MAP[table_name]  # type: ignore
