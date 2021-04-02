@@ -393,7 +393,9 @@ def run_energy_update_archive(
                     )
 
 
-def run_energy_update_days(networks: Optional[List[NetworkSchema]] = None, days: int = 1) -> None:
+def run_energy_update_days(
+    networks: Optional[List[NetworkSchema]] = None, days: int = 1, fueltech: str = None
+) -> None:
     """Run energy sum update for yesterday. This task is scheduled
     in scheduler/db"""
 
@@ -419,7 +421,7 @@ def run_energy_update_days(networks: Optional[List[NetworkSchema]] = None, days:
             regions = ["WEM"]
 
         for region in regions:
-            run_energy_calc(region, date_min, date_max, network=network)
+            run_energy_calc(region, date_min, date_max, network=network, fueltech_id=fueltech)
 
 
 def run_energy_update_45d() -> None:
