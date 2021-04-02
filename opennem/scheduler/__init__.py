@@ -130,8 +130,7 @@ def monitor_wem_interval() -> None:
 @huey.periodic_task(crontab(hour="/12"), priority=10)
 @huey.lock_task("monitor_emission_factors")
 def monitor_emission_factors() -> None:
-    if settings.workers_run:
-        alert_missing_emission_factors()
+    alert_missing_emission_factors()
 
 
 @huey.periodic_task(crontab(hour="23"))
