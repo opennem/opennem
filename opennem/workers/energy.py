@@ -43,7 +43,7 @@ def get_generated_query(
 
     __sql = """
     select
-        fs.trading_interval at time zone 'AEST' as trading_interval,
+        fs.trading_interval at time zone '{timezone}' as trading_interval,
         fs.facility_code,
         fs.network_id,
         f.fueltech_id,
@@ -68,6 +68,7 @@ def get_generated_query(
         fueltech_match = f"and f.fueltech_id = '{fueltech_id}'"
 
     query = __sql.format(
+        timezone=network.timezone_database,
         network_id=network.code,
         network_region=network_region,
         date_min=date_min - timedelta(minutes=10),
