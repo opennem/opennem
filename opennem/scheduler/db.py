@@ -30,7 +30,8 @@ if settings.cache_url:
 
 huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
-# 6:45AM AEST
+
+# 6:45AM and 8:45AM AEST
 @huey.periodic_task(crontab(hour="20,23", minute="45"))
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
