@@ -5,6 +5,7 @@ import platform
 
 from huey import PriorityRedisHuey, crontab
 
+from opennem.api.export.tasks import export_energy
 from opennem.db.tasks import refresh_material_views
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings
@@ -33,13 +34,13 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 @huey.periodic_task(crontab(hour="20,23", minute="45"))
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
-    if settings.workers_db_run:
-        run_energy_update_days(days=2)
-        refresh_material_views("mv_facility_all")
-        refresh_material_views("mv_network_fueltech_days")
-        refresh_material_views("mv_region_emissions")
-        refresh_material_views("mv_interchange_energy_nem_region")
-        slack_message("Ran daily energy update and material views on {}".format(settings.env))
+    run_energy_update_days(days=2)
+    refresh_material_views("mv_facility_all")
+    refresh_material_views("mv_network_fueltech_days")
+    refresh_material_views("mv_region_emissions")
+    refresh_material_views("mv_interchange_energy_nem_region")
+    export_energy(latest=False)
+    slack_message("Ran daily energy update and material views on {}".format(settings.env))
 
 
 # Catchup task
