@@ -34,7 +34,7 @@ def __trading_energy_generator(
 ) -> pd.DataFrame:
     return_cols = []
 
-    t_start = datetime(date.year, date.month, date.day, 0, 5)
+    t_start = datetime(date.year, date.month, date.day, 0, 5, tzinfo=NetworkNEM.get_fixed_offset())
 
     # 48 trading intervals in the day
     # (could be better with groupby function)
