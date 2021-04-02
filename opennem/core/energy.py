@@ -8,13 +8,14 @@ Uses an average in 30 minute buckets
 
 """
 import logging
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from datetime import date, datetime, timedelta
+from typing import Any, Dict, Generator, List, Optional, Union
 
+import numpy as np
 import pandas as pd
 
 from opennem.schema.core import BaseConfig
-from opennem.schema.network import NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema
 
 logger = logging.getLogger("opennem.compat.energy")
 
@@ -23,6 +24,84 @@ class ScadaResultCompat(BaseConfig):
     interval: datetime
     code: Optional[str]
     generated: Union[float, int, None]
+
+
+def __trapezium_integration(d_ti: np.array, power_field: str = "MWH_READING") -> np.array:
+    return 0.5 * (d_ti[power_field] * [1, 2, 2, 2, 2, 2, 1]).sum() / 12
+
+
+def __trading_energy_generator(
+    df: pd.DataFrame, date: date, duid_id: str, power_field: str = "generated"
+) -> pd.DataFrame:
+    return_cols = []
+
+    t_start = datetime(date.year, date.month, date.day, 0, 5)
+
+    # 48 trading intervals in the day
+    # (could be better with groupby function)
+    for TI in range(48):
+        # t_i initial timestamp of trading_interval, t_f = final timestamp of trading interval
+        t_i = t_start + timedelta(0, 1800 * TI)
+        t_f = t_start + timedelta(0, 1800 * (TI + 1))
+
+        _query = f"'{t_i}' <= trading_interval <= '{t_f}' and facility_code == '{duid_id}'"
+
+        d_ti = df.query(_query)
+
+        energy_value = None
+
+        # interpolate if it isn't padded out
+        if d_ti[power_field].count() != 7:
+            index_interpolated = pd.date_range(start=t_i, end=t_f, freq="5min")
+
+            d_ti = d_ti.reset_index()
+            d_ti = d_ti.set_index("trading_interval")
+            d_ti = d_ti.reindex(index_interpolated)
+            d_ti["duid"] = duid_id
+
+        try:
+            energy_value = __trapezium_integration(d_ti, power_field)
+        except ValueError as e:
+            logger.error("Error with {} at {} {}: {}".format(duid_id, t_i, t_f, e))
+
+        if not d_ti.index.empty:
+            return_cols.append(
+                {
+                    "trading_interval": d_ti.index[-2],
+                    "network_id": "NEM",
+                    "facility_code": duid_id,
+                    "eoi_quantity": energy_value,
+                }
+            )
+
+    return return_cols
+
+
+def get_day_range(df: pd.DataFrame) -> Generator[date, None, None]:
+    """ Get the day range for a dataframe """
+    min_date = (df.index.min() + timedelta(days=1)).date()
+    max_date = (df.index.max() - timedelta(days=1)).date()
+
+    cur_day = min_date
+
+    while cur_day <= max_date:
+        yield cur_day
+        cur_day += timedelta(days=1)
+
+
+def _energy_aggregate_compat(df: pd.DataFrame) -> pd.DataFrame:
+    """ v2 version of energy_sum for compat """
+    energy_genrecs = []
+
+    for day in get_day_range(df):
+        for duid in sorted(df.facility_code.unique()):
+            energy_genrecs += [d for d in __trading_energy_generator(df, day, duid)]
+
+    df = pd.DataFrame(
+        energy_genrecs, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"]
+    )
+
+    return df
 
 
 def _trapezium_integration_variable(d_ti: pd.Series) -> Optional[float]:
@@ -65,8 +144,7 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> Optional[float]:
 def _energy_aggregate(
     df: pd.DataFrame, power_column: str = "generated", zero_fill: bool = False
 ) -> pd.DataFrame:
-    """Energy aggregate that buckets into 30min intervals
-    but takes edges in for 7 total values"""
+    """v3 version of energy aggregate for energy_sum - iterates over time bucekts with edges """
     in_cap = {}
     capture: Dict[str, Any] = {}
     values = []
@@ -129,11 +207,15 @@ def energy_sum(
     """Takes the energy sum for a series of raw duid intervals
     and returns a fresh dataframe to be imported"""
 
-    # Index by datetime
-    df = df.set_index(["trading_interval", "network_id", "facility_code"])
+    if network == NetworkNEM:
+        df = df.set_index(["trading_interval"])
+        df = _energy_aggregate_compat(df)
+    else:
+        # Index by datetime
+        df = df.set_index(["trading_interval", "network_id", "facility_code"])
 
-    # Multigroup by datetime and facility code
-    df = _energy_aggregate(df, power_column=power_column)
+        # Multigroup by datetime and facility code
+        df = _energy_aggregate(df, power_column=power_column)
 
     # Reset back to a simple frame
     df = df.reset_index()
