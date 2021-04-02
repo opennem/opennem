@@ -11,7 +11,6 @@ import logging
 from datetime import date, datetime, timedelta
 from typing import Any, Dict, Generator, List, Optional, Union
 
-import numpy as np
 import pandas as pd
 
 from opennem.schema.core import BaseConfig
@@ -26,7 +25,7 @@ class ScadaResultCompat(BaseConfig):
     generated: Union[float, int, None]
 
 
-def __trapezium_integration(d_ti: np.array, power_field: str = "MWH_READING") -> np.array:
+def __trapezium_integration(d_ti: pd.Series, power_field: str = "MWH_READING") -> pd.Series:
     return 0.5 * (d_ti[power_field] * [1, 2, 2, 2, 2, 2, 1]).sum() / 12
 
 
