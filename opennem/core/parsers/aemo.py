@@ -12,7 +12,17 @@ from pydantic import BaseModel, validator
 from pydantic.error_wrappers import ValidationError
 from pydantic.fields import PrivateAttr
 
-from opennem.schema.aemo.mms import get_mms_schema_for_table
+from opennem.schema.aemo.mms import MMSBase, get_mms_schema_for_table
+
+_HAVE_PANDAS = False
+
+try:
+    import pandas as pd
+
+    _HAVE_PANDAS = True
+except ImportError:
+    pass
+
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +32,7 @@ class AEMOTableSchema(BaseModel):
     name: str
     namespace: str
     fieldnames: List[str]
-    records: List[Union[Dict, BaseModel]] = []
+    _records: List[Union[Dict, BaseModel]] = []
 
     # optionally it has a schema
     _record_schema: Optional[BaseModel] = PrivateAttr()
@@ -31,7 +41,7 @@ class AEMOTableSchema(BaseModel):
     url_source: Optional[str]
 
     # the original content ?!?!
-    # @NOTE does this make sense ..
+    # @NOTE does this make sense .. (it doesnt because it can be super large)
     content_source: Optional[str]
 
     @property
@@ -64,8 +74,17 @@ class AEMOTableSchema(BaseModel):
 
         return True
 
-    def get_records(self) -> Any:
-        return self.records
+    @property
+    def records(self) -> Any:
+        _records = []
+
+        for _r in self._records:
+            if isinstance(_r, MMSBase):
+                _records.append(_r.dict())
+            if isinstance(_r, Dict):
+                _records.append(_r)
+
+        return _records
 
     def add_record(self, record: Union[Dict, BaseModel]) -> bool:
         if hasattr(self, "_record_schema") and self._record_schema:
@@ -86,11 +105,30 @@ class AEMOTableSchema(BaseModel):
                     logger.error("{} has error: {} '{}'".format(ve_fieldname, ve["msg"], ve_val))
                 return False
 
-            self.records.append(_record)
+            self._records.append(_record)
         else:
-            self.records.append(record)
+            self._records.append(record)
 
         return True
+
+    def to_frame(self) -> Any:
+        """ Return a pandas dataframe for the table """
+        if not _HAVE_PANDAS:
+            return None
+
+        _index_keys = []
+
+        if hasattr(self, "_record_schema") and self._record_schema:
+            if hasattr(self._record_schema, "_primary_keys"):
+                _index_keys = self._record_schema._primary_keys  # type: ignore
+
+        _df = pd.DataFrame(self.records)
+
+        if len(_index_keys) > 0:
+            logger.debug("Setting index to {}".format(_index_keys))
+            _df = _df.set_index(_index_keys)
+
+        return _df
 
     class Config:
         underscore_attrs_are_private = True
@@ -153,6 +191,7 @@ def parse_aemo_csv(content: str, table_set: AEMOTableSet = AEMOTableSet()) -> AE
     """
     content_split = content.splitlines()
 
+    # @NOTE more efficient csv parsing
     datacsv = csv.reader(content_split)
 
     # init all the parser vars
@@ -183,18 +222,23 @@ def parse_aemo_csv(content: str, table_set: AEMOTableSet = AEMOTableSet()) -> AE
             table_name = row[2]
             table_fields = row[4:]
 
-            table_current = AEMOTableSchema(
-                name=table_name,
-                namespace=table_namespace,
-                fields=table_fields,
-                fieldnames=table_fields,
-            )
+            table_full_name = "{}_{}".format(table_namespace.upper(), table_name.upper())
 
-            # do we have a custom shema for the table?
-            table_schema = get_mms_schema_for_table(table_current.full_name)
+            if table_set.has_table(table_full_name):
+                table_current = table_set.get_table(table_full_name)
+            else:
+                table_current = AEMOTableSchema(
+                    name=table_name,
+                    namespace=table_namespace,
+                    fields=table_fields,
+                    fieldnames=table_fields,
+                )
 
-            if table_schema:
-                table_current.set_schema(table_schema)
+                # do we have a custom shema for the table?
+                table_schema = get_mms_schema_for_table(table_current.full_name)
+
+                if table_schema:
+                    table_current.set_schema(table_schema)
 
         # new record
         elif record_type == "D":
