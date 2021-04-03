@@ -5,6 +5,7 @@ import platform
 
 from huey import PriorityRedisHuey, crontab
 
+from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_energy
 from opennem.db.tasks import refresh_material_views
 from opennem.notifications.slack import slack_message
@@ -31,16 +32,16 @@ if settings.cache_url:
 huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
 
-# 6:45AM and 8:45AM AEST
-@huey.periodic_task(crontab(hour="20,23", minute="45"))
-@huey.lock_task("db_refresh_material_views")
+# 5:45AM and 8:45AM AEST
+@huey.periodic_task(crontab(hour="19,23", minute="45"))
 def db_refresh_material_views() -> None:
     run_energy_update_days(days=2)
     refresh_material_views("mv_facility_all")
     refresh_material_views("mv_network_fueltech_days")
     refresh_material_views("mv_region_emissions")
     refresh_material_views("mv_interchange_energy_nem_region")
-    export_energy(latest=False)
+    export_energy(latest=True)
+    export_energy(priority=PriorityType.monthly)
     slack_message("Ran daily energy update and material views on {}".format(settings.env))
 
 
