@@ -1,19 +1,11 @@
 import csv
-import json
 import logging
 from datetime import datetime
-from io import StringIO
 from pathlib import Path
 from typing import List
-from urllib.parse import urlparse
-
-import requests
-import wikipedia
-from PIL import Image
 
 from opennem.api.photo.controllers import write_photo_to_s3
 from opennem.core.loader import load_data
-from opennem.core.normalizers import station_name_cleaner
 from opennem.core.photos.processor import get_image_from_web
 from opennem.core.photos.schema import PhotoImportSchema
 from opennem.db import SessionLocal
