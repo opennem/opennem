@@ -1,4 +1,3 @@
-import json
 import logging
 from datetime import datetime
 from itertools import groupby
@@ -6,7 +5,6 @@ from typing import List, Optional, Union
 
 from openpyxl import load_workbook
 
-from opennem.core.dispatch_type import parse_dispatch_type
 from opennem.core.facility.fueltechs import parse_facility_fueltech
 from opennem.core.facilitystatus import map_aemo_facility_status, parse_facility_status
 from opennem.core.fueltechs import lookup_fueltech
@@ -19,9 +17,8 @@ from opennem.core.normalizers import (
 )
 from opennem.core.stations.station_code_from_duids import station_code_from_duids
 from opennem.core.stations.station_name_code_map import station_name_code_map
-from opennem.core.unit_codes import get_basecode, get_unit_code
+from opennem.core.unit_codes import get_unit_code
 from opennem.core.unit_parser import parse_unit_duid
-from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.gi")
@@ -53,9 +50,7 @@ FACILITY_KEYS = [
 ]
 
 
-def parse_comissioned_date(
-    date_str: Union[str, datetime]
-) -> Optional[datetime]:
+def parse_comissioned_date(date_str: Union[str, datetime]) -> Optional[datetime]:
     dt = None
 
     if type(date_str) is datetime:
@@ -143,15 +138,11 @@ def gi_grouper(records, station_code_map):
     # filter out records we don't want
     records = list(filter(gi_filter, records))
 
-    records = [
-        {"name": station_name_cleaner(i["station_name"]), **i} for i in records
-    ]
+    records = [{"name": station_name_cleaner(i["station_name"]), **i} for i in records]
 
     grouped_records = {}
 
-    for k, v in groupby(
-        records, key=lambda v: (v["name"].strip(), v["owner"].strip())
-    ):
+    for k, v in groupby(records, key=lambda v: (v["name"].strip(), v["owner"].strip())):
         v = list(v)
 
         key = k[0]
@@ -181,9 +172,7 @@ def gi_grouper(records, station_code_map):
                 duid = get_unit_code(unit, duid, i["station_name"])
 
             facility_duids = [duid]
-            station_code = lookup_station_code(
-                facility_duids, station_name, station_code_map
-            )
+            station_code = lookup_station_code(facility_duids, station_name, station_code_map)
 
             records_parsed.append(
                 {
@@ -196,12 +185,8 @@ def gi_grouper(records, station_code_map):
                     "network_region": normalize_aemo_region(i["Region"]),
                     "network_name": i["station_name"].strip(),
                     "dispatch_type": "GENERATOR",
-                    "fueltech": parse_facility_fueltech(fueltech)
-                    if fueltech
-                    else None,
-                    "status": parse_facility_status(
-                        map_aemo_facility_status(i["status"])
-                    ),
+                    "fueltech": parse_facility_fueltech(fueltech) if fueltech else None,
+                    "status": parse_facility_status(map_aemo_facility_status(i["status"])),
                     "registered": parse_comissioned_date(i["SurveyEffective"]),
                     **get_capacities(i),
                 }
@@ -212,17 +197,13 @@ def gi_grouper(records, station_code_map):
     coded_records = {}
     _id = 3000
 
-    for station_code, facilities in groupby(
-        records_parsed, key=lambda x: x["station_code"]
-    ):
+    for station_code, facilities in groupby(records_parsed, key=lambda x: x["station_code"]):
 
         # station_name = facilities[0]["name"]
         facilities = list(facilities)
 
         if not station_code:
-            raise Exception(
-                "Unmapped station {}: {}".format(station_code, facilities)
-            )
+            raise Exception("Unmapped station {}: {}".format(station_code, facilities))
 
         if station_code not in coded_records:
             coded_records[station_code] = {
@@ -249,9 +230,7 @@ def gi_grouper(records, station_code_map):
 
         for facility in station_record["facilities"]:
             grouped_records[station_code]["name"] = facility["name"]
-            grouped_records[station_code]["network_name"] = facility[
-                "network_name"
-            ]
+            grouped_records[station_code]["network_name"] = facility["network_name"]
             facility.pop("name")
             facility.pop("network_name")
             grouped_records[station_code]["facilities"].append(facility)

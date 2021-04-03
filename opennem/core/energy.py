@@ -231,6 +231,6 @@ def energy_sum(
         df.trading_interval = df.trading_interval - pd.Timedelta(minutes=network.reading_shift)
 
     # filter out empties
-    df = df[pd.isnull(df.eoi_quantity) == False]
+    df = df[pd.isnull(df.eoi_quantity) == False]  # noqa: E712
 
     return df

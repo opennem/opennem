@@ -11,7 +11,6 @@ from opennem.core.facilitystatus import parse_facility_status
 from opennem.core.loader import load_data
 from opennem.core.normalizers import station_name_cleaner
 from opennem.exporter.encoders import OpenNEMJSONEncoder
-from opennem.schema.opennem import StationSchema
 from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.mms")
@@ -100,19 +99,13 @@ def dudetailsummary_grouper(tables):
     # Second pass flatten the records and we should get start and end dates
     # and a derived status
     for rec in grouped_records.keys():
-        for _, facility_group_records in grouped_records[rec][
-            "details"
-        ].items():
+        for _, facility_group_records in grouped_records[rec]["details"].items():
 
             # date_end_min = min(
             #     facility_group_records, key=lambda x: x["date_end"]
             # )
-            date_end_max = max(
-                facility_group_records, key=lambda x: x["date_end"]
-            )
-            date_start_min = min(
-                facility_group_records, key=lambda x: x["date_start"]
-            )
+            date_end_max = max(facility_group_records, key=lambda x: x["date_end"])
+            date_start_min = min(facility_group_records, key=lambda x: x["date_start"])
 
             grouped_rec = {
                 **date_end_max,
@@ -125,8 +118,7 @@ def dudetailsummary_grouper(tables):
             grouped_records[rec]["facilities"].append(grouped_rec)
 
     grouped_records = [
-        {"station_code": i, "facilities": v["facilities"]}
-        for i, v in grouped_records.items()
+        {"station_code": i, "facilities": v["facilities"]} for i, v in grouped_records.items()
     ]
 
     tables["PARTICIPANT_REGISTRATION_DUDETAILSUMMARY"] = grouped_records
@@ -149,9 +141,7 @@ def dudetailsummary_grouper(tables):
 def operatingstatus_grouper(tables):
 
     if "PARTICIPANT_REGISTRATION_STATIONOPERATINGSTATUS" not in tables:
-        raise Exception(
-            "No PARTICIPANT_REGISTRATION_STATIONOPERATINGSTATUS table"
-        )
+        raise Exception("No PARTICIPANT_REGISTRATION_STATIONOPERATINGSTATUS table")
 
     records = tables["PARTICIPANT_REGISTRATION_STATIONOPERATINGSTATUS"]
 
@@ -336,9 +326,9 @@ def genunits_grouper(tables):
                     #         station_code, record["emissions_factor_co2"]
                     #     )
                     # )
-                    mms[station_code]["facilities"][fac_index][
+                    mms[station_code]["facilities"][fac_index]["emissions_factor_co2"] = record[
                         "emissions_factor_co2"
-                    ] = record["emissions_factor_co2"]
+                    ]
 
         if not facility:
             print("dudetail: couldn't find facility: {}".format(facility_code))
@@ -356,9 +346,7 @@ def load_aemo_csv(item, filename):
         item = {}
 
     if type(item) is not dict:
-        raise Exception(
-            "Invalid item type expecting a dict so we can fill it "
-        )
+        raise Exception("Invalid item type expecting a dict so we can fill it ")
 
     current_item = load_data(filename, True, content_type="latin-1")
 
@@ -408,11 +396,7 @@ def load_aemo_csv(item, filename):
 def load_mms_tables():
     mms_path = Path(__file__).parent.parent / "data" / "mms"
 
-    mms_files = [
-        "mms/{}".format(f.name)
-        for f in mms_path.iterdir()
-        if f.suffix in [".zip"]
-    ]
+    mms_files = ["mms/{}".format(f.name) for f in mms_path.iterdir() if f.suffix in [".zip"]]
 
     tables = reduce(load_aemo_csv, mms_files, {})
 
@@ -423,9 +407,7 @@ def mms_import():
     tables = load_mms_tables()
 
     logger.info(
-        "Imported {} tables: {}".format(
-            len(tables.keys()), ", ".join(list(tables.keys()))
-        )
+        "Imported {} tables: {}".format(len(tables.keys()), ", ".join(list(tables.keys())))
     )
 
     tables = stations_grouper(tables)

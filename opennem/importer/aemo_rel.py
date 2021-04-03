@@ -1,4 +1,3 @@
-import json
 import logging
 from itertools import groupby
 from typing import List, Optional
@@ -15,7 +14,6 @@ from opennem.core.stations.station_code_from_duids import station_code_from_duid
 from opennem.core.stations.station_name_code_map import station_name_code_map
 from opennem.core.unit_codes import get_unit_code
 from opennem.core.unit_parser import parse_unit_duid
-from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.mms")
@@ -62,11 +60,7 @@ def lookup_station_code(
         station_code = station_code_from_duids(duids)
 
     if not station_code:
-        print(
-            "Coult not get a station code for {}: {}".format(
-                station_name, ",".join(duids)
-            )
-        )
+        print("Coult not get a station code for {}: {}".format(station_name, ",".join(duids)))
 
     return station_code
 
@@ -85,9 +79,7 @@ def rel_grouper(records, station_code_map):
             i["tech_primary_descriptor"],
             i["dispatch_type"],
         )
-        station_code = lookup_station_code(
-            [duid], i["station_name"], station_code_map
-        )
+        station_code = lookup_station_code([duid], i["station_name"], station_code_map)
 
         records_parsed.append(
             {

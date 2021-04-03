@@ -32,33 +32,40 @@ class UnitSchema(BaseModel):
     capacity: Optional[int]
 
 
-is_number = lambda v: bool(re.match(__is_number, v))
+def is_number(v: str) -> bool:
+    return bool(re.match(__is_number, v))
 
-is_single_number = lambda v: bool(re.match(__is_single_number, v))
+
+def is_single_number(v: str) -> bool:
+    return bool(re.match(__is_single_number, v))
+
 
 # Has a unit alias like A or GT
-unit_has_alias = lambda v: bool(re.search(__is_unit_alias, v))
-
-unit_has_alias_forced = lambda v: bool(re.search(__is_unit_alias_forced, v))
-
-strip_whitespace = lambda v: str(re.sub(r"\s+", "", v.strip()))
+def unit_has_alias(v: str) -> bool:
+    return bool(re.search(__is_unit_alias, v))
 
 
-def parse_unit_duid(unit_input: str, unit_duid: str):
-    return parse_unit_number(
-        unit_input, facility_unit_numbers_are_single(unit_duid)
-    )
+def unit_has_alias_forced(v: str) -> bool:
+    return bool(re.search(__is_unit_alias_forced, v))
 
 
-def parse_unit_number(unit_input: str, force_single: bool = False):
+def strip_whitespace(v: str) -> str:
+    return str(re.sub(r"\s+", "", v.strip()))
+
+
+def parse_unit_duid(unit_input: str, unit_duid: str) -> UnitSchema:
+    return parse_unit_number(unit_input, facility_unit_numbers_are_single(unit_duid))
+
+
+def parse_unit_number(unit_input: str, force_single: bool = False) -> UnitSchema:
     """
-        Parses unit number string into a UnitSchema model
+    Parses unit number string into a UnitSchema model
 
-        force_single is a hack for units like Hallett where "GT 2-4" means
-        unit alias GT2-4 rather than alias GT with id 2 and 2 units
+    force_single is a hack for units like Hallett where "GT 2-4" means
+    unit alias GT2-4 rather than alias GT with id 2 and 2 units
 
-        AEMO put a unit no in sometimes when they mean a unit ID (ie. 8) and
-        sometimes it means the number of units (ie. 40)
+    AEMO put a unit no in sometimes when they mean a unit ID (ie. 8) and
+    sometimes it means the number of units (ie. 40)
     """
     unit_id = 1
     unit_no = 0
@@ -109,9 +116,7 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
 
         if not unit_alias or not type(unit_alias) is str:
             raise Exception(
-                "Error extracting alias from {}: Got {}".format(
-                    unit_input, unit_alias
-                )
+                "Error extracting alias from {}: Got {}".format(unit_input, unit_alias)
             )
 
         # remove the unit alias
@@ -128,9 +133,7 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
 
         if not unit_alias or not type(unit_alias) is str:
             raise Exception(
-                "Error extracting alias from {}: Got {}".format(
-                    unit_input, unit_alias
-                )
+                "Error extracting alias from {}: Got {}".format(unit_input, unit_alias)
             )
 
         # remove the unit alias
@@ -163,6 +166,10 @@ def parse_unit_number(unit_input: str, force_single: bool = False):
 
         unit_no += unit_max - unit_id + 1
 
-    unit = UnitSchema(id=unit_id, number=unit_no, alias=unit_alias,)
+    unit = UnitSchema(
+        id=unit_id,
+        number=unit_no,
+        alias=unit_alias,
+    )
 
     return unit

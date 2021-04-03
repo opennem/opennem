@@ -1,22 +1,11 @@
-import json
 import logging
-import os
-from datetime import date, datetime
-from decimal import Decimal
 
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import MultipleResultsFound
 
-from opennem.core.facilitystations import facility_station_join_by_name
 from opennem.core.loader import load_data
-from opennem.core.normalizers import (
-    clean_capacity,
-    name_normalizer,
-    normalize_duid,
-    station_name_cleaner,
-)
-from opennem.core.station_duid_map import facility_has_station_remap, facility_map_station
+from opennem.core.normalizers import clean_capacity, normalize_duid, station_name_cleaner
+from opennem.core.station_duid_map import facility_map_station
 from opennem.db import db_connect
 from opennem.db.models.opennem import Facility, Station
 from opennem.importer.compat import (
@@ -40,9 +29,7 @@ def load_opennem_facilities():
     for station_data in stations:
         station = None
 
-        facilities = [
-            {"code": k, **v} for k, v in station_data["duid_data"].items()
-        ]
+        facilities = [{"code": k, **v} for k, v in station_data["duid_data"].items()]
 
         # update facilities
         for facility_data in facilities:
@@ -52,18 +39,10 @@ def load_opennem_facilities():
             station_code = facility_map_station(
                 facility_duid, normalize_duid(station_data["station_code"])
             )
-            station_state = map_compat_facility_state(
-                station_data["status"]["state"]
-            )
-            station_network = (
-                "WEM" if station_data["location"]["state"] == "WA" else "NEM"
-            )
+            station_state = map_compat_facility_state(station_data["status"]["state"])
+            station_network = "WEM" if station_data["location"]["state"] == "WA" else "NEM"
 
-            station = (
-                s.query(Station)
-                .filter(Station.network_code == station_code)
-                .one_or_none()
-            )
+            station = s.query(Station).filter(Station.network_code == station_code).one_or_none()
 
             if not station:
                 station = Station(
@@ -74,11 +53,7 @@ def load_opennem_facilities():
                     network_name=station_data["display_name"],
                     created_by="opennem.load_facilities",
                 )
-                logger.info(
-                    "Created station: {} {} ".format(
-                        station_name, station_code
-                    )
-                )
+                logger.info("Created station: {} {} ".format(station_name, station_code))
 
                 s.add(station)
                 s.commit()
@@ -86,43 +61,28 @@ def load_opennem_facilities():
             facility_status = station_state
 
             # Network region
-            facility_network_region = map_compat_network_region(
-                station_data["region_id"]
-            )
+            facility_network_region = map_compat_network_region(station_data["region_id"])
 
             # Fueltech
             facility_fueltech = None
 
             if "fuel_tech" in facility_data and facility_data["fuel_tech"]:
-                facility_fueltech = map_compat_fueltech(
-                    facility_data["fuel_tech"]
-                )
+                facility_fueltech = map_compat_fueltech(facility_data["fuel_tech"])
 
             # Capacity
             facility_capacity = None
 
-            if (
-                "registered_capacity" in facility_data
-                and facility_data["registered_capacity"]
-            ):
-                facility_capacity = clean_capacity(
-                    facility_data["registered_capacity"]
-                )
+            if "registered_capacity" in facility_data and facility_data["registered_capacity"]:
+                facility_capacity = clean_capacity(facility_data["registered_capacity"])
 
             facility = None
 
             try:
                 facility = (
-                    s.query(Facility)
-                    .filter(Facility.network_code == facility_duid)
-                    .one_or_none()
+                    s.query(Facility).filter(Facility.network_code == facility_duid).one_or_none()
                 )
             except MultipleResultsFound:
-                logger.error(
-                    "Multiple facilities found for duid {}".format(
-                        facility_duid
-                    )
-                )
+                logger.error("Multiple facilities found for duid {}".format(facility_duid))
 
                 # facility = (
                 #     s.query(Facility)

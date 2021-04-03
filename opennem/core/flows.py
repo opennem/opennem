@@ -9,7 +9,6 @@ from datetime_truncate import truncate
 from opennem.api.stats.schema import (
     DataQueryResult,
     OpennemData,
-    OpennemDataSet,
     RegionFlowEmissionsResult,
     RegionFlowResult,
 )

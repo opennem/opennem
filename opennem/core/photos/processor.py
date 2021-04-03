@@ -2,10 +2,7 @@ import logging
 
 from PIL import Image
 
-from opennem.db import SessionLocal
-from opennem.db.models.opennem import Photo, Station
 from opennem.utils.http import http
-from opennem.utils.images import image_get_crypto_hash, img_to_buffer
 
 from .schema import PhotoImportSchema
 

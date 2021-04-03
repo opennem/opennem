@@ -1,13 +1,10 @@
-import json
 import logging
 from datetime import datetime
-from typing import List
 
 from opennem.core.facility.fueltechs import parse_facility_fueltech
 from opennem.core.facilitystatus import parse_facility_status
 from opennem.core.loader import load_data
 from opennem.core.networks import network_from_network_region
-from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.importer.compat import (
     map_compat_facility_state,
     map_compat_fueltech,
@@ -44,9 +41,7 @@ def registry_to_station(registry_station: dict, _id: int) -> StationSchema:
         return station
 
     for duid, registry_facility in registry_station["duid_data"].items():
-        network_region = map_compat_network_region(
-            registry_station.get("region_id", "")
-        )
+        network_region = map_compat_network_region(registry_station.get("region_id", ""))
 
         facility = FacilitySchema(
             **{
@@ -58,18 +53,12 @@ def registry_to_station(registry_station: dict, _id: int) -> StationSchema:
                 "station_code": registry_station.get("station_id", ""),
                 "dispatch_type": "GENERATOR",
                 "status": parse_facility_status(
-                    map_compat_facility_state(
-                        registry_station.get("status", {}).get("state", "")
-                    )
+                    map_compat_facility_state(registry_station.get("status", {}).get("state", ""))
                 ),
                 "fueltech": parse_facility_fueltech(
-                    map_compat_fueltech(
-                        registry_facility.get("fuel_tech", None)
-                    )
+                    map_compat_fueltech(registry_facility.get("fuel_tech", None))
                 ),
-                "capacity_registered": registry_facility.get(
-                    "registered_capacity", None
-                ),
+                "capacity_registered": registry_facility.get("registered_capacity", None),
             }
         )
         station.facilities.append(facility)
@@ -91,9 +80,7 @@ def registry_to_stations(registry, start_id: int = 5000) -> StationSet:
 
             if station_existing:
                 logger.info(
-                    "Merging station {} into {}".format(
-                        station_code, station_existing.code
-                    )
+                    "Merging station {} into {}".format(station_code, station_existing.code)
                 )
                 station_existing.facilities += _station.facilities
                 continue
