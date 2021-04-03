@@ -126,12 +126,12 @@ def cmd_export_energy_monthly() -> None:
 @click.command()
 def cmd_export_all() -> None:
     run_energy_update_days(days=2)
+    refresh_material_views("mv_facility_all")
     refresh_material_views("mv_network_fueltech_days")
-    refresh_material_views("mv_facility_45d")
-    export_power()
-    export_energy()
-    export_all_monthly()
-    export_all_daily()
+    refresh_material_views("mv_region_emissions")
+    refresh_material_views("mv_interchange_energy_nem_region")
+    export_energy(latest=True)
+    export_energy(priority=PriorityType.monthly)
 
 
 @click.group()
