@@ -2403,7 +2403,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "d6f8bb81d97ab9b78d46cf8bba008105e9c60179ecab309a1afdc8e64feb4b39"
+content-hash = "048e43b082e3187e0806ddbf85ec24c9f4a2f55964d3c9d9cdaea63c4a4adaeb"
 
 [metadata.files]
 aiofiles = [
