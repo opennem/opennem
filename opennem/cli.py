@@ -15,7 +15,7 @@ from opennem.importer.db import import_facilities
 from opennem.importer.db import init as db_init
 from opennem.importer.emissions import import_emissions_map
 from opennem.importer.mms import mms_export
-from opennem.importer.opennem import opennem_export, opennem_import
+from opennem.importer.opennem import opennem_import
 from opennem.settings import settings
 from opennem.workers.energy import run_energy_update_archive, run_energy_update_days
 
@@ -96,11 +96,6 @@ def cmd_import_all() -> None:
 @click.command()
 def cmd_import_emissions() -> None:
     import_emissions_map("emission_factors.csv")
-
-
-@click.command()
-def cmd_export_opennem() -> None:
-    opennem_export()
 
 
 @click.command()
