@@ -44,7 +44,7 @@ def cache_scada_result(func: Callable) -> Callable:
         if facilities:
             key_list += facilities
 
-        key_list.append(energy)
+        key_list.append(str(energy))
 
         key = frozenset(key_list)
         ret: Optional[ScadaDateRange] = None
