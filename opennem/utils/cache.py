@@ -31,6 +31,7 @@ def cache_scada_result(func: Callable) -> Callable:
         networks: Optional[List[NetworkSchema]] = None,
         network_region: Optional[str] = None,
         facilities: Optional[List[str]] = None,
+        energy: bool = False,
     ) -> Optional[ScadaDateRange]:
         key_list = []
 
@@ -42,6 +43,8 @@ def cache_scada_result(func: Callable) -> Callable:
 
         if facilities:
             key_list += facilities
+
+        key_list.append(energy)
 
         key = frozenset(key_list)
         ret: Optional[ScadaDateRange] = None

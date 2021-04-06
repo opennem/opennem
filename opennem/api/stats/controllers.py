@@ -275,6 +275,7 @@ def get_scada_range(
     networks: Optional[List[NetworkSchema]] = None,
     network_region: Optional[str] = None,
     facilities: Optional[List[str]] = None,
+    energy: bool = False,
 ) -> Optional[ScadaDateRange]:
     """Get the start and end dates for a network query. This is more efficient
     than providing or querying the range at query time
@@ -293,11 +294,16 @@ def get_scada_range(
         {network_query}
         {network_region_query}
         f.fueltech_id not in ('solar_rooftop', 'imports', 'exports')
-        and f.interconnector is FALSE;
+        and f.interconnector is FALSE
+        and fs.{field} is not null;
     """
 
     network_query = ""
     timezone = "UTC"
+    field_name = "generated"
+
+    if energy:
+        field_name = "eoi_quantity"
 
     # Only look back 7 days because the query is more optimized
     date_min = datetime.now() - timedelta(days=7)
@@ -322,6 +328,7 @@ def get_scada_range(
 
     scada_range_query = dedent(
         __query.format(
+            field=field_name,
             date_min=date_min,
             facility_query=facility_query,
             network_query=network_query,
