@@ -14,7 +14,7 @@ from typing import Any, Dict, Generator, List, Optional, Union
 import pandas as pd
 
 from opennem.schema.core import BaseConfig
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 
 logger = logging.getLogger("opennem.compat.energy")
 
@@ -216,6 +216,11 @@ def energy_sum(
     if network == NetworkNEM:
         df = df.set_index(["trading_interval"])
         df = _energy_aggregate_compat(df)
+
+    elif network == NetworkWEM:
+        df["eoi_quantity"] = df.generated / 2
+        df = df.drop("generated", axis=1)
+
     else:
         # Index by datetime
         df = df.set_index(["trading_interval", "network_id", "facility_code"])

@@ -12,7 +12,7 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.core.facility.fueltechs import load_fueltechs
 from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id
-from opennem.core.networks import get_network_region_schema
+from opennem.core.networks import get_network_region_schema, network_from_state
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.diff.versions import CUR_YEAR, get_network_regions
@@ -443,4 +443,5 @@ def run_energy_update_nemweb() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_all()
+    run_energy_update_days(networks=[NetworkWEM], days=3)
+    # run_energy_update_all()
