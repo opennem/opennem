@@ -172,7 +172,7 @@ def export_energy(
             date_range_networks = [NetworkNEM]
 
         date_range: ScadaDateRange = get_scada_range(
-            network=energy_stat.network, networks=date_range_networks
+            network=energy_stat.network, networks=date_range_networks, energy=True
         )
 
         # Migrate to this time_series
@@ -300,7 +300,9 @@ def export_all_monthly() -> None:
                 "Running monthlies for {} and {}".format(network.code, network_region.code)
             )
 
-            scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks)
+            scada_range: ScadaDateRange = get_scada_range(
+                network=network, networks=networks, energy=True
+            )
 
             time_series = TimeSeries(
                 start=scada_range.start,
@@ -362,7 +364,9 @@ def export_all_daily() -> None:
         if network_region.code == "WEM":
             networks = [NetworkWEM, NetworkAPVI]
 
-        scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks)
+        scada_range: ScadaDateRange = get_scada_range(
+            network=network, networks=networks, energy=True
+        )
 
         time_series = TimeSeries(
             start=scada_range.start,
