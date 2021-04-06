@@ -57,7 +57,7 @@ def cache_scada_result(func: Callable) -> Callable:
 
             return ret
         except KeyError:
-            ret = func(network, networks, network_region, facilities)
+            ret = func(network, networks, network_region, facilities, energy)
 
             logger.debug("scada range MISS at key: {}".format(key))
 
