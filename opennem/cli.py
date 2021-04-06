@@ -159,7 +159,6 @@ cmd_import.add_command(cmd_import_all, name="all")
 cmd_import.add_command(cmd_import_emissions, name="emissions")
 cmd_import.add_command(cmd_import_facilities, name="facilities")
 
-cmd_export.add_command(cmd_export_opennem, name="opennem")
 cmd_export.add_command(cmd_export_all, name="all")
 cmd_export.add_command(cmd_export_power, name="power")
 cmd_export.add_command(cmd_export_energy, name="energy")
