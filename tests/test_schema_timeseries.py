@@ -53,7 +53,7 @@ from opennem.schema.network import NetworkNEM
             ),
             # Expected
             datetime.fromisoformat("2021-01-01 00:00:00+10:00"),
-            datetime.fromisoformat("2021-01-15 12:45:00+10:00"),
+            datetime.fromisoformat("2021-01-15 23:59:59+10:00"),
             "1d",
             15,
         ),
