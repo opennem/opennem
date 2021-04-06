@@ -191,7 +191,7 @@ def init_aggregation_policies() -> None:
             try:
                 logger.debug(drop_query)
                 c.execute(drop_query)
-            except Exception as e:
+            except Exception:
                 logger.warn("Could not drop continuous aggregation query: {}".format(view.name))
                 pass
 

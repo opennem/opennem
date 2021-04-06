@@ -7,7 +7,7 @@ from starlette import status
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import get_database_session
 from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Revision, Station
-from opennem.schema.opennem import StationOutputSchema, StationSchema
+from opennem.schema.opennem import StationOutputSchema
 
 from .schema import StationIDList, StationRecord
 
@@ -51,7 +51,7 @@ def stations(
         stations = stations.outerjoin(Revision, Revision.station_id == Station.id)
 
     if only_approved:
-        stations = stations.filter(Station.approved == True)
+        stations = stations.filter(Station.approved == True)  # noqa: E712
 
     if name:
         stations = stations.filter(Station.name.like("%{}%".format(name)))
@@ -83,7 +83,7 @@ def station_ids(
     stations = session.query(Station).join(Station.location)
 
     if only_approved:
-        stations = stations.filter(Station.approved == True)
+        stations = stations.filter(Station.approved == True)  # noqa: E712
 
     stations = stations.order_by(
         Station.id,

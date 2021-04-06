@@ -1,9 +1,8 @@
-import decimal
 from typing import List, Optional
 
 from sqlalchemy.orm.session import Session
 
-from opennem.db.models.opennem import Facility, Location, Station
+from opennem.db.models.opennem import Facility, Station
 
 
 def get_stations(
@@ -14,7 +13,7 @@ def get_stations(
     page: int = 1,
 ) -> List[Station]:
     """
-        API controller that gets all stations sorted and joined
+    API controller that gets all stations sorted and joined
 
     """
 

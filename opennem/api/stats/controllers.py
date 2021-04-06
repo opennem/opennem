@@ -353,26 +353,3 @@ def get_scada_range(
     scada_range = ScadaDateRange(start=scada_min, end=scada_max, network=network)
 
     return scada_range
-
-
-def station_attach_stats(station: Station, session: Session) -> Station:
-    # @TODO update for new queries
-    since = datetime.now() - human_to_timedelta("7d")
-
-    facility_codes = list(set([f.code for f in station.facilities]))
-
-    stats = (
-        session.query(FacilityScada)
-        .filter(FacilityScada.facility_code.in_(facility_codes))
-        .filter(FacilityScada.trading_interval >= since)
-        .order_by(FacilityScada.facility_code)
-        .order_by(FacilityScada.trading_interval)
-        .all()
-    )
-
-    for facility in station.facilities:
-        facility_power = list(filter(lambda s: s.facility_code == facility.code, stats))
-
-        # facility.scada_power = stats_factory(facility_power)
-
-    return station

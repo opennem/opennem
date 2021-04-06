@@ -516,7 +516,7 @@ def export_electricitymap() -> None:
     if power_set:
         em_set.append_set(power_set)
 
-    write_output(f"v3/clients/em/latest.json", em_set)
+    write_output("v3/clients/em/latest.json", em_set)
 
 
 def export_metadata() -> bool:

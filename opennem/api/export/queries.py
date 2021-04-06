@@ -86,7 +86,6 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
             fs.observation_time >= '{date_start}'
         group by 1, 2;
         """.format(
-            trunc=time_series.interval.trunc,
             tz=time_series.network.timezone_database,
             station_codes=",".join(["'{}'".format(i) for i in station_codes]),
             date_start=time_series.get_range().start,
@@ -122,7 +121,6 @@ def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> s
 
 
     """.format(
-        timezone=time_series.network.timezone_database,
         network_id=time_series.network.code,
         region=network_region,
         date_start=time_series.get_range().start,

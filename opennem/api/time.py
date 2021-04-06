@@ -7,8 +7,8 @@ from opennem.schema.time import TimeInterval, TimePeriod
 
 def human_to_interval(interval_human: str) -> TimeInterval:
     """
-        Parses user supplied intervals like "15M" to TimeInterval
-        instances.
+    Parses user supplied intervals like "15M" to TimeInterval
+    instances.
 
     """
     if interval_human not in INTERVALS_SUPPORTED:
@@ -34,4 +34,3 @@ def human_to_period(period_human: str) -> TimePeriod:
         )
 
     return get_period(period_human)
-
