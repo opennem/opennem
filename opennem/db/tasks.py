@@ -45,9 +45,11 @@ def refresh_timescale_views(
                 logger.error("Could not run refresh: {}".format(e))
 
 
-def refresh_material_views(view_name: Optional[str] = None) -> None:
+def refresh_material_views(
+    view_name: Optional[str] = None, concurrently: bool = True, with_data: bool = True
+) -> None:
     """Refresh material views"""
-    __query = "REFRESH MATERIALIZED VIEW concurrently {view} with data"
+    __query = "REFRESH MATERIALIZED VIEW {is_concurrent} {view} {data_spec}"
 
     engine = get_database_engine()
 
@@ -60,7 +62,11 @@ def refresh_material_views(view_name: Optional[str] = None) -> None:
 
     with engine.connect() as c:
         for v in views:
-            query = __query.format(view=v)
+            query = __query.format(
+                view=v,
+                is_concurrent="concurrently" if concurrently else "",
+                data_spec="with data" if with_data else "",
+            )
             logger.debug(query)
 
             try:
