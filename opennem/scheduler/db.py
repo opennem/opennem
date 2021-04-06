@@ -36,21 +36,21 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 @huey.periodic_task(crontab(hour="19,23", minute="45"))
 def db_refresh_material_views() -> None:
     run_energy_update_days(days=2)
-    refresh_material_views("mv_facility_all")
-    refresh_material_views("mv_network_fueltech_days")
-    refresh_material_views("mv_region_emissions")
-    refresh_material_views("mv_interchange_energy_nem_region")
+    refresh_material_views("mv_facility_all", concurrently=False, with_data=False)
+    refresh_material_views("mv_network_fueltech_days", concurrently=False, with_data=False)
+    refresh_material_views("mv_region_emissions", concurrently=False, with_data=False)
+    refresh_material_views("mv_interchange_energy_nem_region", concurrently=False, with_data=False)
     export_energy(latest=True)
     export_energy(priority=PriorityType.monthly)
     slack_message("Ran daily energy update and material views on {}".format(settings.env))
 
 
 # Catchup task
-@huey.periodic_task(crontab(hour="2, 14", minute="45"))
+@huey.periodic_task(crontab(hour="14", minute="45"))
 def db_refresh_catchup() -> None:
-    refresh_material_views("mv_network_fueltech_days")
-    refresh_material_views("mv_region_emissions")
-    refresh_material_views("mv_interchange_energy_nem_region")
+    refresh_material_views("mv_network_fueltech_days", concurrently=False, with_data=False)
+    refresh_material_views("mv_region_emissions", concurrently=False, with_data=False)
+    refresh_material_views("mv_interchange_energy_nem_region", concurrently=False, with_data=False)
 
 
 @huey.periodic_task(crontab(hour="*/1", minute="15,45"))
