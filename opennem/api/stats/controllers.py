@@ -302,7 +302,7 @@ def get_scada_range(
     timezone = "UTC"
     field_name = "generated"
 
-    if energy:
+    if energy is True:
         field_name = "eoi_quantity"
 
     # Only look back 7 days because the query is more optimized
