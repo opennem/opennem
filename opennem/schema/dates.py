@@ -153,8 +153,6 @@ class TimeSeries(BaseConfig):
             )
 
             if self.year == CUR_YEAR:
-                today = datetime.now(tz=self.network.get_fixed_offset())
-
                 end = datetime(
                     year=CUR_YEAR,
                     month=self.end.month,
@@ -164,12 +162,9 @@ class TimeSeries(BaseConfig):
                     second=59,
                 )
 
-                end = end - timedelta(days=1)
+                # end = end - timedelta(days=1)
 
                 end = end.replace(tzinfo=self.network.get_fixed_offset())
-
-                if self.end.date() < today.date():
-                    end = self.end
 
         if self.month:
             start = datetime(
