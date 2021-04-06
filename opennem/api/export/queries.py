@@ -327,7 +327,7 @@ def power_network_fueltech_query(
     select
         time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
         ft.code as fueltech_code,
-        sum(fs.generated) as facility_power
+        coalesce(sum(fs.generated), 0) as fueltech_power
     from facility_scada fs
     join facility f on fs.facility_code = f.code
     join fueltech ft on f.fueltech_id = ft.code
