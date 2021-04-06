@@ -156,7 +156,12 @@ class TimeSeries(BaseConfig):
                 today = datetime.now(tz=self.network.get_fixed_offset())
 
                 end = datetime(
-                    year=CUR_YEAR, month=today.month, day=today.day, hour=23, minute=59, second=59
+                    year=CUR_YEAR,
+                    month=self.end.month,
+                    day=self.end.day,
+                    hour=23,
+                    minute=59,
+                    second=59,
                 )
 
                 end = end - timedelta(days=1)
