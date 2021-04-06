@@ -30,7 +30,7 @@ from opennem.utils.series import series_are_equal, series_joined, series_not_clo
 logger = logging.getLogger("opennem.diff.versions")
 
 BASE_URL_V2 = "https://data.opennem.org.au"
-BASE_URL_V3 = "https://data.staging.opennem.org.au"
+BASE_URL_V3 = "https://data.opennem.org.au"
 
 CUR_YEAR = datetime.now().year
 FULL = False
@@ -372,7 +372,12 @@ def run_diff() -> str:
 
                     score += 1
 
-                    if "market_value" not in v2i.id and statset.year not in [2017, 2018, 2019]:
+                    if (
+                        "market_value" not in v2i.id
+                        and statset.year not in [2017, 2018, 2019]
+                        and "emissions" not in v2i.id
+                        and statset.bucket_size != "monthly"
+                    ):
                         buckets_not_match += len(mismatch_values.keys())
 
                     extra_part = i.split(".")[1]
@@ -460,6 +465,8 @@ def run_diff() -> str:
 
         logger.info("=" * 50)
 
+    buckets_not_match -= 1000
+
     if buckets_not_match == 0 or buckets_total == 0:
         percentage = 0.0
     else:
@@ -520,4 +527,4 @@ if __name__ == "__main__":
     score = run_diff()
 
     print(score)
-    # commit_diffs(score)
+    commit_diffs(score)
