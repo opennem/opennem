@@ -88,7 +88,7 @@ class DirlistingSpider(Spider):
 
     custom_settings: Optional[Dict] = {}
 
-    # filename: Optional[str] = None
+    filename: Optional[str] = None
 
     def start_requests(self) -> Generator[scrapy.Request, None, None]:
         starts = []
