@@ -424,24 +424,15 @@ def run_energy_update_days(
             run_energy_calc(region, date_min, date_max, network=network, fueltech_id=fueltech)
 
 
-def run_energy_update_45d() -> None:
-    run_energy_update_days(days=45)
-
-
-def run_energy_update_all() -> None:
+def run_energy_update_all(
+    network: NetworkSchema = NetworkNEM, fueltech: Optional[str] = None
+) -> None:
     """Runs energy update for all regions and all years for one-off
     inserts"""
     for year in range(CUR_YEAR, 2009, -1):
-        run_energy_update_archive(year=year)
-
-
-def run_energy_update_nemweb() -> None:
-    """Runs energy update for all regions and all years for one-off
-    inserts"""
-    for year in range(2009, 1997, -1):
-        run_energy_update_archive(year=year)
+        run_energy_update_archive(year=year, fueltech=fueltech, network=network)
 
 
 if __name__ == "__main__":
-    run_energy_update_days(networks=[NetworkNEM], days=10, fueltech="solar_rooftop")
-    # run_energy_update_all()
+    # run_energy_update_days(networks=[NetworkNEM], days=10, fueltech="solar_rooftop")
+    run_energy_update_all(fueltech="solar_rooftop")
