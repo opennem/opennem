@@ -48,9 +48,16 @@ def __trading_energy_generator(
         d_ti = df.query(_query)
 
         energy_value = None
+        trading_interval = None
 
+        # rooftop 30m intervals - AEMO rooftop is going to go in a separate network
+        # so this won't be required
+        if (d_ti.fueltech_id.all() == "solar_rooftop") and (d_ti[power_field].count() == 1):
+            energy_value = d_ti[power_field].sum() / 2
+            # ooofff
+            trading_interval = d_ti.index + timedelta(minutes=5)
         # interpolate if it isn't padded out
-        if d_ti[power_field].count() != 7:
+        elif d_ti[power_field].count() != 7:
             index_interpolated = pd.date_range(start=t_i, end=t_f, freq="5min")
 
             d_ti = d_ti.reset_index()
@@ -59,14 +66,16 @@ def __trading_energy_generator(
             d_ti["duid"] = duid_id
 
         try:
-            energy_value = __trapezium_integration(d_ti, power_field)
+            if d_ti.fueltech_id.all() != "solar_rooftop":
+                energy_value = __trapezium_integration(d_ti, power_field)
+                trading_interval = d_ti.index[-2]
         except ValueError as e:
             logger.error("Error with {} at {} {}: {}".format(duid_id, t_i, t_f, e))
 
         if not d_ti.index.empty:
             return_cols.append(
                 {
-                    "trading_interval": d_ti.index[-2],
+                    "trading_interval": trading_interval,
                     "network_id": "NEM",
                     "facility_code": duid_id,
                     "eoi_quantity": energy_value,

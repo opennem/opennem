@@ -443,5 +443,5 @@ def run_energy_update_nemweb() -> None:
 
 
 if __name__ == "__main__":
-    run_energy_update_days(networks=[NetworkWEM], days=3)
+    run_energy_update_days(networks=[NetworkNEM], days=10, fueltech="solar_rooftop")
     # run_energy_update_all()
