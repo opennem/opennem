@@ -6,13 +6,14 @@ NEMWEB Data ingress into OpenNEM format
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from itertools import groupby
 from typing import Any, Dict, List, Optional
 
 from scrapy import Spider
 from sqlalchemy.dialects.postgresql import insert
 
+from opennem.api.stats.queries import duid_in_case
 from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal, get_database_engine
@@ -280,8 +281,30 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
     return {"num_records": len(records_to_store)}
 
 
-def process_case_solutions(table: Dict, spider: Spider):
-    pass
+def _clear_scada_for_range(item: Dict[str, Any]) -> None:
+    # We need to purge old records in that date range
+    all_dates = [i["trading_interval"] for i in item["records"]]
+    min_date = min(all_dates)
+    max_date = max(all_dates)
+    duids = list(set([i["facility_code"] for i in item["records"]]))
+
+    __sql = """
+        update facility_scada set
+            generated=null
+        where
+            network_id='NEM' and
+            facility_code in ({fac_codes}) and
+            trading_interval >= '{min_date}' and
+            trading_interval <= '{max_date}'
+    """
+
+    query = __sql.format(fac_codes=duid_in_case(duids), min_date=min_date, max_date=max_date)
+
+    engine = get_database_engine()
+
+    with engine.connect() as c:
+        logger.debug(query)
+        c.execute(query)
 
 
 def process_trading_price(table: Dict, spider: Spider) -> Dict[str, Any]:
@@ -571,6 +594,9 @@ def process_unit_solution(table: Dict[str, Any], spider: Spider) -> Dict:
     )
     item["content"] = None
 
+    # Update existing records for this range
+    _clear_scada_for_range(item)
+
     return item
 
 
@@ -592,6 +618,8 @@ def process_meter_data_gen_duid(table: Dict[str, Any], spider: Spider) -> Dict:
         power_field="MWH_READING",
     )
     item["content"] = None
+
+    _clear_scada_for_range(item)
 
     return item
 
@@ -703,7 +731,7 @@ TABLE_PROCESSOR_MAP = {
 
 class NemwebUnitScadaOpenNEMStorePipeline(object):
     @check_spider_pipeline
-    def process_item(self, item, spider=None):
+    def process_item(self, item: Dict[str, Any], spider=None) -> List:
         if not item:
             msg = "NemwebUnitScadaOpenNEMStorePipeline"
             if spider and hasattr(spider, "name"):
@@ -746,8 +774,8 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
             try:
                 record_item = globals()[process_meth](table, spider=spider)
             except Exception as e:
-                print("error running command")
-                # logger.error(e)
+                # print("error running command")
+                logger.error(e)
 
             if record_item:
                 ret.append(record_item)
