@@ -8,12 +8,8 @@ from datetime import datetime, timedelta
 from textwrap import dedent
 from typing import List, Optional
 
-from opennem.core.normalizers import normalize_duid
 from opennem.schema.dates import TimeSeries
-
-
-def duid_in_case(facility_codes: List[str]) -> str:
-    return ",".join(["'{}'".format(i) for i in map(normalize_duid, facility_codes)])
+from opennem.utils.sql import duid_in_case
 
 
 def power_facility_query(
