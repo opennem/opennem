@@ -74,4 +74,4 @@ TODO
 notebooks/data/
 .idea/
 scripts/run_export.py
-scripts/test_wind_diff.py
+scripts/wind_diff.py
