@@ -536,7 +536,7 @@ def process_unit_scada(table: Dict[str, Any], spider: Spider) -> Dict:
         raise Exception("Invalid table no records")
 
     records = table["records"]
-    item = dict()
+    item: Dict[str, Any] = dict()
 
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
@@ -557,7 +557,7 @@ def process_unit_solution(table: Dict[str, Any], spider: Spider) -> Dict:
         raise Exception("Invalid table no records")
 
     records = table["records"]
-    item = dict()
+    item: Dict[str, Any] = dict()
 
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
@@ -579,7 +579,7 @@ def process_meter_data_gen_duid(table: Dict[str, Any], spider: Spider) -> Dict:
         raise Exception("Invalid table no records")
 
     records = table["records"]
-    item = dict()
+    item: Dict[str, Any] = dict()
 
     item["table_schema"] = FacilityScada
     item["update_fields"] = ["generated"]
@@ -601,7 +601,7 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
         raise Exception("Invalid table no records")
 
     records = table["records"]
-    item = dict()
+    item: Dict[str, Any] = dict()
 
     # Filter out for only measurements
     # as opposed to TYPE=SATELLITE
@@ -653,7 +653,7 @@ def process_rooftop_forecast(table: Dict[str, Any], spider: Spider) -> Dict:
         raise Exception("Invalid table no records")
 
     records = table["records"]
-    item = dict()
+    item: Dict[str, Any] = dict()
 
     scada_records = unit_scada_generate_facility_scada(
         records,
