@@ -30,10 +30,13 @@ from opennem.utils.series import series_are_equal, series_joined, series_not_clo
 logger = logging.getLogger("opennem.diff.versions")
 
 BASE_URL_V2 = "https://data.opennem.org.au"
-BASE_URL_V3 = "https://data.opennem.org.au"
+BASE_URL_V3 = "https://data.dev.opennem.org.au"
 
 CUR_YEAR = datetime.now().year
 FULL = False
+INCLUDE_MONTHLY = True
+REGION = os.environ.get("REGION", None)
+# REGION="NSW1"
 
 
 def get_v2_url(
@@ -254,7 +257,7 @@ def run_diff() -> str:
 
     buckets_total = 0
 
-    regions = get_network_regions(NetworkNEM)
+    regions = get_network_regions(NetworkNEM, REGION)
     statsetmap = get_url_map(regions)
 
     # load urls
@@ -375,8 +378,9 @@ def run_diff() -> str:
                     if (
                         "market_value" not in v2i.id
                         and statset.year not in [2017, 2018, 2019]
+                        # and statset.year > 2020
                         and "emissions" not in v2i.id
-                        and statset.bucket_size != "monthly"
+                        and (statset.bucket_size != "monthly")
                     ):
                         buckets_not_match += len(mismatch_values.keys())
 
@@ -465,8 +469,6 @@ def run_diff() -> str:
 
         logger.info("=" * 50)
 
-    buckets_not_match -= 1000
-
     if buckets_not_match == 0 or buckets_total == 0:
         percentage = 0.0
     else:
@@ -488,6 +490,13 @@ def commit_diffs(score: str) -> None:
     repo = Repo(rw_dir)
     author = committer = Actor("OpenNEM Data Quality", "sysadmin@opennem.org.au")
 
+    repo.index.add(["csv"])
+    repo.index.commit(
+        "Commit full csvs for {}.".format(settings.env),
+        author=author,
+        committer=committer,
+    )
+
     repo.index.add(["diff"])
     repo.index.commit(
         "Commit version diffs for {}. Score: {}".format(settings.env, score),
@@ -496,7 +505,7 @@ def commit_diffs(score: str) -> None:
     )
 
     origin = repo.remote(name="origin")
-    # origin.push()
+    origin.push()
 
 
 def run_data_diff() -> None:
@@ -527,4 +536,8 @@ if __name__ == "__main__":
     score = run_diff()
 
     print(score)
-    commit_diffs(score)
+
+    COMMIT = os.environ.get("COMMIT", False)
+
+    if COMMIT:
+        commit_diffs(score)
