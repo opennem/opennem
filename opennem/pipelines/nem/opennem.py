@@ -599,7 +599,7 @@ def process_unit_solution(table: Dict[str, Any], spider: Spider) -> Dict:
     item["content"] = None
 
     # Update existing records for this range
-    _clear_scada_for_range(item)
+    # _clear_scada_for_range(item)
 
     return item
 
@@ -624,7 +624,7 @@ def process_meter_data_gen_duid(table: Dict[str, Any], spider: Spider) -> Dict:
     item["content"] = None
 
     # Update existing records for this range
-    _clear_scada_for_range(item)
+    # _clear_scada_for_range(item)
 
     return item
 
