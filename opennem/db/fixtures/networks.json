@@ -6,7 +6,8 @@
     "timezone": "Australia/Sydney",
     "timezone_database": "AEST",
     "offset": 600,
-    "interval_size": 5
+    "interval_size": 5,
+    "interval_shift": 5
   },
   {
     "code": "WEM",
