@@ -18,7 +18,7 @@ from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BalancingSummary, Facility, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
-from opennem.schema.network import NetworkSchema
+from opennem.schema.network import NetworkAEMORooftop, NetworkSchema
 from opennem.utils.dates import parse_date
 from opennem.utils.numbers import float_to_str
 from opennem.utils.pipelines import check_spider_pipeline
@@ -643,7 +643,7 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
     scada_records = unit_scada_generate_facility_scada(
         records_filtered,
         spider,
-        network=NetworkNEM,
+        network=NetworkAEMORooftop,
         interval_field="INTERVAL_DATETIME",
         facility_code_field="REGIONID",
         power_field="POWER",
@@ -691,7 +691,7 @@ def process_rooftop_forecast(table: Dict[str, Any], spider: Spider) -> Dict:
     scada_records = unit_scada_generate_facility_scada(
         records,
         spider,
-        network=NetworkNEM,
+        network=NetworkAEMORooftop,
         interval_field="INTERVAL_DATETIME",
         facility_code_field="REGIONID",
         power_field="POWERMEAN",
