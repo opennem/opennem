@@ -12,7 +12,7 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.core.facility.fueltechs import load_fueltechs
 from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id
-from opennem.core.networks import get_network_region_schema, network_from_state
+from opennem.core.networks import get_network_region_schema
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
 from opennem.diff.versions import CUR_YEAR, get_network_regions
@@ -20,7 +20,13 @@ from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.dates import DatetimeRange, TimeSeries
-from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import (
+    NetworkAEMORooftop,
+    NetworkAPVI,
+    NetworkNEM,
+    NetworkSchema,
+    NetworkWEM,
+)
 from opennem.utils.interval import get_human_interval
 
 logger = logging.getLogger("opennem.workers.energy")
@@ -59,7 +65,7 @@ def get_generated_query(
         and fs.is_forecast is False
         {fueltech_match}
         and fs.generated is not null
-    order by fs.trading_interval asc, 2;
+    order by fs.trading_interval asc, 2
     """
 
     fueltech_match = ""
@@ -73,6 +79,46 @@ def get_generated_query(
         network_region=network_region,
         date_min=date_min - timedelta(minutes=10),
         date_max=date_max + timedelta(minutes=10),
+        fueltech_match=fueltech_match,
+    )
+
+    return dedent(query)
+
+
+def get_clear_query(
+    network_region: str,
+    date_min: datetime,
+    date_max: datetime,
+    network: NetworkSchema,
+    fueltech_id: Optional[str] = None,
+) -> str:
+    """ Clear the energies for the range we're about to update """
+
+    __sql = """
+    update facility_scada fs
+    set
+        eoi_quantity = NULL
+    from facility f
+    where
+        f.code = fs.facility_code
+        and f.network_id='{network_id}'
+        and f.network_region='{network_region}'
+        and fs.trading_interval >= '{date_min}'
+        and fs.trading_interval <= '{date_max}'
+        and fs.is_forecast is False
+        {fueltech_match};
+    """
+
+    fueltech_match = ""
+
+    if fueltech_id:
+        fueltech_match = f"and f.fueltech_id = '{fueltech_id}'"
+
+    query = __sql.format(
+        network_id=network.code,
+        network_region=network_region,
+        date_min=date_min,
+        date_max=date_max,
         fueltech_match=fueltech_match,
     )
 
@@ -143,11 +189,17 @@ def get_generated(
 
     query = get_generated_query(network_region, date_min, date_max, network, fueltech_id)
 
+    query_clear = get_clear_query(network_region, date_min, date_max, network, fueltech_id)
+
     engine = get_database_engine()
 
     results = []
 
     with engine.connect() as c:
+        logger.debug(query_clear)
+
+        c.execute(query_clear)
+
         logger.debug(query)
 
         if not DRY_RUN:
@@ -250,7 +302,7 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
     csv_content = generate_csv_from_records(
         FacilityScada,
         records_to_store,
-        column_names=records_to_store[0].keys(),
+        column_names=list(records_to_store[0].keys()),
     )
 
     try:
@@ -440,5 +492,4 @@ def run_energy_update_all(
 
 
 if __name__ == "__main__":
-    # run_energy_update_days(networks=[NetworkNEM], days=10, fueltech="solar_rooftop")
-    run_energy_update_all(fueltech="solar_rooftop")
+    run_energy_update_days(days=10)
