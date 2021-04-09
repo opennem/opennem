@@ -1,7 +1,10 @@
 import csv
 import logging
 from pkgutil import get_data
-from typing import Dict, Optional
+from typing import Dict, List, Optional
+
+from opennem.core.loader import load_data
+from opennem.schema.fueltech import FueltechSchema
 
 logger = logging.getLogger(__name__)
 
@@ -146,3 +149,30 @@ def map_v3_fueltech(
             return v2_fueltech
 
     return ft
+
+
+def get_fueltechs() -> List[FueltechSchema]:
+    fixture = load_data("fueltechs.json", from_fixture=True)
+
+    fueltechs = []
+    f: Dict = None
+
+    for f in fixture:
+        _f = FueltechSchema(**f)
+        fueltechs.append(_f)
+
+    return fueltechs
+
+
+_FUELTECHS: List[FueltechSchema] = get_fueltechs()
+
+
+def get_fueltech(code: str) -> FueltechSchema:
+    _code = code.strip().lower()
+
+    _lookup = list(filter(lambda x: x.code == _code, _FUELTECHS))
+
+    if not _lookup:
+        raise Exception(f"Fueltech {_code} not found")
+
+    return _lookup.pop()
