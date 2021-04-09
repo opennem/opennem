@@ -63,7 +63,13 @@ def rooftop_facilities() -> None:
             logger.info("Creating new facility {}".format(state_rooftop_code))
             rooftop_fac = Facility(code=state_rooftop_code)
 
-        rooftop_fac.network_id = state_map["network"]
+        network = state_map["network"]
+
+        # map to separate AEMO rooftop network
+        if network.upper() == "NEM":
+            network = "AEMO_ROOFTOP"
+
+        rooftop_fac.network_id = network
         rooftop_fac.network_region = state_map["network_region"]
         rooftop_fac.fueltech_id = "solar_rooftop"
         rooftop_fac.status_id = "operating"

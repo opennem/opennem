@@ -128,9 +128,22 @@ NetworkAPVI = NetworkSchema(
     interval_size=15,
 )
 
+# This is a "virtual" network that is made up of
+# NEM + WEM
 NetworkAU = NetworkSchema(
     code="AU",
     label="AU",
+    country="au",
+    timezone="Australia/Sydney",
+    timezone_database="AEST",
+    offset=600,
+    interval_size=30,
+)
+
+
+NetworkAEMORooftop = NetworkSchema(
+    code="AEMO_ROOFTOP",
+    label="AEMO Rooftop",
     country="au",
     timezone="Australia/Sydney",
     timezone_database="AEST",

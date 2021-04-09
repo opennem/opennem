@@ -27,5 +27,15 @@
     "offset": 600,
     "interval_size": 15,
     "export_set": false
+  },
+  {
+    "code": "AEMO_ROOFTOP",
+    "country": "au",
+    "label": "AEMO Rooftop",
+    "timezone": "Australia/Sydney",
+    "timezone_database": "AEST",
+    "offset": 600,
+    "interval_size": 30,
+    "export_set": false
   }
 ]
