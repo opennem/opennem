@@ -52,7 +52,7 @@ def get_generated_query(
         facility_scada fs
         left join facility f on fs.facility_code = f.code
     where
-        fs.network_id='{network_id}'
+        f.network_id='{network_id}'
         and f.network_region='{network_region}'
         and fs.trading_interval >= '{date_min}'
         and fs.trading_interval <= '{date_max}'
