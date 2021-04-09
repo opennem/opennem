@@ -22,6 +22,11 @@ def upgrade() -> None:
     op.execute("UPDATE network SET interval_shift = 0")
     op.alter_column("network", "interval_shift", nullable=False)
 
+    op.add_column("network", sa.Column("network_price", sa.Text(), nullable=True))
+    op.execute("update network set network_price='NEM';")
+    op.alter_column("network", "interval_shift", nullable=False)
+
 
 def downgrade() -> None:
     op.drop_column("network", "interval_shift")
+    op.drop_column("network", "network_price")

@@ -5,6 +5,7 @@
     "label": "NEM",
     "timezone": "Australia/Sydney",
     "timezone_database": "AEST",
+    "network_price": "NEM",
     "offset": 600,
     "interval_size": 5,
     "interval_shift": 5
@@ -14,6 +15,7 @@
     "country": "au",
     "label": "WEM",
     "timezone": "Australia/Perth",
+    "network_price": "WEM",
     "timezone_database": "AWST",
     "offset": 480,
     "interval_size": 30
@@ -23,6 +25,7 @@
     "country": "au",
     "label": "APVI",
     "timezone": "Australia/Sydney",
+    "network_price": "NEM",
     "timezone_database": "AEST",
     "offset": 600,
     "interval_size": 15,
@@ -34,6 +37,7 @@
     "label": "AEMO Rooftop",
     "timezone": "Australia/Sydney",
     "timezone_database": "AEST",
+    "network_price": "NEM",
     "offset": 600,
     "interval_size": 30,
     "export_set": false

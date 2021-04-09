@@ -82,6 +82,9 @@ class Network(Base, BaseModel):
     offset = Column(Integer, nullable=True)
     interval_size = Column(Integer, nullable=False)
 
+    # Network that is used to price this network
+    network_price = Column(Text, nullable=False)
+
     # This stores the shift in time for the network
     # trading intervals
     interval_shift = Column(Integer, nullable=False, default=0)
