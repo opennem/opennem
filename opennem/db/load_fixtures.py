@@ -97,6 +97,9 @@ def load_networks():
         network_model.offset = network["offset"]
         network_model.interval_size = network["interval_size"]
 
+        if "interval_shift" in network:
+            network_model.interval_shift = network["interval_shift"]
+
         if "export_set" in network:
             network_model.export_set = network["export_set"]
 
