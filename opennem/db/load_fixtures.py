@@ -96,6 +96,7 @@ def load_networks():
         network_model.timezone_database = network["timezone_database"]
         network_model.offset = network["offset"]
         network_model.interval_size = network["interval_size"]
+        network_model.network_price = network["network_price"]
 
         if "interval_shift" in network:
             network_model.interval_shift = network["interval_shift"]
