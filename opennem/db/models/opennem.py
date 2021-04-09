@@ -82,6 +82,10 @@ class Network(Base, BaseModel):
     offset = Column(Integer, nullable=True)
     interval_size = Column(Integer, nullable=False)
 
+    # This stores the shift in time for the network
+    # trading intervals
+    interval_shift = Column(Integer, nullable=False, default=0)
+
     # record is exported
     export_set = Column(Boolean, default=True, nullable=False)
 
@@ -697,10 +701,18 @@ class FacilityScada(Base, BaseModel):
     energy_quality_flag = Column(Numeric, nullable=False, default=0)
 
     __table_args__ = (
-        Index("idx_facility_scada_facility_code_trading_interval", facility_code, trading_interval.desc()),
+        Index(
+            "idx_facility_scada_facility_code_trading_interval",
+            facility_code,
+            trading_interval.desc(),
+        ),
         Index("idx_facility_scada_network_id", network_id),
-        Index("idx_facility_scada_network_id_trading_interval", network_id, trading_interval.desc()),
-        Index("idx_facility_scada_trading_interval_facility_code", trading_interval, facility_code),
+        Index(
+            "idx_facility_scada_network_id_trading_interval", network_id, trading_interval.desc()
+        ),
+        Index(
+            "idx_facility_scada_trading_interval_facility_code", trading_interval, facility_code
+        ),
     )
 
 
