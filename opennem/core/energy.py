@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 
 from opennem.schema.core import BaseConfig
-from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkNEM, NetworkSchema
 
 logger = logging.getLogger("opennem.compat.energy")
 
