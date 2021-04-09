@@ -14,7 +14,7 @@ from typing import Any, Dict, Generator, List, Optional, Union
 import pandas as pd
 
 from opennem.schema.core import BaseConfig
-from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkSchema, NetworkWEM
 
 logger = logging.getLogger("opennem.compat.energy")
 
@@ -222,12 +222,22 @@ def energy_sum(
     """Takes the energy sum for a series of raw duid intervals
     and returns a fresh dataframe to be imported"""
 
-    if network == NetworkNEM:
+    # These are the networks that run through the compat func
+    COMPAT_NETWORKS = [NetworkNEM]
+
+    if network in COMPAT_NETWORKS:
         df = df.set_index(["trading_interval"])
         df = _energy_aggregate_compat(df)
 
-    elif network == NetworkWEM:
+    # Shortcuts - @NOTE this is a v2 compat feature
+    # since it takes these averages - remove for full
+    # sum
+    elif network.interval_size == 30:
         df["eoi_quantity"] = df.generated / 2
+        df = df.drop("generated", axis=1)
+
+    elif network.interval_size == 15:
+        df["eoi_quantity"] = df.generated / 4
         df = df.drop("generated", axis=1)
 
     else:
@@ -240,7 +250,7 @@ def energy_sum(
     # Reset back to a simple frame
     df = df.reset_index()
 
-    # Shift back 5 minutes to even up into 30 minute bkocks
+    # Shift back if required by network
     if network.interval_shift:
         df.trading_interval = df.trading_interval - pd.Timedelta(minutes=network.interval_shift)
 
