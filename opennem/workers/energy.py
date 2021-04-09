@@ -394,13 +394,16 @@ def run_energy_update_archive(
 
 
 def run_energy_update_days(
-    networks: Optional[List[NetworkSchema]] = None, days: int = 1, fueltech: str = None
+    networks: Optional[List[NetworkSchema]] = None,
+    days: int = 1,
+    fueltech: str = None,
+    region: str = None,
 ) -> None:
     """Run energy sum update for yesterday. This task is scheduled
     in scheduler/db"""
 
     if not networks:
-        networks = [NetworkNEM, NetworkWEM, NetworkAPVI]
+        networks = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop]
 
     for network in networks:
 
@@ -416,6 +419,9 @@ def run_energy_update_days(
         date_min = today_midnight - timedelta(days=days)
 
         regions = [i.code for i in get_network_regions(network)]
+
+        if region:
+            regions = [region.upper()]
 
         if network == NetworkAPVI:
             regions = ["WEM"]
