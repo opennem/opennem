@@ -1,15 +1,15 @@
 create materialized view mv_network_fueltech_days as
   select
-      date_trunc('day', f.trading_interval at time zone n.timezone_database) as trading_day,
-      f.code,
-      f.fueltech_id,
-      f.network_id,
-      f.network_region,
-      f.interconnector,
-      f.interconnector_region_to,
-      sum(f.energy) as energy,
-      sum(f.market_value) as market_value,
-      sum(f.emissions) as emissions
+    date_trunc('day', f.trading_interval at time zone n.timezone_database) as trading_day,
+    f.code,
+    f.fueltech_id,
+    f.network_id,
+    f.network_region,
+    f.interconnector,
+    f.interconnector_region_to,
+    sum(f.energy) as energy,
+    sum(f.market_value) as market_value,
+    sum(f.emissions) as emissions
   from (
     select
         time_bucket('30 minutes', fs.trading_interval) as trading_interval,
@@ -26,24 +26,12 @@ create materialized view mv_network_fueltech_days as
       left join facility f on fs.facility_code = f.code
       left join network n on f.network_id = n.code
       left join balancing_summary bs on
-          bs.trading_interval - INTERVAL '5 minutes' = fs.trading_interval
-          and bs.network_id=f.network_id
+          bs.trading_interval - INTERVAL '1 minute' * n.interval_shift = fs.trading_interval
+          and bs.network_id = n.network_price
           and bs.network_region = f.network_region
     where fs.is_forecast is False
     group by
         1, 2, 3, 4, 5, 6, 7
-  ) as f
-  left join network n on f.network_id = n.code
-  where
-      f.fueltech_id is not null
-  group by
-      1,
-      f.network_id,
-      f.code,
-      f.fueltech_id,
-      f.network_region,
-      f.interconnector,
-      f.interconnector_region_to
 order by 1 desc;
 
 create unique index idx_mv_network_fueltech_days_unique_trading_day_network_id_code on mv_network_fueltech_days (trading_day, network_id, code);
