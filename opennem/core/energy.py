@@ -55,8 +55,8 @@ def __trading_energy_generator(
         # so this won't be required
         if (d_ti.fueltech_id.all() == "solar_rooftop") and (d_ti[power_field].count() == 1):
             energy_value = d_ti[power_field].sum() / 2
-            # ooofff
-            trading_interval = d_ti.index + timedelta(minutes=5)
+            # ooofff - this delta comes back off as part of NEM offset
+            trading_interval = d_ti.index[0] + timedelta(minutes=5)
         # interpolate if it isn't padded out
         elif d_ti[power_field].count() != 7:
             index_interpolated = pd.date_range(
