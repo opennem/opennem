@@ -12,13 +12,16 @@ from typing import Dict, List, Optional, Union
 from scrapy import Spider
 from sqlalchemy.sql.schema import Table
 
+from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
 
 
 def generate_csv_from_records(
-    table: Table, records: List[Dict], column_names: Optional[List[str]] = None
+    table: Union[Table, FacilityScada, BalancingSummary],
+    records: List[Dict],
+    column_names: Optional[List[str]] = None,
 ) -> StringIO:
     """
     Take a list of dict records and a table schema and generate a csv
@@ -45,9 +48,7 @@ def generate_csv_from_records(
 
         for column_name in table_column_names:
             if column_name not in record_field_names:
-                raise Exception(
-                    "Missing value for column {}".format(column_name)
-                )
+                raise Exception("Missing value for column {}".format(column_name))
 
         column_names = record_field_names
 
@@ -85,9 +86,7 @@ class RecordsToCSVPipeline(object):
 
         for record_set in item:
             if not isinstance(record_set, dict):
-                logger.error(
-                    "Invalid record_set passed to CSV pipeline: %s", record_set
-                )
+                logger.error("Invalid record_set passed to CSV pipeline: %s", record_set)
                 return record_set
 
             if "table_schema" not in record_set:
