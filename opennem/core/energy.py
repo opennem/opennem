@@ -67,7 +67,7 @@ def __trading_energy_generator(
             d_ti = d_ti.set_index("trading_interval")
             d_ti = d_ti.reindex(index_interpolated)
             d_ti["facility_code"] = duid_id
-            d_ti[power_field].replace(np.NaN, 0)
+            d_ti[power_field] = d_ti[power_field].replace(np.NaN, 0)
 
             if d_ti[power_field].count() != 7:
                 logger.warn("Interpolated frame didn't match generated count")
