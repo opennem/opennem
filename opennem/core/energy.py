@@ -241,8 +241,8 @@ def energy_sum(
     df = df.reset_index()
 
     # Shift back 5 minutes to even up into 30 minute bkocks
-    if network.reading_shift:
-        df.trading_interval = df.trading_interval - pd.Timedelta(minutes=network.reading_shift)
+    if network.interval_shift:
+        df.trading_interval = df.trading_interval - pd.Timedelta(minutes=network.interval_shift)
 
     # filter out empties
     df = df[pd.isnull(df.eoi_quantity) == False]  # noqa: E712

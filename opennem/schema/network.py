@@ -32,8 +32,10 @@ class NetworkSchema(BaseConfig):
     timezone: str = Field(..., description="Network timezone")
     timezone_database: str = Field("UTC", description="Database timezone format")
     offset: Optional[int] = Field(None, description="Network time offset in minutes")
+
     interval_size: int = Field(..., description="Size of network interval in minutes")
-    reading_shift: Optional[int] = Field(None, description="Size of reading shift in minutes")
+
+    interval_shift: int = Field(0, description="Size of reading shift in minutes")
 
     def get_interval(self) -> Optional[TimeInterval]:
         if not self.interval_size:
@@ -103,7 +105,7 @@ NetworkNEM = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=5,
-    reading_shift=5,
+    interval_shift=5,
 )
 
 NetworkWEM = NetworkSchema(
