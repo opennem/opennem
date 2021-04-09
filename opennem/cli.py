@@ -43,8 +43,9 @@ def cmd_db_init() -> None:
 
 
 @click.command()
-def cmd_db_fixturer() -> None:
+def cmd_db_fixtures() -> None:
     load_fixtures()
+    logger.info("Fixtures loaded")
 
 
 @click.command()
@@ -165,7 +166,7 @@ cmd_export.add_command(cmd_export_energy, name="energy")
 cmd_export.add_command(cmd_export_energy_monthly, name="energy_monthly")
 
 cmd_db.add_command(cmd_db_init, name="init")
-cmd_db.add_command(cmd_db_fixturer, name="load_fixtures")
+cmd_db.add_command(cmd_db_fixtures, name="fixtures")
 cmd_db.add_command(cmd_db_refresh, name="refresh")
 cmd_db.add_command(cmd_db_views, name="views")
 cmd_db.add_command(cmd_db_aggregations, name="aggregations")
