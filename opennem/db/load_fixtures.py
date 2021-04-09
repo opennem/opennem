@@ -120,7 +120,9 @@ def load_network_regions():
 
     for network_region in fixture:
         network_region_model = (
-            s.query(NetworkRegion).filter_by(code=network_region["code"]).one_or_none()
+            s.query(NetworkRegion)
+            .filter_by(code=network_region["code"], network_id=network_region["network_id"])
+            .one_or_none()
         )
 
         if not network_region_model:
@@ -327,7 +329,7 @@ def update_existing_geos():
         s.commit()
 
 
-def load_fixtures():
+def load_fixtures() -> None:
     load_fueltechs()
     load_facilitystatus()
     load_networks()
