@@ -11,6 +11,7 @@ import logging
 from datetime import date, datetime, timedelta
 from typing import Any, Dict, Generator, List, Optional, Union
 
+import numpy as np
 import pandas as pd
 
 from opennem.schema.core import BaseConfig
@@ -58,12 +59,18 @@ def __trading_energy_generator(
             trading_interval = d_ti.index + timedelta(minutes=5)
         # interpolate if it isn't padded out
         elif d_ti[power_field].count() != 7:
-            index_interpolated = pd.date_range(start=t_i, end=t_f, freq="5min")
+            index_interpolated = pd.date_range(
+                start=t_i, end=t_f, freq="5min", tz=NetworkNEM.get_timezone()
+            )
 
             d_ti = d_ti.reset_index()
             d_ti = d_ti.set_index("trading_interval")
             d_ti = d_ti.reindex(index_interpolated)
-            d_ti["duid"] = duid_id
+            d_ti["facility_code"] = duid_id
+            d_ti[power_field].replace(np.NaN, 0)
+
+            if d_ti[power_field].count() != 7:
+                logger.warn("Interpolated frame didn't match generated count")
 
         try:
             if d_ti.fueltech_id.all() != "solar_rooftop":
