@@ -181,6 +181,7 @@ def get_generated(
     date_max: datetime,
     network: NetworkSchema,
     fueltech_id: Optional[str] = None,
+    run_clear: bool = True,
 ) -> List[Dict]:
     """Gets generated values for a date range for a network and network region
     and optionally for a single fueltech"""
@@ -196,9 +197,10 @@ def get_generated(
     results = []
 
     with engine.connect() as c:
-        logger.debug(query_clear)
 
-        c.execute(query_clear)
+        if run_clear:
+            logger.debug(query_clear)
+            c.execute(query_clear)
 
         logger.debug(query)
 
@@ -337,6 +339,7 @@ def run_energy_calc(
     date_max: datetime,
     network: NetworkSchema,
     fueltech_id: Optional[str] = None,
+    run_clear: bool = True,
 ) -> int:
     generated_results: List[Dict] = []
 
@@ -349,7 +352,12 @@ def run_energy_calc(
         generated_results = get_flows(region, date_min, date_max, network=network, flow=flow)
     else:
         generated_results = get_generated(
-            region, date_min, date_max, network=network, fueltech_id=fueltech_id
+            region,
+            date_min,
+            date_max,
+            network=network,
+            fueltech_id=fueltech_id,
+            run_clear=run_clear,
         )
 
     num_records = 0
@@ -382,6 +390,7 @@ def run_energy_update_archive(
     regions: Optional[List[str]] = None,
     fueltech: Optional[str] = None,
     network: NetworkSchema = NetworkNEM,
+    run_clear: bool = True,
 ) -> None:
 
     date_range = get_date_range(network=network)
@@ -441,7 +450,12 @@ def run_energy_update_archive(
             for region in regions:
                 for fueltech_id in fueltechs:
                     run_energy_calc(
-                        region, date_min, date_max, fueltech_id=fueltech_id, network=network
+                        region,
+                        date_min,
+                        date_max,
+                        fueltech_id=fueltech_id,
+                        network=network,
+                        run_clear=run_clear,
                     )
 
 
@@ -479,7 +493,9 @@ def run_energy_update_days(
             regions = ["WEM"]
 
         for region in regions:
-            run_energy_calc(region, date_min, date_max, network=network, fueltech_id=fueltech)
+            run_energy_calc(
+                region, date_min, date_max, network=network, fueltech_id=fueltech, run_clear=False
+            )
 
 
 def run_energy_update_all(
@@ -487,8 +503,8 @@ def run_energy_update_all(
 ) -> None:
     """Runs energy update for all regions and all years for one-off
     inserts"""
-    for year in range(CUR_YEAR, 2009, -1):
-        run_energy_update_archive(year=year, fueltech=fueltech, network=network)
+    for year in range(CUR_YEAR, 1997, -1):
+        run_energy_update_archive(year=year, fueltech=fueltech, network=network, run_clear=True)
 
 
 if __name__ == "__main__":
