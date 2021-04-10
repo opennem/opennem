@@ -478,7 +478,7 @@ def energy_network_fueltech_query(
 
     __query = """
     select
-        date_trunc('{trunc_name}', t.trading_day),
+        date_trunc('{trunc}', t.trading_day),
         t.fueltech_id,
         sum(t.energy) / 1000 as fueltech_energy,
         sum(t.market_value) as fueltech_market_value,
@@ -511,9 +511,7 @@ def energy_network_fueltech_query(
 
     query = dedent(
         __query.format(
-            energy_view=settings.db_energy_view,
             trunc=date_range.interval.trunc,
-            trunc_name=trunc_name,
             date_min=date_range.start.date(),
             date_max=date_range.end.date(),
             network_query=network_query,
