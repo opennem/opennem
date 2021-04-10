@@ -36,6 +36,7 @@ from sqlalchemy.sql.schema import UniqueConstraint
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
+from opennem.utils.sql import time_bucket
 
 Base = declarative_base(cls=DictableModel)
 metadata = Base.metadata
@@ -760,4 +761,67 @@ class BalancingSummary(Base, BaseModel):
             network_region,
             trading_interval.desc(),
         ),
+    )
+
+
+# Aggregate tables
+
+
+class AggregateFacilityDaily(Base):
+    """
+    Facility Dailies Aggregates
+    """
+
+    __tablename__ = "at_facility_daily"
+
+    # def __str__(self) -> str:
+    #     return "<{}: {} {} {}>".format(
+    #         self.__class__,
+    #         self.trading_interval,
+    #         self.network_id,
+    #         self.facility_code,
+    #     )
+
+    # def __repr__(self) -> str:
+    #     return "{}: {} {} {}".format(
+    #         self.__class__,
+    #         self.trading_interval,
+    #         self.network_id,
+    #         self.facility_code,
+    #     )
+
+    trading_day = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
+
+    network_id = Column(
+        Text,
+        ForeignKey("network.code", name="fk_at_facility_daily_network_code"),
+        primary_key=True,
+        index=True,
+        nullable=False,
+    )
+    network = relationship("Network")
+
+    facility_code = Column(
+        Text,
+        ForeignKey("facility.code", name="fk_at_facility_daily_facility_code"),
+        primary_key=True,
+        index=True,
+        nullable=False,
+    )
+    facility = relationship("Facility")
+
+    fueltech_id = Column(Text, nullable=True)
+
+    energy = Column(Numeric, nullable=True)
+    market_value = Column(Numeric, nullable=True)
+    emissions = Column(Numeric, nullable=True)
+
+    __table_args__ = (
+        Index(
+            "idx_at_facility_day_facility_code_trading_interval",
+            facility_code,
+            trading_day.desc(),
+        ),
+        Index("idx_at_facility_daily_network_id_trading_interval", network_id, trading_day.desc()),
+        Index("idx_at_facility_daily_trading_interval_facility_code", trading_day, facility_code),
     )
