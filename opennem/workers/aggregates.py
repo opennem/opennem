@@ -112,5 +112,23 @@ def run_aggregates_facility_all() -> None:
         exec_aggregates_facility_daily_query(date_min, date_max)
 
 
+def run_aggregate_days(
+    days: int = 1,
+) -> None:
+    """Run energy sum update for yesterday. This task is scheduled
+    in scheduler/db"""
+
+    # This is Sydney time as the data is published in local time
+
+    # today_midnight in NEM time
+    today = datetime.now().date()
+
+    date_max = today
+    date_min = today - timedelta(days=days)
+
+    exec_aggregates_facility_daily_query(date_min, date_max)
+
+
 if __name__ == "__main__":
+    # run_aggregate_days()
     run_aggregates_facility_all()
