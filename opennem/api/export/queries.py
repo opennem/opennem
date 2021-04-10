@@ -476,51 +476,31 @@ def energy_network_fueltech_query(
     if time_series.network not in networks_query:
         networks_query.append(time_series.network)
 
-    if time_series.interval.interval >= 1440:
-        __query = """
-        select
-            date_trunc('{trunc}', t.trading_day) as trading_day,
-            t.fueltech_id,
-            sum(t.energy) / 1000 as fueltech_energy,
-            sum(t.market_value) as fueltech_market_value,
-            sum(t.emissions) as fueltech_emissions
-        from mv_network_fueltech_days t
-        where
-            t.trading_day <= '{date_max}'::date and
-            t.trading_day >= '{date_min}'::date and
-            t.fueltech_id not in ('imports', 'exports', 'interconnector') and
-            {network_query}
-            {network_region_query}
-            1=1
-        group by 1, 2
-        order by 1 desc;
-        """
-    else:
-        __query = """
-        select
-            t.ti_{trunc_name} as trading_day,
-            t.fueltech_id,
-            coalesce(sum(t.energy) / 1000, 0) as fueltech_energy,
-            sum(t.market_value) as fueltech_market_value,
-            coalesce(sum(t.emissions), 0) as fueltech_emissions
-        from mv_facility_45d t
-        where
-            t.ti_{trunc_name} <= '{date_max}'::date and
-            t.ti_{trunc_name} >= '{date_min}'::date and
-            t.fueltech_id not in ('imports', 'exports', 'interconnector') and
-            {network_query}
-            {network_region_query}
-            1=1
-        group by 1, 2
-        order by
-            trading_day desc;
-        """
+    __query = """
+    select
+        date_trunc('{trunc_name}', t.trading_day),
+        t.fueltech_id,
+        sum(t.energy) / 1000 as fueltech_energy,
+        sum(t.market_value) as fueltech_market_value,
+        sum(t.emissions) as fueltech_emissions
+    from at_facility_daily t
+    left join facility f on t.facility_code = f.code
+    where
+        t.trading_day <= '{date_max}'::date and
+        t.trading_day >= '{date_min}'::date and
+        t.fueltech_id not in ('imports', 'exports', 'interconnector') and
+        {network_query}
+        {network_region_query}
+        1=1
+    group by 1, 2
+    order by 1 desc;
+    """
 
     network_region_query = ""
     date_range = time_series.get_range()
 
     if network_region:
-        network_region_query = f"t.network_region='{network_region}' and"
+        network_region_query = f"f.network_region='{network_region}' and"
 
     networks_list = networks_to_in(networks_query)
     network_query = "t.network_id IN ({}) and ".format(networks_list)

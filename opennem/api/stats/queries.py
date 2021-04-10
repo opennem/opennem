@@ -63,39 +63,21 @@ def energy_facility_query(time_series: TimeSeries, facility_codes: List[str]) ->
     __query = """
     select
         date_trunc('{trunc}', t.trading_day at time zone '{timezone}') as trading_day,
-        t.code,
+        t.facility_code,
         sum(t.energy) as fueltech_energy,
         sum(t.market_value) as fueltech_market_value,
         sum(t.emissions) as fueltech_emissions
-    from mv_network_fueltech_days t
+    from at_facility_daily t
     where
         t.trading_day <= '{date_max}' and
         t.trading_day >= '{date_min}' and
-        t.code in ({facility_codes_parsed})
+        t.facility_code in ({facility_codes_parsed})
     group by 1, 2
     order by
         trading_day desc;
     """
 
     date_range = time_series.get_range()
-
-    if time_series.period.period <= 43800:
-        __query = """
-        select
-            date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_day,
-            t.code,
-            sum(t.energy) as fueltech_energy,
-            sum(t.market_value) as fueltech_market_value,
-            sum(t.emissions) as fueltech_emissions
-        from mv_facility_45d t
-        where
-            t.trading_interval <= '{date_max}' and
-            t.trading_interval >= '{date_min}' and
-            t.code in ({facility_codes_parsed})
-        group by 1, 2
-        order by
-            trading_day desc;
-        """
 
     query = dedent(
         __query.format(
