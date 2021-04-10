@@ -505,10 +505,6 @@ def energy_network_fueltech_query(
     networks_list = networks_to_in(networks_query)
     network_query = "t.network_id IN ({}) and ".format(networks_list)
 
-    trunc_name = "{}_{}".format(
-        time_series.interval.trunc, time_series.network.timezone_database
-    ).lower()
-
     query = dedent(
         __query.format(
             trunc=date_range.interval.trunc,
