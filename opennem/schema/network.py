@@ -151,4 +151,4 @@ NetworkAEMORooftop = NetworkSchema(
     interval_size=30,
 )
 
-NETWORKS = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAU]
+NETWORKS = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAU, NetworkAEMORooftop]
