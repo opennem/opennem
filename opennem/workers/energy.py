@@ -493,11 +493,11 @@ def run_energy_update_days(
         if network == NetworkAPVI:
             regions = ["WEM"]
 
-        for region in regions:
-            logger.debug("{} {}".format(network.code, region))
-            # run_energy_calc(
-            #     region, date_min, date_max, network=network, fueltech_id=fueltech, run_clear=False
-            # )
+        for ri in regions:
+            # logger.debug("{} {}".format(network.code, ri))
+            run_energy_calc(
+                ri, date_min, date_max, network=network, fueltech_id=fueltech, run_clear=False
+            )
 
 
 def run_energy_update_all(
@@ -510,4 +510,4 @@ def run_energy_update_all(
 
 
 if __name__ == "__main__":
-    run_energy_update_days(days=10)
+    run_energy_update_days(days=10, networks=[NetworkNEM, NetworkWEM])
