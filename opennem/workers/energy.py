@@ -12,10 +12,10 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.core.facility.fueltechs import load_fueltechs
 from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id
+from opennem.core.network_regions import get_network_regions
 from opennem.core.networks import get_network_region_schema
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
-from opennem.diff.versions import CUR_YEAR, get_network_regions
 from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
@@ -27,6 +27,7 @@ from opennem.schema.network import (
     NetworkSchema,
     NetworkWEM,
 )
+from opennem.utils.dates import DATE_CURRENT_YEAR
 from opennem.utils.interval import get_human_interval
 
 logger = logging.getLogger("opennem.workers.energy")
@@ -398,7 +399,7 @@ def run_energy_update_archive(
     years: List[int] = []
 
     if not year:
-        years = [i for i in range(YEAR_EARLIEST, CUR_YEAR + 1)]
+        years = [i for i in range(YEAR_EARLIEST, DATE_CURRENT_YEAR + 1)]
     else:
         years = [year]
 
@@ -493,9 +494,10 @@ def run_energy_update_days(
             regions = ["WEM"]
 
         for region in regions:
-            run_energy_calc(
-                region, date_min, date_max, network=network, fueltech_id=fueltech, run_clear=False
-            )
+            logger.debug("{} {}".format(network.code, region))
+            # run_energy_calc(
+            #     region, date_min, date_max, network=network, fueltech_id=fueltech, run_clear=False
+            # )
 
 
 def run_energy_update_all(
@@ -503,7 +505,7 @@ def run_energy_update_all(
 ) -> None:
     """Runs energy update for all regions and all years for one-off
     inserts"""
-    for year in range(CUR_YEAR, 1997, -1):
+    for year in range(DATE_CURRENT_YEAR, 1997, -1):
         run_energy_update_archive(year=year, fueltech=fueltech, network=network, run_clear=True)
 
 
