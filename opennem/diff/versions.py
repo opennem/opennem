@@ -160,8 +160,8 @@ def get_url_map(regions: List[NetworkRegion]) -> List[DiffComparisonSet]:
         )
         urls.append(a)
 
-        # v2 dailies only go back to 2017
-        for y in [2021, 2020, 2019, 2018, 2017]:
+        # v2 dailies only go back to 2018
+        for y in [2021, 2020, 2019, 2018]:
             a = DiffComparisonSet(
                 stat_type=StatType.energy, network_region=region.code, bucket_size="daily", year=y
             )
@@ -477,7 +477,7 @@ def run_diff() -> str:
     else:
         percentage = round((buckets_total - buckets_not_match) / buckets_total * 100, 2)
 
-    return "{}% match. {} total buckets match of {}. {} not matching.".format(
+    return "{}% match. {} total values match of {}. {} not matching.".format(
         percentage, (buckets_total - buckets_not_match), buckets_total, buckets_not_match
     )
 
