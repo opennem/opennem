@@ -160,8 +160,9 @@ def get_url_map(regions: List[NetworkRegion]) -> List[DiffComparisonSet]:
         )
         urls.append(a)
 
-        # v2 dailies only go back to 2018
-        for y in [2021, 2020, 2019, 2018]:
+        # v2 dailies only go back to 2019
+        # @WARN 2018 isn't complete in jan/feb on v2
+        for y in [2021, 2020, 2019]:
             a = DiffComparisonSet(
                 stat_type=StatType.energy, network_region=region.code, bucket_size="daily", year=y
             )
@@ -170,7 +171,7 @@ def get_url_map(regions: List[NetworkRegion]) -> List[DiffComparisonSet]:
         a = DiffComparisonSet(
             stat_type=StatType.energy, network_region=region.code, bucket_size="monthly"
         )
-        # urls.append(a)
+        urls.append(a)
 
     return urls
 
