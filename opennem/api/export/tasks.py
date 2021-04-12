@@ -353,7 +353,7 @@ def export_all_monthly() -> None:
 
 def export_all_daily() -> None:
     session = SessionLocal()
-    network_regions = session.query(NetworkRegion).all()
+    network_regions = session.query(NetworkRegion).filter_by(export_set=True).all()
 
     cpi = gov_stats_cpi()
 
