@@ -170,7 +170,7 @@ def get_url_map(regions: List[NetworkRegion]) -> List[DiffComparisonSet]:
         a = DiffComparisonSet(
             stat_type=StatType.energy, network_region=region.code, bucket_size="monthly"
         )
-        urls.append(a)
+        # urls.append(a)
 
     return urls
 
