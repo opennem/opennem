@@ -25,7 +25,7 @@ from opennem.core.networks import (
 )
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Network
-from opennem.schema.network import NetworkAEMORooftop
+from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.utils.version import VersionPart, get_version
 
@@ -193,7 +193,13 @@ def get_export_map() -> StatMetadata:
             country=country,
             date_range=scada_range,
             network=NetworkAU,
-            networks=[NetworkNEM, NetworkWEM],
+            networks=[
+                NetworkNEM,
+                NetworkWEM,
+                NetworkAEMORooftop,
+                NetworkAEMORooftopBackfill,
+                NetworkAPVI,
+            ],
             interval=NetworkAU.get_interval(),
             period=human_to_period("7d"),
         )
@@ -211,7 +217,13 @@ def get_export_map() -> StatMetadata:
                 country=country,
                 date_range=scada_range,
                 network=NetworkAU,
-                networks=[NetworkNEM, NetworkWEM],
+                networks=[
+                    NetworkNEM,
+                    NetworkWEM,
+                    NetworkAEMORooftop,
+                    NetworkAEMORooftopBackfill,
+                    NetworkAPVI,
+                ],
                 year=year,
                 interval=human_to_interval("1d"),
                 period=human_to_period("1Y"),
@@ -224,7 +236,13 @@ def get_export_map() -> StatMetadata:
             country=country,
             date_range=scada_range,
             network=NetworkAU,
-            networks=[NetworkNEM, NetworkWEM],
+            networks=[
+                NetworkNEM,
+                NetworkWEM,
+                NetworkAEMORooftop,
+                NetworkAEMORooftopBackfill,
+                NetworkAPVI,
+            ],
             interval=human_to_interval("1M"),
             period=human_to_period("all"),
         )
@@ -251,7 +269,7 @@ def get_export_map() -> StatMetadata:
             export.network_region_query = "WEM"
 
         if network.code == "NEM":
-            export.networks = [NetworkNEM, NetworkAEMORooftop]
+            export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
         _exmap.append(export)
 
@@ -280,7 +298,7 @@ def get_export_map() -> StatMetadata:
                 export.network_region_query = "WEM"
 
             if network.code == "NEM":
-                export.networks = [NetworkNEM, NetworkAEMORooftop]
+                export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             _exmap.append(export)
 
@@ -300,7 +318,7 @@ def get_export_map() -> StatMetadata:
             export.network_region_query = "WEM"
 
         if network.code == "NEM":
-            export.networks = [NetworkNEM, NetworkAEMORooftop]
+            export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
         _exmap.append(export)
 
@@ -332,7 +350,7 @@ def get_export_map() -> StatMetadata:
                 export.network_region_query = "WEM"
 
             if network.code == "NEM":
-                export.networks = [NetworkNEM, NetworkAEMORooftop]
+                export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             _exmap.append(export)
 
@@ -348,7 +366,7 @@ def get_export_map() -> StatMetadata:
                     date_range=scada_range,
                     network=network_schema,
                     network_region=region.code,
-                    networks=[NetworkNEM, NetworkAEMORooftop],
+                    networks=[NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill],
                     bom_station=bom_station,
                     year=year,
                     period=human_to_period("1Y"),
@@ -362,7 +380,7 @@ def get_export_map() -> StatMetadata:
                 country=network.country,
                 date_range=scada_range,
                 network=network_schema,
-                networks=[NetworkNEM, NetworkAEMORooftop],
+                networks=[NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill],
                 network_region=region.code,
                 bom_station=bom_station,
                 period=human_to_period("all"),
@@ -374,7 +392,7 @@ def get_export_map() -> StatMetadata:
                 export.network_region_query = "WEM"
 
             if network.code == "NEM":
-                export.networks = [NetworkNEM, NetworkAEMORooftop]
+                export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             _exmap.append(export)
 
