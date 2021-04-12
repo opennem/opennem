@@ -36,7 +36,6 @@ CUR_YEAR = datetime.now().year
 FULL = False
 INCLUDE_MONTHLY = True
 REGION = os.environ.get("REGION", None)
-# REGION="NSW1"
 
 
 def get_v2_url(
