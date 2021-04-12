@@ -26,6 +26,13 @@ STATE_NETWORK_REGION_MAP = [
     {"state": "TAS", "network": "NEM", "network_region": "TAS1"},
     {"state": "SA", "network": "NEM", "network_region": "SA1"},
     {"state": "NT", "network": "NEM", "network_region": "NT1"},
+    # AEMO backfill derives from APVI data
+    {"state": "NSW", "network": "AEMO_ROOFTOP_BACKFILL", "network_region": "NSW1"},
+    {"state": "QLD", "network": "AEMO_ROOFTOP_BACKFILL", "network_region": "QLD1"},
+    {"state": "VIC", "network": "AEMO_ROOFTOP_BACKFILL", "network_region": "VIC1"},
+    {"state": "TAS", "network": "AEMO_ROOFTOP_BACKFILL", "network_region": "TAS1"},
+    {"state": "SA", "network": "AEMO_ROOFTOP_BACKFILL", "network_region": "SA1"},
+    {"state": "NT", "network": "AEMO_ROOFTOP_BACKFILL", "network_region": "NT1"},
 ]
 
 
