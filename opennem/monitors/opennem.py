@@ -18,10 +18,7 @@ def check_opennem_interval_delays(network_code: str) -> bool:
     if settings.debug:
         env = ".dev"
 
-    url = (
-        f"https://data.opennem.org.au/v3/stats/au/{network.code}/power/7d.json"
-        f"https://data{env}.opennem.org.au/v3/stats/au/{network.code}/power/7d.json"
-    )
+    url = f"https://data{env}.opennem.org.au/v3/stats/au/{network.code}/power/7d.json"
 
     resp = http.get(url)
 
