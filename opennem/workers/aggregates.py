@@ -1,27 +1,33 @@
 import logging
-from datetime import date, datetime, timedelta
+import os
+from datetime import datetime, timedelta
 from textwrap import dedent
 from typing import Optional, Tuple
 
 from opennem.db import get_database_engine
+from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import DATE_CURRENT_YEAR
 
 logger = logging.getLogger("opennem.workers.aggregates")
 
+DRY_RUN = os.environ.get("DRY_RUN", False)
 
-def aggregates_facility_daily_query(date_min: date, date_max: Optional[date] = None) -> str:
+
+def aggregates_facility_daily_query(
+    date_min: datetime, date_max: Optional[datetime] = None
+) -> str:
     """ This is the query to update the at_facility_daily aggregate """
 
     __query = """
     insert into at_facility_daily
         select
-        date_trunc('day', fs.trading_interval at time zone n.timezone_database) as trading_day,
-        f.network_id,
-        f.code as facility_code,
-        f.fueltech_id,
-        sum(fs.energy) as energy,
-        sum(fs.market_value) as market_value,
-        sum(fs.emissions) as emissions
+            date_trunc('day', fs.trading_interval at time zone n.timezone_database) as trading_day,
+            f.network_id,
+            f.code as facility_code,
+            f.fueltech_id,
+            sum(fs.energy) as energy,
+            sum(fs.market_value) as market_value,
+            sum(fs.emissions) as emissions
         from (
             select
                 time_bucket('30 minutes', fs.trading_interval) as trading_interval,
@@ -53,10 +59,10 @@ def aggregates_facility_daily_query(date_min: date, date_max: Optional[date] = N
             and fs.trading_interval >= '{date_min}'
             {date_max_query}
         group by
-        1,
-        f.network_id,
-        f.code,
-        f.fueltech_id
+            1,
+            f.network_id,
+            f.code,
+            f.fueltech_id
     on conflict (trading_day, network_id, facility_code) DO UPDATE set
         energy = EXCLUDED.energy,
         market_value = EXCLUDED.market_value,
@@ -66,7 +72,7 @@ def aggregates_facility_daily_query(date_min: date, date_max: Optional[date] = N
     date_max_query: str = ""
 
     if date_max:
-        date_max_query = f"and fs.trading_interval <= '{date_max}'"
+        date_max_query = f"and fs.trading_interval < '{date_max}'"
 
     query = __query.format(
         date_min=date_min,
@@ -76,29 +82,54 @@ def aggregates_facility_daily_query(date_min: date, date_max: Optional[date] = N
     return dedent(query)
 
 
-def exec_aggregates_facility_daily_query(date_min: date, date_max: Optional[date] = None) -> bool:
+def exec_aggregates_facility_daily_query(
+    date_min: datetime, date_max: Optional[datetime] = None
+) -> bool:
     resp_code: bool = False
     engine = get_database_engine()
+    result = None
 
     query = aggregates_facility_daily_query(date_min, date_max)
 
     with engine.connect() as c:
         logger.debug(query)
-        result = c.execute(query)
+
+        if not DRY_RUN:
+            result = c.execute(query)
 
     logger.debug(result)
 
     return resp_code
 
 
-def _get_year_range(year: int) -> Tuple[date, date]:
-    date_min = datetime(year, 1, 1).date()
-    date_max = datetime(year, 12, 31).date()
+def _get_year_range(year: int, network: NetworkSchema = NetworkNEM) -> Tuple[datetime, datetime]:
+    """ Get a date range for a year with end exclusive """
+    tz = network.get_fixed_offset()
+
+    date_min = datetime(year, 1, 1, 0, 0, 0, 0, tzinfo=tz)
+    date_max = datetime(year + 1, 1, 1, 0, 0, 0, 0, tzinfo=tz)
 
     if year == DATE_CURRENT_YEAR:
-        date_max = datetime.now().date()
+        date_max = datetime.now().replace(hour=0, minute=0, second=0, tzinfo=tz) + timedelta(
+            days=1
+        )
 
     return date_min, date_max
+
+
+def run_aggregates_facility_year(
+    year: int = DATE_CURRENT_YEAR, network: NetworkSchema = NetworkNEM
+) -> None:
+    """Run aggregates for a single year
+
+    Args:
+        year (int, optional): [description]. Defaults to DATE_CURRENT_YEAR.
+        network (NetworkSchema, optional): [description]. Defaults to NetworkNEM.
+    """
+    date_min, date_max = _get_year_range(year)
+    logger.info("Running for year {} - range : {} {}".format(year, date_min, date_max))
+
+    exec_aggregates_facility_daily_query(date_min, date_max)
 
 
 def run_aggregates_facility_all() -> None:
@@ -106,22 +137,21 @@ def run_aggregates_facility_all() -> None:
     YEAR_MAX = DATE_CURRENT_YEAR
 
     for year in range(YEAR_MAX, YEAR_MIN - 1, -1):
-        date_min, date_max = _get_year_range(year)
-        logger.info("Running for year {} - range : {} {}".format(year, date_min, date_max))
-
-        exec_aggregates_facility_daily_query(date_min, date_max)
+        run_aggregates_facility_year(year)
 
 
-def run_aggregate_days(
-    days: int = 1,
-) -> None:
+def run_aggregate_days(days: int = 1, network: NetworkSchema = NetworkNEM) -> None:
     """Run energy sum update for yesterday. This task is scheduled
     in scheduler/db"""
+
+    tz = network.get_fixed_offset()
 
     # This is Sydney time as the data is published in local time
 
     # today_midnight in NEM time
-    today = datetime.now().date()
+    today = datetime.now().replace(
+        hour=0, minute=0, second=0, microsecond=0, tzinfo=tz
+    ) + timedelta(days=1)
 
     date_max = today
     date_min = today - timedelta(days=days)
@@ -129,6 +159,7 @@ def run_aggregate_days(
     exec_aggregates_facility_daily_query(date_min, date_max)
 
 
+# Debug entry point
 if __name__ == "__main__":
-    # run_aggregate_days()
-    run_aggregates_facility_all()
+    run_aggregate_days(days=10)
+    # run_aggregates_facility_all()
