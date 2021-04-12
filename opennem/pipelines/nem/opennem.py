@@ -638,7 +638,11 @@ def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
 
     # Filter out for only measurements
     # as opposed to TYPE=SATELLITE
-    records_filtered = list(filter(lambda x: x["TYPE"] == "MEASUREMENT", records))
+    # use DAILY from MMS records. If no daily fallback onto MEASUREMENT
+    records_filtered = list(filter(lambda x: x["TYPE"] == "DAILY", records))
+
+    if not records_filtered:
+        records_filtered = list(filter(lambda x: x["TYPE"] == "MEASUREMENT", records))
 
     scada_records = unit_scada_generate_facility_scada(
         records_filtered,
