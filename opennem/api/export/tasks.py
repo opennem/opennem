@@ -35,7 +35,13 @@ from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
 from opennem.diff.versions import get_network_regions
 from opennem.schema.dates import TimeSeries
-from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
+from opennem.schema.network import (
+    NetworkAEMORooftop,
+    NetworkAEMORooftopBackfill,
+    NetworkAPVI,
+    NetworkNEM,
+    NetworkWEM,
+)
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.export.tasks")
@@ -296,6 +302,9 @@ def export_all_monthly() -> None:
             if network_region.code == "WEM":
                 networks = [NetworkWEM, NetworkAPVI]
 
+            if network == NetworkNEM:
+                networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
+
             logger.debug(
                 "Running monthlies for {} and {}".format(network.code, network_region.code)
             )
@@ -359,7 +368,7 @@ def export_all_daily() -> None:
 
     for network_region in network_regions:
         network = network_from_network_code(network_region.network.code)
-        networks = [NetworkNEM, NetworkAEMORooftop]
+        networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
         if network_region.code == "WEM":
             networks = [NetworkWEM, NetworkAPVI]
