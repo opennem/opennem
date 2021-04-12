@@ -17,6 +17,7 @@ from opennem.importer.emissions import import_emissions_map
 from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_import
 from opennem.settings import settings
+from opennem.workers.aggregates import run_aggregate_days
 from opennem.workers.energy import run_energy_update_archive, run_energy_update_days
 
 logger = logging.getLogger("opennem.cli")
@@ -116,11 +117,12 @@ def cmd_export_energy_monthly() -> None:
 
 @click.command()
 def cmd_export_all() -> None:
-    run_energy_update_days(days=6)
-    refresh_material_views("mv_facility_all")
-    refresh_material_views("mv_network_fueltech_days")
-    refresh_material_views("mv_region_emissions")
-    refresh_material_views("mv_interchange_energy_nem_region")
+    run_energy_update_days(days=5)
+    run_aggregate_days(days=5)
+    # refresh_material_views("mv_facility_all")
+    # refresh_material_views("mv_network_fueltech_days")
+    # refresh_material_views("mv_region_emissions")
+    # refresh_material_views("mv_interchange_energy_nem_region")
     export_energy(latest=True)
     export_energy(priority=PriorityType.monthly)
 
