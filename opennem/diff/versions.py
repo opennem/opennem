@@ -161,7 +161,8 @@ def get_url_map(regions: List[NetworkRegion]) -> List[DiffComparisonSet]:
         )
         urls.append(a)
 
-        for y in [2021]:
+        # v2 dailies only go back to 2017
+        for y in [2021, 2020, 2019, 2018, 2017]:
             a = DiffComparisonSet(
                 stat_type=StatType.energy, network_region=region.code, bucket_size="daily", year=y
             )
@@ -337,6 +338,9 @@ def run_diff() -> str:
                 continue
 
             if "temperature" in v2i.id:
+                continue
+
+            if "market_value" in v2i.id:
                 continue
 
             if v2i.fuel_tech:
