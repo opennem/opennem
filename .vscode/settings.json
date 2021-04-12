@@ -3,7 +3,14 @@
     "**/__pycache__/": true,
     ".venv": true,
     "build": true,
-    "dist": true
+    "dist": true,
+    ".idea": true,
+    ".benchmarks": true,
+    ".ipynb_checkpoints": true,
+    ".mypy_cache": true,
+    ".pytest_cache": true,
+    ".scrapy": true,
+    ".tox": true
   },
   "editor.formatOnSave": true,
   "python.pythonPath": ".venv/bin/python",
