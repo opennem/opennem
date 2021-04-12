@@ -151,4 +151,17 @@ NetworkAEMORooftop = NetworkSchema(
     interval_size=30,
 )
 
-NETWORKS = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAU, NetworkAEMORooftop]
+# This is the network for derived solar_rooftop data
+# that predates AEMORooftop
+NetworkAEMORooftopBackfill = NetworkSchema(
+    code="AEMO_ROOFTOP_BACKFILL",
+    label="AEMO Rooftop Backfill",
+    country="au",
+    timezone="Australia/Sydney",
+    timezone_database="AEST",
+    offset=600,
+    interval_size=30,
+)
+
+
+NETWORKS = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAU, NetworkAEMORooftop, NetworkAEMORooftop]
