@@ -501,12 +501,14 @@ def run_energy_update_days(
 
 
 def run_energy_update_all(
-    network: NetworkSchema = NetworkNEM, fueltech: Optional[str] = None
+    network: NetworkSchema = NetworkNEM, fueltech: Optional[str] = None, run_clear: bool = False
 ) -> None:
     """Runs energy update for all regions and all years for one-off
     inserts"""
     for year in range(DATE_CURRENT_YEAR, 1997, -1):
-        run_energy_update_archive(year=year, fueltech=fueltech, network=network, run_clear=True)
+        run_energy_update_archive(
+            year=year, fueltech=fueltech, network=network, run_clear=run_clear
+        )
 
 
 if __name__ == "__main__":
