@@ -35,7 +35,7 @@ from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
 from opennem.diff.versions import get_network_regions
 from opennem.schema.dates import TimeSeries
-from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkWEM
+from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.export.tasks")
@@ -359,7 +359,7 @@ def export_all_daily() -> None:
 
     for network_region in network_regions:
         network = network_from_network_code(network_region.network.code)
-        networks = None
+        networks = [NetworkNEM, NetworkAEMORooftop]
 
         if network_region.code == "WEM":
             networks = [NetworkWEM, NetworkAPVI]
@@ -540,9 +540,10 @@ def export_metadata() -> bool:
     return False
 
 
+# Debug Hooks
 if __name__ == "__main__":
-    export_power(priority=PriorityType.live)
-    export_energy(latest=True)
-    export_all_monthly()
+    # export_power(priority=PriorityType.live)
+    # export_energy(latest=True)
+    # export_all_monthly()
     export_all_daily()
-    export_electricitymap()
+    # export_electricitymap()
