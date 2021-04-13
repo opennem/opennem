@@ -45,7 +45,7 @@ def db_refresh_material_views() -> None:
     refresh_material_views("mv_interchange_energy_nem_region")
     export_energy(latest=True)
     export_energy(priority=PriorityType.monthly)
-    slack_message("Ran daily energy update and material views on {}".format(settings.env))
+    slack_message("Ran daily energy update and aggregates on {}".format(settings.env))
 
 
 @huey.periodic_task(crontab(hour="*/1", minute="15"))
@@ -59,7 +59,6 @@ def db_refresh_material_views_recent() -> None:
 @huey.periodic_task(crontab(hour="*/3", minute="30"))
 def db_refresh_energies_yesterday() -> None:
     run_energy_update_days(days=2)
-    run_energy_update_days(days=3, networks=[NetworkWEM])
 
 
 @huey.periodic_task(crontab(hour="22", minute="1"))
