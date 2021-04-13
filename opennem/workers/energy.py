@@ -73,6 +73,7 @@ def get_generated_query(
     """
 
     fueltech_match = ""
+    facility_match = ""
     network_region_query = ""
 
     if fueltech_id:
