@@ -5,6 +5,7 @@ from pprint import pprint
 from typing import List, Optional, Union
 
 from dictalchemy.utils import fromdict
+
 # from opennem.core.loader import load_data
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
@@ -420,6 +421,9 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
         else:
             station_model.approved_at = None
             station_model.approved_by = None
+
+        if station.website_url:
+            station_model.website_url = station.website_url
 
         station_model.network_name = station.network_name
 
