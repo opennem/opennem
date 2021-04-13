@@ -50,7 +50,7 @@ class WemStoreFacilityIntervals(object):
         csvreader = csv.DictReader(item["content"].split("\n"))
 
         item["table_schema"] = FacilityScada
-        item["update_fields"] = ["generated", "eoi_quantity"]
+        item["update_fields"] = ["generated"]
         item["records"] = unit_scada_generate_facility_scada(
             csvreader,
             spider,
