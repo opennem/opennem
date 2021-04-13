@@ -1,6 +1,6 @@
 # pylint: disable=no-member
 """
-Facility BBASEHOS has fueltech gas_recip
+Facility BBASEHOS has fueltech BBASEHOS
 
 Revision ID: 21f32dd12775
 Revises: 0995118b97ec
@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute("update facility set fueltech_id='gas_recip' where code = 'gas_recip';")
+    op.execute("update facility set fueltech_id='gas_recip' where code = 'BBASEHOS';")
 
 
 def downgrade() -> None:
