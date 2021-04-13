@@ -37,7 +37,7 @@ class MMSArchiveBulkSpider(scrapy.Spider):
         start_month = datetime(2021, 2, 1)
         end_month = datetime(2006, 7, 1)
 
-        for date in month_series(start_month, end_month):
+        for date in month_series(start_month, end_month, reverse=True):
             for table in self.tables:
                 url_params = {
                     "month": get_date_component("%m", dt=date),
