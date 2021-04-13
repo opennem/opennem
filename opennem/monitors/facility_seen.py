@@ -59,6 +59,10 @@ def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
         if fac.network_id == "NEM" and fac.code.endswith("L1"):
             return None
 
+        # ignore the Point Henry Smelter loads
+        if fac.network_id == "NEM" and fac.code.startswith("PTH0"):
+            return None
+
         # ignore demo VPPs
         if fac.network_id == "NEM" and fac.code in NEM_VPPS:
             return None
