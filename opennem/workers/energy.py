@@ -558,4 +558,4 @@ def run_energy_update_facility(
 
 
 if __name__ == "__main__":
-    run_energy_update_days(days=10, networks=[NetworkNEM, NetworkWEM])
+    run_energy_update_all()
