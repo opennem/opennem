@@ -9,8 +9,10 @@ from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_energy
 from opennem.db.tasks import refresh_material_views
 from opennem.notifications.slack import slack_message
+from opennem.schema.network import NetworkWEM
 from opennem.settings import settings
-from opennem.workers.aggregates import run_aggregate_days
+from opennem.utils.dates import DATE_CURRENT_YEAR
+from opennem.workers.aggregates import run_aggregates_facility_year
 from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 
@@ -37,7 +39,7 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 @huey.periodic_task(crontab(hour="19", minute="45"))
 def db_refresh_material_views() -> None:
     run_energy_update_days(days=2)
-    run_aggregate_days(days=2)
+    run_aggregates_facility_year(DATE_CURRENT_YEAR)
     refresh_material_views("mv_facility_all")
     refresh_material_views("mv_region_emissions")
     refresh_material_views("mv_interchange_energy_nem_region")
@@ -54,10 +56,10 @@ def db_refresh_material_views_recent() -> None:
 
 
 # @NOTE optimized can now run every hour but shouldn't have to
-@huey.periodic_task(crontab(hour="*/2", minute="30"))
+@huey.periodic_task(crontab(hour="*/3", minute="30"))
 def db_refresh_energies_yesterday() -> None:
     run_energy_update_days(days=2)
-    run_aggregate_days(days=2)
+    run_energy_update_days(days=3, networks=[NetworkWEM])
 
 
 @huey.periodic_task(crontab(hour="22", minute="1"))
