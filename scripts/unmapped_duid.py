@@ -14,6 +14,7 @@ from typing import Optional
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Station
+from opennem.importer.db import mms_init
 from opennem.monitors.facility_seen import FacilitySeen, ignored_duids
 from opennem.schema.opennem import FacilitySchema, StationSchema
 from opennem.schema.stations import StationSet
@@ -72,7 +73,9 @@ def station_is_in_db(station_code: str) -> Optional[Station]:
 
 NEM_STATION_REMAP = {"SWANBANK": "SWAN_B", "CALLIDE": "CALL_A"}
 
-if __name__ == "__main__":
+
+def list_unmapped() -> None:
+    """ Print out and find the umapped DUIDS """
     unmapped_source = Path(__file__).parent.parent / "data" / "unmapped.csv"
 
     if not unmapped_source.is_file():
@@ -113,3 +116,8 @@ if __name__ == "__main__":
             )
         else:
             logger.info("Cound not find facility for {}".format(fac_seen.code))
+
+
+if __name__ == "__main__":
+    mms_init()
+    # list_unmapped()
