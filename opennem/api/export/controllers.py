@@ -483,7 +483,7 @@ def energy_fueltech_daily(
         interval=time_series.interval,
         region=network_region_code,
         period=time_series.period,
-        localize=False,
+        localize=True,
         # code=network.code.lower(),
     )
 
@@ -499,7 +499,7 @@ def energy_fueltech_daily(
         region=network_region_code,
         period=time_series.period,
         code=time_series.network.code.lower(),
-        localize=False,
+        localize=True,
     )
 
     stats.append_set(stats_market_value)
@@ -513,7 +513,7 @@ def energy_fueltech_daily(
         region=network_region_code,
         period=time_series.period,
         code=time_series.network.code.lower(),
-        localize=False,
+        localize=True,
     )
 
     stats.append_set(stats_emissions)
