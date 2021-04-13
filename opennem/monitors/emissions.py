@@ -46,7 +46,7 @@ def get_facility_no_emission_factor(only_operating: bool = False) -> List[Facili
         left join fueltech ft on f.fueltech_id = ft.code
         where
             ft.renewable is False and
-            ft.code not in ('imports', 'exports') and
+            ft.code not in ('imports', 'exports', 'interconnector') and
             (f.emissions_factor_co2 is null or f.emissions_factor_co2 = 0)
             {operating_filter}
         order by network_region desc;
