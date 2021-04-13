@@ -4,7 +4,7 @@ disable_existing_loggers: false
 
 formatters:
   basic:
-    format: "[%(name)-35s %(levelname)8s] %(message)s"
+    format: "[%(asctime)s] %(name)-35s %(levelname)8s] %(message)s"
   standard:
     format: "[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s"
     datefmt: "%H:%M:%S"
