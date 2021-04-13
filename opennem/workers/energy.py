@@ -371,7 +371,8 @@ def run_energy_calc(
     if fueltech_id:
         flow = fueltech_to_flow(fueltech_id)
 
-    if flow and region:
+    # @TODO get rid of the hard-coded networknem part
+    if flow and region and network == NetworkNEM:
         generated_results = get_flows(
             date_min, date_max, network_region=region, network=network, flow=flow
         )
