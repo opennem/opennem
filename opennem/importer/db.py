@@ -393,6 +393,16 @@ def opennem_init() -> None:
     import_station_set(stations)
 
 
+def mms_init() -> None:
+    station_data = load_data("mms_stations.json", from_project=True)
+    stations = StationSet()
+
+    for s in station_data:
+        stations.add_dict(s)
+
+    import_station_set(stations)
+
+
 def import_station_set(stations: StationSet, only_insert_facilities: bool = False) -> None:
     session = SessionLocal()
 
@@ -407,7 +417,8 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
 
         logger.debug("{} station: {}".format(add_or_update, station.code))
 
-        station_model.description = station.description
+        if station.description:
+            station_model.description = station.description
 
         if station.name:
             station_model.name = station.name
@@ -425,7 +436,8 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
         if station.website_url:
             station_model.website_url = station.website_url
 
-        station_model.network_name = station.network_name
+        if station.network_name:
+            station_model.network_name = station.network_name
 
         if not station_model.location:
             station_model.location = Location()
