@@ -5,17 +5,14 @@ from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
 
 import pytz
-from sqlalchemy.orm import Session
 
 from opennem.core.normalizers import normalize_duid
 from opennem.db import get_database_engine
-from opennem.db.models.opennem import FacilityScada, Station
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
 from opennem.utils.numbers import cast_trailing_nulls
-from opennem.utils.time import human_to_timedelta
 from opennem.utils.timezone import is_aware, make_aware
 from opennem.utils.version import get_version
 
