@@ -58,7 +58,7 @@ def schedule_custom_tasks() -> None:
         export_electricitymap()
 
 
-@huey.periodic_task(crontab(hour="13"), priority=50)
+@huey.periodic_task(crontab(hour="13", minute="15"), priority=50)
 @huey.lock_task("schedule_export_all_daily")
 def schedule_export_all_daily() -> None:
     if settings.workers_run:
@@ -66,7 +66,7 @@ def schedule_export_all_daily() -> None:
         slack_message("Finished running export_all_daily on {}".format(settings.env))
 
 
-@huey.periodic_task(crontab(hour="12"), priority=50)
+@huey.periodic_task(crontab(hour="12", minute="15"), priority=50)
 @huey.lock_task("schedule_export_all_monthly")
 def schedule_export_all_monthly() -> None:
     if settings.workers_run:
@@ -89,7 +89,7 @@ def schedule_daily_tasks() -> None:
         slack_message("Finished running energy dailies on {}".format(settings.env))
 
 
-@huey.periodic_task(crontab(hour="22"), priority=30)
+@huey.periodic_task(crontab(hour="22", minute="15"), priority=30)
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
     if settings.workers_run:
@@ -127,7 +127,7 @@ def monitor_wem_interval() -> None:
     aemo_wem_live_interval()
 
 
-@huey.periodic_task(crontab(hour="/12"), priority=10)
+@huey.periodic_task(crontab(hour="12", minute="45"), priority=10)
 @huey.lock_task("monitor_emission_factors")
 def monitor_emission_factors() -> None:
     alert_missing_emission_factors()
