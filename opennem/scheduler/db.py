@@ -9,8 +9,7 @@ from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_energy
 from opennem.db.tasks import refresh_material_views
 from opennem.notifications.slack import slack_message
-from opennem.schema.network import NetworkWEM
-from opennem.settings import settings
+from opennem.settings import settings  # noqa: F401
 from opennem.utils.dates import DATE_CURRENT_YEAR
 from opennem.workers.aggregates import run_aggregates_facility_year
 from opennem.workers.energy import run_energy_update_days
