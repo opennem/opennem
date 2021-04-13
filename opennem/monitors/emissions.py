@@ -78,8 +78,12 @@ def alert_missing_emission_factors() -> None:
 
     for rec in missing_factors:
         slack_message(
-            "{} in {} {} with fueltech {} is missing factor".format(
-                rec.station_name, rec.network_id, rec.network_region, rec.fueltech_id
+            "{} ({}) in {} {} with fueltech {} is missing factor".format(
+                rec.facility_code,
+                rec.station_name,
+                rec.network_id,
+                rec.network_region,
+                rec.fueltech_id,
             )
         )
 
