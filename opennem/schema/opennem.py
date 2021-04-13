@@ -28,13 +28,13 @@ class OpennemBaseSchema(BaseConfig):
 
 class FueltechSchema(BaseConfig):
     code: str
-    label: str
-    renewable: bool
+    label: Optional[str]
+    renewable: Optional[bool]
 
 
 class FacilityStatusSchema(BaseConfig):
     code: str
-    label: str
+    label: Optional[str]
 
 
 class ParticipantSchema(OpennemBaseSchema):
