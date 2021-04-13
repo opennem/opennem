@@ -918,7 +918,7 @@
     "duid_data": {
       "BROKENH1": {
         "fuel_tech": "solar",
-        "registered_capacity": 27
+        "registered_capacity": 54
       }
     },
     "region_id": "NSW1",
@@ -972,13 +972,13 @@
     "location": {
       "state": "VIC",
       "postcode": 3384,
-      "latitude": null,
-      "longitude": null
+      "latitude": -37.04204489999999,
+      "longitude": 142.9813895
     },
     "duid_data": {
       "BULGANA1": {
         "fuel_tech": "wind",
-        "registered_capacity": 87
+        "registered_capacity": 182
       }
     },
     "region_id": "VIC1",
@@ -1430,6 +1430,26 @@
       "state": "Commissioned"
     }
   },
+  "COLLECWF": {
+    "station_id": "COLLECWF",
+    "display_name": "Collector",
+    "location": {
+      "state": "NSW",
+      "postcode": 2581,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "COLWF01": {
+        "fuel_tech": "wind",
+        "registered_capacity": 113
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
   "COLNSV": {
     "station_id": "COLNSV",
     "display_name": "Collinsville",
@@ -1639,6 +1659,26 @@
       "state": "Commissioned"
     }
   },
+  "CRURWF": {
+    "station_id": "CRURWF",
+    "display_name": "Crudine Ridge",
+    "location": {
+      "state": "NSW",
+      "postcode": 2850,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "CRURWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 141
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
   "CSPVPS": {
     "station_id": "CSPVPS",
     "display_name": "Collinsville",
@@ -1795,7 +1835,7 @@
     "duid_data": {
       "DDPS1": {
         "fuel_tech": "gas_ccgt",
-        "registered_capacity": 121
+        "registered_capacity": 643
       }
     },
     "region_id": "QLD1",
@@ -1955,7 +1995,7 @@
     "duid_data": {
       "EASTCRK2": {
         "fuel_tech": "bioenergy_biogas",
-        "registered_capacity": 8.984
+        "registered_capacity": 6.738
       }
     },
     "region_id": "NSW1",
@@ -2189,6 +2229,26 @@
       "state": "Commissioned"
     }
   },
+  "FNWF": {
+    "station_id": "FNWF",
+    "display_name": "Ferguson North",
+    "location": {
+      "state": "VIC",
+      "postcode": 3268,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "FNWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 4
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
   "G/STONE": {
     "station_id": "G/STONE",
     "display_name": "Gladstone",
@@ -2265,7 +2325,7 @@
     "duid_data": {
       "GANNSF1": {
         "fuel_tech": "solar",
-        "registered_capacity": 25
+        "registered_capacity": 55
       }
     },
     "region_id": "VIC1",
@@ -2889,7 +2949,7 @@
     "duid_data": {
       "HPRG1": {
         "fuel_tech": "battery_discharging",
-        "registered_capacity": 100
+        "registered_capacity": 150
       },
       "HPRL1": {
         "fuel_tech": "battery_charging",
@@ -3121,6 +3181,26 @@
       "state": "Commissioned"
     }
   },
+  "JEMALNG": {
+    "station_id": "JEMALNG",
+    "display_name": "Jemalong",
+    "location": {
+      "state": "NSW",
+      "postcode": 2871,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "JEMALNG1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 55
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
   "JNDSHPS": {
     "station_id": "JNDSHPS",
     "display_name": "Jindabyne (Mini Hydro)",
@@ -3233,6 +3313,26 @@
       }
     },
     "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "KIAMSF": {
+    "station_id": "KIAMSF",
+    "display_name": "Kiamal",
+    "location": {
+      "state": "VIC",
+      "postcode": 3490,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "KIAMSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 239
+      }
+    },
+    "region_id": "VIC1",
     "status": {
       "state": "Commissioned"
     }
@@ -3471,6 +3571,26 @@
       }
     },
     "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "LIMOSF1": {
+    "station_id": "LIMOSF1",
+    "display_name": "Limondale  1",
+    "location": {
+      "state": "NSW",
+      "postcode": 2715,
+      "latitude": -34.7755018,
+      "longitude": 143.50804630000002
+    },
+    "duid_data": {
+      "LIMOSF11": {
+        "fuel_tech": "solar",
+        "registered_capacity": 275
+      }
+    },
+    "region_id": "NSW1",
     "status": {
       "state": "Commissioned"
     }
@@ -3988,6 +4108,26 @@
       "state": "Commissioned"
     }
   },
+  "MIDDLESF": {
+    "station_id": "MIDDLESF",
+    "display_name": "Middlemount",
+    "location": {
+      "state": "QLD",
+      "postcode": 4746,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "MIDDLSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 30
+      }
+    },
+    "region_id": "QLD1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
   "MIDLDPS": {
     "station_id": "MIDLDPS",
     "display_name": "Midlands",
@@ -4119,6 +4259,46 @@
     "status": {
       "state": "Decommissioned",
       "date": "2014-05-29"
+    }
+  },
+  "MOLNGSF": {
+    "station_id": "MOLNGSF",
+    "display_name": "Molong",
+    "location": {
+      "state": "NSW",
+      "postcode": 2866,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "MOLNGSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 36
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MOORAWF": {
+    "station_id": "MOORAWF",
+    "display_name": "Moorabool",
+    "location": {
+      "state": "VIC",
+      "postcode": 3342,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "MOORAWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 312
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
     }
   },
   "MORANBAH": {
@@ -4374,6 +4554,26 @@
       }
     },
     "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MWPS3": {
+    "station_id": "MWPS3",
+    "display_name": "Morgan-Whyalla Pipeline Pumping  No 3",
+    "location": {
+      "state": "SA",
+      "postcode": 5381,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "MWPS3PV1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 7
+      }
+    },
+    "region_id": "SA1",
     "status": {
       "state": "Commissioned"
     }
@@ -5892,6 +6092,26 @@
       "date": "2016-01-15"
     }
   },
+  "SUNRSF": {
+    "station_id": "SUNRSF",
+    "display_name": "Sunraysia",
+    "location": {
+      "state": "NSW",
+      "postcode": 2715,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "SUNRSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 228
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
   "SVALE": {
     "station_id": "SVALE",
     "display_name": "Springvale",
@@ -6574,6 +6794,46 @@
       "state": "Commissioned"
     }
   },
+  "WARWSF1": {
+    "station_id": "WARWSF1",
+    "display_name": "Warwick SF",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "state": "QLD",
+      "postcode": null
+    },
+    "region_id": "QLD1",
+    "duid_data": {
+      "WARWSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 39
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WARWSF2": {
+    "station_id": "WARWSF2",
+    "display_name": "Warwick SF",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "state": "QLD",
+      "postcode": null
+    },
+    "region_id": "QLD1",
+    "duid_data": {
+      "WARWSF2": {
+        "fuel_tech": "solar",
+        "registered_capacity": 39
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    }
+  },
   "WATERLWF": {
     "station_id": "WATERLWF",
     "display_name": "Waterloo",
@@ -6627,6 +6887,26 @@
       "WDLNGN01": {
         "fuel_tech": "bioenergy_biogas",
         "registered_capacity": 7
+      }
+    },
+    "region_id": "NSW1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "WELLINSF": {
+    "station_id": "WELLINSF",
+    "display_name": "Wellington",
+    "location": {
+      "state": "NSW",
+      "postcode": 2820,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "WELLSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 216
       }
     },
     "region_id": "NSW1",
@@ -7314,6 +7594,26 @@
       "state": "Commissioned"
     }
   },
+  "YATSF": {
+    "station_id": "YATSF",
+    "display_name": "Yatpool",
+    "location": {
+      "state": "VIC",
+      "postcode": 3500,
+      "latitude": null,
+      "longitude": null
+    },
+    "duid_data": {
+      "YATSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 94
+      }
+    },
+    "region_id": "VIC1",
+    "status": {
+      "state": "Commissioned"
+    }
+  },
   "YAWWF": {
     "station_id": "YAWWF",
     "display_name": "Yawong",
@@ -7556,9 +7856,29 @@
       "state": "Commissioned"
     }
   },
-  "BULGREPOWER": {
-    "station_id": "BULGREPOWER",
-    "display_name": "Bulgana Green Power Hub - Units",
+  "BANGOWF": {
+    "station_id": "BANGOWF",
+    "display_name": "Bango",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "state": "NSW",
+      "postcode": null
+    },
+    "region_id": "NSW1",
+    "duid_data": {
+      "BANGOWF1": {
+        "fuel_tech": "wind",
+        "registered_capacity": 159
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "COHUNASF": {
+    "station_id": "COHUNASF",
+    "display_name": "Cohuna",
     "location": {
       "latitude": null,
       "longitude": null,
@@ -7567,18 +7887,18 @@
     },
     "region_id": "VIC1",
     "duid_data": {
-      "BULGANA1": {
-        "fuel_tech": "wind",
-        "registered_capacity": 182
+      "COHUNA": {
+        "fuel_tech": "solar",
+        "registered_capacity": 31
       }
     },
     "status": {
       "state": "Commissioned"
     }
   },
-  "GOONUMSF": {
-    "station_id": "GOONUMSF",
-    "display_name": "Goonumbla",
+  "COLLWF1": {
+    "station_id": "COLLWF1",
+    "display_name": "Collector WF",
     "location": {
       "latitude": null,
       "longitude": null,
@@ -7587,29 +7907,69 @@
     },
     "region_id": "NSW1",
     "duid_data": {
-      "GOONSF1": {
-        "fuel_tech": "solar",
-        "registered_capacity": 85
+      "COLWF01": {
+        "fuel_tech": "wind",
+        "registered_capacity": 113
       }
     },
     "status": {
       "state": "Commissioned"
     }
   },
-  "LIMOSF1": {
-    "station_id": "LIMOSF1",
-    "display_name": "Limondale SF",
+  "DARPOISF": {
+    "station_id": "DARPOISF",
+    "display_name": "Darlington Point",
     "location": {
-      "latitude": -34.7755018,
-      "longitude": 143.50804630000002,
+      "latitude": null,
+      "longitude": null,
       "state": "NSW",
       "postcode": null
     },
     "region_id": "NSW1",
     "duid_data": {
-      "LIMOSF11": {
+      "DARLSF1": {
         "fuel_tech": "solar",
-        "registered_capacity": 275
+        "registered_capacity": 324
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "GLEWESSF": {
+    "station_id": "GLEWESSF",
+    "display_name": "Glenrowan West",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "state": "VIC",
+      "postcode": null
+    },
+    "region_id": "VIC1",
+    "duid_data": {
+      "GLRWNSF1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 132
+      }
+    },
+    "status": {
+      "state": "Commissioned"
+    }
+  },
+  "MORPIPPUMPING": {
+    "station_id": "MORPIPPUMPING",
+    "display_name": "Morgan-Whyalla Pipeline Pumping Station No 4, PV Units",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "state": "SA",
+      "postcode": null
+    },
+    "region_id": "SA1",
+    "duid_data": {
+      "MWPS4PV1": {
+        "fuel_tech": "solar",
+        "registered_capacity": 5
       }
     },
     "status": {
