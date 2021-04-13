@@ -373,7 +373,7 @@ def run_energy_calc(
 
     if flow:
         generated_results = get_flows(
-            date_min, date_max, region=region, network=network, flow=flow
+            date_min, date_max, network_region=region, network=network, flow=flow
         )
     else:
         generated_results = get_generated(
