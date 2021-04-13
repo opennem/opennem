@@ -9,7 +9,7 @@ from opennem.db.models.opennem import Facility
 logger = logging.getLogger(__name__)
 
 
-def load_facility_fueltech_map():
+def load_facility_fueltech_map() -> None:
     """
     Only do this for DUIDs that don't have a fueltech
 
