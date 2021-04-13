@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 import pytz
 from pytz import FixedOffset
 
-from opennem.api.stats.controllers import get_scada_range
+from opennem.api.stats.controllers import duid_in_case, get_scada_range
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.core.facility.fueltechs import load_fueltechs
@@ -29,6 +29,7 @@ from opennem.schema.network import (
 )
 from opennem.utils.dates import DATE_CURRENT_YEAR
 from opennem.utils.interval import get_human_interval
+from opennem.workers.facility_data_ranges import get_facility_seen_range
 
 logger = logging.getLogger("opennem.workers.energy")
 
@@ -40,11 +41,12 @@ NEMWEB_DISPATCH_OLD_MIN_DATE = datetime.fromisoformat("1998-12-07 01:40:00")
 
 
 def get_generated_query(
-    network_region: str,
     date_min: datetime,
     date_max: datetime,
     network: NetworkSchema,
+    network_region: Optional[str] = None,
     fueltech_id: Optional[str] = None,
+    facility_codes: Optional[List[str]] = None,
 ) -> str:
     # @TODO support refresh energies for a single duid or station
 
@@ -60,27 +62,37 @@ def get_generated_query(
         left join facility f on fs.facility_code = f.code
     where
         f.network_id='{network_id}'
-        and f.network_region='{network_region}'
+        {network_region_query}
         and fs.trading_interval >= '{date_min}'
         and fs.trading_interval <= '{date_max}'
         and fs.is_forecast is False
         {fueltech_match}
+        {facility_match}
         and fs.generated is not null
     order by fs.trading_interval asc, 2
     """
 
     fueltech_match = ""
+    network_region_query = ""
 
     if fueltech_id:
         fueltech_match = f"and f.fueltech_id = '{fueltech_id}'"
+
+    if facility_codes:
+        facility_match = f"and f.code in ({duid_in_case(facility_codes)})"
+
+    if network_region:
+        network_region_query = f"and f.network_region='{network_region}'"
 
     query = __sql.format(
         timezone=network.timezone_database,
         network_id=network.code,
         network_region=network_region,
+        network_region_query=network_region_query,
         date_min=date_min - timedelta(minutes=10),
         date_max=date_max + timedelta(minutes=10),
         fueltech_match=fueltech_match,
+        facility_match=facility_match,
     )
 
     return dedent(query)
@@ -177,19 +189,26 @@ def get_flows_query(
 
 
 def get_generated(
-    network_region: str,
     date_min: datetime,
     date_max: datetime,
     network: NetworkSchema,
+    run_clear: bool = False,
+    network_region: Optional[str] = None,
     fueltech_id: Optional[str] = None,
-    run_clear: bool = True,
+    facility_codes: Optional[List[str]] = None,
 ) -> List[Dict]:
     """Gets generated values for a date range for a network and network region
     and optionally for a single fueltech"""
 
-    # @TODO support refresh energies for a single duid or station
-
-    query = get_generated_query(network_region, date_min, date_max, network, fueltech_id)
+    # holy prop drill!
+    query = get_generated_query(
+        date_min,
+        date_max,
+        network,
+        fueltech_id=fueltech_id,
+        facility_codes=facility_codes,
+        network_region=network_region,
+    )
 
     query_clear = get_clear_query(network_region, date_min, date_max, network, fueltech_id)
 
@@ -217,9 +236,9 @@ def get_generated(
 
 
 def get_flows(
-    network_region: str,
     date_min: datetime,
     date_max: datetime,
+    network_region: str,
     network: NetworkSchema,
     flow: FlowDirection,
 ) -> List[Dict]:
@@ -335,13 +354,15 @@ def get_date_range(network: NetworkSchema) -> DatetimeRange:
 
 
 def run_energy_calc(
-    region: str,
     date_min: datetime,
     date_max: datetime,
     network: NetworkSchema,
+    region: Optional[str] = None,
     fueltech_id: Optional[str] = None,
-    run_clear: bool = True,
+    facility_codes: Optional[List[str]] = None,
+    run_clear: bool = False,
 ) -> int:
+    """ Runs the actual energy calc - believe it or not """
     generated_results: List[Dict] = []
 
     flow = None
@@ -350,15 +371,18 @@ def run_energy_calc(
         flow = fueltech_to_flow(fueltech_id)
 
     if flow:
-        generated_results = get_flows(region, date_min, date_max, network=network, flow=flow)
+        generated_results = get_flows(
+            date_min, date_max, region=region, network=network, flow=flow
+        )
     else:
         generated_results = get_generated(
-            region,
             date_min,
             date_max,
+            network_region=region,
             network=network,
             fueltech_id=fueltech_id,
             run_clear=run_clear,
+            facility_codes=facility_codes,
         )
 
     num_records = 0
@@ -451,9 +475,9 @@ def run_energy_update_archive(
             for region in regions:
                 for fueltech_id in fueltechs:
                     run_energy_calc(
-                        region,
                         date_min,
                         date_max,
+                        region=region,
                         fueltech_id=fueltech_id,
                         network=network,
                         run_clear=run_clear,
@@ -496,7 +520,12 @@ def run_energy_update_days(
         for ri in regions:
             # logger.debug("{} {}".format(network.code, ri))
             run_energy_calc(
-                ri, date_min, date_max, network=network, fueltech_id=fueltech, run_clear=False
+                date_min,
+                date_max,
+                network=network,
+                fueltech_id=fueltech,
+                run_clear=False,
+                region=ri,
             )
 
 
@@ -509,6 +538,22 @@ def run_energy_update_all(
         run_energy_update_archive(
             year=year, fueltech=fueltech, network=network, run_clear=run_clear
         )
+
+
+def run_energy_update_facility(
+    facility_codes: List[str], network: NetworkSchema = NetworkNEM
+) -> None:
+    facility_seen_range = None
+
+    # catch me if you can
+    facility_seen_range = get_facility_seen_range(facility_codes)
+
+    run_energy_calc(
+        facility_seen_range.date_min,
+        facility_seen_range.date_max,
+        facility_codes=facility_codes,
+        network=network,
+    )
 
 
 if __name__ == "__main__":
