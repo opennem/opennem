@@ -323,9 +323,12 @@ class StationSchema(OpennemBaseSchema):
 
     network: Optional[str] = None
 
+    approved: bool = True
+
     description: Optional[str]
     wikipedia_link: Optional[str]
     wikidata_id: Optional[str]
+    website_link: Optional[str]
 
 
 class StationOutputSchema(OpennemBaseSchema):
@@ -351,3 +354,4 @@ class StationOutputSchema(OpennemBaseSchema):
     description: Optional[str]
     wikipedia_link: Optional[str]
     wikidata_id: Optional[str]
+    website_link: Optional[str]
