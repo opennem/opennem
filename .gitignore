@@ -100,3 +100,4 @@ scripts/wind_diff.py
 notebooks/data/
 *.ipynb
 notebooks/*.csv
+opennem/data/mms_stations.json
