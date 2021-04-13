@@ -60,7 +60,7 @@ def db_refresh_energies_yesterday() -> None:
     run_aggregate_days(days=2)
 
 
-@huey.periodic_task(crontab(hour="22"))
+@huey.periodic_task(crontab(hour="22", minute="1"))
 @huey.lock_task("db_facility_seen_update")
 def db_facility_seen_update() -> None:
     if settings.workers_db_run:
