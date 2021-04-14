@@ -13,7 +13,6 @@ NEWSPIDER_MODULE = "opennem.spiders"
 
 LOG_LEVEL = "ERROR"
 LOG_STDOUT = False
-# L
 
 USER_AGENT = "opennem/v3.0.0 (+https://opennem.org.au)"
 ROBOTSTXT_OBEY = False
