@@ -40,9 +40,23 @@ services:
     volumes:
       - staging_data:/var/lib/postgresql/data
 
+  mysql:
+    image: mariadb
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - TZ
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    ports:
+      - ${HOST:-127.0.0.1}:15444:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+
 volumes:
   staging_data: {}
   scrapyd_data:
     driver: local
   scrapyd_eggs:
     driver: local
+  mysql_data: {}
