@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 import scrapy
 
@@ -12,7 +13,7 @@ class BomJSONObservationSpider(scrapy.Spider):
 
     pipelines = set([StoreBomObservation])
 
-    station_id: str = None
+    station_id: Optional[str] = None
 
     custom_settings = {
         "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) Chrome/89.0.4389.90"
