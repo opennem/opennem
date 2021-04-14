@@ -13,7 +13,7 @@ logger = logging.getLogger("opennem.monitors.facility_seen")
 
 
 class FacilityEmissionsRecord(BaseConfig):
-    station_name: str
+    station_name: Optional[str] = ""
     network_id: str
     network_region: str
     facility_code: str
