@@ -14,6 +14,10 @@ class BomJSONObservationSpider(scrapy.Spider):
 
     station_id: str = None
 
+    custom_settings = {
+        "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) Chrome/89.0.4389.90"
+    }
+
     def parse(self, response):
         json_response = json.loads(response.text)
 

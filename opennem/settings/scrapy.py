@@ -15,7 +15,7 @@ LOG_LEVEL = "ERROR"
 LOG_STDOUT = False
 # L
 
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90"
+USER_AGENT = "opennem/v3.0.0 (+https://opennem.org.au)"
 ROBOTSTXT_OBEY = False
 CONCURRENT_REQUESTS = 8
 COOKIES_ENABLED = True
