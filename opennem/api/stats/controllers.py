@@ -5,7 +5,9 @@ from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
 
 import pytz
+from datetime_truncate import truncate as date_trunc
 
+from opennem.api.time import human_to_interval
 from opennem.core.normalizers import normalize_duid
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkSchema
@@ -124,6 +126,17 @@ def stats_factory(
 
         if network and timezone and not is_aware(end):
             end = end.replace(tzinfo=network.get_fixed_offset())
+
+        # @TODO compose this and make it generic - some intervals
+        # get truncated.
+        # trunc the date for days and months
+        if interval == human_to_interval("1d"):
+            start = date_trunc(start, truncate_to="day")
+            end = date_trunc(end, truncate_to="day")
+
+        if interval == human_to_interval("1M"):
+            start = date_trunc(start, truncate_to="month")
+            end = date_trunc(end, truncate_to="month")
 
         # free
         dates = []
