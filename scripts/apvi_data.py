@@ -1,24 +1,34 @@
+#!/usr/bin/env python
+"""
+APVI Rooftop Data Read Script
+"""
 import json
+import logging
+from datetime import datetime
 from itertools import groupby
 
 import requests
 
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.pipelines.apvi.data import STATE_POSTCODE_PREFIXES
-from opennem.schema.network import NetworkNEM
 from opennem.spiders.apvi.data import APVI_DATA_URI, APVI_DATE_QUERY_FORMAT, TODAY
-from opennem.utils.dates import date_series, parse_date
+from opennem.utils.dates import date_series
+
+logger = logging.getLogger("opennem.scripts.apvi")
 
 APVI_BASE = ""
 
 SWIS_CODES = ["65", "64", "63", "62", "61", "60"]
 
 
-def main():
+def main() -> None:
 
     json_data_ungrouped = []
 
-    for req_date in date_series(TODAY, length=3, reverse=True):
+    for req_date in date_series(TODAY, length=1, reverse=True):
+
+        logger.info("Getting data for {}".format(req_date))
+
         records = requests.post(
             APVI_DATA_URI,
             data={"day": req_date.strftime(APVI_DATE_QUERY_FORMAT)},
@@ -33,13 +43,15 @@ def main():
                 if state not in ["WA"]:
                     continue
 
-                interval_time = parse_date(
-                    record["ts"],
-                    dayfirst=False,
-                    yearfirst=True,
-                )
+                interval_time = datetime.fromisoformat(record["ts"].replace("Z", "+10:00"))
 
-                interval_time = interval_time.astimezone(NetworkNEM.get_timezone())
+                # interval_time = parse_date(
+                #     record["ts"],
+                #     dayfirst=False,
+                #     yearfirst=True,
+                # )
+
+                # interval_time = interval_time.astimezone(NetworkNEM.get_timezone())
 
                 generated_state = sum(
                     [
@@ -67,6 +79,10 @@ def main():
 
     json_grouped_date = {}
 
+    from pprint import pprint
+
+    pprint(json_data_ungrouped)
+
     for date_grouped_str, v in groupby(
         json_data_ungrouped, lambda k: str(k["trading_interval"].date())
     ):
@@ -81,10 +97,9 @@ def main():
         json_grouped_summed = {}
 
         if grouped_date not in json_grouped_summed:
-            print(grouped_date)
             json_grouped_summed[grouped_date] = {}
 
-        print(json_grouped_summed)
+        # print(json_grouped_summed)
 
         for trading_interval in trading_day:
             for k, v in trading_interval.items():
@@ -101,7 +116,7 @@ def main():
 
     json_serialized = json.dumps(json_grouped_summed, indent=4, cls=OpenNEMJSONEncoder)
 
-    print(json_serialized)
+    # print(json_serialized)
 
 
 if __name__ == "__main__":
