@@ -12,7 +12,7 @@ from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility
 from opennem.importer.compat import map_compat_fueltech
 from opennem.schema.core import BaseConfig
-from opennem.settings import settings
+from opennem.settings import settings  # noqa: F401
 
 logger = logging.getLogger("opennem.scripts.v2_duid_compare")
 
