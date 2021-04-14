@@ -87,6 +87,9 @@ class OpennemSettings(BaseSettings):
     workers_run: bool = True
     workers_db_run: bool = True
 
+    # templates folder relative to opennem module root
+    templates_dir: str = "templates"
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
