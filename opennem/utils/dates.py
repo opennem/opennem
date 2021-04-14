@@ -27,6 +27,7 @@ DATE_FORMATS = [
 ]
 
 DATE_CURRENT = datetime.now()
+DATE_YESTERDAY = DATE_CURRENT - timedelta(days=1)
 DATE_CURRENT_YEAR = DATE_CURRENT.year
 
 
