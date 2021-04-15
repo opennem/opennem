@@ -82,8 +82,8 @@ def update_facility_seen_range(
 
 
 class FacilitySeenRange(BaseConfig):
-    date_min: datetime
-    date_max: datetime
+    date_min: Optional[datetime]
+    date_max: Optional[datetime]
 
 
 def get_facility_seen_range(facility_codes: List[str]) -> FacilitySeenRange:
