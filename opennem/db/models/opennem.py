@@ -8,7 +8,7 @@
 """
 
 from decimal import Decimal
-from typing import Optional
+from typing import List, Optional
 
 from dictalchemy import DictableModel
 from geoalchemy2 import Geometry
@@ -37,6 +37,7 @@ from sqlalchemy.sql.schema import UniqueConstraint
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
 from opennem.utils.sql import time_bucket
+from opennem.workers.facility_data_ranges import FacilitySeenRange
 
 Base = declarative_base(cls=DictableModel)
 metadata = Base.metadata
@@ -401,6 +402,41 @@ class Station(Base, BaseModel):
 
     # Website
     website_url = Column(Text, nullable=True)
+
+    @hybrid_property
+    def facility_codes(self) -> List[str]:
+        """Returns a list of facility codes for this station
+
+        Returns:
+            List[str]: facility codes
+        """
+
+        _fac_codes = list(set([f.code for f in self.facilities]))
+
+        return _fac_codes
+
+    @hybrid_property
+    def scada_range(self) -> Optional[FacilitySeenRange]:
+        """[summary]
+
+        Returns:
+            FacilitySeenRange: [description]
+        """
+        fsr = FacilitySeenRange(date_min=None, date_max=None)
+
+        if not self.facilities:
+            return fsr
+
+        first_seens = [f.data_first_seen for f in self.facilities if f.data_first_seen]
+        last_seens = [f.data_first_seen for f in self.facilities if f.data_first_seen]
+
+        if first_seens:
+            fsr.date_min = min(first_seens)
+
+        if last_seens:
+            fsr.date_max = max(last_seens)
+
+        return fsr
 
     @hybrid_property
     def capacity_registered(self) -> Optional[float]:
