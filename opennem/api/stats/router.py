@@ -83,7 +83,9 @@ def power_station(
 
     # @TODO make both of these methods of Station
     facility_codes = list(set([f.code for f in station.facilities]))
-    facilities_first_seen: datetime = min([f.data_first_seen for f in station.facilities])
+    facilities_first_seen: datetime = min(
+        [f.data_first_seen for f in station.facilities if f.data_first_seen]
+    )
 
     stats = []
 
