@@ -69,7 +69,7 @@ def power_station(
     period = human_to_period(period_human)
     units = get_unit("power")
 
-    station = (
+    station: Optional[Station] = (
         session.query(Station)
         .join(Facility)
         .filter(Station.code == station_code)
@@ -81,22 +81,18 @@ def power_station(
     if not station:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
 
-    # @TODO make both of these methods of Station
-    facility_codes = list(set([f.code for f in station.facilities]))
-    facilities_first_seen: datetime = min(
-        [f.data_first_seen for f in station.facilities if f.data_first_seen]
-    )
+    facilities_date_range = station.scada_range
 
     stats = []
 
     time_series = TimeSeries(
-        start=facilities_first_seen,
+        start=facilities_date_range.date_min,
         network=network,
         period=period,
         interval=interval,
     )
 
-    query = power_facility_query(time_series, facility_codes)
+    query = power_facility_query(time_series, station.facility_codes)
 
     logger.debug(query)
 
@@ -176,7 +172,7 @@ def energy_station(
     period_obj = human_to_period(period)
     units = get_unit("energy")
 
-    station = (
+    station: Optional[Station] = (
         session.query(Station)
         .join(Station.facilities)
         .filter(Station.code == station_code)
@@ -187,17 +183,14 @@ def energy_station(
     if not station:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
 
-    if len(station.facilities) < 1:
+    if not station.facilities:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Station has no facilities",
         )
 
-    facility_codes = list(set([f.code for f in station.facilities]))
-    facilities_first_seen: datetime = min([f.data_first_seen for f in station.facilities])
-
     time_series = TimeSeries(
-        start=facilities_first_seen,
+        start=station.scada_range.date_min,
         network=network,
         interval=interval_obj,
         period=period_obj,
@@ -205,7 +198,7 @@ def energy_station(
 
     query = energy_facility_query(
         time_series,
-        facility_codes,
+        station.facility_codes,
     )
 
     logger.debug(query)
