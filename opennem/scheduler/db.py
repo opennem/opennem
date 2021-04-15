@@ -14,7 +14,6 @@ from opennem.utils.dates import DATE_CURRENT_YEAR
 from opennem.workers.aggregates import run_aggregates_facility_year
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.energy import run_energy_update_days
-from opennem.workers.facility_data_ranges import update_facility_seen_range
 
 # Py 3.8 on MacOS changed the default multiprocessing model
 if platform.system() == "Darwin":
@@ -60,11 +59,3 @@ def db_refresh_material_views_recent() -> None:
 @huey.periodic_task(crontab(hour="*/3", minute="30"))
 def db_refresh_energies_yesterday() -> None:
     run_energy_update_days(days=2)
-
-
-@huey.periodic_task(crontab(hour="22", minute="1"))
-@huey.lock_task("db_facility_seen_update")
-def db_facility_seen_update() -> None:
-    if settings.workers_db_run:
-        update_facility_seen_range(False)
-        slack_message("Ran facility seen range on {}".format(settings.env))

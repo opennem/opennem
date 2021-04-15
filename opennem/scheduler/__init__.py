@@ -22,6 +22,7 @@ from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings
+from opennem.workers.facility_data_ranges import update_facility_seen_range
 
 # Py 3.8 on MacOS changed the default multiprocessing model
 if platform.system() == "Darwin":
@@ -40,9 +41,8 @@ if settings.cache_url:
     redis_host = settings.cache_url.host
 
 huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
+
 # export tasks
-
-
 @huey.periodic_task(crontab(minute="*/5"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
@@ -133,7 +133,18 @@ def monitor_emission_factors() -> None:
     alert_missing_emission_factors()
 
 
+# worker tasks
 @huey.periodic_task(crontab(hour="23"))
 def schedule_facility_first_seen_check() -> None:
     """ Check for new DUIDS """
     facility_first_seen_check()
+
+
+@huey.periodic_task(crontab(hour="4,10,16,22", minute="1"))
+@huey.lock_task("db_facility_seen_update")
+def db_facility_seen_update() -> None:
+    if settings.workers_db_run:
+        r = update_facility_seen_range()
+
+        if r:
+            slack_message("Ran facility seen range on {}".format(settings.env))
