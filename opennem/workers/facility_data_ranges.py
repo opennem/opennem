@@ -20,7 +20,7 @@ logger = logging.getLogger("opennem.workers.facility_data_ranges")
 
 
 def get_update_seen_query(
-    last_seen: bool = True,
+    include_first_seen: bool = True,
     facility_codes: Optional[List[str]] = None,
 ) -> str:
     __query = """
@@ -41,14 +41,10 @@ def get_update_seen_query(
     where f.code = seen_query.code;
     """
 
-    fs = ""
-    facility_codes_query = ""
-
-    if not last_seen:
-        fs = "--"
-
-    if facility_codes:
-        facility_codes_query = f"and f.code in ({duid_in_case(facility_codes)})"
+    fs = "" if include_first_seen else "--"
+    facility_codes_query = (
+        f"and f.code in ({duid_in_case(facility_codes)})" if facility_codes else ""
+    )
 
     query = __query.format(fs=fs, facility_codes_query=facility_codes_query)
 
@@ -56,14 +52,25 @@ def get_update_seen_query(
 
 
 def update_facility_seen_range(
-    last_seen: bool = True,
+    include_first_seen: bool = False,
     facility_codes: Optional[List[str]] = None,
 ) -> bool:
-    """Updates last seen and first seen"""
+    """Updates last seen and first seen. For each facility updates the date the facility
+    was seen for the first and last time in the power data from FacilityScada.
+
+    Args:
+        include_first_seen (bool, optional): Include earliest seen time. Defaults to False.
+        facility_codes (Optional[List[str]], optional): List of facility codes to update. Defaults to None.
+
+    Returns:
+        bool: Ran successfuly
+    """
 
     engine = get_database_engine()
 
-    __query = get_update_seen_query(last_seen, facility_codes)
+    __query = get_update_seen_query(
+        include_first_seen=include_first_seen, facility_codes=facility_codes
+    )
 
     with engine.connect() as c:
         logger.debug(__query)
@@ -80,6 +87,16 @@ class FacilitySeenRange(BaseConfig):
 
 
 def get_facility_seen_range(facility_codes: List[str]) -> FacilitySeenRange:
+    """Gets the date range that a facility or list of facilities was seen in SCADA data.
+
+
+    Args:
+        facility_codes (Optional[List[str]], optional): List of facility codes to update. Defaults to None.
+
+    Returns:
+        FacilitySeenRange: Schema defining the date range
+    """
+
     __query = """
         select
             min(data_first_seen) as first_seen,
@@ -114,4 +131,4 @@ def get_facility_seen_range(facility_codes: List[str]) -> FacilitySeenRange:
 
 
 if __name__ == "__main__":
-    update_facility_seen_range(False)
+    update_facility_seen_range()
