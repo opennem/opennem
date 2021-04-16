@@ -189,8 +189,19 @@ def energy_station(
             detail="Station has no facilities",
         )
 
+    # Start date
+    date_start = station.scada_range.date_min
+    date_end = station.scada_range.date_max
+    network_range = get_scada_range(network=network)
+
+    if not date_start:
+        date_start = network_range.start
+
+    if not date_end:
+        date_end = network_range.end
+
     time_series = TimeSeries(
-        start=station.scada_range.date_min,
+        start=date_start,
         network=network,
         interval=interval_obj,
         period=period_obj,
