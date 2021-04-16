@@ -325,6 +325,9 @@ class StationSchema(OpennemBaseSchema):
 
     approved: bool = True
 
+    data_first_seen: datetime
+    data_last_seen: datetime
+
     description: Optional[str]
     wikipedia_link: Optional[str]
     wikidata_id: Optional[str]
