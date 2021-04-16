@@ -334,7 +334,7 @@ def get_scada_range(
 
     if facilities:
         fac_case = duid_in_case(facilities)
-        facility_query = "f.facility_code IN ({}) and ".format(fac_case)
+        facility_query = "f.code IN ({}) and ".format(fac_case)
 
     scada_range_query = dedent(
         __query.format(
