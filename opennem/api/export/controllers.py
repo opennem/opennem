@@ -1,4 +1,5 @@
 import logging
+from datetime import timedelta
 from typing import List, Optional
 
 from opennem.api.export.queries import (
@@ -392,12 +393,12 @@ def power_week(
 
     # rooftop forecast
 
-    time_series_rooftop_forecast = time_series.copy()
-    time_series_rooftop_forecast.interval = human_to_interval("30m")
+    time_series_rooftop_forecast = time_series_rooftop.copy()
+    time_series_rooftop_forecast.start = time_series_rooftop.end - timedelta(hours=1)
     time_series_rooftop_forecast.forecast = True
 
     query = power_network_rooftop_query(
-        time_series=time_series_rooftop,
+        time_series=time_series_rooftop_forecast,
         networks_query=networks_query,
         network_region=network_region_code,
         forecast=True,
