@@ -2582,5 +2582,88 @@
     "wikipedia_link": null,
     "wikidata_id": null,
     "website_url": "https://www.shell.com.au/energy-and-innovation/shell-australia-new-energies/gangarri-solar-project.html"
+  },
+  {
+    "created_by": "opennem.stations",
+    "created_at": "2020-11-13T02:47:00.969029",
+    "id": 5070,
+    "participant": null,
+    "participant_id": null,
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "wind",
+          "label": "Wind",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "GULLRWF2",
+        "network_code": "GULLRWF2",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 110.67,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "NSW1",
+        "unit_id": null,
+        "unit_number": 31,
+        "unit_alias": null,
+        "unit_capacity": 3.57,
+        "emissions_factor_co2": 0.0,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ],
+    "photos": null,
+    "code": "BIALAWF",
+    "name": "Biala Wind Farm",
+    "network_name": "Biala Wind Farm",
+    "location": {
+      "created_by": null,
+      "created_at": "2020-11-13T02:47:00.969029",
+      "id": null,
+      "weather_station": null,
+      "weather_nearest": null,
+      "address1": "Grabben Gullen Rd",
+      "address2": "",
+      "locality": "Gurrundah",
+      "state": "NSW",
+      "postcode": "2581",
+      "country": "au",
+      "geocode_approved": true,
+      "geocode_skip": false,
+      "geocode_processed_at": null,
+      "geocode_by": null,
+      "lat": -34.58783555632732,
+      "lng": 149.36984787301526
+    },
+    "location_id": null,
+    "approved": true,
+    "approved_by": null,
+    "approved_at": null,
+    "network": null,
+    "description": "Biala wind farm is a 31 turbine wind farm located approximately 6km south of Grabben Gullen on Grabben Gullen Road, 8km east of Biala and 14.5km south west of Crookwell in the Southern Tablelands of NSW. The planned wind farm is 100% owned by Beijing Jingneng Clean Energy (Australia) Holding Pty Ltd (BJCE Australia) who own the nearby 73 turbine Gullen Range Wind Farm and 10MW Gullen Solar Farm.\nBiala Wind Farm is expected to have an installed capacity of approximately 110MW producing enough electricity for approximately 46,000 typical homes on an average day of wind.\nBJCE Australia commenced construction of the wind farm in August 2019 with electricity expected to be generated in the second quarter of 2020.",
+    "wikipedia_link": null,
+    "wikidata_id": null,
+    "website_url": "https://bialawindfarm.com/"
   }
 ]
