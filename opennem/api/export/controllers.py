@@ -393,39 +393,41 @@ def power_week(
     )
 
     # rooftop forecast
+    rooftop_forecast = None
 
-    time_series_rooftop_forecast = time_series_rooftop.copy()
-    time_series_rooftop_forecast.start = rooftop.data[0].history.last
-    time_series_rooftop_forecast.forecast = True
+    if rooftop and rooftop.data and len(rooftop.data) > 0:
+        time_series_rooftop_forecast = time_series_rooftop.copy()
+        time_series_rooftop_forecast.start = rooftop.data[0].history.last
+        time_series_rooftop_forecast.forecast = True
 
-    query = power_network_rooftop_query(
-        time_series=time_series_rooftop_forecast,
-        networks_query=networks_query,
-        network_region=network_region_code,
-        forecast=True,
-    )
+        query = power_network_rooftop_query(
+            time_series=time_series_rooftop_forecast,
+            networks_query=networks_query,
+            network_region=network_region_code,
+            forecast=True,
+        )
 
-    with engine.connect() as c:
-        logger.debug(query)
-        row = list(c.execute(query))
+        with engine.connect() as c:
+            logger.debug(query)
+            row = list(c.execute(query))
 
-    rooftop_forecast_power = [
-        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-        for i in row
-    ]
+        rooftop_forecast_power = [
+            DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
+            for i in row
+        ]
 
-    rooftop_forecast = stats_factory(
-        rooftop_forecast_power,
-        # code=network_region_code or network.code,
-        network=time_series.network,
-        interval=human_to_interval("30m"),
-        period=time_series.period,
-        units=get_unit("power"),
-        region=network_region_code,
-        fueltech_group=True,
-        include_code=include_code,
-        cast_nulls=False,
-    )
+        rooftop_forecast = stats_factory(
+            rooftop_forecast_power,
+            # code=network_region_code or network.code,
+            network=time_series.network,
+            interval=human_to_interval("30m"),
+            period=time_series.period,
+            units=get_unit("power"),
+            region=network_region_code,
+            fueltech_group=True,
+            include_code=include_code,
+            cast_nulls=False,
+        )
 
     if rooftop and rooftop_forecast:
         if (
