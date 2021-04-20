@@ -1,5 +1,7 @@
 import urllib
-from urllib.parse import urljoin, urlparse
+
+# urljoin from here so that the netlocs can be loaded
+from urllib.parse import urljoin, urlparse  # noqa: F401
 
 # Support S3 URI's in urllib
 urllib.parse.uses_netloc.append("s3")
