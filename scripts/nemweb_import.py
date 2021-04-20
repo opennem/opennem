@@ -18,10 +18,11 @@ from sqlalchemy.engine.base import Engine
 
 from opennem.core.normalizers import clean_float, string_to_upper
 from opennem.db import db_connect, get_database_engine
-from opennem.db.models.opennem import FacilityScada
+from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.core import BaseConfig
+from opennem.schema.network import NetworkNEM
 from opennem.settings import settings  # noqa: F401
 from opennem.utils.dates import date_series
 
@@ -30,6 +31,13 @@ logger = logging.getLogger("opennem.importer.nemweb")
 # These are from min/max SETTLEMENTDATE on nemweb DISPATCH_UNIT_SOLUTION_OLD
 NEMWEB_DISPATCH_OLD_MIN_DATE = datetime.fromisoformat("1998-12-07 01:40:00")
 NEMWEB_DISPATCH_OLD_MAX_DATE = datetime.fromisoformat("2014-08-01 00:00:00")
+
+# TRADING_PRICE min date (going back from)
+NEMWEB_TRADING_PRICE_MIN_DATE = datetime.fromisoformat("2009-07-01 00:00:00")
+
+
+def _trading_interval_timezone(dt: datetime) -> datetime:
+    return dt.replace(tzinfo=NetworkNEM.get_timezone())
 
 
 # Defines a schema for return results from DISPATHC_UNIT_SOLUTION_OLD
@@ -45,12 +53,47 @@ class DispatchUnitSolutionOld(BaseConfig):
     is_forecast: bool = False
     energy_quality_flag: int = 0
 
+    _trading_interval_timezone = validator("trading_interval", pre=True, allow_reuse=True)(
+        _trading_interval_timezone
+    )
+
     _normalize_network_id = validator("network_id", pre=True, allow_reuse=True)(string_to_upper)
     _normalize_facility_code = validator("facility_code", pre=True, allow_reuse=True)(
         string_to_upper
     )
     _normalize_generated = validator("generated", pre=True, allow_reuse=True)(clean_float)
     _normalize_energy = validator("eoi_quantity", pre=True, allow_reuse=True)(clean_float)
+
+
+class BalancingSummaryImport(BaseConfig):
+    created_by: str = "opennem.importer.nemweb"
+    created_at: datetime = datetime.now()
+    updated_at: Optional[str]
+    network_id: str = "NEM"
+    trading_interval: datetime
+    forecast_load: Optional[float]
+    generation_scheduled: Optional[float]
+    generation_non_scheduled: Optional[float]
+    generation_total: Optional[float]
+    price: Optional[float]
+    network_region: str
+    is_forecast: bool = False
+    net_interchange: Optional[float]
+    demand_total: Optional[float]
+    price_dispatch: Optional[float]
+    net_interchange_trading: Optional[float]
+
+    _trading_interval_timezone = validator("trading_interval", pre=True, allow_reuse=True)(
+        _trading_interval_timezone
+    )
+    _normalize_price = validator("price", pre=True, allow_reuse=True)(clean_float)
+    _normalize_net_interchange = validator("net_interchange", pre=True, allow_reuse=True)(
+        clean_float
+    )
+    _normalize_net_interchange_trading = validator(
+        "net_interchange_trading", pre=True, allow_reuse=True
+    )(clean_float)
+    _normalize_demand_total = validator("demand_total", pre=True, allow_reuse=True)(clean_float)
 
 
 def get_mysql_engine() -> Engine:
@@ -100,6 +143,53 @@ def get_scada_old_query(year: int, month: int) -> str:
     return dedent(query)
 
 
+def get_trading_price_import_query(limit: Optional[int] = None) -> str:
+    """Join TRADING_PRICE with regionids and return from min date
+
+    @NOTE all of these SETTLEMENTDATES come back in UTC+10 with no tzinfo
+    """
+
+    __query = """
+    select
+        tp.SETTLEMENTDATE,
+        tp.RRP,
+        ri.REGIONID
+    from TRADING_PRICE tp
+    left join REGIONID ri on ri.id = tp.REGIONID
+    where tp.SETTLEMENTDATE  < '{date_min}'
+    order by tp.SETTLEMENTDATE desc
+    {limit_query}
+    """
+
+    limit_query = f"limit {limit}" if limit else ""
+
+    query = __query.format(date_min=NEMWEB_TRADING_PRICE_MIN_DATE, limit_query=limit_query)
+
+    return dedent(query)
+
+
+def get_regionsum_import_query(limit: Optional[int] = None) -> str:
+
+    __query = """
+    select
+        trs.SETTLEMENTDATE,
+        ri.REGIONID,
+        trs.TOTALDEMAND,
+        trs.NETINTERCHANGE
+    from TRADING_REGIONSUM trs
+    left join REGIONID ri on ri.id = trs.REGIONID
+    where trs.SETTLEMENTDATE  < '{date_min}'
+    order by trs.SETTLEMENTDATE desc
+    {limit_query}
+    """
+
+    limit_query = f"limit {limit}" if limit else ""
+
+    query = __query.format(date_min=NEMWEB_TRADING_PRICE_MIN_DATE, limit_query=limit_query)
+
+    return dedent(query)
+
+
 def insert_scada_records(records: List[DispatchUnitSolutionOld]) -> int:
     """ Bulk insert the scada records """
 
@@ -127,6 +217,52 @@ def insert_scada_records(records: List[DispatchUnitSolutionOld]) -> int:
 
     csv_content = generate_csv_from_records(
         FacilityScada,
+        records_to_store,
+        column_names=records_to_store[0].keys(),
+    )
+
+    try:
+        cursor.copy_expert(sql_query, csv_content)
+        conn.commit()
+    except Exception as e:
+        logger.error("Error inserting records: {}".format(e))
+        return 0
+
+    logger.info("Inserted {} records".format(len(records_to_store)))
+
+    return len(records_to_store)
+
+
+def insert_balancing_summary_records(
+    records: List[BalancingSummaryImport], update_fields: List[str] = ["price"]
+) -> int:
+    """ Bulk insert the balancing_summary records """
+
+    records_to_store = [i.dict() for i in records]
+
+    # dedupe records
+    return_records_grouped = {}
+
+    # primary key protection for bulk insert
+    for pk_values, rec_value in groupby(
+        records_to_store,
+        key=lambda r: (
+            r.get("trading_interval"),
+            r.get("network_id"),
+            r.get("network_region"),
+        ),
+    ):
+        if pk_values not in return_records_grouped:
+            return_records_grouped[pk_values] = list(rec_value).pop()
+
+    records_to_store = list(return_records_grouped.values())
+
+    sql_query = build_insert_query(BalancingSummary, ["updated_at"] + update_fields)
+    conn = get_database_engine().raw_connection()
+    cursor = conn.cursor()
+
+    csv_content = generate_csv_from_records(
+        BalancingSummary,
         records_to_store,
         column_names=records_to_store[0].keys(),
     )
@@ -181,5 +317,58 @@ def import_nemweb_scada() -> None:
     return None
 
 
+def import_nemweb_price() -> None:
+    engine_mysql = get_mysql_engine()
+    logger.info("Connected to database.")
+
+    query = get_trading_price_import_query()
+
+    with engine_mysql.connect() as c:
+        logger.debug(query)
+
+        results_raw = list(c.execute(query))
+
+        logger.info("Got {} rows from TRADING_PRICE".format(len(results_raw)))
+
+        results_schema = [
+            BalancingSummaryImport(
+                trading_interval=i[0],
+                price=i[1],
+                network_region=i[2],
+            )
+            for i in results_raw
+        ]
+
+        insert_balancing_summary_records(results_schema)
+
+
+def import_nemweb_regionsum() -> None:
+    engine_mysql = get_mysql_engine()
+    logger.info("Connected to database.")
+
+    query = get_regionsum_import_query()
+
+    with engine_mysql.connect() as c:
+        logger.debug(query)
+
+        results_raw = list(c.execute(query))
+
+        logger.info("Got {} rows from REGIONSUM".format(len(results_raw)))
+
+        results_schema = [
+            BalancingSummaryImport(
+                trading_interval=i[0],
+                network_region=i[1],
+                demand_total=i[2],
+                net_interchange_trading=i[3],
+            )
+            for i in results_raw
+        ]
+
+        insert_balancing_summary_records(
+            results_schema, ["demand_total", "net_interchange_trading"]
+        )
+
+
 if __name__ == "__main__":
-    import_nemweb_scada()
+    import_nemweb_regionsum()
