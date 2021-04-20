@@ -32,23 +32,3 @@ def dt_floor(dt: datetime, interval: int = 5) -> datetime:
         seconds=dt.second,
         microseconds=dt.microsecond,
     )
-
-
-def dt_series(tz: Callable = timezone("UTC")) -> List[datetime]:
-    """
-    Generate a datetime series
-
-    """
-    end = dt_floor(tz.localize(datetime.now()))
-
-    start = end - timedelta(days=7)
-    interval = timedelta(minutes=5)
-
-    dc_current = start
-    series = []
-
-    while dc_current <= end:
-        series.append(dc_current)
-        dc_current += interval
-
-    return series
