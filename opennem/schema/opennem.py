@@ -307,10 +307,13 @@ class FacilityImportSchema(OpennemBaseSchema):
     id: Optional[int]
 
     network: NetworkSchema = NetworkNEM
+    network_id: Optional[str]
 
     fueltech: Optional[FueltechSchema]
+    fueltech_id: Optional[str]
 
     status: Optional[FacilityStatusSchema]
+    status_id: Optional[str]
 
     # @TODO no longer optional
     code: Optional[str] = ""

@@ -482,20 +482,39 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
                     )
                 )
 
-            facility_model.network_region = fac.network_region
-
+            # fueltech
             if fac.fueltech:
                 facility_model.fueltech_id = fac.fueltech.code
 
-            facility_model.network_id = fac.network.code
-            facility_model.status_id = fac.status.code
-            facility_model.dispatch_type = fac.dispatch_type
+            if fac.fueltech_id:
+                facility_model.fueltech_id = fac.fueltech_id
+
+            # network
+            if fac.network:
+                facility_model.network_id = fac.network.code
+
+            if fac.network_id:
+                facility_model.network_id = fac.network_id
+
+            # status
+            if fac.status:
+                facility_model.status_id = fac.status.code
+
+            if fac.status_id:
+                facility_model.status_id = fac.status_id
+
+            # rest
+            if fac.dispatch_type:
+                facility_model.dispatch_type = fac.dispatch_type
 
             if fac.capacity_registered:
                 facility_model.capacity_registered = fac.capacity_registered
 
             if fac.registered:
                 facility_model.registered = fac.registered
+
+            if fac.network_region:
+                facility_model.network_region = fac.network_region
 
             facility_model.unit_id = fac.unit_id
             facility_model.unit_number = fac.unit_number
