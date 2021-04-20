@@ -360,14 +360,12 @@ def import_nemweb_regionsum() -> None:
                 trading_interval=i[0],
                 network_region=i[1],
                 demand_total=i[2],
-                net_interchange_trading=i[3],
+                net_interchange=i[3],
             )
             for i in results_raw
         ]
 
-        insert_balancing_summary_records(
-            results_schema, ["demand_total", "net_interchange_trading"]
-        )
+        insert_balancing_summary_records(results_schema, ["demand_total", "net_interchange"])
 
 
 if __name__ == "__main__":
