@@ -453,7 +453,12 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
                 station.location.lng, station.location.lat
             )
 
+        session.add(station_model)
+        session.commit()
+
         for fac in station.facilities:
+            facility_added = False
+
             facility_model = (
                 session.query(Facility)
                 .filter_by(code=fac.code)
@@ -467,6 +472,15 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
 
             if not facility_model:
                 facility_model = Facility(code=fac.code, network_id=fac.network.code)
+                facility_added = True
+
+            if facility_model.station_id != station_model.id:
+                facility_model.station_id = station_model.id
+                logger.debug(
+                    " => Reassigned facility {} to station {}".format(
+                        facility_model.code, station_model.code
+                    )
+                )
 
             facility_model.network_region = fac.network_region
 
@@ -503,8 +517,11 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
             session.add(facility_model)
             station_model.facilities.append(facility_model)
             logger.debug(
-                " => Added facility {} to {} {}".format(
-                    fac.code, facility_model.network_id, facility_model.network_region
+                " => {} facility {} to {} {}".format(
+                    "Added" if facility_added else "Updated",
+                    fac.code,
+                    facility_model.network_id,
+                    facility_model.network_region,
                 )
             )
 
