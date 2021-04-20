@@ -14,7 +14,7 @@ from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
-from opennem.utils.numbers import cast_trailing_nulls
+from opennem.utils.numbers import cast_trailing_nulls, trim_nulls
 from opennem.utils.timezone import is_aware, make_aware
 from opennem.utils.version import get_version
 
@@ -50,6 +50,7 @@ def stats_factory(
     data_id: Optional[str] = None,
     localize: Optional[bool] = True,
     include_code: Optional[bool] = True,
+    cast_nulls: Optional[bool] = True,
 ) -> Optional[OpennemDataSet]:
     """
     Takes a list of data query results and returns OpennemDataSets
@@ -94,11 +95,17 @@ def stats_factory(
         # continue
 
         # Cast trailing nulls
-        if not units.name.startswith("temperature") or units.cast_nulls:
+        if (not units.name.startswith("temperature") or (units.cast_nulls is True)) and (
+            cast_nulls is True
+        ):
             data_value = cast_trailing_nulls(data_value)
 
+        data_trimmed = dict(zip(data_sorted.keys(), data_value))
+
+        data_trimmed = trim_nulls(data_trimmed)
+
         # Find start/end dates
-        dates = list(data_grouped.keys())
+        dates = list(data_trimmed.keys())
 
         if not dates:
             return None
@@ -145,7 +152,7 @@ def stats_factory(
             start=start,
             last=end,
             interval=interval.interval_human,
-            data=data_value,
+            data=data_trimmed.values(),
         )
 
         data = OpennemData(
