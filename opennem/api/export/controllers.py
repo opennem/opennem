@@ -389,6 +389,7 @@ def power_week(
         region=network_region_code,
         fueltech_group=True,
         include_code=include_code,
+        cast_nulls=False,
     )
 
     # rooftop forecast
@@ -423,6 +424,7 @@ def power_week(
         region=network_region_code,
         fueltech_group=True,
         include_code=include_code,
+        cast_nulls=False,
     )
 
     if rooftop and rooftop_forecast:
