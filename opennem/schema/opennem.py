@@ -303,6 +303,74 @@ class FacilityOutputSchema(OpennemBaseSchema):
         return value
 
 
+class FacilityImportSchema(OpennemBaseSchema):
+    id: Optional[int]
+
+    network: NetworkSchema = NetworkNEM
+
+    fueltech: Optional[FueltechSchema]
+
+    status: Optional[FacilityStatusSchema]
+
+    # @TODO no longer optional
+    code: Optional[str] = ""
+
+    scada_power: Optional[OpennemData]
+
+    # revisions: Optional[List[RevisionSchema]] = []
+    # revision_ids: Optional[List[int]] = []
+
+    dispatch_type: DispatchType = DispatchType.GENERATOR
+
+    active: bool = True
+
+    capacity_registered: Optional[float]
+
+    registered: Optional[datetime]
+    deregistered: Optional[datetime]
+
+    network_region: Optional[str]
+
+    unit_id: Optional[int]
+    unit_number: Optional[int]
+    unit_alias: Optional[str]
+    unit_capacity: Optional[float]
+
+    emissions_factor_co2: Optional[float]
+
+    approved: bool = False
+    approved_by: Optional[str]
+    approved_at: Optional[datetime]
+
+
+class StationImportSchema(OpennemBaseSchema):
+    id: Optional[int]
+
+    code: str
+
+    participant: Optional[ParticipantSchema] = None
+
+    facilities: Optional[List[FacilityImportSchema]] = []
+
+    photos: Optional[List[Photo]]
+
+    name: Optional[str]
+
+    # Original network fields
+    network_name: Optional[str]
+
+    location: LocationSchema = LocationSchema()
+
+    network: Optional[str] = None
+
+    approved: bool = True
+
+    description: Optional[str]
+    wikipedia_link: Optional[str]
+    wikidata_id: Optional[str]
+    website_url: Optional[str]
+
+
 class StationSchema(OpennemBaseSchema):
     id: Optional[int]
 
