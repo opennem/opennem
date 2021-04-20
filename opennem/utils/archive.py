@@ -1,11 +1,10 @@
 """
-    Module to handle zip files
-
+Module to handle zip files and nested zip files.
 
 """
 import io
 from io import BytesIO
-from typing import IO
+from typing import IO, Any
 from zipfile import ZipFile
 
 # limit how many zips within zips we'll parse
@@ -13,7 +12,7 @@ from zipfile import ZipFile
 ZIP_LIMIT = 0
 
 
-def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
+def chain_streams(streams: Any, buffer_size: int = io.DEFAULT_BUFFER_SIZE) -> io.BufferedReader:
     """
     Chain an iterable of streams together into a single buffered stream.
     Usage:
@@ -25,7 +24,7 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
     """
 
     class ChainStream(io.RawIOBase):
-        def __init__(self):
+        def __init__(self) -> None:
             self.leftover = b""
             self.stream_iter = iter(streams)
             try:
@@ -33,10 +32,10 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
             except StopIteration:
                 self.stream = None
 
-        def readable(self):
+        def readable(self) -> bool:
             return True
 
-        def _read_next_chunk(self, max_length):
+        def _read_next_chunk(self, max_length: int) -> bytes:
             if self.leftover:
                 return self.leftover
             elif self.stream is not None:
@@ -44,7 +43,7 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
             else:
                 return b""
 
-        def readinto(self, b):
+        def readinto(self, b: Any) -> int:
             buffer_length = len(b)
             chunk = self._read_next_chunk(buffer_length)
             while len(chunk) == 0:
@@ -63,6 +62,7 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
                 chunk[buffer_length:],
             )
             b[: len(output)] = output
+
             return len(output)
 
     return io.BufferedReader(ChainStream(), buffer_size=buffer_size)
@@ -88,7 +88,7 @@ def fix_central_directory(zfile: BytesIO) -> BytesIO:
     return zfile
 
 
-def stream_zip_contents(file_obj: IO[bytes], mode: str = "w"):
+def stream_zip_contents(file_obj: IO[bytes], mode: str = "w"):  # type: ignore
     """
     Steram out the entire contents of a zipfile
     handling embedded zips
