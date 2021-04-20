@@ -1,6 +1,6 @@
 import pytest
 
-from opennem.utils.numbers import sigfig_compact
+from opennem.utils.numbers import sigfig_compact, trim_nulls
 
 
 @pytest.mark.parametrize(
@@ -27,6 +27,16 @@ from opennem.utils.numbers import sigfig_compact
         (-1234567.89, -1234567),
     ],
 )
-def test_sigfig_compact(number, number_expected) -> None:
+def test_sigfig_compact(number: float, number_expected: float) -> None:
     number = sigfig_compact(number, 4)
     assert number == number_expected
+
+
+def test_trim_nulls() -> None:
+    subject = {"a": None, "b": 1, "c": None}
+
+    expected = {"b": 1}
+
+    res = trim_nulls(subject)
+
+    assert res == expected, "Got expected return"
