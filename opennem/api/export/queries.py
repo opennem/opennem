@@ -1,3 +1,4 @@
+from datetime import timedelta
 from textwrap import dedent
 from typing import List, Optional
 
@@ -403,12 +404,12 @@ def power_network_rooftop_query(
         select
             time_bucket_gapfill('30 minutes', fs.trading_interval)  AS trading_interval,
             ft.code as fueltech_code,
-            coalesce({agg_func}(fs.generated), 0) as facility_power
+            {agg_func}(fs.generated) as facility_power
         from facility_scada fs
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
         where
-            fs.is_forecast is {forecast} and
+            {forecast_query}
             f.fueltech_id = 'solar_rooftop' and
             {network_query}
             {network_region_query}
@@ -422,6 +423,8 @@ def power_network_rooftop_query(
     wem_apvi_case: str = ""
     agg_func = "sum"
     timezone: str = time_series.network.timezone_database
+
+    forecast_query = f"fs.is_forecast is {forecast} and"
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
@@ -440,6 +443,9 @@ def power_network_rooftop_query(
     date_max = time_series.get_range().end
     date_min = time_series.get_range().start
 
+    if forecast:
+        date_max = date_min + timedelta(hours=1)
+
     query = dedent(
         __query.format(
             network_query=network_query,
@@ -447,7 +453,7 @@ def power_network_rooftop_query(
             timezone=timezone,
             date_max=date_max,
             date_min=date_min,
-            forecast=str(forecast),
+            forecast_query=forecast_query,
             agg_func=agg_func,
         )
     )
