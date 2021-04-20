@@ -1,6 +1,6 @@
 import decimal
 from math import floor, log, pow
-from typing import List, Union
+from typing import Dict, List, Union
 
 from opennem.settings import settings
 
@@ -108,5 +108,35 @@ def cast_trailing_nulls(series: List) -> List:
             series[i] = 0
         else:
             return series
+
+    return series
+
+
+def trim_nulls(series: Dict) -> Dict:
+    """
+    Trime preceding and trailing nulls in dict
+    """
+    in_values = False
+    _remove_keys = []
+
+    for i, x in series.items():
+        if x is not None:
+            in_values = True
+
+        if in_values:
+            continue
+
+        _remove_keys.append(i)
+
+    for dt in reversed(series.keys()):
+        v = series[dt]
+
+        if v is not None:
+            break
+
+        _remove_keys.append(dt)
+
+    for k in _remove_keys:
+        series.pop(k, None)
 
     return series
