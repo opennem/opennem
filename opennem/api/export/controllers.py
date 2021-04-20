@@ -395,7 +395,7 @@ def power_week(
     # rooftop forecast
 
     time_series_rooftop_forecast = time_series_rooftop.copy()
-    time_series_rooftop_forecast.start = time_series_rooftop.end - timedelta(hours=1)
+    time_series_rooftop_forecast.start = rooftop.data[0].history.last
     time_series_rooftop_forecast.forecast = True
 
     query = power_network_rooftop_query(

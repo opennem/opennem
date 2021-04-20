@@ -444,7 +444,9 @@ def power_network_rooftop_query(
     date_min = time_series.get_range().start
 
     if forecast:
-        date_max = date_min + timedelta(hours=1)
+        # @TODO work out what in get_range is mashing this
+        date_min = time_series.start + timedelta(minutes=30)
+        date_max = date_min + timedelta(hours=3)
 
     query = dedent(
         __query.format(
