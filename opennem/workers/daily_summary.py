@@ -173,6 +173,9 @@ def run_daily_fueltech_summary() -> None:
     if slack_sent:
         logger.info("Sent slack message")
 
+    else:
+        logger.error("Could not send slack message for daily fueltech summary")
+
 
 if __name__ == "__main__":
     run_daily_fueltech_summary()
