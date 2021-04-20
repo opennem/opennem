@@ -2665,5 +2665,15 @@
     "wikipedia_link": null,
     "wikidata_id": null,
     "website_url": "https://bialawindfarm.com/"
+  },
+  {
+    "code": "BHWF",
+    "facilities": [
+      {
+        "code": "BALDHWF1",
+        "capacity_registered": 106.6,
+        "approved": true
+      }
+    ]
   }
 ]
