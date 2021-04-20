@@ -164,7 +164,7 @@ def date_series(
             next_record += interval
 
 
-total_months = lambda dt: dt.month + 12 * dt.year
+total_months = lambda dt: dt.month + 12 * dt.year  # noqa: E731
 
 
 def total_weeks(d1: Union[datetime, date], d2: Union[datetime, date]) -> int:
