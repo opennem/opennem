@@ -14,6 +14,7 @@ from opennem.api.photo.schema import Photo
 from opennem.api.stats.schema import OpennemData
 from opennem.api.weather.schema import WeatherStation
 from opennem.core.dispatch_type import DispatchType
+from opennem.core.networks import datetime_add_network_timezone
 from opennem.core.normalizers import clean_capacity, normalize_string
 
 from .core import BaseConfig
@@ -221,6 +222,10 @@ class LocationSchema(OpennemBaseSchema):
             return geometry.mapping(to_shape(value))
 
 
+def as_nem_timezone(dt: datetime) -> datetime:
+    return datetime_add_network_timezone(dt, NetworkNEM)
+
+
 class FacilityOutputSchema(OpennemBaseSchema):
     id: Optional[int]
 
@@ -234,9 +239,6 @@ class FacilityOutputSchema(OpennemBaseSchema):
     code: Optional[str] = ""
 
     scada_power: Optional[OpennemData]
-
-    # revisions: Optional[List[RevisionSchema]] = []
-    # revision_ids: Optional[List[int]] = []
 
     dispatch_type: DispatchType = DispatchType.GENERATOR
 
@@ -256,6 +258,10 @@ class FacilityOutputSchema(OpennemBaseSchema):
 
     data_first_seen: Optional[datetime]
     data_last_seen: Optional[datetime]
+
+    _seen_dates_tz = validator("data_first_seen", "data_last_seen", pre=True, allow_reuse=True)(
+        as_nem_timezone
+    )
 
     @validator("network", pre=True)
     def flatten_network(cls, value) -> str:
