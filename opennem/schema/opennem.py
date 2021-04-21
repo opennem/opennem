@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from geoalchemy2.elements import WKBElement
 from geoalchemy2.shape import to_shape
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, ValidationError, validator
 from shapely import geometry
 
 from opennem.api.photo.schema import Photo
@@ -116,9 +116,6 @@ class FacilitySchema(OpennemBaseSchema):
 
     scada_power: Optional[OpennemData]
 
-    # revisions: Optional[List[RevisionSchema]] = []
-    # revision_ids: Optional[List[int]] = []
-
     dispatch_type: DispatchType = DispatchType.GENERATOR
 
     active: bool = True
@@ -226,6 +223,19 @@ def as_nem_timezone(dt: datetime) -> datetime:
     return datetime_add_network_timezone(dt, NetworkNEM)
 
 
+def _flatten_linked_object(value: Union[str, Dict, object]) -> str:
+    if isinstance(value, str):
+        return value
+
+    if isinstance(value, dict) and "code" in value:
+        return value["code"]
+
+    if isinstance(value, object) and hasattr(value, "code"):
+        return value.code
+
+    raise ValidationError("Could not flatten no value or invalid")
+
+
 class FacilityOutputSchema(OpennemBaseSchema):
     id: Optional[int]
 
@@ -263,35 +273,9 @@ class FacilityOutputSchema(OpennemBaseSchema):
         as_nem_timezone
     )
 
-    @validator("network", pre=True)
-    def flatten_network(cls, value) -> str:
-        if isinstance(value, str):
-            return value
-
-        if "code" in value:
-            return value["code"]
-
-        return value.code if value else ""
-
-    @validator("fueltech", pre=True)
-    def flatten_fueltech(cls, value) -> str:
-        if isinstance(value, str):
-            return value
-
-        if "code" in value:
-            return value["code"]
-
-        return value.code if value else ""
-
-    @validator("status", pre=True)
-    def flatten_status(cls, value) -> str:
-        if isinstance(value, str):
-            return value
-
-        if "code" in value:
-            return value["code"]
-
-        return value.code if value else ""
+    _flatten_embedded = validator("network", "fueltech", "status", pre=True, allow_reuse=True)(
+        _flatten_linked_object
+    )
 
     @validator("capacity_registered")
     def _clean_capacity_regisered(cls, value):
@@ -325,9 +309,6 @@ class FacilityImportSchema(OpennemBaseSchema):
     code: Optional[str] = ""
 
     scada_power: Optional[OpennemData]
-
-    # revisions: Optional[List[RevisionSchema]] = []
-    # revision_ids: Optional[List[int]] = []
 
     dispatch_type: DispatchType = DispatchType.GENERATOR
 
