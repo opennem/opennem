@@ -428,7 +428,7 @@ class Station(Base, BaseModel):
             return fsr
 
         first_seens = [f.data_first_seen for f in self.facilities if f.data_first_seen]
-        last_seens = [f.data_first_seen for f in self.facilities if f.data_first_seen]
+        last_seens = [f.data_last_seen for f in self.facilities if f.data_last_seen]
 
         if first_seens:
             fsr.date_min = min(first_seens)
