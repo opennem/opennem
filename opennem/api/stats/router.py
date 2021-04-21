@@ -85,8 +85,20 @@ def power_station(
 
     stats = []
 
+    date_min = facilities_date_range.date_min
+    date_max = facilities_date_range.date_max
+
+    network_range = get_scada_range(network=network)
+
+    if not date_min:
+        date_min = network_range.start
+
+    if not date_max:
+        date_max = network_range.end
+
     time_series = TimeSeries(
-        start=facilities_date_range.date_min,
+        start=date_min,
+        end=date_max,
         network=network,
         period=period,
         interval=interval,
@@ -202,6 +214,7 @@ def energy_station(
 
     time_series = TimeSeries(
         start=date_start,
+        end=date_end,
         network=network,
         interval=interval_obj,
         period=period_obj,
