@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 
 from opennem.db import SessionLocal
@@ -11,6 +12,7 @@ from opennem.schema.network import (
     NetworkSchema,
     NetworkWEM,
 )
+from opennem.utils.timezone import is_aware
 
 NEM_STATES = ["QLD", "NSW", "VIC", "ACT", "TAS", "SA", "NT"]
 
@@ -92,3 +94,8 @@ def get_network_region_schema(
     regions = [NetworkRegionSchema.from_orm(i) for i in regions_result]
 
     return regions
+
+
+def datetime_add_network_timezone(dt: datetime, network: NetworkSchema) -> datetime:
+    """ Returns a datetime in network timezone """
+    return dt.astimezone(network.get_fixed_offset())
