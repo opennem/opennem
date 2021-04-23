@@ -220,7 +220,8 @@ class LocationSchema(OpennemBaseSchema):
 
 
 def as_nem_timezone(dt: datetime) -> datetime:
-    return datetime_add_network_timezone(dt, NetworkNEM)
+    if dt:
+        return datetime_add_network_timezone(dt, NetworkNEM)
 
 
 def _flatten_linked_object(value: Union[str, Dict, object]) -> str:
