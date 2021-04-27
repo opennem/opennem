@@ -4,8 +4,9 @@
 """
 
 import logging
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
+from typing import Tuple
 
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.loader import load_data
@@ -25,7 +26,7 @@ from opennem.importer.compat import map_compat_facility_state
 logger = logging.getLogger(__name__)
 
 
-def load_fueltechs():
+def load_fueltechs() -> None:
     """
     Load the fueltechs fixture
     """
@@ -51,7 +52,7 @@ def load_fueltechs():
             logger.error("Have {}".format(fueltech.code))
 
 
-def load_facilitystatus():
+def load_facilitystatus() -> None:
     """
     Load the facility status fixture
     """
@@ -76,7 +77,7 @@ def load_facilitystatus():
             logger.error("Have {}".format(facility_status.code))
 
 
-def load_networks():
+def load_networks() -> None:
     """
     Load the networks fixture
     """
@@ -111,7 +112,7 @@ def load_networks():
             logger.error("Have {}".format(network_model.code))
 
 
-def load_network_regions():
+def load_network_regions() -> None:
     """
     Load the network region fixture
     """
@@ -143,12 +144,12 @@ def load_network_regions():
 """
 
 
-def parse_date(date_str):
+def parse_date(date_str) -> date:
     dt = datetime.strptime(date_str, "%Y%m%d")
     return dt.date()
 
 
-def parse_fixed_line(line):
+def parse_fixed_line(line) -> Tuple[str, str, str, date, Decimal, Decimal]:
     """
     Parses a fixed-width CSV from the funky BOM format
     """
@@ -162,7 +163,7 @@ def parse_fixed_line(line):
     )
 
 
-def load_bom_stations_csv():
+def load_bom_stations_csv() -> None:
     """
     Imports the BOM fixed-width stations format
 
@@ -196,7 +197,7 @@ def load_bom_stations_csv():
             logger.error("Have {}".format(station.code))
 
 
-def load_bom_stations_json():
+def load_bom_stations_json() -> None:
     """
     Imports BOM stations into the database from bom_stations.json
 
@@ -248,7 +249,7 @@ def load_bom_stations_json():
     session.commit()
 
 
-def update_existing_geos():
+def update_existing_geos() -> None:
     """
     Old method to update geos from existing facilities file on OpenNEM
     """
