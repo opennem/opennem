@@ -234,7 +234,7 @@ def _flatten_linked_object(value: Union[str, Dict, object]) -> str:
         return value["code"]
 
     if isinstance(value, object) and hasattr(value, "code"):
-        return value.code
+        return value.code  # type: ignore
 
     raise ValidationError("Could not flatten no value or invalid")
 
