@@ -303,7 +303,7 @@ def export_all_monthly() -> None:
                 networks = [NetworkWEM, NetworkAPVI]
 
             if network == NetworkNEM:
-                networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
+                networks = [NetworkNEM, NetworkAEMORooftop]
 
             logger.debug(
                 "Running monthlies for {} and {}".format(network.code, network_region.code)
