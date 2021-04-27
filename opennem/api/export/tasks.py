@@ -299,6 +299,12 @@ def export_all_monthly() -> None:
         for network_region in network_regions:
             networks = []
 
+            logging.info(
+                "Exporting monthly for network {} and region {}".format(
+                    network.code, network_region.code
+                )
+            )
+
             if network_region.code == "WEM":
                 networks = [NetworkWEM, NetworkAPVI]
 
