@@ -236,7 +236,7 @@ def _flatten_linked_object(value: Union[str, Dict, object]) -> str:
     if isinstance(value, object) and hasattr(value, "code"):
         return value.code  # type: ignore
 
-    raise ValidationError("Could not flatten no value or invalid")
+    raise ValidationError("Could not flatten no value or invalid", model=StationSchema)
 
 
 class FacilityOutputSchema(OpennemBaseSchema):
