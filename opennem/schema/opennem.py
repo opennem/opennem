@@ -223,6 +223,8 @@ def as_nem_timezone(dt: datetime) -> datetime:
     if dt:
         return datetime_add_network_timezone(dt, NetworkNEM)
 
+    raise Exception("Require a date for nem timezone")
+
 
 def _flatten_linked_object(value: Union[str, Dict, object]) -> str:
     if isinstance(value, str):
