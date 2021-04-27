@@ -42,6 +42,7 @@ if settings.cache_url:
 
 huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 
+
 # export tasks
 @huey.periodic_task(crontab(minute="*/5"), priority=90)
 @huey.lock_task("schedule_live_tasks")
