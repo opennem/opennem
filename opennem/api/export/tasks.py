@@ -368,7 +368,7 @@ def export_all_daily() -> None:
 
     for network_region in network_regions:
         network = network_from_network_code(network_region.network.code)
-        networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
+        networks = [NetworkNEM, NetworkAEMORooftop]
 
         if network_region.code == "WEM":
             networks = [NetworkWEM, NetworkAPVI]
