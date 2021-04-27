@@ -139,19 +139,19 @@ class FacilitySchema(OpennemBaseSchema):
     approved_at: Optional[datetime]
 
     @validator("capacity_registered")
-    def _clean_capacity_regisered(cls, value):
-        value = clean_capacity(value)
+    def _clean_capacity_regisered(cls, value: Union[str, int, float]) -> Optional[float]:
+        _v = clean_capacity(value)
 
         if isinstance(value, float):
-            value = round(value, 2)
+            _v = round(value, 2)
 
-        return value
+        return _v
 
     @validator("emissions_factor_co2")
-    def _clean_emissions_factor_co2(cls, value):
-        value = clean_capacity(value)
+    def _clean_emissions_factor_co2(cls, value: Union[str, int, float]) -> Optional[float]:
+        _v = clean_capacity(value)
 
-        return value
+        return _v
 
 
 class WeatherStationNearest(BaseModel):
@@ -185,15 +185,15 @@ class LocationSchema(OpennemBaseSchema):
     lng: Optional[float]
 
     @validator("address1")
-    def clean_address(cls, value):
+    def clean_address(cls, value: str) -> str:
         return normalize_string(value)
 
     @validator("address2")
-    def clean_address2(cls, value):
+    def clean_address2(cls, value: str) -> str:
         return normalize_string(value)
 
     @validator("locality")
-    def clean_locality(cls, value):
+    def clean_locality(cls, value: str) -> str:
         return normalize_string(value)
 
     @validator("state")
@@ -201,10 +201,14 @@ class LocationSchema(OpennemBaseSchema):
         if value:
             return value.upper()
 
+        return None
+
     @validator("postcode")
     def clean_postcode(cls, value: str) -> Optional[str]:
         if value:
             return value.strip()
+
+        return None
 
     @validator("geom", pre=True)
     def parse_geom(cls, value: WKBElement) -> Any:
@@ -281,19 +285,19 @@ class FacilityOutputSchema(OpennemBaseSchema):
     )
 
     @validator("capacity_registered")
-    def _clean_capacity_regisered(cls, value):
-        value = clean_capacity(value)
+    def _clean_capacity_regisered(cls, value: Union[str, float, int]) -> Optional[float]:
+        _v = clean_capacity(value)
 
         if isinstance(value, float):
-            value = round(value, 2)
+            _v = round(value, 2)
 
-        return value
+        return _v
 
     @validator("emissions_factor_co2")
-    def _clean_emissions_factor_co2(cls, value):
-        value = clean_capacity(value)
+    def _clean_emissions_factor_co2(cls, value: Union[str, float, int]) -> Optional[float]:
+        _v = clean_capacity(value)
 
-        return value
+        return _v
 
 
 class FacilityImportSchema(OpennemBaseSchema):
