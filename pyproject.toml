@@ -64,7 +64,7 @@ xlrd = "^2.0.1"
 requests-cache = "^0.5.2"
 datetime-truncate = "^1.1.1"
 datedelta = "^1.3"
-pandas = "^1.2.2"
+pandas = "^1.2.4"
 fastapi-cache2 = {extras = ["redis"], version = "^0.1.3"}
 aioredis = "^1.3.1"
 osm2geojson = "^0.1.29"
@@ -86,7 +86,6 @@ mypy = "^0.790"
 mdutils = "^1.2.2"
 sqlalchemy-stubs = "^0.3"
 pycodestyle = "^2.6.0"
-py-spy = "^0.3.3"
 pytest-benchmark = {extras = ["histogram"], version = "^3.2.3"}
 uvicorn = {extras = ["watchgodreload"], version = "^0.12.3"}
 GitPython = "^3.1.12"
