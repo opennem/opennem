@@ -25,7 +25,7 @@
     "country": "au",
     "label": "APVI",
     "timezone": "Australia/Sydney",
-    "network_price": "NEM",
+    "network_price": "WEM",
     "timezone_database": "AEST",
     "offset": 600,
     "interval_size": 15,
