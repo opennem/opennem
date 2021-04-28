@@ -4,7 +4,8 @@ from typing import Optional
 import scrapy
 
 from opennem.pipelines.bom import StoreBomObservation
-from opennem.utils.random_agent import user_agent_rotator
+
+# from opennem.utils.random_agent import user_agent_rotator
 
 
 class BomJSONObservationSpider(scrapy.Spider):
@@ -17,7 +18,7 @@ class BomJSONObservationSpider(scrapy.Spider):
     station_id: Optional[str] = None
 
     custom_settings = {
-        "USER_AGENT": user_agent_rotator.get_random_user_agent(),
+        "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90",
     }
 
     def parse(self, response):
