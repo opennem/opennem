@@ -488,9 +488,9 @@ def energy_network_fueltech_query(
     select
         date_trunc('{trunc}', t.trading_day),
         t.fueltech_id,
-        sum(t.energy) / 1000 as fueltech_energy,
-        sum(t.market_value) as fueltech_market_value,
-        sum(t.emissions) as fueltech_emissions
+        coalesce(sum(t.energy) / 1000, 0) as fueltech_energy,
+        coalesce(sum(t.market_value), 0) as fueltech_market_value,
+        coalesce(sum(t.emissions), 0) as fueltech_emissions
     from at_facility_daily t
     left join facility f on t.facility_code = f.code
     where
