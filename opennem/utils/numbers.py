@@ -1,8 +1,12 @@
 import decimal
+import logging
+from datetime import datetime
 from math import floor, log, pow
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from opennem.settings import settings
+
+logger = logging.getLogger("opennem.utils.numbers")
 
 __log10 = 2.302585092994046
 
@@ -138,5 +142,28 @@ def trim_nulls(series: Dict) -> Dict:
 
     for k in _remove_keys:
         series.pop(k, None)
+
+    return series
+
+
+def pad_time_series(
+    series: Dict, start_date: datetime, end_date: datetime, pad_with: Optional[int] = 0
+) -> Dict:
+    """ Pad out time series to start and end date """
+
+    series_dates = series.keys()
+    series_min_date = min(series_dates)
+    series_max_date = max(series_dates)
+
+    to_pad = 0
+
+    if start_date < series_min_date:
+        # @TODO date - date / interval
+        logger.warn("Start date padding out")
+        to_pad += 1
+
+    if end_date > series_max_date:
+        logger.warn("End date pad out")
+        to_pad += 1
 
     return series
