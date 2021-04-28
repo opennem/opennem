@@ -16,7 +16,7 @@ class BomJSONObservationSpider(scrapy.Spider):
     station_id: Optional[str] = None
 
     custom_settings = {
-        "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) Chrome/89.0.4389.90"
+        "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11) Chrome/89.0",
     }
 
     def parse(self, response):
