@@ -486,7 +486,7 @@ def energy_network_fueltech_query(
 
     __query = """
     select
-        date_trunc('{trunc}', t.trading_day),
+        time_bucket_gapfill('{trunc}', t.trading_day),
         t.fueltech_id,
         coalesce(sum(t.energy) / 1000, 0) as fueltech_energy,
         coalesce(sum(t.market_value), 0) as fueltech_market_value,
@@ -515,7 +515,7 @@ def energy_network_fueltech_query(
 
     query = dedent(
         __query.format(
-            trunc=date_range.interval.trunc,
+            trunc=date_range.interval.interval_sql,
             date_min=date_range.start.date(),
             date_max=date_range.end.date(),
             network_query=network_query,
