@@ -397,7 +397,14 @@ def power_network_region_fueltech(
     network_region_code: str = Query(..., description="Network region code"),
     month: date = Query(datetime.now().date(), description="Month to query"),
 ) -> OpennemDataSet:
-    network = network_from_network_code(network_code)
+
+    network = None
+
+    try:
+        network = network_from_network_code(network_code)
+    except Exception:
+        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+
     interval_obj = network.get_interval()
     period_obj = human_to_period("1M")
 
@@ -438,7 +445,13 @@ def emission_factor_per_network(  # type: ignore
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
-    network = network_from_network_code(network_code)
+    network = None
+
+    try:
+        network = network_from_network_code(network_code)
+    except Exception:
+        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+
     interval_obj = human_to_interval(interval)
     period_obj = human_to_period("7d")
 
@@ -526,7 +539,13 @@ def fueltech_demand_mix(
     """
     engine = get_database_engine()
 
-    network = network_from_network_code(network_code)
+    network = None
+
+    try:
+        network = network_from_network_code(network_code)
+    except Exception:
+        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+
     interval_obj = human_to_interval("5m")
     period_obj = human_to_period("1d")
 
