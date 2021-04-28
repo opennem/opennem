@@ -24,7 +24,7 @@ class BomCapitalsSpider(BomJSONObservationSpider):
 
 
 class BomAllSpider(BomJSONObservationSpider):
-    name = "bom.all"
+    # name = "bom.all"
 
     def start_requests(self):
         station = get_stations()
