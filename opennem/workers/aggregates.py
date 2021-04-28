@@ -30,11 +30,11 @@ def aggregates_facility_daily_query(
             sum(fs.emissions) as emissions
         from (
             select
-                time_bucket('30 minutes', fs.trading_interval) as trading_interval,
+                time_bucket_gapfill('30 minutes', fs.trading_interval) as trading_interval,
                 fs.facility_code as code,
-                sum(fs.eoi_quantity) as energy,
-                sum(fs.eoi_quantity) * coalesce(max(bsn.price), max(bs.price)) as market_value,
-                sum(fs.eoi_quantity) * max(f.emissions_factor_co2) as emissions
+                coalesce(sum(fs.eoi_quantity), 0) as energy,
+                coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bsn.price), max(bs.price), 0) as market_value,
+                coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(f.emissions_factor_co2), 0) as emissions
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
             left join network n on f.network_id = n.code
@@ -48,7 +48,10 @@ def aggregates_facility_daily_query(
                 and bs.network_id = n.network_price
                 and bs.network_region = f.network_region
                 and f.network_id != 'NEM'
-            where fs.is_forecast is False
+            where
+                fs.is_forecast is False and
+                and fs.trading_interval >= '{date_min}'
+                {date_max_query}
             group by
                 1, 2
         ) as fs
@@ -72,7 +75,7 @@ def aggregates_facility_daily_query(
     date_max_query: str = ""
 
     if date_max:
-        date_max_query = f"and fs.trading_interval < '{date_max}'"
+        date_max_query = f"and fs.trading_interval <= '{date_max}'"
 
     query = __query.format(
         date_min=date_min,
@@ -161,5 +164,5 @@ def run_aggregate_days(days: int = 1, network: NetworkSchema = NetworkNEM) -> No
 
 # Debug entry point
 if __name__ == "__main__":
-    run_aggregate_days(days=10)
-    # run_aggregates_facility_all()
+    # run_aggregate_days(days=10)
+    run_aggregates_facility_all()
