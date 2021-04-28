@@ -1,6 +1,9 @@
+from typing import Generator
+
 import scrapy
 
 from opennem.spiders.bom.bom_base import BomJSONObservationSpider
+from opennem.utils.random_agent import random_user_agent
 
 from .utils import get_stations, get_stations_priority
 
@@ -14,22 +17,24 @@ REQUEST_HEADERS = {
 class BomCapitalsSpider(BomJSONObservationSpider):
     name = "bom.capitals"
 
-    def start_requests(self):
+    def start_requests(self) -> Generator[scrapy.Request, None, None]:
         priority_stations = get_stations_priority()
 
+        _headers = REQUEST_HEADERS.copy()
+        _headers["User-Agent"] = random_user_agent()
+
         for station in priority_stations:
-            yield scrapy.Request(
-                station.feed_url, meta={"code": station.code}, headers=REQUEST_HEADERS
-            )
+            yield scrapy.Request(station.feed_url, meta={"code": station.code}, headers=_headers)
 
 
 class BomAllSpider(BomJSONObservationSpider):
     # name = "bom.all"
 
-    def start_requests(self):
-        station = get_stations()
+    def start_requests(self) -> Generator[scrapy.Request, None, None]:
+        stations = get_stations()
 
-        for station in station:
-            yield scrapy.Request(
-                station.feed_url, meta={"code": station.code}, headers=REQUEST_HEADERS
-            )
+        _headers = REQUEST_HEADERS.copy()
+        _headers["User-Agent"] = random_user_agent()
+
+        for station in stations:
+            yield scrapy.Request(station.feed_url, meta={"code": station.code}, headers=_headers)
