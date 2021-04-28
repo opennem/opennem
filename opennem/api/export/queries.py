@@ -516,7 +516,7 @@ def energy_network_fueltech_query(
 
     query = dedent(
         __query.format(
-            trunc=date_range.interval.interval,
+            trunc=date_range.interval.trunc,
             date_min=date_range.start.date(),
             date_max=date_range.end.date(),
             network_query=network_query,
