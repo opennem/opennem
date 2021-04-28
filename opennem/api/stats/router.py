@@ -3,7 +3,6 @@ from datetime import date, datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import networks
 from sqlalchemy.orm import Session
 from starlette import status
 
