@@ -1,11 +1,9 @@
 import json
-from typing import Optional
+from typing import Any, Dict, Generator, Optional
 
 import scrapy
 
 from opennem.pipelines.bom import StoreBomObservation
-
-# from opennem.utils.random_agent import user_agent_rotator
 
 
 class BomJSONObservationSpider(scrapy.Spider):
@@ -21,7 +19,7 @@ class BomJSONObservationSpider(scrapy.Spider):
         "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90",
     }
 
-    def parse(self, response):
+    def parse(self, response: Any) -> Generator[Dict[str, Any], None, None]:
         json_response = json.loads(response.text)
 
         if not type(json_response) is dict:
