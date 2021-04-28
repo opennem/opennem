@@ -1922,6 +1922,26 @@ w3lib = ">=1.17.0"
 "zope.interface" = ">=4.1.3"
 
 [[package]]
+name = "scrapyd-client"
+version = "1.2.0a1"
+description = "A client for scrapyd"
+category = "dev"
+optional = false
+python-versions = "*"
+develop = false
+
+[package.dependencies]
+requests = "*"
+Scrapy = ">=0.17"
+six = "*"
+
+[package.source]
+type = "git"
+url = "https://github.com/iamumairayub/scrapyd-client.git"
+reference = "master"
+resolved_reference = "c4575befa450aa3054c893a8895086d1fb449405"
+
+[[package]]
 name = "secretstorage"
 version = "3.3.1"
 description = "Python bindings to FreeDesktop.org Secret Service API"
@@ -2459,7 +2479,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "b2489d3a4b3ddc9e8d7953d69b6ec0ee6bc0a4aae92723c13bf83a1dfef81dc0"
+content-hash = "0991f1e162855d0375ac3f52ee1a5e374cbda3b1cb73f73f0021ff92cec4647a"
 
 [metadata.files]
 aiofiles = [
@@ -3590,6 +3610,7 @@ scrapy = [
     {file = "Scrapy-2.4.1-py2.py3-none-any.whl", hash = "sha256:27621ab491706ec8cc41168cdbdff07e7fe8c344c8640e9e9faebd7cf84008e2"},
     {file = "Scrapy-2.4.1.tar.gz", hash = "sha256:68c48f01a58636bdf0f6fcd5035a19ecf277b58af24bd70c36dc6e556df3e005"},
 ]
+scrapyd-client = []
 secretstorage = [
     {file = "SecretStorage-3.3.1-py3-none-any.whl", hash = "sha256:422d82c36172d88d6a0ed5afdec956514b189ddbfb72fefab0c8a1cee4eaf71f"},
     {file = "SecretStorage-3.3.1.tar.gz", hash = "sha256:fd666c51a6bf200643495a04abb261f83229dcb6fd8472ec393df7ffc8b6f195"},
