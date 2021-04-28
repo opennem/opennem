@@ -472,6 +472,7 @@ def energy_network_fueltech_query(
     time_series: TimeSeries,
     network_region: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
+    coalesce_with: Optional[int] = 0,
 ) -> str:
     """
     Get Energy for a network or network + region
@@ -488,9 +489,9 @@ def energy_network_fueltech_query(
     select
         time_bucket_gapfill('{trunc}', t.trading_day),
         t.fueltech_id,
-        coalesce(sum(t.energy) / 1000, 0) as fueltech_energy,
-        coalesce(sum(t.market_value), 0) as fueltech_market_value,
-        coalesce(sum(t.emissions), 0) as fueltech_emissions
+        coalesce(sum(t.energy) / 1000, {coalesce_with}) as fueltech_energy,
+        coalesce(sum(t.market_value), {coalesce_with}) as fueltech_market_value,
+        coalesce(sum(t.emissions), {coalesce_with}) as fueltech_emissions
     from at_facility_daily t
     left join facility f on t.facility_code = f.code
     where
@@ -520,6 +521,7 @@ def energy_network_fueltech_query(
             date_max=date_range.end.date(),
             network_query=network_query,
             network_region_query=network_region_query,
+            coalesce_with=coalesce_with,
         )
     )
 
