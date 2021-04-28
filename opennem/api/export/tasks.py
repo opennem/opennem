@@ -572,6 +572,6 @@ def export_metadata() -> bool:
 if __name__ == "__main__":
     # export_power(priority=PriorityType.live)
     # export_energy(latest=True)
-    # export_all_monthly()
+    export_all_monthly()
     export_all_daily()
     # export_electricitymap()
