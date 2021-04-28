@@ -24,9 +24,9 @@
     "code": "APVI",
     "country": "au",
     "label": "APVI",
-    "timezone": "Australia/Sydney",
+    "timezone": "Australia/Perth",
     "network_price": "WEM",
-    "timezone_database": "AEST",
+    "timezone_database": "AWST",
     "offset": 600,
     "interval_size": 15,
     "export_set": false
