@@ -3,6 +3,7 @@ from datetime import date, datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import networks
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -416,10 +417,13 @@ def power_network_region_fueltech(
     if not network:
         raise Exception("Network not found")
 
+    networks = [network]
+
     time_series = TimeSeries(
         start=scada_range.start,
         month=month,
         network=network,
+        networks=networks,
         interval=interval_obj,
         period=period_obj,
     )
@@ -456,7 +460,7 @@ def emission_factor_per_network(  # type: ignore
     period_obj = human_to_period("7d")
 
     if not interval_obj:
-        raise Exception(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid interval size")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid interval size")
 
     scada_range = get_scada_range(network=network)
 
