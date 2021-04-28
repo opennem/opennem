@@ -13,9 +13,7 @@ logger = logging.getLogger("opennem.workers.aggregates")
 DRY_RUN = os.environ.get("DRY_RUN", False)
 
 
-def aggregates_facility_daily_query(
-    date_min: datetime, date_max: Optional[datetime] = None
-) -> str:
+def aggregates_facility_daily_query(date_min: datetime, date_max: datetime = None) -> str:
     """ This is the query to update the at_facility_daily aggregate """
 
     __query = """
@@ -51,7 +49,7 @@ def aggregates_facility_daily_query(
             where
                 fs.is_forecast is False and
                 and fs.trading_interval >= '{date_min}'
-                {date_max_query}
+                and fs.trading_interval <= '{date_max}'
             group by
                 1, 2
         ) as fs
@@ -60,7 +58,7 @@ def aggregates_facility_daily_query(
         where
             f.fueltech_id is not null
             and fs.trading_interval >= '{date_min}'
-            {date_max_query}
+            and fs.trading_interval <= '{date_max}'
         group by
             1,
             f.network_id,
@@ -72,22 +70,15 @@ def aggregates_facility_daily_query(
         emissions = EXCLUDED.emissions;
     """
 
-    date_max_query: str = ""
-
-    if date_max:
-        date_max_query = f"and fs.trading_interval <= '{date_max}'"
-
     query = __query.format(
         date_min=date_min,
-        date_max_query=date_max_query,
+        date_max=date_max,
     )
 
     return dedent(query)
 
 
-def exec_aggregates_facility_daily_query(
-    date_min: datetime, date_max: Optional[datetime] = None
-) -> bool:
+def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime = None) -> bool:
     resp_code: bool = False
     engine = get_database_engine()
     result = None
