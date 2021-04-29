@@ -30,11 +30,7 @@ def get_aemo_wem_live_facility_intervals_recent_date() -> datetime:
     csvreader = csv.DictReader(csv_content.decode("utf-8").split("\n"))
 
     if not csvreader.fieldnames or len(csvreader.fieldnames) < 1:
-        logger.error(
-            "WEM live facility intervals returning bad CSV: {}".format(
-                LIVE_FACILITIES
-            )
-        )
+        logger.error("WEM live facility intervals returning bad CSV: {}".format(LIVE_FACILITIES))
 
     records = unit_scada_generate_facility_scada(
         records=csvreader,
@@ -44,6 +40,11 @@ def get_aemo_wem_live_facility_intervals_recent_date() -> datetime:
         network=NetworkWEM,
     )
 
-    max_date = max([i["trading_interval"] for i in records])
+    trading_intervals = [i["trading_interval"] for i in records]
+
+    if not trading_intervals:
+        raise Exception("Error parsing AEMO WEM live facility intervals")
+
+    max_date = max(trading_intervals)
 
     return max_date
