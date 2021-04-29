@@ -18,15 +18,13 @@ def aemo_wem_live_interval() -> bool:
     """
     network = NetworkWEM
 
-    now_date = datetime.now().astimezone(network.get_timezone())
+    now_date = datetime.now().astimezone(network.get_timezone())  # type: ignore
 
     live_most_recent = get_aemo_wem_live_facility_intervals_recent_date()
 
     live_delta = chop_microseconds(now_date - live_most_recent)
 
-    logger.debug(
-        "Live time: {},  delay: {}".format(live_most_recent, live_delta)
-    )
+    logger.debug("Live time: {},  delay: {}".format(live_most_recent, live_delta))
 
     # @TODO move the minutes into settings
     if live_delta > timedelta(minutes=90):
