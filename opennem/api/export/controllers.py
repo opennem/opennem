@@ -300,7 +300,8 @@ def power_week(
     ]
 
     if len(stats) < 1:
-        raise Exception("No results from query: {}".format(query))
+        logger.warn("No results from query: {}".format(query))
+        return None
 
     result = stats_factory(
         stats,
@@ -315,7 +316,8 @@ def power_week(
     )
 
     if not result:
-        raise Exception("No results")
+        logger.warn("No results from scada_factory for query: {}".format(query))
+        return None
 
     if include_capacities and network_region_code:
         region_fueltech_capacities = get_facility_capacities(
