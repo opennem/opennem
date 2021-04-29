@@ -47,7 +47,7 @@ def aggregates_facility_daily_query(date_min: datetime, date_max: datetime = Non
                 and bs.network_region = f.network_region
                 and f.network_id != 'NEM'
             where
-                fs.is_forecast is False and
+                fs.is_forecast is False
                 and fs.trading_interval >= '{date_min}'
                 and fs.trading_interval <= '{date_max}'
             group by
@@ -155,5 +155,4 @@ def run_aggregate_days(days: int = 1, network: NetworkSchema = NetworkNEM) -> No
 
 # Debug entry point
 if __name__ == "__main__":
-    # run_aggregate_days(days=10)
-    run_aggregates_facility_all()
+    run_aggregates_facility_year(2021)
