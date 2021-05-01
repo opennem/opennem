@@ -200,8 +200,8 @@ NEM,TAS1,BBDISEL1,Bell Bay,distillate,retired,0.972,AEMO
 NEM,TAS1,BBTHREE1,Bell Bay Three,gas_ocgt,operating,0.66468414,AEMO
 NEM,TAS1,BBTHREE2,Bell Bay Three,gas_ocgt,operating,0.66468414,AEMO
 NEM,TAS1,BBTHREE3,Bell Bay Three,gas_ocgt,operating,0.66468414,AEMO
-NEM,TAS1,BELLBAY1,Bell Bay,gas_steam,retired,,
-NEM,TAS1,BELLBAY2,Bell Bay,gas_steam,retired,,
+NEM,TAS1,BELLBAY1,Bell Bay,gas_steam,retired,0.70856,Manual
+NEM,TAS1,BELLBAY2,Bell Bay,gas_steam,retired,0.70856,Manual
 NEM,TAS1,CATAGUN1,Catagunya/Liapootah/Wayatinah,distillate,operating,0.972,AEMO
 NEM,TAS1,GEORGTN1,George Town,distillate,retired,0.972,AEMO
 NEM,TAS1,MEADOWB2,Meadowbank,distillate,operating,0.972,AEMO
