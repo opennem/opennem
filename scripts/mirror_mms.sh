@@ -9,6 +9,8 @@ unset wgetpath
 unset desinationdir
 unset year
 unset month
+unset ignore
+unset ignore_files
 
 wgetpath=`which wget`
 desinationdir=data/mms
@@ -23,11 +25,12 @@ if ! [ -d $desinationdir ]; then
   mkdir -p $desinationdir
 fi
 
-while getopts ":y:m:" flag
+while getopts ":y:m:i" flag
 do
   case "${flag}" in
     y ) year=${OPTARG};;
     m ) printf -v month "%02d" ${OPTARG};;
+    i ) ignore=1;;
     : ) usage;;
   esac
 done
@@ -58,6 +61,13 @@ else
   echo " OK "
 fi
 
+# Ignore files - larger bidoffer and p5min files
+ignore_files="index.htm*"
+
+if [ "$ignore" = 1 ]; then
+  ignore_files="${ignore_files}, PUBLIC_DVD_BIDPEROFFER*, PUBLIC_DVD_P5MIN_*"
+fi
+
 $wgetpath \
   -r `# recursive` \
   -c `# continue broken` \
@@ -66,7 +76,7 @@ $wgetpath \
   -np \
   -nv \
   --timestamping \
-  -R "index.html*" \
+  -R ${ignore_files} \
   --retry-connrefused \
   -t20 \
   --retry-on-http-error=403,501,503 \
