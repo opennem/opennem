@@ -10,14 +10,14 @@ from opennem.importer.compat import (
     map_compat_fueltech,
     map_compat_network_region,
 )
-from opennem.schema.opennem import FacilitySchema, LocationSchema, StationSchema
+from opennem.schema.opennem import FacilitySchema, LocationSchema, StationImportSchema
 from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.registry")
 
 
-def registry_to_station(registry_station: dict, _id: int) -> StationSchema:
-    station = StationSchema(
+def registry_to_station(registry_station: dict, _id: int) -> StationImportSchema:
+    station = StationImportSchema(
         id=_id,
         code=registry_station.get("station_id", ""),
         name=registry_station.get("display_name", ""),
