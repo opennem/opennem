@@ -2,20 +2,21 @@ import logging
 import sys
 from logging.config import fileConfig
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from alembic import context
+from sqlalchemy.schema import SchemaItem
 
 BASE_DIR = str(Path(__file__).parent.parent.parent.parent)
 
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
-from opennem.db import db_connect
-from opennem.db.models import opennem
-from opennem.settings import settings
+from opennem.db import db_connect  # noqa: E402
+from opennem.db.models import opennem  # noqa: E402
+from opennem.settings import settings  # noqa: E402
 
-config = context.config
+config = context.config  # type: ignore
 fileConfig(config.config_file_name)
 logger = logging.getLogger("alembic.env")
 
@@ -37,14 +38,17 @@ def exclude_tables_from_config(config_: Dict[str, Any]) -> List[str]:
 exclude_tables = exclude_tables_from_config(config.get_section("alembic:exclude"))
 
 
-def include_object(object, name, type_, reflected, compare_to):
+def include_object(
+    object: SchemaItem, name: str, type_: str, reflected: bool, compare_to: Optional[SchemaItem]
+) -> bool:
+    """ Pluggable include object method to support skipping some migration tables """
     if type_ == "table" and name in exclude_tables:
         return False
     else:
         return True
 
 
-def run_migrations_offline():
+def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
     This configures the context with just a URL
@@ -69,7 +73,7 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def run_migrations_online():
+def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
