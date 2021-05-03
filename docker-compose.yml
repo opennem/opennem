@@ -53,6 +53,19 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2017-CU8-ubuntu
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - TZ
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - ${HOST:-127.0.0.1}:1433:1433
+    # volumes:
+    # - mssql_data:
+
 volumes:
   staging_data: {}
   scrapyd_data:
