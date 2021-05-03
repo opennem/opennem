@@ -69,3 +69,11 @@ create index if not exists idx_trading_month_aest_code_index on mv_facility_all 
 create index if not exists idx_trading_day_awst_index on mv_facility_all (ti_day_awst desc);
 create index if not exists idx_trading_day_awst_code_index on mv_facility_all (ti_day_awst desc, code);
 create index if not exists idx_trading_month_awst_code_index on mv_facility_all (ti_month_awst desc, code);
+
+
+-- other indexes
+create index if not exists idx_trading_interval_code_index on mv_facility_all (trading_interval desc, code);
+create index if not exists idx_trading_day_aest_code_index on mv_facility_all (ti_day_aest desc, code);
+create index if not exists idx_trading_month_aest_code_index on mv_facility_all (ti_month_aest desc, code);
+create index if not exists idx_trading_day_awst_code_index on mv_facility_all (ti_day_awst desc, code);
+create index if not exists idx_trading_month_awst_code_index on mv_facility_all (ti_month_awst desc, code);
