@@ -27,7 +27,7 @@ while getopts ":y:m:" flag
 do
   case "${flag}" in
     y ) year=${OPTARG};;
-    m ) month=${OPTARG};;
+    m ) printf -v month "%02d" ${OPTARG};;
     : ) usage;;
   esac
 done
