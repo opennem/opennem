@@ -2,7 +2,7 @@ import logging
 import sys
 from logging.config import fileConfig
 from pathlib import Path
-from typing import List
+from typing import Any, Dict, List
 
 from alembic import context
 
@@ -25,7 +25,8 @@ config.set_main_option("sqlalchemy.url", settings.db_url)
 target_metadata = opennem.metadata
 
 
-def exclude_tables_from_config(config_: str) -> List[str]:
+def exclude_tables_from_config(config_: Dict[str, Any]) -> List[str]:
+    """ Read list of tables to exclude from config section and return as a list """
     tables = []
     tables_ = config_.get("tables", None)
     if tables_ is not None:
