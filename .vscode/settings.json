@@ -36,5 +36,7 @@
     "no-self-argument"
   ],
   "python.testing.unittestEnabled": false,
-  "python.testing.nosetestsEnabled": false
+  "python.testing.nosetestsEnabled": false,
+  "python.analysis.typeshedPaths": ["${workspaceFolder}/opennem/subs"],
+  "python.autoComplete.typeshedPaths": ["${workspaceFolder}/opennem/subs"]
 }
