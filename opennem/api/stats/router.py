@@ -24,7 +24,7 @@ from .queries import (
     network_fueltech_demand_query,
     power_facility_query,
 )
-from .schema import DataQueryResult, OpennemData, OpennemDataSet
+from .schema import DataQueryResult, OpennemDataSet
 
 logger = logging.getLogger(__name__)
 
