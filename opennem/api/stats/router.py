@@ -528,7 +528,7 @@ def emission_factor_per_network(  # type: ignore
 def fueltech_demand_mix(
     engine=Depends(get_database_engine),  # type: ignore
     network_code: str = Query(..., description="Network code"),
-) -> OpennemData:
+) -> OpennemDataSet:
     """Return fueltech proportion of demand for a network
 
     Args:
