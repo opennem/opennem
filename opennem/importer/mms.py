@@ -403,7 +403,7 @@ def load_mms_tables():
     return tables
 
 
-def mms_import():
+def mms_import() -> StationSet:
     tables = load_mms_tables()
 
     logger.info(
