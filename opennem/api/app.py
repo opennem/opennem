@@ -84,7 +84,7 @@ app.add_middleware(
 
 # Custom exception handler
 @app.exception_handler(Exception)
-async def unicorn_exception_handler(request: Request, exc: Exception):
+async def unicorn_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     return JSONResponse(
         status_code=418,
         content={"message": f"Error: {exc.args}"},
