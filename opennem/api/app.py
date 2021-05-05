@@ -10,6 +10,8 @@ from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from sqlalchemy.orm import Session
 from starlette import status
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 from opennem.api.admin.router import router as admin_router
 from opennem.api.facility.router import router as facility_router
@@ -78,6 +80,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Custom exception handler
+@app.exception_handler(Exception)
+async def unicorn_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=418,
+        content={"message": f"Error: {exc.args}"},
+    )
 
 
 @app.on_event("startup")
