@@ -6,6 +6,8 @@ from typing import Any, Dict, List, Optional, Union
 
 import pytz
 from datetime_truncate import truncate as date_trunc
+from fastapi.exceptions import HTTPException
+from starlette import status
 
 from opennem.api.time import human_to_interval
 from opennem.core.normalizers import normalize_duid
@@ -359,7 +361,10 @@ def get_scada_range(
         scada_range_result = list(c.execute(scada_range_query))
 
         if len(scada_range_result) < 1:
-            raise Exception("No scada range result")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No results",
+            )
 
         scada_min = scada_range_result[0][0]
         scada_max = scada_range_result[0][1]
