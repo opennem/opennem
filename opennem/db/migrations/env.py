@@ -13,7 +13,7 @@ if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
 from opennem.db import db_connect  # noqa: E402
-from opennem.db.models import mms, opennem  # noqa: E402
+from opennem.db.models import opennem  # noqa: E402
 from opennem.settings import settings  # noqa: E402
 
 config = context.config  # type: ignore
@@ -23,7 +23,7 @@ logger = logging.getLogger("alembic.env")
 config.set_main_option("sqlalchemy.url", settings.db_url)
 
 
-target_metadata = [opennem.metadata, mms.metadata]
+target_metadata = [opennem.metadata]
 
 
 def exclude_tables_from_config(config_: Dict[str, Any]) -> List[str]:
