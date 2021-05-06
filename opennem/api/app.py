@@ -119,6 +119,13 @@ def alert_test() -> None:
     raise Exception("Test Alert Error from {}".format(settings.env))
 
 
+@app.get("/exception_test", include_in_schema=False)
+def exception_test() -> HTTPException:
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Custom exception message"
+    )
+
+
 @app.get(
     "/networks",
     response_model=List[APINetworkSchema],
