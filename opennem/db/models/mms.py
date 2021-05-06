@@ -5910,7 +5910,7 @@ class Reallocationinterval(Base):
     nrp = Column(Numeric(15, 5))
 
 
-class Reallocationinterval(Base):
+class Reallocationintervals(Base):
     __tablename__ = 'reallocationintervals'
     __table_args__ = {'schema': 'mms'}
 
@@ -5922,7 +5922,7 @@ class Reallocationinterval(Base):
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
 
 
-class Reallocation(Base):
+class Reallocations(Base):
     __tablename__ = 'reallocations'
     __table_args__ = {'schema': 'mms'}
 
