@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from opennem.core.networks import network_from_network_code
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings
-from opennem.utils.dates import chop_microseconds, parse_date
+from opennem.utils.dates import chop_delta_microseconds, parse_date
 from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.monitors.opennem")
@@ -46,7 +46,7 @@ def check_opennem_interval_delays(network_code: str) -> bool:
 
     now_date = datetime.now().astimezone(network.get_timezone())
 
-    time_delta = chop_microseconds(now_date - history_date)
+    time_delta = chop_delta_microseconds(now_date - history_date)
 
     logger.debug("Live time: {},  delay: {}".format(history_date, time_delta))
 

@@ -221,8 +221,17 @@ def week_series(
         yield cur_cal[0], cur_cal[1]
 
 
-def chop_microseconds(delta: timedelta) -> timedelta:
+def chop_delta_microseconds(delta: timedelta) -> timedelta:
+    """ Removes microsevonds from a timedelta """
     return delta - timedelta(microseconds=delta.microseconds)
+
+
+def chop_datetime_microseconds(dt: datetime) -> datetime:
+    """ Removes the microseconds portion of a datetime """
+    if not dt.microsecond:
+        return dt
+
+    return dt - timedelta(microseconds=dt.microsecond)
 
 
 def get_date_component(format_str: str, dt: datetime = None) -> str:

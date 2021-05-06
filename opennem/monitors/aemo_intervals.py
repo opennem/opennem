@@ -7,7 +7,7 @@ from opennem.monitors.aemo_wem_live_intervals import (
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkWEM
 from opennem.settings import settings
-from opennem.utils.dates import chop_microseconds
+from opennem.utils.dates import chop_delta_microseconds
 
 logger = logging.getLogger("opennem.monitors.aemo")
 
@@ -22,7 +22,7 @@ def aemo_wem_live_interval() -> bool:
 
     live_most_recent = get_aemo_wem_live_facility_intervals_recent_date()
 
-    live_delta = chop_microseconds(now_date - live_most_recent)
+    live_delta = chop_delta_microseconds(now_date - live_most_recent)
 
     logger.debug("Live time: {},  delay: {}".format(live_most_recent, live_delta))
 

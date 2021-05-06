@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from decimal import Decimal
 from math import isnan
 from typing import Any, List, Optional, Tuple, Union
@@ -15,16 +15,10 @@ from opennem.schema.network import NetworkSchema
 from opennem.schema.opennem import ResponseStatus
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
 from opennem.settings import settings
+from opennem.utils.dates import chop_datetime_microseconds
 from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import sigfig_compact
 from opennem.utils.timezone import get_current_timezone
-
-
-def chop_microseconds(dt: datetime) -> datetime:
-    if not dt.microsecond:
-        return dt
-
-    return dt - timedelta(microseconds=dt.microsecond)
 
 
 def optionaly_lowercase_string(value: str) -> str:
@@ -201,7 +195,9 @@ class OpennemDataSet(BaseConfig):
         optionally_parse_string_datetime
     )
 
-    _created_at_trim = validator("created_at", allow_reuse=True, pre=True)(chop_microseconds)
+    _created_at_trim = validator("created_at", allow_reuse=True, pre=True)(
+        chop_datetime_microseconds
+    )
     _network_lowercase = validator("network", allow_reuse=True, pre=True)(
         optionaly_lowercase_string
     )
