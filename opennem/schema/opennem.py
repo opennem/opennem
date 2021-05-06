@@ -16,15 +16,20 @@ from opennem.api.weather.schema import WeatherStation
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.networks import datetime_add_network_timezone
 from opennem.core.normalizers import clean_capacity, normalize_string
+from opennem.utils.version import __VERSION__
 
 from .core import BaseConfig
 from .network import NetworkNEM, NetworkSchema
 
 
+class ResponseStatus(Enum):
+    OK = "OK"
+    ERROR = "ERROR"
+
+
 class OpennemBaseSchema(BaseConfig):
-    pass
-    # created_by: Optional[str]
-    # created_at: Optional[datetime] = datetime.now()
+    version: str = __VERSION__
+    response_status: ResponseStatus = ResponseStatus.OK
 
 
 class FueltechSchema(BaseConfig):
