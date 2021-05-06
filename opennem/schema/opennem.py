@@ -10,13 +10,14 @@ from geoalchemy2.shape import to_shape
 from pydantic import BaseModel, ValidationError, validator
 from shapely import geometry
 
-from opennem import __version__
 from opennem.api.photo.schema import Photo
 from opennem.api.stats.schema import OpennemData
 from opennem.api.weather.schema import WeatherStation
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.networks import datetime_add_network_timezone
 from opennem.core.normalizers import clean_capacity, normalize_string
+from opennem.utils.dates import chop_datetime_microseconds, optionally_parse_string_datetime
+from opennem.utils.version import get_version
 
 from .core import BaseConfig
 from .network import NetworkNEM, NetworkSchema
@@ -28,8 +29,13 @@ class ResponseStatus(Enum):
 
 
 class OpennemBaseSchema(BaseConfig):
-    version: str = __version__
+    version: str = get_version()
+    created_at: datetime = chop_datetime_microseconds(datetime.now())
     response_status: ResponseStatus = ResponseStatus.OK
+
+    _version_fromstr = validator("created_at", allow_reuse=True, pre=True)(
+        optionally_parse_string_datetime
+    )
 
 
 class FueltechSchema(BaseConfig):
@@ -75,30 +81,6 @@ class RecordTypes(str, Enum):
     facility = "facility"
     location = "location"
     revision = "revision"
-
-
-class RevisionSchema(OpennemBaseSchema):
-    id: int
-
-    changes: Dict[str, Union[str, int, float, bool, None]] = {}
-    previous: Optional[Dict[str, Union[str, int, float, bool]]] = {}
-
-    parent_id: Optional[int]
-    parent_type: Optional[str]
-    station_owner_id: Optional[int]
-    station_owner_name: Optional[str]
-    station_owner_code: Optional[str]
-
-    is_update: bool = False
-
-    approved: bool = False
-    approved_by: Optional[str]
-    approved_at: Optional[datetime]
-    approved_comment: Optional[str]
-
-    discarded: bool = False
-    discarded_by: Optional[str]
-    discarded_at: Optional[datetime]
 
 
 class ScadaReading(Tuple[datetime, Optional[float]]):
