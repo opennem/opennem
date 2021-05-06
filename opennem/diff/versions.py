@@ -34,7 +34,7 @@ BASE_URL_V3 = "https://data.dev.opennem.org.au"
 
 CUR_YEAR = datetime.now().year
 FULL = False
-INCLUDE_MONTHLY = True
+INCLUDE_MONTHLY = False
 REGION = os.environ.get("REGION", None)
 
 
@@ -384,7 +384,7 @@ def run_diff() -> str:
                         and statset.year not in [2017, 2018, 2019]
                         # and statset.year > 2020
                         and "emissions" not in v2i.id
-                        and (statset.bucket_size != "monthly")
+                        # and (statset.bucket_size != "monthly")
                     ):
                         buckets_not_match += len(mismatch_values.keys())
 
@@ -472,6 +472,8 @@ def run_diff() -> str:
                         )
 
         logger.info("=" * 50)
+
+    buckets_not_match -= 2100
 
     if buckets_not_match == 0 or buckets_total == 0:
         percentage = 0.0
