@@ -9,6 +9,7 @@ if sys.version_info < (3, 7):
 # setup sentry
 from opennem.settings import settings
 from opennem.utils.sentry import setup_sentry
+from opennem.utils.version import get_version
 
 if settings.sentry_enabled:
     setup_sentry()
@@ -17,6 +18,6 @@ if settings.sentry_enabled:
 import warnings
 
 # Ignore noisy twisted deprecation warnings
-warnings.filterwarnings(
-    "ignore", category=DeprecationWarning, module="twisted"
-)
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="twisted")
+
+__version__ = get_version()
