@@ -12,7 +12,7 @@ from opennem.core.compat.utils import translate_id_v3_to_v2
 from opennem.core.fueltechs import map_v3_fueltech
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
-from opennem.schema.opennem import ResponseStatus
+from opennem.schema.response import ResponseStatus
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
 from opennem.settings import settings
 from opennem.utils.dates import chop_datetime_microseconds
