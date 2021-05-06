@@ -12,6 +12,7 @@ from opennem.core.compat.utils import translate_id_v3_to_v2
 from opennem.core.fueltechs import map_v3_fueltech
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
+from opennem.schema.opennem import ResponseStatus
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
 from opennem.settings import settings
 from opennem.utils.interval import get_human_interval
@@ -163,6 +164,7 @@ class OpennemData(BaseConfig):
 
 class OpennemDataSet(BaseConfig):
     type: Optional[str]
+    response_status: ResponseStatus = ResponseStatus.OK
     version: Optional[str]
     network: Optional[str]
     code: Optional[str]
