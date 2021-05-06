@@ -10,13 +10,13 @@ from geoalchemy2.shape import to_shape
 from pydantic import BaseModel, ValidationError, validator
 from shapely import geometry
 
+from opennem import __version__
 from opennem.api.photo.schema import Photo
 from opennem.api.stats.schema import OpennemData
 from opennem.api.weather.schema import WeatherStation
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.networks import datetime_add_network_timezone
 from opennem.core.normalizers import clean_capacity, normalize_string
-from opennem.utils.version import __VERSION__
 
 from .core import BaseConfig
 from .network import NetworkNEM, NetworkSchema
@@ -28,7 +28,7 @@ class ResponseStatus(Enum):
 
 
 class OpennemBaseSchema(BaseConfig):
-    version: str = __VERSION__
+    version: str = __version__
     response_status: ResponseStatus = ResponseStatus.OK
 
 
