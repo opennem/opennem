@@ -299,3 +299,24 @@ def get_end_of_last_month(dt: datetime) -> datetime:
 
 def strip_timezone(dt: datetime) -> datetime:
     return dt.replace(tzinfo=None)
+
+
+def optionally_parse_string_datetime(
+    value: Optional[Union[str, datetime, date]] = None
+) -> Optional[Union[str, datetime, date]]:
+    """ Parse a string or date or datetime back into a datetime optionally """
+    if not value:
+        return value
+
+    if isinstance(value, str):
+        try:
+            return datetime.fromisoformat(value)
+        except ValueError:
+            logger.error("Could not parse optional date: {}".format(value))
+            return None
+
+    if isinstance(value, datetime):
+        # @TODO here optionally set to network time
+        return value
+
+    return value
