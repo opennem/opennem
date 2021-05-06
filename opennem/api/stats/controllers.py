@@ -10,7 +10,6 @@ from fastapi.exceptions import HTTPException
 from starlette import status
 
 from opennem.api.time import human_to_interval
-from opennem.core.normalizers import normalize_duid
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
