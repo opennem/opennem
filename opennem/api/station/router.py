@@ -6,7 +6,7 @@ from starlette import status
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import get_database_session
-from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Revision, Station
+from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Station
 from opennem.schema.opennem import StationOutputSchema
 
 from .schema import StationIDList, StationRecord
@@ -23,8 +23,6 @@ router = APIRouter()
 def stations(
     session: Session = Depends(get_database_session),
     facilities_include: Optional[bool] = Query(False, description="Include facilities in records"),
-    revisions_include: Optional[bool] = Query(False, description="Include revisions in records"),
-    history_include: Optional[bool] = Query(False, description="Include history in records"),
     only_approved: Optional[bool] = Query(
         False, description="Only show approved stations not those pending"
     ),
@@ -46,9 +44,6 @@ def stations(
         stations = stations.outerjoin(Facility, Facility.station_id == Station.id).outerjoin(
             FuelTech, Facility.fueltech_id == FuelTech.code
         )
-
-    if revisions_include:
-        stations = stations.outerjoin(Revision, Revision.station_id == Station.id)
 
     if only_approved:
         stations = stations.filter(Station.approved == True)  # noqa: E712
