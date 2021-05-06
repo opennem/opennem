@@ -207,6 +207,10 @@ class LocationSchema(OpennemBaseSchema):
 
 
 def as_nem_timezone(dt: datetime) -> datetime:
+    """Cast date with network NEM timezone
+
+    @TODO should catch errors before getting to this point
+    """
     if dt:
         return datetime_add_network_timezone(dt, NetworkNEM)
 
