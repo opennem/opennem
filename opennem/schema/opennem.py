@@ -16,16 +16,12 @@ from opennem.api.weather.schema import WeatherStation
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.networks import datetime_add_network_timezone
 from opennem.core.normalizers import clean_capacity, normalize_string
+from opennem.schema.response import ResponseStatus
 from opennem.utils.dates import chop_datetime_microseconds, optionally_parse_string_datetime
 from opennem.utils.version import get_version
 
 from .core import BaseConfig
 from .network import NetworkNEM, NetworkSchema
-
-
-class ResponseStatus(Enum):
-    OK = "OK"
-    ERROR = "ERROR"
 
 
 class OpennemBaseSchema(BaseConfig):
