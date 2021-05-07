@@ -93,6 +93,15 @@ class TimeSeries(BaseConfig):
     # Default forward forecast time period
     forecast_period: str = "7d"
 
+    def __str__(self) -> str:
+        """ Return an informative stringified object for debugging and exceptions """
+        _build_str = (
+            f"Network {self.network.code} at interval {self.interval.interval_human} and "
+            f"period {self.period.period_human} between {self.start} and {self.end}"
+        )
+
+        return _build_str
+
     def get_range(self) -> DatetimeRange:
         """Return a DatetimeRange from the time series for queries"""
         start = self.start
