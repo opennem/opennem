@@ -65,7 +65,7 @@ def weather_daily(
     ]
 
     if len(temp_avg) < 1:
-        logger.info("No results from query: {}".format(query))
+        logger.error("No results from weather_observation_query with {}".format(time_series))
         return None
 
     stats = stats_factory(
@@ -80,6 +80,9 @@ def weather_daily(
     )
 
     if not stats:
+        logger.error(
+            "No results from weather_observation_query stats factory with {}".format(time_series)
+        )
         return None
 
     if include_min_max:
@@ -126,7 +129,8 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
     ]
 
     if len(stats) < 1:
-        raise Exception("No results from query: {}".format(query))
+        logger.error("No results for gov_stats_cpi returing blank set")
+        return None
 
     result = stats_factory(
         stats,
@@ -154,7 +158,8 @@ def power_flows_region_week(
         row = list(c.execute(query))
 
     if len(row) < 1:
-        raise Exception("No results from query: {}".format(query))
+        logger.error("No results from interconnector_power_flow query for {}".format(time_series))
+        return None
 
     imports = [
         DataQueryResult(interval=i[0], result=i[2], group_by="imports" if len(i) > 1 else None)
@@ -178,7 +183,10 @@ def power_flows_region_week(
     )
 
     if not result:
-        raise Exception("No results")
+        logger.error(
+            "No results from interconnector_power_flow stats facoty for {}".format(time_series)
+        )
+        return None
 
     result_exports = stats_factory(
         exports,
@@ -208,7 +216,10 @@ def power_flows_network_week(
         row = list(c.execute(query))
 
     if len(row) < 1:
-        raise Exception("No results from query: {}".format(query))
+        logger.error(
+            "No results from interconnector_flow_network_regions_query with {}".format(time_series)
+        )
+        return None
 
     imports = [
         DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None)
@@ -229,7 +240,10 @@ def power_flows_network_week(
     )
 
     if not result:
-        raise Exception("No results")
+        logger.error(
+            "No results from interconnector_flow_network_regions_query with {}".format(time_series)
+        )
+        return None
 
     return result
 
@@ -252,7 +266,8 @@ def demand_week(
         row = list(c.execute(query))
 
     if len(row) < 1:
-        raise Exception("No results from query: {}".format(query))
+        logger.error("No results from network_demand_query with {}".format(time_series))
+        return None
 
     demand = [
         DataQueryResult(interval=i[0], result=i[2], group_by="demand" if len(i) > 1 else None)
@@ -270,7 +285,8 @@ def demand_week(
     )
 
     if not result:
-        raise Exception("No results")
+        logger.error("No results from network_demand_query with {}".format(time_series))
+        return None
 
     return result
 
@@ -300,7 +316,7 @@ def power_week(
     ]
 
     if len(stats) < 1:
-        logger.warn("No results from query: {}".format(query))
+        logger.error("No results from power week query with {}".format(time_series))
         return None
 
     result = stats_factory(
@@ -316,7 +332,7 @@ def power_week(
     )
 
     if not result:
-        logger.warn("No results from scada_factory for query: {}".format(query))
+        logger.error("No results from power week status factory with {}".format(time_series))
         return None
 
     if include_capacities and network_region_code:
