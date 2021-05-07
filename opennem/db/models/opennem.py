@@ -299,8 +299,6 @@ class Location(Base):
     state = Column(Text)
     postcode = Column(Text, nullable=True)
 
-    revisions = relationship("Revision", lazy="joined")
-
     # an OSM way id such as 395531577
     osm_way_id = Column(Text, nullable=True)
 
@@ -374,8 +372,6 @@ class Station(Base, BaseModel):
         innerjoin=False,
         cascade="all, delete",
     )
-
-    revisions = relationship("Revision")
 
     photos = relationship(
         "Photo",
@@ -523,8 +519,6 @@ class Facility(Base, BaseModel):
     )
     # station = relationship("Station", back_populates="facilities")
 
-    revisions = relationship("Revision")
-
     # DUID but modified by opennem as an identifier
     code = Column(Text, index=True, nullable=False, unique=True)
 
@@ -600,103 +594,6 @@ class Facility(Base, BaseModel):
     @hybrid_property
     def ocode(self) -> str:
         return get_ocode(self)
-
-
-class Revision(Base, BaseModel):
-
-    __tablename__ = "revisions"
-
-    id = Column(
-        Integer,
-        autoincrement=True,
-        nullable=False,
-        primary_key=True,
-    )
-
-    station_id = Column(
-        Integer,
-        ForeignKey("station.id", name="fk_revision_station_id"),
-        nullable=True,
-    )
-    station = relationship("Station", back_populates="revisions", lazy="joined")
-
-    facility_id = Column(
-        Integer,
-        ForeignKey("facility.id", name="fk_revision_facility_id"),
-        nullable=True,
-    )
-    facility = relationship("Facility", back_populates="revisions", lazy="joined")
-
-    location_id = Column(
-        Integer,
-        ForeignKey("location.id", name="fk_revision_location_id"),
-        nullable=True,
-    )
-    location = relationship("Location", back_populates="revisions", lazy="joined")
-
-    changes = Column(JSON, nullable=True)
-    previous = Column(JSON, nullable=True)
-
-    is_update = Column(Boolean, default=False)
-
-    approved = Column(Boolean, default=False)
-    approved_by = Column(Text)
-    approved_at = Column(DateTime(timezone=True), nullable=True)
-    approved_comment = Column(Text, nullable=True)
-
-    discarded = Column(Boolean, default=False)
-    discarded_by = Column(Text)
-    discarded_at = Column(DateTime(timezone=True), nullable=True)
-
-    @hybrid_property
-    def parent_id(self) -> int:
-        return self.station_id or self.facility_id or self.location_id
-
-    @hybrid_property
-    def parent_type(self) -> str:
-        if self.station_id:
-            return "station"
-
-        if self.facility_id:
-            return "facility"
-
-        if self.location_id:
-            return "location"
-
-        return ""
-
-    @hybrid_property
-    def station_owner_id(self) -> int:
-        if self.station_id:
-            return self.station_id
-
-        if self.facility_id:
-            return self.facility.station.id
-
-        if self.location:
-            return self.location.station.id
-
-    @hybrid_property
-    def station_owner_name(self) -> str:
-        if self.station_id:
-            return self.station.name
-
-        if self.facility_id:
-            return self.facility.station.name
-
-        if self.location:
-            return self.location.station.name
-
-    @hybrid_property
-    def station_owner_code(self) -> str:
-        if self.station_id:
-            return self.station.code
-
-        if self.facility_id:
-            return self.facility.station.code
-
-        if self.location:
-            return self.location.station.code
 
 
 class FacilityScada(Base, BaseModel):
