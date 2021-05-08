@@ -51,13 +51,13 @@ class AEMOTableSchema(BaseModel):
 
     @validator("name")
     def validate_name(cls, table_name: str) -> str:
-        _table_name = table_name.strip().upper()
+        _table_name = table_name.strip().lower()
 
         return _table_name
 
     @validator("namespace")
     def validate_namespace(cls, namespace_name: str) -> str:
-        _namespace_name = namespace_name.strip().upper()
+        _namespace_name = namespace_name.strip().lower()
 
         return _namespace_name
 
@@ -66,7 +66,7 @@ class AEMOTableSchema(BaseModel):
         if not isinstance(fieldnames, list):
             return []
 
-        _fieldnames = [i.strip() for i in fieldnames]
+        _fieldnames = [i.lower() for i in fieldnames]
 
         return _fieldnames
 
@@ -221,9 +221,9 @@ def parse_aemo_csv(content: str, table_set: AEMOTableSet = AEMOTableSet()) -> AE
 
             table_namespace = row[1]
             table_name = row[2]
-            table_fields = row[4:]
+            table_fields = [i.lower() for i in row[4:]]
 
-            table_full_name = "{}_{}".format(table_namespace.upper(), table_name.upper())
+            table_full_name = "{}_{}".format(table_namespace.lower(), table_name.lower())
 
             if table_set.has_table(table_full_name):
                 table_current = table_set.get_table(table_full_name)
