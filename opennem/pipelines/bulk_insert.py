@@ -27,12 +27,12 @@ logger = logging.getLogger(__name__)
 
 BULK_INSERT_QUERY = """
     CREATE TEMP TABLE __tmp_{table_name}_{tmp_table_name}
-    (LIKE {table_name} INCLUDING DEFAULTS)
+    (LIKE {table_schema}{table_name} INCLUDING DEFAULTS)
     ON COMMIT DROP;
 
     COPY __tmp_{table_name}_{tmp_table_name} FROM STDIN WITH (FORMAT CSV, HEADER TRUE, DELIMITER ',');
 
-    INSERT INTO {table_name}
+    INSERT INTO {table_schema}{table_name}
         SELECT *
         FROM __tmp_{table_name}_{tmp_table_name}
     ON CONFLICT {on_conflict}
@@ -66,7 +66,7 @@ def build_insert_query(
 
     update_col_names = list(filter(lambda c: c, update_col_names))
 
-    primary_key_columns = [c.name for c in table.__table__.primary_key.columns.values()]
+    primary_key_columns = [c.name for c in table.__table__.primary_key.columns.values()]  # type: ignore
 
     if len(update_col_names):
         on_conflict = BULK_INSERT_CONFLICT_UPDATE.format(
@@ -74,10 +74,27 @@ def build_insert_query(
             update_values=", ".join([f"{n} = EXCLUDED.{n}" for n in update_col_names]),
         )
 
+    # Table schema
+    table_schema: str = ""
+    _ts: Optional[str] = None
+
+    if hasattr(table, "__table_args__") and "schema" in table.__table_args__:  # type: ignore
+        _ts = table.__table_args__["schema"]  # type: ignore
+        table_schema = f"{_ts}."
+
+    # Temporary table name uniq
+    tmp_table_name: str = ""
+
+    tmp_table_name = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")
+
+    if _ts:
+        tmp_table_name = f"{_ts}_{tmp_table_name}"
+
     query = BULK_INSERT_QUERY.format(
-        table_name=table.__table__.name,
+        table_name=table.__table__.name,  # type: ignore
+        table_schema=table_schema,
         on_conflict=on_conflict,
-        tmp_table_name=datetime.strftime(datetime.now(), "%Y%m%d%H%M%S"),
+        tmp_table_name=tmp_table_name,
     )
 
     logger.debug(query)
