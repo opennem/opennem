@@ -76,10 +76,21 @@ def build_insert_query(
 
     # Table schema
     table_schema: str = ""
-    _ts: Optional[str] = None
+    _ts: str = ""
 
-    if hasattr(table, "__table_args__") and "schema" in table.__table_args__:  # type: ignore
-        _ts = table.__table_args__["schema"]  # type: ignore
+    if hasattr(table, "__table_args__"):
+        if isinstance(table.__table_args__, dict) and "schema" in table.__table_args__:  # type: ignore
+            _ts = table.__table_args__["schema"]  # type: ignore
+
+        # for table args that are a list of args find the schema def
+        if isinstance(table.__table_args__, tuple):  # type: ignore
+            for i in table.__table_args__:  # type: ignore
+                if isinstance(i, dict) and "schema" in i:  # type: ignore
+                    _ts = i["schema"]  # type: ignore
+
+        if not _ts:
+            logger.warn("Table schema not found for table: {}".format(table.__table__.name))
+
         table_schema = f"{_ts}."
 
     # Temporary table name uniq
