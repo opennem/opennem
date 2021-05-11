@@ -31,7 +31,7 @@ class OpennemExceptionResponse(Response):
 
     def __init__(
         self,
-        response_class: OpennemBaseHttpException,
+        response_class: OpennemErrorSchema,
         status_code: int = 200,
         headers: dict = None,
     ):
