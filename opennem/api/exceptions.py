@@ -14,5 +14,29 @@ class OpennemBaseHttpException(HTTPException):
         if not self.status_code:
             self.status_code = status_code
 
-class InvalidDateRange(HTTPException):
+
+class ItemNotFound(OpennemBaseHttpException):
     status_code = status.HTTP_404_NOT_FOUND
+
+
+class InvalidDateRange(OpennemBaseHttpException):
+    status_code = status.HTTP_404_NOT_FOUND
+
+
+class OpennemExceptionResponse(Response):
+    media_type = "application/json"
+    response_class: OpennemBaseHttpException
+
+    def __init__(
+        self,
+        response_class: OpennemBaseHttpException,
+        status_code: int = 200,
+        headers: dict = None,
+    ):
+        self.response_class = response_class
+        self.status_code = status_code
+
+        super().__init__(content=b"", status_code=status_code, headers=headers)
+
+    def render(self, content: Any) -> bytes:
+        return self.response_class.json().encode("utf-8")  # type: ignore
