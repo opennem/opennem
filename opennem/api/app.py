@@ -1,13 +1,10 @@
 import logging
 from typing import List
 
-import aioredis
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
 from fastapi.responses import FileResponse
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.requests import Request
@@ -30,7 +27,6 @@ from opennem.schema.opennem import FueltechSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.settings import settings
-from opennem.utils.http_cache import PydanticCoder
 from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
@@ -69,20 +65,6 @@ async def unicorn_exception_handler(request: Request, exc: Exception) -> JSONRes
         status_code=418,
         content={"message": f"Error: {exc.args}"},
     )
-
-
-@app.on_event("startup")
-async def startup() -> None:
-    logger.debug("In startup")
-
-    redis = await aioredis.create_redis_pool(settings.cache_url, encoding="utf-8")
-    FastAPICache.init(RedisBackend(redis), prefix="api-cache", coder=PydanticCoder)
-
-
-# @app.on_event("shutdown")
-async def shutdown() -> None:
-    logger.debug("In shutdown")
-    await database.disconnect()
 
 
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
