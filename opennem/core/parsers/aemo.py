@@ -184,12 +184,16 @@ class AEMOParserException(Exception):
 AEMO_ROW_HEADER_TYPES = ["C", "I", "D"]
 
 
-def parse_aemo_csv(content: str, table_set: AEMOTableSet = AEMOTableSet()) -> AEMOTableSet:
+def parse_aemo_csv(content: str, table_set: Optional[AEMOTableSet] = None) -> AEMOTableSet:
     """
     Parse AEMO CSV's into schemas and return a table set
 
     Exception raised on error and logs malformed CSVs
     """
+
+    if not table_set:
+        table_set = AEMOTableSet()
+
     content_split = content.splitlines()
 
     # @NOTE more efficient csv parsing
