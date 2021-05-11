@@ -1,44 +1,51 @@
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
+from starlette.responses import Response
 
+from opennem.api.exceptions import OpennemBaseHttpException
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import get_database_session
 from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Station
 from opennem.schema.opennem import StationOutputSchema
 
-from .schema import StationIDList, StationRecord
+from .schema import StationResponse
 
 router = APIRouter()
 
 
+class NetworkNotFound(OpennemBaseHttpException):
+    detail = "Network not found"
+
+
+class StationNotFound(OpennemBaseHttpException):
+    detail = "Station not found"
+
+
+class StationNoFacilities(OpennemBaseHttpException):
+    detail = "Station has no facilities"
+
+
 @router.get(
     "/",
-    response_model=List[StationRecord],
+    response_model=StationResponse,
     description="Get a list of all stations",
     response_model_exclude_none=True,
 )
 def stations(
+    response: Response,
     session: Session = Depends(get_database_session),
-    facilities_include: Optional[bool] = Query(False, description="Include facilities in records"),
+    facilities_include: Optional[bool] = Query(True, description="Include facilities in records"),
     only_approved: Optional[bool] = Query(
         False, description="Only show approved stations not those pending"
     ),
     name: Optional[str] = None,
     limit: Optional[int] = None,
     page: int = 1,
-) -> List[StationOutputSchema]:
-    stations = (
-        session.query(Station)
-        .join(Location)
-        .enable_eagerloads(True)
-        #
-        # .group_by(Station.code)
-        # .filter(Facility.fueltech_id.isnot(None))
-        # .filter(Facility.status_id.isnot(None))
-    )
+) -> StationResponse:
+    stations = session.query(Station).join(Location).enable_eagerloads(True)
 
     if facilities_include:
         stations = stations.outerjoin(Facility, Facility.station_id == Station.id).outerjoin(
@@ -60,7 +67,7 @@ def stations(
 
     stations = stations.all()
 
-    return stations
+    resp = StationResponse(data=stations, total_records=len(stations))
 
     response.headers["X-Total-Count"] = str(len(stations))
 
@@ -97,7 +104,7 @@ def station(
     station = station.one_or_none()
 
     if not station:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Station not found")
+        raise StationNotFound()
 
     if not station.facilities:
         raise HTTPException(
