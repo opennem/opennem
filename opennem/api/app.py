@@ -8,9 +8,9 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.requests import Request
-from starlette.responses import JSONResponse
 
 from opennem.api.admin.router import router as admin_router
+from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facility.router import router as facility_router
 from opennem.api.geo.router import router as geo_router
 from opennem.api.locations import router as locations_router
@@ -23,7 +23,7 @@ from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
 from opennem.db import get_database_session
 from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
-from opennem.schema.opennem import FueltechSchema
+from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.settings import settings
@@ -59,11 +59,15 @@ app.add_middleware(
 
 
 # Custom exception handler
-@app.exception_handler(Exception)
-async def unicorn_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    return JSONResponse(
-        status_code=418,
-        content={"message": f"Error: {exc.args}"},
+@app.exception_handler(OpennemBaseHttpException)
+async def opennem_exception_handler(
+    request: Request, exc: OpennemBaseHttpException
+) -> OpennemExceptionResponse:
+    resp_content = OpennemErrorSchema(detail=exc.detail)
+
+    return OpennemExceptionResponse(
+        status_code=exc.status_code,
+        response_class=resp_content,
     )
 
 
@@ -103,8 +107,8 @@ def alert_test() -> None:
 
 
 @app.get("/exception_test", include_in_schema=False)
-def exception_test() -> HTTPException:
-    raise HTTPException(
+def exception_test() -> None:
+    raise OpennemBaseHttpException(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Custom exception message"
     )
 
