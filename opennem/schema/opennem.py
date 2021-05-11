@@ -34,6 +34,16 @@ class OpennemBaseSchema(BaseConfig):
     )
 
 
+class OpennemBaseDataSchema(OpennemBaseSchema):
+    total_records: int
+    data: Union[List, Dict]
+
+
+class OpennemErrorSchema(OpennemBaseSchema):
+    response_status = ResponseStatus.ERROR
+    detail: str
+
+
 class FueltechSchema(BaseConfig):
     code: str
     label: Optional[str]
