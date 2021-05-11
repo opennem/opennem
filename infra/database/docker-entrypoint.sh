@@ -6,7 +6,7 @@ source /scripts/env-data.sh
 
 
 SHARED_PRELOAD_LIBRARIES='pg_cron,timescaledb'
-POSTGRES_MULTIPLE_EXTENSIONS='postgis,timescaledb,hstore,postgis_topology,postgis_raster,btree_gist,periods'
+POSTGRES_MULTIPLE_EXTENSIONS='postgis,timescaledb,hstore,postgis_topology,postgis_raster,btree_gist'
 
 # Setup postgres CONF file
 
