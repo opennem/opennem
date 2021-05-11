@@ -4,6 +4,8 @@ from fastapi import HTTPException
 from starlette import status
 from starlette.responses import Response
 
+from opennem.schema.opennem import OpennemErrorSchema
+
 
 class OpennemBaseHttpException(HTTPException):
     """ Base OpenNEM Exception """
@@ -25,7 +27,7 @@ class InvalidDateRange(OpennemBaseHttpException):
 
 class OpennemExceptionResponse(Response):
     media_type = "application/json"
-    response_class: OpennemBaseHttpException
+    response_class: OpennemErrorSchema
 
     def __init__(
         self,
