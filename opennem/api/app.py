@@ -21,7 +21,7 @@ from opennem.api.tasks.router import router as tasks_router
 from opennem.api.weather.router import router as weather_router
 from opennem.core.time import INTERVALS, PERIODS
 from opennem.core.units import UNITS
-from opennem.db import database, get_database_session
+from opennem.db import get_database_session
 from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema
 from opennem.schema.time import TimeInterval, TimePeriod
