@@ -1,5 +1,6 @@
 import logging
-from typing import List
+import time
+from typing import Any, List, Optional
 
 import aioredis
 from fastapi import Depends, FastAPI, HTTPException
@@ -40,28 +41,6 @@ app = FastAPI(
     title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None
 )
 
-try:
-    from fastapi.staticfiles import StaticFiles
-
-    app.mount(
-        "/static",
-        StaticFiles(directory=settings.static_folder_path),
-        name="static",
-    )
-except Exception as e:
-    logger.error("Error initializing static hosting: {}".format(e))
-
-
-app.include_router(stats_router, tags=["Stats"], prefix="/stats")
-app.include_router(locations_router, tags=["Locations"], prefix="/locations")
-app.include_router(geo_router, tags=["Geo"], prefix="/geo")
-app.include_router(station_router, tags=["Stations"], prefix="/station")
-app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
-app.include_router(weather_router, tags=["Weather"], prefix="/weather")
-app.include_router(admin_router, tags=["Admin"], prefix="/admin", include_in_schema=False)
-app.include_router(tasks_router, tags=["Tasks"], prefix="/tasks", include_in_schema=False)
-
-
 origins = [
     "https://opennem.org.au",
     "https://dev.opennem.org.au",
@@ -82,7 +61,6 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["X-Process-Time"],
 )
-
 
 # Custom exception handler
 @app.exception_handler(Exception)
@@ -106,6 +84,28 @@ async def startup() -> None:
 async def shutdown() -> None:
     logger.debug("In shutdown")
     await database.disconnect()
+
+
+app.include_router(stats_router, tags=["Stats"], prefix="/stats")
+app.include_router(locations_router, tags=["Locations"], prefix="/locations")
+app.include_router(geo_router, tags=["Geo"], prefix="/geo")
+app.include_router(station_router, tags=["Stations"], prefix="/station")
+app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
+app.include_router(weather_router, tags=["Weather"], prefix="/weather")
+app.include_router(admin_router, tags=["Admin"], prefix="/admin", include_in_schema=False)
+app.include_router(tasks_router, tags=["Tasks"], prefix="/tasks", include_in_schema=False)
+
+
+try:
+    from fastapi.staticfiles import StaticFiles
+
+    app.mount(
+        "/static",
+        StaticFiles(directory=settings.static_folder_path),
+        name="static",
+    )
+except Exception as e:
+    logger.error("Error initializing static hosting: {}".format(e))
 
 
 @app.get("/robots.txt", response_class=FileResponse, include_in_schema=False)
