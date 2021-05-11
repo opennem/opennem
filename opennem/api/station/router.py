@@ -62,31 +62,9 @@ def stations(
 
     return stations
 
+    response.headers["X-Total-Count"] = str(len(stations))
 
-@router.get(
-    "/ids",
-    response_model=List[StationIDList],
-    description="Get a list of station ids for dropdowns",
-    response_model_exclude_none=True,
-)
-def station_ids(
-    session: Session = Depends(get_database_session),
-    only_approved: Optional[bool] = Query(
-        True, description="Only show approved stations not those pending"
-    ),
-) -> List[StationIDList]:
-    stations = session.query(Station).join(Station.location)
-
-    if only_approved:
-        stations = stations.filter(Station.approved == True)  # noqa: E712
-
-    stations = stations.order_by(
-        Station.id,
-    )
-
-    stations = stations.all()
-
-    return stations
+    return resp
 
 
 @router.get(
