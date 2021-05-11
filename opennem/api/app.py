@@ -1,6 +1,5 @@
 import logging
-import time
-from typing import Any, List, Optional
+from typing import List
 
 import aioredis
 from fastapi import Depends, FastAPI, HTTPException
@@ -62,6 +61,7 @@ app.add_middleware(
     expose_headers=["X-Process-Time"],
 )
 
+
 # Custom exception handler
 @app.exception_handler(Exception)
 async def unicorn_exception_handler(request: Request, exc: Exception) -> JSONResponse:
@@ -74,7 +74,6 @@ async def unicorn_exception_handler(request: Request, exc: Exception) -> JSONRes
 @app.on_event("startup")
 async def startup() -> None:
     logger.debug("In startup")
-    # await database.connect()
 
     redis = await aioredis.create_redis_pool(settings.cache_url, encoding="utf-8")
     FastAPICache.init(RedisBackend(redis), prefix="api-cache", coder=PydanticCoder)
