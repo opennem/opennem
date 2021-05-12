@@ -219,7 +219,7 @@ class LocationSchema(OpennemBaseSchema):
             return geometry.mapping(to_shape(value))
 
 
-def as_nem_timezone(dt: datetime) -> datetime:
+def as_nem_timezone(dt: datetime) -> Optional[datetime]:
     """Cast date with network NEM timezone
 
     @TODO should catch errors before getting to this point
@@ -228,6 +228,7 @@ def as_nem_timezone(dt: datetime) -> datetime:
         return datetime_add_network_timezone(dt, NetworkNEM)
 
     logger.error("Require a date for nem timezone")
+    return None
 
 
 def _flatten_linked_object(value: Union[str, Dict, object]) -> str:
