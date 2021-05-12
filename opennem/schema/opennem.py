@@ -1,6 +1,7 @@
 # pylint: disable=no-name-in-module
 # pylint: disable=no-self-argument
 # pylint: disable=no-member
+import logging
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -22,6 +23,8 @@ from opennem.utils.version import get_version
 
 from .core import BaseConfig
 from .network import NetworkNEM, NetworkSchema
+
+logger = logging.getLogger(__name__)
 
 
 class OpennemBaseSchema(BaseConfig):
@@ -224,7 +227,7 @@ def as_nem_timezone(dt: datetime) -> datetime:
     if dt:
         return datetime_add_network_timezone(dt, NetworkNEM)
 
-    raise Exception("Require a date for nem timezone")
+    logger.error("Require a date for nem timezone")
 
 
 def _flatten_linked_object(value: Union[str, Dict, object]) -> str:
