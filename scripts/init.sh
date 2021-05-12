@@ -12,11 +12,10 @@ fi
 
 alembic upgrade head
 
-# Creates the db views
-python -m opennem.cli db
-
 # Initialzies fixtures and all the station, fac, emissions, etc. data
 python -m opennem.cli db init
+
+python -m opennem.cli db views
 
 # CRAWLS
 
@@ -41,7 +40,6 @@ scrapy crawl -L ERROR au.nem.current.rooftop
 scrapy crawl -L ERROR au.nem.current.trading_is
 scrapy crawl -L ERROR au.nem.current.dispatch
 scrapy crawl -L ERROR au.nem.current.dispatch_actual_gen
-
 
 
 # update seen ranges
