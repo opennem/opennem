@@ -12,4 +12,7 @@ RUN set -eux \
   && rm -rf /var/lib/apt/lists/* \
   && echo "v3"
 
+# Copy scripts
 ADD infra/database/scripts /scripts
+WORKDIR /scripts
+RUN chmod +x *.sh
