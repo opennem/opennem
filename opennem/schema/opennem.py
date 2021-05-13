@@ -299,6 +299,63 @@ class FacilityOutputSchema(BaseConfig):
         return _v
 
 
+class FacilitySchema(BaseConfig):
+    id: Optional[int]
+
+    network: NetworkSchema = NetworkNEM
+
+    fueltech: Optional[FueltechSchema]
+
+    status: Optional[FacilityStatusSchema]
+
+    station_id: Optional[int]
+
+    # @TODO no longer optional
+    code: Optional[str] = ""
+
+    scada_power: Optional[OpennemData]
+
+    # revisions: Optional[List[RevisionSchema]] = []
+    # revision_ids: Optional[List[int]] = []
+
+    dispatch_type: DispatchType = DispatchType.GENERATOR
+
+    active: bool = True
+
+    capacity_registered: Optional[float]
+
+    registered: Optional[datetime]
+    deregistered: Optional[datetime]
+
+    network_region: Optional[str]
+
+    unit_id: Optional[int]
+    unit_number: Optional[int]
+    unit_alias: Optional[str]
+    unit_capacity: Optional[float]
+
+    emissions_factor_co2: Optional[float]
+
+    approved: bool = False
+    approved_by: Optional[str]
+    approved_at: Optional[datetime]
+
+    @validator("capacity_registered")
+    def _clean_capacity_regisered(cls, value):
+        value = clean_capacity(value)
+
+        if isinstance(value, float):
+            value = round(value, 2)
+
+        return value
+
+    @validator("emissions_factor_co2")
+    def _clean_emissions_factor_co2(cls, value):
+        value = clean_capacity(value)
+
+        return value
+
+
 class FacilityImportSchema(BaseConfig):
     id: Optional[int]
 
