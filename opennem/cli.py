@@ -7,7 +7,7 @@ from scrapy.utils.python import garbage_collect
 from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_all_monthly, export_energy, export_power
 from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures
-from opennem.db.tasks import refresh_material_views, refresh_views
+from opennem.db.tasks import refresh_views
 from opennem.db.views import init_aggregation_policies
 from opennem.db.views.init import init_views_cli
 from opennem.importer.all import run_all
