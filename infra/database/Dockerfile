@@ -1,4 +1,4 @@
-FROM kartoza/postgis:12.1 as base
+FROM kartoza/postgis:12.4 as base
 
 
 RUN set -eux \
@@ -11,6 +11,10 @@ RUN set -eux \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && echo "v3"
+
+RUN  echo $POSTGRES_MAJOR_VERSION >/tmp/pg_version.txt
+RUN  echo $POSTGIS_MAJOR_VERSION >/tmp/pg_major_version.txt
+RUN  echo $POSTGIS_MINOR_RELEASE >/tmp/pg_minor_version.txt
 
 # Copy scripts
 ADD infra/database/scripts /scripts
