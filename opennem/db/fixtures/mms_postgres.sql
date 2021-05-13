@@ -1,3 +1,4 @@
+drop schema mms cascade;
 
 create schema if not exists mms;
 
