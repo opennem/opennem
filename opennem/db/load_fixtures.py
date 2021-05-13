@@ -148,12 +148,12 @@ def load_network_regions() -> None:
 """
 
 
-def parse_date(date_str) -> date:
+def parse_date(date_str: str) -> date:
     dt = datetime.strptime(date_str, "%Y%m%d")
     return dt.date()
 
 
-def parse_fixed_line(line) -> Tuple[str, str, str, date, Decimal, Decimal]:
+def parse_fixed_line(line: str) -> Tuple[str, str, str, date, Decimal, Decimal]:
     """
     Parses a fixed-width CSV from the funky BOM format
     """
@@ -216,7 +216,7 @@ def load_bom_stations_json() -> None:
 
     for bom_station in bom_stations:
 
-        if not "code" in bom_station:
+        if "code" not in bom_station:
             logger.error("Invalida bom station ..")
             continue
 
@@ -267,9 +267,9 @@ def update_existing_geos() -> None:
     for station_data in stations:
         station = None
 
-        station_name = station_name_cleaner(station_data["display_name"])
+        # station_name = station_name_cleaner(station_data["display_name"])
         station_code = normalize_duid(station_data["station_code"])
-        station_state = map_compat_facility_state(station_data["status"]["state"])
+        # station_state = map_compat_facility_state(station_data["status"]["state"])
 
         station = s.query(Station).filter(Station.network_code == station_code).one_or_none()
 
