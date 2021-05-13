@@ -58,7 +58,7 @@ class FacilityStatusSchema(BaseConfig):
     label: Optional[str]
 
 
-class ParticipantSchema(OpennemBaseSchema):
+class ParticipantSchema(BaseConfig):
     id: int
     code: Optional[str]
     name: str
@@ -68,11 +68,11 @@ class ParticipantSchema(OpennemBaseSchema):
     abn: Optional[str] = None
 
 
-class StationBaseSchema(OpennemBaseSchema):
+class StationBaseSchema(BaseConfig):
     id: int
 
 
-class FacilityBaseSchema(OpennemBaseSchema):
+class FacilityBaseSchema(BaseConfig):
     id: int
 
 
@@ -95,8 +95,6 @@ class RecordTypes(str, Enum):
 class ScadaReading(Tuple[datetime, Optional[float]]):
     pass
 
-
-class FacilitySchema(OpennemBaseSchema):
     id: Optional[int]
 
     network: NetworkSchema = NetworkNEM
@@ -155,7 +153,7 @@ class WeatherStationNearest(BaseModel):
     distance: float
 
 
-class LocationSchema(OpennemBaseSchema):
+class LocationSchema(BaseConfig):
     id: Optional[int]
 
     weather_station: Optional[WeatherStation]
@@ -244,7 +242,7 @@ def _flatten_linked_object(value: Union[str, Dict, object]) -> str:
     raise ValidationError("Could not flatten no value or invalid", model=StationSchema)
 
 
-class FacilityOutputSchema(OpennemBaseSchema):
+class FacilityOutputSchema(BaseConfig):
     id: Optional[int]
 
     network: str = "NEM"
@@ -301,7 +299,7 @@ class FacilityOutputSchema(OpennemBaseSchema):
         return _v
 
 
-class FacilityImportSchema(OpennemBaseSchema):
+class FacilityImportSchema(BaseConfig):
     id: Optional[int]
 
     network: NetworkSchema = NetworkNEM
@@ -341,7 +339,7 @@ class FacilityImportSchema(OpennemBaseSchema):
     approved_at: Optional[datetime]
 
 
-class StationImportSchema(OpennemBaseSchema):
+class StationImportSchema(BaseConfig):
     id: Optional[int]
 
     code: str
@@ -369,7 +367,7 @@ class StationImportSchema(OpennemBaseSchema):
     website_url: Optional[str]
 
 
-class StationSchema(OpennemBaseSchema):
+class StationSchema(BaseConfig):
     id: Optional[int]
 
     code: str
@@ -400,7 +398,7 @@ class StationSchema(OpennemBaseSchema):
     website_url: Optional[str]
 
 
-class StationOutputSchema(OpennemBaseSchema):
+class StationOutputSchema(BaseConfig):
     id: Optional[int]
 
     code: str
