@@ -90,8 +90,8 @@ def build_insert_query(
 
         if not _ts:
             logger.warn("Table schema not found for table: {}".format(table.__table__.name))
-
-        table_schema = f"{_ts}."
+        else:
+            table_schema = f"{_ts}."
 
     # Temporary table name uniq
     tmp_table_name: str = ""
