@@ -42,6 +42,8 @@ def import_nem_interconnects() -> None:
         logger.error(e)
         return None
 
+    if not aemo_table_set:
+        return None
     records: List[MarketConfigInterconnector] = aemo_table_set.get_table(
         "MARKET_CONFIG_INTERCONNECTOR"
     ).get_records()
