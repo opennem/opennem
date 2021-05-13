@@ -12,5 +12,4 @@ RUN set -eux \
   && rm -rf /var/lib/apt/lists/* \
   && echo "v3"
 
-ADD infra/database/setup-timescale.sh /scripts/setup-timescale.sh
-ADD infra/database/docker-entrypoint.sh /scripts/docker-entrypoint.sh
+ADD infra/database/scripts /scripts
