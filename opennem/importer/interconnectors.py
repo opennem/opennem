@@ -19,6 +19,8 @@ from opennem.utils.mime import decode_bytes
 
 logger = logging.getLogger(__name__)
 
+INTERCONNECTOR_TABLE = "market_config_interconnector"
+
 
 def import_nem_interconnects() -> None:
     session = SessionLocal()
@@ -44,9 +46,17 @@ def import_nem_interconnects() -> None:
 
     if not aemo_table_set:
         return None
-    records: List[MarketConfigInterconnector] = aemo_table_set.get_table(
-        "MARKET_CONFIG_INTERCONNECTOR"
-    ).get_records()
+
+    if not aemo_table_set.has_table(INTERCONNECTOR_TABLE):
+        logger.error("Could not find table {}".format(INTERCONNECTOR_TABLE))
+        return None
+
+    int_table = aemo_table_set.get_table(INTERCONNECTOR_TABLE)
+
+    if not int_table:
+        logger.error("Could not fetch table: {}".format(INTERCONNECTOR_TABLE))
+
+    records: List[MarketConfigInterconnector] = int_table.get_records()
 
     for interconnector in records:
         if not isinstance(interconnector, MarketConfigInterconnector):
