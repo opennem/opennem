@@ -66,6 +66,7 @@ def registry_init() -> None:
 
             if not f:
                 logger.info("Added facility {} {}".format(fac.code, fac.network.code))
+
                 f = Facility(
                     **fac.dict(
                         exclude={
