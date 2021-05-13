@@ -48,6 +48,7 @@ def load_fueltechs() -> None:
         try:
             s.add(fueltech)
             s.commit()
+            logger.info("Loaded fueltech {}".format(fueltech.code))
         except Exception:
             logger.error("Have {}".format(fueltech.code))
 
@@ -73,6 +74,7 @@ def load_facilitystatus() -> None:
         try:
             s.add(facility_status)
             s.commit()
+            logger.debug("Loaded status {}".format(facility_status.code))
         except Exception:
             logger.error("Have {}".format(facility_status.code))
 
@@ -108,6 +110,7 @@ def load_networks() -> None:
         try:
             s.add(network_model)
             s.commit()
+            logger.debug("Loaded network {}".format(network_model.code))
         except Exception:
             logger.error("Have {}".format(network_model.code))
 
@@ -135,6 +138,7 @@ def load_network_regions() -> None:
         try:
             s.add(network_region_model)
             s.commit()
+            logger.debug("Loaded network region {}".format(network_region_model.code))
         except Exception:
             logger.error("Have {}".format(network_region_model.code))
 
@@ -224,7 +228,7 @@ def load_bom_stations_json() -> None:
         station = session.query(BomStation).filter_by(code=bom_station["code"]).one_or_none()
 
         if not station:
-            logger.info("New station: %s", bom_station["name"])
+            logger.info("New BOM station: %s", bom_station["name"])
 
             station = BomStation(
                 code=bom_station["code"],
