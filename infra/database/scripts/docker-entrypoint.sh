@@ -21,6 +21,8 @@ source /scripts/setup-pg_hba.sh
 
 source /scripts/setup-timescale.sh
 
+source /scripts/setup-tune.sh
+
 
 if [[ -z "$REPLICATE_FROM" ]]; then
     # This means this is a master instance. We check that database exists
