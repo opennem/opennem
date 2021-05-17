@@ -28,7 +28,7 @@ services:
       - ${HOST:-127.0.0.1}:6800:6800
 
   database:
-    image: opennem/database:12.3
+    image: opennem/database:dev
     restart: unless-stopped
     env_file: ./.env
     environment:
@@ -38,7 +38,7 @@ services:
     ports:
       - ${HOST:-127.0.0.1}:15433:5432
     volumes:
-      - staging_data:/var/lib/postgresql/data
+      - staging_data:/var/lib/postgresql
 
   # mysql:
   #   image: mariadb
