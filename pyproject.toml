@@ -38,7 +38,7 @@ openpyxl = "^3.0.4"
 geoalchemy2 = "^0.8.4"
 geojson = "^2.5.0"
 uvicorn = "^0.13.4"
-fastapi = {extras = ["all"], version = "^0.63.0"}
+fastapi = "^0.65.1"
 shapely = "^1.7.0"
 pyyaml = "^5.3.1"
 dictalchemy = "^0.1.2"
