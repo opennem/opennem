@@ -279,3 +279,7 @@ def parse_aemo_urls(urls: List[str]) -> AEMOTableSet:
         aemo = parse_aemo_csv(csv_content_decoded, aemo)
 
     return aemo
+
+
+def parse_aemo_directory(directory_path: str) -> AEMOTableSet:
+    pass
