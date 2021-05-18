@@ -1,7 +1,6 @@
 import logging
 from typing import Generator, Optional
 
-from databases import Database
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -13,20 +12,6 @@ from opennem.settings import settings
 DeclarativeBase = declarative_base()
 
 logger = logging.getLogger(__name__)
-
-
-database = Database(settings.db_url)
-
-
-# Methods
-
-
-async def db_connect_async() -> None:
-    await database.connect()
-
-
-async def db_disconnect() -> None:
-    await database.disconnect()
 
 
 def db_connect(
