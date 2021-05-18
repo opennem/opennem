@@ -9,6 +9,10 @@ if [ -z "$POSTGRES_MAX_CONNECTIONS" ]; then
     POSTGRES_MAX_CONNECTIONS="300"
 fi
 
+if [ -z "$POSTGRES_SHARED_BUFFERS" ]; then
+    POSTGRES_SHARED_BUFFERS="512MB"
+fi
+
 # backup conf file
 cp $CONF{,.`date +"%Y%m%d_%H%M%S"`.bak}
 
@@ -18,7 +22,8 @@ sed -i '/max_connections/d' $CONF
 # write optimisations conf
 cat > ${ROOT_CONF}/optimisations.conf <<EOF
 max_connections = ${POSTGRES_MAX_CONNECTIONS}
-
+shared_buffers = ${POSTGRES_SHARED_BUFFERS}
 EOF
+
+
 echo "include 'optimisations.conf'" >> $CONF
-fi
