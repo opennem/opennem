@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -11,7 +12,9 @@ from opennem.db import get_database_session
 from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Station
 from opennem.schema.opennem import StationOutputSchema
 
-from .schema import StationResponse
+from .schema import StationResponse, StationsResponse
+
+logger = logging.getLogger("opennem.api.station")
 
 router = APIRouter()
 
@@ -30,7 +33,7 @@ class StationNoFacilities(OpennemBaseHttpException):
 
 @router.get(
     "/",
-    response_model=StationResponse,
+    response_model=StationsResponse,
     description="Get a list of all stations",
     response_model_exclude_none=True,
 )
@@ -44,7 +47,7 @@ def stations(
     name: Optional[str] = None,
     limit: Optional[int] = None,
     page: int = 1,
-) -> StationResponse:
+) -> StationsResponse:
     stations = session.query(Station).join(Location).enable_eagerloads(True)
 
     if facilities_include:
@@ -58,6 +61,9 @@ def stations(
     if name:
         stations = stations.filter(Station.name.like("%{}%".format(name)))
 
+    if limit:
+        stations = stations.limit(limit)
+
     stations = stations.order_by(
         # Facility.network_region,
         Station.name,
@@ -67,9 +73,35 @@ def stations(
 
     stations = stations.all()
 
-    resp = StationResponse(data=stations, total_records=len(stations))
+    resp = StationsResponse(data=stations, total_records=len(stations))
 
     response.headers["X-Total-Count"] = str(len(stations))
+
+    return resp
+
+
+@router.get(
+    "/{id:int}",
+    response_model=StationResponse,
+    description="Get a single station record",
+    response_model_exclude_none=False,
+)
+def station_record(
+    response: Response,
+    id: int,
+    session: Session = Depends(get_database_session),
+) -> StationResponse:
+
+    logger.debug("get {}".format(id))
+
+    station = session.query(Station).get(id)
+
+    if not station:
+        raise StationNotFound()
+
+    resp = StationResponse(record=station, total_records=1)
+
+    response.headers["X-Total-Count"] = str(1)
 
     return resp
 
@@ -89,7 +121,7 @@ def station(
     only_generators: bool = Query(True, description="Show only generators"),
 ) -> StationOutputSchema:
 
-    station = (
+    station_query = (
         session.query(Station)
         .filter(Station.code == station_code)
         .filter(Facility.station_id == Station.id)
@@ -99,9 +131,9 @@ def station(
     )
 
     if only_generators:
-        station = station.filter(Facility.dispatch_type == DispatchType.GENERATOR)
+        station_query = station_query.filter(Facility.dispatch_type == DispatchType.GENERATOR)
 
-    station = station.one_or_none()
+    station = station_query.one_or_none()
 
     if not station:
         raise StationNotFound()
