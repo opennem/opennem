@@ -60,6 +60,7 @@ class OpennemSettings(BaseSettings):
     server_host: str = "0.0.0.0"
     server_port: int = 8000
     server_reload: bool = False
+    server_ssl: bool = False
 
     # timeout on http requests
     # see opennem.utils.http
