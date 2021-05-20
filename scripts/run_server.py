@@ -40,6 +40,8 @@ def run_server() -> None:
         reload=reload,
         reload_dirs=reload_dirs,
         workers=workers,
+        ssl_keyfile="./var/_wildcard.opennem.localhost-key.pem",
+        ssl_certfile="./var/_wildcard.opennem.localhost.pem",
     )
 
 
