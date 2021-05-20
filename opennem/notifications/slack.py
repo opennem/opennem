@@ -1,5 +1,6 @@
 import logging
 import sys
+from typing import List, Optional
 
 import requests
 from validators import ValidationFailure
@@ -13,7 +14,19 @@ logger = logging.getLogger(__name__)
 REQ_HEADERS = {"User-Agent": USER_AGENT, "Content-type": "application/json"}
 
 
-def slack_message(msg: str) -> bool:
+def _slack_tag_list(user_list: List[str]) -> str:
+    """List of slack usernames to alert to a string
+
+    Args:
+        user_list (List[str]): list of usernames
+
+    Returns:
+        str: string to tag
+    """
+    _tag_list = " ".join([f"@{i.strip().lstrip('@')}" for i in user_list if i])
+
+    return _tag_list
+
     """
     Post a slack message to the watchdog channel
 
