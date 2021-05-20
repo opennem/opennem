@@ -1107,6 +1107,19 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
+name = "pyjwt"
+version = "1.7.1"
+description = "JSON Web Token implementation in Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+crypto = ["cryptography (>=1.4)"]
+flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
+test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
+
+[[package]]
 name = "pylint"
 version = "2.8.2"
 description = "python code static checker"
@@ -1734,6 +1747,20 @@ ipython-genutils = "*"
 test = ["pytest"]
 
 [[package]]
+name = "twilio"
+version = "6.59.0"
+description = "Twilio API client and TwiML generator"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+PyJWT = "1.7.1"
+pytz = "*"
+requests = {version = ">=2.0.0", markers = "python_version >= \"3.0\""}
+six = "*"
+
+[[package]]
 name = "twine"
 version = "3.4.1"
 description = "Collection of utilities for publishing packages on PyPI"
@@ -2004,7 +2031,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "2674b349aa47130826a2728e9f9eca837cc705ba1a5fefd2be0867ca931022b3"
+content-hash = "633a20753ceb311189de86bd34fcf65a6a5d3241f3d4fc57f428c2df42e2e635"
 
 [metadata.files]
 alembic = [
@@ -2739,6 +2766,10 @@ pygments = [
     {file = "Pygments-2.9.0-py3-none-any.whl", hash = "sha256:d66e804411278594d764fc69ec36ec13d9ae9147193a1740cd34d272ca383b8e"},
     {file = "Pygments-2.9.0.tar.gz", hash = "sha256:a18f47b506a429f6f4b9df81bb02beab9ca21d0a5fee38ed15aef65f0545519f"},
 ]
+pyjwt = [
+    {file = "PyJWT-1.7.1-py2.py3-none-any.whl", hash = "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e"},
+    {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
+]
 pylint = [
     {file = "pylint-2.8.2-py3-none-any.whl", hash = "sha256:f7e2072654a6b6afdf5e2fb38147d3e2d2d43c89f648637baab63e026481279b"},
     {file = "pylint-2.8.2.tar.gz", hash = "sha256:586d8fa9b1891f4b725f587ef267abe2a1bad89d6b184520c7f07a253dd6e217"},
@@ -3036,6 +3067,9 @@ tqdm = [
 traitlets = [
     {file = "traitlets-5.0.5-py3-none-any.whl", hash = "sha256:69ff3f9d5351f31a7ad80443c2674b7099df13cc41fc5fa6e2f6d3b0330b0426"},
     {file = "traitlets-5.0.5.tar.gz", hash = "sha256:178f4ce988f69189f7e523337a3e11d91c786ded9360174a3d9ca83e79bc5396"},
+]
+twilio = [
+    {file = "twilio-6.59.0.tar.gz", hash = "sha256:996946c6c6d156a2ca07a14d4aacfe300b67f881a44d651fba848f783edbe9fa"},
 ]
 twine = [
     {file = "twine-3.4.1-py3-none-any.whl", hash = "sha256:16f706f2f1687d7ce30e7effceee40ed0a09b7c33b9abb5ef6434e5551565d83"},
