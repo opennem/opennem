@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseSettings, PostgresDsn, RedisDsn
 from pydantic.class_validators import validator
@@ -94,6 +94,10 @@ class OpennemSettings(BaseSettings):
 
     # templates folder relative to opennem module root
     templates_dir: str = "templates"
+
+    # monitoring
+    monitoring_alert_sms: Optional[str] = None
+    monintoring_alert_slack_user: Optional[List[str]] = None
 
     # pylint: disable=no-self-argument
     @validator("log_level")
