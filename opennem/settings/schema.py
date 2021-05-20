@@ -38,6 +38,7 @@ class OpennemSettings(BaseSettings):
     # twilio setup
     twilio_sid: Optional[str]
     twilio_auth_token: Optional[str]
+    twilio_from_number: Optional[str]
 
     export_local: bool = False
 
