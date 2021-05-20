@@ -448,6 +448,9 @@ pydantic==1.8.2; python_full_version >= "3.6.1" \
 pydispatcher==2.0.5; platform_python_implementation == "CPython" and python_version >= "3.6" \
     --hash=sha256:5570069e1b1769af1fe481de6dd1d3a388492acddd2cdad7a3bde145615d5caf \
     --hash=sha256:5be4a8be12805ef7d712dd9a93284fb8bc53f309867e573f653a72e5fd10e433
+pyjwt==1.7.1 \
+    --hash=sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e \
+    --hash=sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96
 pyopenssl==20.0.1; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6" \
     --hash=sha256:818ae18e06922c066f777a33f1fca45786d85edfe71cd043de6379337a7f274b \
     --hash=sha256:4c231c759543ba02560fcd2480c48dcec4dae34c9da7d3747c508227e0624b51
@@ -598,6 +601,8 @@ starlette==0.14.2; python_version >= "3.6" \
 tomlkit==0.7.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0") \
     --hash=sha256:6babbd33b17d5c9691896b0e68159215a9387ebfa938aa3ac42f4a4beeb2b831 \
     --hash=sha256:ac57f29693fab3e309ea789252fcce3061e19110085aa31af5446ca749325618
+twilio==6.59.0 \
+    --hash=sha256:996946c6c6d156a2ca07a14d4aacfe300b67f881a44d651fba848f783edbe9fa
 twisted-iocpsupport==1.0.1; python_full_version >= "3.5.4" and python_version >= "3.6" and platform_system == "Windows" \
     --hash=sha256:bdda01692988f29d43d832a4b1f402199d0c7d80083ad65059a0892a3670fc9a \
     --hash=sha256:34a3dfd743f9b7a464ba72c9fa9fc21e2a5e5d2f5a8c805f3e3057a2b3c1f7de \
