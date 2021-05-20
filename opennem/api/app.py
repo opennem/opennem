@@ -13,6 +13,7 @@ from opennem.api.admin.router import router as admin_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facility.router import router as facility_router
 from opennem.api.geo.router import router as geo_router
+from opennem.api.location.router import router as location_router
 from opennem.api.locations import router as locations_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.station.router import router as station_router
@@ -85,6 +86,7 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> Openne
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(locations_router, tags=["Locations"], prefix="/locations")
 app.include_router(geo_router, tags=["Geo"], prefix="/geo")
+app.include_router(location_router, tags=["Locations"], prefix="/location")
 app.include_router(station_router, tags=["Stations"], prefix="/station")
 app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
