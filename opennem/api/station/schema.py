@@ -108,6 +108,10 @@ class StationRecord(ApiBase):
 
 
 class StationResponse(OpennemBaseDataSchema):
+    record: StationRecord
+
+
+class StationsResponse(OpennemBaseDataSchema):
     data: List[StationRecord]
 
 
