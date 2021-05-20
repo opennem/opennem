@@ -91,7 +91,8 @@ class StationRecord(ApiBase):
     # Original network fields
     network_name: Optional[str]
 
-    location: Optional[LocationSchema]
+    # location: Optional[LocationSchema]
+    location_id: int
 
     facilities: List[FacilitySchema]
 
