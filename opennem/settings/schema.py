@@ -97,7 +97,7 @@ class OpennemSettings(BaseSettings):
 
     # monitoring
     monitoring_alert_sms: Optional[str] = None
-    monintoring_alert_slack_user: Optional[List[str]] = None
+    monitoring_alert_slack_user: Optional[List[str]] = None
 
     # pylint: disable=no-self-argument
     @validator("log_level")
