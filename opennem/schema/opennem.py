@@ -38,8 +38,7 @@ class OpennemBaseSchema(BaseConfig):
 
 
 class OpennemBaseDataSchema(OpennemBaseSchema):
-    total_records: int
-    data: Union[List, Dict]
+    total_records: Optional[int]
 
 
 class OpennemErrorSchema(OpennemBaseSchema):
