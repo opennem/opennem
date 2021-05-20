@@ -1,4 +1,4 @@
-drop schema mms cascade;
+drop schema if exists mms cascade;
 
 create schema if not exists mms;
 
