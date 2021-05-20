@@ -27,6 +27,8 @@ def _slack_tag_list(user_list: List[str]) -> str:
 
     return _tag_list
 
+
+def slack_message(msg: str, tag_users: List[str] = None) -> bool:
     """
     Post a slack message to the watchdog channel
 
@@ -43,8 +45,16 @@ def _slack_tag_list(user_list: List[str]) -> str:
         return False
 
     alert_url = settings.slack_hook_url
+    tag_list: Optional[str] = ""
 
-    resp = requests.post(alert_url, json={"text": msg})
+    if tag_users:
+        tag_list = _slack_tag_list(tag_users)
+
+    composed_message = f"{msg} {tag_list}"
+
+    logger.debug(composed_message)
+
+    resp = requests.post(alert_url, json={"text": composed_message})
 
     if resp.status_code != 200:
         logger.error("Error sending slack message")
