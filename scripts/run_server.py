@@ -24,6 +24,7 @@ def run_server() -> None:
     reload = False
     reload_dirs = None
     workers = 4
+    ssl_options = {}
 
     # @TODO move this into opennem.settings
     if settings.debug:
@@ -31,6 +32,12 @@ def run_server() -> None:
         log_level = "debug"
         reload_dirs = [str(RELOAD_PATH)]
         workers = 1
+
+    if settings.server_ssl:
+        ssl_options = {
+            "ssl_keyfile": "./var/_wildcard.opennem.localhost-key.pem",
+            "ssl_certfile": "./var/_wildcard.opennem.localhost.pem",
+        }
 
     uvicorn.run(
         "opennem.api.app:app",
@@ -40,9 +47,10 @@ def run_server() -> None:
         reload=reload,
         reload_dirs=reload_dirs,
         workers=workers,
-        ssl_keyfile="./var/_wildcard.opennem.localhost-key.pem",
-        ssl_certfile="./var/_wildcard.opennem.localhost.pem",
+        **ssl_options,
     )
+
+    logger.info("Running server on {} {}".format(settings.server_host, settings.server_port))
 
 
 if __name__ == "__main__":
