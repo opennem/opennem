@@ -100,6 +100,10 @@ class OpennemSettings(BaseSettings):
     monitoring_alert_sms: Optional[str] = None
     monitoring_alert_slack_user: Optional[List[str]] = None
 
+    # api key cookie settings
+    api_cookie_name: str = "onid"
+    api_cookie_domain: str = "opennem.org.au"
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
