@@ -104,6 +104,10 @@ class OpennemSettings(BaseSettings):
     api_cookie_name: str = "onid"
     api_cookie_domain: str = "opennem.org.au"
 
+    # trello key / secret for feedback endpoint
+    trello_api_key: Optional[str]
+    trello_api_secret: Optional[str]
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
