@@ -2,8 +2,6 @@
 
 set -e
 
-source /scripts/env-data.sh
-
 # env vars for tuning
 if [ -z "$POSTGRES_MAX_CONNECTIONS" ]; then
     POSTGRES_MAX_CONNECTIONS="300"
