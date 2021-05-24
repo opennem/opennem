@@ -1,3 +1,8 @@
+"""
+OpenNEM API
+
+Primary Router. All the main setup of the API is here.
+"""
 import logging
 from typing import List
 
@@ -37,6 +42,7 @@ app = FastAPI(
     title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None
 )
 
+# @TODO put CORS available/permissions in settings
 origins = [
     "https://opennem.org.au",
     "https://dev.opennem.org.au",
