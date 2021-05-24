@@ -52,7 +52,7 @@ def slack_message(msg: str, tag_users: List[str] = None) -> bool:
 
     composed_message = f"{msg} {tag_list}"
 
-    logger.debug(composed_message)
+    logger.info("Sending message: {}".format(composed_message))
 
     resp = requests.post(alert_url, json={"text": composed_message})
 
