@@ -35,6 +35,8 @@ services:
       - TZ
       - TIMESCALEDB_TELEMETRY=off
       - PGPASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_MAX_CONNECTIONS=5
+      - POSTGRES_SHARED_BUFFERS=64MB
     ports:
       - ${HOST:-127.0.0.1}:15433:5432
     volumes:
