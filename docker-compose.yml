@@ -27,7 +27,7 @@ services:
     ports:
       - ${HOST:-127.0.0.1}:6800:6800
 
-  database:
+  postgres:
     image: opennem/database:dev
     restart: unless-stopped
     env_file: ./.env
