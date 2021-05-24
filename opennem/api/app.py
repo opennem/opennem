@@ -89,6 +89,7 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> Openne
     )
 
 
+# sub-routers
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(locations_router, tags=["Locations"], prefix="/locations")
 app.include_router(geo_router, tags=["Geo"], prefix="/geo")
@@ -118,18 +119,6 @@ def robots_txt() -> FileResponse:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     return FileResponse(settings.static_folder_path + "/robots.txt")
-
-
-@app.get("/alert_test", include_in_schema=False)
-def alert_test() -> None:
-    raise Exception("Test Alert Error from {}".format(settings.env))
-
-
-@app.get("/exception_test", include_in_schema=False)
-def exception_test() -> None:
-    raise OpennemBaseHttpException(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Custom exception message"
-    )
 
 
 @app.get(
