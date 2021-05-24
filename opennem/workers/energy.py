@@ -106,7 +106,7 @@ def get_clear_query(
     network: NetworkSchema,
     fueltech_id: Optional[str] = None,
 ) -> str:
-    """ Clear the energies for the range we're about to update """
+    """Clear the energies for the range we're about to update"""
 
     __sql = """
     update facility_scada fs
@@ -363,7 +363,7 @@ def run_energy_calc(
     facility_codes: Optional[List[str]] = None,
     run_clear: bool = False,
 ) -> int:
-    """ Runs the actual energy calc - believe it or not """
+    """Runs the actual energy calc - believe it or not"""
     generated_results: List[Dict] = []
 
     flow = None
@@ -520,7 +520,6 @@ def run_energy_update_days(
             regions = ["WEM"]
 
         for ri in regions:
-            # logger.debug("{} {}".format(network.code, ri))
             run_energy_calc(
                 date_min,
                 date_max,
