@@ -44,6 +44,7 @@ class FacilitySchema(ApiBase):
     registered: Optional[datetime]
     deregistered: Optional[datetime]
     expected_closure_date: Optional[datetime]
+    expected_closure_year: Optional[int]
 
     network_region: Optional[str]
 
