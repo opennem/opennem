@@ -536,6 +536,7 @@ class Facility(Base, BaseModel):
 
     registered = Column(DateTime, nullable=True)
     deregistered = Column(DateTime, nullable=True)
+    expected_closure_date = Column(DateTime, nullable=True)
 
     unit_id = Column(Integer, nullable=True)
     unit_number = Column(Integer, nullable=True)
