@@ -108,6 +108,10 @@ class OpennemSettings(BaseSettings):
     trello_api_key: Optional[str]
     trello_api_secret: Optional[str]
 
+    # feedback
+    # this is the feedback board
+    feedback_trello_board_id: str = "60a48f32c97cf221e3d4bec1"
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
