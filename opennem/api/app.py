@@ -17,6 +17,7 @@ from starlette.requests import Request
 from opennem.api.admin.router import router as admin_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facility.router import router as facility_router
+from opennem.api.feedback.router import router as feedback_router
 from opennem.api.geo.router import router as geo_router
 from opennem.api.location.router import router as location_router
 from opennem.api.locations import router as locations_router
@@ -99,6 +100,7 @@ app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(admin_router, tags=["Admin"], prefix="/admin", include_in_schema=False)
 app.include_router(tasks_router, tags=["Tasks"], prefix="/tasks", include_in_schema=False)
+app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 
 
 try:
