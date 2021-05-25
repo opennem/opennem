@@ -152,9 +152,9 @@ __is_single_number = re.compile(r"^\d$")
 __match_twitter_handle = re.compile(r"^@?[A-Za-z\_]{1,15}$")
 
 
-def validate_twitter_handle(twitter_handle: str) -> bool:
+def validate_twitter_handle(twitter_handle: str) -> Optional[re.Match]:
     """Validate a twitter handle. Optional @, length up to 15 characters"""
-    return re.match(__match_twitter_handle, twitter_handle) is True
+    return re.match(__match_twitter_handle, twitter_handle)
 
 
 class TwitterHandle(str):
