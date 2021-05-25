@@ -72,6 +72,15 @@ class Feedback(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class ApiKeys(Base):
+    __tablename__ = "api_keys"
+
+    keyid = Column(Text, nullable=False, primary_key=True)
+    description = Column(Text, nullable=True)
+    revoked = Column(Boolean, nullable=False, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class FuelTech(Base, BaseModel):
     __tablename__ = "fueltech"
 
