@@ -1,155 +1,69 @@
+import pytest
+
 from opennem.core.normalizers import station_name_cleaner
 
 
-class TestStationNameCleaner(object):
-    def test_stripping_units(self):
-        name = "Eastern Creek LFG PS Units 1-4"
-        subj = station_name_cleaner(name)
+@pytest.mark.parametrize(
+    ["station_name", "station_name_clean"],
+    [
+        # Simple strips
+        ("Test Power Station", "Test"),
+        ("Test Wind Farm", "Test"),
+        ("Test Solar Farm", "Test"),
+        ("Test Solar Project", "Test"),
+        ("Test (Solar Project)", "Test"),
+        ("Test SF", "Test"),
+        ("White Rock Wind and Battery", "White Rock"),
+        ("White Rock Wind and", "White Rock"),
+        ("Jounama (Mini Hydro)", "Jounama"),
+        ("Hallett Power Station", "Hallett Power Station"),
+        ("Grosvenor 1 Waste Coal Mine Gas Power Station", "Grosvenor 1"),
+        ("Yallourn 'W' Power Station", "Yallourn W"),
+        ("Wyndham Waste Disposal Facility", "Wyndham"),
+        ("Eastern Creek LFG PS Units 1-4", "Eastern Creek"),
+        ("Tamar Valley Combined Cycle", "Tamar Valley"),
+        ("Broadmeadows Landfill", "Broadmeadows"),
+        ("Bulgana Green Power Hub - Units", "Bulgana Green Power Hub"),
+        ("Cleantech Biogas", "Cleantech"),
+        ("Earthpower Biomass", "Earthpower"),
+        ("earthpower biomass", "Earthpower"),
+        ("Collector Wind Farm 1", "Collector"),
+        ("Collie G1", "Collie"),
+        ("Lake Bonney Bess1", "Lake Bonney Battery"),
+        # Combined names
+        ("Catagunya / Liapootah / Wayatinah", "Catagunya / Liapootah / Wayatinah"),
+        ("Catagunya / Liapootah /Wayatinah", "Catagunya / Liapootah / Wayatinah"),
+        ("catagunya/liapootah /wayatinah", "Catagunya / Liapootah / Wayatinah"),
+        ("catagunya/liapootah /woy woy power station", "Catagunya / Liapootah / Woy Woy"),
+        # mappings
+        ("SA Government Virtual Power Plant - stage 1", "SA VPP"),
+        ("Hornsdale Power Reserve Unit 1", "Hornsdale Power Reserve"),
+        ("University of Melbourne Archives Brunswick", "UoM Archives Brunswick"),
+        ("Energy Brix Complex", "Morwell"),
+        ("Swanbank B Power Station & Swanbank E Gas Turbine", "Swanbank B"),
+        ("Swanbank B", "Swanbank B"),
+        ("Swanbank E", "Swanbank E"),
+        ("Tailem Bend 1", "Tailem Bend"),
+        ("Hallett 1 Wind Farm", "Hallett 1 Wind Farm"),
+        ("Hallett 2 Wind Farm", "Hallett 2 Wind Farm"),
+    ],
+)
+def test_station_name_cleaner(station_name: str, station_name_clean: str) -> None:
+    subject = station_name_cleaner(station_name)
 
-        # assert subj == "Eastern Creek", "Eastern Creek should strip units"
+    assert subject == station_name_clean, "Clean name matches"
 
-    def test_power_stripper(self):
-        name = "Test Power Station"
-        subj = station_name_cleaner(name)
 
-        assert subj == "Test", "Test power station becomes just Test"
+def test_station_name_cleaner_hallet_is_three_units() -> None:
+    hallet_names = [
+        "Hallett Power Station",
+        "Hallett 1 Wind Farm",
+        "Hallett 2 Wind Farm",
+    ]
+    hallet_names_cleaned = list(set([station_name_cleaner(i) for i in hallet_names]))
 
-    def test_acronyms(self):
-        name = "bhp power"
-        subj = station_name_cleaner(name)
+    print(hallet_names_cleaned)
 
-        assert subj == "BHP", "Acronym is BHP"
-
-    def test_hallett_power(self):
-        name = "Hallett Power Station"
-        subj = station_name_cleaner(name)
-
-        assert subj == "Hallett", "Hallet Power Station is Hallet"
-
-    def test_hallet_is_three_units(self):
-        hallet_names = [
-            "Hallett Power Station",
-            "Hallett 1 Wind Farm",
-            "Hallett 2 Wind Farm",
-        ]
-        hallet_names_cleaned = list(set([station_name_cleaner(i) for i in hallet_names]))
-
-        assert len(hallet_names) == len(
-            hallet_names_cleaned
-        ), "Hallet should have three distinct names"
-
-    def test_grosvenor_stripping(self):
-        name = "Grosvenor 1 Waste Coal Mine Gas Power Station"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Grosvenor 1", "Grosvenor strips specifications"
-
-    def test_unit_letters(self):
-        name = "Yallourn 'W' Power Station"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Yallourn W", "Yallourn has a unit letter"
-
-    def test_strip_landfill(self):
-        name = "Broadmeadows Landfill"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Broadmeadows", "Broadmeadows Landfill becomes Broadmeadows"
-
-    def test_strip_waste_disposal(self):
-        name = "Wyndham Waste Disposal Facility"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Wyndham", "Whyndham Waste Disposal stripped to suburb"
-
-    def test_strip_combined_cycle(self):
-        name = "Tamar Valley Combined Cycle"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Tamar Valley", "Tamar Valley Combined Cycle stripped to suburb"
-
-    # Slash names
-
-    def test_dashed_names(self):
-        name = "Catagunya / Liapootah / Wayatinah"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Catagunya / Liapootah / Wayatinah", "Catagunya slash name"
-
-    def test_dashed_names_whitespace(self):
-        name = "Catagunya/Liapootah / Wayatinah"
-        subject = station_name_cleaner(name)
-
-        assert (
-            subject == "Catagunya / Liapootah / Wayatinah"
-        ), "Catagunya slash name whitespaced correctly"
-
-    def test_dashed_names_whitespace_capitalized(self):
-        name = "catagunya/liapootah / wayatinah"
-        subject = station_name_cleaner(name)
-
-        assert (
-            subject == "Catagunya / Liapootah / Wayatinah"
-        ), "Catagunya slash name whitespaced and capitalized correctly"
-
-    def test_dashed_names_with_stripping(self):
-        name = "Catagunya / Liapootah / Wayatinah Power Station"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Catagunya / Liapootah / Wayatinah", "Catagunya hyphenated name"
-
-    def test_dashed_names_with_stripping_capitalized(self):
-        name = "Catagunya / Liapootah / woy woy power station"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Catagunya / Liapootah / Woy Woy", "Catagunya hyphenated name"
-
-    # Mappings
-
-    def test_name_mapping_and_stripping(self):
-        name = "SA Government Virtual Power Plant - stage 1"
-        subject = station_name_cleaner(name)
-
-        assert subject == "SA VPP", "SA Government Virtual Power Plant maps to SA VPP"
-
-    def test_name_mapping_hornsdale(self):
-        name = "Hornsdale Power Reserve Unit 1"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Hornsdale Power Reserve", "Hornsdale maps"
-
-    def test_name_uni_melbourne(self):
-        name = "University of Melbourne Archives Brunswick"
-        subject = station_name_cleaner(name)
-
-        assert subject == "UoM Archives Brunswick", "UoM is abbreviated and suburb name added"
-
-    def test_name_energy_brix(self):
-        name = "Energy Brix Complex"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Morwell", "Energy Brix Complex becomes Morwell"
-
-    def test_government_virtual(self):
-        name = "SA Government Virtual Power Plant - stage 1"
-        subject = station_name_cleaner(name)
-
-        assert subject == "SA VPP", "SA Government Virtual becomes SA VPP"
-
-    def test_swanbank_b(self):
-        name = "Swanbank B Power Station & Swanbank E Gas Turbine"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Swanbank B", "Swanbank B"
-
-    def test_swanbank_b_single(self):
-        name = "Swanbank B"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Swanbank B", "Swanbank B"
-
-    def test_swanbank_e_single(self):
-        name = "Swanbank E"
-        subject = station_name_cleaner(name)
-
-        assert subject == "Swanbank E", "Swanbank E"
+    assert len(hallet_names) == len(
+        hallet_names_cleaned
+    ), "Hallet should have three distinct names"
