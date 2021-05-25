@@ -5,6 +5,7 @@ from dictalchemy.utils import fromdict
 from sqlalchemy.exc import IntegrityError
 
 from opennem.core.loader import load_data
+from opennem.core.normalizers import station_name_cleaner
 from opennem.core.stats.store import init_stats
 from opennem.db import SessionLocal
 from opennem.db.load_fixtures import load_fixtures
@@ -148,7 +149,10 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
             station_model.description = station.description
 
         if station.name:
-            station_model.name = station.name
+            station_name = station_name_cleaner(station.name)
+
+            station_model.name = station_name
+            station_model.network_name = station.network_name
 
         station_model.approved = station.approved
 
