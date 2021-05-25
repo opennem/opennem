@@ -8,9 +8,16 @@ in data from various sources.
 import logging
 import re
 from decimal import Decimal
-from typing import Optional, Union
+from typing import Any, Callable, Dict, Generator, Optional, Union
+
+from pydantic.error_wrappers import ValidationError
+from pydantic.validators import str_validator
 
 from opennem.core.station_names import station_map_name
+
+AnyCallable = Callable[..., Any]
+
+CallableGenerator = Generator[AnyCallable, None, None]
 
 logger = logging.getLogger("opennem.core.normalizers")
 
@@ -141,6 +148,31 @@ ACRONYMS = [
 
 __is_number = re.compile(r"^[\d\.]+$")
 __is_single_number = re.compile(r"^\d$")
+
+__match_twitter_handle = re.compile(r"^@?[A-Za-z\_]{1,15}$")
+
+
+def validate_twitter_handle(twitter_handle: str) -> bool:
+    """Validate a twitter handle. Optional @, length up to 15 characters"""
+    return re.match(__match_twitter_handle, twitter_handle) is True
+
+
+class TwitterHandle(str):
+    @classmethod
+    def __modify_schema__(cls, field_schema: Dict[str, Any]) -> None:
+        field_schema.update(type="string", format="email")
+
+    @classmethod
+    def __get_validators__(cls) -> "CallableGenerator":
+        yield str_validator
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, value: Union[str]) -> str:
+        if validate_twitter_handle(value):
+            return value
+
+        raise ValueError("Invalid twitter handle")
 
 
 def strip_whitespace(subject: str) -> str:
