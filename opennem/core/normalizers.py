@@ -10,7 +10,6 @@ import re
 from decimal import Decimal
 from typing import Any, Callable, Dict, Generator, Optional, Union
 
-from pydantic.error_wrappers import ValidationError
 from pydantic.validators import str_validator
 
 from opennem.core.station_names import station_map_name
