@@ -229,7 +229,7 @@ def normalize_aemo_region(region_code: str = "") -> str:
 
 def string_is_equal_case_insensitive(subject: str, value: str) -> bool:
     """Case insensitive string is equal"""
-    return subject.strip().lower() == value.trim().lower()
+    return subject.strip().lower() == value.strip().lower()
 
 
 def normalize_duid(duid: str) -> str:
