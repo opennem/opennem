@@ -40,19 +40,9 @@ def db_refresh_material_views() -> None:
     run_energy_update_days(days=2)
     run_aggregates_facility_year(DATE_CURRENT_YEAR)
     run_daily_fueltech_summary()
-    refresh_material_views("mv_facility_all")
-    refresh_material_views("mv_region_emissions")
-    refresh_material_views("mv_interchange_energy_nem_region")
     export_energy(latest=True)
     export_energy(priority=PriorityType.monthly)
     slack_message("Ran daily energy update and aggregates on {}".format(settings.env))
-
-
-@huey.periodic_task(crontab(hour="*/1", minute="15"))
-@huey.lock_task("db_refresh_material_views_recent")
-def db_refresh_material_views_recent() -> None:
-    refresh_material_views("mv_facility_45d")
-    refresh_material_views("mv_region_emissions_45d")
 
 
 # @NOTE optimized can now run every hour but shouldn't have to
