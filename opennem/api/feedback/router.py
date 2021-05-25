@@ -6,10 +6,10 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
 from opennem.api.exceptions import OpennemBaseHttpException
-from opennem.core.normalizers import TwitterHandle
 from opennem.db import get_database_session
 from opennem.db.models.opennem import Feedback
 from opennem.notifications.trello import post_trello_card
+from opennem.schema.types import TwitterHandle
 
 logger = logging.getLogger(__name__)
 
