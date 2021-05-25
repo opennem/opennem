@@ -3,9 +3,9 @@ from opennem.core.loader import load_data
 STATION_NAME_MAP = load_data("station_name_maps.json")
 
 
-def station_map_name(station_name):
+def station_map_name(station_name: str) -> str:
     """
-        Clean names manually using a map
+    Clean names manually using a map
 
     """
     if type(station_name) is not str:
