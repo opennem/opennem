@@ -8,7 +8,7 @@ in data from various sources.
 import logging
 import re
 from decimal import Decimal
-from typing import Optional, Union
+from typing import Dict, List, Optional, Union
 
 from opennem.core.station_names import station_map_name
 
@@ -34,6 +34,7 @@ STRIP_WORDS = [
     "network support station",
     "combined cycle",
     "green power hub units",
+    "unit 1",
     "wind and solar",
     "streams station",
     "utilisation facility",
@@ -51,6 +52,7 @@ STRIP_WORDS = [
     "solar system",
     "power station",
     "bio reactor",
+    "biogas",
     "generation station",
     "sydney",
     "cogeneration",
@@ -74,8 +76,9 @@ STRIP_WORDS = [
     "system",
     "plant",
     "battery",
-    "power",
+    "g1",
     "farm",
+    "1",
     "sv",
     "sf",
     "pe",
@@ -96,13 +99,13 @@ STRIP_WORDS = [
     "dhl6",
     "run of river",
     "and",
-    "bess",
-    "h2e",
     "bess1",
+    "h2e",
     "gen",
     "gt",
     "bioreactor",
     "bordertown",
+    "winery",
 ]
 
 # Words that are acronyms and should be uppercased
@@ -134,6 +137,11 @@ ACRONYMS = [
     "nawma",
 ]
 
+# replacemnt words for stations
+STATION_WORD_REPLACEMENTS = {"University Of Melbourne": "UoM"}
+
+# skip station cleaning for any station matching
+STATION_SKIP_CLEANING_MATCHES = ["Hallett"]
 
 # Custom normalizers
 
@@ -206,6 +214,11 @@ def normalize_whitespace(subject: str) -> str:
     return str(re.sub(r"\s{2,}", " ", subject.strip()))
 
 
+def strip_double_spaces(subject: str) -> str:
+    """Strips double spaces back to spaces"""
+    return re.sub(" +", " ", subject)
+
+
 def string_to_upper(subject: str = "") -> str:
     """Strips and uppercases strings. Used for ID's"""
     subject_clean = subject.strip().upper()
@@ -214,17 +227,6 @@ def string_to_upper(subject: str = "") -> str:
 
 
 # String normalizers
-
-
-def string_to_title(subject: str) -> str:
-    """Title case and clean string"""
-    return str(subject).strip().title()
-
-
-def normalize_string(subject: str) -> str:
-    """Deprecated function alias"""
-    logger.warn("normalize_string is deprecated")
-    return string_to_title(subject)
 
 
 def is_lowercase(subject: str) -> bool:
@@ -239,6 +241,17 @@ def strip_and_lower_string(subject: str) -> str:
     return subject.strip().lower()
 
 
+def string_to_title(subject: str) -> str:
+    """Title case and clean string"""
+    return str(subject).strip().title()
+
+
+def normalize_string(subject: str) -> str:
+    """Deprecated function alias"""
+    logger.warn("normalize_string is deprecated")
+    return string_to_title(subject)
+
+
 def strip_encoded_non_breaking_spaces(subject: str) -> str:
     return subject.replace("\u00a0", "")
 
@@ -248,6 +261,7 @@ def strip_capacity_from_string(subject: str) -> str:
 
 
 def strip_non_alpha_characters_from_string(subject: str) -> str:
+    """Strips punctuation, brackets, etc."""
     return re.sub(r",|-|\(|\)|\–|\"|\'", "", subject)
 
 
@@ -281,7 +295,8 @@ def string_is_equal_case_insensitive(subject: str, value: str) -> bool:
     return subject.strip().lower() == value.strip().lower()
 
 
-def normalize_duid(duid: str) -> str:
+def normalize_duid(duid: Optional[str]) -> str:
+    """Take what is supposed to be a DUID and clean it up so we always return a string, even if its blank"""
     duid = duid or ""
 
     # @TODO replace with regexp that removes junk
@@ -307,23 +322,145 @@ def name_normalizer(name: str) -> str:
 # Station name cleaner
 
 
-def clean_numbers(part: Union[str, int]) -> Union[str, int, None]:
+def clean_station_numbers_to_string(part: Union[str, int]) -> str:
     """
-    Clean the number part of a station name
-
+    Clean the number part of a station name and remove it completely if its a large number
     """
     if not is_number(part):
-        return part
+        return str(part)
 
     part_parsed = int(part)
 
     if part_parsed < 6:
-        return part_parsed
+        return str(part_parsed)
 
-    return None
+    return ""
 
 
-def station_name_cleaner(facility_name: str) -> str:
+def strip_words_from_sentence(subject: str, strip_words: List[str] = STRIP_WORDS) -> str:
+    for w in strip_words:
+        if f" {w}" in subject:
+            subject = subject.replace(f" {w}", " ")
+
+        if " " in w:
+            subject = subject.replace(w, " ")
+
+    return subject
+
+
+def clean_and_format_slashed_station_names(subject: str) -> str:
+    """Cleans up slashed station names like Name / Name"""
+    if "/" in subject:
+        subject = " / ".join([i.strip().title() for i in subject.split("/")])
+
+    return subject
+
+
+def station_name_run_replacements(
+    subject: str, replacement_map: Dict[str, str] = STATION_WORD_REPLACEMENTS
+) -> str:
+    """Run a string replacement map over a string - note that it's case sensitive"""
+    for subject_string, replacement_string in replacement_map.items():
+        if subject_string in subject:
+            subject = subject.replace(subject_string, replacement_string)
+
+    return subject
+
+
+def skip_clean_for_matching(
+    subject: str, skip_matches: List[str] = STATION_SKIP_CLEANING_MATCHES
+) -> bool:
+    """Skip station cleaning for those matching"""
+    for skip_match in skip_matches:
+        if skip_match.lower() in subject.lower():
+            return True
+
+    return False
+
+
+def station_name_cleaner(station_name: str) -> str:
+    """Refactred version of the station name cleaner. Cleans up station names prior to applying
+    any manual mappings"""
+
+    # Clean it up all in lower case
+    station_clean_name = station_name
+
+    # Exit early if we already map
+    if station_map_name(station_clean_name) != station_clean_name:
+        return station_map_name(station_clean_name)
+
+    if skip_clean_for_matching(station_clean_name):
+        return station_clean_name
+
+    # List of cleaning methods to pass the string through
+    for clean_func in [
+        str.strip,
+        str.lower,
+        strip_double_spaces,
+        strip_encoded_non_breaking_spaces,
+        strip_capacity_from_string,
+        strip_non_alpha_characters_from_string,
+        strip_words_from_sentence,
+        strip_double_spaces,
+        str.strip,
+    ]:
+        station_clean_name = clean_func(station_clean_name)  # type: ignore
+
+    # Exit early if we already map
+    if station_map_name(station_clean_name) != station_clean_name:
+        return station_map_name(station_clean_name)
+
+    # Split the name up into parts and go through each one
+    name_components = [str(i) for i in station_clean_name.strip().split(" ")]
+    name_components_parsed: List[str] = []
+
+    for _comp in name_components:
+        comp: Optional[str] = str(_comp)
+
+        if not comp:
+            continue
+
+        if not isinstance(comp, str):
+            comp = ""
+
+        if comp in STRIP_WORDS:
+            comp = ""
+
+        if comp in ACRONYMS:
+            comp = comp.upper()
+        elif isinstance(comp, str) and comp.startswith("mc"):
+            comp = "Mc" + comp[2:].capitalize()
+        elif isinstance(comp, str) and comp != "":
+            comp = comp.capitalize()
+
+        # strip numbers greater than 5
+        if comp:
+            comp = clean_station_numbers_to_string(comp)
+
+        name_components_parsed.append(comp)
+
+    # Join the name back up
+    station_clean_name = " ".join(name_components_parsed)
+
+    # List of cleaning methods to pass the string through
+    for clean_func in [
+        str.strip,
+        str.lower,
+        strip_double_spaces,
+        string_to_title,
+        clean_and_format_slashed_station_names,
+        station_name_run_replacements,
+    ]:
+        station_clean_name = clean_func(station_clean_name)  # type: ignore
+
+    # Exit if we map
+    if station_map_name(station_clean_name) != station_clean_name:
+        return station_map_name(station_clean_name)
+
+    return station_clean_name
+
+
+def _old_station_name_cleaner(facility_name: str) -> str:
     """ "
     This cleans station names from their messy as hell AEMO names to something
     we can plug into name_clean and humans can actually read
@@ -399,7 +536,7 @@ def station_name_cleaner(facility_name: str) -> str:
             comp = comp.capitalize()
 
         # strip numbers greater than 5
-        comp_clean = clean_numbers(comp)
+        comp_clean = clean_station_numbers_to_string(comp)
 
         if comp_clean:
             comp = comp_clean
