@@ -223,6 +223,7 @@ def string_to_upper(subject: str = "") -> str:
 
 
 def normalize_aemo_region(region_code: str = "") -> str:
+    """Alias for string to upper"""
     logger.warn("normalize_aemo_region is going to be deprecated")
     return string_to_upper(region_code)
 
