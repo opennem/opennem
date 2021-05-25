@@ -20,3 +20,6 @@ alembic upgrade head
 python -m opennem.cli db fixtures
 
 python -m opennem.importer.rooftop
+
+# import closure dates
+python -m opennem.importer.facility_closure_dates
