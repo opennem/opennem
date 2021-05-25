@@ -184,7 +184,7 @@ def id_duid(facility_name: str) -> str:
 
 
 def string_to_upper(subject: str = "") -> str:
-    """ Strips and uppercases strings. Used for ID's """
+    """Strips and uppercases strings. Used for ID's"""
     subject_clean = subject.strip().upper()
 
     return subject_clean
@@ -196,8 +196,8 @@ def normalize_aemo_region(region_code: str = "") -> str:
 
 
 def string_is_equal_case_insensitive(subject: str, value: str) -> bool:
-    """ Case insensitive string is equal """
-    return subject.trim().lower() == value.trim().lower()
+    """Case insensitive string is equal"""
+    return subject.strip().lower() == value.trim().lower()
 
 
 def normalize_duid(duid: str) -> str:
