@@ -53,6 +53,25 @@ class BaseModel(object):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
 
+class Feedback(Base):
+    __tablename__ = "feedback"
+
+    id = Column(
+        Integer,
+        autoincrement=True,
+        nullable=False,
+        primary_key=True,
+    )
+
+    subject = Column(Text, nullable=False)
+    description = Column(Text, nullable=True)
+    email = Column(Text, nullable=True)
+    twitter = Column(Text, nullable=True)
+    user_ip = Column(Text, nullable=False)
+    user_agent = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class FuelTech(Base, BaseModel):
     __tablename__ = "fueltech"
 
