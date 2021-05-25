@@ -152,7 +152,6 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
             station_name = station_name_cleaner(station.name)
 
             station_model.name = station_name
-            station_model.network_name = station.network_name
 
         station_model.approved = station.approved
 
