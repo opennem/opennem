@@ -14,7 +14,6 @@ from dictalchemy import DictableModel
 from geoalchemy2 import Geometry
 from shapely import wkb
 from sqlalchemy import (
-    JSON,
     Boolean,
     Column,
     Date,
