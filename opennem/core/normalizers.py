@@ -8,15 +8,9 @@ in data from various sources.
 import logging
 import re
 from decimal import Decimal
-from typing import Any, Callable, Dict, Generator, Optional, Union
-
-from pydantic.validators import str_validator
+from typing import Optional, Union
 
 from opennem.core.station_names import station_map_name
-
-AnyCallable = Callable[..., Any]
-
-CallableGenerator = Generator[AnyCallable, None, None]
 
 logger = logging.getLogger("opennem.core.normalizers")
 
@@ -141,8 +135,7 @@ ACRONYMS = [
 ]
 
 
-__is_number = re.compile(r"^[\d\.]+$")
-__is_single_number = re.compile(r"^\d$")
+# Custom normalizers
 
 __match_twitter_handle = re.compile(r"^@?[A-Za-z\_]{1,15}$")
 
@@ -152,30 +145,10 @@ def validate_twitter_handle(twitter_handle: str) -> Optional[re.Match]:
     return re.match(__match_twitter_handle, twitter_handle)
 
 
-class TwitterHandle(str):
-    @classmethod
-    def __modify_schema__(cls, field_schema: Dict[str, Any]) -> None:
-        field_schema.update(type="string", format="email")
+# Number normalizers
 
-    @classmethod
-    def __get_validators__(cls) -> "CallableGenerator":
-        yield str_validator
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, value: Union[str]) -> str:
-        if validate_twitter_handle(value):
-            return value
-
-        raise ValueError("Invalid twitter handle")
-
-
-def strip_whitespace(subject: str) -> str:
-    return str(re.sub(r"\s+", "", subject.strip()))
-
-
-def normalize_whitespace(subject: str) -> str:
-    return str(re.sub(r"\s{2,}", " ", subject.strip()))
+__is_number = re.compile(r"^[\d\.]+$")
+__is_single_number = re.compile(r"^\d$")
 
 
 def is_number(value: Union[str, int]) -> bool:
@@ -191,9 +164,46 @@ def is_number(value: Union[str, int]) -> bool:
 
 
 def is_single_number(value: Union[str, int]) -> bool:
+    value = str(value).strip()
+
     if re.match(__is_single_number, value):
         return True
     return False
+
+
+def clean_float(number: Union[str, int, float]) -> Optional[float]:
+    num_return = None
+
+    if isinstance(number, str):
+        number = number.strip()
+
+        if number == "":
+            return None
+
+        num_return = float(number)
+        return num_return
+
+    if isinstance(number, int):
+        return float(number)
+
+    if isinstance(number, Decimal):
+        return float(number)
+
+    if isinstance(number, float):
+        return number
+
+    return None
+
+
+# Whitespace normalizers
+
+
+def strip_whitespace(subject: str) -> str:
+    return str(re.sub(r"\s+", "", subject.strip()))
+
+
+def normalize_whitespace(subject: str) -> str:
+    return str(re.sub(r"\s{2,}", " ", subject.strip()))
 
 
 def string_to_upper(subject: str = "") -> str:
@@ -201,6 +211,63 @@ def string_to_upper(subject: str = "") -> str:
     subject_clean = subject.strip().upper()
 
     return subject_clean
+
+
+# String normalizers
+
+
+def string_to_title(subject: str) -> str:
+    """Title case and clean string"""
+    return str(subject).strip().title()
+
+
+def normalize_string(subject: str) -> str:
+    """Deprecated function alias"""
+    logger.warn("normalize_string is deprecated")
+    return string_to_title(subject)
+
+
+def is_lowercase(subject: str) -> bool:
+    return subject.lower() == subject
+
+
+def is_uppercase(subject: str) -> bool:
+    return subject.upper() == subject
+
+
+def strip_and_lower_string(subject: str) -> str:
+    return subject.strip().lower()
+
+
+def strip_encoded_non_breaking_spaces(subject: str) -> str:
+    return subject.replace("\u00a0", "")
+
+
+def strip_capacity_from_string(subject: str) -> str:
+    return re.sub(r"\d+\ ?(mw|kw|MW|KW)", "", subject)
+
+
+def strip_non_alpha_characters_from_string(subject: str) -> str:
+    return re.sub(r",|-|\(|\)|\–|\"|\'", "", subject)
+
+
+def stem(word: str) -> str:
+    """Get the stem of a word"""
+    return word.lower().rstrip(",.!:;'-\"").lstrip("'\"")
+
+
+def clean_sentence(sentence: str) -> str:
+    """Method to clean up a sentence into word stems"""
+    sentence_parts = sentence.strip().split()
+
+    sentence_parts_stemmed = map(stem, sentence_parts)
+
+    sentence_reformed = "".join(sentence_parts_stemmed)
+
+    return sentence_reformed
+
+
+# OpenNEM specific normalizers
 
 
 def normalize_aemo_region(region_code: str = "") -> str:
@@ -226,15 +293,6 @@ def normalize_duid(duid: str) -> str:
     return duid
 
 
-def normalize_string(csv_string: str) -> str:
-    if not type(csv_string) is str:
-        csv_string = str(csv_string)
-
-    csv_string = csv_string.strip().title()
-
-    return csv_string
-
-
 def name_normalizer(name: str) -> str:
     name_normalized = ""
 
@@ -246,52 +304,7 @@ def name_normalizer(name: str) -> str:
     return str(name_normalized)
 
 
-def stem(word: str) -> str:
-    """Get the stem of a word"""
-    return word.lower().rstrip(",.!:;'-\"").lstrip("'\"")
-
-
-def clean_sentence(sentence: str) -> str:
-    """Method to clean up a sentence into word stems"""
-    sentence_parts = sentence.strip().split()
-
-    sentence_parts_stemmed = map(stem, sentence_parts)
-
-    sentence_reformed = "".join(sentence_parts_stemmed)
-
-    return sentence_reformed
-
-
-def is_lowercase(subject: str) -> bool:
-    return subject.lower() == subject
-
-
-def is_uppercase(subject: str) -> bool:
-    return subject.upper() == subject
-
-
-def clean_float(number: Union[str, int, float]) -> Optional[float]:
-    num_return = None
-
-    if isinstance(number, str):
-        number = number.strip()
-
-        if number == "":
-            return None
-
-        num_return = float(number)
-        return num_return
-
-    if isinstance(number, int):
-        return float(number)
-
-    if isinstance(number, Decimal):
-        return float(number)
-
-    if isinstance(number, float):
-        return number
-
-    return None
+# Station name cleaner
 
 
 def clean_numbers(part: Union[str, int]) -> Union[str, int, None]:
