@@ -14,9 +14,9 @@ class OpennemSettings(BaseSettings):
 
     log_level: str = "DEBUG"
 
-    db_url: PostgresDsn = "postgresql://opennem:opennem@127.0.0.1:15433/opennem"
+    db_url: PostgresDsn = "postgresql://opennem:opennem@127.0.0.1:15433/opennem"  # type: ignore
 
-    cache_url: RedisDsn = "redis://127.0.0.1"
+    cache_url: RedisDsn = "redis://127.0.0.1"  # type: ignore
 
     sentry_url: Optional[str]
 
