@@ -20,10 +20,6 @@ CallableGenerator = Generator[AnyCallable, None, None]
 
 logger = logging.getLogger("opennem.core.normalizers")
 
-__id_unit_regex = re.compile(r"^(Y|C)[0-9]{1,3}")
-
-__id_duid_regex = re.compile(r"[A-Z0-9]{1,6}")
-
 # Words that are stripped out of station names
 STRIP_WORDS = [
     "stage 1",
@@ -198,20 +194,6 @@ def is_single_number(value: Union[str, int]) -> bool:
     if re.match(__is_single_number, value):
         return True
     return False
-
-
-# @TODO not yet implemented
-def id_unit(facility_name: str) -> str:
-    __n = facility_name
-
-    return __n
-
-
-# @TODO not yet implement
-def id_duid(facility_name: str) -> str:
-    __n = facility_name
-
-    return __n
 
 
 def string_to_upper(subject: str = "") -> str:
