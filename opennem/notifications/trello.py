@@ -57,9 +57,6 @@ def post_trello_card(subject: str, description: Optional[str] = None) -> bool:
     return True
 
 
-def run() -> None:
-    post_trello_card("test", "this is the description")
-
-
+# Debug entrypoint
 if __name__ == "__main__":
-    run()
+    post_trello_card("test #2", "this is the description\n\nthis *is* _markdown_")
