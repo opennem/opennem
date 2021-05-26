@@ -228,6 +228,8 @@ def string_to_upper(subject: str = "") -> str:
 
 # String normalizers
 
+__urlsafe_match = re.compile(r"^[a-zA-Z0-9_-]*$")
+
 
 def is_lowercase(subject: str) -> bool:
     return subject.lower() == subject
@@ -263,6 +265,11 @@ def strip_capacity_from_string(subject: str) -> str:
 def strip_non_alpha_characters_from_string(subject: str) -> str:
     """Strips punctuation, brackets, etc."""
     return re.sub(r",|-|\(|\)|\–|\"|\'", "", subject)
+
+
+def string_is_urlsafe(subject: str) -> bool:
+    """Check if a string is URL safe"""
+    return isinstance(re.match(__urlsafe_match, subject), re.Match)
 
 
 def stem(word: str) -> str:
