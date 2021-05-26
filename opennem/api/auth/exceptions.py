@@ -5,6 +5,13 @@ OpenNEM Auth Exceptions
 from opennem.api.exceptions import OpennemBaseHttpException
 
 
+class UnauthorizedRequest(OpennemBaseHttpException):
+    """Base 401 return for unauthorized"""
+
+    detail = "Unauthorized request"
+    status_code = 401
+
+
 class BadCredentials(OpennemBaseHttpException):
     """Base 403 return for permission denied"""
 
@@ -15,4 +22,4 @@ class BadCredentials(OpennemBaseHttpException):
 class BadCredentialsKeyNotFound(BadCredentials):
     """API Key not found exception"""
 
-    detail = "Bad credentials: key not found"
+    detail = "Bad credentials: Key not found"
