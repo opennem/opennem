@@ -15,6 +15,7 @@ from starlette import status
 from starlette.requests import Request
 
 from opennem.api.admin.router import router as admin_router
+from opennem.api.auth.router import router as auth_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facility.router import router as facility_router
 from opennem.api.feedback.router import router as feedback_router
@@ -104,6 +105,7 @@ async def http_type_exception_handler(
 
 
 # sub-routers
+app.include_router(auth_router, tags=["Authentication"], prefix="/auth", include_in_schema=True)
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(locations_router, tags=["Locations"], prefix="/locations")
 app.include_router(geo_router, tags=["Geo"], prefix="/geo")
