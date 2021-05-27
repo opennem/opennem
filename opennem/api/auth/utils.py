@@ -22,3 +22,11 @@ def cookie_name_from_auth_name(auth_name: str) -> str:
         cookie_auth_name = f"_{auth_name.lower()}"
 
     return cookie_auth_name
+
+
+def header_name_from_auth_name(auth_name: str) -> str:
+    """Takes an auth name and returns what the http header name will be"""
+
+    header_auth_name = f"X-{auth_name.upper()}"
+
+    return header_auth_name
