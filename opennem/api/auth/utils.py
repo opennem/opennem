@@ -4,10 +4,10 @@ OpenNEM Auth Utils
 """
 import secrets
 
-API_KEY_LENGTH = 16
+from opennem.settings import settings
 
 
-def generate_api_key(key_length: int = API_KEY_LENGTH) -> str:
+def generate_api_key(key_length: int = settings.api_app_auth_key_length) -> str:
     """Generates an URL-safe API key using the secrets library and settings"""
     return secrets.token_urlsafe(64)[:key_length]
 
