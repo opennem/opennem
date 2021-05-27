@@ -5,6 +5,8 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
+from opennem.api.auth.key import get_api_key
+from opennem.api.auth.schema import AuthApiKeyRecord
 from opennem.api.exceptions import OpennemBaseHttpException
 from opennem.db import get_database_session
 from opennem.db.models.opennem import Feedback
@@ -29,7 +31,9 @@ class UserFeedbackSubmission(BaseModel):
 
 @router.post("/")
 def feedback_submissions(
-    user_feedback: UserFeedbackSubmission, session: Session = Depends(get_database_session)
+    user_feedback: UserFeedbackSubmission,
+    session: Session = Depends(get_database_session),
+    app_auth: AuthApiKeyRecord = Depends(get_api_key),
 ) -> Any:
     """User feedback submission"""
     feedback = Feedback(
