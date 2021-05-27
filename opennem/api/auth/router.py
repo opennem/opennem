@@ -7,10 +7,9 @@ OpenNEM API Auth Router
 from typing import Dict
 
 from fastapi import APIRouter, Depends
-from fastapi.security.api_key import APIKey
 
 from opennem.api.auth.key import get_api_key
-from opennem.api.auth.schema import AuthApiKeyInfoResponse
+from opennem.api.auth.schema import AuthApiKeyInfoResponse, AuthApiKeyRecord
 
 router = APIRouter()
 
@@ -24,7 +23,7 @@ def auth_logout() -> Dict:
 
 
 @router.get("/info", response_model=AuthApiKeyInfoResponse)
-def app_auth_test(api_record: APIKey = Depends(get_api_key)) -> AuthApiKeyInfoResponse:
+def app_auth_test(api_record: AuthApiKeyRecord = Depends(get_api_key)) -> AuthApiKeyInfoResponse:
     _response = AuthApiKeyInfoResponse(record=api_record, total_records=1)
 
     return _response
