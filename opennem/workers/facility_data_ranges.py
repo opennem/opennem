@@ -131,4 +131,4 @@ def get_facility_seen_range(facility_codes: List[str]) -> FacilitySeenRange:
 
 
 if __name__ == "__main__":
-    update_facility_seen_range()
+    update_facility_seen_range(True)
