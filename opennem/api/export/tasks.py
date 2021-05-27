@@ -181,6 +181,14 @@ def export_energy(
             network=energy_stat.network, networks=date_range_networks, energy=True
         )
 
+        if not date_range:
+            logger.error(
+                "Skipping - Could not get date range for energy {} {}".format(
+                    energy_stat.network, date_range_networks
+                )
+            )
+            continue
+
         # Migrate to this time_series
         time_series = TimeSeries(
             start=date_range.start,
