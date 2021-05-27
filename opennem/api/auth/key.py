@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from fastapi import Security
 from fastapi.security.api_key import APIKeyCookie, APIKeyHeader, APIKeyQuery
@@ -8,7 +9,12 @@ from opennem.db import SessionLocal
 from opennem.db.models.opennem import ApiKeys
 from opennem.settings import settings
 
-from .exceptions import BadCredentials, BadCredentialsKeyNotFound, UnauthorizedRequest
+from .exceptions import (
+    BadCredentials,
+    BadCredentialsKeyNotFound,
+    RevokedCredentials,
+    UnauthorizedRequest,
+)
 from .schema import AuthApiKeyRecord
 from .utils import cookie_name_from_auth_name, header_name_from_auth_name
 
@@ -39,6 +45,10 @@ def get_api_key_record(api_key: str) -> AuthApiKeyRecord:
     if not api_key_record:
         logger.error("API key not found: {}".format(api_key))
         raise BadCredentialsKeyNotFound()
+
+    if api_key_record.revoked:
+        logger.error("API key revoked: {}".format(api_key))
+        raise RevokedCredentials()
 
     api_key_schema = AuthApiKeyRecord.from_orm(api_key_record)
 
