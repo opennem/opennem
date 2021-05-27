@@ -17,10 +17,10 @@ def validate_api_key(api_key: str) -> str:
     if not isinstance(api_key, str):
         raise TypeError("API Key invalid type")
 
-    if len(api_key) < 10:
+    if len(api_key) < 16:
         raise ValueError("API Key too short")
 
-    if len(api_key) > 32:
+    if len(api_key) > 128:
         raise ValueError("API Key too long")
 
     if not string_is_urlsafe(api_key):
