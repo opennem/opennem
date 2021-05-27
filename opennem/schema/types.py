@@ -6,6 +6,7 @@ OpenNEM Custom Schema Types
 
 from typing import Any, Callable, Dict, Generator, Union
 
+from pydantic.networks import AnyUrl
 from pydantic.validators import str_validator
 
 from opennem.core.normalizers import validate_twitter_handle
@@ -13,6 +14,13 @@ from opennem.core.normalizers import validate_twitter_handle
 AnyCallable = Callable[..., Any]
 
 CallableGenerator = Generator[AnyCallable, None, None]
+
+
+class PostgresSqlAlchemyDsn(AnyUrl):
+    """DSN for Postgres for latest sqlalchemy which doesn't allow `postgres` as the scheme"""
+
+    allowed_schemes = {"postgresql"}
+    user_required = True
 
 
 class TwitterHandle(str):
