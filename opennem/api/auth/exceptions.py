@@ -23,3 +23,10 @@ class BadCredentialsKeyNotFound(BadCredentials):
     """API Key not found exception"""
 
     detail = "Bad credentials: Key not found"
+
+
+class RevokedCredentials(OpennemBaseHttpException):
+    """401 for revoked credentials"""
+
+    detail = "Credentials revoked or expires"
+    status_code = 401
