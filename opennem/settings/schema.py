@@ -20,7 +20,7 @@ class OpennemSettings(BaseSettings):
         "postgresql://opennem:opennem@127.0.0.1:15433/opennem"
     )
 
-    cache_url: RedisDsn = "redis://127.0.0.1"  # type: ignore
+    cache_url: RedisDsn = RedisDsn("redis://127.0.0.1")
 
     sentry_url: Optional[str]
 
