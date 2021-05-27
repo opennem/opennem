@@ -110,8 +110,10 @@ class OpennemSettings(BaseSettings):
     monitoring_alert_slack_user: Optional[List[str]] = None
 
     # api key cookie settings
-    api_cookie_name: str = "onid"
-    api_cookie_domain: str = "opennem.org.au"
+    api_app_auth_name: str = "onau"
+    api_user_auth_name: str = "onuu"
+
+    api_auth_cookie_domain: str = "opennem.org.au"
 
     # trello key / secret for feedback endpoint
     trello_api_key: Optional[str]
