@@ -25,6 +25,6 @@ def auth_logout() -> Dict:
 
 @router.get("/info", response_model=AuthApiKeyInfoResponse)
 def app_auth_test(api_record: APIKey = Depends(get_api_key)) -> AuthApiKeyInfoResponse:
-    _response = AuthApiKeyInfoResponse(record=api_record)
+    _response = AuthApiKeyInfoResponse(record=api_record, total_records=1)
 
     return _response
