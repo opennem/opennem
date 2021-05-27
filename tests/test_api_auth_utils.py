@@ -5,6 +5,15 @@ from opennem.api.auth.utils import (
     generate_api_key,
     header_name_from_auth_name,
 )
+from opennem.core.validators.strings import string_is_urlsafe
+
+
+def test_generate_api_key() -> None:
+    genkey = generate_api_key(20)
+
+    assert isinstance(genkey, str), "Key is a string"
+    assert len(genkey) == 20, "Key has correct length"
+    assert string_is_urlsafe(genkey) is True, "Key is url safe"
 
 
 @pytest.mark.parametrize(
