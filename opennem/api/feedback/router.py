@@ -11,6 +11,7 @@ from opennem.api.exceptions import OpennemBaseHttpException
 from opennem.db import get_database_session
 from opennem.db.models.opennem import Feedback
 from opennem.notifications.trello import post_trello_card
+from opennem.schema.opennem import OpennemBaseSchema
 from opennem.schema.types import TwitterHandle
 
 logger = logging.getLogger(__name__)
@@ -47,4 +48,4 @@ def feedback_submissions(
 
     post_trello_card(subject=user_feedback.subject, description=user_feedback.description)
 
-    return {"status": "OK"}
+    return OpennemBaseSchema()
