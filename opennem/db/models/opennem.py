@@ -234,7 +234,6 @@ class BomStation(Base):
     website_url = Column(Text, nullable=True)
     feed_url = Column(Text, nullable=True)
 
-    observations = relationship("BomObservation")
     altitude = Column(Integer, nullable=True)
 
     geom = Column(Geometry("POINT", srid=4326, spatial_index=False))
@@ -267,6 +266,7 @@ class BomObservation(Base):
         primary_key=True,
     )
     station = relationship("BomStation")
+
     temp_apparent = Column(Numeric)
     temp_air = Column(Numeric)
     temp_min = Column(Numeric)
