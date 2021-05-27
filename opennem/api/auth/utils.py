@@ -19,6 +19,6 @@ def cookie_name_from_auth_name(auth_name: str) -> str:
     cookie_auth_name = auth_name
 
     if not cookie_auth_name.startswith("_"):
-        cookie_auth_name = f"_{auth_name}"
+        cookie_auth_name = f"_{auth_name.lower()}"
 
     return cookie_auth_name
