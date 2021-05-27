@@ -90,6 +90,19 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> Openne
     )
 
 
+@app.exception_handler(401)
+@app.exception_handler(403)
+async def http_type_exception_handler(
+    request: Request, exc: HTTPException
+) -> OpennemExceptionResponse:
+    resp_content = OpennemErrorSchema(detail=exc.detail)
+
+    return OpennemExceptionResponse(
+        status_code=exc.status_code,
+        response_class=resp_content,
+    )
+
+
 # sub-routers
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(locations_router, tags=["Locations"], prefix="/locations")
