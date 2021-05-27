@@ -32,7 +32,9 @@ def get_api_key_record(api_key: str) -> AuthApiKeyRecord:
         logger.error("Bad API key {}: {}".format(api_key, e))
         raise UnauthorizedRequest()
 
-    api_key_record = session.query(ApiKeys).filter_by(keyid=api_key).one_or_none()
+    api_key_record: Optional[ApiKeys] = (
+        session.query(ApiKeys).filter_by(keyid=api_key).one_or_none()
+    )
 
     if not api_key_record:
         logger.error("API key not found: {}".format(api_key))
