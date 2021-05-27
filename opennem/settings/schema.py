@@ -1,10 +1,12 @@
 from pathlib import Path
 from typing import List, Optional
 
-from pydantic import BaseSettings, PostgresDsn, RedisDsn
+from pydantic import BaseSettings, RedisDsn
 from pydantic.class_validators import validator
 from scrapy.settings import Settings
 from scrapy.utils.project import get_project_settings
+
+from opennem.schema.types import PostgresSqlAlchemyDsn
 
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
@@ -14,7 +16,9 @@ class OpennemSettings(BaseSettings):
 
     log_level: str = "DEBUG"
 
-    db_url: PostgresDsn = "postgresql://opennem:opennem@127.0.0.1:15433/opennem"  # type: ignore
+    db_url: PostgresSqlAlchemyDsn = PostgresSqlAlchemyDsn(
+        "postgresql://opennem:opennem@127.0.0.1:15433/opennem"
+    )
 
     cache_url: RedisDsn = "redis://127.0.0.1"  # type: ignore
 
