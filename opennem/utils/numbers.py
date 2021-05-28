@@ -3,7 +3,7 @@ import logging
 import re
 from datetime import datetime
 from math import floor, log, pow
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from opennem.settings import settings
 
@@ -173,7 +173,7 @@ def pad_time_series(
 __re_filesize_from_string = re.compile(r"^(\d+\.?\d+?).*?(KB|MB)$")
 
 
-def filesize_from_string(subject: str) -> Optional[float]:
+def filesize_from_string(subject: str) -> Tuple[Optional[float], Optional[str]]:
     """Extract a file size from a string.
 
     Returns size and units
@@ -183,7 +183,7 @@ def filesize_from_string(subject: str) -> Optional[float]:
     m = re.match(__re_filesize_from_string, subject)
 
     if not m:
-        return None
+        return None, None
 
     size: Optional[float] = None
     units: Optional[str] = None
