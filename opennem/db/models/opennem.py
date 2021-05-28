@@ -27,7 +27,7 @@ from sqlalchemy import (
     Text,
     func,
 )
-from sqlalchemy.dialects.postgresql import TIMESTAMP
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -79,6 +79,18 @@ class ApiKeys(Base):
     description = Column(Text, nullable=True)
     revoked = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class CrawlMeta(Base):
+    """Metadata about crawlers where k,v can be stored"""
+
+    __tablename__ = "crawl_meta"
+
+    spider_name = Column(Text, nullable=False, primary_key=True)
+    value = Column(JSONB, nullable=True, index=True)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
 
 class FuelTech(Base, BaseModel):
