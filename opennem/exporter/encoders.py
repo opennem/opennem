@@ -1,6 +1,15 @@
+"""
+OpenNEM custom JSON encoders and decoders.
+
+Supporting both regular JSON and extended GeoJSON. This is used by SQLAlchemy to serialize objects
+in the data store as well
+
+:see_also: opennem/db/__init__.py
+"""
 import decimal
 import json
 from datetime import date, datetime
+from typing import Any, Optional
 
 from geojson import GeoJSONEncoder
 
@@ -8,7 +17,9 @@ from opennem.core.dispatch_type import DispatchType, dispatch_type_string
 
 
 class OpenNEMJSONEncoder(json.JSONEncoder):
-    def default(self, o):
+    """JSON encoder that supports decial, datetime and dates"""
+
+    def default(self, o: Any) -> Any:
         if isinstance(o, decimal.Decimal):
             return float(o)
         if isinstance(o, datetime):
@@ -21,7 +32,9 @@ class OpenNEMJSONEncoder(json.JSONEncoder):
 
 
 class OpenNEMGeoJSONEncoder(GeoJSONEncoder, OpenNEMJSONEncoder):
-    def default(self, o):
+    """JSON encoder that also support geojson using the GeoJSONEncoder"""
+
+    def default(self, o: Any) -> Any:
         if isinstance(o, decimal.Decimal):
             return float(o)
         if isinstance(o, datetime):
@@ -31,34 +44,24 @@ class OpenNEMGeoJSONEncoder(GeoJSONEncoder, OpenNEMJSONEncoder):
         return super(OpenNEMGeoJSONEncoder, self).default(o)
 
 
-def opennem_deserialize(serialized: str) -> any:
+def opennem_deserialize(serialized: str) -> Any:
+    """Use custom OpenNEM deserializer which supports custom types and GeoJSON
 
+    @TODO This has fallen back onto the standard json.loads as there are bugs in ujson
+    and the GeoJSON decoder
+    """
     obj_serialized = None
 
-    # try ujson first because it's faster
-    # try:
-    #     obj_serialized = ujson.loads(serialized)
-    # except TypeError:
-    #     pass
-
-    # if not obj_serialized:
-    obj_serialized = json.loads(serialized, cls=OpenNEMGeoJSONEncoder)
+    obj_serialized = json.loads(serialized)
 
     return obj_serialized
 
 
-def opennem_serialize(obj: any, indent=None) -> str:
+def opennem_serialize(obj: Any, indent: Optional[int] = None) -> str:
+    """Use custom OpenNEM serializer which supports custom types and GeoJSON"""
     obj_deserialized = None
 
-    # try ujson first because it's faster
-    # try:
-    #     obj_deserialized = ujson.dumps(obj, indent=indent)
-    # except TypeError:
-    #     pass
-
     if not obj_deserialized:
-        obj_deserialized = json.dumps(
-            obj, cls=OpenNEMGeoJSONEncoder, indent=indent
-        )
+        obj_deserialized = json.dumps(obj, cls=OpenNEMGeoJSONEncoder, indent=indent)
 
     return obj_deserialized
