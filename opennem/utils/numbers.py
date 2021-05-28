@@ -1,5 +1,6 @@
 import decimal
 import logging
+import re
 from datetime import datetime
 from math import floor, log, pow
 from typing import Dict, List, Optional, Union
@@ -26,7 +27,7 @@ def float_to_str(f):
 
 
 def cast_number(number: any) -> float:
-    """ Cast to a float """
+    """Cast to a float"""
     number_float = float(number)
 
     return number_float
@@ -149,7 +150,7 @@ def trim_nulls(series: Dict) -> Dict:
 def pad_time_series(
     series: Dict, start_date: datetime, end_date: datetime, pad_with: Optional[int] = 0
 ) -> Dict:
-    """ Pad out time series to start and end date """
+    """Pad out time series to start and end date"""
 
     series_dates = series.keys()
     series_min_date = min(series_dates)
@@ -167,3 +168,30 @@ def pad_time_series(
         to_pad += 1
 
     return series
+
+
+__re_filesize_from_string = re.compile(r"^(\d+\.?\d+?).*?(KB|MB)$")
+
+
+def filesize_from_string(subject: str) -> Optional[float]:
+    """Extract a file size from a string.
+
+    Returns size and units
+
+    ex. "203 KB" -> 203, KB
+    """
+    m = re.match(__re_filesize_from_string, subject)
+
+    if not m:
+        return None
+
+    size: Optional[float] = None
+    units: Optional[str] = None
+
+    try:
+        size = float(m.group(1))
+        units = m.group(2)
+    except IndexError:
+        pass
+
+    return size, units
