@@ -30,6 +30,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import UniqueConstraint
 
@@ -87,7 +88,7 @@ class CrawlMeta(Base):
     __tablename__ = "crawl_meta"
 
     spider_name = Column(Text, nullable=False, primary_key=True)
-    value = Column(JSONB, nullable=True, index=True)
+    value = Column(MutableDict.as_mutable(JSONB), nullable=True, index=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
