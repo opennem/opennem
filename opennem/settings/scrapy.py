@@ -36,6 +36,10 @@ DNS_TIMEOUT = 10
 # SPIDER_MODULES = ["opennem.spiders"]
 SPIDER_LOADER_WARN_ONLY = True
 
+EXTENSIONS = {
+    "opennem.extensions.spider_store_meta.ExtensionSpiderStoreMeta": 200,
+}
+
 # Pipline docs:
 # 1xx series - download handlers
 # 2xx series - unpackers
@@ -53,6 +57,8 @@ ITEM_PIPELINES = {
     "opennem.pipelines.aemo.general_information.GeneralInformationGrouperPipeline": 351,
     "opennem.pipelines.aemo.registration_exemption.RegistrationExemptionStorePipeline": 355,
     "opennem.pipelines.aemo.general_information.GeneralInformationStoragePipeline": 356,
+    # AEMO Download monitor
+    "opennem.pipelines.aemo.downloads.DownloadMonitorPipeline": 360,
     # Opennem storers
     "opennem.pipelines.nem.DatabaseStore": 400,
     "opennem.pipelines.nem.opennem.NemwebUnitScadaOpenNEMStorePipeline": 405,
@@ -82,6 +88,7 @@ ITEM_PIPELINES = {
     # DB bulk Inserterers
     "opennem.pipelines.csv.RecordsToCSVPipeline": 610,
     "opennem.pipelines.bulk_insert.BulkInsertPipeline": 620,
+    #
 }
 
 # @TODO if DEBUG
@@ -91,3 +98,6 @@ HTTPCACHE_ENABLED = False
 RETRY_ENABLED = True
 RETRY_TIMES = 9
 RETRY_HTTP_CODES = [400, 403, 500, 502, 503, 504, 522, 524, 408, 429]
+
+# OpenNEM extensions
+STOREMETA_ENABLED = True
