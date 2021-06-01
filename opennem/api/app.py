@@ -64,7 +64,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["X-Process-Time"],
+    expose_headers=["X-Process-Time", "X-ONAU", "X-ONAA"],
 )
 
 
