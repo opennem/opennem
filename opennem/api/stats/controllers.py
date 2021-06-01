@@ -312,7 +312,7 @@ def get_scada_range(
     """
 
     network_query = ""
-    timezone = network.timezone_database
+    timezone = network.timezone_database or "UTC"
     field_name = "generated"
 
     if energy is True:
