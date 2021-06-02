@@ -2,10 +2,12 @@ import logging
 import os
 from datetime import datetime, timedelta
 from textwrap import dedent
-from typing import Optional, Tuple
+from typing import Tuple
 
+from opennem.api.stats.controllers import get_scada_range
+from opennem.api.stats.schema import ScadaDateRange
 from opennem.db import get_database_engine
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import DATE_CURRENT_YEAR
 
 logger = logging.getLogger("opennem.workers.aggregates")
@@ -14,7 +16,7 @@ DRY_RUN = os.environ.get("DRY_RUN", False)
 
 
 def aggregates_facility_daily_query(date_min: datetime, date_max: datetime = None) -> str:
-    """ This is the query to update the at_facility_daily aggregate """
+    """This is the query to update the at_facility_daily aggregate"""
 
     __query = """
     insert into at_facility_daily
@@ -97,7 +99,7 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime 
 
 
 def _get_year_range(year: int, network: NetworkSchema = NetworkNEM) -> Tuple[datetime, datetime]:
-    """ Get a date range for a year with end exclusive """
+    """Get a date range for a year with end exclusive"""
     tz = network.get_fixed_offset()
 
     date_min = datetime(year, 1, 1, 0, 0, 0, 0, tzinfo=tz)
@@ -126,12 +128,18 @@ def run_aggregates_facility_year(
     exec_aggregates_facility_daily_query(date_min, date_max)
 
 
-def run_aggregates_facility_all() -> None:
+def run_aggregates_facility_all_by_year() -> None:
     YEAR_MIN = 1998
     YEAR_MAX = DATE_CURRENT_YEAR
 
     for year in range(YEAR_MAX, YEAR_MIN - 1, -1):
         run_aggregates_facility_year(year)
+
+
+def run_aggregates_facility_all(network: NetworkSchema) -> None:
+    scada_range: ScadaDateRange = get_scada_range(network=network)
+
+    exec_aggregates_facility_daily_query(date_min=scada_range.start, date_max=scada_range.end)
 
 
 def run_aggregate_days(days: int = 1, network: NetworkSchema = NetworkNEM) -> None:
@@ -153,6 +161,11 @@ def run_aggregate_days(days: int = 1, network: NetworkSchema = NetworkNEM) -> No
     exec_aggregates_facility_daily_query(date_min, date_max)
 
 
+def run_aggregates_all() -> None:
+    for network in [NetworkWEM, NetworkNEM]:
+        run_aggregates_facility_all(network)
+
+
 # Debug entry point
 if __name__ == "__main__":
-    run_aggregates_facility_year(2021)
+    run_aggregates_all()
