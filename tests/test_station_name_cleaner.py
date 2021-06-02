@@ -13,6 +13,8 @@ from opennem.core.normalizers import station_name_cleaner
         ("Test Solar Project", "Test"),
         ("Test (Solar Project)", "Test"),
         ("Test SF", "Test"),
+        #
+        ("Hepburn Wind", "Hepburn"),
         ("White Rock Wind and Battery", "White Rock"),
         ("White Rock Wind and", "White Rock"),
         ("Jounama (Mini Hydro)", "Jounama"),
