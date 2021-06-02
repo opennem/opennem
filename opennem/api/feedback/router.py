@@ -46,6 +46,19 @@ def feedback_submissions(
 
     session.add(feedback)
 
-    post_trello_card(subject=user_feedback.subject, description=user_feedback.description)
+    trello_sent = False
+
+    try:
+        trello_sent = post_trello_card(
+            subject=user_feedback.subject, description=user_feedback.description
+        )
+    except Exception as e:
+        logger.error(e)
+
+    feedback.alert_sent = trello_sent
+
+    session.add(feedback)
+
+    session.commit()
 
     return OpennemBaseSchema()
