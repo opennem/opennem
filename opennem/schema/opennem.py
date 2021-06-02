@@ -16,7 +16,7 @@ from opennem.api.stats.schema import OpennemData
 from opennem.api.weather.schema import WeatherStation
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.networks import datetime_add_network_timezone
-from opennem.core.normalizers import clean_capacity, normalize_string
+from opennem.core.normalizers import clean_capacity, string_to_title
 from opennem.schema.response import ResponseStatus
 from opennem.utils.dates import chop_datetime_microseconds, optionally_parse_string_datetime
 from opennem.utils.version import get_version
@@ -179,15 +179,15 @@ class LocationSchema(BaseConfig):
 
     @validator("address1")
     def clean_address(cls, value: str) -> str:
-        return normalize_string(value)
+        return string_to_title(value)
 
     @validator("address2")
     def clean_address2(cls, value: str) -> str:
-        return normalize_string(value)
+        return string_to_title(value)
 
     @validator("locality")
     def clean_locality(cls, value: str) -> str:
-        return normalize_string(value)
+        return string_to_title(value)
 
     @validator("state")
     def state_upper(cls, value: str) -> Optional[str]:
