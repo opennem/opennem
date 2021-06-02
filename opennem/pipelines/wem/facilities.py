@@ -9,9 +9,9 @@ from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.normalizers import (
     clean_capacity,
     normalize_duid,
-    normalize_string,
     participant_name_filter,
     station_name_cleaner,
+    string_to_title,
 )
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility, Location, Participant, Station
@@ -45,15 +45,11 @@ class WemStoreFacility(object):
             participant = None
 
             participant_name = participant_name_filter(row["Participant Name"])
-            participant_network_name = normalize_string(
-                row["Participant Name"]
-            )
+            participant_network_name = string_to_title(row["Participant Name"])
             participant_code = normalize_duid(row["Participant Code"])
 
             participant = (
-                s.query(Participant)
-                .filter(Participant.code == participant_code)
-                .one_or_none()
+                s.query(Participant).filter(Participant.code == participant_code).one_or_none()
             )
 
             if not participant:
@@ -78,11 +74,7 @@ class WemStoreFacility(object):
             facility_code = normalize_duid(row["Facility Code"])
             station_code = parse_wem_facility_code(facility_code)
 
-            station = (
-                s.query(Station)
-                .filter(Station.code == station_code)
-                .one_or_none()
-            )
+            station = s.query(Station).filter(Station.code == station_code).one_or_none()
 
             if not station:
                 station = Station(
@@ -99,11 +91,7 @@ class WemStoreFacility(object):
 
                 logger.debug("Added WEM station: {}".format(station_code))
 
-            facility = (
-                s.query(Facility)
-                .filter(Facility.code == facility_code)
-                .one_or_none()
-            )
+            facility = s.query(Facility).filter(Facility.code == facility_code).one_or_none()
 
             if not facility:
                 facility = Facility(
@@ -126,9 +114,7 @@ class WemStoreFacility(object):
             facility.unit_capacity = capacity_unit
 
             if registered_date:
-                registered_date_dt = datetime.strptime(
-                    registered_date, "%Y-%m-%d %H:%M:%S"
-                )
+                registered_date_dt = datetime.strptime(registered_date, "%Y-%m-%d %H:%M:%S")
                 facility.registered = registered_date_dt
 
             facility.station = station
@@ -175,9 +161,7 @@ class WemStoreLiveFacilities(object):
             participant_code = normalize_duid(row["PARTICIPANT_CODE"])
 
             participant = (
-                s.query(Participant)
-                .filter(Participant.code == participant_code)
-                .one_or_none()
+                s.query(Participant).filter(Participant.code == participant_code).one_or_none()
             )
 
             if not participant:
@@ -194,9 +178,7 @@ class WemStoreLiveFacilities(object):
                 s.commit()
 
                 logger.warning(
-                    "Participant not found created new database entry: {}".format(
-                        participant_code
-                    )
+                    "Participant not found created new database entry: {}".format(participant_code)
                 )
 
             station = None
@@ -205,13 +187,9 @@ class WemStoreLiveFacilities(object):
             facility_code = normalize_duid(row["FACILITY_CODE"])
             station_code = parse_wem_facility_code(facility_code)
             station_name = station_name_cleaner(row["DISPLAY_NAME"])
-            station_network_name = normalize_string(row["DISPLAY_NAME"])
+            station_network_name = string_to_title(row["DISPLAY_NAME"])
 
-            station = (
-                s.query(Station)
-                .filter(Station.code == station_code)
-                .one_or_none()
-            )
+            station = s.query(Station).filter(Station.code == station_code).one_or_none()
 
             if not station:
                 station = Station(
@@ -237,17 +215,11 @@ class WemStoreLiveFacilities(object):
             station.network_name = station_network_name
 
             if lat and lng and not station.location.geom:
-                station.location.geom = "SRID=4326;POINT({} {})".format(
-                    lat, lng
-                )
+                station.location.geom = "SRID=4326;POINT({} {})".format(lat, lng)
                 station.location.geocode_by = "aemo"
                 station.location.geocode_approved = True
 
-            facility = (
-                s.query(Facility)
-                .filter(Facility.code == facility_code)
-                .one_or_none()
-            )
+            facility = s.query(Facility).filter(Facility.code == facility_code).one_or_none()
 
             if not facility:
                 facility = Facility(
@@ -267,20 +239,14 @@ class WemStoreLiveFacilities(object):
                 date_fmt = "%Y"
 
                 try:
-                    registered_date_dt = datetime.strptime(
-                        registered_date, date_fmt
-                    )
+                    registered_date_dt = datetime.strptime(registered_date, date_fmt)
                 except Exception:
-                    logger.error(
-                        "Bad date: %s for format %s", registered_date, date_fmt
-                    )
+                    logger.error("Bad date: %s for format %s", registered_date, date_fmt)
 
                 if registered_date_dt:
                     facility.registered = registered_date_dt
 
-            fueltech = lookup_fueltech(
-                fueltype=row["PRIMARY_FUEL"], techtype=row["FACILITY_TYPE"]
-            )
+            fueltech = lookup_fueltech(fueltype=row["PRIMARY_FUEL"], techtype=row["FACILITY_TYPE"])
 
             if fueltech and not facility.fueltech:
                 facility.fueltech_id = fueltech
