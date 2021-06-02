@@ -40457,7 +40457,11 @@
           "offset": 600,
           "interval_size": 5
         },
-        "fueltech": null,
+        "fueltech": {
+          "code": "battery_charging",
+          "label": "Battery (Discharging)",
+          "renewable": true
+        },
         "status": {
           "code": "operating",
           "label": "Operating"

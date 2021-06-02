@@ -3476,7 +3476,10 @@
         "fuel_tech": "battery_discharging",
         "registered_capacity": 25
       },
-      "LBBL1": {}
+      "LBBL1": {
+        "fuel_tech": "battery_charging",
+        "registered_capacity": 25
+      }
     },
     "region_id": "SA1",
     "status": {
