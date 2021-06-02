@@ -15,6 +15,7 @@ from opennem.core.normalizers import station_name_cleaner
         ("Test SF", "Test"),
         #
         ("Hepburn Wind", "Hepburn"),
+        ("Lake Bonney Battery", "Lake Bonney"),
         ("White Rock Wind and Battery", "White Rock"),
         ("White Rock Wind and", "White Rock"),
         ("Jounama (Mini Hydro)", "Jounama"),
@@ -31,7 +32,7 @@ from opennem.core.normalizers import station_name_cleaner
         ("earthpower biomass", "Earthpower"),
         ("Collector Wind Farm 1", "Collector"),
         ("Collie G1", "Collie"),
-        ("Lake Bonney Bess1", "Lake Bonney Battery"),
+        ("Lake Bonney Bess1", "Lake Bonney"),
         # Combined names
         ("Catagunya / Liapootah / Wayatinah", "Catagunya / Liapootah / Wayatinah"),
         ("Catagunya / Liapootah /Wayatinah", "Catagunya / Liapootah / Wayatinah"),
