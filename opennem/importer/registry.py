@@ -99,7 +99,7 @@ def registry_import() -> StationSet:
     return on_registry
 
 
-def registry_export():
+def registry_export() -> None:
     stations = registry_import()
 
     with open("data/registry.json", "w") as fh:
