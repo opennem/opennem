@@ -70,6 +70,7 @@ class Feedback(Base):
     twitter = Column(Text, nullable=True)
     user_ip = Column(Text, nullable=False)
     user_agent = Column(Text, nullable=False)
+    alert_sent = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
