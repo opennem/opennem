@@ -22,6 +22,7 @@ from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings
+from opennem.utils.scrapyd import job_schedule_all
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 
 # Py 3.8 on MacOS changed the default multiprocessing model
@@ -138,7 +139,7 @@ def monitor_emission_factors() -> None:
 @huey.periodic_task(crontab(hour="23", minute="1"))
 @huey.lock_task("schedule_facility_first_seen_check")
 def schedule_facility_first_seen_check() -> None:
-    """ Check for new DUIDS """
+    """Check for new DUIDS"""
     facility_first_seen_check()
 
 
@@ -150,3 +151,22 @@ def db_facility_seen_update() -> None:
 
         if r:
             slack_message("Ran facility seen range on {}".format(settings.env))
+
+
+# spider tasks
+@huey.periodic_task(crontab(hour="23", minute="55"))
+@huey.lock_task("schedule_spider_catchup_tasks")
+def spider_catchup_tasks() -> None:
+    catchup_spiders = [
+        "au.bom.capitals",
+        "au.apvi.current",
+        "au.nem.day.dispatch_is",
+        "au.nem.day.dispatch_scada",
+        "au.nem.day.rooftop",
+        "au.nem.day.trading_is",
+        "au.nem.week.dispatch",
+        "au.nem.week.dispatch_actual_gen",
+    ]
+
+    for _spider_name in catchup_spiders:
+        job_schedule_all(_spider_name)
