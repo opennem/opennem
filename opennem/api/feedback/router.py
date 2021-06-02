@@ -30,6 +30,7 @@ class UserFeedbackSubmission(BaseModel):
     twitter: Optional[TwitterHandle]
 
 
+@router.post("")
 @router.post("/")
 def feedback_submissions(
     user_feedback: UserFeedbackSubmission,
