@@ -54,6 +54,13 @@ def registry_init() -> None:
                 station.location.lng, station.location.lat
             )
 
+        # clean station name
+        if station.name:
+            station_model.name = station_name_cleaner(station.network_name)
+
+        if station.network_name:
+            station_model.name = station_name_cleaner(station.network_name)
+
         session.add(station_model)
         session.commit()
 
@@ -149,7 +156,7 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
             station_model.description = station.description
 
         if station.name:
-            station_name = station_name_cleaner(station.name)
+            station_name = station_name_cleaner(station.network_name)
 
             station_model.name = station_name
 
