@@ -24,7 +24,7 @@ class NemwebWeekDispatch(NemwebSpider):
     name = "au.nem.week.dispatch"
     start_url = "http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/"
 
-    limit = 7
+    limit = 8
 
     pipelines_extra = set(
         [
