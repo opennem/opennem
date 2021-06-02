@@ -1,15 +1,14 @@
+# pylint: disable=no-name-in-module
+# pylint: disable=no-self-argument
+# pylint: disable=no-member
+"""
+OpenNEM MMS Schemas
+"""
 from typing import Optional
 
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, validator
 
-from opennem.core.normalizers import (
-    clean_capacity,
-    is_number,
-    normalize_duid,
-    normalize_string,
-    participant_name_filter,
-    station_name_cleaner,
-)
+from opennem.core.normalizers import normalize_duid, participant_name_filter
 
 
 class MMSBase(BaseModel):
@@ -55,7 +54,6 @@ class MMSFacility(MMSBase):
     @validator("network_name")
     def network_name_isalpha(cls, v):
         assert type(v) is str, "must be string"
-        # assert v.isalpha(), "must be alpha: {}".format(v)
 
         return v
 
