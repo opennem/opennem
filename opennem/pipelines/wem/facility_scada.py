@@ -1,6 +1,7 @@
 import csv
 import logging
 from datetime import datetime, timedelta
+from typing import Any, Dict
 
 from sqlalchemy.dialects.postgresql import insert
 
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class WemStoreFacilityScada(object):
     @check_spider_pipeline
-    def process_item(self, item, spider=None):
+    def process_item(self, item: Dict[str, Any], spider=None):
         if "content" not in item:
             logger.error("No item content slipping store facility scada")
             return item
@@ -42,7 +43,7 @@ class WemStoreFacilityScada(object):
 
 class WemStoreFacilityIntervals(object):
     @check_spider_pipeline
-    def process_item(self, item, spider=None):
+    def process_item(self, item: Dict[str, Any], spider=None):
         if "content" not in item:
             logger.error("No item content slipping store facility scada")
             return item
@@ -73,7 +74,7 @@ class WemStoreLiveFacilityScada(object):
     """
 
     @check_spider_pipeline
-    def process_item(self, item, spider=None):
+    def process_item(self, item: Dict[str, Any], spider=None):
 
         session = SessionLocal()
         engine = get_database_engine()
