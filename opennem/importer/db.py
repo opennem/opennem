@@ -281,8 +281,17 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
 
 
 def import_facilities() -> None:
+    registry_init()
+    logger.info("Registry initialized")
+
     opennem_init()
     logger.info("Opennem stations imported")
+
+    mms_init()
+    logger.info("Opennem stations imported")
+
+    rooftop_facilities()
+    logger.info("Rooftop stations initialized")
 
 
 def init() -> None:
@@ -292,14 +301,7 @@ def init() -> None:
     load_fixtures()
     logger.info("Fixtures loaded")
 
-    registry_init()
-    logger.info("Registry initialized")
-
-    opennem_init()
-    logger.info("Opennem facilities initialized")
-
-    rooftop_facilities()
-    logger.info("Rooftop stations initialized")
+    import_facilities()
 
     import_emissions_csv()
     logger.info("Emission data initialized")
