@@ -34,7 +34,7 @@ def get_update_seen_query(
             max(fs.trading_interval) as data_last_seen
             from facility_scada fs
         left join facility f on fs.facility_code = f.code
-        where fs.generated > 0
+        where fs.generated > 0 or fs.eoi_quantity is not null
         {facility_codes_query}
         group by 1
     ) as seen_query
