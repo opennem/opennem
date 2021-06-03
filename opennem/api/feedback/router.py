@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
@@ -34,15 +34,23 @@ class UserFeedbackSubmission(BaseModel):
 @router.post("/")
 def feedback_submissions(
     user_feedback: UserFeedbackSubmission,
+    request: Request,
     session: Session = Depends(get_database_session),
     app_auth: AuthApiKeyRecord = Depends(get_api_key),
 ) -> Any:
     """User feedback submission"""
+
+    user_ip = request.client.host
+
+    if not user_ip:
+        user_ip = "127.0.0.1"
+
     feedback = Feedback(
         subject=user_feedback.subject,
         description=user_feedback.description,
         email=user_feedback.email,
         twitter=user_feedback.twitter,
+        user_ip=user_ip,
     )
 
     session.add(feedback)
