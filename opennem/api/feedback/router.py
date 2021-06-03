@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Optional
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Header, Request
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
@@ -37,6 +37,7 @@ def feedback_submissions(
     request: Request,
     session: Session = Depends(get_database_session),
     app_auth: AuthApiKeyRecord = Depends(get_api_key),
+    user_agent: Optional[str] = Header(None),
 ) -> Any:
     """User feedback submission"""
 
@@ -51,6 +52,7 @@ def feedback_submissions(
         email=user_feedback.email,
         twitter=user_feedback.twitter,
         user_ip=user_ip,
+        user_agent=user_agent,
     )
 
     session.add(feedback)
