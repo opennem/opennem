@@ -434,7 +434,9 @@ def power_network_rooftop_query(
         # APVI network is used to provide rooftop for WEM so we require it
         # in country-wide totals
         wem_apvi_case = "or (f.network_id='APVI' and f.network_region='WEM')"
-        agg_func = "max"
+
+        if NetworkNEM not in networks_query:
+            agg_func = "max"
 
     network_query = "(f.network_id IN ({}) {}) and ".format(
         networks_to_in(networks_query), wem_apvi_case
