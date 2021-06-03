@@ -1,6 +1,6 @@
 import logging
 from collections import OrderedDict
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, tzinfo
 from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
 
@@ -368,6 +368,10 @@ def get_scada_range(
 
     if not scada_min or not scada_max:
         return None
+
+    # set network timezone since that is what we're querying
+    scada_min = scada_min.replace(tzinfo=network.get_fixed_offset())
+    scada_max = scada_max.replace(tzinfo=network.get_fixed_offset())
 
     scada_range = ScadaDateRange(start=scada_min, end=scada_max, network=network)
 
