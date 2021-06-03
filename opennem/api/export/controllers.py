@@ -2,6 +2,7 @@ import logging
 from datetime import timedelta
 from typing import List, Optional
 
+from opennem.api.exceptions import OpennemBaseHttpException
 from opennem.api.export.queries import (
     country_stats_query,
     energy_network_flow_query,
@@ -28,6 +29,10 @@ from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimePeriod
 
 logger = logging.getLogger(__name__)
+
+
+class NoResults(OpennemBaseHttpException):
+    detail = "No results"
 
 
 def weather_daily(
@@ -65,8 +70,7 @@ def weather_daily(
     ]
 
     if len(temp_avg) < 1:
-        logger.error("No results from weather_observation_query with {}".format(time_series))
-        return None
+        raise NoResults()
 
     stats = stats_factory(
         stats=temp_avg,
@@ -80,10 +84,7 @@ def weather_daily(
     )
 
     if not stats:
-        logger.error(
-            "No results from weather_observation_query stats factory with {}".format(time_series)
-        )
-        return None
+        raise NoResults()
 
     if include_min_max:
         stats_min = stats_factory(

@@ -130,15 +130,17 @@ def export_power(
         time_series_weather.interval = human_to_interval("30m")
 
         if power_stat.bom_station:
-            weather_set = weather_daily(
-                time_series=time_series_weather,
-                station_code=power_stat.bom_station,
-                network_region=power_stat.network_region,
-                include_min_max=False,
-                unit_name="temperature",
-            )
-
-            stat_set.append_set(weather_set)
+            try:
+                weather_set = weather_daily(
+                    time_series=time_series_weather,
+                    station_code=power_stat.bom_station,
+                    network_region=power_stat.network_region,
+                    include_min_max=False,
+                    unit_name="temperature",
+                )
+                stat_set.append_set(weather_set)
+            except Exception:
+                pass
 
         write_output(power_stat.path, stat_set)
         output_count += 1
@@ -233,12 +235,15 @@ def export_energy(
                 stat_set.append_set(interconnector_emissions)
 
             if energy_stat.bom_station:
-                weather_stats = weather_daily(
-                    time_series=time_series,
-                    station_code=energy_stat.bom_station,
-                    network_region=energy_stat.network_region,
-                )
-                stat_set.append_set(weather_stats)
+                try:
+                    weather_stats = weather_daily(
+                        time_series=time_series,
+                        station_code=energy_stat.bom_station,
+                        network_region=energy_stat.network_region,
+                    )
+                    stat_set.append_set(weather_stats)
+                except Exception:
+                    pass
 
             write_output(energy_stat.path, stat_set)
 
@@ -276,12 +281,15 @@ def export_energy(
                 stat_set.append_set(interconnector_emissions)
 
             if energy_stat.bom_station:
-                weather_stats = weather_daily(
-                    time_series=time_series,
-                    station_code=energy_stat.bom_station,
-                    network_region=energy_stat.network_region,
-                )
-                stat_set.append_set(weather_stats)
+                try:
+                    weather_stats = weather_daily(
+                        time_series=time_series,
+                        station_code=energy_stat.bom_station,
+                        network_region=energy_stat.network_region,
+                    )
+                    stat_set.append_set(weather_stats)
+                except Exception:
+                    pass
 
             write_output(energy_stat.path, stat_set)
 
@@ -364,12 +372,15 @@ def export_all_monthly() -> None:
             bom_station = get_network_region_weather_station(network_region.code)
 
             if bom_station:
-                weather_stats = weather_daily(
-                    time_series=time_series,
-                    station_code=bom_station,
-                    network_region=network_region.code,
-                )
-                all_monthly.append_set(weather_stats)
+                try:
+                    weather_stats = weather_daily(
+                        time_series=time_series,
+                        station_code=bom_station,
+                        network_region=network_region.code,
+                    )
+                    all_monthly.append_set(weather_stats)
+                except Exception:
+                    pass
 
     write_output("v3/stats/au/all/monthly.json", all_monthly)
 
@@ -441,12 +452,15 @@ def export_all_daily() -> None:
             bom_station = get_network_region_weather_station(network_region.code)
 
             if bom_station:
-                weather_stats = weather_daily(
-                    time_series=time_series,
-                    station_code=bom_station,
-                    network_region=network_region.code,
-                )
-                stat_set.append_set(weather_stats)
+                try:
+                    weather_stats = weather_daily(
+                        time_series=time_series,
+                        station_code=bom_station,
+                        network_region=network_region.code,
+                    )
+                    stat_set.append_set(weather_stats)
+                except Exception:
+                    pass
 
             if cpi:
                 stat_set.append_set(cpi)
