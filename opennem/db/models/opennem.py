@@ -68,8 +68,8 @@ class Feedback(Base):
     description = Column(Text, nullable=True)
     email = Column(Text, nullable=True)
     twitter = Column(Text, nullable=True)
-    user_ip = Column(Text, nullable=False)
-    user_agent = Column(Text, nullable=False)
+    user_ip = Column(Text, nullable=True)
+    user_agent = Column(Text, nullable=True)
     alert_sent = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
