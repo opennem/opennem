@@ -334,7 +334,7 @@ def get_scada_range(
     network_region_query = ""
 
     if network_region:
-        network_region_query = f"f.network_region = '{network_region.code}' and"
+        network_region_query = f"f.network_region = '{network_region}' and"
 
     facility_query = ""
 
