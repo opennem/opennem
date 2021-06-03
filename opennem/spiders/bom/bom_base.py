@@ -16,7 +16,7 @@ class BomJSONObservationSpider(scrapy.Spider):
     station_id: Optional[str] = None
 
     custom_settings = {
-        "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90",
+        "USER_AGENT": "Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/537.38 (KHTML, like Gecko) Chrome/91",
     }
 
     def parse(self, response: Any) -> Generator[Dict[str, Any], None, None]:
