@@ -312,7 +312,7 @@ def get_scada_range(
     """
 
     network_query = ""
-    timezone = network.timezone_database or "UTC"
+    timezone = network.timezone_database if network else "UTC"
     field_name = "generated"
 
     if network and network.code in ["WEM"]:
