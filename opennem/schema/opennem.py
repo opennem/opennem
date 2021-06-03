@@ -224,7 +224,6 @@ def as_nem_timezone(dt: datetime) -> Optional[datetime]:
     if dt:
         return datetime_add_network_timezone(dt, NetworkNEM)
 
-    logger.error("Require a date for nem timezone")
     return None
 
 
