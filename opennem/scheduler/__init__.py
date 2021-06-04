@@ -17,6 +17,7 @@ from opennem.api.export.tasks import (
 )
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.aemo_intervals import aemo_wem_live_interval
+from opennem.monitors.database import check_database_live
 from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
@@ -133,6 +134,11 @@ def monitor_wem_interval() -> None:
 @huey.lock_task("monitor_emission_factors")
 def monitor_emission_factors() -> None:
     alert_missing_emission_factors()
+
+
+@huey.periodic_task(crontab(hour="*", minute="*/30"))
+def monitor_database() -> None:
+    check_database_live()
 
 
 # worker tasks
