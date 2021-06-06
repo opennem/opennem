@@ -1302,7 +1302,7 @@
           "label": "Operating"
         },
         "station_id": null,
-        "code": "",
+        "code": "BANGOWF2",
         "network_code": "BANGOWF2",
         "scada_power": null,
         "dispatch_type": "GENERATOR",
