@@ -40,6 +40,6 @@ def write_output(
     if is_local:
         byte_count = write_to_local(path, write_content)
     else:
-        byte_count = write_to_s3(path, write_content)
+        byte_count = write_to_s3(stat_set, path)
 
     return byte_count
