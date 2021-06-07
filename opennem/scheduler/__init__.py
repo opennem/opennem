@@ -160,7 +160,7 @@ def db_facility_seen_update() -> None:
 
 
 # spider tasks
-@huey.periodic_task(crontab(hour="23", minute="55"))
+@huey.periodic_task(crontab(hour="*/4", minute="55"))
 @huey.lock_task("schedule_spider_catchup_tasks")
 def spider_catchup_tasks() -> None:
     catchup_spiders = [
