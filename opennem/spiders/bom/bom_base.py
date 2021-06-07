@@ -15,9 +15,11 @@ class BomJSONObservationSpider(scrapy.Spider):
 
     station_id: Optional[str] = None
 
-    custom_settings = {
-        "USER_AGENT": "Mozilla/5.0 AppleWebKit/0 (KHTML, like Gecko) Chrome/89",
-    }
+    random_user_agent: bool = True
+
+    # custom_settings = {
+    #     "USER_AGENT": "Mozilla/5.0 AppleWebKit/0 (KHTML, like Gecko) Chrome/89",
+    # }
 
     def parse(self, response: Any) -> Generator[Dict[str, Any], None, None]:
         json_response = json.loads(response.text)
