@@ -67,6 +67,7 @@ SQLAlchemy = "^1.4.15"
 requests-cache = "^0.6.3"
 twilio = "^6.59.0"
 py-trello = "^0.18.0"
+fake-useragent = "^0.1.11"
 
 [tool.poetry.dev-dependencies]
 mysqlclient = "^2.0.3"
