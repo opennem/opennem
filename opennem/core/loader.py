@@ -11,6 +11,7 @@ from typing import Any, List, Optional
 logger = logging.getLogger("opennem.core.loader")
 
 MODULE_PATH = Path(os.path.dirname(sys.modules["opennem"].__file__))
+PROJECT_ROOT = MODULE_PATH.parent
 DATA_PATH = "core/data"
 FIXTURE_PATH = "db/fixtures"
 SETTINGS_PATH = "settings"
