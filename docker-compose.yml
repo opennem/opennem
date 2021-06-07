@@ -10,7 +10,7 @@ services:
     restart: on-failure
 
   scrapyd:
-    image: opennem/scrapyd
+    image: docker.pkg.github.com/opennem/scrapyd/scrapyd
     restart: unless-stopped
     command: scrapyd --pidfile /tmp/scrapyd.pid
     volumes:
