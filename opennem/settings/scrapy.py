@@ -36,9 +36,7 @@ DNS_TIMEOUT = 10
 # SPIDER_MODULES = ["opennem.spiders"]
 SPIDER_LOADER_WARN_ONLY = True
 
-EXTENSIONS = {
-    "opennem.extensions.spider_store_meta.ExtensionSpiderStoreMeta": 200,
-}
+EXTENSIONS = {"opennem.middlewares.spider_store_meta.ExtensionSpiderStoreMeta": 200}
 
 # Pipline docs:
 # 1xx series - download handlers
