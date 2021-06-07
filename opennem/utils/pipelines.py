@@ -1,3 +1,37 @@
+"""
+OpenNEM Spider Pipeline Module
+
+
+This is a custom module for scrapy that allows you to set custom pipelines
+to execute. By default scrapy will pass a crawler through every pipeline
+step.
+
+The pipelines you want to execute should be included as a set. You can
+set them using the pipelines or pipelines_extra class property on the
+spider.
+
+ex.
+
+In [9]: class ExampleSpider(Spider):
+   ...:     name = "spider.test"
+   ...:     pipelines = set([LinkExtract])
+   ...:
+
+The pipelines process_item method need to be wrapped in check_spider_pipeline
+
+ex.
+
+```
+In [6]: class NemwebUnitScadaOpenNEMStorePipeline(object):
+   ...:     @check_spider_pipeline
+   ...:     def process_item(self, item: Dict[str, Any], spider=None) -> List:
+   ...:         pass
+   ...:
+```
+
+With no wrapping it will execute the pipeline per normal scrapy behavior.
+"""
+
 import functools
 import logging
 from typing import Any, Callable, Dict
