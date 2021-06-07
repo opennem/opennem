@@ -2,7 +2,7 @@
   "files.exclude": {
     "**/__pycache__/": true,
     ".venv": true,
-    "build": true,
+    "**/build": true,
     "dist": true,
     ".idea": true,
     ".benchmarks": true,
