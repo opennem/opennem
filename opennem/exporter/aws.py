@@ -109,7 +109,7 @@ def write_to_s3(content: str, file_path: str, content_type: str = "application/j
     if not settings.s3_bucket_path:
         raise Exception("Require an S3 bucket to write to")
 
-    s3bucket = OpennemDataSetSerializeS3(settings.s3_bucket_path, exclude_unset=exclude_unset)
+    s3bucket = OpennemDataSetSerializeS3(settings.s3_bucket_path)
     write_response = None
 
     try:
