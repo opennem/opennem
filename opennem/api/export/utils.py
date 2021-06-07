@@ -7,7 +7,8 @@ import logging
 
 from pydantic.main import BaseModel
 
-from opennem.exporter.aws import write_to_s3
+from opennem.api.stats.schema import OpennemDataSet
+from opennem.exporter.aws import write_statset_to_s3, write_to_s3
 from opennem.exporter.local import write_to_local
 from opennem.settings import settings
 
@@ -39,7 +40,13 @@ def write_output(
 
     if is_local:
         byte_count = write_to_local(path, write_content)
-    else:
+    elif isinstance(stat_set, str):
         byte_count = write_to_s3(stat_set, path)
+    elif isinstance(stat_set, OpennemDataSet):
+        byte_count = write_statset_to_s3(stat_set, path)
+    elif isinstance(stat_set, BaseModel):
+        byte_count = write_to_s3(write_content, path)
+    else:
+        raise Exception("Do not know how to write content of this type to output")
 
     return byte_count
