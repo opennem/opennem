@@ -28,13 +28,13 @@ if [[ $# -eq 0 ]] ; then
 else
   echo "Building docker release"
 
-  docker build -f infra/container/Dockerfile -t opennem/opennem_backend:$VERSION .
-  docker tag  opennem/opennem_backend:$VERSION opennem/opennem_backend
-  docker push opennem/opennem_backend:$VERSION opennem/opennem_backend
+  # docker build -f infra/container/Dockerfile -t opennem/opennem_backend:$VERSION .
+  # docker tag  opennem/opennem_backend:$VERSION opennem/opennem_backend
+  # docker push opennem/opennem_backend:$VERSION opennem/opennem_backend
 
   echo "Deploying crawler to prod"
 
-  scrapyd-deploy prod
+  # scrapyd-deploy prod
 fi
 
 scrapyd-deploy dev
