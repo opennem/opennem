@@ -23,7 +23,12 @@ def _get_twilio_client() -> Optional[TwilioClient]:
         logger.error("No twilio account setup on environment {}".format(settings.env))
         return None
 
-    _tc = TwilioClient(settings.twilio_sid, settings.twilio_auth_token)
+    _tc = None
+
+    try:
+        _tc = TwilioClient(settings.twilio_sid, settings.twilio_auth_token)
+    except Exception as e:
+        logger.error("Could not initiate Twilio client: {}".format(e))
 
     return _tc
 
