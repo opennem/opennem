@@ -11,8 +11,6 @@ from opennem.settings import settings
 
 logger = logging.getLogger("opennem.notifications.twilio")
 
-twilio_client = TwilioClient(settings.twilio_sid, settings.twilio_auth_token)
-
 
 def _get_twilio_client() -> Optional[TwilioClient]:
     """Creates and returns a Twilio REST API client using opennem
