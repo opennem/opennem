@@ -118,6 +118,8 @@ email-validator==1.1.2; python_full_version >= "3.6.1" and python_version >= "3.
 et-xmlfile==1.1.0; python_version >= "3.6" \
     --hash=sha256:a2ba85d1d6a74ef63837eed693bcb89c3f752169b0e3e7ae5b16ca5e1b3deada \
     --hash=sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c
+fake-useragent==0.1.11 \
+    --hash=sha256:c104998b750eb097eefc28ae28e92d66397598d2cf41a31aa45d5559ef1adf35
 fastapi==0.65.1; python_version >= "3.6" \
     --hash=sha256:7619282fbce0ec53c7dfa3fa262280c00ace9f6d772cfd06e4ab219dce66985e \
     --hash=sha256:478b7e0cbb52c9913b9903d88ae14195cb8a479c4596e0b2f2238d317840a7dc
