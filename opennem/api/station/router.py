@@ -145,6 +145,6 @@ def station(
         )
 
     if station.facilities:
-        station.network = station.facilities[0].network_id
+        station.network = station.facilities[0].network_id  # type: ignore
 
     return station
