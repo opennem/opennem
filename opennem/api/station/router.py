@@ -119,7 +119,7 @@ def station(
     station_code: str,
     session: Session = Depends(get_database_session),
     only_generators: bool = Query(True, description="Show only generators"),
-) -> StationOutputSchema:
+) -> Station:
 
     station_query = (
         session.query(Station)
