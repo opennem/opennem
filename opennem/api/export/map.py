@@ -27,6 +27,7 @@ from opennem.db import SessionLocal
 from opennem.db.models.opennem import Network
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill
 from opennem.schema.time import TimeInterval, TimePeriod
+from opennem.utils.dates import week_series
 from opennem.utils.version import VersionPart, get_version
 
 logger = logging.getLogger(__name__)
@@ -223,6 +224,19 @@ def get_export_map() -> StatMetadata:
 
         _exmap.append(export)
 
+        for year, week in week_series(scada_range.end, scada_range.start):
+            export = StatExport(
+                stat_type=StatType.power,
+                priority=PriorityType.history,
+                country=country,
+                network=NetworkAU,
+                networks=[NetworkNEM, NetworkWEM],
+                year=year,
+                week=week,
+                date_range=date_range_from_week(year, week, NetworkAU),
+            )
+            _exmap.append(export)
+
         for year in range(
             datetime.now().year,
             scada_range.start.year - 1,
@@ -292,6 +306,23 @@ def get_export_map() -> StatMetadata:
 
         if not scada_range:
             raise Exception("Require a scada range for network: {}".format(network.code))
+
+        for year, week in week_series(scada_range.end, scada_range.start):
+            export = StatExport(
+                stat_type=StatType.power,
+                priority=PriorityType.history,
+                country=network.country,
+                network=network_schema,
+                year=year,
+                week=week,
+                date_range=date_range_from_week(year, week, NetworkAU),
+            )
+
+            if network.code == "WEM":
+                export.networks = [NetworkWEM, NetworkAPVI]
+                export.network_region_query = "WEM"
+
+            _exmap.append(export)
 
         for year in range(
             datetime.now().year,
