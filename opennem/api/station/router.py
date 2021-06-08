@@ -144,6 +144,7 @@ def station(
             detail="Station has no facilities",
         )
 
-    station.network = station.facilities[0].network_id
+    if station.facilities:
+        station.network = station.facilities[0].network_id
 
     return station
