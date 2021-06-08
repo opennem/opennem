@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 from typing import List, Optional
 
@@ -47,6 +47,23 @@ class PriorityType(Enum):
     daily = 2
     monthly = 3
     history = 4
+
+
+def date_range_from_week(
+    year: int, week: int, network: Optional[NetworkSchema] = None
+) -> ScadaDateRange:
+    """
+    Get a scada date range from week number with
+    network awareness
+    """
+    start_date_str = f"{year}-W{week - 1}-1"
+    start_date_dt = datetime.strptime(start_date_str, "%Y-W%W-%w")
+
+    end_date = start_date_dt + timedelta(days=7)
+
+    scada_range = ScadaDateRange(start=start_date_dt, end=end_date, network=network)
+
+    return scada_range
 
 
 def priority_from_name(priority_name: str) -> PriorityType:
