@@ -77,6 +77,24 @@ def schedule_export_all_monthly() -> None:
         slack_message("Finished running export_all_monthly on {}".format(settings.env))
 
 
+@huey.periodic_task(crontab(hour="*/12", minute="19"))
+@huey.lock_task("schedule_power_weeklies")
+def schedule_power_weeklies() -> None:
+    """
+    Run weekly power outputs
+    """
+    export_power(priority=PriorityType.history, latest=True)
+
+
+@huey.periodic_task(crontab(hour="12", minute="15"))
+@huey.lock_task("schedule_power_weeklies_archive")
+def schedule_power_weeklies_archive() -> None:
+    """
+    Run weekly power outputs entire archive
+    """
+    export_power(priority=PriorityType.history)
+
+
 @huey.periodic_task(crontab(hour="*/1", minute="15, 45"), priority=50)
 @huey.lock_task("schedule_hourly_tasks")
 def schedule_hourly_tasks() -> None:
