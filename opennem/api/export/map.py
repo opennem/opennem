@@ -50,7 +50,7 @@ class PriorityType(Enum):
 
 
 def priority_from_name(priority_name: str) -> PriorityType:
-    """ Get the PriorityType enum def from a priority string name """
+    """Get the PriorityType enum def from a priority string name"""
     priority_names = [i.name for i in PriorityType]
 
     if priority_name not in priority_names:
@@ -185,7 +185,7 @@ def get_export_map() -> StatMetadata:
         scada_range = get_scada_range(network=NetworkAU, networks=[NetworkNEM, NetworkWEM])
 
         if not scada_range:
-            raise Exception("Require a scada range")
+            raise Exception("Require a scada range for NetworkAU")
 
         export = StatExport(
             stat_type=StatType.power,
@@ -274,7 +274,7 @@ def get_export_map() -> StatMetadata:
         _exmap.append(export)
 
         if not scada_range:
-            raise Exception("Require a scada range")
+            raise Exception("Require a scada range for network: {}".format(network.code))
 
         for year in range(
             datetime.now().year,
@@ -331,7 +331,11 @@ def get_export_map() -> StatMetadata:
             bom_station = get_network_region_weather_station(region.code)
 
             if not scada_range:
-                raise Exception("Require a scada range")
+                raise Exception(
+                    "Require a scada range for network {} and region {}".format(
+                        network_schema.code, region
+                    )
+                )
 
             export = StatExport(
                 stat_type=StatType.power,
