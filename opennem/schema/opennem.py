@@ -228,6 +228,9 @@ def as_nem_timezone(dt: datetime) -> Optional[datetime]:
 
 
 def _flatten_linked_object(value: Union[str, Dict, object]) -> str:
+    if not value:
+        return ""
+
     if isinstance(value, str):
         return value
 
