@@ -457,7 +457,7 @@ class StationSchema(BaseConfig):
 
 
 class StationOutputSchema(BaseConfig):
-    id: Optional[int]
+    id: int
 
     code: str
 
