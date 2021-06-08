@@ -235,6 +235,7 @@ def get_export_map() -> StatMetadata:
                 week=week,
                 date_range=date_range_from_week(year, week, NetworkAU),
                 interval=human_to_interval("30m"),
+                period=human_to_period("7d"),
             )
             _exmap.append(export)
 
@@ -318,6 +319,7 @@ def get_export_map() -> StatMetadata:
                 week=week,
                 date_range=date_range_from_week(year, week, NetworkAU),
                 interval=human_to_interval(f"{network.interval_size}m"),
+                period=human_to_period("7d"),
             )
 
             if network.code == "WEM":
