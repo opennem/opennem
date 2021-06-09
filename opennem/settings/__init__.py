@@ -25,9 +25,12 @@ from opennem.settings.log import LOGGING_CONFIG
 from opennem.settings.utils import load_env_file
 from opennem.utils.proc import running_as_scrapy
 
-logging.getLogger().setLevel(logging.INFO)
+from .schema import OpennemSettings  # noqa: E402
 
-from .schema import OpennemSettings
+__root_logger = logging.getLogger()
+__root_logger.setLevel(logging.INFO)
+__root_logger_formatter = logging.Formatter(fmt="[%(levelname)8s] %(message)s")
+__root_logger.handlers[0].setFormatter(__root_logger_formatter)
 
 MODULE_DIR = os.path.dirname(__file__)
 
