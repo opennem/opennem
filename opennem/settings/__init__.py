@@ -19,9 +19,12 @@ from pathlib import Path
 # @NOTE load first external deps in an exception block so that we can catch if the ENV is loaded and be friendly
 try:
     from dotenv import load_dotenv
+    from pydantic import ValidationError
 except ImportError:
     logging.error("Could not load required modules. Likely virtualenv not active or installed.")
     sys.exit(-1)
+
+from pydantic.error_wrappers import _display_error_loc, _display_error_type_and_ctx
 
 from opennem.settings.log import LOGGING_CONFIG
 from opennem.settings.utils import load_env_file
@@ -47,6 +50,7 @@ logging.info(f"Loading OpenNEM ENV {ENV}")
 
 env_files = load_env_file(ENV)
 
+
 # Load the env files
 # @TODO add logging
 for _env_file in env_files:
@@ -55,7 +59,23 @@ for _env_file in env_files:
     load_dotenv(dotenv_path=_env_file, override=True)
 
 # @NOTE don't use pydantics env file support since it doesn't support multiple
-settings: OpennemSettings = OpennemSettings()
+try:
+    settings: OpennemSettings = OpennemSettings()
+except ValidationError as e:
+    logging.error("{} validation errors in settings schema".format(len(e.errors())))
+
+    for err_no, _validation_error in enumerate(e.errors()):
+        logging.error(
+            f'{_display_error_loc(_validation_error)}: {_validation_error["msg"]} ({_display_error_type_and_ctx(_validation_error)})'
+        )
+
+    try:
+        logging.info("Exiting")
+        sys.exit(-1)
+    except Exception:
+        pass
+
+    do_exit = True
 
 
 # skip if the current cli is scrapy
