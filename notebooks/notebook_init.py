@@ -10,7 +10,7 @@ from pathlib import Path
 logger = logging.getLogger("opennem.notebook")
 
 warnings.filterwarnings("ignore")
-logging.getLogger().setLevel(logging.ERROR)
+logging.getLogger().setLevel(logging.INFO)
 logging.getLogger("matplotlib").setLevel(logging.WARNING)
 
 on_path = str(Path.cwd().parent)
