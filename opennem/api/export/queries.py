@@ -348,7 +348,7 @@ def power_network_fueltech_query(
 
     fueltechs_excluded = ["exports", "imports", "interconnector"]
 
-    if NetworkNEM in networks_query:
+    if NetworkNEM in networks_query or NetworkWEM in networks_query:
         fueltechs_excluded.append("solar_rooftop")
 
     if network_region:
