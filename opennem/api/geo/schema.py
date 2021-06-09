@@ -1,4 +1,13 @@
-from typing import Dict, List, Optional, Union
+"""
+OpenNEM GeoJSON Output Schema
+
+Utiizes the geojson_pydantic package to create the GeoJSON outputs as
+pydantic schemas that can be output by the api
+
+Customisation is that our Facility Schemas have optional geometries
+rather than required.
+"""
+from typing import Dict, List, Optional, Sequence, Union
 
 from geojson_pydantic.features import Feature, FeatureCollection
 from geojson_pydantic.geometries import (
@@ -12,9 +21,7 @@ from geojson_pydantic.geometries import (
 )
 from pydantic import BaseModel
 
-Geometry = Union[
-    Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
-]
+Geometry = Union[Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon]
 
 
 class FacilityGeoBase(BaseModel):
@@ -23,19 +30,18 @@ class FacilityGeoBase(BaseModel):
 
 
 class FacilityGeometryCollection(FacilityGeoBase, GeometryCollection):
-    geometries: Optional[List[Geometry]]
+    geometries: List[Geometry]
 
 
 class FacilityFeature(Feature):
     """
-        Update to default to GeometryCollection
+    Update to default to GeometryCollection
     """
 
-    geometry: Optional[Geometry]
+    geometry: Optional[Geometry]  # type: ignore
 
 
 class FacilityGeo(FacilityGeoBase, FeatureCollection):
     name: str = "opennem"
     crs: Optional[Dict]
-    features: List[FacilityFeature]
-
+    features: Sequence[FacilityFeature]  # type: ignore
