@@ -127,7 +127,7 @@ try:
         name="static",
     )
 except Exception as e:
-    logger.error("Error initializing static hosting: {}".format(e))
+    logger.info("Error initializing static hosting: {}".format(e))
 
 
 @app.get("/robots.txt", response_class=FileResponse, include_in_schema=False)
