@@ -385,7 +385,7 @@ def get_export_map() -> StatMetadata:
             if not scada_range:
                 raise Exception(
                     "Require a scada range for network {} and region {}".format(
-                        network_schema.code, region
+                        network_schema.code, region.code
                     )
                 )
 
