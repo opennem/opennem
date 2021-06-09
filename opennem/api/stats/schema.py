@@ -208,18 +208,23 @@ class OpennemDataSet(BaseConfig):
     # pylint: disable=no-self-argument
     @validator("data")
     def validate_data_unique(cls, value: List[OpennemData]) -> List[OpennemData]:
+        """Validate the data being set to make sure there are no duplicate ids"""
         _id_values = [i.id for i in value]
 
         if len(_id_values) != len(set(_id_values)):
             # find the ids that are not unique
-            _duplicate_msg = ""
-            _id_duplicates = [item for item, count in Counter(_id_values).items() if count > 1]
+            _msg = ""
+            _id_duplicates = [
+                item
+                for item, count in Counter(_id_values).items()
+                if count > 1 and isinstance(item, str)
+            ]
 
             if _id_duplicates:
-                _duplicate_msg = ", ".join(_id_duplicates)
+                _msg = ", ".join(_id_duplicates)
 
             raise ValueError(
-                f"OpennemDataSet has duplicate id{'s' if len(_duplicate_msg) > 1 else ''}: {_duplicate_msg}"
+                f"OpennemDataSet has duplicate id{'s' if len(_id_duplicates) > 1 else ''}: {_msg}"
             )
 
         return value
