@@ -1,5 +1,4 @@
 import logging
-from datetime import timedelta
 from typing import List, Optional
 
 from opennem.api.exceptions import OpennemBaseHttpException
