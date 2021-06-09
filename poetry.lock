@@ -405,7 +405,7 @@ pyflakes = ">=2.3.0,<2.4.0"
 
 [[package]]
 name = "geoalchemy2"
-version = "0.8.5"
+version = "0.9.0"
 description = "Using SQLAlchemy with Spatial Databases"
 category = "main"
 optional = false
@@ -2110,7 +2110,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "887c9100a887fed1aad80c0cbd1f17e055cdf865cbcb95733fc49d557dedc1ca"
+content-hash = "c833f0354e66b7350f08b679f88016ef26704b118c8f637de25e54c4e71af3ef"
 
 [metadata.files]
 alembic = [
@@ -2317,8 +2317,8 @@ flake8 = [
     {file = "flake8-3.9.2.tar.gz", hash = "sha256:07528381786f2a6237b061f6e96610a4167b226cb926e2aa2b6b1d78057c576b"},
 ]
 geoalchemy2 = [
-    {file = "GeoAlchemy2-0.8.5-py2.py3-none-any.whl", hash = "sha256:56dff13365ac2ea5ab828a697e240984f7ac448a32a3feba25356b4aa8e24d34"},
-    {file = "GeoAlchemy2-0.8.5.tar.gz", hash = "sha256:567e105e6b0d5fd94a5a869d358b0c47956570bb3f3d19e98086344b1abefed8"},
+    {file = "GeoAlchemy2-0.9.0-py2.py3-none-any.whl", hash = "sha256:5e54d979d49574e176b5eef6a9e7ab0d217a9f1098071dd578dbddc4b1f7ad9d"},
+    {file = "GeoAlchemy2-0.9.0.tar.gz", hash = "sha256:c32023bc2fb8fbb136f00a0e9c2feba21f3e1040af0f619c888661f6ee72dd28"},
 ]
 geojson = [
     {file = "geojson-2.5.0-py2.py3-none-any.whl", hash = "sha256:ccbd13368dd728f4e4f13ffe6aaf725b6e802c692ba0dde628be475040c534ba"},
