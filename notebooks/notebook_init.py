@@ -11,6 +11,8 @@ from opennem.settings import settings  # noqa
 
 logger = logging.getLogger("opennem.notebook")
 
+__all__ = ["settings", "logging", "logger"]
+
 warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.INFO)
 logging.getLogger("matplotlib").setLevel(logging.WARNING)
