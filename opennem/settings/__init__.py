@@ -14,6 +14,7 @@ import logging
 import logging.config
 import os
 import sys
+from pathlib import Path
 
 try:
     from dotenv import load_dotenv
@@ -43,6 +44,8 @@ env_files = load_env_file(ENV)
 # Load the env files
 # @TODO add logging
 for _env_file in env_files:
+    _env_full_path = Path(_env_file).resolve()
+    logging.info("Loading env file: {}".format(_env_full_path))
     load_dotenv(dotenv_path=_env_file, override=True)
 
 # @NOTE don't use pydantics env file support since it doesn't support multiple
