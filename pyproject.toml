@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem-backend"
-version = "3.7.3-alpha.1"
+version = "3.7.3-alpha.2"
 description = "OpenNEM Australian Energy Data Backend"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 license = "MIT"
@@ -49,7 +49,7 @@ pillow = "^8.0.1"
 python-dateutil = "^2.8.1"
 python-dotenv = "^0.17.1"
 Pint = "^0.17"
-geojson-pydantic = "^0.2.1"
+geojson-pydantic = "^0.3.0"
 tomlkit = "^0.7.0"
 validators = "^0.18.1"
 smart-open = {extras = ["s3"], version = "^5.0.0"}
