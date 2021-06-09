@@ -31,7 +31,12 @@ from .schema import OpennemSettings  # noqa: E402
 
 __root_logger = logging.getLogger()
 __root_logger.setLevel(logging.INFO)
-__root_logger_formatter = logging.Formatter(fmt="[%(levelname)8s] %(message)s")
+__root_logger_formatter = logging.Formatter(fmt=" * %(levelname)s %(message)s")
+num_handlers = len(__root_logger.handlers)
+
+if num_handlers == 0:
+    __root_logger.addHandler(logging.StreamHandler())
+
 __root_logger.handlers[0].setFormatter(__root_logger_formatter)
 
 MODULE_DIR = os.path.dirname(__file__)
