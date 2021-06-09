@@ -25,13 +25,15 @@ from opennem.settings.log import LOGGING_CONFIG
 from opennem.settings.utils import load_env_file
 from opennem.utils.proc import running_as_scrapy
 
+logging.getLogger().setLevel(logging.INFO)
+
 from .schema import OpennemSettings
 
 MODULE_DIR = os.path.dirname(__file__)
 
 ENV = os.getenv("ENV", default="development")
 
-logging.debug(f"Loading ENV {ENV}")
+logging.info(f"Loading OpenNEM ENV {ENV}")
 
 env_files = load_env_file(ENV)
 
