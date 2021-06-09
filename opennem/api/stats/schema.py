@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from datetime import date, datetime
 from decimal import Decimal
 from math import isnan
@@ -24,6 +25,10 @@ from opennem.utils.timezone import get_current_timezone
 def optionaly_lowercase_string(value: str) -> str:
     """Read from settings if we want output schema string
     values to be lowercased or not and perform"""
+
+    if not value:
+        raise ValueError("Require a value to lowercase")
+
     if settings.schema_output_lowercase_strings:
         value = value.lower()
 
@@ -167,6 +172,15 @@ class OpennemDataSet(BaseConfig):
 
     data: List[OpennemData] = []
 
+    # Properties
+    @property
+    def ids(self) -> List[str]:
+        """Return a list of data ids in this data set"""
+        id_list = [i.id for i in self.data if i.id and isinstance(i.id, str)]
+
+        return id_list
+
+    # Methods
     def append_set(self, subject_set: Optional[OpennemDataSet] = None) -> None:
         if not subject_set:
             return None
@@ -190,7 +204,26 @@ class OpennemDataSet(BaseConfig):
 
         return _ds.pop()
 
-    # validators
+    # Validators
+    # pylint: disable=no-self-argument
+    @validator("data")
+    def validate_data_unique(cls, value: List[OpennemData]) -> List[OpennemData]:
+        _id_values = [i.id for i in value]
+
+        if len(_id_values) != len(set(_id_values)):
+            # find the ids that are not unique
+            _duplicate_msg = ""
+            _id_duplicates = [item for item, count in Counter(_id_values).items() if count > 1]
+
+            if _id_duplicates:
+                _duplicate_msg = ", ".join(_id_duplicates)
+
+            raise ValueError(
+                f"OpennemDataSet has duplicate id{'s' if len(_duplicate_msg) > 1 else ''}: {_duplicate_msg}"
+            )
+
+        return value
+
     _version_fromstr = validator("created_at", allow_reuse=True, pre=True)(
         optionally_parse_string_datetime
     )
