@@ -383,11 +383,12 @@ def get_export_map() -> StatMetadata:
             bom_station = get_network_region_weather_station(region.code)
 
             if not scada_range:
-                raise Exception(
+                logger.error(
                     "Require a scada range for network {} and region {}".format(
                         network_schema.code, region.code
                     )
                 )
+                continue
 
             export = StatExport(
                 stat_type=StatType.power,
