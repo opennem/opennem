@@ -16,6 +16,7 @@ import os
 import sys
 from pathlib import Path
 
+# @NOTE load first external deps in an exception block so that we can catch if the ENV is loaded and be friendly
 try:
     from dotenv import load_dotenv
 except ImportError:
