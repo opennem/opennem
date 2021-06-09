@@ -137,20 +137,20 @@ webencodings = "*"
 
 [[package]]
 name = "boto3"
-version = "1.17.85"
+version = "1.17.90"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [package.dependencies]
-botocore = ">=1.20.85,<1.21.0"
+botocore = ">=1.20.90,<1.21.0"
 jmespath = ">=0.7.1,<1.0.0"
 s3transfer = ">=0.4.0,<0.5.0"
 
 [[package]]
 name = "botocore"
-version = "1.20.85"
+version = "1.20.90"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -366,7 +366,7 @@ pyrepl = ">=0.8.2"
 
 [[package]]
 name = "fastapi"
-version = "0.65.1"
+version = "0.65.2"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 category = "main"
 optional = false
@@ -539,7 +539,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "importlib-metadata"
-version = "4.4.0"
+version = "4.5.0"
 description = "Read metadata from Python packages"
 category = "dev"
 optional = false
@@ -573,7 +573,7 @@ python-versions = "*"
 
 [[package]]
 name = "ipython"
-version = "7.24.0"
+version = "7.24.1"
 description = "IPython: Productive Interactive Computing"
 category = "dev"
 optional = false
@@ -1357,7 +1357,7 @@ python-versions = "*"
 
 [[package]]
 name = "python-magic"
-version = "0.4.23"
+version = "0.4.24"
 description = "File type identification using libmagic"
 category = "main"
 optional = false
@@ -1451,7 +1451,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 
 [[package]]
 name = "requests-cache"
-version = "0.6.3"
+version = "0.6.4"
 description = "Persistent cache for requests library"
 category = "main"
 optional = false
@@ -1827,7 +1827,7 @@ test = ["pytest"]
 
 [[package]]
 name = "twilio"
-version = "6.59.0"
+version = "6.59.1"
 description = "Twilio API client and TwiML generator"
 category = "main"
 optional = false
@@ -2159,12 +2159,12 @@ bleach = [
     {file = "bleach-3.3.0.tar.gz", hash = "sha256:98b3170739e5e83dd9dc19633f074727ad848cbedb6026708c8ac2d3b697a433"},
 ]
 boto3 = [
-    {file = "boto3-1.17.85-py2.py3-none-any.whl", hash = "sha256:ee82c1a97de02bd4e295b8cad440093d57869892ee5b8941a851758c45944cd5"},
-    {file = "boto3-1.17.85.tar.gz", hash = "sha256:8352dffe768af9e1471323c8e443cc66a114891572bf832bec3cc2eec47838f6"},
+    {file = "boto3-1.17.90-py2.py3-none-any.whl", hash = "sha256:2ade860f66fa6b9a9886d7ff2e5118e5efebc4807b863ef735d358ef730234ed"},
+    {file = "boto3-1.17.90.tar.gz", hash = "sha256:bbf727d770a9844834bfbf3f811db1d3438320897f67cfb21cdca5bb8fc23c13"},
 ]
 botocore = [
-    {file = "botocore-1.20.85-py2.py3-none-any.whl", hash = "sha256:7f54fa67b45cf767e1e4045741674cfdc47a3f424fe6f37570ae3ff1ca1e1e2a"},
-    {file = "botocore-1.20.85.tar.gz", hash = "sha256:d8992096d9c04e7be331924a59677e591cce6a3c6bd3a4c8fe26b00700d5255a"},
+    {file = "botocore-1.20.90-py2.py3-none-any.whl", hash = "sha256:6ae4ff3405cc4fc69ff3673a8dd234bf869aa556ae1e0da050d7f2aa3c3edab6"},
+    {file = "botocore-1.20.90.tar.gz", hash = "sha256:b301810c4bd6cab1b6eaf6bfd9f25abb27959b586c2e1689bbce035b3fb8ae66"},
 ]
 cachetools = [
     {file = "cachetools-4.2.2-py3-none-any.whl", hash = "sha256:2cc0b89715337ab6dbba85b5b50effe2b0c74e035d83ee8ed637cf52f12ae001"},
@@ -2305,8 +2305,8 @@ fancycompleter = [
     {file = "fancycompleter-0.9.1.tar.gz", hash = "sha256:09e0feb8ae242abdfd7ef2ba55069a46f011814a80fe5476be48f51b00247272"},
 ]
 fastapi = [
-    {file = "fastapi-0.65.1-py3-none-any.whl", hash = "sha256:7619282fbce0ec53c7dfa3fa262280c00ace9f6d772cfd06e4ab219dce66985e"},
-    {file = "fastapi-0.65.1.tar.gz", hash = "sha256:478b7e0cbb52c9913b9903d88ae14195cb8a479c4596e0b2f2238d317840a7dc"},
+    {file = "fastapi-0.65.2-py3-none-any.whl", hash = "sha256:39569a18914075b2f1aaa03bcb9dc96a38e0e5dabaf3972e088c9077dfffa379"},
+    {file = "fastapi-0.65.2.tar.gz", hash = "sha256:8359e55d8412a5571c0736013d90af235d6949ec4ce978e9b63500c8f4b6f714"},
 ]
 filelock = [
     {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},
@@ -2414,8 +2414,8 @@ idna = [
     {file = "idna-2.10.tar.gz", hash = "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6"},
 ]
 importlib-metadata = [
-    {file = "importlib_metadata-4.4.0-py3-none-any.whl", hash = "sha256:960d52ba7c21377c990412aca380bf3642d734c2eaab78a2c39319f67c6a5786"},
-    {file = "importlib_metadata-4.4.0.tar.gz", hash = "sha256:e592faad8de1bda9fe920cf41e15261e7131bcf266c30306eec00e8e225c1dd5"},
+    {file = "importlib_metadata-4.5.0-py3-none-any.whl", hash = "sha256:833b26fb89d5de469b24a390e9df088d4e52e4ba33b01dc5e0e4f41b81a16c00"},
+    {file = "importlib_metadata-4.5.0.tar.gz", hash = "sha256:b142cc1dd1342f31ff04bb7d022492b09920cb64fed867cd3ea6f80fe3ebd139"},
 ]
 incremental = [
     {file = "incremental-21.3.0-py2.py3-none-any.whl", hash = "sha256:92014aebc6a20b78a8084cdd5645eeaa7f74b8933f70fa3ada2cfbd1e3b54321"},
@@ -2426,8 +2426,8 @@ iniconfig = [
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
 ]
 ipython = [
-    {file = "ipython-7.24.0-py3-none-any.whl", hash = "sha256:f86788eef439891438af3498525094cc2acbdbea4f2aa2f8895782d4ff471341"},
-    {file = "ipython-7.24.0.tar.gz", hash = "sha256:a171caa3d3d4c819a1c0742e3abecfd5a2b8ab525ca1c9f114b40b76b0679ab1"},
+    {file = "ipython-7.24.1-py3-none-any.whl", hash = "sha256:d513e93327cf8657d6467c81f1f894adc125334ffe0e4ddd1abbb1c78d828703"},
+    {file = "ipython-7.24.1.tar.gz", hash = "sha256:9bc24a99f5d19721fb8a2d1408908e9c0520a17fff2233ffe82620847f17f1b6"},
 ]
 ipython-genutils = [
     {file = "ipython_genutils-0.2.0-py2.py3-none-any.whl", hash = "sha256:72dd37233799e619666c9f639a9da83c34013a73e8bbc79a7a6348d93c61fab8"},
@@ -2938,8 +2938,8 @@ python-editor = [
     {file = "python_editor-1.0.4-py3.5.egg", hash = "sha256:c3da2053dbab6b29c94e43c486ff67206eafbe7eb52dbec7390b5e2fb05aac77"},
 ]
 python-magic = [
-    {file = "python-magic-0.4.23.tar.gz", hash = "sha256:88f71d04fde4318da32fa03930362f1c6127caa833614563fd53a0fd3438cc3e"},
-    {file = "python_magic-0.4.23-py2.py3-none-any.whl", hash = "sha256:3790dc06e5abf9d618d288adf831f159ca9a3872aac7bcb8b7008b4a08d9809c"},
+    {file = "python-magic-0.4.24.tar.gz", hash = "sha256:de800df9fb50f8ec5974761054a708af6e4246b03b4bdaee993f948947b0ebcf"},
+    {file = "python_magic-0.4.24-py2.py3-none-any.whl", hash = "sha256:4fec8ee805fea30c07afccd1592c0f17977089895bdfaae5fec870a84e997626"},
 ]
 pytz = [
     {file = "pytz-2021.1-py2.py3-none-any.whl", hash = "sha256:eb10ce3e7736052ed3623d49975ce333bcd712c7bb19a58b9e2089d4057d0798"},
@@ -3040,8 +3040,8 @@ requests = [
     {file = "requests-2.25.1.tar.gz", hash = "sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804"},
 ]
 requests-cache = [
-    {file = "requests-cache-0.6.3.tar.gz", hash = "sha256:0b9b5555b3b2ecda74a9aa5abd98174bc7332de2e1d32f9f8f056583b01d6e99"},
-    {file = "requests_cache-0.6.3-py2.py3-none-any.whl", hash = "sha256:6e28e461873415036ea383c2414691cf1164cb01391ad4c45b84b3ebf0fb9287"},
+    {file = "requests-cache-0.6.4.tar.gz", hash = "sha256:dd9120a4ab7b8128cba9b6b120d8b5560d566a3cd0f828cced3d3fd60a42ec40"},
+    {file = "requests_cache-0.6.4-py2.py3-none-any.whl", hash = "sha256:1102daa13a804abe23fad62d694e7dee58d6063a35d94bf6e8c9821e22e5a78b"},
 ]
 requests-oauthlib = [
     {file = "requests-oauthlib-1.3.0.tar.gz", hash = "sha256:b4261601a71fd721a8bd6d7aa1cc1d6a8a93b4a9f5e96626f8e4d91e8beeaa6a"},
@@ -3185,7 +3185,7 @@ traitlets = [
     {file = "traitlets-5.0.5.tar.gz", hash = "sha256:178f4ce988f69189f7e523337a3e11d91c786ded9360174a3d9ca83e79bc5396"},
 ]
 twilio = [
-    {file = "twilio-6.59.0.tar.gz", hash = "sha256:996946c6c6d156a2ca07a14d4aacfe300b67f881a44d651fba848f783edbe9fa"},
+    {file = "twilio-6.59.1.tar.gz", hash = "sha256:f6cdd2d814c8db411cc6e55145e48491c145af60f5c024e5582578039d0b9141"},
 ]
 twine = [
     {file = "twine-3.4.1-py3-none-any.whl", hash = "sha256:16f706f2f1687d7ce30e7effceee40ed0a09b7c33b9abb5ef6434e5551565d83"},
