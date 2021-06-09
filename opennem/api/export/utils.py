@@ -43,7 +43,9 @@ def write_output(
     elif isinstance(stat_set, str):
         byte_count = write_to_s3(stat_set, path)
     elif isinstance(stat_set, OpennemDataSet):
-        byte_count = write_statset_to_s3(stat_set, path)
+        byte_count = write_statset_to_s3(
+            stat_set, path, exclude_unset=exclude_unset, exclude=exclude
+        )
     elif isinstance(stat_set, BaseModel):
         byte_count = write_to_s3(write_content, path)
     else:
