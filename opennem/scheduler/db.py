@@ -10,7 +10,6 @@ from opennem.api.export.tasks import export_energy
 from opennem.db.tasks import refresh_material_views
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings  # noqa: F401
-from opennem.utils.dates import DATE_CURRENT_YEAR
 from opennem.workers.aggregates import run_aggregates_all
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.energy import run_energy_update_days
