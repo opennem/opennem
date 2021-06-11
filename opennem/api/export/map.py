@@ -379,7 +379,7 @@ def get_export_map() -> StatMetadata:
             continue
 
         for region in network.regions:
-            scada_range = get_scada_range(network=network_schema, network_region=region)
+            scada_range = get_scada_range(network=network_schema, network_region=region.code)
             bom_station = get_network_region_weather_station(region.code)
 
             if not scada_range:
