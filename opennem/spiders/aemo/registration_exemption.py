@@ -1,7 +1,12 @@
 from io import BytesIO
 
 import scrapy
-from openpyxl import load_workbook
+
+try:
+    from openpyxl import load_workbook
+except ImportError:
+    pass
+
 
 from opennem.pipelines.aemo.registration_exemption import (
     RegistrationExemptionGrouperPipeline,
@@ -9,7 +14,8 @@ from opennem.pipelines.aemo.registration_exemption import (
 )
 
 
-class AEMORegistrationExemptionListSpider(scrapy.Spider):
+class AEMORegistrationExemptionListSpider:
+    # class AEMORegistrationExemptionListSpider(scrapy.Spider):
     """
     Crawls the current AEMO registration and exemption spreadsheet
     and extracts participants and generators

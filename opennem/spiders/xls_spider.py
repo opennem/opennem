@@ -2,10 +2,13 @@ from io import BytesIO
 from itertools import groupby
 
 import scrapy
-from openpyxl import load_workbook
 
-
-class XLSSpider(scrapy.Spider):
+try:
+    from openpyxl import load_workbook
+except ImportError:
+    pass
+class XLSSpider():
+# class XLSSpider(scrapy.Spider):
     def start_requests(self):
         if not hasattr(self, "url"):
             raise Exception("Require URL param")
