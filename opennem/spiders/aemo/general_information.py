@@ -1,7 +1,9 @@
 from io import BytesIO
 
-import scrapy
-from openpyxl import load_workbook
+try:
+    from openpyxl import load_workbook
+except ImportError:
+    pass
 
 from opennem.pipelines.aemo.general_information import (
     GeneralInformationGrouperPipeline,
@@ -9,7 +11,8 @@ from opennem.pipelines.aemo.general_information import (
 )
 
 
-class AEMOGeneralInformationCurrentSpider(scrapy.Spider):
+# class AEMOGeneralInformationCurrentSpider(scrapy.Spider):
+class Spider:
     """
     Extracts station and unit data from the AEMO general information spreadsheet
 
@@ -48,9 +51,7 @@ class AEMOGeneralInformationCurrentSpider(scrapy.Spider):
         "SurveyEffective",
     ]
 
-    pipelines_extra = set(
-        [GeneralInformationGrouperPipeline, GeneralInformationStoragePipeline]
-    )
+    pipelines_extra = set([GeneralInformationGrouperPipeline, GeneralInformationStoragePipeline])
 
     def parse(self, response):
         wb = load_workbook(BytesIO(response.body), data_only=True)
