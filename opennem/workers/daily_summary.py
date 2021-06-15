@@ -5,12 +5,10 @@ and other stats per network
 import logging
 from datetime import datetime, timedelta
 from operator import attrgetter
-from pathlib import Path
 from textwrap import dedent
 from typing import List
 
 from datetime_truncate import truncate as date_trunc
-from mako.template import Template
 
 from opennem.core.templates import serve_template
 from opennem.db import get_database_engine
