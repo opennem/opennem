@@ -66,7 +66,8 @@ except ValidationError as e:
 
     for err_no, _validation_error in enumerate(e.errors()):
         logging.error(
-            f'{_display_error_loc(_validation_error)}: {_validation_error["msg"]} ({_display_error_type_and_ctx(_validation_error)})'
+            f'{_display_error_loc(_validation_error)}: {_validation_error["msg"]} \
+                ({_display_error_type_and_ctx(_validation_error)})'
         )
 
     try:
