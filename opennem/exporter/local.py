@@ -1,4 +1,3 @@
-import io
 import logging
 from io import BytesIO, StringIO
 from os import makedirs
@@ -11,9 +10,7 @@ from opennem.utils.mime import decode_bytes
 logger = logging.getLogger(__name__)
 
 
-def write_to_local(
-    file_path: str, data: Union[StringIO, bytes, BytesIO, str]
-) -> int:
+def write_to_local(file_path: str, data: Union[StringIO, bytes, BytesIO, str]) -> int:
     save_folder = settings.static_folder_path
 
     save_file_path = Path(save_folder) / file_path.lstrip("/")
