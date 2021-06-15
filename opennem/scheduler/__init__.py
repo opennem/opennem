@@ -154,7 +154,7 @@ def monitor_emission_factors() -> None:
     alert_missing_emission_factors()
 
 
-@huey.periodic_task(crontab(hour="*", minute="*/30"))
+@huey.periodic_task(crontab(hour="*", minute="*/1"))
 def monitor_database() -> None:
     check_database_live()
 
