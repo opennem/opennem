@@ -101,3 +101,4 @@ notebooks/data/
 *.ipynb
 notebooks/*.csv
 opennem/data/mms_stations.json
+notebooks/dmc_emissions.py
