@@ -83,9 +83,12 @@ def schedule_power_weeklies() -> None:
 @huey.lock_task("schedule_power_weeklies_archive")
 def schedule_power_weeklies_archive() -> None:
     """
-    Run weekly power outputs entire archive
+    Run weekly power outputs entire archive. Note that this is 8000+ files at the moment
+
+    @NOTE disabled as we will run manually
     """
-    export_power(priority=PriorityType.history)
+    # export_power(priority=PriorityType.history)
+    return None
 
 
 @huey.periodic_task(crontab(hour="*/1", minute="15, 45"), priority=50)
