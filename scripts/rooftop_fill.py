@@ -17,7 +17,7 @@ from opennem.core.normalizers import clean_float
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import AggregateFacilityDaily
 from opennem.schema.core import BaseConfig
-from opennem.settings import settings
+from opennem.settings import settings  # noqa: F401
 
 logger = logging.getLogger("opennem.scripts.rooftop_fill")
 
