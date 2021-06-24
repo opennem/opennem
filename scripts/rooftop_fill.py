@@ -7,7 +7,7 @@ Fill AEMO_ROOFTOP_BACKFILL network data with APVI derived data from v2
 
 import csv
 import logging
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Optional
 
@@ -20,6 +20,8 @@ from opennem.schema.core import BaseConfig
 from opennem.settings import settings
 
 logger = logging.getLogger("opennem.scripts.rooftop_fill")
+
+NEM_MIN_ROOFTOP_DATE = datetime.fromisoformat("2018-03-01T00:00:00+00")
 
 
 def _get_aemo_backfill_facility_id(network_region: str) -> str:
