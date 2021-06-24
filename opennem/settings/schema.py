@@ -21,6 +21,9 @@ class OpennemSettings(BaseSettings):
 
     log_level: str = "DEBUG"
 
+    # Set maintenance mode - workers won't run and API will return a MaintenanceMode response
+    maintenance_mode: bool = False
+
     # @NOTE pydantic settings assignment type mismatch from mypy
     # https://github.com/samuelcolvin/pydantic/issues/1490
     db_url: PostgresSqlAlchemyDsn = "postgresql://opennem:opennem@127.0.0.1:15433/opennem"  # type: ignore
