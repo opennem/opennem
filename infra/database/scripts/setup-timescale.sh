@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-# timescaledb-tune --quiet --yes
+timescaledb-tune --quiet --yes
 
