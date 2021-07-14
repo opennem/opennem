@@ -3102,7 +3102,7 @@
       }
     ],
     "photos": null,
-    "code": "KEP",
+    "code": "KENNEDY",
     "name": "Kennedy Energy Park",
     "network_name": "Kennedy Energy Park",
     "location": {
@@ -3338,5 +3338,94 @@
     "description": "",
     "wikipedia_link": null,
     "website_url": "https://kennedyenergypark.com.au/"
+  },
+  {
+    "code": "BULGANA",
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "battery_charging",
+          "label": "Battery (Charging)",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "BULBESL1",
+        "network_code": "BULBESL1",
+        "scada_power": null,
+        "dispatch_type": "LOAD",
+        "active": true,
+        "capacity_registered": 20,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "QLD1",
+        "unit_id": null,
+        "unit_number": 40,
+        "unit_alias": null,
+        "unit_capacity": 0.5,
+        "emissions_factor_co2": 0.0,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      },
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "battery_discharging",
+          "label": "Battery (Discharging)",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "BULBESG1",
+        "network_code": "BULBESG1",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 20.0,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "QLD1",
+        "unit_id": null,
+        "unit_number": 40,
+        "unit_alias": null,
+        "unit_capacity": 0.5,
+        "emissions_factor_co2": 0.0,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ]
   }
 ]
