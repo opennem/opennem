@@ -296,7 +296,7 @@ def import_facilities() -> None:
     logger.info("Opennem stations imported")
 
     mms_init()
-    logger.info("Opennem stations imported")
+    logger.info("MMS stations imported")
 
     rooftop_facilities()
     logger.info("Rooftop stations initialized")
