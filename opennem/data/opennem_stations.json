@@ -3048,5 +3048,129 @@
     "description": "Kennedy Energy Park is a world-first wind, solar and energy storage facility located in Flinders Shire in central north Queensland. The project is owned by Windlab and Eurus. Construction has commenced and it will be generating by late 2019.",
     "wikipedia_link": null,
     "website_url": "https://kennedyenergypark.com.au/"
+  },
+  {
+    "created_by": "opennem.stations",
+    "created_at": "2020-11-13T02:47:00.969029",
+    "id": 5092,
+    "participant": null,
+    "participant_id": null,
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "battery_charging",
+          "label": "Battery (Charging)",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "WANDBG1",
+        "network_code": "WANDBG1",
+        "scada_power": null,
+        "dispatch_type": "LOAD",
+        "active": true,
+        "capacity_registered": 123,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "QLD1",
+        "unit_id": null,
+        "unit_number": 6,
+        "unit_alias": null,
+        "unit_capacity": null,
+        "emissions_factor_co2": 0.0,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      },
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "battery_discharging",
+          "label": "Battery (Discharging)",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "WANDBG1",
+        "network_code": "WANDBG1",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 123.0,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "QLD1",
+        "unit_id": null,
+        "unit_number": null,
+        "unit_alias": null,
+        "unit_capacity": null,
+        "emissions_factor_co2": 0.0,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ],
+    "photos": null,
+    "code": "WANDBG",
+    "name": "Wandoan South BESS",
+    "network_name": "Wandoan South BESS",
+    "location": {
+      "created_by": null,
+      "created_at": "2021-11-13T02:47:00.969029",
+      "id": null,
+      "weather_station": null,
+      "weather_nearest": null,
+      "address1": "Gadsbys Rd",
+      "address2": "",
+      "locality": "Woleebee",
+      "state": "QLD",
+      "postcode": "4419",
+      "country": "au",
+      "geocode_approved": true,
+      "geocode_skip": false,
+      "geocode_processed_at": null,
+      "geocode_by": null,
+      "lat": -26.263986201894923,
+      "lng": 149.7728711343933
+    },
+    "location_id": null,
+    "approved": true,
+    "approved_by": null,
+    "approved_at": null,
+    "network": null,
+    "description": "The Wandoan South Battery Energy Storage System (BESS) Project is located near Wandoan, 400km north-west of Brisbane in the Darling Downs region. The BESS will have a discharge capacity of up to 100MW and store 150MWh of energy, which could power up to 57,000 average homes annually. It represents the first milestone of the Wandoan South Project to be developed across several stages.",
+    "wikipedia_link": null,
+    "website_url": "https://www.venaenergy.com.au/all_projects/wandoan-south-bess/"
   }
 ]
