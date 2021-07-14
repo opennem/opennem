@@ -95,6 +95,9 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime 
 
     logger.debug(result)
 
+    # @NOTE rooftop fix for double counts
+    run_rooftop_fix()
+
     return resp_code
 
 
@@ -159,6 +162,18 @@ def run_aggregate_days(days: int = 1, network: NetworkSchema = NetworkNEM) -> No
     date_min = today - timedelta(days=days)
 
     exec_aggregates_facility_daily_query(date_min, date_max)
+
+
+def run_rooftop_fix() -> None:
+    query = "delete from at_facility_daily where trading_day < '2018-03-01 00:00:00+00' and network_id='AEMO_ROOFTOP';"
+
+    engine = get_database_engine()
+
+    with engine.connect() as c:
+        logger.debug(query)
+
+        if not DRY_RUN:
+            c.execute(query)
 
 
 def run_aggregates_all() -> None:
