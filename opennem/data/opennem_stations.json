@@ -3206,8 +3206,8 @@
           "label": "Operating"
         },
         "station_id": null,
-        "code": "WANDBG1",
-        "network_code": "WANDBG1",
+        "code": "WANDBL1",
+        "network_code": "WANDBL1",
         "scada_power": null,
         "dispatch_type": "GENERATOR",
         "active": true,
