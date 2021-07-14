@@ -3040,8 +3040,8 @@
           "label": "Operating"
         },
         "station_id": null,
-        "code": "KEPBG1",
-        "network_code": "KEPBG1",
+        "code": "KEPBL1",
+        "network_code": "KEPBL1",
         "scada_power": null,
         "dispatch_type": "LOAD",
         "active": true,
