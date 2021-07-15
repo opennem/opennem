@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -exo pipefail
 
-pwd > .venv/lib/python3.8/site-packages/local.pth
+# set local path
+pwd > .venv/lib/python3.9/site-packages/local.pth
 
 if [ -z "$VIRTUAL_ENV" ]
 then
