@@ -21,7 +21,7 @@ class AEMOMonitorRelSpider(Spider):
 
     pipelines = set([DownloadMonitorPipeline])
 
-    def parse(self, response: Response) -> Dict[str, Any]:
+    def parse(self, response: Any) -> Dict[str, Any]:
 
         file_downloads = []
 
