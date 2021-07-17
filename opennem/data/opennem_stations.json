@@ -3469,5 +3469,78 @@
         "approved_at": null
       }
     ]
+  },
+  {
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "solar_utility",
+          "label": "Solar (Utility)",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "WAGGNSF1",
+        "network_code": "WAGGNSF1",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 55,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "NSW1",
+        "unit_id": null,
+        "unit_number": 34,
+        "unit_alias": null,
+        "unit_capacity": 1.411,
+        "emissions_factor_co2": 0.0,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ],
+    "photos": null,
+    "code": "WAGGNSF",
+    "name": "Wagga North",
+    "network_name": "Wagga North Solar Farm",
+    "location": {
+      "created_by": null,
+      "created_at": "2021-11-13T02:47:00.969029",
+      "id": null,
+      "weather_station": null,
+      "weather_nearest": null,
+      "address1": "E Bomen Rd",
+      "address2": "",
+      "locality": "Bomen",
+      "state": "NSW",
+      "postcode": "2650",
+      "country": "au",
+      "geocode_approved": true,
+      "geocode_skip": false,
+      "geocode_processed_at": null,
+      "geocode_by": null,
+      "lat": -35.069081178076296,
+      "lng": 147.43822726118572
+    },
+    "approved": true,
+    "description": "The Wagga Wagga Solar Farm site is located six kilometres from the town centre adjacent to the Bomen industrial zone. The project has been in development since 2017 and is currently in the early stages of construction.",
+    "wikipedia_link": null,
+    "website_url": "https://www.terrainsolar.com/wagga"
   }
 ]
