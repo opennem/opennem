@@ -8,7 +8,7 @@ from opennem.schema.opennem import OpennemErrorSchema
 
 
 class OpennemBaseHttpException(HTTPException):
-    """ Base OpenNEM Exception """
+    """Base OpenNEM Exception"""
 
     status_code = status.HTTP_404_NOT_FOUND
 
@@ -23,6 +23,11 @@ class ItemNotFound(OpennemBaseHttpException):
 
 class InvalidDateRange(OpennemBaseHttpException):
     status_code = status.HTTP_404_NOT_FOUND
+
+
+class MaintenanceMode(OpennemBaseHttpException):
+    status_code = status.HTTP_204_NO_CONTENT
+    detail = "Maintenance Mode"
 
 
 class OpennemExceptionResponse(Response):
