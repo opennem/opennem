@@ -25,7 +25,9 @@ def _get_trello_client() -> TrelloClient:
     return tc
 
 
-def post_trello_card(subject: str, description: Optional[str] = None) -> bool:
+def post_trello_card(
+    subject: str, email: Optional[str] = None, description: Optional[str] = None
+) -> bool:
     tc = _get_trello_client()
 
     feedback_board = tc.get_board(settings.feedback_trello_board_id)
@@ -52,7 +54,15 @@ def post_trello_card(subject: str, description: Optional[str] = None) -> bool:
 
     feedback_list: TrelloList = feedback_list_lookup.pop()
 
-    feedback_list.add_card(subject, desc=description, labels=[website_label])
+    full_description = ""
+
+    if email:
+        full_description = f"{email}\n\n"
+
+    if description:
+        full_description += f"{description}\n\n"
+
+    feedback_list.add_card(subject, desc=full_description, labels=[website_label])
 
     return True
 
