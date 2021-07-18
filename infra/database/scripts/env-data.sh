@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-POSTGRES_MAJOR_VERSION=12
+POSTGRES_MAJOR_VERSION=13
 POSTGIS_MAJOR=$(cat /tmp/pg_major_version.txt)
 POSTGIS_MINOR_RELEASE=$(cat /tmp/pg_minor_version.txt)
 DEFAULT_DATADIR="/var/lib/postgresql/${POSTGRES_MAJOR_VERSION}/main"
