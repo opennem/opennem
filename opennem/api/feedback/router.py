@@ -61,7 +61,9 @@ def feedback_submissions(
 
     try:
         trello_sent = post_trello_card(
-            subject=user_feedback.subject, description=user_feedback.description
+            subject=user_feedback.subject,
+            description=user_feedback.description,
+            email=user_feedback.email,
         )
     except Exception as e:
         logger.error(e)
