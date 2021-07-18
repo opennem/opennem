@@ -186,8 +186,6 @@ def fueltechs(
     if not fueltechs:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    print(fueltechs)
-
     return [FueltechSchema.from_orm(i) for i in fueltechs]
 
 
