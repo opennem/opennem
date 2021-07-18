@@ -186,7 +186,9 @@ def fueltechs(
     if not fueltechs:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    return fueltechs
+    print(fueltechs)
+
+    return [FueltechSchema.from_orm(i) for i in fueltechs]
 
 
 @app.get("/intervals", response_model=List[TimeInterval])
