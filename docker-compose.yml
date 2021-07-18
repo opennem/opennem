@@ -41,7 +41,7 @@ services:
       - mysql_data:/var/lib/mysql
 
   postgres:
-    image: opennem/database:dev
+    image: opennem/database:latest
     restart: unless-stopped
     env_file: ./.env
     environment:
