@@ -39,3 +39,5 @@ class DownloadMonitorPipeline(object):
                     dl.published_date, dl.filename, dl.source_url, dl.download_url
                 )
             )
+
+        return item
