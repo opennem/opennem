@@ -20,6 +20,7 @@ logger = logging.getLogger("opennem.spider.meta")
 
 class CrawlStatTypes(Enum):
     last_crawled = "last_crawled"
+    data = "data"
 
 
 def crawler_get_meta(spider: Spider, key: str) -> Union[str, datetime]:
