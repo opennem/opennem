@@ -1,5 +1,7 @@
+import logging
 from typing import Any, Dict
 
+from pydantic import ValidationError
 from scrapy import Spider
 from scrapy.http import Response
 
@@ -58,15 +60,19 @@ class AEMOMonitorRelSpider(Spider):
                 download_size, _ = filesize_from_string(download_size_raw)
 
             # create a model from the extracted fields
-            section_model = AEMOFileDownloadSection(
-                published_date=published_date,
-                filename=download_title,
-                download_url=publish_link,
-                file_size=download_size,
-                source_url=response.url,
-                source_title=source_title,
-            )
+            section_model = None
 
-            file_downloads.append(section_model)
+            try:
+                section_model = AEMOFileDownloadSection(
+                    published_date=published_date,
+                    filename=download_title,
+                    download_url=publish_link,
+                    file_size=download_size,
+                    source_url=response.url,
+                    source_title=source_title,
+                )
+                file_downloads.append(section_model)
+            except ValidationError as e:
+                self.log("Validation error: {}".format(e), logging.ERROR)
 
-        return {"items": file_downloads}
+        return {"_data": file_downloads, "items": file_downloads}
