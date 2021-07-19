@@ -5,9 +5,12 @@ Stores metadata about a spider crawl
 """
 
 import logging
+from datetime import datetime
 
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
+
+from opennem.core.crawlers.meta import CrawlStatTypes, crawler_set_meta
 
 logger = logging.getLogger("opennem.extensions.spider_store_meta")
 
@@ -43,6 +46,8 @@ class ExtensionSpiderStoreMeta:
 
     def spider_closed(self, spider):
         logger.info("closed spider %s", spider.name)
+
+        crawler_set_meta(spider, CrawlStatTypes.last_crawled, datetime.now())
 
     def item_scraped(self, item, spider):
         self.items_scraped += 1
