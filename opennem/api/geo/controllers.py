@@ -29,7 +29,7 @@ def stations_to_geojson(stations: List[Station]) -> FacilityGeo:
             "postcode": station.location.postcode,
             "name": station.name,
             "capacity_registered": station.capacity_registered,
-            "osm_id": station.location.osm_way_id,
+            "osm_way_id": station.location.osm_way_id,
             # "capacity_aggregate": station.capacity_aggregate,
             "duid_data": [],
         }
