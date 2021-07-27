@@ -10,20 +10,15 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, Optional
 
-from fake_useragent import UserAgent
 from scrapy import Request, Spider, signals
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
 
+from opennem.utils.random_agent import get_random_agent
+
 logger = logging.getLogger("opennem.extensions.random_agent")
 
-# initialize the user agent chooser
-ua = UserAgent()
 
 scrapy_settings = Dict[str, Any]
-
-
-def get_random_user_agent() -> str:
-    return ua.random
 
 
 class RandomUserAgentMiddleware(UserAgentMiddleware):
@@ -55,7 +50,7 @@ class RandomUserAgentMiddleware(UserAgentMiddleware):
         user_agent: Optional[str] = None
 
         if hasattr(spider, "random_user_agent") and spider.random_user_agent:
-            user_agent = get_random_user_agent()
+            user_agent = get_random_agent()
 
         user_agent = getattr(spider, "user_agent", user_agent)
 
