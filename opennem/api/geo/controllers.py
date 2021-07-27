@@ -29,6 +29,7 @@ def stations_to_geojson(stations: List[Station]) -> FacilityGeo:
             "postcode": station.location.postcode,
             "name": station.name,
             "capacity_registered": station.capacity_registered,
+            "osm_id": station.location.osm_way_id,
             # "capacity_aggregate": station.capacity_aggregate,
             "duid_data": [],
         }
@@ -64,9 +65,7 @@ def stations_to_geojson(stations: List[Station]) -> FacilityGeo:
         feature = FacilityFeature(**feature_dict)
 
         if station.location and station.location.geom:
-            geom = Point(
-                coordinates=(station.location.lng, station.location.lat)
-            )
+            geom = Point(coordinates=(station.location.lng, station.location.lat))
 
             if not feature.geometry:
                 feature.geometry = geom
