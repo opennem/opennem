@@ -41,13 +41,13 @@ services:
       - mysql_data:/var/lib/mysql
 
   postgres:
-    image: opennem/database:latest
+    image: opennem/database:dev
     restart: unless-stopped
     env_file: ./.env
     environment:
       - TZ
       - TIMESCALEDB_TELEMETRY=off
-      - PGPASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_MAX_CONNECTIONS=60
       - POSTGRES_SHARED_BUFFERS=64MB
     ports:
