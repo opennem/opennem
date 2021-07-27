@@ -43,6 +43,7 @@ def registry_init() -> None:
             station_model.created_by = "opennem.registry"
 
         # location
+        if not station_model.location_id:
         station_model.location = fromdict(
             Location(),
             station_dict["location"],
