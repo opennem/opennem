@@ -44,11 +44,11 @@ def registry_init() -> None:
 
         # location
         if not station_model.location_id:
-        station_model.location = fromdict(
-            Location(),
-            station_dict["location"],
-            exclude=["id"],
-        )
+            station_model.location = fromdict(
+                Location(),
+                station_dict["location"],
+                exclude=["id"],
+            )
 
         if station.location.lat and station.location.lng:
             station_model.location.geom = "SRID=4326;POINT({} {})".format(
@@ -144,7 +144,14 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
 
     for station in stations:
         add_or_update: str = "Updating"
-        station_model = session.query(Station).filter_by(code=station.code).one_or_none()
+
+        station_model = (
+            session.query(Station)
+            # .outerjoin(Station.facilities)
+            # .outerjoin(Station.location)
+            # .outerjoin(Facility.fueltech)
+            .filter_by(code=station.code).one_or_none()
+        )
 
         if not station_model:
             add_or_update = "Adding"
@@ -178,7 +185,7 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
         if station.network_name:
             station_model.network_name = station.network_name
 
-        if not station_model.location:
+        if not station_model.location_id:
             station_model.location = Location()
 
         if station.location:
