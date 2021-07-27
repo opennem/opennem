@@ -17,6 +17,7 @@ REQ_HEADERS = {
 
 
 def get_aemo_wem_live_facility_intervals_recent_date() -> datetime:
+    """Returns the latest interval date from the WEM live feed. Used in monitors."""
     req = http.get(LIVE_FACILITIES, headers=REQ_HEADERS)
 
     if req.status_code != 200:
