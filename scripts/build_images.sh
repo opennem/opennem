@@ -9,4 +9,4 @@ docker buildx build \
   -f infra/database/Dockerfile \
   --push \
   --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
-  --tag opennem/database:latest .
+  --tag opennem/database:dev .
