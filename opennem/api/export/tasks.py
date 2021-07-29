@@ -34,6 +34,7 @@ from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
 from opennem.api.time import human_to_interval, human_to_period
+from opennem.controllers.flows import interconnector_region_daily
 from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.db import SessionLocal
@@ -231,21 +232,28 @@ def export_energy(
             # Hard coded to NEM only atm but we'll put has_interconnectors
             # in the metadata to automate all this
             if energy_stat.network == NetworkNEM and energy_stat.network_region:
-                interconnector_flows = energy_interconnector_region_daily(
+                interconnector_data = interconnector_region_daily(
                     time_series=time_series,
-                    networks_query=energy_stat.networks,
                     network_region_code=energy_stat.network_region_query
                     or energy_stat.network_region,
                 )
-                stat_set.append_set(interconnector_flows)
+                stat_set.append_set(interconnector_data)
 
-                interconnector_emissions = energy_interconnector_emissions_region_daily(
-                    time_series=time_series,
-                    networks_query=energy_stat.networks,
-                    network_region_code=energy_stat.network_region_query
-                    or energy_stat.network_region,
-                )
-                stat_set.append_set(interconnector_emissions)
+                # interconnector_flows = energy_interconnector_region_daily(
+                #     time_series=time_series,
+                #     networks_query=energy_stat.networks,
+                #     network_region_code=energy_stat.network_region_query
+                #     or energy_stat.network_region,
+                # )
+                # stat_set.append_set(interconnector_flows)
+
+                # interconnector_emissions = energy_interconnector_emissions_region_daily(
+                #     time_series=time_series,
+                #     networks_query=energy_stat.networks,
+                #     network_region_code=energy_stat.network_region_query
+                #     or energy_stat.network_region,
+                # )
+                # stat_set.append_set(interconnector_emissions)
 
             if energy_stat.bom_station:
                 try:
@@ -277,21 +285,27 @@ def export_energy(
             # Hard coded to NEM only atm but we'll put has_interconnectors
             # in the metadata to automate all this
             if energy_stat.network == NetworkNEM and energy_stat.network_region:
-                interconnector_flows = energy_interconnector_region_daily(
+                interconnector_data = interconnector_region_daily(
                     time_series=time_series,
-                    networks_query=energy_stat.networks,
                     network_region_code=energy_stat.network_region_query
                     or energy_stat.network_region,
                 )
-                stat_set.append_set(interconnector_flows)
+                stat_set.append_set(interconnector_data)
+                # interconnector_flows = energy_interconnector_region_daily(
+                #     time_series=time_series,
+                #     networks_query=energy_stat.networks,
+                #     network_region_code=energy_stat.network_region_query
+                #     or energy_stat.network_region,
+                # )
+                # stat_set.append_set(interconnector_flows)
 
-                interconnector_emissions = energy_interconnector_emissions_region_daily(
-                    time_series=time_series,
-                    networks_query=energy_stat.networks,
-                    network_region_code=energy_stat.network_region_query
-                    or energy_stat.network_region,
-                )
-                stat_set.append_set(interconnector_emissions)
+                # interconnector_emissions = energy_interconnector_emissions_region_daily(
+                #     time_series=time_series,
+                #     networks_query=energy_stat.networks,
+                #     network_region_code=energy_stat.network_region_query
+                #     or energy_stat.network_region,
+                # )
+                # stat_set.append_set(interconnector_emissions)
 
             if energy_stat.bom_station:
                 try:
@@ -366,19 +380,23 @@ def export_all_monthly() -> None:
                 continue
 
             if network == NetworkNEM:
-                interconnector_flows = energy_interconnector_region_daily(
-                    time_series=time_series,
-                    networks_query=networks,
-                    network_region_code=network_region.code,
+                interconnector_data = interconnector_region_daily(
+                    time_series=time_series, network_region_code=network_region.code
                 )
-                stat_set.append_set(interconnector_flows)
 
-                interconnector_emissions = energy_interconnector_emissions_region_daily(
-                    time_series=time_series,
-                    networks_query=networks,
-                    network_region_code=network_region.code,
-                )
-                stat_set.append_set(interconnector_emissions)
+                # interconnector_flows = energy_interconnector_region_daily(
+                #     time_series=time_series,
+                #     networks_query=networks,
+                #     network_region_code=network_region.code,
+                # )
+                # stat_set.append_set(interconnector_flows)
+
+                # interconnector_emissions = energy_interconnector_emissions_region_daily(
+                #     time_series=time_series,
+                #     networks_query=networks,
+                #     network_region_code=network_region.code,
+                # )
+                stat_set.append_set(interconnector_data)
 
             all_monthly.append_set(stat_set)
 
