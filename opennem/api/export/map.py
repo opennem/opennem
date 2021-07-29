@@ -40,6 +40,8 @@ class StatType(Enum):
     power = "power"
     energy = "energy"
     interchange = "interchange"
+    marketvalue = "market_value"
+    emissions = "emissions"
     gov = "gov"
 
 
