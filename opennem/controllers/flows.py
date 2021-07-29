@@ -105,13 +105,9 @@ def interconnector_region_daily(
             )
 
             if not result:
-                logger.error("No interconnector energy result")
-                # return result
+                logger.info("No interconnector energy result")
                 continue
 
-            logger.info(
-                "Adding {} {} with {} values".format(units.name, result.ids, len(result.data))
-            )
             return_ds.append_set(result)
 
     return return_ds
