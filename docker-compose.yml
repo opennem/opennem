@@ -42,6 +42,7 @@ services:
 
   postgres:
     image: opennem/database:dev
+    shm_size: "2GB"
     restart: unless-stopped
     env_file: ./.env
     environment:
