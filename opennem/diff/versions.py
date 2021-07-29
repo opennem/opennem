@@ -42,7 +42,10 @@ def load_statset_v2(statset: List[Dict]) -> OpennemDataSetV2:
 
 
 def get_v2_url(
-    stat_type: StatType, network_region: str, bucket_size: str = "daily", year: int = CUR_YEAR
+    stat_type: StatType,
+    network_region: str,
+    bucket_size: str = "daily",
+    year: Optional[int] = None,
 ) -> str:
     """
     get v2 url
@@ -61,6 +64,10 @@ def get_v2_url(
         url_components = [network_region.lower(), "energy", bucket_size, "all"]
 
     elif stat_type == StatType.energy and bucket_size == "daily":
+
+        if not year:
+            year = CUR_YEAR
+
         url_components = [network_region.lower(), "energy", bucket_size, str(year)]
 
     else:
