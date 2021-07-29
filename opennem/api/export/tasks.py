@@ -15,8 +15,6 @@ from typing import List, Optional
 from opennem.api.export.controllers import (
     demand_week,
     energy_fueltech_daily,
-    energy_interconnector_emissions_region_daily,
-    energy_interconnector_region_daily,
     gov_stats_cpi,
     power_flows_network_week,
     power_flows_region_week,
@@ -239,22 +237,6 @@ def export_energy(
                 )
                 stat_set.append_set(interconnector_data)
 
-                # interconnector_flows = energy_interconnector_region_daily(
-                #     time_series=time_series,
-                #     networks_query=energy_stat.networks,
-                #     network_region_code=energy_stat.network_region_query
-                #     or energy_stat.network_region,
-                # )
-                # stat_set.append_set(interconnector_flows)
-
-                # interconnector_emissions = energy_interconnector_emissions_region_daily(
-                #     time_series=time_series,
-                #     networks_query=energy_stat.networks,
-                #     network_region_code=energy_stat.network_region_query
-                #     or energy_stat.network_region,
-                # )
-                # stat_set.append_set(interconnector_emissions)
-
             if energy_stat.bom_station:
                 try:
                     weather_stats = weather_daily(
@@ -291,21 +273,6 @@ def export_energy(
                     or energy_stat.network_region,
                 )
                 stat_set.append_set(interconnector_data)
-                # interconnector_flows = energy_interconnector_region_daily(
-                #     time_series=time_series,
-                #     networks_query=energy_stat.networks,
-                #     network_region_code=energy_stat.network_region_query
-                #     or energy_stat.network_region,
-                # )
-                # stat_set.append_set(interconnector_flows)
-
-                # interconnector_emissions = energy_interconnector_emissions_region_daily(
-                #     time_series=time_series,
-                #     networks_query=energy_stat.networks,
-                #     network_region_code=energy_stat.network_region_query
-                #     or energy_stat.network_region,
-                # )
-                # stat_set.append_set(interconnector_emissions)
 
             if energy_stat.bom_station:
                 try:
@@ -383,19 +350,6 @@ def export_all_monthly() -> None:
                 interconnector_data = interconnector_region_daily(
                     time_series=time_series, network_region_code=network_region.code
                 )
-
-                # interconnector_flows = energy_interconnector_region_daily(
-                #     time_series=time_series,
-                #     networks_query=networks,
-                #     network_region_code=network_region.code,
-                # )
-                # stat_set.append_set(interconnector_flows)
-
-                # interconnector_emissions = energy_interconnector_emissions_region_daily(
-                #     time_series=time_series,
-                #     networks_query=networks,
-                #     network_region_code=network_region.code,
-                # )
                 stat_set.append_set(interconnector_data)
 
             all_monthly.append_set(stat_set)
