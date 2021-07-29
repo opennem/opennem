@@ -547,7 +547,6 @@ def energy_fueltech_daily(
 def energy_interconnector_region_daily(
     time_series: TimeSeries,
     network_region_code: str,
-    networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
