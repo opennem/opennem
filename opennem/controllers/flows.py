@@ -1,23 +1,17 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import Sequence, Tuple, Union
 
 from dateutil.relativedelta import relativedelta
 
 from opennem.api.export.map import StatType
 from opennem.api.stats.controllers import stats_factory
-from opennem.api.stats.schema import DataQueryResult, OpennemDataSet, RegionFlowEmissionsResult
-from opennem.api.time import human_to_interval, human_to_period
+from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.core.compat.loader import get_dataset
 from opennem.core.compat.schema import OpennemDataSetV2
-from opennem.core.flows import net_flows_emissions
 from opennem.core.units import get_unit
-from opennem.db import get_database_engine
 from opennem.schema.dates import TimeSeries
-from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.schema.stats import StatTypes
-from opennem.schema.time import TimePeriod
 
 logger = logging.getLogger("opennem.controllers.flows")
 logger.setLevel(logging.DEBUG)
