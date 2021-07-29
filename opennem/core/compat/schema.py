@@ -2,7 +2,7 @@
 OpenNEM v2 formatted output exports as Pydantic schemas
 
 """
-
+import logging
 from datetime import date, datetime
 from typing import List, Optional, Tuple, Union
 
@@ -13,6 +13,8 @@ from opennem.schema.core import BaseConfig
 from opennem.utils.interval import get_human_interval
 
 # from pydantic import validator
+
+logger = logging.getLogger("opennem.compat.schema")
 
 
 def strip_timezone(dt: datetime) -> datetime:
@@ -73,5 +75,19 @@ class OpennemDataSetV2(BaseConfig):
 
         if len(_ds) < 1:
             return None
+
+        return _ds.pop()
+
+    def search_id(self, id: str) -> Optional[OpennemDataV2]:
+        """Search for an id matching"""
+        _ds = list(filter(lambda x: x.id.find(id) > 0, self.data))
+
+        if len(_ds) < 1:
+            raise Exception(f"Could not search id {id}")
+
+        if len(_ds) > 1:
+            logger.warn(
+                "Found more than one id matching {}: {}".format(id, ", ".join([i.id for i in _ds]))
+            )
 
         return _ds.pop()
