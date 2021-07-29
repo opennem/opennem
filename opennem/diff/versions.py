@@ -46,6 +46,7 @@ def get_v2_url(
     network_region: str,
     bucket_size: str = "daily",
     year: Optional[int] = None,
+    testing: bool = False,
 ) -> str:
     """
     get v2 url
@@ -57,18 +58,21 @@ def get_v2_url(
 
     url_components = []
 
+    if testing:
+        url_components.append("testing")
+
     if stat_type == StatType.power:
-        url_components = ["power", network_region.lower()]
+        url_components += ["power", network_region.lower()]
 
     elif stat_type == StatType.energy and bucket_size == "monthly":
-        url_components = [network_region.lower(), "energy", bucket_size, "all"]
+        url_components += [network_region.lower(), "energy", bucket_size, "all"]
 
     elif stat_type == StatType.energy and bucket_size == "daily":
 
         if not year:
             year = CUR_YEAR
 
-        url_components = [network_region.lower(), "energy", bucket_size, str(year)]
+        url_components += [network_region.lower(), "energy", bucket_size, str(year)]
 
     else:
         raise Exception("Invalid v2 url components")

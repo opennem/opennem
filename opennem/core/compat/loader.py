@@ -21,8 +21,9 @@ def get_dataset(
     network_region: str,
     bucket_size: str = "daily",
     year: Optional[int] = None,
+    testing: bool = True,
 ) -> OpennemDataSetV2:
-    req_url = get_v2_url(stat_type, network_region, bucket_size, year)
+    req_url = get_v2_url(stat_type, network_region, bucket_size, year, testing=testing)
 
     r = http.get(req_url)
 
