@@ -15,7 +15,6 @@ from urllib.parse import urljoin
 from opennem.api.export.map import StatType
 from opennem.api.stats.loader import load_statset
 from opennem.api.stats.schema import OpennemData, OpennemDataSet
-from opennem.core.compat.loader import load_statset_v2
 from opennem.core.compat.schema import OpennemDataSetV2, OpennemDataV2
 from opennem.core.compat.utils import translate_id_v2_to_v3
 from opennem.db import SessionLocal
@@ -36,6 +35,10 @@ CUR_YEAR = datetime.now().year
 FULL = False
 INCLUDE_MONTHLY = False
 REGION = os.environ.get("REGION", None)
+
+
+def load_statset_v2(statset: List[Dict]) -> OpennemDataSetV2:
+    return OpennemDataSetV2(data=[OpennemDataV2.parse_obj(i) for i in statset])
 
 
 def get_v2_url(
