@@ -27,7 +27,7 @@ from opennem.schema.network import (
     NetworkSchema,
     NetworkWEM,
 )
-from opennem.utils.dates import DATE_CURRENT_YEAR
+from opennem.utils.dates import DATE_CURRENT_YEAR, get_last_complete_day_for_network
 from opennem.utils.interval import get_human_interval
 from opennem.workers.facility_data_ranges import get_facility_seen_range
 
@@ -501,12 +501,7 @@ def run_energy_update_days(
     for network in networks:
 
         # This is Sydney time as the data is published in local time
-        tz = pytz.timezone(network.timezone)
-
-        # today_midnight in NEM time
-        today_midnight = datetime.now(tz).replace(
-            tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
-        )
+        today_midnight = get_last_complete_day_for_network(network)
 
         date_max = today_midnight
         date_min = today_midnight - timedelta(days=days)
