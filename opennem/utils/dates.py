@@ -3,6 +3,8 @@ import math
 from datetime import date, datetime, timedelta, timezone
 from typing import Generator, Optional, Tuple, Union
 
+import pytz
+
 # ParserError isn't a concrete type
 from dateutil.parser import ParserError, parse  # type: ignore
 from dateutil.relativedelta import relativedelta
@@ -222,12 +224,12 @@ def week_series(
 
 
 def chop_delta_microseconds(delta: timedelta) -> timedelta:
-    """ Removes microsevonds from a timedelta """
+    """Removes microsevonds from a timedelta"""
     return delta - timedelta(microseconds=delta.microseconds)
 
 
 def chop_datetime_microseconds(dt: datetime) -> datetime:
-    """ Removes the microseconds portion of a datetime """
+    """Removes the microseconds portion of a datetime"""
     if not dt.microsecond:
         return dt
 
@@ -295,7 +297,7 @@ def strip_timezone(dt: datetime) -> datetime:
 def optionally_parse_string_datetime(
     value: Optional[Union[str, datetime, date]] = None
 ) -> Optional[Union[str, datetime, date]]:
-    """ Parse a string or date or datetime back into a datetime optionally """
+    """Parse a string or date or datetime back into a datetime optionally"""
     if not value:
         return value
 
@@ -311,3 +313,14 @@ def optionally_parse_string_datetime(
         return value
 
     return value
+
+
+def get_last_complete_day_for_network(network: NetworkSchema) -> datetime:
+    tz = pytz.timezone(network.timezone)
+
+    # today_midnight in NEM time
+    today_midnight = datetime.now(tz).replace(
+        tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
+    )
+
+    return today_midnight
