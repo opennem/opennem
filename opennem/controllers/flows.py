@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from enum import Enum
 from typing import Sequence, Tuple, Union
 
 from dateutil.relativedelta import relativedelta
@@ -12,14 +11,10 @@ from opennem.core.compat.loader import get_dataset
 from opennem.core.compat.schema import OpennemDataSetV2
 from opennem.core.units import get_unit
 from opennem.schema.dates import TimeSeries
+from opennem.schema.flows import FlowType
 
 logger = logging.getLogger("opennem.controllers.flows")
 logger.setLevel(logging.DEBUG)
-
-
-class FlowType(Enum):
-    imports = "imports"
-    exports = "exports"
 
 
 td_month = relativedelta(months=1)
