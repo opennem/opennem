@@ -76,10 +76,10 @@ class OpennemSettings(BaseSettings):
 
     # timeout on http requests
     # see opennem.utils.http
-    http_timeout: int = 30
+    http_timeout: int = 40
 
     # number of retries by default
-    http_retries: int = 5
+    http_retries: int = 7
 
     # cache http requests locally
     http_cache_local: bool = False
