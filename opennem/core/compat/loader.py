@@ -2,11 +2,15 @@
 OpenNEM v2 schema loader
 """
 import logging
+from datetime import timedelta
 from typing import Dict, List, Optional
 
 from opennem.api.export.map import StatType
 from opennem.core.compat.schema import OpennemDataSetV2, OpennemDataV2
 from opennem.diff.versions import get_v2_url
+from opennem.schema.flows import FlowType
+from opennem.schema.network import NetworkNEM
+from opennem.utils.dates import get_last_complete_day_for_network
 from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.compat.loader")
@@ -14,6 +18,34 @@ logger = logging.getLogger("opennem.compat.loader")
 
 def load_statset_v2(statset: List[Dict]) -> OpennemDataSetV2:
     return OpennemDataSetV2(data=[OpennemDataV2.parse_obj(i) for i in statset])
+
+
+def statset_patch(ds: OpennemDataSetV2, bucket_size: str) -> OpennemDataSetV2:
+    """Patch fix for today()"""
+    today = get_last_complete_day_for_network(NetworkNEM)
+
+    ds_out = ds.copy()
+    ds_out.data = []
+
+    for ft in [FlowType.imports, FlowType.exports]:
+        for st in [StatType.energy, StatType.marketvalue, StatType.emissions]:
+            search_id_match = "{}.{}".format(ft.value, st.value)
+
+            dsid = ds.search_id(search_id_match)
+
+            if not dsid:
+                continue
+
+            if bucket_size == "daily":
+                if dsid.history.last != today:
+                    day_gap = today - dsid.history.last
+                    print(dsid.history.start, day_gap)
+                    dsid.history.start = str(dsid.history.start + timedelta(days=day_gap.days))
+                    dsid.history.last = str(today)
+
+            ds_out.data.append(dsid)
+
+    return ds_out
 
 
 def get_dataset(
@@ -36,4 +68,13 @@ def get_dataset(
 
     statset = load_statset_v2(json_data)
 
+    statset = statset_patch(statset, bucket_size=bucket_size)
+
     return statset
+
+
+if __name__ == "__main__":
+    ds = get_dataset(StatType.energy, "NSW1", "daily")
+
+    with open("flow_test.json", "w") as fh:
+        fh.write(ds.json())
