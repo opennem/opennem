@@ -40,7 +40,7 @@ def statset_patch(ds: OpennemDataSetV2, bucket_size: str) -> OpennemDataSetV2:
                 if dsid.history.last != today:
                     day_gap = today - dsid.history.last
                     dsid.history.start = str(dsid.history.start + timedelta(days=day_gap.days))
-                    dsid.history.last = str(today)
+                    dsid.history.last = str(today - timedelta(days=1))
 
             ds_out.data.append(dsid)
 
