@@ -23,7 +23,7 @@ td_day = relativedelta(days=1)
 
 def parse_ds_to_generated(
     ds: OpennemDataSetV2, flow_type: FlowType, stat_type: StatType
-) -> Sequence[Tuple[datetime, Union[float, int]]]:
+) -> List[Tuple[datetime, Union[float, int]]]:
     generated_list = []
 
     search_id_match = "{}.{}".format(flow_type.value, stat_type.value)
