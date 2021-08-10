@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from typing import Sequence, Tuple, Union
+from typing import List, Tuple, Union
 
 from dateutil.relativedelta import relativedelta
 
