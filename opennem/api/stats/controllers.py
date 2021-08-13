@@ -315,8 +315,8 @@ def get_scada_range(
     timezone = network.timezone_database if network else "UTC"
     field_name = "generated"
 
-    if network and network.code in ["WEM"]:
-        energy = True
+    # if energy is False and network and network.code in ["WEM"]:
+    # energy = True
 
     if energy is True:
         field_name = "eoi_quantity"
