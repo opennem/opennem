@@ -204,6 +204,12 @@ def export_energy(
             )
             continue
 
+        logger.debug(
+            "Date range is: {} {} => {}".format(
+                energy_stat.network.code, date_range.start, date_range.end
+            )
+        )
+
         # Migrate to this time_series
         time_series = TimeSeries(
             start=date_range.start,
