@@ -7,7 +7,7 @@ from sqlalchemy.sql.elements import TextClause
 
 from opennem.api.stats.controllers import networks_to_in
 from opennem.schema.dates import TimeSeries
-from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 from opennem.settings import settings
 
@@ -442,6 +442,9 @@ def power_network_rooftop_query(
         # APVI network is used to provide rooftop for WEM so we require it
         # in country-wide totals
         wem_apvi_case = "or (f.network_id='APVI' and f.network_region='WEM')"
+
+        if NetworkAPVI in networks_query:
+            networks_query.remove(NetworkAPVI)
 
         if NetworkNEM not in networks_query:
             agg_func = "max"
