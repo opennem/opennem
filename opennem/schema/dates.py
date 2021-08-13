@@ -94,7 +94,7 @@ class TimeSeries(BaseConfig):
     forecast_period: str = "7d"
 
     def __str__(self) -> str:
-        """ Return an informative stringified object for debugging and exceptions """
+        """Return an informative stringified object for debugging and exceptions"""
         _build_str = (
             f"Network {self.network.code} at interval {self.interval.interval_human} and "
             f"period {self.period.period_human} between {self.start} and {self.end}"
@@ -171,7 +171,7 @@ class TimeSeries(BaseConfig):
                     second=59,
                 )
 
-                # end = end - timedelta(days=1)
+                end = end - timedelta(days=1)
 
                 end = end.replace(tzinfo=self.network.get_fixed_offset())
 
