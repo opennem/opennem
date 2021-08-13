@@ -96,6 +96,12 @@ def export_power(
             network=power_stat.network, networks=date_range_networks
         )
 
+        logger.debug(
+            "Date range for {}: {} => {}".format(
+                power_stat.network.code, date_range.start, date_range.end
+            )
+        )
+
         # Migrate to this time_series
         time_series = TimeSeries(
             start=date_range.start,
