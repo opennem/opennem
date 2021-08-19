@@ -5,6 +5,7 @@ This module provides a set of utilities to normalize, clean and parse passed
 in data from various sources.
 
 """
+import itertools
 import logging
 import re
 from decimal import Decimal
@@ -143,6 +144,31 @@ STATION_WORD_REPLACEMENTS = {"University Of Melbourne": "UoM"}
 # skip station cleaning for any station matching
 STATION_SKIP_CLEANING_MATCHES = ["Hallett"]
 
+# Dictionary map of accented chars to their A-Z equivelants
+_ACCENT_REPLACE_MAP = dict(
+    zip(
+        "ÂÃÄÀÁÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖŐØŒÙÚÛÜŰÝÞßàáâãäåæçèéêëìíîïðñòóôõöőøœùúûüűýþÿ",
+        itertools.chain(
+            "AAAAAA",
+            ["AE"],
+            "CEEEEIIIIDNOOOOOOO",
+            ["OE"],
+            "UUUUUY",
+            ["TH", "ss"],
+            "aaaaaa",
+            ["ae"],
+            "ceeeeiiiionooooooo",
+            ["oe"],
+            "uuuuuy",
+            ["th"],
+            "y",
+        ),
+    )
+)
+
+# Stores translation table for accent chars
+_ACCENT_TRANSLATION = str.maketrans(_ACCENT_REPLACE_MAP)
+
 # Custom normalizers
 
 __match_twitter_handle = re.compile(r"^@?[A-Za-z\_]{1,15}$")
@@ -252,6 +278,11 @@ def normalize_string(subject: str) -> str:
     """Deprecated function alias"""
     logger.warn("normalize_string is deprecated")
     return string_to_title(subject)
+
+
+def replace_accented(subject: str) -> str:
+    """Replaces accented characters in a string to their A-Z equiv. ex ñ => n"""
+    return subject.translate(_ACCENT_TRANSLATION)
 
 
 def strip_encoded_non_breaking_spaces(subject: str) -> str:
