@@ -8,6 +8,7 @@ See also: mirror_mms.sh to dodwnload archives
 
 import gc
 import logging
+import re
 from pathlib import Path
 from typing import List, Optional
 
@@ -86,12 +87,10 @@ def store_mms_table(table: AEMOTableSchema) -> int:
     return len(records_to_store)
 
 
-@click.command()
+# @click.command()
 # @click.option("--purge", is_flag=True, help="Purge unmapped views")
-def main() -> None:
-    MMS_DIR = "data/mms/2021/MMSDM_2021_07/MMSDM_Historical_Data_SQLLoader/DATA/"
-
-    mmsdir = Path(MMS_DIR)
+def import_directory(mms_dir: str) -> None:
+    mmsdir = Path(mms_dir)
     file_count: int = 0
 
     if not mmsdir.is_dir():
@@ -117,6 +116,32 @@ def main() -> None:
                 logger.info("Stored {} records".format(rec_stored))
             except Exception as e:
                 logger.error("Could not store for table: {}: {}".format(table.name, e))
+
+
+def main() -> None:
+    # BASE_DIR = "data/mms/2021/MMSDM_2021_07/MMSDM_Historical_Data_SQLLoader/DATA/"
+    mms_data_dir = Path("data/mms/")
+
+    if not mms_data_dir.is_dir():
+        raise Exception("Not a directory: {}".format(mms_data_dir))
+
+    for _dir in mms_data_dir.iterdir():
+        if not re.match(r"^\d{4}$", _dir.name):
+            continue
+
+        for _dir_month in _dir.iterdir():
+            if not re.match(r"^MMSDM_\d{4}_\d{2}", _dir_month.name):
+                continue
+
+            mms_path = _dir_month / "MMSDM_Historical_Data_SQLLoader/DATA/"
+
+            if not mms_path.is_dir():
+                logger.warn("Have mms folder with no data: {}".format(_dir_month))
+                continue
+
+            logger.info("Running import on: {}".format(mms_path))
+
+            import_directory(str(mms_path))
 
 
 if __name__ == "__main__":
