@@ -1,12 +1,18 @@
 """
 Settings files - read settings from env
 
+Process:
+
+ * Loads dotenv to read environment from .env files
+ * Setup logging - root logger, read logging config, etc.
+ * Settings init - read all env and init settings module
+
 Will load environment in order:
 
-    * .env
-    * .env.{environment}
-    * system env
-    * pydantic settings
+ * `.env`
+ * `.env.{environment}`
+ * system env
+ * pydantic settings
 
 """
 import logging
@@ -32,6 +38,7 @@ from opennem.utils.proc import running_as_scrapy
 
 from .schema import OpennemSettings  # noqa: E402
 
+# Setup logging - root logger and handlers
 __root_logger = logging.getLogger()
 __root_logger.setLevel(logging.INFO)
 __root_logger_formatter = logging.Formatter(fmt=" * %(levelname)s %(message)s")
