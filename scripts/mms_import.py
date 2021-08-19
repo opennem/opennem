@@ -89,7 +89,7 @@ def store_mms_table(table: AEMOTableSchema) -> int:
 @click.command()
 # @click.option("--purge", is_flag=True, help="Purge unmapped views")
 def main() -> None:
-    MMS_DIR = "data/mms/2021/MMSDM_2021_03/MMSDM_Historical_Data_SQLLoader/DATA/"
+    MMS_DIR = "data/mms/2021/MMSDM_2021_07/MMSDM_Historical_Data_SQLLoader/DATA/"
 
     mmsdir = Path(MMS_DIR)
     file_count: int = 0
@@ -111,7 +111,12 @@ def main() -> None:
 
         for table in ts.tables:
             logger.info("Storing table: {}".format(table.full_name))
-            store_mms_table(table)
+
+            try:
+                rec_stored = store_mms_table(table)
+                logger.info("Stored {} records".format(rec_stored))
+            except Exception as e:
+                logger.error("Could not store for table: {}: {}".format(table.name, e))
 
 
 if __name__ == "__main__":
