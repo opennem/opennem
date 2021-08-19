@@ -1,3 +1,9 @@
+"""
+OpenNEM main module entry
+
+Setup main module entry point with sanity checks, settings init
+and sentry.
+"""
 import sys
 
 # This will eventually be dynamically parsed
