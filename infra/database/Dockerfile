@@ -1,4 +1,4 @@
-FROM nikc/database:dev as base
+FROM nikc9/postgis as base
 
 
 # RUN set -eux \
