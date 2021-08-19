@@ -1,13 +1,12 @@
 """
-    settings files - read settings from env
+Settings files - read settings from env
 
+Will load environment in order:
 
-    will read in order:
-
-        * .env
-        * .env.{environment}
-        * system env
-        * pydantic settings
+    * .env
+    * .env.{environment}
+    * system env
+    * pydantic settings
 
 """
 import logging
@@ -16,7 +15,8 @@ import os
 import sys
 from pathlib import Path
 
-# @NOTE load first external deps in an exception block so that we can catch if the ENV is loaded and be friendly
+# @NOTE load first external deps in an exception block so that we can catch if the ENV is
+# loaded and be friendly
 try:
     from dotenv import load_dotenv
     from pydantic import ValidationError
