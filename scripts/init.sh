@@ -37,14 +37,14 @@ scrapy crawl -L ERROR au.wem.current.balancing_summary
 # nem
 scrapy crawl -L ERROR au.nem.day.dispatch_is
 scrapy crawl -L ERROR au.nem.day.dispatch_scada
-scrapy crawl -L ERROR au.nem.current.rooftop
-scrapy crawl -L ERROR au.nem.current.trading_is
-scrapy crawl -L ERROR au.nem.current.dispatch
-scrapy crawl -L ERROR au.nem.current.dispatch_actual_gen
+# scrapy crawl -L ERROR au.nem.current.rooftop
+# scrapy crawl -L ERROR au.nem.current.trading_is
+# scrapy crawl -L ERROR au.nem.current.dispatch
+# scrapy crawl -L ERROR au.nem.current.dispatch_actual_gen
 
 
 # update seen ranges
 python -m opennem.workers.facility_data_ranges
 
 # refresh views
-python -m opennem.cli db refresh
+# python -m opennem.cli db refresh
