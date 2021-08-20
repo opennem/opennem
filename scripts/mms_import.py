@@ -119,7 +119,6 @@ def import_directory(mms_dir: str) -> None:
 
 
 def main() -> None:
-    # BASE_DIR = "data/mms/2021/MMSDM_2021_07/MMSDM_Historical_Data_SQLLoader/DATA/"
     mms_data_dir = Path("data/mms/")
 
     if not mms_data_dir.is_dir():
