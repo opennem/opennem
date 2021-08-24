@@ -89,7 +89,7 @@ def store_mms_table(table: AEMOTableSchema) -> int:
 
 # @click.command()
 # @click.option("--purge", is_flag=True, help="Purge unmapped views")
-def import_directory(mms_dir: str) -> None:
+def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
     mmsdir = Path(mms_dir)
     file_count: int = 0
 
@@ -103,13 +103,21 @@ def import_directory(mms_dir: str) -> None:
         with open(f) as fh:
             content = fh.read()
 
-        ts = parse_aemo_csv(content)
+        if namespace:
+            ts = parse_aemo_csv(content, namespace_filter=[namespace])
+        else:
+            ts = parse_aemo_csv(content)
+
         file_count += 1
 
         logger.info("Loaded {} files and {} tables".format(file_count, len(ts.table_names)))
 
         for table in ts.tables:
-            logger.info("Storing table: {}".format(table.full_name))
+
+            if namespace and table.namespace != namespace:
+                continue
+
+            logger.info("Storing table: {} {}".format(table.namespace, table.full_name))
 
             try:
                 rec_stored = store_mms_table(table)
@@ -140,7 +148,8 @@ def main() -> None:
 
             logger.info("Running import on: {}".format(mms_path))
 
-            import_directory(str(mms_path))
+            import_directory(str(mms_path), "participant_registration")
+            break
 
 
 if __name__ == "__main__":
