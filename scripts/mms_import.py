@@ -110,7 +110,7 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
 
         file_count += 1
 
-        logger.info("Loaded {} files and {} tables".format(file_count, len(ts.table_names)))
+        logger.debug("Loaded {} files and {} tables".format(file_count, len(ts.table_names)))
 
         for table in ts.tables:
 
