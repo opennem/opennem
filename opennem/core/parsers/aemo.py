@@ -113,7 +113,7 @@ class AEMOTableSchema(BaseModel):
         return True
 
     def to_frame(self) -> Any:
-        """ Return a pandas dataframe for the table """
+        """Return a pandas dataframe for the table"""
         if not _HAVE_PANDAS:
             return None
 
@@ -184,7 +184,11 @@ class AEMOParserException(Exception):
 AEMO_ROW_HEADER_TYPES = ["C", "I", "D"]
 
 
-def parse_aemo_csv(content: str, table_set: Optional[AEMOTableSet] = None) -> AEMOTableSet:
+def parse_aemo_csv(
+    content: str,
+    table_set: Optional[AEMOTableSet] = None,
+    namespace_filter: Optional[List[str]] = None,
+) -> AEMOTableSet:
     """
     Parse AEMO CSV's into schemas and return a table set
 
@@ -229,6 +233,9 @@ def parse_aemo_csv(content: str, table_set: Optional[AEMOTableSet] = None) -> AE
 
             table_full_name = "{}_{}".format(table_namespace.lower(), table_name.lower())
 
+            if namespace_filter and table_namespace not in namespace_filter:
+                continue
+
             if table_set.has_table(table_full_name):
                 table_current = table_set.get_table(table_full_name)
             else:
@@ -265,7 +272,7 @@ def parse_aemo_csv(content: str, table_set: Optional[AEMOTableSet] = None) -> AE
 
 
 def parse_aemo_urls(urls: List[str]) -> AEMOTableSet:
-    """ Parse a list of URLs into an AEMOTableSet """
+    """Parse a list of URLs into an AEMOTableSet"""
     aemo = AEMOTableSet()
 
     for url in urls:
