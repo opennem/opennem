@@ -10,6 +10,71 @@ from opennem.schema.stations import StationSet
 logger = logging.getLogger("opennem.importer.mms")
 
 
+__query = """
+
+select
+    mms.station.stationid,
+    mms.station.stationname,
+    stationoperatingstatus.status,
+    stationoperatingstatus.effectivedate as status_effectivedate,
+    mms.station.address1,
+    mms.station.address2,
+    mms.station.city,
+    mms.station.state,
+    dualloc.gensetid,
+    mms.dispatchableunit.duid,
+    mms.dispatchableunit.duname,
+    mms.dispatchableunit.unittype,
+    mms.dudetail.registeredcapacity,
+    mms.dudetail.maxcapacity,
+    mms.genunits.co2e_emissions_factor,
+    mms.genunits.co2e_data_source,
+    mms.genunits.co2e_energy_source,
+    1
+from mms.dispatchableunit
+left join (
+    select
+        duid,
+        stationid,
+        max(effectivedate)
+    from mms.stadualloc
+    group by 1, 2
+    order by duid
+) as stadualloc on stadualloc.duid = mms.dispatchableunit.duid
+left join mms.station on stadualloc.stationid = mms.station.stationid
+inner join (
+    select
+        stationid,
+        status,
+        max(effectivedate) as effectivedate
+    from mms.stationoperatingstatus
+    group by 1, 2 order by stationid
+) as stationoperatingstatus on stationoperatingstatus.stationid = mms.station.stationid
+left join (
+    select
+        duid,
+        max(effectivedate),
+        max(versionno) as versionno
+    from mms.dudetail
+    group by 1
+    order by duid
+) as dt on dt.duid = mms.dispatchableunit.duid
+left join mms.dudetail on mms.dudetail.duid = dt.duid and mms.dudetail.versionno = dt.versionno
+left join (
+    select
+        duid,
+        gensetid,
+        max(effectivedate) as effectivedate
+    from mms.dualloc
+    group by 1, 2
+    order by duid, gensetid
+) as dualloc on dualloc.duid = mms.dispatchableunit.duid
+left join mms.genunits on mms.genunits.gensetid = dualloc.gensetid
+order by 1 asc
+;
+"""
+
+
 def mms_import() -> StationSet:
 
     mms = StationSet()
