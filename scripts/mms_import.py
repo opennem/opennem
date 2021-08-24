@@ -94,7 +94,7 @@ def import_directory(mms_dir: str) -> None:
     file_count: int = 0
 
     if not mmsdir.is_dir():
-        raise Exception("Not a directory: {}".format(MMS_DIR))
+        raise Exception("Not a directory: {}".format(mms_dir))
 
     ts = AEMOTableSet()
     content = None
