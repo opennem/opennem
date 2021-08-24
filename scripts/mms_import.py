@@ -9,7 +9,6 @@ See also: mirror_mms.sh to dodwnload archives
 import gc
 import logging
 import re
-from os import name
 from pathlib import Path
 from typing import List, Optional
 
