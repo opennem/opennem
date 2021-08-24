@@ -45,11 +45,11 @@ def mms_export():
 
     mms_duid_station_map = mms_station_map_from_records(mms)
 
-    with open("data/mms.json", "w") as fh:
+    with open("data/mms2.json", "w") as fh:
         fh.write(mms.json(indent=4))
 
-    with open("data/mms_duid_station_map.json", "w") as fh:
-        json.dump(mms_duid_station_map, fh, indent=4, cls=OpenNEMJSONEncoder)
+    # with open("data/mms_duid_station_map.json", "w") as fh:
+    #     json.dump(mms_duid_station_map, fh, indent=4, cls=OpenNEMJSONEncoder)
 
 
 if __name__ == "__main__":
