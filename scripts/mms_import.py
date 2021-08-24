@@ -117,7 +117,7 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
             if namespace and table.namespace != namespace:
                 continue
 
-            logger.info("Storing table: {} {}".format(table.namespace, table.full_name))
+            logger.debug("Storing table: {} {}".format(table.namespace, table.full_name))
 
             try:
                 rec_stored = store_mms_table(table)
@@ -128,13 +128,21 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
 
 @click.command()
 @click.option("--namespace", type=str, required=False)
-def main(namespace: Optional[str] = None) -> None:
+@click.option("--debug", is_flag=True, default=False)
+def main(namespace: Optional[str] = None, debug: Optional[bool] = False) -> None:
+
+    logging.getLogger().setLevel(logging.INFO)
+    logger.setLevel(logging.INFO)
+
     mms_data_dir = Path("data/mms/")
 
     logger.info("Importing from {}".format(mms_data_dir))
 
     if namespace:
         logger.info("Filtering to namespace: {}".format(namespace))
+
+    if debug:
+        logger.setLevel(logging.DEBUG)
 
     if not mms_data_dir.is_dir():
         raise Exception("Not a directory: {}".format(mms_data_dir))
