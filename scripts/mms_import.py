@@ -126,7 +126,9 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
                 logger.error("Could not store for table: {}: {}".format(table.name, e))
 
 
-def main() -> None:
+@click.command()
+@click.option("--namespace", type=str, required=False)
+def main(namespace: Optional[str] = None) -> None:
     mms_data_dir = Path("data/mms/")
 
     if not mms_data_dir.is_dir():
