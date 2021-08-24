@@ -149,7 +149,6 @@ def main() -> None:
             logger.info("Running import on: {}".format(mms_path))
 
             import_directory(str(mms_path), "participant_registration")
-            break
 
 
 if __name__ == "__main__":
