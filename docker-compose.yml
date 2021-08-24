@@ -41,7 +41,7 @@ services:
   #     - mysql_data:/var/lib/mysql
 
   postgres:
-    image: opennem/database:dev
+    image: timescale/timescaledb-ha:pg12-latest
     shm_size: "2GB"
     restart: unless-stopped
     env_file: ./.env
@@ -49,15 +49,14 @@ services:
       - TZ
       - TIMESCALEDB_TELEMETRY=off
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_MAX_CONNECTIONS=60
-      - POSTGRES_SHARED_BUFFERS=64MB
+      - TS_TUNE_MAX_CONNS_FLAGS=60
     ports:
       - ${HOST:-127.0.0.1}:15433:5432
     volumes:
-      - staging_data:/var/lib/postgresql
+      - postgres_data:/home/postgres/pgdata/data/
 
 volumes:
-  staging_data: {}
+  postgres_data: {}
   scrapyd_data:
     driver: local
   scrapyd_eggs:
