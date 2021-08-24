@@ -132,11 +132,11 @@ def main() -> None:
     if not mms_data_dir.is_dir():
         raise Exception("Not a directory: {}".format(mms_data_dir))
 
-    for _dir in mms_data_dir.iterdir():
+    for _dir in sorted(mms_data_dir.iterdir()):
         if not re.match(r"^\d{4}$", _dir.name):
             continue
 
-        for _dir_month in _dir.iterdir():
+        for _dir_month in sorted(_dir.iterdir()):
             if not re.match(r"^MMSDM_\d{4}_\d{2}", _dir_month.name):
                 continue
 
