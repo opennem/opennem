@@ -233,7 +233,7 @@ def parse_aemo_csv(
 
             table_full_name = "{}_{}".format(table_namespace.lower(), table_name.lower())
 
-            if namespace_filter and table_namespace not in namespace_filter:
+            if namespace_filter and table_namespace.lower() not in namespace_filter:
                 table_current = None
                 continue
 
