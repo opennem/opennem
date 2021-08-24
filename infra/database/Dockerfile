@@ -1,4 +1,4 @@
-FROM nikc9/postgis as base
+FROM nikc9/postgis:latest as base
 
 
 # RUN set -eux \
