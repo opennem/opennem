@@ -9,6 +9,7 @@ See also: mirror_mms.sh to dodwnload archives
 import gc
 import logging
 import re
+from os import name
 from pathlib import Path
 from typing import List, Optional
 
@@ -131,6 +132,11 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
 def main(namespace: Optional[str] = None) -> None:
     mms_data_dir = Path("data/mms/")
 
+    logger.info("Importing from {}".format(mms_data_dir))
+
+    if namespace:
+        logger.info("Filtering to namespace: {}".format(namespace))
+
     if not mms_data_dir.is_dir():
         raise Exception("Not a directory: {}".format(mms_data_dir))
 
@@ -150,7 +156,7 @@ def main(namespace: Optional[str] = None) -> None:
 
             logger.info("Running import on: {}".format(mms_path))
 
-            import_directory(str(mms_path), "participant_registration")
+            import_directory(str(mms_path), namespace=namespace)
 
 
 if __name__ == "__main__":
