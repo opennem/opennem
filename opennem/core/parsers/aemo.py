@@ -234,6 +234,7 @@ def parse_aemo_csv(
             table_full_name = "{}_{}".format(table_namespace.lower(), table_name.lower())
 
             if namespace_filter and table_namespace not in namespace_filter:
+                table_current = None
                 continue
 
             if table_set.has_table(table_full_name):
@@ -255,7 +256,6 @@ def parse_aemo_csv(
         # new record
         elif record_type == "D":
             if not table_current:
-                logger.error("Malformed AEMO csv - field records before table definition")
                 continue
 
             values = row[4:]
