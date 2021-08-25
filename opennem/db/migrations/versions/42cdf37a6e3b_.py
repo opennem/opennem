@@ -19,6 +19,7 @@ depends_on = None
 
 def upgrade():
     op.execute("CREATE EXTENSION IF NOT EXISTS postgis")
+    op.execute("CREATE EXTENSION IF NOT EXISTS timescaledb")
 
     op.create_table(
         "bom_station",
@@ -110,9 +111,7 @@ def upgrade():
         unique=False,
         postgresql_using="gist",
     )
-    op.create_index(
-        op.f("ix_location_place_id"), "location", ["place_id"], unique=False
-    )
+    op.create_index(op.f("ix_location_place_id"), "location", ["place_id"], unique=False)
     op.create_table(
         "network",
         sa.Column("created_by", sa.Text(), nullable=True),
@@ -152,9 +151,7 @@ def upgrade():
         sa.Column("approved_at", sa.DateTime(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        op.f("ix_participant_code"), "participant", ["code"], unique=True
-    )
+    op.create_index(op.f("ix_participant_code"), "participant", ["code"], unique=True)
     op.create_table(
         "balancing_summary",
         sa.Column("created_by", sa.Text(), nullable=True),
@@ -229,9 +226,7 @@ def upgrade():
             ["network.code"],
             name="fk_balancing_summary_network_code",
         ),
-        sa.PrimaryKeyConstraint(
-            "network_id", "trading_interval", "facility_code"
-        ),
+        sa.PrimaryKeyConstraint("network_id", "trading_interval", "facility_code"),
     )
     op.create_index(
         op.f("ix_facility_scada_facility_code"),
@@ -268,9 +263,7 @@ def upgrade():
         sa.Column("approved", sa.Boolean(), nullable=True),
         sa.Column("approved_by", sa.Text(), nullable=True),
         sa.Column("approved_at", sa.DateTime(timezone=True), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["location_id"], ["location.id"], name="fk_station_location_id"
-        ),
+        sa.ForeignKeyConstraint(["location_id"], ["location.id"], name="fk_station_location_id"),
         sa.ForeignKeyConstraint(
             ["participant_id"],
             ["participant.id"],
@@ -323,12 +316,8 @@ def upgrade():
         sa.ForeignKeyConstraint(
             ["fueltech_id"], ["fueltech.code"], name="fk_facility_fueltech_id"
         ),
-        sa.ForeignKeyConstraint(
-            ["network_id"], ["network.code"], name="fk_station_network_code"
-        ),
-        sa.ForeignKeyConstraint(
-            ["station_id"], ["station.id"], name="fk_station_status_code"
-        ),
+        sa.ForeignKeyConstraint(["network_id"], ["network.code"], name="fk_station_network_code"),
+        sa.ForeignKeyConstraint(["station_id"], ["station.id"], name="fk_station_status_code"),
         sa.ForeignKeyConstraint(
             ["status_id"],
             ["facility_status.code"],
@@ -336,9 +325,7 @@ def upgrade():
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        op.f("ix_facility_code"), "facility", ["code"], unique=False
-    )
+    op.create_index(op.f("ix_facility_code"), "facility", ["code"], unique=False)
     op.create_index(
         op.f("ix_facility_network_code"),
         "facility",
@@ -371,9 +358,7 @@ def upgrade():
         sa.Column("approved", sa.Boolean(), nullable=True),
         sa.Column("approved_by", sa.Text(), nullable=True),
         sa.Column("approved_at", sa.DateTime(timezone=True), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["station_id"], ["station.id"], name="fk_photos_station_id"
-        ),
+        sa.ForeignKeyConstraint(["station_id"], ["station.id"], name="fk_photos_station_id"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -400,15 +385,9 @@ def upgrade():
         sa.Column("discarded", sa.Boolean(), nullable=True),
         sa.Column("discarded_by", sa.Text(), nullable=True),
         sa.Column("discarded_at", sa.DateTime(timezone=True), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["facility_id"], ["facility.id"], name="fk_revision_facility_id"
-        ),
-        sa.ForeignKeyConstraint(
-            ["location_id"], ["location.id"], name="fk_revision_location_id"
-        ),
-        sa.ForeignKeyConstraint(
-            ["station_id"], ["station.id"], name="fk_revision_station_id"
-        ),
+        sa.ForeignKeyConstraint(["facility_id"], ["facility.id"], name="fk_revision_facility_id"),
+        sa.ForeignKeyConstraint(["location_id"], ["location.id"], name="fk_revision_location_id"),
+        sa.ForeignKeyConstraint(["station_id"], ["station.id"], name="fk_revision_station_id"),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###
@@ -425,12 +404,8 @@ def downgrade():
     op.drop_index(op.f("ix_station_network_code"), table_name="station")
     op.drop_index(op.f("ix_station_code"), table_name="station")
     op.drop_table("station")
-    op.drop_index(
-        op.f("ix_facility_scada_trading_interval"), table_name="facility_scada"
-    )
-    op.drop_index(
-        op.f("ix_facility_scada_facility_code"), table_name="facility_scada"
-    )
+    op.drop_index(op.f("ix_facility_scada_trading_interval"), table_name="facility_scada")
+    op.drop_index(op.f("ix_facility_scada_facility_code"), table_name="facility_scada")
     op.drop_table("facility_scada")
     op.drop_table("bom_observation")
     op.drop_index(
