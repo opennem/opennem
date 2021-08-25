@@ -121,7 +121,6 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
 
             try:
                 rec_stored = store_mms_table(table)
-                logger.info("Stored {} records".format(rec_stored))
             except Exception as e:
                 logger.error("Could not store for table: {}: {}".format(table.name, e))
 
