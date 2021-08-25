@@ -120,7 +120,7 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
             logger.debug("Storing table: {} {}".format(table.namespace, table.full_name))
 
             try:
-                rec_stored = store_mms_table(table)
+                store_mms_table(table)
             except Exception as e:
                 logger.error("Could not store for table: {}: {}".format(table.name, e))
 
