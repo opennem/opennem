@@ -1,23 +1,26 @@
 FROM nikc9/postgis:latest as base
 
+# setup build environment
+ENV BUILD_PACKAGES="lsb-release git binutils libc6-dev patchutils gcc libc-dev make cmake libssl-dev devscripts equivs libkrb5-dev"
+RUN apt-get -y update \
+  && apt-get install -y ${BUILD_PACKAGES} \
+  && apt-mark auto ${BUILD_PACKAGES}
 
-# RUN set -eux \
-#   && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
-#   && wget --content-disposition https://packagecloud.io/timescale/timescaledb/packages/debian/stretch/timescaledb-2-loader-postgresql-13_2.3.1~debian9_amd64.deb/download.deb \
-#   && wget --content-disposition https://packagecloud.io/timescale/timescaledb/packages/debian/stretch/timescaledb-2-postgresql-13_2.3.1~debian9_amd64.deb/download.deb \
-#   && dpkg -i timescaledb-2-loader-postgresql-13_2.3.1~debian9_amd64.deb \
-#   && dpkg -i timescaledb-2-postgresql-13_2.3.1~debian9_amd64.deb \
-#   && rm *.deb
+RUN mkdir -p /build
+RUN chmod 777 /build
+WORKDIR /build/
 
-RUN set -eux \
-  && sh -c "echo 'deb https://packagecloud.io/timescale/timescaledb/debian/ `lsb_release -c -s` main' > /etc/apt/sources.list.d/timescaledb.list" \
-  && wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | apt-key add - \
-  && apt-get update \
-  && apt-get  -y --no-install-recommends install timescaledb-2-postgresql-12 timescaledb-tools \
-  && apt-get -y --purge autoremove \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* \
-  && echo "v3"
+# checkout
+ARG GITHUB_REPO=timescale/timescaledb
+ARG GITHUB_TAG
+RUN git clone "https://github.com/${GITHUB_REPO}" /build/timescaledb;
+
+# build TS version
+ARG TIMESCALE_VERSION=2.4.1
+RUN cd /build/timescaledb && git reset HEAD --hard && git clean -f -d -x && git checkout ${TIMESCALE_VERSION} \
+  && rm -rf build \
+  && PATH="/usr/lib/postgresql/${POSTGRES_MAJOR_VERSION}/bin:${PATH}" ./bootstrap -DTAP_CHECKS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DREGRESS_CHECKS=OFF -DGENERATE_DOWNGRADE_SCRIPT=ON -DPROJECT_INSTALL_METHOD="${INSTALL_METHOD}"${OSS_ONLY} \
+  && cd build && make -j 6 install || exit 1;
 
 RUN  echo $POSTGRES_MAJOR_VERSION >/tmp/pg_version.txt
 RUN  echo $POSTGIS_MAJOR_VERSION >/tmp/pg_major_version.txt
