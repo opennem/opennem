@@ -8,8 +8,10 @@ import sys
 
 # This will eventually be dynamically parsed
 v = "3.7.0"
+
 __env__ = "prod"
 
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 # Check minimum required Python version
 if sys.version_info < (3, 7):
