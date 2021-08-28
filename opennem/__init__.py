@@ -11,7 +11,7 @@ v = "3.7.0"
 
 __env__ = "prod"
 
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 # Check minimum required Python version
 if sys.version_info < (3, 7):
