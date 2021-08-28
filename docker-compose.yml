@@ -41,7 +41,7 @@ services:
   #     - mysql_data:/var/lib/mysql
 
   postgres:
-    image: timescale/timescaledb-ha:pg12-latest
+    image: opennem/database:dev
     shm_size: "2GB"
     restart: unless-stopped
     env_file: ./.env
@@ -49,11 +49,10 @@ services:
       - TZ
       - TIMESCALEDB_TELEMETRY=off
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - TS_TUNE_MAX_CONNS_FLAGS=60
     ports:
       - ${HOST:-127.0.0.1}:15433:5432
     volumes:
-      - postgres_data:/home/postgres/pgdata/data/
+      - postgres_data:/var/lib/postgresql/
 
 volumes:
   postgres_data: {}
