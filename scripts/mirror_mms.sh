@@ -82,6 +82,7 @@ $wgetpath \
   --retry-on-http-error=403,501,503 \
   --random-wait \
   --cut-dirs 3 \
+  --limit-size 100M \
   -P ${desinationdir} \
   -U "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0" \
   $dist_url
