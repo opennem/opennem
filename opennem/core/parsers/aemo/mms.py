@@ -1,6 +1,5 @@
 """
-    Parse AEMO CSV format which can have multiple
-    tables and definitions per CSV files.
+Parse AEMO MMS CSV format which can have multiple tables and definitions per CSV files.
 
 """
 
@@ -184,7 +183,7 @@ class AEMOParserException(Exception):
 AEMO_ROW_HEADER_TYPES = ["C", "I", "D"]
 
 
-def parse_aemo_csv(
+def parse_aemo_mms_csv(
     content: str,
     table_set: Optional[AEMOTableSet] = None,
     namespace_filter: Optional[List[str]] = None,
