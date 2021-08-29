@@ -3842,8 +3842,8 @@ class MnspInterconnector(Base):
     authoriseddate = Column(TIMESTAMP(precision=3))
     authorisedby = Column(String(15))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
-    from_region_tlf = Column(Numeric(12, 7))
-    to_region_tlf = Column(Numeric(12, 7))
+    from_region_tlf = Column(Numeric(12, 7), nullable=True)
+    to_region_tlf = Column(Numeric(12, 7), nullable=True)
 
 
 class MnspOffertrk(Base):
