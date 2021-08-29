@@ -77,7 +77,7 @@ def store_mms_table(table: AEMOTableSchema) -> int:
     csv_content = generate_csv_from_records(
         table_schema,
         records_to_store,
-        column_names=records_to_store[0].keys(),
+        column_names=list(records_to_store[0].keys()),
     )
 
     cursor.copy_expert(sql_query, csv_content)
@@ -105,6 +105,8 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
             # with mmap.mmap(fh.fileno(), length=0, access=mmap.ACCESS_READ) as mmap_obj:
             content = fh.read()
 
+        logger.info(f"Reading file: {f}")
+
         if namespace:
             ts = parse_aemo_mms_csv(content, namespace_filter=[namespace])
         else:
@@ -125,6 +127,7 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
                 store_mms_table(table)
             except Exception as e:
                 logger.error("Could not store for table: {}: {}".format(table.full_name, e))
+                raise e
 
 
 @click.command()
