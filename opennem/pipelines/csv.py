@@ -18,6 +18,15 @@ from opennem.utils.pipelines import check_spider_pipeline
 logger = logging.getLogger(__name__)
 
 
+def pad_column_null(records: List[Dict], column_name: str) -> List[Dict]:
+    a = []
+
+    for i in records:
+        a.append({column_name: None, **i})
+
+    return a
+
+
 def generate_csv_from_records(
     table: Union[Table, FacilityScada, BalancingSummary],
     records: List[Dict],
@@ -32,6 +41,8 @@ def generate_csv_from_records(
         raise Exception("No records")
 
     csv_buffer = StringIO()
+
+    missing_columns = []
 
     table_column_names = [c.name for c in table.__table__.columns.values()]  # type: ignore
 
@@ -48,9 +59,16 @@ def generate_csv_from_records(
 
         for column_name in table_column_names:
             if column_name not in record_field_names:
-                raise Exception("Missing value for column {}".format(column_name))
+                # raise Exception("Missing value for column {}".format(column_name))
+                logger.warn("Missing value for column {}".format(column_name))
+                missing_columns.append(column_name)
+                # column_names.remove(column_name)
 
         column_names = record_field_names
+
+    if missing_columns:
+        for missing_col in missing_columns:
+            pad_column_null(records, missing_col)
 
     if not column_names:
         column_names = table_column_names
