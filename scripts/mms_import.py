@@ -83,7 +83,7 @@ def store_mms_table(table: AEMOTableSchema) -> int:
     cursor.copy_expert(sql_query, csv_content)
     conn.commit()
 
-    logger.info("Inserted {} records".format(len(records_to_store)))
+    logger.info("{}: Inserted {} records".format(table.full_name, len(records_to_store)))
 
     return len(records_to_store)
 
@@ -124,7 +124,7 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
             try:
                 store_mms_table(table)
             except Exception as e:
-                logger.error("Could not store for table: {}: {}".format(table.name, e))
+                logger.error("Could not store for table: {}: {}".format(table.full_name, e))
 
 
 @click.command()
