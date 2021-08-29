@@ -133,6 +133,7 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
 def main(namespace: Optional[str] = None, debug: Optional[bool] = False) -> None:
 
     logging.getLogger().setLevel(logging.INFO)
+    logging.getLogger("opennem.pipelines.bulk_insert").setLevel(logging.INFO)
     logger.setLevel(logging.INFO)
 
     mms_data_dir = Path("data/mms/")
