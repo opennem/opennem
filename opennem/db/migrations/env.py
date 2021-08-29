@@ -1,3 +1,4 @@
+# pylint: disable=no-member
 import logging
 import sys
 from logging.config import fileConfig
@@ -27,7 +28,7 @@ target_metadata = [opennem.metadata]
 
 
 def exclude_tables_from_config(config_: Dict[str, Any]) -> List[str]:
-    """ Read list of tables to exclude from config section and return as a list """
+    """Read list of tables to exclude from config section and return as a list"""
     tables = []
     tables_ = config_.get("tables", None)
     if tables_ is not None:
@@ -41,7 +42,7 @@ exclude_tables = exclude_tables_from_config(config.get_section("alembic:exclude"
 def include_object(
     object: SchemaItem, name: str, type_: str, reflected: bool, compare_to: Optional[SchemaItem]
 ) -> bool:
-    """ Pluggable include object method to support skipping some migration tables """
+    """Pluggable include object method to support skipping some migration tables"""
     if type_ == "table" and name in exclude_tables:
         return False
     else:
