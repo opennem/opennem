@@ -1,5 +1,5 @@
 """Excel parser for OpenNEM"""
-from typing import BinaryIO, Dict, List, Optional, Tuple
+from typing import BinaryIO, Dict, List, Optional, Tuple, Union
 
 from openpyxl import load_workbook
 from openpyxl.workbook.workbook import Workbook
@@ -43,8 +43,10 @@ def parse_workbook_sheet(sheet: Worksheet) -> List[Dict]:
 
 
 def parse_workbook(
-    fh: BinaryIO, model: Optional[BaseConfig] = None, convert_xls: bool = True
-) -> Workbook:
+    fh: BinaryIO,
+    convert_xls: bool = True,
+    worksheet: Optional[str] = None,
+) -> Union[Workbook, Worksheet]:
     """Parse an excel file (with conversion) into a dict of lists for each sheet"""
 
     fh.seek(0)
@@ -52,7 +54,7 @@ def parse_workbook(
     wb: Optional[Workbook] = None
 
     if fh_mime in ["application/CDFV2"]:
-        if convert_to_xlxs:
+        if convert_xls:
             wb = convert_to_xlxs(fh)
     else:
         wb = load_workbook(fh)
@@ -60,11 +62,10 @@ def parse_workbook(
     if not wb:
         raise Exception("Could not parse workbook")
 
-    # workbook_parsed = {}
+    if worksheet:
+        if worksheet not in wb:
+            raise Exception(f"Could not find worksheet {worksheet} in workbook")
 
-    # for _sheet in wb.sheetnames:
-    #     _parsed_sheet = parse_workbook_sheet(wb[_sheet])
-
-    #     workbook_parsed[_sheet] = _parsed_sheet
+        return wb[worksheet]
 
     return wb
