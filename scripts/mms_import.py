@@ -90,9 +90,9 @@ def store_mms_table(table: AEMOTableSchema) -> int:
     return len(records_to_store)
 
 
-@click.command()
-@click.argument("filepath", type=str, required=True)
-@click.option("--namespace", type=str, required=False)
+# @click.command()
+# @click.argument("filepath", type=str, required=True)
+# @click.option("--namespace", type=str, required=False)
 def import_file(filepath: Path, namespace: Optional[str] = None) -> None:
     content = None
 
@@ -123,9 +123,9 @@ def import_file(filepath: Path, namespace: Optional[str] = None) -> None:
             raise e
 
 
-@click.command()
-@click.argument("mms_dir", type=str, required=True)
-@click.option("--namespace", type=str, required=False)
+# @click.command()
+# @click.argument("mms_dir", type=str, required=True)
+# @click.option("--namespace", type=str, required=False)
 def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
     mmsdir = Path(mms_dir)
 
