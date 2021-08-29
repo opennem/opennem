@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from opennem.core.parsers.aemo_nem_facility_closures import parse_aemo_closures_xls
+from opennem.core.parsers.aemo.facility_closures import parse_aemo_closures_xls
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility
 
