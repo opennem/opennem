@@ -35,7 +35,12 @@ def mime_from_content(content: BytesIO) -> Optional[str]:
         content = BytesIO(content)
 
     try:
-        file_mime = magic.from_buffer(content.read(2048), mime=True)
+        _file_buffer: bytes = content.read(2048)
+
+        # rewind it back again
+        content.seek(0)
+
+        file_mime = magic.from_buffer(_file_buffer, mime=True)
     except Exception as e:
         logger.error("Error parsing mime from content: {}".format(e))
         return None
