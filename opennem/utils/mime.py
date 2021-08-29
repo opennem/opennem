@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 CONTENT_TYPES = ["utf-8", "utf-8-sig", "latin-1"]
 
 
-def mime_from_content(content: BytesIO) -> Optional[str]:
+def mime_from_content(content: BinaryIO) -> Optional[str]:
     """
     Use libmime to get mime type from content stream
     """
@@ -102,7 +102,7 @@ def _is_textfile_proc(fn):
     return re.search("text", msg) != None
 
 
-def is_textfile(fh: IO) -> bool:
+def is_textfile(fh: BinaryIO) -> bool:
     """Check if a file is a text file by looking at proportion of non-ASCII characters in file buffer"""
     fh.seek(0)
     _buffer = fh.read(512)
