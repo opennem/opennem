@@ -3,7 +3,7 @@ import logging
 from pkgutil import get_data
 from typing import Dict, List, Optional
 
-from opennem.core.dispatch_type import DispatchType
+from opennem.core.dispatch_type import DispatchType, dispatch_type_string, parse_dispatch_type
 from opennem.core.loader import load_data
 from opennem.schema.fueltech import FueltechSchema
 
@@ -68,10 +68,15 @@ def load_fueltech_map(fixture_name: str) -> Dict:
     fueltech_map = {}
 
     csvreader = csv.DictReader(csv_data)
+
     for line in csvreader:
         record = [i or None for field, i in line.items() if field in MAP_KEYS]
 
-        key = tuple(map(clean_fueltech, record))
+        records = list(map(clean_fueltech, record))
+
+        # records[4] = parse_dispatch_type(records[4])
+
+        key = tuple(records)
 
         fueltech_map[key] = line["fueltech_map"]
 
@@ -86,7 +91,7 @@ def lookup_fueltech(
     fueltype_desc: Optional[str] = None,
     techtype: Optional[str] = None,
     techtype_desc: Optional[str] = None,
-    dispatch_type: Optional[DispatchType] = None,
+    dispatch_type: DispatchType = DispatchType.GENERATOR,
 ) -> Optional[str]:
     """
     Takes fueltech strings from AEMO or other sources and maps them
@@ -106,10 +111,10 @@ def lookup_fueltech(
     if techtype_desc:
         ttd = clean_fueltech(techtype_desc)
 
-    lookup_set = tuple([ft, ftd, tt, ttd, dispatch_type.value if dispatch_type else None])
+    lookup_set = tuple([ft, ftd, tt, ttd, dispatch_type.value.lower()])
 
     # Lookup legacy fuel tech types and map them
-    if ft in LEGACY_FUELTECH_MAP.keys():
+    if ft and ft in LEGACY_FUELTECH_MAP.keys():
         return LEGACY_FUELTECH_MAP[ft]
 
     if lookup_set in FUELTECH_MAP:
