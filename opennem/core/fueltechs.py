@@ -3,6 +3,7 @@ import logging
 from pkgutil import get_data
 from typing import Dict, List, Optional
 
+from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
 from opennem.schema.fueltech import FueltechSchema
 
@@ -82,27 +83,30 @@ FUELTECH_MAP = load_fueltech_map("aemo_fueltech_map.csv")
 
 def lookup_fueltech(
     fueltype: str,
-    fueltype_desc=None,
-    techtype=None,
-    techtype_desc=None,
-    dispatch_type: str = "generator",
+    fueltype_desc: Optional[str] = None,
+    techtype: Optional[str] = None,
+    techtype_desc: Optional[str] = None,
+    dispatch_type: Optional[DispatchType] = None,
 ) -> Optional[str]:
     """
     Takes fueltech strings from AEMO or other sources and maps them
     to opennem fueltechs using the csv file in the data directory
 
     """
+    tt, ftd, ttd = None, None, None
 
     ft = clean_fueltech(fueltype)
-    tt = clean_fueltech(techtype)
-    ftd = clean_fueltech(fueltype_desc)
-    ttd = clean_fueltech(techtype_desc)
-    dispatch_type = dispatch_type.strip().lower()
 
-    if dispatch_type not in ["generator", "load"]:
-        raise Exception("Invalid dispatch type: {}".format(dispatch_type))
+    if techtype:
+        tt = clean_fueltech(techtype)
 
-    lookup_set = tuple([ft, ftd, tt, ttd, dispatch_type])
+    if fueltype_desc:
+        ftd = clean_fueltech(fueltype_desc)
+
+    if techtype_desc:
+        ttd = clean_fueltech(techtype_desc)
+
+    lookup_set = tuple([ft, ftd, tt, ttd, dispatch_type.value if dispatch_type else None])
 
     # Lookup legacy fuel tech types and map them
     if ft in LEGACY_FUELTECH_MAP.keys():
