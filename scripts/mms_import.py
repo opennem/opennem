@@ -88,52 +88,56 @@ def store_mms_table(table: AEMOTableSchema) -> int:
     return len(records_to_store)
 
 
-# @click.command()
-# @click.option("--purge", is_flag=True, help="Purge unmapped views")
+@click.command()
+@click.argument("filepath", type=str, required=True)
+@click.option("--namespace", type=str, required=False)
+def import_file(filepath: Path, namespace: Optional[str] = None) -> None:
+    content = None
+
+    with open(filepath, mode="r") as fh:
+        # with mmap.mmap(fh.fileno(), length=0, access=mmap.ACCESS_READ) as mmap_obj:
+        content = fh.read()
+
+    logger.info(f"Reading file: {filepath}")
+
+    if namespace:
+        ts = parse_aemo_mms_csv(content, namespace_filter=[namespace])
+    else:
+        ts = parse_aemo_mms_csv(content)
+
+    logger.debug("Loaded {} tables".format(len(ts.table_names)))
+
+    for table in ts.tables:
+
+        if namespace and table.namespace != namespace:
+            continue
+
+        logger.debug("Storing table: {} {}".format(table.namespace, table.full_name))
+
+        try:
+            store_mms_table(table)
+        except Exception as e:
+            logger.error("Could not store for table: {}: {}".format(table.full_name, e))
+            raise e
+
+
+@click.command()
+@click.argument("mms_dir", type=str, required=True)
+@click.option("--namespace", type=str, required=False)
 def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
     mmsdir = Path(mms_dir)
-    file_count: int = 0
 
     if not mmsdir.is_dir():
         raise Exception("Not a directory: {}".format(mms_dir))
 
-    ts = AEMOTableSet()
-    content = None
-
     for f in mmsdir.glob("*.zip"):
-        with open(f, mode="r") as fh:
-            # with mmap.mmap(fh.fileno(), length=0, access=mmap.ACCESS_READ) as mmap_obj:
-            content = fh.read()
-
-        logger.info(f"Reading file: {f}")
-
-        if namespace:
-            ts = parse_aemo_mms_csv(content, namespace_filter=[namespace])
-        else:
-            ts = parse_aemo_mms_csv(content)
-
-        file_count += 1
-
-        logger.debug("Loaded {} files and {} tables".format(file_count, len(ts.table_names)))
-
-        for table in ts.tables:
-
-            if namespace and table.namespace != namespace:
-                continue
-
-            logger.debug("Storing table: {} {}".format(table.namespace, table.full_name))
-
-            try:
-                store_mms_table(table)
-            except Exception as e:
-                logger.error("Could not store for table: {}: {}".format(table.full_name, e))
-                raise e
+        import_file(f, namespace=namespace)
 
 
 @click.command()
 @click.option("--namespace", type=str, required=False)
 @click.option("--debug", is_flag=True, default=False)
-def main(namespace: Optional[str] = None, debug: Optional[bool] = False) -> None:
+def all(namespace: Optional[str] = None, debug: Optional[bool] = False) -> None:
 
     logging.getLogger().setLevel(logging.INFO)
     logging.getLogger("opennem.pipelines.bulk_insert").setLevel(logging.INFO)
@@ -170,6 +174,15 @@ def main(namespace: Optional[str] = None, debug: Optional[bool] = False) -> None
 
             import_directory(str(mms_path), namespace=namespace)
 
+
+@click.group()
+def main() -> None:
+    pass
+
+
+main.add_command(all)
+main.add_command(import_directory, name="dir")
+main.add_command(import_file, name="file")
 
 if __name__ == "__main__":
     try:
