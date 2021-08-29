@@ -8,6 +8,7 @@ See also: mirror_mms.sh to dodwnload archives
 
 import gc
 import logging
+import mmap
 import re
 from pathlib import Path
 from typing import List, Optional
@@ -100,7 +101,8 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
     content = None
 
     for f in mmsdir.glob("*.zip"):
-        with open(f) as fh:
+        with open(f, mode="r") as fh:
+            # with mmap.mmap(fh.fileno(), length=0, access=mmap.ACCESS_READ) as mmap_obj:
             content = fh.read()
 
         if namespace:
