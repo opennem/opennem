@@ -1,18 +1,32 @@
 """
 OpenNEM Excel File Utils
 
-
+@NOTE https://github.com/snoopyjc/xls2xlsx/blob/master/xls2xlsx/xls2xlsx.py
 """
 
+_HAVE_XLRD = False
 
-from typing import Any
+import logging  # noqa: E402
+from typing import Any, Optional  # noqa: E402
 
-import xlrd
-from openpyxl.workbook.workbook import Workbook
+try:
+    import xlrd
+
+    _HAVE_XLRD = True
+except ImportError:
+    pass
+
+from openpyxl.workbook.workbook import Workbook  # noqa: E402
+
+logger = logging.getLogger("opennem.utils.xls")
 
 
-def convert_to_xlxs(content: Any) -> Workbook:
+def convert_to_xlxs(content: Any) -> Optional[Workbook]:
     """Convert old workbook formats xls into xlxs"""
+    if not _HAVE_XLRD:
+        logger.error("xlrd module not installed. Cannot convert XLS file.")
+        return None
+
     xlsBook = xlrd.open_workbook(file_contents=content)
     workbook = Workbook()
 
@@ -23,8 +37,6 @@ def convert_to_xlxs(content: Any) -> Workbook:
 
         for row in range(0, xlsSheet.nrows):
             for col in range(0, xlsSheet.ncols):
-                sheet.cell(
-                    row=row + 1, column=col + 1
-                ).value = xlsSheet.cell_value(row, col)
+                sheet.cell(row=row + 1, column=col + 1).value = xlsSheet.cell_value(row, col)
 
     return workbook
