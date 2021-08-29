@@ -639,11 +639,16 @@ def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optio
     if type(capacity) is float:
         cap_clean = capacity
 
-    elif type(capacity) == str:
+    elif isinstance(capacity, str):
         cap_clean = strip_whitespace(capacity)
 
         if "-" in cap_clean:
             cap_clean_components = cap_clean.split("-")
+            cap_clean = cap_clean_components.pop()
+            return clean_capacity(cap_clean)
+
+        if "/" in cap_clean:
+            cap_clean_components = cap_clean.split("/")
             cap_clean = cap_clean_components.pop()
             return clean_capacity(cap_clean)
 
