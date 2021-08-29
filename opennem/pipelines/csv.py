@@ -59,19 +59,15 @@ def generate_csv_from_records(
 
         for column_name in table_column_names:
             if column_name not in record_field_names:
-                # raise Exception("Missing value for column {}".format(column_name))
                 logger.warn("Missing value for column {}".format(column_name))
                 missing_columns.append(column_name)
-                # column_names.remove(column_name)
-
-        column_names = record_field_names
 
     if missing_columns:
         for missing_col in missing_columns:
-            pad_column_null(records, missing_col)
+            records = pad_column_null(records, missing_col)
 
-    if not column_names:
-        column_names = table_column_names
+    # if not column_names:
+    column_names = table_column_names
 
     csvwriter = csv.DictWriter(csv_buffer, fieldnames=column_names)
     csvwriter.writeheader()
