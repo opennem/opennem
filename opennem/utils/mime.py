@@ -7,7 +7,8 @@
 import logging
 import mimetypes
 from io import BytesIO
-from typing import Optional
+from typing import BinaryIO, Optional
+from zipfile import BadZipFile, ZipFile
 
 try:
     import magic
@@ -65,3 +66,23 @@ def decode_bytes(content: bytes) -> str:
             pass
 
     raise Exception("Could not decode")
+
+
+def is_zip(fh: BinaryIO, test_zip: bool = True) -> bool:
+    """Check if a file-like object is a zip file"""
+    try:
+        zf = ZipFile(fh)
+
+        if not test_zip:
+            return True
+
+        # test_result will CRC check each file and return none on success
+        test_result = zf.testzip()
+
+        if not test_result:
+            return True
+
+    except BadZipFile:
+        return False
+
+    return False
