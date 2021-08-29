@@ -14,7 +14,7 @@ from typing import List, Optional
 
 import click
 
-from opennem.core.parsers.aemo import AEMOTableSchema, AEMOTableSet, parse_aemo_csv
+from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet, parse_aemo_mms_csv
 from opennem.db import get_database_engine
 from opennem.db.models import mms
 from opennem.pipelines.bulk_insert import build_insert_query
@@ -104,9 +104,9 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
             content = fh.read()
 
         if namespace:
-            ts = parse_aemo_csv(content, namespace_filter=[namespace])
+            ts = parse_aemo_mms_csv(content, namespace_filter=[namespace])
         else:
-            ts = parse_aemo_csv(content)
+            ts = parse_aemo_mms_csv(content)
 
         file_count += 1
 

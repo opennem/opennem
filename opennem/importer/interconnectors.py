@@ -11,7 +11,7 @@ from typing import List
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
 from opennem.core.networks import state_from_network_region
-from opennem.core.parsers.aemo import AEMOParserException, parse_aemo_csv
+from opennem.core.parsers.aemo.mms import AEMOParserException, parse_aemo_mms_csv
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility, Location, Station
 from opennem.schema.aemo.mms import MarketConfigInterconnector
@@ -39,7 +39,7 @@ def import_nem_interconnects() -> None:
     aemo_table_set = None
 
     try:
-        aemo_table_set = parse_aemo_csv(csv_data)
+        aemo_table_set = parse_aemo_mms_csv(csv_data)
     except AEMOParserException as e:
         logger.error(e)
         return None
