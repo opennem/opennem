@@ -28,6 +28,7 @@ def convert_to_xlxs(fh: BinaryIO) -> Optional[Workbook]:
         return None
 
     file_content = fh.read()
+    fh.seek(0)
 
     xlsBook = xlrd.open_workbook(file_contents=file_content)
     workbook = Workbook()
