@@ -80,6 +80,8 @@ def store_mms_table(table: AEMOTableSchema) -> int:
         column_names=list(records_to_store[0].keys()),
     )
 
+    logger.debug(csv_content.getvalue().splitlines()[:2])
+
     cursor.copy_expert(sql_query, csv_content)
     conn.commit()
 
