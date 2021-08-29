@@ -191,5 +191,9 @@ def rel_export() -> None:
     logger.info("Wrote {} records".format(nem_rel.length))
 
 
+def parse_aemo_rel_spreadsheet() -> None:
+    pass
+
+
 if __name__ == "__main__":
     rel_export()
