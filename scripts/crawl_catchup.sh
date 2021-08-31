@@ -1,8 +1,9 @@
-./scripts/spider_queue.py au.bom.capitals
-./scripts/spider_queue.py au.apvi.current
-./scripts/spider_queue.py au.nem.day.dispatch_is
-./scripts/spider_queue.py au.nem.day.dispatch_scada
-./scripts/spider_queue.py au.nem.day.rooftop
-./scripts/spider_queue.py au.nem.day.trading_is
-./scripts/spider_queue.py au.nem.week.dispatch
-./scripts/spider_queue.py au.nem.week.dispatch_actual_gen
+ENV=staging scrapy crawl au.bom.capitals
+# ENV=staging scrapy crawl au.apvi.current
+ENV=staging scrapy crawl au.nem.day.dispatch_is
+ENV=staging scrapy crawl au.nem.day.dispatch_scada
+ENV=staging scrapy crawl au.nem.day.rooftop
+ENV=staging scrapy crawl au.nem.day.trading_is
+ENV=staging scrapy crawl au.nem.week.dispatch
+ENV=staging scrapy crawl au.nem.week.dispatch_actual_gen
+
