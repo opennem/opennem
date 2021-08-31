@@ -22,7 +22,7 @@ def pad_column_null(records: List[Dict], column_name: str) -> List[Dict]:
     a = []
 
     for i in records:
-        a.append({column_name: None, **i})
+        a.append({column_name: "", **i})
 
     return a
 
