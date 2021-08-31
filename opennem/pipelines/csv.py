@@ -42,8 +42,6 @@ def generate_csv_from_records(
 
     csv_buffer = StringIO()
 
-    missing_columns = []
-
     table_column_names = [c.name for c in table.__table__.columns.values()]  # type: ignore
 
     # sanity check the records we received to make sure
@@ -59,15 +57,12 @@ def generate_csv_from_records(
 
         for column_name in table_column_names:
             if column_name not in record_field_names:
-                logger.warn("Missing value for column {}".format(column_name))
-                missing_columns.append(column_name)
+                raise Exception("Missing value for column {}".format(column_name))
 
-    if missing_columns:
-        for missing_col in missing_columns:
-            records = pad_column_null(records, missing_col)
+        column_names = record_field_names
 
-    # if not column_names:
-    column_names = table_column_names
+    if not column_names:
+        column_names = table_column_names
 
     csvwriter = csv.DictWriter(csv_buffer, fieldnames=column_names)
     csvwriter.writeheader()
