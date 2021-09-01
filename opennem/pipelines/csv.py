@@ -59,7 +59,15 @@ def generate_csv_from_records(
             if column_name not in record_field_names:
                 raise Exception("Missing value for column {}".format(column_name))
 
+<<<<<<< Updated upstream
         column_names = record_field_names
+=======
+        column_names = table_column_names
+
+    # if missing_columns:
+    #     for missing_col in missing_columns:
+    #         records = pad_column_null(records, missing_col)
+>>>>>>> Stashed changes
 
     if not column_names:
         column_names = table_column_names
