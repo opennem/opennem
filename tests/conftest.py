@@ -34,3 +34,8 @@ def xls_file(load_file: Callable) -> BinaryIO:
 @pytest.fixture
 def xlsx_file(load_file: Callable) -> BinaryIO:
     return load_file("excel_template.xlsx")
+
+
+@pytest.fixture
+def aemo_nemweb_dispatch_scada(load_file: Callable) -> BinaryIO:
+    return load_file("PUBLIC_DISPATCHSCADA_202109021255_0000000348376188.zip")
