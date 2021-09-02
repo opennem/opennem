@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def pad_column_null(records: List[Dict], column_name: str) -> List[Dict]:
+    """Adds missing column name into the list of table records"""
     a = []
 
     for i in records:
