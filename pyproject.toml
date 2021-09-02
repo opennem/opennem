@@ -94,6 +94,7 @@ tox = "^3.23.1"
 scrapyd-client = {git = "https://github.com/iamumairayub/scrapyd-client.git"}
 types-requests = "^2.25.2"
 betamax = "^0.8.1"
+jupyter = "^1.0.0"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
