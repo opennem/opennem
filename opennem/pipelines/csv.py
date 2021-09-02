@@ -1,7 +1,7 @@
 """
-Take records generated from previous pipeline steps (usually a list of
-dicts) and prep them into CSV in the shape of the database table
-schema so they can be used with bulk_insert
+    Take records generated from previous pipeline steps (usually a list of
+    dicts) and prep them into CSV in the shape of the database table
+    schema so they can be used with bulk_insert
 
 """
 import csv
@@ -16,16 +16,6 @@ from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.utils.pipelines import check_spider_pipeline
 
 logger = logging.getLogger(__name__)
-
-
-def pad_column_null(records: List[Dict], column_name: str) -> List[Dict]:
-    """Adds missing column name into the list of table records"""
-    a = []
-
-    for i in records:
-        a.append({column_name: "", **i})
-
-    return a
 
 
 def generate_csv_from_records(
@@ -61,11 +51,6 @@ def generate_csv_from_records(
                 raise Exception("Missing value for column {}".format(column_name))
 
         column_names = record_field_names
-        # column_names = table_column_names
-
-    # if missing_columns:
-    #     for missing_col in missing_columns:
-    #         records = pad_column_null(records, missing_col)
 
     if not column_names:
         column_names = table_column_names

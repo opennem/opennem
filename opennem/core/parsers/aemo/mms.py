@@ -282,7 +282,7 @@ def parse_aemo_urls(urls: List[str]) -> AEMOTableSet:
             continue
 
         csv_content_decoded = csv_content.decode("utf-8")
-        aemo = parse_aemo_mms_csv(csv_content_decoded, aemo)
+        aemo = parse_aemo_csv(csv_content_decoded, aemo)
 
     return aemo
 

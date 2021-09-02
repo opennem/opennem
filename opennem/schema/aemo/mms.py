@@ -55,19 +55,11 @@ class ParticipantMNSPInterconnector(MMSBase):
 
     linkid: str
     effectivedate: datetime
-    versionno: int
     interconnectorid: str
     fromregion: str
     toregion: str
     maxcapacity: float
-    tlf: Optional[float]
-    lhsfactor: Optional[float]
-    meterflowconstant: Optional[float]
     authoriseddate: datetime
-    authorisedby: str
-    lastchanged: Optional[datetime]
-    from_region_tlf: Optional[float]
-    to_region_tlf: Optional[float]
 
     @validator("linkid", pre=True)
     def validate_linkid(cls, value: str) -> str:
@@ -100,25 +92,6 @@ class ParticipantMNSPInterconnector(MMSBase):
             raise ValueError("Not a valid authoriseddate: {}".format(value))
 
         return dt
-
-    @validator("lastchanged", pre=True)
-    def validate_lastchanged(cls, value: Optional[str]) -> Optional[datetime]:
-        if not value or value == "":
-            return None
-
-        dt = parse_date(value)
-
-        if not dt:
-            logger.error("Not a valid date: {}".format(value))
-            raise ValueError("Not a valid lastchanged: {}".format(value))
-
-        return dt
-
-
-class ParticipantRegistrationStadualloc(MMSBase):
-    """"""
-
-    pass
 
 
 class MarketConfigInterconnector(MMSBase):
@@ -159,8 +132,8 @@ TABLE_TO_SCHEMA_MAP = {
 
 
 def get_mms_schema_for_table(table_name: str) -> Optional[MMSBase]:
-    if table_name.upper() not in TABLE_TO_SCHEMA_MAP.keys():
-        logger.warn("No schema found for table: {}".format(table_name))
+    if table_name not in TABLE_TO_SCHEMA_MAP.keys():
+        logger.info("No schema found for table: {}".format(table_name))
         return None
 
-    return TABLE_TO_SCHEMA_MAP[table_name.upper()]  # type: ignore
+    return TABLE_TO_SCHEMA_MAP[table_name]  # type: ignore

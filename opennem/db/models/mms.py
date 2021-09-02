@@ -8,8 +8,8 @@ metadata = Base.metadata
 
 
 class AncillaryRecoverySplit(Base):
-    __tablename__ = "ancillary_recovery_split"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'ancillary_recovery_split'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -20,8 +20,8 @@ class AncillaryRecoverySplit(Base):
 
 
 class Apccomp(Base):
-    __tablename__ = "apccomp"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'apccomp'
+    __table_args__ = {'schema': 'mms'}
 
     apcid = Column(String(10), primary_key=True)
     regionid = Column(String(10))
@@ -33,8 +33,8 @@ class Apccomp(Base):
 
 
 class Apccompamount(Base):
-    __tablename__ = "apccompamount"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'apccompamount'
+    __table_args__ = {'schema': 'mms'}
 
     apcid = Column(String(10), primary_key=True, nullable=False)
     participantid = Column(String(10), primary_key=True, nullable=False)
@@ -45,8 +45,8 @@ class Apccompamount(Base):
 
 
 class Apccompamounttrk(Base):
-    __tablename__ = "apccompamounttrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'apccompamounttrk'
+    __table_args__ = {'schema': 'mms'}
 
     apcid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -56,8 +56,8 @@ class Apccompamounttrk(Base):
 
 
 class Apevent(Base):
-    __tablename__ = "apevent"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'apevent'
+    __table_args__ = {'schema': 'mms'}
 
     apeventid = Column(Numeric(22, 0), primary_key=True)
     effectivefrominterval = Column(TIMESTAMP(precision=3))
@@ -71,8 +71,8 @@ class Apevent(Base):
 
 
 class Apeventregion(Base):
-    __tablename__ = "apeventregion"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'apeventregion'
+    __table_args__ = {'schema': 'mms'}
 
     apeventid = Column(Numeric(22, 0), primary_key=True, nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
@@ -89,8 +89,8 @@ class Apeventregion(Base):
 
 
 class Auction(Base):
-    __tablename__ = "auction"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'auction'
+    __table_args__ = {'schema': 'mms'}
 
     auctionid = Column(String(30), primary_key=True)
     auctiondate = Column(TIMESTAMP(precision=3))
@@ -104,8 +104,8 @@ class Auction(Base):
 
 
 class AuctionCalendar(Base):
-    __tablename__ = "auction_calendar"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'auction_calendar'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     quarter = Column(Numeric(1, 0), primary_key=True, nullable=False)
@@ -122,8 +122,8 @@ class AuctionCalendar(Base):
 
 
 class AuctionIcAllocation(Base):
-    __tablename__ = "auction_ic_allocations"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'auction_ic_allocations'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     quarter = Column(Numeric(1, 0), primary_key=True, nullable=False)
@@ -140,8 +140,8 @@ class AuctionIcAllocation(Base):
 
 
 class AuctionRevenueEstimate(Base):
-    __tablename__ = "auction_revenue_estimate"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'auction_revenue_estimate'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     quarter = Column(Numeric(1, 0), primary_key=True, nullable=False)
@@ -157,8 +157,8 @@ class AuctionRevenueEstimate(Base):
 
 
 class AuctionRevenueTrack(Base):
-    __tablename__ = "auction_revenue_track"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'auction_revenue_track'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     quarter = Column(Numeric(1, 0), primary_key=True, nullable=False)
@@ -173,8 +173,8 @@ class AuctionRevenueTrack(Base):
 
 
 class AuctionRpEstimate(Base):
-    __tablename__ = "auction_rp_estimate"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'auction_rp_estimate'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     quarter = Column(Numeric(1, 0), primary_key=True, nullable=False)
@@ -187,8 +187,8 @@ class AuctionRpEstimate(Base):
 
 
 class AuctionTranche(Base):
-    __tablename__ = "auction_tranche"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'auction_tranche'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     quarter = Column(Numeric(1, 0), primary_key=True, nullable=False)
@@ -203,8 +203,8 @@ class AuctionTranche(Base):
 
 
 class Biddayoffer(Base):
-    __tablename__ = "biddayoffer"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'biddayoffer'
+    __table_args__ = {'schema': 'mms'}
 
     duid = Column(String(10), primary_key=True, nullable=False)
     bidtype = Column(String(10), primary_key=True, nullable=False)
@@ -236,8 +236,8 @@ class Biddayoffer(Base):
 
 
 class BiddayofferD(Base):
-    __tablename__ = "biddayoffer_d"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'biddayoffer_d'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -270,8 +270,8 @@ class BiddayofferD(Base):
 
 
 class Bidduiddetail(Base):
-    __tablename__ = "bidduiddetails"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'bidduiddetails'
+    __table_args__ = {'schema': 'mms'}
 
     duid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -286,8 +286,8 @@ class Bidduiddetail(Base):
 
 
 class Bidduiddetailstrk(Base):
-    __tablename__ = "bidduiddetailstrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'bidduiddetailstrk'
+    __table_args__ = {'schema': 'mms'}
 
     duid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -298,8 +298,8 @@ class Bidduiddetailstrk(Base):
 
 
 class Bidofferfiletrk(Base):
-    __tablename__ = "bidofferfiletrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'bidofferfiletrk'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(10), primary_key=True, nullable=False)
     offerdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -311,8 +311,8 @@ class Bidofferfiletrk(Base):
 
 
 class Bidperoffer(Base):
-    __tablename__ = "bidperoffer"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'bidperoffer'
+    __table_args__ = {'schema': 'mms'}
 
     duid = Column(String(10), primary_key=True, nullable=False)
     bidtype = Column(String(10), primary_key=True, nullable=False)
@@ -344,8 +344,8 @@ class Bidperoffer(Base):
 
 
 class BidperofferD(Base):
-    __tablename__ = "bidperoffer_d"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'bidperoffer_d'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -379,8 +379,8 @@ class BidperofferD(Base):
 
 
 class Bidtype(Base):
-    __tablename__ = "bidtypes"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'bidtypes'
+    __table_args__ = {'schema': 'mms'}
 
     bidtype = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -394,8 +394,8 @@ class Bidtype(Base):
 
 
 class Bidtypestrk(Base):
-    __tablename__ = "bidtypestrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'bidtypestrk'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -405,8 +405,8 @@ class Bidtypestrk(Base):
 
 
 class Billadjustment(Base):
-    __tablename__ = "billadjustments"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billadjustments'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -428,8 +428,8 @@ class Billadjustment(Base):
 
 
 class BillingApcCompensation(Base):
-    __tablename__ = "billing_apc_compensation"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_apc_compensation'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -444,8 +444,8 @@ class BillingApcCompensation(Base):
 
 
 class BillingApcRecovery(Base):
-    __tablename__ = "billing_apc_recovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_apc_recovery'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -463,8 +463,8 @@ class BillingApcRecovery(Base):
 
 
 class BillingCo2ePublication(Base):
-    __tablename__ = "billing_co2e_publication"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_co2e_publication'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -477,8 +477,8 @@ class BillingCo2ePublication(Base):
 
 
 class BillingCo2ePublicationTrk(Base):
-    __tablename__ = "billing_co2e_publication_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_co2e_publication_trk'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -487,8 +487,8 @@ class BillingCo2ePublicationTrk(Base):
 
 
 class BillingCspDerogationAmount(Base):
-    __tablename__ = "billing_csp_derogation_amount"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_csp_derogation_amount'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -500,8 +500,8 @@ class BillingCspDerogationAmount(Base):
 
 
 class BillingDailyEnergySummary(Base):
-    __tablename__ = "billing_daily_energy_summary"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_daily_energy_summary'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -515,8 +515,8 @@ class BillingDailyEnergySummary(Base):
 
 
 class BillingDirectionReconOther(Base):
-    __tablename__ = "billing_direction_recon_other"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_direction_recon_other'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -539,8 +539,8 @@ class BillingDirectionReconOther(Base):
 
 
 class BillingDirectionReconciliatn(Base):
-    __tablename__ = "billing_direction_reconciliatn"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_direction_reconciliatn'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -561,8 +561,8 @@ class BillingDirectionReconciliatn(Base):
 
 
 class BillingEftshortfallAmount(Base):
-    __tablename__ = "billing_eftshortfall_amount"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_eftshortfall_amount'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -577,8 +577,8 @@ class BillingEftshortfallAmount(Base):
 
 
 class BillingEftshortfallDetail(Base):
-    __tablename__ = "billing_eftshortfall_detail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_eftshortfall_detail'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -589,8 +589,8 @@ class BillingEftshortfallDetail(Base):
 
 
 class BillingGstDetail(Base):
-    __tablename__ = "billing_gst_detail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_gst_detail'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -604,8 +604,8 @@ class BillingGstDetail(Base):
 
 
 class BillingGstSummary(Base):
-    __tablename__ = "billing_gst_summary"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_gst_summary'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -618,8 +618,8 @@ class BillingGstSummary(Base):
 
 
 class BillingMrPayment(Base):
-    __tablename__ = "billing_mr_payment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_mr_payment'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -633,8 +633,8 @@ class BillingMrPayment(Base):
 
 
 class BillingMrRecovery(Base):
-    __tablename__ = "billing_mr_recovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_mr_recovery'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -648,8 +648,8 @@ class BillingMrRecovery(Base):
 
 
 class BillingMrShortfall(Base):
-    __tablename__ = "billing_mr_shortfall"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_mr_shortfall'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -663,8 +663,8 @@ class BillingMrShortfall(Base):
 
 
 class BillingMrSummary(Base):
-    __tablename__ = "billing_mr_summary"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_mr_summary'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -679,8 +679,8 @@ class BillingMrSummary(Base):
 
 
 class BillingNmasTstPayment(Base):
-    __tablename__ = "billing_nmas_tst_payments"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_nmas_tst_payments'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -692,8 +692,8 @@ class BillingNmasTstPayment(Base):
 
 
 class BillingNmasTstRecovery(Base):
-    __tablename__ = "billing_nmas_tst_recovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_nmas_tst_recovery'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -718,8 +718,8 @@ class BillingNmasTstRecovery(Base):
 
 
 class BillingNmasTstRecvryRbf(Base):
-    __tablename__ = "billing_nmas_tst_recvry_rbf"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_nmas_tst_recvry_rbf'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -734,8 +734,8 @@ class BillingNmasTstRecvryRbf(Base):
 
 
 class BillingNmasTstRecvryTrk(Base):
-    __tablename__ = "billing_nmas_tst_recvry_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_nmas_tst_recvry_trk'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -746,8 +746,8 @@ class BillingNmasTstRecvryTrk(Base):
 
 
 class BillingResTraderPayment(Base):
-    __tablename__ = "billing_res_trader_payment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_res_trader_payment'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -759,8 +759,8 @@ class BillingResTraderPayment(Base):
 
 
 class BillingResTraderRecovery(Base):
-    __tablename__ = "billing_res_trader_recovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_res_trader_recovery'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -771,8 +771,8 @@ class BillingResTraderRecovery(Base):
 
 
 class BillingSecdepInterestPay(Base):
-    __tablename__ = "billing_secdep_interest_pay"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_secdep_interest_pay'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -786,8 +786,8 @@ class BillingSecdepInterestPay(Base):
 
 
 class BillingSecdepInterestRate(Base):
-    __tablename__ = "billing_secdep_interest_rate"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_secdep_interest_rate'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -798,8 +798,8 @@ class BillingSecdepInterestRate(Base):
 
 
 class BillingSecdepositApplication(Base):
-    __tablename__ = "billing_secdeposit_application"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billing_secdeposit_application'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -809,8 +809,8 @@ class BillingSecdepositApplication(Base):
 
 
 class Billingapccompensation(Base):
-    __tablename__ = "billingapccompensation"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingapccompensation'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -822,8 +822,8 @@ class Billingapccompensation(Base):
 
 
 class Billingapcrecovery(Base):
-    __tablename__ = "billingapcrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingapcrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -835,8 +835,8 @@ class Billingapcrecovery(Base):
 
 
 class Billingaspayment(Base):
-    __tablename__ = "billingaspayments"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingaspayments'
+    __table_args__ = {'schema': 'mms'}
 
     regionid = Column(String(10))
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -865,8 +865,8 @@ class Billingaspayment(Base):
 
 
 class Billingasrecovery(Base):
-    __tablename__ = "billingasrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingasrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     regionid = Column(String(10), primary_key=True, nullable=False)
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -911,8 +911,8 @@ class Billingasrecovery(Base):
 
 
 class Billingcalendar(Base):
-    __tablename__ = "billingcalendar"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingcalendar'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -927,8 +927,8 @@ class Billingcalendar(Base):
 
 
 class Billingcpdatum(Base):
-    __tablename__ = "billingcpdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingcpdata'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -942,8 +942,8 @@ class Billingcpdatum(Base):
 
 
 class Billingcpsum(Base):
-    __tablename__ = "billingcpsum"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingcpsum'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -958,8 +958,8 @@ class Billingcpsum(Base):
 
 
 class Billingcustexcessgen(Base):
-    __tablename__ = "billingcustexcessgen"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingcustexcessgen'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -973,8 +973,8 @@ class Billingcustexcessgen(Base):
 
 
 class Billingdaytrk(Base):
-    __tablename__ = "billingdaytrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingdaytrk'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -985,8 +985,8 @@ class Billingdaytrk(Base):
 
 
 class Billingexcessgen(Base):
-    __tablename__ = "billingexcessgen"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingexcessgen'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1000,8 +1000,8 @@ class Billingexcessgen(Base):
 
 
 class Billingfee(Base):
-    __tablename__ = "billingfees"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingfees'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1016,8 +1016,8 @@ class Billingfee(Base):
 
 
 class Billingfinancialadjustment(Base):
-    __tablename__ = "billingfinancialadjustments"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingfinancialadjustments'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1033,8 +1033,8 @@ class Billingfinancialadjustment(Base):
 
 
 class Billinggendatum(Base):
-    __tablename__ = "billinggendata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billinggendata'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1052,8 +1052,8 @@ class Billinggendatum(Base):
 
 
 class Billinginterresidue(Base):
-    __tablename__ = "billinginterresidues"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billinginterresidues'
+    __table_args__ = {'schema': 'mms'}
 
     allocation = Column(Numeric(6, 3))
     totalsurplus = Column(Numeric(15, 5))
@@ -1068,8 +1068,8 @@ class Billinginterresidue(Base):
 
 
 class Billingintervention(Base):
-    __tablename__ = "billingintervention"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingintervention'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1081,8 +1081,8 @@ class Billingintervention(Base):
 
 
 class Billinginterventionregion(Base):
-    __tablename__ = "billinginterventionregion"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billinginterventionregion'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1094,8 +1094,8 @@ class Billinginterventionregion(Base):
 
 
 class Billingintraresidue(Base):
-    __tablename__ = "billingintraresidues"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingintraresidues'
+    __table_args__ = {'schema': 'mms'}
 
     allocation = Column(Numeric(6, 3))
     totalsurplus = Column(Numeric(15, 5))
@@ -1109,8 +1109,8 @@ class Billingintraresidue(Base):
 
 
 class Billingiraucsurplu(Base):
-    __tablename__ = "billingiraucsurplus"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingiraucsurplus'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(2, 0), primary_key=True, nullable=False)
@@ -1127,8 +1127,8 @@ class Billingiraucsurplu(Base):
 
 
 class Billingiraucsurplussum(Base):
-    __tablename__ = "billingiraucsurplussum"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingiraucsurplussum'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1149,8 +1149,8 @@ class Billingiraucsurplussum(Base):
 
 
 class Billingirfm(Base):
-    __tablename__ = "billingirfm"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingirfm'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1161,8 +1161,8 @@ class Billingirfm(Base):
 
 
 class Billingirnspsurplu(Base):
-    __tablename__ = "billingirnspsurplus"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingirnspsurplus'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(2, 0), primary_key=True, nullable=False)
@@ -1179,8 +1179,8 @@ class Billingirnspsurplu(Base):
 
 
 class Billingirnspsurplussum(Base):
-    __tablename__ = "billingirnspsurplussum"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingirnspsurplussum'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1199,8 +1199,8 @@ class Billingirnspsurplussum(Base):
 
 
 class Billingirpartsurplu(Base):
-    __tablename__ = "billingirpartsurplus"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingirpartsurplus'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(2, 0), primary_key=True, nullable=False)
@@ -1218,10 +1218,10 @@ class Billingirpartsurplu(Base):
 
 
 class Billingirpartsurplussum(Base):
-    __tablename__ = "billingirpartsurplussum"
+    __tablename__ = 'billingirpartsurplussum'
     __table_args__ = (
-        Index("billingirpartsurplussum_i01", "residueyear", "quarter"),
-        {"schema": "mms"},
+        Index('billingirpartsurplussum_i01', 'residueyear', 'quarter'),
+        {'schema': 'mms'}
     )
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -1243,10 +1243,10 @@ class Billingirpartsurplussum(Base):
 
 
 class Billingprioradjustment(Base):
-    __tablename__ = "billingprioradjustments"
+    __tablename__ = 'billingprioradjustments'
     __table_args__ = (
-        Index("billingprioradjustments_ndx2", "participantid", "lastchanged"),
-        {"schema": "mms"},
+        Index('billingprioradjustments_ndx2', 'participantid', 'lastchanged'),
+        {'schema': 'mms'}
     )
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -1268,8 +1268,8 @@ class Billingprioradjustment(Base):
 
 
 class Billingrealloc(Base):
-    __tablename__ = "billingrealloc"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingrealloc'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1281,8 +1281,8 @@ class Billingrealloc(Base):
 
 
 class BillingreallocDetail(Base):
-    __tablename__ = "billingrealloc_detail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingrealloc_detail'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1295,8 +1295,8 @@ class BillingreallocDetail(Base):
 
 
 class Billingregionexport(Base):
-    __tablename__ = "billingregionexports"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingregionexports'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1311,8 +1311,8 @@ class Billingregionexport(Base):
 
 
 class Billingregionfigure(Base):
-    __tablename__ = "billingregionfigures"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingregionfigures'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1333,8 +1333,8 @@ class Billingregionfigure(Base):
 
 
 class Billingregionimport(Base):
-    __tablename__ = "billingregionimports"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingregionimports'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1349,8 +1349,8 @@ class Billingregionimport(Base):
 
 
 class Billingreserverecovery(Base):
-    __tablename__ = "billingreserverecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingreserverecovery'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1361,8 +1361,8 @@ class Billingreserverecovery(Base):
 
 
 class Billingreserveregionrecovery(Base):
-    __tablename__ = "billingreserveregionrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingreserveregionrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1374,8 +1374,8 @@ class Billingreserveregionrecovery(Base):
 
 
 class Billingreservetrader(Base):
-    __tablename__ = "billingreservetrader"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingreservetrader'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1388,8 +1388,8 @@ class Billingreservetrader(Base):
 
 
 class Billingreservetraderregion(Base):
-    __tablename__ = "billingreservetraderregion"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingreservetraderregion'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1401,8 +1401,8 @@ class Billingreservetraderregion(Base):
 
 
 class Billingruntrk(Base):
-    __tablename__ = "billingruntrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingruntrk'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1423,8 +1423,8 @@ class Billingruntrk(Base):
 
 
 class Billingsmelterreduction(Base):
-    __tablename__ = "billingsmelterreduction"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billingsmelterreduction'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(22, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(22, 0), primary_key=True, nullable=False)
@@ -1440,8 +1440,8 @@ class Billingsmelterreduction(Base):
 
 
 class Billinterventionrecovery(Base):
-    __tablename__ = "billinterventionrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billinterventionrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1452,8 +1452,8 @@ class Billinterventionrecovery(Base):
 
 
 class Billinterventionregionrecovery(Base):
-    __tablename__ = "billinterventionregionrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billinterventionregionrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1465,8 +1465,8 @@ class Billinterventionregionrecovery(Base):
 
 
 class Billsmelterrate(Base):
-    __tablename__ = "billsmelterrate"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billsmelterrate'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1479,8 +1479,8 @@ class Billsmelterrate(Base):
 
 
 class Billwhitehole(Base):
-    __tablename__ = "billwhitehole"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'billwhitehole'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(22, 0), primary_key=True, nullable=False)
     weekno = Column(Numeric(22, 0), primary_key=True, nullable=False)
@@ -1495,8 +1495,8 @@ class Billwhitehole(Base):
 
 
 class Connectionpoint(Base):
-    __tablename__ = "connectionpoint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'connectionpoint'
+    __table_args__ = {'schema': 'mms'}
 
     connectionpointid = Column(String(10), primary_key=True)
     connectionpointname = Column(String(80))
@@ -1512,15 +1512,10 @@ class Connectionpoint(Base):
 
 
 class Connectionpointdetail(Base):
-    __tablename__ = "connectionpointdetails"
+    __tablename__ = 'connectionpointdetails'
     __table_args__ = (
-        Index(
-            "connectionpointdetai_ndx2",
-            "meterdataprovider",
-            "networkserviceprovider",
-            "finresporgan",
-        ),
-        {"schema": "mms"},
+        Index('connectionpointdetai_ndx2', 'meterdataprovider', 'networkserviceprovider', 'finresporgan'),
+        {'schema': 'mms'}
     )
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -1548,8 +1543,8 @@ class Connectionpointdetail(Base):
 
 
 class Connectionpointoperatingsta(Base):
-    __tablename__ = "connectionpointoperatingsta"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'connectionpointoperatingsta'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1561,8 +1556,8 @@ class Connectionpointoperatingsta(Base):
 
 
 class ConstraintrelaxationOcd(Base):
-    __tablename__ = "constraintrelaxation_ocd"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'constraintrelaxation_ocd'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1573,8 +1568,11 @@ class ConstraintrelaxationOcd(Base):
 
 
 class Contractagc(Base):
-    __tablename__ = "contractagc"
-    __table_args__ = (Index("contractagc_ndx2", "participantid", "contractid"), {"schema": "mms"})
+    __tablename__ = 'contractagc'
+    __table_args__ = (
+        Index('contractagc_ndx2', 'participantid', 'contractid'),
+        {'schema': 'mms'}
+    )
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1593,8 +1591,8 @@ class Contractagc(Base):
 
 
 class Contractgovernor(Base):
-    __tablename__ = "contractgovernor"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'contractgovernor'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1647,8 +1645,8 @@ class Contractgovernor(Base):
 
 
 class Contractloadshed(Base):
-    __tablename__ = "contractloadshed"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'contractloadshed'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1695,8 +1693,8 @@ class Contractloadshed(Base):
 
 
 class Contractreactivepower(Base):
-    __tablename__ = "contractreactivepower"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'contractreactivepower'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1729,8 +1727,8 @@ class Contractreactivepower(Base):
 
 
 class Contractreserveflag(Base):
-    __tablename__ = "contractreserveflag"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'contractreserveflag'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1740,8 +1738,8 @@ class Contractreserveflag(Base):
 
 
 class Contractreservethreshold(Base):
-    __tablename__ = "contractreservethreshold"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'contractreservethreshold'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1757,8 +1755,8 @@ class Contractreservethreshold(Base):
 
 
 class Contractreservetrader(Base):
-    __tablename__ = "contractreservetrader"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'contractreservetrader'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True)
     duid = Column(String(10))
@@ -1774,8 +1772,8 @@ class Contractreservetrader(Base):
 
 
 class Contractrestartservice(Base):
-    __tablename__ = "contractrestartservices"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'contractrestartservices'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1793,8 +1791,8 @@ class Contractrestartservice(Base):
 
 
 class Contractrestartunit(Base):
-    __tablename__ = "contractrestartunits"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'contractrestartunits'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False, index=True)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1805,8 +1803,8 @@ class Contractrestartunit(Base):
 
 
 class Contractunitloading(Base):
-    __tablename__ = "contractunitloading"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'contractunitloading'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1827,8 +1825,8 @@ class Contractunitloading(Base):
 
 
 class Contractunitunloading(Base):
-    __tablename__ = "contractunitunloading"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'contractunitunloading'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -1845,8 +1843,11 @@ class Contractunitunloading(Base):
 
 
 class Dayoffer(Base):
-    __tablename__ = "dayoffer"
-    __table_args__ = (Index("dayoffer_ndx2", "duid", "lastchanged"), {"schema": "mms"})
+    __tablename__ = 'dayoffer'
+    __table_args__ = (
+        Index('dayoffer_ndx2', 'duid', 'lastchanged'),
+        {'schema': 'mms'}
+    )
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -1881,8 +1882,11 @@ class Dayoffer(Base):
 
 
 class DayofferD(Base):
-    __tablename__ = "dayoffer_d"
-    __table_args__ = (Index("dayoffer_d_ndx2", "duid", "lastchanged"), {"schema": "mms"})
+    __tablename__ = 'dayoffer_d'
+    __table_args__ = (
+        Index('dayoffer_d_ndx2', 'duid', 'lastchanged'),
+        {'schema': 'mms'}
+    )
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -1917,8 +1921,8 @@ class DayofferD(Base):
 
 
 class Daytrack(Base):
-    __tablename__ = "daytrack"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'daytrack'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     regionid = Column(String(10))
@@ -1930,8 +1934,8 @@ class Daytrack(Base):
 
 
 class Defaultdayoffer(Base):
-    __tablename__ = "defaultdayoffer"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'defaultdayoffer'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -1963,8 +1967,8 @@ class Defaultdayoffer(Base):
 
 
 class Defaultoffertrk(Base):
-    __tablename__ = "defaultoffertrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'defaultoffertrk'
+    __table_args__ = {'schema': 'mms'}
 
     duid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -1976,8 +1980,8 @@ class Defaultoffertrk(Base):
 
 
 class Defaultperoffer(Base):
-    __tablename__ = "defaultperoffer"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'defaultperoffer'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -2003,8 +2007,8 @@ class Defaultperoffer(Base):
 
 
 class Deltamw(Base):
-    __tablename__ = "deltamw"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'deltamw'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2023,8 +2027,8 @@ class Deltamw(Base):
 
 
 class Demandoperationalactual(Base):
-    __tablename__ = "demandoperationalactual"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'demandoperationalactual'
+    __table_args__ = {'schema': 'mms'}
 
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     regionid = Column(String(20), primary_key=True, nullable=False)
@@ -2033,8 +2037,8 @@ class Demandoperationalactual(Base):
 
 
 class Demandoperationalforecast(Base):
-    __tablename__ = "demandoperationalforecast"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'demandoperationalforecast'
+    __table_args__ = {'schema': 'mms'}
 
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     regionid = Column(String(20), primary_key=True, nullable=False)
@@ -2046,8 +2050,8 @@ class Demandoperationalforecast(Base):
 
 
 class DispatchConstraintFcasOcd(Base):
-    __tablename__ = "dispatch_constraint_fcas_ocd"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatch_constraint_fcas_ocd'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2061,8 +2065,8 @@ class DispatchConstraintFcasOcd(Base):
 
 
 class DispatchFcasReq(Base):
-    __tablename__ = "dispatch_fcas_req"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatch_fcas_req'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2083,8 +2087,8 @@ class DispatchFcasReq(Base):
 
 
 class DispatchInterconnection(Base):
-    __tablename__ = "dispatch_interconnection"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatch_interconnection'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2101,8 +2105,8 @@ class DispatchInterconnection(Base):
 
 
 class DispatchLocalPrice(Base):
-    __tablename__ = "dispatch_local_price"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatch_local_price'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -2111,8 +2115,8 @@ class DispatchLocalPrice(Base):
 
 
 class DispatchMnspbidtrk(Base):
-    __tablename__ = "dispatch_mnspbidtrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatch_mnspbidtrk'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2125,8 +2129,8 @@ class DispatchMnspbidtrk(Base):
 
 
 class DispatchMrScheduleTrk(Base):
-    __tablename__ = "dispatch_mr_schedule_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatch_mr_schedule_trk'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
@@ -2136,8 +2140,8 @@ class DispatchMrScheduleTrk(Base):
 
 
 class DispatchPriceRevision(Base):
-    __tablename__ = "dispatch_price_revision"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatch_price_revision'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2151,8 +2155,8 @@ class DispatchPriceRevision(Base):
 
 
 class DispatchUnitConformance(Base):
-    __tablename__ = "dispatch_unit_conformance"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatch_unit_conformance'
+    __table_args__ = {'schema': 'mms'}
 
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -2175,8 +2179,8 @@ class DispatchUnitConformance(Base):
 
 
 class DispatchUnitScada(Base):
-    __tablename__ = "dispatch_unit_scada"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatch_unit_scada'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -2184,8 +2188,8 @@ class DispatchUnitScada(Base):
 
 
 class Dispatchableunit(Base):
-    __tablename__ = "dispatchableunit"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatchableunit'
+    __table_args__ = {'schema': 'mms'}
 
     duid = Column(String(10), primary_key=True)
     duname = Column(String(20))
@@ -2194,8 +2198,11 @@ class Dispatchableunit(Base):
 
 
 class Dispatchbidtrk(Base):
-    __tablename__ = "dispatchbidtrk"
-    __table_args__ = (Index("dispatchbidtrk_ndx2", "duid", "lastchanged"), {"schema": "mms"})
+    __tablename__ = 'dispatchbidtrk'
+    __table_args__ = (
+        Index('dispatchbidtrk_ndx2', 'duid', 'lastchanged'),
+        {'schema': 'mms'}
+    )
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2207,8 +2214,8 @@ class Dispatchbidtrk(Base):
 
 
 class Dispatchblockedconstraint(Base):
-    __tablename__ = "dispatchblockedconstraint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatchblockedconstraint'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2216,8 +2223,8 @@ class Dispatchblockedconstraint(Base):
 
 
 class DispatchcaseOcd(Base):
-    __tablename__ = "dispatchcase_ocd"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatchcase_ocd'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2225,8 +2232,8 @@ class DispatchcaseOcd(Base):
 
 
 class Dispatchcasesolution(Base):
-    __tablename__ = "dispatchcasesolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatchcasesolution'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2255,8 +2262,8 @@ class Dispatchcasesolution(Base):
 
 
 class DispatchcasesolutionBnc(Base):
-    __tablename__ = "dispatchcasesolution_bnc"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatchcasesolution_bnc'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2284,8 +2291,8 @@ class DispatchcasesolutionBnc(Base):
 
 
 class Dispatchconstraint(Base):
-    __tablename__ = "dispatchconstraint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatchconstraint'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False, index=True)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2303,8 +2310,8 @@ class Dispatchconstraint(Base):
 
 
 class Dispatchinterconnectorre(Base):
-    __tablename__ = "dispatchinterconnectorres"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatchinterconnectorres'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2331,8 +2338,11 @@ class Dispatchinterconnectorre(Base):
 
 
 class Dispatchload(Base):
-    __tablename__ = "dispatchload"
-    __table_args__ = (Index("dispatchload_ndx2", "duid", "lastchanged"), {"schema": "mms"})
+    __tablename__ = 'dispatchload'
+    __table_args__ = (
+        Index('dispatchload_ndx2', 'duid', 'lastchanged'),
+        {'schema': 'mms'}
+    )
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2393,8 +2403,11 @@ class Dispatchload(Base):
 
 
 class DispatchloadBnc(Base):
-    __tablename__ = "dispatchload_bnc"
-    __table_args__ = (Index("dispatchload_bnc_ndx2", "duid", "lastchanged"), {"schema": "mms"})
+    __tablename__ = 'dispatchload_bnc'
+    __table_args__ = (
+        Index('dispatchload_bnc_ndx2', 'duid', 'lastchanged'),
+        {'schema': 'mms'}
+    )
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2423,8 +2436,11 @@ class DispatchloadBnc(Base):
 
 
 class Dispatchoffertrk(Base):
-    __tablename__ = "dispatchoffertrk"
-    __table_args__ = (Index("dispatchoffertrk_ndx2", "duid", "lastchanged"), {"schema": "mms"})
+    __tablename__ = 'dispatchoffertrk'
+    __table_args__ = (
+        Index('dispatchoffertrk_ndx2', 'duid', 'lastchanged'),
+        {'schema': 'mms'}
+    )
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -2435,8 +2451,8 @@ class Dispatchoffertrk(Base):
 
 
 class Dispatchprice(Base):
-    __tablename__ = "dispatchprice"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatchprice'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2497,8 +2513,8 @@ class Dispatchprice(Base):
 
 
 class Dispatchregionsum(Base):
-    __tablename__ = "dispatchregionsum"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatchregionsum'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2614,8 +2630,8 @@ class Dispatchregionsum(Base):
 
 
 class Dispatchtrk(Base):
-    __tablename__ = "dispatchtrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dispatchtrk'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2625,8 +2641,8 @@ class Dispatchtrk(Base):
 
 
 class Dualloc(Base):
-    __tablename__ = "dualloc"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dualloc'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2636,8 +2652,8 @@ class Dualloc(Base):
 
 
 class Dudetail(Base):
-    __tablename__ = "dudetail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dudetail'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -2657,13 +2673,13 @@ class Dudetail(Base):
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
     intermittentflag = Column(String(1))
     semischedule_flag = Column(String(1))
-    maxrateofchangeup = Column(Numeric(6, 0), nullable=True)
-    maxrateofchangedown = Column(Numeric(6, 0), nullable=True)
+    maxrateofchangeup = Column(Numeric(6, 0))
+    maxrateofchangedown = Column(Numeric(6, 0))
 
 
 class Dudetailsummary(Base):
-    __tablename__ = "dudetailsummary"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'dudetailsummary'
+    __table_args__ = {'schema': 'mms'}
 
     duid = Column(String(10), primary_key=True, nullable=False)
     start_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -2688,8 +2704,8 @@ class Dudetailsummary(Base):
 
 
 class Emsmaster(Base):
-    __tablename__ = "emsmaster"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'emsmaster'
+    __table_args__ = {'schema': 'mms'}
 
     spd_id = Column(String(21), primary_key=True, nullable=False)
     spd_type = Column(String(1), primary_key=True, nullable=False)
@@ -2699,8 +2715,8 @@ class Emsmaster(Base):
 
 
 class Forcemajeure(Base):
-    __tablename__ = "forcemajeure"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'forcemajeure'
+    __table_args__ = {'schema': 'mms'}
 
     fmid = Column(String(10), primary_key=True)
     startdate = Column(TIMESTAMP(precision=3))
@@ -2714,8 +2730,8 @@ class Forcemajeure(Base):
 
 
 class Forcemajeureregion(Base):
-    __tablename__ = "forcemajeureregion"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'forcemajeureregion'
+    __table_args__ = {'schema': 'mms'}
 
     fmid = Column(String(10), primary_key=True, nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
@@ -2723,8 +2739,8 @@ class Forcemajeureregion(Base):
 
 
 class Gdinstruct(Base):
-    __tablename__ = "gdinstruct"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'gdinstruct'
+    __table_args__ = {'schema': 'mms'}
 
     duid = Column(String(10), index=True)
     stationid = Column(String(10))
@@ -2744,8 +2760,8 @@ class Gdinstruct(Base):
 
 
 class Gencondatum(Base):
-    __tablename__ = "gencondata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'gencondata'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2776,8 +2792,8 @@ class Gencondatum(Base):
 
 
 class Genconset(Base):
-    __tablename__ = "genconset"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'genconset'
+    __table_args__ = {'schema': 'mms'}
 
     genconsetid = Column(String(20), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -2789,8 +2805,8 @@ class Genconset(Base):
 
 
 class Genconsetinvoke(Base):
-    __tablename__ = "genconsetinvoke"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'genconsetinvoke'
+    __table_args__ = {'schema': 'mms'}
 
     invocation_id = Column(Numeric(9, 0), primary_key=True)
     startdate = Column(TIMESTAMP(precision=3), nullable=False)
@@ -2809,8 +2825,8 @@ class Genconsetinvoke(Base):
 
 
 class Genconsettrk(Base):
-    __tablename__ = "genconsettrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'genconsettrk'
+    __table_args__ = {'schema': 'mms'}
 
     genconsetid = Column(String(20), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -2826,8 +2842,8 @@ class Genconsettrk(Base):
 
 
 class Genericconstraintrh(Base):
-    __tablename__ = "genericconstraintrhs"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'genericconstraintrhs'
+    __table_args__ = {'schema': 'mms'}
 
     genconid = Column(String(20), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -2847,8 +2863,8 @@ class Genericconstraintrh(Base):
 
 
 class Genericequationdesc(Base):
-    __tablename__ = "genericequationdesc"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'genericequationdesc'
+    __table_args__ = {'schema': 'mms'}
 
     equationid = Column(String(20), primary_key=True)
     description = Column(String(256))
@@ -2862,8 +2878,8 @@ class Genericequationdesc(Base):
 
 
 class Genericequationrh(Base):
-    __tablename__ = "genericequationrhs"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'genericequationrhs'
+    __table_args__ = {'schema': 'mms'}
 
     equationid = Column(String(20), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -2882,8 +2898,8 @@ class Genericequationrh(Base):
 
 
 class Genmeter(Base):
-    __tablename__ = "genmeter"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'genmeter'
+    __table_args__ = {'schema': 'mms'}
 
     meterid = Column(String(12), primary_key=True, nullable=False)
     gensetid = Column(String(20))
@@ -2904,8 +2920,8 @@ class Genmeter(Base):
 
 
 class Genunitmtrinperiod(Base):
-    __tablename__ = "genunitmtrinperiod"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'genunitmtrinperiod'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(10), primary_key=True, nullable=False)
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -2920,17 +2936,12 @@ class Genunitmtrinperiod(Base):
     exportreactivevalue = Column(Numeric(16, 6))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
     mda = Column(String(10), primary_key=True, nullable=False)
-    local_retailer = Column(
-        String(10),
-        primary_key=True,
-        nullable=False,
-        server_default=text("'POOLNSW'::character varying"),
-    )
+    local_retailer = Column(String(10), primary_key=True, nullable=False, server_default=text("'POOLNSW'::character varying"))
 
 
 class Genunit(Base):
-    __tablename__ = "genunits"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'genunits'
+    __table_args__ = {'schema': 'mms'}
 
     gensetid = Column(String(20), primary_key=True)
     stationid = Column(String(10))
@@ -2954,8 +2965,8 @@ class Genunit(Base):
 
 
 class GenunitsUnit(Base):
-    __tablename__ = "genunits_unit"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'genunits_unit'
+    __table_args__ = {'schema': 'mms'}
 
     gensetid = Column(String(20), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -2969,8 +2980,8 @@ class GenunitsUnit(Base):
 
 
 class GstBasClas(Base):
-    __tablename__ = "gst_bas_class"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'gst_bas_class'
+    __table_args__ = {'schema': 'mms'}
 
     bas_class = Column(String(30), primary_key=True)
     description = Column(String(100))
@@ -2978,8 +2989,8 @@ class GstBasClas(Base):
 
 
 class GstRate(Base):
-    __tablename__ = "gst_rate"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'gst_rate'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -2989,8 +3000,8 @@ class GstRate(Base):
 
 
 class GstTransactionClas(Base):
-    __tablename__ = "gst_transaction_class"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'gst_transaction_class'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -3000,8 +3011,8 @@ class GstTransactionClas(Base):
 
 
 class GstTransactionType(Base):
-    __tablename__ = "gst_transaction_type"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'gst_transaction_type'
+    __table_args__ = {'schema': 'mms'}
 
     transaction_type = Column(String(30), primary_key=True)
     description = Column(String(100))
@@ -3011,8 +3022,8 @@ class GstTransactionType(Base):
 
 
 class Instructionsubtype(Base):
-    __tablename__ = "instructionsubtype"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'instructionsubtype'
+    __table_args__ = {'schema': 'mms'}
 
     instructiontypeid = Column(String(10), primary_key=True, nullable=False)
     instructionsubtypeid = Column(String(10), primary_key=True, nullable=False)
@@ -3021,8 +3032,8 @@ class Instructionsubtype(Base):
 
 
 class Instructiontype(Base):
-    __tablename__ = "instructiontype"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'instructiontype'
+    __table_args__ = {'schema': 'mms'}
 
     instructiontypeid = Column(String(10), primary_key=True)
     description = Column(String(64))
@@ -3031,8 +3042,8 @@ class Instructiontype(Base):
 
 
 class Intcontract(Base):
-    __tablename__ = "intcontract"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intcontract'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True)
     participantid = Column(String(10))
@@ -3048,8 +3059,8 @@ class Intcontract(Base):
 
 
 class Intcontractamount(Base):
-    __tablename__ = "intcontractamount"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intcontractamount'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -3060,8 +3071,8 @@ class Intcontractamount(Base):
 
 
 class Intcontractamounttrk(Base):
-    __tablename__ = "intcontractamounttrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intcontractamounttrk'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -3071,8 +3082,8 @@ class Intcontractamounttrk(Base):
 
 
 class Interconnector(Base):
-    __tablename__ = "interconnector"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'interconnector'
+    __table_args__ = {'schema': 'mms'}
 
     interconnectorid = Column(String(10), primary_key=True)
     regionfrom = Column(String(10))
@@ -3083,8 +3094,8 @@ class Interconnector(Base):
 
 
 class Interconnectoralloc(Base):
-    __tablename__ = "interconnectoralloc"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'interconnectoralloc'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(5, 0), primary_key=True, nullable=False)
@@ -3096,8 +3107,8 @@ class Interconnectoralloc(Base):
 
 
 class Interconnectorconstraint(Base):
-    __tablename__ = "interconnectorconstraint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'interconnectorconstraint'
+    __table_args__ = {'schema': 'mms'}
 
     reserveoverallloadfactor = Column(Numeric(5, 2))
     fromregionlossshare = Column(Numeric(5, 2))
@@ -3124,8 +3135,8 @@ class Interconnectorconstraint(Base):
 
 
 class Interconnmwflow(Base):
-    __tablename__ = "interconnmwflow"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'interconnmwflow'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(6, 0), primary_key=True, nullable=False)
@@ -3137,8 +3148,8 @@ class Interconnmwflow(Base):
 
 
 class IntermittentClusterAvail(Base):
-    __tablename__ = "intermittent_cluster_avail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_cluster_avail'
+    __table_args__ = {'schema': 'mms'}
 
     tradingdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3149,8 +3160,8 @@ class IntermittentClusterAvail(Base):
 
 
 class IntermittentClusterAvailDay(Base):
-    __tablename__ = "intermittent_cluster_avail_day"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_cluster_avail_day'
+    __table_args__ = {'schema': 'mms'}
 
     tradingdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3159,8 +3170,8 @@ class IntermittentClusterAvailDay(Base):
 
 
 class IntermittentDsPred(Base):
-    __tablename__ = "intermittent_ds_pred"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_ds_pred'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3175,8 +3186,8 @@ class IntermittentDsPred(Base):
 
 
 class IntermittentDsRun(Base):
-    __tablename__ = "intermittent_ds_run"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_ds_run'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3194,8 +3205,8 @@ class IntermittentDsRun(Base):
 
 
 class IntermittentForecastTrk(Base):
-    __tablename__ = "intermittent_forecast_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_forecast_trk'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3205,8 +3216,8 @@ class IntermittentForecastTrk(Base):
 
 
 class IntermittentGenFcst(Base):
-    __tablename__ = "intermittent_gen_fcst"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_gen_fcst'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3217,8 +3228,8 @@ class IntermittentGenFcst(Base):
 
 
 class IntermittentGenFcstDatum(Base):
-    __tablename__ = "intermittent_gen_fcst_data"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_gen_fcst_data'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3231,8 +3242,8 @@ class IntermittentGenFcstDatum(Base):
 
 
 class IntermittentGenLimit(Base):
-    __tablename__ = "intermittent_gen_limit"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_gen_limit'
+    __table_args__ = {'schema': 'mms'}
 
     tradingdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3242,8 +3253,8 @@ class IntermittentGenLimit(Base):
 
 
 class IntermittentGenLimitDay(Base):
-    __tablename__ = "intermittent_gen_limit_day"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_gen_limit_day'
+    __table_args__ = {'schema': 'mms'}
 
     tradingdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3255,8 +3266,8 @@ class IntermittentGenLimitDay(Base):
 
 
 class IntermittentP5Pred(Base):
-    __tablename__ = "intermittent_p5_pred"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_p5_pred'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3271,8 +3282,8 @@ class IntermittentP5Pred(Base):
 
 
 class IntermittentP5Run(Base):
-    __tablename__ = "intermittent_p5_run"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intermittent_p5_run'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -3290,8 +3301,8 @@ class IntermittentP5Run(Base):
 
 
 class Intraregionalloc(Base):
-    __tablename__ = "intraregionalloc"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'intraregionalloc'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(5, 0), primary_key=True, nullable=False)
@@ -3302,8 +3313,8 @@ class Intraregionalloc(Base):
 
 
 class Irfmamount(Base):
-    __tablename__ = "irfmamount"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'irfmamount'
+    __table_args__ = {'schema': 'mms'}
 
     irfmid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3))
@@ -3316,8 +3327,8 @@ class Irfmamount(Base):
 
 
 class Irfmevent(Base):
-    __tablename__ = "irfmevents"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'irfmevents'
+    __table_args__ = {'schema': 'mms'}
 
     irfmid = Column(String(10), primary_key=True)
     startdate = Column(TIMESTAMP(precision=3))
@@ -3328,8 +3339,8 @@ class Irfmevent(Base):
 
 
 class Lossfactormodel(Base):
-    __tablename__ = "lossfactormodel"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'lossfactormodel'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -3340,8 +3351,8 @@ class Lossfactormodel(Base):
 
 
 class Lossmodel(Base):
-    __tablename__ = "lossmodel"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'lossmodel'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -3354,8 +3365,8 @@ class Lossmodel(Base):
 
 
 class MarketFeeCatExcl(Base):
-    __tablename__ = "market_fee_cat_excl"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'market_fee_cat_excl'
+    __table_args__ = {'schema': 'mms'}
 
     marketfeeid = Column(String(20), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3364,8 +3375,8 @@ class MarketFeeCatExcl(Base):
 
 
 class MarketFeeCatExclTrk(Base):
-    __tablename__ = "market_fee_cat_excl_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'market_fee_cat_excl_trk'
+    __table_args__ = {'schema': 'mms'}
 
     marketfeeid = Column(String(20), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3374,8 +3385,8 @@ class MarketFeeCatExclTrk(Base):
 
 
 class MarketFeeExclusion(Base):
-    __tablename__ = "market_fee_exclusion"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'market_fee_exclusion'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3385,8 +3396,8 @@ class MarketFeeExclusion(Base):
 
 
 class MarketFeeExclusiontrk(Base):
-    __tablename__ = "market_fee_exclusiontrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'market_fee_exclusiontrk'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3397,8 +3408,8 @@ class MarketFeeExclusiontrk(Base):
 
 
 class MarketPriceThreshold(Base):
-    __tablename__ = "market_price_thresholds"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'market_price_thresholds'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -3411,8 +3422,8 @@ class MarketPriceThreshold(Base):
 
 
 class MarketSuspendRegimeSum(Base):
-    __tablename__ = "market_suspend_regime_sum"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'market_suspend_regime_sum'
+    __table_args__ = {'schema': 'mms'}
 
     suspension_id = Column(String(20), primary_key=True, nullable=False)
     regionid = Column(String(20), primary_key=True, nullable=False)
@@ -3423,8 +3434,8 @@ class MarketSuspendRegimeSum(Base):
 
 
 class MarketSuspendRegionSum(Base):
-    __tablename__ = "market_suspend_region_sum"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'market_suspend_region_sum'
+    __table_args__ = {'schema': 'mms'}
 
     suspension_id = Column(String(20), primary_key=True, nullable=False)
     regionid = Column(String(20), primary_key=True, nullable=False)
@@ -3435,8 +3446,8 @@ class MarketSuspendRegionSum(Base):
 
 
 class MarketSuspendSchedule(Base):
-    __tablename__ = "market_suspend_schedule"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'market_suspend_schedule'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     day_type = Column(String(20), primary_key=True, nullable=False)
@@ -3455,8 +3466,8 @@ class MarketSuspendSchedule(Base):
 
 
 class MarketSuspendScheduleTrk(Base):
-    __tablename__ = "market_suspend_schedule_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'market_suspend_schedule_trk'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True)
     source_start_date = Column(TIMESTAMP(precision=3))
@@ -3467,8 +3478,8 @@ class MarketSuspendScheduleTrk(Base):
 
 
 class Marketfee(Base):
-    __tablename__ = "marketfee"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'marketfee'
+    __table_args__ = {'schema': 'mms'}
 
     marketfeeid = Column(String(10), primary_key=True)
     marketfeeperiod = Column(String(20))
@@ -3481,8 +3492,8 @@ class Marketfee(Base):
 
 
 class Marketfeedatum(Base):
-    __tablename__ = "marketfeedata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'marketfeedata'
+    __table_args__ = {'schema': 'mms'}
 
     marketfeeid = Column(String(10), primary_key=True, nullable=False)
     marketfeeversionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -3492,8 +3503,8 @@ class Marketfeedatum(Base):
 
 
 class Marketfeetrk(Base):
-    __tablename__ = "marketfeetrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'marketfeetrk'
+    __table_args__ = {'schema': 'mms'}
 
     marketfeeversionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3503,8 +3514,8 @@ class Marketfeetrk(Base):
 
 
 class Marketnoticedatum(Base):
-    __tablename__ = "marketnoticedata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'marketnoticedata'
+    __table_args__ = {'schema': 'mms'}
 
     noticeid = Column(Numeric(10, 0), primary_key=True)
     effectivedate = Column(TIMESTAMP(precision=3))
@@ -3516,8 +3527,8 @@ class Marketnoticedatum(Base):
 
 
 class Marketnoticetype(Base):
-    __tablename__ = "marketnoticetype"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'marketnoticetype'
+    __table_args__ = {'schema': 'mms'}
 
     typeid = Column(String(25), primary_key=True)
     description = Column(String(64))
@@ -3526,8 +3537,8 @@ class Marketnoticetype(Base):
 
 
 class Marketsuspension(Base):
-    __tablename__ = "marketsuspension"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'marketsuspension'
+    __table_args__ = {'schema': 'mms'}
 
     suspensionid = Column(String(10), primary_key=True)
     startdate = Column(TIMESTAMP(precision=3))
@@ -3541,8 +3552,8 @@ class Marketsuspension(Base):
 
 
 class Marketsusregion(Base):
-    __tablename__ = "marketsusregion"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'marketsusregion'
+    __table_args__ = {'schema': 'mms'}
 
     suspensionid = Column(String(10), primary_key=True, nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
@@ -3550,8 +3561,8 @@ class Marketsusregion(Base):
 
 
 class MasCpChange(Base):
-    __tablename__ = "mas_cp_change"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mas_cp_change'
+    __table_args__ = {'schema': 'mms'}
 
     nmi = Column(String(10), primary_key=True)
     status_flag = Column(String(1))
@@ -3616,8 +3627,11 @@ class MasCpChange(Base):
 
 
 class MasCpMaster(Base):
-    __tablename__ = "mas_cp_master"
-    __table_args__ = (UniqueConstraint("nmi", "valid_to_date"), {"schema": "mms"})
+    __tablename__ = 'mas_cp_master'
+    __table_args__ = (
+        UniqueConstraint('nmi', 'valid_to_date'),
+        {'schema': 'mms'}
+    )
 
     nmi = Column(String(10), primary_key=True, nullable=False)
     cp_security_code = Column(String(4))
@@ -3653,15 +3667,15 @@ class MasCpMaster(Base):
 
 
 class MccCasesolution(Base):
-    __tablename__ = "mcc_casesolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mcc_casesolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True)
 
 
 class MccConstraintsolution(Base):
-    __tablename__ = "mcc_constraintsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mcc_constraintsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     constraintid = Column(String(20), primary_key=True, nullable=False)
@@ -3670,8 +3684,8 @@ class MccConstraintsolution(Base):
 
 
 class Meterdatum(Base):
-    __tablename__ = "meterdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'meterdata'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(10), primary_key=True, nullable=False)
     periodid = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -3688,8 +3702,8 @@ class Meterdatum(Base):
 
 
 class MeterdataAggregateRead(Base):
-    __tablename__ = "meterdata_aggregate_reads"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'meterdata_aggregate_reads'
+    __table_args__ = {'schema': 'mms'}
 
     case_id = Column(Numeric(15, 0), primary_key=True, nullable=False)
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3704,8 +3718,8 @@ class MeterdataAggregateRead(Base):
 
 
 class MeterdataGenDuid(Base):
-    __tablename__ = "meterdata_gen_duid"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'meterdata_gen_duid'
+    __table_args__ = {'schema': 'mms'}
 
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -3714,8 +3728,8 @@ class MeterdataGenDuid(Base):
 
 
 class MeterdataIndividualRead(Base):
-    __tablename__ = "meterdata_individual_reads"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'meterdata_individual_reads'
+    __table_args__ = {'schema': 'mms'}
 
     case_id = Column(Numeric(15, 0), primary_key=True, nullable=False)
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3732,8 +3746,8 @@ class MeterdataIndividualRead(Base):
 
 
 class MeterdataInterconnector(Base):
-    __tablename__ = "meterdata_interconnector"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'meterdata_interconnector'
+    __table_args__ = {'schema': 'mms'}
 
     case_id = Column(Numeric(15, 0), primary_key=True, nullable=False)
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3745,8 +3759,8 @@ class MeterdataInterconnector(Base):
 
 
 class MeterdataTrk(Base):
-    __tablename__ = "meterdata_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'meterdata_trk'
+    __table_args__ = {'schema': 'mms'}
 
     case_id = Column(Numeric(15, 0), primary_key=True)
     aggregate_reads_load_datetime = Column(TIMESTAMP(precision=3))
@@ -3757,8 +3771,8 @@ class MeterdataTrk(Base):
 
 
 class Meterdatatrk(Base):
-    __tablename__ = "meterdatatrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'meterdatatrk'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     meterrunno = Column(Numeric(6, 0), primary_key=True, nullable=False)
@@ -3774,8 +3788,8 @@ class Meterdatatrk(Base):
 
 
 class MmsDataModelAudit(Base):
-    __tablename__ = "mms_data_model_audit"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mms_data_model_audit'
+    __table_args__ = {'schema': 'mms'}
 
     installation_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     mmsdm_version = Column(String(20), primary_key=True, nullable=False)
@@ -3788,8 +3802,8 @@ class MmsDataModelAudit(Base):
 
 
 class MnspDayoffer(Base):
-    __tablename__ = "mnsp_dayoffer"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mnsp_dayoffer'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     offerdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3813,8 +3827,8 @@ class MnspDayoffer(Base):
 
 
 class MnspFiletrk(Base):
-    __tablename__ = "mnsp_filetrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mnsp_filetrk'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     offerdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3826,8 +3840,8 @@ class MnspFiletrk(Base):
 
 
 class MnspInterconnector(Base):
-    __tablename__ = "mnsp_interconnector"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mnsp_interconnector'
+    __table_args__ = {'schema': 'mms'}
 
     linkid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3842,13 +3856,13 @@ class MnspInterconnector(Base):
     authoriseddate = Column(TIMESTAMP(precision=3))
     authorisedby = Column(String(15))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
-    from_region_tlf = Column(Numeric(12, 7), nullable=True)
-    to_region_tlf = Column(Numeric(12, 7), nullable=True)
+    from_region_tlf = Column(Numeric(12, 7))
+    to_region_tlf = Column(Numeric(12, 7))
 
 
 class MnspOffertrk(Base):
-    __tablename__ = "mnsp_offertrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mnsp_offertrk'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     offerdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3861,8 +3875,8 @@ class MnspOffertrk(Base):
 
 
 class MnspParticipant(Base):
-    __tablename__ = "mnsp_participant"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mnsp_participant'
+    __table_args__ = {'schema': 'mms'}
 
     interconnectorid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3872,8 +3886,8 @@ class MnspParticipant(Base):
 
 
 class MnspPeroffer(Base):
-    __tablename__ = "mnsp_peroffer"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mnsp_peroffer'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     offerdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -3900,8 +3914,8 @@ class MnspPeroffer(Base):
 
 
 class MrDayofferStack(Base):
-    __tablename__ = "mr_dayoffer_stack"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mr_dayoffer_stack'
+    __table_args__ = {'schema': 'mms'}
 
     mr_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
@@ -3918,8 +3932,8 @@ class MrDayofferStack(Base):
 
 
 class MrEvent(Base):
-    __tablename__ = "mr_event"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mr_event'
+    __table_args__ = {'schema': 'mms'}
 
     mr_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
@@ -3932,8 +3946,8 @@ class MrEvent(Base):
 
 
 class MrEventSchedule(Base):
-    __tablename__ = "mr_event_schedule"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mr_event_schedule'
+    __table_args__ = {'schema': 'mms'}
 
     mr_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
@@ -3947,8 +3961,8 @@ class MrEventSchedule(Base):
 
 
 class MrPerofferStack(Base):
-    __tablename__ = "mr_peroffer_stack"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mr_peroffer_stack'
+    __table_args__ = {'schema': 'mms'}
 
     mr_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
@@ -3962,8 +3976,8 @@ class MrPerofferStack(Base):
 
 
 class MtpasaCaseSet(Base):
-    __tablename__ = "mtpasa_case_set"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_case_set'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -3973,8 +3987,8 @@ class MtpasaCaseSet(Base):
 
 
 class MtpasaCaseresult(Base):
-    __tablename__ = "mtpasa_caseresult"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_caseresult'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -3983,8 +3997,8 @@ class MtpasaCaseresult(Base):
 
 
 class MtpasaCasesolution(Base):
-    __tablename__ = "mtpasa_casesolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_casesolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -4010,8 +4024,8 @@ class MtpasaCasesolution(Base):
 
 
 class MtpasaConstraintresult(Base):
-    __tablename__ = "mtpasa_constraintresult"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_constraintresult'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -4031,8 +4045,8 @@ class MtpasaConstraintresult(Base):
 
 
 class MtpasaConstraintsolution(Base):
-    __tablename__ = "mtpasa_constraintsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_constraintsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -4044,17 +4058,12 @@ class MtpasaConstraintsolution(Base):
     capacitymarginalvalue = Column(Numeric(12, 2))
     capacityviolationdegree = Column(Numeric(12, 2))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
-    runtype = Column(
-        String(20),
-        primary_key=True,
-        nullable=False,
-        server_default=text("'OUTAGE_LRC'::character varying"),
-    )
+    runtype = Column(String(20), primary_key=True, nullable=False, server_default=text("'OUTAGE_LRC'::character varying"))
 
 
 class MtpasaConstraintsummary(Base):
-    __tablename__ = "mtpasa_constraintsummary"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_constraintsummary'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -4070,8 +4079,8 @@ class MtpasaConstraintsummary(Base):
 
 
 class MtpasaInterconnectorresult(Base):
-    __tablename__ = "mtpasa_interconnectorresult"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_interconnectorresult'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -4091,8 +4100,8 @@ class MtpasaInterconnectorresult(Base):
 
 
 class MtpasaInterconnectorsolution(Base):
-    __tablename__ = "mtpasa_interconnectorsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_interconnectorsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -4106,19 +4115,14 @@ class MtpasaInterconnectorsolution(Base):
     calculatedexportlimit = Column(Numeric(12, 2))
     calculatedimportlimit = Column(Numeric(12, 2))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
-    runtype = Column(
-        String(20),
-        primary_key=True,
-        nullable=False,
-        server_default=text("'OUTAGE_LRC'::character varying"),
-    )
+    runtype = Column(String(20), primary_key=True, nullable=False, server_default=text("'OUTAGE_LRC'::character varying"))
     exportlimitconstraintid = Column(String(20))
     importlimitconstraintid = Column(String(20))
 
 
 class MtpasaIntermittentAvail(Base):
-    __tablename__ = "mtpasa_intermittent_avail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_intermittent_avail'
+    __table_args__ = {'schema': 'mms'}
 
     tradingdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -4129,8 +4133,8 @@ class MtpasaIntermittentAvail(Base):
 
 
 class MtpasaIntermittentLimit(Base):
-    __tablename__ = "mtpasa_intermittent_limit"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_intermittent_limit'
+    __table_args__ = {'schema': 'mms'}
 
     tradingdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(20), primary_key=True, nullable=False)
@@ -4142,8 +4146,8 @@ class MtpasaIntermittentLimit(Base):
 
 
 class MtpasaLolpresult(Base):
-    __tablename__ = "mtpasa_lolpresult"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_lolpresult'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -4160,8 +4164,8 @@ class MtpasaLolpresult(Base):
 
 
 class MtpasaOfferdatum(Base):
-    __tablename__ = "mtpasa_offerdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_offerdata'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(20), primary_key=True, nullable=False)
     offerdatetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4179,8 +4183,8 @@ class MtpasaOfferdatum(Base):
 
 
 class MtpasaOfferfiletrk(Base):
-    __tablename__ = "mtpasa_offerfiletrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_offerfiletrk'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(20), primary_key=True, nullable=False)
     offerdatetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4188,8 +4192,8 @@ class MtpasaOfferfiletrk(Base):
 
 
 class MtpasaRegionavailTrk(Base):
-    __tablename__ = "mtpasa_regionavail_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_regionavail_trk'
+    __table_args__ = {'schema': 'mms'}
 
     publish_datetime = Column(TIMESTAMP(precision=3), primary_key=True)
     startdate = Column(TIMESTAMP(precision=3))
@@ -4198,8 +4202,8 @@ class MtpasaRegionavailTrk(Base):
 
 
 class MtpasaRegionavailability(Base):
-    __tablename__ = "mtpasa_regionavailability"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_regionavailability'
+    __table_args__ = {'schema': 'mms'}
 
     publish_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     day = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4217,8 +4221,8 @@ class MtpasaRegionavailability(Base):
 
 
 class MtpasaRegioniteration(Base):
-    __tablename__ = "mtpasa_regioniteration"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_regioniteration'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -4234,8 +4238,8 @@ class MtpasaRegioniteration(Base):
 
 
 class MtpasaRegionresult(Base):
-    __tablename__ = "mtpasa_regionresult"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_regionresult'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -4271,8 +4275,8 @@ class MtpasaRegionresult(Base):
 
 
 class MtpasaRegionsolution(Base):
-    __tablename__ = "mtpasa_regionsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_regionsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -4297,12 +4301,7 @@ class MtpasaRegionsolution(Base):
     aggregatescheduledload = Column(Numeric(12, 2))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
     aggregatepasaavailability = Column(Numeric(12, 0))
-    runtype = Column(
-        String(20),
-        primary_key=True,
-        nullable=False,
-        server_default=text("'OUTAGE_LRC'::character varying"),
-    )
+    runtype = Column(String(20), primary_key=True, nullable=False, server_default=text("'OUTAGE_LRC'::character varying"))
     calculatedlor1level = Column(Numeric(16, 6))
     calculatedlor2level = Column(Numeric(16, 6))
     msrnetinterchangeunderscarcity = Column(Numeric(12, 2))
@@ -4321,8 +4320,8 @@ class MtpasaRegionsolution(Base):
 
 
 class MtpasaRegionsummary(Base):
-    __tablename__ = "mtpasa_regionsummary"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_regionsummary'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -4357,8 +4356,8 @@ class MtpasaRegionsummary(Base):
 
 
 class MtpasaReservelimit(Base):
-    __tablename__ = "mtpasa_reservelimit"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_reservelimit'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     version_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4369,8 +4368,8 @@ class MtpasaReservelimit(Base):
 
 
 class MtpasaReservelimitRegion(Base):
-    __tablename__ = "mtpasa_reservelimit_region"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_reservelimit_region'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     version_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4381,8 +4380,8 @@ class MtpasaReservelimitRegion(Base):
 
 
 class MtpasaReservelimitSet(Base):
-    __tablename__ = "mtpasa_reservelimit_set"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_reservelimit_set'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     version_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4394,8 +4393,8 @@ class MtpasaReservelimitSet(Base):
 
 
 class MtpasaReservelimitsolution(Base):
-    __tablename__ = "mtpasa_reservelimitsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasa_reservelimitsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     run_no = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -4409,8 +4408,8 @@ class MtpasaReservelimitsolution(Base):
 
 
 class MtpasaconstraintsolutionD(Base):
-    __tablename__ = "mtpasaconstraintsolution_d"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasaconstraintsolution_d'
+    __table_args__ = {'schema': 'mms'}
 
     datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     constraint_id = Column(String(20), primary_key=True, nullable=False)
@@ -4420,8 +4419,8 @@ class MtpasaconstraintsolutionD(Base):
 
 
 class MtpasainterconnectorsolutionD(Base):
-    __tablename__ = "mtpasainterconnectorsolution_d"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasainterconnectorsolution_d'
+    __table_args__ = {'schema': 'mms'}
 
     datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interconnector_id = Column(String(12), primary_key=True, nullable=False)
@@ -4436,8 +4435,8 @@ class MtpasainterconnectorsolutionD(Base):
 
 
 class MtpasaregionsolutionD(Base):
-    __tablename__ = "mtpasaregionsolution_d"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'mtpasaregionsolution_d'
+    __table_args__ = {'schema': 'mms'}
 
     datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     region_id = Column(String(12), primary_key=True, nullable=False)
@@ -4457,8 +4456,8 @@ class MtpasaregionsolutionD(Base):
 
 
 class NegativeResidue(Base):
-    __tablename__ = "negative_residue"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'negative_residue'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     nrm_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4478,8 +4477,8 @@ class NegativeResidue(Base):
 
 
 class NetworkEquipmentdetail(Base):
-    __tablename__ = "network_equipmentdetail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'network_equipmentdetail'
+    __table_args__ = {'schema': 'mms'}
 
     substationid = Column(String(30), primary_key=True, nullable=False)
     equipmenttype = Column(String(10), primary_key=True, nullable=False)
@@ -4492,8 +4491,8 @@ class NetworkEquipmentdetail(Base):
 
 
 class NetworkOutageconstraintset(Base):
-    __tablename__ = "network_outageconstraintset"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'network_outageconstraintset'
+    __table_args__ = {'schema': 'mms'}
 
     outageid = Column(Numeric(15, 0), primary_key=True, nullable=False)
     genconsetid = Column(String(50), primary_key=True, nullable=False)
@@ -4502,8 +4501,8 @@ class NetworkOutageconstraintset(Base):
 
 
 class NetworkOutagedetail(Base):
-    __tablename__ = "network_outagedetail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'network_outagedetail'
+    __table_args__ = {'schema': 'mms'}
 
     outageid = Column(Numeric(15, 0), primary_key=True, nullable=False)
     substationid = Column(String(30), primary_key=True, nullable=False)
@@ -4526,8 +4525,8 @@ class NetworkOutagedetail(Base):
 
 
 class NetworkOutagestatuscode(Base):
-    __tablename__ = "network_outagestatuscode"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'network_outagestatuscode'
+    __table_args__ = {'schema': 'mms'}
 
     outagestatuscode = Column(String(10), primary_key=True)
     description = Column(String(100))
@@ -4535,8 +4534,8 @@ class NetworkOutagestatuscode(Base):
 
 
 class NetworkRating(Base):
-    __tablename__ = "network_rating"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'network_rating'
+    __table_args__ = {'schema': 'mms'}
 
     spd_id = Column(String(21), primary_key=True, nullable=False)
     validfrom = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4551,8 +4550,8 @@ class NetworkRating(Base):
 
 
 class NetworkRealtimerating(Base):
-    __tablename__ = "network_realtimerating"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'network_realtimerating'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     spd_id = Column(String(21), primary_key=True, nullable=False)
@@ -4560,8 +4559,8 @@ class NetworkRealtimerating(Base):
 
 
 class NetworkStaticrating(Base):
-    __tablename__ = "network_staticrating"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'network_staticrating'
+    __table_args__ = {'schema': 'mms'}
 
     substationid = Column(String(30), primary_key=True, nullable=False)
     equipmenttype = Column(String(10), primary_key=True, nullable=False)
@@ -4575,8 +4574,8 @@ class NetworkStaticrating(Base):
 
 
 class NetworkSubstationdetail(Base):
-    __tablename__ = "network_substationdetail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'network_substationdetail'
+    __table_args__ = {'schema': 'mms'}
 
     substationid = Column(String(30), primary_key=True, nullable=False)
     validfrom = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4588,8 +4587,8 @@ class NetworkSubstationdetail(Base):
 
 
 class Oartrack(Base):
-    __tablename__ = "oartrack"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'oartrack'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     offerdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4602,8 +4601,8 @@ class Oartrack(Base):
 
 
 class Offeragcdatum(Base):
-    __tablename__ = "offeragcdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'offeragcdata'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False, index=True)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4621,8 +4620,8 @@ class Offeragcdatum(Base):
 
 
 class Offerastrk(Base):
-    __tablename__ = "offerastrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'offerastrk'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -4632,8 +4631,8 @@ class Offerastrk(Base):
 
 
 class Offerfiletrk(Base):
-    __tablename__ = "offerfiletrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'offerfiletrk'
+    __table_args__ = {'schema': 'mms'}
 
     offerdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     participantid = Column(String(10), primary_key=True, nullable=False, index=True)
@@ -4645,8 +4644,8 @@ class Offerfiletrk(Base):
 
 
 class Offergovdatum(Base):
-    __tablename__ = "offergovdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'offergovdata'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False, index=True)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4663,8 +4662,8 @@ class Offergovdatum(Base):
 
 
 class Offerlsheddatum(Base):
-    __tablename__ = "offerlsheddata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'offerlsheddata'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4678,8 +4677,8 @@ class Offerlsheddatum(Base):
 
 
 class Offerrestartdatum(Base):
-    __tablename__ = "offerrestartdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'offerrestartdata'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False)
     offerdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4693,8 +4692,8 @@ class Offerrestartdatum(Base):
 
 
 class Offerrpowerdatum(Base):
-    __tablename__ = "offerrpowerdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'offerrpowerdata'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False, index=True)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4710,8 +4709,8 @@ class Offerrpowerdatum(Base):
 
 
 class Offeruloadingdatum(Base):
-    __tablename__ = "offeruloadingdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'offeruloadingdata'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False, index=True)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4725,8 +4724,8 @@ class Offeruloadingdatum(Base):
 
 
 class Offerunloadingdatum(Base):
-    __tablename__ = "offerunloadingdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'offerunloadingdata'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(10), primary_key=True, nullable=False, index=True)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4740,8 +4739,8 @@ class Offerunloadingdatum(Base):
 
 
 class Overriderrp(Base):
-    __tablename__ = "overriderrp"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'overriderrp'
+    __table_args__ = {'schema': 'mms'}
 
     regionid = Column(String(10), primary_key=True, nullable=False)
     startdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4756,16 +4755,16 @@ class Overriderrp(Base):
 
 
 class P5minBlockedconstraint(Base):
-    __tablename__ = "p5min_blockedconstraint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'p5min_blockedconstraint'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     constraintid = Column(String(20), primary_key=True, nullable=False)
 
 
 class P5minCasesolution(Base):
-    __tablename__ = "p5min_casesolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'p5min_casesolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True)
     startinterval_datetime = Column(String(20))
@@ -4789,8 +4788,8 @@ class P5minCasesolution(Base):
 
 
 class P5minConstraintsolution(Base):
-    __tablename__ = "p5min_constraintsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'p5min_constraintsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4807,8 +4806,8 @@ class P5minConstraintsolution(Base):
 
 
 class P5minInterconnectorsoln(Base):
-    __tablename__ = "p5min_interconnectorsoln"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'p5min_interconnectorsoln'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interconnectorid = Column(String(10), primary_key=True, nullable=False)
@@ -4835,8 +4834,8 @@ class P5minInterconnectorsoln(Base):
 
 
 class P5minLocalPrice(Base):
-    __tablename__ = "p5min_local_price"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'p5min_local_price'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4846,8 +4845,8 @@ class P5minLocalPrice(Base):
 
 
 class P5minRegionsolution(Base):
-    __tablename__ = "p5min_regionsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'p5min_regionsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4953,8 +4952,8 @@ class P5minRegionsolution(Base):
 
 
 class P5minUnitsolution(Base):
-    __tablename__ = "p5min_unitsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'p5min_unitsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -4989,8 +4988,8 @@ class P5minUnitsolution(Base):
 
 
 class Participant(Base):
-    __tablename__ = "participant"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'participant'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(10), primary_key=True)
     participantclassid = Column(String(20))
@@ -5002,8 +5001,8 @@ class Participant(Base):
 
 
 class ParticipantBandfeeAlloc(Base):
-    __tablename__ = "participant_bandfee_alloc"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'participant_bandfee_alloc'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(10), primary_key=True, nullable=False)
     marketfeeid = Column(String(10), primary_key=True, nullable=False)
@@ -5015,8 +5014,8 @@ class ParticipantBandfeeAlloc(Base):
 
 
 class Participantaccount(Base):
-    __tablename__ = "participantaccount"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'participantaccount'
+    __table_args__ = {'schema': 'mms'}
 
     accountname = Column(String(80))
     participantid = Column(String(10), primary_key=True)
@@ -5036,8 +5035,8 @@ class Participantaccount(Base):
 
 
 class Participantcategory(Base):
-    __tablename__ = "participantcategory"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'participantcategory'
+    __table_args__ = {'schema': 'mms'}
 
     participantcategoryid = Column(String(10), primary_key=True)
     description = Column(String(64))
@@ -5045,8 +5044,8 @@ class Participantcategory(Base):
 
 
 class Participantcategoryalloc(Base):
-    __tablename__ = "participantcategoryalloc"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'participantcategoryalloc'
+    __table_args__ = {'schema': 'mms'}
 
     participantcategoryid = Column(String(10), primary_key=True, nullable=False)
     participantid = Column(String(10), primary_key=True, nullable=False)
@@ -5054,8 +5053,8 @@ class Participantcategoryalloc(Base):
 
 
 class Participantclas(Base):
-    __tablename__ = "participantclass"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'participantclass'
+    __table_args__ = {'schema': 'mms'}
 
     participantclassid = Column(String(20), primary_key=True)
     description = Column(String(64))
@@ -5063,8 +5062,8 @@ class Participantclas(Base):
 
 
 class Participantcreditdetail(Base):
-    __tablename__ = "participantcreditdetail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'participantcreditdetail'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     participantid = Column(String(10), primary_key=True, nullable=False, index=True)
@@ -5075,8 +5074,8 @@ class Participantcreditdetail(Base):
 
 
 class Participantnoticetrk(Base):
-    __tablename__ = "participantnoticetrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'participantnoticetrk'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(10), primary_key=True, nullable=False, index=True)
     noticeid = Column(Numeric(10, 0), primary_key=True, nullable=False)
@@ -5084,8 +5083,8 @@ class Participantnoticetrk(Base):
 
 
 class Pasacasesolution(Base):
-    __tablename__ = "pasacasesolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'pasacasesolution'
+    __table_args__ = {'schema': 'mms'}
 
     caseid = Column(String(20), primary_key=True)
     solutioncomplete = Column(Numeric(16, 6))
@@ -5097,8 +5096,8 @@ class Pasacasesolution(Base):
 
 
 class Pasaconstraintsolution(Base):
-    __tablename__ = "pasaconstraintsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'pasaconstraintsolution'
+    __table_args__ = {'schema': 'mms'}
 
     caseid = Column(String(20), nullable=False)
     constraintid = Column(String(20), primary_key=True, nullable=False)
@@ -5112,8 +5111,8 @@ class Pasaconstraintsolution(Base):
 
 
 class Pasainterconnectorsolution(Base):
-    __tablename__ = "pasainterconnectorsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'pasainterconnectorsolution'
+    __table_args__ = {'schema': 'mms'}
 
     caseid = Column(String(20), nullable=False)
     interconnectorid = Column(String(10), primary_key=True, nullable=False)
@@ -5131,8 +5130,8 @@ class Pasainterconnectorsolution(Base):
 
 
 class Pasaregionsolution(Base):
-    __tablename__ = "pasaregionsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'pasaregionsolution'
+    __table_args__ = {'schema': 'mms'}
 
     caseid = Column(String(20), nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
@@ -5158,8 +5157,8 @@ class Pasaregionsolution(Base):
 
 
 class PdpasaCasesolution(Base):
-    __tablename__ = "pdpasa_casesolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'pdpasa_casesolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True)
     pasaversion = Column(String(10))
@@ -5183,8 +5182,8 @@ class PdpasaCasesolution(Base):
 
 
 class PdpasaRegionsolution(Base):
-    __tablename__ = "pdpasa_regionsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'pdpasa_regionsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -5208,12 +5207,7 @@ class PdpasaRegionsolution(Base):
     aggregatescheduledload = Column(Numeric(12, 2))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
     aggregatepasaavailability = Column(Numeric(12, 0))
-    runtype = Column(
-        String(20),
-        primary_key=True,
-        nullable=False,
-        server_default=text("'OUTAGE_LRC'::character varying"),
-    )
+    runtype = Column(String(20), primary_key=True, nullable=False, server_default=text("'OUTAGE_LRC'::character varying"))
     energyreqdemand10 = Column(Numeric(12, 2))
     calculatedlor1level = Column(Numeric(16, 6))
     calculatedlor2level = Column(Numeric(16, 6))
@@ -5236,8 +5230,8 @@ class PdpasaRegionsolution(Base):
 
 
 class Perdemand(Base):
-    __tablename__ = "perdemand"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'perdemand'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3))
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -5253,8 +5247,11 @@ class Perdemand(Base):
 
 
 class Peroffer(Base):
-    __tablename__ = "peroffer"
-    __table_args__ = (Index("peroffer_ndx2", "duid", "lastchanged"), {"schema": "mms"})
+    __tablename__ = 'peroffer'
+    __table_args__ = (
+        Index('peroffer_ndx2', 'duid', 'lastchanged'),
+        {'schema': 'mms'}
+    )
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -5282,8 +5279,11 @@ class Peroffer(Base):
 
 
 class PerofferD(Base):
-    __tablename__ = "peroffer_d"
-    __table_args__ = (Index("peroffer_d_ndx2", "duid", "lastchanged"), {"schema": "mms"})
+    __tablename__ = 'peroffer_d'
+    __table_args__ = (
+        Index('peroffer_d_ndx2', 'duid', 'lastchanged'),
+        {'schema': 'mms'}
+    )
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -5311,8 +5311,8 @@ class PerofferD(Base):
 
 
 class PredispatchFcasReq(Base):
-    __tablename__ = "predispatch_fcas_req"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatch_fcas_req'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20))
     runno = Column(Numeric(3, 0))
@@ -5335,8 +5335,8 @@ class PredispatchFcasReq(Base):
 
 
 class PredispatchLocalPrice(Base):
-    __tablename__ = "predispatch_local_price"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatch_local_price'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20), nullable=False)
     datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -5348,8 +5348,8 @@ class PredispatchLocalPrice(Base):
 
 
 class PredispatchMnspbidtrk(Base):
-    __tablename__ = "predispatch_mnspbidtrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatch_mnspbidtrk'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20), primary_key=True, nullable=False)
     linkid = Column(String(10), primary_key=True, nullable=False)
@@ -5363,11 +5363,11 @@ class PredispatchMnspbidtrk(Base):
 
 
 class Predispatchbidtrk(Base):
-    __tablename__ = "predispatchbidtrk"
+    __tablename__ = 'predispatchbidtrk'
     __table_args__ = (
-        Index("predispatchbidtrk_ndx2", "duid", "lastchanged"),
-        Index("predispatchbidtrk_ndx3", "duid", "settlementdate"),
-        {"schema": "mms"},
+        Index('predispatchbidtrk_ndx2', 'duid', 'lastchanged'),
+        Index('predispatchbidtrk_ndx3', 'duid', 'settlementdate'),
+        {'schema': 'mms'}
     )
 
     predispatchseqno = Column(String(20), primary_key=True, nullable=False)
@@ -5382,16 +5382,16 @@ class Predispatchbidtrk(Base):
 
 
 class Predispatchblockedconstraint(Base):
-    __tablename__ = "predispatchblockedconstraint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchblockedconstraint'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20), primary_key=True, nullable=False)
     constraintid = Column(String(20), primary_key=True, nullable=False)
 
 
 class Predispatchcasesolution(Base):
-    __tablename__ = "predispatchcasesolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchcasesolution'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -5416,8 +5416,8 @@ class Predispatchcasesolution(Base):
 
 
 class Predispatchconstraint(Base):
-    __tablename__ = "predispatchconstraint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchconstraint'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20), index=True)
     runno = Column(Numeric(3, 0))
@@ -5436,8 +5436,8 @@ class Predispatchconstraint(Base):
 
 
 class Predispatchinterconnectorre(Base):
-    __tablename__ = "predispatchinterconnectorres"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchinterconnectorres'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20), index=True)
     runno = Column(Numeric(3, 0))
@@ -5465,8 +5465,8 @@ class Predispatchinterconnectorre(Base):
 
 
 class Predispatchintersensitivity(Base):
-    __tablename__ = "predispatchintersensitivities"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchintersensitivities'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20))
     runno = Column(Numeric(3, 0))
@@ -5522,8 +5522,11 @@ class Predispatchintersensitivity(Base):
 
 
 class Predispatchload(Base):
-    __tablename__ = "predispatchload"
-    __table_args__ = (Index("predispatchload_ndx2", "duid", "lastchanged"), {"schema": "mms"})
+    __tablename__ = 'predispatchload'
+    __table_args__ = (
+        Index('predispatchload_ndx2', 'duid', 'lastchanged'),
+        {'schema': 'mms'}
+    )
 
     predispatchseqno = Column(String(20), index=True)
     runno = Column(Numeric(3, 0))
@@ -5579,8 +5582,8 @@ class Predispatchload(Base):
 
 
 class Predispatchoffertrk(Base):
-    __tablename__ = "predispatchoffertrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchoffertrk'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20), primary_key=True, nullable=False)
     duid = Column(String(10), primary_key=True, nullable=False)
@@ -5593,8 +5596,8 @@ class Predispatchoffertrk(Base):
 
 
 class Predispatchprice(Base):
-    __tablename__ = "predispatchprice"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchprice'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20), index=True)
     runno = Column(Numeric(3, 0))
@@ -5632,8 +5635,8 @@ class Predispatchprice(Base):
 
 
 class Predispatchpricesensitivity(Base):
-    __tablename__ = "predispatchpricesensitivities"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchpricesensitivities'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20), index=True)
     runno = Column(Numeric(3, 0))
@@ -5689,8 +5692,8 @@ class Predispatchpricesensitivity(Base):
 
 
 class Predispatchregionsum(Base):
-    __tablename__ = "predispatchregionsum"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchregionsum'
+    __table_args__ = {'schema': 'mms'}
 
     predispatchseqno = Column(String(20), index=True)
     runno = Column(Numeric(3, 0))
@@ -5806,8 +5809,8 @@ class Predispatchregionsum(Base):
 
 
 class Predispatchscenariodemand(Base):
-    __tablename__ = "predispatchscenariodemand"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchscenariodemand'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -5817,8 +5820,8 @@ class Predispatchscenariodemand(Base):
 
 
 class Predispatchscenariodemandtrk(Base):
-    __tablename__ = "predispatchscenariodemandtrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'predispatchscenariodemandtrk'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -5828,8 +5831,8 @@ class Predispatchscenariodemandtrk(Base):
 
 
 class Prudentialcompanyposition(Base):
-    __tablename__ = "prudentialcompanyposition"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'prudentialcompanyposition'
+    __table_args__ = {'schema': 'mms'}
 
     prudential_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -5853,8 +5856,8 @@ class Prudentialcompanyposition(Base):
 
 
 class Prudentialruntrk(Base):
-    __tablename__ = "prudentialruntrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'prudentialruntrk'
+    __table_args__ = {'schema': 'mms'}
 
     prudential_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -5864,8 +5867,8 @@ class Prudentialruntrk(Base):
 
 
 class Reallocation(Base):
-    __tablename__ = "reallocation"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'reallocation'
+    __table_args__ = {'schema': 'mms'}
 
     reallocationid = Column(String(20), primary_key=True)
     creditparticipantid = Column(String(10))
@@ -5885,8 +5888,8 @@ class Reallocation(Base):
 
 
 class Reallocationdetail(Base):
-    __tablename__ = "reallocationdetails"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'reallocationdetails'
+    __table_args__ = {'schema': 'mms'}
 
     reallocationid = Column(String(20), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -5897,8 +5900,8 @@ class Reallocationdetail(Base):
 
 
 class Reallocationinterval(Base):
-    __tablename__ = "reallocationinterval"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'reallocationinterval'
+    __table_args__ = {'schema': 'mms'}
 
     reallocationid = Column(String(20), primary_key=True, nullable=False)
     periodid = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -5908,8 +5911,8 @@ class Reallocationinterval(Base):
 
 
 class Reallocationintervals(Base):
-    __tablename__ = "reallocationintervals"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'reallocationintervals'
+    __table_args__ = {'schema': 'mms'}
 
     reallocationid = Column(String(20), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -5920,8 +5923,8 @@ class Reallocationintervals(Base):
 
 
 class Reallocations(Base):
-    __tablename__ = "reallocations"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'reallocations'
+    __table_args__ = {'schema': 'mms'}
 
     reallocationid = Column(String(20), primary_key=True)
     startdate = Column(TIMESTAMP(precision=3))
@@ -5938,8 +5941,8 @@ class Reallocations(Base):
 
 
 class Region(Base):
-    __tablename__ = "region"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'region'
+    __table_args__ = {'schema': 'mms'}
 
     regionid = Column(String(10), primary_key=True)
     description = Column(String(64))
@@ -5948,8 +5951,8 @@ class Region(Base):
 
 
 class Regionapc(Base):
-    __tablename__ = "regionapc"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'regionapc'
+    __table_args__ = {'schema': 'mms'}
 
     regionid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -5960,8 +5963,8 @@ class Regionapc(Base):
 
 
 class Regionapcinterval(Base):
-    __tablename__ = "regionapcintervals"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'regionapcintervals'
+    __table_args__ = {'schema': 'mms'}
 
     regionid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -5975,21 +5978,21 @@ class Regionapcinterval(Base):
 
 
 class RegionfcasrelaxationOcd(Base):
-    __tablename__ = "regionfcasrelaxation_ocd"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'regionfcasrelaxation_ocd'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
     servicetype = Column(String(10), primary_key=True, nullable=False)
-    _global = Column("global", Numeric(1, 0), primary_key=True, nullable=False)
+    _global = Column('global', Numeric(1, 0), primary_key=True, nullable=False)
     requirement = Column(Numeric(15, 5))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
 
 
 class Regionstandingdatum(Base):
-    __tablename__ = "regionstandingdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'regionstandingdata'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6004,8 +6007,8 @@ class Regionstandingdatum(Base):
 
 
 class Resdemandtrk(Base):
-    __tablename__ = "resdemandtrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'resdemandtrk'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     regionid = Column(String(10), primary_key=True, nullable=False)
@@ -6018,8 +6021,8 @@ class Resdemandtrk(Base):
 
 
 class Reserve(Base):
-    __tablename__ = "reserve"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'reserve'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6041,8 +6044,8 @@ class Reserve(Base):
 
 
 class ResidueBidTrk(Base):
-    __tablename__ = "residue_bid_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residue_bid_trk'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30))
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6053,8 +6056,8 @@ class ResidueBidTrk(Base):
 
 
 class ResidueConDatum(Base):
-    __tablename__ = "residue_con_data"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residue_con_data'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6068,8 +6071,8 @@ class ResidueConDatum(Base):
 
 
 class ResidueConEstimatesTrk(Base):
-    __tablename__ = "residue_con_estimates_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residue_con_estimates_trk'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30), primary_key=True, nullable=False)
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
@@ -6080,8 +6083,8 @@ class ResidueConEstimatesTrk(Base):
 
 
 class ResidueConFund(Base):
-    __tablename__ = "residue_con_funds"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residue_con_funds'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30), primary_key=True, nullable=False)
     interconnectorid = Column(String(10), primary_key=True, nullable=False)
@@ -6097,8 +6100,8 @@ class ResidueConFund(Base):
 
 
 class ResidueContract(Base):
-    __tablename__ = "residue_contracts"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residue_contracts'
+    __table_args__ = {'schema': 'mms'}
 
     contractyear = Column(Numeric(4, 0), primary_key=True, nullable=False)
     quarter = Column(Numeric(1, 0), primary_key=True, nullable=False)
@@ -6121,8 +6124,8 @@ class ResidueContract(Base):
 
 
 class ResidueFundsBid(Base):
-    __tablename__ = "residue_funds_bid"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residue_funds_bid'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30), primary_key=True, nullable=False)
     participantid = Column(String(10), primary_key=True, nullable=False)
@@ -6135,8 +6138,8 @@ class ResidueFundsBid(Base):
 
 
 class ResiduePriceBid(Base):
-    __tablename__ = "residue_price_bid"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residue_price_bid'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30))
     participantid = Column(String(10), primary_key=True, nullable=False)
@@ -6148,8 +6151,8 @@ class ResiduePriceBid(Base):
 
 
 class ResiduePriceFundsBid(Base):
-    __tablename__ = "residue_price_funds_bid"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residue_price_funds_bid'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30), primary_key=True, nullable=False)
     interconnectorid = Column(String(10), primary_key=True, nullable=False)
@@ -6162,8 +6165,8 @@ class ResiduePriceFundsBid(Base):
 
 
 class ResiduePublicDatum(Base):
-    __tablename__ = "residue_public_data"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residue_public_data'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6177,8 +6180,8 @@ class ResiduePublicDatum(Base):
 
 
 class ResidueTrk(Base):
-    __tablename__ = "residue_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residue_trk'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30))
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6193,8 +6196,8 @@ class ResidueTrk(Base):
 
 
 class Residuecontractpayment(Base):
-    __tablename__ = "residuecontractpayments"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residuecontractpayments'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30), primary_key=True, nullable=False)
     participantid = Column(String(10), primary_key=True, nullable=False)
@@ -6202,8 +6205,8 @@ class Residuecontractpayment(Base):
 
 
 class Residuefiletrk(Base):
-    __tablename__ = "residuefiletrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'residuefiletrk'
+    __table_args__ = {'schema': 'mms'}
 
     contractid = Column(String(30))
     participantid = Column(String(10), primary_key=True, nullable=False)
@@ -6216,8 +6219,8 @@ class Residuefiletrk(Base):
 
 
 class RooftopPvActual(Base):
-    __tablename__ = "rooftop_pv_actual"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'rooftop_pv_actual'
+    __table_args__ = {'schema': 'mms'}
 
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     type = Column(String(20), primary_key=True, nullable=False)
@@ -6228,8 +6231,8 @@ class RooftopPvActual(Base):
 
 
 class RooftopPvForecast(Base):
-    __tablename__ = "rooftop_pv_forecast"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'rooftop_pv_forecast'
+    __table_args__ = {'schema': 'mms'}
 
     version_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     regionid = Column(String(20), primary_key=True, nullable=False)
@@ -6242,8 +6245,8 @@ class RooftopPvForecast(Base):
 
 
 class SecdepositInterestRate(Base):
-    __tablename__ = "secdeposit_interest_rate"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'secdeposit_interest_rate'
+    __table_args__ = {'schema': 'mms'}
 
     interest_acct_id = Column(String(20), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -6252,8 +6255,8 @@ class SecdepositInterestRate(Base):
 
 
 class SecdepositProvision(Base):
-    __tablename__ = "secdeposit_provision"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'secdeposit_provision'
+    __table_args__ = {'schema': 'mms'}
 
     security_deposit_id = Column(String(20), primary_key=True, nullable=False)
     participantid = Column(String(20), primary_key=True, nullable=False)
@@ -6267,8 +6270,8 @@ class SecdepositProvision(Base):
 
 
 class SetAncillarySummary(Base):
-    __tablename__ = "set_ancillary_summary"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_ancillary_summary'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6281,8 +6284,8 @@ class SetAncillarySummary(Base):
 
 
 class SetApcCompensation(Base):
-    __tablename__ = "set_apc_compensation"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_apc_compensation'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6294,8 +6297,8 @@ class SetApcCompensation(Base):
 
 
 class SetApcRecovery(Base):
-    __tablename__ = "set_apc_recovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_apc_recovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6309,8 +6312,8 @@ class SetApcRecovery(Base):
 
 
 class SetCspDerogationAmount(Base):
-    __tablename__ = "set_csp_derogation_amount"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_csp_derogation_amount'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6322,8 +6325,8 @@ class SetCspDerogationAmount(Base):
 
 
 class SetCspSupportdataConstraint(Base):
-    __tablename__ = "set_csp_supportdata_constraint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_csp_supportdata_constraint'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6342,8 +6345,8 @@ class SetCspSupportdataConstraint(Base):
 
 
 class SetCspSupportdataEnergydiff(Base):
-    __tablename__ = "set_csp_supportdata_energydiff"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_csp_supportdata_energydiff'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6362,8 +6365,8 @@ class SetCspSupportdataEnergydiff(Base):
 
 
 class SetCspSupportdataSubprice(Base):
-    __tablename__ = "set_csp_supportdata_subprice"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_csp_supportdata_subprice'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6387,8 +6390,8 @@ class SetCspSupportdataSubprice(Base):
 
 
 class SetFcasPayment(Base):
-    __tablename__ = "set_fcas_payment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_fcas_payment'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6408,8 +6411,8 @@ class SetFcasPayment(Base):
 
 
 class SetFcasRecovery(Base):
-    __tablename__ = "set_fcas_recovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_fcas_recovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(String(3), primary_key=True, nullable=False)
@@ -6436,8 +6439,8 @@ class SetFcasRecovery(Base):
 
 
 class SetFcasRegulationTrk(Base):
-    __tablename__ = "set_fcas_regulation_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_fcas_regulation_trk'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6451,8 +6454,8 @@ class SetFcasRegulationTrk(Base):
 
 
 class SetMrPayment(Base):
-    __tablename__ = "set_mr_payment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_mr_payment'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6467,8 +6470,8 @@ class SetMrPayment(Base):
 
 
 class SetMrRecovery(Base):
-    __tablename__ = "set_mr_recovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_mr_recovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6482,8 +6485,8 @@ class SetMrRecovery(Base):
 
 
 class SetNmasRecovery(Base):
-    __tablename__ = "set_nmas_recovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_nmas_recovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6506,8 +6509,8 @@ class SetNmasRecovery(Base):
 
 
 class SetNmasRecoveryRbf(Base):
-    __tablename__ = "set_nmas_recovery_rbf"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_nmas_recovery_rbf'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6523,8 +6526,8 @@ class SetNmasRecoveryRbf(Base):
 
 
 class SetRunParameter(Base):
-    __tablename__ = "set_run_parameter"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'set_run_parameter'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6534,8 +6537,8 @@ class SetRunParameter(Base):
 
 
 class Setagcpayment(Base):
-    __tablename__ = "setagcpayment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setagcpayment'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6557,8 +6560,8 @@ class Setagcpayment(Base):
 
 
 class Setagcrecovery(Base):
-    __tablename__ = "setagcrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setagcrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6577,8 +6580,8 @@ class Setagcrecovery(Base):
 
 
 class Setapccompensation(Base):
-    __tablename__ = "setapccompensation"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setapccompensation'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6590,8 +6593,8 @@ class Setapccompensation(Base):
 
 
 class Setapcrecovery(Base):
-    __tablename__ = "setapcrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setapcrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6606,8 +6609,8 @@ class Setapcrecovery(Base):
 
 
 class SetcfgParticipantMpf(Base):
-    __tablename__ = "setcfg_participant_mpf"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setcfg_participant_mpf'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -6619,8 +6622,8 @@ class SetcfgParticipantMpf(Base):
 
 
 class SetcfgParticipantMpftrk(Base):
-    __tablename__ = "setcfg_participant_mpftrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setcfg_participant_mpftrk'
+    __table_args__ = {'schema': 'mms'}
 
     participantid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -6631,8 +6634,8 @@ class SetcfgParticipantMpftrk(Base):
 
 
 class Setcpdatum(Base):
-    __tablename__ = "setcpdata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setcpdata'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(10, 0), primary_key=True, nullable=False)
@@ -6663,8 +6666,8 @@ class Setcpdatum(Base):
 
 
 class Setcpdataregion(Base):
-    __tablename__ = "setcpdataregion"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setcpdataregion'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(22, 10), primary_key=True, nullable=False)
@@ -6681,8 +6684,8 @@ class Setcpdataregion(Base):
 
 
 class Setfcascomp(Base):
-    __tablename__ = "setfcascomp"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setfcascomp'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6702,8 +6705,8 @@ class Setfcascomp(Base):
 
 
 class Setfcasrecovery(Base):
-    __tablename__ = "setfcasrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setfcasrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6722,8 +6725,8 @@ class Setfcasrecovery(Base):
 
 
 class Setfcasregionrecovery(Base):
-    __tablename__ = "setfcasregionrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setfcasregionrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6737,8 +6740,8 @@ class Setfcasregionrecovery(Base):
 
 
 class Setgendatum(Base):
-    __tablename__ = "setgendata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setgendata'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(10, 0), primary_key=True, nullable=False)
@@ -6772,8 +6775,8 @@ class Setgendatum(Base):
 
 
 class Setgendataregion(Base):
-    __tablename__ = "setgendataregion"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setgendataregion'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(22, 10), primary_key=True, nullable=False)
@@ -6792,8 +6795,8 @@ class Setgendataregion(Base):
 
 
 class Setgovpayment(Base):
-    __tablename__ = "setgovpayment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setgovpayment'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6828,8 +6831,8 @@ class Setgovpayment(Base):
 
 
 class Setgovrecovery(Base):
-    __tablename__ = "setgovrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setgovrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6857,8 +6860,8 @@ class Setgovrecovery(Base):
 
 
 class Setintervention(Base):
-    __tablename__ = "setintervention"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setintervention'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6874,8 +6877,8 @@ class Setintervention(Base):
 
 
 class Setinterventionrecovery(Base):
-    __tablename__ = "setinterventionrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setinterventionrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6892,8 +6895,8 @@ class Setinterventionrecovery(Base):
 
 
 class Setintraregionresidue(Base):
-    __tablename__ = "setintraregionresidues"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setintraregionresidues'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6908,8 +6911,8 @@ class Setintraregionresidue(Base):
 
 
 class Setiraucsurplu(Base):
-    __tablename__ = "setiraucsurplus"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setiraucsurplus'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     settlementrunno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6927,8 +6930,8 @@ class Setiraucsurplu(Base):
 
 
 class Setirfmrecovery(Base):
-    __tablename__ = "setirfmrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setirfmrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6945,8 +6948,8 @@ class Setirfmrecovery(Base):
 
 
 class Setirnspsurplu(Base):
-    __tablename__ = "setirnspsurplus"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setirnspsurplus'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     settlementrunno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6964,8 +6967,8 @@ class Setirnspsurplu(Base):
 
 
 class Setirpartsurplu(Base):
-    __tablename__ = "setirpartsurplus"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setirpartsurplus'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     settlementrunno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -6983,8 +6986,8 @@ class Setirpartsurplu(Base):
 
 
 class Setirsurplu(Base):
-    __tablename__ = "setirsurplus"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setirsurplus'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     settlementrunno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7000,8 +7003,8 @@ class Setirsurplu(Base):
 
 
 class Setlshedpayment(Base):
-    __tablename__ = "setlshedpayment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setlshedpayment'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7030,8 +7033,8 @@ class Setlshedpayment(Base):
 
 
 class Setlshedrecovery(Base):
-    __tablename__ = "setlshedrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setlshedrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7055,8 +7058,8 @@ class Setlshedrecovery(Base):
 
 
 class Setluloadpayment(Base):
-    __tablename__ = "setluloadpayment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setluloadpayment'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7085,8 +7088,8 @@ class Setluloadpayment(Base):
 
 
 class Setluloadrecovery(Base):
-    __tablename__ = "setluloadrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setluloadrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7111,8 +7114,8 @@ class Setluloadrecovery(Base):
 
 
 class Setlunloadpayment(Base):
-    __tablename__ = "setlunloadpayment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setlunloadpayment'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7140,8 +7143,8 @@ class Setlunloadpayment(Base):
 
 
 class Setlunloadrecovery(Base):
-    __tablename__ = "setlunloadrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setlunloadrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7166,8 +7169,8 @@ class Setlunloadrecovery(Base):
 
 
 class Setmarketfee(Base):
-    __tablename__ = "setmarketfees"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setmarketfees'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7181,8 +7184,8 @@ class Setmarketfee(Base):
 
 
 class Setreallocation(Base):
-    __tablename__ = "setreallocations"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setreallocations'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7196,8 +7199,8 @@ class Setreallocation(Base):
 
 
 class Setreserverecovery(Base):
-    __tablename__ = "setreserverecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setreserverecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7215,8 +7218,8 @@ class Setreserverecovery(Base):
 
 
 class Setreservetrader(Base):
-    __tablename__ = "setreservetrader"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setreservetrader'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7237,8 +7240,8 @@ class Setreservetrader(Base):
 
 
 class Setrestartpayment(Base):
-    __tablename__ = "setrestartpayment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setrestartpayment'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7259,8 +7262,8 @@ class Setrestartpayment(Base):
 
 
 class Setrestartrecovery(Base):
-    __tablename__ = "setrestartrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setrestartrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7282,8 +7285,8 @@ class Setrestartrecovery(Base):
 
 
 class Setrpowerpayment(Base):
-    __tablename__ = "setrpowerpayment"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setrpowerpayment'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7317,8 +7320,8 @@ class Setrpowerpayment(Base):
 
 
 class Setrpowerrecovery(Base):
-    __tablename__ = "setrpowerrecovery"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setrpowerrecovery'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7343,8 +7346,8 @@ class Setrpowerrecovery(Base):
 
 
 class Setsmallgendatum(Base):
-    __tablename__ = "setsmallgendata"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setsmallgendata'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7362,8 +7365,8 @@ class Setsmallgendatum(Base):
 
 
 class Setvicboundaryenergy(Base):
-    __tablename__ = "setvicboundaryenergy"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setvicboundaryenergy'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7374,8 +7377,8 @@ class Setvicboundaryenergy(Base):
 
 
 class Setvicenergyfigure(Base):
-    __tablename__ = "setvicenergyfigures"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setvicenergyfigures'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7388,8 +7391,8 @@ class Setvicenergyfigure(Base):
 
 
 class Setvicenergyflow(Base):
-    __tablename__ = "setvicenergyflow"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'setvicenergyflow'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     versionno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7399,8 +7402,8 @@ class Setvicenergyflow(Base):
 
 
 class Spdconnectionpointconstraint(Base):
-    __tablename__ = "spdconnectionpointconstraint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'spdconnectionpointconstraint'
+    __table_args__ = {'schema': 'mms'}
 
     connectionpointid = Column(String(12), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -7412,8 +7415,8 @@ class Spdconnectionpointconstraint(Base):
 
 
 class Spdinterconnectorconstraint(Base):
-    __tablename__ = "spdinterconnectorconstraint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'spdinterconnectorconstraint'
+    __table_args__ = {'schema': 'mms'}
 
     interconnectorid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -7424,8 +7427,8 @@ class Spdinterconnectorconstraint(Base):
 
 
 class Spdregionconstraint(Base):
-    __tablename__ = "spdregionconstraint"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'spdregionconstraint'
+    __table_args__ = {'schema': 'mms'}
 
     regionid = Column(String(10), primary_key=True, nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -7437,8 +7440,8 @@ class Spdregionconstraint(Base):
 
 
 class SraCashSecurity(Base):
-    __tablename__ = "sra_cash_security"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_cash_security'
+    __table_args__ = {'schema': 'mms'}
 
     cash_security_id = Column(String(36), primary_key=True)
     participantid = Column(String(10))
@@ -7453,8 +7456,8 @@ class SraCashSecurity(Base):
 
 
 class SraFinancialAucMardetail(Base):
-    __tablename__ = "sra_financial_auc_mardetail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_financial_auc_mardetail'
+    __table_args__ = {'schema': 'mms'}
 
     sra_year = Column(Numeric(4, 0), primary_key=True, nullable=False)
     sra_quarter = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7466,8 +7469,8 @@ class SraFinancialAucMardetail(Base):
 
 
 class SraFinancialAucMargin(Base):
-    __tablename__ = "sra_financial_auc_margin"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_financial_auc_margin'
+    __table_args__ = {'schema': 'mms'}
 
     sra_year = Column(Numeric(4, 0), primary_key=True, nullable=False)
     sra_quarter = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7480,8 +7483,8 @@ class SraFinancialAucMargin(Base):
 
 
 class SraFinancialAucReceipt(Base):
-    __tablename__ = "sra_financial_auc_receipts"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_financial_auc_receipts'
+    __table_args__ = {'schema': 'mms'}
 
     sra_year = Column(Numeric(4, 0), primary_key=True, nullable=False)
     sra_quarter = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7499,8 +7502,8 @@ class SraFinancialAucReceipt(Base):
 
 
 class SraFinancialAucpayDetail(Base):
-    __tablename__ = "sra_financial_aucpay_detail"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_financial_aucpay_detail'
+    __table_args__ = {'schema': 'mms'}
 
     sra_year = Column(Numeric(4, 0), primary_key=True, nullable=False)
     sra_quarter = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7522,8 +7525,8 @@ class SraFinancialAucpayDetail(Base):
 
 
 class SraFinancialAucpaySum(Base):
-    __tablename__ = "sra_financial_aucpay_sum"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_financial_aucpay_sum'
+    __table_args__ = {'schema': 'mms'}
 
     sra_year = Column(Numeric(4, 0), primary_key=True, nullable=False)
     sra_quarter = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7538,8 +7541,8 @@ class SraFinancialAucpaySum(Base):
 
 
 class SraFinancialRuntrk(Base):
-    __tablename__ = "sra_financial_runtrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_financial_runtrk'
+    __table_args__ = {'schema': 'mms'}
 
     sra_year = Column(Numeric(4, 0), primary_key=True, nullable=False)
     sra_quarter = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7553,8 +7556,8 @@ class SraFinancialRuntrk(Base):
 
 
 class SraOfferProduct(Base):
-    __tablename__ = "sra_offer_product"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_offer_product'
+    __table_args__ = {'schema': 'mms'}
 
     auctionid = Column(String(30), primary_key=True, nullable=False)
     participantid = Column(String(10), primary_key=True, nullable=False)
@@ -7569,8 +7572,8 @@ class SraOfferProduct(Base):
 
 
 class SraOfferProfile(Base):
-    __tablename__ = "sra_offer_profile"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_offer_profile'
+    __table_args__ = {'schema': 'mms'}
 
     auctionid = Column(String(30), primary_key=True, nullable=False)
     participantid = Column(String(10), primary_key=True, nullable=False)
@@ -7582,8 +7585,8 @@ class SraOfferProfile(Base):
 
 
 class SraPrudentialCashSecurity(Base):
-    __tablename__ = "sra_prudential_cash_security"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_prudential_cash_security'
+    __table_args__ = {'schema': 'mms'}
 
     prudential_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     prudential_runno = Column(Numeric(8, 0), primary_key=True, nullable=False)
@@ -7593,8 +7596,8 @@ class SraPrudentialCashSecurity(Base):
 
 
 class SraPrudentialCompPosition(Base):
-    __tablename__ = "sra_prudential_comp_position"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_prudential_comp_position'
+    __table_args__ = {'schema': 'mms'}
 
     prudential_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     prudential_runno = Column(Numeric(8, 0), primary_key=True, nullable=False)
@@ -7605,8 +7608,8 @@ class SraPrudentialCompPosition(Base):
 
 
 class SraPrudentialExposure(Base):
-    __tablename__ = "sra_prudential_exposure"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_prudential_exposure'
+    __table_args__ = {'schema': 'mms'}
 
     prudential_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     prudential_runno = Column(Numeric(8, 0), primary_key=True, nullable=False)
@@ -7625,18 +7628,18 @@ class SraPrudentialExposure(Base):
 
 
 class SraPrudentialRun(Base):
-    __tablename__ = "sra_prudential_run"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'sra_prudential_run'
+    __table_args__ = {'schema': 'mms'}
 
     prudential_date = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     prudential_runno = Column(Numeric(8, 0), primary_key=True, nullable=False)
 
 
 class Stadualloc(Base):
-    __tablename__ = "stadualloc"
+    __tablename__ = 'stadualloc'
     __table_args__ = (
-        Index("stadualloc_ndx2", "stationid", "effectivedate", "versionno"),
-        {"schema": "mms"},
+        Index('stadualloc_ndx2', 'stationid', 'effectivedate', 'versionno'),
+        {'schema': 'mms'}
     )
 
     duid = Column(String(10), primary_key=True, nullable=False, index=True)
@@ -7647,8 +7650,8 @@ class Stadualloc(Base):
 
 
 class Station(Base):
-    __tablename__ = "station"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'station'
+    __table_args__ = {'schema': 'mms'}
 
     stationid = Column(String(10), primary_key=True)
     stationname = Column(String(80))
@@ -7664,8 +7667,8 @@ class Station(Base):
 
 
 class Stationoperatingstatu(Base):
-    __tablename__ = "stationoperatingstatus"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'stationoperatingstatus'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     stationid = Column(String(10), primary_key=True, nullable=False)
@@ -7677,10 +7680,10 @@ class Stationoperatingstatu(Base):
 
 
 class Stationowner(Base):
-    __tablename__ = "stationowner"
+    __tablename__ = 'stationowner'
     __table_args__ = (
-        Index("stationowner_ndx2", "stationid", "effectivedate", "versionno"),
-        {"schema": "mms"},
+        Index('stationowner_ndx2', 'stationid', 'effectivedate', 'versionno'),
+        {'schema': 'mms'}
     )
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -7691,8 +7694,8 @@ class Stationowner(Base):
 
 
 class Stationownertrk(Base):
-    __tablename__ = "stationownertrk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'stationownertrk'
+    __table_args__ = {'schema': 'mms'}
 
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     participantid = Column(String(10), primary_key=True, nullable=False)
@@ -7703,8 +7706,8 @@ class Stationownertrk(Base):
 
 
 class StpasaCasesolution(Base):
-    __tablename__ = "stpasa_casesolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'stpasa_casesolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True)
     pasaversion = Column(String(10))
@@ -7728,8 +7731,8 @@ class StpasaCasesolution(Base):
 
 
 class StpasaConstraintsolution(Base):
-    __tablename__ = "stpasa_constraintsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'stpasa_constraintsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -7738,17 +7741,12 @@ class StpasaConstraintsolution(Base):
     capacitymarginalvalue = Column(Numeric(12, 2))
     capacityviolationdegree = Column(Numeric(12, 2))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
-    runtype = Column(
-        String(20),
-        primary_key=True,
-        nullable=False,
-        server_default=text("'OUTAGE_LRC'::character varying"),
-    )
+    runtype = Column(String(20), primary_key=True, nullable=False, server_default=text("'OUTAGE_LRC'::character varying"))
 
 
 class StpasaInterconnectorsoln(Base):
-    __tablename__ = "stpasa_interconnectorsoln"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'stpasa_interconnectorsoln'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -7759,19 +7757,14 @@ class StpasaInterconnectorsoln(Base):
     calculatedexportlimit = Column(Numeric(12, 2))
     calculatedimportlimit = Column(Numeric(12, 2))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
-    runtype = Column(
-        String(20),
-        primary_key=True,
-        nullable=False,
-        server_default=text("'OUTAGE_LRC'::character varying"),
-    )
+    runtype = Column(String(20), primary_key=True, nullable=False, server_default=text("'OUTAGE_LRC'::character varying"))
     exportlimitconstraintid = Column(String(20))
     importlimitconstraintid = Column(String(20))
 
 
 class StpasaRegionsolution(Base):
-    __tablename__ = "stpasa_regionsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'stpasa_regionsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -7795,12 +7788,7 @@ class StpasaRegionsolution(Base):
     aggregatescheduledload = Column(Numeric(12, 2))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
     aggregatepasaavailability = Column(Numeric(12, 0))
-    runtype = Column(
-        String(20),
-        primary_key=True,
-        nullable=False,
-        server_default=text("'OUTAGE_LRC'::character varying"),
-    )
+    runtype = Column(String(20), primary_key=True, nullable=False, server_default=text("'OUTAGE_LRC'::character varying"))
     energyreqdemand10 = Column(Numeric(12, 2))
     calculatedlor1level = Column(Numeric(16, 6))
     calculatedlor2level = Column(Numeric(16, 6))
@@ -7823,8 +7811,8 @@ class StpasaRegionsolution(Base):
 
 
 class StpasaSystemsolution(Base):
-    __tablename__ = "stpasa_systemsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'stpasa_systemsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), nullable=False, index=True)
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True)
@@ -7839,8 +7827,8 @@ class StpasaSystemsolution(Base):
 
 
 class StpasaUnitsolution(Base):
-    __tablename__ = "stpasa_unitsolution"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'stpasa_unitsolution'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     interval_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -7854,17 +7842,12 @@ class StpasaUnitsolution(Base):
     energyavailable = Column(Numeric(10, 0))
     lastchanged = Column(TIMESTAMP(precision=3), index=True)
     pasaavailability = Column(Numeric(12, 0))
-    runtype = Column(
-        String(20),
-        primary_key=True,
-        nullable=False,
-        server_default=text("'OUTAGE_LRC'::character varying"),
-    )
+    runtype = Column(String(20), primary_key=True, nullable=False, server_default=text("'OUTAGE_LRC'::character varying"))
 
 
 class Tradinginterconnect(Base):
-    __tablename__ = "tradinginterconnect"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'tradinginterconnect'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7877,8 +7860,11 @@ class Tradinginterconnect(Base):
 
 
 class Tradingload(Base):
-    __tablename__ = "tradingload"
-    __table_args__ = (Index("tradingload_ndx2", "duid", "lastchanged"), {"schema": "mms"})
+    __tablename__ = 'tradingload'
+    __table_args__ = (
+        Index('tradingload_ndx2', 'duid', 'lastchanged'),
+        {'schema': 'mms'}
+    )
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7903,8 +7889,8 @@ class Tradingload(Base):
 
 
 class Tradingprice(Base):
-    __tablename__ = "tradingprice"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'tradingprice'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -7935,8 +7921,8 @@ class Tradingprice(Base):
 
 
 class Tradingregionsum(Base):
-    __tablename__ = "tradingregionsum"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'tradingregionsum'
+    __table_args__ = {'schema': 'mms'}
 
     settlementdate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     runno = Column(Numeric(3, 0), primary_key=True, nullable=False)
@@ -8031,8 +8017,8 @@ class Tradingregionsum(Base):
 
 
 class Transmissionlossfactor(Base):
-    __tablename__ = "transmissionlossfactor"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'transmissionlossfactor'
+    __table_args__ = {'schema': 'mms'}
 
     transmissionlossfactor = Column(Numeric(15, 5), nullable=False)
     effectivedate = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
@@ -8044,8 +8030,8 @@ class Transmissionlossfactor(Base):
 
 
 class Valuationid(Base):
-    __tablename__ = "valuationid"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'valuationid'
+    __table_args__ = {'schema': 'mms'}
 
     valuationid = Column(String(15), primary_key=True)
     description = Column(String(80))
@@ -8053,8 +8039,8 @@ class Valuationid(Base):
 
 
 class VoltageInstruction(Base):
-    __tablename__ = "voltage_instruction"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'voltage_instruction'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     ems_id = Column(String(60), primary_key=True, nullable=False)
@@ -8072,8 +8058,8 @@ class VoltageInstruction(Base):
 
 
 class VoltageInstructionTrk(Base):
-    __tablename__ = "voltage_instruction_trk"
-    __table_args__ = {"schema": "mms"}
+    __tablename__ = 'voltage_instruction_trk'
+    __table_args__ = {'schema': 'mms'}
 
     run_datetime = Column(TIMESTAMP(precision=3), primary_key=True, nullable=False)
     file_type = Column(String(20))

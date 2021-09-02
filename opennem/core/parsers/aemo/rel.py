@@ -1,7 +1,7 @@
 import logging
 from itertools import groupby
 from pathlib import Path
-from typing import IO, Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from openpyxl import load_workbook
 
@@ -11,12 +11,10 @@ from opennem.core.facilitystatus import parse_facility_status
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.loader import PROJECT_DATA_PATH, load_data
 from opennem.core.normalizers import clean_capacity, normalize_duid, station_name_cleaner
-from opennem.core.parsers.excel import parse_workbook
 from opennem.core.stations.station_code_from_duids import station_code_from_duids
 from opennem.core.stations.station_name_code_map import station_name_code_map
 from opennem.core.unit_codes import get_unit_code
 from opennem.core.unit_parser import parse_unit_duid
-from opennem.schema.aemo.rel import AEMORelGeneratorRecord
 from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.parsers.aemo.rel")
@@ -142,7 +140,7 @@ def rel_grouper(records: List[Dict], station_code_map) -> Dict[str, Any]:
 
 
 def load_rel() -> List[Dict[str, Any]]:
-    aemo_path: Path = Path(PROJECT_DATA_PATH) / "aemo" / "nem_rel_202108.xls"
+    aemo_path: Path = Path(PROJECT_DATA_PATH) / "aemo" / "nem_rel_202108.xlsx"
 
     if not aemo_path.is_file():
         raise Exception("Not found: {}".format(aemo_path))
@@ -193,54 +191,9 @@ def rel_export() -> None:
     logger.info("Wrote {} records".format(nem_rel.length))
 
 
-# new
-
-from io import BytesIO, open
-
-AEMO_REL_GENERATOR_SHEETNAME = "Generators and Scheduled Loads"
-
-
-def parse_aemo_rel_generators(filename: Union[str, Path, BytesIO]) -> StationSet:
-    fh: Optional[BytesIO] = None
-
-    if isinstance(filename, str):
-        filename = Path(filename)
-
-    if isinstance(filename, Path):
-        if not filename.is_file():
-            raise Exception(f"Could not open specified rel file {filename}")
-
-        fh = open(str(filename), "rb")
-
-    if isinstance(filename, IO):
-        fh = filename
-
-    generators_ws = parse_workbook(fh, worksheet=AEMO_REL_GENERATOR_SHEETNAME)
-
-    generator_records = []
-
-    for row in generators_ws.iter_rows(min_row=2, values_only=True):
-        _row_dict = dict(
-            zip(
-                FACILITY_KEYS,
-                list(row[: len(FACILITY_KEYS)]),
-            )
-        )
-
-        _row_schema = AEMORelGeneratorRecord(**_row_dict)
-        generator_records.append(_row_schema)
-
-    s = StationSet()
-
-    return generator_records
+def parse_aemo_rel_spreadsheet() -> None:
+    pass
 
 
 if __name__ == "__main__":
-    aemo_path: Path = Path(PROJECT_DATA_PATH) / "aemo" / "nem_rel_202108.xls"
-    r = parse_aemo_rel_generators("opennem/data/aemo/nem_rel_202108.xls")
-
-    from pprint import pprint
-
-    pprint(r)
-
-    pprint([i.fueltech_id for i in r])
+    rel_export()

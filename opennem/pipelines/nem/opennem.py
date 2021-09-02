@@ -783,7 +783,11 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
 
             record_item = None
 
-            record_item = globals()[process_meth](table, spider=spider)
+            try:
+                record_item = globals()[process_meth](table, spider=spider)
+            except Exception as e:
+                # print("error running command")
+                logger.error(e)
 
             if record_item:
                 ret.append(record_item)
