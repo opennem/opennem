@@ -8,3 +8,6 @@ export DEBUG=1
 # Project ships with an iPython configuration stored in $PWD/.ipython
 # here we can instruct iPython to look in this folder for a configuration profile
 export IPYTHONDIR=.ipython
+
+# Set the jupyter notebook config directory
+export JUPYTER_CONFIG_DIR=.jupyter
