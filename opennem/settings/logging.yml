@@ -66,3 +66,6 @@ loggers:
     propagate: yes
   scrapy.utils.log:
     level: ERROR
+  parso:
+    level: ERROR
+    propagate: no
