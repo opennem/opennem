@@ -1,0 +1,10 @@
+# Example .envrc file
+# .envrc files execute the environment when entering the directory via direnv
+# install direnv with `brew install direnv` or `apt install -y direnv`
+
+# enables debug mode
+export DEBUG=1
+
+# Project ships with an iPython configuration stored in $PWD/.ipython
+# here we can instruct iPython to look in this folder for a configuration profile
+export IPYTHONDIR=.ipython
