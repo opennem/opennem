@@ -99,6 +99,12 @@ scripts/wind_diff.py
 # notebooks @NOTE you can force commit anything we want in here
 notebooks/data/
 *.ipynb
+.ipynb_checkpoints
 notebooks/*.csv
 opennem/data/mms_stations.json
 notebooks/dmc_emissions.py
+
+# iPython config and profiles
+.ipython/profile_default/log
+.ipython/profile_default/pid
+.ipython/profile_default/history.sqlite
