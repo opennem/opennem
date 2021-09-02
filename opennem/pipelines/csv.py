@@ -1,7 +1,7 @@
 """
-    Take records generated from previous pipeline steps (usually a list of
-    dicts) and prep them into CSV in the shape of the database table
-    schema so they can be used with bulk_insert
+Take records generated from previous pipeline steps (usually a list of
+dicts) and prep them into CSV in the shape of the database table
+schema so they can be used with bulk_insert
 
 """
 import csv
