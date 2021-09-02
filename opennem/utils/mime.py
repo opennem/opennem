@@ -6,6 +6,9 @@
 
 import logging
 import mimetypes
+import re
+import string
+import subprocess
 from io import BytesIO
 from typing import BinaryIO, Optional
 from zipfile import BadZipFile, ZipFile
@@ -24,7 +27,7 @@ logger = logging.getLogger(__name__)
 CONTENT_TYPES = ["utf-8", "utf-8-sig", "latin-1"]
 
 
-def mime_from_content(content: BytesIO) -> Optional[str]:
+def mime_from_content(content: BinaryIO) -> Optional[str]:
     """
     Use libmime to get mime type from content stream
     """
@@ -91,3 +94,36 @@ def is_zip(fh: BinaryIO, test_zip: bool = True) -> bool:
         return False
 
     return False
+
+
+def _is_textfile_proc(fn):
+    """Linux only proc to check if a file is text"""
+    msg = subprocess.Popen(["file", fn], stdout=subprocess.PIPE).communicate()[0]
+    return re.search("text", msg) != None
+
+
+def is_textfile(fh: BinaryIO) -> bool:
+    """Check if a file is a text file by looking at proportion of non-ASCII characters in file buffer"""
+    fh.seek(0)
+    _buffer = fh.read(512)
+    fh.seek(0)
+
+    if not _buffer:
+        return True
+
+    if "\0" in _buffer:
+        return False
+
+    text_characters = "".join(map(chr, range(32, 127)) + list("\n\r\t\b"))
+    _null_trans = string.maketrans("", "")
+
+    # Get the non-text characters (maps a character to itself then
+    # use the 'remove' option to get rid of the text characters.)
+    t = _buffer.translate(_null_trans, text_characters)
+
+    # If more than 30% non-text characters, then
+    # this is considered a binary file
+    if float(len(t)) / float(len(_buffer)) > 0.30:
+        return False
+
+    return True

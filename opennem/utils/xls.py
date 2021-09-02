@@ -7,7 +7,7 @@ OpenNEM Excel File Utils
 _HAVE_XLRD = False
 
 import logging  # noqa: E402
-from typing import Any, Optional  # noqa: E402
+from typing import BinaryIO, Optional  # noqa: E402
 
 try:
     import xlrd
@@ -21,13 +21,16 @@ from openpyxl.workbook.workbook import Workbook  # noqa: E402
 logger = logging.getLogger("opennem.utils.xls")
 
 
-def convert_to_xlxs(content: Any) -> Optional[Workbook]:
+def convert_to_xlxs(fh: BinaryIO) -> Optional[Workbook]:
     """Convert old workbook formats xls into xlxs"""
     if not _HAVE_XLRD:
         logger.error("xlrd module not installed. Cannot convert XLS file.")
         return None
 
-    xlsBook = xlrd.open_workbook(file_contents=content)
+    file_content = fh.read()
+    fh.seek(0)
+
+    xlsBook = xlrd.open_workbook(file_contents=file_content)
     workbook = Workbook()
 
     for i in range(0, xlsBook.nsheets):
