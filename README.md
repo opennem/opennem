@@ -205,3 +205,15 @@ $ pip install scrapyd-client
 ```
 
 Which installs the [scrapyd-client](https://github.com/scrapy/scrapyd-client) tools. Project settings are read from `scrapy.cfg`
+
+# Notebooks
+
+The OpenNEM project is packaged with a number of example Jupyter notebooks demonstrating use of the API and library. The dependancies to run notebooks are found in `requirements_notebooks.txt` in the root folder. The example notebooks are contained in `notebooks` and there is a configured Jupyter profile in `.jupyter`.
+
+To set it up first install the requirements, and then start the Jupyter server
+
+```sh
+$ source .venv/bin/activate
+$ pip install -r requirements_notebooks.txt
+$ jupyter notebook
+```
