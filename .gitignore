@@ -108,10 +108,12 @@ notebooks/dmc_emissions.py
 .ipython/profile_default/log
 .ipython/profile_default/pid
 .ipython/profile_default/history.sqlite
+.ipython/profile_default/startup/README
 
 # This is the venv used for notebooks
 # see requirements_notebook.txt
 .venv_notebooks/
+.venv_notebook/
 
 # jupyter local config ignores
 .jupyter/migrated
