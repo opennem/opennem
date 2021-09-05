@@ -70,6 +70,7 @@ SQLAlchemy = "^1.4.15"
 requests-cache = "^0.7.3"
 twilio = "^6.59.0"
 py-trello = "^0.18.0"
+gitignore-parser = "^0.0.8"
 
 
 [tool.poetry.dev-dependencies]

@@ -481,6 +481,14 @@ python-versions = ">=3.4"
 smmap = ">=3.0.1,<5"
 
 [[package]]
+name = "gitignore-parser"
+version = "0.0.8"
+description = "A spec-compliant gitignore parser for Python 3.5+"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "gitpython"
 version = "3.1.20"
 description = "Python Git Library"
@@ -2194,7 +2202,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "860fcb0ace56a270711bc5e7c8f30d65c919bf3e6ec3498c71d28822c6923b3f"
+content-hash = "1c7ad8c399dbf9829265b0a23e65493a3c974ac2a79ec32b0ff85613f8cad96f"
 
 [metadata.files]
 alembic = [
@@ -2420,6 +2428,9 @@ geojson-pydantic = [
 gitdb = [
     {file = "gitdb-4.0.7-py3-none-any.whl", hash = "sha256:6c4cc71933456991da20917998acbe6cf4fb41eeaab7d6d67fbc05ecd4c865b0"},
     {file = "gitdb-4.0.7.tar.gz", hash = "sha256:96bf5c08b157a666fec41129e6d327235284cca4c81e92109260f353ba138005"},
+]
+gitignore-parser = [
+    {file = "gitignore_parser-0.0.8.tar.gz", hash = "sha256:b4e6e63d971810cbd2168bc02deddba719c07da655eaf56336d4bb0233ecef85"},
 ]
 gitpython = [
     {file = "GitPython-3.1.20-py3-none-any.whl", hash = "sha256:b1e1c269deab1b08ce65403cf14e10d2ef1f6c89e33ea7c5e5bb0222ea593b8a"},
