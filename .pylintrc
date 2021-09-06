@@ -1,5 +1,5 @@
 [MASTER]
-ignore=nem_derived
+ignore=nem_derived,.ipython,.jupyter
 load-plugins=pylint_sqlalchemy
 extension-pkg-whitelist=pydantic
 
