@@ -21,7 +21,7 @@ if settings.sentry_enabled:
     setup_sentry()
 
 
-import logging  # noqa: E402
+import logging  # noqa: E402,F401
 
 # Clean up default loggers so they're less noisy
 # Kill warnings from various modules
