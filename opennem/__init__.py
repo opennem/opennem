@@ -46,4 +46,9 @@ def get_module_path() -> None:
 v = "3.7.0"
 __env__ = "prod"
 __version__ = get_version()
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
+__path__ = None
+
+try:
+    __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
+except Exception:
+    pass
