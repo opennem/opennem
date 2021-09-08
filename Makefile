@@ -30,6 +30,9 @@ pyclean:
 cleandist:
 	rm -rf build
 
+codecov:
+	pytest --cov=./opennem
+
 release: build
 	pip install twine
 	twine check dist/*
