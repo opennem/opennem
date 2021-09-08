@@ -1,3 +1,4 @@
 ignore:
-  - "*/tests/*”
-  - "notebooks"
+  - "tests/"
+  - "scripts/"
+  - "notebooks/"
