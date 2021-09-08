@@ -100,6 +100,7 @@ betamax = "^0.8.1"
 types-python-dateutil = "^2.8.0"
 types-pytz = "^2021.1.0"
 coverage = "^5.5"
+pytest-cov = "^2.12.1"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
