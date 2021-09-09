@@ -6,7 +6,8 @@ on:
       - "*"
 
 jobs:
-  build:
+  buildimage:
+    name: build docker images
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

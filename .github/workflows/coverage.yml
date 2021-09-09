@@ -1,7 +1,8 @@
 name: CodeCov
 on: [push, pull_request]
 jobs:
-  run:
+  runcov:
+    name: run coverage
     runs-on: ubuntu-latest
     env:
       OS: ubuntu-latest
