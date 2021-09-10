@@ -52,6 +52,17 @@ def get_pkg_version() -> Optional[str]:
     return version
 
 
+def get_scm_version() -> None:
+    import os.path as pth
+
+    try:
+        from setuptools_scm import get_version
+
+        version = get_version(root=pth.join("..", ".."), relative_to=__file__)
+    except Exception:
+        raise ImportError("setuptools_scm broken or not installed")
+
+
 pkg_meta = get_project_meta()
 version = None
 
