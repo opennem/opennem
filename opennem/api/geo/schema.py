@@ -7,7 +7,7 @@ pydantic schemas that can be output by the api
 Customisation is that our Facility Schemas have optional geometries
 rather than required.
 """
-from typing import Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 from geojson_pydantic.features import Feature, FeatureCollection
 from geojson_pydantic.geometries import (
@@ -33,11 +33,14 @@ class FacilityGeometryCollection(FacilityGeoBase, GeometryCollection):
     geometries: List[Geometry]
 
 
-class FacilityFeature(Feature):
+class FacilityFeature(BaseModel):
     """
     Update to default to GeometryCollection
     """
 
+    # @TODO - correct schema for GeoJSON that supports both versions
+    bbox: Optional[Any]
+    properties: Optional[Any]
     geometry: Optional[Geometry]  # type: ignore
 
 
