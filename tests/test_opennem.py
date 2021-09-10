@@ -23,4 +23,4 @@ def test_opennem_version() -> None:
 def test_opennem_path() -> None:
     import opennem
 
-    assert isinstance(opennem.__path__, str), "Path is a string"
+    assert isinstance(opennem.__path__, list), "Path is a list"
