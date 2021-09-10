@@ -16,11 +16,7 @@ from starlette.requests import Request
 
 from opennem.api.admin.router import router as admin_router
 from opennem.api.auth.router import router as auth_router
-from opennem.api.exceptions import (
-    MaintenanceMode,
-    OpennemBaseHttpException,
-    OpennemExceptionResponse,
-)
+from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facility.router import router as facility_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.geo.router import router as geo_router
