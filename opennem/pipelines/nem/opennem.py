@@ -92,10 +92,13 @@ def unit_scada_generate_facility_scada(
         energy = None
 
         if network == NetworkWEM and power_field and not energy_field:
-            energy = str(clean_float(generated) / 2)  # type: ignore
+            _generated = clean_float(generated)
+
+            if _generated:
+                energy = str(_generated / 2)
 
         if energy_field and energy_field in row:
-            energy = clean_float(row[energy_field])  # type: ignore
+            energy = clean_float(row[energy_field])
 
             if energy:
                 energy = float_to_str(energy)
