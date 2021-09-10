@@ -18,7 +18,8 @@ jobs:
           python-version: 3.9
       - name: Generate Report
         run: |
+          pip install -r requirements.txt
           pip install coverage
-          coverage run -m unittest
+          coverage run -m pytest
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v1
