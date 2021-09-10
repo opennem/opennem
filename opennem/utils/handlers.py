@@ -6,12 +6,14 @@
 
 import io
 import zipfile
-from typing import Any
+from typing import IO, Any, Iterable, Union
 
-from smart_open import open, register_compressor
+from smart_open import open, register_compressor  # noqa: F401
 
 
-def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
+def chain_streams(
+    streams: Iterable, buffer_size: int = io.DEFAULT_BUFFER_SIZE
+) -> io.BufferedReader:
     """
     Chain an iterable of streams together into a single buffered stream.
     Usage:
@@ -23,7 +25,7 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
     """
 
     class ChainStream(io.RawIOBase):
-        def __init__(self):
+        def __init__(self) -> None:
             self.leftover = b""
             self.stream_iter = iter(streams)
             try:
@@ -31,10 +33,10 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
             except StopIteration:
                 self.stream = None
 
-        def readable(self):
+        def readable(self) -> bool:
             return True
 
-        def _read_next_chunk(self, max_length):
+        def _read_next_chunk(self, max_length: int) -> bytes:
             if self.leftover:
                 return self.leftover
             elif self.stream is not None:
@@ -42,7 +44,7 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
             else:
                 return b""
 
-        def readinto(self, b):
+        def readinto(self, b: Any) -> int:
             buffer_length = len(b)
             chunk = self._read_next_chunk(buffer_length)
             while len(chunk) == 0:
@@ -69,7 +71,7 @@ def chain_streams(streams, buffer_size=io.DEFAULT_BUFFER_SIZE):
 ZIP_LIMIT = 0
 
 
-def _handle_zip(file_obj: Any, mode: str) -> io.BufferedReader:
+def _handle_zip(file_obj: Any, mode: str) -> Union[io.BufferedReader, IO[bytes]]:
     with zipfile.ZipFile(file_obj) as zf:
         if len(zf.namelist()) == 1:
             return zf.open(zf.namelist()[0])
