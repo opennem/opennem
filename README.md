@@ -2,7 +2,7 @@
 
 **NOTE: This is the backend project** For the client python project see [opennem/opennempy](https://github.com/opennem/opennempy)
 
-![Tests](https://github.com/opennem/opennem/workflows/Tests/badge.svg)
+![Tests](https://github.com/opennem/opennem/workflows/Tests/badge.svg) [![codecov](https://codecov.io/gh/opennem/opennem/branch/master/graph/badge.svg?token=HSJP632WBX)](https://codecov.io/gh/opennem/opennem)
 
 The OpenNEM project aims to make the wealth of public National Electricity Market (NEM) data more accessible to a wider audience.
 
