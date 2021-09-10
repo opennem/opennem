@@ -9,7 +9,7 @@ rather than required.
 """
 from typing import Any, Dict, List, Optional, Sequence, Union
 
-from geojson_pydantic.features import Feature, FeatureCollection
+from geojson_pydantic.features import FeatureCollection
 from geojson_pydantic.geometries import (
     GeometryCollection,
     LineString,
