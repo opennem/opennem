@@ -22,7 +22,7 @@ class FlowDirection(Enum):
 
 
 def fueltech_to_flow(fueltech_id: str) -> Optional[FlowDirection]:
-    """ Check if a fueltech is a flow and if so return the enum """
+    """Check if a fueltech is a flow and if so return the enum"""
     if not fueltech_id:
         raise Exception("Require a fueltech")
 
@@ -210,12 +210,12 @@ def net_flows_emissions(
 
 
 def _invert_flowid(flowid: str) -> str:
-    """ Reverses the flow id """
+    """Reverses the flow id"""
     return "->".join(flowid.split("->")[::-1])
 
 
 def invert_flow_set(flow_set: OpennemData) -> OpennemData:
-    """ Takes a flow like NSW1->QLD1 and inverts it to QLD1->NSW1"""
+    """Takes a flow like NSW1->QLD1 and inverts it to QLD1->NSW1"""
     flow_set_inverted = flow_set.copy()
 
     if flow_set.id:
@@ -234,6 +234,11 @@ def invert_flow_set(flow_set: OpennemData) -> OpennemData:
     if flow_set_inverted.code:
         flow_set_inverted.code = _invert_flowid(flow_set_inverted.code)
 
-    flow_set_inverted.history.data = [-i for i in flow_set.history.data]
+    def _save_invert(value: Optional[int]) -> Optional[int]:
+        if value:
+            return -value
+        return None
+
+    flow_set_inverted.history.data = [_save_invert(i) for i in flow_set.history.data]
 
     return flow_set_inverted
