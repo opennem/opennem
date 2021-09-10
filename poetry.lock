@@ -2001,6 +2001,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "types-cachetools"
+version = "4.2.0"
+description = "Typing stubs for cachetools"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "types-python-dateutil"
 version = "2.8.0"
 description = "Typing stubs for python-dateutil"
@@ -2012,6 +2020,14 @@ python-versions = "*"
 name = "types-pytz"
 version = "2021.1.2"
 description = "Typing stubs for pytz"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "types-pyyaml"
+version = "5.4.10"
+description = "Typing stubs for PyYAML"
 category = "dev"
 optional = false
 python-versions = "*"
@@ -2229,7 +2245,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "f71e9345b1ca8bba85391b3fc7e30e17da5c8cd219b4c1fd9e8e832118827d2b"
+content-hash = "e6549a51480f31cdbfbc5b54ca968a57012c994d4b1423ce40f9696777ecd21e"
 
 [metadata.files]
 alembic = [
@@ -3433,6 +3449,10 @@ twisted-iocpsupport = [
     {file = "twisted_iocpsupport-1.0.1-pp36-pypy36_pp73-win32.whl", hash = "sha256:ed8cb959d7dce287419e766267a280139fedf14217d85695d7b6384d8ccd3353"},
     {file = "twisted_iocpsupport-1.0.1-pp37-pypy37_pp73-win32.whl", hash = "sha256:1535e537b6d60d0cfd2b4785f1c7a021beb62d8df6bac3dc6c45bb866ce648e4"},
 ]
+types-cachetools = [
+    {file = "types-cachetools-4.2.0.tar.gz", hash = "sha256:9a44c7e1168990240520d1ff24020359e1cc5d9e2e1d63fa96bd54da2c954d07"},
+    {file = "types_cachetools-4.2.0-py3-none-any.whl", hash = "sha256:8d96c270ceb5e2d90ea2651e67b96197e2997d464f1ccd3a0d0f3dff9e0463fa"},
+]
 types-python-dateutil = [
     {file = "types-python-dateutil-2.8.0.tar.gz", hash = "sha256:540c6c53c3a52433d7088254e3afdc3f6c86b5ae452aaa1b796c26d01c9fd73c"},
     {file = "types_python_dateutil-2.8.0-py3-none-any.whl", hash = "sha256:9954d87dc982344bb2aad73a7fe505bdca72f89088ef653c4c40f52649183437"},
@@ -3440,6 +3460,10 @@ types-python-dateutil = [
 types-pytz = [
     {file = "types-pytz-2021.1.2.tar.gz", hash = "sha256:448828a06f2aaa840e57364d866c661645a045e532f817e4f10c8c3ab2b66651"},
     {file = "types_pytz-2021.1.2-py3-none-any.whl", hash = "sha256:28fb1c0f77f59aebe9b792d073ebfbbbf7b329f9d4af6a6079713a618a1c0f31"},
+]
+types-pyyaml = [
+    {file = "types-PyYAML-5.4.10.tar.gz", hash = "sha256:1d9e431e9f1f78a65ea957c558535a3b15ad67ea4912bce48a6c1b613dcf81ad"},
+    {file = "types_PyYAML-5.4.10-py3-none-any.whl", hash = "sha256:f1d1357168988e45fa20c65aecb3911462246a84809015dd889ebf8b1db74124"},
 ]
 types-requests = [
     {file = "types-requests-2.25.6.tar.gz", hash = "sha256:e21541c0f55c066c491a639309159556dd8c5833e49fcde929c4c47bdb0002ee"},
