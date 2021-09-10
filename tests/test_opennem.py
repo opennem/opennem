@@ -1,6 +1,8 @@
 # noqa: F408, F401
 import pytest
 
+from opennem.settings.schema import OpennemSettings
+
 
 def test_opennem_imports() -> None:
     try:
@@ -25,3 +27,11 @@ def test_opennem_path() -> None:
 
     assert hasattr(opennem, "__path__"), "Module has a path"
     assert isinstance(opennem.__path__, list), "Path is a list"  # type: ignore
+
+
+def test_opennem_settings() -> None:
+    import opennem
+
+    assert hasattr(opennem, "settings"), "We have settings"
+
+    assert isinstance(opennem.settings, OpennemSettings), "Settings is an openem settings schema"
