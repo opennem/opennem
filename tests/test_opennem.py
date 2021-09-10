@@ -23,4 +23,5 @@ def test_opennem_version() -> None:
 def test_opennem_path() -> None:
     import opennem
 
-    assert isinstance(opennem.__path__, list), "Path is a list"
+    assert hasattr(opennem, "__path__"), "Module has a path"
+    assert isinstance(opennem.__path__, list), "Path is a list"  # type: ignore
