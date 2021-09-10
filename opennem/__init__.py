@@ -6,8 +6,6 @@ and sentry.
 """
 import sys
 
-from opennem.utils.project import get_module_path
-
 # Check minimum required Python version
 if sys.version_info < (3, 7):
     print("OpenNEM %s requires Python 3.7 or greater")
@@ -38,4 +36,3 @@ from opennem.utils.version import get_version  # noqa: E402
 v = "3.7.0"
 __env__ = "prod"
 __version__ = get_version()
-__path__ = get_module_path()  # type: ignore
