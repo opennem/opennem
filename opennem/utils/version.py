@@ -28,7 +28,7 @@ def get_project_meta() -> Optional[Dict]:
         logger.error("Error parsing project metadata: {}".format(e))
         return None
 
-    return project_meta
+    return dict(project_meta)
 
 
 # get version from VERSION file
