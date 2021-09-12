@@ -41,7 +41,7 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
 
 # 5:45AM and 8:45AM AEST
-@huey.periodic_task(crontab(hour="19", minute="45"))
+@huey.periodic_task(crontab(hour="5,8", minute="45"))
 def db_refresh_material_views() -> None:
     run_energy_update_days(days=2)
     run_aggregates_all()
@@ -81,7 +81,7 @@ def monitor_wem_interval() -> None:
     aemo_wem_live_interval()
 
 
-@huey.periodic_task(crontab(hour="12", minute="45"), priority=10)
+@huey.periodic_task(crontab(hour="8", minute="45"), priority=10)
 @huey.lock_task("monitor_emission_factors")
 def monitor_emission_factors() -> None:
     alert_missing_emission_factors()
@@ -93,7 +93,7 @@ def monitor_database() -> None:
 
 
 # worker tasks
-@huey.periodic_task(crontab(hour="23", minute="1"))
+@huey.periodic_task(crontab(hour="10", minute="1"))
 @huey.lock_task("schedule_facility_first_seen_check")
 def schedule_facility_first_seen_check() -> None:
     """Check for new DUIDS"""
