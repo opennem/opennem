@@ -3688,5 +3688,130 @@
     "description": "Suntop Solar Farm is located near Wellington, south of Dubbo in regional New South Wales. The site will accommodate a large-scale solar PV system utilising single-axis tracking, and ground mounted panels which will generate 395GWh of energy throughout the year. Single-axis tracking has been selected for this project to harness the highest amount of solar irradiance as the panels will track the sun’s movement east to west each day.",
     "wikipedia_link": null,
     "website_url": "https://suntopsolarfarm.com.au/"
+  },
+  {
+    "created_by": "opennem.stations",
+    "created_at": "2020-11-13T02:47:00.969029",
+    "id": 5210,
+    "participant": null,
+    "participant_id": null,
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "battery_charging",
+          "label": "",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "VBBL1",
+        "network_code": "VBBL1",
+        "scada_power": null,
+        "dispatch_type": "LOAD",
+        "active": true,
+        "capacity_registered": 360,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "VIC1",
+        "unit_id": null,
+        "unit_number": null,
+        "unit_alias": null,
+        "unit_capacity": null,
+        "emissions_factor_co2": 0.0,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      },
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "battery_discharging",
+          "label": "",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "VBBG1",
+        "network_code": "VBBG1",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 360,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "VIC1",
+        "unit_id": null,
+        "unit_number": null,
+        "unit_alias": null,
+        "unit_capacity": null,
+        "emissions_factor_co2": 0.0,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ],
+    "photos": null,
+    "code": "VBB",
+    "name": "Victoria Big Battery",
+    "network_name": "Victoria Big Battery",
+    "location": {
+      "created_by": null,
+      "created_at": "2020-11-13T02:47:00.969029",
+      "id": null,
+      "weather_station": null,
+      "weather_nearest": null,
+      "address1": "",
+      "address2": "",
+      "locality": "Moorabool",
+      "state": "VIC",
+      "postcode": "3213",
+      "country": "au",
+      "geocode_approved": true,
+      "geocode_skip": false,
+      "geocode_processed_at": null,
+      "geocode_by": null,
+      "lat": -38.03827950146317,
+      "lng": 144.2910031846593
+    },
+    "location_id": null,
+    "approved": true,
+    "approved_by": null,
+    "approved_at": null,
+    "network": null,
+    "description": "The Victorian Big Battery is a 300 MW grid-scale battery storage project in Geelong, Australia which will store enough energy in reserve to power over one million Victorian homes for 1/2 an hour.",
+    "wikipedia_link": null,
+    "wikidata_id": null,
+    "website_url": "https://victorianbigbattery.com.au/"
   }
 ]
