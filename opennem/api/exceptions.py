@@ -30,6 +30,21 @@ class MaintenanceMode(OpennemBaseHttpException):
     detail = "Maintenance Mode"
 
 
+class OpenNEMInvalidNetwork(OpennemBaseHttpException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "Invalid Network"
+
+
+class OpenNEMInvalidNetworkRegion(OpennemBaseHttpException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "Invalid Network Region"
+
+
+class OpenNEMNoResults(OpennemBaseHttpException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "No Results"
+
+
 class OpennemExceptionResponse(Response):
     media_type = "application/json"
     response_class: OpennemErrorSchema

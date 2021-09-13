@@ -1,7 +1,8 @@
 import logging
+import re
 from typing import List, Optional
 
-from opennem.api.exceptions import OpennemBaseHttpException
+from opennem.api.exceptions import OpennemBaseHttpException, OpenNEMInvalidNetworkRegion
 from opennem.api.export.queries import (
     country_stats_query,
     energy_network_flow_query,
@@ -26,6 +27,9 @@ from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimePeriod
+
+_valid_region = re.compile(r"^\w{1,4}\d?$")
+
 
 logger = logging.getLogger(__name__)
 
@@ -299,6 +303,9 @@ def power_week(
     include_code: Optional[bool] = True,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
+
+    if network_region_code and not re.match(_valid_region, network_region_code):
+        raise OpenNEMInvalidNetworkRegion()
 
     query = power_network_fueltech_query(
         time_series=time_series,
