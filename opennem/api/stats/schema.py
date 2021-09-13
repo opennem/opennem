@@ -4,7 +4,7 @@ from collections import Counter
 from datetime import date, datetime
 from decimal import Decimal
 from math import isnan
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from pydantic import validator
 
@@ -93,6 +93,16 @@ class OpennemDataHistory(BaseConfig):
 
     # validators
     _data_valid = validator("data", allow_reuse=True, pre=True)(data_validate)
+
+    def get_date(self, dt: date) -> Optional[Union[float, int]]:
+        """Get value for a specific date"""
+        _values = self.values()
+        _get_value = list(filter(lambda x: x[0].date() == dt, _values))
+
+        if not _get_value:
+            return None
+
+        return _get_value.pop()[1]
 
     def values(self) -> List[Tuple[datetime, float]]:
         interval_obj = get_human_interval(self.interval)
