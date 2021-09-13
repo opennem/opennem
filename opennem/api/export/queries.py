@@ -9,7 +9,6 @@ from opennem.api.stats.controllers import networks_to_in
 from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
-from opennem.settings import settings
 
 
 def weather_observation_query(time_series: TimeSeries, station_codes: List[str]) -> str:
@@ -18,43 +17,36 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
         # @TODO replace with mv
         __query = """
         select
-            date_trunc('{trunc}', t.observation_time at time zone '{tz}') as observation_month,
-            t.station_id,
-            avg(t.temp_avg),
-            min(t.temp_min),
-            max(t.temp_max)
-        from
-            (
-                select
-                    time_bucket_gapfill('1 day', observation_time) as observation_time,
-                    fs.station_id,
+            date_trunc('{trunc}', observation_time at time zone '{tz}') as observation_time,
+            fs.station_id,
 
-                    case
-                        when avg(fs.temp_air) is not null
-                            then avg(fs.temp_air)
-                        when max(fs.temp_max) is not null and max(fs.temp_min) is not null
-                            then ((max(fs.temp_max) + min(fs.temp_min)) / 2)
-                        else NULL
-                    end as temp_avg,
+            case
+                when avg(fs.temp_air) is not null
+                    then avg(fs.temp_air)
+                when max(fs.temp_max) is not null and max(fs.temp_min) is not null
+                    then ((max(fs.temp_max) + min(fs.temp_min)) / 2)
+                else NULL
+            end as temp_avg,
 
-                    case when min(fs.temp_min) is not null
-                        then min(fs.temp_min)
-                        else min(fs.temp_air)
-                    end as temp_min,
+            case when min(fs.temp_min) is not null
+                then min(fs.temp_min)
+                else min(fs.temp_air)
+            end as temp_min,
 
-                    case when max(fs.temp_max) is not null
-                        then max(fs.temp_max)
-                        else max(fs.temp_air)
-                    end as temp_max
+            case when max(fs.temp_max) is not null
+                then max(fs.temp_max)
+                else max(fs.temp_air)
+            end as temp_max,
 
-                from bom_observation fs
-                where
-                    fs.station_id in ({station_codes}) and
-                    fs.observation_time <= '{date_end}' and
-                    fs.observation_time >= '{date_start}'
-                group by 1, 2
-            ) as t
-        group by 1, 2;
+            min(fs.temp_min) as temp_min
+
+        from bom_observation fs
+        where
+            fs.station_id in ({station_codes}) and
+            fs.observation_time <= '{date_end}' and
+            fs.observation_time >= '{date_start}'
+        group by 1, 2
+        order by 1 asc;
         """.format(
             trunc=time_series.interval.trunc,
             tz=time_series.network.timezone_database,
@@ -85,7 +77,8 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
             fs.station_id in ({station_codes}) and
             fs.observation_time <= '{date_end}' and
             fs.observation_time >= '{date_start}'
-        group by 1, 2;
+        group by 1, 2
+        order by 1 desc;
         """.format(
             tz=time_series.network.timezone_database,
             station_codes=",".join(["'{}'".format(i) for i in station_codes]),
