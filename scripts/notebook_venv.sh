@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Sets up a temporary venv for notebook requirements and exports to a requirements file
-# set -uxo pipefail
+set -uo pipefail
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
@@ -10,10 +10,10 @@ unset _NOTEBOOK_VENV
 unset _NOTEBOOK_REQUIREMENTS
 
 _NOTEBOOK_VENV=".venv_notebook"
-_NOTEBOOK_REQUIREMENTS="requirements_notebook.txt"
+_NOTEBOOK_REQUIREMENTS="requirements_notebooks.txt"
 
 # _PACKAGES="jupyter seaborn ipywidgets pyoptimus ipython pandas=='1.3.2'"
-_PACKAGES="jupyter"
+_PACKAGES="jupyter seaborn"
 
 _checkrequirements() {
   _require_command python
@@ -60,12 +60,18 @@ _sourcevenv() {
 }
 
 _installpackages() {
+  # fixes for openblas
+  export SYSTEM_VERSION_COMPAT=1 \
+  LDFLAGS="-L/$(brew --prefix openblas)/lib" \
+  CPPFLAGS="-I$(brew --prefix openblas)/include" \
+  OPENBLAS="$(brew --prefix openblas)"
+
   pip install ${_PACKAGES}
 }
 
 _export_requirements() {
-  pip3 freeze > ${_NOTEBOOK_REQUIREMENTS}
-  _log "Wrote requirements to ${_VENV_REQUIREMENTS}"
+  pip3 freeze -l > ${_NOTEBOOK_REQUIREMENTS}
+  _log "Wrote requirements to ${_NOTEBOOK_REQUIREMENTS}"
 }
 
 init_notebook_venv() {
@@ -82,4 +88,4 @@ init_notebook_venv() {
   _log "Done"
 }
 
-_sourcevenv
+init_notebook_venv
