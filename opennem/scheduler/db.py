@@ -35,7 +35,7 @@ if platform.system() == "Darwin":
 redis_host = None
 
 if settings.cache_url:
-    redis_host = settings.cache_url.host
+    redis_host = settings.cache_url.host  # type: ignore
 
 huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
