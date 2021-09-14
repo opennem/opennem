@@ -5,7 +5,7 @@ description = "OpenNEM Australian Energy Data Backend"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 license = "MIT"
 packages = [
-    { include = "opennem" },
+    { include = "opennem" }
 ]
 
 readme = "README.md"
@@ -19,7 +19,7 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Environment :: Console",
   "Framework :: Scrapy",
-  "License :: OSI Approved :: MIT License",
+  "License :: OSI Approved :: MIT License"
 ]
 
 include = [
@@ -30,7 +30,6 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.8"
 requests = "^2.23.0"
-sqlalchemy = "^1.3.17"
 sentry-sdk = "^1.1.0"
 pydantic = {extras = ["email"], version = "^1.8.2"}
 alembic = "^1.6.2"
