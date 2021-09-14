@@ -54,7 +54,11 @@ def generate_csv_from_records(
 
         for field_name in record_field_names:
             if field_name not in table_column_names:
-                raise Exception("Column name not found: {}".format(field_name))
+                raise Exception(
+                    "Column name from records not found in table: {}. Have {}".format(
+                        field_name, ", ".join(table_column_names)
+                    )
+                )
 
         for column_name in table_column_names:
             if column_name not in record_field_names:
