@@ -8,14 +8,15 @@ See also: mirror_mms.sh to dodwnload archives
 
 import gc
 import logging
-import mmap
+
+# import mmap
 import re
 from pathlib import Path
 from typing import List, Optional
 
 import click
 
-from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet, parse_aemo_mms_csv
+from opennem.core.parsers.aemo.mms import AEMOTableSchema, parse_aemo_mms_csv
 from opennem.db import get_database_engine
 from opennem.db.models import mms
 from opennem.pipelines.bulk_insert import build_insert_query
@@ -63,14 +64,21 @@ def store_mms_table(table: AEMOTableSchema) -> int:
     table_schema = get_mms_model(table)
 
     if not table_schema:
-        raise Exception("No table ORM schema for table name {}".format(table.name))
+        logger.error("No table ORM schema for table name {}".format(table.name))
+        return 0
 
     # update all non-primary key fields. get them dynamically.
     update_fields = [i.name for i in table_schema.__table__.columns if not i.primary_key]  # type: ignore
 
     records_to_store = table.records
 
-    sql_query = build_insert_query(table_schema, update_fields)
+    sql_query = ""
+
+    try:
+        sql_query = build_insert_query(table_schema, update_fields)
+    except Exception as e:
+        logger.error(e)
+        return 0
 
     conn = get_database_engine().raw_connection()
     cursor = conn.cursor()
@@ -90,9 +98,6 @@ def store_mms_table(table: AEMOTableSchema) -> int:
     return len(records_to_store)
 
 
-# @click.command()
-# @click.argument("filepath", type=str, required=True)
-# @click.option("--namespace", type=str, required=False)
 def import_file(filepath: Path, namespace: Optional[str] = None) -> None:
     content = None
 
@@ -123,10 +128,27 @@ def import_file(filepath: Path, namespace: Optional[str] = None) -> None:
             raise e
 
 
-# @click.command()
-# @click.argument("mms_dir", type=str, required=True)
-# @click.option("--namespace", type=str, required=False)
 def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
+    mmsdir = Path(mms_dir)
+
+    if not mmsdir.is_dir():
+        raise Exception("Not a directory: {}".format(mms_dir))
+
+    for f in mmsdir.glob("*.zip"):
+        import_file(f, namespace=namespace)
+
+
+@click.command()
+@click.argument("filepath", type=str, required=True)
+@click.option("--namespace", type=str, required=False)
+def cmd_import_file(filepath: Path, namespace: Optional[str] = None) -> None:
+    import_file(filepath=filepath, namespace=namespace)
+
+
+@click.command()
+@click.argument("mms_dir", type=str, required=True)
+@click.option("--namespace", type=str, required=False)
+def cmd_import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
     mmsdir = Path(mms_dir)
 
     if not mmsdir.is_dir():
@@ -183,8 +205,8 @@ def main() -> None:
 
 
 main.add_command(all)
-main.add_command(import_directory, name="dir")
-main.add_command(import_file, name="file")
+main.add_command(cmd_import_directory, name="dir")
+main.add_command(cmd_import_file, name="file")
 
 if __name__ == "__main__":
     try:
