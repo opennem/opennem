@@ -244,6 +244,9 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
         facility_code = normalize_duid(record["INTERCONNECTORID"])
         power_value = clean_float(record["MWFLOW"])
 
+        # @TODO
+        # power_value = clean_float(record["METEREDMWFLOW"])
+
         records_to_store.append(
             {
                 "network_id": "NEM",
