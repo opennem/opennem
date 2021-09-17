@@ -30,61 +30,13 @@ logger = logging.getLogger("opennem.workers.emission_flows")
 ENGINE = get_database_engine()
 
 
-def load_factors() -> pd.DataFrame:
-    sql = """
-        SELECT
-            S.STATIONID,
-            S.ID,
-            GS.GENSETID,
-            GU.CO2E_DATA_SOURCE,
-            GU.CO2E_ENERGY_SOURCE,
-            GU.CO2E_EMISSIONS_FACTOR,
-            GU.REGISTEREDCAPACITY
-        FROM mms.GENUNITS GU
-            INNER JOIN mms.GENSET GS ON GS.ID = GU.GENSETID
-            INNER JOIN STATION S ON S.ID = GU.STATIONID
-        """
-    return pd.read_sql(sql, con=ENGINE)
-
-
-def load_stations() -> pd.DataFrame:
-    # loads unique duids
-    sql = """
-        SELECT
-            DUID,
-            STATIONID
-        FROM DUDETAILSUMMARY
-        GROUP BY DUID"""
-
-    return pd.read_sql(sql, con=ENGINE)
-
-
-def map_factors(df: pd.DataFrame, unit: str = "MW") -> pd.DataFrame:
-    # load_maps
-    stations = load_stations()
-    factors = load_factors()
-
-    # transform
-    station_dict = dict(stations.values)
-    factor_dict = dict(factors[["ID", "CO2E_EMISSIONS_FACTOR"]].values)
-
-    # map station id's
-    df["SID"] = df.ID.apply(lambda x: station_dict[x])
-    df["emissions_factor"] = df.SID.apply(lambda x: factor_dict[x])
-    df["EMISSIONS"] = df.emissions_factor * df[unit]
-
-    return df
-
-
-def dispatch_all_int(date_start: datetime, date_end: datetime) -> pd.DataFrame:
-    """New"""
-    df = pd.DataFrame()
-
-    return df
-
-
 def load_interconnector(date_start: datetime, date_end: datetime) -> pd.DataFrame:
-    """New"""
+    """Load interconnector power"""
+
+    query = """
+
+
+    """
 
     # interconnector fields
     fields = ["METEREDMWFLOW", "INTERVENTION", "FROM_REGIONID", "TO_REGIONID"]
@@ -93,16 +45,6 @@ def load_interconnector(date_start: datetime, date_end: datetime) -> pd.DataFram
     df = pd.DataFrame(data, fields)
 
     return df
-
-
-def load_day(date_start: datetime, date_end: datetime):
-    # load data
-    df_gen = dispatch_all_int(date_start=date_start, date_end=date_end)
-    df_emissions = map_factors(df_gen)
-
-    df_ic = load_interconnector(date_start=date_start, date_end=date_end)
-
-    return df_emissions, df_ic
 
 
 def calc_emissions(df_emissions):
@@ -155,7 +97,7 @@ def emissions(df_emissions, power_dict):
     return emissions_dict
 
 
-def power(df_emissions, df_ic):
+def power(df_emissions, df_ic) -> Dict:
     power_dict = dict(df_emissions.groupby(df_emissions.REGIONID).MW.sum())
     power_dict.update(interconnector_dict(df_ic))
     return power_dict
@@ -171,6 +113,7 @@ def interconnector_dict(interconnector_di: pd.DataFrame) -> pd.DataFrame:
     dy["METEREDMWFLOW"] *= -1
     df = dx.append(dy)
     df.loc[df.METEREDMWFLOW < 0, "METEREDMWFLOW"] = 0
+
     return df.set_index(["FROM_REGIONID", "TO_REGIONID"]).to_dict()["METEREDMWFLOW"]
 
 
@@ -219,10 +162,11 @@ def fill_constant(a, _var, value, _var_dict) -> None:
 
 
 def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
+    #
     power_dict = power(emissions_di, interconnector_di)
     emissions_dict = emissions(emissions_di, power_dict)
-
     demand_dict = demand(power_dict)
+
     a = np.zeros((10, 10))
     _var_dict = dict(zip(["s", "q", "t", "n", "v", "v-n", "n-q", "n-v", "v-s", "v-t"], range(10)))
 
@@ -272,11 +216,76 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
     return df
 
 
+def load_factors() -> pd.DataFrame:
+    sql = """
+        SELECT
+            S.STATIONID,
+            S.ID,
+            GS.GENSETID,
+            GU.CO2E_DATA_SOURCE,
+            GU.CO2E_ENERGY_SOURCE,
+            GU.CO2E_EMISSIONS_FACTOR,
+            GU.REGISTEREDCAPACITY
+        FROM mms.GENUNITS GU
+            INNER JOIN mms.GENSET GS ON GS.ID = GU.GENSETID
+            INNER JOIN STATION S ON S.ID = GU.STATIONID
+        """
+    return pd.read_sql(sql, con=ENGINE)
+
+
+def load_stations() -> pd.DataFrame:
+    # loads unique duids
+    sql = """
+        SELECT
+            DUID,
+            STATIONID
+        FROM DUDETAILSUMMARY
+        GROUP BY DUID"""
+
+    return pd.read_sql(sql, con=ENGINE)
+
+
+def dispatch_all_int(date_start: datetime, date_end: datetime) -> pd.DataFrame:
+    """New"""
+    df = pd.DataFrame()
+
+    return df
+
+
+def map_factors(date_start: datetime, date_end: datetime, unit: str = "MW") -> pd.DataFrame:
+    """Fetch all emissions for all stations"""
+
+    query = """
+
+
+
+    """
+
+    # load_maps
+    df_gen = dispatch_all_int(date_start=date_start, date_end=date_end)
+
+    stations = load_stations()
+    factors = load_factors()
+
+    # transform
+    station_dict = dict(stations.values)
+    factor_dict = dict(factors[["ID", "CO2E_EMISSIONS_FACTOR"]].values)
+
+    # map station id's
+    df_gen["SID"] = df_gen.ID.apply(lambda x: station_dict[x])
+    df_gen["emissions_factor"] = df_gen.SID.apply(lambda x: factor_dict[x])
+    df_gen["EMISSIONS"] = df_gen.emissions_factor * df_gen[unit]
+
+    return df_gen
+
+
 def calc_day(day: datetime) -> None:
 
-    tomorrow = day + timedelta(days=1)
+    day_next = day + timedelta(days=1)
 
-    df_gen, df_ic = load_day(date_start=day, date_end=tomorrow)
+    df_gen = map_factors(date_start=day, date_end=day_next)
+
+    df_ic = load_interconnector(date_start=day, date_end=day_next)
 
     results_dict = calculate_emission_flows(df_gen, df_ic)
 
