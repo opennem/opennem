@@ -2,7 +2,7 @@ import decimal
 import logging
 import re
 from datetime import datetime
-from math import floor, log, pow
+from math import floor, log, pow  # noqa: no-name-module
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from opennem.settings import settings
