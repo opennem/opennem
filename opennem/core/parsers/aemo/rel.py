@@ -68,7 +68,7 @@ def lookup_station_code(
     return station_code
 
 
-def rel_grouper(records: List[Dict], station_code_map) -> Dict[str, Any]:
+def rel_grouper(records: List[Dict], station_code_map: Dict) -> Dict[str, Any]:
     records_parsed = []
 
     for _id, i in enumerate(records, start=2000):
