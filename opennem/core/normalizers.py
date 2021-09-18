@@ -466,8 +466,10 @@ def station_name_cleaner(station_name: str) -> str:
 
         if comp in ACRONYMS:
             comp = comp.upper()
+
         elif isinstance(comp, str) and comp.startswith("mc"):
             comp = "Mc" + comp[2:].capitalize()
+
         elif isinstance(comp, str) and comp != "":
             comp = comp.capitalize()
 
@@ -483,9 +485,7 @@ def station_name_cleaner(station_name: str) -> str:
     # List of cleaning methods to pass the string through
     for clean_func in [
         str.strip,
-        str.lower,
         strip_double_spaces,
-        string_to_title,
         clean_and_format_slashed_station_names,
         station_name_run_replacements,
     ]:
