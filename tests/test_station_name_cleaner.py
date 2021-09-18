@@ -33,6 +33,7 @@ from opennem.core.normalizers import station_name_cleaner
         ("Collector Wind Farm 1", "Collector"),
         ("Collie G1", "Collie"),
         ("Lake Bonney Bess1", "Lake Bonney"),
+        ("Muja Cd", "Muja CD"),
         # Combined names
         ("Catagunya / Liapootah / Wayatinah", "Catagunya / Liapootah / Wayatinah"),
         ("Catagunya / Liapootah /Wayatinah", "Catagunya / Liapootah / Wayatinah"),
