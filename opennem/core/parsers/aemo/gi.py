@@ -21,7 +21,7 @@ from typing import Dict, List, Optional
 from openpyxl import load_workbook
 from pydantic import validator
 
-import opennem
+import opennem  # noqa: 401
 from opennem.core.normalizers import normalize_duid
 from opennem.schema.core import BaseConfig
 
