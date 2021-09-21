@@ -22,6 +22,7 @@ from openpyxl import load_workbook
 from pydantic import validator
 
 import opennem  # noqa: 401
+from opennem.core.fueltechs import clean_fueltech
 from opennem.core.normalizers import normalize_duid
 from opennem.schema.core import BaseConfig
 
@@ -52,6 +53,53 @@ GI_EXISTING_NEW_GEN_KEYS = {
 def excel_column_to_column_index(excel_column: str) -> int:
     """Takes an excel column like 'A' and converts to column index"""
     return ord(excel_column.upper()) - 64
+
+
+AEMO_GI_FUELTECH_MAP = {
+    "Solar": "solar_utility",
+    "Battery Storage": "battery_charging",
+    "Coal": "coal_black",
+    "CCGT": "gas_ccgt",
+    "Water": "hydo",
+    "Wind": "wind",
+    "Biomass": "bioenergy_biomass",
+    "OCGT": "gas_ocgt",
+}
+
+AEMO_GI_STATUS_MAP = {
+    "Anticipated": None,
+    "Committed": "committed",
+    "Publicly Announced Upgrade": None,
+    "Committed¹": "committed",
+    "Committed Upgrade": None,
+    "Withdrawn - Permanent": None,
+    "Committed*": "committed",
+    "In Service - Announced Withdrawal (Permanent)": "operating",
+    "In Commissioning": "commissioning",
+    "In Service": "operating",
+    "Publicly Announced": "announced",
+    "Anticipated Upgrade": None,
+}
+
+
+def aemo_gi_fueltech_to_fueltech(gi_fueltech: Optional[str]) -> Optional[str]:
+    if not gi_fueltech:
+        return None
+
+    if gi_fueltech not in AEMO_GI_FUELTECH_MAP.keys():
+        return None
+
+    return AEMO_GI_FUELTECH_MAP[gi_fueltech]
+
+
+def aemo_gi_status_map(gi_status: Optional[str]) -> Optional[str]:
+    if not gi_status:
+        return None
+
+    if gi_status not in AEMO_GI_STATUS_MAP.keys():
+        return None
+
+    return AEMO_GI_STATUS_MAP[gi_status]
 
 
 class AEMOGIRecord(BaseConfig):
@@ -118,4 +166,5 @@ if __name__ == "__main__":
 
     from pprint import pprint
 
-    pprint(records[0])
+    fueltechs = list(set([i["UnitStatus"] for i in records]))
+    print(fueltechs)
