@@ -14,6 +14,7 @@ purpose - to import new facilities and updates into the OpenNEM database.
 """
 
 import logging
+import re
 
 # from datetime import datetime
 from pathlib import Path
@@ -23,7 +24,12 @@ from openpyxl import load_workbook
 from pydantic import validator
 
 import opennem  # noqa: 401
-from opennem.core.normalizers import normalize_duid, station_name_cleaner
+from opennem.core.normalizers import (
+    clean_capacity,
+    clean_float,
+    normalize_duid,
+    station_name_cleaner,
+)
 from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.parsers.aemo.gi")
@@ -102,6 +108,26 @@ def aemo_gi_status_map(gi_status: Optional[str]) -> Optional[str]:
     return AEMO_GI_STATUS_MAP[gi_status]
 
 
+def aemo_gi_capacity_cleaner(cap: Optional[str]) -> Optional[float]:
+    """Custom capacity cleaner because sometimes its parsed as silly
+    text like a range (ie. '150 - 180'"""
+    if not cap:
+        return None
+
+    cap = cap.strip()
+
+    num_part = re.search(r"^[\d\.]+", cap)
+
+    if not num_part:
+        return None
+
+    num_extracted = num_part.group(0)
+
+    num_extracted_and_clean = clean_capacity(clean_float(num_extracted))
+
+    return num_extracted_and_clean
+
+
 class AEMOGIRecord(BaseConfig):
     name: str
     region: str
@@ -119,6 +145,9 @@ class AEMOGIRecord(BaseConfig):
     # )
 
     _clean_duid = validator("duid", pre=True, allow_reuse=True)(normalize_duid)
+    _clean_capacity = validator("capacity_registered", pre=True, allow_reuse=True)(
+        lambda x: clean_capacity(clean_float(x))
+    )
 
 
 def parse_aemo_general_information(filename: str) -> List[AEMOGIRecord]:
