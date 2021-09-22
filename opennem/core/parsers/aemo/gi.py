@@ -14,7 +14,8 @@ purpose - to import new facilities and updates into the OpenNEM database.
 """
 
 import logging
-from datetime import datetime
+
+# from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -22,7 +23,6 @@ from openpyxl import load_workbook
 from pydantic import validator
 
 import opennem  # noqa: 401
-from opennem.core.fueltechs import clean_fueltech
 from opennem.core.normalizers import normalize_duid, station_name_cleaner
 from opennem.schema.core import BaseConfig
 
