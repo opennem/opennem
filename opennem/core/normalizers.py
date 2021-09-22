@@ -630,14 +630,14 @@ def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optio
 
     @TODO support unit conversion
     """
-    cap_clean = None
+    cap_clean: Optional[str] = None
 
     if capacity is None:
         return None
 
     # Type gating float, string, int, others ..
     if type(capacity) is float:
-        cap_clean = capacity
+        return round(capacity, round_to)
 
     elif isinstance(capacity, str):
         cap_clean = strip_whitespace(capacity)
@@ -657,7 +657,7 @@ def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optio
 
         # funky values in spreadsheet
         cap_clean = cap_clean.replace(",", ".")
-        cap_clean = float(cap_clean)
+        return round(float(cap_clean), 2)
 
     elif type(capacity) == int:
         cap_clean = float(capacity)
