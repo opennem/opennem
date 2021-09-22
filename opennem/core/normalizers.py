@@ -657,10 +657,10 @@ def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optio
 
         # funky values in spreadsheet
         cap_clean = cap_clean.replace(",", ".")
-        return round(float(cap_clean), 2)
+        return round(float(cap_clean), round_to)
 
     elif type(capacity) == int:
-        cap_clean = float(capacity)
+        return round(float(capacity), round_to)
 
     elif type(capacity) is not float:
         if capacity is None:
