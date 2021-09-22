@@ -36,8 +36,8 @@ GI_EXISTING_NEW_GEN_KEYS = {
     "TechType": "E",
     "FuelType": "F",
     "duid": "G",
-    "Units": "H",
-    "NameCapacity": "M",
+    "units_no": "H",
+    "capacity_registered": "M",
     "StorageCapacity": "N",
     "UnitStatus": "O",
     "DispatchType": "P",
@@ -109,7 +109,7 @@ class AEMOGIRecord(BaseConfig):
     status_id: Optional[str]
     duid: Optional[str]
     units_no: Optional[int]
-    capacity_registered: float
+    capacity_registered: Optional[float]
 
     # expected_closure_year: Optional[int]
     # expected_closure_date: Optional[datetime]
@@ -184,6 +184,7 @@ if __name__ == "__main__":
     logger.info(f"Loading: {aemo_gi_testfile}")
 
     records = parse_aemo_general_information(str(aemo_gi_testfile))
+    records = list(filter(lambda x: x.status_id in ["committed", "commissioning"]))
 
     from pprint import pprint
 
