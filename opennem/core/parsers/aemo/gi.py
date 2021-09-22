@@ -16,20 +16,20 @@ purpose - to import new facilities and updates into the OpenNEM database.
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from openpyxl import load_workbook
 from pydantic import validator
 
 import opennem  # noqa: 401
 from opennem.core.fueltechs import clean_fueltech
-from opennem.core.normalizers import normalize_duid
+from opennem.core.normalizers import normalize_duid, station_name_cleaner
 from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.parsers.aemo.gi")
 
 GI_EXISTING_NEW_GEN_KEYS = {
-    "Region": "A",
+    "region": "A",
     "AssetType": "B",
     "StationName": "C",
     "Owner": "D",
@@ -103,21 +103,22 @@ def aemo_gi_status_map(gi_status: Optional[str]) -> Optional[str]:
 
 
 class AEMOGIRecord(BaseConfig):
-    station_name: str
+    name: str
     region: str
     fueltech_id: Optional[str]
+    status_id: Optional[str]
     duid: Optional[str]
     units_no: Optional[int]
-    status_id: Optional[int]
+    capacity_registered: float
 
-    expected_closure_year: Optional[int]
-    expected_closure_date: Optional[datetime]
+    # expected_closure_year: Optional[int]
+    # expected_closure_date: Optional[datetime]
 
     # _validate_closure_year = validator("expected_closure_year", pre=True)(
     #     _clean_expected_closure_year
     # )
 
-    _clean_duid = validator("duid", pre=True)(normalize_duid)
+    _clean_duid = validator("duid", pre=True, allow_reuse=True)(normalize_duid)
 
 
 def parse_aemo_general_information(filename: str) -> List[Dict]:
@@ -142,12 +143,30 @@ def parse_aemo_general_information(filename: str) -> List[Dict]:
 
         return_dict = dict(zip(GI_EXISTING_NEW_GEN_KEYS, list(row_collapsed)))
 
+        # break at end of data records
+        # GI has a blank line before garbage notes
+        if row[0] is None:
+            break
+
         if return_dict is None:
             raise Exception("Failed on row: {}".format(row))
+
+        return_dict = {
+            **return_dict,
+            **{
+                "name": station_name_cleaner(return_dict["StationName"]),
+                "status_id": aemo_gi_status_map(return_dict["UnitStatus"]),
+                "fueltech_id": aemo_gi_fueltech_to_fueltech(return_dict["FuelSummary"]),
+            },
+        }
 
         records.append(return_dict)
 
     return records
+
+
+def get_unique_values_for_field(records: List[Dict], field_name: str) -> List[Any]:
+    return list(set([i[field_name] for i in records]))
 
 
 # debug entrypoint
@@ -166,5 +185,5 @@ if __name__ == "__main__":
 
     from pprint import pprint
 
-    fueltechs = list(set([i["UnitStatus"] for i in records]))
-    print(fueltechs)
+    # pprint(records[:5])
+    pprint(get_unique_values_for_field(records, "Region"))
