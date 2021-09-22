@@ -146,7 +146,7 @@ class AEMOGIRecord(BaseConfig):
 
     _clean_duid = validator("duid", pre=True, allow_reuse=True)(normalize_duid)
     _clean_capacity = validator("capacity_registered", pre=True, allow_reuse=True)(
-        lambda x: clean_capacity(clean_float(x))
+        aemo_gi_capacity_cleaner
     )
 
 
