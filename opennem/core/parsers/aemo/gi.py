@@ -121,7 +121,7 @@ def aemo_gi_capacity_cleaner(cap: Optional[str]) -> Optional[float]:
     if not num_part:
         return None
 
-    num_extracted = num_part.group(0)
+    num_extracted = str(num_part.group(0))
 
     num_extracted_and_clean = clean_capacity(clean_float(num_extracted))
 
