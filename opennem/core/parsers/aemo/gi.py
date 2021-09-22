@@ -126,7 +126,7 @@ def aemo_gi_capacity_cleaner(cap: Optional[str]) -> Optional[float]:
 
     num_extracted = str(num_part.group(0))
 
-    num_extracted_and_clean = clean_capacity(clean_float(num_extracted))
+    num_extracted_and_clean = clean_float(num_extracted)
 
     return num_extracted_and_clean
 
@@ -216,7 +216,7 @@ if __name__ == "__main__":
     logger.info(f"Loading: {aemo_gi_testfile}")
 
     records = parse_aemo_general_information(str(aemo_gi_testfile))
-    records = list(filter(lambda x: x.status_id in ["committed", "commissioning"]))
+    records = list(filter(lambda x: x.status_id in ["committed", "commissioning"], records))
 
     from pprint import pprint
 
