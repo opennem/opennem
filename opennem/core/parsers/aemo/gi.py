@@ -121,7 +121,7 @@ class AEMOGIRecord(BaseConfig):
     _clean_duid = validator("duid", pre=True, allow_reuse=True)(normalize_duid)
 
 
-def parse_aemo_general_information(filename: str) -> List[Dict]:
+def parse_aemo_general_information(filename: str) -> List[AEMOGIRecord]:
     wb = load_workbook(filename, data_only=True)
 
     SHEET_KEY = "ExistingGeneration&NewDevs"
@@ -160,7 +160,9 @@ def parse_aemo_general_information(filename: str) -> List[Dict]:
             },
         }
 
-        records.append(return_dict)
+        return_model = AEMOGIRecord(**return_dict)
+
+        records.append(return_model)
 
     return records
 
@@ -185,5 +187,5 @@ if __name__ == "__main__":
 
     from pprint import pprint
 
-    # pprint(records[:5])
-    pprint(get_unique_values_for_field(records, "Region"))
+    pprint(records[:5])
+    # pprint(get_unique_values_for_field(records, "Region"))
