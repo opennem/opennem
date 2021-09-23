@@ -635,7 +635,7 @@ def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optio
     """
     cap_clean: Optional[str] = None
 
-    if capacity is None:
+    if capacity is None or capacity == "-":
         return None
 
     # Type gating float, string, int, others ..
