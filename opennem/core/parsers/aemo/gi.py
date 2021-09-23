@@ -22,6 +22,8 @@ from typing import Any, Dict, List, Optional
 
 from openpyxl import load_workbook
 from pydantic import validator
+from pydantic.types import conint
+from sqlalchemy.sql import select
 
 import opennem  # noqa: 401
 from opennem.core.normalizers import (
@@ -30,6 +32,8 @@ from opennem.core.normalizers import (
     normalize_duid,
     station_name_cleaner,
 )
+from opennem.db import SessionLocal, get_database_engine
+from opennem.db.models.opennem import Facility
 from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.parsers.aemo.gi")
@@ -203,6 +207,34 @@ def get_unique_values_for_field(records: List[Dict], field_name: str) -> List[An
     return list(set([i[field_name] for i in records]))
 
 
+def facility_matcher(records: List[AEMOGIRecord]) -> None:
+    with SessionLocal() as sess:
+
+        for gi_record in records:
+            if not gi_record.duid:
+                continue
+
+            gi_lookup: Optional[Facility] = sess.execute(
+                select(Facility).where(Facility.code == gi_record.duid)
+            ).one_or_none()
+
+            if not gi_lookup:
+                logger.info(f"MISS: {gi_record.duid} {gi_record.name}")
+                continue
+
+            gi_db: Facility = gi_lookup[0]
+
+            logger.info(
+                f"HIT {gi_record.duid} {gi_record.name} - currently {gi_db.status_id} change to => {gi_record.status_id}"
+            )
+
+            gi_db.status_id = gi_record.status_id
+
+            sess.add(gi_db)
+
+        sess.commit()
+
+
 # debug entrypoint
 if __name__ == "__main__":
     aemo_gi_testfile = (
@@ -220,5 +252,6 @@ if __name__ == "__main__":
 
     from pprint import pprint
 
-    pprint(records[:5])
+    # pprint(records)
+    facility_matcher(records=records)
     # pprint(get_unique_values_for_field(records, "Region"))
