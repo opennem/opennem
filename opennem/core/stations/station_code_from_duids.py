@@ -40,10 +40,10 @@ def station_code_from_duids(duids: List[str]) -> Optional[str]:
     if not duids:
         return None
 
+    duids_uniq = list(set([i for i in duids if i]))
+
     if len(duids) == 0:
         return None
-
-    duids_uniq = list(set(duids))
 
     common = findcommonstart(duids_uniq)
 
