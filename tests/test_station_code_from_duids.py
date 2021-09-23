@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List
 
 import pytest
 
@@ -8,8 +8,8 @@ from opennem.core.stations.station_code_from_duids import station_code_from_duid
 @pytest.mark.parametrize(
     ["subject", "expected"],
     [
-        (None, None),
-        ("", None),
+        ([None], None),
+        ([""], None),
         ([], None),
         (["BARRON1", "BARRON2"], "BARRON"),
         (["OSBAG"], "OSBAG"),
@@ -17,7 +17,7 @@ from opennem.core.stations.station_code_from_duids import station_code_from_duid
         (["FNWF1"], "FNWF"),
     ],
 )
-def test_station_code_from_duid(subject: Union[str, List[str]], expected: str) -> None:
+def test_station_code_from_duid(subject: List[str], expected: str) -> None:
     return_val = station_code_from_duids(subject)
 
     assert expected == return_val, "Got correct response"
