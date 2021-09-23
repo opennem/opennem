@@ -34,6 +34,7 @@ from opennem.core.normalizers import station_name_cleaner
         ("Collie G1", "Collie"),
         ("Lake Bonney Bess1", "Lake Bonney"),
         ("Muja Cd", "Muja CD"),
+        (" Kiamal Solar Farm - Stage 1 ", "Kiamal"),
         # kennedy
         (" Kennedy Energy Park - Phase 1 - Solar ", "Kennedy Energy Park"),
         (" Kennedy Energy Park - Phase 1 - Wind ", "Kennedy Energy Park"),
