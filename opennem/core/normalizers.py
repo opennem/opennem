@@ -71,6 +71,7 @@ STRIP_WORDS = [
     "units",
     "unit",
     "gas",
+    "filtration",
     "hydro",
     "diesel",
     "turbine",
@@ -421,6 +422,18 @@ def station_name_run_replacements(
     return subject
 
 
+def strip_station_name_numbering(sub: str) -> str:
+    """Strips end of names like 'Sydney No 3' to just 'Sydney'.
+
+    @NOTE Not all manipulation is done in lower case."""
+    return re.sub(r" No ?\d?$", "", sub)
+
+
+def station_name_hyphenate(sub: str) -> str:
+    """Hyphenates names like 'Dapto to Wollongong' as 'Dapto-Wollongong'."""
+    return re.sub(r"\ To\ ", "-", sub, re.IGNORECASE)
+
+
 def skip_clean_for_matching(
     subject: str, skip_matches: List[str] = STATION_SKIP_CLEANING_MATCHES
 ) -> bool:
@@ -452,10 +465,12 @@ def station_name_cleaner(station_name: str) -> str:
         str.lower,
         strip_double_spaces,
         strip_encoded_non_breaking_spaces,
+        strip_station_name_numbering,
         strip_capacity_from_string,
         strip_non_alpha_characters_from_string,
         strip_words_from_sentence,
         strip_double_spaces,
+        station_name_hyphenate,
         str.strip,
     ]:
         station_clean_name = clean_func(station_clean_name)  # type: ignore
@@ -504,6 +519,8 @@ def station_name_cleaner(station_name: str) -> str:
         strip_double_spaces,
         clean_and_format_slashed_station_names,
         station_name_run_replacements,
+        strip_station_name_numbering,
+        station_name_hyphenate,
     ]:
         station_clean_name = clean_func(station_clean_name)  # type: ignore
 

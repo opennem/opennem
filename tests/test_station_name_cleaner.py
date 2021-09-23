@@ -39,6 +39,13 @@ from opennem.core.normalizers import station_name_cleaner
         (" Kennedy Energy Park - Phase 1 - Solar ", "Kennedy Energy Park"),
         (" Kennedy Energy Park - Phase 1 - Wind ", "Kennedy Energy Park"),
         (" Kennedy Energy Park - Phase 1 - Battery ", "Kennedy Energy Park"),
+        # morgan-whyalla pipeline
+        (
+            "Morgan To Whyalla Pipeline No 1 PS And Water   Filtration Plant",
+            "Morgan-Whyalla Pipeline",
+        ),
+        ("Morgan To Whyalla Pipeline No 2 PS", "Morgan-Whyalla Pipeline"),
+        ("Morgan To Whyalla Pipeline No 3 PS", "Morgan-Whyalla Pipeline"),
         # Combined names
         ("Catagunya / Liapootah / Wayatinah", "Catagunya / Liapootah / Wayatinah"),
         ("Catagunya / Liapootah /Wayatinah", "Catagunya / Liapootah / Wayatinah"),
