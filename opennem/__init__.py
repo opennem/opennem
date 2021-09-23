@@ -28,6 +28,7 @@ import warnings  # noqa: E402
 
 # Ignore noisy twisted deprecation warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="twisted")
+warnings.filterwarnings("ignore", module="openpyxl")
 
 # Core methods we reuire in loading the module
 from opennem.utils.version import get_version  # noqa: E402

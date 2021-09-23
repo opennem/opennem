@@ -71,6 +71,7 @@ STRIP_WORDS = [
     "units",
     "unit",
     "gas",
+    "filtration",
     "hydro",
     "diesel",
     "turbine",
@@ -333,17 +334,30 @@ def string_is_equal_case_insensitive(subject: str, value: str) -> bool:
     return subject.strip().lower() == value.strip().lower()
 
 
-def normalize_duid(duid: Optional[str]) -> str:
+def normalize_duid(duid: Optional[str]) -> Optional[str]:
     """Take what is supposed to be a DUID and clean it up so we always return a string, even if its blank"""
     duid = duid or ""
 
-    # @TODO replace with regexp that removes junk
-    duid = duid.strip()
+    if not duid:
+        return None
 
-    if duid == "-":
+    # strip out non-ascii characters
+    duid_ascii = duid.encode("ascii", "ignore").decode("utf-8")
+
+    # strip out non-alpha num
+    # @TODO also pass to validator
+    duid_ascii = re.sub(r"\W+", "", duid_ascii)
+
+    # strip out control chars
+    duid_ascii = re.sub(r"\_[xX][0-9A-F]{4}\_", "", duid_ascii)
+
+    # normalize
+    duid_ascii = duid_ascii.strip().upper()
+
+    if duid_ascii == "-" or not duid_ascii:
         return ""
 
-    return duid
+    return duid_ascii
 
 
 def name_normalizer(name: str) -> str:
@@ -365,6 +379,9 @@ def clean_station_numbers_to_string(part: Union[str, int]) -> str:
     Clean the number part of a station name and remove it completely if its a large number
     """
     if not is_number(part):
+        return str(part)
+
+    if isinstance(part, float) or part.find(".") > 0:
         return str(part)
 
     part_parsed = int(part)
@@ -405,6 +422,18 @@ def station_name_run_replacements(
     return subject
 
 
+def strip_station_name_numbering(sub: str) -> str:
+    """Strips end of names like 'Sydney No 3' to just 'Sydney'.
+
+    @NOTE Not all manipulation is done in lower case."""
+    return re.sub(r" No ?\d?$", "", sub)
+
+
+def station_name_hyphenate(sub: str) -> str:
+    """Hyphenates names like 'Dapto to Wollongong' as 'Dapto-Wollongong'."""
+    return re.sub(r"\ To\ ", "-", sub, re.IGNORECASE)
+
+
 def skip_clean_for_matching(
     subject: str, skip_matches: List[str] = STATION_SKIP_CLEANING_MATCHES
 ) -> bool:
@@ -436,10 +465,12 @@ def station_name_cleaner(station_name: str) -> str:
         str.lower,
         strip_double_spaces,
         strip_encoded_non_breaking_spaces,
+        strip_station_name_numbering,
         strip_capacity_from_string,
         strip_non_alpha_characters_from_string,
         strip_words_from_sentence,
         strip_double_spaces,
+        station_name_hyphenate,
         str.strip,
     ]:
         station_clean_name = clean_func(station_clean_name)  # type: ignore
@@ -466,8 +497,10 @@ def station_name_cleaner(station_name: str) -> str:
 
         if comp in ACRONYMS:
             comp = comp.upper()
+
         elif isinstance(comp, str) and comp.startswith("mc"):
             comp = "Mc" + comp[2:].capitalize()
+
         elif isinstance(comp, str) and comp != "":
             comp = comp.capitalize()
 
@@ -483,11 +516,11 @@ def station_name_cleaner(station_name: str) -> str:
     # List of cleaning methods to pass the string through
     for clean_func in [
         str.strip,
-        str.lower,
         strip_double_spaces,
-        string_to_title,
         clean_and_format_slashed_station_names,
         station_name_run_replacements,
+        strip_station_name_numbering,
+        station_name_hyphenate,
     ]:
         station_clean_name = clean_func(station_clean_name)  # type: ignore
 
@@ -630,24 +663,24 @@ def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optio
 
     @TODO support unit conversion
     """
-    cap_clean = None
+    cap_clean: Optional[str] = None
 
-    if capacity is None:
+    if capacity is None or capacity == "-":
         return None
 
     # Type gating float, string, int, others ..
     if type(capacity) is float:
-        cap_clean = capacity
+        return round(capacity, round_to)
 
     elif isinstance(capacity, str):
         cap_clean = strip_whitespace(capacity)
 
-        if "-" in cap_clean:
+        if cap_clean.find("-") > 0:
             cap_clean_components = cap_clean.split("-")
             cap_clean = cap_clean_components.pop()
             return clean_capacity(cap_clean)
 
-        if "/" in cap_clean:
+        if cap_clean.find("/") > 0:
             cap_clean_components = cap_clean.split("/")
             cap_clean = cap_clean_components.pop()
             return clean_capacity(cap_clean)
@@ -657,10 +690,10 @@ def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optio
 
         # funky values in spreadsheet
         cap_clean = cap_clean.replace(",", ".")
-        cap_clean = float(cap_clean)
+        return round(float(cap_clean), round_to)
 
     elif type(capacity) == int:
-        cap_clean = float(capacity)
+        return round(float(capacity), round_to)
 
     elif type(capacity) is not float:
         if capacity is None:

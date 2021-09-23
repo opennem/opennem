@@ -4,17 +4,14 @@ from typing import List, Optional
 from opennem.core.normalizers import is_single_number
 
 
-def getcommonletters(strlist):
-    return "".join(
-        [
-            x[0]
-            for x in zip(*strlist)
-            if reduce(lambda a, b: (a == b) and a or None, x)
-        ]
+def getcommonletters(strlist: List[str]) -> str:
+    _strlist = "".join(
+        [x[0] for x in zip(*strlist) if reduce(lambda a, b: (a == b) and a or None, x)]
     )
+    return _strlist
 
 
-def findcommonstart(strlist):
+def findcommonstart(strlist: List[str]) -> str:
     strlist = strlist[:]
     prev = None
     while True:
@@ -29,12 +26,12 @@ def findcommonstart(strlist):
 
 def station_code_from_duids(duids: List[str]) -> Optional[str]:
     """
-        Derives a station code from a list of duids
+    Derives a station code from a list of duids
 
-        ex.
+    ex.
 
-        BARRON1,BARRON2 => BARRON
-        OSBAG,OSBAG => OSBAG
+    BARRON1,BARRON2 => BARRON
+    OSBAG,OSBAG => OSBAG
 
     """
     if type(duids) is not list:
@@ -43,10 +40,10 @@ def station_code_from_duids(duids: List[str]) -> Optional[str]:
     if not duids:
         return None
 
+    duids_uniq = list(set([i for i in duids if i]))
+
     if len(duids) == 0:
         return None
-
-    duids_uniq = list(set(duids))
 
     common = findcommonstart(duids_uniq)
 

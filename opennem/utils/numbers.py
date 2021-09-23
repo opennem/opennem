@@ -2,8 +2,8 @@ import decimal
 import logging
 import re
 from datetime import datetime
-from math import floor, log, pow
-from typing import Dict, List, Optional, Tuple, Union
+from math import floor, log, pow  # noqa: no-name-module
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from opennem.settings import settings
 
@@ -17,7 +17,7 @@ ctx = decimal.Context()
 ctx.prec = 20
 
 
-def float_to_str(f):
+def float_to_str(f: float) -> str:
     """
     Convert the given float to a string,
     without resorting to scientific notation
@@ -26,14 +26,14 @@ def float_to_str(f):
     return format(d1, "f")
 
 
-def cast_number(number: any) -> float:
+def cast_number(number: Any) -> float:
     """Cast to a float"""
     number_float = float(number)
 
     return number_float
 
 
-def num_sigfigs(n, sig):
+def num_sigfigs(n: float, sig: int) -> float:
     """
     Adapted significant figure count
 
@@ -93,15 +93,6 @@ def human2bytes(s: str) -> int:
         prefix[s] = 1 << (i + 1) * 10
 
     return int(num * prefix[letter])
-
-
-def float_to_str(f: float) -> str:
-    """
-    Convert the given float to a string,
-    without resorting to scientific notation
-    """
-    d1 = ctx.create_decimal(repr(f))
-    return format(d1, "f")
 
 
 def cast_trailing_nulls(series: List) -> List:

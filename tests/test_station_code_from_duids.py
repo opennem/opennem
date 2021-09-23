@@ -1,42 +1,23 @@
+from typing import List
+
 import pytest
 
-from opennem.core.stations.station_code_from_duids import (
-    station_code_from_duids,
+from opennem.core.stations.station_code_from_duids import station_code_from_duids
+
+
+@pytest.mark.parametrize(
+    ["subject", "expected"],
+    [
+        ([None], None),
+        ([""], None),
+        ([], None),
+        (["BARRON1", "BARRON2"], "BARRON"),
+        (["OSBAG"], "OSBAG"),
+        (["OSBAG", "OSBAG"], "OSBAG"),
+        (["FNWF1"], "FNWF"),
+    ],
 )
+def test_station_code_from_duid(subject: List[str], expected: str) -> None:
+    return_val = station_code_from_duids(subject)
 
-
-class TestStationCodeFromDuids(object):
-    def test_none(self):
-        subject = station_code_from_duids(None)
-
-        assert subject == None, "None is none"
-
-    def test_not_list(self):
-        subject = station_code_from_duids("")
-
-        assert subject == None, "None is none"
-
-    def test_empty(self):
-        subject = station_code_from_duids([])
-
-        assert subject == None, "None is none"
-
-    def test_barron(self):
-        subject = station_code_from_duids(["BARRON1", "BARRON2"])
-
-        assert subject == "BARRON", "Barron convertts to BARRON"
-
-    def test_osbag(self):
-        subject = station_code_from_duids(["OSBAG"])
-
-        assert subject == "OSBAG", "OSBAG convertts to OSBAG"
-
-    def test_osbag_two(self):
-        subject = station_code_from_duids(["OSBAG", "OSBAG"])
-
-        assert subject == "OSBAG", "OSBAG convertts to OSBAG"
-
-    def test_ferguson_wf(self):
-        subject = station_code_from_duids(["FNWF1"])
-
-        assert subject == "FNWF", "Trims and strips numbers"
+    assert expected == return_val, "Got correct response"
