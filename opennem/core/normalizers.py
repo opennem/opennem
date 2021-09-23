@@ -333,17 +333,30 @@ def string_is_equal_case_insensitive(subject: str, value: str) -> bool:
     return subject.strip().lower() == value.strip().lower()
 
 
-def normalize_duid(duid: Optional[str]) -> str:
+def normalize_duid(duid: Optional[str]) -> Optional[str]:
     """Take what is supposed to be a DUID and clean it up so we always return a string, even if its blank"""
     duid = duid or ""
 
-    # @TODO replace with regexp that removes junk
-    duid = duid.strip()
+    if not duid:
+        return None
 
-    if duid == "-":
+    # strip out non-ascii characters
+    duid_ascii = duid.encode("ascii", "ignore").decode("utf-8")
+
+    # strip out non-alpha num
+    # @TODO also pass to validator
+    duid_ascii = re.sub(r"\W+", "", duid_ascii)
+
+    # strip out control chars
+    duid_ascii = re.sub(r"\_[xX][0-9A-F]{4}\_", "", duid_ascii)
+
+    # normalize
+    duid_ascii = duid_ascii.strip().upper()
+
+    if duid_ascii == "-" or not duid_ascii:
         return ""
 
-    return duid
+    return duid_ascii
 
 
 def name_normalizer(name: str) -> str:
