@@ -367,6 +367,9 @@ def clean_station_numbers_to_string(part: Union[str, int]) -> str:
     if not is_number(part):
         return str(part)
 
+    if isinstance(part, float) or part.find(".") > 0:
+        return str(part)
+
     part_parsed = int(part)
 
     if part_parsed < 6:
