@@ -324,6 +324,9 @@ def power_flows_network_week(
     interval_obj = network.get_interval()
     period_obj = human_to_period("1M")
 
+    if not network:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
+
     scada_range = get_scada_range(network=network)
 
     if not scada_range:
