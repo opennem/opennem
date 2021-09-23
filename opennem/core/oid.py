@@ -1,5 +1,6 @@
 """
-    Module that generated opennem ids
+Module that generated opennem ids. These are used for new stations and facilities
+that haven't yet been assigned an DUID or STATIONID. They are derived from the name
 
 """
 
@@ -40,14 +41,10 @@ def oid_to_id(oid: str) -> int:
 
 def get_network_region(network_region: str) -> Optional[str]:
     """
-        Trim the numbers off the end of nem regions
+    Trim the numbers off the end of nem regions
 
     """
-    if (
-        network_region
-        and type(network_region) is str
-        and len(network_region) > 1
-    ):
+    if network_region and type(network_region) is str and len(network_region) > 1:
         if is_number(network_region[-1:]):
             return network_region[:-1]
 
@@ -61,7 +58,7 @@ def get_network_region(network_region: str) -> Optional[str]:
 
 def get_station_facility(station):
     """
-        Get the first facility for a station
+    Get the first facility for a station
 
     """
     if (station.facilities) and len(station.facilities) > 0:
@@ -83,7 +80,7 @@ def get_station_code(station):
 def get_ocode(station) -> str:
     """
 
-        format: {country}_{network}_{region}_{station}_{id}
+    format: {country}_{network}_{region}_{station}_{id}
     """
     facility = get_station_facility(station)
 
