@@ -111,6 +111,9 @@ def aemo_gi_status_map(gi_status: Optional[str]) -> Optional[str]:
 def aemo_gi_capacity_cleaner(cap: Optional[str]) -> Optional[float]:
     """Custom capacity cleaner because sometimes its parsed as silly
     text like a range (ie. '150 - 180'"""
+    if isinstance(cap, int) or isinstance(cap, float):
+        return cap
+
     if not cap:
         return None
 
