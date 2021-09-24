@@ -39,7 +39,7 @@ NEM_VPPS = [
 
 
 def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
-    """ Filters out ignored records like dummy generators """
+    """Filters out ignored records like dummy generators"""
 
     def fac_is_ignored(fac: FacilitySeen) -> Optional[FacilitySeen]:
 
@@ -106,17 +106,23 @@ def get_facility_first_seen(period: Optional[str] = None) -> List[FacilitySeen]:
     return records
 
 
-def facility_first_seen_check() -> None:
-    """ Find new DUIDs and alert on them """
+def facility_first_seen_check() -> List[FacilitySeen]:
+    """Find new DUIDs and alert on them"""
     facs = get_facility_first_seen("3 days")
 
     facs_filtered = ignored_duids(facs)
+
+    facs_out = []
 
     for fac in facs_filtered:
         msg = "Found new facility on network {} with DUID: {}".format(fac.network_id, fac.code)
         slack_message(msg)
         logger.info(msg)
+        facs_out.append(fac)
+
+    return facs_out
 
 
+# debug entry point
 if __name__ == "__main__":
-    facility_first_seen_check()
+    seen_facilities = facility_first_seen_check()
