@@ -7,6 +7,7 @@ from opennem.core.normalizers import normalize_duid
     ["duid", "duid_expected"],
     [
         ("TARONG#1", "TARONG#1"),
+        ("V-S-MNSP1", "V-S-MNSP1"),
         (
             " LIMOSF11\
  ",

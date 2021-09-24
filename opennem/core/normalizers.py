@@ -346,7 +346,7 @@ def normalize_duid(duid: Optional[str]) -> Optional[str]:
 
     # strip out non-alpha num
     # @TODO also pass to validator
-    duid_ascii = re.sub(r"\W\_\#+", "", duid_ascii)
+    duid_ascii = re.sub(r"\W\_\-\#+", "", duid_ascii)
 
     # strip out control chars
     duid_ascii = re.sub(r"\_[xX][0-9A-F]{4}\_", "", duid_ascii)
