@@ -417,7 +417,7 @@ def run_energy_update_archive(
     regions: Optional[List[str]] = None,
     fueltech: Optional[str] = None,
     network: NetworkSchema = NetworkNEM,
-    run_clear: bool = True,
+    run_clear: bool = False,
 ) -> None:
 
     date_range = get_date_range(network=network)
