@@ -27,18 +27,18 @@ services:
     ports:
       - ${HOST:-127.0.0.1}:6800:6800
 
-  # mysql:
-  #   image: mariadb
-  #   restart: unless-stopped
-  #   env_file: ./.env
-  #   environment:
-  #     - TZ
-  #     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-  #     - MYSQL_DATABASE=${MYSQL_DATABASE}
-  #   ports:
-  #     - ${HOST:-127.0.0.1}:15444:3306
-  #   volumes:
-  #     - mysql_data:/var/lib/mysql
+  mysql:
+    image: mariadb
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - TZ
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    ports:
+      - ${HOST:-127.0.0.1}:15444:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   postgres:
     image: opennem/database:dev
