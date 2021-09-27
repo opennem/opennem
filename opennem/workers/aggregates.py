@@ -142,6 +142,10 @@ def run_aggregates_facility_all_by_year() -> None:
 def run_aggregates_facility_all(network: NetworkSchema) -> None:
     scada_range: ScadaDateRange = get_scada_range(network=network)
 
+    if not scada_range:
+        logger.error("Could not find a scada range for {}".format(network.code))
+        return None
+
     exec_aggregates_facility_daily_query(date_min=scada_range.start, date_max=scada_range.end)
 
 
