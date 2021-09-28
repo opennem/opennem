@@ -1,5 +1,5 @@
-scrapy crawl au.bom.capitals
-#  scrapy crawl au.apvi.current
+scrapy crawl bom.capitals
+scrapy crawl au.apvi.current
 scrapy crawl au.nem.current.dispatch_is
 scrapy crawl au.nem.current.dispatch_scada
 scrapy crawl au.nem.current.rooftop
