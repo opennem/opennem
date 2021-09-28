@@ -105,7 +105,7 @@ def get_day_range(df: pd.DataFrame) -> Generator[date, None, None]:
 
 
 def _energy_aggregate_compat(df: pd.DataFrame) -> pd.DataFrame:
-    """ v2 version of energy_sum for compat """
+    """v2 version of energy_sum for compat"""
     energy_genrecs = []
 
     for day in get_day_range(df):
@@ -159,7 +159,7 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> Optional[float]:
 def _energy_aggregate(
     df: pd.DataFrame, power_column: str = "generated", zero_fill: bool = False
 ) -> pd.DataFrame:
-    """v3 version of energy aggregate for energy_sum - iterates over time bucekts with edges """
+    """v3 version of energy aggregate for energy_sum - iterates over time bucekts with edges"""
     in_cap = {}
     capture: Dict[str, Any] = {}
     values = []
@@ -199,7 +199,7 @@ def _energy_aggregate(
 def shape_energy_dataframe(
     gen_series: List[Dict], network: NetworkSchema = NetworkNEM
 ) -> pd.DataFrame:
-    """ Shapes a list of dicts into a dataframe for energy_sum"""
+    """Shapes a list of dicts into a dataframe for energy_sum"""
     df = pd.DataFrame(
         gen_series,
         columns=[
