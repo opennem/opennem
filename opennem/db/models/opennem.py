@@ -801,3 +801,45 @@ class AggregateFacilityDaily(Base):
         Index("idx_at_facility_daily_network_id_trading_interval", network_id, trading_day.desc()),
         Index("idx_at_facility_daily_trading_interval_facility_code", trading_day, facility_code),
     )
+
+
+class AggregateNetworkFlows(Base):
+    """
+    Network Flows Aggregate Table
+    """
+
+    __tablename__ = "at_network_flows"
+
+    trading_interval = Column(
+        TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False
+    )
+
+    network_id = Column(
+        Text,
+        ForeignKey("network.code", name="fk_at_facility_daily_network_code"),
+        primary_key=True,
+        index=True,
+        nullable=False,
+    )
+    network = relationship("Network")
+
+    network_region = Column(Text, index=True)
+
+    energy_imports = Column(Numeric, nullable=True)
+    energy_exports = Column(Numeric, nullable=True)
+    emissions_imports = Column(Numeric, nullable=True)
+    emissions_exports = Column(Numeric, nullable=True)
+
+    __table_args__ = (
+        Index(
+            "idx_at_facility_daily_network_id_trading_interval",
+            network_id,
+            trading_interval.desc(),
+        ),
+        Index(
+            "idx_at_facility_daily_trading_interval_facility_code",
+            trading_interval,
+            network_id,
+            network_region,
+        ),
+    )
