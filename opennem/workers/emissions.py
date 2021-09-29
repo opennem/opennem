@@ -47,25 +47,10 @@ def load_interconnector(date_start: datetime, date_end: datetime) -> pd.DataFram
     return df
 
 
-def calc_emissions(df_emissions):
-    # MWH & tonnes (divide 12)
-    dx_emissions = df_emissions.groupby(["SETTLEMENTDATE", "REGIONID", "TECHFUEL_ID"])[
-        ["MW", "EMISSIONS"]
-    ].sum()
-    dx_emissions.reset_index(inplace=True)
-    return dx_emissions
-
-
 def calc_flows(df_ic):
     dx_ic = df_ic.copy()
     dx_ic.METEREDMWFLOW = dx_ic.METEREDMWFLOW
     return dx_ic
-
-
-def isolate_di(dx_emissions, dx_ic, dt):
-    emissions_di = dx_emissions[dx_emissions.SETTLEMENTDATE == dt]
-    interconnector_di = dx_ic[dx_ic.index == dt]
-    return emissions_di, interconnector_di
 
 
 def simple_exports(emissions_di, power_dict, from_regionid, to_regionid):
@@ -203,6 +188,15 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
     return df
 
 
+def calc_emissions(df_emissions):
+    # MWH & tonnes (divide 12)
+    dx_emissions = df_emissions.groupby(["SETTLEMENTDATE", "REGIONID", "TECHFUEL_ID"])[
+        ["MW", "EMISSIONS"]
+    ].sum()
+    dx_emissions.reset_index(inplace=True)
+    return dx_emissions
+
+
 def calculate_emission_flows(df_gen, df_ic):
 
     dx_emissions = calc_emissions(df_gen)
@@ -210,7 +204,11 @@ def calculate_emission_flows(df_gen, df_ic):
     results = {}
     dt = df_gen.SETTLEMENTDATE.iloc[0]
     while dt <= df_gen.SETTLEMENTDATE.iloc[-1]:
-        emissions_di, interconnector_di = isolate_di(dx_emissions, dx_ic, dt)
+        # emissions_di, interconnector_di = isolate_di(dx_emissions, dx_ic, dt)
+
+        emissions_di = dx_emissions[dx_emissions.SETTLEMENTDATE == dt]
+        interconnector_di = dx_ic[dx_ic.index == dt]
+
         results[dt] = solve_flows(emissions_di, interconnector_di)
         dt += timedelta(0, 300)
     return results
