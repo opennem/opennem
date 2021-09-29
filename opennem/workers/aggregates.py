@@ -80,6 +80,76 @@ def aggregates_facility_daily_query(date_min: datetime, date_max: datetime = Non
     return dedent(query)
 
 
+def aggregates_network_intervals_query(date_min: datetime, date_max: datetime) -> str:
+    """aggregates network intervals query"""
+
+    __query = """
+        select
+            fs.trading_interval,
+            f.code,
+            f.fueltech_id,
+            f.network_id,
+            f.network_region,
+            f.interconnector,
+            f.interconnector_region_to,
+            date_trunc('day', fs.trading_interval at time zone 'AEST') as ti_day_aest,
+            date_trunc('month', fs.trading_interval at time zone 'AEST') as ti_month_aest,
+            date_trunc('day', fs.trading_interval at time zone 'AWST') as ti_day_awst,
+            date_trunc('month', fs.trading_interval at time zone 'AWST') as ti_month_awst,
+            round(max(fs.energy), 4) as energy,
+            case when max(bs.price_dispatch) >= 0  and min(fs.energy) >= 0 then
+                coalesce(
+                    round(max(fs.energy) * max(bs.price_dispatch), 4),
+                    0.0
+                )
+            else 0.0
+            end as market_value,
+            case when min(f.emissions_factor_co2) >= 0  and min(fs.energy) >= 0 then
+                coalesce(
+                    round(max(fs.energy) * min(f.emissions_factor_co2), 4),
+                    0.0
+                )
+            else 0.0
+            end as emissions
+        from (
+            select
+                time_bucket('30 minutes', fs.trading_interval) as trading_interval,
+                fs.facility_code,
+                fs.network_id,
+                round(sum(fs.eoi_quantity), 4) as energy
+            from facility_scada fs
+            where fs.is_forecast is False
+            group by
+                1, 2, 3
+        ) as fs
+            left join facility f on fs.facility_code = f.code
+            left join balancing_summary bs on
+                bs.trading_interval = fs.trading_interval
+                and bs.network_id=f.network_id
+                and bs.network_region = f.network_region
+        where
+            f.fueltech_id is not null
+            and fs.trading_interval >= '{date_min}'
+            and fs.trading_interval <= '{date_max}'
+        group by
+            1,
+            f.code,
+            f.fueltech_id,
+            f.network_id,
+            f.network_region,
+            f.interconnector,
+            f.interconnector_region_to
+        order by 1 desc
+    """
+
+    query = __query.format(
+        date_min=date_min,
+        date_max=date_max,
+    )
+
+    return dedent(query)
+
+
 def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime = None) -> bool:
     resp_code: bool = False
     engine = get_database_engine()
@@ -141,6 +211,10 @@ def run_aggregates_facility_all_by_year() -> None:
 
 def run_aggregates_facility_all(network: NetworkSchema) -> None:
     scada_range: ScadaDateRange = get_scada_range(network=network)
+
+    if not scada_range:
+        logger.error("Could not find a scada range for {}".format(network.code))
+        return None
 
     exec_aggregates_facility_daily_query(date_min=scada_range.start, date_max=scada_range.end)
 

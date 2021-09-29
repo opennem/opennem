@@ -93,9 +93,9 @@ def __trading_energy_generator(
 
 
 def get_day_range(df: pd.DataFrame) -> Generator[date, None, None]:
-    """ Get the day range for a dataframe """
-    min_date = (df.index.min() + timedelta(days=1)).date()
-    max_date = (df.index.max() - timedelta(days=1)).date()
+    """Get the day range for a dataframe"""
+    max_date = (df.index.min() + timedelta(days=1)).date()
+    min_date = (df.index.max() - timedelta(days=1)).date()
 
     cur_day = min_date
 
@@ -105,7 +105,7 @@ def get_day_range(df: pd.DataFrame) -> Generator[date, None, None]:
 
 
 def _energy_aggregate_compat(df: pd.DataFrame) -> pd.DataFrame:
-    """ v2 version of energy_sum for compat """
+    """v2 version of energy_sum for compat"""
     energy_genrecs = []
 
     for day in get_day_range(df):
@@ -159,7 +159,7 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> Optional[float]:
 def _energy_aggregate(
     df: pd.DataFrame, power_column: str = "generated", zero_fill: bool = False
 ) -> pd.DataFrame:
-    """v3 version of energy aggregate for energy_sum - iterates over time bucekts with edges """
+    """v3 version of energy aggregate for energy_sum - iterates over time bucekts with edges"""
     in_cap = {}
     capture: Dict[str, Any] = {}
     values = []
@@ -199,7 +199,7 @@ def _energy_aggregate(
 def shape_energy_dataframe(
     gen_series: List[Dict], network: NetworkSchema = NetworkNEM
 ) -> pd.DataFrame:
-    """ Shapes a list of dicts into a dataframe for energy_sum"""
+    """Shapes a list of dicts into a dataframe for energy_sum"""
     df = pd.DataFrame(
         gen_series,
         columns=[
@@ -224,7 +224,10 @@ def shape_energy_dataframe(
 
 
 def energy_sum(
-    df: pd.DataFrame, network: NetworkSchema, power_column: str = "generated"
+    df: pd.DataFrame,
+    network: NetworkSchema,
+    power_column: str = "generated",
+    filter_no_energy_values: bool = True,
 ) -> pd.DataFrame:
     """Takes the energy sum for a series of raw duid intervals
     and returns a fresh dataframe to be imported"""
@@ -262,6 +265,7 @@ def energy_sum(
         df.trading_interval = df.trading_interval - pd.Timedelta(minutes=network.interval_shift)
 
     # filter out empties
-    df = df[pd.isnull(df.eoi_quantity) == False]  # noqa: E712
+    if filter_no_energy_values:
+        df = df[pd.isnull(df.eoi_quantity) == False]  # noqa: E712
 
     return df

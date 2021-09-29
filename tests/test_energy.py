@@ -4,6 +4,7 @@ from typing import List
 
 from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.schema.network import NetworkNEM
+from opennem.workers.emissions import load_factors
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "energy"
 
@@ -30,6 +31,19 @@ def test_energy_sum_average_fixture() -> None:
 
     power_df = shape_energy_dataframe(power_results_bw01)
 
-    es = energy_sum(power_df, NetworkNEM)
+    energy_sum(power_df, NetworkNEM)
 
     assert len(records) == 32288, "Right length of records"
+
+
+def test_energy_sum_outputs() -> None:
+    records = load_energy_fixture_csv("nem_generated_coal_black.csv")
+
+    power_df = shape_energy_dataframe(records)
+
+    es = energy_sum(power_df, NetworkNEM)
+
+    # should be 50 records
+    assert len(es) == 50, "Has the correct number of records"
+
+    return es

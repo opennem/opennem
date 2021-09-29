@@ -82,11 +82,21 @@ def store_mms_table(table: AEMOTableSchema) -> int:
 
     conn = get_database_engine().raw_connection()
     cursor = conn.cursor()
-    csv_content = generate_csv_from_records(
-        table_schema,
-        records_to_store,
-        column_names=list(records_to_store[0].keys()),
-    )
+
+    csv_content = ""
+
+    try:
+        csv_content = generate_csv_from_records(
+            table_schema,
+            records_to_store,
+            column_names=list(records_to_store[0].keys()),
+        )
+    except Exception as e:
+        logger.error(e)
+        return 0
+
+    if not csv_content:
+        return 0
 
     logger.debug(csv_content.getvalue().splitlines()[:2])
 

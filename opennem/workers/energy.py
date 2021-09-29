@@ -4,7 +4,6 @@ from itertools import groupby
 from textwrap import dedent
 from typing import Dict, List, Optional
 
-import pytz
 from pytz import FixedOffset
 
 from opennem.api.stats.controllers import duid_in_case, get_scada_range
@@ -417,7 +416,7 @@ def run_energy_update_archive(
     regions: Optional[List[str]] = None,
     fueltech: Optional[str] = None,
     network: NetworkSchema = NetworkNEM,
-    run_clear: bool = True,
+    run_clear: bool = False,
 ) -> None:
 
     date_range = get_date_range(network=network)
@@ -554,4 +553,4 @@ def run_energy_update_facility(
 
 # debug entry point
 if __name__ == "__main__":
-    run_energy_update_all()
+    run_energy_update_days(days=3, networks=[NetworkNEM])
