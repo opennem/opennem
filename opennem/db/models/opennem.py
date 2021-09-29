@@ -816,7 +816,7 @@ class AggregateNetworkFlows(Base):
 
     network_id = Column(
         Text,
-        ForeignKey("network.code", name="fk_at_facility_daily_network_code"),
+        ForeignKey("network.code", name="fk_at_network_flows_network_code"),
         primary_key=True,
         index=True,
         nullable=False,
@@ -832,12 +832,12 @@ class AggregateNetworkFlows(Base):
 
     __table_args__ = (
         Index(
-            "idx_at_facility_daily_network_id_trading_interval",
+            "idx_at_network_flowsy_network_id_trading_interval",
             network_id,
             trading_interval.desc(),
         ),
         Index(
-            "idx_at_facility_daily_trading_interval_facility_code",
+            "idx_at_network_flows_trading_interval_facility_code",
             trading_interval,
             network_id,
             network_region,
