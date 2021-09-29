@@ -62,19 +62,6 @@ def calc_flows(df_ic):
     return dx_ic
 
 
-def calculate_emission_flows(df_gen, df_ic):
-
-    dx_emissions = calc_emissions(df_gen)
-    dx_ic = calc_flows(df_ic)
-    results = {}
-    dt = df_gen.SETTLEMENTDATE.iloc[0]
-    while dt <= df_gen.SETTLEMENTDATE.iloc[-1]:
-        emissions_di, interconnector_di = isolate_di(dx_emissions, dx_ic, dt)
-        results[dt] = solve_flows(emissions_di, interconnector_di)
-        dt += timedelta(0, 300)
-    return results
-
-
 def isolate_di(dx_emissions, dx_ic, dt):
     emissions_di = dx_emissions[dx_emissions.SETTLEMENTDATE == dt]
     interconnector_di = dx_ic[dx_ic.index == dt]
@@ -216,6 +203,19 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
     return df
 
 
+def calculate_emission_flows(df_gen, df_ic):
+
+    dx_emissions = calc_emissions(df_gen)
+    dx_ic = calc_flows(df_ic)
+    results = {}
+    dt = df_gen.SETTLEMENTDATE.iloc[0]
+    while dt <= df_gen.SETTLEMENTDATE.iloc[-1]:
+        emissions_di, interconnector_di = isolate_di(dx_emissions, dx_ic, dt)
+        results[dt] = solve_flows(emissions_di, interconnector_di)
+        dt += timedelta(0, 300)
+    return results
+
+
 def load_factors() -> pd.DataFrame:
     sql = """
         SELECT
@@ -294,9 +294,10 @@ def calc_day(day: datetime) -> None:
     flow_series.rename(columns={"level_0": "SETTLEMENTDATE", "index": "REGIONIDS"}, inplace=True)
     flow_series["REGIONID_FROM"] = flow_series.apply(lambda x: x.REGIONIDS[0], axis=1)
     flow_series["REGIONID_TO"] = flow_series.apply(lambda x: x.REGIONIDS[1], axis=1)
-    flow_series[["SETTLEMENTDATE", "REGIONID_FROM", "REGIONID_TO", "EMISSIONS"]].to_csv(
-        "~/emissions/series/{0}.csv".format(day), index=None
-    )
+
+    # flow_series[["SETTLEMENTDATE", "REGIONID_FROM", "REGIONID_TO", "EMISSIONS"]].to_csv(
+    #     "~/emissions/series/{0}.csv".format(day), index=None
+    # )
 
     # build the final data frame with both imports and exports
     daily_flow = pd.DataFrame(
