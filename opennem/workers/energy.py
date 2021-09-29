@@ -4,7 +4,6 @@ from itertools import groupby
 from textwrap import dedent
 from typing import Dict, List, Optional
 
-import pytz
 from pytz import FixedOffset
 
 from opennem.api.stats.controllers import duid_in_case, get_scada_range
