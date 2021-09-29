@@ -224,7 +224,10 @@ def shape_energy_dataframe(
 
 
 def energy_sum(
-    df: pd.DataFrame, network: NetworkSchema, power_column: str = "generated"
+    df: pd.DataFrame,
+    network: NetworkSchema,
+    power_column: str = "generated",
+    filter_no_energy_values: bool = True,
 ) -> pd.DataFrame:
     """Takes the energy sum for a series of raw duid intervals
     and returns a fresh dataframe to be imported"""
@@ -262,6 +265,7 @@ def energy_sum(
         df.trading_interval = df.trading_interval - pd.Timedelta(minutes=network.interval_shift)
 
     # filter out empties
-    df = df[pd.isnull(df.eoi_quantity) == False]  # noqa: E712
+    if filter_no_energy_values:
+        df = df[pd.isnull(df.eoi_quantity) == False]  # noqa: E712
 
     return df
