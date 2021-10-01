@@ -341,6 +341,38 @@ def snake_to_camel(string: str) -> str:
     """Converts snake case to camel case. ie. field_name to FieldName"""
     return "".join(word.capitalize() for word in string.split("_"))
 
+
+def _build_split_re(split_words: List[str]) -> Pattern[str]:
+    _regexp_format = ("({})").format("|".join(_SPLIT_WORDS))
+    _split_regexp = re.compile(_regexp_format)
+
+    return _split_regexp
+
+
+_SPLIT_WORDS = ["settlement", "total", "net", "type", "id", "scheduled", "semi", "date"]
+
+_split_words_regexp = _build_split_re(_SPLIT_WORDS)
+
+
+def capitalized_block_to_words(string: str) -> List[str]:
+    """Converts capitalized block words into a list so it can be rejoined"""
+    subject: str = string
+
+    for clean_func in [str.strip, str.lower, strip_whitespace, strip_most_punctuation]:
+        subject = clean_func(subject)  # type: ignore
+
+    _split_result = re.split(_split_words_regexp, subject)
+    rejoined_word = [i for i in _split_result if i]
+
+    return rejoined_word
+
+
+def blockwords_to_snake_case(subject: str) -> str:
+    _wordlist = capitalized_block_to_words(subject)
+
+    return "_".join(_wordlist)
+
+
 # OpenNEM specific normalizers
 
 
