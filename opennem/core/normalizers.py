@@ -242,6 +242,14 @@ def strip_most_punctuation(subject: str) -> str:
     return re.sub(r"[\(\)#\$!_\?\s\@]+", "", subject)
 
 
+def strip_special_chars(subject: str) -> str:
+    """Strip out most special chars
+
+    @TODO this requires unit tests
+    """
+    return str(re.sub(r"[\s]+", "", subject.strip()))
+
+
 def normalize_whitespace(subject: str) -> str:
     return str(re.sub(r"\s{2,}", " ", subject.strip()))
 
