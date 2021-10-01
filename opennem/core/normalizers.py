@@ -333,6 +333,14 @@ def clean_sentence(sentence: str) -> str:
     return sentence_reformed
 
 
+# Case Styles
+# convert to/from various cases
+
+
+def snake_to_camel(string: str) -> str:
+    """Converts snake case to camel case. ie. field_name to FieldName"""
+    return "".join(word.capitalize() for word in string.split("_"))
+
 # OpenNEM specific normalizers
 
 
