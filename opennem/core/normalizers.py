@@ -238,6 +238,7 @@ def strip_whitespace(subject: str) -> str:
 
 
 def strip_most_punctuation(subject: str) -> str:
+    """Removes most puncuation from a string"""
     return re.sub(r"[\(\)#\$!_\?\s\@]+", "", subject)
 
 
