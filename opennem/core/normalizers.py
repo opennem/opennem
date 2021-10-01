@@ -9,7 +9,7 @@ import itertools
 import logging
 import re
 from decimal import Decimal
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Pattern, Union
 
 from opennem.core.station_names import station_map_name
 
@@ -235,6 +235,10 @@ def clean_float(number: Union[str, int, float]) -> Optional[float]:
 
 def strip_whitespace(subject: str) -> str:
     return str(re.sub(r"\s+", "", subject.strip()))
+
+
+def strip_most_punctuation(subject: str) -> str:
+    return re.sub(r"[\(\)#\$!_\?\s\@]+", "", subject)
 
 
 def normalize_whitespace(subject: str) -> str:
