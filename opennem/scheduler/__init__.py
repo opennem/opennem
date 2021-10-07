@@ -16,6 +16,7 @@ from opennem.api.export.tasks import (
     export_power,
 )
 from opennem.exporter.geojson import export_facility_geojson
+from opennem.monitors.set_outputs import run_set_output_check
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings
 
@@ -128,3 +129,10 @@ def schedule_export_geojson() -> None:
 def schedule_export_metadata() -> None:
     if settings.workers_run:
         export_metadata()
+
+
+# set output check
+@huey.periodic_task(crontab(hour="*/6"), priority=30)
+@huey.lock_task("schedule_run_set_output_check")
+def schedule_run_set_output_check() -> None:
+    run_set_output_check()
