@@ -40,7 +40,13 @@ from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
 from opennem.diff.versions import get_network_regions
 from opennem.schema.dates import TimeSeries
-from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
+from opennem.schema.network import (
+    NetworkAEMORooftop,
+    NetworkAEMORooftopBackfill,
+    NetworkAPVI,
+    NetworkNEM,
+    NetworkWEM,
+)
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.export.tasks")
@@ -537,6 +543,7 @@ def export_electricitymap() -> None:
         start=date_range.start,
         end=date_range.end,
         network=interchange_stat.network,
+        networks=[NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill],
         interval=interchange_stat.interval,
         period=interchange_stat.period,
     )
