@@ -70,6 +70,9 @@ def write_statset_to_s3(
     """
     s3_save_path = urljoin(f"https://{settings.s3_bucket_path}", file_path)
 
+    if file_path.startswith("/"):
+        file_path = file_path[1:]
+
     if not settings.s3_bucket_path:
         raise Exception("Require an S3 bucket to write to")
 
@@ -105,6 +108,9 @@ def write_to_s3(content: str, file_path: str, content_type: str = "application/j
     Write a string to s3
     """
     s3_save_path = urljoin(f"https://{settings.s3_bucket_path}", file_path)
+
+    if file_path.startswith("/"):
+        file_path = file_path[1:]
 
     if not settings.s3_bucket_path:
         raise Exception("Require an S3 bucket to write to")
