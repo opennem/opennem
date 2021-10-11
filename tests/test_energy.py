@@ -51,4 +51,6 @@ def test_energy_sum_outputs() -> None:
     # should be 50 records
     assert len(es) == 1536, "Has the correct number of records"
 
+    assert es.eoi_quantity.sum() > 1000, "Has energy value"
+
     return es
