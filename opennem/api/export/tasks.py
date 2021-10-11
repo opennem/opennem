@@ -437,7 +437,7 @@ def export_all_daily() -> None:
                 "Exporting for network {} and region {}".format(network.code, network_region.code)
             )
 
-            networks = [NetworkNEM, NetworkAEMORooftop]
+            networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             if network_region.code == "WEM":
                 networks = [NetworkWEM, NetworkAPVI]
@@ -624,8 +624,8 @@ def export_metadata() -> bool:
 
 # Debug Hooks
 if __name__ == "__main__":
-    export_power(priority=PriorityType.live)
-    export_energy(latest=True)
-    export_all_monthly()
+    # export_power(priority=PriorityType.live)
+    # export_energy(latest=True)
+    # export_all_monthly()
     export_all_daily()
-    export_electricitymap()
+    # export_electricitymap()
