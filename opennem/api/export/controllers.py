@@ -354,7 +354,6 @@ def power_week(
     # price
 
     time_series_price = time_series.copy()
-    time_series_price.interval = human_to_interval("30m")
 
     query = price_network_query(
         time_series=time_series_price,
@@ -376,7 +375,7 @@ def power_week(
         code=network_region_code or time_series.network.code.lower(),
         units=get_unit("price_energy_mega"),
         network=time_series.network,
-        interval=human_to_interval("30m"),
+        interval=time_series.interval,
         region=network_region_code,
         period=time_series.period,
         include_code=include_code,
