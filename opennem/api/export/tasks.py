@@ -45,6 +45,7 @@ from opennem.schema.network import (
     NetworkAEMORooftopBackfill,
     NetworkAPVI,
     NetworkNEM,
+    NetworkSchema,
     NetworkWEM,
 )
 from opennem.utils.version import get_version
@@ -416,12 +417,13 @@ def export_all_monthly() -> None:
     write_output("v3/stats/au/all/monthly.json", all_monthly)
 
 
-def export_all_daily(network_code: Optional[str] = None) -> None:
+def export_all_daily(
+    networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM],
+    network_region_code: Optional[str] = None,
+) -> None:
     session = SessionLocal()
 
     cpi = gov_stats_cpi()
-
-    networks = [NetworkNEM, NetworkWEM]
 
     for network in networks:
         network_regions = (
@@ -430,8 +432,8 @@ def export_all_daily(network_code: Optional[str] = None) -> None:
             .filter_by(network_id=network.code)
         )
 
-        if network_code:
-            network_regions = network_regions.filter_by(code="NSW1")
+        if network_region_code:
+            network_regions = network_regions.filter_by(code=network_region_code)
 
         network_regions = network_regions.all()
 
@@ -631,5 +633,5 @@ if __name__ == "__main__":
     # export_power(priority=PriorityType.live)
     # export_energy(latest=True)
     # export_all_monthly()
-    export_all_daily("NSW1")
+    export_all_daily(networks=[NetworkNEM], network_region_code="NSW1")
     # export_electricitymap()
