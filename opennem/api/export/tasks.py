@@ -416,7 +416,7 @@ def export_all_monthly() -> None:
     write_output("v3/stats/au/all/monthly.json", all_monthly)
 
 
-def export_all_daily() -> None:
+def export_all_daily(network_code: Optional[str] = None) -> None:
     session = SessionLocal()
 
     cpi = gov_stats_cpi()
@@ -428,8 +428,12 @@ def export_all_daily() -> None:
             session.query(NetworkRegion)
             .filter_by(export_set=True)
             .filter_by(network_id=network.code)
-            .all()
         )
+
+        if network_code:
+            network_regions = network_regions.filter_by(code="NSW1")
+
+        network_regions = network_regions.all()
 
         for network_region in network_regions:
 
@@ -627,5 +631,5 @@ if __name__ == "__main__":
     # export_power(priority=PriorityType.live)
     # export_energy(latest=True)
     # export_all_monthly()
-    export_all_daily()
+    export_all_daily("NSW1")
     # export_electricitymap()
