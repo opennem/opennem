@@ -58,7 +58,6 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
     else:
         __query = """
         select
-            -- fs.observation_time at time zone '{tz}' as ot,
             time_bucket_gapfill('30 minutes', fs.observation_time) as ot,
             fs.station_id as station_id,
             avg(fs.temp_air) as temp_air,
