@@ -212,7 +212,7 @@ def run_aggregates_facility_all_by_year() -> None:
 def run_aggregates_facility_all(network: NetworkSchema) -> None:
     scada_range: ScadaDateRange = get_scada_range(network=network)
 
-    scada_range.end += timedelta(days=1)
+    scada_range.end += timedelta(days=1)  # type: ignore
 
     if not scada_range:
         logger.error("Could not find a scada range for {}".format(network.code))
