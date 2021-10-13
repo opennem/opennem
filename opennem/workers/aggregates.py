@@ -251,7 +251,7 @@ def run_rooftop_fix() -> None:
 
 
 def run_aggregates_all() -> None:
-    for network in [NetworkWEM, NetworkNEM]:
+    for network in [NetworkNEM]:
         run_aggregates_facility_all(network)
 
 
