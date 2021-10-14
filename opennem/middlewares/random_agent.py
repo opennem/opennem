@@ -59,7 +59,7 @@ class RandomUserAgentMiddleware(UserAgentMiddleware):
 
     def process_request(self, request: Request, spider: Spider) -> None:
         if self.user_agent:
-            print("Setting user agent to: {}".format(self.user_agent))
+            logger.info("Setting user agent to: {}".format(self.user_agent))
             request.headers.setdefault(b"User-Agent", self.user_agent)
 
 
