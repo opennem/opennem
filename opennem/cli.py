@@ -86,6 +86,11 @@ def cmd_import_facilities() -> None:
 
 
 @click.command()
+def cmd_import_bom_stations() -> None:
+    load_bom_stations_json()
+
+
+@click.command()
 def cmd_import_mms() -> None:
     mms_export()
 
@@ -157,6 +162,7 @@ cmd_import.add_command(cmd_import_mms, name="mms")
 cmd_import.add_command(cmd_import_all, name="all")
 cmd_import.add_command(cmd_import_emissions, name="emissions")
 cmd_import.add_command(cmd_import_facilities, name="facilities")
+cmd_import.add_command(cmd_import_bom_stations, name="bom")
 
 cmd_export.add_command(cmd_export_all, name="all")
 cmd_export.add_command(cmd_export_power, name="power")
