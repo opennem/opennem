@@ -214,6 +214,11 @@ def load_bom_stations_json() -> None:
 
     codes = []
 
+    if not bom_stations:
+        logger.error("Could not load bom stations")
+
+    stations_imported = 0
+
     for bom_station in bom_stations:
 
         if "code" not in bom_station:
@@ -248,8 +253,10 @@ def load_bom_stations_json() -> None:
 
         station.geom = "SRID=4326;POINT({} {})".format(bom_station["lng"], bom_station["lat"])
 
+        stations_imported += 1
         session.add(station)
 
+    logger.info("Imported {} stations".format(stations_imported))
     session.commit()
 
 
