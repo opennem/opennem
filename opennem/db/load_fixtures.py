@@ -247,6 +247,9 @@ def load_bom_stations_json() -> None:
         station.state = bom_station["state"]
         station.altitude = bom_station["altitude"]
 
+        if "web_code" in bom_station:
+            station.web_code = bom_station["web_code"]
+
         if bom_station["code"] in bom_capitals:
             station.is_capital = True
             station.priority = 1
