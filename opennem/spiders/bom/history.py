@@ -7,7 +7,7 @@ from typing import Any, Dict, Generator, Optional
 import scrapy
 from scrapy.http import TextResponse
 
-from opennem.core.normalizers import is_number
+from opennem.core.normalizers import clean_float, is_number
 from opennem.pipelines.bom import StoreBomHistoryObservation
 from opennem.spiders.bom.utils import get_archive_page_for_station_code, get_stations_priority
 
@@ -82,8 +82,8 @@ class BOMHistorySpider(scrapy.Spider):
             records.append({
                 "observation_date": month.replace(day=day_of_month),
                 "code": code,
-                "temp_max": trow.css("td.xb::text").get(),
-                "temp_min": trow.css("td.c::text").get()
+                "temp_min": clean_float(trow.css("td.xb::text").get()),
+                "temp_max": clean_float(trow.css("td.c")[1].css("::text").get())
             })
 
         yield {"records": records}
