@@ -50,7 +50,6 @@ class BOMHistorySpider(scrapy.Spider):
         code = None
         month = None
 
-
         if "month" not in response.meta:
             yield None
 
