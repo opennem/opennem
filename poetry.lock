@@ -2252,7 +2252,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "18ff7267bc1a42b0fc58c1f124a3da66e2450ed3c324fe950619acfa9fbc088f"
+content-hash = "cad4a2f9f5da749a8b511ab7a9e30095c5f748bc88023b8c52b79f4641195760"
 
 [metadata.files]
 alembic = [
