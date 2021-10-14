@@ -238,6 +238,7 @@ class BomStation(Base):
     code = Column(Text, primary_key=True)
     state = Column(Text)
     name = Column(Text)
+    web_code = Column(Text, nullable=True)
     name_alias = Column(Text, nullable=True)
     registered = Column(Date)
 
