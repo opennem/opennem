@@ -12,8 +12,9 @@ export IPYTHONDIR=.ipython
 # Set the jupyter notebook config directory
 export JUPYTER_CONFIG_DIR=.jupyter
 
-# build options for scipy on m1 macs
-# export SYSTEM_VERSION_COMPAT=1 \
-#  LDFLAGS="-L/$(brew --prefix openblas)/lib" \
-#  CPPFLAGS="-I$(brew --prefix openblas)/include" \
-#  OPENBLAS="$(brew --prefix openblas)"
+# M1 homebrew links for builds of numpy and cryptography
+export SYSTEM_VERSION_COMPAT=1 \
+  LDFLAGS="-L/$(brew --prefix openblas)/lib -L$(brew --prefix libffi)/lib" \
+  CPPFLAGS="-I$(brew --prefix openblas)/include I$(brew --prefix libffi)/include" \
+  OPENBLAS="$(brew --prefix openblas)" \
+  CFLAGS="-falign-functions=8 ${CFLAGS}"
