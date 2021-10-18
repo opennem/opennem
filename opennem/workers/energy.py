@@ -553,4 +553,5 @@ def run_energy_update_facility(
 
 # debug entry point
 if __name__ == "__main__":
-    run_energy_update_days(days=3, networks=[NetworkNEM])
+    run_energy_update_all()
+    # run_energy_update_days(days=3, networks=[NetworkNEM])
