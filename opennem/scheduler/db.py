@@ -69,7 +69,7 @@ def db_refresh_energies_yesterday() -> None:
 
 
 @huey.periodic_task(crontab(hour="6", minute="45"))
-@huey.lock_task()
+@huey.lock_task("db_run_emission_tasks")
 def db_run_emission_tasks() -> None:
     try:
         run_emission_update_day(2)
