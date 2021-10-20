@@ -24,6 +24,8 @@ import numpy as np
 import pandas as pd
 
 from opennem.db import get_database_engine
+from opennem.schema.network import NetworkNEM
+from opennem.utils.dates import get_last_complete_day_for_network
 
 logger = logging.getLogger("opennem.workers.emission_flows")
 
@@ -311,6 +313,24 @@ def calc_day(day: datetime) -> None:
     daily_flow.to_sql("EMISSION_FLOW", engine=ENGINE, if_exist="append")
 
     # daily_flow.to_("~/emissions/daily_summary.csv".format(d.date()), mode='a', header=False)
+
+
+def run_emission_update_day(
+    days: int = 1,
+) -> None:
+    """Run energy sum update for yesterday. This task is scheduled
+    in scheduler/db"""
+
+
+    # This is Sydney time as the data is published in local time
+    today_midnight = get_last_complete_day_for_network(NetworkNEM)
+
+    date_max = today_midnight
+    date_min = today_midnight - timedelta(days=days)
+
+    calc_day(
+        today_midnight,
+    )
 
 
 if __name__ == "__main__":
