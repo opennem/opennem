@@ -35,7 +35,7 @@ class MMSArchiveBulkSpider(scrapy.Spider):
 
     def start_requests(self) -> Generator[scrapy.Request, None, None]:
         start_month = datetime(2021, 8, 1)
-        end_month = datetime(2019, 1, 1)
+        end_month = datetime(2010, 1, 1)
 
         for date in month_series(start_month, end_month, reverse=True):
             for table in self.tables:
