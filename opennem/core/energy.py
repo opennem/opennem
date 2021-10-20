@@ -108,7 +108,12 @@ def _energy_aggregate_compat(df: pd.DataFrame) -> pd.DataFrame:
     """v2 version of energy_sum for compat"""
     energy_genrecs = []
 
-    for day in get_day_range(df):
+    days = list(get_day_range(df))
+
+    if len(days) == 0:
+        logger.error("Got no days from day range")
+
+    for day in days:
         for duid in sorted(df.facility_code.unique()):
             energy_genrecs += [d for d in __trading_energy_generator(df, day, duid)]
 
