@@ -18,6 +18,7 @@ from opennem.settings import settings  # noqa: F401
 from opennem.utils.scrapyd import job_schedule_all
 from opennem.workers.aggregates import run_aggregates_all
 from opennem.workers.daily_summary import run_daily_fueltech_summary
+from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 
@@ -66,6 +67,15 @@ def db_refresh_material_views_recent() -> None:
 def db_refresh_energies_yesterday() -> None:
     run_energy_update_days(days=2)
 
+
+@huey.periodic_task(crontab(hour="6", minute="45"))
+@huey.lock_task()
+def db_run_emission_tasks() -> None:
+    try:
+        run_emission_update_day(2)
+    except Exception as e:
+        # logger.error()
+        pass
 
 # monitoring tasks
 @huey.periodic_task(crontab(minute="*/60"), priority=80)
