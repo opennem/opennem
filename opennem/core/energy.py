@@ -94,8 +94,8 @@ def __trading_energy_generator(
 
 def get_day_range(df: pd.DataFrame) -> Generator[date, None, None]:
     """Get the day range for a dataframe"""
-    max_date = (df.index.min() + timedelta(days=1)).date()
-    min_date = (df.index.max() - timedelta(days=1)).date()
+    min_date = (df.index.min() + timedelta(days=1)).date()
+    max_date = (df.index.max() - timedelta(days=1)).date()
 
     cur_day = min_date
 
