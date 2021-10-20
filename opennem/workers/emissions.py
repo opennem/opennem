@@ -335,10 +335,11 @@ def run_emission_update_day(
         current_day -= timedelta(days=1)
 
 
+def _test_case() -> None:
+    test_date = datetime.fromisoformat("2021-10-01T00:00:00")
+    calc_day(test_date)
+
+
 if __name__ == "__main__":
     logger.info("starting")
-
-    test_date = datetime.fromisoformat("2021-10-01T00:00:00")
-
     run_emission_update_day(7)
-    # calc_day(test_date)
