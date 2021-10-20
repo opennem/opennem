@@ -79,6 +79,7 @@ def db_run_emission_tasks() -> None:
     except Exception as e:
         logger.error("Error running emission update: {}".format(str(e)))
 
+
 # monitoring tasks
 @huey.periodic_task(crontab(minute="*/60"), priority=80)
 @huey.lock_task("monitor_opennem_intervals")
