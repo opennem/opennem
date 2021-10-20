@@ -37,7 +37,7 @@ def test_energy_sum_average_fixture() -> None:
     assert len(records) == 32288, "Right length of records"
 
 
-def test_energy_sum_outputs() -> None:
+def _test_energy_sum_outputs() -> None:
     records = load_energy_fixture_csv("nem_generated_coal_black.csv")
 
     assert len(records) == 50, "Has the correct number of records"
