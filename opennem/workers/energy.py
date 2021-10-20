@@ -551,6 +551,16 @@ def run_energy_update_facility(
     )
 
 
+def _test_case() -> None:
+    """ Run a test case so we can attach debugger """
+    run_energy_calc(
+        date_min=datetime.fromisoformat("2020-12-31 23:50:00+10:00"),
+        date_max=datetime.fromisoformat("2021-02-01 00:10:00+10:00"),
+        network=NetworkNEM,
+        region="NSW1",
+        fueltech_id="coal_black"
+    )
+
 # debug entry point
 if __name__ == "__main__":
     run_energy_update_all()
