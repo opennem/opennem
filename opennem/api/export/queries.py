@@ -84,7 +84,6 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
         group by 1, 2
         order by 1 desc;
         """.format(
-            tz=time_series.network.timezone_database,
             station_codes=",".join(["'{}'".format(i) for i in station_codes]),
             date_start=time_series.get_range().start,
             date_end=time_series.get_range().end,
