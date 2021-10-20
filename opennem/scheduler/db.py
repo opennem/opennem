@@ -1,6 +1,7 @@
 # pylint: disable=no-name-in-module
 # pylint: disable=no-self-argument
 # pylint: disable=no-member
+import logging
 import platform
 
 from huey import PriorityRedisHuey, crontab
@@ -32,6 +33,8 @@ if platform.system() == "Darwin":
         # sometimes it has already been set by
         # other libs
         pass
+
+logger = logging.getLogger("openenm.scheduler.db")
 
 redis_host = None
 
@@ -74,8 +77,7 @@ def db_run_emission_tasks() -> None:
     try:
         run_emission_update_day(2)
     except Exception as e:
-        # logger.error()
-        pass
+        logger.error("Error running emission update: {}".format(str(e)))
 
 # monitoring tasks
 @huey.periodic_task(crontab(minute="*/60"), priority=80)
