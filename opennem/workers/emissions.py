@@ -318,19 +318,21 @@ def calc_day(day: datetime) -> None:
 def run_emission_update_day(
     days: int = 1,
 ) -> None:
-    """Run energy sum update for yesterday. This task is scheduled
-    in scheduler/db"""
-
-
+    """Run emission calcs for number of days"""
     # This is Sydney time as the data is published in local time
     today_midnight = get_last_complete_day_for_network(NetworkNEM)
 
-    date_max = today_midnight
+    current_day = today_midnight
     date_min = today_midnight - timedelta(days=days)
 
-    calc_day(
-        today_midnight,
-    )
+    while current_day >= date_min:
+        logger.info("Running emission update for {}".format(current_day))
+
+        calc_day(
+            current_day,
+        )
+
+        current_day -= timedelta(days=1)
 
 
 if __name__ == "__main__":
@@ -338,4 +340,5 @@ if __name__ == "__main__":
 
     test_date = datetime.fromisoformat("2021-10-01T00:00:00")
 
-    calc_day(test_date)
+    run_emission_update_day(7)
+    # calc_day(test_date)
