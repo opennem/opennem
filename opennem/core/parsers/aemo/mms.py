@@ -170,7 +170,6 @@ class AEMOTableSet(BaseModel):
 
         return found_table
 
-
     def add_table(self, table: AEMOTableSchema) -> bool:
         self.tables.append(table)
 
