@@ -591,6 +591,7 @@ class Facility(Base, BaseModel):
     # interconnector metadata
     interconnector = Column(Boolean, default=False, index=True)
     interconnector_region_to = Column(Text, nullable=True, index=True)
+    interconnector_region_from = Column(Text, nullable=True, index=True)
 
     # first seen / last seen in scada data
     data_first_seen = Column(DateTime(timezone=True), nullable=True, index=True)
