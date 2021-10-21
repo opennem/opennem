@@ -147,6 +147,8 @@ class AEMOTableSet(BaseModel):
         return _names
 
     def has_table(self, table_name: str) -> bool:
+        found_table: bool = False
+
         if not self.tables:
             return False
 
@@ -155,7 +157,19 @@ class AEMOTableSet(BaseModel):
 
         table_lookup = list(filter(lambda t: t.full_name == table_name, self.tables))
 
-        return len(table_lookup) > 0
+        if len(table_lookup) > 0:
+            return True
+
+        # if not found search by name only
+        table_lookup = list(filter(lambda t: t.name == table_name, self.tables))
+
+        if len(table_lookup) > 0:
+            return True
+
+        logger.debug("Looking up table: {} amongst ({})".format(table_name, ", ".join([i.name for i in self.tables])))
+
+        return found_table
+
 
     def add_table(self, table: AEMOTableSchema) -> bool:
         self.tables.append(table)
@@ -163,15 +177,23 @@ class AEMOTableSet(BaseModel):
         return True
 
     def get_table(self, table_name: str) -> Optional[AEMOTableSchema]:
-        table_name = table_name.upper()
-
         if not self.has_table(table_name):
             return None
             # raise Exception("Table not found: {}".format(table_name))
 
         table_lookup = list(filter(lambda t: t.full_name == table_name, self.tables))
 
-        return table_lookup.pop()
+        if table_lookup:
+            return table_lookup.pop()
+
+        table_lookup = list(filter(lambda t: t.name == table_name, self.tables))
+
+        if table_lookup:
+            return table_lookup.pop()
+
+        logger.debug("Looking up table: {} amongst ({})".format(table_name, ", ".join([i.name for i in self.tables])))
+
+        return None
 
 
 class AEMOParserException(Exception):
