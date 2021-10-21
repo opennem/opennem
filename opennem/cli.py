@@ -14,6 +14,7 @@ from opennem.importer.all import run_all
 from opennem.importer.db import import_facilities
 from opennem.importer.db import init as db_init
 from opennem.importer.emissions import import_emissions_map
+from opennem.importer.interconnectors import import_nem_interconnects
 from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_import
 from opennem.settings import settings
@@ -106,6 +107,11 @@ def cmd_import_emissions() -> None:
 
 
 @click.command()
+def cmd_import_interconnectors() -> None:
+    import_nem_interconnects()
+
+
+@click.command()
 def cmd_export_power() -> None:
     export_power(priority=PriorityType.live)
 
@@ -163,6 +169,7 @@ cmd_import.add_command(cmd_import_all, name="all")
 cmd_import.add_command(cmd_import_emissions, name="emissions")
 cmd_import.add_command(cmd_import_facilities, name="facilities")
 cmd_import.add_command(cmd_import_bom_stations, name="bom")
+cmd_import.add_command(cmd_import_interconnectors, name="interconnectors")
 
 cmd_export.add_command(cmd_export_all, name="all")
 cmd_export.add_command(cmd_export_power, name="power")
