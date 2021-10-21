@@ -55,4 +55,4 @@ class ItemMessageFilter(Filter):
             # Make the message everything but the item itself
             record.msg = match.group(1)
         # Don't actually want to filter out this record, so always return 1
-        return 1
+        return True
