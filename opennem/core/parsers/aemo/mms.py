@@ -153,8 +153,6 @@ class AEMOTableSet(BaseModel):
         if len(self.tables) < 1:
             return False
 
-        table_name = table_name.upper()
-
         table_lookup = list(filter(lambda t: t.full_name == table_name, self.tables))
 
         return len(table_lookup) > 0
