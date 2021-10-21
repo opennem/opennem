@@ -126,6 +126,8 @@ class OpennemSettings(BaseSettings):
     # this is the feedback board
     feedback_trello_board_id: str = "60a48f32c97cf221e3d4bec1"
 
+    willyweather_api_key: Optional[str]
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
