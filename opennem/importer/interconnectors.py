@@ -19,8 +19,8 @@ from opennem.utils.mime import decode_bytes
 
 logger = logging.getLogger(__name__)
 
-INTERCONNECTOR_TABLE = "market_config_interconnector"
-
+# INTERCONNECTOR_TABLE = "market_config_interconnector"  # full name with namespace
+INTERCONNECTOR_TABLE = "interconnector"
 
 def import_nem_interconnects() -> None:
     session = SessionLocal()
@@ -49,6 +49,7 @@ def import_nem_interconnects() -> None:
 
     if not aemo_table_set.has_table(INTERCONNECTOR_TABLE):
         logger.error("Could not find table {}".format(INTERCONNECTOR_TABLE))
+        logger.info("Have tables: {}".format(", ".join([i.name for i in aemo_table_set.tables])))
         return None
 
     int_table = aemo_table_set.get_table(INTERCONNECTOR_TABLE)
@@ -56,11 +57,16 @@ def import_nem_interconnects() -> None:
     if not int_table:
         logger.error("Could not fetch table: {}".format(INTERCONNECTOR_TABLE))
 
-    records: List[MarketConfigInterconnector] = int_table.get_records()
+    records: List[MarketConfigInterconnector] = int_table.records
 
     for interconnector in records:
         if not isinstance(interconnector, MarketConfigInterconnector):
-            raise Exception("Not what we're looking for ")
+            logger.debug(interconnector)
+
+            if isinstance(interconnector, dict) and "interconnectorid" in interconnector:
+                interconnector = MarketConfigInterconnector(**interconnector)
+                # raise Exception("Not what we're looking for ")
+
 
         # skip SNOWY
         # @TODO do these need to be remapped for historical
@@ -118,6 +124,7 @@ def import_nem_interconnects() -> None:
 
         int_facility.interconnector = True
         int_facility.interconnector_region_to = interconnector.regionto
+        int_facility.interconnector_region_from = interconnector.regionfrom
 
         interconnector_station.facilities.append(int_facility)
 
