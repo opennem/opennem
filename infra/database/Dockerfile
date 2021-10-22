@@ -25,7 +25,7 @@ ARG GITHUB_TAG
 RUN git clone "https://github.com/${GITHUB_REPO}" /build/timescaledb;
 
 # Build timescaledb extension from source version
-ARG TIMESCALE_VERSION=2.4.1
+ARG TIMESCALE_VERSION=2.4.2
 RUN cd /build/timescaledb \
   && git reset HEAD --hard \
   && git clean -f -d -x \
