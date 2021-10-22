@@ -21,6 +21,8 @@ sed -i '/max_connections/d' $CONF
 cat > ${ROOT_CONF}/optimisations.conf <<EOF
 max_connections = ${POSTGRES_MAX_CONNECTIONS}
 shared_buffers = ${POSTGRES_SHARED_BUFFERS}
+max_locks_per_transaction = 512
+max_parallel_workers = 0
 EOF
 
 
