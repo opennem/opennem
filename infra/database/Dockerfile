@@ -5,7 +5,7 @@
 FROM nikc9/postgis:latest as base
 
 # Install build requirements
-ENV BUILD_PACKAGES="lsb-release git binutils vim libc6-dev patchutils gcc libc-dev make cmake libssl-dev devscripts equivs libkrb5-dev"
+ENV BUILD_PACKAGES="lsb-release postgresql-client-12 git binutils vim libc6-dev patchutils gcc libc-dev make cmake libssl-dev devscripts equivs libkrb5-dev"
 RUN set -eux \
   && export DEBIAN_FRONTEND=noninteractive \
   && apt-get -y update \
