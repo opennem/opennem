@@ -175,7 +175,7 @@ def network_region_price_query(time_series: TimeSeries) -> str:
             bs.trading_interval >= '{date_min}'
             and bs.trading_interval < '{date_max}'
             and bs.network_id = '{network_id}'
-            and bs.network_region IN ({network_regions})
+            {network_regions_query}
         group by 1;
     """
 
@@ -183,13 +183,19 @@ def network_region_price_query(time_series: TimeSeries) -> str:
 
     date_min: datetime = date_range.end - timedelta(days=1)
 
+    network_regions_query = ""
+
+    if time_series.network.regions:
+        network_regions: str = ",".join([f"'{i.code}'" for i in time_series.network.regions])
+        network_regions_query = f"and bs.network_region IN ({network_regions})"
+
     query = dedent(
         __query.format(
             network_id=time_series.network.code,
             trunc=time_series.interval.interval_human,
             date_max=date_range.end,
             date_min=date_min,
-            network_regions=",".join(time_series.network.regions),
+            network_regions_query=network_regions_query,
         )
     )
     return query
