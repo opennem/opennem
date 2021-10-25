@@ -161,3 +161,35 @@ def network_fueltech_demand_query(time_series: TimeSeries) -> str:
         )
     )
     return query
+
+
+def network_region_price_query(time_series: TimeSeries) -> str:
+    __query = """
+        select
+            time_bucket('{trunc}', bs.trading_interval) as trading_interval,
+            bs.network_id,
+            bs.network_region,
+            coalesce(avg(bs.price), avg(bs.price_dispatch)) as price
+        from balancing_summary bs
+        where
+            bs.trading_interval >= '{date_min}'
+            and bs.trading_interval < '{date_max}'
+            and bs.network_id = '{network_id}'
+            and bs.network_region IN ({network_regions})
+        group by 1;
+    """
+
+    date_range = time_series.get_range()
+
+    date_min: datetime = date_range.end - timedelta(days=1)
+
+    query = dedent(
+        __query.format(
+            network_id=time_series.network.code,
+            trunc=time_series.interval.interval_human,
+            date_max=date_range.end,
+            date_min=date_min,
+            network_regions=",".join(time_series.network.regions),
+        )
+    )
+    return query
