@@ -134,8 +134,6 @@ def spider_catchup_tasks() -> None:
         "au.nem.day.dispatch_scada",
         "au.nem.day.rooftop",
         "au.nem.day.trading_is",
-        "au.nem.week.dispatch",
-        "au.nem.week.dispatch_actual_gen",
     ]
 
     for _spider_name in catchup_spiders:
@@ -146,9 +144,6 @@ def spider_catchup_tasks() -> None:
 @huey.lock_task("spider_live_tasks")
 def spider_live_tasks() -> None:
     latest_spiders = [
-        # "au.apvi.latest.data",
-        "au.nem.latest.dispatch",
-        "au.nem.latest.dispatch_actual_gen",
         "au.nem.latest.dispatch_is",
         "au.nem.latest.rooftop",
         "au.nem.latest.rooftop_forecast",
@@ -156,4 +151,16 @@ def spider_live_tasks() -> None:
     ]
 
     for _spider_name in latest_spiders:
+        job_schedule_all(_spider_name)
+
+
+@huey.periodic_task(crontab(hour="4,5,6,13,16,17", minute="5,35"))
+@huey.lock_task("spider_next_day_dispatches")
+def spider_next_day_dispatches() -> None:
+    catchup_spiders = [
+        "au.nem.latest.dispatch",
+        "au.nem.latest.dispatch_actual_gen",
+    ]
+
+    for _spider_name in catchup_spiders:
         job_schedule_all(_spider_name)
