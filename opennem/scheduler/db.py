@@ -131,7 +131,6 @@ def spider_catchup_tasks() -> None:
         "au.bom.capitals",
         "au.apvi.current",
         "au.nem.day.dispatch_is",
-        "au.nem.day.dispatch_scada",
         "au.nem.day.rooftop",
         "au.nem.day.trading_is",
     ]
@@ -144,7 +143,7 @@ def spider_catchup_tasks() -> None:
 @huey.lock_task("spider_live_tasks")
 def spider_live_tasks() -> None:
     latest_spiders = [
-        "au.nem.latest.dispatch_is",
+        "au.nem.latest.dispatch_scada",
         "au.nem.latest.rooftop",
         "au.nem.latest.rooftop_forecast",
         "au.nem.latest.trading_is",
