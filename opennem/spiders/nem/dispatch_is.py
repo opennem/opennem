@@ -8,6 +8,7 @@ class NemwebLatestDispatchIS(NemwebSpider):
     process_latest = True
     name = "au.nem.latest.dispatch_is"
     start_url = "http://nemweb.com.au/Reports/Current/DispatchIS_Reports/"
+    limit = 3
 
     pipelines_extra = set(
         [
