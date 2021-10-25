@@ -176,7 +176,7 @@ def network_region_price_query(time_series: TimeSeries) -> str:
             and bs.trading_interval < '{date_max}'
             and bs.network_id = '{network_id}'
             {network_regions_query}
-        group by 1;
+        group by 1, 2, 3;
     """
 
     date_range = time_series.get_range()
