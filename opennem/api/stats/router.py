@@ -2,7 +2,8 @@ import logging
 from datetime import date, datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Path, Query
+from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -623,10 +624,16 @@ def fueltech_demand_mix(
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
+@router.get(
+    "/price/{network_code}",
+    name="Price history by network and network region",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+)
 def price_network_endpoint(
-    engine=Depends(get_database_engine),  # type: ignore
-    network_code: str = Query(..., description="Network code"),
-    network_region: str = Query(None, description="Network region code"),
+    engine: Engine = Depends(get_database_engine),
+    network_code: str = Path(..., description="Network code"),
+    network_region: Optional[str] = Query(None, description="Network region code"),
 ) -> OpennemDataSet:
     """Returns network and network region price info for interval which defaults to network
     interval size
