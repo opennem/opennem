@@ -45,7 +45,6 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 def schedule_live_tasks() -> None:
     if settings.workers_run:
         export_power(priority=PriorityType.live)
-        export_flows()
 
 
 @huey.periodic_task(crontab(minute="*/15"), priority=90)
@@ -53,6 +52,7 @@ def schedule_live_tasks() -> None:
 def schedule_custom_tasks() -> None:
     if settings.workers_run:
         export_electricitymap()
+        export_flows()
 
 
 @huey.periodic_task(crontab(hour="*/2", minute="15"), priority=50)
