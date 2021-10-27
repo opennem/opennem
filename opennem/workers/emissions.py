@@ -332,7 +332,7 @@ def run_emission_update_day(
             current_day,
         )
 
-        current_day -= timedelta(days=1)
+        current_day -= timedelta(days=days)
 
 
 def _test_case() -> None:
