@@ -171,6 +171,7 @@ def spider_next_day_dispatches() -> None:
 @huey.lock_task("spider_schedule_wem")
 def spider_schedule_wem() -> None:
     wem_spiders = [
+        "au.apvi.latest.data",
         "au.wem.current.balancing_summary",
         "au.wem.current.facility_scada",
         "au.wem.live.facility_intervals",
