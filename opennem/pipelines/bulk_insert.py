@@ -174,7 +174,7 @@ class BulkInsertPipeline(object):
                 link_dt = single_item["link_dt"]
                 last_processed_dt = link_dt
             else:
-                logger.error("No link_dt in item. keys: {}".format(",".join(single_item.keys())))
+                logger.debug("No link_dt in item. keys: {}".format(",".join(single_item.keys())))
 
             if last_processed_dt:
                 crawler_set_meta(spider, CrawlStatTypes.latest_processed, last_processed_dt)
