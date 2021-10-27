@@ -16,6 +16,7 @@ from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, Station
 from opennem.schema.dates import TimeSeries
+from opennem.schema.network import NetworkNetworkRegion
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_scada_range, stats_factory
@@ -679,6 +680,9 @@ def price_network_endpoint(
         interval=interval_obj,
         period=period_obj,
     )
+
+    if network_region:
+        time_series.network.regions = [NetworkNetworkRegion(code=network_region)]
 
     query = network_region_price_query(time_series=time_series)
 
