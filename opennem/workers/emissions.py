@@ -29,22 +29,44 @@ from opennem.utils.dates import get_last_complete_day_for_network
 
 logger = logging.getLogger("opennem.workers.emission_flows")
 
-ENGINE = get_database_engine()
+engine = get_database_engine()
 
 
 def load_interconnector(date_start: datetime, date_end: datetime) -> pd.DataFrame:
-    """Load interconnector power"""
+    """Load interconnector for a date range"""
 
     query = """
+        select
+            sum(generated),
+            f.interconnector_region_to,
+            f.interconnector_region_from
+        from facility_scada fs
+        left join facility f on f.code = fs.facility_code
+        where
+            f.interconnector is True
+            and fs.trading_interval >= '{date_start}'
+            and fs.trading_interval < '{date_end}'
+        group by 2, 3;
+    """.format(
+        date_start=date_start, date_end=date_end
+    )
 
+    engine = get_database_engine()
+    results = []
 
-    """
+    with engine.connect() as c:
+        logger.debug(query)
 
-    # interconnector fields
-    fields = ["METEREDMWFLOW", "INTERVENTION", "FROM_REGIONID", "TO_REGIONID"]
-    data = {}
+        try:
+            results = list(c.execute(query))
+        except Exception as e:
+            logger.error(e)
 
-    df = pd.DataFrame(data, fields)
+    logger.debug("Got back {} flow rows".format(len(results)))
+
+    fields = ["METEREDMWFLOW", "FROM_REGIONID", "TO_REGIONID"]
+
+    df = pd.DataFrame(results, fields)
 
     return df
 
@@ -230,7 +252,7 @@ def load_factors() -> pd.DataFrame:
             INNER JOIN mms.GENSET GS ON GS.ID = GU.GENSETID
             INNER JOIN STATION S ON S.ID = GU.STATIONID
         """
-    return pd.read_sql(sql, con=ENGINE)
+    return pd.read_sql(sql, con=engine)
 
 
 def load_stations() -> pd.DataFrame:
@@ -242,7 +264,7 @@ def load_stations() -> pd.DataFrame:
         FROM DUDETAILSUMMARY
         GROUP BY DUID"""
 
-    return pd.read_sql(sql, con=ENGINE)
+    return pd.read_sql(sql, con=engine)
 
 
 def dispatch_all_int(date_start: datetime, date_end: datetime) -> pd.DataFrame:
@@ -310,7 +332,7 @@ def calc_day(day: datetime) -> None:
     daily_flow["DATE"] = day
 
     # insert into db
-    daily_flow.to_sql("EMISSION_FLOW", engine=ENGINE, if_exist="append")
+    daily_flow.to_sql("EMISSION_FLOW", engine=engine, if_exist="append")
 
     # daily_flow.to_("~/emissions/daily_summary.csv".format(d.date()), mode='a', header=False)
 
