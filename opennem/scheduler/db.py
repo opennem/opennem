@@ -187,6 +187,7 @@ def spider_schedule_wem() -> None:
         "au.wem.current.balancing_summary",
         "au.wem.current.facility_scada",
         "au.wem.live.facility_intervals",
+        "au.wem.facilities",
         "au.wem.live.pulse",
     ]
 
