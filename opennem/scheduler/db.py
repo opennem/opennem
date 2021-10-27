@@ -68,7 +68,8 @@ def db_refresh_material_views_recent() -> None:
 # @NOTE optimized can now run every hour but shouldn't have to
 @huey.periodic_task(crontab(hour="*/3", minute="30"))
 def db_refresh_energies_yesterday() -> None:
-    run_energy_update_days(days=2)
+    pass
+    # run_energy_update_days(days=2)
 
 
 @huey.periodic_task(crontab(hour="6", minute="45"))
