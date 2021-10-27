@@ -175,3 +175,6 @@ def spider_schedule_wem() -> None:
         "au.wem.live.facility_intervals",
         "au.wem.live.pulse",
     ]
+
+    for _spider_name in wem_spiders:
+        job_schedule_all(_spider_name)
