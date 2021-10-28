@@ -8,7 +8,6 @@ import logging
 from datetime import datetime
 
 from scrapy import signals
-from scrapy.exceptions import NotConfigured
 
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_set_meta
 
