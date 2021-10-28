@@ -102,6 +102,5 @@ class LinkExtract(object):
 
             item["content"] = content
             item["extension"] = file_extension
-            return item
 
         return item
