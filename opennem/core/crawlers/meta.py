@@ -7,7 +7,7 @@ Gets metadata about crawls from the database
 import logging
 from datetime import datetime
 from enum import Enum
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from scrapy import Spider
 
@@ -20,11 +20,17 @@ logger = logging.getLogger("opennem.spider.meta")
 
 class CrawlStatTypes(Enum):
     last_crawled = "last_crawled"
+    latest_processed = "latest_processed"
     data = "data"
 
 
-def crawler_get_meta(spider: Spider, key: str) -> Union[str, datetime]:
-    pass
+def crawler_get_meta(spider: Spider, key: CrawlStatTypes) -> Optional[Union[str, datetime]]:
+    session = SessionLocal()
+
+    spider_meta = session.query(CrawlMeta).filter_by(spider_name=spider.name).one_or_none()
+
+    if not spider_meta:
+        return None
 
 
 def crawler_set_meta(spider: Spider, key: CrawlStatTypes, value: Any) -> None:

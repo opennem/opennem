@@ -7,6 +7,7 @@ from urllib.parse import ParseResult, urlparse
 
 import scrapy
 from scrapy import Spider
+from scrapy.http import Response
 
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import parse_date
@@ -102,7 +103,7 @@ class DirlistingSpider(Spider):
         for url in starts:
             yield scrapy.Request(url)
 
-    def parse(self, response) -> Generator[Dict[str, Any], None, None]:
+    def parse(self, response: Response) -> Generator[Dict[str, Any], None, None]:
         links = list(reversed([i.get() for i in response.xpath("//body/pre/a/@href")]))
 
         if self.filename:
