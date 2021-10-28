@@ -5,10 +5,9 @@ from opennem.spiders.nemweb import NemwebSpider
 
 
 class NemwebDispatchActualGenLatest(NemwebSpider):
+    process_latest = True
     name = "au.nem.latest.dispatch_actual_gen"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/"
-
-    limit = 1
 
     pipelines_extra = set(
         [
