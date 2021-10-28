@@ -9,6 +9,7 @@ import scrapy
 from scrapy import Spider
 from scrapy.http import Response
 
+from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_meta
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import parse_date
 
@@ -16,11 +17,29 @@ PADDING_WIDTH = 3
 
 __is_number = re.compile(r"^\d+$")
 
+__match_link_dt = re.compile(r"_(?P<datetime>\d{12})_")
+
 
 def is_number(value: str) -> bool:
     if re.match(__is_number, value):
         return True
     return False
+
+
+def get_link_datetime(link: str) -> Optional[datetime]:
+    _dt_matches = re.search(__match_link_dt, link)
+
+    if not _dt_matches:
+        return None
+
+    if "datetime" not in _dt_matches.groupdict().keys():
+        return None
+
+    _dt_str = _dt_matches.group("datetime")
+
+    dt = datetime.strptime(_dt_str, "%Y%m%d%H%M")
+
+    return dt
 
 
 def parse_dirlisting(raw_string: str) -> Dict[str, Any]:
@@ -77,6 +96,9 @@ class DirlistingSpider(Spider):
 
     """
 
+    # process only the latest using crawl meta
+    process_latest: bool = False
+
     limit: int = 0
 
     skip: int = 0
@@ -105,6 +127,10 @@ class DirlistingSpider(Spider):
 
     def parse(self, response: Response) -> Generator[Dict[str, Any], None, None]:
         links = list(reversed([i.get() for i in response.xpath("//body/pre/a/@href")]))
+        latest_processed: Optional[datetime] = None
+
+        if self.process_latest:
+            latest_processed = crawler_get_meta(self, CrawlStatTypes.latest_processed)
 
         if self.filename:
             self.skip = 0
@@ -117,6 +143,7 @@ class DirlistingSpider(Spider):
 
         for link in links:
             link = response.urljoin(link)
+            link_dt = get_link_datetime(link)
 
             if link.endswith("/"):
                 continue
@@ -134,6 +161,11 @@ class DirlistingSpider(Spider):
                     logging.INFO,
                 )
                 continue
+
+            if self.process_latest and latest_processed and link_dt:
+                if latest_processed >= link_dt:
+                    logging.debug("Last processed skipping: {}".format(link))
+                    continue
 
             if (
                 self.filename_filter
@@ -158,4 +190,4 @@ class DirlistingSpider(Spider):
 
             self.log("Getting {}".format(link), logging.INFO)
 
-            yield {"link": link}
+            yield {"link": link, "link_dt": link_dt}
