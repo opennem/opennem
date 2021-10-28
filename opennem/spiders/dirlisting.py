@@ -97,7 +97,7 @@ class DirlistingSpider(Spider):
             starts = [self.start_url]
 
         if hasattr(self, "start_urls") and self.start_urls and type(self.start_urls) is list:
-            starts = [self.start_urls]
+            starts = self.start_urls
 
         for url in starts:
             yield scrapy.Request(url)
