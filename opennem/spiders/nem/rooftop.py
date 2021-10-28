@@ -10,7 +10,7 @@ class NemwebLatestRooftopActual(NemwebSpider):
     process_latest = True
     name = "au.nem.latest.rooftop"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/"
-    # limit = 3
+    limit = 3
 
     # Ignore sat
     filename_filter = re.compile(r".*_MEASUREMENT_.*")

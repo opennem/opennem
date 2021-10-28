@@ -7,6 +7,7 @@ from opennem.spiders.nemweb import NemwebSpider
 
 
 class NemwebLatestRooftopForecast(NemwebSpider):
+    process_latest = True
     name = "au.nem.latest.rooftop_forecast"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/"
     limit = 2

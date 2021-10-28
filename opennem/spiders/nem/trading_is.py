@@ -5,6 +5,7 @@ from opennem.spiders.nemweb import NemwebSpider
 
 
 class NemwebLatestTradingIS(NemwebSpider):
+    process_latest = True
     name = "au.nem.latest.trading_is"
     start_url = "http://nemweb.com.au/Reports/Current/TradingIS_Reports/"
     limit = 3
