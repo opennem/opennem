@@ -749,7 +749,7 @@ TABLE_PROCESSOR_MAP = {
 
 class NemwebUnitScadaOpenNEMStorePipeline(object):
     @check_spider_pipeline
-    def process_item(self, item: Dict[str, Any], spider=None) -> List:
+    def process_item(self, item: Dict[str, Any], spider: Optional[Spider] = None) -> List:
         if not item:
             msg = "NemwebUnitScadaOpenNEMStorePipeline"
             if spider and hasattr(spider, "name"):
