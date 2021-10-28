@@ -75,6 +75,8 @@ def get_aemo_5min_data(interval: str = "5MIN") -> Optional[Dict]:
 
     if not r.ok:
         logger.error("Response {}: {}".format(r.status_code, str(r.content)))
+        logger.debug(r.request.headers)
+        logger.debug(r.headers)
         return None
 
     try:
