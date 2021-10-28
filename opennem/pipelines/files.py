@@ -1,9 +1,11 @@
 import logging
 import os
 from io import BytesIO
+from typing import Any, Dict
 from zipfile import ZipFile
 
 from requests import RequestException
+from scrapy import Spider
 
 from opennem.utils.handlers import _handle_zip, chain_streams, open
 from opennem.utils.http import http
@@ -67,7 +69,7 @@ class LinkExtract(object):
     """
 
     @check_spider_pipeline
-    def process_item(self, item, spider):
+    def process_item(self, item, spider: Spider) -> Dict[str, Any]:
         if "link" not in item:
             return item
 
@@ -101,3 +103,5 @@ class LinkExtract(object):
             item["content"] = content
             item["extension"] = file_extension
             return item
+
+        return item
