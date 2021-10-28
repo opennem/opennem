@@ -32,6 +32,14 @@ def crawler_get_meta(spider: Spider, key: CrawlStatTypes) -> Optional[Union[str,
     if not spider_meta:
         return None
 
+    if not spider_meta.data:
+        return None
+
+    if key.value not in spider_meta.data:
+        return None
+
+    return spider_meta.data[key.value]
+
 
 def crawler_set_meta(spider: Spider, key: CrawlStatTypes, value: Any) -> None:
     session = SessionLocal()
