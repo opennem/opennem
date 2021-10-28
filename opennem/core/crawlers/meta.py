@@ -44,6 +44,19 @@ def crawler_get_meta(spider: Spider, key: CrawlStatTypes) -> Optional[Union[str,
 def crawler_set_meta(spider: Spider, key: CrawlStatTypes, value: Any) -> None:
     session = SessionLocal()
 
+    if key == CrawlStatTypes.latest_processed:
+        current_value = crawler_get_meta(spider, key)
+
+        try:
+            if current_value and current_value >= value:
+                return None
+        except TypeError:
+            logger.error(
+                "Error comparing {} ({}) and {} ({})".format(
+                    current_value, type(current_value), value, type(value)
+                )
+            )
+
     spider_meta = session.query(CrawlMeta).filter_by(spider_name=spider.name).one_or_none()
 
     if not spider_meta:
