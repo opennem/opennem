@@ -755,7 +755,7 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
             if spider and hasattr(spider, "name"):
                 msg = spider.name
             logger.error("No item in pipeline: {}".format(msg))
-            return {}
+            return []
 
         if "tables" not in item:
             print(item)
