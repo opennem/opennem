@@ -23,6 +23,7 @@ AEMO_5MIN_RESPONSE_KEY = "5MIN"
 class AEMOPeriodType(Enum):
     actual = "ACTUAL"
     scheduled = "SCHEDULED"
+    forecast = "FORECAST"
 
 
 class AEMO5MinAPIResponse(BaseModel):
