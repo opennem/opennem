@@ -4,10 +4,10 @@ from opennem.pipelines.nem.opennem import NemwebUnitScadaOpenNEMStorePipeline
 from opennem.spiders.nemweb import NemwebSpider
 
 
-class NemwebLatestDispatchScada(NemwebSpider):
-    name = "au.nem.latest.dispatch_scada"
+class NemwebDispatchScada(NemwebSpider):
+    process_latest = True
+    name = "au.nem.dispatch_scada"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
-    limit = 3
 
     pipelines_extra = set(
         [
