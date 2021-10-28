@@ -791,6 +791,11 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
 
             record_item = globals()[process_meth](table, spider=spider)
 
+            # item keys to copy over
+            for copy_key in ["link", "link_dt"]:
+                if copy_key in item:
+                    record_item[copy_key] = item[copy_key]
+
             if record_item:
                 ret.append(record_item)
 
