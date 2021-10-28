@@ -20,6 +20,7 @@ from typing import Any, List, Optional, Union
 # from sqlalchemy.exc import StatementError
 from sqlalchemy.sql.schema import Column, Table
 
+from opennem.core.crawlers.meta import CrawlStatTypes, crawler_set_meta
 from opennem.db import get_database_engine
 from opennem.utils.pipelines import check_spider_pipeline
 
@@ -157,12 +158,25 @@ class BulkInsertPipeline(object):
                 conn.commit()
             except Exception as generic_error:
                 if hasattr(generic_error, "hide_parameters"):
-                    generic_error.hide_parameters = True
+                    generic_error.hide_parameters = True  # type: ignore
                 logger.error(generic_error)
 
             try:
                 num_records += len(csv_content.getvalue().split("\n")) - 1
             except Exception:
                 pass
+
+        # store the latest processed date
+        if num_records > 0:
+            last_processed_dt: Optional[datetime] = None
+
+            if "link_dt" in single_item:
+                link_dt = single_item["link_dt"]
+                last_processed_dt = link_dt
+            else:
+                logger.error("No link_di in item. keys: {}".format(",".join(single_item.keys())))
+
+            if last_processed_dt:
+                crawler_set_meta(spider, CrawlStatTypes.latest_processed, last_processed_dt)
 
         return {"num_records": num_records}
