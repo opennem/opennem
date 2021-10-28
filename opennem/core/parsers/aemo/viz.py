@@ -107,9 +107,9 @@ def aemo_parse_5min_api(aemo_response_data: Dict) -> List[AEMO5MinAPIResponse]:
     return model_response
 
 
-def get_aemo_5min() -> List[AEMO5MinAPIResponse]:
+def get_aemo_5min(interval_size: str = "5MIN") -> List[AEMO5MinAPIResponse]:
     """Run the live get and parse it"""
-    aemo_viz_data = get_aemo_5min_data()
+    aemo_viz_data = get_aemo_5min_data(interval=interval_size)
 
     if not aemo_viz_data:
         logger.error("No response data")
