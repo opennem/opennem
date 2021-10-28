@@ -364,4 +364,5 @@ def _test_case() -> None:
 
 if __name__ == "__main__":
     logger.info("starting")
-    run_emission_update_day(7)
+    _test_case()
+    # run_emission_update_day(7)
