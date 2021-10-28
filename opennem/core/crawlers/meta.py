@@ -38,7 +38,13 @@ def crawler_get_meta(spider: Spider, key: CrawlStatTypes) -> Optional[Union[str,
     if key.value not in spider_meta.data:
         return None
 
-    return spider_meta.data[key.value]
+    _val = spider_meta.data[key.value]
+
+    if key in [CrawlStatTypes.latest_processed, CrawlStatTypes.last_crawled]:
+        _val_processed = datetime.fromisoformat(_val)
+        return _val_processed
+
+    return _val
 
 
 def crawler_set_meta(spider: Spider, key: CrawlStatTypes, value: Any) -> None:
