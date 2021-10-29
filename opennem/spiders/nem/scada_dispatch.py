@@ -6,7 +6,7 @@ from opennem.spiders.nemweb import NemwebSpider
 
 class NemwebDispatchScada(NemwebSpider):
     process_latest = True
-    name = "au.nem.dispatch_scada"
+    name = "au.nem.latest.dispatch_scada"
     start_url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
 
     pipelines_extra = set(
