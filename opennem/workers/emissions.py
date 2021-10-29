@@ -32,12 +32,13 @@ logger = logging.getLogger("opennem.workers.emission_flows")
 engine = get_database_engine()
 
 
-def load_interconnector(date_start: datetime, date_end: datetime) -> pd.DataFrame:
-    """Load interconnector for a date range"""
+def load_interconnector_intervals(date_start: datetime, date_end: datetime) -> pd.DataFrame:
+    """Load interconnectors for a date range"""
 
     query = """
         select
-            sum(generated),
+            fs.trading_interval at time zone 'AEST' as trading_interval,
+            coalesce(fs.eoi_quantity, 0),
             f.interconnector_region_to,
             f.interconnector_region_from
         from facility_scada fs
@@ -51,24 +52,39 @@ def load_interconnector(date_start: datetime, date_end: datetime) -> pd.DataFram
         date_start=date_start, date_end=date_end
     )
 
-    engine = get_database_engine()
-    results = []
+    df_gen = pd.read_sql(query, con=engine, index_col="trading_interval")
 
-    with engine.connect() as c:
-        logger.debug(query)
+    return df_gen
 
-        try:
-            results = list(c.execute(query))
-        except Exception as e:
-            logger.error(e)
 
-    logger.debug("Got back {} flow rows".format(len(results)))
+def load_energy_intervals(date_start: datetime, date_end: datetime) -> pd.DataFrame:
+    """Fetch all emissions for all stations"""
 
-    fields = ["METEREDMWFLOW", "FROM_REGIONID", "TO_REGIONID"]
+    query = """
+        select
+            fs.trading_interval at time zone 'AEST' as trading_interval,
+            f.network_id,
+            f.network_region,
+            fs.facility_code as fs_duid,
+            f.code as duid,
+            fs.generated as power,
+            fs.eoi_quantity as energy,
+            coalesce(fs.eoi_quantity * f.emissions_factor_co2, 0) as emissions
+        from facility_scada fs
+        left join facility f on fs.facility_code = f.code
+        where
+            fs.trading_interval >= '{date_start}T00:00:00+10:00'
+            and fs.trading_interval < '{date_end}T00:00:00+10:00'
+            and fs.eoi_quantity is not null
+            and f.interconnector is False
+        order by 1 asc;
+    """.format(
+        date_start=date_start.date(), date_end=date_end.date()
+    )
 
-    df = pd.DataFrame(results, fields)
+    df_gen = pd.read_sql(query, con=engine, index_col="trading_interval")
 
-    return df
+    return df_gen
 
 
 def calc_flows(df_ic):
@@ -212,102 +228,40 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
     return df
 
 
-def calc_emissions(df_emissions):
+def calc_emissions(df_emissions: pd.DataFrame) -> pd.DataFrame:
     # MWH & tonnes (divide 12)
     dx_emissions = df_emissions.groupby(["SETTLEMENTDATE", "REGIONID", "TECHFUEL_ID"])[
         ["MW", "EMISSIONS"]
     ].sum()
     dx_emissions.reset_index(inplace=True)
+
     return dx_emissions
 
 
-def calculate_emission_flows(df_gen, df_ic):
+def calculate_emission_flows(df_gen: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
 
     dx_emissions = calc_emissions(df_gen)
     dx_ic = calc_flows(df_ic)
+
     results = {}
     dt = df_gen.SETTLEMENTDATE.iloc[0]
     while dt <= df_gen.SETTLEMENTDATE.iloc[-1]:
-        # emissions_di, interconnector_di = isolate_di(dx_emissions, dx_ic, dt)
-
         emissions_di = dx_emissions[dx_emissions.SETTLEMENTDATE == dt]
         interconnector_di = dx_ic[dx_ic.index == dt]
 
         results[dt] = solve_flows(emissions_di, interconnector_di)
-        dt += timedelta(0, 300)
+        dt += timedelta(minutes=5)
+
     return results
-
-
-def load_factors() -> pd.DataFrame:
-    sql = """
-        SELECT
-            S.STATIONID,
-            S.ID,
-            GS.GENSETID,
-            GU.CO2E_DATA_SOURCE,
-            GU.CO2E_ENERGY_SOURCE,
-            GU.CO2E_EMISSIONS_FACTOR,
-            GU.REGISTEREDCAPACITY
-        FROM mms.GENUNITS GU
-            INNER JOIN mms.GENSET GS ON GS.ID = GU.GENSETID
-            INNER JOIN STATION S ON S.ID = GU.STATIONID
-        """
-    return pd.read_sql(sql, con=engine)
-
-
-def load_stations() -> pd.DataFrame:
-    # loads unique duids
-    sql = """
-        SELECT
-            DUID,
-            STATIONID
-        FROM DUDETAILSUMMARY
-        GROUP BY DUID"""
-
-    return pd.read_sql(sql, con=engine)
-
-
-def dispatch_all_int(date_start: datetime, date_end: datetime) -> pd.DataFrame:
-    """New"""
-    df = pd.DataFrame()
-
-    return df
-
-
-def map_factors(date_start: datetime, date_end: datetime, unit: str = "MW") -> pd.DataFrame:
-    """Fetch all emissions for all stations"""
-
-    query = """
-
-
-
-    """
-
-    # load_maps
-    df_gen = dispatch_all_int(date_start=date_start, date_end=date_end)
-
-    stations = load_stations()
-    factors = load_factors()
-
-    # transform
-    station_dict = dict(stations.values)
-    factor_dict = dict(factors[["ID", "CO2E_EMISSIONS_FACTOR"]].values)
-
-    # map station id's
-    df_gen["SID"] = df_gen.ID.apply(lambda x: station_dict[x])
-    df_gen["emissions_factor"] = df_gen.SID.apply(lambda x: factor_dict[x])
-    df_gen["EMISSIONS"] = df_gen.emissions_factor * df_gen[unit]
-
-    return df_gen
 
 
 def calc_day(day: datetime) -> None:
 
     day_next = day + timedelta(days=1)
 
-    df_gen = map_factors(date_start=day, date_end=day_next)
+    df_gen = load_energy_intervals(date_start=day, date_end=day_next)
 
-    df_ic = load_interconnector(date_start=day, date_end=day_next)
+    df_ic = load_interconnector_intervals(date_start=day, date_end=day_next)
 
     results_dict = calculate_emission_flows(df_gen, df_ic)
 
