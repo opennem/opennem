@@ -829,6 +829,10 @@ class AggregateNetworkFlows(Base):
 
     energy_imports = Column(Numeric, nullable=True)
     energy_exports = Column(Numeric, nullable=True)
+
+    market_value_imports = Column(Numeric, nullable=True)
+    market_value_exports = Column(Numeric, nullable=True)
+
     emissions_imports = Column(Numeric, nullable=True)
     emissions_exports = Column(Numeric, nullable=True)
 
