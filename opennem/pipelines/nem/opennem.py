@@ -793,7 +793,7 @@ class NemwebUnitScadaOpenNEMStorePipeline(object):
 
             # item keys to copy over
             for copy_key in ["link", "link_dt"]:
-                if copy_key in item:
+                if copy_key in item and record_item and isinstance(record_item, dict):
                     record_item[copy_key] = item[copy_key]
 
             if record_item:
