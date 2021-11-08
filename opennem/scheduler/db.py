@@ -154,7 +154,7 @@ def spider_live_tasks() -> None:
         job_schedule_all(_spider_name)
 
 
-@huey.periodic_task(crontab(hour="4,5,6,13,16,17", minute="5,35"))
+@huey.periodic_task(crontab(hour="4,5,6,13,16,17", minute="10"))
 @huey.lock_task("spider_next_day_dispatches")
 def spider_next_day_dispatches() -> None:
     catchup_spiders = [
