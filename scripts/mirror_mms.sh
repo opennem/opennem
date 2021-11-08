@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # OpenNEM script to mirror AEMO MMS archives for a year and month
 # locally. See usage for more info.ç
-set -eo pipefail
+set -eox pipefail
 
 usage() { echo "Usage: $0 [-y <year>] [-m <month>]" 1>&2; exit 1; }
 
@@ -13,7 +13,7 @@ unset ignore
 unset ignore_files
 
 wgetpath=`which wget`
-desinationdir=data/mms
+desinationdir=/Volumes/Backup/mms
 
 if ! [ -x "$(command -v $wgetpath)" ]; then
   echo "Require wget"
@@ -76,13 +76,12 @@ $wgetpath \
   -np \
   -nv \
   --timestamping \
-  -R ${ignore_files} \
+  -R "${ignore_files}" \
   --retry-connrefused \
   -t20 \
   --retry-on-http-error=403,501,503 \
   --random-wait \
   --cut-dirs 3 \
-  --limit-size 100M \
   -P ${desinationdir} \
   -U "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0" \
   $dist_url
