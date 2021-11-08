@@ -164,3 +164,14 @@ def spider_next_day_dispatches() -> None:
 
     for _spider_name in catchup_spiders:
         job_schedule_all(_spider_name)
+
+
+@huey.periodic_task(crontab(minute="*/5"))
+@huey.lock_task("spider_schedule_wem")
+def spider_schedule_wem() -> None:
+    wem_spiders = [
+        "au.wem.current.balancing_summary",
+        "au.wem.current.facility_scada",
+        "au.wem.live.facility_intervals",
+        "au.wem.live.pulse",
+    ]
