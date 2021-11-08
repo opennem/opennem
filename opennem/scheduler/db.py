@@ -139,11 +139,12 @@ def spider_catchup_tasks() -> None:
         job_schedule_all(_spider_name)
 
 
-@huey.periodic_task(crontab(minute="*/1"))
+@huey.periodic_task(crontab(minute="*/5"))
 @huey.lock_task("spider_live_tasks")
 def spider_live_tasks() -> None:
     latest_spiders = [
         "au.nem.latest.dispatch_scada",
+        "au.nem.latest.dispatch_is",
         "au.nem.latest.rooftop",
         "au.nem.latest.rooftop_forecast",
         "au.nem.latest.trading_is",
