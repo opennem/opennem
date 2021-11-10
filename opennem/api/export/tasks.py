@@ -578,7 +578,11 @@ def export_electricitymap() -> None:
 
     for region in get_network_regions(NetworkNEM):
         power_set = power_week(
-            time_series, region.code, include_capacities=True, include_code=False
+            time_series,
+            region.code,
+            include_capacities=True,
+            include_code=False,
+            networks_query=[NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill],
         )
 
         if power_set:
