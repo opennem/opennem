@@ -155,6 +155,21 @@ def spider_live_tasks() -> None:
         job_schedule_all(_spider_name)
 
 
+@huey.periodic_task(crontab(hour="*/1"))
+@huey.lock_task("spider_nem_catchup")
+def spider_nem_catchup() -> None:
+    catchup_spiders = [
+        "au.nem.day.dispatch_is",
+        "au.nem.day.dispatch_scada",
+        "au.nem.day.rooftop",
+        "au.nem.day.rooftop_forecast",
+        "au.nem.day.trading_is",
+    ]
+
+    for _spider_name in catchup_spiders:
+        job_schedule_all(_spider_name)
+
+
 # bom spiders
 @huey.periodic_task(crontab(minute="*/10"))
 @huey.lock_task("spider_bom")
