@@ -70,7 +70,7 @@ class ParticipantMNSPInterconnector(MMSBase):
     to_region_tlf: Optional[float]
 
     @validator("linkid", pre=True)
-    def validate_linkid(cls, value: str) -> str:
+    def validate_linkid(cls, value: str) -> Optional[str]:
         return normalize_duid(value)
 
     @validator("effectivedate", pre=True)
