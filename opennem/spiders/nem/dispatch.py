@@ -5,7 +5,7 @@ from opennem.spiders.nemweb import NemwebSpider
 
 
 class NemwebLatestDispatch(NemwebSpider):
-    process_latest = True
+    process_latest = False
     name = "au.nem.latest.dispatch"
     start_url = "http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/"
     limit = 1
