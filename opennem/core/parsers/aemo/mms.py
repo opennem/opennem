@@ -5,6 +5,7 @@ Parse AEMO MMS CSV format which can have multiple tables and definitions per CSV
 
 import csv
 import logging
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, validator
@@ -14,6 +15,7 @@ from pydantic.fields import PrivateAttr
 from opennem.core.downloader import url_downloader
 from opennem.schema.aemo.mms import MMSBase, get_mms_schema_for_table
 from opennem.schema.core import BaseConfig
+from opennem.utils.version import get_version
 
 _HAVE_PANDAS = False
 
@@ -48,6 +50,17 @@ class AEMOTableSchema(BaseConfig):
     @property
     def full_name(self) -> str:
         return "{}_{}".format(self.namespace, self.name)
+
+    @property
+    def primary_key(self) -> Optional[List[str]]:
+        if (
+            hasattr(self, "_record_schema")
+            and isinstance(self._record_schema, MMSBase)
+            and hasattr(self._record_schema, "_primary_keys")
+        ):
+            return self._record_schema._primary_keys
+
+        return None
 
     @validator("name")
     def validate_name(cls, table_name: str) -> str:
@@ -95,6 +108,7 @@ class AEMOTableSchema(BaseConfig):
                 _record = self._record_schema(**record)  # type: ignore
             except ValidationError as e:
                 val_errors = e.errors()
+                logger.debug(record)
 
                 for ve in val_errors:
                     ve_fieldname = ve["loc"][0]
@@ -136,6 +150,8 @@ class AEMOTableSchema(BaseConfig):
 
 
 class AEMOTableSet(BaseModel):
+    version: str = get_version()
+    generated: datetime = datetime.now()
     tables: List[AEMOTableSchema] = []
 
     @property

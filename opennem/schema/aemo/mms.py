@@ -38,8 +38,8 @@ def capitalize_string(string_val: str) -> str:
 
 
 class MMSBase(BaseModel):
-    _interval_field = Optional[str]
-    _primary_keys = Optional[List[str]]
+    _interval_field: Optional[str]
+    _primary_keys: Optional[List[str]] = None
 
     class Config:
         anystr_strip_whitespace = True
@@ -144,7 +144,7 @@ class MarketConfigInterconnector(MMSBase):
 
 class DispatchUnitSolutionSchema(MMSBase):
     _interval_field = "settlementdate"
-    _primary_keys = ["settlementdate", "duid"]
+    _primary_keys: List[str] = ["settlementdate", "duid"]
 
     settlementdate: datetime
     duid: str
@@ -155,14 +155,17 @@ class DispatchUnitSolutionSchema(MMSBase):
 
 
 class TradingPriceSchema(MMSBase):
-    settlementdate: Optional[datetime]
+    _interval_field = "settlementdate"
+    _primary_keys: List[str] = ["settlementdate", "regionid"]
+
+    settlementdate: datetime
     runno: int
     regionid: str
     periodid: int
     rrp: float
     eep: int
     invalidflag: int
-    lastchanged: Optional[datetime]
+    lastchanged: datetime
     rop: float
     raise6secrrp: float
     raise6secrop: float
