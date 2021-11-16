@@ -104,11 +104,13 @@ def parse_dirlisting_line(dirlisting_line: str) -> Optional[DirlistingEntry]:
 
 
 def parse_dirlisting(dirlisting_content: str) -> List[DirlistingEntry]:
+    """Parse a directory listng into a list of DirlistingEntry models"""
     resp = HtmlResponse(url="http://none", body=dirlisting_content, encoding="utf-8")
 
     _dirlisting_models: List[DirlistingEntry] = []
 
     for i in resp.css("body pre").get().split("<br>"):
+        # it catches the containing block so skip those
         if "pre>" in i:
             continue
 
