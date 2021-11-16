@@ -11,7 +11,7 @@ from pydantic import BaseModel, validator
 from pydantic.error_wrappers import ValidationError
 from pydantic.fields import PrivateAttr
 
-from opennem.pipelines.files import _fallback_download_handler
+from opennem.core.downloader import url_downloader
 from opennem.schema.aemo.mms import MMSBase, get_mms_schema_for_table
 
 _HAVE_PANDAS = False
@@ -166,7 +166,11 @@ class AEMOTableSet(BaseModel):
         if len(table_lookup) > 0:
             return True
 
-        logger.debug("Looking up table: {} amongst ({})".format(table_name, ", ".join([i.name for i in self.tables])))
+        logger.debug(
+            "Looking up table: {} amongst ({})".format(
+                table_name, ", ".join([i.name for i in self.tables])
+            )
+        )
 
         return found_table
 
@@ -190,7 +194,11 @@ class AEMOTableSet(BaseModel):
         if table_lookup:
             return table_lookup.pop()
 
-        logger.debug("Looking up table: {} amongst ({})".format(table_name, ", ".join([i.name for i in self.tables])))
+        logger.debug(
+            "Looking up table: {} amongst ({})".format(
+                table_name, ", ".join([i.name for i in self.tables])
+            )
+        )
 
         return None
 
@@ -294,7 +302,7 @@ def parse_aemo_urls(urls: List[str]) -> AEMOTableSet:
     aemo = AEMOTableSet()
 
     for url in urls:
-        csv_content = _fallback_download_handler(url)
+        csv_content = url_downloader(url)
 
         if not csv_content:
             logger.error("Could not parse URL: {}".format(url))
