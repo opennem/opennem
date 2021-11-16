@@ -13,6 +13,7 @@ from pydantic.fields import PrivateAttr
 
 from opennem.core.downloader import url_downloader
 from opennem.schema.aemo.mms import MMSBase, get_mms_schema_for_table
+from opennem.schema.core import BaseConfig
 
 _HAVE_PANDAS = False
 
@@ -28,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 # pylint: disable=no-self-argument
-class AEMOTableSchema(BaseModel):
+class AEMOTableSchema(BaseConfig):
     name: str
     namespace: str
     fieldnames: List[str]
