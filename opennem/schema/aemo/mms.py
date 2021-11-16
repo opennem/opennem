@@ -49,6 +49,14 @@ class MMSBase(BaseModel):
         allow_population_by_field_name = True
         alias_generator = mms_alias_generator
 
+    _validate_settlementdate = validator(
+        "settlementdate", pre=True, allow_reuse=True, check_fields=False
+    )(lambda x: parse_date(x, network=NetworkNEM))
+
+    _validate_lastchanged = validator(
+        "lastchanged", pre=True, allow_reuse=True, check_fields=False
+    )(lambda x: parse_date(x, network=NetworkNEM))
+
 
 class ParticipantMNSPInterconnector(MMSBase):
     """"""
@@ -132,7 +140,6 @@ class MarketConfigInterconnector(MMSBase):
 
     # validators
     _validate_description = validator("description")(capitalize_string)
-    _validate_lastchanged = validator("lastchanged", pre=True)(validate_date)
 
 
 class DispatchUnitSolutionSchema(MMSBase):
@@ -143,9 +150,6 @@ class DispatchUnitSolutionSchema(MMSBase):
     duid: str
     initialmw: Optional[float]
 
-    _validate_settlementdate = validator("settlementdate", pre=True)(
-        lambda x: parse_date(x, network=NetworkNEM)
-    )
     _validate_duid = validator("duid")(normalize_duid)
     _validate_initialmw = validator("initialmw")(clean_float)
 
