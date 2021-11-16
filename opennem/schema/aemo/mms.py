@@ -154,11 +154,41 @@ class DispatchUnitSolutionSchema(MMSBase):
     _validate_initialmw = validator("initialmw")(clean_float)
 
 
+class TradingPriceSchema(MMSBase):
+    settlementdate: Optional[datetime]
+    runno: int
+    regionid: str
+    periodid: int
+    rrp: float
+    eep: int
+    invalidflag: int
+    lastchanged: Optional[datetime]
+    rop: float
+    raise6secrrp: float
+    raise6secrop: float
+    raise60secrrp: float
+    raise60secrop: float
+    raise5minrrp: float
+    raise5minrop: float
+    raiseregrrp: float
+    raiseregrop: float
+    lower6secrrp: float
+    lower6secrop: float
+    lower60secrrp: float
+    lower60secrop: float
+    lower5minrrp: float
+    lower5minrop: float
+    lowerregrrp: float
+    lowerregrop: float
+    price_status: str
+
+
 # Map AEMO full table names to schemas
 TABLE_TO_SCHEMA_MAP = {
     "PARTICIPANT_REGISTRATION_MNSP_INTERCONNECTOR": ParticipantMNSPInterconnector,
     "MARKET_CONFIG_INTERCONNECTOR": MarketConfigInterconnector,
     "DISPATCH_UNIT_SOLUTION": DispatchUnitSolutionSchema,
+    "TRADING_PRICE": TradingPriceSchema,
 }
 
 
