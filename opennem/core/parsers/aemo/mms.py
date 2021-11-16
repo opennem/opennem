@@ -282,6 +282,7 @@ def parse_aemo_mms_csv(
         # new record
         elif record_type == "D":
             if not table_current:
+                logger.error("Have a record but not currently in a table")
                 continue
 
             values = row[4:]
@@ -293,6 +294,9 @@ def parse_aemo_mms_csv(
             record = dict(zip(table_current.fieldnames, values))
 
             table_current.add_record(record)
+
+        else:
+            logger.error(f"Invalid AEMO record type: {record_type}")
 
     return table_set
 
