@@ -186,12 +186,27 @@ class TradingPriceSchema(MMSBase):
     price_status: str
 
 
+class TradingInterconnectorRes(MMSBase):
+    _interval_field = "settlementdate"
+    _primary_keys: List[str] = ["settlementdate", "interconnectorid"]
+
+    settlementdate: datetime
+    runno: int
+    interconnectorid: str
+    periodid: int
+    meteredmwflow: float
+    mwflow: float
+    mwlosses: float
+    lastchanged: datetime
+
+
 # Map AEMO full table names to schemas
 TABLE_TO_SCHEMA_MAP = {
     "PARTICIPANT_REGISTRATION_MNSP_INTERCONNECTOR": ParticipantMNSPInterconnector,
     "MARKET_CONFIG_INTERCONNECTOR": MarketConfigInterconnector,
     "DISPATCH_UNIT_SOLUTION": DispatchUnitSolutionSchema,
     "TRADING_PRICE": TradingPriceSchema,
+    "TRADING_INTERCONNECTORRES": TradingInterconnectorRes,
 }
 
 
