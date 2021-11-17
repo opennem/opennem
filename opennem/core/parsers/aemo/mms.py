@@ -89,14 +89,12 @@ class AEMOTableSchema(BaseConfig):
         return True
 
     @property
-    def records(self) -> Any:
+    def records(self) -> Union[MMSBase, Dict[str, Any]]:
+        return self._records
         _records = []
 
         for _r in self._records:
-            if isinstance(_r, MMSBase):
-                _records.append(_r.dict())
-            if isinstance(_r, Dict):
-                _records.append(_r)
+            _records.append(_r)
 
         return _records
 
