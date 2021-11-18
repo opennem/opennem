@@ -35,7 +35,7 @@ class AEMOTableSchema(BaseConfig):
     name: str
     namespace: str
     fieldnames: List[str]
-    _records: List[Union[Dict, BaseModel]] = []
+    _records: List[Union[MMSBase, Dict[str, Any]]] = []
 
     # optionally it has a schema
     _record_schema: Optional[BaseModel] = PrivateAttr()
@@ -89,14 +89,8 @@ class AEMOTableSchema(BaseConfig):
         return True
 
     @property
-    def records(self) -> Union[MMSBase, Dict[str, Any]]:
+    def records(self) -> List[Union[MMSBase, Dict[str, Any]]]:
         return self._records
-        _records = []
-
-        for _r in self._records:
-            _records.append(_r)
-
-        return _records
 
     def add_record(self, record: Union[Dict, BaseModel]) -> bool:
         if hasattr(self, "_record_schema") and self._record_schema:
