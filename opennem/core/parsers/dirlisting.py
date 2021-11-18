@@ -14,12 +14,14 @@ import logging
 import re
 from datetime import datetime
 from enum import Enum
+from operator import attrgetter
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import ValidationError, validator
 from scrapy.http import HtmlResponse
 
+from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import is_number, strip_double_spaces
 from opennem.schema.core import BaseConfig
 
@@ -121,6 +123,39 @@ class DirlistingEntry(BaseConfig):
         return DirlistingEntryType.file
 
 
+class DirectoryListing(BaseConfig):
+    url: str
+    entries: List[DirlistingEntry] = []
+
+    @property
+    def count(self) -> int:
+        return len(self.entries)
+
+    @property
+    def file_count(self) -> int:
+        return len(self.get_files())
+
+    @property
+    def directory_count(self) -> int:
+        return len(self.get_directories())
+
+    def get_files(self) -> List[DirlistingEntry]:
+        return list(filter(lambda x: x.entry_type == DirlistingEntryType.file, self.entries))
+
+    def get_directories(self) -> List[DirlistingEntry]:
+        return list(filter(lambda x: x.entry_type == DirlistingEntryType.directory, self.entries))
+
+    def get_most_recent_files(
+        self, reverse: bool = True, limit: Optional[int] = None
+    ) -> List[DirlistingEntry]:
+        _entries = list(sorted(self.get_files(), key=attrgetter("modified_date"), reverse=reverse))
+
+        if not limit:
+            return _entries
+
+        return _entries[:limit]
+
+
 def parse_dirlisting_line(dirlisting_line: str) -> Optional[DirlistingEntry]:
     """Parses a single line from a dirlisting page"""
 
@@ -161,7 +196,10 @@ def parse_dirlisting(dirlisting_content: str) -> List[DirlistingEntry]:
     return _dirlisting_models
 
 
-if __name__ == "__main__":
-    test_line = 'Monday, February 11, 2019  4:31 PM        <dir> <a href="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/DUPLICATE/">DUPLICATE</a>'
-    t = parse_dirlisting_line(test_line)
-    print(t)
+def get_dirlisting(url: str) -> DirectoryListing:
+    _response = url_downloader(url)
+    _entries = parse_dirlisting(_response.decode("utf-8"))
+
+    model = DirectoryListing(url=url, entries=_entries)
+
+    return model
