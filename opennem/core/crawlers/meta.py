@@ -7,7 +7,7 @@ Gets metadata about crawls from the database
 import logging
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import CrawlMeta
@@ -19,6 +19,20 @@ class CrawlStatTypes(Enum):
     last_crawled = "last_crawled"
     latest_processed = "latest_processed"
     data = "data"
+
+
+def crawler_get_all_meta(crawler_name: str) -> Optional[Dict[str, Any]]:
+    session = SessionLocal()
+
+    spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
+
+    if not spider_meta:
+        return None
+
+    if not spider_meta.data:
+        return None
+
+    return spider_meta.data
 
 
 def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> Optional[Union[str, datetime]]:
