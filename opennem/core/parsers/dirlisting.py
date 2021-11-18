@@ -6,7 +6,7 @@ objects
 Currently supports:
 
     * IIS default listings and variations
-
+    * Extracing metadata from AEMO filenames
 """
 
 import html
@@ -15,7 +15,7 @@ import re
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import ValidationError, validator
 from scrapy.http import HtmlResponse
@@ -28,6 +28,10 @@ logger = logging.getLogger("opennem.parsers.dirlisting")
 __iis_line_match = re.compile(
     r"(?P<modified_date>.*[AM|PM])\ {2,}(?P<file_size>(\d{1,}|\<dir\>))\ <a href=['\"]?(?P<link>[^'\" >]+)['\"]>(?P<filename>[^\<]+)"
 )
+
+
+# AEMO files have a created timestamp in their filenames. This extracts it.
+_aemo_created_date_match = re.compile(r"\_(?P<date_created>\d{12})\_")
 
 
 def parse_dirlisting_datetime(datetime_string: Union[str, datetime]) -> Optional[datetime]:
@@ -67,6 +71,7 @@ class DirlistingEntry(BaseConfig):
     filename: Path
     link: str
     modified_date: Optional[datetime]
+    aemo_created_date: Optional[datetime]
     file_size: Optional[int]
     entry_type: DirlistingEntryType = DirlistingEntryType.file
 
@@ -74,8 +79,32 @@ class DirlistingEntry(BaseConfig):
         parse_dirlisting_datetime
     )
 
+    @validator("aemo_created_date", always=True)
+    def _validate_aemo_created_date(cls, value: Any, values: Dict[str, Any]) -> Optional[datetime]:
+        if value:
+            raise Exception("aemo_created_date is derived, not set")
+
+        # no need to check if this exists since ValidationError will occur if not
+        _filename_value = values["filename"]
+
+        _created_date_match = re.search(_aemo_created_date_match, str(_filename_value))
+
+        if not _created_date_match:
+            return None
+
+        _dt_str = _created_date_match.group("date_created")
+
+        dt = None
+
+        try:
+            dt = datetime.strptime(_dt_str, "%Y%m%d%H%M")
+        except ValueError:
+            return None
+
+        return dt
+
     @validator("file_size", allow_reuse=True, pre=True)
-    def _parse_dirlisting_filesize(cls, value: str):
+    def _parse_dirlisting_filesize(cls, value: str) -> Optional[int]:
         if value != "<dir>":
             return value
 

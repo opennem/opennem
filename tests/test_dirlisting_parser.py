@@ -44,6 +44,7 @@ def test_parse_dirlisting_datetime(datetime_string: str, datetime_expected: date
             {
                 "filename": Path("PUBLIC_DISPATCHIS_202111081435_0000000352251582.zip"),
                 "modified_date": datetime.fromisoformat("2021-11-08T14:30:00"),
+                # "aemo_created_date": datetime.fromisoformat("2021-11-08T14:35:00"),
                 "file_size": 18166,
                 "link": "http://nemweb.com.au/Reports/Current/DispatchIS_Reports/PUBLIC_DISPATCHIS_202111081435_0000000352251582.zip",
             },
