@@ -11,6 +11,9 @@ logger = logging.getLogger("opennem.downloader")
 
 def url_downloader(url: str) -> bytes:
     """Downloads a URL and returns content, handling embedded zips and other MIME's"""
+
+    logger.debug("Downloading: {}".format(url))
+
     r = http.get(url)
 
     if not r.ok:
