@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Union
 from pydantic import ValidationError, validator
 from scrapy.http import HtmlResponse
 
-from opennem.core.normalizers import strip_double_spaces
+from opennem.core.normalizers import is_number, strip_double_spaces
 from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.parsers.dirlisting")
@@ -105,10 +105,20 @@ class DirlistingEntry(BaseConfig):
 
     @validator("file_size", allow_reuse=True, pre=True)
     def _parse_dirlisting_filesize(cls, value: str) -> Optional[int]:
-        if value != "<dir>":
+        if is_number(value):
             return value
 
         return None
+
+    @validator("entry_type", always=True)
+    def _validate_entry_type(cls, value: Any, values: Dict[str, Any]) -> DirlistingEntryType:
+        if not values["file_size"]:
+            return DirlistingEntryType.directory
+
+        if values["link"].endswith("/"):
+            return DirlistingEntryType.directory
+
+        return DirlistingEntryType.file
 
 
 def parse_dirlisting_line(dirlisting_line: str) -> Optional[DirlistingEntry]:
@@ -146,9 +156,12 @@ def parse_dirlisting(dirlisting_content: str) -> List[DirlistingEntry]:
         model = parse_dirlisting_line(html.unescape(i.strip()))
 
         if model:
-            if not model.file_size or model.link.endswith("/"):
-                model.entry_type = DirlistingEntryType.directory
-
             _dirlisting_models.append(model)
 
     return _dirlisting_models
+
+
+if __name__ == "__main__":
+    test_line = 'Monday, February 11, 2019  4:31 PM        <dir> <a href="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/DUPLICATE/">DUPLICATE</a>'
+    t = parse_dirlisting_line(test_line)
+    print(t)
