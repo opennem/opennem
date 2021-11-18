@@ -155,6 +155,9 @@ class DirectoryListing(BaseConfig):
 
         return _entries[:limit]
 
+    def get_files_modified_since(self, modified_date: datetime) -> List[DirlistingEntry]:
+        return list(filter(lambda x: x.modified_date > modified_date, self.get_files()))
+
 
 def parse_dirlisting_line(dirlisting_line: str) -> Optional[DirlistingEntry]:
     """Parses a single line from a dirlisting page"""
