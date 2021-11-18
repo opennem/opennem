@@ -158,6 +158,8 @@ class DirectoryListing(BaseConfig):
 
 def parse_dirlisting_line(dirlisting_line: str) -> Optional[DirlistingEntry]:
     """Parses a single line from a dirlisting page"""
+    if not dirlisting_line:
+        return None
 
     matches = re.search(__iis_line_match, dirlisting_line)
 
