@@ -36,11 +36,11 @@ class ExtensionSpiderStoreMeta:
     def spider_closed(self, spider):  # type: ignore
         logger.info("closed spider %s", spider.name)
 
-        crawler_set_meta(spider, CrawlStatTypes.last_crawled, datetime.now())
+        crawler_set_meta(spider.name, CrawlStatTypes.last_crawled, datetime.now())
 
         if hasattr(spider, "data"):
-            crawler_set_meta(spider, CrawlStatTypes.data, spider.data)
+            crawler_set_meta(spider.name, CrawlStatTypes.data, spider.data)
 
     def item_scraped(self, item, spider):  # type: ignore
         if isinstance(item, dict) and "_data" in item:
-            crawler_set_meta(spider, CrawlStatTypes.data, [i.json() for i in item["_data"]])
+            crawler_set_meta(spider.name, CrawlStatTypes.data, [i.json() for i in item["_data"]])

@@ -9,11 +9,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Optional, Union
 
-from scrapy import Spider
-
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import CrawlMeta
-from opennem.spiders.aemo.monitoring import AEMOMonitorRelSpider
 
 logger = logging.getLogger("opennem.spider.meta")
 
@@ -24,10 +21,10 @@ class CrawlStatTypes(Enum):
     data = "data"
 
 
-def crawler_get_meta(spider: Spider, key: CrawlStatTypes) -> Optional[Union[str, datetime]]:
+def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> Optional[Union[str, datetime]]:
     session = SessionLocal()
 
-    spider_meta = session.query(CrawlMeta).filter_by(spider_name=spider.name).one_or_none()
+    spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
 
     if not spider_meta:
         return None
@@ -47,11 +44,11 @@ def crawler_get_meta(spider: Spider, key: CrawlStatTypes) -> Optional[Union[str,
     return _val
 
 
-def crawler_set_meta(spider: Spider, key: CrawlStatTypes, value: Any) -> None:
+def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None:
     session = SessionLocal()
 
     if key == CrawlStatTypes.latest_processed:
-        current_value = crawler_get_meta(spider, key)
+        current_value = crawler_get_meta(crawler_name, key)
 
         try:
             if current_value and current_value >= value:
@@ -63,18 +60,18 @@ def crawler_set_meta(spider: Spider, key: CrawlStatTypes, value: Any) -> None:
                 )
             )
 
-    spider_meta = session.query(CrawlMeta).filter_by(spider_name=spider.name).one_or_none()
+    spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
 
     if not spider_meta:
-        spider_meta = CrawlMeta(spider_name=spider.name, data={})
+        spider_meta = CrawlMeta(spider_name=crawler_name, data={})
 
     spider_meta.data[key.value] = value
 
-    logger.info("Spider {} meta: Set {} to {}".format(spider.name, key.value, value))
+    logger.info("Spider {} meta: Set {} to {}".format(crawler_name, key.value, value))
 
     session.add(spider_meta)
     session.commit()
 
 
 if __name__ == "__main__":
-    crawler_set_meta(AEMOMonitorRelSpider, CrawlStatTypes.last_crawled, datetime.now())
+    crawler_set_meta("au.nem.latest.dispatch_scada", CrawlStatTypes.last_crawled, datetime.now())

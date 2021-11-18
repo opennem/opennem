@@ -177,6 +177,6 @@ class BulkInsertPipeline(object):
                 logger.debug("No link_dt in item. keys: {}".format(",".join(single_item.keys())))
 
             if last_processed_dt:
-                crawler_set_meta(spider, CrawlStatTypes.latest_processed, last_processed_dt)
+                crawler_set_meta(spider.name, CrawlStatTypes.latest_processed, last_processed_dt)
 
         return {"num_records": num_records}
