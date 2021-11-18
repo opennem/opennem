@@ -93,7 +93,7 @@ class AEMOTableSchema(BaseConfig):
         return self._records
 
     def add_record(self, record: Union[Dict, BaseModel]) -> bool:
-        if hasattr(self, "_record_schema") and self._record_schema:
+        if isinstance(record, dict) and hasattr(self, "_record_schema") and self._record_schema:
             _record = None
 
             try:
@@ -184,7 +184,13 @@ class AEMOTableSet(BaseModel):
         return found_table
 
     def add_table(self, table: AEMOTableSchema) -> bool:
-        self.tables.append(table)
+        _existing_table = self.get_table(table.full_name)
+
+        if _existing_table:
+            for r in table.records:
+                _existing_table.add_record(r)
+        else:
+            self.tables.append(table)
 
         return True
 
@@ -272,21 +278,18 @@ def parse_aemo_mms_csv(
                 table_current = None
                 continue
 
-            if table_set.has_table(table_full_name):
-                table_current = table_set.get_table(table_full_name)
-            else:
-                table_current = AEMOTableSchema(
-                    name=table_name,
-                    namespace=table_namespace,
-                    fields=table_fields,
-                    fieldnames=table_fields,
-                )
+            table_current = AEMOTableSchema(
+                name=table_name,
+                namespace=table_namespace,
+                fields=table_fields,
+                fieldnames=table_fields,
+            )
 
-                # do we have a custom shema for the table?
-                table_schema = get_mms_schema_for_table(table_current.full_name)
+            # do we have a custom shema for the table?
+            table_schema = get_mms_schema_for_table(table_current.full_name)
 
-                if table_schema:
-                    table_current.set_schema(table_schema)
+            if table_schema:
+                table_current.set_schema(table_schema)
 
         # new record
         elif record_type == "D":
