@@ -272,8 +272,6 @@ def parse_aemo_mms_csv(
             table_name = row[2]
             table_fields = [i.lower() for i in row[4:]]
 
-            table_full_name = "{}_{}".format(table_namespace.lower(), table_name.lower())
-
             if namespace_filter and table_namespace.lower() not in namespace_filter:
                 table_current = None
                 continue
