@@ -175,11 +175,11 @@ class AEMOTableSet(BaseModel):
         if len(table_lookup) > 0:
             return True
 
-        logger.debug(
-            "Looking up table: {} amongst ({})".format(
-                table_name, ", ".join([i.name for i in self.tables])
-            )
-        )
+        # logger.debug(
+        #     "Looking up table: {} amongst ({})".format(
+        #         table_name, ", ".join([i.name for i in self.tables])
+        #     )
+        # )
 
         return found_table
 
