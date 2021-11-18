@@ -130,7 +130,7 @@ class DirlistingSpider(Spider):
         latest_processed: Optional[datetime] = None
 
         if self.process_latest:
-            latest_processed = crawler_get_meta(self, CrawlStatTypes.latest_processed)
+            latest_processed = crawler_get_meta(self.name, CrawlStatTypes.latest_processed)
 
         if self.filename:
             self.skip = 0
