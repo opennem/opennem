@@ -18,14 +18,18 @@ WILLY_MAP = {
     "066214": 4988,  # NSW1 - Observatory Hill
 }
 
-WILLY_STATION_URL = "https://api.willyweather.com.au/v2/{api_key}/weather-stations/{station_id}.json"
-WILLY_LOCATION_URL = "https://api.willyweather.com.au/v2/{api_key}/locations/{location_id}/weather.json"
+WILLY_STATION_URL = (
+    "https://api.willyweather.com.au/v2/{api_key}/weather-stations/{station_id}.json"
+)
+WILLY_LOCATION_URL = (
+    "https://api.willyweather.com.au/v2/{api_key}/locations/{location_id}/weather.json"
+)
 WILLY_SEARCH_URL = "https://api.willyweather.com.au/v2/{api_key}/search.json"
 WILLY_SEARCH_CLOSEST_URL = "https://api.willyweather.com.au/v2/{api_key}/search/closest.json"
 
 
-class WillyClient():
-    """ Client for Willy Weather API"""
+class WillyClient:
+    """Client for Willy Weather API"""
 
     def __init__(self) -> None:
         if not settings.willyweather_api_key:
@@ -48,14 +52,12 @@ class WillyClient():
 
     def get_station_url(self, station_id: int) -> str:
         return WILLY_STATION_URL.format(
-            api_key=settings.willyweather_api_key,
-            station_id=str(station_id)
+            api_key=settings.willyweather_api_key, station_id=str(station_id)
         )
 
     def get_location_url(self, location_id: int) -> str:
         return WILLY_LOCATION_URL.format(
-            api_key=settings.willyweather_api_key,
-            location_id=location_id
+            api_key=settings.willyweather_api_key, location_id=location_id
         )
 
     def get_search_url(self) -> str:
@@ -71,46 +73,38 @@ class WillyClient():
     def search_station(self, query: str, limit: int = 4) -> Dict:
         url = self.get_search_url()
 
-        resp = self._req(url, {
-            "query": query,
-            "limit": limit
-        })
+        resp = self._req(url, {"query": query, "limit": limit})
 
         return resp
 
     def search_closest(self, id: int) -> Dict:
         url = self.get_search_closest_url()
 
-        resp = self._req(url, {
-            "id": id,
-            "weatherTypes": ["general"],
-            "units": "distance:km"
-        })
+        resp = self._req(url, {"id": id, "weatherTypes": ["general"], "units": "distance:km"})
 
         return resp
 
-    def get_station_temp(self, station_id: int, days: int = 1, start_date: str = "2021-10-15") -> Dict:
+    def get_station_temp(
+        self, station_id: int, days: int = 1, start_date: str = "2021-10-15"
+    ) -> Dict:
         url = self.get_station_url(station_id)
 
-        resp = self._req(url, {
-            "observationalGraphs": ["temperature"],
-            "days": days,
-            "startDate": start_date
-        })
+        resp = self._req(
+            url, {"observationalGraphs": ["temperature"], "days": days, "startDate": start_date}
+        )
 
         return resp
 
-    def get_location_temp(self, location_id: int, days: int = 1, start_date: str = "2021-10-15") -> Dict:
+    def get_location_temp(
+        self, location_id: int, days: int = 1, start_date: str = "2021-10-15"
+    ) -> Dict:
         url = self.get_location_url(location_id)
 
-        resp = self._req(url, {
-            "observationalGraphs": ["temperature"],
-            "days": days,
-            "startDate": start_date
-        })
+        resp = self._req(
+            url, {"observationalGraphs": ["temperature"], "days": days, "startDate": start_date}
+        )
 
         return resp
-
 
 
 def get_station_weather() -> None:
@@ -132,8 +126,10 @@ def update_weather() -> None:
             for p in pointset["points"]:
                 r_dict = {
                     "station_id": bom_code,
-                    "observation_time": unix_timestamp_to_aware_datetime(p["x"], "Australia/Sydney"),
-                    "temp_air": p["y"]
+                    "observation_time": unix_timestamp_to_aware_datetime(
+                        p["x"], "Australia/Sydney"
+                    ),
+                    "temp_air": p["y"],
                 }
                 print("{} -> {}".format(r_dict["observation_time"], r_dict["temp_air"]))
                 records.append(r_dict)
@@ -158,6 +154,7 @@ def update_weather() -> None:
         logger.error("Error: {}".format(e))
     finally:
         session.close()
+
 
 if __name__ == "__main__":
     update_weather()
