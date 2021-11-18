@@ -177,9 +177,11 @@ def parse_dirlisting_line(dirlisting_line: str) -> Optional[DirlistingEntry]:
     return model
 
 
-def parse_dirlisting(dirlisting_content: str) -> List[DirlistingEntry]:
+def get_dirlisting(url: str) -> DirectoryListing:
     """Parse a directory listng into a list of DirlistingEntry models"""
-    resp = HtmlResponse(url="http://none", body=dirlisting_content, encoding="utf-8")
+    dirlisting_content = url_downloader(url)
+
+    resp = HtmlResponse(url=url, body=dirlisting_content, encoding="utf-8")
 
     _dirlisting_models: List[DirlistingEntry] = []
 
@@ -191,15 +193,12 @@ def parse_dirlisting(dirlisting_content: str) -> List[DirlistingEntry]:
         model = parse_dirlisting_line(html.unescape(i.strip()))
 
         if model:
+
+            # append the base URL to the model link
+            model.link = resp.urljoin(model.link)
+
             _dirlisting_models.append(model)
 
-    return _dirlisting_models
-
-
-def get_dirlisting(url: str) -> DirectoryListing:
-    _response = url_downloader(url)
-    _entries = parse_dirlisting(_response.decode("utf-8"))
-
-    model = DirectoryListing(url=url, entries=_entries)
+    model = DirectoryListing(url=url, entries=_dirlisting_models)
 
     return model
