@@ -15,6 +15,7 @@ from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet
 from opennem.db import SessionLocal, get_database_engine
+from opennem.db.bulk_insert_csv import bulkinsert_mms_items
 from opennem.db.models.opennem import BalancingSummary, Facility, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
 from opennem.schema.core import BaseConfig
@@ -42,107 +43,32 @@ class ControllerReturn(BaseConfig):
 def unit_scada_generate_facility_scada(
     records,
     network: NetworkSchema = NetworkNEM,
-    interval_field: str = "SETTLEMENTDATE",
-    facility_code_field: str = "DUID",
-    date_format: Optional[str] = None,
-    power_field: Optional[str] = None,
+    interval_field: str = "settlementdate",
+    facility_code_field: str = "duid",
+    power_field: Optional[str] = "scadavalue",
     energy_field: Optional[str] = None,
     is_forecast: bool = False,
-    primary_key_track: bool = False,
-    groupby_filter: bool = True,
-    created_by: str = None,
-    limit: int = 0,
-    duid: str = None,
 ) -> List[Dict]:
     created_at = datetime.now()
-    primary_keys = []
     return_records = []
 
     created_by = "opennem.controller"
 
     for row in records:
-
-        trading_interval = parse_date(
-            row[interval_field],
-            network=network,
-            dayfirst=False,
-            date_format=date_format,
-        )
-
-        # if facility_code_field not in row:
-        # logger.error("Invalid row no facility_code")
-        # continue
-
-        facility_code = normalize_duid(row[facility_code_field])
-
-        if duid and facility_code != duid:
-            continue
-
-        if primary_key_track:
-            pkey = (trading_interval, facility_code)
-
-            if pkey in primary_keys:
-                continue
-
-            primary_keys.append(pkey)
-
-        generated = None
-
-        if power_field and power_field in row:
-            generated = clean_float(row[power_field])
-
-            if generated:
-                generated = float_to_str(generated)
-
-        energy = None
-
-        if network == NetworkWEM and power_field and not energy_field:
-            _generated = clean_float(row[power_field])
-
-            if _generated:
-                energy = str(_generated / 2)
-
-        if energy_field and energy_field in row:
-            _energy = clean_float(row[energy_field])
-
-            if _energy:
-                energy = float_to_str(_energy)
-
         __rec = {
-            "created_by": created_by,
+            "created_by": "opennem.controller",
             "created_at": created_at,
             "updated_at": None,
             "network_id": network.code,
-            "trading_interval": trading_interval,
-            "facility_code": facility_code,
-            "generated": generated,
-            "eoi_quantity": energy,
+            "trading_interval": getattr(row, interval_field),
+            "facility_code": getattr(row, facility_code_field),
+            "generated": getattr(row, power_field),
+            "eoi_quantity": None,
             "is_forecast": is_forecast,
             "energy_quality_flag": 0,
         }
 
         return_records.append(__rec)
-
-        if limit > 0 and len(return_records) >= limit:
-            break
-
-    if not groupby_filter:
-        return return_records
-
-    return_records_grouped = {}
-
-    for pk_values, rec_value in groupby(
-        return_records,
-        key=lambda r: (
-            r.get("network_id"),
-            r.get("trading_interval"),
-            r.get("facility_code"),
-        ),
-    ):
-        if pk_values not in return_records_grouped:
-            return_records_grouped[pk_values] = list(rec_value).pop()
-
-    return_records = list(return_records_grouped.values())
 
     return return_records
 
@@ -422,50 +348,36 @@ def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
     return {"num_records": len(records_to_store)}
 
 
-def process_unit_scada(table: Dict[str, Any], spider: Spider) -> Dict:
-    if "records" not in table:
-        raise Exception("Invalid table no records")
+def process_unit_scada(table: AEMOTableSchema) -> ControllerReturn:
+    cr = ControllerReturn(total_records=len(table.records))
 
-    records = table["records"]
-    item: Dict[str, Any] = dict()
-
-    item["table_schema"] = FacilityScada
-    item["update_fields"] = ["generated"]
-    item["records"] = unit_scada_generate_facility_scada(
-        records,
-        spider,
-        power_field="SCADAVALUE",
-        network=NetworkNEM,
-        date_format="%Y/%m/%d %H:%M:%S",
+    records = unit_scada_generate_facility_scada(
+        table.records,
+        interval_field="settlementdate",
+        facility_code_field="duid",
+        power_field="scadavalue",
     )
-    item["content"] = ""
 
-    return item
+    cr.processed_records = len(records)
+    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
+
+    return cr
 
 
-def process_unit_solution(table: Dict[str, Any], spider: Spider) -> Dict:
-    if "records" not in table:
-        raise Exception("Invalid table no records")
+def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
+    cr = ControllerReturn(total_records=len(table.records))
 
-    records = table["records"]
-    item: Dict[str, Any] = dict()
-
-    item["table_schema"] = FacilityScada
-    item["update_fields"] = ["generated"]
-    item["records"] = unit_scada_generate_facility_scada(
-        records,
-        spider,
-        network=NetworkNEM,
+    records = unit_scada_generate_facility_scada(
+        table.records,
         interval_field="SETTLEMENTDATE",
         facility_code_field="DUID",
         power_field="INITIALMW",
     )
-    item["content"] = None
 
-    # Update existing records for this range
-    # _clear_scada_for_range(item)
+    cr.processed_records = len(records)
+    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
 
-    return item
+    return cr
 
 
 def process_meter_data_gen_duid(table: Dict[str, Any], spider: Spider) -> Dict:
