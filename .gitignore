@@ -119,3 +119,4 @@ notebooks/dmc_emissions.py
 .jupyter/migrated
 .jupyter/jupyter_notebook_config.original.py
 .opennem_requests_cache
+scratch/
