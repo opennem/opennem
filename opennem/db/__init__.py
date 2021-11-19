@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def db_connect(
-    db_conn_str: Optional[str] = None, debug: bool = False, timeout: int = 300
+    db_conn_str: Optional[str] = None, debug: bool = False, timeout: int = 100
 ) -> Engine:
     """
     Performs database connection using database settings from settings.py.
@@ -33,6 +33,13 @@ def db_connect(
     if settings.db_debug:
         debug = True
 
+    keepalive_kwargs = {
+        "keepalives": 1,
+        "keepalives_idle": 30,
+        "keepalives_interval": 5,
+        "keepalives_count": 5,
+    }
+
     try:
         return create_engine(
             db_conn_str,
@@ -46,6 +53,7 @@ def db_connect(
             pool_pre_ping=True,
             pool_use_lifo=True,
             connect_args=connect_args,
+            **keepalive_kwargs,
         )
     except Exception as exc:
         logger.error("Could not connect to database: %s", exc)
