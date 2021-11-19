@@ -52,8 +52,10 @@ def db_connect(
             pool_timeout=timeout,
             pool_pre_ping=True,
             pool_use_lifo=True,
-            connect_args=connect_args,
-            **keepalive_kwargs,
+            connect_args={
+                **connect_args,
+                **keepalive_kwargs,
+            },
         )
     except Exception as exc:
         logger.error("Could not connect to database: %s", exc)
