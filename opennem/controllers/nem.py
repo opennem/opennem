@@ -5,18 +5,17 @@ Parses MMS tables into OpenNEM derived database
 
 import logging
 from datetime import datetime
-from itertools import groupby
 from typing import Any, Dict, List, Optional
 
 from scrapy import Spider
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.core.networks import NetworkNEM
-from opennem.core.normalizers import clean_float, normalize_duid
+from opennem.core.normalizers import clean_float
 from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.bulk_insert_csv import bulkinsert_mms_items
-from opennem.db.models.opennem import BalancingSummary, Facility, FacilityScada
+from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkAEMORooftop, NetworkSchema, NetworkWEM
@@ -406,6 +405,8 @@ def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
         power_field="power",
     )
 
+    records = [rooftop_remap_regionids(i) for i in records if i]
+
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
 
@@ -422,6 +423,8 @@ def process_rooftop_forecase(table: AEMOTableSchema) -> ControllerReturn:
         power_field="powermean",
         is_forecast=True,
     )
+
+    records = [rooftop_remap_regionids(i) for i in records if i]
 
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
@@ -443,7 +446,7 @@ TABLE_PROCESSOR_MAP = {
 }
 
 
-def store_aemo_tableset(tableset: AEMOTableSet) -> List:
+def store_aemo_tableset(tableset: AEMOTableSet) -> List[ControllerReturn]:
     if not tableset.tables:
         raise Exception("Invalid item - no tables located")
 
