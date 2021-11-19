@@ -10,7 +10,6 @@
 from decimal import Decimal
 from typing import List, Optional
 
-from dictalchemy import DictableModel
 from geoalchemy2 import Geometry
 from shapely import wkb
 from sqlalchemy import (
@@ -39,7 +38,7 @@ from opennem.core.oid import get_ocode, get_oid
 from opennem.utils.sql import time_bucket
 from opennem.workers.facility_data_ranges import FacilitySeenRange
 
-Base = declarative_base(cls=DictableModel)
+Base = declarative_base()
 metadata = Base.metadata
 
 

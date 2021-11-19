@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime
 
-from dictalchemy.utils import fromdict
 from sqlalchemy.exc import IntegrityError
 
 from opennem.core.loader import load_data
@@ -36,7 +35,7 @@ def registry_init() -> None:
 
         if not station_model:
             # pylint:disable no-member
-            station_model = fromdict(Station(), station_dict)
+            station_model = {}
             station_model.approved = True
             station_model.approved_at = datetime.now()
             station_model.approved_by = "opennem.registry"
@@ -44,7 +43,7 @@ def registry_init() -> None:
 
         # location
         if not station_model.location_id:
-            station_model.location = fromdict(
+            station_model.location = dict(
                 Location(),
                 station_dict["location"],
                 exclude=["id"],
