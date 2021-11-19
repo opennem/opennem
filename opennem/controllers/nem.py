@@ -369,9 +369,9 @@ def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
 
     records = unit_scada_generate_facility_scada(
         table.records,
-        interval_field="SETTLEMENTDATE",
-        facility_code_field="DUID",
-        power_field="INITIALMW",
+        interval_field="settlementdate",
+        facility_code_field="duid",
+        power_field="initialmw",
     )
 
     cr.processed_records = len(records)
@@ -396,98 +396,37 @@ def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerReturn:
     return cr
 
 
-def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:
-    if "records" not in table:
-        raise Exception("Invalid table no records")
+def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
+    cr = ControllerReturn(total_records=len(table.records))
 
-    records = table["records"]
-    item: Dict[str, Any] = dict()
-
-    # Filter out for only measurements
-    # as opposed to TYPE=SATELLITE
-    # use DAILY from MMS records. If no daily fallback onto MEASUREMENT
-    records_filtered = list(filter(lambda x: x["TYPE"] == "DAILY", records))
-
-    if not records_filtered:
-        records_filtered = list(filter(lambda x: x["TYPE"] == "MEASUREMENT", records))
-
-    scada_records = unit_scada_generate_facility_scada(
-        records_filtered,
-        spider,
-        network=NetworkAEMORooftop,
-        interval_field="INTERVAL_DATETIME",
-        facility_code_field="REGIONID",
-        power_field="POWER",
-        # don't filter down on duid since they'll conflict
-        # we need to sum aggs
-        groupby_filter=False,
+    records = unit_scada_generate_facility_scada(
+        table.records,
+        interval_field="interval_datetime",
+        facility_code_field="regionid",
+        power_field="power",
     )
 
-    scada_records = [rooftop_remap_regionids(i) for i in scada_records if i]
+    cr.processed_records = len(records)
+    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
 
-    # remove empties
-    scada_records = [i for i in scada_records if i]
-
-    # dedupe
-    return_records_grouped = {}
-
-    for pk_values, rec_value in groupby(
-        scada_records,
-        key=lambda r: (
-            r.get("trading_interval"),
-            r.get("network_id"),
-            r.get("facility_code"),
-        ),
-    ):
-        if pk_values not in return_records_grouped:
-            return_records_grouped[pk_values] = list(rec_value).pop()
-
-    scada_records = list(return_records_grouped.values())
-
-    item["table_schema"] = FacilityScada
-    item["update_fields"] = ["generated"]
-    item["records"] = scada_records
-    item["content"] = None
-
-    return item
+    return cr
 
 
-def process_rooftop_forecast(table: Dict[str, Any], spider: Spider) -> Dict:
-    if "records" not in table:
-        raise Exception("Invalid table no records")
+def process_rooftop_forecase(table: AEMOTableSchema) -> ControllerReturn:
+    cr = ControllerReturn(total_records=len(table.records))
 
-    records = table["records"]
-    item: Dict[str, Any] = dict()
-
-    scada_records = unit_scada_generate_facility_scada(
-        records,
-        spider,
-        network=NetworkAEMORooftop,
-        interval_field="INTERVAL_DATETIME",
-        facility_code_field="REGIONID",
-        power_field="POWERMEAN",
-        # don't filter down on duid since they'll conflict
-        # we need to sum aggs
-        groupby_filter=False,
+    records = unit_scada_generate_facility_scada(
+        table.records,
+        interval_field="interval_datetime",
+        facility_code_field="regionid",
+        power_field="powermean",
+        is_forecast=True,
     )
 
-    # remap duids
-    scada_records = [rooftop_remap_regionids(i) for i in scada_records]
+    cr.processed_records = len(records)
+    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
 
-    scada_records = [i for i in scada_records if i]
-
-    def set_is_forecast(record: Dict, is_forecast: bool = True) -> Dict:
-        record["is_forecast"] = is_forecast
-        return record
-
-    scada_records = [set_is_forecast(i) for i in scada_records]
-
-    item["table_schema"] = FacilityScada
-    item["update_fields"] = ["generated"]
-    item["records"] = scada_records
-    item["content"] = None
-
-    return item
+    return cr
 
 
 TABLE_PROCESSOR_MAP = {
