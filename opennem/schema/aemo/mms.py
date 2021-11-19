@@ -285,6 +285,15 @@ class DispatchRegionSum(MMSBase):
     demand_and_nonschedgen: float
 
 
+class DispatchUnitScada(MMSBase):
+    _interval_field = "settlementdate"
+    _primary_keys: List[str] = ["settlementdate", "regionid"]
+
+    settlementdate: datetime
+    duid: str
+    scadavalue: float
+
+
 # Map AEMO full table names to schemas
 TABLE_TO_SCHEMA_MAP = {
     "PARTICIPANT_REGISTRATION_MNSP_INTERCONNECTOR": ParticipantMNSPInterconnector,
@@ -295,6 +304,7 @@ TABLE_TO_SCHEMA_MAP = {
     "DISPATCH_INTERCONNECTORRES": DispatchInterconnectorRes,
     "DISPATCH_PRICE": DispatchPriceSchema,
     "DISPATCH_REGIONSUM": DispatchRegionSum,
+    "DISPATCH_UNIT_SCADA": DispatchUnitScada,
 }
 
 
