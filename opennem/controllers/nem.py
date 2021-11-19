@@ -45,7 +45,7 @@ def unit_scada_generate_facility_scada(
     network: NetworkSchema = NetworkNEM,
     interval_field: str = "settlementdate",
     facility_code_field: str = "duid",
-    power_field: Optional[str] = "scadavalue",
+    power_field: str = "scadavalue",
     energy_field: Optional[str] = None,
     is_forecast: bool = False,
 ) -> List[Dict]:
