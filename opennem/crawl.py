@@ -173,6 +173,9 @@ _CRAWLER_SET = load_crawlers()
 
 
 def run_crawls_all(last_crawled: bool = True) -> None:
+    if not _CRAWLER_SET.crawlers:
+        raise Exception("No crawlers found")
+
     for crawler in _CRAWLER_SET.crawlers:
         logger.info("Running crawl on {}".format(crawler.name))
         run_crawl(crawler, last_crawled=last_crawled)
