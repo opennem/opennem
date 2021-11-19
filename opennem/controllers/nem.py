@@ -1,8 +1,6 @@
-"""
+"""OpenNEM Core Controller
 
-NEMWEB Data ingress into OpenNEM format
-
-
+Parses MMS tables into OpenNEM derived database
 """
 
 import logging
@@ -19,13 +17,23 @@ from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BalancingSummary, Facility, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
+from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkAEMORooftop, NetworkSchema, NetworkWEM
 from opennem.utils.dates import parse_date
 from opennem.utils.numbers import float_to_str
-from opennem.utils.pipelines import check_spider_pipeline
 from opennem.utils.sql import duid_in_case
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.controllers.opennem")
+
+# Return Schema
+
+
+class ControllerReturn(BaseConfig):
+    total_records: int = 0
+    inserted_records: int = 0
+    processed_records: int = 0
+    errors: int = 0
+    error_detail: Optional[str]
 
 
 # Helpers
@@ -33,7 +41,6 @@ logger = logging.getLogger(__name__)
 
 def unit_scada_generate_facility_scada(
     records,
-    spider=None,
     network: NetworkSchema = NetworkNEM,
     interval_field: str = "SETTLEMENTDATE",
     facility_code_field: str = "DUID",
@@ -51,10 +58,7 @@ def unit_scada_generate_facility_scada(
     primary_keys = []
     return_records = []
 
-    created_by = ""
-
-    if spider and hasattr(spider, "name"):
-        created_by = spider.name
+    created_by = "opennem.controller"
 
     for row in records:
 
@@ -199,80 +203,24 @@ def generate_balancing_summary(
 # Processors
 
 
-def get_interconnector_facility(facility_code: str) -> Facility:
-    session = SessionLocal()
-
-    _fac = session.query(Facility).filter_by(code=facility_code).one_or_none()
-
-    if not _fac:
-        raise Exception("Could not find facility {}".format(facility_code))
-
-    return _fac
-
-
-def process_case_solutions(table: Dict, spider: Spider):
-    pass
-
-
-def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
+def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerReturn:
     session = SessionLocal()
     engine = get_database_engine()
 
-    if "records" not in table:
-        raise Exception("Invalid table no records")
-
-    records = table["records"]
-
+    cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
 
-    for record in records:
-        ti_value = None
-
-        if "SETTLEMENTDATE" in record:
-            ti_value = record["SETTLEMENTDATE"]
-
-        if "RUN_DATETIME" in record:
-            ti_value = record["RUN_DATETIME"]
-
-        if not ti_value:
-            raise Exception("Require a trading interval")
-
-        trading_interval = parse_date(ti_value, network=NetworkNEM, dayfirst=False)
-
-        if not trading_interval:
-            continue
-
-        facility_code = normalize_duid(record["INTERCONNECTORID"])
-        power_value = clean_float(record["MWFLOW"])
-
-        # @TODO
-        # power_value = clean_float(record["METEREDMWFLOW"])
-
+    for record in table.records:
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "created_by": spider.name,
-                "facility_code": facility_code,
-                "trading_interval": trading_interval,
-                "generated": power_value,
+                "created_by": "opennem.controller",
+                "facility_code": record.interconnectorid,
+                "trading_interval": record.settlementdate,
+                "generated": record.mwflow,
             }
         )
-
-    # remove duplicates
-    return_records_grouped = {}
-
-    for pk_values, rec_value in groupby(
-        records_to_store,
-        key=lambda r: (
-            r.get("trading_interval"),
-            r.get("network_id"),
-            r.get("facility_code"),
-        ),
-    ):
-        if pk_values not in return_records_grouped:
-            return_records_grouped[pk_values] = list(rec_value).pop()
-
-    records_to_store = list(return_records_grouped.values())
+        cr.processed_records += 1
 
     # insert
     stmt = insert(FacilityScada).values(records_to_store)
@@ -288,47 +236,21 @@ def process_dispatch_interconnectorres(table: Dict, spider: Spider) -> Dict:
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
-        return {"num_records": 0}
+        cr.errors = cr.processed_records
+        return cr
     finally:
         session.close()
 
-    return {"num_records": len(records_to_store)}
+    cr.inserted_records = cr.processed_records
+    return cr
 
 
-def _clear_scada_for_range(item: Dict[str, Any]) -> None:
-    # We need to purge old records in that date range
-    all_dates = [i["trading_interval"] for i in item["records"]]
-    min_date = min(all_dates)
-    max_date = max(all_dates)
-    duids = list(set([i["facility_code"] for i in item["records"]]))
-
-    __sql = """
-        update facility_scada set
-            generated=null
-        where
-            network_id='NEM' and
-            facility_code in ({fac_codes}) and
-            trading_interval >= '{min_date}' and
-            trading_interval <= '{max_date}'
-    """
-
-    query = __sql.format(fac_codes=duid_in_case(duids), min_date=min_date, max_date=max_date)
-
-    engine = get_database_engine()
-
-    with engine.connect() as c:
-        logger.debug(query)
-        c.execute(query)
-
-
-def process_nem_price(table: AEMOTableSchema) -> Dict[str, Any]:
+def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
     session = SessionLocal()
     engine = get_database_engine()
 
-    limit = None
+    cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
-    records_processed = 0
-    primary_keys = []
 
     price_field = "price"
 
@@ -336,37 +258,17 @@ def process_nem_price(table: AEMOTableSchema) -> Dict[str, Any]:
         price_field = "price_dispatch"
 
     for record in table.records:
-        print(record)
-        _pk = set([record.settlementdate, record.regionid])
-
-        if _pk in primary_keys:
-            continue
-
-        primary_keys.append(_pk)
-
-        price = None
-
-        if record.rrp:
-            price = record.rrp
-
-        if not price:
-            continue
-
         records_to_store.append(
             {
                 "network_id": "NEM",
                 "created_by": "opennem.controllers.nem",
                 "network_region": record.regionid,
                 "trading_interval": record.settlementdate,
-                price_field: price,
+                price_field: record.rrp,
             }
         )
 
-        records_processed += 1
-
-        if limit and records_processed >= limit:
-            logger.info("Reached limit of: {} {}".format(limit, records_processed))
-            break
+        cr.processed_records += 1
 
     stmt = insert(BalancingSummary).values(records_to_store)
     stmt.bind = engine
@@ -379,73 +281,37 @@ def process_nem_price(table: AEMOTableSchema) -> Dict[str, Any]:
         session.execute(stmt)
         session.commit()
     except Exception as e:
-        logger.error("Error inserting records")
+        logger.error("Error inserting NEM price records")
         logger.error(e)
-        return {"num_records": 0}
+        cr.errors = cr.processed_records
+        return cr
     finally:
         session.close()
 
-    return {"num_records": len(records_to_store)}
+    cr.inserted_records = cr.processed_records
+    return cr
 
 
-def process_dispatch_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
+def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     session = SessionLocal()
     engine = get_database_engine()
 
-    if "records" not in table:
-        raise Exception("Invalid table no records")
-
-    records = table["records"]
-
-    limit = None
+    cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
-    records_processed = 0
-    primary_keys = []
 
-    for record in records:
-        trading_interval = parse_date(
-            record["SETTLEMENTDATE"],
-            network=NetworkNEM,
-            dayfirst=False,
-            date_format="%Y/%m/%d %H:%M:%S",
-        )
-
-        if not trading_interval:
-            continue
-
-        _pk = set([trading_interval, record["REGIONID"]])
-
-        if _pk in primary_keys:
-            continue
-
-        primary_keys.append(_pk)
-
-        net_interchange = None
-
-        if "NETINTERCHANGE" in record:
-            net_interchange = clean_float(record["NETINTERCHANGE"])
-
-        demand_total = None
-
-        if "DEMAND_AND_NONSCHEDGEN" in record:
-            demand_total = clean_float(record["DEMAND_AND_NONSCHEDGEN"])
-
+    for record in table.records:
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "created_by": spider.name,
-                "network_region": record["REGIONID"],
-                "trading_interval": trading_interval,
-                "net_interchange": net_interchange,
-                "demand_total": demand_total,
+                "created_by": "opennem.controller",
+                "network_region": record.regionid,
+                "trading_interval": record.settlementdate,
+                "net_interchange": record.netinterchange,
+                "demand_total": record.demand_and_nonschedgen,
             }
         )
 
-        records_processed += 1
-
-        if limit and records_processed >= limit:
-            logger.info("Reached limit of: {} {}".format(limit, records_processed))
-            break
+        cr.processed_records += 1
 
     stmt = insert(BalancingSummary).values(records_to_store)
     stmt.bind = engine
@@ -463,12 +329,14 @@ def process_dispatch_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
-        return {"num_records": 0}
+        cr.errors = cr.processed_records
+        return cr
 
     finally:
         session.close()
 
-    return {"num_records": len(records_to_store)}
+    cr.inserted_records = cr.processed_records
+    return cr
 
 
 def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
@@ -720,16 +588,15 @@ def process_rooftop_forecast(table: Dict[str, Any], spider: Spider) -> Dict:
 
 
 TABLE_PROCESSOR_MAP = {
-    "dispatch_case_solution": "process_case_solutions",
     "dispatch_interconnectorres": "process_dispatch_interconnectorres",
-    "dispatch_regionsum": "process_dispatch_regionsum",
     "dispatch_unit_scada": "process_unit_scada",
     "dispatch_unit_solution": "process_unit_solution",
-    "METER_DATA_GEN_DUID": "process_meter_data_gen_duid",
-    "ROOFTOP_ACTUAL": "process_rooftop_actual",
-    "ROOFTOP_FORECAST": "process_rooftop_forecast",
+    "meter_data_gen_duid": "process_meter_data_gen_duid",
+    "rooftop_actual": "process_rooftop_actual",
+    "rooftop_forecast": "process_rooftop_forecast",
     "dispatch_price": "process_nem_price",
     "trading_price": "process_nem_price",
+    "dispatch_regionsum": "process_dispatch_regionsum",
     "trading_regionsum": "process_trading_regionsum",
 }
 
@@ -756,11 +623,6 @@ def store_aemo_tableset(tableset: AEMOTableSet) -> List:
         record_item = None
 
         record_item = globals()[process_meth](table)
-
-        # # item keys to copy over
-        # for copy_key in ["link", "link_dt"]:
-        #     if copy_key in item and record_item and isinstance(record_item, dict):
-        #         record_item[copy_key] = item[copy_key]
 
         if record_item:
             ret.append(record_item)
