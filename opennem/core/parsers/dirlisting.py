@@ -16,7 +16,7 @@ from datetime import datetime
 from enum import Enum
 from operator import attrgetter
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Pattern, Union
 
 from pydantic import ValidationError, validator
 from scrapy.http import HtmlResponse
@@ -138,6 +138,9 @@ class DirectoryListing(BaseConfig):
     @property
     def directory_count(self) -> int:
         return len(self.get_directories())
+
+    def apply_filter(self, pattern: str) -> None:
+        self.entries = list(filter(lambda x: not re.match(pattern, x.link), self.entries))
 
     def get_files(self) -> List[DirlistingEntry]:
         return list(filter(lambda x: x.entry_type == DirlistingEntryType.file, self.entries))
