@@ -200,6 +200,91 @@ class TradingInterconnectorRes(MMSBase):
     lastchanged: datetime
 
 
+class DispatchInterconnectorRes(MMSBase):
+    _interval_field = "settlementdate"
+    _primary_keys: List[str] = ["settlementdate", "interconnectorid"]
+
+    settlementdate: datetime
+    runno: int
+    interconnectorid: str
+    dispatchinterval: int
+    intervention: int
+    meteredmwflow: float
+    mwflow: float
+    mwlosses: float
+    marginalvalue: float
+    violationdegree: float
+    lastchanged: datetime
+    exportlimit: float
+    importlimit: float
+    marginalloss: float
+    exportgenconid: str
+    importgenconid: str
+    fcasexportlimit: float
+    fcasimportlimit: float
+    local_price_adjustment_export: float
+    locally_constrained_export: float
+    local_price_adjustment_import: float
+    locally_constrained_import: float
+
+
+class DispatchPriceSchema(MMSBase):
+    _interval_field = "settlementdate"
+    _primary_keys: List[str] = ["settlementdate", "regionid"]
+
+    settlementdate: datetime
+    runno: int
+    regionid: str
+    dispatchinterval: int
+    intervention: int
+    rrp: float
+    eep: int
+    rop: float
+    apcflag: int
+    marketsuspendedflag: int
+    lastchanged: datetime
+    raise6secrrp: float
+    raise6secrop: float
+    raise60secrrp: float
+    raise60secrop: float
+    raise5minrrp: float
+    raise5minrop: float
+    raiseregrrp: float
+    raiseregrop: float
+    lower6secrrp: float
+    lower6secrop: float
+    lower60secrrp: float
+    lower60secrop: float
+    lower5minrrp: float
+    lower5minrop: float
+    lowerregrrp: float
+    lowerregrop: float
+    price_status: str
+
+
+class DispatchRegionSum(MMSBase):
+    _interval_field = "settlementdate"
+    _primary_keys: List[str] = ["settlementdate", "regionid"]
+
+    settlementdate: datetime
+    runno: int
+    regionid: str
+    dispatchinterval: int
+    intervention: int
+    lastchanged: datetime
+
+    totaldemand: float
+    availablegeneration: float
+    availableload: float
+    demandforecast: float
+    dispatchablegeneration: float
+    dispatchableload: float
+    netinterchange: float
+    excessgeneration: float
+
+    demand_and_nonschedgen: float
+
+
 # Map AEMO full table names to schemas
 TABLE_TO_SCHEMA_MAP = {
     "PARTICIPANT_REGISTRATION_MNSP_INTERCONNECTOR": ParticipantMNSPInterconnector,
@@ -207,6 +292,9 @@ TABLE_TO_SCHEMA_MAP = {
     "DISPATCH_UNIT_SOLUTION": DispatchUnitSolutionSchema,
     "TRADING_PRICE": TradingPriceSchema,
     "TRADING_INTERCONNECTORRES": TradingInterconnectorRes,
+    "DISPATCH_INTERCONNECTORRES": DispatchInterconnectorRes,
+    "DISPATCH_PRICE": DispatchPriceSchema,
+    "DISPATCH_REGIONSUM": DispatchRegionSum,
 }
 
 
