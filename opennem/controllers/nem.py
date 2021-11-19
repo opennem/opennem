@@ -380,29 +380,20 @@ def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
     return cr
 
 
-def process_meter_data_gen_duid(table: Dict[str, Any], spider: Spider) -> Dict:
-    if "records" not in table:
-        raise Exception("Invalid table no records")
+def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerReturn:
+    cr = ControllerReturn(total_records=len(table.records))
 
-    records = table["records"]
-    item: Dict[str, Any] = dict()
-
-    item["table_schema"] = FacilityScada
-    item["update_fields"] = ["generated"]
-    item["records"] = unit_scada_generate_facility_scada(
-        records,
-        spider,
-        network=NetworkNEM,
-        interval_field="INTERVAL_DATETIME",
-        facility_code_field="DUID",
-        power_field="MWH_READING",
+    records = unit_scada_generate_facility_scada(
+        table.records,
+        interval_field="interval_datetime",
+        facility_code_field="duid",
+        power_field="mwh_reading",
     )
-    item["content"] = None
 
-    # Update existing records for this range
-    # _clear_scada_for_range(item)
+    cr.processed_records = len(records)
+    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
 
-    return item
+    return cr
 
 
 def process_rooftop_actual(table: Dict[str, Any], spider: Spider) -> Dict:

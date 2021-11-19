@@ -49,6 +49,10 @@ class MMSBase(BaseModel):
         allow_population_by_field_name = True
         alias_generator = mms_alias_generator
 
+    _validate_interval_datetime = validator(
+        "interval_datetime", pre=True, allow_reuse=True, check_fields=False
+    )(lambda x: parse_date(x, network=NetworkNEM))
+
     _validate_settlementdate = validator(
         "settlementdate", pre=True, allow_reuse=True, check_fields=False
     )(lambda x: parse_date(x, network=NetworkNEM))
@@ -287,11 +291,20 @@ class DispatchRegionSum(MMSBase):
 
 class DispatchUnitScada(MMSBase):
     _interval_field = "settlementdate"
-    _primary_keys: List[str] = ["settlementdate", "regionid"]
+    _primary_keys: List[str] = ["settlementdate", "duid"]
 
     settlementdate: datetime
     duid: str
     scadavalue: float
+
+
+class MeterDataGenDUID(MMSBase):
+    _interval_field = "interval_datetime"
+    _primary_keys: List[str] = ["interval_datetime", "duid"]
+
+    interval_datetime: datetime
+    duid: str
+    mwh_reading: float
 
 
 # Map AEMO full table names to schemas
@@ -305,6 +318,7 @@ TABLE_TO_SCHEMA_MAP = {
     "DISPATCH_PRICE": DispatchPriceSchema,
     "DISPATCH_REGIONSUM": DispatchRegionSum,
     "DISPATCH_UNIT_SCADA": DispatchUnitScada,
+    "METER_DATA_GEN_DUID": MeterDataGenDUID,
 }
 
 
