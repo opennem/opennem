@@ -140,7 +140,7 @@ class DirectoryListing(BaseConfig):
         return len(self.get_directories())
 
     def apply_filter(self, pattern: str) -> None:
-        self.entries = list(filter(lambda x: not re.match(pattern, x.link), self.entries))
+        self.entries = list(filter(lambda x: re.match(pattern, x.link), self.entries))
 
     def get_files(self) -> List[DirlistingEntry]:
         return list(filter(lambda x: x.entry_type == DirlistingEntryType.file, self.entries))
