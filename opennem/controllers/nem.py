@@ -403,6 +403,7 @@ def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
         interval_field="interval_datetime",
         facility_code_field="regionid",
         power_field="power",
+        network=NetworkAEMORooftop,
     )
 
     records = [rooftop_remap_regionids(i) for i in records if i]
@@ -422,6 +423,7 @@ def process_rooftop_forecase(table: AEMOTableSchema) -> ControllerReturn:
         facility_code_field="regionid",
         power_field="powermean",
         is_forecast=True,
+        network=NetworkAEMORooftop,
     )
 
     records = [rooftop_remap_regionids(i) for i in records if i]
