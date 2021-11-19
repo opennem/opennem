@@ -307,6 +307,31 @@ class MeterDataGenDUID(MMSBase):
     mwh_reading: float
 
 
+class RooftopForecast(MMSBase):
+    _interval_field = "interval_datetime"
+    _primary_keys: List[str] = ["interval_datetime", "regionid"]
+
+    interval_datetime: datetime
+    lastchanged: datetime
+    regionid: str
+    powermean: float
+    powerpoe50: float
+    powerpoelow: float
+    powerpoehigh: float
+
+
+class RooftopActual(MMSBase):
+    _interval_field = "interval_datetime"
+    _primary_keys: List[str] = ["interval_datetime", "regionid"]
+
+    interval_datetime: datetime
+    lastchanged: datetime
+    regionid: str
+    power: float
+    qi: float
+    type: str
+
+
 # Map AEMO full table names to schemas
 TABLE_TO_SCHEMA_MAP = {
     "PARTICIPANT_REGISTRATION_MNSP_INTERCONNECTOR": ParticipantMNSPInterconnector,
@@ -319,6 +344,8 @@ TABLE_TO_SCHEMA_MAP = {
     "DISPATCH_REGIONSUM": DispatchRegionSum,
     "DISPATCH_UNIT_SCADA": DispatchUnitScada,
     "METER_DATA_GEN_DUID": MeterDataGenDUID,
+    "ROOFTOP_FORECAST": RooftopForecast,
+    "ROOFTOP_ACTUAL": RooftopActual,
 }
 
 
