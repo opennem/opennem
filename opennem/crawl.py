@@ -207,6 +207,8 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
     if not has_errors:
         last_modified_date = max([i.modified_date for i in entries_to_fetch])
         crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, last_modified_date)
+        crawler.last_crawled = last_modified_date
+        crawler.last_processed = last_modified_date
         logger.info("Set last updated to {}".format(last_modified_date))
 
 
