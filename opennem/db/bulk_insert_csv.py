@@ -157,7 +157,13 @@ def generate_bulkinsert_csv_from_records(
     # @TODO put the columns in the correct order ..
     # @NOTE do we need to ?!
     for record in records:
-        csvwriter.writerow(record)
+        if not record:
+            continue
+
+        try:
+            csvwriter.writerow(record)
+        except Exception:
+            logger.error("Error writing row in bulk insert: {}".format(record))
 
     # rewind it back to the start
     csv_buffer.seek(0)
