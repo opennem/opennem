@@ -1,16 +1,19 @@
 """OpenNEM BoM Client
 
 """
+import logging
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import pytz
+import requests
 from pydantic import validator
 
 from opennem.schema.core import BaseConfig
-from opennem.utils.http import http
 from opennem.utils.random_agent import get_random_agent
-from opennem.utils.timezone import UTC, make_aware
+from opennem.utils.timezone import UTC
+
+logger = logging.getLogger("opennem.clients.bom")
 
 BOM_REQUEST_HEADERS = {
     "Host": "www.bom.gov.au",
@@ -98,7 +101,11 @@ def get_bom_request_headers() -> Dict[str, str]:
 
 def get_bom_observations(observation_url: str, station_code: str) -> BOMObservationReturn:
     """Requests a BOM observation JSON endpoint and returns a schema"""
-    resp = http.get(observation_url, headers=get_bom_request_headers())
+    _headers = get_bom_request_headers()
+
+    logger.info("Fetching {}".format(observation_url))
+
+    resp = requests.get(observation_url, headers=_headers)
 
     resp_object = resp.json()
 
@@ -112,8 +119,7 @@ def get_bom_observations(observation_url: str, station_code: str) -> BOMObservat
             "station_code": station_code,
             "state": _oo["header"][0]["state_time_zone"],
             "observations": [
-                {**i, "state": _oo["header"][0]["state_time_zone"]}
-                for i in _oo["data"]
+                {**i, "state": _oo["header"][0]["state_time_zone"]} for i in _oo["data"]
             ],
         }
     )
