@@ -96,7 +96,7 @@ def get_bom_request_headers() -> Dict[str, str]:
     return {**BOM_REQUEST_HEADERS, "User-Agent": get_random_agent()}
 
 
-def get_bom_observations(observation_url: str) -> BOMObservationReturn:
+def get_bom_observations(observation_url: str, station_code: str) -> BOMObservationReturn:
     """Requests a BOM observation JSON endpoint and returns a schema"""
     resp = http.get(observation_url, headers=get_bom_request_headers())
 
@@ -109,9 +109,11 @@ def get_bom_observations(observation_url: str) -> BOMObservationReturn:
 
     observations = BOMObservationReturn(
         **{
+            "station_code": station_code,
             "state": _oo["header"][0]["state_time_zone"],
             "observations": [
-                {**i, "state": _oo["header"][0]["state_time_zone"]} for i in _oo["data"]
+                {**i, "state": _oo["header"][0]["state_time_zone"]}
+                for i in _oo["data"]
             ],
         }
     )
@@ -122,6 +124,6 @@ def get_bom_observations(observation_url: str) -> BOMObservationReturn:
 if __name__ == "__main__":
     u = "http://www.bom.gov.au/fwo/IDN60801/IDN60801.94768.json"
 
-    r = get_bom_observations(u)
+    r = get_bom_observations(u, "066214")
 
     print(r.json(indent=4))
