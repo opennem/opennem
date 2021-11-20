@@ -407,6 +407,7 @@ def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
     )
 
     records = [rooftop_remap_regionids(i) for i in records if i]
+    records = [i for i in records if i]
 
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
@@ -427,6 +428,7 @@ def process_rooftop_forecase(table: AEMOTableSchema) -> ControllerReturn:
     )
 
     records = [rooftop_remap_regionids(i) for i in records if i]
+    records = [i for i in records if i]
 
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
