@@ -224,11 +224,15 @@ def run_crawls_all(last_crawled: bool = True) -> None:
         run_crawl(crawler, last_crawled=last_crawled)
 
 
+def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True) -> None:
+    if not _CRAWLER_SET.crawlers:
+        raise Exception("No crawlers found")
+
+    for crawler in _CRAWLER_SET.get_crawlers_by_schedule(schedule):
+        run_crawl(crawler, last_crawled=last_crawled)
+
+
 if __name__ == "__main__":
     # crawler_set = load_crawlers()
     # run_crawls_all()
-
-    crawlers = _CRAWLER_SET.get_crawlers_by_schedule(CrawlerSchedule.live)
-
-    for c in crawlers:
-        print(c.name)
+    pass
