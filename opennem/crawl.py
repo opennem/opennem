@@ -2,20 +2,31 @@
 
 """
 import logging
-import re
 from datetime import datetime
-from typing import List, Optional, Pattern
-
-from pydantic import ValidationError, validator
+from enum import Enum
+from operator import attrgetter
+from typing import List, Optional
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.parsers.aemo.mms import parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 from opennem.schema.core import BaseConfig
-from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.crawler")
+
+
+class CrawlerPriority(Enum):
+    high = 1
+    medium = 5
+    low = 10
+
+
+class CrawlerSchedule(Enum):
+    live = "1m"
+    frequent = "5m"
+    hourly = "1h"
+    daily = "1d"
 
 
 class CrawlerDefinition(BaseConfig):
@@ -25,6 +36,9 @@ class CrawlerDefinition(BaseConfig):
     url: str
     limit: Optional[int]
     filename_filter: Optional[str]
+
+    priority: CrawlerPriority
+    schedule: Optional[CrawlerSchedule]
 
     # crawl metadata
     last_crawled: Optional[datetime]
@@ -45,38 +59,57 @@ class CrawlerSet(BaseConfig):
 
         return _crawler_lookup.pop()
 
+    def get_crawlers_by_schedule(self, schedule: CrawlerSchedule) -> List[CrawlerDefinition]:
+        return list(
+            sorted(
+                filter(lambda x: x.schedule == schedule, self.crawlers),
+                key=lambda x: x.priority.value,
+            )
+        )
+
 
 AEMONemTradingISLatest = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
     name="au.nem.current.trading_is",
     url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
     limit=3,
 )
 
 AEMONemDispatchISLatest = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
     name="au.nem.current.dispatch_is",
     url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
     limit=3,
 )
 
 AEMONEMDispatchScada = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
     name="au.nem.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
     limit=3,
 )
 
 AEMONEMDispatchActualGEN = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
     name="au.nem.dispatch_actual_gen",
     url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
     limit=1,
 )
 
 AEMONEMNextDayDispatch = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
     name="au.nem.dispatch",
     url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
     limit=1,
 )
 
 AEMONEMRooftop = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.frequent,
     name="au.nem.rooftop",
     url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
     limit=1,
@@ -85,6 +118,8 @@ AEMONEMRooftop = CrawlerDefinition(
 
 
 AEMONEMRooftopForecast = CrawlerDefinition(
+    priority=CrawlerPriority.low,
+    schedule=CrawlerSchedule.frequent,
     name="au.nem.rooftop_forecast",
     url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
     limit=1,
@@ -124,6 +159,12 @@ def load_crawlers() -> CrawlerSet:
 
 
 def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False) -> None:
+    logger.info(
+        "Crawling: {}. Latest: {}. Limit: {}. Last crawled: {}".format(
+            crawler.name, last_crawled, limit, crawler.last_crawled
+        )
+    )
+
     dirlisting = get_dirlisting(crawler.url)
 
     if crawler.filename_filter:
@@ -183,4 +224,9 @@ def run_crawls_all(last_crawled: bool = True) -> None:
 
 if __name__ == "__main__":
     # crawler_set = load_crawlers()
-    run_crawls_all()
+    # run_crawls_all()
+
+    crawlers = _CRAWLER_SET.get_crawlers_by_schedule(CrawlerSchedule.live)
+
+    for c in crawlers:
+        print(c.name)
