@@ -41,7 +41,8 @@ services:
   #     - mysql_data:/var/lib/mysql
 
   postgres:
-    image: opennem/database:dev
+    # image: opennem/database:dev
+    image: timescale/timescaledb-postgis:latest-pg12
     shm_size: "2GB"
     restart: unless-stopped
     env_file: ./.env
@@ -52,10 +53,10 @@ services:
     ports:
       - ${HOST:-127.0.0.1}:15433:5432
     volumes:
-      - postgres_data:/var/lib/postgresql/
+      - db_data:/var/lib/postgresql/
 
 volumes:
-  postgres_data: {}
+  db_data: {}
   scrapyd_data:
     driver: local
   scrapyd_eggs:
