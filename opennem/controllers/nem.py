@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 from scrapy import Spider
 from sqlalchemy.dialects.postgresql import insert
 
+from opennem.controllers.schema import ControllerReturn
 from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float
 from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet
@@ -21,20 +22,8 @@ from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkAEMORooftop, NetworkSchema, NetworkWEM
 from opennem.utils.dates import parse_date
 from opennem.utils.numbers import float_to_str
-from opennem.utils.sql import duid_in_case
 
 logger = logging.getLogger("opennem.controllers.opennem")
-
-# Return Schema
-
-
-class ControllerReturn(BaseConfig):
-    total_records: int = 0
-    inserted_records: int = 0
-    processed_records: int = 0
-    errors: int = 0
-    error_detail: Optional[str]
-
 
 # Helpers
 
@@ -50,8 +39,6 @@ def unit_scada_generate_facility_scada(
 ) -> List[Dict]:
     created_at = datetime.now()
     return_records = []
-
-    created_by = "opennem.controller"
 
     for row in records:
         __rec = {
@@ -450,11 +437,11 @@ TABLE_PROCESSOR_MAP = {
 }
 
 
-def store_aemo_tableset(tableset: AEMOTableSet) -> List[ControllerReturn]:
+def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
     if not tableset.tables:
         raise Exception("Invalid item - no tables located")
 
-    ret = []
+    cr = ControllerReturn()
 
     for table in tableset.tables:
         if table.full_name not in TABLE_PROCESSOR_MAP:
@@ -474,6 +461,10 @@ def store_aemo_tableset(tableset: AEMOTableSet) -> List[ControllerReturn]:
         record_item = globals()[process_meth](table)
 
         if record_item:
-            ret.append(record_item)
+            cr.processed_records += record_item.processed_records
+            cr.total_records += record_item.total_records
+            cr.inserted_records += record_item.inserted_records
+            cr.errors += record_item.errors
+            cr.error_detail += record_item.error_detail
 
-    return ret
+    return cr
