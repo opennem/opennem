@@ -8,10 +8,9 @@ from huey import PriorityRedisHuey, crontab
 
 from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_energy
-from opennem.crawl import run_crawls_all
+from opennem.crawl import CrawlerSchedule, run_crawls_by_schedule
 from opennem.db.tasks import refresh_material_views
 from opennem.monitors.aemo_intervals import aemo_wem_live_interval
-from opennem.monitors.database import check_database_live
 from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
@@ -125,7 +124,6 @@ def db_facility_seen_update() -> None:
 @huey.lock_task("schedule_spider_catchup_tasks")
 def spider_catchup_tasks() -> None:
     catchup_spiders = [
-        "au.bom.capitals",
         "au.apvi.current",
         "au.nem.day.dispatch_is",
         "au.nem.day.rooftop",
@@ -136,28 +134,28 @@ def spider_catchup_tasks() -> None:
         job_schedule_all(_spider_name)
 
 
+@huey.periodic_task(crontab(minute="*/1"))
+@huey.lock_task("crawler_scheduled_live")
+def crawler_scheduled_live() -> None:
+    run_crawls_by_schedule(CrawlerSchedule.live)
+
+
 @huey.periodic_task(crontab(minute="*/5"))
-@huey.lock_task("spider_live_tasks")
-def spider_live_tasks() -> None:
-    run_crawls_all()
+@huey.lock_task("crawler_scheduled_frequent")
+def crawler_scheduled_frequent() -> None:
+    run_crawls_by_schedule(CrawlerSchedule.frequent)
 
 
-@huey.periodic_task(crontab(hour="*/4", minute="10"))
-@huey.lock_task("spider_nem_catchup")
-def spider_nem_catchup() -> None:
-    run_crawls_all(last_crawled=False)
+@huey.periodic_task(crontab(hour="*/1", minute="2"))
+@huey.lock_task("crawler_scheduled_hourly")
+def crawler_scheduled_hourly() -> None:
+    run_crawls_by_schedule(CrawlerSchedule.hourly)
 
 
-# bom spiders
-@huey.periodic_task(crontab(minute="*/10"))
-@huey.lock_task("spider_bom")
-def spider_bom() -> None:
-    bom_spiders = [
-        "au.bom.capitals",
-    ]
-
-    for _spider_name in bom_spiders:
-        job_schedule_all(_spider_name)
+@huey.periodic_task(crontab(hour="9", minute="1"))
+@huey.lock_task("crawler_scheduled_day")
+def crawler_scheduled_day() -> None:
+    run_crawls_by_schedule(CrawlerSchedule.daily)
 
 
 @huey.periodic_task(crontab(minute="*/5"))
