@@ -35,7 +35,16 @@ def registry_init() -> None:
 
         if not station_model:
             # pylint:disable no-member
-            station_model = {}
+            main_dict = {
+                i: k
+                for i, k in station_dict.items()
+                if i not in ["facilities", "location", "participant", "photos", "network"]
+            }
+
+            main_dict["facilities"] = []
+            main_dict["location"] = None
+
+            station_model = Station(**main_dict)
             station_model.approved = True
             station_model.approved_at = datetime.now()
             station_model.approved_by = "opennem.registry"
@@ -43,11 +52,12 @@ def registry_init() -> None:
 
         # location
         if not station_model.location_id:
-            station_model.location = dict(
-                Location(),
-                station_dict["location"],
-                exclude=["id"],
-            )
+            location_dict = {
+                i: k
+                for i, k in station_dict["location"].items()
+                if i not in ["id", "weather_station", "weather_nearest", "country", "lat", "lng"]
+            }
+            station_model.location = Location(**location_dict)
 
         if station.location.lat and station.location.lng:
             station_model.location.geom = "SRID=4326;POINT({} {})".format(
@@ -76,16 +86,19 @@ def registry_init() -> None:
                 logger.info("Added facility {} {}".format(fac.code, fac.network.code))
 
                 f = Facility(
-                    **fac.dict(
-                        exclude={
+                    **{
+                        i: k
+                        for i, k in fac.dict().items()
+                        if i
+                        not in [
                             "id",
                             "fueltech",
                             "status",
                             "network",
                             "revision_ids",
                             "scada_power",
-                        }
-                    )
+                        ]
+                    }
                 )
                 f.approved_by = "opennem.registry"
                 f.created_by = "opennem.registry"
