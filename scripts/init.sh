@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -exo pipefail
+set -euo pipefail
 
 # set local path
 pwd > .venv/lib/python3.9/site-packages/local.pth
