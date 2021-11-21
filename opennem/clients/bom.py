@@ -50,13 +50,13 @@ class BOMObserationSchema(BaseConfig):
     state: str
     aifstime_utc: str
     observation_time: Optional[datetime]
-    apparent_t: float
+    apparent_t: Optional[float]
     air_temp: float
-    press_qnh: float
-    wind_dir: str
+    press_qnh: Optional[float]
+    wind_dir: Optional[str]
     wind_spd_kmh: Optional[float]
     gust_kmh: Optional[float]
-    rel_hum: float
+    rel_hum: Optional[float]
     cloud: Optional[str]
     cloud_type: Optional[str]
 
