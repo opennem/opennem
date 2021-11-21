@@ -124,7 +124,7 @@ def schedule_export_geojson() -> None:
 
 
 # metadata
-@huey.periodic_task(crontab(hour="*/12"), priority=30)
+@huey.periodic_task(crontab(hour="*/12", minute="30"), priority=30)
 @huey.lock_task("schedule_export_metadata")
 def schedule_export_metadata() -> None:
     if settings.workers_run:
@@ -132,7 +132,7 @@ def schedule_export_metadata() -> None:
 
 
 # set output check
-@huey.periodic_task(crontab(hour="*/6"), priority=30)
+@huey.periodic_task(crontab(hour="*/12", minute="30"), priority=30)
 @huey.lock_task("schedule_run_set_output_check")
 def schedule_run_set_output_check() -> None:
     run_set_output_check()
