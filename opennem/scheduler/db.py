@@ -119,21 +119,7 @@ def db_facility_seen_update() -> None:
             slack_message("Ran facility seen range on {}".format(settings.env))
 
 
-# spider tasks
-@huey.periodic_task(crontab(hour="*/4", minute="55"))
-@huey.lock_task("schedule_spider_catchup_tasks")
-def spider_catchup_tasks() -> None:
-    catchup_spiders = [
-        "au.apvi.current",
-        "au.nem.day.dispatch_is",
-        "au.nem.day.rooftop",
-        "au.nem.day.trading_is",
-    ]
-
-    for _spider_name in catchup_spiders:
-        job_schedule_all(_spider_name)
-
-
+# crawler tasks
 @huey.periodic_task(crontab(minute="*/1"))
 @huey.lock_task("crawler_scheduled_live")
 def crawler_scheduled_live() -> None:
@@ -152,7 +138,7 @@ def crawler_scheduled_hourly() -> None:
     run_crawls_by_schedule(CrawlerSchedule.hourly)
 
 
-@huey.periodic_task(crontab(hour="9", minute="1"))
+@huey.periodic_task(crontab(hour="8,16", minute="1"))
 @huey.lock_task("crawler_scheduled_day")
 def crawler_scheduled_day() -> None:
     run_crawls_by_schedule(CrawlerSchedule.daily)
@@ -162,7 +148,6 @@ def crawler_scheduled_day() -> None:
 @huey.lock_task("spider_schedule_wem")
 def spider_schedule_wem() -> None:
     wem_spiders = [
-        "au.apvi.latest.data",
         "au.wem.current.balancing_summary",
         "au.wem.current.facility_scada",
         "au.wem.live.facility_intervals",
