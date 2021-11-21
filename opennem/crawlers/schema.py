@@ -23,7 +23,7 @@ class CrawlerDefinition(BaseConfig):
     """Defines a crawler"""
 
     name: str
-    url: str
+    url: Optional[str]
     limit: Optional[int]
     filename_filter: Optional[str]
 
