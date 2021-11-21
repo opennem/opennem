@@ -3,9 +3,7 @@
 """
 import logging
 from datetime import datetime
-from enum import Enum
-from operator import attrgetter
-from typing import Callable, List, Optional
+from typing import List, Optional
 
 import pytz
 
@@ -15,64 +13,11 @@ from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.parsers.aemo.mms import parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
-from opennem.schema.core import BaseConfig
-from opennem.spiders.bom.utils import get_stations, get_stations_priority
+from opennem.crawlers.apvi import crawl_apvi_forecasts
+from opennem.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule, CrawlerSet
+from opennem.spiders.bom.utils import get_stations_priority
 
 logger = logging.getLogger("opennem.crawler")
-
-
-class CrawlerPriority(Enum):
-    high = 1
-    medium = 5
-    low = 10
-
-
-class CrawlerSchedule(Enum):
-    live = "1m"
-    frequent = "5m"
-    hourly = "1h"
-    daily = "1d"
-
-
-class CrawlerDefinition(BaseConfig):
-    """Defines a crawler"""
-
-    name: str
-    url: str
-    limit: Optional[int]
-    filename_filter: Optional[str]
-
-    priority: CrawlerPriority
-    schedule: Optional[CrawlerSchedule]
-
-    # crawl metadata
-    last_crawled: Optional[datetime]
-    last_processed: Optional[datetime]
-
-    processor: Callable
-
-
-class CrawlerSet(BaseConfig):
-    """Defines a set of crawlers"""
-
-    crawlers: List[CrawlerDefinition]
-
-    def get_crawler(self, name: str) -> CrawlerDefinition:
-        """Get a crawler by name"""
-        _crawler_lookup = list(filter(lambda x: x.name == name, self.crawlers))
-
-        if not _crawler_lookup:
-            raise Exception(f"Could not find crawler {name}")
-
-        return _crawler_lookup.pop()
-
-    def get_crawlers_by_schedule(self, schedule: CrawlerSchedule) -> List[CrawlerDefinition]:
-        return list(
-            sorted(
-                filter(lambda x: x.schedule == schedule, self.crawlers),
-                key=lambda x: x.priority.value,
-            )
-        )
 
 
 def load_crawlers() -> CrawlerSet:
@@ -263,6 +208,14 @@ BOMCapitals = CrawlerDefinition(
     processor=crawl_bom_capitals,
 )
 
+APVIRooftopCrawler = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.frequent,
+    name="apvi.data",
+    url="none",
+    processor=crawl_apvi_forecasts,
+)
+
 
 _CRAWLER_SET = load_crawlers()
 
@@ -287,5 +240,7 @@ def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True)
 if __name__ == "__main__":
     # crawler_set = load_crawlers()
     # run_crawls_all()
-    run_crawls_by_schedule(CrawlerSchedule.frequent)
+    # run_crawls_by_schedule(CrawlerSchedule.frequent)
+    apvi = _CRAWLER_SET.get_crawler("apvi.data")
+    run_crawl(apvi)
     pass
