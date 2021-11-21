@@ -60,7 +60,7 @@ class APVIForecastInterval(BaseConfig):
             raise Exception(f"Invalid APVI forecast interval: {value}")
 
         # All APVI data is in NEM time
-        interval_time = interval_time.astimezone(NetworkNEM.get_timezone()) # type: ignore
+        interval_time = interval_time.astimezone(NetworkNEM.get_timezone())  # type: ignore
 
         return interval_time
 
@@ -112,7 +112,7 @@ def get_apvi_rooftop_data() -> Optional[APVIForecastSet]:
 
     try:
         _resp_json = _resp.json()
-    except JSONDecodeError:
+    except JSONDecodeError as e:
         logger.error("Error decoding APVI response: {}".format(e))
         return None
 
