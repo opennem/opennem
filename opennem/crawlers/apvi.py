@@ -32,6 +32,6 @@ def crawl_apvi_forecasts(
 
 
 if __name__ == "__main__":
-    r = get_apvi_rooftop_dat()
+    r = get_apvi_rooftop_data()
     cr = store_apvi_forecastset(r)
     print(cr)
