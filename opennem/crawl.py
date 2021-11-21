@@ -15,6 +15,7 @@ from opennem.core.parsers.aemo.mms import parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 from opennem.crawlers.apvi import crawl_apvi_forecasts
 from opennem.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule, CrawlerSet
+from opennem.crawlers.wem import run_wem_balancing_crawl, run_wem_facility_scada_crawl
 from opennem.spiders.bom.utils import get_stations_priority
 
 logger = logging.getLogger("opennem.crawler")
@@ -216,6 +217,19 @@ APVIRooftopCrawler = CrawlerDefinition(
     processor=crawl_apvi_forecasts,
 )
 
+WEMBalancingLive = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.frequent,
+    name="au.wem.live.balancing",
+    processor=run_wem_balancing_crawl,
+)
+
+WEMBalancingLive = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.frequent,
+    name="au.wem.live.facility_scada",
+    processor=run_wem_facility_scada_crawl,
+)
 
 _CRAWLER_SET = load_crawlers()
 
@@ -241,6 +255,6 @@ if __name__ == "__main__":
     # crawler_set = load_crawlers()
     # run_crawls_all()
     # run_crawls_by_schedule(CrawlerSchedule.frequent)
-    apvi = _CRAWLER_SET.get_crawler("apvi.data")
+    apvi = _CRAWLER_SET.get_crawler("au.wem.live.facility_scada")
     run_crawl(apvi)
     pass
