@@ -109,7 +109,7 @@ def schedule_facility_first_seen_check() -> None:
     facility_first_seen_check()
 
 
-@huey.periodic_task(crontab(hour="4,10,16,22", minute="1"))
+@huey.periodic_task(crontab(hour="*/1", minute="1"))
 @huey.lock_task("db_facility_seen_update")
 def db_facility_seen_update() -> None:
     if settings.workers_db_run:
