@@ -6,7 +6,6 @@ pytest
 flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 flake8 . --count --exit-zero --max-complexity=14 --max-line-length=127 --statistics
 
-scrapy list
 # @TODO run mypy
 
 poetry version ${1-prerelease}
@@ -38,7 +37,5 @@ else
 
   # scrapyd-deploy prod
 fi
-
-scrapyd-deploy dev
 
 rm -rf build/
