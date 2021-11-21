@@ -142,18 +142,3 @@ def crawler_scheduled_hourly() -> None:
 @huey.lock_task("crawler_scheduled_day")
 def crawler_scheduled_day() -> None:
     run_crawls_by_schedule(CrawlerSchedule.daily)
-
-
-@huey.periodic_task(crontab(minute="*/5"))
-@huey.lock_task("spider_schedule_wem")
-def spider_schedule_wem() -> None:
-    wem_spiders = [
-        "au.wem.current.balancing_summary",
-        "au.wem.current.facility_scada",
-        "au.wem.live.facility_intervals",
-        "au.wem.facilities",
-        "au.wem.live.pulse",
-    ]
-
-    for _spider_name in wem_spiders:
-        job_schedule_all(_spider_name)
