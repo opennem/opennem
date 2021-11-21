@@ -125,7 +125,9 @@ def get_bom_observations(observation_url: str, station_code: str) -> BOMObservat
             "station_code": station_code,
             "state": _oo["header"][0]["state_time_zone"],
             "observations": [
-                {**i, "state": _oo["header"][0]["state_time_zone"]} for i in _oo["data"]
+                {**i, "state": _oo["header"][0]["state_time_zone"]}
+                for i in _oo["data"]
+                if "air_temp" in i and i["air_temp"] is not None
             ],
         }
     )
