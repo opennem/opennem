@@ -7,7 +7,13 @@ from typing import Tuple
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.db import get_database_engine
-from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import (
+    NetworkAEMORooftop,
+    NetworkAPVI,
+    NetworkNEM,
+    NetworkSchema,
+    NetworkWEM,
+)
 from opennem.utils.dates import DATE_CURRENT_YEAR
 
 logger = logging.getLogger("opennem.workers.aggregates")
@@ -15,7 +21,9 @@ logger = logging.getLogger("opennem.workers.aggregates")
 DRY_RUN = os.environ.get("DRY_RUN", False)
 
 
-def aggregates_facility_daily_query(date_min: datetime, date_max: datetime = None) -> str:
+def aggregates_facility_daily_query(
+    date_max: datetime, date_min: datetime, network: NetworkSchema
+) -> str:
     """This is the query to update the at_facility_daily aggregate"""
 
     __query = """
@@ -50,6 +58,7 @@ def aggregates_facility_daily_query(date_min: datetime, date_max: datetime = Non
                 and f.network_id != 'NEM'
             where
                 fs.is_forecast is False
+                and fs.network_id = '{network_id}'
                 and fs.trading_interval >= '{date_min}'
                 and fs.trading_interval <= '{date_max}'
             group by
@@ -59,8 +68,6 @@ def aggregates_facility_daily_query(date_min: datetime, date_max: datetime = Non
         left join network n on f.network_id = n.code
         where
             f.fueltech_id is not null
-            and fs.trading_interval >= '{date_min}'
-            and fs.trading_interval <= '{date_max}'
         group by
             1,
             f.network_id,
@@ -73,8 +80,9 @@ def aggregates_facility_daily_query(date_min: datetime, date_max: datetime = Non
     """
 
     query = __query.format(
-        date_min=date_min,
-        date_max=date_max,
+        date_min=date_min.astimezone(network.get_fixed_offset()),
+        date_max=date_max.astimezone(network.get_fixed_offset()),
+        network_id=network.code,
     )
 
     return dedent(query)
@@ -150,12 +158,14 @@ def aggregates_network_intervals_query(date_min: datetime, date_max: datetime) -
     return dedent(query)
 
 
-def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime = None) -> bool:
+def exec_aggregates_facility_daily_query(
+    date_min: datetime, date_max: datetime, network: NetworkSchema
+) -> bool:
     resp_code: bool = False
     engine = get_database_engine()
     result = None
 
-    query = aggregates_facility_daily_query(date_min, date_max)
+    query = aggregates_facility_daily_query(date_min, date_max, network)
 
     with engine.connect() as c:
         logger.debug(query)
@@ -166,7 +176,8 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime 
     logger.debug(result)
 
     # @NOTE rooftop fix for double counts
-    run_rooftop_fix()
+    if not DRY_RUN:
+        run_rooftop_fix()
 
     return resp_code
 
@@ -198,7 +209,7 @@ def run_aggregates_facility_year(
     date_min, date_max = _get_year_range(year)
     logger.info("Running for year {} - range : {} {}".format(year, date_min, date_max))
 
-    exec_aggregates_facility_daily_query(date_min, date_max)
+    exec_aggregates_facility_daily_query(date_min, date_max, network)
 
 
 def run_aggregates_facility_all_by_year() -> None:
@@ -212,13 +223,13 @@ def run_aggregates_facility_all_by_year() -> None:
 def run_aggregates_facility_all(network: NetworkSchema) -> None:
     scada_range: ScadaDateRange = get_scada_range(network=network)
 
-    scada_range.end += timedelta(days=1)  # type: ignore
-
     if not scada_range:
         logger.error("Could not find a scada range for {}".format(network.code))
         return None
 
-    exec_aggregates_facility_daily_query(date_min=scada_range.start, date_max=scada_range.end)
+    exec_aggregates_facility_daily_query(
+        date_min=scada_range.start, date_max=scada_range.end, network=network
+    )
 
 
 def run_aggregate_days(days: int = 1, network: NetworkSchema = NetworkNEM) -> None:
@@ -237,7 +248,7 @@ def run_aggregate_days(days: int = 1, network: NetworkSchema = NetworkNEM) -> No
     date_max = today
     date_min = today - timedelta(days=days)
 
-    exec_aggregates_facility_daily_query(date_min, date_max)
+    exec_aggregates_facility_daily_query(date_min, date_max, network)
 
 
 def run_rooftop_fix() -> None:
@@ -257,6 +268,22 @@ def run_aggregates_all() -> None:
         run_aggregates_facility_all(network)
 
 
+def run_aggregates_all_days() -> None:
+    day_start = datetime.now()
+
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+    day_start = today
+    day_end = today - timedelta(days=7)
+
+    for network in [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop]:
+        logger.info(
+            "Running for Network {} range {} => {}".format(network.code, day_start, day_end)
+        )
+        exec_aggregates_facility_daily_query(day_start, day_end, network)
+
+
 # Debug entry point
 if __name__ == "__main__":
-    run_aggregates_all()
+    # run_energy_update_days(days=30)
+    run_aggregates_all_days()
