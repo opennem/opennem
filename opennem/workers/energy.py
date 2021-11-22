@@ -89,8 +89,8 @@ def get_generated_query(
         network_id=network.code,
         network_region=network_region,
         network_region_query=network_region_query,
-        date_min=date_min - timedelta(minutes=10),
-        date_max=date_max + timedelta(minutes=10),
+        date_min=date_min,
+        date_max=date_max + timedelta(minutes=5),
         fueltech_match=fueltech_match,
         facility_match=facility_match,
     )
@@ -403,8 +403,11 @@ def run_energy_calc(
 
         logger.info("Done {} for {} => {}".format(region, date_min, date_max))
     except Exception as e:
-        logger.error(e)
-        slack_message("Energy archive error: {}".format(e))
+        import traceback
+
+        print(traceback.format_exc())
+        logger.error(e.with_traceback())
+        # slack_message("Energy archive error: {}".format(e))
 
     return num_records
 
