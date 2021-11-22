@@ -638,7 +638,7 @@ def export_metadata() -> bool:
 # Debug Hooks
 if __name__ == "__main__":
     # export_power(priority=PriorityType.live)
-    # export_energy(latest=True)
+    export_energy(latest=True)
     # export_all_monthly()
-    export_all_daily(networks=[NetworkNEM], network_region_code="NSW1")
+    # export_all_daily()
     # export_electricitymap()
