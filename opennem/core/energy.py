@@ -92,6 +92,65 @@ def __trading_energy_generator(
     return return_cols
 
 
+def __trading_energy_generator_hour(
+    df: pd.DataFrame, hour: datetime, duid_id: str, power_field: str = "generated"
+) -> pd.DataFrame:
+    return_cols = []
+
+    t_start = hour.replace(minute=5)
+
+    for TI in range(2):
+        t_i = t_start + timedelta(0, 1800 * TI)
+        t_f = t_start + timedelta(0, 1800 * (TI + 1))
+
+        _query = f"'{t_i}' <= trading_interval <= '{t_f}' and facility_code == '{duid_id}'"
+
+        d_ti = df.query(_query)
+
+        energy_value = None
+        trading_interval = None
+
+        # rooftop 30m intervals - AEMO rooftop is going to go in a separate network
+        # so this won't be required
+        if (d_ti.fueltech_id.all() == "solar_rooftop") and (d_ti[power_field].count() == 1):
+            energy_value = d_ti[power_field].sum() / 2
+            # ooofff - this delta comes back off as part of NEM offset
+            trading_interval = d_ti.index[0] + timedelta(minutes=5)
+        # interpolate if it isn't padded out
+        elif d_ti[power_field].count() != 7:
+            index_interpolated = pd.date_range(
+                start=t_i, end=t_f, freq="5min", tz=NetworkNEM.get_timezone()
+            )
+
+            d_ti = d_ti.reset_index()
+            d_ti = d_ti.set_index("trading_interval")
+            d_ti = d_ti.reindex(index_interpolated)
+            d_ti["facility_code"] = duid_id
+            d_ti[power_field] = d_ti[power_field].replace(np.NaN, 0)
+
+            if d_ti[power_field].count() != 7:
+                logger.warn("Interpolated frame didn't match generated count")
+
+        try:
+            if d_ti.fueltech_id.all() != "solar_rooftop":
+                energy_value = __trapezium_integration(d_ti, power_field)
+                trading_interval = d_ti.index[-2]
+        except ValueError as e:
+            logger.error("Error with {} at {} {}: {}".format(duid_id, t_i, t_f, e))
+
+        if not d_ti.index.empty:
+            return_cols.append(
+                {
+                    "trading_interval": trading_interval,
+                    "network_id": "NEM",
+                    "facility_code": duid_id,
+                    "eoi_quantity": energy_value,
+                }
+            )
+
+    return return_cols
+
+
 def get_day_range(df: pd.DataFrame) -> Generator[date, None, None]:
     """Get the day range for a dataframe"""
     min_date = (df.index.min() + timedelta(days=1)).date()
@@ -102,6 +161,20 @@ def get_day_range(df: pd.DataFrame) -> Generator[date, None, None]:
     while cur_day <= max_date:
         yield cur_day
         cur_day += timedelta(days=1)
+
+
+def get_hour_range(df: pd.DataFrame) -> Generator[datetime, None, None]:
+    """Get the hour range for a dataframe"""
+    min_date = df.index.min()
+    max_date = df.index.max()
+
+    logger.debug("Datafram date range is {} -> {}".format(min_date, max_date))
+
+    cur_hour = min_date
+
+    while cur_hour <= max_date - timedelta(hours=1):
+        yield cur_hour
+        cur_hour += timedelta(hours=1)
 
 
 def _energy_aggregate_compat(df: pd.DataFrame) -> pd.DataFrame:
@@ -116,6 +189,27 @@ def _energy_aggregate_compat(df: pd.DataFrame) -> pd.DataFrame:
     for day in days:
         for duid in sorted(df.facility_code.unique()):
             energy_genrecs += [d for d in __trading_energy_generator(df, day, duid)]
+
+    df = pd.DataFrame(
+        energy_genrecs, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"]
+    )
+
+    return df
+
+
+def _energy_aggregate_hours(df: pd.DataFrame) -> pd.DataFrame:
+    """v3 version of energy_sum for compat"""
+    energy_genrecs = []
+
+    hours = list(get_hour_range(df))
+
+    if len(hours) == 0:
+        logger.error("Got no hours from hour range")
+
+    for hour in hours:
+        logger.info("Running for hour: {}".format(hour))
+        for duid in sorted(df.facility_code.unique()):
+            energy_genrecs += [d for d in __trading_energy_generator_hour(df, hour, duid)]
 
     df = pd.DataFrame(
         energy_genrecs, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"]
@@ -233,6 +327,7 @@ def energy_sum(
     network: NetworkSchema,
     power_column: str = "generated",
     filter_no_energy_values: bool = True,
+    hours: bool = True,
 ) -> pd.DataFrame:
     """Takes the energy sum for a series of raw duid intervals
     and returns a fresh dataframe to be imported"""
@@ -242,7 +337,10 @@ def energy_sum(
 
     if network in COMPAT_NETWORKS:
         df = df.set_index(["trading_interval"])
-        df = _energy_aggregate_compat(df)
+        if hours:
+            df = _energy_aggregate_hours(df)
+        else:
+            df = _energy_aggregate(df)
 
     # Shortcuts - @NOTE this is a v2 compat feature
     # since it takes these averages - remove for full
