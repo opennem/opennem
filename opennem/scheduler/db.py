@@ -17,11 +17,12 @@ from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings  # noqa: F401
 from opennem.utils.scrapyd import job_schedule_all
-from opennem.workers.aggregates import run_aggregates_all
+from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
+from opennem.workers.gap_fill import run_energy_gapfill
 
 # Py 3.8 on MacOS changed the default multiprocessing model
 if platform.system() == "Darwin":
@@ -48,7 +49,6 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 @huey.periodic_task(crontab(hour="5,11", minute="45"))
 def db_refresh_material_views() -> None:
     run_energy_update_days(days=2)
-    run_aggregates_all()
     run_daily_fueltech_summary()
     refresh_material_views("mv_facility_all")
     refresh_material_views("mv_region_emissions")
@@ -63,6 +63,20 @@ def db_refresh_material_views() -> None:
 def db_refresh_material_views_recent() -> None:
     refresh_material_views("mv_facility_45d")
     refresh_material_views("mv_region_emissions_45d")
+
+
+# Run aggregate table aggregates for all networks
+@huey.periodic_task(crontab(hour="*/1", minute="15"))
+@huey.lock_task("db_run_energy_gapfil")
+def db_run_energy_gapfil() -> None:
+    run_energy_gapfill()
+
+
+# Run aggregate table aggregates for all networks
+@huey.periodic_task(crontab(hour="*/3", minute="30"))
+@huey.lock_task("db_run_aggregates")
+def db_run_aggregates() -> None:
+    run_aggregates_all_days()
 
 
 # @NOTE optimized can now run every hour but shouldn't have to
