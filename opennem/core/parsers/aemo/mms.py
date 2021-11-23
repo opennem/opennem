@@ -125,15 +125,18 @@ class AEMOTableSchema(BaseConfig):
 
         _index_keys = []
 
+        _df = pd.DataFrame(self.records)
+
         if hasattr(self, "_record_schema") and self._record_schema:
             if hasattr(self._record_schema, "_primary_keys"):
                 _index_keys = self._record_schema._primary_keys  # type: ignore
 
-        _df = pd.DataFrame(self.records)
-
         if len(_index_keys) > 0:
             logger.debug("Setting index to {}".format(_index_keys))
-            _df = _df.set_index(_index_keys)
+            try:
+                _df = _df.set_index(_index_keys)
+            except KeyError:
+                logger.warn("Could not set index with columns: {}".format(", ".join(_index_keys)))
 
         return _df
 
