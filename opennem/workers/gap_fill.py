@@ -3,6 +3,7 @@
 
 import logging
 from datetime import datetime, timedelta
+from textwrap import dedent
 from typing import List, Optional
 
 from opennem.core.networks import network_from_network_code
@@ -64,7 +65,7 @@ def query_energy_gaps(network: NetworkSchema = NetworkNEM, days: int = 7) -> Lis
 
     _query = query.format(tz=network.timezone_database, network_id=network.code, days=days)
 
-    logger.debug(_query)
+    logger.debug(dedent(_query))
 
     with engine.connect() as c:
         _results = c.execute(_query)
