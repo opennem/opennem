@@ -9,37 +9,6 @@ services:
       - ./.env
     restart: on-failure
 
-  scrapyd:
-    image: docker.pkg.github.com/opennem/scrapyd/scrapyd
-    restart: unless-stopped
-    command: scrapyd --pidfile /tmp/scrapyd.pid
-    volumes:
-      - scrapyd_data:/app/dbs
-      - scrapyd_eggs:/app/eggs
-    environment:
-      - TZ
-      - SCRAPYD=1
-      - DATABASE_HOST_URL
-      - REDIS_HOST_URL
-      - GOOGLE_PLACES_API_KEY
-      - ENV
-      - SENTRY_URL
-    ports:
-      - ${HOST:-127.0.0.1}:6800:6800
-
-  # mysql:
-  #   image: mariadb
-  #   restart: unless-stopped
-  #   env_file: ./.env
-  #   environment:
-  #     - TZ
-  #     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-  #     - MYSQL_DATABASE=${MYSQL_DATABASE}
-  #   ports:
-  #     - ${HOST:-127.0.0.1}:15444:3306
-  #   volumes:
-  #     - mysql_data:/var/lib/mysql
-
   postgres:
     # image: opennem/database:dev
     image: timescale/timescaledb-postgis:latest-pg12
