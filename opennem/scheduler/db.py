@@ -151,7 +151,7 @@ def crawler_scheduled_hourly() -> None:
     run_crawls_by_schedule(CrawlerSchedule.hourly)
 
 
-@huey.periodic_task(crontab(hour="8,16", minute="1"))
+@huey.periodic_task(crontab(hour="5,8,16", minute="15"))
 @huey.lock_task("crawler_scheduled_day")
 def crawler_scheduled_day() -> None:
     run_crawls_by_schedule(CrawlerSchedule.daily)
