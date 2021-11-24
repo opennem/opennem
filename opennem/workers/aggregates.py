@@ -106,8 +106,8 @@ def exec_aggregates_facility_daily_query(
     logger.debug(result)
 
     # @NOTE rooftop fix for double counts
-    if not DRY_RUN:
-        run_rooftop_fix()
+    # if not DRY_RUN:
+    # run_rooftop_fix()
 
     return resp_code
 
