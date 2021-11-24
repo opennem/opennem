@@ -74,7 +74,7 @@ def db_run_energy_gapfil() -> None:
 
 
 # Run aggregate table aggregates for all networks
-@huey.periodic_task(crontab(hour="*/3", minute="30"))
+@huey.periodic_task(crontab(hour="*/12", minute="30"))
 @huey.lock_task("db_run_aggregates")
 def db_run_aggregates() -> None:
     run_aggregates_all_days(days=1)
