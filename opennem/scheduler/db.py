@@ -121,7 +121,8 @@ def monitor_emission_factors() -> None:
 @huey.lock_task("schedule_facility_first_seen_check")
 def schedule_facility_first_seen_check() -> None:
     """Check for new DUIDS"""
-    facility_first_seen_check()
+    if settings.env == "production":
+        facility_first_seen_check()
 
 
 @huey.periodic_task(crontab(hour="9,18", minute="45"))
