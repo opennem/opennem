@@ -50,6 +50,7 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 def db_refresh_material_views() -> None:
     run_energy_update_days(days=2)
     run_daily_fueltech_summary()
+    run_aggregates_all_days(days=14)
     refresh_material_views("mv_facility_all")
     refresh_material_views("mv_region_emissions")
     refresh_material_views("mv_interchange_energy_nem_region")
@@ -76,7 +77,7 @@ def db_run_energy_gapfil() -> None:
 @huey.periodic_task(crontab(hour="*/3", minute="30"))
 @huey.lock_task("db_run_aggregates")
 def db_run_aggregates() -> None:
-    run_aggregates_all_days()
+    run_aggregates_all_days(days=1)
 
 
 # @NOTE optimized can now run every hour but shouldn't have to
