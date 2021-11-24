@@ -80,8 +80,8 @@ def aggregates_facility_daily_query(
     """
 
     query = __query.format(
-        date_min=date_min.astimezone(network.get_fixed_offset()),
-        date_max=date_max.astimezone(network.get_fixed_offset()),
+        date_min=date_min.replace(tzinfo=network.get_fixed_offset()),
+        date_max=date_max.replace(tzinfo=network.get_fixed_offset()),
         network_id=network.code,
     )
 
@@ -171,9 +171,7 @@ def run_aggregate_days(days: int = 1, network: NetworkSchema = NetworkNEM) -> No
     # This is Sydney time as the data is published in local time
 
     # today_midnight in NEM time
-    today = datetime.now().replace(
-        hour=0, minute=0, second=0, microsecond=0, tzinfo=tz
-    ) + timedelta(days=1)
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
 
     date_max = today
     date_min = today - timedelta(days=days)
