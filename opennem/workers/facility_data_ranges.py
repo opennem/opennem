@@ -76,8 +76,6 @@ def update_facility_seen_range(
         logger.debug(__query)
         c.execute(__query)
 
-    slack_message("Ran facility_seen_range")
-
     return True
 
 
