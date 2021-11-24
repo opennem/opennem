@@ -268,13 +268,13 @@ def run_aggregates_all() -> None:
         run_aggregates_facility_all(network)
 
 
-def run_aggregates_all_days() -> None:
+def run_aggregates_all_days(days: int = 7) -> None:
     day_start = datetime.now()
 
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
     day_start = today
-    day_end = today - timedelta(days=7)
+    day_end = today - timedelta(days=days)
 
     for network in [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop]:
         logger.info(
