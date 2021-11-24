@@ -26,6 +26,7 @@ class EnergyGap(BaseConfig):
     network_id: str
     has_power: bool
     has_energy: bool
+    total_generated: Optional[float]
     total_energy: Optional[float]
 
 
@@ -39,6 +40,7 @@ def query_energy_gaps(network: NetworkSchema = NetworkNEM, days: int = 7) -> Lis
             t.network_id,
             t.has_power,
             t.has_energy,
+            t.total_generated,
             t.total_energy
         from (
             select
@@ -46,6 +48,7 @@ def query_energy_gaps(network: NetworkSchema = NetworkNEM, days: int = 7) -> Lis
                 fs.network_id,
                 case when sum(fs.generated) is NULL then FALSE else TRUE end as has_power,
                 case when sum(fs.eoi_quantity) IS NULL then FALSE else TRUE end as has_energy,
+                sum(fs.generated) as total_generated,
                 sum(fs.eoi_quantity) as total_energy
             from facility_scada fs
             join facility f on fs.facility_code = f.code
