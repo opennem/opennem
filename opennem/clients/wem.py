@@ -19,7 +19,7 @@ from opennem.utils.random_agent import get_random_agent
 logger = logging.getLogger("opennem.client.wem")
 
 _AEMO_WEM_LIVE_SCADA_URL = (
-    "https://data.wa.aemo.com.au/public/infographic/neartime/actual-generation.csv"
+    "https://aemo.com.au/aemo/data/wa/infographic/facility-intervals-last96.csv"
 )
 
 _AEMO_WEM_LIVE_BALANCING_URL = "https://data.wa.aemo.com.au/public/infographic/neartime/pulse.csv"
@@ -196,10 +196,10 @@ def get_wem_live_balancing_summary(live: bool = True) -> WEMBalancingSummarySet:
 
 WEM_FACILITY_INTERVAL_FIELD_REMAP = {
     # live
-    "INTERVAL": "trading_interval",
-    "PARTICIPANT_CODE": "facility_code",
-    "SCHEDULED_MW": "generated_scheduled",
-    "NON_SCHEDULED_MW": "generated_non_scheduled",
+    "PERIOD": "trading_interval",
+    "FACILITY_CODE": "facility_code",
+    "ACTUAL_MW": "power",
+    # "FORECAST_EOI_MW": "forecast_load"
     # nemweb
     "Energy Generated (MWh)": "eoi_quantity",
     "Trading Interval": "trading_interval",
@@ -239,7 +239,7 @@ def get_wem_facility_intervals(live: bool = True) -> WEMFacilityIntervalSet:
     req = _wem_session.get(_url)
 
     if not req.ok:
-        raise Exception("Get wem live balancing summary error: {}".format(req.status_code))
+        raise Exception("Get WEM facility intervals summary error: {}".format(req.status_code))
 
     _models = []
 
@@ -250,7 +250,7 @@ def get_wem_facility_intervals(live: bool = True) -> WEMFacilityIntervalSet:
         _csv_rec = {_remap_wem_facility_interval_field(i): k for i, k in _csv_rec.items()}
         _models.append(WEMGenerationInterval(**_csv_rec))
 
-    logger.debug(f"Got {len(_models)} balancing summary records")
+    logger.debug(f"Got {len(_models)} facility interval records")
 
     wem_set = WEMFacilityIntervalSet(crawled_at=datetime.now(), live=live, intervals=_models)
 
@@ -259,6 +259,9 @@ def get_wem_facility_intervals(live: bool = True) -> WEMFacilityIntervalSet:
 
 # debug entry point
 if __name__ == "__main__":
-    m = get_wem_facility_intervals(live=False)
+    # m = get_wem_facility_intervals(live=False)
 
     m = get_wem_facility_intervals(live=True)
+
+    with open("wem-live.json", "w") as fh:
+        fh.write(m.json(indent=4))
