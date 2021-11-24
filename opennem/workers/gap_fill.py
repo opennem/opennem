@@ -75,8 +75,8 @@ def query_energy_gaps(network: NetworkSchema = NetworkNEM, days: int = 7) -> Lis
     return _result_models
 
 
-def run_energy_gapfill_for_network(network: NetworkSchema = NetworkNEM) -> None:
-    energy_gaps = query_energy_gaps(network)
+def run_energy_gapfill_for_network(network: NetworkSchema = NetworkNEM, days: int = 7) -> None:
+    energy_gaps = query_energy_gaps(network, days=days)
 
     energy_gaps_filtered = list(
         filter(lambda x: x.has_power is True and x.has_energy is False, energy_gaps)
@@ -95,10 +95,10 @@ def run_energy_gapfill_for_network(network: NetworkSchema = NetworkNEM) -> None:
         run_energy_calc(dmin, dmax, network=network_from_network_code(gap.network_id))
 
 
-def run_energy_gapfill() -> None:
+def run_energy_gapfill(days: int = 7) -> None:
     for network in [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop]:
-        run_energy_gapfill_for_network(network)
+        run_energy_gapfill_for_network(network, days=days)
 
 
 if __name__ == "__main__":
-    run_energy_gapfill()
+    run_energy_gapfill(days=20)
