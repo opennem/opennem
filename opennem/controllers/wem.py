@@ -69,7 +69,7 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
     except Exception as e:
         logger.error("Error: {}".format(e))
         cr.errors = len(records_to_store)
-        cr.error_detail = str(e)
+        cr.error_detail.append(str(e))
     finally:
         session.close()
 
@@ -122,7 +122,7 @@ def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> Contr
     except Exception as e:
         logger.error("Error: {}".format(e))
         cr.errors = len(records_to_store)
-        cr.error_detail = str(e)
+        cr.error_detail.append(str(e))
     finally:
         session.close()
 
