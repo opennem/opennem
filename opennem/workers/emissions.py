@@ -1,31 +1,23 @@
-"""
+"""OpenNEM Network Flows Worker
 
-In a nutshell, it uses numpy to solve a simply simultaneous equation that solves emissions flows
-between each region - based on the power flows between each region, and the territorial emissions
-of each region.   (I did use it to calculate the territorial emissions at the same time - but gather
-you've already got a process for that?).
+Creates an aggregate table with network flows (imports/exports), emissions and market_value
 
-
-The current work flow is that it loads emissions factors from the MMS tables, and maps the emissions
-factors to the appropriate power station or duid. These are applied to the generation data (the MWh
-values calculated by trapezoidal integration) to generator the emissions. The actual flows on the
-interconnectors (METEREDMWFLOW ) is also used from the interconnector MMS tables.
-
-Most of the script is just arranging the data in a form for the numpy linalg function = not sure
-why I used a dict as data structure. Probably not a good decision - but it was what I started
-with / stuck with.
+@TODO There are still some hard-coded methods her specific to NEM that should be refactored
+out
 """
 
 import logging
 from datetime import datetime, timedelta
-from typing import Dict
+from typing import Dict, Optional
 
 import numpy as np
 import pandas as pd
+import pytz
 
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_complete_day_for_network
+from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.workers.emission_flows")
 
@@ -38,7 +30,7 @@ def load_interconnector_intervals(date_start: datetime, date_end: datetime) -> p
     query = """
         select
             fs.trading_interval at time zone 'AEST' as trading_interval,
-            coalesce(fs.eoi_quantity, 0),
+            coalesce(fs.generated, 0) as generated,
             f.interconnector_region_to,
             f.interconnector_region_from
         from facility_scada fs
@@ -47,7 +39,6 @@ def load_interconnector_intervals(date_start: datetime, date_end: datetime) -> p
             f.interconnector is True
             and fs.trading_interval >= '{date_start}'
             and fs.trading_interval < '{date_end}'
-        group by 2, 3;
     """.format(
         date_start=date_start, date_end=date_end
     )
@@ -65,6 +56,7 @@ def load_energy_intervals(date_start: datetime, date_end: datetime) -> pd.DataFr
             fs.trading_interval at time zone 'AEST' as trading_interval,
             f.network_id,
             f.network_region,
+            f.fueltech_id,
             fs.facility_code as fs_duid,
             f.code as duid,
             fs.generated as power,
@@ -82,83 +74,69 @@ def load_energy_intervals(date_start: datetime, date_end: datetime) -> pd.DataFr
         date_start=date_start.date(), date_end=date_end.date()
     )
 
-    df_gen = pd.read_sql(query, con=engine, index_col="trading_interval")
+    df_gen = pd.read_sql(query, con=engine)
 
     return df_gen
 
 
-def calc_flows(df_ic):
-    dx_ic = df_ic.copy()
-    dx_ic.METEREDMWFLOW = dx_ic.METEREDMWFLOW
-    return dx_ic
+def interconnector_dict(interconnector_di: pd.DataFrame) -> pd.DataFrame:
+    dx = (
+        interconnector_di.groupby(["interconnector_region_from", "interconnector_region_to"])
+        .generated.sum()
+        .reset_index()
+    )
+    dy = dx.rename(
+        columns={
+            "interconnector_region_from": "interconnector_region_to",
+            "interconnector_region_to": "interconnector_region_from",
+        }
+    )
+    dy["generated"] *= -1
+    df = dx.append(dy)
+    df.loc[df.generated < 0, "generated"] = 0
 
-
-def simple_exports(emissions_di, power_dict, from_regionid, to_regionid):
-    dx = emissions_di[emissions_di.REGIONID == from_regionid]
-    ic_flow = power_dict[from_regionid, to_regionid]
-    return ic_flow / dx.MW.sum() * dx.EMISSIONS.sum()
-
-
-def emissions(df_emissions, power_dict):
-    emissions_dict = dict(df_emissions.groupby(df_emissions.REGIONID).EMISSIONS.sum())
-    simple_flows = [[2, 1], [3, 5], [4, 5]]
-    for from_regionid, to_regionid in simple_flows:
-        emissions_dict[(from_regionid, to_regionid)] = simple_exports(
-            df_emissions, power_dict, from_regionid, to_regionid
-        )
-    return emissions_dict
+    return df.set_index(["interconnector_region_from", "interconnector_region_to"]).to_dict()[
+        "generated"
+    ]
 
 
 def power(df_emissions, df_ic) -> Dict:
-    power_dict = dict(df_emissions.groupby(df_emissions.REGIONID).MW.sum())
+    df_emissions = df_emissions.reset_index()
+    power_dict = dict(df_emissions.groupby(df_emissions.network_region).energy.sum())
     power_dict.update(interconnector_dict(df_ic))
     return power_dict
 
 
-def interconnector_dict(interconnector_di: pd.DataFrame) -> pd.DataFrame:
-    dx = (
-        interconnector_di.groupby(["FROM_REGIONID", "TO_REGIONID"])
-        .METEREDMWFLOW.sum()
-        .reset_index()
-    )
-    dy = dx.rename(columns={"FROM_REGIONID": "TO_REGIONID", "TO_REGIONID": "FROM_REGIONID"})
-    dy["METEREDMWFLOW"] *= -1
-    df = dx.append(dy)
-    df.loc[df.METEREDMWFLOW < 0, "METEREDMWFLOW"] = 0
-
-    return df.set_index(["FROM_REGIONID", "TO_REGIONID"]).to_dict()["METEREDMWFLOW"]
-
-
-def supply(power_dict: Dict) -> Dict:
-    d = {}
-    d[1] = power_dict[1] + power_dict[(2, 1)] + power_dict[(5, 1)]
-    d[2] = power_dict[2] + power_dict[(1, 2)]
-    d[3] = power_dict[3] + power_dict[(5, 3)]
-    d[4] = power_dict[4] + power_dict[(5, 4)]
-    d[5] = power_dict[5] + power_dict[(1, 5)] + power_dict[(3, 5)] + power_dict[(4, 5)]
-    return d
+def simple_exports(emissions_di, power_dict, from_regionid, to_regionid):
+    dx = emissions_di[emissions_di.network_region == from_regionid]
+    ic_flow = power_dict[from_regionid, to_regionid]
+    return ic_flow / dx.energy.sum() * dx.emissions.sum()
 
 
 def demand(power_dict: Dict) -> Dict:
     d = {}
-    d[1] = (
-        power_dict[1]
-        + power_dict[(2, 1)]
-        + power_dict[(5, 1)]
-        - power_dict[(1, 5)]
-        - power_dict[(1, 2)]
+
+    if "NSW1" not in power_dict:
+        raise Exception("Missing generation info")
+
+    d["NSW1"] = (
+        power_dict["NSW1"]
+        + power_dict[("QLD1", "NSW1")]
+        + power_dict[("VIC1", "NSW1")]
+        - power_dict[("NSW1", "VIC1")]
+        - power_dict[("NSW1", "QLD1")]
     )
-    d[2] = power_dict[2] + power_dict[(1, 2)] - power_dict[(2, 1)]
-    d[3] = power_dict[3] + power_dict[(5, 3)] - power_dict[(3, 5)]
-    d[4] = power_dict[4] + power_dict[(5, 4)] - power_dict[(4, 5)]
-    d[5] = (
-        power_dict[5]
-        + power_dict[(1, 5)]
-        + power_dict[(3, 5)]
-        + power_dict[(4, 5)]
-        - power_dict[(5, 1)]
-        - power_dict[(5, 4)]
-        - power_dict[(5, 3)]
+    d["QLD1"] = power_dict["QLD1"] + power_dict[("NSW1", "QLD1")] - power_dict[("QLD1", "NSW1")]
+    d["SA1"] = power_dict["SA1"] + power_dict[("VIC1", "SA1")] - power_dict[("SA1", "VIC1")]
+    d["TAS1"] = power_dict["TAS1"] + power_dict[("VIC1", "TAS1")] - power_dict[("TAS1", "VIC1")]
+    d["VIC1"] = (
+        power_dict["VIC1"]
+        + power_dict[("NSW1", "VIC1")]
+        + power_dict[("SA1", "VIC1")]
+        + power_dict[("TAS1", "VIC1")]
+        - power_dict[("VIC1", "NSW1")]
+        - power_dict[("VIC1", "TAS1")]
+        - power_dict[("VIC1", "SA1")]
     )
     return d
 
@@ -177,7 +155,12 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
     #
     power_dict = power(emissions_di, interconnector_di)
     emissions_dict = emissions(emissions_di, power_dict)
-    demand_dict = demand(power_dict)
+
+    try:
+        demand_dict = demand(power_dict)
+    except Exception as e:
+        print("Error: {}".format(e))
+        return None
 
     a = np.zeros((10, 10))
     _var_dict = dict(zip(["s", "q", "t", "n", "v", "v-n", "n-q", "n-v", "v-s", "v-t"], range(10)))
@@ -190,20 +173,35 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
     fill_row(a, 4, [["v", 1], ["v-n", 1], ["n-v", -1], ["v-s", 1], ["v-t", 1]], _var_dict)
 
     # emissions intensity equations
-    fill_row(a, 5, [["n-q", 1], ["n", -power_dict[(1, 2)] / demand_dict[1]]], _var_dict)
-    fill_row(a, 6, [["n-v", 1], ["n", -power_dict[(1, 5)] / demand_dict[1]]], _var_dict)
-    fill_row(a, 7, [["v-t", 1], ["v", -power_dict[(5, 4)] / demand_dict[5]]], _var_dict)
-    fill_row(a, 8, [["v-s", 1], ["v", -power_dict[(5, 3)] / demand_dict[5]]], _var_dict)
-    fill_row(a, 9, [["v-n", 1], ["v", -power_dict[(5, 1)] / demand_dict[5]]], _var_dict)
+    fill_row(
+        a, 5, [["n-q", 1], ["n", -power_dict[("NSW1", "QLD1")] / demand_dict["NSW1"]]], _var_dict
+    )
+    fill_row(
+        a, 6, [["n-v", 1], ["n", -power_dict[("NSW1", "VIC1")] / demand_dict["NSW1"]]], _var_dict
+    )
+    fill_row(
+        a, 7, [["v-t", 1], ["v", -power_dict[("VIC1", "TAS1")] / demand_dict["VIC1"]]], _var_dict
+    )
+    fill_row(
+        a, 8, [["v-s", 1], ["v", -power_dict[("VIC1", "SA1")] / demand_dict["VIC1"]]], _var_dict
+    )
+    fill_row(
+        a, 9, [["v-n", 1], ["v", -power_dict[("VIC1", "NSW1")] / demand_dict["VIC1"]]], _var_dict
+    )
 
     # constants
     b = np.zeros((10, 1))
-    fill_constant(b, "s", emissions_dict[3] - emissions_dict[(3, 5)], _var_dict)
-    fill_constant(b, "q", emissions_dict[2] - emissions_dict[(2, 1)], _var_dict)
-    fill_constant(b, "t", emissions_dict[4] - emissions_dict[(4, 5)], _var_dict)
-    fill_constant(b, "n", emissions_dict[1] + emissions_dict[(2, 1)], _var_dict)
+    fill_constant(b, "s", emissions_dict["SA1"] - emissions_dict[("SA1", "VIC1")], _var_dict)
+    fill_constant(b, "q", emissions_dict["QLD1"] - emissions_dict[("QLD1", "NSW1")], _var_dict)
+    fill_constant(b, "t", emissions_dict["TAS1"] - emissions_dict[("TAS1", "VIC1")], _var_dict)
+    fill_constant(b, "n", emissions_dict["NSW1"] + emissions_dict[("QLD1", "NSW1")], _var_dict)
     fill_constant(
-        b, "v", emissions_dict[5] + emissions_dict[(3, 5)] + emissions_dict[(4, 5)], _var_dict
+        b,
+        "v",
+        emissions_dict["VIC1"]
+        + emissions_dict[("SA1", "VIC1")]
+        + emissions_dict[("TAS1", "VIC1")],
+        _var_dict,
     )
 
     # get result
@@ -211,14 +209,14 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
 
     # transform into emission flows
     emission_flows = {}
-    emission_flows[1, 2] = result[6][0]
-    emission_flows[5, 1] = result[5][0]
-    emission_flows[1, 5] = result[7][0]
-    emission_flows[5, 3] = result[8][0]
-    emission_flows[5, 4] = result[9][0]
-    emission_flows[2, 1] = emissions_dict[2, 1]
-    emission_flows[4, 5] = emissions_dict[4, 5]
-    emission_flows[3, 5] = emissions_dict[3, 5]
+    emission_flows["NSW1", "QLD1"] = result[6][0]
+    emission_flows["VIC1", "NSW1"] = result[5][0]
+    emission_flows["NSW1", "VIC1"] = result[7][0]
+    emission_flows["VIC1", "SA1"] = result[8][0]
+    emission_flows["VIC1", "TAS1"] = result[9][0]
+    emission_flows["QLD1", "NSW1"] = emissions_dict["QLD1", "NSW1"]
+    emission_flows["TAS1", "VIC1"] = emissions_dict["TAS1", "VIC1"]
+    emission_flows["SA1", "VIC1"] = emissions_dict["SA1", "VIC1"]
 
     # shape into dataframe
     df = pd.DataFrame.from_dict(emission_flows, orient="index")
@@ -229,24 +227,23 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
 
 
 def calc_emissions(df_emissions: pd.DataFrame) -> pd.DataFrame:
-    # MWH & tonnes (divide 12)
-    dx_emissions = df_emissions.groupby(["SETTLEMENTDATE", "REGIONID", "TECHFUEL_ID"])[
-        ["MW", "EMISSIONS"]
+    df_gen_em = df_emissions.groupby(["trading_interval", "network_region", "fueltech_id"])[
+        ["energy", "emissions"]
     ].sum()
-    dx_emissions.reset_index(inplace=True)
+    df_gen_em.reset_index(inplace=True)
 
-    return dx_emissions
+    return df_gen_em
 
 
 def calculate_emission_flows(df_gen: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
 
     dx_emissions = calc_emissions(df_gen)
-    dx_ic = calc_flows(df_ic)
+    dx_ic = df_ic
 
     results = {}
-    dt = df_gen.SETTLEMENTDATE.iloc[0]
-    while dt <= df_gen.SETTLEMENTDATE.iloc[-1]:
-        emissions_di = dx_emissions[dx_emissions.SETTLEMENTDATE == dt]
+    dt = df_gen.trading_interval.iloc[0]
+    while dt <= df_gen.trading_interval.iloc[-1]:
+        emissions_di = dx_emissions[dx_emissions.trading_interval == dt]
         interconnector_di = dx_ic[dx_ic.index == dt]
 
         results[dt] = solve_flows(emissions_di, interconnector_di)
@@ -271,6 +268,8 @@ def calc_day(day: datetime) -> None:
     flow_series["REGIONID_FROM"] = flow_series.apply(lambda x: x.REGIONIDS[0], axis=1)
     flow_series["REGIONID_TO"] = flow_series.apply(lambda x: x.REGIONIDS[1], axis=1)
 
+    return flow_series
+
     # flow_series[["SETTLEMENTDATE", "REGIONID_FROM", "REGIONID_TO", "EMISSIONS"]].to_csv(
     #     "~/emissions/series/{0}.csv".format(day), index=None
     # )
@@ -284,22 +283,33 @@ def calc_day(day: datetime) -> None:
     )
     daily_flow.index.name = "REGIONID"
     daily_flow["DATE"] = day
+    return daily_flow
 
-    # insert into db
-    daily_flow.to_sql("EMISSION_FLOW", engine=engine, if_exist="append")
 
-    # daily_flow.to_("~/emissions/daily_summary.csv".format(d.date()), mode='a', header=False)
+def emissions(df_emissions, power_dict):
+    df_emissions = df_emissions.reset_index()
+    emissions_dict = dict(df_emissions.groupby(df_emissions.network_region).emissions.sum())
+    # simple_flows = [[2, 1], [3, 5], [4, 5]]
+    simple_flows = [["QLD1", "NSW1"], ["SA1", "VIC1"], ["TAS1", "VIC1"]]
+    for from_regionid, to_regionid in simple_flows:
+        emissions_dict[(from_regionid, to_regionid)] = simple_exports(
+            df_emissions, power_dict, from_regionid, to_regionid
+        )
+    return emissions_dict
 
 
 def run_emission_update_day(
     days: int = 1,
+    day: Optional[datetime] = None,
 ) -> None:
     """Run emission calcs for number of days"""
     # This is Sydney time as the data is published in local time
-    today_midnight = get_last_complete_day_for_network(NetworkNEM)
 
-    current_day = today_midnight
-    date_min = today_midnight - timedelta(days=days)
+    if not day:
+        day = get_last_complete_day_for_network(NetworkNEM)
+
+    current_day = day
+    date_min = day - timedelta(days=days)
 
     while current_day >= date_min:
         logger.info("Running emission update for {}".format(current_day))
