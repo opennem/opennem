@@ -34,6 +34,7 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
                 "trading_interval": _rec.trading_day_interval,
                 "network_id": "WEM",
                 "network_region": "WEM",
+                "is_forecast": _rec.is_forecast,
                 "forecast_load": _rec.forecast_mw,
                 "generation_total": _rec.actual_total_generation,
                 "generation_scheduled": _rec.actual_nsg_mw,
@@ -57,6 +58,7 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
             "price": stmt.excluded.price,
             "forecast_load": stmt.excluded.forecast_load,
             "generation_total": stmt.excluded.generation_total,
+            "is_forecast": stmt.excluded.is_forecast,
         },
     )
 
