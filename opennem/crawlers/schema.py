@@ -15,6 +15,8 @@ class CrawlerPriority(Enum):
 class CrawlerSchedule(Enum):
     live = "1m"
     frequent = "5m"
+    quarter_hour = "15m"
+    half_hour = "30m"
     hourly = "1h"
     daily = "1d"
 

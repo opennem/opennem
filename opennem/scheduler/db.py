@@ -145,6 +145,18 @@ def crawler_scheduled_frequent() -> None:
     run_crawls_by_schedule(CrawlerSchedule.frequent)
 
 
+@huey.periodic_task(crontab(minute="*/15"))
+@huey.lock_task("crawler_scheduled_quarter_hour")
+def crawler_scheduled_quarter_hour() -> None:
+    run_crawls_by_schedule(CrawlerSchedule.quarter_hour)
+
+
+@huey.periodic_task(crontab(hour="*", minute="3,33"))
+@huey.lock_task("crawler_scheduled_half_hour")
+def crawler_scheduled_half_hour() -> None:
+    run_crawls_by_schedule(CrawlerSchedule.half_hour)
+
+
 @huey.periodic_task(crontab(hour="*/1", minute="2"))
 @huey.lock_task("crawler_scheduled_hourly")
 def crawler_scheduled_hourly() -> None:
