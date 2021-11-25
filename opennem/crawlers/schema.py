@@ -53,6 +53,15 @@ class CrawlerSet(BaseConfig):
 
         return _crawler_lookup.pop()
 
+    def get_crawlers_by_match(self, match: str) -> List[CrawlerDefinition]:
+        """Get crawlers by match"""
+        _crawler_lookup = list(filter(lambda x: match in x.name, self.crawlers))
+
+        if not _crawler_lookup:
+            raise Exception(f"Could not find crawler matching {match}")
+
+        return _crawler_lookup
+
     def get_crawlers_by_schedule(self, schedule: CrawlerSchedule) -> List[CrawlerDefinition]:
         return list(
             sorted(
