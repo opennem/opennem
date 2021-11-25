@@ -140,4 +140,5 @@ if __name__ == "__main__":
 
     r = get_bom_observations(u, "066214")
 
-    print(r.json(indent=4))
+    for i in r.observations:
+        print("{}: {} {}".format(i.observation_time, i.air_temp, i.apparent_t))
