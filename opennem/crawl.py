@@ -15,7 +15,12 @@ from opennem.core.parsers.aemo.mms import parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 from opennem.crawlers.apvi import crawl_apvi_forecasts
 from opennem.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule, CrawlerSet
-from opennem.crawlers.wem import run_wem_balancing_crawl, run_wem_facility_scada_crawl
+from opennem.crawlers.wem import (
+    run_wem_balancing_crawl,
+    run_wem_facility_scada_crawl,
+    run_wem_live_balancing_crawl,
+    run_wem_live_facility_scada_crawl,
+)
 from opennem.spiders.bom.utils import get_stations_priority
 
 logger = logging.getLogger("opennem.crawler")
@@ -56,6 +61,9 @@ def load_crawlers() -> CrawlerSet:
 def run_aemo_mms_crawl(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False
 ) -> Optional[ControllerReturn]:
+    if not crawler.url:
+        raise Exception("Require a URL to run AEMO MMS crawlers")
+
     dirlisting = get_dirlisting(crawler.url)
 
     if crawler.filename_filter:
@@ -87,7 +95,7 @@ def run_aemo_mms_crawl(
     ts = parse_aemo_urls([i.link for i in entries_to_fetch])
 
     controller_returns = store_aemo_tableset(ts)
-    controller_returns.last_modified = max([i.modified_date for i in entries_to_fetch])
+    controller_returns.last_modified = max([i.modified_date for i in entries_to_fetch])  # type: ignore
 
     return controller_returns
 
@@ -108,6 +116,7 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
     has_errors = False
 
     logger.info("Inserted {} of {} records".format(cr.inserted_records, cr.total_records))
+
     if cr.errors > 0:
         has_errors = True
         logger.error("Crawl controller error for {}: {}".format(crawler.name, cr.error_detail))
@@ -217,18 +226,32 @@ APVIRooftopCrawler = CrawlerDefinition(
     processor=crawl_apvi_forecasts,
 )
 
-WEMBalancingLive = CrawlerDefinition(
+WEMBalancing = CrawlerDefinition(
     priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.frequent,
-    name="au.wem.live.balancing",
+    schedule=CrawlerSchedule.hourly,
+    name="au.wem.balancing",
     processor=run_wem_balancing_crawl,
 )
 
-WEMBalancingLive = CrawlerDefinition(
+WEMFacilityScada = CrawlerDefinition(
     priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.hourly,
+    name="au.wem.facility_scada",
+    processor=run_wem_facility_scada_crawl,
+)
+
+WEMBalancingLive = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.frequent,
+    name="au.wem.live.balancing",
+    processor=run_wem_live_balancing_crawl,
+)
+
+WEMFacilityScadaLive = CrawlerDefinition(
+    priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.frequent,
     name="au.wem.live.facility_scada",
-    processor=run_wem_facility_scada_crawl,
+    processor=run_wem_live_facility_scada_crawl,
 )
 
 _CRAWLER_SET = load_crawlers()
@@ -255,6 +278,9 @@ if __name__ == "__main__":
     # crawler_set = load_crawlers()
     # run_crawls_all()
     # run_crawls_by_schedule(CrawlerSchedule.frequent)
-    apvi = _CRAWLER_SET.get_crawler("au.wem.live.facility_scada")
-    run_crawl(apvi)
+    wem = _CRAWLER_SET.get_crawlers_by_match(".wem.")
+
+    for i in wem:
+        print(i.name)
+        run_crawl(i)
     pass
