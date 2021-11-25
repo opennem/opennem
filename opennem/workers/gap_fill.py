@@ -98,7 +98,7 @@ def run_energy_gapfill_for_network(network: NetworkSchema = NetworkNEM, days: in
         run_energy_calc(dmin, dmax, network=network_from_network_code(gap.network_id))
 
 
-def run_energy_gapfill(days: int = 7) -> None:
+def run_energy_gapfill(days: int = 14) -> None:
     for network in [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop]:
         run_energy_gapfill_for_network(network, days=days)
 
