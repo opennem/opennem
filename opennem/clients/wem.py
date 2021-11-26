@@ -70,6 +70,14 @@ class WEMBalancingSummaryInterval(BaseConfig):
         _empty_string_to_none
     )
 
+    _validator_forecast_eoi_mw = validator("forecast_eoi_mw", pre=True, allow_reuse=True)(
+        _empty_string_to_none
+    )
+
+    _validator_forecast_nsg_mw = validator("forecast_nsg_mw", pre=True, allow_reuse=True)(
+        _empty_string_to_none
+    )
+
     @validator("trading_day_interval", pre=True)
     def _validate_trading_interval(cls, value: Any) -> datetime:
         interval_time = parse_date(value, network=NetworkWEM)
