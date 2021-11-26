@@ -73,20 +73,6 @@ def db_run_energy_gapfil() -> None:
     run_energy_gapfill()
 
 
-# Run aggregate table aggregates for all networks
-@huey.periodic_task(crontab(hour="*/12", minute="30"))
-@huey.lock_task("db_run_aggregates")
-def db_run_aggregates() -> None:
-    run_aggregates_all_days(days=1)
-
-
-# @NOTE optimized can now run every hour but shouldn't have to
-@huey.periodic_task(crontab(hour="*/3", minute="30"))
-def db_refresh_energies_yesterday() -> None:
-    pass
-    # run_energy_update_days(days=2)
-
-
 @huey.periodic_task(crontab(hour="6", minute="45"))
 @huey.lock_task("db_run_emission_tasks")
 def db_run_emission_tasks() -> None:
