@@ -17,35 +17,41 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
         # @TODO replace with mv
         __query = """
         select
-            date_trunc('{trunc}', observation_time at time zone '{tz}') as observation_time,
-            fs.station_id,
+            date_trunc('{trunc}', t.observation_hour at time zone '{tz}') as observation_time,
+            avg(t.temp_avg),
+            min(t.temp_min),
+            max(t.temp_max)
+        from (
+            select
+                time_bucket_gapfill('1 hour', observation_time) as observation_hour,
+                fs.station_id,
 
-            case
-                when avg(fs.temp_air) is not null
-                    then avg(fs.temp_air)
-                when max(fs.temp_max) is not null and max(fs.temp_min) is not null
-                    then ((max(fs.temp_max) + min(fs.temp_min)) / 2)
-                else NULL
-            end as temp_avg,
+                case
+                    when avg(fs.temp_air) is not null
+                        then avg(fs.temp_air)
+                    when max(fs.temp_max) is not null and max(fs.temp_min) is not null
+                        then ((max(fs.temp_max) + min(fs.temp_min)) / 2)
+                    else NULL
+                end as temp_avg,
 
-            case when min(fs.temp_min) is not null
-                then min(fs.temp_min)
-                else min(fs.temp_air)
-            end as temp_min,
+                case when min(fs.temp_min) is not null
+                    then min(fs.temp_min)
+                    else min(fs.temp_air)
+                end as temp_min,
 
-            case when max(fs.temp_max) is not null
-                then max(fs.temp_max)
-                else max(fs.temp_air)
-            end as temp_max,
+                case when max(fs.temp_max) is not null
+                    then max(fs.temp_max)
+                    else max(fs.temp_air)
+                end as temp_max
 
-            min(fs.temp_min) as temp_min
-
-        from bom_observation fs
-        where
-            fs.station_id in ({station_codes}) and
-            fs.observation_time <= '{date_end}' and
-            fs.observation_time >= '{date_start}'
-        group by 1, 2
+            from bom_observation fs
+            where
+                fs.station_id in ({station_codes}) and
+                fs.observation_time <= '{date_end}' and
+                fs.observation_time >= '{date_start}'
+            group by 1, 2
+        ) as t
+        group by 1
         order by 1 asc;
         """.format(
             trunc=time_series.interval.trunc,
