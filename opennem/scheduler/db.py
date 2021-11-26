@@ -145,25 +145,25 @@ def crawler_scheduled_frequent() -> None:
     run_crawls_by_schedule(CrawlerSchedule.frequent)
 
 
-@huey.periodic_task(crontab(minute="*/15"))
+@huey.periodic_task(crontab(minute="*/15"), retries=3, retry_delay=30)
 @huey.lock_task("crawler_scheduled_quarter_hour")
 def crawler_scheduled_quarter_hour() -> None:
     run_crawls_by_schedule(CrawlerSchedule.quarter_hour)
 
 
-@huey.periodic_task(crontab(hour="*", minute="3,33"))
+@huey.periodic_task(crontab(hour="*", minute="3,33"), retries=3, retry_delay=30)
 @huey.lock_task("crawler_scheduled_half_hour")
 def crawler_scheduled_half_hour() -> None:
     run_crawls_by_schedule(CrawlerSchedule.half_hour)
 
 
-@huey.periodic_task(crontab(hour="*/1", minute="2"))
+@huey.periodic_task(crontab(hour="*/1", minute="2"), retries=5, retry_delay=90)
 @huey.lock_task("crawler_scheduled_hourly")
 def crawler_scheduled_hourly() -> None:
     run_crawls_by_schedule(CrawlerSchedule.hourly)
 
 
-@huey.periodic_task(crontab(hour="5,8,16", minute="15"))
+@huey.periodic_task(crontab(hour="5,8,16", minute="15"), retries=5, retry_delay=120)
 @huey.lock_task("crawler_scheduled_day")
 def crawler_scheduled_day() -> None:
     run_crawls_by_schedule(CrawlerSchedule.daily)
