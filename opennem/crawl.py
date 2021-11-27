@@ -279,8 +279,9 @@ if __name__ == "__main__":
     # run_crawls_all()
     # run_crawls_by_schedule(CrawlerSchedule.frequent)
     wem = _CRAWLER_SET.get_crawlers_by_match(".wem.")
+    run_crawl(_CRAWLER_SET.get_crawler("au.wem.live.balancing"))
 
-    for i in wem:
-        print(i.name)
-        run_crawl(i)
-    pass
+    # for i in wem:
+    # print(i.name)
+    # run_crawl(i)
+    # pass
