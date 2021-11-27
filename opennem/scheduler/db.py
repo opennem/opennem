@@ -48,9 +48,7 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 # 5:45AM and 8:45AM AEST
 @huey.periodic_task(crontab(hour="5,11", minute="45"))
 def db_refresh_material_views() -> None:
-    run_energy_update_days(days=2)
     run_daily_fueltech_summary()
-    run_aggregates_all_days(days=14)
     refresh_material_views("mv_facility_all")
     refresh_material_views("mv_region_emissions")
     refresh_material_views("mv_interchange_energy_nem_region")
