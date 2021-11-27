@@ -47,6 +47,7 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
 # 5:45AM and 8:45AM AEST
 @huey.periodic_task(crontab(hour="5,11", minute="45"))
+@huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
     refresh_material_views("mv_facility_all")
     refresh_material_views("mv_region_emissions")
@@ -57,6 +58,7 @@ def db_refresh_material_views() -> None:
 
 
 @huey.periodic_task(crontab(hour="10", minute="45"))
+@huey.lock_task("db_run_daily_fueltech_summary")
 def db_run_daily_fueltech_summary() -> None:
     run_daily_fueltech_summary()
 
