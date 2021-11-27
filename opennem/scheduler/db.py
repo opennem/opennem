@@ -46,15 +46,13 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 
 
 # 5:45AM and 8:45AM AEST
-@huey.periodic_task(crontab(hour="5,11", minute="45"))
+@huey.periodic_task(crontab(hour="6", minute="45"))
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
     refresh_material_views("mv_facility_all")
     refresh_material_views("mv_region_emissions")
     refresh_material_views("mv_interchange_energy_nem_region")
-    export_energy(latest=True)
-    export_energy(priority=PriorityType.monthly)
-    slack_message("Ran daily energy update and aggregates on {}".format(settings.env))
+    slack_message("Ran refresh of material views on {}".format(settings.env))
 
 
 @huey.periodic_task(crontab(hour="10", minute="45"))
