@@ -41,21 +41,16 @@ def aggregates_facility_daily_query(
                 time_bucket_gapfill('30 minutes', fs.trading_interval) as trading_interval,
                 fs.facility_code as code,
                 coalesce(sum(fs.eoi_quantity), 0) as energy,
-                coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bsn.price), max(bs.price), 0) as market_value,
+                coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bs.price), 0) as market_value,
                 coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(f.emissions_factor_co2), 0) as emissions
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
             left join network n on f.network_id = n.code
-            left join balancing_summary bsn on
-                bsn.trading_interval - INTERVAL '5 minutes' = fs.trading_interval
-                and bsn.network_id = n.network_price
-                and bsn.network_region = f.network_region
-                and f.network_id = 'NEM'
             left join balancing_summary bs on
-                bs.trading_interval = fs.trading_interval
+                bs.trading_interval {trading_offset} = fs.trading_interval
                 and bs.network_id = n.network_price
                 and bs.network_region = f.network_region
-                and f.network_id != 'NEM'
+                and f.network_id = '{network_id}'
             where
                 fs.is_forecast is False
                 and fs.network_id = '{network_id}'
@@ -79,10 +74,16 @@ def aggregates_facility_daily_query(
         emissions = EXCLUDED.emissions;
     """
 
+    trading_offset = ""
+
+    if network == NetworkNEM:
+        trading_offset = "- INTERVAL '5 minutes'"
+
     query = __query.format(
         date_min=date_min.replace(tzinfo=network.get_fixed_offset()),
         date_max=date_max.replace(tzinfo=network.get_fixed_offset()),
         network_id=network.code,
+        trading_offset=trading_offset,
     )
 
     return dedent(query)
@@ -214,4 +215,4 @@ def run_aggregates_all_days(days: int = 7) -> None:
 # Debug entry point
 if __name__ == "__main__":
     # run_energy_update_days(days=30)
-    run_aggregates_all_days()
+    run_aggregates_all_days(days=2)
