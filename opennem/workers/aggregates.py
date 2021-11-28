@@ -59,7 +59,7 @@ def aggregates_facility_daily_query(
                 fs.is_forecast is False
                 and fs.network_id = '{network_id}'
                 and fs.trading_interval >= '{date_min}'
-                and fs.trading_interval <= '{date_max}'
+                and fs.trading_interval < '{date_max}'
             group by
                 1, 2
         ) as fs
@@ -85,7 +85,7 @@ def aggregates_facility_daily_query(
 
     query = __query.format(
         date_min=date_min.replace(tzinfo=network.get_fixed_offset()),
-        date_max=date_max.replace(tzinfo=network.get_fixed_offset()),
+        date_max=(date_max + timedelta(days=1)).replace(tzinfo=network.get_fixed_offset()),
         network_id=network.code,
         trading_offset=trading_offset,
     )
@@ -222,4 +222,4 @@ def run_aggregates_all_days(
 # Debug entry point
 if __name__ == "__main__":
     # run_energy_update_days(days=30)
-    run_aggregates_all_days(days=30, networks=[NetworkNEM, NetworkWEM])
+    run_aggregates_all_days(days=30, networks=[NetworkAPVI, NetworkWEM])
