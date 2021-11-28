@@ -18,6 +18,7 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
         __query = """
         select
             date_trunc('{trunc}', t.observation_hour at time zone '{tz}') as observation_time,
+            t.station_id,
             avg(t.temp_avg),
             min(t.temp_min),
             max(t.temp_max)
