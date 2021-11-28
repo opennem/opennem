@@ -78,12 +78,17 @@ def query_energy_gaps(network: NetworkSchema = NetworkNEM, days: int = 7) -> Lis
     return _result_models
 
 
-def run_energy_gapfill_for_network(network: NetworkSchema = NetworkNEM, days: int = 7) -> None:
+def run_energy_gapfill_for_network(
+    network: NetworkSchema = NetworkNEM, days: int = 7, run_all: bool = False
+) -> None:
     energy_gaps = query_energy_gaps(network, days=days)
 
     energy_gaps_filtered = list(
         filter(lambda x: x.has_power is True and x.has_energy is False, energy_gaps)
     )
+
+    if run_all:
+        energy_gaps_filtered = energy_gaps
 
     logger.info("Found {} energy gaps interval hours".format(len(energy_gaps_filtered)))
 
@@ -101,10 +106,11 @@ def run_energy_gapfill_for_network(network: NetworkSchema = NetworkNEM, days: in
 def run_energy_gapfill(
     days: int = 14,
     networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
+    run_all: bool = False,
 ) -> None:
     for network in networks:
-        run_energy_gapfill_for_network(network, days=days)
+        run_energy_gapfill_for_network(network, days=days, run_all=run_all)
 
 
 if __name__ == "__main__":
-    run_energy_gapfill(days=2, networks=[NetworkNEM])
+    run_energy_gapfill(days=2, networks=[NetworkNEM], run_all=True)
