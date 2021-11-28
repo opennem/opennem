@@ -68,11 +68,17 @@ def db_refresh_material_views_recent() -> None:
     refresh_material_views("mv_region_emissions_45d")
 
 
-# Run aggregate table aggregates for all networks
+# run gap fill tasks
+@huey.periodic_task(crontab(hour="5", minute="15"))
+@huey.lock_task("db_run_energy_gapfill_all")
+def db_run_energy_gapfill_all() -> None:
+    run_energy_gapfill()
+
+
 @huey.periodic_task(crontab(hour="*/1", minute="15"))
 @huey.lock_task("db_run_energy_gapfil")
 def db_run_energy_gapfil() -> None:
-    run_energy_gapfill()
+    run_energy_gapfill(days=1)
 
 
 @huey.periodic_task(crontab(hour="*/3", minute=45))
