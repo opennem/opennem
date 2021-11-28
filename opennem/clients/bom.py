@@ -112,8 +112,11 @@ def get_bom_observations(observation_url: str, station_code: str) -> BOMObservat
     try:
         resp_object = resp.json()
     except Exception:
-        logger.error("Error parsing BOM response: bad json")
-        raise Exception("Bad BOM response: bad json")
+        raise Exception(
+            "Error parsing BOM response: bad json. Status: {}. Content length: {}".format(
+                resp.status_code, len(resp.content)
+            )
+        )
 
     if "observations" not in resp_object:
         raise Exception("Invalid BOM return for {}".format(observation_url))
