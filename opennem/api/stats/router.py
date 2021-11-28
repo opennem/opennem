@@ -16,7 +16,14 @@ from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, Station
 from opennem.schema.dates import TimeSeries
-from opennem.schema.network import NetworkNetworkRegion
+from opennem.schema.network import (
+    NetworkAEMORooftop,
+    NetworkAEMORooftopBackfill,
+    NetworkAPVI,
+    NetworkNEM,
+    NetworkNetworkRegion,
+    NetworkWEM,
+)
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_scada_range, stats_factory
@@ -424,6 +431,13 @@ def power_network_region_fueltech(
 
     networks = [network]
 
+    if network == NetworkNEM:
+        networks.append(NetworkAEMORooftop)
+        networks.append(NetworkAEMORooftopBackfill)
+
+    elif network == NetworkWEM:
+        networks.append(NetworkAPVI)
+
     time_series = TimeSeries(
         start=scada_range.start,
         month=month,
@@ -433,7 +447,9 @@ def power_network_region_fueltech(
         period=period_obj,
     )
 
-    stat_set = power_week(time_series, network_region_code, include_capacities=True)
+    stat_set = power_week(
+        time_series, network_region_code, include_capacities=True, networks_query=networks
+    )
 
     if not stat_set:
         raise Exception("No results")
