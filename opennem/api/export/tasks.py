@@ -274,8 +274,11 @@ def export_energy(
                         network_region=energy_stat.network_region,
                     )
                     stat_set.append_set(weather_stats)
-                except Exception:
+                except Exception as e:
+                    logger.error("weather_stat exception: {}".format(e))
                     pass
+            else:
+                logger.info("Stat set has no bom station")
 
             write_output(energy_stat.path, stat_set)
 

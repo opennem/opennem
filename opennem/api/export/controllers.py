@@ -116,8 +116,6 @@ def weather_daily(
         stats.append_set(stats_min)
         stats.append_set(stats_max)
 
-    logger.debug(stats)
-
     return stats
 
 
