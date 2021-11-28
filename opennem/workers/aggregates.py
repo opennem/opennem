@@ -42,7 +42,11 @@ def aggregates_facility_daily_query(
                 fs.facility_code as code,
                 coalesce(sum(fs.eoi_quantity), 0) as energy,
                 coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bs.price), 0) as market_value,
-                coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(f.emissions_factor_co2), 0) as emissions
+                case
+                    when sum(fs.eoi_quantity) > 0 then
+                        coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(f.emissions_factor_co2), 0)
+                    else 0
+                end as emissions
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
             left join network n on f.network_id = n.code
