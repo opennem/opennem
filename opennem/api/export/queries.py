@@ -52,7 +52,7 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
                 fs.observation_time >= '{date_start}'
             group by 1, 2
         ) as t
-        group by 1
+        group by 1, 2
         order by 1 asc;
         """.format(
             trunc=time_series.interval.trunc,
