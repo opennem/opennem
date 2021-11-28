@@ -73,6 +73,7 @@ def weather_daily(
     ]
 
     if len(temp_avg) < 1:
+        logger.error(f"No weather results for {station_code}")
         raise NoResults()
 
     stats = stats_factory(
@@ -114,6 +115,8 @@ def weather_daily(
 
         stats.append_set(stats_min)
         stats.append_set(stats_max)
+
+    logger.debug(stats)
 
     return stats
 
