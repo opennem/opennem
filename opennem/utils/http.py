@@ -74,11 +74,11 @@ http.mount("http://", adapter_retry)
 setup_http_cache()
 
 
-def mount_timeout_adaptor(session: requests.Session) -> requests.Session:
+def mount_timeout_adaptor(session: requests.Session) -> None:
     session.mount("https://", adapter_timeout)
     session.mount("http://", adapter_timeout)
 
 
-def mount_retry_adaptor(session: requests.Session) -> requests.Session:
+def mount_retry_adaptor(session: requests.Session) -> None:
     session.mount("https://", adapter_retry)
     session.mount("http://", adapter_retry)
