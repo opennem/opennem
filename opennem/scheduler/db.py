@@ -49,9 +49,9 @@ huey = PriorityRedisHuey("opennem.scheduler.db", host=redis_host)
 @huey.periodic_task(crontab(hour="6", minute="45"))
 @huey.lock_task("db_refresh_material_views")
 def db_refresh_material_views() -> None:
-    refresh_material_views("mv_facility_all")
-    refresh_material_views("mv_region_emissions")
-    refresh_material_views("mv_interchange_energy_nem_region")
+    # refresh_material_views("mv_facility_all")
+    # refresh_material_views("mv_region_emissions")
+    # refresh_material_views("mv_interchange_energy_nem_region")
     slack_message("Ran refresh of material views on {}".format(settings.env))
 
 
