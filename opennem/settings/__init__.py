@@ -21,6 +21,8 @@ import os
 import sys
 from pathlib import Path
 
+from opennem.utils.version import get_version
+
 # @NOTE load first external deps in an exception block so that we can catch if the ENV is
 # loaded and be friendly
 try:
@@ -50,10 +52,14 @@ if num_handlers == 0:
 __root_logger.handlers[0].setFormatter(__root_logger_formatter)
 
 MODULE_DIR = os.path.dirname(__file__)
+PYTHON_VERSION = ".".join(
+    [str(i) for i in (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)]
+)
 
 ENV = os.getenv("ENV", default="development")
 
 logging.info(f"Loading OpenNEM ENV {ENV}")
+logging.info(f"OpenNEM Version: {get_version()}. Python version: {PYTHON_VERSION}")
 
 env_files = load_env_file(ENV)
 
