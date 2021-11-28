@@ -10,6 +10,7 @@ import requests
 from pydantic import validator
 
 from opennem.schema.core import BaseConfig
+from opennem.utils.http import mount_retry_adaptor, mount_timeout_adaptor
 from opennem.utils.random_agent import get_random_agent
 from opennem.utils.timezone import UTC
 
@@ -34,6 +35,12 @@ STATE_TO_TIMEZONE = {
     "NT": "Australia/Darwin",
     "WA": "Australia/Perth",
 }
+
+
+_bom_req_session = requests.Session()
+
+mount_retry_adaptor(_bom_req_session)
+mount_timeout_adaptor(_bom_req_session)
 
 
 def _clean_bom_text_field(field_val: str) -> Optional[str]:
@@ -105,7 +112,7 @@ def get_bom_observations(observation_url: str, station_code: str) -> BOMObservat
 
     logger.info("Fetching {}".format(observation_url))
 
-    resp = requests.get(observation_url, headers=_headers)
+    resp = _bom_req_session.get(observation_url, headers=_headers)
 
     resp_object = None
 
