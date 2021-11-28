@@ -72,3 +72,13 @@ http.mount("https://", adapter_retry)
 http.mount("http://", adapter_retry)
 
 setup_http_cache()
+
+
+def mount_timeout_adaptor(session: requests.Session) -> requests.Session:
+    session.mount("https://", adapter_timeout)
+    session.mount("http://", adapter_timeout)
+
+
+def mount_retry_adaptor(session: requests.Session) -> requests.Session:
+    session.mount("https://", adapter_retry)
+    session.mount("http://", adapter_retry)
