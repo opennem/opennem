@@ -98,10 +98,13 @@ def run_energy_gapfill_for_network(network: NetworkSchema = NetworkNEM, days: in
         run_energy_calc(dmin, dmax, network=network_from_network_code(gap.network_id))
 
 
-def run_energy_gapfill(days: int = 14) -> None:
-    for network in [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop]:
+def run_energy_gapfill(
+    days: int = 14,
+    networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
+) -> None:
+    for network in networks:
         run_energy_gapfill_for_network(network, days=days)
 
 
 if __name__ == "__main__":
-    run_energy_gapfill(days=20)
+    run_energy_gapfill(days=2, networks=[NetworkNEM])
