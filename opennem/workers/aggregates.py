@@ -2,7 +2,7 @@ import logging
 import os
 from datetime import datetime, timedelta
 from textwrap import dedent
-from typing import Tuple
+from typing import List, Tuple
 
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import ScadaDateRange
@@ -201,7 +201,10 @@ def run_aggregates_all() -> None:
         run_aggregates_facility_all(network)
 
 
-def run_aggregates_all_days(days: int = 7) -> None:
+def run_aggregates_all_days(
+    days: int = 7,
+    networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
+) -> None:
     day_start = datetime.now()
 
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -209,7 +212,7 @@ def run_aggregates_all_days(days: int = 7) -> None:
     day_start = today
     day_end = today - timedelta(days=days)
 
-    for network in [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop]:
+    for network in networks:
         logger.info(
             "Running for Network {} range {} => {}".format(network.code, day_start, day_end)
         )
@@ -219,4 +222,4 @@ def run_aggregates_all_days(days: int = 7) -> None:
 # Debug entry point
 if __name__ == "__main__":
     # run_energy_update_days(days=30)
-    run_aggregates_all_days(days=2)
+    run_aggregates_all_days(days=30, networks=[NetworkNEM, NetworkWEM])
