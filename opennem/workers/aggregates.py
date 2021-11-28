@@ -100,7 +100,7 @@ def exec_aggregates_facility_daily_query(
     engine = get_database_engine()
     result = None
 
-    query = aggregates_facility_daily_query(date_min, date_max, network)
+    query = aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
 
     with engine.connect() as c:
         logger.debug(query)
@@ -125,9 +125,7 @@ def _get_year_range(year: int, network: NetworkSchema = NetworkNEM) -> Tuple[dat
     date_max = datetime(year + 1, 1, 1, 0, 0, 0, 0, tzinfo=tz)
 
     if year == DATE_CURRENT_YEAR:
-        date_max = datetime.now().replace(hour=0, minute=0, second=0, tzinfo=tz) + timedelta(
-            days=1
-        )
+        date_max = datetime.now().replace(hour=0, minute=0, second=0, tzinfo=tz)
 
     return date_min, date_max
 
@@ -196,9 +194,12 @@ def run_rooftop_fix() -> None:
             c.execute(query)
 
 
-def run_aggregates_all() -> None:
-    for network in [NetworkNEM]:
+def run_aggregates_all(
+    networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
+) -> None:
+    for network in networks:
         run_aggregates_facility_all(network)
+        run_aggregates_facility_year(network=network)
 
 
 def run_aggregates_all_days(
@@ -222,4 +223,6 @@ def run_aggregates_all_days(
 # Debug entry point
 if __name__ == "__main__":
     # run_energy_update_days(days=30)
-    run_aggregates_all_days(days=30, networks=[NetworkAPVI, NetworkWEM])
+    # run_aggregates_all_days(days=30, networks=[NetworkAPVI, NetworkWEM])
+
+    run_aggregates_facility_year(network=NetworkWEM)
