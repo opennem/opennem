@@ -89,8 +89,8 @@ def get_generated_query(
         network_id=network.code,
         network_region=network_region,
         network_region_query=network_region_query,
-        date_min=date_min,
-        date_max=date_max + timedelta(minutes=5),
+        date_min=date_min.replace(tzinfo=network.get_fixed_offset()),
+        date_max=(date_max + timedelta(minutes=5)).replace(tzinfo=network.get_fixed_offset()),
         fueltech_match=fueltech_match,
         facility_match=facility_match,
     )
