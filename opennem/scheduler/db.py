@@ -128,8 +128,8 @@ def schedule_facility_first_seen_check() -> None:
 @huey.periodic_task(crontab(hour="9,18", minute="45"))
 @huey.lock_task("db_facility_seen_update")
 def db_facility_seen_update() -> None:
-    if settings.workers_db_run:
-        update_facility_seen_range()
+    update_facility_seen_range()
+    slack_message(f"Updated facility seen range on {settings.env}")
 
 
 # crawler tasks
