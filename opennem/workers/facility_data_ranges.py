@@ -20,7 +20,7 @@ logger = logging.getLogger("opennem.workers.facility_data_ranges")
 
 
 def get_update_seen_query(
-    include_first_seen: bool = True,
+    include_first_seen: bool = False,
     facility_codes: Optional[List[str]] = None,
 ) -> str:
     __query = """
@@ -129,4 +129,4 @@ def get_facility_seen_range(facility_codes: List[str]) -> FacilitySeenRange:
 
 
 if __name__ == "__main__":
-    update_facility_seen_range(True)
+    update_facility_seen_range(False)
