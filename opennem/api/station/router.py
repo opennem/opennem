@@ -61,15 +61,12 @@ def stations(
     if name:
         stations = stations.filter(Station.name.like("%{}%".format(name)))
 
+    stations = stations.order_by(
+        Station.name,
+    )
+
     if limit:
         stations = stations.limit(limit)
-
-    stations = stations.order_by(
-        # Facility.network_region,
-        Station.name,
-        # Facility.network_code,
-        # Facility.code,
-    )
 
     stations = stations.all()
 
