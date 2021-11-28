@@ -53,16 +53,10 @@ def station_record(
     Get a single weather station by code
 
     """
-    station = (
-        session.query(BomStation)
-        .filter(BomStation.code == station_code)
-        .one_or_none()
-    )
+    station = session.query(BomStation).filter(BomStation.code == station_code).one_or_none()
 
     if not station:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No station found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No station found")
 
     return station
 
@@ -78,7 +72,6 @@ def station_observations_api(
     interval_human: str = Query("15m", description="Interval"),
     period_human: str = Query("7d", description="Period"),
     station_codes: List[str] = [],
-    network_code: str = "NEM",
     timezone: str = None,
     offset: str = None,
     year: int = None,
@@ -87,15 +80,10 @@ def station_observations_api(
     units = get_unit("temperature")
 
     if not interval_human:
-        interval = "15m"
+        interval_human = "15m"
 
     if not period_human:
-        period = "7d"
-
-    network = None
-
-    if network_code:
-        network = network_from_network_code(network_code)
+        period_human = "7d"
 
     if station_code:
         station_codes = [station_code]
@@ -109,17 +97,10 @@ def station_observations_api(
     if offset:
         timezone = get_fixed_timezone(offset)
 
-    scada_range = None
-
-    if network:
-        scada_range = get_scada_range(network=network)
-
     query = observation_query(
         station_codes=station_codes,
         interval=interval,
         period=period,
-        network=network,
-        scada_range=scada_range,
         year=year,
     )
 
@@ -127,9 +108,7 @@ def station_observations_api(
         results = list(c.execute(query))
 
     stats = [
-        DataQueryResult(
-            interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None
-        )
+        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
         for i in results
     ]
 
@@ -144,7 +123,6 @@ def station_observations_api(
         units=units,
         interval=interval,
         period=period,
-        network=network,
         code="bom",
         group_field="temperature",
     )
