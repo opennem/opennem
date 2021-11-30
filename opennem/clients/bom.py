@@ -10,7 +10,7 @@ import requests
 from pydantic import validator
 
 from opennem.schema.core import BaseConfig
-from opennem.utils.http import mount_retry_adaptor, mount_timeout_adaptor
+from opennem.utils.http import http, mount_retry_adaptor, mount_timeout_adaptor
 from opennem.utils.random_agent import get_random_agent
 from opennem.utils.timezone import UTC
 
@@ -112,7 +112,7 @@ def get_bom_observations(observation_url: str, station_code: str) -> BOMObservat
 
     logger.info("Fetching {}".format(observation_url))
 
-    resp = _bom_req_session.get(observation_url, headers=_headers)
+    resp = http.get(observation_url, headers=_headers)
 
     resp_object = None
 
