@@ -7,13 +7,12 @@ from typing import List, Optional
 
 import pytz
 
-from opennem.clients.bom import get_bom_observations
-from opennem.controllers.bom import store_bom_observation_intervals
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.parsers.aemo.mms import parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 from opennem.crawlers.apvi import crawl_apvi_forecasts
+from opennem.crawlers.bom import crawl_bom_capitals
 from opennem.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule, CrawlerSet
 from opennem.crawlers.wem import (
     run_wem_balancing_crawl,
@@ -21,7 +20,6 @@ from opennem.crawlers.wem import (
     run_wem_live_balancing_crawl,
     run_wem_live_facility_scada_crawl,
 )
-from opennem.spiders.bom.utils import get_stations_priority
 
 logger = logging.getLogger("opennem.crawler")
 
@@ -129,23 +127,6 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
         crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, crawler.last_processed)
 
         logger.info("Set last updated to {}".format(cr.last_modified))
-
-
-def crawl_bom_capitals(
-    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False
-) -> ControllerReturn:
-    bom_stations = get_stations_priority()
-
-    for bom_station in bom_stations:
-        try:
-            bom_observations = get_bom_observations(bom_station.feed_url, bom_station.code)
-            cr = store_bom_observation_intervals(bom_observations)
-        except Exception as e:
-            logger.error("Bom error for station {}: {}".format(bom_station.name, e))
-
-    cr.last_modified = datetime.now()
-
-    return cr
 
 
 AEMONemTradingISLatest = CrawlerDefinition(
