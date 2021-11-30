@@ -137,8 +137,11 @@ def crawl_bom_capitals(
     bom_stations = get_stations_priority()
 
     for bom_station in bom_stations:
-        bom_observations = get_bom_observations(bom_station.feed_url, bom_station.code)
-        cr = store_bom_observation_intervals(bom_observations)
+        try:
+            bom_observations = get_bom_observations(bom_station.feed_url, bom_station.code)
+            cr = store_bom_observation_intervals(bom_observations)
+        except Exception as e:
+            logger.error("Bom error for station {}: {}".format(bom_station.name, e))
 
     cr.last_modified = datetime.now()
 
