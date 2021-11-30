@@ -152,6 +152,7 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
         return cr
     finally:
         session.close()
+        engine.dispose()
 
     cr.inserted_records = cr.processed_records
     return cr
@@ -199,6 +200,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         return cr
     finally:
         session.close()
+        engine.dispose()
 
     cr.inserted_records = cr.processed_records
     return cr
@@ -246,6 +248,7 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
 
     finally:
         session.close()
+        engine.dispose()
 
     cr.inserted_records = cr.processed_records
     return cr
@@ -330,6 +333,7 @@ def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
 
     finally:
         session.close()
+        engine.dispose()
 
     return {"num_records": len(records_to_store)}
 
