@@ -57,6 +57,7 @@ def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerReturn:
         cr.error_detail = str(e)
     finally:
         session.close()
+        engine.dispose()
 
     return cr
 

@@ -67,6 +67,7 @@ def store_bom_observation_intervals(observations: BOMObservationReturn) -> Contr
         return cr
     finally:
         session.close()
+        engine.dispose()
 
     cr.inserted_records = cr.processed_records
 

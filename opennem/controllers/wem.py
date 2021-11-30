@@ -72,6 +72,7 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
         cr.error_detail.append(str(e))
     finally:
         session.close()
+        engine.dispose()
 
     return cr
 
