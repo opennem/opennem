@@ -1,4 +1,3 @@
-
 from datetime import datetime
 from typing import Optional
 
@@ -11,7 +10,7 @@ class BomStationSchema(BaseConfig):
     name: str
     web_code: Optional[str]
     name_alias: Optional[str]
-    registered: datetime
+    registered: Optional[datetime]
 
     priority: int
     is_capital: bool = False
