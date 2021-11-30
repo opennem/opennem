@@ -78,13 +78,13 @@ def db_run_energy_gapfill_all() -> None:
 @huey.periodic_task(crontab(hour="*/1", minute="15"))
 @huey.lock_task("db_run_energy_gapfil")
 def db_run_energy_gapfil() -> None:
-    run_energy_gapfill(days=1)
+    run_energy_gapfill(days=14)
 
 
 @huey.periodic_task(crontab(hour="*/3", minute=45))
 @huey.lock_task("db_run_aggregates")
 def db_run_aggregates() -> None:
-    run_aggregates_all_days(1)
+    run_aggregates_all_days(days=2)
 
 
 @huey.periodic_task(crontab(hour="8", minute="30"))
