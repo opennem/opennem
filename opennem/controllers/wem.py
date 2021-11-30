@@ -125,5 +125,6 @@ def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> Contr
         cr.error_detail.append(str(e))
     finally:
         session.close()
+        engine.dispose()
 
     return cr
