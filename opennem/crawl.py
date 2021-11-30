@@ -3,14 +3,11 @@
 """
 import logging
 from datetime import datetime
-from typing import List, Optional
 
 import pytz
 
-from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
-from opennem.core.parsers.aemo.mms import parse_aemo_urls
-from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
+from opennem.crawlers.aemo import run_aemo_mms_crawl
 from opennem.crawlers.apvi import crawl_apvi_forecasts
 from opennem.crawlers.bom import crawl_bom_capitals
 from opennem.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule, CrawlerSet
@@ -54,48 +51,6 @@ def load_crawlers() -> CrawlerSet:
     logger.debug("Loaded {} crawlers".format(len(cs.crawlers)))
 
     return cs
-
-
-def run_aemo_mms_crawl(
-    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False
-) -> Optional[ControllerReturn]:
-    if not crawler.url:
-        raise Exception("Require a URL to run AEMO MMS crawlers")
-
-    dirlisting = get_dirlisting(crawler.url)
-
-    if crawler.filename_filter:
-        dirlisting.apply_filter(crawler.filename_filter)
-
-    logger.debug(
-        "Got {} entries, {} files and {} directories".format(
-            dirlisting.count, dirlisting.file_count, dirlisting.directory_count
-        )
-    )
-
-    entries_to_fetch: List[DirlistingEntry] = []
-
-    if last_crawled and crawler.last_crawled:
-        entries_to_fetch = dirlisting.get_files_modified_since(crawler.last_crawled)
-
-    elif limit and crawler.limit:
-        entries_to_fetch = dirlisting.get_most_recent_files(limit=crawler.limit)
-
-    else:
-        entries_to_fetch = dirlisting.get_files()
-
-    if not entries_to_fetch:
-        logger.info("Nothing to do")
-        return None
-
-    logger.info("Fetching {} entries".format(len(entries_to_fetch)))
-
-    ts = parse_aemo_urls([i.link for i in entries_to_fetch])
-
-    controller_returns = store_aemo_tableset(ts)
-    controller_returns.last_modified = max([i.modified_date for i in entries_to_fetch])  # type: ignore
-
-    return controller_returns
 
 
 def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False) -> None:
@@ -259,13 +214,5 @@ def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True)
 
 
 if __name__ == "__main__":
-    # crawler_set = load_crawlers()
-    # run_crawls_all()
-    # run_crawls_by_schedule(CrawlerSchedule.frequent)
     wem = _CRAWLER_SET.get_crawlers_by_match(".wem.")
-    run_crawl(_CRAWLER_SET.get_crawler("au.wem.live.balancing"))
-
-    # for i in wem:
-    # print(i.name)
-    # run_crawl(i)
-    # pass
+    run_crawl(_CRAWLER_SET.get_crawler("au.bom.capitals"))
