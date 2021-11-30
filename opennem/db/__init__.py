@@ -4,7 +4,7 @@ from typing import Generator, Optional
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 from opennem.exporter.encoders import opennem_deserialize, opennem_serialize
 from opennem.settings import settings
@@ -64,11 +64,7 @@ def db_connect(
 
 engine = db_connect()
 
-SessionLocal = sessionmaker(
-    bind=engine,
-    autocommit=False,
-    autoflush=False,
-)
+SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 SessionAutocommit = sessionmaker(bind=engine, autocommit=True, autoflush=True)
 
