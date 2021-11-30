@@ -96,3 +96,6 @@ def get_database_engine() -> Engine:
 
     """
     return engine
+
+
+engine.dispose()
