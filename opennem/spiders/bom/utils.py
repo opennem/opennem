@@ -1,6 +1,8 @@
 from datetime import date, datetime
 from typing import List
 
+from sqlalchemy.sql.operators import from_
+
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import BomStation
 from opennem.schema.bom import BomStationSchema
@@ -21,7 +23,7 @@ def get_stations_priority() -> List[BomStationSchema]:
 
     stations = session.query(BomStation).filter(BomStation.priority < 2).all()
 
-    _models = [BomStationSchema(**i) for i in stations]
+    _models = [BomStationSchema.from_orm(i) for i in stations]
 
     return _models
 
