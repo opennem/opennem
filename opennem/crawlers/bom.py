@@ -29,6 +29,7 @@ def crawl_bom_capitals(
         except Exception as e:
             logger.info("Bom error for station {}: {}".format(bom_station.name, e))
 
-    cr.last_modified = datetime.now()
+    if cr:
+        cr.last_modified = datetime.now()
 
     return cr
