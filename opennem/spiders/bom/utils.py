@@ -3,6 +3,7 @@ from typing import List
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import BomStation
+from opennem.schema.bom import BomStationSchema
 
 BOM_REQUEST_HEADERS = {
     "Host": "www.bom.gov.au",
@@ -14,13 +15,15 @@ BOM_REQUEST_HEADERS = {
 }
 
 
-def get_stations_priority() -> List[BomStation]:
+def get_stations_priority() -> List[BomStationSchema]:
     """This gets all the capital stations which are required for the linked regions"""
     session = SessionLocal()
 
     stations = session.query(BomStation).filter(BomStation.priority < 2).all()
 
-    return stations
+    _models = [BomStationSchema(**i) for i in stations]
+
+    return _models
 
 
 def get_stations() -> List[BomStation]:
