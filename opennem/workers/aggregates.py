@@ -222,7 +222,4 @@ def run_aggregates_all_days(
 
 # Debug entry point
 if __name__ == "__main__":
-    # run_energy_update_days(days=30)
-    # run_aggregates_all_days(days=30, networks=[NetworkAPVI, NetworkWEM])
-
-    run_aggregates_facility_year(network=NetworkWEM)
+    run_aggregates_all()
