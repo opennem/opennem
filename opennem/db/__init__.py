@@ -91,7 +91,8 @@ def get_database_engine() -> Engine:
     Gets a database engine connection
 
     """
-    return engine
+    _engine = db_connect()
+    return _engine
 
 
 engine.dispose()
