@@ -20,6 +20,10 @@ def crawl_bom_capitals(
 
     for bom_station in bom_stations:
         try:
+            if not bom_station.feed_url:
+                logger.error("Station {} has no feed url - skipping ".format(bom_station.code))
+                continue
+
             bom_observations = get_bom_observations(bom_station.feed_url, bom_station.code)
             cr = store_bom_observation_intervals(bom_observations)
         except Exception as e:
