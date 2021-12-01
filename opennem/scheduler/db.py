@@ -102,6 +102,9 @@ def db_run_emission_tasks() -> None:
 @huey.periodic_task(crontab(minute="*/60"), priority=80)
 @huey.lock_task("monitor_opennem_intervals")
 def monitor_opennem_intervals() -> None:
+    if settings.env != "production":
+        return None
+
     for network_code in ["NEM", "WEM"]:
         check_opennem_interval_delays(network_code)
 
@@ -109,6 +112,9 @@ def monitor_opennem_intervals() -> None:
 @huey.periodic_task(crontab(minute="*/60"), priority=50)
 @huey.lock_task("monitor_wem_interval")
 def monitor_wem_interval() -> None:
+    if settings.env != "production":
+        return None
+
     aemo_wem_live_interval()
 
 
