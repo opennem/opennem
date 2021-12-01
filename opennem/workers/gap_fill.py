@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from textwrap import dedent
 from typing import List, Optional
 
+from opennem import settings
 from opennem.core.networks import network_from_network_code
 from opennem.db import get_database_engine
 from opennem.schema.core import BaseConfig
@@ -98,6 +99,10 @@ def run_energy_gapfill_for_network(
                 gap.network_id, gap.interval, gap.has_power, gap.has_energy, gap.total_energy
             )
         )
+
+        if settings.dry_run:
+            continue
+
         dmin = gap.interval
         dmax = dmin + timedelta(hours=1)
         run_energy_calc(dmin, dmax, network=network_from_network_code(gap.network_id))
@@ -113,4 +118,4 @@ def run_energy_gapfill(
 
 
 if __name__ == "__main__":
-    run_energy_gapfill(days=2, networks=[NetworkNEM], run_all=True)
+    run_energy_gapfill(days=2, networks=[NetworkWEM])
