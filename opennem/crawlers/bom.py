@@ -3,6 +3,7 @@
 """
 import logging
 from datetime import datetime
+from typing import Optional
 
 from opennem.clients.bom import get_bom_observations
 from opennem.controllers.bom import store_bom_observation_intervals
@@ -17,6 +18,7 @@ def crawl_bom_capitals(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False
 ) -> ControllerReturn:
     bom_stations = get_stations_priority()
+    cr: Optional[ControllerReturn] = None
 
     for bom_station in bom_stations:
         try:
