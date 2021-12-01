@@ -105,7 +105,13 @@ def run_energy_gapfill_for_network(
 
         dmin = gap.interval
         dmax = dmin + timedelta(hours=1)
-        run_energy_calc(dmin, dmax, network=network_from_network_code(gap.network_id))
+
+        try:
+            run_energy_calc(dmin, dmax, network=network_from_network_code(gap.network_id))
+        except Exception:
+            logger.error(
+                "Error running {} energy gapfill for {} => {}".format(gap.network_id, dmin, dmax)
+            )
 
 
 def run_energy_gapfill(
@@ -114,6 +120,7 @@ def run_energy_gapfill(
     run_all: bool = False,
 ) -> None:
     for network in networks:
+        logger.info("Running energy gapfill for {}".format(network.code))
         run_energy_gapfill_for_network(network, days=days, run_all=run_all)
 
 
