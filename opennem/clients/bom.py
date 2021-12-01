@@ -106,6 +106,10 @@ def get_bom_request_headers() -> Dict[str, str]:
     return {**BOM_REQUEST_HEADERS, "User-Agent": get_random_agent()}
 
 
+class BOMParsingException(Exception):
+    pass
+
+
 def get_bom_observations(observation_url: str, station_code: str) -> BOMObservationReturn:
     """Requests a BOM observation JSON endpoint and returns a schema"""
     _headers = get_bom_request_headers()
@@ -122,14 +126,14 @@ def get_bom_observations(observation_url: str, station_code: str) -> BOMObservat
     try:
         resp_object = resp.json()
     except Exception:
-        raise Exception(
+        raise BOMParsingException(
             "Error parsing BOM response: bad json. Status: {}. Content length: {}".format(
                 resp.status_code, len(resp.content)
             )
         )
 
     if "observations" not in resp_object:
-        raise Exception("Invalid BOM return for {}".format(observation_url))
+        raise BOMParsingException("Invalid BOM return for {}".format(observation_url))
 
     _oo = resp_object["observations"]
 
