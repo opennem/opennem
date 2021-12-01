@@ -120,7 +120,7 @@ def get_bom_observations(observation_url: str, station_code: str) -> BOMObservat
 
     resp_object = None
 
-    if not resp.ok:
+    if not resp.ok or resp.status_code == 403:
         raise Exception("BoM client request exception: {}".format(resp.status_code))
 
     try:
