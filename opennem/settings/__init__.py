@@ -111,4 +111,4 @@ if LOGGING_CONFIG and not running_as_scrapy():
 
 
 if settings.dry_run:
-    logging.info("Dry run (no database actions")
+    logging.info("Dry run (no database actions)")
