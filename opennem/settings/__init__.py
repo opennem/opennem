@@ -108,3 +108,7 @@ if LOGGING_CONFIG and not running_as_scrapy():
 
     # other misc loggers
     logging.getLogger("PIL").setLevel(logging.ERROR)
+
+
+if settings.dry_run:
+    logging.info("Dry run (no database actions")
