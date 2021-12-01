@@ -132,6 +132,7 @@ def emission_factor_region_query(
 def network_fueltech_demand_query(time_series: TimeSeries) -> str:
     __query = """
         select
+            fs.trading_interval at time zone '{tz}' as trading_interval,
             f.fueltech_id,
             round(sum(fs.eoi_quantity) / 1000, 2) as energy,
             sum(bs.demand_total) as demand
@@ -144,7 +145,7 @@ def network_fueltech_demand_query(time_series: TimeSeries) -> str:
             and fs.trading_interval < '{date_max}'
             and fs.network_id = '{network_id}'
             and f.dispatch_type = 'GENERATOR'
-        group by 1;
+        group by 1, 2;
     """
 
     date_range = time_series.get_range()
@@ -157,7 +158,7 @@ def network_fueltech_demand_query(time_series: TimeSeries) -> str:
             trunc=time_series.interval.trunc,
             date_max=date_range.end,
             date_min=date_min,
-            timezone=time_series.network.timezone_database,
+            tz=time_series.network.timezone_database,
         )
     )
     return query
