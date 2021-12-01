@@ -124,5 +124,6 @@ def run_energy_gapfill(
         run_energy_gapfill_for_network(network, days=days, run_all=run_all)
 
 
+
 if __name__ == "__main__":
-    run_energy_gapfill(days=2, networks=[NetworkWEM])
+    run_energy_gapfill()
