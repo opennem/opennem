@@ -541,12 +541,12 @@ def emission_factor_per_network(  # type: ignore
     return result
 
 
-@router.get(
-    "/fueltech_mix/{network_code}",
-    name="Fueltech mix by network",
-    response_model=OpennemDataSet,
-    response_model_exclude_unset=True,
-)
+# @router.get(
+#     "/fueltech_mix/{network_code}",
+#     name="Fueltech mix by network",
+#     response_model=OpennemDataSet,
+#     response_model_exclude_unset=True,
+# )
 def fueltech_demand_mix(
     engine: Engine = Depends(get_database_engine),  # type: ignore
     network_code: str = Query(..., description="Network code"),
@@ -561,6 +561,8 @@ def fueltech_demand_mix(
 
     Returns:
         OpennemData: data set
+
+    @TODO optimize this quer
     """
     engine = get_database_engine()
 
