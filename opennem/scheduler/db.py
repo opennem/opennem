@@ -6,8 +6,6 @@ import platform
 
 from huey import PriorityRedisHuey, crontab
 
-from opennem.api.export.map import PriorityType
-from opennem.api.export.tasks import export_energy
 from opennem.crawl import CrawlerSchedule, run_crawls_by_schedule
 from opennem.db.tasks import refresh_material_views
 from opennem.monitors.aemo_intervals import aemo_wem_live_interval
@@ -16,11 +14,9 @@ from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings  # noqa: F401
-from opennem.utils.scrapyd import job_schedule_all
 from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
-from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.gap_fill import run_energy_gapfill
 
