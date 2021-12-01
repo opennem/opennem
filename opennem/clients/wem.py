@@ -12,7 +12,7 @@ See the URL constants for sources and unit tests
 
 import csv
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Union
 
 import requests
@@ -182,6 +182,10 @@ _wem_session = requests.Session()
 _wem_session.headers.update({"User-Agent": get_random_agent()})
 
 
+class WEMFileNotFoundException(Exception):
+    pass
+
+
 def wem_downloader(url: str, for_date: Optional[datetime] = None) -> str:
     """Downloads WEM content using the session"""
     url_params = {
@@ -195,6 +199,11 @@ def wem_downloader(url: str, for_date: Optional[datetime] = None) -> str:
     logger.info(f"Fetching {_url_parsed}")
 
     response = _wem_session.get(_url_parsed)
+
+    # sometimes with the WEM delay the current
+    # month isn't up
+    if response.status_code == 404:
+        raise WEMFileNotFoundException()
 
     if not response.ok:
         raise Exception(
@@ -369,7 +378,18 @@ def get_wem_facility_intervals(from_date: Optional[datetime] = None) -> WEMFacil
 
     @TODO not yet smart enough to know if it should check current or archive
     """
-    content = wem_downloader(_AEMO_WEM_SCADA_URL, from_date)
+    content: Optional[str] = None
+
+    try:
+        content = wem_downloader(_AEMO_WEM_SCADA_URL, from_date)
+    except WEMFileNotFoundException:
+        _now = datetime.now()
+        from_date = _now - timedelta(days=30)
+        content = wem_downloader(_AEMO_WEM_SCADA_URL, from_date)
+
+    if not content:
+        raise Exception("No content for wem facility intervals")
+
     _models = parse_wem_facility_intervals(content)
 
     wem_set = WEMFacilityIntervalSet(
