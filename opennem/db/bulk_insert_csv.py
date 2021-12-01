@@ -8,14 +8,15 @@ import csv
 import logging
 from datetime import datetime
 from io import StringIO
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TypeVar, Union
 
 from sqlalchemy.sql.schema import Column, Table
 
 from opennem.db import get_database_engine
-from opennem.db.models.opennem import BalancingSummary, FacilityScada
 
 logger = logging.getLogger("opennem.db.bulk_insert_csv")
+
+ORMTableType = TypeVar("ORMTableType", bound=Table)
 
 BULK_INSERT_QUERY = """
     CREATE TEMP TABLE __tmp_{table_name}_{tmp_table_name}
@@ -106,7 +107,7 @@ def build_insert_query(
 
 
 def generate_bulkinsert_csv_from_records(
-    table: Union[Table, FacilityScada, BalancingSummary],
+    table: ORMTableType,
     records: List[Dict],
     column_names: Optional[List[str]] = None,
 ) -> StringIO:
@@ -172,7 +173,7 @@ def generate_bulkinsert_csv_from_records(
 
 
 def bulkinsert_mms_items(
-    table: Table,
+    table: ORMTableType,
     records: List[Dict],
     update_fields: Optional[List[Union[str, Column[Any]]]] = None,
 ) -> int:
