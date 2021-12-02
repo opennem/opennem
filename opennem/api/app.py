@@ -122,7 +122,7 @@ async def http_type_exception_handler(
 
 
 # sub-routers
-app.include_router(auth_router, tags=["Authentication"], prefix="/auth", include_in_schema=True)
+app.include_router(auth_router, tags=["Authentication"], prefix="/auth", include_in_schema=False)
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(locations_router, tags=["Locations"], prefix="/locations")
 app.include_router(geo_router, tags=["Geo"], prefix="/geo")
