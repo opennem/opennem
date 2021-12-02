@@ -60,6 +60,14 @@ retry_strategy = Retry(
 )
 
 
+# This will retry on 403's as well
+retry_strategy_on_permission_denied = Retry(
+    total=DEFAULT_RETRIES,
+    backoff_factor=2,
+    status_forcelist=[429, 500, 502, 503, 504],
+    allowed_methods=["HEAD", "GET", "OPTIONS"],
+)
+
 http = requests.Session()
 
 adapter_timeout = TimeoutHTTPAdapter()
