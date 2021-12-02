@@ -228,14 +228,16 @@ def run_aggregates_all_days(
 
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
-    day_start = today
-    day_end = today - timedelta(days=days)
+    date_end = today
+    date_start = today - timedelta(days=days)
 
     for network in networks:
         logger.info(
-            "Running for Network {} range {} => {}".format(network.code, day_start, day_end)
+            "Running for Network {} range {} => {}".format(network.code, date_start, date_end)
         )
-        exec_aggregates_facility_daily_query(day_start, day_end, network)
+        exec_aggregates_facility_daily_query(
+            date_min=day_start, date_max=date_end, network=network
+        )
 
 
 # Debug entry point
