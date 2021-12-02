@@ -56,7 +56,7 @@ retry_strategy = Retry(
     total=DEFAULT_RETRIES,
     backoff_factor=2,
     status_forcelist=[403, 429, 500, 502, 503, 504],
-    method_whitelist=["HEAD", "GET", "OPTIONS"],
+    allowed_methods=["HEAD", "GET", "OPTIONS"],
 )
 
 
