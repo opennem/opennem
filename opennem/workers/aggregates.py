@@ -83,11 +83,9 @@ def aggregates_facility_daily_query(
     if network == NetworkNEM:
         trading_offset = "- INTERVAL '5 minutes'"
 
-    # @NOTE do all tz work in query methods
-    date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset())
     date_max_offset = (date_max + timedelta(days=1)).replace(tzinfo=network.get_fixed_offset())
 
-    if date_max_offset <= date_min_offset:
+    if date_max_offset <= date_min:
         raise Exception(
             "aggregates_facility_daily_query: date_max ({}) is before date_min ({})".format(
                 date_max_offset, date_min
@@ -95,7 +93,7 @@ def aggregates_facility_daily_query(
         )
 
     query = __query.format(
-        date_min=date_min_offset,
+        date_min=date_min.replace(tzinfo=network.get_fixed_offset()),
         date_max=date_max_offset,
         network_id=network.code,
         trading_offset=trading_offset,
@@ -226,8 +224,6 @@ def run_aggregates_all_days(
     days: int = 7,
     networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
 ) -> None:
-    day_start = datetime.now()
-
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
     date_end = today
@@ -238,7 +234,7 @@ def run_aggregates_all_days(
             "Running for Network {} range {} => {}".format(network.code, date_start, date_end)
         )
         exec_aggregates_facility_daily_query(
-            date_min=day_start, date_max=date_end, network=network
+            date_min=date_start, date_max=date_end, network=network
         )
 
 
