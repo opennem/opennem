@@ -100,6 +100,15 @@ def exec_aggregates_facility_daily_query(
     engine = get_database_engine()
     result = None
 
+    # @TODO should put this check everywhere
+    # or place it all in a schema that validates
+    if date_max < date_min:
+        raise Exception(
+            "exec_aggregates_facility_daily_query: date_max ({}) is prior to date_min ({})".format(
+                date_max, date_min
+            )
+        )
+
     query = aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
 
     with engine.connect() as c:
