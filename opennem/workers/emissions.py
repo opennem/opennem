@@ -8,7 +8,7 @@ out
 
 import logging
 from datetime import datetime, timedelta
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 import numpy as np
 import pandas as pd
@@ -110,7 +110,9 @@ def power(df_emissions, df_ic) -> Dict:
     return power_dict
 
 
-def simple_exports(emissions_di, power_dict, from_regionid, to_regionid):
+def simple_exports(
+    emissions_di: pd.DataFrame, power_dict: Dict, from_regionid: str, to_regionid: str
+) -> Any:
     dx = emissions_di[emissions_di.network_region == from_regionid]
     ic_flow = power_dict[from_regionid, to_regionid]
     return ic_flow / dx.energy.sum() * dx.emissions.sum()
