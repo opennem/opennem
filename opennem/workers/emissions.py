@@ -119,30 +119,39 @@ def simple_exports(
 
 
 def demand(power_dict: Dict) -> Dict:
+    """Calculate demand for NEM"""
     d = {}
 
     if "NSW1" not in power_dict:
         raise EmissionsWorkerException("Missing generation info")
 
-    d["NSW1"] = (
-        power_dict["NSW1"]
-        + power_dict[("QLD1", "NSW1")]
-        + power_dict[("VIC1", "NSW1")]
-        - power_dict[("NSW1", "VIC1")]
-        - power_dict[("NSW1", "QLD1")]
-    )
-    d["QLD1"] = power_dict["QLD1"] + power_dict[("NSW1", "QLD1")] - power_dict[("QLD1", "NSW1")]
-    d["SA1"] = power_dict["SA1"] + power_dict[("VIC1", "SA1")] - power_dict[("SA1", "VIC1")]
-    d["TAS1"] = power_dict["TAS1"] + power_dict[("VIC1", "TAS1")] - power_dict[("TAS1", "VIC1")]
-    d["VIC1"] = (
-        power_dict["VIC1"]
-        + power_dict[("NSW1", "VIC1")]
-        + power_dict[("SA1", "VIC1")]
-        + power_dict[("TAS1", "VIC1")]
-        - power_dict[("VIC1", "NSW1")]
-        - power_dict[("VIC1", "TAS1")]
-        - power_dict[("VIC1", "SA1")]
-    )
+    try:
+        d["NSW1"] = (
+            power_dict["NSW1"]
+            + power_dict[("QLD1", "NSW1")]
+            + power_dict[("VIC1", "NSW1")]
+            - power_dict[("NSW1", "VIC1")]
+            - power_dict[("NSW1", "QLD1")]
+        )
+        d["QLD1"] = (
+            power_dict["QLD1"] + power_dict[("NSW1", "QLD1")] - power_dict[("QLD1", "NSW1")]
+        )
+        d["SA1"] = power_dict["SA1"] + power_dict[("VIC1", "SA1")] - power_dict[("SA1", "VIC1")]
+        d["TAS1"] = (
+            power_dict["TAS1"] + power_dict[("VIC1", "TAS1")] - power_dict[("TAS1", "VIC1")]
+        )
+        d["VIC1"] = (
+            power_dict["VIC1"]
+            + power_dict[("NSW1", "VIC1")]
+            + power_dict[("SA1", "VIC1")]
+            + power_dict[("TAS1", "VIC1")]
+            - power_dict[("VIC1", "NSW1")]
+            - power_dict[("VIC1", "TAS1")]
+            - power_dict[("VIC1", "SA1")]
+        )
+    except KeyError as e:
+        logger.error("nem_demand data error: could not find {}".format(e))
+
     return d
 
 
