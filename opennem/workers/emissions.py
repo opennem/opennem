@@ -12,7 +12,6 @@ from typing import Dict, Optional
 
 import numpy as np
 import pandas as pd
-import pytz
 
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkNEM
@@ -22,6 +21,10 @@ from opennem.utils.http import http
 logger = logging.getLogger("opennem.workers.emission_flows")
 
 engine = get_database_engine()
+
+
+class EmissionsWorkerException(Exception):
+    pass
 
 
 def load_interconnector_intervals(date_start: datetime, date_end: datetime) -> pd.DataFrame:
@@ -117,7 +120,7 @@ def demand(power_dict: Dict) -> Dict:
     d = {}
 
     if "NSW1" not in power_dict:
-        raise Exception("Missing generation info")
+        raise EmissionsWorkerException("Missing generation info")
 
     d["NSW1"] = (
         power_dict["NSW1"]
