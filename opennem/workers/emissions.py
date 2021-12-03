@@ -252,7 +252,19 @@ def calculate_emission_flows(df_gen: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
     return results
 
 
-def calc_day(day: datetime) -> None:
+def emissions(df_emissions, power_dict):
+    df_emissions = df_emissions.reset_index()
+    emissions_dict = dict(df_emissions.groupby(df_emissions.network_region).emissions.sum())
+    # simple_flows = [[2, 1], [3, 5], [4, 5]]
+    simple_flows = [["QLD1", "NSW1"], ["SA1", "VIC1"], ["TAS1", "VIC1"]]
+    for from_regionid, to_regionid in simple_flows:
+        emissions_dict[(from_regionid, to_regionid)] = simple_exports(
+            df_emissions, power_dict, from_regionid, to_regionid
+        )
+    return emissions_dict
+
+
+def calc_day(day: datetime) -> pd.DataFrame:
 
     day_next = day + timedelta(days=1)
 
@@ -275,27 +287,15 @@ def calc_day(day: datetime) -> None:
     # )
 
     # build the final data frame with both imports and exports
-    daily_flow = pd.DataFrame(
-        {
-            "EXPORTS": flow_series.groupby("REGIONID_FROM").EMISSIONS.sum(),
-            "IMPORTS": flow_series.groupby("REGIONID_TO").EMISSIONS.sum(),
-        }
-    )
-    daily_flow.index.name = "REGIONID"
-    daily_flow["DATE"] = day
-    return daily_flow
-
-
-def emissions(df_emissions, power_dict):
-    df_emissions = df_emissions.reset_index()
-    emissions_dict = dict(df_emissions.groupby(df_emissions.network_region).emissions.sum())
-    # simple_flows = [[2, 1], [3, 5], [4, 5]]
-    simple_flows = [["QLD1", "NSW1"], ["SA1", "VIC1"], ["TAS1", "VIC1"]]
-    for from_regionid, to_regionid in simple_flows:
-        emissions_dict[(from_regionid, to_regionid)] = simple_exports(
-            df_emissions, power_dict, from_regionid, to_regionid
-        )
-    return emissions_dict
+    # daily_flow = pd.DataFrame(
+    #     {
+    #         "EXPORTS": flow_series.groupby("REGIONID_FROM").EMISSIONS.sum(),
+    #         "IMPORTS": flow_series.groupby("REGIONID_TO").EMISSIONS.sum(),
+    #     }
+    # )
+    # daily_flow.index.name = "REGIONID"
+    # daily_flow["DATE"] = day
+    # return daily_flow
 
 
 def run_emission_update_day(
