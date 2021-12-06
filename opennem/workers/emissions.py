@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from opennem.db import get_database_engine
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
 from opennem.utils.dates import get_last_complete_day_for_network
 
 logger = logging.getLogger("opennem.workers.emission_flows")
@@ -54,7 +54,7 @@ def load_interconnector_intervals(
 
 
 def load_energy_intervals(
-    date_start: datetime, date_end: datetime, network: NetworkSchema
+    date_start: datetime, date_end: datetime, network: NetworkSchema = NetworkNEM
 ) -> pd.DataFrame:
     """Fetch all emissions for all stations"""
 
