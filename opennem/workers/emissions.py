@@ -53,12 +53,14 @@ def load_interconnector_intervals(
     return df_gen
 
 
-def load_energy_intervals(date_start: datetime, date_end: datetime) -> pd.DataFrame:
+def load_energy_intervals(
+    date_start: datetime, date_end: datetime, network: NetworkSchema
+) -> pd.DataFrame:
     """Fetch all emissions for all stations"""
 
     query = """
         select
-            fs.trading_interval at time zone 'AEST' as trading_interval,
+            fs.trading_interval at time zone '{tz}' as trading_interval,
             f.network_id,
             f.network_region,
             f.fueltech_id,
@@ -72,11 +74,15 @@ def load_energy_intervals(date_start: datetime, date_end: datetime) -> pd.DataFr
         where
             fs.trading_interval >= '{date_start}T00:00:00+10:00'
             and fs.trading_interval < '{date_end}T00:00:00+10:00'
+            and f.network_id = '{network_code}'
             and fs.eoi_quantity is not null
             and f.interconnector is False
         order by 1 asc;
     """.format(
-        date_start=date_start.date(), date_end=date_end.date()
+        date_start=date_start.date(),
+        date_end=date_end.date(),
+        network_code=network.code,
+        tz=network.timezone_database
     )
 
     df_gen = pd.read_sql(query, con=engine)
