@@ -16,7 +16,6 @@ import pandas as pd
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_complete_day_for_network
-from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.workers.emission_flows")
 
