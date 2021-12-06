@@ -65,12 +65,6 @@ def db_refresh_material_views_recent() -> None:
 
 
 # run gap fill tasks
-@huey.periodic_task(crontab(hour="5", minute="15"))
-@huey.lock_task("db_run_energy_gapfill_all")
-def db_run_energy_gapfill_all() -> None:
-    run_energy_gapfill()
-
-
 @huey.periodic_task(crontab(hour="*/1", minute="15"))
 @huey.lock_task("db_run_energy_gapfil")
 def db_run_energy_gapfil() -> None:
