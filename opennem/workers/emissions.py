@@ -186,7 +186,7 @@ def fill_constant(a, _var, value, _var_dict) -> None:
 
 
 def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
-    #
+    """ """
     power_dict = power(emissions_di, interconnector_di)
     emissions_dict = emissions(emissions_di, power_dict)
 
