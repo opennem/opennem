@@ -277,7 +277,7 @@ def calculate_emission_flows(df_gen: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
     return results
 
 
-def emissions(df_emissions, power_dict):
+def emissions(df_emissions: pd.DataFrame, power_dict: Dict):
     df_emissions = df_emissions.reset_index()
     emissions_dict = dict(df_emissions.groupby(df_emissions.network_region).emissions.sum())
     # simple_flows = [[2, 1], [3, 5], [4, 5]]
@@ -351,7 +351,7 @@ def _test_case() -> None:
     calc_day(test_date)
 
 
+# debug entry point
 if __name__ == "__main__":
     logger.info("starting")
     _test_case()
-    # run_emission_update_day(7)
