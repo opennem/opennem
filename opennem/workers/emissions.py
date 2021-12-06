@@ -82,7 +82,7 @@ def load_energy_intervals(
         date_start=date_start.date(),
         date_end=date_end.date(),
         network_code=network.code,
-        tz=network.timezone_database
+        tz=network.timezone_database,
     )
 
     df_gen = pd.read_sql(query, con=engine)
@@ -111,7 +111,8 @@ def interconnector_dict(interconnector_di: pd.DataFrame) -> pd.DataFrame:
     ]
 
 
-def power(df_emissions, df_ic) -> Dict:
+def power(df_emissions: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
+    """ """
     df_emissions = df_emissions.reset_index()
     power_dict = dict(df_emissions.groupby(df_emissions.network_region).energy.sum())
     power_dict.update(interconnector_dict(df_ic))
