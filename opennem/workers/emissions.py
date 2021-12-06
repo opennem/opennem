@@ -114,11 +114,22 @@ def simple_exports(
     emissions_di: pd.DataFrame, power_dict: Dict, from_regionid: str, to_regionid: str
 ) -> Any:
     dx = emissions_di[emissions_di.network_region == from_regionid]
-    ic_flow = power_dict[from_regionid, to_regionid]
+
+    try:
+        ic_flow = power_dict[from_regionid, to_regionid]
+    except KeyError:
+        raise EmissionsWorkerException(
+            "Could not find power for {} => {}. Available are: {}".format(
+                from_regionid,
+                to_regionid,
+                ", ".join(f"{i[0]} => {i[1]}" for i in power_dict.keys()),
+            )
+        )
+
     return ic_flow / dx.energy.sum() * dx.emissions.sum()
 
 
-def demand(power_dict: Dict) -> Dict:
+def nem_demand(power_dict: Dict) -> Dict:
     """Calculate demand for NEM"""
     d = {}
 
@@ -171,7 +182,7 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
     emissions_dict = emissions(emissions_di, power_dict)
 
     try:
-        demand_dict = demand(power_dict)
+        demand_dict = nem_demand(power_dict)
     except Exception as e:
         print("Error: {}".format(e))
         return None
