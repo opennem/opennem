@@ -121,7 +121,11 @@ def run_energy_gapfill(
 ) -> None:
     for network in networks:
         logger.info("Running energy gapfill for {}".format(network.code))
-        run_energy_gapfill_for_network(network, days=days, run_all=run_all)
+
+        try:
+            run_energy_gapfill_for_network(network, days=days, run_all=run_all)
+        except Exception as e:
+            logger.error("gap_fill run error: {}".format(e))
 
 
 # debug entry point
