@@ -277,15 +277,18 @@ def calculate_emission_flows(df_gen: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
     return results
 
 
-def emissions(df_emissions: pd.DataFrame, power_dict: Dict):
+def emissions(df_emissions: pd.DataFrame, power_dict: Dict) -> Dict:
     df_emissions = df_emissions.reset_index()
     emissions_dict = dict(df_emissions.groupby(df_emissions.network_region).emissions.sum())
+
     # simple_flows = [[2, 1], [3, 5], [4, 5]]
     simple_flows = [["QLD1", "NSW1"], ["SA1", "VIC1"], ["TAS1", "VIC1"]]
+
     for from_regionid, to_regionid in simple_flows:
         emissions_dict[(from_regionid, to_regionid)] = simple_exports(
             df_emissions, power_dict, from_regionid, to_regionid
         )
+
     return emissions_dict
 
 
