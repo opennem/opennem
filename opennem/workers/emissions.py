@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from opennem.db import get_database_engine
-from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_complete_day_for_network
 
 logger = logging.getLogger("opennem.workers.emission_flows")
@@ -41,7 +41,7 @@ def load_interconnector_intervals(
         left join facility f on f.code = fs.facility_code
         where
             f.interconnector is True
-            and f.network_id='{network_id}',
+            and f.network_id='{network_id}'
             and fs.trading_interval >= '{date_start}'
             and fs.trading_interval < '{date_end}'
     """.format(
