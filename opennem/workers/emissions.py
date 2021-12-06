@@ -19,8 +19,6 @@ from opennem.utils.dates import get_last_complete_day_for_network
 
 logger = logging.getLogger("opennem.workers.emission_flows")
 
-engine = get_database_engine()
-
 
 class EmissionsWorkerException(Exception):
     pass
@@ -30,6 +28,7 @@ def load_interconnector_intervals(
     date_start: datetime, date_end: datetime, network: NetworkSchema = NetworkNEM
 ) -> pd.DataFrame:
     """Load interconnectors for a date range"""
+    engine = get_database_engine()
 
     query = """
         select
@@ -57,6 +56,7 @@ def load_energy_intervals(
     date_start: datetime, date_end: datetime, network: NetworkSchema = NetworkNEM
 ) -> pd.DataFrame:
     """Fetch all emissions for all stations"""
+    engine = get_database_engine()
 
     query = """
         select
