@@ -101,6 +101,7 @@ coverage = "^5.5"
 pytest-cov = "^2.12.1"
 types-cachetools = "^4.2.0"
 types-PyYAML = "^5.4.10"
+aws-cdk-lib = "^2.8.0"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
