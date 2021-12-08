@@ -201,8 +201,10 @@ def run_crawls_all(last_crawled: bool = True) -> None:
         raise Exception("No crawlers found")
 
     for crawler in _CRAWLER_SET.crawlers:
-        logger.info("Running crawl on {}".format(crawler.name))
-        run_crawl(crawler, last_crawled=last_crawled)
+        try:
+            run_crawl(crawler, last_crawled=last_crawled)
+        except Exception as e:
+            logger.error("Error running crawl {}: {}".format(crawler.name, e))
 
 
 def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True) -> None:
