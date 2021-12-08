@@ -210,7 +210,10 @@ def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True)
         raise Exception("No crawlers found")
 
     for crawler in _CRAWLER_SET.get_crawlers_by_schedule(schedule):
-        run_crawl(crawler, last_crawled=last_crawled)
+        try:
+            run_crawl(crawler, last_crawled=last_crawled)
+        except Exception as e:
+            logger.error("Error running crawl {}: {}".format(crawler.name, e))
 
 
 if __name__ == "__main__":
