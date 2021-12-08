@@ -197,6 +197,7 @@ _CRAWLER_SET = load_crawlers()
 
 
 def run_crawls_all(last_crawled: bool = True) -> None:
+    """Runs all the crawl definitions"""
     if not _CRAWLER_SET.crawlers:
         raise Exception("No crawlers found")
 
@@ -208,6 +209,7 @@ def run_crawls_all(last_crawled: bool = True) -> None:
 
 
 def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True) -> None:
+    """Gets the crawlers by schedule and runs them"""
     if not _CRAWLER_SET.crawlers:
         raise Exception("No crawlers found")
 
