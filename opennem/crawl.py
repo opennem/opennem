@@ -3,6 +3,7 @@
 """
 import logging
 from datetime import datetime
+from typing import List
 
 import pytz
 
@@ -221,6 +222,13 @@ def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True)
             run_crawl(crawler, last_crawled=last_crawled)
         except Exception as e:
             logger.error("Error running crawl {}: {}".format(crawler.name, e))
+
+
+def get_crawler_names() -> List[str]:
+    """Get a list of crawler names"""
+    crawler_names: List[str] = [i.name for i in _CRAWLER_SET.crawlers]
+
+    return crawler_names
 
 
 if __name__ == "__main__":
