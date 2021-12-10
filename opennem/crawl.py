@@ -17,6 +17,7 @@ from opennem.crawlers.wem import (
     run_wem_live_balancing_crawl,
     run_wem_live_facility_scada_crawl,
 )
+from opennem.utils.dates import chop_datetime_microseconds
 
 logger = logging.getLogger("opennem.crawler")
 
@@ -76,7 +77,9 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
 
     if not has_errors:
         crawler.last_crawled = cr.last_modified
-        crawler.last_processed = datetime.now().astimezone(pytz.timezone("Australia/Sydney"))
+        crawler.last_processed = chop_datetime_microseconds(
+            datetime.now().astimezone(pytz.timezone("Australia/Sydney"))
+        )
 
         crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, crawler.last_crawled)
         crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, crawler.last_processed)
@@ -221,5 +224,8 @@ def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True)
 
 
 if __name__ == "__main__":
-    wem = _CRAWLER_SET.get_crawlers_by_match(".wem.")
-    run_crawl(_CRAWLER_SET.get_crawler("au.bom.capitals"))
+    # wem = _CRAWLER_SET.get_crawlers_by_match(".wem.")
+    # run_crawl(_CRAWLER_SET.get_crawler("au.bom.capitals"))
+
+    for crawler in _CRAWLER_SET.crawlers:
+        logger.info(crawler.name)
