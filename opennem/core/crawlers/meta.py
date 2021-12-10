@@ -9,8 +9,9 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, Optional, Union
 
-from opennem.db import SessionLocal
+from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import CrawlMeta
+from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.spider.meta")
 
@@ -19,6 +20,12 @@ class CrawlStatTypes(Enum):
     last_crawled = "last_crawled"
     latest_processed = "latest_processed"
     data = "data"
+
+
+class CrawlMetadata(BaseConfig):
+    name: str
+    last_crawled: Optional[datetime]
+    last_processed: Optional[datetime]
 
 
 def crawler_get_all_meta(crawler_name: str) -> Optional[Dict[str, Any]]:
