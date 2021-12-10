@@ -29,6 +29,7 @@ class CrawlMetadata(BaseConfig):
 
 
 def crawler_get_all_meta(crawler_name: str) -> Optional[Dict[str, Any]]:
+    """Get crawler metadata by crawler name"""
     session = SessionLocal()
 
     spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
@@ -43,6 +44,7 @@ def crawler_get_all_meta(crawler_name: str) -> Optional[Dict[str, Any]]:
 
 
 def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> Optional[Union[str, datetime]]:
+    """Crawler get specific stat type from metadata for crawler name"""
     session = SessionLocal()
 
     spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
