@@ -232,8 +232,5 @@ def get_crawler_names() -> List[str]:
 
 
 if __name__ == "__main__":
-    # wem = _CRAWLER_SET.get_crawlers_by_match(".wem.")
-    # run_crawl(_CRAWLER_SET.get_crawler("au.bom.capitals"))
-
     for crawler in _CRAWLER_SET.crawlers:
         logger.info(crawler.name)

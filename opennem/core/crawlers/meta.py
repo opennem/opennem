@@ -17,8 +17,13 @@ logger = logging.getLogger("opennem.spider.meta")
 
 
 class CrawlStatTypes(Enum):
+    # This is the last available date for a stat set
     last_crawled = "last_crawled"
+
+    # last time it was processed
     latest_processed = "latest_processed"
+
+    # generic data holder for all metadata
     data = "data"
 
 
@@ -68,6 +73,7 @@ def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> Optional[Union[s
 
 
 def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None:
+    """Set a crawler metadata stat type by name"""
     session = SessionLocal()
 
     if key == CrawlStatTypes.latest_processed:
