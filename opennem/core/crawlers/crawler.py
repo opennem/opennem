@@ -30,7 +30,7 @@ def crawlers_get_crawl_metadata() -> List[CrawlMetadata]:
         from crawl_meta cm
         order by last_crawled desc;
     """
-    _crawlers = []
+    _crawler_metas = []
 
     with engine.connect() as c:
         _crawler_metas = list(c.execute(__query))
