@@ -1,3 +1,9 @@
+""" OpenNEM cli interface
+
+run with either the opennem entry point or:
+
+$ python -m opennem.cli
+"""
 import logging
 from typing import Optional
 
