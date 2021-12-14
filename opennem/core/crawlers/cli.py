@@ -16,4 +16,9 @@ def crawl_cli_run() -> None:
     logger.info("run crawl")
 
 
+@click.command()
+def crawl_cli_meta() -> None:
+    logger.info("run crawl")
+
+
 cmd_crawl_cli.add_command(crawl_cli_run, name="run")
