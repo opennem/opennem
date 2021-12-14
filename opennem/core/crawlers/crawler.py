@@ -27,7 +27,8 @@ def crawlers_get_crawl_metadata() -> List[CrawlMetadata]:
         select
             cm.spider_name as name,
             cm.data->>'last_crawled' as last_crawled,
-            cm.data->>'last_processed' as last_processed
+            cm.data->>'last_processed' as last_processed,
+            cm.data->>'force_run' as force_run
         from crawl_meta cm
         order by last_crawled desc;
     """
