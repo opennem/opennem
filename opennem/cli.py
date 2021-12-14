@@ -6,6 +6,7 @@ from scrapy.utils.python import garbage_collect
 
 from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_all_monthly, export_energy, export_power
+from opennem.core.crawlers.cli import cmd_crawl_cli
 from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures
 from opennem.db.tasks import refresh_views
 from opennem.db.views import init_aggregation_policies
@@ -27,11 +28,6 @@ logger = logging.getLogger("opennem.cli")
 @click.group()
 def main() -> None:
     pass
-
-
-@click.command()
-def crawl() -> None:
-    logger.info("crawl @TODO")
 
 
 @click.group()
@@ -156,7 +152,7 @@ def cmd_task_energy(year: int, fueltech: Optional[str] = None) -> None:
     run_energy_update_archive(year, fueltech=fueltech)
 
 
-main.add_command(crawl)
+main.add_command(cmd_crawl_cli, name="crawl")
 main.add_command(cmd_db, name="db")
 main.add_command(cmd_import, name="import")
 main.add_command(cmd_export, name="export")
