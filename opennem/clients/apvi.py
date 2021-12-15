@@ -2,9 +2,11 @@
 
 """
 import logging
+import urllib.parse as urlparse
 from datetime import datetime
 from json.decoder import JSONDecodeError
 from typing import Any, Dict, List, Optional
+from urllib.parse import urlencode
 
 import pytz
 import requests
@@ -42,11 +44,18 @@ WA_NON_SWIS = ["66", "67"]
 
 def get_apvi_uri() -> str:
     url = APVI_DATA_URI
+    params = {}
+
+    url_parts = list(urlparse.urlparse(url))
+    query = dict(urlparse.parse_qsl(url_parts[4]))
 
     if settings.apvi_token:
-        pass
+        params["access_token"] = settings.apvi_token
+        query.update(params)
 
-    return url
+    url_parts[4] = urlencode(query)
+
+    return urlparse.urlunparse(url_parts)
 
 
 class APVIForecastInterval(BaseConfig):
