@@ -10,6 +10,7 @@ import pytz
 import requests
 from pydantic import validator
 
+from opennem import settings
 from opennem.importer.rooftop import ROOFTOP_CODE
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
@@ -37,6 +38,15 @@ STATE_POSTCODE_PREFIXES = {
 }
 
 WA_NON_SWIS = ["66", "67"]
+
+
+def get_apvi_uri() -> str:
+    url = APVI_DATA_URI
+
+    if settings.apvi_token:
+        pass
+
+    return url
 
 
 class APVIForecastInterval(BaseConfig):
@@ -102,7 +112,7 @@ def get_apvi_rooftop_data() -> Optional[APVIForecastSet]:
 
     logger.debug("Getting APVI data for day {}".format(day))
 
-    _resp = _apvi_request_session.post(APVI_DATA_URI, data={"day": day})
+    _resp = _apvi_request_session.post(get_apvi_uri(), data={"day": day})
 
     if not _resp.ok:
         logger.error("Invalid APVI Return: {}".format(_resp.status_code))
@@ -194,6 +204,9 @@ def get_apvi_rooftop_data() -> Optional[APVIForecastSet]:
 
 if __name__ == "__main__":
     cr = get_apvi_rooftop_data()
+
+    if not cr:
+        raise Exception("Invalid APVI Data")
 
     with open("apvi.json", "w") as fh:
         fh.write(cr.json(indent=4))
