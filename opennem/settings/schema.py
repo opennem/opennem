@@ -52,6 +52,9 @@ class OpennemSettings(BaseSettings):
     twilio_auth_token: Optional[str]
     twilio_from_number: Optional[str]
 
+    # APVI
+    apvi_token: Optional[str]
+
     export_local: bool = False
 
     s3_bucket_path: str = "s3://data.opennem.org.au/"
