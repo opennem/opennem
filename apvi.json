@@ -1,0 +1,2051 @@
+{
+    "crawled_at": null,
+    "intervals": [
+        {
+            "trading_interval": "2022-01-21T05:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 0.96714788
+        },
+        {
+            "trading_interval": "2022-01-21T05:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 0.96714788
+        },
+        {
+            "trading_interval": "2022-01-21T05:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 0.97793219
+        },
+        {
+            "trading_interval": "2022-01-21T05:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 12.999918990000001
+        },
+        {
+            "trading_interval": "2022-01-21T05:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 2.77791514
+        },
+        {
+            "trading_interval": "2022-01-21T05:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 52.03280214
+        },
+        {
+            "trading_interval": "2022-01-21T05:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 31.36006993
+        },
+        {
+            "trading_interval": "2022-01-21T05:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 60.89469199000001
+        },
+        {
+            "trading_interval": "2022-01-21T05:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 2.6713068799999995
+        },
+        {
+            "trading_interval": "2022-01-21T05:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 5.5316237699999995
+        },
+        {
+            "trading_interval": "2022-01-21T06:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 114.83163923999999
+        },
+        {
+            "trading_interval": "2022-01-21T06:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 67.76147082
+        },
+        {
+            "trading_interval": "2022-01-21T06:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 127.33618501
+        },
+        {
+            "trading_interval": "2022-01-21T06:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 2.6713068799999995
+        },
+        {
+            "trading_interval": "2022-01-21T06:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 9.781840240000001
+        },
+        {
+            "trading_interval": "2022-01-21T06:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 188.7097792
+        },
+        {
+            "trading_interval": "2022-01-21T06:15:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 132.20081294
+        },
+        {
+            "trading_interval": "2022-01-21T06:15:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 209.58546990000002
+        },
+        {
+            "trading_interval": "2022-01-21T06:15:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 4.1936535699999995
+        },
+        {
+            "trading_interval": "2022-01-21T06:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 15.1947525
+        },
+        {
+            "trading_interval": "2022-01-21T06:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 286.90984935000006
+        },
+        {
+            "trading_interval": "2022-01-21T06:30:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 209.12862020999998
+        },
+        {
+            "trading_interval": "2022-01-21T06:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 329.87311771000003
+        },
+        {
+            "trading_interval": "2022-01-21T06:30:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 26.01919604
+        },
+        {
+            "trading_interval": "2022-01-21T06:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 20.46894207
+        },
+        {
+            "trading_interval": "2022-01-21T06:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 419.0115489600001
+        },
+        {
+            "trading_interval": "2022-01-21T06:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 304.47897585999993
+        },
+        {
+            "trading_interval": "2022-01-21T06:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 440.61909262
+        },
+        {
+            "trading_interval": "2022-01-21T06:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 51.65108637000001
+        },
+        {
+            "trading_interval": "2022-01-21T06:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 27.3688913
+        },
+        {
+            "trading_interval": "2022-01-21T07:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 546.97602549
+        },
+        {
+            "trading_interval": "2022-01-21T07:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 410.22956482999996
+        },
+        {
+            "trading_interval": "2022-01-21T07:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 590.20775159
+        },
+        {
+            "trading_interval": "2022-01-21T07:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 109.76207807
+        },
+        {
+            "trading_interval": "2022-01-21T07:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 34.987414189999996
+        },
+        {
+            "trading_interval": "2022-01-21T07:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 682.6945430000001
+        },
+        {
+            "trading_interval": "2022-01-21T07:15:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 541.98269419
+        },
+        {
+            "trading_interval": "2022-01-21T07:15:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 724.14984113
+        },
+        {
+            "trading_interval": "2022-01-21T07:15:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 178.00473497
+        },
+        {
+            "trading_interval": "2022-01-21T07:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 43.23086071
+        },
+        {
+            "trading_interval": "2022-01-21T07:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 2.34667945
+        },
+        {
+            "trading_interval": "2022-01-21T07:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 863.5063855000001
+        },
+        {
+            "trading_interval": "2022-01-21T07:30:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 684.5108879600001
+        },
+        {
+            "trading_interval": "2022-01-21T07:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 825.50969627
+        },
+        {
+            "trading_interval": "2022-01-21T07:30:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 240.23250638
+        },
+        {
+            "trading_interval": "2022-01-21T07:30:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 0.60405522
+        },
+        {
+            "trading_interval": "2022-01-21T07:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 51.54942271
+        },
+        {
+            "trading_interval": "2022-01-21T07:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 4.6933589
+        },
+        {
+            "trading_interval": "2022-01-21T07:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1039.4298172000001
+        },
+        {
+            "trading_interval": "2022-01-21T07:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 822.88062896
+        },
+        {
+            "trading_interval": "2022-01-21T07:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 951.59067238
+        },
+        {
+            "trading_interval": "2022-01-21T07:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 274.60557688
+        },
+        {
+            "trading_interval": "2022-01-21T07:45:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 8.954137649999998
+        },
+        {
+            "trading_interval": "2022-01-21T07:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 62.19864106
+        },
+        {
+            "trading_interval": "2022-01-21T07:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 7.04003835
+        },
+        {
+            "trading_interval": "2022-01-21T08:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1206.91153966
+        },
+        {
+            "trading_interval": "2022-01-21T08:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 986.8275866899999
+        },
+        {
+            "trading_interval": "2022-01-21T08:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1111.80607049
+        },
+        {
+            "trading_interval": "2022-01-21T08:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 319.02822167
+        },
+        {
+            "trading_interval": "2022-01-21T08:00:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 28.457985259999997
+        },
+        {
+            "trading_interval": "2022-01-21T08:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 73.45759962
+        },
+        {
+            "trading_interval": "2022-01-21T08:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 11.733397250000001
+        },
+        {
+            "trading_interval": "2022-01-21T08:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1377.4331212
+        },
+        {
+            "trading_interval": "2022-01-21T08:15:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 1136.95854436
+        },
+        {
+            "trading_interval": "2022-01-21T08:15:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1243.13094154
+        },
+        {
+            "trading_interval": "2022-01-21T08:15:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 375.4967981199999
+        },
+        {
+            "trading_interval": "2022-01-21T08:15:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 58.62497122999999
+        },
+        {
+            "trading_interval": "2022-01-21T08:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 82.63451663999999
+        },
+        {
+            "trading_interval": "2022-01-21T08:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 18.7734356
+        },
+        {
+            "trading_interval": "2022-01-21T08:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1507.0306835600002
+        },
+        {
+            "trading_interval": "2022-01-21T08:30:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 1281.32101891
+        },
+        {
+            "trading_interval": "2022-01-21T08:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1358.12782688
+        },
+        {
+            "trading_interval": "2022-01-21T08:30:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 440.51648898999997
+        },
+        {
+            "trading_interval": "2022-01-21T08:30:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 98.17147129
+        },
+        {
+            "trading_interval": "2022-01-21T08:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 90.74744897000001
+        },
+        {
+            "trading_interval": "2022-01-21T08:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 23.466794500000002
+        },
+        {
+            "trading_interval": "2022-01-21T08:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1605.66361239
+        },
+        {
+            "trading_interval": "2022-01-21T08:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 1433.6529355300004
+        },
+        {
+            "trading_interval": "2022-01-21T08:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1481.8256489399998
+        },
+        {
+            "trading_interval": "2022-01-21T08:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 486.82214152
+        },
+        {
+            "trading_interval": "2022-01-21T08:45:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 156.68301412
+        },
+        {
+            "trading_interval": "2022-01-21T08:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 99.26682364999999
+        },
+        {
+            "trading_interval": "2022-01-21T08:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 35.20019175
+        },
+        {
+            "trading_interval": "2022-01-21T09:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1709.64461496
+        },
+        {
+            "trading_interval": "2022-01-21T09:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 1570.73017075
+        },
+        {
+            "trading_interval": "2022-01-21T09:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1564.0341655
+        },
+        {
+            "trading_interval": "2022-01-21T09:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 551.2403093999999
+        },
+        {
+            "trading_interval": "2022-01-21T09:00:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 215.73336179
+        },
+        {
+            "trading_interval": "2022-01-21T09:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 106.59681085
+        },
+        {
+            "trading_interval": "2022-01-21T09:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 49.28026845
+        },
+        {
+            "trading_interval": "2022-01-21T09:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1785.60998341
+        },
+        {
+            "trading_interval": "2022-01-21T09:15:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 1706.14564341
+        },
+        {
+            "trading_interval": "2022-01-21T09:15:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1708.6924061399998
+        },
+        {
+            "trading_interval": "2022-01-21T09:15:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 653.2080786399999
+        },
+        {
+            "trading_interval": "2022-01-21T09:15:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 276.53062474
+        },
+        {
+            "trading_interval": "2022-01-21T09:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 113.94340798000002
+        },
+        {
+            "trading_interval": "2022-01-21T09:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 65.70702460000001
+        },
+        {
+            "trading_interval": "2022-01-21T09:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1861.86184249
+        },
+        {
+            "trading_interval": "2022-01-21T09:30:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 1808.9419640400001
+        },
+        {
+            "trading_interval": "2022-01-21T09:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1831.93913246
+        },
+        {
+            "trading_interval": "2022-01-21T09:30:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 740.93339277
+        },
+        {
+            "trading_interval": "2022-01-21T09:30:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 354.90614124
+        },
+        {
+            "trading_interval": "2022-01-21T09:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 121.68697658999999
+        },
+        {
+            "trading_interval": "2022-01-21T09:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 77.44042185
+        },
+        {
+            "trading_interval": "2022-01-21T09:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1853.39785543
+        },
+        {
+            "trading_interval": "2022-01-21T09:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 1917.2539859500002
+        },
+        {
+            "trading_interval": "2022-01-21T09:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1969.47451516
+        },
+        {
+            "trading_interval": "2022-01-21T09:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 833.92666796
+        },
+        {
+            "trading_interval": "2022-01-21T09:45:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 442.66509070999996
+        },
+        {
+            "trading_interval": "2022-01-21T09:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 128.07650759999999
+        },
+        {
+            "trading_interval": "2022-01-21T09:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 79.7871013
+        },
+        {
+            "trading_interval": "2022-01-21T10:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1913.3816450600002
+        },
+        {
+            "trading_interval": "2022-01-21T10:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2014.6411152599999
+        },
+        {
+            "trading_interval": "2022-01-21T10:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2082.53042077
+        },
+        {
+            "trading_interval": "2022-01-21T10:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 897.43658437
+        },
+        {
+            "trading_interval": "2022-01-21T10:00:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 528.33372839
+        },
+        {
+            "trading_interval": "2022-01-21T10:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 132.96953076999998
+        },
+        {
+            "trading_interval": "2022-01-21T10:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 84.4804602
+        },
+        {
+            "trading_interval": "2022-01-21T10:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1990.3065207200004
+        },
+        {
+            "trading_interval": "2022-01-21T10:15:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2098.1465416
+        },
+        {
+            "trading_interval": "2022-01-21T10:15:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2174.84536665
+        },
+        {
+            "trading_interval": "2022-01-21T10:15:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 937.5439724899999
+        },
+        {
+            "trading_interval": "2022-01-21T10:15:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 611.64473007
+        },
+        {
+            "trading_interval": "2022-01-21T10:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 138.00020719
+        },
+        {
+            "trading_interval": "2022-01-21T10:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 91.52049855
+        },
+        {
+            "trading_interval": "2022-01-21T10:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2066.52574789
+        },
+        {
+            "trading_interval": "2022-01-21T10:30:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2165.0408067
+        },
+        {
+            "trading_interval": "2022-01-21T10:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2241.4325382
+        },
+        {
+            "trading_interval": "2022-01-21T10:30:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 988.6481883699998
+        },
+        {
+            "trading_interval": "2022-01-21T10:30:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 704.4724121
+        },
+        {
+            "trading_interval": "2022-01-21T10:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 143.50048539
+        },
+        {
+            "trading_interval": "2022-01-21T10:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 89.1738191
+        },
+        {
+            "trading_interval": "2022-01-21T10:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2094.26942102
+        },
+        {
+            "trading_interval": "2022-01-21T10:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2223.5640026
+        },
+        {
+            "trading_interval": "2022-01-21T10:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2316.8150985899997
+        },
+        {
+            "trading_interval": "2022-01-21T10:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 1011.7224927699999
+        },
+        {
+            "trading_interval": "2022-01-21T10:45:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 786.0364985
+        },
+        {
+            "trading_interval": "2022-01-21T10:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 148.28006182
+        },
+        {
+            "trading_interval": "2022-01-21T10:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 89.1738191
+        },
+        {
+            "trading_interval": "2022-01-21T11:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2157.25603957
+        },
+        {
+            "trading_interval": "2022-01-21T11:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2271.16643037
+        },
+        {
+            "trading_interval": "2022-01-21T11:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2414.59218015
+        },
+        {
+            "trading_interval": "2022-01-21T11:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 992.5755910999999
+        },
+        {
+            "trading_interval": "2022-01-21T11:00:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 876.1530839699999
+        },
+        {
+            "trading_interval": "2022-01-21T11:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 150.71951102999998
+        },
+        {
+            "trading_interval": "2022-01-21T11:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 105.60057525
+        },
+        {
+            "trading_interval": "2022-01-21T11:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2165.7217833600002
+        },
+        {
+            "trading_interval": "2022-01-21T11:15:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2318.5757385399993
+        },
+        {
+            "trading_interval": "2022-01-21T11:15:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2458.85570948
+        },
+        {
+            "trading_interval": "2022-01-21T11:15:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 1003.5594925199998
+        },
+        {
+            "trading_interval": "2022-01-21T11:15:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 953.56441919
+        },
+        {
+            "trading_interval": "2022-01-21T11:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 153.68876797999997
+        },
+        {
+            "trading_interval": "2022-01-21T11:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 110.29393415
+        },
+        {
+            "trading_interval": "2022-01-21T11:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2200.24290469
+        },
+        {
+            "trading_interval": "2022-01-21T11:30:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2349.9358084699998
+        },
+        {
+            "trading_interval": "2022-01-21T11:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2370.14056159
+        },
+        {
+            "trading_interval": "2022-01-21T11:30:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 1010.8375096499999
+        },
+        {
+            "trading_interval": "2022-01-21T11:30:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1019.88723961
+        },
+        {
+            "trading_interval": "2022-01-21T11:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 155.52794785
+        },
+        {
+            "trading_interval": "2022-01-21T11:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 107.9472547
+        },
+        {
+            "trading_interval": "2022-01-21T11:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2230.15925988
+        },
+        {
+            "trading_interval": "2022-01-21T11:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2371.8947655799993
+        },
+        {
+            "trading_interval": "2022-01-21T11:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2232.72730893
+        },
+        {
+            "trading_interval": "2022-01-21T11:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 1044.8399398400002
+        },
+        {
+            "trading_interval": "2022-01-21T11:45:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1084.90916962
+        },
+        {
+            "trading_interval": "2022-01-21T11:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 156.14715893
+        },
+        {
+            "trading_interval": "2022-01-21T11:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 105.60057525
+        },
+        {
+            "trading_interval": "2022-01-21T12:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2207.5090031699997
+        },
+        {
+            "trading_interval": "2022-01-21T12:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2386.337209359999
+        },
+        {
+            "trading_interval": "2022-01-21T12:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2103.09682495
+        },
+        {
+            "trading_interval": "2022-01-21T12:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 1049.88473394
+        },
+        {
+            "trading_interval": "2022-01-21T12:00:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1142.63797845
+        },
+        {
+            "trading_interval": "2022-01-21T12:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 157.00024918
+        },
+        {
+            "trading_interval": "2022-01-21T12:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 105.60057525
+        },
+        {
+            "trading_interval": "2022-01-21T12:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2226.84990586
+        },
+        {
+            "trading_interval": "2022-01-21T12:15:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2396.43549426
+        },
+        {
+            "trading_interval": "2022-01-21T12:15:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2008.57608902
+        },
+        {
+            "trading_interval": "2022-01-21T12:15:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 1043.52151803
+        },
+        {
+            "trading_interval": "2022-01-21T12:15:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1193.8564001
+        },
+        {
+            "trading_interval": "2022-01-21T12:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 156.96191792
+        },
+        {
+            "trading_interval": "2022-01-21T12:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 103.2538958
+        },
+        {
+            "trading_interval": "2022-01-21T12:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2186.6370615200003
+        },
+        {
+            "trading_interval": "2022-01-21T12:30:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2411.9997572199995
+        },
+        {
+            "trading_interval": "2022-01-21T12:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2009.04816779
+        },
+        {
+            "trading_interval": "2022-01-21T12:30:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 1008.7080729600001
+        },
+        {
+            "trading_interval": "2022-01-21T12:30:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1242.51487438
+        },
+        {
+            "trading_interval": "2022-01-21T12:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 156.39050897
+        },
+        {
+            "trading_interval": "2022-01-21T12:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 105.60057525
+        },
+        {
+            "trading_interval": "2022-01-21T12:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2124.6760838200003
+        },
+        {
+            "trading_interval": "2022-01-21T12:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2410.0035815799997
+        },
+        {
+            "trading_interval": "2022-01-21T12:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2061.13330671
+        },
+        {
+            "trading_interval": "2022-01-21T12:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 915.2701478399999
+        },
+        {
+            "trading_interval": "2022-01-21T12:45:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1273.26526714
+        },
+        {
+            "trading_interval": "2022-01-21T12:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 155.72349576
+        },
+        {
+            "trading_interval": "2022-01-21T12:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 98.5605369
+        },
+        {
+            "trading_interval": "2022-01-21T13:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 2047.91934821
+        },
+        {
+            "trading_interval": "2022-01-21T13:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2406.2549836099997
+        },
+        {
+            "trading_interval": "2022-01-21T13:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2116.45242961
+        },
+        {
+            "trading_interval": "2022-01-21T13:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 858.4657547499999
+        },
+        {
+            "trading_interval": "2022-01-21T13:00:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1308.23363958
+        },
+        {
+            "trading_interval": "2022-01-21T13:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 156.65231237999998
+        },
+        {
+            "trading_interval": "2022-01-21T13:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 98.5605369
+        },
+        {
+            "trading_interval": "2022-01-21T13:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1971.9737154200002
+        },
+        {
+            "trading_interval": "2022-01-21T13:15:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2401.53244275
+        },
+        {
+            "trading_interval": "2022-01-21T13:15:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2068.42937409
+        },
+        {
+            "trading_interval": "2022-01-21T13:15:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 843.8991386799999
+        },
+        {
+            "trading_interval": "2022-01-21T13:15:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1325.63044585
+        },
+        {
+            "trading_interval": "2022-01-21T13:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 156.15662980000002
+        },
+        {
+            "trading_interval": "2022-01-21T13:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 105.60057525
+        },
+        {
+            "trading_interval": "2022-01-21T13:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1965.0459139399998
+        },
+        {
+            "trading_interval": "2022-01-21T13:30:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2377.71769702
+        },
+        {
+            "trading_interval": "2022-01-21T13:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1944.52239816
+        },
+        {
+            "trading_interval": "2022-01-21T13:30:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 829.50378943
+        },
+        {
+            "trading_interval": "2022-01-21T13:30:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1346.09847474
+        },
+        {
+            "trading_interval": "2022-01-21T13:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 154.68432847
+        },
+        {
+            "trading_interval": "2022-01-21T13:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 126.72069030000002
+        },
+        {
+            "trading_interval": "2022-01-21T13:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1904.6382493099998
+        },
+        {
+            "trading_interval": "2022-01-21T13:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2354.5967760900003
+        },
+        {
+            "trading_interval": "2022-01-21T13:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1941.11109075
+        },
+        {
+            "trading_interval": "2022-01-21T13:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 825.43219123
+        },
+        {
+            "trading_interval": "2022-01-21T13:45:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1364.03408585
+        },
+        {
+            "trading_interval": "2022-01-21T13:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 152.85461947
+        },
+        {
+            "trading_interval": "2022-01-21T13:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 124.37401085
+        },
+        {
+            "trading_interval": "2022-01-21T14:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1800.7996785400003
+        },
+        {
+            "trading_interval": "2022-01-21T14:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2327.8179169600003
+        },
+        {
+            "trading_interval": "2022-01-21T14:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1997.4848139600003
+        },
+        {
+            "trading_interval": "2022-01-21T14:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 839.6884523399998
+        },
+        {
+            "trading_interval": "2022-01-21T14:00:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1365.60232235
+        },
+        {
+            "trading_interval": "2022-01-21T14:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 150.71530493
+        },
+        {
+            "trading_interval": "2022-01-21T14:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 119.68065195
+        },
+        {
+            "trading_interval": "2022-01-21T14:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1754.3787280300003
+        },
+        {
+            "trading_interval": "2022-01-21T14:15:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2287.00021395
+        },
+        {
+            "trading_interval": "2022-01-21T14:15:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2068.8839480300003
+        },
+        {
+            "trading_interval": "2022-01-21T14:15:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 836.7425886499998
+        },
+        {
+            "trading_interval": "2022-01-21T14:15:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1375.52456016
+        },
+        {
+            "trading_interval": "2022-01-21T14:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 147.43223633999997
+        },
+        {
+            "trading_interval": "2022-01-21T14:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 119.68065195
+        },
+        {
+            "trading_interval": "2022-01-21T14:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1719.47090725
+        },
+        {
+            "trading_interval": "2022-01-21T14:30:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2225.2695326700004
+        },
+        {
+            "trading_interval": "2022-01-21T14:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 2018.5435852899998
+        },
+        {
+            "trading_interval": "2022-01-21T14:30:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 765.47510535
+        },
+        {
+            "trading_interval": "2022-01-21T14:30:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1375.52456016
+        },
+        {
+            "trading_interval": "2022-01-21T14:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 144.13969687999997
+        },
+        {
+            "trading_interval": "2022-01-21T14:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 122.02733140000001
+        },
+        {
+            "trading_interval": "2022-01-21T14:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1657.3815815300002
+        },
+        {
+            "trading_interval": "2022-01-21T14:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2163.2918580900005
+        },
+        {
+            "trading_interval": "2022-01-21T14:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1961.7523562
+        },
+        {
+            "trading_interval": "2022-01-21T14:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 671.05144622
+        },
+        {
+            "trading_interval": "2022-01-21T14:45:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1370.7231736899998
+        },
+        {
+            "trading_interval": "2022-01-21T14:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 140.20373983000002
+        },
+        {
+            "trading_interval": "2022-01-21T14:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 114.98729305
+        },
+        {
+            "trading_interval": "2022-01-21T15:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1585.61891285
+        },
+        {
+            "trading_interval": "2022-01-21T15:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2102.81351435
+        },
+        {
+            "trading_interval": "2022-01-21T15:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1934.0026230999997
+        },
+        {
+            "trading_interval": "2022-01-21T15:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 614.4066968299999
+        },
+        {
+            "trading_interval": "2022-01-21T15:00:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1368.2520874099998
+        },
+        {
+            "trading_interval": "2022-01-21T15:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 136.24418716
+        },
+        {
+            "trading_interval": "2022-01-21T15:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 126.72069030000002
+        },
+        {
+            "trading_interval": "2022-01-21T15:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1531.9138996599997
+        },
+        {
+            "trading_interval": "2022-01-21T15:15:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 2015.82873061
+        },
+        {
+            "trading_interval": "2022-01-21T15:15:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1835.1781174900002
+        },
+        {
+            "trading_interval": "2022-01-21T15:15:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 642.43202658
+        },
+        {
+            "trading_interval": "2022-01-21T15:15:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1367.17447773
+        },
+        {
+            "trading_interval": "2022-01-21T15:15:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 130.4833381
+        },
+        {
+            "trading_interval": "2022-01-21T15:15:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 124.37401085
+        },
+        {
+            "trading_interval": "2022-01-21T15:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1469.4882472599998
+        },
+        {
+            "trading_interval": "2022-01-21T15:30:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 1933.31023372
+        },
+        {
+            "trading_interval": "2022-01-21T15:30:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1730.8436033199998
+        },
+        {
+            "trading_interval": "2022-01-21T15:30:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 695.5006417999998
+        },
+        {
+            "trading_interval": "2022-01-21T15:30:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1352.6088837999998
+        },
+        {
+            "trading_interval": "2022-01-21T15:30:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 124.08433622
+        },
+        {
+            "trading_interval": "2022-01-21T15:30:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 117.3339725
+        },
+        {
+            "trading_interval": "2022-01-21T15:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1468.1917017399999
+        },
+        {
+            "trading_interval": "2022-01-21T15:45:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 1910.7290525600001
+        },
+        {
+            "trading_interval": "2022-01-21T15:45:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1674.68952182
+        },
+        {
+            "trading_interval": "2022-01-21T15:45:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 686.6688147199999
+        },
+        {
+            "trading_interval": "2022-01-21T15:45:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1305.05377507
+        },
+        {
+            "trading_interval": "2022-01-21T15:45:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 121.59708487999998
+        },
+        {
+            "trading_interval": "2022-01-21T15:45:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 114.98729305
+        },
+        {
+            "trading_interval": "2022-01-21T16:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NSW",
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "generated": 1344.5427298200002
+        },
+        {
+            "trading_interval": "2022-01-21T16:00:00+10:00",
+            "network_id": "APVI",
+            "state": "VIC",
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "generated": 1885.39905639
+        },
+        {
+            "trading_interval": "2022-01-21T16:00:00+10:00",
+            "network_id": "APVI",
+            "state": "QLD",
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "generated": 1385.97893999
+        },
+        {
+            "trading_interval": "2022-01-21T16:00:00+10:00",
+            "network_id": "APVI",
+            "state": "SA",
+            "facility_code": "ROOFTOP_APVI_SA",
+            "generated": 665.6809055699998
+        },
+        {
+            "trading_interval": "2022-01-21T16:00:00+10:00",
+            "network_id": "APVI",
+            "state": "WA",
+            "facility_code": "ROOFTOP_APVI_WA",
+            "generated": 1308.1126569799997
+        },
+        {
+            "trading_interval": "2022-01-21T16:00:00+10:00",
+            "network_id": "APVI",
+            "state": "TAS",
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "generated": 120.71075625000002
+        },
+        {
+            "trading_interval": "2022-01-21T16:00:00+10:00",
+            "network_id": "APVI",
+            "state": "NT",
+            "facility_code": "ROOFTOP_APVI_NT",
+            "generated": 98.5605369
+        }
+    ],
+    "capacities": [
+        {
+            "state": "NSW",
+            "capacity_registered": 4475.506195,
+            "facility_code": "ROOFTOP_APVI_NSW",
+            "unit_number": 4475
+        },
+        {
+            "state": "VIC",
+            "capacity_registered": 3344.713255,
+            "facility_code": "ROOFTOP_APVI_VIC",
+            "unit_number": 3344
+        },
+        {
+            "state": "QLD",
+            "capacity_registered": 4492.997012,
+            "facility_code": "ROOFTOP_APVI_QLD",
+            "unit_number": 4492
+        },
+        {
+            "state": "SA",
+            "capacity_registered": 1933.9947319999997,
+            "facility_code": "ROOFTOP_APVI_SA",
+            "unit_number": 1933
+        },
+        {
+            "state": "WA",
+            "capacity_registered": 2012.4506270000002,
+            "facility_code": "ROOFTOP_APVI_WA",
+            "unit_number": 1911
+        },
+        {
+            "state": "TAS",
+            "capacity_registered": 212.986817,
+            "facility_code": "ROOFTOP_APVI_TAS",
+            "unit_number": 212
+        },
+        {
+            "state": "NT",
+            "capacity_registered": 251.839145,
+            "facility_code": "ROOFTOP_APVI_NT",
+            "unit_number": 212
+        }
+    ]
+}

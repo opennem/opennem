@@ -110,9 +110,11 @@ def get_apvi_rooftop_data() -> Optional[APVIForecastSet]:
     """Obtains and parses APVI forecast data"""
     day = get_date_component(APVI_DATE_QUERY_FORMAT)
 
-    logger.debug("Getting APVI data for day {}".format(day))
+    apvi_endpoint_url = get_apvi_uri()
 
-    _resp = _apvi_request_session.post(get_apvi_uri(), data={"day": day})
+    logger.info("Getting APVI data for day {} from {}".format(day, apvi_endpoint_url))
+
+    _resp = _apvi_request_session.post(apvi_endpoint_url, data={"day": day})
 
     if not _resp.ok:
         logger.error("Invalid APVI Return: {}".format(_resp.status_code))
