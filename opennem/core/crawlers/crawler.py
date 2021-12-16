@@ -16,7 +16,7 @@ class CrawlMetadata(BaseConfig):
     name: str
     last_crawled: Optional[datetime]
     last_processed: Optional[datetime]
-    force_run: bool = False
+    force_run: Optional[bool] = False
 
 
 def crawlers_get_crawl_metadata() -> List[CrawlMetadata]:
