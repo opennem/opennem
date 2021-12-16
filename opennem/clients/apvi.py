@@ -43,6 +43,7 @@ WA_NON_SWIS = ["66", "67"]
 
 
 def get_apvi_uri() -> str:
+    """Get the APVI URL and set token from config"""
     url = APVI_DATA_URI
     params = {}
 
