@@ -198,7 +198,7 @@ def wem_downloader(url: str, for_date: Optional[datetime] = None) -> str:
 
     logger.info(f"Fetching {_url_parsed}")
 
-    response = _wem_session.get(_url_parsed)
+    response = _wem_session.get(_url_parsed, verify=False)
 
     # sometimes with the WEM delay the current
     # month isn't up
@@ -403,10 +403,10 @@ def get_wem_facility_intervals(from_date: Optional[datetime] = None) -> WEMFacil
 if __name__ == "__main__":
     # m = get_wem_facility_intervals(live=False)
 
-    m = get_wem_facility_intervals()
+    # m = get_wem_facility_intervals()
 
-    with open("wem.json", "w") as fh:
-        fh.write(m.json(indent=4))
+    # with open("wem.json", "w") as fh:
+    #     fh.write(m.json(indent=4))
 
     m = get_wem_live_facility_intervals()
 
