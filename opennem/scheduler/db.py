@@ -6,7 +6,7 @@ import platform
 
 from huey import PriorityRedisHuey, crontab
 
-from opennem.crawl import CrawlerSchedule, run_crawls_by_schedule
+from opennem.crawl import CrawlerSchedule, run_crawls_all, run_crawls_by_schedule
 from opennem.db.tasks import refresh_material_views
 from opennem.monitors.aemo_intervals import aemo_wem_live_interval
 from opennem.monitors.emissions import alert_missing_emission_factors
@@ -169,3 +169,9 @@ def crawler_scheduled_hourly() -> None:
 @huey.lock_task("crawler_scheduled_day")
 def crawler_scheduled_day() -> None:
     run_crawls_by_schedule(CrawlerSchedule.daily)
+
+
+@huey.periodic_task(crontab(hour="*/1", minute="31"), retries=5, retry_delay=120)
+@huey.lock_task("crawler_schedule_all_fallback")
+def crawler_schedule_all_fallback() -> None:
+    run_crawls_all()
