@@ -102,7 +102,7 @@
   {
     "code": "nuclear",
     "label": "Nuclear",
-    "renewable": true
+    "renewable": false
   },
   {
     "code": "imports",
