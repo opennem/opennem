@@ -4,6 +4,7 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Generator, Optional, Tuple, Union
 
 import pytz
+
 # ParserError isn't a concrete type
 from dateutil.parser import ParserError, parse  # type: ignore
 from dateutil.relativedelta import relativedelta
@@ -227,8 +228,12 @@ def chop_delta_microseconds(delta: timedelta) -> timedelta:
     return delta - timedelta(microseconds=delta.microseconds)
 
 
-def chop_datetime_microseconds(dt: datetime) -> datetime:
+def chop_datetime_microseconds(dt: datetime) -> Optional[datetime]:
     """Removes the microseconds portion of a datetime"""
+
+    if not dt:
+        return None
+
     if not dt.microsecond:
         return dt
 
@@ -326,5 +331,5 @@ def get_last_complete_day_for_network(network: NetworkSchema) -> datetime:
 
 
 def unix_timestamp_to_aware_datetime(timestamp: int, timezone: str) -> datetime:
-    """ Convert a unix timstamp to an aware datetime """
+    """Convert a unix timstamp to an aware datetime"""
     return pytz.timezone(timezone).localize(datetime.fromtimestamp(timestamp))
