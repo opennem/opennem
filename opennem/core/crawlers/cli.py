@@ -3,6 +3,8 @@ import logging
 
 import click
 
+from opennem.core.crawlers.crawler import crawlers_get_crawl_metadata
+
 logger = logging.getLogger("opennem.cli")
 
 
@@ -17,8 +19,14 @@ def crawl_cli_run() -> None:
 
 
 @click.command()
-def crawl_cli_meta() -> None:
-    logger.info("run crawl")
+def crawl_cli_list() -> None:
+    logger.info("Listing crawlers")
+
+    crawler_meta = crawlers_get_crawl_metadata()
+
+    for c in crawler_meta:
+        print("{} {} {}".format(c.name, c.last_processed, c.last_crawled))
 
 
 cmd_crawl_cli.add_command(crawl_cli_run, name="run")
+cmd_crawl_cli.add_command(crawl_cli_list, name="list")
