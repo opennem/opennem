@@ -6,6 +6,7 @@ from rich.table import Table
 
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_get_crawl_metadata
+from opennem.utils.dates import chop_datetime_microseconds
 
 logger = logging.getLogger("opennem.cli")
 
@@ -32,7 +33,7 @@ def crawl_cli_list() -> None:
     crawler_meta = crawlers_get_crawl_metadata()
 
     for c in crawler_meta:
-        table.add_row(c.name, str(c.last_processed), str(c.last_crawled))
+        table.add_row(c.name, str(chop_datetime_microseconds(c.last_processed)), str(chop_datetime_microseconds(c.last_crawled)))
 
     console.print(table)
 
