@@ -231,6 +231,11 @@ def get_crawler_names() -> List[str]:
     return crawler_names
 
 
+def get_crawl_set() -> CrawlerSet:
+    """Access method for crawler set"""
+    return _CRAWLER_SET
+
+
 if __name__ == "__main__":
     for crawler in _CRAWLER_SET.crawlers:
         logger.info(crawler.name)
