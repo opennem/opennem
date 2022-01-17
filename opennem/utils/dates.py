@@ -240,6 +240,18 @@ def chop_datetime_microseconds(dt: datetime) -> Optional[datetime]:
     return dt - timedelta(microseconds=dt.microsecond)
 
 
+def chop_timezone(dt: datetime) -> Optional[datetime]:
+    """Removes the timezone of a datetime"""
+
+    if not dt:
+        return None
+
+    if not dt.tzinfo:
+        return dt
+
+    return dt.replace(tzinfo=None)
+
+
 def get_date_component(format_str: str, dt: datetime = None) -> str:
     """
     Get the format string part out of a date
