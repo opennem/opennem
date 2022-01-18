@@ -6,9 +6,12 @@ from rich.table import Table
 
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_get_crawl_metadata
+from opennem.crawl import get_crawl_set
 from opennem.utils.dates import chop_datetime_microseconds, chop_timezone
 
 logger = logging.getLogger("opennem.cli")
+
+crawler_set = get_crawl_set()
 
 
 @click.group()
