@@ -25,6 +25,11 @@ def crawl_cli_run() -> None:
 
 
 @click.command()
+def crawl_cli_flush() -> None:
+    console.log("[blue]Flushing crawlers[/blue]")
+
+
+@click.command()
 def crawl_cli_list() -> None:
     console.log("[blue]Listing crawlers[/blue]")
 
@@ -47,3 +52,4 @@ def crawl_cli_list() -> None:
 
 cmd_crawl_cli.add_command(crawl_cli_run, name="run")
 cmd_crawl_cli.add_command(crawl_cli_list, name="list")
+cmd_crawl_cli.add_command(crawl_cli_flush, name="flush")
