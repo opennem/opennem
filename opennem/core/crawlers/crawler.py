@@ -45,6 +45,19 @@ def crawlers_get_crawl_metadata() -> List[CrawlMetadata]:
     return _crawler_meta_models
 
 
+def crawlers_flush_metadata() -> None:
+    """Flush the crawler metadata"""
+    engine = get_database_engine()
+
+    __query = """
+        delete
+        from crawl_meta cm;
+    """
+
+    with engine.connect() as c:
+        c.execute(__query)
+
+
 # debug entry point
 if __name__ == "__main__":
     metas = crawlers_get_crawl_metadata()
