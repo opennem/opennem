@@ -5,7 +5,7 @@ import click
 from rich.table import Table
 
 from opennem import console
-from opennem.core.crawlers.crawler import crawlers_get_crawl_metadata
+from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
 from opennem.crawl import get_crawl_set
 from opennem.utils.dates import chop_datetime_microseconds, chop_timezone
 
@@ -27,6 +27,7 @@ def crawl_cli_run() -> None:
 @click.command()
 def crawl_cli_flush() -> None:
     console.log("[blue]Flushing crawlers[/blue]")
+    crawlers_flush_metadata()
 
 
 @click.command()
