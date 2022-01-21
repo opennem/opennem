@@ -8,7 +8,6 @@ import logging
 from typing import Optional
 
 import click
-from rich.console import Console
 from scrapy.utils.python import garbage_collect
 
 from opennem.api.export.map import PriorityType
@@ -30,7 +29,6 @@ from opennem.workers.aggregates import run_aggregate_days
 from opennem.workers.energy import run_energy_update_archive, run_energy_update_days
 
 logger = logging.getLogger("opennem.cli")
-console = Console()
 
 
 @click.group()

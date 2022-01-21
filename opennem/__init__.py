@@ -37,3 +37,8 @@ from opennem.utils.version import get_version  # noqa: E402
 v = "3.7.0"
 __env__ = "prod"
 __version__ = get_version()
+
+# Setup console
+from rich.console import Console  # noqa: E402
+
+console = Console()
