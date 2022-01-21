@@ -75,7 +75,7 @@ rich = "^11.0.0"
 [tool.poetry.dev-dependencies]
 mysqlclient = "^2.0.3"
 black = "^21.5b1"
-flake8 = "^3.9.2"
+flake8 = "^4.0.1"
 isort = "^5.8.0"
 pylint = "^2.8.2"
 rope = "^0.19.0"
@@ -87,7 +87,7 @@ pytest-watch = "^4.2.0"
 mypy = "^0.910"
 mdutils = "^1.2.2"
 sqlalchemy-stubs = "^0.4"
-pycodestyle = "^2.6.0"
+pycodestyle = "^2.8.0"
 pytest-benchmark = {extras = ["histogram"], version = "^3.2.3"}
 GitPython = "^3.1.12"
 pdbpp = "^0.10.2"
@@ -103,6 +103,7 @@ pytest-cov = "^2.12.1"
 types-cachetools = "^4.2.0"
 types-PyYAML = "^5.4.10"
 aws-cdk-lib = "^2.8.0"
+pyflakes = "^2.4.0"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
