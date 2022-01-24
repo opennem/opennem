@@ -133,7 +133,7 @@ AEMONEMNextDayDispatch = CrawlerDefinition(
 )
 
 AEMONEMRooftop = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
+    priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.frequent,
     name="au.nem.rooftop",
     url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
