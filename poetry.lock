@@ -86,7 +86,7 @@ visualize = ["graphviz (>0.5.1)", "Twisted (>=16.1.1)"]
 
 [[package]]
 name = "aws-cdk-lib"
-version = "2.8.0"
+version = "2.9.0"
 description = "Version 2 of the AWS Cloud Development Kit library"
 category = "dev"
 optional = false
@@ -2324,7 +2324,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "123ec49dcf164e78808812cda0df6043a4ae7080cdf718545aacd08ff00ac159"
+content-hash = "169001886867aa07dacf85af5e79dca2913799121487f4813f28a6146d8594e9"
 
 [metadata.files]
 alembic = [
@@ -2356,8 +2356,8 @@ automat = [
     {file = "Automat-20.2.0.tar.gz", hash = "sha256:7979803c74610e11ef0c0d68a2942b152df52da55336e0c9d58daf1831cbdf33"},
 ]
 aws-cdk-lib = [
-    {file = "aws-cdk-lib-2.8.0.tar.gz", hash = "sha256:5630e37326495ecb219b3f2c922d7d629b80e1868bd958d916e8a5301da26532"},
-    {file = "aws_cdk_lib-2.8.0-py3-none-any.whl", hash = "sha256:6472a80c06cbb0f3e0927b2641ea928330fa58192fb8cabce72c420414e72656"},
+    {file = "aws-cdk-lib-2.9.0.tar.gz", hash = "sha256:2e38174d0f9f9ae6a44abe63bf85d21741145832c841ea8da602992ab81945cd"},
+    {file = "aws_cdk_lib-2.9.0-py3-none-any.whl", hash = "sha256:bf60b904725b03f02d36ef25c4d9f726757cd721a10194f95e4bc574dba466d3"},
 ]
 backcall = [
     {file = "backcall-0.2.0-py2.py3-none-any.whl", hash = "sha256:fbbce6a29f263178a1f7915c1940bde0ec2b2a967566fe1c65c1dfb7422bd255"},
