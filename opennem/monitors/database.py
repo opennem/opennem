@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional
 
 from opennem.db import get_database_engine
-from opennem.notifications.twilio import twilio_message
+from opennem.notifications.slack import slack_message
 
 LAST_ALERTED: Optional[datetime] = None
 
@@ -45,7 +45,7 @@ def check_database_live() -> None:
     if has_error:
         global LAST_ALERTED
 
-        msg_was_sent = twilio_message("Opennem {}".format(msg))
+        msg_was_sent = slack_message("Opennem {}".format(msg), tag_users=["nik"])
 
         if msg_was_sent:
             LAST_ALERTED = datetime.now()
