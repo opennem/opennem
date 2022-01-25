@@ -14,7 +14,7 @@ try:
 except ImportError:
     pass
 
-from opennem.settings import settings
+from opennem.settings import settings  # noqa: E402
 
 logger = logging.getLogger("opennem.notifications.twilio")
 
