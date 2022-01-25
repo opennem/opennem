@@ -5,7 +5,14 @@ OpenNEM Twilio SMS and Whatsapp alert notifications
 import logging
 from typing import Optional
 
-from twilio.rest import Client as TwilioClient
+_HAVE_TWILIO = False
+
+try:
+    from twilio.rest import Client as TwilioClient
+
+    _HAVE_TWILIO = True
+except ImportError:
+    pass
 
 from opennem.settings import settings
 
@@ -19,7 +26,7 @@ def _get_twilio_client() -> Optional[TwilioClient]:
     Returns:
         Optional[TwilioClient]: The twilio client object
     """
-    if not settings.twilio_auth_token or not settings.twilio_sid:
+    if not settings.twilio_auth_token or not settings.twilio_sid or not _HAVE_TWILIO:
         logger.error("No twilio account setup on environment {}".format(settings.env))
         return None
 
