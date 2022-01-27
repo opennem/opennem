@@ -13,6 +13,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from opennem.api.export.controllers import (
+    NoResults,
     demand_week,
     energy_fueltech_daily,
     energy_interconnector_emissions_region_daily,
@@ -274,6 +275,8 @@ def export_energy(
                         network_region=energy_stat.network_region,
                     )
                     stat_set.append_set(weather_stats)
+                except NoResults as e:
+                    logger.info("No results for weather result: {}".format(e))
                 except Exception as e:
                     logger.error("weather_stat exception: {}".format(e))
                     pass
@@ -323,6 +326,8 @@ def export_energy(
                         network_region=energy_stat.network_region,
                     )
                     stat_set.append_set(weather_stats)
+                except NoResults as e:
+                    logger.info("No weather results: {}".format(e))
                 except Exception:
                     pass
 
