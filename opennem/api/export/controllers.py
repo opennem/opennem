@@ -73,7 +73,7 @@ def weather_daily(
     ]
 
     if len(temp_avg) < 1:
-        logger.error(f"No weather results for {station_code}")
+        logger.info(f"No weather results for {station_code}")
         raise NoResults()
 
     stats = stats_factory(
