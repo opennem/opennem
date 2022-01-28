@@ -120,3 +120,4 @@ notebooks/dmc_emissions.py
 .jupyter/jupyter_notebook_config.original.py
 .opennem_requests_cache
 scratch/
+.opennem_requests_cache.sqlite
