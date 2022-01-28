@@ -32,6 +32,8 @@ except ImportError:
     logging.error("Could not load required modules. Likely virtualenv not active or installed.")
     sys.exit(-1)
 
+from platform import platform
+
 from pydantic.error_wrappers import _display_error_loc, _display_error_type_and_ctx
 
 from opennem.settings.log import LOGGING_CONFIG
@@ -55,11 +57,14 @@ MODULE_DIR = os.path.dirname(__file__)
 PYTHON_VERSION = ".".join(
     [str(i) for i in (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)]
 )
+SYSTEM_STRING = platform()
 
 ENV = os.getenv("ENV", default="development")
 
 logging.info(f"Loading OpenNEM ENV {ENV}")
-logging.info(f"OpenNEM Version: {get_version()}. Python version: {PYTHON_VERSION}")
+logging.info(
+    f"OpenNEM Version: {get_version()}. Python version: {PYTHON_VERSION}. System: {SYSTEM_STRING}"
+)
 
 env_files = load_env_file(ENV)
 
