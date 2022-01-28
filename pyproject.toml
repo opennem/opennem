@@ -30,7 +30,7 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.8"
 requests = "^2.23.0"
-sentry-sdk = "^1.1.0"
+sentry-sdk = "^1.5.4"
 pydantic = {extras = ["email"], version = "^1.8.2"}
 alembic = "^1.6.2"
 click = "^7.1.2"
@@ -69,7 +69,6 @@ requests-cache = "^0.7.3"
 py-trello = "^0.18.0"
 gitignore-parser = "^0.0.8"
 rich = "^11.0.0"
-sentry = "^22.1.0"
 
 
 [tool.poetry.dev-dependencies]
