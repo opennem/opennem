@@ -375,6 +375,12 @@ def export_all_monthly() -> None:
                 network=network, networks=networks, energy=True
             )
 
+            if not scada_range or not scada_range.start:
+                logger.error(
+                    "Could not get scada range for network {} and energy {}".format(network, True)
+                )
+                continue
+
             time_series = TimeSeries(
                 start=scada_range.start,
                 end=scada_range.end,
