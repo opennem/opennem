@@ -33,6 +33,7 @@ class CrawlerDefinition(BaseConfig):
 
     priority: CrawlerPriority
     schedule: Optional[CrawlerSchedule]
+    backoff: Optional[int]
 
     # crawl metadata
     last_crawled: Optional[datetime]
