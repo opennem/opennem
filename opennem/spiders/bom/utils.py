@@ -1,5 +1,6 @@
 from datetime import date, datetime
-from typing import List
+from random import shuffle
+from typing import List, Optional
 
 from sqlalchemy.sql.operators import from_
 
@@ -17,15 +18,25 @@ BOM_REQUEST_HEADERS = {
 }
 
 
-def get_stations_priority() -> List[BomStationSchema]:
+def get_stations_priority(limit: Optional[int] = None) -> List[BomStationSchema]:
     """This gets all the capital stations which are required for the linked regions"""
     session = SessionLocal()
 
     stations = session.query(BomStation).filter(BomStation.priority < 2).all()
 
-    _models = [BomStationSchema.from_orm(i) for i in stations]
+    all_models = [BomStationSchema.from_orm(i) for i in stations]
+    return_models = []
 
-    return _models
+    if limit:
+        if limit > len(all_models):
+            return all_models
+
+        # shuffle the list of stations and pick a random number out
+        shuffle(all_models)
+
+        return_models = all_models[:limit]
+
+    return return_models
 
 
 def get_stations() -> List[BomStation]:
