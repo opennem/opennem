@@ -158,10 +158,11 @@ AEMONEMRooftopForecast = CrawlerDefinition(
 
 BOMCapitals = CrawlerDefinition(
     priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.quarter_hour,
+    schedule=CrawlerSchedule.frequent,
     name="au.bom.capitals",
     url="none",
     limit=1,
+    backoff=15,
     processor=crawl_bom_capitals,
 )
 
