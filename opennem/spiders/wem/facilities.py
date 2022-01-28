@@ -7,15 +7,11 @@ class WemLiveFacilities(WemCurrentSpider):
 
     pipelines_extra = set([WemStoreLiveFacilities])
 
-    start_url = (
-        "https://aemo.com.au/aemo/data/wa/infographic/facility-meta.csv"
-    )
+    start_url = "https://aemo.com.au/aemo/data/wa/infographic/facility-meta.csv"
 
 
 class WemFacilities(WemCurrentSpider):
     name = "au.wem.facilities"
-    start_url = (
-        "http://data.wa.aemo.com.au/datafiles/facilities/facilities.csv"
-    )
+    start_url = "http://data.wa.aemo.com.au/datafiles/facilities/facilities.csv"
 
     pipelines_extra = set([WemStoreFacility])

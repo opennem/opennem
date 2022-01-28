@@ -19,7 +19,7 @@ CSV_IMPORT_FORMAT_COLUMNS = [
 
 
 class OSMImportCSVSchema(BaseConfig):
-    """ Defines a schema for osm way imports """
+    """Defines a schema for osm way imports"""
 
     network_id: str
     station_code: str
@@ -47,7 +47,7 @@ def get_import_osm_data(file_name: str = "osm_ways.csv") -> List[OSMImportCSVSch
 
 
 def import_osm_way_data() -> None:
-    """ Updates the OSM way ids for stations from the CSV file fixture """
+    """Updates the OSM way ids for stations from the CSV file fixture"""
     session = SessionLocal()
     station_osm_records = get_import_osm_data()
 
@@ -76,7 +76,7 @@ def import_osm_way_data() -> None:
 
 
 def import_osm_ways() -> int:
-    """ Gets the geometries for each OSM way id and store them against the station geom """
+    """Gets the geometries for each OSM way id and store them against the station geom"""
     session = SessionLocal()
 
     stations_with_ways = (

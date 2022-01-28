@@ -66,9 +66,7 @@ class APVIDataArchiveSpider(APVIDataSpiderBase):
     name = "au.apvi.archive.data"
 
     def start_requests(self) -> Generator[scrapy.FormRequest, None, None]:
-        end_date = datetime.strptime(
-            APVI_EARLIEST_DATE, APVI_DATE_QUERY_FORMAT
-        ).date()
+        end_date = datetime.strptime(APVI_EARLIEST_DATE, APVI_DATE_QUERY_FORMAT).date()
 
         for date in date_series(start=MONTH_AGO, end=end_date, reverse=True):
             day = date.strftime(APVI_DATE_QUERY_FORMAT)

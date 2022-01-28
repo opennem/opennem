@@ -28,7 +28,7 @@ class SettingsNotFound(Exception):
 
 
 def load_logging_config(filename: str = "logging.yml", fail_silent: bool = True) -> Optional[dict]:
-    """ Load logging configuration from yml file """
+    """Load logging configuration from yml file"""
 
     settings_file_content = load_data(filename, from_settings=True)
 

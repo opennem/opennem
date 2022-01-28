@@ -63,4 +63,3 @@ class FacilityModificationTypes(str, Enum):
 class FacilityModification(ApiBase):
     comment: Optional[str] = Field(None)
     modification: FacilityModificationTypes
-

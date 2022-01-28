@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_image_from_web(image_url: str) -> Image:
-    """ Gets an image from an URL """
+    """Gets an image from an URL"""
     img = None
 
     try:
@@ -23,5 +23,5 @@ def get_image_from_web(image_url: str) -> Image:
 
 
 def import_photo(photo: PhotoImportSchema):
-    """ Imports a photo from a photo import schema """
+    """Imports a photo from a photo import schema"""
     pass

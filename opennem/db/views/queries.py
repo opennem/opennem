@@ -46,13 +46,13 @@ def get_view_unique_index_query(viewdef: ViewDefinition) -> Optional[str]:
 
 
 def get_all_views_query() -> str:
-    """ doc """
+    """doc"""
     # There is a better way to do this to get out deps
     return "select table_name from INFORMATION_SCHEMA.views where table_schema='public';"
 
 
 def get_all_views_deps() -> str:
-    """ doc """
+    """doc"""
 
     query = """
     with view_oids as (

@@ -12,7 +12,7 @@ class AEMOMMSDudetailSummaryGrouper(object):
     def parse_date(self, date_string: str) -> Optional[datetime]:
         """
 
-            `25/10/1998  12:00:00 am` => d
+        `25/10/1998  12:00:00 am` => d
 
         """
         date_string_components = date_string.strip().split(" ")
@@ -83,19 +83,11 @@ class AEMOMMSDudetailSummaryGrouper(object):
 
         # Second pass flatten the records and we should get start and end dates and a derived status
         for rec in grouped_records.keys():
-            for facility_group, facility_group_records in grouped_records[rec][
-                "details"
-            ].items():
+            for facility_group, facility_group_records in grouped_records[rec]["details"].items():
 
-                date_end_min = min(
-                    facility_group_records, key=lambda x: x["date_end"]
-                )
-                date_end_max = max(
-                    facility_group_records, key=lambda x: x["date_end"]
-                )
-                date_start_min = min(
-                    facility_group_records, key=lambda x: x["date_start"]
-                )
+                date_end_min = min(facility_group_records, key=lambda x: x["date_end"])
+                date_end_max = max(facility_group_records, key=lambda x: x["date_end"])
+                date_start_min = min(facility_group_records, key=lambda x: x["date_start"])
 
                 # print(date_end_min, date_start_min, date_end_max)
 
@@ -110,8 +102,7 @@ class AEMOMMSDudetailSummaryGrouper(object):
                 grouped_records[rec]["facilities"].append(grouped_rec)
 
         grouped_records = [
-            {"id": i, "facilities": v["facilities"]}
-            for i, v in grouped_records.items()
+            {"id": i, "facilities": v["facilities"]} for i, v in grouped_records.items()
         ]
 
         return grouped_records

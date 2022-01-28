@@ -25,9 +25,7 @@ def fetch_au_cpi() -> List[AUCpiData]:
     r = http.get(AU_CPI_URL)
 
     if not r.ok:
-        raise Exception(
-            "Problem grabbing CPI source: {}".format(r.status_code)
-        )
+        raise Exception("Problem grabbing CPI source: {}".format(r.status_code))
 
     wb = xlrd.open_workbook(file_contents=r.content)
 

@@ -50,7 +50,7 @@ def get_import_photo_data(file_name: str = "photos.csv") -> List[PhotoImportSche
 
 
 def import_photos_from_fixtures() -> None:
-    """ Import photos to stations """
+    """Import photos to stations"""
     session = SessionLocal()
     photo_records = get_import_photo_data()
 

@@ -22,7 +22,7 @@ FACILITY_STATUS_FIXTURE = load_statuses()
 
 def map_aemo_facility_status(facility_status: str) -> str:
     """
-        Maps an AEMO facility status to an Opennem facility status
+    Maps an AEMO facility status to an Opennem facility status
 
 
     """
@@ -44,11 +44,7 @@ def map_aemo_facility_status(facility_status: str) -> str:
     if unit_status.startswith("emerging"):
         return "emerging"
 
-    raise Exception(
-        "Could not find AEMO status for facility status: {}".format(
-            unit_status
-        )
-    )
+    raise Exception("Could not find AEMO status for facility status: {}".format(unit_status))
 
 
 def parse_facility_status(status_code: str) -> dict:

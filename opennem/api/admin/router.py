@@ -34,9 +34,7 @@ def scraper_stats(
         results = list(c.execute(query))
 
     if not len(results):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not implemented"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not implemented")
 
     result = []
 

@@ -22,9 +22,7 @@ def upgrade() -> None:
         sa.Column("network_region", sa.Text(), nullable=True),
     )
     op.execute("COMMIT")
-    op.execute(
-        "update balancing_summary set network_region='WEM' where network_id='WEM'"
-    )
+    op.execute("update balancing_summary set network_region='WEM' where network_id='WEM'")
 
 
 def downgrade() -> None:

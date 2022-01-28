@@ -40,11 +40,7 @@ def get_unique_duid(units: list) -> str:
 
     first_record = units[0]
 
-    return (
-        normalize_duid(first_record["duid"])
-        if "duid" in first_record
-        else None
-    )
+    return normalize_duid(first_record["duid"]) if "duid" in first_record else None
 
 
 def get_station_record_from_facilities(units: list):
@@ -75,9 +71,9 @@ def get_unique_reqion(units: list) -> str:
 
 class RegistrationExemptionGrouperPipeline(object):
     """
-        This is the first-pass pipeline of the AEMO Registration and Exemptions list
+    This is the first-pass pipeline of the AEMO Registration and Exemptions list
 
-        It groups by clean station name
+    It groups by clean station name
 
     """
 
@@ -94,9 +90,7 @@ class RegistrationExemptionGrouperPipeline(object):
                 **i,
                 "name": station_name_cleaner(i["station_name"]),
                 "name_join": False
-                if facility_station_join_by_name(
-                    station_name_cleaner(i["station_name"])
-                )
+                if facility_station_join_by_name(station_name_cleaner(i["station_name"]))
                 else i["duid"],
             }
             for i in generators
@@ -106,9 +100,7 @@ class RegistrationExemptionGrouperPipeline(object):
 
         generators_grouped = {}
 
-        for k, v in groupby(
-            generators, key=lambda v: (v["name"], v["name_join"])
-        ):
+        for k, v in groupby(generators, key=lambda v: (v["name"], v["name_join"])):
             key = k
             if not key in generators_grouped:
                 generators_grouped[key] = []
@@ -123,9 +115,9 @@ class RegistrationExemptionGrouperPipeline(object):
 
 class RegistrationExemptionStorePipeline(DatabaseStoreBase):
     """
-        This pipeline is the second pass of the AEMO NEM REL List
+    This pipeline is the second pass of the AEMO NEM REL List
 
-        It sorts out whats new, what is updated, units and updating the database
+    It sorts out whats new, what is updated, units and updating the database
 
     """
 
@@ -140,21 +132,13 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             try:
                 participant = (
-                    s.query(Participant)
-                    .filter(Participant.name == participant_name)
-                    .one_or_none()
+                    s.query(Participant).filter(Participant.name == participant_name).one_or_none()
                 )
             except MultipleResultsFound as e:
-                logger.info(
-                    "Found multiple participants with name {}".format(
-                        participant_name
-                    )
-                )
+                logger.info("Found multiple participants with name {}".format(participant_name))
 
                 participant = (
-                    s.query(Participant)
-                    .filter(Participant.name == participant_name)
-                    .first()
+                    s.query(Participant).filter(Participant.name == participant_name).first()
                 )
 
             if not participant:
@@ -165,9 +149,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             s.add(participant)
 
-            logger.info(
-                "Found new NEM participant: {}".format(participant_name)
-            )
+            logger.info("Found new NEM participant: {}".format(participant_name))
             self.participant_keys[participant_name] = participant
 
             facility = None
@@ -182,10 +164,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
         if not "generators" in item and type(item["generators"]) is not list:
             raise Exception("Invalid item - no generators located")
 
-        if (
-            not "participants" in item
-            and type(item["participants"]) is not list
-        ):
+        if not "participants" in item and type(item["participants"]) is not list:
             raise Exception("Invalid item - no generators located")
 
         generators = item["generators"]
@@ -223,9 +202,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
             # This is the most suitable unit record to use for the station
             # see helper above
-            facility_station_record = get_station_record_from_facilities(
-                facilities
-            )
+            facility_station_record = get_station_record_from_facilities(facilities)
 
             facility_network_region = get_unique_reqion(facilities)
 
@@ -234,9 +211,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
                 try:
                     facility_lookup = (
-                        s.query(Facility)
-                        .filter(Facility.network_code == duid)
-                        .one_or_none()
+                        s.query(Facility).filter(Facility.network_code == duid).one_or_none()
                     )
                 except MultipleResultsFound:
                     logger.warning(
@@ -248,29 +223,17 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 if facility_lookup and facility_lookup.station:
                     facility_station = facility_lookup.station
 
-            if (
-                duid
-                and (duid_unique and facility_count > 1)
-                or not duid_unique
-            ):
+            if duid and (duid_unique and facility_count > 1) or not duid_unique:
 
-                facility_lookup = (
-                    s.query(Facility)
-                    .filter(Facility.network_code == duid)
-                    .first()
-                )
+                facility_lookup = s.query(Facility).filter(Facility.network_code == duid).first()
 
                 if facility_lookup and facility_lookup.station:
                     facility_station = facility_lookup.station
 
-            if not facility_station and facility_station_join_by_name(
-                station_name
-            ):
+            if not facility_station and facility_station_join_by_name(station_name):
                 try:
                     facility_station = (
-                        s.query(Station)
-                        .filter(Station.name == station_name)
-                        .one_or_none()
+                        s.query(Station).filter(Station.name == station_name).one_or_none()
                     )
                 except MultipleResultsFound:
                     logger.warning(
@@ -291,9 +254,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
             if not facility_station:
                 facility_station = Station(
                     name=station_name,
-                    network_name=name_normalizer(
-                        facility_station_record["station_name"]
-                    ),
+                    network_name=name_normalizer(facility_station_record["station_name"]),
                     network_id="NEM",
                     created_by="pipeline.aemo.registration_exemption",
                 )
@@ -301,9 +262,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                 s.add(facility_station)
                 created_station = True
             else:
-                facility_station.updated_by = (
-                    "pipeline.aemo.registration_exemption"
-                )
+                facility_station.updated_by = "pipeline.aemo.registration_exemption"
 
             logger.info(
                 "REL: {} station with name {} and code {}".format(
@@ -319,23 +278,15 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
             # Step go through the facility records we got ..
             for facility_record in facilities:
                 network_name = name_normalizer(facility_record["station_name"])
-                participant_name = name_normalizer(
-                    facility_record["participant"]
-                )
-                facility_region = normalize_aemo_region(
-                    facility_record["region"]
-                )
+                participant_name = name_normalizer(facility_record["participant"])
+                facility_region = normalize_aemo_region(facility_record["region"])
                 duid = normalize_duid(facility_record["duid"])
                 reg_cap = clean_capacity(facility_record["reg_cap"])
                 unit = parse_unit_duid(facility_record["unit_no"], duid)
                 unit_size = clean_capacity(facility_record["unit_size"])
-                unit_code = get_unit_code(
-                    unit, duid, facility_station_record["station_name"]
-                )
+                unit_code = get_unit_code(unit, duid, facility_station_record["station_name"])
                 facility_status = "operating"
-                facility_dispatch_type = parse_dispatch_type(
-                    facility_record["dispatch_type"]
-                )
+                facility_dispatch_type = parse_dispatch_type(facility_record["dispatch_type"])
                 fueltech = lookup_fueltech(
                     facility_record["fuel_source_primary"],
                     facility_record["fuel_source_descriptor"],
@@ -346,32 +297,24 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
 
                 # Skip loads that are not batteries or pumps for now
                 # @NOTE @TODO better to centralize this as it needs to be consistent
-                if (
-                    facility_dispatch_type == DispatchType.LOAD
-                    and fueltech not in ["battery_charging", "pumps",]
-                ):
+                if facility_dispatch_type == DispatchType.LOAD and fueltech not in [
+                    "battery_charging",
+                    "pumps",
+                ]:
                     continue
 
                 # check if we have it by ocode first
-                facility = (
-                    s.query(Facility)
-                    .filter(Facility.code == unit_code)
-                    .one_or_none()
-                )
+                facility = s.query(Facility).filter(Facility.code == unit_code).one_or_none()
 
                 # If the duid is unique then we have no issues on which to join/create
                 if duid and duid_unique and not facility:
                     try:
                         facility = (
-                            s.query(Facility)
-                            .filter(Facility.network_code == duid)
-                            .one_or_none()
+                            s.query(Facility).filter(Facility.network_code == duid).one_or_none()
                         )
                     except MultipleResultsFound:
                         logger.warning(
-                            "REL: Multiple facilities found for {} {}".format(
-                                station_name, duid
-                            )
+                            "REL: Multiple facilities found for {} {}".format(station_name, duid)
                         )
 
                 if duid and not duid_unique and not facility:
@@ -415,9 +358,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     )
                     created_facility = True
                 else:
-                    facility.updated_by = (
-                        "pipeline.aemo.registration_exemption"
-                    )
+                    facility.updated_by = "pipeline.aemo.registration_exemption"
 
                 # Sanity checking
                 if len(unit_code) < 3:
@@ -461,9 +402,7 @@ class RegistrationExemptionStorePipeline(DatabaseStoreBase):
                     )
 
                 if not created_facility:
-                    facility.updated_by = (
-                        "pipeline.aemo.registration_exemption"
-                    )
+                    facility.updated_by = "pipeline.aemo.registration_exemption"
 
                 s.add(facility)
                 s.commit()

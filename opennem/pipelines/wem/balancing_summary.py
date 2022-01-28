@@ -23,9 +23,7 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
         records_to_store = []
 
         for record in csvreader:
-            trading_interval = parse_date(
-                record["Trading Interval"], network=NetworkWEM
-            )
+            trading_interval = parse_date(record["Trading Interval"], network=NetworkWEM)
 
             if not trading_interval:
                 continue
@@ -37,12 +35,8 @@ class WemStoreBalancingSummary(DatabaseStoreBase):
                     "network_region": "WEM",
                     "trading_interval": trading_interval,
                     "forecast_load": record["Load Forecast (MW)"],
-                    "generation_scheduled": record[
-                        "Scheduled Generation (MW)"
-                    ],
-                    "generation_non_scheduled": record[
-                        "Non-Scheduled Generation (MW)"
-                    ],
+                    "generation_scheduled": record["Scheduled Generation (MW)"],
+                    "generation_non_scheduled": record["Non-Scheduled Generation (MW)"],
                     "generation_total": record["Total Generation (MW)"],
                     "price": record["Final Price ($/MWh)"],
                 }

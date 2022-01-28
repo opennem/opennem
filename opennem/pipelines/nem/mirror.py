@@ -43,19 +43,13 @@ class DatabaseStore(object):
             table_name = table["name"]
 
             if not table_name in TABLE_MAP:
-                logger.error(
-                    "Could not map table name to model for item {}".format(
-                        table_name
-                    )
-                )
+                logger.error("Could not map table name to model for item {}".format(table_name))
                 continue
 
             Model = TABLE_MAP[table_name]
 
             if not "records" in table:
-                logger.info(
-                    "No records for item with table name {}".format(table_name)
-                )
+                logger.info("No records for item with table name {}".format(table_name))
                 continue
 
             records = table["records"]

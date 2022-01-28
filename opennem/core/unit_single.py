@@ -5,9 +5,9 @@ SINGLE_UNITS = load_data("single_units.json")
 
 def facility_unit_numbers_are_single(facility_duid: str) -> bool:
     """
-        These units have unit numbers that are single units rather than ranges.
+    These units have unit numbers that are single units rather than ranges.
 
-        ex. GT 1-2 means unit of alias GT1 and id 2 rather than alias GT and range 1-2
+    ex. GT 1-2 means unit of alias GT1 and id 2 rather than alias GT and range 1-2
 
     """
 

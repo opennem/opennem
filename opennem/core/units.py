@@ -41,11 +41,7 @@ def get_unit(unit_human: str) -> UnitDefinition:
     if not UNITS:
         UNITS = load_units()
 
-    unit_lookup = list(
-        filter(
-            lambda x: x.name_alias == unit_human or x.name == unit_human, UNITS
-        )
-    )
+    unit_lookup = list(filter(lambda x: x.name_alias == unit_human or x.name == unit_human, UNITS))
 
     if unit_lookup:
         return unit_lookup.pop()

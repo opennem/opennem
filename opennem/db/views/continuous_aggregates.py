@@ -31,7 +31,7 @@ def create_continuous_aggregation_query(viewdef: ViewDefinition) -> Optional[str
 
 
 def remove_continuous_aggregation_query(viewdef: ViewDefinition) -> Optional[str]:
-    """ Remove a continuous aggregation policy """
+    """Remove a continuous aggregation policy"""
 
     if not viewdef.aggregation_policy:
         return None

@@ -25,9 +25,7 @@ def export_power_task(priority: PriorityType, latest: bool) -> None:
 
 
 @router.get("/scrapy/task")
-def scrapy_task(
-    name: str = Query(None, description="name of spider to queue")
-) -> List[str]:
+def scrapy_task(name: str = Query(None, description="name of spider to queue")) -> List[str]:
     return job_schedule_all(name)
 
 
@@ -48,13 +46,9 @@ def worker_task(
     task = None
 
     if name == "energy":
-        task = export_energy_task.schedule(
-            kwargs=dict(priority=priority, latest=latest), delay=1
-        )
+        task = export_energy_task.schedule(kwargs=dict(priority=priority, latest=latest), delay=1)
     elif name == "power":
-        task = export_power_task.schedule(
-            dict(priority=priority, latest=latest), delay=1
-        )
+        task = export_power_task.schedule(dict(priority=priority, latest=latest), delay=1)
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

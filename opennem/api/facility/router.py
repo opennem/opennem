@@ -33,20 +33,18 @@ def facilities(
 
 
 @router.get(
-    "/{facility_code:path}", name="Facility", response_model=FacilityRecord,
+    "/{facility_code:path}",
+    name="Facility",
+    response_model=FacilityRecord,
 )
 def facility(
     facility_code: str = Query(str, description="Facility code"),
     session: Session = Depends(get_database_session),
 ) -> FacilityRecord:
-    facility = (
-        session.query(Facility).filter_by(code=facility_code).one_or_none()
-    )
+    facility = session.query(Facility).filter_by(code=facility_code).one_or_none()
 
     if not facility:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Facility not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facility not found")
 
     return facility
 
@@ -60,9 +58,7 @@ def facility_update(
     facility = session.query(Facility).get(facility_id)
 
     if not facility:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Facility not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facility not found")
 
     if data.modification == FacilityModificationTypes.approve:
 

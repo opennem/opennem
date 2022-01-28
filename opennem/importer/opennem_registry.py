@@ -8,9 +8,7 @@ def run_import_opennem_registry():
     mms = run_import_mms()
 
     nem_stations = {
-        i: v
-        for i, v in station_fixture.items()
-        if v["location"]["state"] not in ["WA"]
+        i: v for i, v in station_fixture.items() if v["location"]["state"] not in ["WA"]
     }
 
     for station_key, station_record in nem_stations.items():

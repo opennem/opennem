@@ -21,9 +21,7 @@ def load_stations(file_path: str = "opennem.json") -> List[StationSchema]:
         try:
             stations.append(StationSchema(**i))
         except ValidationError as e:
-            logger.error(
-                "Error with record: {} {}: {}".format(i["code"], i["name"], e)
-            )
+            logger.error("Error with record: {} {}: {}".format(i["code"], i["name"], e))
 
     return stations
 

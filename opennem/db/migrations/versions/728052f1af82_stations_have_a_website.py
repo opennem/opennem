@@ -18,9 +18,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column(
-        "station", sa.Column("website_url", sa.Text(), nullable=True)
-    )
+    op.add_column("station", sa.Column("website_url", sa.Text(), nullable=True))
 
 
 def downgrade() -> None:

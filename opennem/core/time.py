@@ -37,9 +37,7 @@ def get_interval_by_size(interval_size: int) -> Optional[TimeInterval]:
     Get an interval by size
 
     """
-    interval_lookup = list(
-        filter(lambda x: x.interval == interval_size, INTERVALS)
-    )
+    interval_lookup = list(filter(lambda x: x.interval == interval_size, INTERVALS))
 
     if interval_lookup:
         return interval_lookup.pop()
@@ -50,9 +48,7 @@ def get_interval_by_size(interval_size: int) -> Optional[TimeInterval]:
 
 
 def get_interval(interval_human: str) -> TimeInterval:
-    interval_lookup = list(
-        filter(lambda x: x.interval_human == interval_human, INTERVALS)
-    )
+    interval_lookup = list(filter(lambda x: x.interval_human == interval_human, INTERVALS))
 
     if interval_lookup:
         return interval_lookup.pop()
@@ -61,9 +57,7 @@ def get_interval(interval_human: str) -> TimeInterval:
 
 
 def get_period(period_human: str) -> TimePeriod:
-    period_lookup = list(
-        filter(lambda x: x.period_human == period_human, PERIODS)
-    )
+    period_lookup = list(filter(lambda x: x.period_human == period_human, PERIODS))
 
     if period_lookup:
         return period_lookup.pop()

@@ -32,9 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class NemMMSSingle(DatabaseStoreBase):
-    """
-
-    """
+    """ """
 
     def get_table(self, item):
         if "tables" not in item:
@@ -51,19 +49,13 @@ class NemMMSSingle(DatabaseStoreBase):
             )
             return False
 
-        table = [
-            i
-            for i in item["tables"]
-            if "name" in i and i["name"] == self.table
-        ]
+        table = [i for i in item["tables"] if "name" in i and i["name"] == self.table]
 
         return table.pop() if len(table) else None
 
 
 class NemStoreMMSStations(DatabaseStoreBase):
-    """
-
-    """
+    """ """
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
@@ -85,11 +77,7 @@ class NemStoreMMSStations(DatabaseStoreBase):
             state = normalize_string(record["STATE"]).capitalize()
             postcode = normalize_string(record["POSTCODE"])
 
-            station = (
-                s.query(Station)
-                .filter(Station.network_code == duid)
-                .one_or_none()
-            )
+            station = s.query(Station).filter(Station.network_code == duid).one_or_none()
 
             if not station:
                 station = Station(
@@ -120,22 +108,14 @@ class NemStoreMMSStations(DatabaseStoreBase):
                 logger.error(e)
 
             logger.debug(
-                "{} station record with id {}".format(
-                    "Created" if created else "Updated", duid
-                )
+                "{} station record with id {}".format("Created" if created else "Updated", duid)
             )
 
-        logger.info(
-            "Created {} records and updated {}".format(
-                records_created, records_updated
-            )
-        )
+        logger.info("Created {} records and updated {}".format(records_created, records_updated))
 
 
 class NemStoreMMSStationStatus(DatabaseStoreBase):
-    """
-
-    """
+    """ """
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
@@ -149,11 +129,7 @@ class NemStoreMMSStationStatus(DatabaseStoreBase):
             # @TODO this needs to be mapped to v3 state
             status = record["STATUS"]
 
-            station = (
-                s.query(Station)
-                .filter(Station.network_code == duid)
-                .one_or_none()
-            )
+            station = s.query(Station).filter(Station.network_code == duid).one_or_none()
 
             if not station:
                 logger.error("Could not find station {}".format(duid))
@@ -172,7 +148,7 @@ class NemStoreMMSStationStatus(DatabaseStoreBase):
 class NemStoreMMSParticipant(DatabaseStoreBase):
     """
 
-        @NOTE This pipeline has been converted to use pydantic models
+    @NOTE This pipeline has been converted to use pydantic models
     """
 
     @check_spider_pipeline
@@ -194,9 +170,7 @@ class NemStoreMMSParticipant(DatabaseStoreBase):
 
             if not "NAME" in record or not "PARTICIPANTID" in record:
                 logger.error(record)
-                raise Exception(
-                    "Invalid MMS participant record: {}".format(record)
-                )
+                raise Exception("Invalid MMS participant record: {}".format(record))
 
             participant_schema = None
 
@@ -209,9 +183,7 @@ class NemStoreMMSParticipant(DatabaseStoreBase):
                     }
                 )
             except Exception:
-                logger.error(
-                    "Validation error with record: {}".format(record["NAME"])
-                )
+                logger.error("Validation error with record: {}".format(record["NAME"]))
                 continue
 
             # pid = normalize_duid(record["PARTICIPANTID"])
@@ -252,17 +224,11 @@ class NemStoreMMSParticipant(DatabaseStoreBase):
                 )
             )
 
-        logger.info(
-            "Created {} records and updated {}".format(
-                records_created, records_updated
-            )
-        )
+        logger.info("Created {} records and updated {}".format(records_created, records_updated))
 
 
 class NemStoreMMSDudetail(DatabaseStoreBase):
-    """
-
-    """
+    """ """
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
@@ -280,11 +246,7 @@ class NemStoreMMSDudetail(DatabaseStoreBase):
             capacity_max = clean_capacity(record["MAXCAPACITY"])
             dispatch_type = parse_dispatch_type(record["DISPATCHTYPE"])
 
-            facility = (
-                s.query(Facility)
-                .filter(Facility.network_code == duid)
-                .one_or_none()
-            )
+            facility = s.query(Facility).filter(Facility.network_code == duid).one_or_none()
 
             if not facility:
                 facility = Facility(
@@ -324,9 +286,7 @@ class NemStoreMMSDudetail(DatabaseStoreBase):
 
 
 class NemStoreMMSDudetailSummary(DatabaseStoreBase):
-    """
-
-    """
+    """ """
 
     @check_spider_pipeline
     def process_item(self, item, spider=None):
@@ -339,9 +299,7 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
         for record in item:
             created = False
 
-            participant_code = normalize_duid(
-                record["facilities"][0]["PARTICIPANTID"]
-            )
+            participant_code = normalize_duid(record["facilities"][0]["PARTICIPANTID"])
 
             # Step 1. Find participant by code or create
             participant = (
@@ -363,22 +321,16 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
             # Step 3. now create the facilities and associate
             for facility_record in record["facilities"]:
                 duid = normalize_duid(facility_record["DUID"])
-                station_code = facility_map_station(
-                    duid, normalize_duid(record["id"])
-                )
+                station_code = facility_map_station(duid, normalize_duid(record["id"]))
 
-                network_region = normalize_aemo_region(
-                    facility_record["REGIONID"]
-                )
+                network_region = normalize_aemo_region(facility_record["REGIONID"])
                 date_start = facility_record["date_start"]
                 date_end = facility_record["date_end"]
                 facility_state = "retired"
 
                 # Step 2. Find station or create
                 station = (
-                    s.query(Station)
-                    .filter(Station.network_code == station_code)
-                    .one_or_none()
+                    s.query(Station).filter(Station.network_code == station_code).one_or_none()
                 )
 
                 if not station:
@@ -398,22 +350,12 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
                     facility_state = "operating"
 
                 if not "DISPATCHTYPE" in facility_record:
-                    logger.error(
-                        "MMS dudetailsummary: Invalid record: {}".format(
-                            facility_record
-                        )
-                    )
+                    logger.error("MMS dudetailsummary: Invalid record: {}".format(facility_record))
                     continue
 
-                dispatch_type = parse_dispatch_type(
-                    facility_record["DISPATCHTYPE"]
-                )
+                dispatch_type = parse_dispatch_type(facility_record["DISPATCHTYPE"])
 
-                facility = (
-                    s.query(Facility)
-                    .filter(Facility.network_code == duid)
-                    .one_or_none()
-                )
+                facility = s.query(Facility).filter(Facility.network_code == duid).one_or_none()
 
                 if not facility:
 
@@ -465,7 +407,7 @@ class NemStoreMMSDudetailSummary(DatabaseStoreBase):
 
 class NemStoreMMSStatdualloc(DatabaseStoreBase):
     """
-        AEMO MMS associates all duids with station ids
+    AEMO MMS associates all duids with station ids
     """
 
     @check_spider_pipeline
@@ -480,21 +422,11 @@ class NemStoreMMSStatdualloc(DatabaseStoreBase):
             created = False
 
             duid = normalize_duid(record["DUID"])
-            station_code = facility_map_station(
-                duid, normalize_duid(record["STATIONID"])
-            )
+            station_code = facility_map_station(duid, normalize_duid(record["STATIONID"]))
 
-            station = (
-                s.query(Station)
-                .filter(Station.network_code == station_code)
-                .one_or_none()
-            )
+            station = s.query(Station).filter(Station.network_code == station_code).one_or_none()
 
-            facility = (
-                s.query(Facility)
-                .filter(Facility.network_code == duid)
-                .one_or_none()
-            )
+            facility = s.query(Facility).filter(Facility.network_code == duid).one_or_none()
 
             if not station:
                 station = Station(
@@ -528,13 +460,9 @@ class NemStoreMMSStatdualloc(DatabaseStoreBase):
                 logger.error(e)
 
             logger.debug(
-                "{} facility record with id {}".format(
-                    "Created" if created else "Updated", duid
-                )
+                "{} facility record with id {}".format("Created" if created else "Updated", duid)
             )
 
         logger.info(
-            "Created {} facility records and updated {}".format(
-                records_created, records_updated
-            )
+            "Created {} facility records and updated {}".format(records_created, records_updated)
         )

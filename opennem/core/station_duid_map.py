@@ -15,11 +15,9 @@ def map_old_station_names(station_code: str) -> str:
 STATION_DUID_MAP = load_data("facility_duid_map.json")
 
 
-def facility_map_station(
-    duid: str, default_station: Optional[str] = None
-) -> Optional[str]:
+def facility_map_station(duid: str, default_station: Optional[str] = None) -> Optional[str]:
     """
-        Maps duid -> station code
+    Maps duid -> station code
 
     """
 

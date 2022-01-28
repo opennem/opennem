@@ -4,7 +4,7 @@ from opennem.schema.core import BaseConfig
 
 
 class PhotoImportSchema(BaseConfig):
-    """ Defines a schema for photo imports """
+    """Defines a schema for photo imports"""
 
     network_id: str
     station_code: str

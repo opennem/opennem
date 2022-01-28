@@ -32,11 +32,7 @@ def opennem_geocode(limit=None):
     session = sessionmaker(bind=engine)
     s = session()
 
-    records = (
-        s.query(Station)
-        .filter(Station.geom == None)
-        .filter(Station.geocode_skip == False)
-    )
+    records = s.query(Station).filter(Station.geom == None).filter(Station.geocode_skip == False)
 
     count = 0
     skipped = 0
@@ -52,11 +48,7 @@ def opennem_geocode(limit=None):
 
         pprint(google_result)
 
-        if (
-            google_result
-            and type(google_result) is list
-            and len(google_result) > 0
-        ):
+        if google_result and type(google_result) is list and len(google_result) > 0:
             result = google_result[0]
 
             r.place_id = result["place_id"]

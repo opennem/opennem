@@ -15,7 +15,7 @@ def dispatch_type_string(dispatch_type: DispatchType) -> str:
 
 def parse_dispatch_type(dispatch_string: str):
     """
-        Converts dispatch type string into an enum constant
+    Converts dispatch type string into an enum constant
 
     """
     if not dispatch_string:

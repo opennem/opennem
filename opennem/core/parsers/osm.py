@@ -18,12 +18,12 @@ OSM_API_WAY_URI = "https://www.openstreetmap.org/api/0.6/way/{way_id}/full"
 
 
 def get_osm_way_url(way_id: str) -> str:
-    """ Returns an XML thing for an OSM way id"""
+    """Returns an XML thing for an OSM way id"""
     return OSM_API_WAY_URI.format(way_id=way_id)
 
 
 def get_osm_way(way_id: str) -> Dict:
-    """ Returns the xml payload from the osm api"""
+    """Returns the xml payload from the osm api"""
     way_url = get_osm_way_url(way_id)
 
     way_resp = http.get(way_url)
@@ -54,7 +54,7 @@ def get_osm_way(way_id: str) -> Dict:
 
 
 def get_osm_geom(way_id: str, srid: int = 4326) -> WKBElement:
-    """ Returns an WKT element from an osm way id """
+    """Returns an WKT element from an osm way id"""
     poly = None
 
     osm_way = get_osm_way(way_id)

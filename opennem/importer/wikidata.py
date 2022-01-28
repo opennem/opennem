@@ -188,7 +188,7 @@ def get_image(image_url: str) -> Image:
 
 
 def wikidata_photos() -> None:
-    """ Attach wikidata photos to stations """
+    """Attach wikidata photos to stations"""
     session = SessionLocal()
     wikidata = load_data("wikidata-photos.json", from_project=True)
 

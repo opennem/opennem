@@ -6,6 +6,7 @@
 
 import csv
 import json
+
 # from opennem.utils.log_config
 import logging
 import re
@@ -35,11 +36,7 @@ def report_changed_names(registry, current):
         if in_current and len(in_current):
             station_current = in_current[0]
             if station_current.name != station.name:
-                renames.append(
-                    "`{}` renamed to `{}`".format(
-                        station.name, station_current.name
-                    )
-                )
+                renames.append("`{}` renamed to `{}`".format(station.name, station_current.name))
 
     return renames
 
@@ -76,7 +73,9 @@ def report_changed_capacities(registry_units, current_units):
             if unit_current.capacity == None and unit.capacity:
                 renames.append(
                     "{} (`{}`) added capacity `{}`".format(
-                        unit_current.name, unit_current.duid, unit.capacity,
+                        unit_current.name,
+                        unit_current.duid,
+                        unit.capacity,
                     )
                 )
             elif (
@@ -96,17 +95,12 @@ def report_changed_capacities(registry_units, current_units):
     return renames
 
 
-def records_diff(
-    subject: List[object], comparitor: List[object], key: str = "code"
-) -> List[str]:
+def records_diff(subject: List[object], comparitor: List[object], key: str = "code") -> List[str]:
     diff_keys = list(
-        set([getattr(i, key) for i in subject])
-        - set([getattr(i, key) for i in comparitor])
+        set([getattr(i, key) for i in subject]) - set([getattr(i, key) for i in comparitor])
     )
 
-    diff_records = list(
-        filter(lambda x: getattr(x, key) in diff_keys, subject)
-    )
+    diff_records = list(filter(lambda x: getattr(x, key) in diff_keys, subject))
 
     return diff_records
 
@@ -116,10 +110,7 @@ def station_in_registry_not_in_new(registry, current):
 
     list_table = ["Name", "Code", "Facilities"]
 
-    [
-        list_table.extend([i.name, i.code, str(len(i.facilities))])
-        for i in diff_stations
-    ]
+    [list_table.extend([i.name, i.code, str(len(i.facilities))]) for i in diff_stations]
 
     return list_table
 
@@ -130,9 +121,7 @@ def stations_in_new_not_in_registry(registry, current):
     list_table = ["Name", "Code", "Facilities"]
 
     [
-        list_table.extend(
-            [i.name, str(i.code) if i.code else "", str(len(i.facilities))]
-        )
+        list_table.extend([i.name, str(i.code) if i.code else "", str(len(i.facilities))])
         for i in diff_stations
     ]
 
@@ -179,9 +168,7 @@ def run_diff():
     md.new_header(level=1, title="Summary")
     summary = ["", "Prod", "Version 3"]
     summary.extend(["Stations", str(len(registry)), str(len(current))])
-    summary.extend(
-        ["Units", str(len(registry_units)), str(len(current_units))]
-    )
+    summary.extend(["Units", str(len(registry_units)), str(len(current_units))])
     md.new_table(columns=3, rows=3, text=summary)
 
     # Renames

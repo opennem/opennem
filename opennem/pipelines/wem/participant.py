@@ -32,9 +32,7 @@ class WemStoreParticipant(object):
             participant_name = participant_name_filter(row["Participant Name"])
 
             participant = (
-                s.query(Participant)
-                .filter(Participant.code == participant_code)
-                .one_or_none()
+                s.query(Participant).filter(Participant.code == participant_code).one_or_none()
             )
 
             if not participant:
@@ -49,16 +47,12 @@ class WemStoreParticipant(object):
                     created_by="pipeline.wem.participant",
                 )
 
-                logger.info(
-                    "Created new WEM participant: {}".format(participant_code)
-                )
+                logger.info("Created new WEM participant: {}".format(participant_code))
 
             elif participant.name != participant_name:
                 participant.name = participant_name
                 participant.updated_by = "pipeline.wem.participant"
-                logger.info(
-                    "Updated WEM participant: {}".format(participant_code)
-                )
+                logger.info("Updated WEM participant: {}".format(participant_code))
 
             try:
                 s.add(participant)
@@ -88,19 +82,13 @@ class WemStoreLiveParticipant(object):
 
             participant = None
 
-            participant_code = normalize_duid(
-                normalize_string(row["PARTICIPANT_CODE"])
-            )
+            participant_code = normalize_duid(normalize_string(row["PARTICIPANT_CODE"]))
             participant_name = participant_name_filter(
                 row["PARTICIPANT_DISPLAY_NAME"]
-            ) or participant_name_filter(
-                row.get("PARTICIPANT_FULL_NAME", None)
-            )
+            ) or participant_name_filter(row.get("PARTICIPANT_FULL_NAME", None))
 
             participant = (
-                s.query(Participant)
-                .filter(Participant.code == participant_code)
-                .one_or_none()
+                s.query(Participant).filter(Participant.code == participant_code).one_or_none()
             )
 
             if not participant:
@@ -110,17 +98,13 @@ class WemStoreLiveParticipant(object):
                     created_by=spider.name,
                 )
 
-                logger.info(
-                    "Created new WEM participant: {}".format(participant_code)
-                )
+                logger.info("Created new WEM participant: {}".format(participant_code))
 
             elif participant.name != participant_name:
                 participant.name = participant_name
                 participant.updated_by = spider.name
 
-                logger.info(
-                    "Updated WEM participant: {}".format(participant_code)
-                )
+                logger.info("Updated WEM participant: {}".format(participant_code))
 
             try:
                 s.add(participant)

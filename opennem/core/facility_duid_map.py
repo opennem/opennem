@@ -5,7 +5,7 @@ FACILITY_DUID_MAP = load_data("facility_duid_map.json")
 
 def facility_duid_map(duid: str) -> str:
     """
-        Maps a DUID to a Facility code
+    Maps a DUID to a Facility code
 
     """
     if not type(FACILITY_DUID_MAP) is dict:

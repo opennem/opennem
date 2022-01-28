@@ -12,7 +12,7 @@ GeneratedEnergyForDuid = Tuple[date, str, float]
 
 
 def __trapezium_integration(d_ti: pd.DataFrame, power_column: str = "INITIALMW") -> float:
-    """ Trapezium integration fixed at 6 intervals and 30 minutes """
+    """Trapezium integration fixed at 6 intervals and 30 minutes"""
     if power_column not in d_ti:
         raise Exception("No column {}".format(power_column))
 

@@ -45,9 +45,7 @@ class UnzipSingleFilePipeline(object):
 
             if len(zip_files) != 1:
                 raise Exception(
-                    "Zero or more than one file in zip file. Have {}".format(
-                        len(zip_files)
-                    )
+                    "Zero or more than one file in zip file. Have {}".format(len(zip_files))
                 )
 
 
@@ -100,9 +98,7 @@ class ExtractCSV(object):
                     table_name = table["name"]
 
                     if table_name in item["tables"]:
-                        item["tables"][table_name]["records"] += table[
-                            "records"
-                        ]
+                        item["tables"][table_name]["records"] += table["records"]
                     else:
                         item["tables"][table_name] = table
 
@@ -111,9 +107,7 @@ class ExtractCSV(object):
                     table_name = table["name"]
 
                     if table_name in item["tables"]:
-                        item["tables"][table_name]["records"] += table[
-                            "records"
-                        ]
+                        item["tables"][table_name]["records"] += table["records"]
                     else:
                         item["tables"][table_name] = table
 

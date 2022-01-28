@@ -94,9 +94,9 @@ def get_unique_reqion(units: list) -> Optional[str]:
 
 class GeneralInformationGrouperPipeline(object):
     """
-        This is the first-pass pipeline of the AEMO general information list
+    This is the first-pass pipeline of the AEMO general information list
 
-        It groups by clean station name
+    It groups by clean station name
 
     """
 
@@ -107,17 +107,13 @@ class GeneralInformationGrouperPipeline(object):
 
         generators = item["records"]
 
-        generators = list(
-            filter(lambda x: x["station_name"] != None, generators)
-        )
+        generators = list(filter(lambda x: x["station_name"] != None, generators))
 
         # sort by name
 
         generators_grouped = {}
 
-        for k, v in groupby(
-            generators, key=lambda v: (v["SurveyID"], v["station_name"])
-        ):
+        for k, v in groupby(generators, key=lambda v: (v["SurveyID"], v["station_name"])):
             key = k[0]
             if not key in generators_grouped:
                 generators_grouped[key] = []
@@ -129,7 +125,7 @@ class GeneralInformationGrouperPipeline(object):
 
 class GeneralInformationStoragePipeline(DatabaseStoreBase):
     """
-        Stores the grouped General Information items from AEMO
+    Stores the grouped General Information items from AEMO
 
     """
 
@@ -145,9 +141,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
             # Funky case of Todae solar where they put their name in the
 
             participant = (
-                s.query(Participant)
-                .filter(Participant.name == participant_name)
-                .one_or_none()
+                s.query(Participant).filter(Participant.name == participant_name).one_or_none()
             )
 
             if not participant:
@@ -157,11 +151,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 )
 
                 s.add(participant)
-                logger.info(
-                    "GI: Added new partipant to NEM database: {}".format(
-                        participant_name
-                    )
-                )
+                logger.info("GI: Added new partipant to NEM database: {}".format(participant_name))
 
     def process_facilities(self, records):
         s = self.session()
@@ -198,9 +188,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
 
             # This is the most suitable unit record to use for the station
             # see helper above
-            facility_station_record = get_station_record_from_facilities(
-                facility_records
-            )
+            facility_station_record = get_station_record_from_facilities(facility_records)
 
             if duid and duid_unique and facility_count == 1:
 
@@ -210,27 +198,17 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     facility_lookup = (
                         s.query(Facility)
                         .filter(Facility.network_code == duid)
-                        .filter(
-                            Facility.network_region == station_network_region
-                        )
+                        .filter(Facility.network_region == station_network_region)
                         .one_or_none()
                     )
                 except MultipleResultsFound:
-                    logger.error(
-                        "Found multiple duid for station with code {}".format(
-                            duid
-                        )
-                    )
+                    logger.error("Found multiple duid for station with code {}".format(duid))
                     continue
 
                 if facility_lookup and facility_lookup.station:
                     facility_station = facility_lookup.station
 
-            if (
-                duid
-                and (duid_unique and facility_count > 1)
-                or not duid_unique
-            ):
+            if duid and (duid_unique and facility_count > 1) or not duid_unique:
 
                 facility_lookup = (
                     s.query(Facility)
@@ -242,20 +220,14 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 if facility_lookup and facility_lookup.station:
                     facility_station = facility_lookup.station
 
-            if not facility_station and facility_station_join_by_name(
-                station_name
-            ):
+            if not facility_station and facility_station_join_by_name(station_name):
                 try:
                     facility_station = (
-                        s.query(Station)
-                        .filter(Station.name == station_name)
-                        .one_or_none()
+                        s.query(Station).filter(Station.name == station_name).one_or_none()
                     )
                 except MultipleResultsFound:
                     logger.warning(
-                        "Multiple results found for station name : {}".format(
-                            station_name
-                        )
+                        "Multiple results found for station name : {}".format(station_name)
                     )
                     facility_station = None
 
@@ -282,9 +254,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
             if not facility_station:
                 facility_station = Station(
                     name=station_name,
-                    network_name=name_normalizer(
-                        facility_station_record["station_name"]
-                    ),
+                    network_name=name_normalizer(facility_station_record["station_name"]),
                     network_id="NEM",
                     created_by="pipeline.aemo.general_information",
                 )
@@ -294,9 +264,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
 
                 created_station = True
             else:
-                facility_station.updated_by = (
-                    "pipeline.aemo.general_information"
-                )
+                facility_station.updated_by = "pipeline.aemo.general_information"
 
             for facility_record in facility_records:
                 if facility_record["FuelType"] in ["Natural Gas Pipeline"]:
@@ -309,12 +277,8 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                 facility = None
                 created_facility = False
 
-                facility_network_name = name_normalizer(
-                    facility_record["station_name"]
-                )
-                facility_name = station_name_cleaner(
-                    facility_record["station_name"]
-                )
+                facility_network_name = name_normalizer(facility_record["station_name"])
+                facility_name = station_name_cleaner(facility_record["station_name"])
                 duid = normalize_duid(facility_record["duid"])
                 reg_cap = clean_capacity(facility_record["NameCapacity"])
 
@@ -323,9 +287,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
 
                 unit = parse_unit_duid(unit_id, duid)
                 unit_size = clean_capacity(facility_record["unit_capacity"])
-                unit_code = get_unit_code(
-                    unit, duid, facility_record["station_name"]
-                )
+                unit_code = get_unit_code(unit, duid, facility_record["station_name"])
 
                 facility_comissioned = facility_record["SurveyEffective"]
                 facility_comissioned_dt = None
@@ -339,25 +301,16 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                             facility_comissioned, "%d/%m/%y"
                         )
                 except ValueError:
-                    logger.error(
-                        "Error parsing date: {}".format(facility_comissioned)
-                    )
+                    logger.error("Error parsing date: {}".format(facility_comissioned))
 
-                facility_status = map_aemo_facility_status(
-                    facility_record["UnitStatus"]
-                )
-                facility_network_region = normalize_aemo_region(
-                    facility_record["Region"]
-                )
+                facility_status = map_aemo_facility_status(facility_record["UnitStatus"])
+                facility_network_region = normalize_aemo_region(facility_record["Region"])
                 facility_fueltech = (
                     lookup_fueltech(
                         facility_record["FuelType"],
                         techtype=facility_record["TechType"],
                     )
-                    if (
-                        "FuelType" in facility_record
-                        and facility_record["FuelType"]
-                    )
+                    if ("FuelType" in facility_record and facility_record["FuelType"])
                     else None
                 )
 
@@ -370,28 +323,19 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                     )
 
                 # check if we have it by ocode first
-                facility = (
-                    s.query(Facility)
-                    .filter(Facility.code == unit_code)
-                    .one_or_none()
-                )
+                facility = s.query(Facility).filter(Facility.code == unit_code).one_or_none()
 
                 if not facility and duid:
                     try:
                         facility = (
                             s.query(Facility)
                             .filter(Facility.network_code == duid)
-                            .filter(
-                                Facility.network_region
-                                == facility_network_region
-                            )
+                            .filter(Facility.network_region == facility_network_region)
                             # .filter(Facility.nameplate_capacity != None)
                             .one_or_none()
                         )
                     except MultipleResultsFound:
-                        logger.warn(
-                            "Multiple results found for duid : {}".format(duid)
-                        )
+                        logger.warn("Multiple results found for duid : {}".format(duid))
 
                     if facility:
                         if facility.station and not facility_station:
@@ -400,9 +344,7 @@ class GeneralInformationStoragePipeline(DatabaseStoreBase):
                         logger.info(
                             "GI: Found facility by DUID: code {} station {}".format(
                                 facility.code,
-                                facility.station.name
-                                if facility.station
-                                else None,
+                                facility.station.name if facility.station else None,
                             )
                         )
 

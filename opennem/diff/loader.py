@@ -27,9 +27,7 @@ def _get_state_from_current(station, facilities: List[Any]) -> str:
     state = station.get("state")
 
     if not state:
-        facility_states = list(
-            set([f.network_region for f in facilities if f.network_region])
-        )
+        facility_states = list(set([f.network_region for f in facilities if f.network_region]))
 
         state = facility_states.pop()
 
@@ -46,7 +44,7 @@ def _get_state_from_current(station, facilities: List[Any]) -> str:
 
 def load_registry() -> List[StationSchema]:
     """
-        Loads the facility registry into a list of Station schema's
+    Loads the facility registry into a list of Station schema's
     """
     stations = load_data("facility_registry.json")
 
@@ -56,21 +54,13 @@ def load_registry() -> List[StationSchema]:
         facilities = []
 
         for duid, facility_record in station_record["duid_data"].items():
-            status = map_compat_facility_state(
-                station_record.get("status", {}).get("state", "")
-            )
-            fuel_tech = map_compat_fueltech(
-                facility_record.get("fuel_tech", "")
-            )
-            registered_capacity = clean_capacity(
-                facility_record.get("registered_capacity")
-            )
+            status = map_compat_facility_state(station_record.get("status", {}).get("state", ""))
+            fuel_tech = map_compat_fueltech(facility_record.get("fuel_tech", ""))
+            registered_capacity = clean_capacity(facility_record.get("registered_capacity"))
 
             facility = FacilitySchema(
                 name=normalize_whitespace(station_record.get("display_name")),
-                network_region=map_compat_network_region(
-                    station_record["region_id"]
-                ),
+                network_region=map_compat_network_region(station_record["region_id"]),
                 status=status,
                 duid=duid,
                 fueltech=fuel_tech,
@@ -95,7 +85,7 @@ def load_registry() -> List[StationSchema]:
 
 def load_current() -> List[StationSchema]:
     """
-        Load the current project station data into a list of station schemas
+    Load the current project station data into a list of station schemas
     """
     station_data = load_data("stations.geojson", True)
 

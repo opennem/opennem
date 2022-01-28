@@ -97,5 +97,5 @@ def get_network_region_schema(
 
 
 def datetime_add_network_timezone(dt: datetime, network: NetworkSchema) -> datetime:
-    """ Returns a datetime in network timezone """
+    """Returns a datetime in network timezone"""
     return dt.astimezone(network.get_fixed_offset())

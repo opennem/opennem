@@ -39,9 +39,7 @@ def load_env_file(environment: Optional[str]) -> List[str]:
     if environment:
         environment_suffix = environment.strip().lower()
 
-        env_files.append(
-            "{}.{}".format(BASE_ENV_FILE_NAME, environment_suffix)
-        )
+        env_files.append("{}.{}".format(BASE_ENV_FILE_NAME, environment_suffix))
 
     env_files_exist = [str(i) for i in env_files if _is_env_file(i)]
 

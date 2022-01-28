@@ -130,7 +130,7 @@ def purge_views() -> None:
 
 
 def init_database_views() -> None:
-    """ Initialize all the database view """
+    """Initialize all the database view"""
 
     engine = get_database_engine()
 
@@ -173,7 +173,7 @@ def init_database_views() -> None:
 
 
 def init_aggregation_policies() -> None:
-    """ Initializes the continuous aggregation policies """
+    """Initializes the continuous aggregation policies"""
 
     # @TODO check what exists with query
 
@@ -206,7 +206,7 @@ def init_aggregation_policies() -> None:
 
 
 def get_materialized_view_names() -> List[str]:
-    """ Returns a list of material view names in priority order """
+    """Returns a list of material view names in priority order"""
     return list(
         v.name
         for v in filter(
@@ -216,7 +216,7 @@ def get_materialized_view_names() -> List[str]:
 
 
 def get_timescale_view_names() -> List[str]:
-    """ Returns a list of timescale view names in priority order """
+    """Returns a list of timescale view names in priority order"""
     return list(
         v.name
         for v in filter(lambda x: x.materialized is True and x.aggregation_policy, _VIEW_MAP)

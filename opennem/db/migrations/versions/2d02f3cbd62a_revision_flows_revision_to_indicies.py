@@ -84,9 +84,7 @@ def downgrade() -> None:
         op.f("ix_at_network_flows_network_region"),
         table_name="at_network_flows",
     )
-    op.drop_index(
-        op.f("ix_at_network_flows_network_id"), table_name="at_network_flows"
-    )
+    op.drop_index(op.f("ix_at_network_flows_network_id"), table_name="at_network_flows")
     op.drop_index(
         "idx_at_network_flowsy_network_id_trading_interval",
         table_name="at_network_flows",

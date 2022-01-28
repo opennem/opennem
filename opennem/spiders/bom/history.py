@@ -41,9 +41,7 @@ class BOMHistorySpider(scrapy.Spider):
             for month in months:
                 req_url = get_archive_page_for_station_code(station.web_code, month)
                 yield scrapy.Request(
-                    req_url,
-                    meta={"code": station.code, "month": month},
-                    headers=_headers
+                    req_url, meta={"code": station.code, "month": month}, headers=_headers
                 )  # type: ignore
 
     def parse(self, response: TextResponse) -> Generator[Dict[str, Any], None, None]:
@@ -79,11 +77,13 @@ class BOMHistorySpider(scrapy.Spider):
 
             day_of_month = int(first_col_val)
 
-            records.append({
-                "observation_date": month.replace(day=day_of_month),
-                "code": code,
-                "temp_min": clean_float(trow.css("td.xb::text").get()),
-                "temp_max": clean_float(trow.css("td.c")[1].css("::text").get())
-            })
+            records.append(
+                {
+                    "observation_date": month.replace(day=day_of_month),
+                    "code": code,
+                    "temp_min": clean_float(trow.css("td.xb::text").get()),
+                    "temp_max": clean_float(trow.css("td.c")[1].css("::text").get()),
+                }
+            )
 
         yield {"records": records}

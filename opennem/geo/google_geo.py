@@ -23,17 +23,13 @@ from opennem.settings import scrapy_settings
 logging.basicConfig(level=logging.INFO)
 
 
-requests_cache.install_cache(
-    scrapy_settings.requests_cache_path, expire_after=timedelta(days=60)
-)
+requests_cache.install_cache(scrapy_settings.requests_cache_path, expire_after=timedelta(days=60))
 
 BACKOFF_TIME = 30
 QUERY_LIMIT = 0
 
 
-def google_geocode(
-    query, region=None, api_key=None, return_full_response=False
-):
+def google_geocode(query, region=None, api_key=None, return_full_response=False):
 
     GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/geocode/json"
 
@@ -56,9 +52,7 @@ def google_geocode(
         query_components["country"] = query["country"]
         query.pop("country", None)
 
-    url_params["components"] = "|".join(
-        f"{k}:{v}" for k, v in query_components.items()
-    )
+    url_params["components"] = "|".join(f"{k}:{v}" for k, v in query_components.items())
 
     results = requests.get(GOOGLE_PLACES_URL, params=url_params).json()
 
@@ -92,9 +86,7 @@ def google_geocode(
 
 def lookup_placeid(place_id, api_key=None, retry=0):
 
-    GOOGLE_PLACES_URL = (
-        "https://maps.googleapis.com/maps/api/place/details/json"
-    )
+    GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/details/json"
 
     url_params = {
         "key": scrapy_settings.google_places_api_key,
@@ -128,13 +120,9 @@ def lookup_placeid(place_id, api_key=None, retry=0):
     return results["result"]
 
 
-def place_autocomplete(
-    query, region=None, api_key=None, return_full_response=False
-):
+def place_autocomplete(query, region=None, api_key=None, return_full_response=False):
 
-    GOOGLE_PLACES_URL = (
-        "https://maps.googleapis.com/maps/api/place/autocomplete/json"
-    )
+    GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
 
     query_params = {}
 
@@ -156,9 +144,7 @@ def place_autocomplete(
         query_components["country"] = query["country"]
         query.pop("country", None)
 
-    url_params["components"] = "|".join(
-        f"{k}:{v}" for k, v in query_components.items()
-    )
+    url_params["components"] = "|".join(f"{k}:{v}" for k, v in query_components.items())
 
     results = requests.get(GOOGLE_PLACES_URL, params=url_params).json()
 
@@ -192,9 +178,7 @@ def place_autocomplete(
 
 def place_search(query, api_key=None, return_full_response=False):
 
-    GOOGLE_PLACES_URL = (
-        "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
-    )
+    GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
 
     query_params = {}
 

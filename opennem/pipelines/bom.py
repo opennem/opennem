@@ -25,7 +25,7 @@ STATE_TO_TIMEZONE = {
 
 class StoreBomObservation(object):
     """
-        Pipeline to store BOM observations into the database
+    Pipeline to store BOM observations into the database
     """
 
     @check_spider_pipeline
@@ -117,11 +117,9 @@ class StoreBomObservation(object):
         return len(records_to_store)
 
 
-
-
 class StoreBomHistoryObservation(object):
     """
-        Pipeline to store BOM observations history
+    Pipeline to store BOM observations history
     """
 
     @check_spider_pipeline

@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 # INTERCONNECTOR_TABLE = "market_config_interconnector"  # full name with namespace
 INTERCONNECTOR_TABLE = "interconnector"
 
+
 def import_nem_interconnects() -> None:
     session = SessionLocal()
 
@@ -66,7 +67,6 @@ def import_nem_interconnects() -> None:
             if isinstance(interconnector, dict) and "interconnectorid" in interconnector:
                 interconnector = MarketConfigInterconnector(**interconnector)
                 # raise Exception("Not what we're looking for ")
-
 
         # skip SNOWY
         # @TODO do these need to be remapped for historical

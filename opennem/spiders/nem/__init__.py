@@ -31,9 +31,7 @@ class NemXLSSpider(scrapy.Spider):
 
         yield scrapy.Request(request_url)
 
-    def parse(
-        self, response: Response
-    ) -> Generator[Dict[str, Any], None, None]:
+    def parse(self, response: Response) -> Generator[Dict[str, Any], None, None]:
         yield {"content": response.text}
 
 
@@ -56,7 +54,5 @@ class NemSingleMMSSpider(scrapy.Spider):
 
         yield scrapy.Request(self.url)
 
-    def parse(
-        self, response: Response
-    ) -> Generator[Dict[str, Any], None, None]:
+    def parse(self, response: Response) -> Generator[Dict[str, Any], None, None]:
         yield {"body_stream": io.BytesIO(response.body)}
