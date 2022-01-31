@@ -16,7 +16,7 @@ from opennem import settings
 from opennem.importer.rooftop import ROOFTOP_CODE
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
-from opennem.utils.dates import get_date_component, parse_date
+from opennem.utils.dates import chop_datetime_microseconds, get_date_component, parse_date
 from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
@@ -150,7 +150,9 @@ def get_apvi_rooftop_data() -> Optional[APVIForecastSet]:
     installations = _resp_json["installations"]
 
     # brisbane has no DST so its effectively NEM time
-    _run_at = datetime.now().astimezone(pytz.timezone("Australia/Brisbane"))
+    _run_at = chop_datetime_microseconds(
+        datetime.now().astimezone(pytz.timezone("Australia/Brisbane"))
+    )
     _interval_records = []
 
     for record in postcode_gen:
