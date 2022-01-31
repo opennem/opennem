@@ -237,5 +237,7 @@ def get_crawl_set() -> CrawlerSet:
 
 
 if __name__ == "__main__":
-    for crawler in _CRAWLER_SET.crawlers:
-        logger.info(crawler.name)
+    cs = get_crawl_set()
+
+    cd = cs.get_crawler("apvi.data")
+    run_crawl(cd)
