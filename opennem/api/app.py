@@ -180,7 +180,7 @@ def networks(
 )
 def network_regions(
     session: Session = Depends(get_database_session),
-    network_code: str = Query(None, description="Network code"),
+    network_code: str = Query(..., description="Network code"),
 ) -> List[APINetworkRegion]:
     network_id = network_code.upper()
 
