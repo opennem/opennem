@@ -14,15 +14,15 @@ from opennem.workers.gap_fill import run_energy_gapfill
 def run_tests() -> None:
     export_map = get_export_map()
 
-    # power = (
-    #     export_map.get_by_network_id("AU").get_by_stat_type(StatType.power)
-    #     # .get_by_network_region("NSW1")
-    #     # .get_by_priority(PriorityType.history)
-    #     .get_by_priority(PriorityType.live)
-    # )
+    power = (
+        export_map.get_by_network_id("WEM").get_by_stat_type(StatType.power)
+        # .get_by_network_region("NSW1")
+        # .get_by_priority(PriorityType.history)
+        .get_by_priority(PriorityType.live)
+    )
 
-    # export_power(power.resources)
-    # return None
+    export_power(power.resources)
+    return None
 
     # print(power.resources)
 
@@ -73,4 +73,5 @@ def fallback_runner() -> None:
 
 #
 if __name__ == "__main__":
-    fallback_runner()
+    run_tests()
+    # fallback_runner()
