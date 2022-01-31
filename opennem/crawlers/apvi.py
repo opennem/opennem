@@ -5,11 +5,13 @@
 import logging
 from datetime import datetime
 
-from opennem.clients.apvi import APVIForecastSet, get_apvi_rooftop_data
+import pytz
+
+from opennem.clients.apvi import get_apvi_rooftop_data
 from opennem.controllers.apvi import store_apvi_forecastset, update_apvi_facility_capacities
 from opennem.controllers.schema import ControllerReturn
 from opennem.crawlers.schema import CrawlerDefinition
-from opennem.utils.dates import date_series
+from opennem.utils.dates import chop_datetime_microseconds
 
 logger = logging.getLogger("opennem.crawlers.apvi")
 
@@ -26,12 +28,18 @@ def crawl_apvi_forecasts(
 
     update_apvi_facility_capacities(apvi_forecast_set)
 
-    cr.last_modified = datetime.now()
+    cr.last_modified = chop_datetime_microseconds(
+        datetime.now().astimezone(pytz.timezone("Australia/Sydney"))
+    )
 
     return cr
 
 
 if __name__ == "__main__":
     r = get_apvi_rooftop_data()
-    cr = store_apvi_forecastset(r)
-    print(cr)
+
+    if not r:
+        print("no result")
+    else:
+        cr = store_apvi_forecastset(r)
+        print(cr)
