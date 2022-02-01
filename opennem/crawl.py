@@ -202,6 +202,7 @@ APVIRooftopLatestCrawler = CrawlerDefinition(
     name="apvi.latest.data",
     limit=3,
     url="none",
+    latest=False,
     processor=crawl_apvi_forecasts,
 )
 
@@ -212,6 +213,7 @@ APVIRooftopMonthCrawler = CrawlerDefinition(
     name="apvi.month.data",
     limit=30,
     url="none",
+    latest=False,
     processor=crawl_apvi_forecasts,
 )
 
