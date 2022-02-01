@@ -66,8 +66,8 @@ def load_crawlers() -> CrawlerSet:
 
 def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False) -> None:
     logger.info(
-        "Crawling: {}. Latest: {}. Limit: {}. Last crawled: {}".format(
-            crawler.name, last_crawled, limit, crawler.server_latest
+        "Crawling: {}. Last Crawled: {}. Limit: {}. Last crawled: {}".format(
+            crawler.name, crawler.last_crawled, crawler.limit, crawler.server_latest
         )
     )
 
@@ -78,7 +78,7 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
     crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
 
     cr: Optional[ControllerReturn] = crawler.processor(
-        crawler=crawler, last_crawled=last_crawled, limit=limit
+        crawler=crawler, last_crawled=last_crawled, limit=crawler.limit
     )
 
     if not cr:
@@ -94,7 +94,7 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
         logger.error("Crawl controller error for {}: {}".format(crawler.name, cr.error_detail))
 
     if not has_errors:
-        crawler.last_processed = now_nem_time
+        crawler.last_processed = now_opennem_time
         crawler.server_latest = cr.server_latest
 
         crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, crawler.last_processed)
@@ -125,6 +125,7 @@ AEMONemDispatchISLatest = CrawlerDefinition(
     schedule=CrawlerSchedule.live,
     name="au.nem.current.dispatch_is",
     url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
+    latest=True,
     limit=3,
     processor=run_aemo_mms_crawl,
 )
@@ -134,9 +135,11 @@ AEMONEMDispatchScada = CrawlerDefinition(
     schedule=CrawlerSchedule.live,
     name="au.nem.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
+    latest=True,
     limit=3,
     processor=run_aemo_mms_crawl,
 )
+
 
 AEMONEMDispatchActualGEN = CrawlerDefinition(
     priority=CrawlerPriority.medium,
