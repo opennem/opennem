@@ -20,7 +20,7 @@ def run_aemo_mms_crawl(
     if not crawler.url:
         raise Exception("Require a URL to run AEMO MMS crawlers")
 
-    dirlisting = get_dirlisting(crawler.url)
+    dirlisting = get_dirlisting(crawler.url, timezone="Australia/Brisbane")
 
     if crawler.filename_filter:
         dirlisting.apply_filter(crawler.filename_filter)
