@@ -221,16 +221,13 @@ def get_apvi_rooftop_data(day: Optional[datetime] = None) -> Optional[APVIForeca
     if not day:
         day = get_today_opennem()
 
-    if isinstance(day, datetime):
-        day = day.date()
-
-    day = get_date_component(format_str=APVI_DATE_QUERY_FORMAT, dt=day)
+    day_string = get_date_component(format_str=APVI_DATE_QUERY_FORMAT, dt=day)
 
     apvi_endpoint_url = get_apvi_uri(today=False)
 
-    logger.info("Getting APVI data for day {} from {}".format(day, apvi_endpoint_url))
+    logger.info("Getting APVI data for day {} from {}".format(day_string, apvi_endpoint_url))
 
-    _resp = _apvi_request_session.get(apvi_endpoint_url)
+    _resp = _apvi_request_session.post(apvi_endpoint_url, data={"day": day_string})
 
     if not _resp.ok:
         logger.error("Invalid APVI Return: {}".format(_resp.status_code))
