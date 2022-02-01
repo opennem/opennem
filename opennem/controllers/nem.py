@@ -37,17 +37,28 @@ def unit_scada_generate_facility_scada(
     is_forecast: bool = False,
 ) -> List[Dict]:
     created_at = datetime.now()
-    # primary_
+    primary_keys = []
     return_records = []
 
     for row in records:
+
+        trading_interval = getattr(row, interval_field)
+        facility_code = getattr(row, facility_code_field)
+
+        pk = (trading_interval, network.code, facility_code)
+
+        if pk in primary_keys:
+            continue
+
+        primary_keys.append(pk)
+
         __rec = {
             "created_by": "opennem.controller",
             "created_at": created_at,
             "updated_at": None,
             "network_id": network.code,
-            "trading_interval": getattr(row, interval_field),
-            "facility_code": getattr(row, facility_code_field),
+            "trading_interval": trading_interval,
+            "facility_code": facility_code,
             "generated": getattr(row, power_field),
             "eoi_quantity": None,
             "is_forecast": is_forecast,
