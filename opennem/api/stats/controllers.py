@@ -11,7 +11,12 @@ from starlette import status
 
 from opennem.api.time import human_to_interval
 from opennem.db import get_database_engine
-from opennem.schema.network import NetworkSchema
+from opennem.schema.network import (
+    NetworkAEMORooftop,
+    NetworkAEMORooftopBackfill,
+    NetworkAPVI,
+    NetworkSchema,
+)
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
@@ -306,7 +311,7 @@ def get_scada_range(
         {facility_query}
         {network_query}
         {network_region_query}
-        f.fueltech_id not in ('solar_rooftop', 'imports', 'exports')
+        f.fueltech_id not in ({excluded_fueltechs})
         and f.interconnector is FALSE
         and fs.{field} is not null;
     """
@@ -315,9 +320,25 @@ def get_scada_range(
     timezone = network.timezone_database if network else "UTC"
     field_name = "generated"
 
-    # if energy is False and network and network.code in ["WEM"]:
-    # energy = True
+    # List of fueltechs to exclude from query
+    excluded_fueltechs: List[str] = ["imports", "exports"]
 
+    # If we don't have a rooftop network we exclude solar_rooftop from the query
+    # @TODO define the rooftop networks in the schema
+    exclude_rooftop = True
+
+    if network in [NetworkAPVI, NetworkAEMORooftop, NetworkAEMORooftopBackfill]:
+        exclude_rooftop = False
+
+    # Iterate through the list of networks provided
+    for net_exclude in [NetworkAPVI, NetworkAEMORooftop, NetworkAEMORooftopBackfill]:
+        if networks and net_exclude in networks:
+            exclude_rooftop = False
+
+    if exclude_rooftop:
+        excluded_fueltechs.append("solar_rooftop")
+
+    # Only check energy values
     if energy is True:
         field_name = "eoi_quantity"
 
@@ -350,6 +371,7 @@ def get_scada_range(
             network_query=network_query,
             network_region_query=network_region_query,
             timezone=timezone,
+            excluded_fueltechs=", ".join(["'{}'".format(i) for i in list(excluded_fueltechs)]),
         )
     )
 
