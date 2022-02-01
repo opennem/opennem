@@ -94,7 +94,8 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
         logger.error("Crawl controller error for {}: {}".format(crawler.name, cr.error_detail))
 
     if not has_errors:
-        crawler.last_processed = now_opennem_time
+        # get the time again so we can measure deltas
+        crawler.last_processed = get_today_opennem()
         crawler.server_latest = cr.server_latest
 
         crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, crawler.last_processed)
