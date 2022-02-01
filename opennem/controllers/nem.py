@@ -37,6 +37,7 @@ def unit_scada_generate_facility_scada(
     is_forecast: bool = False,
 ) -> List[Dict]:
     created_at = datetime.now()
+    # primary_
     return_records = []
 
     for row in records:
@@ -68,7 +69,7 @@ def generate_balancing_summary(
     limit: int = 0,
 ) -> List[Dict]:
     created_at = datetime.now()
-    # primary_keys = []
+    primary_keys = []
     return_records = []
 
     created_by = ""
@@ -84,6 +85,13 @@ def generate_balancing_summary(
 
         if network_region_field and network_region_field in row:
             network_region = row[network_region_field]
+
+        pk = (trading_interval, network.code, network_region)
+
+        if pk in primary_keys:
+            continue
+
+        primary_keys.append(pk)
 
         price = None
 
@@ -362,7 +370,7 @@ def process_unit_scada(table: AEMOTableSchema) -> ControllerReturn:
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
+    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])  # type: ignore
     cr.server_latest = max([i["trading_interval"] for i in records])
 
     return cr
