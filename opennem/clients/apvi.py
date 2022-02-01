@@ -93,6 +93,7 @@ class APVIForecastInterval(BaseConfig):
     state: str
     facility_code: Optional[str]
     generated: Optional[float]
+    eoi_quantity: Optional[float]
 
     _validate_state = validator("state", pre=True, allow_reuse=True)(lambda x: x.strip().upper())
 
@@ -118,6 +119,17 @@ class APVIForecastInterval(BaseConfig):
         state = values["state"]
 
         return "{}_{}_{}".format(ROOFTOP_CODE, APVI_NETWORK_CODE, state.upper())
+
+    @validator("eoi_quantity", always=True, pre=True)
+    def _validate_eoi_quantity(cls, value: Any, values: Dict[str, Any]) -> Optional[float]:
+        """Calculates energy value"""
+        generated = values["generated"]
+        energy_quantity: Optional[float] = None
+
+        if generated and is_number(generated):
+            energy_quantity = float(generated) / 4
+
+        return energy_quantity
 
 
 class APVIStateRooftopCapacity(BaseConfig):
