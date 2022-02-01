@@ -68,7 +68,11 @@ def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> Optional[Union[s
 
     _val = spider_meta.data[key.value]
 
-    if key in [CrawlStatTypes.latest_processed, CrawlStatTypes.last_crawled]:
+    if key in [
+        CrawlStatTypes.latest_processed,
+        CrawlStatTypes.last_crawled,
+        CrawlStatTypes.server_latest,
+    ]:
         _val_processed = datetime.fromisoformat(_val)
         return _val_processed
 
