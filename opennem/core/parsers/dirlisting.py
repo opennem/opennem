@@ -17,7 +17,7 @@ from datetime import datetime
 from enum import Enum
 from operator import attrgetter
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Pattern, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import ValidationError, validator
 from scrapy.http import HtmlResponse
