@@ -23,7 +23,7 @@ from opennem.core.networks import (
     NetworkWEM,
     network_from_network_code,
 )
-from opennem.db import SessionLocal
+from opennem.db import get_scoped_session
 from opennem.db.models.opennem import Network
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill
 from opennem.schema.time import TimeInterval, TimePeriod
@@ -191,7 +191,7 @@ def get_weekly_export_map() -> StatMetadata:
     @TODO deconstruct this into separate methods and schema
     ex. network.get_scada_range(), network_region.get_bom_station() etc.
     """
-    session = SessionLocal()
+    session = get_scoped_session()
 
     networks = session.query(Network).filter(Network.export_set.is_(True)).all()
 
@@ -300,7 +300,7 @@ def get_export_map() -> StatMetadata:
     Generates a map of all export JSONs
 
     """
-    session = SessionLocal()
+    session = get_scoped_session()
 
     networks = session.query(Network).filter(Network.export_set.is_(True)).all()
 

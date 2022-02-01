@@ -7,7 +7,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from opennem.clients.bom import BOMObservationReturn
 from opennem.controllers.schema import ControllerReturn
-from opennem.db import SessionLocal, get_database_engine
+from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.models.opennem import BomObservation
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 def store_bom_observation_intervals(observations: BOMObservationReturn) -> ControllerReturn:
     """Store BOM Observations"""
 
-    session = SessionLocal()
+    session = get_scoped_session()
     engine = get_database_engine()
 
     cr = ControllerReturn(total_records=len(observations.observations))

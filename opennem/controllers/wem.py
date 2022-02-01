@@ -8,7 +8,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from opennem.clients.wem import WEMBalancingSummarySet, WEMFacilityIntervalSet
 from opennem.controllers.schema import ControllerReturn
-from opennem.db import SessionLocal, get_database_engine
+from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> ControllerReturn:
     """Persist wem balancing set to the database"""
     engine = get_database_engine()
-    session = SessionLocal()
+    session = get_scoped_session()
     cr = ControllerReturn()
 
     records_to_store = []
@@ -81,7 +81,7 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
 def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> ControllerReturn:
     """Persist WEM facility intervals"""
     engine = get_database_engine()
-    session = SessionLocal()
+    session = get_scoped_session()
     cr = ControllerReturn()
 
     records_to_store = []

@@ -14,7 +14,7 @@ from opennem.controllers.schema import ControllerReturn
 from opennem.core.networks import NetworkNEM
 from opennem.core.normalizers import clean_float
 from opennem.core.parsers.aemo.mms import AEMOTableSchema, AEMOTableSet
-from opennem.db import SessionLocal, get_database_engine
+from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.bulk_insert_csv import bulkinsert_mms_items
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
@@ -134,7 +134,7 @@ def generate_balancing_summary(
 
 
 def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerReturn:
-    session = SessionLocal()
+    session = get_scoped_session()
     engine = get_database_engine()
 
     cr = ControllerReturn(total_records=len(table.records))
@@ -179,7 +179,7 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
 
 
 def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
-    session = SessionLocal()
+    session = get_scoped_session()
     engine = get_database_engine()
 
     cr = ControllerReturn(total_records=len(table.records))
@@ -237,7 +237,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
 
 def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
-    session = SessionLocal()
+    session = get_scoped_session()
     engine = get_database_engine()
 
     cr = ControllerReturn(total_records=len(table.records))
@@ -287,7 +287,7 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
 
 
 def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
-    session = SessionLocal()
+    session = get_scoped_session()
     engine = get_database_engine()
 
     if "records" not in table:

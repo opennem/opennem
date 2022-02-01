@@ -37,7 +37,7 @@ from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
-from opennem.db import SessionLocal
+from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
 from opennem.diff.versions import get_network_regions
 from opennem.schema.dates import TimeSeries
@@ -335,7 +335,7 @@ def export_energy(
 
 
 def export_all_monthly() -> None:
-    session = SessionLocal()
+    session = get_scoped_session()
 
     all_monthly = OpennemDataSet(
         code="au", data=[], version=get_version(), created_at=datetime.now()
@@ -435,7 +435,7 @@ def export_all_daily(
     networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM],
     network_region_code: Optional[str] = None,
 ) -> None:
-    session = SessionLocal()
+    session = get_scoped_session()
 
     cpi = gov_stats_cpi()
 

@@ -9,7 +9,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, Optional, Union
 
-from opennem.db import SessionLocal
+from opennem.db import get_scoped_session
 from opennem.db.models.opennem import CrawlMeta
 
 logger = logging.getLogger("opennem.spider.meta")
@@ -38,7 +38,7 @@ class CrawlStatTypes(Enum):
 
 def crawler_get_all_meta(crawler_name: str) -> Optional[Dict[str, Any]]:
     """Get crawler metadata by crawler name"""
-    session = SessionLocal()
+    session = get_scoped_session()
 
     spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
 
@@ -53,7 +53,7 @@ def crawler_get_all_meta(crawler_name: str) -> Optional[Dict[str, Any]]:
 
 def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> Optional[Union[str, datetime]]:
     """Crawler get specific stat type from metadata for crawler name"""
-    session = SessionLocal()
+    session = get_scoped_session()
 
     spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
 
@@ -77,7 +77,7 @@ def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> Optional[Union[s
 
 def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None:
     """Set a crawler metadata stat type by name"""
-    session = SessionLocal()
+    session = get_scoped_session()
 
     if key == CrawlStatTypes.latest_processed:
         current_value = crawler_get_meta(crawler_name, key)

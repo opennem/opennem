@@ -75,6 +75,13 @@ SessionLocal = scoped_session(
     sessionmaker(autocommit=False, autoflush=False, bind=get_database_engine())
 )
 
+
+def get_scoped_session():
+    return scoped_session(
+        sessionmaker(autocommit=False, autoflush=False, bind=get_database_engine())
+    )()
+
+
 SessionAutocommit = sessionmaker(bind=get_database_engine(), autocommit=True, autoflush=True)
 
 

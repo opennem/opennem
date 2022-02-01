@@ -5,7 +5,7 @@ from fastapi import Security
 from fastapi.security.api_key import APIKeyCookie, APIKeyHeader, APIKeyQuery
 
 from opennem.core.validators.security import validate_api_key
-from opennem.db import SessionLocal
+from opennem.db import get_scoped_session
 from opennem.db.models.opennem import ApiKeys
 from opennem.settings import settings
 
@@ -30,7 +30,7 @@ api_key_cookie = APIKeyCookie(name=APP_AUTH_COOKIE_NAME, auto_error=False)
 
 def get_api_key_record(api_key: str) -> AuthApiKeyRecord:
     """Get an API Key record from the database"""
-    session = SessionLocal()
+    session = get_scoped_session()
 
     try:
         api_key = validate_api_key(api_key)

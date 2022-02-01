@@ -9,7 +9,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from opennem.clients.apvi import APVIForecastSet
 from opennem.controllers.schema import ControllerReturn
-from opennem.db import SessionLocal, get_database_engine
+from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.models.opennem import Facility, FacilityScada
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerReturn:
     """Persist an APVI forecast set to the database"""
     engine = get_database_engine()
-    session = SessionLocal()
+    session = get_scoped_session()
     cr = ControllerReturn()
 
     records_to_store = []
@@ -64,7 +64,7 @@ def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerReturn:
 
 def update_apvi_facility_capacities(forecast_set: APVIForecastSet) -> None:
     """Updates facility capacities for APVI rooftops"""
-    session = SessionLocal()
+    session = get_scoped_session()
 
     if not forecast_set.capacities:
         return None
