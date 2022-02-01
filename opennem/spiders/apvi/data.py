@@ -2,6 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any, Dict, Generator
 
+import pytz
 import scrapy
 
 from opennem.pipelines.apvi.data import APVIStoreData
@@ -12,6 +13,8 @@ logger = logging.getLogger(__name__)
 APVI_DATA_URI = "https://pv-map.apvi.org.au/data"
 
 TODAY = datetime.now().date()
+
+TODAY_NEM = datetime.now().astimezone(pytz.timezone("Australia/Brisbane"))
 
 YESTERDAY = TODAY - timedelta(days=1)
 
