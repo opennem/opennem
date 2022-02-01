@@ -19,7 +19,9 @@ logger = logging.getLogger("opennem.crawlers.apvi")
 def crawl_apvi_forecasts(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False
 ) -> ControllerReturn:
-    apvi_forecast_set = get_apvi_rooftop_data()
+
+    if not crawler.limit or crawler.limit == 1:
+        apvi_forecast_set = get_apvi_rooftop_data()
 
     if not apvi_forecast_set:
         raise Exception("Could not get APVI forecast set")
