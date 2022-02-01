@@ -173,7 +173,7 @@ class DirectoryListing(BaseConfig):
 
             modified_since = list(
                 filter(
-                    lambda x: x.modified_date.astimezone(pytz.timezone(self.timezone))
+                    lambda x: x.modified_date.replace(tzinfo=pytz.timezone(self.timezone))
                     > modified_date,
                     self.get_files(),
                 )
