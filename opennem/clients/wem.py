@@ -276,7 +276,13 @@ def get_wem_live_balancing_summary() -> WEMBalancingSummarySet:
 
     _models = parse_wem_live_balancing_summary(resp)
 
-    server_latest: Optional[datetime] = max([i.trading_day_interval for i in _models])
+    server_latest: Optional[datetime] = max(
+        [
+            i.trading_day_interval
+            for i in _models
+            if i.forecast_eoi_mw is None and i.forecast_mw is None
+        ]
+    )
 
     wem_set = WEMBalancingSummarySet(
         crawled_at=datetime.now(),
@@ -296,7 +302,13 @@ def get_wem_balancing_summary() -> WEMBalancingSummarySet:
 
     _models = parse_wem_balancing_summary(resp)
 
-    server_latest: Optional[datetime] = max([i.trading_day_interval for i in _models])
+    server_latest: Optional[datetime] = max(
+        [
+            i.trading_day_interval
+            for i in _models
+            if i.forecast_eoi_mw is None and i.forecast_mw is None
+        ]
+    )
 
     wem_set = WEMBalancingSummarySet(
         crawled_at=datetime.now(),
