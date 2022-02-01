@@ -31,8 +31,6 @@ def load_crawlers() -> CrawlerSet:
         if isinstance(globals()[i], CrawlerDefinition):
             _crawler_inst = globals()[i]
 
-            logger.debug("Found crawler definition: {}".format(i))
-
             _meta = crawler_get_all_meta(_crawler_inst.name)
 
             if not _meta:
@@ -59,7 +57,9 @@ def load_crawlers() -> CrawlerSet:
 
     cs = CrawlerSet(crawlers=_crawlers)
 
-    logger.debug("Loaded {} crawlers".format(len(cs.crawlers)))
+    logger.debug(
+        "Loaded {} crawlers: {}".format(len(cs.crawlers), ", ".join([i.name for i in cs.crawlers]))
+    )
 
     return cs
 
@@ -192,6 +192,7 @@ APVIRooftopTodayCrawler = CrawlerDefinition(
     schedule=CrawlerSchedule.frequent,
     name="apvi.today.data",
     url="none",
+    latest=True,
     processor=crawl_apvi_forecasts,
 )
 
