@@ -360,3 +360,8 @@ def get_last_complete_day_for_network(network: NetworkSchema) -> datetime:
 def unix_timestamp_to_aware_datetime(timestamp: int, timezone: str) -> datetime:
     """Convert a unix timstamp to an aware datetime"""
     return pytz.timezone(timezone).localize(datetime.fromtimestamp(timestamp))
+
+
+def get_today_nem() -> datetime:
+    """Gets today in NEM time"""
+    return datetime.now().astimezone(pytz.timezone("Australia/Brisbane"))
