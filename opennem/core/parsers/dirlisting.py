@@ -161,7 +161,9 @@ class DirectoryListing(BaseConfig):
         return _entries[:limit]
 
     def get_files_modified_since(self, modified_date: datetime) -> List[DirlistingEntry]:
-        return list(filter(lambda x: x.modified_date > modified_date, self.get_files()))
+        modified_since = list(filter(lambda x: x.modified_date > modified_date, self.get_files()))
+
+        return modified_since
 
 
 def parse_dirlisting_line(dirlisting_line: str) -> Optional[DirlistingEntry]:
@@ -211,4 +213,4 @@ def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing
 
     listing_model = DirectoryListing(url=url, timezone=timezone, entries=_dirlisting_models)
 
-    return model
+    return listing_model
