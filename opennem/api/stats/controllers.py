@@ -394,8 +394,9 @@ def get_scada_range(
         return None
 
     # set network timezone since that is what we're querying
-    scada_min = scada_min.replace(tzinfo=network.get_fixed_offset())
-    scada_max = scada_max.replace(tzinfo=network.get_fixed_offset())
+    if network and network.get_fixed_offset():
+        scada_min = scada_min.replace(tzinfo=network.get_fixed_offset())
+        scada_max = scada_max.replace(tzinfo=network.get_fixed_offset())
 
     scada_range = ScadaDateRange(start=scada_min, end=scada_max, network=network)
 
