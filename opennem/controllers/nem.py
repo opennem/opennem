@@ -164,6 +164,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
     cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
+    primary_keys = []
 
     price_field = "price"
 
@@ -171,6 +172,13 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         price_field = "price_dispatch"
 
     for record in table.records:
+        primary_key = set([record.settlementdate, record.regionid])
+
+        if primary_key in primary_keys:
+            continue
+
+        primary_keys.append(primary_key)
+
         records_to_store.append(
             {
                 "network_id": "NEM",
