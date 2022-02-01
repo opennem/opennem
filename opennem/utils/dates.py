@@ -28,7 +28,13 @@ DATE_FORMATS = [
 ]
 
 DATE_CURRENT = datetime.now()
+
+TODAY = datetime.now().date()
+
+TODAY_NEM = datetime.now().astimezone(pytz.timezone("Australia/Brisbane"))
+
 DATE_YESTERDAY = DATE_CURRENT - timedelta(days=1)
+
 DATE_CURRENT_YEAR = DATE_CURRENT.year
 
 
