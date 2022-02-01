@@ -203,9 +203,6 @@ def _energy_aggregate_hours(df: pd.DataFrame) -> pd.DataFrame:
 
     hours = list(get_hour_range(df))
 
-    if len(hours) == 0:
-        logger.error("Got no hours from hour range")
-
     for hour in hours:
         logger.info("Running for hour: {}".format(hour))
         for duid in sorted(df.facility_code.unique()):
@@ -338,6 +335,13 @@ def energy_sum(
     if network in COMPAT_NETWORKS:
         df = df.set_index(["trading_interval"])
         if hours:
+            if len(list(get_hour_range(df))) == 0:
+                logger.error(
+                    "energy_sum error for network {}: Got no hours from hour range".format(
+                        network.code
+                    )
+                )
+
             df = _energy_aggregate_hours(df)
         else:
             df = _energy_aggregate(df)
