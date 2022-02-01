@@ -102,6 +102,7 @@ class WEMBalancingSummarySet(BaseConfig):
     live: bool = True
     intervals: List[WEMBalancingSummaryInterval]
     source_url: Optional[str]
+    server_latest: Optional[datetime]
 
     @property
     def count(self) -> int:
@@ -275,10 +276,13 @@ def get_wem_live_balancing_summary() -> WEMBalancingSummarySet:
 
     _models = parse_wem_live_balancing_summary(resp)
 
+    server_latest: Optional[datetime] = max([i.trading_day_interval for i in _models])
+
     wem_set = WEMBalancingSummarySet(
         crawled_at=datetime.now(),
         live=True,
         source_url=_AEMO_WEM_LIVE_BALANCING_URL,
+        server_latest=server_latest,
         intervals=_models,
     )
 
@@ -292,10 +296,13 @@ def get_wem_balancing_summary() -> WEMBalancingSummarySet:
 
     _models = parse_wem_balancing_summary(resp)
 
+    server_latest: Optional[datetime] = max([i.trading_day_interval for i in _models])
+
     wem_set = WEMBalancingSummarySet(
         crawled_at=datetime.now(),
         live=True,
         source_url=_AEMO_WEM_LIVE_BALANCING_URL,
+        server_latest=server_latest,
         intervals=_models,
     )
 

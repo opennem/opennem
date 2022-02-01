@@ -26,6 +26,7 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
         return cr
 
     cr.total_records = len(balancing_set.intervals)
+    cr.server_latest = balancing_set.server_latest
 
     for _rec in balancing_set.intervals:
         records_to_store.append(
