@@ -33,6 +33,7 @@ class CrawlerDefinition(BaseConfig):
     url: Optional[str]
     limit: Optional[int]
     filename_filter: Optional[str]
+    latest: bool = False
 
     priority: CrawlerPriority
     schedule: Optional[CrawlerSchedule]
