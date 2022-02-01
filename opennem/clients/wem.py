@@ -279,17 +279,13 @@ def get_wem_live_balancing_summary() -> WEMBalancingSummarySet:
     server_latest: Optional[datetime] = None
 
     all_trading_intervals = list(
-        set(
-            [
-                i.trading_day_interval
-                for i in _models
-                if i.forecast_eoi_mw is None and i.forecast_mw is None
-            ]
-        )
+        set([i.trading_day_interval for i in _models if i.price is not None])
     )
 
     if all_trading_intervals:
         server_latest = max(all_trading_intervals)
+    else:
+        logger.info("No trading intervals for in wem live balancing")
 
     wem_set = WEMBalancingSummarySet(
         crawled_at=datetime.now(),
