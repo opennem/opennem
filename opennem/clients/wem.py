@@ -165,6 +165,7 @@ class WEMFacilityIntervalSet(BaseConfig):
     live: bool = True
     intervals: List[WEMGenerationInterval]
     source_url: Optional[str]
+    server_latest: Optional[datetime]
 
     @property
     def count(self) -> int:
@@ -360,11 +361,14 @@ def get_wem_live_facility_intervals() -> WEMFacilityIntervalSet:
     content = wem_downloader(_AEMO_WEM_LIVE_SCADA_URL)
     _models = parse_wem_facility_intervals(content)
 
+    server_latest = max([i.trading_interval for i in _models])
+
     wem_set = WEMFacilityIntervalSet(
         crawled_at=datetime.now(),
         live=True,
         intervals=_models,
         source_url=_AEMO_WEM_LIVE_SCADA_URL,
+        server_latest=server_latest,
     )
 
     return wem_set
@@ -389,8 +393,14 @@ def get_wem_facility_intervals(from_date: Optional[datetime] = None) -> WEMFacil
 
     _models = parse_wem_facility_intervals(content)
 
+    server_latest: Optional[datetime] = max([i.trading_interval for i in _models])
+
     wem_set = WEMFacilityIntervalSet(
-        crawled_at=datetime.now(), live=False, source_url=_AEMO_WEM_SCADA_URL, intervals=_models
+        crawled_at=datetime.now(),
+        live=False,
+        source_url=_AEMO_WEM_SCADA_URL,
+        intervals=_models,
+        server_latest=server_latest,
     )
 
     return wem_set

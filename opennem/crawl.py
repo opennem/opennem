@@ -87,11 +87,6 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
     # run here
     has_errors = False
 
-    logger.debug("crawler server latest: {}".format(crawler.server_latest))
-
-    if cr.server_latest:
-        crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, crawler.server_latest)
-
     logger.info("Inserted {} of {} records".format(cr.inserted_records, cr.total_records))
 
     if cr.errors > 0:
@@ -103,6 +98,11 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
         crawler.server_latest = cr.server_latest
 
         crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, crawler.last_processed)
+
+        if cr.server_latest:
+            crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, crawler.server_latest)
+        else:
+            logger.debug("{} has no server_latest return".format(crawler.name))
 
         logger.info(
             "Set last_proceesed to {} and server_latest to {}".format(
