@@ -138,6 +138,14 @@ AEMONEMDispatchScada = CrawlerDefinition(
     processor=run_aemo_mms_crawl,
 )
 
+AEMONEMCurrentDispatchScada = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.four_times_a_day,
+    name="au.nem.current.dispatch_scada",
+    url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
+    latest=False,
+    processor=run_aemo_mms_crawl,
+)
 
 AEMONEMDispatchActualGEN = CrawlerDefinition(
     priority=CrawlerPriority.medium,
