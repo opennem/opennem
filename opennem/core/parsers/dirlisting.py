@@ -126,6 +126,7 @@ class DirlistingEntry(BaseConfig):
 
 class DirectoryListing(BaseConfig):
     url: str
+    timezone: Optional[str]
     entries: List[DirlistingEntry] = []
 
     @property
@@ -186,7 +187,7 @@ def parse_dirlisting_line(dirlisting_line: str) -> Optional[DirlistingEntry]:
     return model
 
 
-def get_dirlisting(url: str) -> DirectoryListing:
+def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing:
     """Parse a directory listng into a list of DirlistingEntry models"""
     dirlisting_content = url_downloader(url)
 
@@ -208,6 +209,6 @@ def get_dirlisting(url: str) -> DirectoryListing:
 
             _dirlisting_models.append(model)
 
-    model = DirectoryListing(url=url, entries=_dirlisting_models)
+    listing_model = DirectoryListing(url=url, timezone=timezone, entries=_dirlisting_models)
 
     return model
