@@ -23,6 +23,8 @@ logger = logging.getLogger(__name__)
 
 APVI_DATA_URI = "https://pv-map.apvi.org.au/data"
 
+APVI_API_URL = "https://pv-map.apvi.org.au/api/v2/2-digit/today.json"
+
 APVI_NETWORK_CODE = "APVI"
 
 APVI_DATE_QUERY_FORMAT = "%Y-%m-%d"
