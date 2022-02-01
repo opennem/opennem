@@ -1,3 +1,4 @@
+# pylint: disable=no-self-argument
 """OpenNEM Directory Listing Parser
 
 Used to parse default http server directory listings and returns a list of file
