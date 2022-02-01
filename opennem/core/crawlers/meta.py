@@ -79,7 +79,7 @@ def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None
     """Set a crawler metadata stat type by name"""
     session = get_scoped_session()
 
-    if key == CrawlStatTypes.latest_processed:
+    if key == CrawlStatTypes.server_latest:
         current_value = crawler_get_meta(crawler_name, key)
 
         try:
