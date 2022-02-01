@@ -154,6 +154,8 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
         engine.dispose()
 
     cr.inserted_records = cr.processed_records
+    cr.server_latest = max([i["trading_interval"] for i in records_to_store])
+
     return cr
 
 
@@ -210,6 +212,8 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         engine.dispose()
 
     cr.inserted_records = cr.processed_records
+    cr.server_latest = max([i["trading_interval"] for i in records_to_store])
+
     return cr
 
 
@@ -258,6 +262,8 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         engine.dispose()
 
     cr.inserted_records = cr.processed_records
+    cr.server_latest = max([i["trading_interval"] for i in records_to_store])
+
     return cr
 
 
@@ -357,6 +363,7 @@ def process_unit_scada(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
+    cr.server_latest = max([i["trading_interval"] for i in records])
 
     return cr
 
@@ -373,6 +380,7 @@ def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
+    cr.server_latest = max([i["trading_interval"] for i in records])
 
     return cr
 
@@ -389,6 +397,7 @@ def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
+    cr.server_latest = max([i["trading_interval"] for i in records])
 
     return cr
 
@@ -409,6 +418,7 @@ def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
+    cr.server_latest = max([i["trading_interval"] for i in records])
 
     return cr
 
@@ -417,7 +427,7 @@ def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
     records = unit_scada_generate_facility_scada(
-        table.records,
+        table.records,  # type: ignore
         interval_field="interval_datetime",
         facility_code_field="regionid",
         power_field="powermean",
@@ -429,7 +439,8 @@ def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
     records = [i for i in records if i]
 
     cr.processed_records = len(records)
-    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
+    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])  # type: ignore
+    cr.server_latest = max([i["trading_interval"] for i in records])
 
     return cr
 
