@@ -72,10 +72,10 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
     )
 
     #
-    now_nem_time = get_today_opennem()
+    now_opennem_time = get_today_opennem()
 
     crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
-    crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_nem_time)
+    crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
 
     cr: Optional[ControllerReturn] = crawler.processor(
         crawler=crawler, last_crawled=last_crawled, limit=limit
