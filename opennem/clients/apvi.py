@@ -13,22 +13,18 @@ import requests
 from pydantic import validator
 
 from opennem import settings
+from opennem.core.normalizers import is_number
 from opennem.importer.rooftop import ROOFTOP_CODE
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
-from opennem.utils.dates import (
-    chop_datetime_microseconds,
-    get_date_component,
-    get_today_opennem,
-    parse_date,
-)
+from opennem.utils.dates import get_date_component, get_today_opennem, parse_date
 from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
 
 APVI_DATA_URI = "https://pv-map.apvi.org.au/data"
 
-APVI_API_URL = "https://pv-map.apvi.org.au/api/v2/2-digit/today.json"
+APVI_API_TODAY_URL = "https://pv-map.apvi.org.au/api/v2/2-digit/today.json"
 
 APVI_NETWORK_CODE = "APVI"
 
@@ -36,6 +32,7 @@ APVI_DATE_QUERY_FORMAT = "%Y-%m-%d"
 
 APVI_EARLIEST_DATE = "2013-05-07"
 
+# @TODO remove this eventually
 STATE_POSTCODE_PREFIXES = {
     "NSW": "2",
     "VIC": "3",
@@ -46,12 +43,37 @@ STATE_POSTCODE_PREFIXES = {
     "NT": "0",
 }
 
+POSTCODE_STATE_PREFIXES = {
+    "2": "NSW",
+    "3": "VIC",
+    "4": "QLD",
+    "5": "SA",
+    "6": "WA",
+    "7": "TAS",
+    "0": "NT",
+}
+
 WA_NON_SWIS = ["66", "67"]
 
 
-def get_apvi_uri() -> str:
+def get_state_for_prefix(prefix: str) -> str:
+    """Returns a state for a prefix"""
+    if not is_number(prefix):
+        raise Exception("get_state_for_prefix: {} is not a number".format(prefix))
+
+    if prefix[:1] not in POSTCODE_STATE_PREFIXES.keys():
+        raise Exception("get_state_for_prefix: could not find state for prefix {}".format(prefix))
+
+    return POSTCODE_STATE_PREFIXES[prefix[:1]]
+
+
+def get_apvi_uri(today: bool = True) -> str:
     """Get the APVI URL and set token from config"""
     url = APVI_DATA_URI
+
+    if today:
+        url = APVI_API_TODAY_URL
+
     params = {}
 
     url_parts = list(urlparse.urlparse(url))
@@ -123,15 +145,89 @@ _apvi_request_session = requests.Session()
 _apvi_request_session.headers.update({"User-Agent": f"OpenNEM/{get_version()}"})
 
 
+def get_apvi_rooftop_today() -> Optional[APVIForecastSet]:
+    """Gets today APVI data and returns a set"""
+
+    apvi_endpoint_url = get_apvi_uri(today=True)
+
+    _resp = _apvi_request_session.get(apvi_endpoint_url)
+
+    if not _resp.ok:
+        logger.error("Invalid APVI Return: {}".format(_resp.status_code))
+        return None
+
+    _resp_json = None
+
+    try:
+        _resp_json = _resp.json()
+    except JSONDecodeError as e:
+        logger.error("Error decoding APVI response: {}".format(e))
+        return None
+
+    _required_keys = ["capacity", "performance", "output"]
+
+    for _req_key in _required_keys:
+        if _req_key not in _resp_json:
+            logger.error(f"Invalid APVI response: {_req_key} field not found")
+            return None
+
+    # capacity = _resp_json["capacity"]
+    # performance = _resp_json["performance"]
+    output = _resp_json["output"]
+
+    _run_at = get_today_opennem()
+
+    record_set = {}
+
+    for postcode_prefix, time_records in output.items():
+        # Skip WA that is non-SWIS
+        if postcode_prefix in WA_NON_SWIS:
+            continue
+
+        state = get_state_for_prefix(postcode_prefix)
+
+        if state not in record_set:
+            record_set[state] = {}
+
+        for trading_interval, generated in time_records.items():
+            if trading_interval not in record_set[state]:
+                record_set[state][trading_interval] = 0
+
+            record_set[state][trading_interval] += generated
+
+    interval_models = []
+
+    for state, interval_records in record_set.items():
+        for trading_interval, generated in interval_records.items():
+            interval_models.append(
+                APVIForecastInterval(
+                    **{
+                        "network_id": "APVI",
+                        "trading_interval": trading_interval,
+                        "state": state,
+                        "generated": generated,
+                    }
+                )
+            )
+
+    apvi_forecast_set = APVIForecastSet(crawled=_run_at, intervals=interval_models)
+
+    return apvi_forecast_set
+
+
 def get_apvi_rooftop_data(day: Optional[datetime] = None) -> Optional[APVIForecastSet]:
     """Obtains and parses APVI forecast data"""
-    day = get_date_component(format_str=APVI_DATE_QUERY_FORMAT, dt=day)
 
-    apvi_endpoint_url = get_apvi_uri()
+    if not day:
+        day = get_today_opennem()
+
+    day = get_date_component(format_str=APVI_DATE_QUERY_FORMAT, dt=day.date())
+
+    apvi_endpoint_url = get_apvi_uri(today=False)
 
     logger.info("Getting APVI data for day {} from {}".format(day, apvi_endpoint_url))
 
-    _resp = _apvi_request_session.post(apvi_endpoint_url, data={"day": day})
+    _resp = _apvi_request_session.get(apvi_endpoint_url)
 
     if not _resp.ok:
         logger.error("Invalid APVI Return: {}".format(_resp.status_code))
@@ -222,7 +318,7 @@ def get_apvi_rooftop_data(day: Optional[datetime] = None) -> Optional[APVIForeca
 
 
 if __name__ == "__main__":
-    cr = get_apvi_rooftop_data()
+    cr = get_apvi_rooftop_today()
 
     if not cr:
         raise Exception("Invalid APVI Data")
