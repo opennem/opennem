@@ -19,7 +19,7 @@ Currently supports:
 
 ## Requirements
 
- * Python 3.7+ (see `.python-version` with `pyenv`)
+ * Python 3.9+ (see `.python-version` with `pyenv`)
  * Docker and `docker-compose` if you want to run the local dev stack
 
 ## Quickstart
@@ -81,13 +81,13 @@ The list of extras are:
 List the crawlers
 
 ```sh
-$ scrapy list
+$ opennem crawl list
 ```
 
 Crawl
 
 ```sh
-$ scrapy crawl au.nem.current.dispatch_scada
+$ opennem crawl run au.nem.current.dispatch_scada
 ```
 
 ## Development
@@ -140,12 +140,6 @@ Bring up the database migrations using alembic:
 $ alembic upgrade head
 ```
 
-Run scrapy in the root folder for options:
-
-```sh
-$ scrapy
-```
-
 The `opennem` cli interface provides other options and settings:
 
 ```sh
@@ -175,36 +169,10 @@ $ ptw
 The script `build-release.sh` will tag a new release, build the docker image, tag the git version, push to GitHub and push the latest
 release to PyPi
 
-
-## Architecture overview
-
-This project uses [Scrapy](https://scrapy.org/) to obtain data from supported energy markets and [SQLAlchemy](https://www.sqlalchemy.org/) to store data, and [Alembic](https://alembic.sqlalchemy.org/en/latest/) for database migrations. Database storage has been tested with sqlite, postgres and mysql.
-
-Overview of scrapy architecture:
-
-![](https://docs.scrapy.org/en/latest/_images/scrapy_architecture_02.png)
-
 ## Code Navigation
 
-* Spider definitions in `opennem/spiders`
-* Processing pipelines for crawls in `opennem/pipelines`
 * Database models for supported energy markets are stored in `opennem/db/models`
-
-## Deploy Crawlers
-
-You can deploy the crawlers to the scrapyd server with:
-
-```sh
-$ scrapyd-deploy
-```
-
-If you don't have that command and it isn't available install it with:
-
-```sh
-$ pip install scrapyd-client
-```
-
-Which installs the [scrapyd-client](https://github.com/scrapy/scrapyd-client) tools. Project settings are read from `scrapy.cfg`
+* API intercace at `opennem/api`
 
 # Notebooks
 
