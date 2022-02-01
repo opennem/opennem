@@ -252,7 +252,7 @@ def chop_timezone(dt: datetime) -> Optional[datetime]:
     return dt.replace(tzinfo=None)
 
 
-def get_date_component(format_str: str, dt: datetime = None) -> str:
+def get_date_component(format_str: str, dt: datetime = None, tz: str = "UTC") -> str:
     """
     Get the format string part out of a date
 
@@ -260,9 +260,18 @@ def get_date_component(format_str: str, dt: datetime = None) -> str:
     >>> get_date_component("%Y")
     > 2020
     """
-    if dt:
-        return dt.strftime(format_str)
-    return datetime.now().strftime(format_str)
+    if not dt:
+        dt = DATE_CURRENT
+
+    if tz:
+        try:
+            dt = dt.astimezone(pytz.timezone(tz))
+        except Exception:
+            logger.error("Invalid timezone {}".format(tz))
+
+    date_str_component = dt.strftime(format_str)
+
+    return date_str_component
 
 
 def subtract_week(subject: datetime) -> datetime:
