@@ -82,9 +82,6 @@ def get_scoped_session():
     )()
 
 
-SessionAutocommit = sessionmaker(bind=get_database_engine(), autocommit=True, autoflush=True)
-
-
 def get_database_session() -> Generator[sessionmaker, None, None]:
     """
     Gets a database session
