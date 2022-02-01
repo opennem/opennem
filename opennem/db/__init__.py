@@ -62,11 +62,20 @@ def db_connect(
         raise exc
 
 
-engine = db_connect()
+def get_database_engine() -> Engine:
+    """
+    Gets a database engine connection
 
-SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+    """
+    _engine = db_connect()
+    return _engine
 
-SessionAutocommit = sessionmaker(bind=engine, autocommit=True, autoflush=True)
+
+SessionLocal = scoped_session(
+    sessionmaker(autocommit=False, autoflush=False, bind=get_database_engine())
+)
+
+SessionAutocommit = sessionmaker(bind=get_database_engine(), autocommit=True, autoflush=True)
 
 
 def get_database_session() -> Generator[sessionmaker, None, None]:
@@ -84,15 +93,3 @@ def get_database_session() -> Generator[sessionmaker, None, None]:
     finally:
         if s:
             s.close()
-
-
-def get_database_engine() -> Engine:
-    """
-    Gets a database engine connection
-
-    """
-    _engine = db_connect()
-    return _engine
-
-
-engine.dispose()
