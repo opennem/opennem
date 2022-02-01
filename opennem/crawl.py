@@ -180,7 +180,7 @@ AEMONEMRooftop = CrawlerDefinition(
 
 AEMONEMRooftopForecast = CrawlerDefinition(
     priority=CrawlerPriority.low,
-    schedule=CrawlerSchedule.frequent,
+    schedule=CrawlerSchedule.hourly,
     name="au.nem.rooftop_forecast",
     url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
     latest=True,
@@ -297,5 +297,5 @@ def get_crawl_set() -> CrawlerSet:
 if __name__ == "__main__":
     cs = get_crawl_set()
 
-    for c in cs.get_crawlers_by_match("apvi"):
+    for c in cs.get_crawlers_by_match("apvi.latest.data"):
         run_crawl(c)
