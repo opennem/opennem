@@ -65,6 +65,9 @@ def load_crawlers() -> CrawlerSet:
 
 
 def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False) -> None:
+    """Runs a crawl from the crawl definition with ability to overwrite last crawled and obey the defined
+    limit"""
+
     logger.info(
         "Crawling: {}. Last Crawled: {}. Limit: {}. Last crawled: {}".format(
             crawler.name, crawler.last_crawled, crawler.limit, crawler.server_latest
