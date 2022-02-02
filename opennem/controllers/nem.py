@@ -18,8 +18,7 @@ from opennem.db import SessionLocal, get_database_engine
 from opennem.db.bulk_insert_csv import bulkinsert_mms_items
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
-from opennem.schema.core import BaseConfig
-from opennem.schema.network import NetworkAEMORooftop, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkAEMORooftop, NetworkSchema
 from opennem.utils.dates import parse_date
 from opennem.utils.numbers import float_to_str
 
