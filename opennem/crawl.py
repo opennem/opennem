@@ -85,7 +85,11 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
         crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, crawler.last_crawled)
         crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, crawler.last_processed)
 
-        logger.info("Set last updated to {}".format(cr.last_modified))
+        logger.info(
+            "Set last updated to {} and last processed to {}".format(
+                cr.last_modified, crawler.last_processed
+            )
+        )
 
 
 AEMONemTradingISLatest = CrawlerDefinition(
