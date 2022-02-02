@@ -118,9 +118,9 @@ _apvi_request_session = requests.Session()
 _apvi_request_session.headers.update({"User-Agent": f"OpenNEM/{get_version()}"})
 
 
-def get_apvi_rooftop_data() -> Optional[APVIForecastSet]:
+def get_apvi_rooftop_data(day: Optional[datetime]) -> Optional[APVIForecastSet]:
     """Obtains and parses APVI forecast data"""
-    day = get_date_component(APVI_DATE_QUERY_FORMAT)
+    day = get_date_component(APVI_DATE_QUERY_FORMAT, day)
 
     apvi_endpoint_url = get_apvi_uri()
 
