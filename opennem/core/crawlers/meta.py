@@ -89,7 +89,7 @@ def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None
 
     spider_meta.data[key.value] = value
 
-    logger.info("Spider {} meta: Set {} to {}".format(crawler_name, key.value, value))
+    logger.debug("Spider {} meta: Set {} to {}".format(crawler_name, key.value, value))
 
     session.add(spider_meta)
     session.commit()
