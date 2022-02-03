@@ -165,7 +165,7 @@ def crawler_scheduled_hourly() -> None:
     run_crawls_by_schedule(CrawlerSchedule.hourly)
 
 
-@huey.periodic_task(crontab(hour="6,12,18,24", minute="33"), retries=5, retry_delay=90)
+@huey.periodic_task(crontab(hour="*/6", minute="33"), retries=5, retry_delay=90)
 @huey.lock_task("crawler_scheduled_four_times_a_day")
 def crawler_scheduled_four_times_a_day() -> None:
     run_crawls_by_schedule(CrawlerSchedule.four_times_a_day)
