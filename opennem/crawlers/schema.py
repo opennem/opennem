@@ -18,6 +18,8 @@ class CrawlerSchedule(Enum):
     quarter_hour = "15m"
     half_hour = "30m"
     hourly = "1h"
+    four_times_a_day = "6h"
+    twice_a_day = "12h"
     daily = "1d"
 
 
