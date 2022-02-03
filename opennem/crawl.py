@@ -168,7 +168,16 @@ BOMCapitals = CrawlerDefinition(
 APVIRooftopCrawler = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.frequent,
-    name="apvi.data",
+    name="apvi.today.data",
+    url="none",
+    processor=crawl_apvi_forecasts,
+)
+
+APVIRooftopCrawler = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.four_times_a_day,
+    name="apvi.latest.data",
+    limit=3,
     url="none",
     processor=crawl_apvi_forecasts,
 )
@@ -243,5 +252,5 @@ def get_crawl_set() -> CrawlerSet:
 if __name__ == "__main__":
     cs = get_crawl_set()
 
-    cd = cs.get_crawler("apvi.data")
+    cd = cs.get_crawler("apvi.latest.data")
     run_crawl(cd)
