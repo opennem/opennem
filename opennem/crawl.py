@@ -165,7 +165,7 @@ BOMCapitals = CrawlerDefinition(
     processor=crawl_bom_capitals,
 )
 
-APVIRooftopCrawler = CrawlerDefinition(
+APVIRooftopTodayCrawler = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.frequent,
     name="apvi.today.data",
@@ -173,11 +173,21 @@ APVIRooftopCrawler = CrawlerDefinition(
     processor=crawl_apvi_forecasts,
 )
 
-APVIRooftopCrawler = CrawlerDefinition(
+APVIRooftopLatestCrawler = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.four_times_a_day,
     name="apvi.latest.data",
     limit=3,
+    url="none",
+    processor=crawl_apvi_forecasts,
+)
+
+
+APVIRooftopMonthCrawler = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
+    name="apvi.month.data",
+    limit=30,
     url="none",
     processor=crawl_apvi_forecasts,
 )
