@@ -73,5 +73,5 @@ def fallback_runner() -> None:
 
 #
 if __name__ == "__main__":
-    run_tests()
-    # fallback_runner()
+    # run_tests()
+    fallback_runner()
