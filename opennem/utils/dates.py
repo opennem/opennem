@@ -365,3 +365,8 @@ def unix_timestamp_to_aware_datetime(timestamp: int, timezone: str) -> datetime:
 def get_today_nem() -> datetime:
     """Gets today in NEM time"""
     return datetime.now().astimezone(pytz.timezone("Australia/Brisbane"))
+
+
+def get_today_opennem() -> datetime:
+    """OpenNEM time is Sydney / Melbrouen"""
+    return datetime.now().astimezone(pytz.timezone("Australia/Sydney"))
