@@ -82,6 +82,7 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
             datetime.now().astimezone(pytz.timezone("Australia/Sydney"))
         )
 
+        crawler_set_meta(crawler.name, CrawlStatTypes.version, 2)
         crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, crawler.last_crawled)
         crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, crawler.last_processed)
 
