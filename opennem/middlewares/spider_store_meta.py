@@ -37,6 +37,7 @@ class ExtensionSpiderStoreMeta:
         logger.info("closed spider %s", spider.name)
 
         crawler_set_meta(spider.name, CrawlStatTypes.last_crawled, datetime.now())
+        crawler_set_meta(spider.name, CrawlStatTypes.version, 1)
 
         if hasattr(spider, "data"):
             crawler_set_meta(spider.name, CrawlStatTypes.data, spider.data)
