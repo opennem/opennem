@@ -6,6 +6,7 @@ from opennem.schema.core import BaseConfig
 
 class ControllerReturn(BaseConfig):
     last_modified: Optional[datetime]
+    server_latest: Optional[datetime]
     total_records: int = 0
     inserted_records: int = 0
     processed_records: int = 0
