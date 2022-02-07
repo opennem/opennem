@@ -14,8 +14,10 @@ logger = logging.getLogger("opennem.crawlers.crawler")
 
 class CrawlMetadata(BaseConfig):
     name: str
+    version: Optional[float]
     last_crawled: Optional[datetime]
     last_processed: Optional[datetime]
+    server_latest: Optional[datetime]
     force_run: Optional[bool] = False
 
 
@@ -26,8 +28,10 @@ def crawlers_get_crawl_metadata() -> List[CrawlMetadata]:
     __query = """
         select
             cm.spider_name as name,
+            cm.data->>'version' as version,
             cm.data->>'last_crawled' as last_crawled,
             cm.data->>'latest_processed' as last_processed,
+            cm.data->>'server_latest' as server_latest,
             cm.data->>'force_run' as force_run
         from crawl_meta cm
         order by last_crawled desc;
@@ -63,4 +67,8 @@ if __name__ == "__main__":
     metas = crawlers_get_crawl_metadata()
 
     for m in metas:
-        logger.info("{} {} {}".format(m.name, m.last_crawled, m.last_processed))
+        logger.info(
+            "{} {} {} {} {}".format(
+                m.name, m.version, m.last_crawled, m.last_processed, m.server_latest
+            )
+        )
