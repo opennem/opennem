@@ -4,7 +4,6 @@
 
 import logging
 from datetime import datetime
-from typing import Optional
 
 import pytz
 
@@ -12,7 +11,7 @@ from opennem.clients.apvi import get_apvi_rooftop_data
 from opennem.controllers.apvi import store_apvi_forecastset, update_apvi_facility_capacities
 from opennem.controllers.schema import ControllerReturn
 from opennem.crawlers.schema import CrawlerDefinition
-from opennem.utils.dates import TODAY_NEM, chop_datetime_microseconds, date_series, get_today_nem
+from opennem.utils.dates import chop_datetime_microseconds, date_series, get_today_nem
 
 logger = logging.getLogger("opennem.crawlers.apvi")
 
