@@ -38,6 +38,7 @@ def crawl_cli_list() -> None:
     table.add_column("Crawler")
     table.add_column("Last Crawled")
     table.add_column("Last Processed")
+    table.add_column("Server Latest")
 
     crawler_meta = crawlers_get_crawl_metadata()
 
@@ -46,6 +47,7 @@ def crawl_cli_list() -> None:
             c.name,
             str(chop_timezone(chop_datetime_microseconds(c.last_processed))),
             str(chop_datetime_microseconds(c.last_crawled)),
+            str(chop_datetime_microseconds(c.server_latest)),
         )
 
     console.print(table)
