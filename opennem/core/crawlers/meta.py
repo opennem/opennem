@@ -16,6 +16,11 @@ logger = logging.getLogger("opennem.spider.meta")
 
 
 class CrawlStatTypes(Enum):
+    # version of crawler
+    # scrapy based is v1
+    # new version is v2+
+    version = "version"
+
     # last crawl run time
     last_crawled = "last_crawled"
 
