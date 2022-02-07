@@ -18,7 +18,7 @@ from opennem.crawlers.wem import (
     run_wem_live_balancing_crawl,
     run_wem_live_facility_scada_crawl,
 )
-from opennem.utils.dates import chop_datetime_microseconds
+from opennem.utils.dates import chop_datetime_microseconds, get_today_opennem
 
 logger = logging.getLogger("opennem.crawler")
 
@@ -58,9 +58,15 @@ def load_crawlers() -> CrawlerSet:
 def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False) -> None:
     logger.info(
         "Crawling: {}. Latest: {}. Limit: {}. Last crawled: {}".format(
-            crawler.name, last_crawled, limit, crawler.last_crawled
+            crawler.name, last_crawled, limit, crawler.server_latest
         )
     )
+
+    #
+    now_nem_time = get_today_opennem()
+
+    crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
+    crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_nem_time)
 
     cr = crawler.processor(crawler=crawler, last_crawled=last_crawled, limit=limit)
 
@@ -82,8 +88,6 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
             datetime.now().astimezone(pytz.timezone("Australia/Sydney"))
         )
 
-        crawler_set_meta(crawler.name, CrawlStatTypes.version, 2)
-        crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, crawler.last_crawled)
         crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, crawler.last_processed)
 
         logger.info(
@@ -264,5 +268,5 @@ def get_crawl_set() -> CrawlerSet:
 if __name__ == "__main__":
     cs = get_crawl_set()
 
-    cd = cs.get_crawler("apvi.latest.data")
+    cd = cs.get_crawler("au.bom.capitals")
     run_crawl(cd)
