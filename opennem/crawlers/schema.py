@@ -26,6 +26,7 @@ class CrawlerSchedule(Enum):
 class CrawlerDefinition(BaseConfig):
     """Defines a crawler"""
 
+    version: float = 2.0
     name: str
     url: Optional[str]
     limit: Optional[int]
@@ -38,6 +39,7 @@ class CrawlerDefinition(BaseConfig):
     # crawl metadata
     last_crawled: Optional[datetime]
     last_processed: Optional[datetime]
+    server_latest: Optional[datetime]
 
     processor: Callable
 
