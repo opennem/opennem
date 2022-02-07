@@ -1,5 +1,8 @@
 import logging
+from datetime import datetime
+from typing import Optional
 
+import pytz
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.clients.bom import BOMObservationReturn
@@ -17,6 +20,17 @@ def store_bom_observation_intervals(observations: BOMObservationReturn) -> Contr
     engine = get_database_engine()
 
     cr = ControllerReturn(total_records=len(observations.observations))
+
+    latest_forecast: Optional[datetime] = max(
+        [o.observation_time for o in observations.observations]
+    )
+
+    if latest_forecast:
+        latest_forecast = latest_forecast.astimezone(pytz.timezone("Australia/Sydney"))
+        logger.debug("server_latest is {}".format(latest_forecast))
+
+        cr.server_latest = latest_forecast
+
     records_to_store = []
 
     for obs in observations.observations:
