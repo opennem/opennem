@@ -2,11 +2,9 @@
 
 """
 import logging
-from datetime import datetime
-from typing import List
+from typing import List, Optional
 
-import pytz
-
+from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.crawlers.aemo import run_aemo_mms_crawl
 from opennem.crawlers.apvi import crawl_apvi_forecasts
@@ -18,7 +16,7 @@ from opennem.crawlers.wem import (
     run_wem_live_balancing_crawl,
     run_wem_live_facility_scada_crawl,
 )
-from opennem.utils.dates import chop_datetime_microseconds, get_today_opennem
+from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.crawler")
 
@@ -68,13 +66,18 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
     crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
     crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_nem_time)
 
-    cr = crawler.processor(crawler=crawler, last_crawled=last_crawled, limit=limit)
+    cr: Optional[ControllerReturn] = crawler.processor(
+        crawler=crawler, last_crawled=last_crawled, limit=limit
+    )
 
     if not cr:
         return None
 
     # run here
     has_errors = False
+
+    if cr.server_latest:
+        crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.server_latest)
 
     logger.info("Inserted {} of {} records".format(cr.inserted_records, cr.total_records))
 
@@ -83,16 +86,14 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
         logger.error("Crawl controller error for {}: {}".format(crawler.name, cr.error_detail))
 
     if not has_errors:
-        crawler.last_crawled = cr.last_modified
-        crawler.last_processed = chop_datetime_microseconds(
-            datetime.now().astimezone(pytz.timezone("Australia/Sydney"))
-        )
+        crawler.last_processed = now_nem_time
+        crawler.server_latest = cr.server_latest
 
         crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, crawler.last_processed)
 
         logger.info(
-            "Set last updated to {} and last processed to {}".format(
-                cr.last_modified, crawler.last_processed
+            "Set last_proceesed to {} and server_latest to {}".format(
+                crawler.last_processed, crawler.server_latest
             )
         )
 
