@@ -16,11 +16,16 @@ logger = logging.getLogger("opennem.spider.meta")
 
 
 class CrawlStatTypes(Enum):
-    # This is the last available date for a stat set
+    # last crawl run time
     last_crawled = "last_crawled"
 
-    # last time it was processed
+    # last time it was processed (success on insert)
     latest_processed = "latest_processed"
+
+    # the latest data from the server that was processed
+    # ie. on AEMO sites this is the latest dirlisting modified time
+    # available
+    server_latest = "server_latest"
 
     # generic data holder for all metadata
     data = "data"
