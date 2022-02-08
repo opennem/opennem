@@ -4,6 +4,8 @@
 import logging
 from typing import List, Optional
 
+from pydantic import ValidationError
+
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.crawlers.aemo import run_aemo_mms_crawl
@@ -37,14 +39,22 @@ def load_crawlers() -> CrawlerSet:
                 _crawlers.append(_crawler_inst)
                 continue
 
-            crawler_updated_with_meta = CrawlerDefinition(
-                **{
-                    **_crawler_inst.dict(),
-                    **_meta,
-                }
-            )
+            crawler_updated_with_meta: Optional[CrawlerDefinition] = None
 
-            _crawlers.append(crawler_updated_with_meta)
+            try:
+                crawler_updated_with_meta = CrawlerDefinition(
+                    **{
+                        "version": "2",
+                        **_crawler_inst.dict(),
+                        **_meta,
+                    },
+                )
+            except ValidationError as e:
+                logger.error("Validation error for crawler {}: {}".format(_crawler_inst.name, e))
+                raise Exception("Crawler initiation error")
+
+            if crawler_updated_with_meta:
+                _crawlers.append(crawler_updated_with_meta)
 
     cs = CrawlerSet(crawlers=_crawlers)
 
