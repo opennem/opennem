@@ -3,6 +3,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Callable, List, Optional
 
+from pydantic import Field
+
 from opennem.schema.core import BaseConfig
 
 
@@ -26,7 +28,7 @@ class CrawlerSchedule(Enum):
 class CrawlerDefinition(BaseConfig):
     """Defines a crawler"""
 
-    version: float = 2.0
+    version: str = Field("2")
     name: str
     url: Optional[str]
     limit: Optional[int]
