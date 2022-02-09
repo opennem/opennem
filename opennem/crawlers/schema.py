@@ -28,7 +28,7 @@ class CrawlerSchedule(Enum):
 class CrawlerDefinition(BaseConfig):
     """Defines a crawler"""
 
-    version: str = Field("2")
+    version: str = Field(default="2")
     name: str
     url: Optional[str]
     limit: Optional[int]
