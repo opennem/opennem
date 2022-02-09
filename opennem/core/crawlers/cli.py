@@ -20,8 +20,20 @@ def cmd_crawl_cli() -> None:
 
 @click.command()
 @click.argument("name")
-def crawl_cli_run(name: str = None) -> None:
-    console.log("run crawlers matching: {}".format(name))
+def crawl_cli_run(name: str) -> None:
+    console.log("Run crawlers matching: {}".format(name))
+
+    crawlers = get_crawl_set()
+
+    try:
+        crawlers_filtered = crawlers.get_crawlers_by_match(name)
+    except Exception as e:
+        console.log("[red]Could not find crawlers for {}[/red]: {}".format(name, e))
+        return None
+
+    if not crawlers_filtered:
+        console.log("No crawlers found matchin [red]{}[/red]".format(name))
+        return None
 
 
 @click.command()
