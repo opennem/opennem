@@ -342,6 +342,10 @@ def parse_wem_facility_intervals(content: str) -> List[WEMGenerationInterval]:
         # adapts the fields from balancing-summary history to match our schema
         _csv_rec = {_remap_wem_facility_interval_field(i): k for i, k in _csv_rec.items()}
 
+        # @NOTE do wem energy here
+        if "generated" in _csv_rec and _csv_rec["generated"] and _csv_rec["generated"] > 0:
+            _csv_rec["eoi_quantity"] = _csv_rec["generated"] / 2
+
         _m = None
 
         try:
