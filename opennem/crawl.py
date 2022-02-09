@@ -42,12 +42,13 @@ def load_crawlers() -> CrawlerSet:
             crawler_updated_with_meta: Optional[CrawlerDefinition] = None
 
             try:
+                crawler_field_values = {
+                    **_crawler_inst.dict(),
+                    **_meta,
+                    "version": "2",
+                }
                 crawler_updated_with_meta = CrawlerDefinition(
-                    **{
-                        "version": "2",
-                        **_crawler_inst.dict(),
-                        **_meta,
-                    },
+                    **crawler_field_values,
                 )
             except ValidationError as e:
                 logger.error("Validation error for crawler {}: {}".format(_crawler_inst.name, e))
