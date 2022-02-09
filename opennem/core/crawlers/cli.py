@@ -7,7 +7,6 @@ from rich.table import Table
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
 from opennem.crawl import get_crawl_set
-from opennem.utils.dates import chop_datetime_microseconds, chop_timezone
 
 logger = logging.getLogger("opennem.cli")
 
@@ -20,8 +19,9 @@ def cmd_crawl_cli() -> None:
 
 
 @click.command()
-def crawl_cli_run() -> None:
-    logger.info("run crawl")
+@click.argument("name")
+def crawl_cli_run(name: str = None) -> None:
+    console.log("run crawlers matching: {}".format(name))
 
 
 @click.command()
