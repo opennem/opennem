@@ -343,8 +343,8 @@ def parse_wem_facility_intervals(content: str) -> List[WEMGenerationInterval]:
         _csv_rec = {_remap_wem_facility_interval_field(i): k for i, k in _csv_rec.items()}
 
         # @NOTE do wem energy here
-        if "generated" in _csv_rec and _csv_rec["generated"] and _csv_rec["generated"] > 0:
-            _csv_rec["eoi_quantity"] = _csv_rec["generated"] / 2
+        if "power" in _csv_rec and _csv_rec["power"] and float(_csv_rec["power"]) > 0:
+            _csv_rec["eoi_quantity"] = float(_csv_rec["power"]) / 2.0
 
         _m = None
 
