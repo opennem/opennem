@@ -87,6 +87,8 @@ class OpennemSettings(BaseSettings):
     # cache http requests locally
     http_cache_local: bool = False
 
+    http_verify_ssl: bool = True
+
     dry_run: bool = False
 
     _static_folder_path: str = "opennem/static/"
