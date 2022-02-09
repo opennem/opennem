@@ -45,9 +45,9 @@ def crawl_cli_list() -> None:
     for c in crawler_meta:
         table.add_row(
             c.name,
-            str(chop_timezone(chop_datetime_microseconds(c.last_processed))),
-            str(chop_datetime_microseconds(c.last_crawled)),
-            str(chop_datetime_microseconds(c.server_latest)),
+            str(c.last_processed),
+            str(c.last_crawled),
+            str(c.server_latest),
         )
 
     console.print(table)
