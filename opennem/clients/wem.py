@@ -18,6 +18,7 @@ from typing import Any, Dict, List, Optional, Union
 import requests
 from pydantic import ValidationError, validator
 
+from opennem import settings
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkWEM
 from opennem.utils.dates import get_date_component, parse_date
@@ -198,7 +199,7 @@ def wem_downloader(url: str, for_date: Optional[datetime] = None) -> str:
 
     logger.info(f"Fetching {_url_parsed}")
 
-    response = _wem_session.get(_url_parsed, verify=False)
+    response = _wem_session.get(_url_parsed, verify=settings.http_verify_ssl)
 
     # sometimes with the WEM delay the current
     # month isn't up
