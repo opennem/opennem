@@ -6,7 +6,7 @@ from rich.table import Table
 
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
-from opennem.crawl import get_crawl_set
+from opennem.crawl import get_crawl_set, run_crawl
 
 logger = logging.getLogger("opennem.cli")
 
@@ -34,6 +34,11 @@ def crawl_cli_run(name: str) -> None:
     if not crawlers_filtered:
         console.log("No crawlers found matchin [red]{}[/red]".format(name))
         return None
+
+    console.log("[green] running {} crawlers[/green]".format(len(crawlers_filtered)))
+
+    for c in crawlers_filtered:
+        run_crawl(c)
 
 
 @click.command()
