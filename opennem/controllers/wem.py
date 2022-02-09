@@ -111,7 +111,7 @@ def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> Contr
     stmt = stmt.on_conflict_do_update(
         index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
         set_={
-            # "updated_by": stmt.excluded.created_by,
+            "generated": stmt.excluded.generated,
             "eoi_quantity": stmt.excluded.eoi_quantity,
         },
     )
