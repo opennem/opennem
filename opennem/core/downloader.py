@@ -2,6 +2,7 @@ import logging
 from io import BytesIO
 from zipfile import ZipFile
 
+from opennem import settings
 from opennem.utils.handlers import _handle_zip, chain_streams
 from opennem.utils.http import http
 from opennem.utils.mime import mime_from_content, mime_from_url
@@ -14,7 +15,7 @@ def url_downloader(url: str) -> bytes:
 
     logger.debug("Downloading: {}".format(url))
 
-    r = http.get(url, verify=False)
+    r = http.get(url, verify=settings.http_verify_ssl)
 
     if not r.ok:
         raise Exception("Bad link returned {}: {}".format(r.status_code, url))
