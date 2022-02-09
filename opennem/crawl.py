@@ -280,5 +280,5 @@ def get_crawl_set() -> CrawlerSet:
 if __name__ == "__main__":
     cs = get_crawl_set()
 
-    cd = cs.get_crawler("au.bom.capitals")
-    run_crawl(cd)
+    for c in cs.get_crawlers_by_match("apvi"):
+        run_crawl(c)
