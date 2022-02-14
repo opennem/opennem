@@ -35,9 +35,14 @@ def crawl_cli_run(name: str) -> None:
         console.log("No crawlers found matchin [red]{}[/red]".format(name))
         return None
 
-    console.log("[green] running {} crawlers[/green]".format(len(crawlers_filtered)))
+    console.log("[green]Running {} crawlers[/green]".format(len(crawlers_filtered)))
 
     for c in crawlers_filtered:
+        console.log(
+            "Running crawler {} (Version: {})\n\tlast_crawled: {}\n\tlast_processed: {}\n\tserver_latest: {}".format(
+                c.name, c.version, c.last_crawled, c.last_processed, c.server_latest
+            )
+        )
         run_crawl(c)
 
 
