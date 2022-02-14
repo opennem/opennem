@@ -1,7 +1,7 @@
 import logging
 import math
 from datetime import date, datetime, timedelta, timezone
-from typing import Generator, Optional, Tuple, Union
+from typing import Any, Generator, Optional, Tuple, Union
 
 import pytz
 
@@ -258,7 +258,7 @@ def chop_timezone(dt: datetime) -> Optional[datetime]:
     return dt.replace(tzinfo=None)
 
 
-def get_date_component(format_str: str, dt: datetime = None, tz: str = "UTC") -> str:
+def get_date_component(format_str: str, dt: datetime = None, tz: Optional[Any] = None) -> str:
     """
     Get the format string part out of a date
 
@@ -271,9 +271,9 @@ def get_date_component(format_str: str, dt: datetime = None, tz: str = "UTC") ->
 
     if tz:
         try:
-            dt = dt.astimezone(pytz.timezone(tz))
+            dt = dt.astimezone(tz)
         except Exception:
-            logger.error("Invalid timezone {}".format(tz))
+            raise Exception("Invalid timezone: {}".format(tz))
 
     date_str_component = dt.strftime(format_str)
 
