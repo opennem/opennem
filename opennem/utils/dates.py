@@ -364,11 +364,26 @@ def unix_timestamp_to_aware_datetime(timestamp: int, timezone: str) -> datetime:
 
 def get_today_nem() -> datetime:
     """Gets today in NEM time"""
-    return chop_datetime_microseconds(
-        datetime.now().astimezone(pytz.timezone("Australia/Brisbane"))
-    )
+    now = datetime.now()
+
+    now_no_microseconds = now.replace(microsecond=0)
+
+    # NEM is fixed offset at +10
+    nem_tz = pytz.FixedOffset(600)
+
+    nem_dt = now_no_microseconds.astimezone(nem_tz)
+
+    return nem_dt
 
 
 def get_today_opennem() -> datetime:
     """OpenNEM time is Sydney / Melbrouen"""
-    return chop_datetime_microseconds(datetime.now().astimezone(pytz.timezone("Australia/Sydney")))
+    now = datetime.now()
+
+    now_no_microseconds = now.replace(microsecond=0)
+
+    opennem_tz = pytz.timezone("Australia/Sydney")
+
+    opennem_dt = now_no_microseconds.astimezone(opennem_tz)
+
+    return opennem_dt
