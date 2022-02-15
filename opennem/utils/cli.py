@@ -2,6 +2,7 @@ import os
 import sys
 import termios
 import tty
+from distutils.util import strtobool
 from typing import Optional
 
 
@@ -38,7 +39,7 @@ def prompt_user_yes_or_no(question: str, default: Optional[str] = None) -> bool:
         print(c)
         c = getch().lower()
 
-    return c == "y"
+    return strtobool(c)
 
 
 if __name__ == "__main__":
