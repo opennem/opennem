@@ -2,6 +2,7 @@ import os
 import sys
 import termios
 import tty
+from typing import Optional
 
 
 def getch() -> str:
@@ -16,11 +17,22 @@ def getch() -> str:
     return ch
 
 
-def yes_or_no(question: str) -> bool:
+def prompt_user_yes_or_no(question: str, default: Optional[str] = None) -> bool:
     """Prompts the user to confirm input"""
+    prompt: str = ""
+
+    if default is None:
+        prompt = " [y/n] "
+    elif default == "yes":
+        prompt = " [Y/n] "
+    elif default == "no":
+        prompt = " [y/N] "
+    else:
+        raise ValueError(f"Unknown setting '{default}' for default.")
+
     c: str = ""
 
-    print("{} (Y/n): ".format(question), end="", flush=True)
+    print("{} {}: ".format(question, prompt), end="", flush=True)
 
     while c not in ("y", "n"):
         print(c)
@@ -30,7 +42,7 @@ def yes_or_no(question: str) -> bool:
 
 
 if __name__ == "__main__":
-    if not yes_or_no("Continue?"):
+    if not prompt_user_yes_or_no("Continue?"):
         print("No")
         os._exit(0)
     else:
