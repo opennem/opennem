@@ -405,9 +405,12 @@ def run_energy_calc(
     except Exception as e:
         import traceback
 
-        print(traceback.format_exc())
-        logger.error(e.with_traceback())
-        # slack_message("Energy archive error: {}".format(e))
+        error_traceback = e.with_traceback()
+
+        if error_traceback:
+            logger.error(error_traceback)
+        else:
+            logger.error(e)
 
     return num_records
 
