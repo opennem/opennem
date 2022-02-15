@@ -403,8 +403,6 @@ def run_energy_calc(
 
         logger.info("Done {} for {} => {}".format(region, date_min, date_max))
     except Exception as e:
-        import traceback
-
         error_traceback = e.with_traceback()
 
         if error_traceback:
