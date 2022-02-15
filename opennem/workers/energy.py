@@ -296,6 +296,9 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
 
     records_to_store: List[Dict] = esdf.to_dict("records")
 
+    for record in records_to_store[:5]:
+        logger.debug(record)
+
     if len(records_to_store) < 1:
         logger.error("No records returned from energy sum")
         return 0
