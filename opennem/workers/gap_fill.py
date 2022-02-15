@@ -119,6 +119,7 @@ def run_energy_gapfill(
     networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
     run_all: bool = False,
 ) -> None:
+    """Run gapfill of energy values - will find gaps in energy values and run energy_sum"""
     for network in networks:
         logger.info("Running energy gapfill for {}".format(network.code))
 
