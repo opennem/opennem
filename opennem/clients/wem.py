@@ -1,3 +1,4 @@
+# pylint: disable=no-self-argument
 """OpenNEM WEM Client
 
 Four sources:
