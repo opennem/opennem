@@ -54,7 +54,7 @@ def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerReturn:
     except Exception as e:
         logger.error("Error: {}".format(e))
         cr.errors = len(records_to_store)
-        cr.error_detail = str(e)
+        cr.error_detail.append(str(e))
     finally:
         session.close()
         engine.dispose()
