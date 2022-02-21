@@ -82,13 +82,13 @@ def timesince(
     since = delta.days * 24 * 60 * 60 + delta.seconds
     if since <= 0:
         # d is in the future compared to now, stop processing.
-        return time_strings["minute"] % {"num": 0}
+        return time_strings["minute"][0] % {"num": 0}
     for i, (seconds, name) in enumerate(TIMESINCE_CHUNKS):
         count = since // seconds
         if count != 0:
             break
     else:
-        return time_strings["minute"] % {"num": 0}
+        return time_strings["minute"][0] % {"num": 0}
     result = []
     current_depth = 0
     while i < len(TIMESINCE_CHUNKS) and current_depth < depth:
