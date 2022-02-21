@@ -28,7 +28,7 @@ logger = logging.getLogger("opennem.controllers.opennem")
 
 
 def unit_scada_generate_facility_scada(
-    records,
+    records: List[Dict],
     network: NetworkSchema = NetworkNEM,
     interval_field: str = "settlementdate",
     facility_code_field: str = "duid",
@@ -91,7 +91,7 @@ def generate_balancing_summary(
             price = clean_float(row[price_field])
 
             if price:
-                price = float_to_str(price)
+                price = str(float_to_str(price))
 
         __rec = {
             "created_by": created_by,
