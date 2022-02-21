@@ -6,8 +6,6 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-import pytz
-
 from opennem.clients.apvi import APVIForecastSet, get_apvi_rooftop_data, get_apvi_rooftop_today
 from opennem.controllers.apvi import store_apvi_forecastset, update_apvi_facility_capacities
 from opennem.controllers.schema import ControllerReturn
