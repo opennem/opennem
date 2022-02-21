@@ -138,6 +138,7 @@ class APVIStateRooftopCapacity(BaseConfig):
 class APVIForecastSet(BaseConfig):
     crawled_at: Optional[datetime]
     intervals: List[APVIForecastInterval]
+    server_latest: Optional[datetime]
     capacities: Optional[List[APVIStateRooftopCapacity]]
 
 
@@ -210,7 +211,16 @@ def get_apvi_rooftop_today() -> Optional[APVIForecastSet]:
                 )
             )
 
-    apvi_forecast_set = APVIForecastSet(crawled=_run_at, intervals=interval_models)
+    server_latest: Optional[datetime] = None
+
+    trading_intervals = list(set([i.trading_interval for i in interval_models]))
+
+    if trading_intervals:
+        server_latest = max(trading_interval)
+
+    apvi_forecast_set = APVIForecastSet(
+        crawled=_run_at, intervals=interval_models, server_latest=server_latest
+    )
 
     return apvi_forecast_set
 
