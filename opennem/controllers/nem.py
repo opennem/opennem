@@ -126,9 +126,9 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
             {
                 "network_id": "NEM",
                 "created_by": "opennem.controller",
-                "facility_code": record.interconnectorid,
-                "trading_interval": record.settlementdate,
-                "generated": record.mwflow,
+                "facility_code": record.interconnectorid,  # type:ignore
+                "trading_interval": record.settlementdate,  # type:ignore
+                "generated": record.mwflow,  # type:ignore
             }
         )
         cr.processed_records += 1
@@ -349,7 +349,7 @@ def process_unit_scada(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
     records = unit_scada_generate_facility_scada(
-        table.records,
+        table.records,  # type:ignore
         interval_field="settlementdate",
         facility_code_field="duid",
         power_field="scadavalue",
