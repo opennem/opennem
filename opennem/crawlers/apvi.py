@@ -21,24 +21,11 @@ def crawl_apvi_forecasts(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False
 ) -> ControllerReturn:
     """Runs the APVI crawl definition"""
-    # if not crawler.limit or crawler.limit == 1:
-    #     apvi_forecast_return = run_apvi_crawl(get_today_nem())
-    #     return apvi_forecast_return
-
     apvi_return = ControllerReturn()
 
     if crawler.latest:
         apvi_forecast_return = run_apvi_crawl()
-        apvi_return.processed_records += apvi_forecast_return.processed_records
-        apvi_return.total_records += apvi_forecast_return.total_records
-        apvi_return.inserted_records += apvi_forecast_return.inserted_records
-        apvi_return.errors += apvi_forecast_return.errors
-
-        if (
-            not apvi_return.last_modified
-            or apvi_return.last_modified < apvi_forecast_return.last_modified
-        ):
-            apvi_return.last_modified = apvi_forecast_return.last_modified
+        return apvi_forecast_return
 
     # run the entire date range
     else:
