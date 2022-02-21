@@ -71,7 +71,7 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
         )
     )
 
-    #
+    # now in opennem time which is Australia/Sydney
     now_opennem_time = get_today_opennem()
 
     crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
