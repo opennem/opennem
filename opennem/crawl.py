@@ -96,7 +96,6 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
     if not has_errors:
         # get the time again so we can measure deltas
         crawler.last_processed = get_today_opennem()
-        crawler.server_latest = cr.server_latest
 
         crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, crawler.last_processed)
 
