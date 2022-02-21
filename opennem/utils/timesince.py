@@ -29,7 +29,7 @@ def timesince(
     reversed: bool = False,
     depth: int = 2,
     none_value: str = "Never",
-):
+) -> str:
     """
     Take two datetime objects and return the time between d and now as a nicely
     formatted string, e.g. "10 minutes". If d occurs after now, return
@@ -107,8 +107,8 @@ def timesince(
     return ", ".join(result)
 
 
-def timeuntil(d, now=None, time_strings=None, depth=2) -> str:
+def timeuntil(d: datetime, now: Optional[datetime] = None, depth=2) -> str:
     """
     Like timesince, but return a string measuring the time until the given time.
     """
-    return timesince(d, now, reversed=True, time_strings=time_strings, depth=depth)
+    return timesince(d, now, reversed=True, depth=depth)
