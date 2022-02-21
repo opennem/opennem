@@ -337,7 +337,7 @@ def parse_wem_facility_intervals(content: str) -> List[WEMGenerationInterval]:
 
         # @NOTE do wem energy here
         if "power" in _csv_rec and _csv_rec["power"] and float(_csv_rec["power"]) > 0:
-            _csv_rec["eoi_quantity"] = float(_csv_rec["power"]) / 2.0
+            _csv_rec["eoi_quantity"] = str(float(_csv_rec["power"]) / 2.0)
 
         _m = None
 
