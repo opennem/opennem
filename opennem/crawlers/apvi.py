@@ -37,10 +37,10 @@ def crawl_apvi_forecasts(
             apvi_return.errors += apvi_forecast_return.errors
 
             if (
-                not apvi_return.last_modified
-                or apvi_return.last_modified < apvi_forecast_return.last_modified
+                not apvi_return.server_latest
+                or apvi_return.server_latest < apvi_forecast_return.server_latest
             ):
-                apvi_return.last_modified = apvi_forecast_return.last_modified
+                apvi_return.server_latest = apvi_forecast_return.server_latest
 
     return apvi_return
 
