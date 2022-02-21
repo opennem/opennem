@@ -70,9 +70,9 @@ def crawl_cli_list() -> None:
         table.add_row(
             c.name,
             str(c.version),
-            timesince(c.last_processed),
-            timesince(c.last_crawled),
-            timesince(c.server_latest),
+            "{} ({})".format(c.last_crawled, timesince(c.last_crawled)),
+            "{} ({})".format(c.last_processed, timesince(c.last_processed)),
+            "{} ({})".format(c.server_latest, timesince(c.server_latest)),
         )
 
     console.print(table)
