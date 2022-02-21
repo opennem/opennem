@@ -294,9 +294,12 @@ def emissions(df_emissions: pd.DataFrame, power_dict: Dict) -> Dict:
     simple_flows = [["QLD1", "NSW1"], ["SA1", "VIC1"], ["TAS1", "VIC1"]]
 
     for from_regionid, to_regionid in simple_flows:
-        emissions_dict[(from_regionid, to_regionid)] = simple_exports(
-            df_emissions, power_dict, from_regionid, to_regionid
-        )
+        try:
+            emissions_dict[(from_regionid, to_regionid)] = simple_exports(
+                df_emissions, power_dict, from_regionid, to_regionid
+            )
+        except Exception as e:
+            logger.error(e)
 
     return emissions_dict
 
