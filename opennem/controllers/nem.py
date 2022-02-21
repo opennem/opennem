@@ -477,5 +477,6 @@ def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
             cr.inserted_records += record_item.inserted_records
             cr.errors += record_item.errors
             cr.error_detail += record_item.error_detail
+            cr.server_latest = record_item.server_latest
 
     return cr
