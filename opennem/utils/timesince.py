@@ -107,7 +107,7 @@ def timesince(
     return ", ".join(result)
 
 
-def timeuntil(d: datetime, now: Optional[datetime] = None, depth=2) -> str:
+def timeuntil(d: datetime, now: Optional[datetime] = None, depth: int = 2) -> str:
     """
     Like timesince, but return a string measuring the time until the given time.
     """
