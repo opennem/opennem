@@ -75,9 +75,7 @@ def run_apvi_crawl(day: Optional[datetime] = None) -> ControllerReturn:
 
     update_apvi_facility_capacities(apvi_forecast_set)
 
-    cr.last_modified = chop_datetime_microseconds(
-        datetime.now().astimezone(pytz.timezone("Australia/Brisbane"))
-    )
+    cr.server_latest = apvi_forecast_set.server_latest
 
     return cr
 
