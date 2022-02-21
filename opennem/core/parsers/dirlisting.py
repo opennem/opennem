@@ -19,6 +19,7 @@ from operator import attrgetter
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+import pytz
 from pydantic import ValidationError, validator
 from scrapy.http import HtmlResponse
 
@@ -161,7 +162,26 @@ class DirectoryListing(BaseConfig):
         return _entries[:limit]
 
     def get_files_modified_since(self, modified_date: datetime) -> List[DirlistingEntry]:
-        modified_since = list(filter(lambda x: x.modified_date > modified_date, self.get_files()))
+        modified_since = []
+
+        if self.timezone:
+            # sanity check the timezone before filter
+            try:
+                pytz.timezone(self.timezone)
+            except ValueError:
+                raise Exception("Invalid dirlisting timezone: {}".format(self.timezone))
+
+            modified_since = list(
+                filter(
+                    lambda x: x.modified_date.astimezone(pytz.timezone(self.timezone))
+                    > modified_date,
+                    self.get_files(),
+                )
+            )
+        else:
+            modified_since = list(
+                filter(lambda x: x.modified_date > modified_date, self.get_files())
+            )
 
         return modified_since
 
