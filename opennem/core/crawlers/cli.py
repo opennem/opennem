@@ -7,6 +7,7 @@ from rich.table import Table
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
 from opennem.crawl import get_crawl_set, run_crawl
+from opennem.utils.timesince import timesince
 
 logger = logging.getLogger("opennem.cli")
 
@@ -58,6 +59,7 @@ def crawl_cli_list() -> None:
 
     table = Table(show_header=True, header_style="bold magenta")
     table.add_column("Crawler")
+    table.add_column("Version")
     table.add_column("Last Crawled")
     table.add_column("Last Processed")
     table.add_column("Server Latest")
@@ -67,9 +69,10 @@ def crawl_cli_list() -> None:
     for c in crawler_meta:
         table.add_row(
             c.name,
-            str(c.last_processed),
-            str(c.last_crawled),
-            str(c.server_latest),
+            str(c.version),
+            timesince(c.last_processed),
+            timesince(c.last_crawled),
+            timesince(c.server_latest),
         )
 
     console.print(table)
