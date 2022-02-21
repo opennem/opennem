@@ -159,15 +159,6 @@ class WEMGenerationInterval(BaseConfig):
 
         return interval_time
 
-    @validator("eoi_quantity", always=True, pre=True)
-    def _validate_eoi_quantity(cls, value: Any, values: Dict[str, Any]) -> Optional[float]:
-        if "eoi_quantity" in values and values["eoi_quantity"]:
-            return values["eoi_quantity"]
-
-        if "generated" in values:
-            _generated = values["generated"]
-            return _generated / 2
-
 
 class WEMFacilityIntervalSet(BaseConfig):
     crawled_at: datetime
