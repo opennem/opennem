@@ -108,7 +108,7 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
             logger.debug("{} has no server_latest return".format(crawler.name))
 
         logger.info(
-            "Set last_proceesed to {} and server_latest to {}".format(
+            "Set last_processed to {} and server_latest to {}".format(
                 crawler.last_processed, cr.server_latest
             )
         )
