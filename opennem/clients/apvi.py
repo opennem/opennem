@@ -177,7 +177,7 @@ def get_apvi_rooftop_today() -> Optional[APVIForecastSet]:
 
     _run_at = get_today_opennem()
 
-    record_set = {}
+    record_set: Dict[str, Dict] = {}
 
     for postcode_prefix, time_records in output.items():
         # Skip WA that is non-SWIS
