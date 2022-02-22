@@ -8,9 +8,8 @@ from json.decoder import JSONDecodeError
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlencode
 
-import pytz
 import requests
-from pydantic import validator
+from pydantic import ValidationError, validator
 
 from opennem import settings
 from opennem.core.normalizers import is_number
@@ -211,16 +210,26 @@ def get_apvi_rooftop_today() -> Optional[APVIForecastSet]:
                 )
             )
 
-    server_latest: Optional[datetime] = None
+    apvi_server_latest: Optional[datetime] = None
 
     trading_intervals = list(set([i.trading_interval for i in interval_models]))
 
     if trading_intervals:
-        server_latest = max(trading_interval)
+        apvi_server_latest = max(trading_intervals)
 
     apvi_forecast_set = APVIForecastSet(
-        crawled=_run_at, intervals=interval_models, server_latest=server_latest
+        crawled=_run_at,
+        intervals=interval_models,
     )
+
+    try:
+        apvi_forecast_set.server_latest = apvi_server_latest
+    except ValidationError:
+        logger.error(
+            "APVI validation error for server_latest: {} <{}>".format(
+                apvi_server_latest, repr(apvi_server_latest)
+            )
+        )
 
     return apvi_forecast_set
 
