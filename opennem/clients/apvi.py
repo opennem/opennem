@@ -329,9 +329,25 @@ def get_apvi_rooftop_data(day: Optional[datetime] = None) -> Optional[APVIForeca
             )
         )
 
+    apvi_server_latest: Optional[datetime] = None
+
+    trading_intervals = list(set([i.trading_interval for i in _interval_records]))
+
+    if trading_intervals:
+        apvi_server_latest = max(trading_intervals)
+
     apvi_forecast_set = APVIForecastSet(
         crawled=_run_at, intervals=_interval_records, capacities=_state_capacity_models
     )
+
+    try:
+        apvi_forecast_set.server_latest = apvi_server_latest
+    except ValidationError:
+        logger.error(
+            "APVI validation error for server_latest: {} <{}>".format(
+                apvi_server_latest, repr(apvi_server_latest)
+            )
+        )
 
     return apvi_forecast_set
 
