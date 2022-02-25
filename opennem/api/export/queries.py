@@ -619,12 +619,13 @@ def energy_network_interconnector_emissions_query(
     __query = """
     select
         t.trading_interval at time zone '{timezone}' as trading_interval,
-        t.flow_from,
-        t.flow_to,
-        t.flow_energy as energy,
-        t.flow_from_emissions,
-        t.flow_to_emissions
-    from vw_region_flow_emissions t
+        t.network_id,
+        t.network_region,
+        t.energy_imports,
+        t.energy_exports,
+        t.emission_imports,
+        t.emission_exports
+    from at_network_flows t
     where
         t.trading_interval <= '{date_max}' and
         t.trading_interval >= '{date_min}' and
