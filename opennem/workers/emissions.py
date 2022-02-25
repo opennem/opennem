@@ -207,21 +207,11 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
     fill_row(a, 4, [["v", 1], ["v-n", 1], ["n-v", -1], ["v-s", 1], ["v-t", 1]], _var_dict)
 
     # emissions intensity equations
-    fill_row(
-        a, 5, [["n-q", 1], ["n", -power_dict[("NSW1", "QLD1")] / demand_dict["NSW1"]]], _var_dict
-    )
-    fill_row(
-        a, 6, [["n-v", 1], ["n", -power_dict[("NSW1", "VIC1")] / demand_dict["NSW1"]]], _var_dict
-    )
-    fill_row(
-        a, 7, [["v-t", 1], ["v", -power_dict[("VIC1", "TAS1")] / demand_dict["VIC1"]]], _var_dict
-    )
-    fill_row(
-        a, 8, [["v-s", 1], ["v", -power_dict[("VIC1", "SA1")] / demand_dict["VIC1"]]], _var_dict
-    )
-    fill_row(
-        a, 9, [["v-n", 1], ["v", -power_dict[("VIC1", "NSW1")] / demand_dict["VIC1"]]], _var_dict
-    )
+    fill_row(a, 5, [["n-q", 1], ["n", -power_dict[("n", "q")] / demand_dict["NSW1"]]], _var_dict)
+    fill_row(a, 6, [["n-v", 1], ["n", -power_dict[("n", "v")] / demand_dict["NSW1"]]], _var_dict)
+    fill_row(a, 7, [["v-t", 1], ["v", -power_dict[("v", "t")] / demand_dict["VIC1"]]], _var_dict)
+    fill_row(a, 8, [["v-s", 1], ["v", -power_dict[("v", "s")] / demand_dict["VIC1"]]], _var_dict)
+    fill_row(a, 9, [["v-n", 1], ["v", -power_dict[("v", "n")] / demand_dict["VIC1"]]], _var_dict)
 
     # constants
     b = np.zeros((10, 1))
@@ -280,7 +270,12 @@ def calculate_emission_flows(df_gen: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
         emissions_di = dx_emissions[dx_emissions.trading_interval == dt]
         interconnector_di = dx_ic[dx_ic.index == dt]
 
-        results[dt] = solve_flows(emissions_di, interconnector_di)
+        try:
+            results[dt] = solve_flows(emissions_di, interconnector_di)
+        except Exception as e:
+            logger.error("solve_flows error: {}".format(e))
+            raise EmissionsWorkerException("solve_flows error")
+
         dt += timedelta(minutes=5)
 
     return results
@@ -291,7 +286,7 @@ def emissions(df_emissions: pd.DataFrame, power_dict: Dict) -> Dict:
     emissions_dict = dict(df_emissions.groupby(df_emissions.network_region).emissions.sum())
 
     # simple_flows = [[2, 1], [3, 5], [4, 5]]
-    simple_flows = [["QLD1", "NSW1"], ["SA1", "VIC1"], ["TAS1", "VIC1"]]
+    simple_flows = [["N", "Q"], ["S", "V"], ["T", "V"]]
 
     for from_regionid, to_regionid in simple_flows:
         try:
@@ -362,7 +357,7 @@ def run_emission_update_day(
 
 
 def _test_case() -> None:
-    test_date = datetime.fromisoformat("2021-10-01T00:00:00")
+    test_date = datetime.fromisoformat("2022-02-22T00:00:00")
     calc_day(test_date)
 
 
