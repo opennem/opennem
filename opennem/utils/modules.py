@@ -50,9 +50,8 @@ def load_all_crawler_definitions(path: str) -> List[CrawlerDefinition]:
         for module in walk_modules(path):
             for crawler_class in iter_crawler_definitions(module):
                 crawler_definitions.append(crawler_class)
-                print("{} => {}".format(module, crawler_class))
     except ImportError as e:
-        print("Error importing: {}".format(e))
+        raise Exception("Error importing: {}".format(e))
 
     return crawler_definitions
 
