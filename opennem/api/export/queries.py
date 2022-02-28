@@ -629,6 +629,8 @@ def energy_network_interconnector_emissions_query(
     where
         t.trading_interval <= '{date_max}' and
         t.trading_interval >= '{date_min}' and
+        t.network_id = '{network_id}' and
+
         {network_region_query}
         1=1
     order by 1 desc
