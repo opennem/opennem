@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 from starlette import status
@@ -7,7 +7,6 @@ from starlette import status
 from opennem.api.export.map import PriorityType, priority_from_name
 from opennem.api.export.tasks import export_energy, export_power
 from opennem.scheduler import huey
-from opennem.utils.scrapyd import get_jobs, job_schedule_all
 
 logger = logging.getLogger(__name__)
 
@@ -22,17 +21,6 @@ def export_energy_task(priority: PriorityType, latest: bool) -> None:
 @huey.task()
 def export_power_task(priority: PriorityType, latest: bool) -> None:
     export_power(priority=priority, latest=latest)
-
-
-@router.get("/scrapy/task")
-def scrapy_task(name: str = Query(None, description="name of spider to queue")) -> List[str]:
-    return job_schedule_all(name)
-
-
-@router.get("/scrapy/queue")
-def scrapy_queue() -> Dict[str, Any]:
-    resp = get_jobs()
-    return resp
 
 
 @router.get("/worker/task")
