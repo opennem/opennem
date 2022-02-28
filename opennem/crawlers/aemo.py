@@ -33,7 +33,7 @@ def run_aemo_mms_crawl(
 
     entries_to_fetch: List[DirlistingEntry] = []
 
-    if crawler.latest and crawler.server_latest:
+    if (crawler.latest and crawler.server_latest) and last_crawled:
         entries_to_fetch = dirlisting.get_files_modified_since(crawler.server_latest)
         logger.debug("Getting last crawled since {}".format(crawler.server_latest))
 
