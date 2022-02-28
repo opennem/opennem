@@ -9,7 +9,7 @@ from typing import Optional
 from opennem.clients.bom import get_bom_observations
 from opennem.controllers.bom import store_bom_observation_intervals
 from opennem.controllers.nem import ControllerReturn
-from opennem.crawlers.schema import CrawlerDefinition
+from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.spiders.bom.utils import get_stations_priority
 
 logger = logging.getLogger("opennem.crawler.bom")
@@ -41,3 +41,14 @@ def crawl_bom_capitals(
         return cr
 
     return None
+
+
+BOMCapitals = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.frequent,
+    name="au.bom.capitals",
+    url="none",
+    limit=1,
+    backoff=5,
+    processor=crawl_bom_capitals,
+)

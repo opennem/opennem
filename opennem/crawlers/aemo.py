@@ -6,9 +6,9 @@ import logging
 from typing import List, Optional
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
+from opennem.core.crawlers.schema import CrawlerDefinition
 from opennem.core.parsers.aemo.mms import parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
-from opennem.crawlers.schema import CrawlerDefinition
 
 logger = logging.getLogger("opennem.crawler.aemo")
 

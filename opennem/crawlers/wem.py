@@ -10,7 +10,7 @@ from opennem.clients.wem import (
 )
 from opennem.controllers.schema import ControllerReturn
 from opennem.controllers.wem import store_wem_balancingsummary_set, store_wem_facility_intervals
-from opennem.crawlers.schema import CrawlerDefinition
+from opennem.core.crawlers.schema import CrawlerDefinition
 
 logger = logging.getLogger("opennem.crawlers.wem")
 

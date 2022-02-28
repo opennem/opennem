@@ -9,7 +9,7 @@ from typing import Optional
 from opennem.clients.apvi import APVIForecastSet, get_apvi_rooftop_data, get_apvi_rooftop_today
 from opennem.controllers.apvi import store_apvi_forecastset, update_apvi_facility_capacities
 from opennem.controllers.schema import ControllerReturn
-from opennem.crawlers.schema import CrawlerDefinition
+from opennem.core.crawlers.schema import CrawlerDefinition
 from opennem.utils.dates import date_series, get_today_nem
 
 logger = logging.getLogger("opennem.crawlers.apvi")
