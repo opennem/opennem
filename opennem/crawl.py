@@ -65,7 +65,7 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
     limit"""
 
     logger.info(
-        "Crawling: {}. Last Crawled: {}. Limit: {}. Last crawled: {}".format(
+        "Crawling: {}. (Last Crawled: {}. Limit: {}. Server latest: {})".format(
             crawler.name, crawler.last_crawled, crawler.limit, crawler.server_latest
         )
     )
