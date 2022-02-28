@@ -77,7 +77,7 @@ def store_bom_observation_intervals(observations: BOMObservationReturn) -> Contr
     except Exception as e:
         logger.error("Error: {}".format(e))
         cr.errors = cr.processed_records
-        cr.error_detail = str(e)
+        cr.error_detail.append(str(e))
     finally:
         session.close()
         engine.dispose()
