@@ -1,17 +1,23 @@
 """Primary OpenNEM crawler
 
 """
+import inspect
 import logging
 from typing import List, Optional
 
 from pydantic import ValidationError
 
+from opennem import settings
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
+from opennem.core.crawlers.schema import (
+    CrawlerDefinition,
+    CrawlerPriority,
+    CrawlerSchedule,
+    CrawlerSet,
+)
 from opennem.crawlers.aemo import run_aemo_mms_crawl
 from opennem.crawlers.apvi import crawl_apvi_forecasts
-from opennem.crawlers.bom import crawl_bom_capitals
-from opennem.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule, CrawlerSet
 from opennem.crawlers.wem import (
     run_wem_balancing_crawl,
     run_wem_facility_scada_crawl,
@@ -19,43 +25,62 @@ from opennem.crawlers.wem import (
     run_wem_live_facility_scada_crawl,
 )
 from opennem.utils.dates import get_today_opennem
+from opennem.utils.modules import load_all_crawler_definitions
 
 logger = logging.getLogger("opennem.crawler")
 
 
+def iter_crawler_definitions(module: str):
+    """Return an iterator over all spider classes defined in the given module
+    that can be instantiated (i.e. which have name)
+    """
+
+    for obj in vars(module).values():
+        if (
+            inspect.isclass(obj)
+            and issubclass(obj, CrawlerDefinition)
+            and obj.__module__ == module.__name__
+            and getattr(obj, "name", None)
+        ):
+            yield obj
+
+
 def load_crawlers() -> CrawlerSet:
     """Loads all the crawler definitions from a module and returns a CrawlSet"""
-    _crawlers = []
+    crawlers = []
+    crawler_definitions = []
 
-    for i in globals():
-        if isinstance(globals()[i], CrawlerDefinition):
-            _crawler_inst = globals()[i]
+    if settings.crawlers_module:
+        # search_modules.append()
+        crawler_definitions = load_all_crawler_definitions(settings.crawlers_module)
 
-            _meta = crawler_get_all_meta(_crawler_inst.name)
+    for crawler_inst in crawler_definitions:
 
-            if not _meta:
-                _crawlers.append(_crawler_inst)
-                continue
+        _meta = crawler_get_all_meta(crawler_inst.name)
 
-            crawler_updated_with_meta: Optional[CrawlerDefinition] = None
+        if not _meta:
+            crawlers.append(crawler_inst)
+            continue
 
-            try:
-                crawler_field_values = {
-                    **_crawler_inst.dict(),
-                    **_meta,
-                    "version": "2",
-                }
-                crawler_updated_with_meta = CrawlerDefinition(
-                    **crawler_field_values,
-                )
-            except ValidationError as e:
-                logger.error("Validation error for crawler {}: {}".format(_crawler_inst.name, e))
-                raise Exception("Crawler initiation error")
+        crawler_updated_with_meta: Optional[CrawlerDefinition] = None
 
-            if crawler_updated_with_meta:
-                _crawlers.append(crawler_updated_with_meta)
+        try:
+            crawler_field_values = {
+                **crawler_inst.dict(),
+                **_meta,
+                "version": "2",
+            }
+            crawler_updated_with_meta = CrawlerDefinition(
+                **crawler_field_values,
+            )
+        except ValidationError as e:
+            logger.error("Validation error for crawler {}: {}".format(crawler_inst.name, e))
+            raise Exception("Crawler initiation error")
 
-    cs = CrawlerSet(crawlers=_crawlers)
+        if crawler_updated_with_meta:
+            crawlers.append(crawler_updated_with_meta)
+
+    cs = CrawlerSet(crawlers=crawlers)
 
     logger.debug(
         "Loaded {} crawlers: {}".format(len(cs.crawlers), ", ".join([i.name for i in cs.crawlers]))
@@ -114,147 +139,6 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
         )
 
 
-AEMONemTradingISLatest = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nem.current.trading_is",
-    url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)
-
-AEMONemDispatchISLatest = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nem.current.dispatch_is",
-    url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)
-
-AEMONEMDispatchScada = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nem.dispatch_scada",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)
-
-AEMONEMCurrentDispatchScada = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.four_times_a_day,
-    name="au.nem.current.dispatch_scada",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
-    latest=False,
-    processor=run_aemo_mms_crawl,
-)
-
-AEMONEMDispatchActualGEN = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    name="au.nem.dispatch_actual_gen",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)
-
-AEMONEMNextDayDispatch = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.daily,
-    name="au.nem.dispatch",
-    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)
-
-AEMONEMRooftop = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.frequent,
-    name="au.nem.rooftop",
-    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
-    latest=True,
-    filename_filter=".*_MEASUREMENT_.*",
-    processor=run_aemo_mms_crawl,
-)
-
-
-AEMONEMRooftopForecast = CrawlerDefinition(
-    priority=CrawlerPriority.low,
-    schedule=CrawlerSchedule.hourly,
-    name="au.nem.rooftop_forecast",
-    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)
-
-BOMCapitals = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.frequent,
-    name="au.bom.capitals",
-    url="none",
-    limit=1,
-    backoff=5,
-    processor=crawl_bom_capitals,
-)
-
-APVIRooftopTodayCrawler = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.frequent,
-    name="apvi.today.data",
-    url="none",
-    latest=True,
-    processor=crawl_apvi_forecasts,
-)
-
-APVIRooftopLatestCrawler = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.four_times_a_day,
-    name="apvi.latest.data",
-    limit=3,
-    url="none",
-    latest=False,
-    processor=crawl_apvi_forecasts,
-)
-
-
-APVIRooftopMonthCrawler = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.daily,
-    name="apvi.month.data",
-    limit=30,
-    url="none",
-    latest=False,
-    processor=crawl_apvi_forecasts,
-)
-
-WEMBalancing = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.hourly,
-    name="au.wem.balancing",
-    processor=run_wem_balancing_crawl,
-)
-
-WEMFacilityScada = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.hourly,
-    name="au.wem.facility_scada",
-    processor=run_wem_facility_scada_crawl,
-)
-
-WEMBalancingLive = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.frequent,
-    name="au.wem.live.balancing",
-    processor=run_wem_live_balancing_crawl,
-)
-
-WEMFacilityScadaLive = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.frequent,
-    name="au.wem.live.facility_scada",
-    processor=run_wem_live_facility_scada_crawl,
-)
-
 _CRAWLER_SET = load_crawlers()
 
 
@@ -297,5 +181,5 @@ def get_crawl_set() -> CrawlerSet:
 if __name__ == "__main__":
     cs = get_crawl_set()
 
-    for c in cs.get_crawlers_by_match("apvi.latest.data"):
-        run_crawl(c)
+    for c in cs.crawlers:
+        print(c.name)

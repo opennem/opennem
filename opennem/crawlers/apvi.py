@@ -9,7 +9,7 @@ from typing import Optional
 from opennem.clients.apvi import APVIForecastSet, get_apvi_rooftop_data, get_apvi_rooftop_today
 from opennem.controllers.apvi import store_apvi_forecastset, update_apvi_facility_capacities
 from opennem.controllers.schema import ControllerReturn
-from opennem.core.crawlers.schema import CrawlerDefinition
+from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.utils.dates import date_series, get_today_nem
 
 logger = logging.getLogger("opennem.crawlers.apvi")
@@ -63,6 +63,37 @@ def run_apvi_crawl(day: Optional[datetime] = None) -> ControllerReturn:
     cr.server_latest = apvi_forecast_set.server_latest
 
     return cr
+
+
+APVIRooftopTodayCrawler = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.frequent,
+    name="apvi.today.data",
+    url="none",
+    latest=True,
+    processor=crawl_apvi_forecasts,
+)
+
+APVIRooftopLatestCrawler = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.four_times_a_day,
+    name="apvi.latest.data",
+    limit=3,
+    url="none",
+    latest=False,
+    processor=crawl_apvi_forecasts,
+)
+
+
+APVIRooftopMonthCrawler = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
+    name="apvi.month.data",
+    limit=30,
+    url="none",
+    latest=False,
+    processor=crawl_apvi_forecasts,
+)
 
 
 if __name__ == "__main__":

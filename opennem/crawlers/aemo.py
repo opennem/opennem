@@ -6,7 +6,7 @@ import logging
 from typing import List, Optional
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
-from opennem.core.crawlers.schema import CrawlerDefinition
+from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.core.parsers.aemo.mms import parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 
@@ -56,3 +56,78 @@ def run_aemo_mms_crawl(
     controller_returns.last_modified = max([i.modified_date for i in entries_to_fetch])  # type: ignore
 
     return controller_returns
+
+
+AEMONemTradingISLatest = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.nem.current.trading_is",
+    url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
+    latest=True,
+    processor=run_aemo_mms_crawl,
+)
+
+AEMONemDispatchISLatest = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.nem.current.dispatch_is",
+    url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
+    latest=True,
+    processor=run_aemo_mms_crawl,
+)
+
+AEMONEMDispatchScada = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.nem.dispatch_scada",
+    url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
+    latest=True,
+    processor=run_aemo_mms_crawl,
+)
+
+AEMONEMCurrentDispatchScada = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.four_times_a_day,
+    name="au.nem.current.dispatch_scada",
+    url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
+    latest=False,
+    processor=run_aemo_mms_crawl,
+)
+
+AEMONEMDispatchActualGEN = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
+    name="au.nem.dispatch_actual_gen",
+    url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
+    latest=True,
+    processor=run_aemo_mms_crawl,
+)
+
+AEMONEMNextDayDispatch = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
+    name="au.nem.dispatch",
+    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
+    latest=True,
+    processor=run_aemo_mms_crawl,
+)
+
+AEMONEMRooftop = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.frequent,
+    name="au.nem.rooftop",
+    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
+    latest=True,
+    filename_filter=".*_MEASUREMENT_.*",
+    processor=run_aemo_mms_crawl,
+)
+
+
+AEMONEMRooftopForecast = CrawlerDefinition(
+    priority=CrawlerPriority.low,
+    schedule=CrawlerSchedule.hourly,
+    name="au.nem.rooftop_forecast",
+    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
+    latest=True,
+    processor=run_aemo_mms_crawl,
+)

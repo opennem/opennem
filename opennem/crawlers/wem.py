@@ -10,7 +10,7 @@ from opennem.clients.wem import (
 )
 from opennem.controllers.schema import ControllerReturn
 from opennem.controllers.wem import store_wem_balancingsummary_set, store_wem_facility_intervals
-from opennem.core.crawlers.schema import CrawlerDefinition
+from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 
 logger = logging.getLogger("opennem.crawlers.wem")
 
@@ -47,6 +47,34 @@ def run_wem_live_facility_scada_crawl(
     cr = store_wem_facility_intervals(generated_set)
     return cr
 
+
+WEMBalancing = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.hourly,
+    name="au.wem.balancing",
+    processor=run_wem_balancing_crawl,
+)
+
+WEMFacilityScada = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.hourly,
+    name="au.wem.facility_scada",
+    processor=run_wem_facility_scada_crawl,
+)
+
+WEMBalancingLive = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.frequent,
+    name="au.wem.live.balancing",
+    processor=run_wem_live_balancing_crawl,
+)
+
+WEMFacilityScadaLive = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.frequent,
+    name="au.wem.live.facility_scada",
+    processor=run_wem_live_facility_scada_crawl,
+)
 
 if __name__ == "__main__":
     pass
