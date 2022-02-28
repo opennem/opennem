@@ -623,8 +623,8 @@ def energy_network_interconnector_emissions_query(
         t.network_region,
         t.energy_imports,
         t.energy_exports,
-        t.emission_imports,
-        t.emission_exports
+        t.emissions_imports,
+        t.emissions_exports
     from at_network_flows t
     where
         t.trading_interval <= '{date_max}' and
