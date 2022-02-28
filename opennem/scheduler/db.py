@@ -181,9 +181,3 @@ def crawler_scheduled_twice_a_day() -> None:
 @huey.lock_task("crawler_scheduled_day")
 def crawler_scheduled_day() -> None:
     run_crawls_by_schedule(CrawlerSchedule.daily)
-
-
-@huey.periodic_task(crontab(hour="*/4", minute="31"), retries=5, retry_delay=120)
-@huey.lock_task("crawler_schedule_all_fallback")
-def crawler_schedule_all_fallback() -> None:
-    run_crawls_all()
