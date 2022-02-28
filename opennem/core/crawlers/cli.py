@@ -21,7 +21,8 @@ def cmd_crawl_cli() -> None:
 
 @click.command()
 @click.argument("name")
-def crawl_cli_run(name: str) -> None:
+@click.option("--latest", default=False, help="Run only server latest")
+def crawl_cli_run(name: str, latest: bool = False) -> None:
     console.log("Run crawlers matching: {}".format(name))
 
     crawlers = get_crawl_set()
@@ -44,7 +45,7 @@ def crawl_cli_run(name: str) -> None:
                 c.name, c.version, c.last_crawled, c.last_processed, c.server_latest
             )
         )
-        run_crawl(c)
+        run_crawl(c, last_crawled=latest)
 
 
 @click.command()
