@@ -38,6 +38,8 @@ class OpennemSettings(BaseSettings):
 
     scrapyd_project_name: str = "opennem"
 
+    crawlers_module: str = "opennem.crawlers"
+
     google_places_api_key: Optional[str] = None
 
     requests_cache_path: str = ".requests"
