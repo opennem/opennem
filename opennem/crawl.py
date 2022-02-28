@@ -1,7 +1,6 @@
 """Primary OpenNEM crawler
 
 """
-import inspect
 import logging
 from typing import List, Optional
 
@@ -10,39 +9,11 @@ from pydantic import ValidationError
 from opennem import settings
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
-from opennem.core.crawlers.schema import (
-    CrawlerDefinition,
-    CrawlerPriority,
-    CrawlerSchedule,
-    CrawlerSet,
-)
-from opennem.crawlers.aemo import run_aemo_mms_crawl
-from opennem.crawlers.apvi import crawl_apvi_forecasts
-from opennem.crawlers.wem import (
-    run_wem_balancing_crawl,
-    run_wem_facility_scada_crawl,
-    run_wem_live_balancing_crawl,
-    run_wem_live_facility_scada_crawl,
-)
+from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.modules import load_all_crawler_definitions
 
 logger = logging.getLogger("opennem.crawler")
-
-
-def iter_crawler_definitions(module: str):
-    """Return an iterator over all spider classes defined in the given module
-    that can be instantiated (i.e. which have name)
-    """
-
-    for obj in vars(module).values():
-        if (
-            inspect.isclass(obj)
-            and issubclass(obj, CrawlerDefinition)
-            and obj.__module__ == module.__name__
-            and getattr(obj, "name", None)
-        ):
-            yield obj
 
 
 def load_crawlers() -> CrawlerSet:
@@ -179,7 +150,9 @@ def get_crawl_set() -> CrawlerSet:
 
 
 if __name__ == "__main__":
-    cs = get_crawl_set()
+    # cs = get_crawl_set()
 
-    for c in cs.crawlers:
-        print(c.name)
+    # for c in cs.crawlers:
+    #     print(c.name)
+
+    run_crawls_by_schedule(CrawlerSchedule.daily)
