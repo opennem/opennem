@@ -58,6 +58,8 @@ def run_aemo_mms_crawl(
     return controller_returns
 
 
+# Trading_IS
+
 AEMONemTradingISLatest = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
@@ -67,6 +69,18 @@ AEMONemTradingISLatest = CrawlerDefinition(
     processor=run_aemo_mms_crawl,
 )
 
+AEMONemTradingISCurrent = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.hourly,
+    name="au.nem.current.trading_is",
+    url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
+    latest=True,
+    limit=364,
+    processor=run_aemo_mms_crawl,
+)
+
+#  Dispatch_IS
+
 AEMONemDispatchISLatest = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
@@ -75,6 +89,19 @@ AEMONemDispatchISLatest = CrawlerDefinition(
     latest=True,
     processor=run_aemo_mms_crawl,
 )
+
+
+AEMONemDispatchISCurrent = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.hourly,
+    name="au.nem.current.dispatch_is",
+    url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
+    latest=False,
+    limit=364,
+    processor=run_aemo_mms_crawl,
+)
+
+# Dispatch Scada
 
 AEMONEMDispatchScada = CrawlerDefinition(
     priority=CrawlerPriority.high,
@@ -87,12 +114,15 @@ AEMONEMDispatchScada = CrawlerDefinition(
 
 AEMONEMCurrentDispatchScada = CrawlerDefinition(
     priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.four_times_a_day,
+    schedule=CrawlerSchedule.hourly,
     name="au.nem.current.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
     latest=False,
+    limit=364,
     processor=run_aemo_mms_crawl,
 )
+
+# Next day gens and dispatch
 
 AEMONEMDispatchActualGEN = CrawlerDefinition(
     priority=CrawlerPriority.medium,
@@ -112,6 +142,8 @@ AEMONEMNextDayDispatch = CrawlerDefinition(
     processor=run_aemo_mms_crawl,
 )
 
+# Rooftop data
+
 AEMONEMRooftop = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.frequent,
@@ -121,7 +153,6 @@ AEMONEMRooftop = CrawlerDefinition(
     filename_filter=".*_MEASUREMENT_.*",
     processor=run_aemo_mms_crawl,
 )
-
 
 AEMONEMRooftopForecast = CrawlerDefinition(
     priority=CrawlerPriority.low,
