@@ -37,7 +37,7 @@ def run_aemo_mms_crawl(
         entries_to_fetch = dirlisting.get_files_modified_since(crawler.server_latest)
         logger.debug("Getting last crawled since {}".format(crawler.server_latest))
 
-    elif crawler.limit:
+    elif crawler.limit or limit:
         entries_to_fetch = dirlisting.get_most_recent_files(limit=crawler.limit)
         logger.debug("Getting limit {}".format(crawler.limit))
 
