@@ -99,20 +99,18 @@ def schedule_hourly_tasks() -> None:
         export_energy(priority=PriorityType.daily, latest=True)
 
 
-@huey.periodic_task(crontab(hour="22", minute="45"))
+@huey.periodic_task(crontab(hour="*/2", minute="45"))
 @huey.lock_task("schedule_daily_tasks")
 def schedule_daily_tasks() -> None:
     if settings.workers_run:
         export_energy(priority=PriorityType.daily)
-        slack_message("Finished running energy dailies on {}".format(settings.env))
 
 
-@huey.periodic_task(crontab(hour="22", minute="15"), priority=30)
+@huey.periodic_task(crontab(hour="*/2", minute="15"), priority=30)
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
     if settings.workers_run:
         export_energy(priority=PriorityType.monthly)
-        slack_message("Finished running energy_monthlies on {}".format(settings.env))
 
 
 # geojson maps
