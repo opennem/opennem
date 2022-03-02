@@ -1,6 +1,15 @@
 # pylint: disable=no-name-in-module
 # pylint: disable=no-self-argument
 # pylint: disable=no-member
+"""
+Primary scheduler runs:
+
+ * website json export tasks
+ * refreshing materialized views
+ * monitoring tasks
+
+"""
+import logging
 import platform
 
 from huey import PriorityRedisHuey, crontab
@@ -15,10 +24,20 @@ from opennem.api.export.tasks import (
     export_metadata,
     export_power,
 )
+from opennem.db.tasks import refresh_material_views
 from opennem.exporter.geojson import export_facility_geojson
+from opennem.monitors.aemo_intervals import aemo_wem_live_interval
+from opennem.monitors.emissions import alert_missing_emission_factors
+from opennem.monitors.facility_seen import facility_first_seen_check
+from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.monitors.set_outputs import run_set_output_check
 from opennem.notifications.slack import slack_message
-from opennem.settings import settings
+from opennem.settings import settings  # noqa: F401
+from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
+from opennem.workers.daily_summary import run_daily_fueltech_summary
+from opennem.workers.emissions import run_emission_update_day
+from opennem.workers.facility_data_ranges import update_facility_seen_range
+from opennem.workers.gap_fill import run_energy_gapfill
 
 # Py 3.8 on MacOS changed the default multiprocessing model
 if platform.system() == "Darwin":
@@ -37,6 +56,26 @@ if settings.cache_url:
     redis_host = settings.cache_url.host
 
 huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
+
+logger = logging.getLogger("openenm.scheduler")
+
+
+# Materialized views
+# 5:45AM and 8:45AM AEST
+@huey.periodic_task(crontab(hour="6", minute="45"))
+@huey.lock_task("db_refresh_material_views")
+def db_refresh_material_views() -> None:
+    refresh_material_views("mv_facility_all")
+    refresh_material_views("mv_region_emissions")
+    refresh_material_views("mv_interchange_energy_nem_region")
+    slack_message("Ran refresh of material views on {}".format(settings.env))
+
+
+@huey.periodic_task(crontab(hour="*/1", minute="15"))
+@huey.lock_task("db_refresh_material_views_recent")
+def db_refresh_material_views_recent() -> None:
+    refresh_material_views("mv_facility_45d")
+    refresh_material_views("mv_region_emissions_45d")
 
 
 # export tasks
@@ -80,18 +119,6 @@ def schedule_power_weeklies() -> None:
     export_power(priority=PriorityType.history, latest=True)
 
 
-@huey.periodic_task(crontab(hour="12", minute="15"))
-@huey.lock_task("schedule_power_weeklies_archive")
-def schedule_power_weeklies_archive() -> None:
-    """
-    Run weekly power outputs entire archive. Note that this is 8000+ files at the moment
-
-    @NOTE disabled as we will run manually
-    """
-    # export_power(priority=PriorityType.history)
-    return None
-
-
 @huey.periodic_task(crontab(hour="*/3", minute="45"), priority=50)
 @huey.lock_task("schedule_hourly_tasks")
 def schedule_hourly_tasks() -> None:
@@ -129,8 +156,85 @@ def schedule_export_metadata() -> None:
         export_metadata()
 
 
+# Monitoring tasks
+
 # set output check
 @huey.periodic_task(crontab(hour="*/12", minute="30"), priority=30)
 @huey.lock_task("schedule_run_set_output_check")
 def schedule_run_set_output_check() -> None:
     run_set_output_check()
+
+
+@huey.periodic_task(crontab(hour="10", minute="45"))
+@huey.lock_task("db_run_daily_fueltech_summary")
+def db_run_daily_fueltech_summary() -> None:
+    run_daily_fueltech_summary()
+
+
+# run gap fill tasks
+@huey.periodic_task(crontab(hour="*/1", minute="15"))
+@huey.lock_task("db_run_energy_gapfil")
+def db_run_energy_gapfil() -> None:
+    run_energy_gapfill(days=14)
+
+
+@huey.periodic_task(crontab(hour="*/3", minute=45))
+@huey.lock_task("db_run_aggregates")
+def db_run_aggregates() -> None:
+    run_aggregates_all_days(days=2)
+
+
+@huey.periodic_task(crontab(hour="8", minute="30"))
+@huey.lock_task("db_run_aggregates_year")
+def db_run_aggregates_year() -> None:
+    run_aggregates_all()
+
+
+@huey.periodic_task(crontab(hour="6", minute="45"))
+@huey.lock_task("db_run_emission_tasks")
+def db_run_emission_tasks() -> None:
+    try:
+        run_emission_update_day(2)
+    except Exception as e:
+        logger.error("Error running emission update: {}".format(str(e)))
+
+
+@huey.periodic_task(crontab(minute="*/60"), priority=80)
+@huey.lock_task("monitor_opennem_intervals")
+def monitor_opennem_intervals() -> None:
+    if settings.env != "production":
+        return None
+
+    for network_code in ["NEM", "WEM"]:
+        check_opennem_interval_delays(network_code)
+
+
+@huey.periodic_task(crontab(minute="*/60"), priority=50)
+@huey.lock_task("monitor_wem_interval")
+def monitor_wem_interval() -> None:
+    if settings.env != "production":
+        return None
+
+    aemo_wem_live_interval()
+
+
+@huey.periodic_task(crontab(hour="8", minute="45"), priority=10)
+@huey.lock_task("monitor_emission_factors")
+def monitor_emission_factors() -> None:
+    alert_missing_emission_factors()
+
+
+# worker tasks
+@huey.periodic_task(crontab(hour="10", minute="1"))
+@huey.lock_task("schedule_facility_first_seen_check")
+def schedule_facility_first_seen_check() -> None:
+    """Check for new DUIDS"""
+    if settings.env == "production":
+        facility_first_seen_check()
+
+
+@huey.periodic_task(crontab(hour="9,18", minute="45"))
+@huey.lock_task("db_facility_seen_update")
+def db_facility_seen_update() -> None:
+    update_facility_seen_range()
+    slack_message(f"Updated facility seen range on {settings.env}")
