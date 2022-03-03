@@ -15,7 +15,6 @@ from opennem.core.network_regions import get_network_regions
 from opennem.core.networks import get_network_region_schema
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import FacilityScada
-from opennem.notifications.slack import slack_message
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.dates import DatetimeRange, TimeSeries
