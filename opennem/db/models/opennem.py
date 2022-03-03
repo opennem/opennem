@@ -804,7 +804,7 @@ class AggregateFacilityDaily(Base):
     )
 
 
-class AggregateNetworkFlows(Base):
+class AggregateNetworkFlows(Base, BaseModel):
     """
     Network Flows Aggregate Table
     """
