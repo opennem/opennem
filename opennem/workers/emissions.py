@@ -98,7 +98,7 @@ def interconnector_dict(interconnector_di: pd.DataFrame) -> pd.DataFrame:
         }
     )
     dy["generated"] *= -1
-    df = dx.conact(dy)
+    df = dx.concat(dy)
     df.loc[df.generated < 0, "generated"] = 0
 
     return df.set_index(["interconnector_region_from", "interconnector_region_to"]).to_dict()[
