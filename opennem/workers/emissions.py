@@ -351,29 +351,6 @@ def calc_day(day: datetime) -> pd.DataFrame:
     return flow_series_clean
 
 
-def run_emission_update_day(
-    days: int = 1,
-    day: Optional[datetime] = None,
-) -> None:
-    """Run emission calcs for number of days"""
-    # This is Sydney time as the data is published in local time
-
-    if not day:
-        day = get_last_complete_day_for_network(NetworkNEM)
-
-    current_day = day
-    date_min = day - timedelta(days=days)
-
-    while current_day >= date_min:
-        logger.info("Running emission update for {}".format(current_day))
-
-        emissions_day = calc_day(
-            current_day,
-        )
-
-        current_day -= timedelta(days=days)
-
-
 def insert_flows(flow_results: pd.DataFrame, network: NetworkSchema = NetworkNEM) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
@@ -445,9 +422,9 @@ def insert_flows(flow_results: pd.DataFrame, network: NetworkSchema = NetworkNEM
     return len(records_to_store)
 
 
-def _test_case() -> None:
-    test_date = datetime.fromisoformat("2022-02-22T00:00:00")
-    emissions_day = calc_day(test_date)
+def run_and_store_emission_flows(day: datetime) -> None:
+    """Runs and stores emission flows into the aggregate table"""
+    emissions_day = calc_day(day)
 
     emissions_day.reset_index(inplace=True)
     emissions_day = emissions_day.rename(columns={"index": "network_region"})
@@ -462,7 +439,28 @@ def _test_case() -> None:
     insert_flows(emissions_day)
 
 
+def run_emission_update_day(
+    days: int = 1,
+    day: Optional[datetime] = None,
+) -> None:
+    """Run emission calcs for number of days"""
+    # This is Sydney time as the data is published in local time
+
+    if not day:
+        day = get_last_complete_day_for_network(NetworkNEM)
+
+    current_day = day
+    date_min = day - timedelta(days=days)
+
+    while current_day >= date_min:
+        logger.info("Running emission update for {}".format(current_day))
+
+        run_and_store_emission_flows(current_day)
+
+        current_day -= timedelta(days=1)
+
+
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    _test_case()
+    run_emission_update_day(days=30)
