@@ -364,8 +364,6 @@ def insert_flows(flow_results: pd.DataFrame, network: NetworkSchema = NetworkNEM
     flow_results["market_value_imports"] = 0.0
     flow_results["market_value_exports"] = 0.0
 
-    print(flow_results)
-
     # # reorder columns
     columns = [
         "trading_interval",
@@ -432,9 +430,6 @@ def run_and_store_emission_flows(day: datetime) -> None:
     records_to_store: List[Dict] = emissions_day.to_dict("records")
 
     logger.debug("Got {} records".format(len(records_to_store)))
-
-    for record in records_to_store[:5]:
-        logger.debug(record)
 
     insert_flows(emissions_day)
 
