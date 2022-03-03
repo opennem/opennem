@@ -17,6 +17,9 @@ import numpy as np
 import pandas as pd
 
 from opennem.db import get_database_engine
+from opennem.db.models.opennem import AggregateNetworkFlows
+from opennem.pipelines.bulk_insert import build_insert_query
+from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_complete_day_for_network
 
@@ -371,9 +374,83 @@ def run_emission_update_day(
         current_day -= timedelta(days=days)
 
 
+def insert_flows(flow_results: pd.DataFrame, network: NetworkSchema = NetworkNEM) -> int:
+    """Takes a list of generation values and calculates energies and bulk-inserts
+    into the database"""
+
+    # Add metadata
+    flow_results["created_by"] = "opennem.worker.emissions"
+    flow_results["created_at"] = ""
+    flow_results["updated_at"] = datetime.now()
+    flow_results["energy_imports"] = 0.0
+    flow_results["energy_exports"] = 0.0
+    flow_results["market_value_imports"] = 0.0
+    flow_results["market_value_exports"] = 0.0
+
+    print(flow_results)
+
+    # # reorder columns
+    columns = [
+        "trading_interval",
+        "network_id",
+        "network_region",
+        "energy_imports",
+        "energy_exports",
+        "emissions_imports",
+        "emissions_exports",
+        "market_value_imports",
+        "market_value_exports",
+        "created_by",
+        "created_at",
+        "updated_at",
+    ]
+    flow_results = flow_results[columns]
+
+    records_to_store: List[Dict] = flow_results.to_dict("records")
+
+    if len(records_to_store) < 1:
+        logger.error("No records returned from energy sum")
+        return 0
+
+    # Build SQL + CSV and bulk-insert
+    sql_query = build_insert_query(
+        AggregateNetworkFlows,
+        [
+            "energy_imports",
+            "energy_exports",
+            "emissions_imports",
+            "emissions_exports",
+            "market_value_imports",
+            "market_value_exports",
+        ],
+    )
+    conn = get_database_engine().raw_connection()
+    cursor = conn.cursor()
+
+    csv_content = generate_csv_from_records(
+        AggregateNetworkFlows,
+        records_to_store,
+        column_names=list(records_to_store[0].keys()),
+    )
+
+    try:
+        cursor.copy_expert(sql_query, csv_content)
+        conn.commit()
+    except Exception as e:
+        logger.error("Error inserting records: {}".format(e))
+        return 0
+
+    logger.info("Inserted {} records".format(len(records_to_store)))
+
+    return len(records_to_store)
+
+
 def _test_case() -> None:
     test_date = datetime.fromisoformat("2022-02-22T00:00:00")
     emissions_day = calc_day(test_date)
+
+    emissions_day.reset_index(inplace=True)
+    emissions_day = emissions_day.rename(columns={"index": "network_region"})
 
     records_to_store: List[Dict] = emissions_day.to_dict("records")
 
@@ -381,6 +458,8 @@ def _test_case() -> None:
 
     for record in records_to_store[:5]:
         logger.debug(record)
+
+    insert_flows(emissions_day)
 
 
 # debug entry point
