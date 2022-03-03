@@ -824,7 +824,7 @@ class AggregateNetworkFlows(Base, BaseModel):
     )
     network = relationship("Network")
 
-    network_region = Column(Text, index=True)
+    network_region = Column(Text, index=True, primary_key=True, nullable=False)
 
     energy_imports = Column(Numeric, nullable=True)
     energy_exports = Column(Numeric, nullable=True)
