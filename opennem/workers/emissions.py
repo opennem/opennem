@@ -11,7 +11,7 @@ Changelog
 
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -41,13 +41,15 @@ def load_interconnector_intervals(date_start: datetime, date_end: datetime) -> p
         left join facility f on f.code = fs.facility_code
         where
             f.interconnector is True
-            and fs.trading_interval >= '{date_start}'
-            and fs.trading_interval < '{date_end}'
+            and fs.trading_interval >= '{date_start}T00:00:00+10:00'
+            and fs.trading_interval < '{date_end}T00:00:00+10:00'
     """.format(
-        date_start=date_start, date_end=date_end
+        date_start=date_start.date(), date_end=date_end.date()
     )
 
     df_gen = pd.read_sql(query, con=engine, index_col="trading_interval")
+
+    logger.debug(query)
 
     return df_gen
 
@@ -73,12 +75,14 @@ def load_energy_intervals(date_start: datetime, date_end: datetime) -> pd.DataFr
         where
             fs.trading_interval >= '{date_start}T00:00:00+10:00'
             and fs.trading_interval < '{date_end}T00:00:00+10:00'
-            and fs.eoi_quantity is not null
+            -- and fs.eoi_quantity is not null
             and f.interconnector is False
         order by 1 asc;
     """.format(
         date_start=date_start.date(), date_end=date_end.date()
     )
+
+    logger.debug(query)
 
     df_gen = pd.read_sql(query, con=engine)
 
@@ -166,7 +170,7 @@ def nem_demand(power_dict: Dict) -> Dict:
     d = {}
 
     if "NSW1" not in power_dict:
-        raise Exception("Missing generation info")
+        raise Exception("Missing generation info in {}".format(power_dict))
 
     d["NSW1"] = (
         power_dict["NSW1"]
@@ -332,17 +336,16 @@ def calc_day(day: datetime) -> pd.DataFrame:
     flow_series["region_to"] = flow_series.apply(lambda x: x.network_region[1], axis=1)
 
     # build the final data frame with both imports and exports
-    daily_flow = pd.DataFrame(
+    flow_series_clean = pd.DataFrame(
         {
             "emissions_exports": flow_series.groupby("region_from").EMISSIONS.sum(),
             "emissions_imports": flow_series.groupby("region_to").EMISSIONS.sum(),
             "network_id": "NEM",
+            "trading_interval": day,
         }
     )
-    daily_flow.index.name = "network_region"
-    daily_flow["trading_interval"] = day
 
-    return daily_flow
+    return flow_series_clean
 
 
 def run_emission_update_day(
@@ -370,7 +373,14 @@ def run_emission_update_day(
 
 def _test_case() -> None:
     test_date = datetime.fromisoformat("2022-02-22T00:00:00")
-    calc_day(test_date)
+    emissions_day = calc_day(test_date)
+
+    records_to_store: List[Dict] = emissions_day.to_dict("records")
+
+    logger.debug("Got {} records".format(len(records_to_store)))
+
+    for record in records_to_store[:5]:
+        logger.debug(record)
 
 
 # debug entry point
