@@ -97,13 +97,23 @@ def interconnector_dict(interconnector_di: pd.DataFrame) -> pd.DataFrame:
             "interconnector_region_to": "interconnector_region_from",
         }
     )
-    dy["generated"] *= -1
-    df = dx.concat(dy)
-    df.loc[df.generated < 0, "generated"] = 0
 
-    return df.set_index(["interconnector_region_from", "interconnector_region_to"]).to_dict()[
-        "generated"
-    ]
+    # set indexes
+    dy.set_index(["interconnector_region_to", "interconnector_region_from"], inplace=True)
+    dx.set_index(["interconnector_region_to", "interconnector_region_from"], inplace=True)
+
+    dy["generated"] *= -1
+
+    #
+    dx.loc[dx.generated < 0, "generated"] = 0
+    dy.loc[dy.generated < 0, "generated"] = 0
+
+    interconnector_dict = {
+        **dx.to_dict()["generated"],
+        **dy.to_dict()["generated"],
+    }
+
+    return interconnector_dict
 
 
 def power(df_emissions: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
