@@ -266,7 +266,7 @@ def solve_flows(emissions_di, interconnector_di) -> pd.DataFrame:
     try:
         result = np.linalg.solve(a, b)
     except Exception as e:
-        logger.warn("Error: for {}".format(e))
+        logger.warning("Error: for {}".format(e))
         result = None
 
     # transform into emission flows
