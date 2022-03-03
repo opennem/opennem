@@ -124,7 +124,13 @@ def simple_exports(
     except KeyError:
         return 0
 
-    return ic_flow / dx.energy.sum() * dx.emissions.sum()
+    emissions_sum = dx.energy.sum() * dx.emissions.sum()
+    export_value = 0
+
+    if emissions_sum and emissions_sum > 0:
+        export_value = ic_flow / emissions_sum
+
+    return export_value
 
 
 def emissions(df_emissions: pd.DataFrame, power_dict: Dict) -> Dict:
