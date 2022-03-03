@@ -146,9 +146,7 @@ def get_crawl_set() -> CrawlerSet:
 
 
 if __name__ == "__main__":
-    # cs = get_crawl_set()
+    cs = get_crawl_set()
 
-    # for c in cs.crawlers:
-    #     print(c.name)
-
-    run_crawls_by_schedule(CrawlerSchedule.daily)
+    for c in cs.crawlers:
+        run_crawl(c)
