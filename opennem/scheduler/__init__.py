@@ -177,6 +177,9 @@ def db_run_daily_fueltech_summary() -> None:
 def db_run_energy_gapfil() -> None:
     run_energy_gapfill(days=14)
 
+    # Run flow updates
+    run_emission_update_day(days=2)
+
 
 @huey.periodic_task(crontab(hour="*/3", minute=45))
 @huey.lock_task("db_run_aggregates")
@@ -194,7 +197,7 @@ def db_run_aggregates_year() -> None:
 @huey.lock_task("db_run_emission_tasks")
 def db_run_emission_tasks() -> None:
     try:
-        run_emission_update_day(2)
+        run_emission_update_day(days=30)
     except Exception as e:
         logger.error("Error running emission update: {}".format(str(e)))
 
