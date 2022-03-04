@@ -621,10 +621,10 @@ def energy_network_interconnector_emissions_query(
         t.trading_interval at time zone '{timezone}' as trading_interval,
         t.network_id,
         t.network_region,
-        t.energy_imports,
-        t.energy_exports,
-        t.emissions_imports / 1000,
-        t.emissions_exports / 1000
+        coalesce(t.energy_imports / 10000, 0),
+        coalesce(t.energy_exports / 10000, 0),
+        t.emissions_imports,
+        t.emissions_exports
     from at_network_flows t
     where
         t.trading_interval <= '{date_max}' and

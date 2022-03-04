@@ -639,14 +639,15 @@ def energy_interconnector_region_daily(
     return result
 
 
-def energy_interconnector_emissions_region_daily(
+def energy_interconnector_flows_and_emissions(
     time_series: TimeSeries,
     network_region_code: str,
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     period: TimePeriod = human_to_period("1Y")
-    units = get_unit("emissions")
+    unit_energy = get_unit("energy_giga")
+    unit_emissions = get_unit("emissions")
 
     query = energy_network_interconnector_emissions_query(
         time_series=time_series,
@@ -661,6 +662,10 @@ def energy_interconnector_emissions_region_daily(
     if len(row) < 1:
         return None
 
+    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
+
+    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
+
     import_emissions = [
         DataQueryResult(interval=i[0], group_by="imports", result=i[5]) for i in row
     ]
@@ -669,32 +674,54 @@ def energy_interconnector_emissions_region_daily(
     ]
 
     result = stats_factory(
+        imports,
+        network=time_series.network,
+        period=period,
+        interval=time_series.interval,
+        units=unit_energy,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    if not result:
+        raise Exception("No results from flow controller")
+
+    result_exports = stats_factory(
+        exports,
+        network=time_series.network,
+        period=period,
+        interval=time_series.interval,
+        units=unit_energy,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    result.append_set(result_exports)
+
+    result_import_emissions = stats_factory(
         import_emissions,
         network=time_series.network,
         period=period,
         interval=time_series.interval,
-        units=units,
+        units=unit_emissions,
         region=network_region_code,
         fueltech_group=True,
         localize=False,
     )
 
-    # Bail early on no interconnector
-    # don't error
-    if not result:
-        return result
+    result.append_set(result_import_emissions)
 
-    result_exports = stats_factory(
+    result_export_emissions = stats_factory(
         export_emissions,
         network=time_series.network,
         period=period,
         interval=time_series.interval,
-        units=units,
+        units=unit_emissions,
         region=network_region_code,
         fueltech_group=True,
         localize=False,
     )
 
-    result.append_set(result_exports)
+    result.append_set(result_export_emissions)
 
     return result
