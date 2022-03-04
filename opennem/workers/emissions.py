@@ -11,7 +11,7 @@ Changelog
 
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -44,6 +44,7 @@ def load_interconnector_intervals(date_start: datetime, date_end: datetime) -> p
         left join facility f on f.code = fs.facility_code
         where
             f.interconnector is True
+            and f.network_id IN ('NEM')
             and fs.trading_interval >= '{date_start}T00:00:00+10:00'
             and fs.trading_interval < '{date_end}T00:00:00+10:00'
     """.format(
@@ -78,6 +79,7 @@ def load_energy_intervals(date_start: datetime, date_end: datetime) -> pd.DataFr
         where
             fs.trading_interval >= '{date_start}T00:00:00+10:00'
             and fs.trading_interval < '{date_end}T00:00:00+10:00'
+            and f.network_id IN ('NEM')
             -- and fs.eoi_quantity is not null
             and f.interconnector is False
         order by 1 asc;
@@ -123,6 +125,49 @@ def interconnector_dict(interconnector_di: pd.DataFrame) -> pd.DataFrame:
     return interconnector_dict
 
 
+def region_flows(interconnector_di: pd.DataFrame, day: datetime) -> pd.DataFrame:
+    """Get regional energy flows"""
+    dx = (
+        interconnector_di.groupby(["interconnector_region_from", "interconnector_region_to"])
+        .generated.sum()
+        .reset_index()
+    )
+    dy = dx.rename(
+        columns={
+            "interconnector_region_from": "interconnector_region_to",
+            "interconnector_region_to": "interconnector_region_from",
+        }
+    )
+
+    # set indexes
+    dy.set_index(["interconnector_region_to", "interconnector_region_from"], inplace=True)
+    dx.set_index(["interconnector_region_to", "interconnector_region_from"], inplace=True)
+
+    dy["generated"] *= -1
+
+    # sum out imports/exports
+    dx.loc[dx.generated < 0, "generated"] = 0
+    dy.loc[dy.generated < 0, "generated"] = 0
+
+    f = pd.concat([dx, dy])
+
+    energy_flows = pd.DataFrame(
+        {
+            "energy_imports": f.groupby("interconnector_region_to").generated.sum(),
+            "energy_exports": f.groupby("interconnector_region_from").generated.sum(),
+        }
+    )
+
+    energy_flows["network_id"] = "NEM"
+    energy_flows["trading_interval"] = day
+
+    energy_flows.reset_index(inplace=True)
+    energy_flows.rename(columns={"index": "network_region"}, inplace=True)
+    energy_flows.set_index(["trading_interval", "network_id", "network_region"], inplace=True)
+
+    return energy_flows
+
+
 def power(df_emissions: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
     """ """
     df_emissions = df_emissions.reset_index()
@@ -154,7 +199,6 @@ def emissions(df_emissions: pd.DataFrame, power_dict: Dict) -> Dict:
     df_emissions = df_emissions.reset_index()
     emissions_dict = dict(df_emissions.groupby(df_emissions.network_region).emissions.sum())
 
-    # simple_flows = [[2, 1], [3, 5], [4, 5]]
     simple_flows = [["QLD1", "NSW1"], ["SA1", "VIC1"], ["TAS1", "VIC1"]]
 
     for from_regionid, to_regionid in simple_flows:
@@ -320,7 +364,7 @@ def calculate_emission_flows(df_gen: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
     return results
 
 
-def calc_day(day: datetime) -> pd.DataFrame:
+def calc_day(day: datetime) -> Optional[pd.DataFrame]:
 
     day_next = day + timedelta(days=1)
 
@@ -330,7 +374,25 @@ def calc_day(day: datetime) -> pd.DataFrame:
 
     results_dict = calculate_emission_flows(df_gen, df_ic)
 
-    flow_series = pd.concat(results_dict).reset_index()
+    if not results_dict or len(results_dict.keys()) < 1:
+        logger.error("No results for day {}".format(day))
+        return None
+
+    flow_series: Optional[pd.DataFrame] = None
+
+    try:
+        flow_series = pd.concat(results_dict)
+        flow_series.reset_index(inplace=True)
+    except Exception as e:
+        logger.error("Error: {}".format(e))
+        # logger.debug(results_dict)
+        return None
+
+    # if not flow_series or len(flow_series.index) < 1 or flow_series.shape[0] < 1:
+    # logger.error("flow_series is empty or none")
+    # logger.debug(flow_series)
+    # logger.debug(results_dict)
+    # return None
 
     flow_series.rename(
         columns={"level_0": "trading_interval", "index": "network_region"}, inplace=True
@@ -348,19 +410,29 @@ def calc_day(day: datetime) -> pd.DataFrame:
         }
     )
 
-    return flow_series_clean
+    flow_series_clean.reset_index(inplace=True)
+    flow_series_clean.rename(columns={"index": "network_region"}, inplace=True)
+
+    flow_series_clean.set_index(["trading_interval", "network_id", "network_region"], inplace=True)
+
+    # Add in the energy flows
+    energy_flows = region_flows(df_ic, day=day)
+
+    total_series = flow_series_clean.merge(energy_flows, left_index=True, right_index=True)
+
+    return total_series
 
 
 def insert_flows(flow_results: pd.DataFrame, network: NetworkSchema = NetworkNEM) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
 
+    flow_results.reset_index(inplace=True)
+
     # Add metadata
     flow_results["created_by"] = "opennem.worker.emissions"
     flow_results["created_at"] = ""
     flow_results["updated_at"] = datetime.now()
-    flow_results["energy_imports"] = 0.0
-    flow_results["energy_exports"] = 0.0
     flow_results["market_value_imports"] = 0.0
     flow_results["market_value_exports"] = 0.0
 
@@ -424,8 +496,9 @@ def run_and_store_emission_flows(day: datetime) -> None:
     """Runs and stores emission flows into the aggregate table"""
     emissions_day = calc_day(day)
 
-    emissions_day.reset_index(inplace=True)
-    emissions_day = emissions_day.rename(columns={"index": "network_region"})
+    if emissions_day.empty:
+        logger.warning("No results for {}".format(day))
+        return None
 
     records_to_store: List[Dict] = emissions_day.to_dict("records")
 
@@ -435,14 +508,13 @@ def run_and_store_emission_flows(day: datetime) -> None:
 
 
 def run_emission_update_day(
-    days: int = 1,
-    day: Optional[datetime] = None,
+    days: int = 1, day: Optional[datetime] = None, offset_days: int = 1
 ) -> None:
     """Run emission calcs for number of days"""
     # This is Sydney time as the data is published in local time
 
     if not day:
-        day = get_last_complete_day_for_network(NetworkNEM)
+        day = get_last_complete_day_for_network(NetworkNEM) - timedelta(days=offset_days)
 
     current_day = day
     date_min = day - timedelta(days=days)
