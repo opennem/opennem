@@ -461,7 +461,7 @@ def insert_flows(flow_results: pd.DataFrame, network: NetworkSchema = NetworkNEM
 
     # Build SQL + CSV and bulk-insert
     sql_query = build_insert_query(
-        AggregateNetworkFlows,
+        AggregateNetworkFlows,  # type: ignore
         [
             "energy_imports",
             "energy_exports",
@@ -475,7 +475,7 @@ def insert_flows(flow_results: pd.DataFrame, network: NetworkSchema = NetworkNEM
     cursor = conn.cursor()
 
     csv_content = generate_csv_from_records(
-        AggregateNetworkFlows,
+        AggregateNetworkFlows,  # type: ignore
         records_to_store,
         column_names=list(records_to_store[0].keys()),
     )
