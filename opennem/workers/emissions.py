@@ -10,6 +10,7 @@ Changelog
 """
 
 import logging
+from ctypes import Union
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
@@ -178,7 +179,7 @@ def power(df_emissions: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
 
 def simple_exports(
     emissions_di: pd.DataFrame, power_dict: Dict, from_regionid: str, to_regionid: str
-):
+) -> Union[float, int]:
     dx = emissions_di[emissions_di.network_region == from_regionid]
 
     try:
@@ -388,12 +389,6 @@ def calc_day(day: datetime) -> Optional[pd.DataFrame]:
         # logger.debug(results_dict)
         return None
 
-    # if not flow_series or len(flow_series.index) < 1 or flow_series.shape[0] < 1:
-    # logger.error("flow_series is empty or none")
-    # logger.debug(flow_series)
-    # logger.debug(results_dict)
-    # return None
-
     flow_series.rename(
         columns={"level_0": "trading_interval", "index": "network_region"}, inplace=True
     )
@@ -419,6 +414,9 @@ def calc_day(day: datetime) -> Optional[pd.DataFrame]:
     energy_flows = region_flows(df_ic, day=day)
 
     total_series = flow_series_clean.merge(energy_flows, left_index=True, right_index=True)
+
+    # Add in market_values
+    # market_vlues = market_value(df_)
 
     return total_series
 
