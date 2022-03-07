@@ -75,7 +75,7 @@ AEMONemTradingISCurrent = CrawlerDefinition(
     name="au.nem.current.trading_is",
     url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
     latest=False,
-    limit=364,
+    limit=12 * 24 * 6,
     processor=run_aemo_mms_crawl,
 )
 
