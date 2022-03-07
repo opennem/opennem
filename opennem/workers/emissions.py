@@ -423,7 +423,7 @@ def calc_day(day: datetime) -> Optional[pd.DataFrame]:
     return total_series
 
 
-def insert_flows(flow_results: pd.DataFrame, network: NetworkSchema = NetworkNEM) -> int:
+def insert_flows(flow_results: pd.DataFrame) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
 
