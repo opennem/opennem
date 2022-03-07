@@ -10,9 +10,8 @@ Changelog
 """
 
 import logging
-from ctypes import Union
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -179,7 +178,8 @@ def power(df_emissions: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
 
 def simple_exports(
     emissions_di: pd.DataFrame, power_dict: Dict, from_regionid: str, to_regionid: str
-) -> Union[float, int]:
+) -> Union[int, float]:
+
     dx = emissions_di[emissions_di.network_region == from_regionid]
 
     try:
@@ -365,7 +365,7 @@ def calculate_emission_flows(df_gen: pd.DataFrame, df_ic: pd.DataFrame) -> Dict:
     return results
 
 
-def calc_day(day: datetime) -> Optional[pd.DataFrame]:
+def calc_day(day: datetime) -> pd.DataFrame:
 
     day_next = day + timedelta(days=1)
 
@@ -494,7 +494,7 @@ def run_and_store_emission_flows(day: datetime) -> None:
     """Runs and stores emission flows into the aggregate table"""
     emissions_day = calc_day(day)
 
-    if not emissions_day or emissions_day.empty:
+    if emissions_day.empty:
         logger.warning("No results for {}".format(day))
         return None
 
@@ -528,4 +528,4 @@ def run_emission_update_day(
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_emission_update_day(days=400)
+    run_emission_update_day(days=2, offset_days=2)
