@@ -496,7 +496,7 @@ def run_and_store_emission_flows(day: datetime) -> None:
     """Runs and stores emission flows into the aggregate table"""
     emissions_day = calc_day(day)
 
-    if emissions_day.empty:
+    if not emissions_day or emissions_day.empty:
         logger.warning("No results for {}".format(day))
         return None
 
@@ -530,4 +530,4 @@ def run_emission_update_day(
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_emission_update_day(days=30)
+    run_emission_update_day(days=400)
