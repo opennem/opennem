@@ -63,7 +63,7 @@ def run_aemo_mms_crawl(
 AEMONemTradingISLatest = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
-    name="au.nem.current.trading_is",
+    name="au.nem.latest.trading_is",
     url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
     latest=True,
     processor=run_aemo_mms_crawl,
@@ -74,7 +74,7 @@ AEMONemTradingISCurrent = CrawlerDefinition(
     schedule=CrawlerSchedule.hourly,
     name="au.nem.current.trading_is",
     url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
-    latest=True,
+    latest=False,
     limit=364,
     processor=run_aemo_mms_crawl,
 )
