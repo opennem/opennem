@@ -38,6 +38,7 @@ def load_interconnector_intervals(date_start: datetime, date_end: datetime) -> p
         select
             fs.trading_interval at time zone 'AEST' as trading_interval,
             coalesce(fs.generated, 0) as generated,
+            coalesce(fs.eoi_quantity, 0) as eoi_quantity,
             f.interconnector_region_to,
             f.interconnector_region_from
         from facility_scada fs
@@ -129,7 +130,7 @@ def region_flows(interconnector_di: pd.DataFrame, day: datetime) -> pd.DataFrame
     """Get regional energy flows"""
     dx = (
         interconnector_di.groupby(["interconnector_region_from", "interconnector_region_to"])
-        .generated.sum()
+        .eoi_quantity.sum()
         .reset_index()
     )
     dy = dx.rename(
@@ -143,18 +144,18 @@ def region_flows(interconnector_di: pd.DataFrame, day: datetime) -> pd.DataFrame
     dy.set_index(["interconnector_region_to", "interconnector_region_from"], inplace=True)
     dx.set_index(["interconnector_region_to", "interconnector_region_from"], inplace=True)
 
-    dy["generated"] *= -1
+    dy["eoi_quantity"] *= -1
 
     # sum out imports/exports
-    dx.loc[dx.generated < 0, "generated"] = 0
-    dy.loc[dy.generated < 0, "generated"] = 0
+    dx.loc[dx.eoi_quantity < 0, "eoi_quantity"] = 0
+    dy.loc[dy.eoi_quantity < 0, "eoi_quantity"] = 0
 
     f = pd.concat([dx, dy])
 
     energy_flows = pd.DataFrame(
         {
-            "energy_imports": f.groupby("interconnector_region_to").generated.sum(),
-            "energy_exports": f.groupby("interconnector_region_from").generated.sum(),
+            "energy_imports": f.groupby("interconnector_region_to").eoi_quantity.sum(),
+            "energy_exports": f.groupby("interconnector_region_from").eoi_quantity.sum(),
         }
     )
 
