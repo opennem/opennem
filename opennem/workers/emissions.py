@@ -731,4 +731,4 @@ def run_emission_update_day(
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_emission_update_day(days=2, offset_days=2)
+    run_emission_update_day(days=60, offset_days=1)
