@@ -163,11 +163,11 @@ def merge_interconnector_and_energy_data(
         lambda x: abs(x.energy * x.emission_factor) if x.energy and x.energy < 0 else 0, axis=1
     )
 
-    f["market_value_imports"] = f.apply(
+    f["market_value_exports"] = f.apply(
         lambda x: x.energy * x.price_to if x.energy and x.energy > 0 else 0, axis=1
     )
 
-    f["market_value_exports"] = f.apply(
+    f["market_value_imports"] = f.apply(
         lambda x: abs(x.energy * x.price) if x.energy and x.energy < 0 else 0, axis=1
     )
 
