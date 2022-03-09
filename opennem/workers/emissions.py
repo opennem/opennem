@@ -339,7 +339,7 @@ def run_flow_updates_all() -> None:
     NEM_MIN = datetime.fromisoformat("1999-12-03 00:00:00+10:00")
 
     run_flow_updates_for_date_range(
-        datetime.now() - timedelta(days=1),
+        datetime.now().astimezone(NetworkNEM.get_fixed_offset()) - timedelta(days=1),
         NEM_MIN,
     )
 
