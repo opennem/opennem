@@ -335,13 +335,17 @@ def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) ->
         current_day -= timedelta(days=1)
 
 
+def run_flow_updates_all() -> None:
+    NEM_MIN = datetime.fromisoformat("1999-12-03 00:00:00+10:00")
+
+    run_flow_updates_for_date_range(
+        datetime.now() - timedelta(days=1),
+        NEM_MIN,
+    )
+
+
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
 
-    NEM_MIN = datetime.fromisoformat("1999-12-03 00:00:00+10:00")
-
-    run_flow_updates_for_date_range(
-        datetime.fromisoformat("2021-12-03 00:00:00+10:00"),
-        NEM_MIN,
-    )
+    run_flow_updates_all()
