@@ -197,7 +197,7 @@ def db_run_aggregates_year() -> None:
 @huey.lock_task("db_run_emission_tasks")
 def db_run_emission_tasks() -> None:
     try:
-        run_emission_update_day(days=30)
+        run_emission_update_day(days=12)
     except Exception as e:
         logger.error("Error running emission update: {}".format(str(e)))
 
