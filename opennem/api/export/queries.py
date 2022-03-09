@@ -621,8 +621,8 @@ def energy_network_interconnector_emissions_query(
         date_trunc('{trunc}', t.trading_interval) as trading_interval,
         sum(t.imports_energy) / 1000,
         sum(t.exports_energy) / 1000,
-        abs(sum(t.emissions_imports)) / 1000,
-        abs(sum(t.emissions_exports)) / 1000
+        abs(sum(t.emissions_imports)) / 1,
+        abs(sum(t.emissions_exports)) / 1
     from (
         select
             t.trading_interval at time zone '{timezone}' as trading_interval,
