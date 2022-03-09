@@ -323,7 +323,25 @@ def run_emission_update_day(
         current_day -= timedelta(days=1)
 
 
+def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) -> None:
+    """Run emission calcs for a range of daytes"""
+    current_day = date_start
+
+    while current_day >= date_end:
+        logger.info("Running emission update for {}".format(current_day))
+
+        run_and_store_emission_flows(current_day)
+
+        current_day -= timedelta(days=1)
+
+
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_emission_update_day(days=1, offset_days=1)
+
+    NEM_MIN = datetime.fromisoformat("1999-12-03 00:00:00+10:00")
+
+    run_flow_updates_for_date_range(
+        datetime.fromisoformat("2021-12-03 00:00:00+10:00"),
+        NEM_MIN,
+    )
