@@ -216,6 +216,17 @@ def calc_flow_for_day(day: datetime) -> pd.DataFrame:
     return df_flows
 
 
+def calc_flows_for_range(date_start: datetime, date_end: datetime) -> pd.DataFrame:
+    """For a particular day calculate all flow values"""
+    df_energy = load_energy_emission_mv_intervals(date_start=date_start, date_end=date_end)
+
+    df_inter = load_interconnector_intervals(date_start=date_start, date_end=date_end)
+
+    df_flows = merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter)
+
+    return df_flows
+
+
 def insert_flows(flow_results: pd.DataFrame) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
@@ -303,6 +314,26 @@ def run_and_store_emission_flows(day: datetime) -> None:
     insert_flows(emissions_day)
 
 
+def run_and_store_flows_for_range(date_start: datetime, date_end: datetime) -> None:
+    """Runs and stores emission flows into the aggregate table"""
+
+    try:
+        emissions_day = calc_flows_for_range(date_start, date_end)
+    except Exception as e:
+        logger.error("Flow storage error: {}".format(e))
+        return None
+
+    if emissions_day.empty:
+        logger.warning("No results for {} => {}".format(date_start, date_end))
+        return None
+
+    records_to_store: List[Dict] = emissions_day.to_dict("records")
+
+    logger.debug("Got {} records".format(len(records_to_store)))
+
+    insert_flows(emissions_day)
+
+
 def run_emission_update_day(
     days: int = 1, day: Optional[datetime] = None, offset_days: int = 1
 ) -> None:
@@ -344,8 +375,17 @@ def run_flow_updates_all() -> None:
     )
 
 
+def run_flow_updates_all_per_year() -> None:
+    for year in range(2021, 1998, -1):
+        run_and_store_flows_for_range(
+            datetime.fromisoformat(f"{year}-01-01T00:00:00+10:00"),
+            datetime.fromisoformat(f"{year}-12-31T00:00:00+10:00"),
+        )
+
+
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
 
-    run_flow_updates_all()
+    # run_flow_updates_all()
+    run_flow_updates_all_per_year()
