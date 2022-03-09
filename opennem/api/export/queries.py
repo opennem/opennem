@@ -622,7 +622,9 @@ def energy_network_interconnector_emissions_query(
         sum(t.imports_energy) / 1000,
         sum(t.exports_energy) / 1000,
         abs(sum(t.emissions_imports)) / 1,
-        abs(sum(t.emissions_exports)) / 1
+        abs(sum(t.emissions_exports)) / 1,
+        sum(t.market_value_imports) as market_value_imports,
+        sum(t.market_value_exports) as market_value_exports
     from (
         select
             t.trading_interval at time zone '{timezone}' as trading_interval,

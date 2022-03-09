@@ -673,6 +673,9 @@ def energy_interconnector_flows_and_emissions(
         DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row
     ]
 
+    import_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[5]) for i in row]
+    export_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[6]) for i in row]
+
     result = stats_factory(
         imports,
         network=time_series.network,
@@ -723,5 +726,33 @@ def energy_interconnector_flows_and_emissions(
     )
 
     result.append_set(result_export_emissions)
+
+    # market value for flows
+
+    result_import_mv = stats_factory(
+        import_mv,
+        network=time_series.network,
+        period=period,
+        interval=time_series.interval,
+        units=get_unit("market_value"),
+        region=network_region_code,
+        fueltech_group=True,
+        localize=False,
+    )
+
+    result.append_set(result_import_mv)
+
+    result_export_mv = stats_factory(
+        export_mv,
+        network=time_series.network,
+        period=period,
+        interval=time_series.interval,
+        units=get_unit("market_value"),
+        region=network_region_code,
+        fueltech_group=True,
+        localize=False,
+    )
+
+    result.append_set(result_export_mv)
 
     return result
