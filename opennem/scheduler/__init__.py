@@ -119,7 +119,7 @@ def schedule_power_weeklies() -> None:
     export_power(priority=PriorityType.history, latest=True)
 
 
-@huey.periodic_task(crontab(hour="*/3", minute="45"), priority=50)
+@huey.periodic_task(crontab(hour="*/1", minute="15,45"), priority=50)
 @huey.lock_task("schedule_hourly_tasks")
 def schedule_hourly_tasks() -> None:
     if settings.workers_run:
