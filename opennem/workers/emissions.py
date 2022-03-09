@@ -155,10 +155,10 @@ def merge_interconnector_and_energy_data(
     f["energy_imports"] = f.apply(lambda x: abs(x.energy) if x.energy < 0 else 0, axis=1)
 
     f["emission_exports"] = f.apply(
-        lambda x: x.energy * x.emission_factor if x.energy > 0 else 0, axis=1
+        lambda x: x.energy * x.emission_factor_to if x.energy > 0 else 0, axis=1
     )
     f["emission_imports"] = f.apply(
-        lambda x: abs(x.energy * x.emission_factor_to) if x.energy < 0 else 0, axis=1
+        lambda x: abs(x.energy * x.emission_factor) if x.energy < 0 else 0, axis=1
     )
 
     energy_flows = pd.DataFrame(
