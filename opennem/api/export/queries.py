@@ -618,19 +618,30 @@ def energy_network_interconnector_emissions_query(
 
     __query = """
     select
-        t.trading_interval at time zone '{timezone}' as trading_interval,
-        t.network_id,
-        t.network_region,
-        coalesce(t.energy_imports / 10000, 0),
-        coalesce(t.energy_exports / 10000, 0),
-        t.emissions_imports,
-        t.emissions_exports
-    from at_network_flows t
-    where
-        t.trading_interval <= '{date_max}' and
-        t.trading_interval >= '{date_min}' and
-        t.network_id = '{network_id}' and
-        {network_region_query}
+        date_trunc('{trunc}', t.trading_interval) as trading_interval,
+        sum(t.imports_energy) / 1000,
+        sum(t.exports_energy) / 1000,
+        abs(sum(t.emissions_imports)) / 1000,
+        abs(sum(t.emissions_exports)) / 1000
+    from (
+        select
+            t.trading_interval at time zone '{timezone}' as trading_interval,
+            t.network_id,
+            t.network_region,
+            coalesce(t.energy_imports, 0) as imports_energy,
+            coalesce(t.energy_exports, 0) as exports_energy,
+            t.emissions_imports,
+            t.emissions_exports,
+            t.market_value_imports,
+            t.market_value_exports
+        from at_network_flows t
+        where
+            t.trading_interval <= '{date_max}' and
+            t.trading_interval >= '{date_min}' and
+            t.network_id = '{network_id}' and
+            {network_region_query}
+    ) as t
+    group by 1
     order by 1 desc
 
     """
@@ -647,7 +658,7 @@ def energy_network_interconnector_emissions_query(
     query = dedent(
         __query.format(
             timezone=timezone,
-            # trunc=date_range.interval.trunc,
+            trunc=date_range.interval.trunc,
             network_id=time_series.network.code,
             date_min=date_range.start,
             date_max=date_range.end,
