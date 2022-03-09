@@ -273,7 +273,12 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
 
 def run_and_store_emission_flows(day: datetime) -> None:
     """Runs and stores emission flows into the aggregate table"""
-    emissions_day = calc_flow_for_day(day)
+
+    try:
+        emissions_day = calc_flow_for_day(day)
+    except Exception as e:
+        logger.error("Flow storage error: {}".format(e))
+        return None
 
     if emissions_day.empty:
         logger.warning("No results for {}".format(day))
