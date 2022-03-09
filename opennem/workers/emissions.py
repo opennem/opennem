@@ -163,6 +163,14 @@ def merge_interconnector_and_energy_data(
         lambda x: abs(x.energy * x.emission_factor) if x.energy and x.energy < 0 else 0, axis=1
     )
 
+    f["market_value_imports"] = f.apply(
+        lambda x: x.energy * x.price_to if x.energy and x.energy > 0 else 0, axis=1
+    )
+
+    f["market_value_exports"] = f.apply(
+        lambda x: abs(x.energy * x.price) if x.energy and x.energy < 0 else 0, axis=1
+    )
+
     energy_flows = pd.DataFrame(
         {
             "energy_imports": f.groupby(
@@ -177,6 +185,12 @@ def merge_interconnector_and_energy_data(
             "emissions_exports": f.groupby(
                 ["trading_interval", "interconnector_region_from"]
             ).emission_exports.sum(),
+            "market_value_imports": f.groupby(
+                ["trading_interval", "interconnector_region_from"]
+            ).market_value_imports.sum(),
+            "market_value_exports": f.groupby(
+                ["trading_interval", "interconnector_region_from"]
+            ).market_value_exports.sum(),
         }
     )
 
@@ -212,8 +226,6 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
     flow_results["created_by"] = "opennem.worker.emissions"
     flow_results["created_at"] = ""
     flow_results["updated_at"] = datetime.now()
-    flow_results["market_value_imports"] = 0.0
-    flow_results["market_value_exports"] = 0.0
 
     # # reorder columns
     columns = [
@@ -314,4 +326,4 @@ def run_emission_update_day(
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_emission_update_day(days=60, offset_days=1)
+    run_emission_update_day(days=1, offset_days=1)
