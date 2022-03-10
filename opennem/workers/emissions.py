@@ -27,6 +27,10 @@ from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem
 logger = logging.getLogger("opennem.workers.flows")
 
 
+class FlowWorkerException(Exception):
+    pass
+
+
 def load_interconnector_intervals(date_start: datetime, date_end: datetime) -> pd.DataFrame:
     """Load interconnector flows for a date range"""
     engine = get_database_engine()
@@ -54,9 +58,12 @@ def load_interconnector_intervals(date_start: datetime, date_end: datetime) -> p
         date_start=date_start.date(), date_end=date_end.date()
     )
 
+    logger.debug(query)
+
     df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
 
-    logger.debug(query)
+    if df_gen.empty:
+        raise FlowWorkerException("No results from load_interconnector_intervals")
 
     df_gen.index = df_gen.index.tz_convert(tz=network.get_fixed_offset())
 
@@ -107,9 +114,12 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime) 
         date_start=date_start.date(), date_end=date_end.date()
     )
 
+    logger.debug(query)
+
     df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
 
-    logger.debug(query)
+    if df_gen.empty:
+        raise FlowWorkerException("No results from load_interconnector_intervals")
 
     df_gen.index = df_gen.index.tz_convert(tz=network.get_fixed_offset())
 
