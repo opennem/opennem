@@ -125,7 +125,7 @@ def facility_first_seen_check() -> List[FacilitySeen]:
 
 def facility_unmapped_all(filter: bool = True) -> List[FacilitySeen]:
     """Find new DUIDs and alert on them"""
-    facs = get_facility_first_seen("3 days")
+    facs = get_facility_first_seen()
 
     if filter:
         facs = ignored_duids(facs)
@@ -135,4 +135,7 @@ def facility_unmapped_all(filter: bool = True) -> List[FacilitySeen]:
 
 # debug entry point
 if __name__ == "__main__":
-    seen_facilities = facility_first_seen_check()
+    seen_facilities = facility_unmapped_all()
+
+    for f in seen_facilities:
+        logger.info("Unmapped: {} {}".format(f.network_id, f.code))
