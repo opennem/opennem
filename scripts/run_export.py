@@ -3,8 +3,11 @@
 Scratchpad to export JSON's for unit tests + testing
 """
 
+from datetime import datetime, timedelta
+
 from opennem.api.export.map import PriorityType, StatType, get_export_map, get_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_energy, export_power
+from opennem.api.stats.controllers import get_scada_range
 from opennem.core.compat.loader import get_dataset
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.workers.aggregates import run_aggregates_all_days
@@ -21,21 +24,23 @@ def run_tests() -> None:
         .get_by_priority(PriorityType.live)
     )
 
-    export_power(power.resources)
-    return None
+    # export_power(power.resources)
+    # return None
 
     # print(power.resources)
 
-    # energy_map = (
-    #     export_map.get_by_network_id("WEM")
-    #     .get_by_stat_type(StatType.energy)
-    #     .get_by_priority(PriorityType.daily)
-    #     # .get_by_network_region("NSW1")
-    #     .get_by_years([2021])
-    # )
+    energy_map = (
+        export_map.get_by_network_id("NEM")
+        .get_by_network_region("SA1")
+        .get_by_stat_type(StatType.energy)
+        .get_by_priority(PriorityType.monthly)
+        # .get_by_years([2022])
+    )
 
-    # if len(energy_map.resources):
-    #     export_energy(energy_map.resources)
+    if len(energy_map.resources):
+        export_energy(energy_map.resources)
+
+    return None
 
     energy_map = (
         export_map
@@ -66,12 +71,19 @@ def load_flows() -> None:
 
 
 def fallback_runner() -> None:
-    run_energy_gapfill(days=50)
-    run_aggregates_all_days(days=50)
-    export_energy(latest=True)
+    run_energy_gapfill(days=30)
+    run_aggregates_all_days(days=30)
+    export_energy(latest=False)
 
+
+from opennem.workers.energy import run_energy_calc
 
 #
 if __name__ == "__main__":
-    # run_tests()
-    fallback_runner()
+    run_tests()
+    # export_energy(latest=False)
+    # fallback_runner()
+    # dmin = datetime.fromisoformat("2022-02-17 07:00:00+08:00")
+    # dmax = dmin + timedelta(hours=1)
+    # export_energy(latest=True)
+    # run_energy_calc(dmin, dmax, network=NetworkWEM)
