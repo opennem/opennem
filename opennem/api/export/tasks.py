@@ -566,10 +566,10 @@ def export_electricitymap() -> None:
         else:
             em_set.data.append(ds)
 
-    for region in get_network_regions(NetworkNEM):
+    for region in ["NSW1", "QLD1", "VIC1", "TAS1", "SA1"]:
         power_set = power_week(
             time_series,
-            region.code,
+            region,
             include_capacities=True,
             include_code=False,
             networks_query=[NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill],
