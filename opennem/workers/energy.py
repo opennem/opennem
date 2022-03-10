@@ -439,7 +439,7 @@ def run_energy_update_archive(
         months = list(range(1, 13))
 
     if not regions:
-        regions = [i.code for i in get_network_regions(network)]
+        regions = ["NSW1", "QLD1", "VIC1", "TAS1", "SA1"]
 
     # @TODO remove this and give APVI regions
     if network == NetworkAPVI:
