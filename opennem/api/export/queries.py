@@ -618,24 +618,24 @@ def energy_network_interconnector_emissions_query(
 
     __query = """
     select
-        date_trunc('{trunc}', t.trading_interval) as trading_interval,
+        date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_interval,
         sum(t.imports_energy) / 1000,
         sum(t.exports_energy) / 1000,
-        abs(sum(t.emissions_imports)) / 1,
-        abs(sum(t.emissions_exports)) / 1,
+        abs(sum(t.emissions_imports)),
+        abs(sum(t.emissions_exports)),
         sum(t.market_value_imports) as market_value_imports,
         sum(t.market_value_exports) as market_value_exports
     from (
         select
-            t.trading_interval at time zone '{timezone}' as trading_interval,
+            time_bucket_gapfill('1h', t.trading_interval) as trading_interval,
             t.network_id,
             t.network_region,
             coalesce(t.energy_imports, 0) as imports_energy,
             coalesce(t.energy_exports, 0) as exports_energy,
-            t.emissions_imports,
-            t.emissions_exports,
-            t.market_value_imports,
-            t.market_value_exports
+            coalesce(t.emissions_imports, 0) as emissions_imports,
+            coalesce(t.emissions_exports, 0) as emissions_exports,
+            coalesce(t.market_value_imports, 0) as market_value_imports,
+            coalesce(t.market_value_exports, 0) as market_value_exports
         from at_network_flows t
         where
             t.trading_interval <= '{date_max}' and
