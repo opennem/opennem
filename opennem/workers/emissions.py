@@ -218,9 +218,9 @@ def calc_flow_for_day(day: datetime) -> pd.DataFrame:
     """For a particular day calculate all flow values"""
     day_next = day + timedelta(days=1)
 
-    df_energy = load_energy_emission_mv_intervals(date_start=day, date_end=day_next)
-
     df_inter = load_interconnector_intervals(date_start=day, date_end=day_next)
+
+    df_energy = load_energy_emission_mv_intervals(date_start=day, date_end=day_next)
 
     df_flows = merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter)
 
@@ -229,9 +229,10 @@ def calc_flow_for_day(day: datetime) -> pd.DataFrame:
 
 def calc_flows_for_range(date_start: datetime, date_end: datetime) -> pd.DataFrame:
     """For a particular day calculate all flow values"""
-    df_energy = load_energy_emission_mv_intervals(date_start=date_start, date_end=date_end)
 
     df_inter = load_interconnector_intervals(date_start=date_start, date_end=date_end)
+
+    df_energy = load_energy_emission_mv_intervals(date_start=date_start, date_end=date_end)
 
     df_flows = merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter)
 
