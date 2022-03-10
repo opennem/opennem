@@ -9,12 +9,12 @@ def get_network_regions(
     network: NetworkSchema, network_region: Optional[str] = None
 ) -> List[NetworkRegion]:
     """Return regions for a network"""
-    s = SessionLocal()
-    regions = s.query(NetworkRegion).filter_by(network_id=network.code)
+    with SessionLocal() as s:
+        regions = s.query(NetworkRegion).filter_by(network_id=network.code)
 
-    if network_region:
-        regions = regions.filter_by(code=network_region)
+        if network_region:
+            regions = regions.filter_by(code=network_region)
 
-    regions = regions.all()
+        regions = regions.all()
 
-    return regions
+        return regions
