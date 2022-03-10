@@ -1,3 +1,4 @@
+from datetime import datetime
 from datetime import timezone as timezone_native
 from datetime import tzinfo
 from typing import Any, List, Optional, Union
@@ -36,6 +37,9 @@ class NetworkSchema(BaseConfig):
     interval_size: int = Field(..., description="Size of network interval in minutes")
 
     interval_shift: int = Field(0, description="Size of reading shift in minutes")
+
+    # support hardcoded first seen
+    data_first_seen: Optional[datetime]
 
     def get_interval(self) -> Optional[TimeInterval]:
         if not self.interval_size:
@@ -106,6 +110,7 @@ NetworkNEM = NetworkSchema(
     offset=600,
     interval_size=5,
     interval_shift=5,
+    data_first_seen=datetime.fromisoformat("1998-12-07T01:50:00+10:00"),
 )
 
 NetworkWEM = NetworkSchema(
@@ -116,6 +121,7 @@ NetworkWEM = NetworkSchema(
     timezone_database="AWST",
     offset=480,
     interval_size=30,
+    data_first_seen=datetime.fromisoformat("2006-09-20T02:00:00+10:00"),
 )
 
 NetworkAPVI = NetworkSchema(
@@ -126,6 +132,7 @@ NetworkAPVI = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=15,
+    data_first_seen=datetime.fromisoformat("2015-03-20T06:15:00+10:00"),
 )
 
 # This is a "virtual" network that is made up of
@@ -138,6 +145,7 @@ NetworkAU = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=30,
+    data_first_seen=datetime.fromisoformat("1998-12-07T01:50:00+10:00"),
 )
 
 
@@ -149,6 +157,7 @@ NetworkAEMORooftop = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=30,
+    data_first_seen=datetime.fromisoformat("2016-08-01T00:30:00+10:00"),
 )
 
 # This is the network for derived solar_rooftop data
