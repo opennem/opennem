@@ -123,6 +123,16 @@ def facility_first_seen_check() -> List[FacilitySeen]:
     return facs_out
 
 
+def facility_unmapped_all(filter: bool = True) -> List[FacilitySeen]:
+    """Find new DUIDs and alert on them"""
+    facs = get_facility_first_seen("3 days")
+
+    if filter:
+        facs = ignored_duids(facs)
+
+    return facs
+
+
 # debug entry point
 if __name__ == "__main__":
     seen_facilities = facility_first_seen_check()
