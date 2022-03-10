@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 
 from pytz import FixedOffset
 
+from opennem import settings
 from opennem.api.stats.controllers import duid_in_case, get_scada_range
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.energy import energy_sum, shape_energy_dataframe
@@ -32,7 +33,7 @@ from opennem.workers.facility_data_ranges import get_facility_seen_range
 logger = logging.getLogger("opennem.workers.energy")
 
 # For debugging queries
-DRY_RUN = False
+DRY_RUN = settings.dry_run
 YEAR_EARLIEST = 2010
 
 NEMWEB_DISPATCH_OLD_MIN_DATE = datetime.fromisoformat("1998-12-07 01:40:00")
