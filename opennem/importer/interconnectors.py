@@ -112,6 +112,7 @@ def import_nem_interconnects() -> None:
         if not int_facility:
             int_facility = Facility(  # type: ignore
                 code=interconnector.interconnectorid,
+                network_code=interconnector.interconnectorid,
                 dispatch_type=DispatchType.GENERATOR,
                 network_id="NEM",
                 network_region=interconnector.regionfrom,
@@ -123,6 +124,7 @@ def import_nem_interconnects() -> None:
         int_facility.fueltech_id = None
 
         int_facility.interconnector = True
+        int_facility.network_code = interconnector.interconnectorid
         int_facility.interconnector_region_to = interconnector.regionto
         int_facility.interconnector_region_from = interconnector.regionfrom
 
