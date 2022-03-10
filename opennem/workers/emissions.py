@@ -417,5 +417,4 @@ def run_flow_updates_all_for_nem() -> None:
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    # run_flow_updates_all_for_nem()
-    run_flow_updates_all_per_year(2006, 1)
+    run_flow_updates_all_for_nem()
