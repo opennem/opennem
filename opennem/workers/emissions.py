@@ -370,12 +370,12 @@ def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) ->
 def run_flow_updates_all_per_year(year_start: int, years: int = 1) -> None:
     for year in range(year_start, year_start - years, -1):
         date_start = datetime.fromisoformat(f"{year}-01-01T00:00:00+10:00")
-        date_end = datetime.fromisoformat(f"{year}-12-31T00:00:00+10:00")
+        date_end = datetime.fromisoformat(f"{year}-12-31T00:00:00+10:00") + timedelta(days=1)
 
         today_nem = get_today_nem()
 
         if date_end > today_nem:
-            date_end = today_nem
+            date_end = today_nem + timedelta(days=1)
 
         if NetworkNEM.data_first_seen and year == NetworkNEM.data_first_seen.year:
             date_start = NetworkNEM.data_first_seen
@@ -406,4 +406,5 @@ def run_flow_updates_all_for_nem() -> None:
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_flow_updates_all_for_nem()
+    # run_flow_updates_all_for_nem()
+    run_flow_updates_all_per_year(2006, 1)
