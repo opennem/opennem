@@ -16,12 +16,13 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
+from opennem import settings
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.pipelines.bulk_insert import build_insert_query
 from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.network import NetworkNEM
-from opennem.utils.dates import get_last_complete_day_for_network
+from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem
 
 logger = logging.getLogger("opennem.workers.flows")
 
@@ -366,26 +367,43 @@ def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) ->
         current_day -= timedelta(days=1)
 
 
-def run_flow_updates_all() -> None:
-    NEM_MIN = datetime.fromisoformat("1999-12-03 00:00:00+10:00")
+def run_flow_updates_all_per_year(year_start: int, years: int = 1) -> None:
+    for year in range(year_start, year_start - years, -1):
+        date_start = datetime.fromisoformat(f"{year}-01-01T00:00:00+10:00")
+        date_end = datetime.fromisoformat(f"{year}-12-31T00:00:00+10:00")
 
-    run_flow_updates_for_date_range(
-        datetime.now().astimezone(NetworkNEM.get_fixed_offset()) - timedelta(days=1),
-        NEM_MIN,
-    )
+        today_nem = get_today_nem()
 
+        if date_end > today_nem:
+            date_end = today_nem
 
-def run_flow_updates_all_per_year() -> None:
-    for year in range(2021, 1998, -1):
-        run_and_store_flows_for_range(
-            datetime.fromisoformat(f"{year}-01-01T00:00:00+10:00"),
-            datetime.fromisoformat(f"{year}-12-31T00:00:00+10:00"),
+        if NetworkNEM.data_first_seen and year == NetworkNEM.data_first_seen.year:
+            date_start = NetworkNEM.data_first_seen
+
+        if NetworkNEM.data_first_seen and year < NetworkNEM.data_first_seen.year:
+            logger.info(
+                "Skipping year {} since it is earler than earliest date {}".format(
+                    year, NetworkNEM.data_first_seen
+                )
+            )
+            continue
+
+        logger.info(
+            "Running flow_updates_per_year for {} ({} => {})".format(year, date_start, date_end)
         )
+
+        if not settings.dry_run:
+            run_and_store_flows_for_range(
+                date_start,
+                date_end,
+            )
+
+
+def run_flow_updates_all_for_nem() -> None:
+    run_flow_updates_all_per_year(datetime.now().year, 28)
 
 
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-
-    # run_flow_updates_all()
-    run_flow_updates_all_per_year()
+    run_flow_updates_all_for_nem()
