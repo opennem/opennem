@@ -90,7 +90,7 @@ def get_database_session() -> Generator[sessionmaker, None, None]:
     s = None
 
     try:
-        s = SessionLocal()
+        s = get_scoped_session()
         yield s
     except Exception as e:
         raise e
