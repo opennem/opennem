@@ -336,7 +336,7 @@ def energy_sum(
         df = df.set_index(["trading_interval"])
         if hours:
             if len(list(get_hour_range(df))) == 0:
-                logger.error(
+                logger.warning(
                     "energy_sum error for network {}: Got no hours from hour range".format(
                         network.code
                     )
