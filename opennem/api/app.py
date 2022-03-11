@@ -189,7 +189,9 @@ def network_regions(
     if not network_regions:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    response = [APINetworkRegion.parse_obj(i) for i in network_regions]
+    logger.debug(network_regions)
+
+    response = [APINetworkRegion(code=i.code, timezone=i.timezone) for i in network_regions]
 
     return response
 
