@@ -4,15 +4,15 @@ from datetime import datetime
 
 from opennem.pipelines.nem.opennem import unit_scada_generate_facility_scada
 from opennem.schema.network import NetworkWEM
-from opennem.settings.scrapy import USER_AGENT
 from opennem.utils.http import http
+from opennem.utils.random_agent import get_random_agent
 
 logger = logging.getLogger(__name__)
 
 LIVE_FACILITIES = "https://aemo.com.au/aemo/data/wa/infographic/facility-intervals-last96.csv"
 
 REQ_HEADERS = {
-    "User-Agent": USER_AGENT,
+    "User-Agent": get_random_agent(),
 }
 
 

@@ -59,25 +59,6 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 
 logger = logging.getLogger("openenm.scheduler")
 
-
-# Materialized views
-# 5:45AM and 8:45AM AEST
-@huey.periodic_task(crontab(hour="6", minute="45"))
-@huey.lock_task("db_refresh_material_views")
-def db_refresh_material_views() -> None:
-    refresh_material_views("mv_facility_all")
-    refresh_material_views("mv_region_emissions")
-    refresh_material_views("mv_interchange_energy_nem_region")
-    slack_message("Ran refresh of material views on {}".format(settings.env))
-
-
-@huey.periodic_task(crontab(hour="*/1", minute="15"))
-@huey.lock_task("db_refresh_material_views_recent")
-def db_refresh_material_views_recent() -> None:
-    refresh_material_views("mv_facility_45d")
-    refresh_material_views("mv_region_emissions_45d")
-
-
 # export tasks
 @huey.periodic_task(crontab(minute="*/5"), priority=90)
 @huey.lock_task("schedule_live_tasks")

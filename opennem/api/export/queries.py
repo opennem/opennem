@@ -544,62 +544,6 @@ def energy_network_fueltech_query(
     return query
 
 
-def energy_network_flow_query(
-    time_series: TimeSeries,
-    network_region: str,
-    networks_query: Optional[List[NetworkSchema]] = None,
-) -> str:
-    """
-    Get emissions for a network or network + region
-    based on a year
-    """
-
-    if not networks_query:
-        networks_query = [time_series.network]
-
-    if time_series.network not in networks_query:
-        networks_query.append(time_series.network)
-
-    __query = """
-    select
-        date_trunc('{trunc}', t.trading_interval) as trading_interval,
-        sum(t.imports_energy),
-        sum(t.exports_energy),
-        abs(sum(t.imports_market_value_rrp)),
-        abs(sum(t.exports_market_value_rrp))
-    from (
-        select
-            ei.trading_interval,
-            ei.imports_energy,
-            ei.exports_energy,
-            ei.imports_market_value,
-            ei.exports_market_value,
-            ei.imports_market_value_rrp,
-            ei.exports_market_value_rrp
-        from mv_interchange_energy_nem_region ei
-        where
-            ei.trading_interval <= '{date_max}'
-            and ei.trading_interval >= '{date_min}'
-            and ei.network_region='{network_region}'
-    ) as t
-    group by 1
-    order by 1 desc
-    """
-
-    date_range = time_series.get_range()
-
-    query = dedent(
-        __query.format(
-            network_region=network_region,
-            trunc=date_range.interval.trunc,
-            date_min=date_range.start,
-            date_max=date_range.end,
-        )
-    )
-
-    return query
-
-
 def energy_network_interconnector_emissions_query(
     time_series: TimeSeries,
     network_region: Optional[str] = None,

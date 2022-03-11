@@ -1,6 +1,4 @@
-import re
-from logging import Filter
-from typing import Any, Optional
+from typing import Optional
 
 import yaml
 
@@ -12,9 +10,6 @@ DEFAULT_LOGGING = {
     "loggers": {
         "opennem": {
             "level": "DEBUG",
-        },
-        "scrapy": {
-            "level": "ERROR",
         },
         "twisted": {
             "level": "ERROR",
@@ -44,15 +39,3 @@ def load_logging_config(filename: str = "logging.yml", fail_silent: bool = True)
 
 
 LOGGING_CONFIG = load_logging_config()
-
-
-class ItemMessageFilter(Filter):
-    def filter(self, record: Any) -> bool:
-        # The message that logs the item actually has raw % operators in it,
-        # which Scrapy presumably formats later on
-        match = re.search(r"(Scraped from %\(src\)s)\n%\(item\)s", record.msg)
-        if match:
-            # Make the message everything but the item itself
-            record.msg = match.group(1)
-        # Don't actually want to filter out this record, so always return 1
-        return True

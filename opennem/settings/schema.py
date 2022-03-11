@@ -3,8 +3,6 @@ from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import BaseSettings
 from pydantic.class_validators import validator
-from scrapy.settings import Settings
-from scrapy.utils.project import get_project_settings
 
 from opennem.schema.types import PostgresSqlAlchemyDsn
 
@@ -34,10 +32,7 @@ class OpennemSettings(BaseSettings):
 
     prometheus_url: Optional[str]
 
-    scrapyd_url: str = "http://scrapyd:6800"
-
-    scrapyd_project_name: str = "opennem"
-
+    # This is the module where crawlers are found
     crawlers_module: str = "opennem.crawlers"
 
     google_places_api_key: Optional[str] = None
@@ -91,6 +86,7 @@ class OpennemSettings(BaseSettings):
 
     http_verify_ssl: bool = True
 
+    # used in testing to not run database queries
     dry_run: bool = False
 
     _static_folder_path: str = "opennem/static/"
@@ -100,9 +96,6 @@ class OpennemSettings(BaseSettings):
     schema_output_lowercase_strings: bool = True
     # prepend the country code in the id
     schema_output_id_country: bool = False
-
-    # @todo overwrite scrapy settings here
-    scrapy: Optional[Settings] = get_project_settings()
 
     # db views used
 

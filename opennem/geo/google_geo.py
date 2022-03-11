@@ -10,20 +10,18 @@ Methods to use and access the Google Places API
 
 """
 import logging
-import os
-import sys
 import time
 from datetime import timedelta
 
 import requests
 import requests_cache
 
-from opennem.settings import scrapy_settings
+from opennem import settings
 
 logging.basicConfig(level=logging.INFO)
 
 
-requests_cache.install_cache(scrapy_settings.requests_cache_path, expire_after=timedelta(days=60))
+requests_cache.install_cache(settings.requests_cache_path, expire_after=timedelta(days=60))
 
 BACKOFF_TIME = 30
 QUERY_LIMIT = 0
@@ -38,7 +36,7 @@ def google_geocode(query, region=None, api_key=None, return_full_response=False)
     query_components = {}
 
     url_params = {
-        "key": scrapy_settings.google_places_api_key,
+        "key": settings.google_places_api_key,
     }
 
     if region:
@@ -89,7 +87,7 @@ def lookup_placeid(place_id, api_key=None, retry=0):
     GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/details/json"
 
     url_params = {
-        "key": scrapy_settings.google_places_api_key,
+        "key": settings.google_places_api_key,
         "place_id": place_id,
     }
 
@@ -129,7 +127,7 @@ def place_autocomplete(query, region=None, api_key=None, return_full_response=Fa
     query_components = {}
 
     url_params = {
-        "key": scrapy_settings.google_places_api_key,
+        "key": settings.google_places_api_key,
         "input": query,
     }
 
@@ -185,7 +183,7 @@ def place_search(query, api_key=None, return_full_response=False):
     query_components = {}
 
     url_params = {
-        "key": scrapy_settings.google_places_api_key,
+        "key": settings.google_places_api_key,
         "input": query,
         "inputtype": "textquery",
         "language": "en-AU",

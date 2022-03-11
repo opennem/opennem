@@ -17,7 +17,6 @@ from opennem.api.export.controllers import (
     demand_week,
     energy_fueltech_daily,
     energy_interconnector_flows_and_emissions,
-    energy_interconnector_region_daily,
     gov_stats_cpi,
     power_flows_network_week,
     power_flows_region_week,

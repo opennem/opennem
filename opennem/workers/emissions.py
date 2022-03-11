@@ -18,9 +18,8 @@ import pandas as pd
 
 from opennem import settings
 from opennem.db import get_database_engine
+from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import AggregateNetworkFlows
-from opennem.pipelines.bulk_insert import build_insert_query
-from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem
 

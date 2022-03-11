@@ -5,7 +5,6 @@ from typing import List, Optional
 from opennem.api.exceptions import OpennemBaseHttpException, OpenNEMInvalidNetworkRegion
 from opennem.api.export.queries import (
     country_stats_query,
-    energy_network_flow_query,
     energy_network_fueltech_query,
     energy_network_interconnector_emissions_query,
     interconnector_flow_network_regions_query,
@@ -18,9 +17,8 @@ from opennem.api.export.queries import (
 )
 from opennem.api.facility.capacities import get_facility_capacities
 from opennem.api.stats.controllers import stats_factory
-from opennem.api.stats.schema import DataQueryResult, OpennemDataSet, RegionFlowEmissionsResult
+from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval, human_to_period
-from opennem.core.flows import net_flows_emissions
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
 from opennem.schema.dates import TimeSeries
@@ -551,92 +549,6 @@ def energy_fueltech_daily(
     stats.append_set(stats_emissions)
 
     return stats
-
-
-def energy_interconnector_region_daily(
-    time_series: TimeSeries,
-    network_region_code: str,
-) -> Optional[OpennemDataSet]:
-    engine = get_database_engine()
-    period: TimePeriod = human_to_period("1Y")
-    units = get_unit("energy_giga")
-
-    query = energy_network_flow_query(
-        time_series=time_series,
-        network_region=network_region_code,
-    )
-
-    with engine.connect() as c:
-        logger.debug(query)
-        row = list(c.execute(query))
-
-    if len(row) < 1:
-        return None
-
-    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[1]) for i in row]
-
-    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[2]) for i in row]
-
-    imports_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
-
-    exports_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
-
-    result = stats_factory(
-        imports,
-        network=time_series.network,
-        period=period,
-        interval=time_series.interval,
-        units=units,
-        region=network_region_code,
-        fueltech_group=True,
-        # localize=False,
-    )
-
-    # Bail early on no interconnector
-    # don't error
-    if not result:
-        logger.warn("No interconnector energy result")
-        return result
-
-    result_exports = stats_factory(
-        exports,
-        network=time_series.network,
-        period=period,
-        interval=time_series.interval,
-        units=units,
-        region=network_region_code,
-        fueltech_group=True,
-    )
-
-    result.append_set(result_exports)
-
-    result_imports_mv = stats_factory(
-        imports_mv,
-        units=get_unit("market_value"),
-        network=time_series.network,
-        fueltech_group=True,
-        interval=time_series.interval,
-        region=network_region_code,
-        period=time_series.period,
-        code=time_series.network.code.lower(),
-        localize=False,
-    )
-    result.append_set(result_imports_mv)
-
-    result_export_mv = stats_factory(
-        exports_mv,
-        units=get_unit("market_value"),
-        network=time_series.network,
-        fueltech_group=True,
-        interval=time_series.interval,
-        region=network_region_code,
-        period=time_series.period,
-        code=time_series.network.code.lower(),
-        localize=False,
-    )
-    result.append_set(result_export_mv)
-
-    return result
 
 
 def energy_interconnector_flows_and_emissions(

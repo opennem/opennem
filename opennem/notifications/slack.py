@@ -7,11 +7,11 @@ from validators import ValidationFailure
 from validators.url import url as valid_url
 
 from opennem.settings import settings
-from opennem.settings.scrapy import USER_AGENT
+from opennem.utils.random_agent import get_random_agent
 
 logger = logging.getLogger(__name__)
 
-REQ_HEADERS = {"User-Agent": USER_AGENT, "Content-type": "application/json"}
+REQ_HEADERS = {"User-Agent": get_random_agent(), "Content-type": "application/json"}
 
 
 def _slack_tag_list(user_list: List[str]) -> str:

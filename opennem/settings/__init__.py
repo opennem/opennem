@@ -38,7 +38,6 @@ from pydantic.error_wrappers import _display_error_loc, _display_error_type_and_
 
 from opennem.settings.log import LOGGING_CONFIG
 from opennem.settings.utils import load_env_file
-from opennem.utils.proc import running_as_scrapy
 
 from .schema import OpennemSettings  # noqa: E402
 
@@ -97,10 +96,8 @@ except ValidationError as e:
     do_exit = True
 
 
-# skip if the current cli is scrapy
-if LOGGING_CONFIG and not running_as_scrapy():
-    # don't mess with scrapy logging
-
+# skip if logging not configed
+if LOGGING_CONFIG:
     logging.config.dictConfig(LOGGING_CONFIG)
 
     log_level = logging.getLevelName(settings.log_level)

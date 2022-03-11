@@ -7,7 +7,6 @@ import logging
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from scrapy import Spider
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.controllers.schema import ControllerReturn
@@ -72,7 +71,6 @@ def unit_scada_generate_facility_scada(
 
 def generate_balancing_summary(
     records: List[Dict],
-    spider: Spider,
     interval_field: str = "SETTLEMENTDATE",
     network_region_field: str = "REGIONID",
     price_field: Optional[str] = None,
@@ -84,9 +82,6 @@ def generate_balancing_summary(
     return_records = []
 
     created_by = ""
-
-    if spider and hasattr(spider, "name"):
-        created_by = spider.name
 
     for row in records:
 
@@ -286,7 +281,7 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     return cr
 
 
-def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
+def process_trading_regionsum(table: Dict[str, Any]) -> Dict:
     session = get_scoped_session()
     engine = get_database_engine()
 
@@ -331,7 +326,7 @@ def process_trading_regionsum(table: Dict[str, Any], spider: Spider) -> Dict:
         records_to_store.append(
             {
                 "network_id": "NEM",
-                "created_by": spider.name,
+                "created_by": "opennem.controller.nem",
                 "network_region": record["REGIONID"],
                 "net_interchange_trading": net_interchange,
                 "trading_interval": trading_interval,

@@ -61,11 +61,6 @@ loggers:
     level: ERROR
   botocore:
     level: ERROR
-  scrapy:
-    level: ERROR
-    propagate: yes
-  scrapy.utils.log:
-    level: ERROR
   parso:
     level: ERROR
     propagate: no
