@@ -2,7 +2,7 @@ alembic==1.7.6; python_version >= "3.6"
 anyio==3.5.0; python_version >= "3.6" and python_full_version >= "3.6.2"
 appdirs==1.4.4; python_version >= "3.7" and python_version < "4.0"
 asgiref==3.5.0; python_version >= "3.7"
-attrs==21.4.0; python_version >= "3.7" and python_version < "4.0" and python_full_version >= "3.6.7" and (python_version >= "3.7" and python_full_version < "3.0.0" and python_version < "4.0" or python_version >= "3.7" and python_version < "4.0" and python_full_version >= "3.5.0")
+attrs==21.4.0; python_version >= "3.7" and python_version < "4.0" and python_full_version >= "3.6.7"
 automat==20.2.0; python_full_version >= "3.6.7" and python_version >= "3.6"
 beautifulsoup4==4.10.0; python_full_version > "3.0.0"
 boto3==1.21.16; python_version >= "3.6" and python_version < "4.0"
