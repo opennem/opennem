@@ -54,8 +54,8 @@ def query_energy_gaps(network: NetworkSchema = NetworkNEM, days: int = 7) -> Lis
             from facility_scada fs
             join facility f on fs.facility_code = f.code
             where
-                fs.trading_interval >= now() - interval '{days} days 1 hour'
-                and fs.trading_interval < now() - interval '1 hour'
+                fs.trading_interval >= now() - interval '{days} days 2 hours'
+                and fs.trading_interval < now() - interval '2 hours'
                 and fs.network_id='{network_id}'
             group by 1, fs.network_id
         ) as t
