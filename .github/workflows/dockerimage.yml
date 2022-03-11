@@ -1,9 +1,5 @@
 name: Docker Image CI
-on:
-  push:
-    # branches: [master]
-    tags:
-      - "*"
+on: [push, pull_request]
 
 jobs:
   buildimage:
