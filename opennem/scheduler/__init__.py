@@ -24,7 +24,6 @@ from opennem.api.export.tasks import (
     export_metadata,
     export_power,
 )
-from opennem.db.tasks import refresh_material_views
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.aemo_intervals import aemo_wem_live_interval
 from opennem.monitors.emissions import alert_missing_emission_factors
