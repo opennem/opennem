@@ -36,7 +36,7 @@ from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_da
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.facility_data_ranges import update_facility_seen_range
-from opennem.workers.gap_fill import run_energy_gapfill
+from opennem.workers.gap_fill.energy import run_energy_gapfill
 
 # Py 3.8 on MacOS changed the default multiprocessing model
 if platform.system() == "Darwin":
