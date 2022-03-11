@@ -299,7 +299,7 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
         logger.debug(record)
 
     if len(records_to_store) < 1:
-        logger.error("No records returned from energy sum")
+        logger.warning("No records returned from energy sum")
         return 0
 
     # dedupe records
