@@ -527,8 +527,17 @@ def energy_network_fueltech_query(
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and"
 
+    # @NOTE special case for WEM to only include APVI data for that network/region
+    # and not double-count all of AU
+    network_apvi_wem = ""
+
+    if NetworkAPVI in networks_query:
+        network_apvi_wem = "or (t.network_id='APVI' and f.network_region in ('WEM'))"
+        networks_query.pop(networks_query.index(NetworkAPVI))
+
     networks_list = networks_to_in(networks_query)
-    network_query = "t.network_id IN ({}) and ".format(networks_list)
+
+    network_query = "(t.network_id IN ({}) {}) and ".format(networks_list, network_apvi_wem)
 
     query = dedent(
         __query.format(
