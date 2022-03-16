@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 def store_bom_observation_intervals(observations: BOMObservationReturn) -> ControllerReturn:
     """Store BOM Observations"""
 
-    session = get_scoped_session()
     engine = get_database_engine()
 
     cr = ControllerReturn(total_records=len(observations.observations))
@@ -71,16 +70,17 @@ def store_bom_observation_intervals(observations: BOMObservationReturn) -> Contr
         },
     )
 
-    try:
-        session.execute(stmt)
-        session.commit()
-    except Exception as e:
-        logger.error("Error: {}".format(e))
-        cr.errors = cr.processed_records
-        cr.error_detail.append(str(e))
-    finally:
-        session.close()
-        engine.dispose()
+    with get_scoped_session() as session:
+        try:
+            session.execute(stmt)
+            session.commit()
+        except Exception as e:
+            logger.error("Error: {}".format(e))
+            cr.errors = cr.processed_records
+            cr.error_detail.append(str(e))
+        finally:
+            session.close()
+            engine.dispose()
 
     cr.inserted_records = cr.processed_records
 
