@@ -580,7 +580,7 @@ def energy_network_interconnector_emissions_query(
         sum(t.market_value_exports) as market_value_exports
     from (
         select
-            time_bucket_gapfill('1h', t.trading_interval) as trading_interval,
+            time_bucket_gapfill('5 min', t.trading_interval) as trading_interval,
             t.network_id,
             t.network_region,
             coalesce(t.energy_imports, 0) as imports_energy,
