@@ -178,9 +178,6 @@ def bulkinsert_mms_items(
     records: List[Dict],
     update_fields: Optional[List[Union[str, Column[Any]]]] = None,
 ) -> int:
-    engine = get_database_engine()
-    conn = engine.raw_connection()
-
     num_records = 0
 
     if not records:
@@ -191,17 +188,17 @@ def bulkinsert_mms_items(
         table, records, column_names=list(records[0].keys())
     )
 
-    try:
-        cursor = conn.cursor()
-        cursor.copy_expert(sql_query, csv_content)
-        conn.commit()
-        num_records = len(records)
-    except Exception as generic_error:
-        if hasattr(generic_error, "hide_parameters"):
-            generic_error.hide_parameters = True  # type: ignore
-        logger.error(generic_error)
-    finally:
-        engine.dispose()
+    with get_database_engine().raw_connection as conn:
+
+        try:
+            cursor = conn.cursor()
+            cursor.copy_expert(sql_query, csv_content)
+            conn.commit()
+            num_records = len(records)
+        except Exception as generic_error:
+            if hasattr(generic_error, "hide_parameters"):
+                generic_error.hide_parameters = True  # type: ignore
+            logger.error(generic_error)
 
     return num_records
 
