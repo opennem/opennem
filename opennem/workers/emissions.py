@@ -443,4 +443,5 @@ def run_flow_updates_all_for_nem() -> None:
 if __name__ == "__main__":
     logger.info("starting")
     # run_flow_updates_all_for_nem()
-    run_emission_update_day(days=12)
+    # run_emission_update_day(days=12)
+    run_flow_updates_all_per_year(datetime.now().year, 1)
