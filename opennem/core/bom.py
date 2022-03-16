@@ -6,7 +6,6 @@ from datetime import date, datetime
 from random import shuffle
 from typing import List, Optional
 
-from opennem.clients.bom import BOM_REQUEST_HEADERS
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import BomStation
 from opennem.schema.bom import BomStationSchema
