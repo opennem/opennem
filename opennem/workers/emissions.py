@@ -1,12 +1,13 @@
 """OpenNEM Network Flows
 
-Creates an aggregate table with network flows (imports/exports), emissions and market_value
-
+Creates an aggregate table with network flows (imports/exports), emissions
+and market_value
 
 Changelog
 
 * 2-MAR - fix blank values and cleanup
 * 9-MAR - new version optimized and merged
+* 15-MAR - alter bucket times
 
 """
 
@@ -35,12 +36,17 @@ def load_interconnector_intervals(date_start: datetime, date_end: datetime) -> p
     engine = get_database_engine()
     network = NetworkNEM
 
+    if date_start >= date_end:
+        raise FlowWorkerException(
+            "load_interconnector_intervals: date_start is more recent than date_end"
+        )
+
     query = """
         select
-            time_bucket_gapfill('1h', fs.trading_interval) as trading_interval,
+            time_bucket_gapfill('5min', fs.trading_interval) as trading_interval,
             f.interconnector_region_from,
             f.interconnector_region_to,
-            sum(fs.eoi_quantity) as energy
+            coalesce(sum(fs.generated), 0) as generated
         from facility_scada fs
         left join facility f
             on fs.facility_code = f.code
@@ -79,36 +85,46 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime) 
         select
             t.trading_interval,
             t.network_region,
-            sum(t.energy) as energy,
+            sum(t.power) as generated,
             sum(t.market_value) as market_value,
             sum(t.emissions) as emissions
-        from (select
-                time_bucket('1 hour', fs.trading_interval) as trading_interval,
+        from
+        (
+            select
+                fs.trading_interval as trading_interval,
                 f.network_region as network_region,
-                round(coalesce(sum(fs.eoi_quantity), 0), 2) as energy,
-                round(coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bsn.price), 0), 2) as market_value,
-                round(coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(f.emissions_factor_co2), 0), 2) as emissions
+                sum(fs.generated) as power,
+                sum(fs.generated) * max(bsn.price) as market_value,
+                sum(fs.generated) * max(f.emissions_factor_co2) as emissions
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
             left join network n on f.network_id = n.code
-            left join balancing_summary bsn on
-                bsn.trading_interval - INTERVAL '5 minutes' = fs.trading_interval
+            left join (
+                select
+                    time_bucket_gapfill('5 min', bs.trading_interval) as trading_interval,
+                    bs.network_id,
+                    bs.network_region,
+                    locf(bs.price) as price
+                from balancing_summary bs
+                    where bs.network_id='NEM'
+            ) as  bsn on
+                bsn.trading_interval = fs.trading_interval
                 and bsn.network_id = n.network_price
                 and bsn.network_region = f.network_region
                 and f.network_id = 'NEM'
             where
                 fs.is_forecast is False and
                 f.interconnector = False and
-                f.network_id = 'NEM'
+                f.network_id = 'NEM' and
+                fs.generated > 0
             group by
                 1, f.code, 2
-        )
-        as t
+        ) as t
         where
             t.trading_interval >= '{date_start}T00:00:00+10:00' and
-            t.trading_interval < '{date_end}T00:00:00+10:10'
+            t.trading_interval < '{date_end}T00:00:00+10:00'
         group by 1, 2
-        order by 1 asc;
+        order by 1 asc, 2;
     """.format(
         date_start=date_start.date(), date_end=date_end.date()
     )
@@ -122,8 +138,8 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime) 
 
     df_gen.index = df_gen.index.tz_convert(tz=network.get_fixed_offset())
 
-    df_gen["price"] = df_gen["market_value"] / df_gen["energy"]
-    df_gen["emission_factor"] = df_gen["emissions"] / df_gen["energy"]
+    df_gen["price"] = df_gen["market_value"] / df_gen["generated"]
+    df_gen["emission_factor"] = df_gen["emissions"] / df_gen["generated"]
 
     return df_gen
 
@@ -141,6 +157,7 @@ def merge_interconnector_and_energy_data(
         right_on=["trading_interval", "network_region"],
         suffixes=("", "_from"),
     )
+
     df_merged = pd.merge(
         region_from,
         df_energy,
@@ -157,50 +174,60 @@ def merge_interconnector_and_energy_data(
         }
     )
 
-    df_merged_inverted["energy"] *= -1
+    df_merged_inverted["generated"] *= -1
 
     f = pd.concat([df_merged, df_merged_inverted])
 
-    f["energy_exports"] = f.apply(lambda x: x.energy if x.energy and x.energy > 0 else 0, axis=1)
+    f["energy_exports"] = f.apply(
+        lambda x: x.generated if x.generated and x.generated > 0 else 0, axis=1
+    )
     f["energy_imports"] = f.apply(
-        lambda x: abs(x.energy) if x.energy and x.energy < 0 else 0, axis=1
+        lambda x: abs(x.generated) if x.generated and x.generated < 0 else 0, axis=1
     )
 
     f["emission_exports"] = f.apply(
-        lambda x: x.energy * x.emission_factor_to if x.energy and x.energy > 0 else 0, axis=1
+        lambda x: x.generated * x.emission_factor_to if x.generated and x.generated > 0 else 0,
+        axis=1,
     )
     f["emission_imports"] = f.apply(
-        lambda x: abs(x.energy * x.emission_factor) if x.energy and x.energy < 0 else 0, axis=1
+        lambda x: abs(x.generated * x.emission_factor) if x.generated and x.generated < 0 else 0,
+        axis=1,
     )
 
     f["market_value_exports"] = f.apply(
-        lambda x: x.energy * x.price_to if x.energy and x.energy > 0 else 0, axis=1
+        lambda x: x.generated * x.price_to if x.generated and x.generated > 0 else 0, axis=1
     )
 
     f["market_value_imports"] = f.apply(
-        lambda x: abs(x.energy * x.price) if x.energy and x.energy < 0 else 0, axis=1
+        lambda x: abs(x.generated * x.price) if x.generated and x.generated < 0 else 0, axis=1
     )
 
     energy_flows = pd.DataFrame(
         {
             "energy_imports": f.groupby(
                 ["trading_interval", "interconnector_region_from"]
-            ).energy_imports.sum(),
+            ).energy_imports.sum()
+            / 12,
             "energy_exports": f.groupby(
                 ["trading_interval", "interconnector_region_from"]
-            ).energy_exports.sum(),
+            ).energy_exports.sum()
+            / 12,
             "emissions_imports": f.groupby(
                 ["trading_interval", "interconnector_region_from"]
-            ).emission_imports.sum(),
+            ).emission_imports.sum()
+            / 12,
             "emissions_exports": f.groupby(
                 ["trading_interval", "interconnector_region_from"]
-            ).emission_exports.sum(),
+            ).emission_exports.sum()
+            / 12,
             "market_value_imports": f.groupby(
                 ["trading_interval", "interconnector_region_from"]
-            ).market_value_imports.sum(),
+            ).market_value_imports.sum()
+            / 12,
             "market_value_exports": f.groupby(
                 ["trading_interval", "interconnector_region_from"]
-            ).market_value_exports.sum(),
+            ).market_value_exports.sum()
+            / 12,
         }
     )
 
@@ -415,4 +442,5 @@ def run_flow_updates_all_for_nem() -> None:
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_flow_updates_all_for_nem()
+    # run_flow_updates_all_for_nem()
+    run_emission_update_day(days=12)
