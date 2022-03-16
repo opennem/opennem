@@ -190,7 +190,7 @@ def bulkinsert_mms_items(
 
     # @TODO check the scoping here
     engine = get_database_engine()
-    conn = engine.raw_connection
+    conn = engine.raw_connection()
 
     try:
         cursor = conn.cursor()
