@@ -158,17 +158,17 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
     try:
         session.execute(stmt)
         session.commit()
+        cr.inserted_records = cr.processed_records
+        cr.server_latest = max([i["trading_interval"] for i in records_to_store])
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
         cr.errors = cr.processed_records
         return cr
     finally:
+        session.rollback()
         session.close()
         engine.dispose()
-
-    cr.inserted_records = cr.processed_records
-    cr.server_latest = max([i["trading_interval"] for i in records_to_store])
 
     return cr
 
@@ -216,17 +216,16 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
     try:
         session.execute(stmt)
         session.commit()
+        cr.inserted_records = cr.processed_records
+        cr.server_latest = max([i["trading_interval"] for i in records_to_store])
     except Exception as e:
         logger.error("Error inserting NEM price records")
         logger.error(e)
         cr.errors = cr.processed_records
-        return cr
     finally:
+        session.rollback()
         session.close()
         engine.dispose()
-
-    cr.inserted_records = cr.processed_records
-    cr.server_latest = max([i["trading_interval"] for i in records_to_store])
 
     return cr
 
@@ -265,18 +264,16 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     try:
         session.execute(stmt)
         session.commit()
+        cr.inserted_records = cr.processed_records
+        cr.server_latest = max([i["trading_interval"] for i in records_to_store])
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
         cr.errors = cr.processed_records
-        return cr
-
     finally:
+        session.rollback()
         session.close()
         engine.dispose()
-
-    cr.inserted_records = cr.processed_records
-    cr.server_latest = max([i["trading_interval"] for i in records_to_store])
 
     return cr
 
@@ -349,17 +346,19 @@ def process_trading_regionsum(table: Dict[str, Any]) -> Dict:
         },
     )
 
-    with get_scoped_session() as session:
-        try:
-            session.execute(stmt)
-            session.commit()
-        except Exception as e:
-            logger.error("Error inserting records")
-            logger.error(e)
-            records_to_store = []
-        finally:
-            session.close()
-            engine.dispose()
+    session = get_scoped_session()
+
+    try:
+        session.execute(stmt)
+        session.commit()
+    except Exception as e:
+        logger.error("Error inserting records")
+        logger.error(e)
+        records_to_store = []
+    finally:
+        session.rollback()
+        session.close()
+        engine.dispose()
 
     return {"num_records": len(records_to_store)}
 
