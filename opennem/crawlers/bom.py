@@ -9,8 +9,8 @@ from typing import Optional
 from opennem.clients.bom import get_bom_observations
 from opennem.controllers.bom import store_bom_observation_intervals
 from opennem.controllers.nem import ControllerReturn
+from opennem.core.bom import get_stations_priority
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
-from opennem.spiders.bom.utils import get_stations_priority
 
 logger = logging.getLogger("opennem.crawler.bom")
 
