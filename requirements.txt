@@ -2,7 +2,8 @@ alembic==1.7.6; python_version >= "3.6"
 anyio==3.5.0; python_version >= "3.6" and python_full_version >= "3.6.2"
 appdirs==1.4.4; python_version >= "3.7" and python_version < "4.0"
 asgiref==3.5.0; python_version >= "3.7"
-attrs==21.4.0; python_version >= "3.7" and python_version < "4.0" and python_full_version >= "3.6.7"
+async-generator==1.10; python_version >= "3.7"
+attrs==21.4.0; python_version >= "3.7" and python_version < "4.0" and python_full_version >= "3.6.7" and (python_version >= "3.7" and python_full_version < "3.0.0" or python_version >= "3.7" and python_full_version >= "3.5.0")
 automat==20.2.0; python_full_version >= "3.6.7" and python_version >= "3.6"
 beautifulsoup4==4.10.0; python_full_version > "3.0.0"
 boto3==1.21.16; python_version >= "3.6" and python_version < "4.0"
@@ -10,7 +11,7 @@ botocore==1.24.16; python_version >= "3.6" and python_version < "4.0"
 cachetools==5.0.0; python_version >= "3.7" and python_version < "4.0"
 cattrs==1.10.0; python_version >= "3.7" and python_version < "4.0"
 certifi==2021.10.8; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0"
-cffi==1.15.0; python_version >= "3.6"
+cffi==1.15.0; os_name == "nt" and implementation_name != "pypy" and python_version >= "3.7"
 charset-normalizer==2.0.12; python_full_version >= "3.6.0" and python_version >= "3"
 click==8.0.4; python_version >= "3.6"
 colorama==0.4.4; platform_system == "Windows" and python_version >= "3.6" and python_full_version >= "3.6.2" and python_full_version < "4.0.0" and (python_version >= "3.7" and python_full_version < "3.0.0" and platform_system == "Windows" or platform_system == "Windows" and python_version >= "3.7" and python_full_version >= "3.5.0")
@@ -32,10 +33,14 @@ geojson-pydantic==0.3.3; python_version >= "3.7"
 geojson==2.5.0
 gitignore-parser==0.0.8
 greenlet==1.1.2; python_version >= "3" and python_full_version < "3.0.0" and (platform_machine == "aarch64" or platform_machine == "ppc64le" or platform_machine == "x86_64" or platform_machine == "amd64" or platform_machine == "AMD64" or platform_machine == "win32" or platform_machine == "WIN32") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0") and (python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6") or python_version >= "3" and (platform_machine == "aarch64" or platform_machine == "ppc64le" or platform_machine == "x86_64" or platform_machine == "amd64" or platform_machine == "AMD64" or platform_machine == "win32" or platform_machine == "WIN32") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0") and (python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6") and python_full_version >= "3.5.0"
-h11==0.13.0; python_version >= "3.7"
+h11==0.13.0; python_full_version >= "3.7.0" and python_version >= "3.7"
+h2==4.1.0; python_full_version >= "3.6.1" and python_version >= "3.7"
+hpack==4.0.0; python_full_version >= "3.6.1" and python_version >= "3.7"
 huey==2.4.3
+hypercorn==0.13.2; python_version >= "3.7"
+hyperframe==6.0.1; python_full_version >= "3.6.1" and python_version >= "3.7"
 hyperlink==21.0.0; python_full_version >= "3.6.7" and python_version >= "3.6"
-idna==3.3; python_full_version >= "3.6.7" and python_version >= "3.7" and (python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5")
+idna==3.3
 incremental==21.3.0; python_full_version >= "3.6.7" and python_version >= "3.6"
 itemadapter==0.4.0; python_version >= "3.6"
 itemloaders==1.0.4; python_version >= "3.6"
@@ -47,11 +52,13 @@ numpy==1.22.3
 oauthlib==3.2.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.6"
 openpyxl==3.0.9; python_version >= "3.6"
 osm2geojson==0.1.31
+outcome==1.1.0; python_version >= "3.7"
 packaging==21.3; python_version >= "3.6"
 pandas==1.4.1; python_version >= "3.8"
 parsel==1.6.0; python_version >= "3.6"
 pillow==8.4.0; python_version >= "3.6"
 pint==0.17; python_version >= "3.6"
+priority==2.0.0; python_full_version >= "3.6.1" and python_version >= "3.7"
 protego==0.2.1; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6"
 psycopg2==2.9.3; python_version >= "3.6"
 py-trello==0.18.0
@@ -83,12 +90,15 @@ service-identity==21.1.0; python_version >= "3.6"
 shapely==1.8.1.post1; python_version >= "3.6"
 six==1.16.0; python_full_version >= "3.6.7" and python_version >= "3.8" and python_version < "4.0"
 smart-open==5.2.1; python_version >= "3.6" and python_version < "4.0"
-sniffio==1.2.0; python_version >= "3.6" and python_full_version >= "3.6.2"
+sniffio==1.2.0; python_version >= "3.7" and python_full_version >= "3.6.2"
+sortedcontainers==2.4.0; python_version >= "3.7"
 soupsieve==2.3.1; python_version >= "3.6" and python_full_version > "3.0.0"
 sqlalchemy==1.4.32; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.6.0")
 starlette==0.17.1; python_version >= "3.6" and python_full_version >= "3.6.1"
 tldextract==3.2.0; python_version >= "3.7"
+toml==0.10.2; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.7"
 tomlkit==0.7.2; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
+trio==0.20.0; python_version >= "3.7"
 twisted-iocpsupport==1.0.2; python_full_version >= "3.6.7" and python_version >= "3.6" and platform_system == "Windows"
 twisted==22.2.0; python_full_version >= "3.6.7" and python_version >= "3.6"
 typing-extensions==4.1.1; python_version >= "3.6" and python_full_version >= "3.6.7"
@@ -99,5 +109,6 @@ validators==0.18.2; python_version >= "3.4"
 w3lib==1.22.0; python_version >= "3.6"
 wikidata==0.7.0; python_full_version >= "3.4.0"
 wikipedia==1.4.0
+wsproto==1.1.0; python_full_version >= "3.7.0" and python_version >= "3.7"
 xlrd==2.0.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.6.0")
 zope.interface==5.4.0; python_full_version >= "3.6.7" and python_version >= "3.6"
