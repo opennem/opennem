@@ -192,18 +192,18 @@ def bulkinsert_mms_items(
     engine = get_database_engine()
     conn = engine.raw_connection()
 
-    try:
-        cursor = conn.cursor()
-        cursor.copy_expert(sql_query, csv_content)
-        conn.commit()
-        num_records = len(records)
-    except Exception as generic_error:
-        if hasattr(generic_error, "hide_parameters"):
-            generic_error.hide_parameters = True  # type: ignore
-        logger.error(generic_error)
-    finally:
-        engine.dispose()
-        conn.dispose()
+    with conn:
+        try:
+            cursor = conn.cursor()
+            cursor.copy_expert(sql_query, csv_content)
+            conn.commit()
+            num_records = len(records)
+        except Exception as generic_error:
+            if hasattr(generic_error, "hide_parameters"):
+                generic_error.hide_parameters = True  # type: ignore
+            logger.error(generic_error)
+        finally:
+            engine.dispose()
 
     return num_records
 
