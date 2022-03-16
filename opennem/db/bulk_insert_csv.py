@@ -188,17 +188,22 @@ def bulkinsert_mms_items(
         table, records, column_names=list(records[0].keys())
     )
 
-    with get_database_engine().raw_connection as conn:
+    # @TODO check the scoping here
+    engine = get_database_engine()
+    conn = engine.raw_connection
 
-        try:
-            cursor = conn.cursor()
-            cursor.copy_expert(sql_query, csv_content)
-            conn.commit()
-            num_records = len(records)
-        except Exception as generic_error:
-            if hasattr(generic_error, "hide_parameters"):
-                generic_error.hide_parameters = True  # type: ignore
-            logger.error(generic_error)
+    try:
+        cursor = conn.cursor()
+        cursor.copy_expert(sql_query, csv_content)
+        conn.commit()
+        num_records = len(records)
+    except Exception as generic_error:
+        if hasattr(generic_error, "hide_parameters"):
+            generic_error.hide_parameters = True  # type: ignore
+        logger.error(generic_error)
+    finally:
+        engine.dispose()
+        conn.dispose()
 
     return num_records
 
