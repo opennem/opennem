@@ -352,7 +352,7 @@ def run_emission_update_day(
     # This is Sydney time as the data is published in local time
 
     if not day:
-        day = get_last_complete_day_for_network(NetworkNEM) - timedelta(days=offset_days)
+        day = get_last_complete_day_for_network(NetworkNEM)
 
     current_day = day
 
