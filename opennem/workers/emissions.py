@@ -355,14 +355,13 @@ def run_emission_update_day(
         day = get_last_complete_day_for_network(NetworkNEM) - timedelta(days=offset_days)
 
     current_day = day
+
+    if offset_days > 1:
+        current_day -= timedelta(days=offset_days)
+
     date_min = day - timedelta(days=days)
 
-    while current_day >= date_min:
-        logger.info("Running emission update for {}".format(current_day))
-
-        run_and_store_emission_flows(current_day)
-
-        current_day -= timedelta(days=1)
+    run_and_store_flows_for_range(date_min, current_day)
 
 
 def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) -> None:
