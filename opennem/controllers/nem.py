@@ -282,7 +282,6 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
 
 
 def process_trading_regionsum(table: Dict[str, Any]) -> Dict:
-    session = get_scoped_session()
     engine = get_database_engine()
 
     if "records" not in table:
@@ -350,17 +349,17 @@ def process_trading_regionsum(table: Dict[str, Any]) -> Dict:
         },
     )
 
-    try:
-        session.execute(stmt)
-        session.commit()
-    except Exception as e:
-        logger.error("Error inserting records")
-        logger.error(e)
-        return {"num_records": 0}
-
-    finally:
-        session.close()
-        engine.dispose()
+    with get_scoped_session() as session:
+        try:
+            session.execute(stmt)
+            session.commit()
+        except Exception as e:
+            logger.error("Error inserting records")
+            logger.error(e)
+            records_to_store = []
+        finally:
+            session.close()
+            engine.dispose()
 
     return {"num_records": len(records_to_store)}
 
