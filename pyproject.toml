@@ -70,6 +70,7 @@ gitignore-parser = "^0.0.8"
 rich = "^11.0.0"
 GeoAlchemy = "^0.7.2"
 Scrapy = "^2.6.1"
+hypercorn = {extras = ["trio"], version = "^0.13.2"}
 
 
 [tool.poetry.dev-dependencies]
