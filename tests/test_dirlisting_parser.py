@@ -10,7 +10,7 @@ from opennem.core.parsers.dirlisting import (
     parse_dirlisting_line,
 )
 
-from .utils import PATH_TESTS_FIXTURES
+from .conftest import PATH_TESTS_FIXTURES
 
 
 def load_fixture(filename: str = "nemweb_dirlisting.html") -> str:
