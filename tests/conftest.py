@@ -31,14 +31,14 @@ def load_fixture_file(filename: str) -> str:
     return fixture_content
 
 
-def load_fixture_file_binary(filename: str, directory: str = "files") -> bytes:
+def load_fixture_file_binary(filename: str, directory: str = "files") -> io.BytesIO:
     """Read a fixture file and return a file object"""
     fixture_path = PATH_TESTS_FIXTURES / directory / filename
 
     if not fixture_path.is_file():
         raise Exception("Could not find excel fixture at {}".format(fixture_path))
 
-    fixture_content = io.open(fixture_path, mode="rb").read()
+    fixture_content = io.open(fixture_path, mode="rb")
 
     return fixture_content
 
@@ -55,21 +55,24 @@ def load_file_binary() -> Callable:
     return load_fixture_file_binary
 
 
+# Fixtures Below
+
+
 @pytest.fixture
 def xls_old_file(load_file: Callable) -> BinaryIO:
-    return load_file_binary("old.xls")
+    return load_fixture_file_binary("old.xls")
 
 
 @pytest.fixture
 def xls_file(load_file: Callable) -> BinaryIO:
-    return load_file_binary("excel_template_compat.xls")
+    return load_fixture_file_binary("excel_template_compat.xls")
 
 
 @pytest.fixture
 def xlsx_file(load_file: Callable) -> BinaryIO:
-    return load_file_binary("excel_template.xlsx")
+    return load_fixture_file_binary("excel_template.xlsx")
 
 
 @pytest.fixture
 def aemo_nemweb_dispatch_scada(load_file: Callable) -> BinaryIO:
-    return load_file_binary("PUBLIC_DISPATCHSCADA_202109021255_0000000348376188.zip")
+    return load_fixture_file_binary("PUBLIC_DISPATCHSCADA_202109021255_0000000348376188.zip")
