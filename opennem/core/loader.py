@@ -1,17 +1,26 @@
+""" Core loaders that handle files """
 import csv
 import json
 import logging
 import os
 import sys
 import zipfile
+from dataclasses import dataclass
+from io import BytesIO
 from pathlib import Path
 from pkgutil import get_data, get_loader
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
 logger = logging.getLogger("opennem.core.loader")
 
-MODULE_PATH = Path(os.path.dirname(sys.modules["opennem"].__file__))
-PROJECT_ROOT = MODULE_PATH.parent
+MODULE_PATH_FULL = sys.modules["opennem"].__file__
+MODULE_PATH = None
+PROJECT_ROOT = None
+
+if MODULE_PATH_FULL:
+    MODULE_PATH = Path(os.path.dirname(MODULE_PATH_FULL))
+    PROJECT_ROOT = MODULE_PATH.parent
+
 DATA_PATH = "core/data"
 FIXTURE_PATH = "db/fixtures"
 SETTINGS_PATH = "settings"
@@ -121,8 +130,15 @@ def load_data_string(file_path: Path) -> str:
     return content
 
 
-def load_data_zip(file_path: Path) -> str:
-    content = ""
+@dataclass
+class ZipFileReturn:
+    filename: str
+    content: Union[str, bytes]
+
+
+def load_data_zip(file_path: Union[Path, BytesIO], decode_return: bool = True) -> ZipFileReturn:
+    """Loadds a ZipFile from a file path or buffer and returns an object with the content"""
+    content: Union[str, bytes] = ""
 
     with zipfile.ZipFile(file_path) as zf:
         zip_files = zf.namelist()
@@ -130,15 +146,15 @@ def load_data_zip(file_path: Path) -> str:
         if len(zip_files) == 1:
             content = zf.open(zip_files[0]).read()
 
-            if type(content) is bytes:
+            if type(content) is bytes and decode_return:
                 content = content.decode("utf-8")
-
-            return {"filename": zip_files[0], "content": content}
 
         if len(zip_files) != 1:
             raise Exception(
                 "Zero or more than one file in zip file. Have {}".format(len(zip_files))
             )
+
+    return ZipFileReturn(filename=zip_files[0], content=content)
 
 
 def load_data_json(file_content: str) -> Any:
