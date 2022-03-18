@@ -1,9 +1,11 @@
 import io
 from pathlib import Path
-from typing import BinaryIO, Callable
+from typing import BinaryIO, Callable, Union
 
 import pytest
 from betamax import Betamax
+
+from opennem.core.loader import load_data_zip
 
 with Betamax.configure() as config:
     config.cassette_library_dir = "tests/fixtures/cassettes"
@@ -74,5 +76,6 @@ def xlsx_file(load_file: Callable) -> BinaryIO:
 
 
 @pytest.fixture
-def aemo_nemweb_dispatch_scada(load_file: Callable) -> BinaryIO:
-    return load_fixture_file_binary("PUBLIC_DISPATCHSCADA_202109021255_0000000348376188.zip")
+def aemo_nemweb_dispatch_scada(load_file: Callable) -> Union[str, bytes]:
+    zip_file = load_fixture_file_binary("PUBLIC_DISPATCHSCADA_202109021255_0000000348376188.zip")
+    return load_data_zip(zip_file).content
