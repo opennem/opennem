@@ -1,12 +1,7 @@
 from typing import List
 
-import pint
-
 from opennem.core.loader import load_data
 from opennem.schema.units import UnitDefinition
-
-unit_registry = pint.UnitRegistry()
-Q = unit_registry.Quantity
 
 
 def load_units() -> List[UnitDefinition]:
