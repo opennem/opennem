@@ -6,6 +6,7 @@ import requests
 from PIL import Image
 from smart_open import open
 
+from opennem import settings
 from opennem.utils.http import http
 from opennem.utils.url import bucket_to_website
 
@@ -21,7 +22,7 @@ UPLOAD_ARGS = {
 
 def write_photo_to_s3(file_path: str, data, overwrite: bool = False) -> int:
     # @TODO move this to aws.py
-    s3_save_path = os.path.join(S3_EXPORT_DEFAULT_BUCKET, file_path)
+    s3_save_path = os.path.join(settings.photos_bucket_path, file_path)
     write_count = 0
 
     http_save_path = bucket_to_website(s3_save_path)
