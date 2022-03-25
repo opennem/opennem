@@ -126,7 +126,7 @@ AEMONEMCurrentDispatchScada = CrawlerDefinition(
 AEMONEMArchiveDispatchScada = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.daily,
-    name="au.nem.archive.dispatch_scada",
+    name="au.nem.archive.latest.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/",
     latest=False,
     # 3 + 4d
