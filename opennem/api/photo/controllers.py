@@ -1,6 +1,7 @@
 import logging
 import os
 from io import BytesIO
+from typing import Any
 
 import requests
 from PIL import Image
@@ -20,7 +21,7 @@ UPLOAD_ARGS = {
 }
 
 
-def write_photo_to_s3(file_path: str, data, overwrite: bool = False) -> int:
+def write_photo_to_s3(file_path: str, data: Any, overwrite: bool = False) -> int:
     # @TODO move this to aws.py
     s3_save_path = os.path.join(settings.photos_bucket_path, file_path)
     write_count = 0
