@@ -97,7 +97,7 @@ AEMONemDispatchISCurrent = CrawlerDefinition(
     name="au.nem.current.dispatch_is",
     url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
     latest=False,
-    limit=364,
+    limit=2016,
     processor=run_aemo_mms_crawl,
 )
 
@@ -138,7 +138,7 @@ AEMONEMArchiveDispatchScada = CrawlerDefinition(
 
 AEMONEMDispatchActualGEN = CrawlerDefinition(
     priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.daily,
+    schedule=CrawlerSchedule.twice_a_day,
     name="au.nem.dispatch_actual_gen",
     url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
     latest=True,
@@ -147,7 +147,7 @@ AEMONEMDispatchActualGEN = CrawlerDefinition(
 
 AEMONEMNextDayDispatch = CrawlerDefinition(
     priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.daily,
+    schedule=CrawlerSchedule.twice_a_day,
     name="au.nem.dispatch",
     url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
     latest=True,
