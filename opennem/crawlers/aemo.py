@@ -118,6 +118,10 @@ AEMONEMCurrentDispatchScada = CrawlerDefinition(
     name="au.nem.current.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
     latest=False,
+    # one week
+    limit=2016,
+    processor=run_aemo_mms_crawl,
+)
 
 AEMONEMArchiveDispatchScada = CrawlerDefinition(
     priority=CrawlerPriority.high,
