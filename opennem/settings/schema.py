@@ -56,6 +56,8 @@ class OpennemSettings(BaseSettings):
 
     s3_bucket_path: str = "s3://data.opennem.org.au/"
 
+    photos_bucket_path: str = "s3://photos.opennem.org.au/"
+
     interval_default: str = "15m"
 
     period_default: str = "7d"
@@ -128,6 +130,7 @@ class OpennemSettings(BaseSettings):
     # this is the feedback board
     feedback_trello_board_id: str = "60a48f32c97cf221e3d4bec1"
 
+    # willy weather client
     willyweather_api_key: Optional[str]
 
     # pylint: disable=no-self-argument
