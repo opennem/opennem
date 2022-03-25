@@ -22,6 +22,8 @@ UPLOAD_ARGS = {
 
 
 def write_photo_to_s3(file_path: str, data: Any, overwrite: bool = False) -> int:
+    """Writes a photo blob to the S3 photo bucket. Will by default
+    not overwrite any existing paths"""
     # @TODO move this to aws.py
     s3_save_path = os.path.join(settings.photos_bucket_path, file_path)
     write_count = 0
