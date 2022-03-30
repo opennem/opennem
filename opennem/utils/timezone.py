@@ -5,9 +5,10 @@ Some methods adapted from the Django project
 """
 from datetime import datetime, timedelta
 from datetime import timezone as pytimezone
+from typing import Union
 
 
-def get_fixed_timezone(offset):
+def get_fixed_timezone(offset: Union[timedelta, int]) -> pytimezone:
     """Return a tzinfo instance with a fixed offset from UTC."""
 
     if isinstance(offset, timedelta):
@@ -65,7 +66,7 @@ def make_aware(value: datetime, timezone: pytimezone = None, is_dst=None) -> dat
         return value.replace(tzinfo=timezone)
 
 
-def make_naive(value, timezone=None):
+def make_naive(value: datetime, timezone: pytimezone = None) -> datetime:
     """Make an aware datetime.datetime naive in a given time zone."""
 
     if timezone is None:
