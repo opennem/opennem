@@ -1,5 +1,6 @@
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List, Optional, Union
+from zoneinfo import ZoneInfo
 
 from pydantic import BaseSettings
 from pydantic.class_validators import validator
@@ -18,6 +19,8 @@ class OpennemSettings(BaseSettings):
     env: str = "development"
 
     log_level: str = "DEBUG"
+
+    timezone: Union[str, timezone, ZoneInfo] = timezone.utc
 
     # Set maintenance mode - workers won't run and API will return a MaintenanceMode response
     maintenance_mode: bool = False
