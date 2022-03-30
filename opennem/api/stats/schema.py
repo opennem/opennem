@@ -19,7 +19,6 @@ from opennem.settings import settings
 from opennem.utils.dates import chop_datetime_microseconds
 from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import sigfig_compact
-from opennem.utils.timezone import get_current_timezone
 
 
 def optionaly_lowercase_string(value: str) -> str:
@@ -283,7 +282,7 @@ class ScadaDateRange(BaseConfig):
     network: Optional[NetworkSchema]
 
     def _get_value_localized(self, field_name: str = "start") -> Any:
-        timezone = get_current_timezone()
+        timezone = settings.timezone
         date_aware = getattr(self, field_name)
 
         if self.network:
