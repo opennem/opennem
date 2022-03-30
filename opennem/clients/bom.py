@@ -2,10 +2,9 @@
 
 """
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-import pytz
 import requests
 from pydantic import validator
 
@@ -16,7 +15,6 @@ from opennem.utils.http import (
     retry_strategy_on_permission_denied,
 )
 from opennem.utils.random_agent import get_random_agent
-from opennem.utils.timezone import UTC
 
 logger = logging.getLogger("opennem.clients.bom")
 
@@ -92,9 +90,9 @@ class BOMObserationSchema(BaseConfig):
         if _state not in STATE_TO_TIMEZONE.keys():
             return None
 
-        timezone = pytz.timezone(STATE_TO_TIMEZONE[_state])
+        tz = timezone(STATE_TO_TIMEZONE[_state])
 
-        dt_return = dt.replace(tzinfo=UTC).astimezone(timezone)
+        dt_return = dt.replace(tzinfo=timezone.utc).astimezone(timezone)
 
         return dt_return
 

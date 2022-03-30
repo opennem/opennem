@@ -1,6 +1,7 @@
 import logging
 import math
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timedelta
+from datetime import timezone as pytimezone
 from typing import Any, Generator, Optional, Tuple, Union
 
 import pytz
@@ -11,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 
 from opennem.core.networks import NetworkSchema
 from opennem.core.normalizers import normalize_whitespace
-from opennem.utils.timezone import UTC, is_aware, make_aware
+from opennem.utils.timezone import is_aware, make_aware
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ def parse_date(
     dayfirst: bool = True,
     yearfirst: bool = False,
     is_utc: bool = False,
-    timezone: timezone = None,
+    timezone: pytimezone = None,
     use_optimized: bool = True,
 ) -> Optional[datetime]:
     dt_return = None
@@ -109,7 +110,7 @@ def parse_date(
                 dt_return = make_aware(dt_return, timezone=tz)
 
     if is_utc:
-        tz = UTC
+        tz = pytimezone.utc
 
         if dt_return and is_aware(dt_return):
             if tz and hasattr(tz, "localize"):

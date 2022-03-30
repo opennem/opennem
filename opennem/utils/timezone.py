@@ -5,13 +5,11 @@ Some methods adapted from the Django project
 """
 from datetime import datetime, timedelta, timezone
 
-import pytz
-
-UTC = pytz.utc
+from opennem import settings
 
 
-def get_current_timezone():
-    return UTC
+def get_current_timezone() -> timezone:
+    return settings.timezone
 
 
 def get_fixed_timezone(offset):
