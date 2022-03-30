@@ -1,3 +1,9 @@
+"""
+OpenNEM Settings Schema
+
+Everything that can be changed is set here and can be overwritten with ENV settings
+"""
+from datetime import timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional, Union
 from zoneinfo import ZoneInfo
