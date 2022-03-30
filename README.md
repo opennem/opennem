@@ -22,14 +22,22 @@ Currently supports:
  * Python 3.9+ (see `.python-version` with `pyenv`)
  * Docker and `docker-compose` if you want to run the local dev stack
 
+## Local Development Environment
+
+Start the local docker stack
+
+```sh
+$ docker-compose up -d
+```
+
 ## Quickstart
 
 With poetry:
 
 ```sh
 $ poetry install
-$ source .venv/bin/activate
-$ ./init.sh
+$ poetry shell
+$ ./scripts/init.sh
 ```
 
 With pip + venv:
@@ -38,7 +46,7 @@ With pip + venv:
 $ pip -m venv .venv
 $ pip install -r requirements.txt
 $ source .venv/bin/activate
-$ ./init.sh
+$ ./scripts/init.sh
 ```
 
 ## Install
