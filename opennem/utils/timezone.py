@@ -3,13 +3,8 @@ Timezone-related classes and functions.
 
 Some methods adapted from the Django project
 """
-from datetime import datetime, timedelta, timezone
-
-from opennem import settings
-
-
-def get_current_timezone() -> timezone:
-    return settings.timezone
+from datetime import datetime, timedelta
+from datetime import timezone as pytimezone
 
 
 def get_fixed_timezone(offset):
@@ -22,7 +17,7 @@ def get_fixed_timezone(offset):
     hhmm = "%02d%02d" % divmod(abs(offset), 60)
     name = sign + hhmm
 
-    return timezone(timedelta(minutes=offset), name)
+    return pytimezone(timedelta(minutes=offset), name)
 
 
 def is_aware(value: datetime) -> bool:
@@ -53,11 +48,11 @@ def is_naive(value: datetime) -> bool:
     return value.utcoffset() is None
 
 
-def make_aware(value: datetime, timezone=None, is_dst=None) -> datetime:
+def make_aware(value: datetime, timezone: pytimezone = None, is_dst=None) -> datetime:
     """Make a naive datetime.datetime in a given time zone aware."""
 
     if timezone is None:
-        timezone = get_current_timezone()
+        timezone = pytimezone.utc
 
     if hasattr(timezone, "localize"):
         # This method is available for pytz time zones.
@@ -74,7 +69,7 @@ def make_naive(value, timezone=None):
     """Make an aware datetime.datetime naive in a given time zone."""
 
     if timezone is None:
-        timezone = get_current_timezone()
+        timezone = pytimezone.utc
 
     # Emulate the behavior of astimezone() on Python < 3.6.
     if is_naive(value):
