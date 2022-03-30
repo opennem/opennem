@@ -7,8 +7,8 @@ and sentry.
 import sys
 
 # Check minimum required Python version
-if sys.version_info < (3, 9):
-    print("OpenNEM %s requires Python 3.9 or greater")
+if sys.version_info < (3, 10):
+    print("OpenNEM %s requires Python 3.10 or greater")
     sys.exit(1)
 
 
