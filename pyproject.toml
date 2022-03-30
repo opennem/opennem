@@ -13,17 +13,18 @@ readme = "README.md"
 homepage = "https://opennem.org.au"
 repository = "https://github.com/opennem/opennem"
 
-keywords = ["opennem", "analysis", "australia"]
+keywords = ["opennem", "analysis", "australia", "energy"]
 
 classifiers = [
-  "Development Status :: 4 - Beta",
+  "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
-  "Framework :: Scrapy",
-  "License :: OSI Approved :: MIT License"
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Scientific/Engineering"
 ]
 
 include = [
-  'scrapy.cfg',
+  'README.md',
   'opennem/settings/logging.yml'
 ]
 
