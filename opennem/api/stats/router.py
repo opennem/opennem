@@ -26,7 +26,7 @@ from opennem.schema.network import (
 )
 from opennem.utils.time import human_to_timedelta
 
-from .controllers import get_scada_range, stats_factory
+from .controllers import get_balancing_range, get_scada_range, stats_factory
 from .queries import (
     emission_factor_region_query,
     energy_facility_query,
@@ -678,7 +678,7 @@ def price_network_endpoint(
     interval_obj = human_to_interval("5m")
     period_obj = human_to_period("1d")
 
-    scada_range = get_scada_range(network=network)
+    scada_range = get_balancing_range(network=network)
 
     if not scada_range:
         raise HTTPException(
