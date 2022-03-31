@@ -1,13 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
-import pytz
-from pytz import timezone
 
 from opennem.utils.dates import date_series, parse_date
 from opennem.utils.timezone import is_aware
 
-UTC = pytz.utc
+UTC = timezone.utc
 
 
 class TestUtilDates(object):
@@ -15,17 +13,13 @@ class TestUtilDates(object):
         with pytest.raises(ValueError) as excinfo:
             parse_date(None)
 
-        assert "Require a datetime or string" in str(
-            excinfo
-        ), "Empty string raises exception"
+        assert "Require a datetime or string" in str(excinfo), "Empty string raises exception"
 
     def test_date_empty(self):
         with pytest.raises(ValueError) as excinfo:
             parse_date("")
 
-        assert "Invalid date string passed" in str(
-            excinfo
-        ), "Empty string raises exception"
+        assert "Invalid date string passed" in str(excinfo), "Empty string raises exception"
 
     def test_wem_date_comissioned(self):
         subject = parse_date("1/11/08 0:00")
