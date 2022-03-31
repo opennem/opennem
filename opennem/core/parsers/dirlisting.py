@@ -18,8 +18,8 @@ from enum import Enum
 from operator import attrgetter
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
+from zoneinfo import ZoneInfo
 
-import pytz
 from pydantic import ValidationError, validator
 from scrapy.http import HtmlResponse
 
@@ -167,13 +167,13 @@ class DirectoryListing(BaseConfig):
         if self.timezone:
             # sanity check the timezone before filter
             try:
-                pytz.timezone(self.timezone)
+                ZoneInfo(self.timezone)
             except ValueError:
                 raise Exception("Invalid dirlisting timezone: {}".format(self.timezone))
 
             modified_since = list(
                 filter(
-                    lambda x: x.modified_date.replace(tzinfo=pytz.timezone(self.timezone))
+                    lambda x: x.modified_date.replace(tzinfo=ZoneInfo(self.timezone))
                     > modified_date,
                     self.get_files(),
                 )
