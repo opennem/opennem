@@ -1,6 +1,6 @@
 from typing import List
+from zoneinfo import ZoneInfo
 
-import pytz
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
@@ -92,7 +92,7 @@ def station_observations_api(
     period = human_to_period(period_human)
 
     if timezone:
-        timezone = pytz.timezone(timezone)
+        timezone = ZoneInfo(timezone)
 
     if offset:
         timezone = get_fixed_timezone(offset)
