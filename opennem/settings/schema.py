@@ -3,10 +3,9 @@ OpenNEM Settings Schema
 
 Everything that can be changed is set here and can be overwritten with ENV settings
 """
-from datetime import timezone
+from datetime import timezone as pytimezone
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional, Union
-from zoneinfo import ZoneInfo
 
 from pydantic import BaseSettings
 from pydantic.class_validators import validator
@@ -26,7 +25,7 @@ class OpennemSettings(BaseSettings):
 
     log_level: str = "DEBUG"
 
-    timezone: Union[str, timezone, ZoneInfo] = timezone.utc
+    timezone: pytimezone = pytimezone.utc
 
     # Set maintenance mode - workers won't run and API will return a MaintenanceMode response
     maintenance_mode: bool = False
