@@ -5,11 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from starlette import status
 
-from opennem.api.stats.controllers import get_scada_range, stats_factory
+from opennem.api.stats.controllers import stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.api.weather.queries import observation_query
-from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import BomStation
