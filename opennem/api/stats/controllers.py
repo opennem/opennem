@@ -4,7 +4,6 @@ from datetime import datetime, timedelta, timezone
 from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
 
-import pytz
 from datetime_truncate import truncate as date_trunc
 from fastapi.exceptions import HTTPException
 from starlette import status
@@ -123,10 +122,11 @@ def stats_factory(
                 end = make_aware(end, timezone)
 
             if timezone and localize and network and network.offset:
-                tz = pytz.FixedOffset(int(network.offset))
+                tz = network.get_timezone()
 
-                start = start.astimezone(tz)
-                end = end.astimezone(tz)
+                if tz:
+                    start = start.astimezone(tz)
+                    end = end.astimezone(tz)
 
         # Everything needs a timezone even flat dates
         if network and timezone and not is_aware(start):
