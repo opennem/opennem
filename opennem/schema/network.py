@@ -1,15 +1,16 @@
-from datetime import datetime
-from datetime import timezone as timezone_native
-from datetime import tzinfo
+""" Defines a schema for different supported energy networks
+
+
+"""
+from datetime import datetime, timedelta, timezone, tzinfo
 from typing import Any, List, Optional, Union
+from zoneinfo import ZoneInfo
 
-import pytz
 from pydantic import Field
-from pytz import timezone as pytz_timezone
 
+from opennem import settings
 from opennem.core.time import get_interval_by_size
 from opennem.schema.time import TimeInterval
-from opennem.utils.timezone import get_current_timezone
 
 from .core import BaseConfig
 
@@ -30,8 +31,11 @@ class NetworkSchema(BaseConfig):
     label: str
 
     regions: Optional[List[NetworkNetworkRegion]]
+
     timezone: str = Field(..., description="Network timezone")
+
     timezone_database: str = Field("UTC", description="Database timezone format")
+
     offset: Optional[int] = Field(None, description="Network time offset in minutes")
 
     interval_size: int = Field(..., description="Size of network interval in minutes")
@@ -49,41 +53,36 @@ class NetworkSchema(BaseConfig):
 
         return interval
 
-    def get_timezone(
-        self, postgres_format: bool = False
-    ) -> Union[timezone_native, pytz_timezone, str]:
+    def get_timezone(self, postgres_format: bool = False) -> Union[ZoneInfo, str]:
         """Get the network timezone
 
         @TODO define crawl timezones vs network timezone
+        @TODO clean this up and separate out postres format to another parameter
         """
 
         # If a fixed offset is defined for the network use that
         if self.offset:
-            tz = pytz.FixedOffset(self.offset)
+            tz = timezone(timedelta(seconds=self.offset * 60))
 
         # If the network alternatively defines a timezone
         if not tz and self.timezone:
-            tz = pytz_timezone(self.timezone)
-
-        # Default to current system timezone
-        if not tz:
-            tz = get_current_timezone()
+            tz = ZoneInfo(self.timezone)
 
         if postgres_format:
-            tz = str(tz)[:3]
+            return str(tz)[:3]
 
         return tz
 
     def get_crawl_timezone(self) -> Any:
-        tz = pytz_timezone(self.timezone)
+        tz = ZoneInfo(self.timezone)
 
         return tz
 
     def get_fixed_offset(self) -> Union[Any, tzinfo]:
-        if self.offset:
-            return pytz.FixedOffset(self.offset)
+        if not self.offset:
+            raise Exception("No offset set")
 
-        raise Exception("No offset set")
+        return timezone(timedelta(seconds=self.offset * 60))
 
     @property
     def intervals_per_hour(self) -> float:
