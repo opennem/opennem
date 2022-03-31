@@ -3,8 +3,7 @@ import math
 from datetime import date, datetime, timedelta
 from datetime import timezone as pytimezone
 from typing import Any, Generator, Optional, Tuple, Union
-
-import pytz
+from zoneinfo import ZoneInfo
 
 # ParserError isn't a concrete type
 from dateutil.parser import ParserError, parse  # type: ignore
@@ -12,6 +11,7 @@ from dateutil.relativedelta import relativedelta
 
 from opennem.core.networks import NetworkSchema
 from opennem.core.normalizers import normalize_whitespace
+from opennem.schema.network import NetworkNEM
 from opennem.utils.timezone import is_aware, make_aware
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ DATE_CURRENT = datetime.now()
 
 TODAY = datetime.now().date()
 
-TODAY_NEM = datetime.now().astimezone(pytz.timezone("Australia/Brisbane"))
+TODAY_NEM = datetime.now().astimezone(ZoneInfo("Australia/Brisbane"))
 
 DATE_YESTERDAY = DATE_CURRENT - timedelta(days=1)
 
@@ -287,7 +287,7 @@ def subtract_week(subject: datetime) -> datetime:
 
 def subtract_days(subject: Optional[datetime] = None, days: int = 30) -> datetime:
     if not subject:
-        subject = datetime.now(timezone.utc)
+        subject = datetime.now(pytimezone.utc)
 
     return subject - timedelta(days=days)
 
@@ -348,10 +348,8 @@ def optionally_parse_string_datetime(
 
 
 def get_last_complete_day_for_network(network: NetworkSchema) -> datetime:
-    tz = pytz.timezone(network.timezone)
-
-    # today_midnight in NEM time
-    today_midnight = datetime.now(tz).replace(
+    # today_midnight in network time
+    today_midnight = datetime.now(pytimezone(timedelta(seconds=network.offset * 60))).replace(
         tzinfo=network.get_fixed_offset(), microsecond=0, hour=0, minute=0, second=0
     )
 
@@ -360,7 +358,7 @@ def get_last_complete_day_for_network(network: NetworkSchema) -> datetime:
 
 def unix_timestamp_to_aware_datetime(timestamp: int, timezone: str) -> datetime:
     """Convert a unix timstamp to an aware datetime"""
-    return pytz.timezone(timezone).localize(datetime.fromtimestamp(timestamp))
+    return ZoneInfo(timezone).localize(datetime.fromtimestamp(timestamp))
 
 
 def get_today_nem() -> datetime:
@@ -370,7 +368,7 @@ def get_today_nem() -> datetime:
     now_no_microseconds = now.replace(microsecond=0)
 
     # NEM is fixed offset at +10
-    nem_tz = pytz.FixedOffset(600)
+    nem_tz = NetworkNEM.get_fixed_offset()
 
     nem_dt = now_no_microseconds.astimezone(nem_tz)
 
@@ -378,12 +376,12 @@ def get_today_nem() -> datetime:
 
 
 def get_today_opennem() -> datetime:
-    """OpenNEM time is Sydney / Melbrouen"""
+    """OpenNEM time is Sydney / Melbourne"""
     now = datetime.now()
 
     now_no_microseconds = now.replace(microsecond=0)
 
-    opennem_tz = pytz.timezone("Australia/Sydney")
+    opennem_tz = ZoneInfo("Australia/Sydney")
 
     opennem_dt = now_no_microseconds.astimezone(opennem_tz)
 
