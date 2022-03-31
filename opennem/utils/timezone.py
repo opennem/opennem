@@ -49,7 +49,7 @@ def is_naive(value: datetime) -> bool:
     return value.utcoffset() is None
 
 
-def make_aware(value: datetime, timezone: pytimezone = None, is_dst=None) -> datetime:
+def make_aware(value: datetime, timezone: pytimezone = None) -> datetime:
     """Make a naive datetime.datetime in a given time zone aware."""
 
     if timezone is None:
@@ -58,6 +58,7 @@ def make_aware(value: datetime, timezone: pytimezone = None, is_dst=None) -> dat
     # Check that we won't overwrite the timezone of an aware datetime.
     if is_aware(value):
         raise ValueError("make_aware expects a naive datetime, got %s" % value)
+
     # This may be wrong around DST changes!
     return value.replace(tzinfo=timezone)
 
