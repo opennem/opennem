@@ -55,15 +55,11 @@ def make_aware(value: datetime, timezone: pytimezone = None, is_dst=None) -> dat
     if timezone is None:
         timezone = pytimezone.utc
 
-    if hasattr(timezone, "localize"):
-        # This method is available for pytz time zones.
-        return timezone.localize(value, is_dst=is_dst)
-    else:
-        # Check that we won't overwrite the timezone of an aware datetime.
-        if is_aware(value):
-            raise ValueError("make_aware expects a naive datetime, got %s" % value)
-        # This may be wrong around DST changes!
-        return value.replace(tzinfo=timezone)
+    # Check that we won't overwrite the timezone of an aware datetime.
+    if is_aware(value):
+        raise ValueError("make_aware expects a naive datetime, got %s" % value)
+    # This may be wrong around DST changes!
+    return value.replace(tzinfo=timezone)
 
 
 def make_naive(value: datetime, timezone: pytimezone = None) -> datetime:
