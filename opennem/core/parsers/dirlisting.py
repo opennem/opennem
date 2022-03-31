@@ -20,8 +20,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 from zoneinfo import ZoneInfo
 
+from bs4 import BeautifulSoup
 from pydantic import ValidationError, validator
-from scrapy.http import HtmlResponse
 
 from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import is_number, strip_double_spaces
@@ -213,7 +213,7 @@ def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing
     """Parse a directory listng into a list of DirlistingEntry models"""
     dirlisting_content = url_downloader(url)
 
-    resp = HtmlResponse(url=url, body=dirlisting_content, encoding="utf-8")
+    resp = BeautifulSoup(dirlisting_content.decode("utf-8"))
 
     _dirlisting_models: List[DirlistingEntry] = []
 
