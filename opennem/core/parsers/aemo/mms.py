@@ -349,3 +349,13 @@ def parse_aemo_urls(urls: List[str]) -> AEMOTableSet:
 
 def parse_aemo_directory(directory_path: str) -> AEMOTableSet:
     pass
+
+
+# debug entry point
+if __name__ == "__main__":
+    url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202204081455_0000000360913773.zip"
+
+    r = parse_aemo_urls([url])
+    assert r.has_table("unit_scada"), "has table"
+
+    print("has table and done")
