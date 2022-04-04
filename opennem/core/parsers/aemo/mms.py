@@ -173,6 +173,7 @@ class AEMOTableSet(BaseModel):
             return True
 
         # if not found search by name only
+        # @NOTE this might lead to bugs
         table_lookup = list(filter(lambda t: t.name == table_name, self.tables))
 
         if len(table_lookup) > 0:
