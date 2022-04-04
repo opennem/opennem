@@ -117,7 +117,7 @@ class AEMOTableSchema(BaseConfig):
 
                 return False
             except Exception as e:
-                logger.error("{} has error: {}".format(e))
+                logger.error("Record error: {}".format(e))
                 return False
 
             self._records.append(_record)
