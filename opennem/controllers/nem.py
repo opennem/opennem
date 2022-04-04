@@ -448,7 +448,7 @@ def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
         network=NetworkAEMORooftop,
     )
 
-    records = [rooftop_remap_regionids(i) for i in records if i]
+    records = [rooftop_remap_regionids(i) for i in records if i]  # type: ignore
     records = [i for i in records if i]
 
     cr.processed_records = len(records)
