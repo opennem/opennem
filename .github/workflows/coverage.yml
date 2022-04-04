@@ -1,5 +1,9 @@
 name: CodeCov
-on: [push, pull_request]
+on:
+  create:
+    tags:
+      - v*
+
 jobs:
   runcov:
     name: run coverage
