@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from opennem.pipelines.nem.opennem import unit_scada_generate_facility_scada
+from opennem.controllers.nem import unit_scada_generate_facility_scada
 from opennem.schema.network import NetworkWEM
 
 RECORDS_PATH = Path("data/wem/facility-scada-2020-10.csv")
@@ -41,7 +41,8 @@ test_wem_scada_records = load_wem_scada_records()
 
 
 @pytest.mark.benchmark(
-    group="facility_scada_parser", min_rounds=50,
+    group="facility_scada_parser",
+    min_rounds=50,
 )
 @pytest.mark.parametrize(
     "records,groupby_filter,primary_key_track",
@@ -62,6 +63,6 @@ def test_benchmark_generate_facility_scada_base(
         facility_code_field="Facility Code",
         energy_field="Energy Generated (MWh)",
         power_field="EOI Quantity (MW)",
-        groupby_filter=groupby_filter,
+        # groupby_filter=groupby_filter,
         primary_key_track=primary_key_track,
     )
