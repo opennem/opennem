@@ -35,6 +35,7 @@ def unit_scada_generate_facility_scada(
     power_field: str = "scadavalue",
     energy_field: Optional[str] = None,
     is_forecast: bool = False,
+    primary_key_track: bool = True,
 ) -> List[Dict]:
     created_at = datetime.now()
     primary_keys = []
@@ -45,12 +46,17 @@ def unit_scada_generate_facility_scada(
         trading_interval = getattr(row, interval_field)
         facility_code = getattr(row, facility_code_field)
 
-        pk = (trading_interval, network.code, facility_code)
+        if primary_key_track:
+            pk = (trading_interval, network.code, facility_code)
 
-        if pk in primary_keys:
-            continue
+            if pk in primary_keys:
+                continue
 
-        primary_keys.append(pk)
+            primary_keys.append(pk)
+
+        if energy_field:
+            if not hasattr(row, energy_field):
+                raise Exception("No energy field: {}".format(energy_field))
 
         __rec = {
             "created_by": "opennem.controller",
