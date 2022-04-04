@@ -17,17 +17,18 @@ from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.bulk_insert_csv import bulkinsert_mms_items
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.importer.rooftop import rooftop_remap_regionids
+from opennem.schema.aemo.mms import MMSBaseClass
 from opennem.schema.network import NetworkAEMORooftop, NetworkSchema
 from opennem.utils.dates import parse_date
 from opennem.utils.numbers import float_to_str
 
-logger = logging.getLogger("opennem.controllers.opennem")
+logger = logging.getLogger("opennem.controllers.nem")
 
 # Helpers
 
 
 def unit_scada_generate_facility_scada(
-    records: List[Dict],
+    records: List[MMSBaseClass],
     network: NetworkSchema = NetworkNEM,
     interval_field: str = "settlementdate",
     facility_code_field: str = "duid",
@@ -375,7 +376,7 @@ def process_unit_scada(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])  # type: ignore
-    cr.server_latest = max([i["trading_interval"] for i in records])
+    cr.server_latest = max([i["trading_interval"] for i in records if i["trading_interval"]])
 
     return cr
 
@@ -392,7 +393,7 @@ def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
 
     cr.processed_records = len(records)
     cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
-    cr.server_latest = max([i["trading_interval"] for i in records])
+    cr.server_latest = max([i["trading_interval"] for i in records if i["trading_interval"]])
 
     return cr
 
