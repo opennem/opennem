@@ -31,7 +31,7 @@ from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.monitors.set_outputs import run_set_output_check
 from opennem.notifications.slack import slack_message
-from opennem.settings import settings  # noqa: F401
+from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
@@ -58,9 +58,13 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 
 logger = logging.getLogger("openenm.scheduler")
 
+regular_schedule_minute_interval = 1
+
+if IS_DEV:
+    regular_schedule_minute_interval = 5
 
 # crawler tasks
-@huey.periodic_task(crontab(minute="*/1"))
+@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
 @huey.lock_task("crawler_scheduled_live")
 def crawler_scheduled_live() -> None:
     run_crawls_by_schedule(CrawlerSchedule.live)
