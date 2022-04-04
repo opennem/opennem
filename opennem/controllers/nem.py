@@ -45,6 +45,7 @@ def unit_scada_generate_facility_scada(
 
         trading_interval = getattr(row, interval_field)
         facility_code = getattr(row, facility_code_field)
+        energy_quantity: Optional[float] = None
 
         if primary_key_track:
             pk = (trading_interval, network.code, facility_code)
@@ -58,6 +59,8 @@ def unit_scada_generate_facility_scada(
             if not hasattr(row, energy_field):
                 raise Exception("No energy field: {}".format(energy_field))
 
+            energy_quantity = clean_float(getattr(row, energy_field))
+
         __rec = {
             "created_by": "opennem.controller",
             "created_at": created_at,
@@ -66,7 +69,7 @@ def unit_scada_generate_facility_scada(
             "trading_interval": trading_interval,
             "facility_code": facility_code,
             "generated": getattr(row, power_field),
-            "eoi_quantity": None,
+            "eoi_quantity": energy_quantity,
             "is_forecast": is_forecast,
             "energy_quality_flag": 0,
         }
