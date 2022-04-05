@@ -95,11 +95,6 @@ except ValidationError as e:
 
     do_exit = True
 
-if not settings.db_url:
-    raise Exception("Require a database url in settings. Please set DB_URL")
-
-logging.info("Database DSN is: {}".format(settings.db_url))
-
 # skip if logging not configed
 if LOGGING_CONFIG:
     logging.config.dictConfig(LOGGING_CONFIG)
