@@ -8,7 +8,6 @@ import logging
 from typing import Optional
 
 import click
-from scrapy.utils.python import garbage_collect
 
 from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_all_monthly, export_energy, export_power
@@ -200,6 +199,3 @@ if __name__ == "__main__":
             import traceback
 
             traceback.print_exc()
-
-    finally:
-        garbage_collect()
