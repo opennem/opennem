@@ -214,7 +214,7 @@ def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing
     """Parse a directory listng into a list of DirlistingEntry models"""
     dirlisting_content = url_downloader(url)
 
-    resp = BeautifulSoup(dirlisting_content.decode("utf-8"), "lxml")
+    resp = BeautifulSoup(dirlisting_content.decode("utf-8"), "html.parser")
 
     _dirlisting_models: List[DirlistingEntry] = []
 
