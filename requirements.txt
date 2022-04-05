@@ -1,3 +1,4 @@
+Warning: The lock file is not up to date with the latest changes in pyproject.toml. You may be getting outdated dependencies. Run update to update them.
 alembic==1.7.7; python_version >= "3.6"
 anyio==3.5.0; python_version >= "3.6" and python_full_version >= "3.6.2"
 appdirs==1.4.4; python_version >= "3.7" and python_version < "4.0"
