@@ -3,8 +3,7 @@ from datetime import datetime, timedelta
 from itertools import groupby
 from textwrap import dedent
 from typing import Dict, List, Optional
-
-from pytz import FixedOffset
+from zoneinfo import ZoneInfo
 
 from opennem import settings
 from opennem.api.stats.controllers import duid_in_case, get_scada_range
@@ -452,7 +451,13 @@ def run_energy_update_archive(
     for y in years:
         for month in months:
             date_min = datetime(
-                year=y, month=month, day=1, hour=0, minute=0, second=0, tzinfo=FixedOffset(600)
+                year=y,
+                month=month,
+                day=1,
+                hour=0,
+                minute=0,
+                second=0,
+                tzinfo=NetworkWEM.get_timezone(),
             )
 
             date_max = date_min + get_human_interval("1M")
@@ -465,7 +470,7 @@ def run_energy_update_archive(
                     hour=0,
                     minute=0,
                     second=0,
-                    tzinfo=FixedOffset(600),
+                    tzinfo=NetworkWEM.get_timezone(),
                 )
 
             date_min = date_min - timedelta(minutes=10)
