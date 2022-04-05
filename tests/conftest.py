@@ -3,8 +3,6 @@ from typing import BinaryIO, Callable, Optional
 
 import pytest
 from betamax import Betamax
-from requests import Session
-from scrapy.http import Request, Response
 
 from .utils import PATH_TESTS_FIXTURES
 
@@ -28,39 +26,6 @@ def _read_fixture_file(filename: str, directory: str = "files") -> BinaryIO:
 def load_file() -> Callable:
     """Load a static file pytest fixture"""
     return _read_fixture_file
-
-
-@pytest.fixture
-def scrapy_mock_response() -> Callable:
-    """Load a scrapy response pytest fixture. If URL is passed without filename it
-    will do a live request using betamax to store responses"""
-
-    def _scrapy_response_from_file(url: str, filename: Optional[str] = None) -> Response:
-        request = Request(url=url)
-        session = Session()
-        response_content: Optional[bytes] = None
-
-        if not filename:
-            # live request using betamax
-            # @TODO make betamax optional
-            with Betamax(session) as vcr:
-                vcr.use_cassette("user")
-                resp = session.get(url=url)
-
-                if not resp.ok:
-                    raise Exception(f"Could not fetch url: {url}")
-
-                response_content = resp.content
-        else:
-            response_content = _read_fixture_file(filename).read()
-
-        response = Response(url=url, request=request, body=response_content)
-
-        response.encoding = "utf-8"
-
-        return response
-
-    return _scrapy_response_from_file
 
 
 @pytest.fixture
