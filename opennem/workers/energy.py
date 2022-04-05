@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from itertools import groupby
 from textwrap import dedent
 from typing import Dict, List, Optional
-from zoneinfo import ZoneInfo
 
 from opennem import settings
 from opennem.api.stats.controllers import duid_in_case, get_scada_range
