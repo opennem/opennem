@@ -174,7 +174,7 @@ def network_region_price_query(time_series: TimeSeries) -> str:
         from balancing_summary bs
         where
             bs.trading_interval >= '{date_min}'
-            and bs.trading_interval < '{date_max}'
+            and bs.trading_interval <= '{date_max}'
             and bs.network_id = '{network_id}'
             {network_regions_query}
         group by 1, 2, 3;
