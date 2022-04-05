@@ -213,12 +213,20 @@ def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing
     """Parse a directory listng into a list of DirlistingEntry models"""
     dirlisting_content = url_downloader(url)
 
-    resp = BeautifulSoup(dirlisting_content.decode("utf-8"))
+    resp = BeautifulSoup(dirlisting_content.decode("utf-8"), "lxml")
 
     _dirlisting_models: List[DirlistingEntry] = []
 
-    for i in resp.css("body pre").get().split("<br>"):
+    pre_area = resp.find("pre")
+
+    if not pre_area:
+        raise Exception("Invalid directory listing: no pre or bad html")
+
+    for i in pre_area.decode_contents().split("<br/>"):
         # it catches the containing block so skip those
+        if not i:
+            continue
+
         if "pre>" in i:
             continue
 
@@ -232,5 +240,7 @@ def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing
             _dirlisting_models.append(model)
 
     listing_model = DirectoryListing(url=url, timezone=timezone, entries=_dirlisting_models)
+
+    logger.debug("Got back {} models".format(len(listing_model)))
 
     return listing_model
