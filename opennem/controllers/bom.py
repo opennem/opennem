@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime
 from typing import Optional
+from zoneinfo import ZoneInfo
 
-import pytz
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.clients.bom import BOMObservationReturn
@@ -25,7 +25,7 @@ def store_bom_observation_intervals(observations: BOMObservationReturn) -> Contr
     )
 
     if latest_forecast:
-        latest_forecast = latest_forecast.astimezone(pytz.timezone("Australia/Sydney"))
+        latest_forecast = latest_forecast.astimezone(ZoneInfo("Australia/Sydney"))
         logger.debug("server_latest is {}".format(latest_forecast))
 
         cr.server_latest = latest_forecast
