@@ -117,7 +117,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 name = "automat"
 version = "20.2.0"
 description = "Self-service finite-state machines for the programmer on the go."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -324,7 +324,7 @@ test = ["flake8 (==3.7.8)", "hypothesis (==3.55.3)"]
 name = "constantly"
 version = "15.1.0"
 description = "Symbolic constants in Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -358,7 +358,7 @@ toml = ["tomli"]
 name = "cryptography"
 version = "36.0.2"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -377,7 +377,7 @@ test = ["pytest (>=6.2.0)", "pytest-cov", "pytest-subtests", "pytest-xdist", "pr
 name = "cssselect"
 version = "1.1.0"
 description = "cssselect parses CSS3 Selectors and translates them to XPath 1.0"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -518,7 +518,7 @@ test = ["pytest (>=6.2.4,<7.0.0)", "pytest-cov (>=2.12.0,<4.0.0)", "mypy (==0.91
 name = "filelock"
 version = "3.6.0"
 description = "A platform independent file lock."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -699,7 +699,7 @@ python-versions = ">=3.6.1"
 name = "hyperlink"
 version = "21.0.0"
 description = "A featureful, immutable, and correct URL for Python."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -734,7 +734,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 name = "incremental"
 version = "21.3.0"
 description = "A small library that versions your Python projects."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -802,7 +802,7 @@ plugins = ["setuptools"]
 name = "itemadapter"
 version = "0.5.0"
 description = "Common interface for data container classes"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -810,7 +810,7 @@ python-versions = ">=3.6"
 name = "itemloaders"
 version = "1.0.4"
 description = "Base library for scrapy's ItemLoader"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -899,7 +899,7 @@ python-versions = ">=3.6"
 name = "lxml"
 version = "4.8.0"
 description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, != 3.4.*"
 
@@ -1079,7 +1079,7 @@ test = ["hypothesis (>=5.5.3)", "pytest (>=6.0)", "pytest-xdist (>=1.31)"]
 name = "parsel"
 version = "1.6.0"
 description = "Parsel is a library to extract data from HTML and XML using XPath and CSS selectors"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1211,7 +1211,7 @@ wcwidth = "*"
 name = "protego"
 version = "0.2.1"
 description = "Pure-Python robots.txt parser with support for modern conventions"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -1287,7 +1287,7 @@ requests-oauthlib = ">=0.4.1"
 name = "pyasn1"
 version = "0.4.8"
 description = "ASN.1 types and codecs"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1295,7 +1295,7 @@ python-versions = "*"
 name = "pyasn1-modules"
 version = "0.2.8"
 description = "A collection of ASN.1-based protocols modules."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1338,7 +1338,7 @@ email = ["email-validator (>=1.0.3)"]
 name = "pydispatcher"
 version = "2.0.5"
 description = "Multi-producer-multi-consumer signal dispatching mechanism"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1416,7 +1416,7 @@ pylint = ">=1.6"
 name = "pyopenssl"
 version = "22.0.0"
 description = "Python wrapper module around the OpenSSL library"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -1442,7 +1442,7 @@ diagrams = ["jinja2", "railroad-diagrams"]
 name = "pypydispatcher"
 version = "2.1.2"
 description = "Multi-producer-multi-consumer signal dispatching mechanism"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1602,7 +1602,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 name = "queuelib"
 version = "1.6.2"
 description = "Collection of persistent (disk-based) and non-persistent (memory-based) queues"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.5"
 
@@ -1682,7 +1682,7 @@ docs = ["furo (>=2021.9.8)", "linkify-it-py (>=1.0.1,<2.0.0)", "myst-parser (>=0
 name = "requests-file"
 version = "1.5.1"
 description = "File transport adapter for Requests"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1772,7 +1772,7 @@ crt = ["botocore[crt] (>=1.20.29,<2.0a.0)"]
 name = "scrapy"
 version = "2.6.1"
 description = "A high-level Web Crawling and Web Scraping framework"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -1863,7 +1863,7 @@ tornado = ["tornado (>=5)"]
 name = "service-identity"
 version = "21.1.0"
 description = "Service identity verification for pyOpenSSL & cryptography."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -2039,7 +2039,7 @@ python-versions = "*"
 name = "tldextract"
 version = "3.2.0"
 description = "Accurately separate the TLD from the registered domain and subdomains of a URL, using the Public Suffix List. By default, this includes the public ICANN TLDs and their exceptions. You can optionally support the Public Suffix List's private domains as well."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -2164,7 +2164,7 @@ urllib3 = ">=1.26.0"
 name = "twisted"
 version = "22.2.0"
 description = "An asynchronous networking framework written in Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6.7"
 
@@ -2197,7 +2197,7 @@ windows_platform = ["pywin32 (!=226)", "cython-test-exception-raiser (>=1.0.2,<2
 name = "twisted-iocpsupport"
 version = "1.0.2"
 description = "An extension for use in the twisted I/O Completion Ports reactor."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -2337,7 +2337,7 @@ testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", 
 name = "w3lib"
 version = "1.22.0"
 description = "Library of web-related functions"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -2451,7 +2451,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 name = "zope.interface"
 version = "5.4.0"
 description = "Interfaces for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -2467,7 +2467,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "bb281d120427e9032796f7caa4796ccceca73e0c2a450bbb46b909c6d4fec3c6"
+content-hash = "bec8aeaa58e6a8795cb5900f343808c28af82cc09db78e45771826f3420723f7"
 
 [metadata.files]
 alembic = [
