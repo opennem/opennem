@@ -1,5 +1,5 @@
 import io
-from typing import BinaryIO, Callable, Optional
+from typing import BinaryIO, Callable
 
 import pytest
 from betamax import Betamax
@@ -46,18 +46,3 @@ def xlsx_file(load_file: Callable) -> BinaryIO:
 @pytest.fixture
 def aemo_nemweb_dispatch_scada(load_file: Callable) -> BinaryIO:
     return load_file("PUBLIC_DISPATCHSCADA_202109021255_0000000348376188.zip")
-
-
-@pytest.fixture
-def aemo_nemweb_dirlisting(scrapy_mock_response: Callable) -> BinaryIO:
-    return scrapy_mock_response(
-        filename="nemweb_dispatch_scada_dirlisting.html",
-        url="https://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
-    )
-
-
-@pytest.fixture
-def aemo_nemweb_dirlisting_live(scrapy_mock_response: Callable) -> BinaryIO:
-    return scrapy_mock_response(
-        url="https://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
-    )
