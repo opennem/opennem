@@ -32,7 +32,7 @@ class OpennemSettings(BaseSettings):
 
     # @NOTE pydantic settings assignment type mismatch from mypy
     # https://github.com/samuelcolvin/pydantic/issues/1490
-    db_url: PostgresSqlAlchemyDsn = "postgresql://127.0.0.1/none"  # type: ignore
+    db_url: PostgresSqlAlchemyDsn = "postgresql://user:pass@127.0.0.1:15444/opennem"  # type: ignore
 
     cache_url: RedisDsn = "redis://127.0.0.1"
 
