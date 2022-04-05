@@ -21,7 +21,7 @@ def store_bom_observation_intervals(observations: BOMObservationReturn) -> Contr
     cr = ControllerReturn(total_records=len(observations.observations))
 
     latest_forecast: Optional[datetime] = max(
-        [o.observation_time for o in observations.observations]
+        [o.observation_time for o in observations.observations if o.observation_time]
     )
 
     if latest_forecast:
