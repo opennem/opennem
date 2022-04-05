@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OS: ubuntu-latest
-      PYTHON: "3.10"
+      PYTHON: "3.10.4"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -15,7 +15,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@master
         with:
-          python-version: 3.10
+          python-version: 3.10.4
       - name: Generate Report
         run: |
           pip install -r requirements_dev.txt
