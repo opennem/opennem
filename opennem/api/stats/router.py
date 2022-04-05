@@ -653,7 +653,7 @@ def price_network_endpoint(
     engine: Engine = Depends(get_database_engine),
     network_code: str = Path(..., description="Network code"),
     network_region: Optional[str] = Query(None, description="Network region code"),
-    forecasts: Optional[bool] = Query(False, description="Include price forecasts"),
+    forecasts: bool = Query(False, description="Include price forecasts"),
 ) -> OpennemDataSet:
     """Returns network and network region price info for interval which defaults to network
     interval size
