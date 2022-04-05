@@ -1,5 +1,7 @@
 # OpenNEM Energy Market Data Access
 
+![logo](https://developers.opennem.org.au/_static/logo.png)
+
 **NOTE: This is the backend project** For the client python project see [opennem/opennempy](https://github.com/opennem/opennempy)
 
 ![Tests](https://github.com/opennem/opennem/workflows/Tests/badge.svg) [![codecov](https://codecov.io/gh/opennem/opennem/branch/master/graph/badge.svg?token=HSJP632WBX)](https://codecov.io/gh/opennem/opennem)
