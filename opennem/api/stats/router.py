@@ -653,6 +653,7 @@ def price_network_endpoint(
     engine: Engine = Depends(get_database_engine),
     network_code: str = Path(..., description="Network code"),
     network_region: Optional[str] = Query(None, description="Network region code"),
+    forecasts: Optional[bool] = Query(False, description="Include price forecasts"),
 ) -> OpennemDataSet:
     """Returns network and network region price info for interval which defaults to network
     interval size
@@ -678,7 +679,7 @@ def price_network_endpoint(
     interval_obj = human_to_interval("5m")
     period_obj = human_to_period("1d")
 
-    scada_range = get_balancing_range(network=network)
+    scada_range = get_balancing_range(network=network, include_forecasts=forecasts)
 
     if not scada_range:
         raise HTTPException(
