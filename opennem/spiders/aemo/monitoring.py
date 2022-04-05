@@ -3,7 +3,6 @@ from typing import Any, Dict
 
 from pydantic import ValidationError
 from scrapy import Spider
-from scrapy.http import Response
 
 from opennem.schema.aemo.downloads import AEMOFileDownloadSection
 from opennem.utils.dates import parse_date
@@ -20,7 +19,7 @@ class AEMOMonitorRelSpider(Spider):
         "https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information",
     ]
 
-    pipelines = set([DownloadMonitorPipeline])
+    pipelines = set([])
 
     def parse(self, response: Any) -> Dict[str, Any]:
 
