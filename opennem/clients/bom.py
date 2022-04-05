@@ -4,6 +4,7 @@
 import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
+from zoneinfo import ZoneInfo
 
 import requests
 from pydantic import validator
@@ -90,9 +91,9 @@ class BOMObserationSchema(BaseConfig):
         if _state not in STATE_TO_TIMEZONE.keys():
             return None
 
-        tz = timezone(STATE_TO_TIMEZONE[_state])
+        tz = ZoneInfo(STATE_TO_TIMEZONE[_state])
 
-        dt_return = dt.replace(tzinfo=timezone.utc).astimezone(timezone)
+        dt_return = dt.replace(tzinfo=timezone.utc).astimezone(tz)
 
         return dt_return
 
