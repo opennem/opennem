@@ -18,6 +18,7 @@ from enum import Enum
 from operator import attrgetter
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
+from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
@@ -230,17 +231,20 @@ def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing
         if "pre>" in i:
             continue
 
+        if "To Parent Directory" in i:
+            continue
+
         model = parse_dirlisting_line(html.unescape(i.strip()))
 
         if model:
 
             # append the base URL to the model link
-            model.link = resp.urljoin(model.link)
+            model.link = urljoin(url, model.link)
 
             _dirlisting_models.append(model)
 
     listing_model = DirectoryListing(url=url, timezone=timezone, entries=_dirlisting_models)
 
-    logger.debug("Got back {} models".format(len(listing_model)))
+    logger.debug("Got back {} models".format(len(listing_model.entries)))
 
     return listing_model
