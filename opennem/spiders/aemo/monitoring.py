@@ -5,7 +5,6 @@ from pydantic import ValidationError
 from scrapy import Spider
 from scrapy.http import Response
 
-from opennem.pipelines.aemo.downloads import DownloadMonitorPipeline
 from opennem.schema.aemo.downloads import AEMOFileDownloadSection
 from opennem.utils.dates import parse_date
 from opennem.utils.numbers import filesize_from_string
