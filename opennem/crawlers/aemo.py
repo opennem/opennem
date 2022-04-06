@@ -53,7 +53,9 @@ def run_aemo_mms_crawl(
     ts = parse_aemo_urls([i.link for i in entries_to_fetch])
 
     controller_returns = store_aemo_tableset(ts)
-    controller_returns.last_modified = max([i.modified_date for i in entries_to_fetch])  # type: ignore
+    controller_returns.last_modified = max(
+        [i.modified_date for i in entries_to_fetch if i.modified_date]
+    )
 
     return controller_returns
 
