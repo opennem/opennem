@@ -1,5 +1,6 @@
 # pylint: disable=no-self-argument
 import logging
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Optional
 
@@ -332,6 +333,19 @@ class RooftopActual(MMSBase):
     type: str
 
 
+@dataclass
+class MMSBaseClass:
+    _interval_field: str = field(default="settlementdate")
+    _primary_keys: List[str] = field(default_factory=lambda: ["settlementdate", "duid"])
+
+
+@dataclass
+class MMSDispatchUnitScada(MMSBaseClass):
+    duid: str = ""
+    scadavalue: float = 0.0
+    settlementdate: datetime = field(default=datetime.now())
+
+
 # Map AEMO full table names to schemas
 TABLE_TO_SCHEMA_MAP = {
     "PARTICIPANT_REGISTRATION_MNSP_INTERCONNECTOR": ParticipantMNSPInterconnector,
@@ -342,14 +356,14 @@ TABLE_TO_SCHEMA_MAP = {
     "DISPATCH_INTERCONNECTORRES": DispatchInterconnectorRes,
     "DISPATCH_PRICE": DispatchPriceSchema,
     "DISPATCH_REGIONSUM": DispatchRegionSum,
-    "DISPATCH_UNIT_SCADA": DispatchUnitScada,
+    "DISPATCH_UNIT_SCADA": MMSDispatchUnitScada,
     "METER_DATA_GEN_DUID": MeterDataGenDUID,
     "ROOFTOP_FORECAST": RooftopForecast,
     "ROOFTOP_ACTUAL": RooftopActual,
 }
 
 
-def get_mms_schema_for_table(table_name: str) -> Optional[MMSBase]:
+def get_mms_schema_for_table(table_name: str) -> Optional[MMSBaseClass]:
     if table_name.upper() not in TABLE_TO_SCHEMA_MAP.keys():
         logger.warn("No schema found for table: {}".format(table_name))
         return None
