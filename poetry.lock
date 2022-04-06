@@ -196,14 +196,14 @@ webencodings = "*"
 
 [[package]]
 name = "boto3"
-version = "1.21.33"
+version = "1.21.34"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.6"
 
 [package.dependencies]
-botocore = ">=1.24.33,<1.25.0"
+botocore = ">=1.24.34,<1.25.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.5.0,<0.6.0"
 
@@ -212,7 +212,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.24.33"
+version = "1.24.34"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -307,7 +307,7 @@ test = ["flake8 (==3.7.8)", "hypothesis (==3.55.3)"]
 
 [[package]]
 name = "constructs"
-version = "10.0.106"
+version = "10.0.107"
 description = "A programming model for software-defined state"
 category = "dev"
 optional = false
@@ -2237,12 +2237,12 @@ bleach = [
     {file = "bleach-4.1.0.tar.gz", hash = "sha256:0900d8b37eba61a802ee40ac0061f8c2b5dee29c1927dd1d233e075ebf5a71da"},
 ]
 boto3 = [
-    {file = "boto3-1.21.33-py3-none-any.whl", hash = "sha256:9d8ddfefe0c4a993423e2c40831034c78fcb7b3425bf3610cf0087301dd9098b"},
-    {file = "boto3-1.21.33.tar.gz", hash = "sha256:c06b9b29f80da8cf6d9fac8f41d74a74d0f5347927acf11b15428b295fcbdd31"},
+    {file = "boto3-1.21.34-py3-none-any.whl", hash = "sha256:9d2175ad0f5de587473f20b062b1ef462d1e5ee547bb22bdd36e28442823e0a9"},
+    {file = "boto3-1.21.34.tar.gz", hash = "sha256:6cbc3aae70af5f35869d7b2f114cc953edf925231febf892d609682b2ba3f9f0"},
 ]
 botocore = [
-    {file = "botocore-1.24.33-py3-none-any.whl", hash = "sha256:16ca4a2b72fef8caaf0eeb423dbf6cd64938442c4b9f96deb672468229e5e3f9"},
-    {file = "botocore-1.24.33.tar.gz", hash = "sha256:ea5fd180082030a6c33fa19bf011d72970f3ed23cfff1b41413069e325768103"},
+    {file = "botocore-1.24.34-py3-none-any.whl", hash = "sha256:4402900838fad0c46c78f16a497709039f10e945c6ef1f0df5d9a98c80f1563b"},
+    {file = "botocore-1.24.34.tar.gz", hash = "sha256:ec849864a6791c04ac6c52539dae34d53856cd32eb7e5481a3465aab7bd93555"},
 ]
 cachetools = [
     {file = "cachetools-5.0.0-py3-none-any.whl", hash = "sha256:8fecd4203a38af17928be7b90689d8083603073622229ca7077b72d8e5a976e4"},
@@ -2325,8 +2325,8 @@ commonmark = [
     {file = "commonmark-0.9.1.tar.gz", hash = "sha256:452f9dc859be7f06631ddcb328b6919c67984aca654e5fefb3914d54691aed60"},
 ]
 constructs = [
-    {file = "constructs-10.0.106-py3-none-any.whl", hash = "sha256:fa976b0cb5eebd88e0481753d1bc483a818df12be252e8724ae8b7b4f43289a3"},
-    {file = "constructs-10.0.106.tar.gz", hash = "sha256:824b78ed870c432d3e38c9835d6e06f334794d05bb479abbfdfce0ba125fac2a"},
+    {file = "constructs-10.0.107-py3-none-any.whl", hash = "sha256:8cac02b455e8ff4274b32b0f5c8859ed540098d04840ee70c3969f39e73c016b"},
+    {file = "constructs-10.0.107.tar.gz", hash = "sha256:88e6a247f5615f9787a1e0af426d2b6aea6f1118f5363008cc4825d0bf539d07"},
 ]
 coverage = [
     {file = "coverage-6.3.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:9b27d894748475fa858f9597c0ee1d4829f44683f3813633aaf94b19cb5453cf"},
