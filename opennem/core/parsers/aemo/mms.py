@@ -13,8 +13,11 @@ from pydantic.error_wrappers import ValidationError
 from pydantic.fields import PrivateAttr
 
 from opennem.core.downloader import url_downloader
-from opennem.schema.aemo.mms import MMSBase, get_mms_schema_for_table
+from opennem.core.normalizers import normalize_duid
+from opennem.schema.aemo.mms import MMSBaseClass, get_mms_schema_for_table
 from opennem.schema.core import BaseConfig
+from opennem.schema.network import NetworkNEM
+from opennem.utils.dates import parse_date
 from opennem.utils.version import get_version
 
 _HAVE_PANDAS = False
@@ -35,10 +38,10 @@ class AEMOTableSchema(BaseConfig):
     name: str
     namespace: str
     fieldnames: List[str]
-    _records: List[Union[MMSBase, Dict[str, Any]]] = []
+    _records: List[Union[MMSBaseClass, Dict[str, Any]]] = []
 
     # optionally it has a schema
-    _record_schema: Optional[BaseModel] = PrivateAttr()
+    _record_schema: Optional[MMSBaseClass] = PrivateAttr()
 
     # the url this table was taken from if any
     url_source: Optional[str]
@@ -55,7 +58,7 @@ class AEMOTableSchema(BaseConfig):
     def primary_key(self) -> Optional[List[str]]:
         if (
             hasattr(self, "_record_schema")
-            and isinstance(self._record_schema, MMSBase)
+            and isinstance(self._record_schema, MMSBaseClass)
             and hasattr(self._record_schema, "_primary_keys")
         ):
             return self._record_schema._primary_keys
@@ -83,18 +86,21 @@ class AEMOTableSchema(BaseConfig):
 
         return _fieldnames
 
-    def set_schema(self, schema: BaseModel) -> bool:
+    def set_schema(self, schema: MMSBaseClass) -> bool:
         self._record_schema = schema
 
         return True
 
     @property
-    def records(self) -> List[Union[MMSBase, Dict[str, Any]]]:
+    def records(self) -> List[Union[MMSBaseClass, Dict[str, Any]]]:
         return self._records
 
-    def add_record(self, record: Union[Dict, BaseModel]) -> bool:
+    def add_record(self, record: Union[Dict, MMSBaseClass]) -> bool:
         if isinstance(record, dict) and hasattr(self, "_record_schema") and self._record_schema:
             _record = None
+
+            if not isinstance(record, dict):
+                raise Exception("Could not add record, not a dict: {}".format(record))
 
             try:
                 _record = self._record_schema(**record)  # type: ignore
@@ -109,7 +115,9 @@ class AEMOTableSchema(BaseConfig):
                     if record and isinstance(record, dict) and ve_fieldname in record:
                         ve_val = record[ve_fieldname]
 
-                    logger.error("{} has error: {} '{}'".format(ve_fieldname, ve["msg"], ve_val))
+                return False
+            except Exception as e:
+                logger.error("{} has error: {}".format(e))
                 return False
 
             self._records.append(_record)
@@ -179,12 +187,6 @@ class AEMOTableSet(BaseModel):
         if len(table_lookup) > 0:
             return True
 
-        # logger.debug(
-        #     "Looking up table: {} amongst ({})".format(
-        #         table_name, ", ".join([i.name for i in self.tables])
-        #     )
-        # )
-
         return found_table
 
     def add_table(self, table: AEMOTableSchema) -> bool:
@@ -201,7 +203,6 @@ class AEMOTableSet(BaseModel):
     def get_table(self, table_name: str) -> Optional[AEMOTableSchema]:
         if not self.has_table(table_name):
             return None
-            # raise Exception("Table not found: {}".format(table_name))
 
         table_lookup = list(filter(lambda t: t.full_name == table_name, self.tables))
 
@@ -227,6 +228,10 @@ class AEMOParserException(Exception):
 
 
 AEMO_ROW_HEADER_TYPES = ["C", "I", "D"]
+
+MMS_DATE_FIELDS = ["settlementdate", "tradinginterval", "lastchanged", "interval_datetime"]
+
+MMS_DUID_FIELDS = ["duid"]
 
 
 def parse_aemo_mms_csv(
@@ -262,6 +267,7 @@ def parse_aemo_mms_csv(
             continue
 
         # new table set
+        # @TODO switch to match
         if record_type == "C":
             # @TODO csv meta stored in table
             if table_current:
@@ -306,6 +312,15 @@ def parse_aemo_mms_csv(
                 continue
 
             record = dict(zip(table_current.fieldnames, values))
+
+            for field, fieldvalue in record.items():
+                if field in MMS_DATE_FIELDS:
+                    fieldvalue_parsed = parse_date(fieldvalue, network=NetworkNEM)
+                    record[field] = fieldvalue_parsed
+
+                if field in MMS_DUID_FIELDS:
+                    fieldvalue_parsed = normalize_duid(fieldvalue)
+                    record[field] = fieldvalue_parsed
 
             table_current.add_record(record)
 
