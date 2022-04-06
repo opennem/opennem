@@ -16,8 +16,9 @@ def run_tests() -> None:
     export_map = get_export_map()
 
     power = (
-        export_map.get_by_network_id("NEM").get_by_stat_type(StatType.power)
-        # .get_by_network_region("NSW1")
+        export_map.get_by_network_id("NEM")
+        .get_by_stat_type(StatType.power)
+        .get_by_network_region("SA1")
         # .get_by_priority(PriorityType.history)
         .get_by_priority(PriorityType.live)
     )
