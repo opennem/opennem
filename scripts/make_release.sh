@@ -17,7 +17,7 @@ echo "Building version $VERSION"
 poetry export --format requirements.txt -E postgres --without-hashes > requirements.txt
 poetry export --dev --format requirements.txt --without-hashes > requirements_dev.txt
 
-git add pyproject.toml requirements.txt
+git add pyproject.toml requirements.txt requirements_dev.txt
 
 git ci -m "v$VERSION"
 
@@ -27,15 +27,7 @@ git push -u origin master v$VERSION
 if [[ $# -eq 0 ]] ; then
   echo 'Dev release'
 else
-  echo "Building docker release"
-
-  # docker build -f infra/container/Dockerfile -t opennem/opennem_backend:$VERSION .
-  # docker tag  opennem/opennem_backend:$VERSION opennem/opennem_backend
-  # docker push opennem/opennem_backend:$VERSION opennem/opennem_backend
-
-  echo "Deploying crawler to prod"
-
-  # scrapyd-deploy prod
+  echo "Non development release"
 fi
 
 rm -rf build/
