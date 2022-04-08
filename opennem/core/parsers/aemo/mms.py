@@ -344,6 +344,14 @@ def parse_aemo_urls(urls: List[str]) -> AEMOTableSet:
         csv_content_decoded = csv_content.decode("utf-8")
         aemo = parse_aemo_mms_csv(csv_content_decoded, aemo)
 
+    # Count number of records
+    total_records = 0
+
+    for table in aemo.tables:
+        total_records += len(table.records)
+
+    logger.info("Parsed {} records".format(total_records))
+
     return aemo
 
 
