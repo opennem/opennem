@@ -4,6 +4,7 @@ Parses MMS tables into OpenNEM derived database
 """
 
 import logging
+from dataclasses import asdict
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
@@ -43,13 +44,25 @@ def unit_scada_generate_facility_scada(
 
     for row in records:
 
+        fields = ""
+
+        try:
+            fields = ", ".join(asdict(row).keys())
+        except Exception:
+            pass
+
+        if isinstance(row, dict):
+            fields = row.keys()
+
         if not hasattr(row, interval_field):
-            raise Exception("No such field: {}".format(interval_field))
+            raise Exception("No such field: {}. Fields: {}".format(interval_field, fields))
 
         trading_interval = getattr(row, interval_field)
 
         if not hasattr(row, facility_code_field):
-            raise Exception("No such facility field: {}".format(facility_code_field))
+            raise Exception(
+                "No such facility field: {}. Fields: {}".format(facility_code_field, fields)
+            )
 
         facility_code = getattr(row, facility_code_field)
 
@@ -57,7 +70,7 @@ def unit_scada_generate_facility_scada(
 
         if energy_field:
             if not hasattr(row, energy_field):
-                raise Exception("No energy field: {}".format(energy_field))
+                raise Exception("No energy field: {}. Fields: {}".format(energy_field, fields))
 
             energy_quantity = clean_float(getattr(row, energy_field))
 
