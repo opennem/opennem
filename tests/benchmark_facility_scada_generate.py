@@ -59,7 +59,7 @@ def test_benchmark_generate_facility_scada_base(
         unit_scada_generate_facility_scada,
         records,
         network=NetworkWEM,
-        interval_field="Trading Interval",
+        interval_field="Trading Date",
         facility_code_field="Facility Code",
         energy_field="Energy Generated (MWh)",
         power_field="EOI Quantity (MW)",
