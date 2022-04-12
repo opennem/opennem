@@ -113,3 +113,5 @@ if LOGGING_CONFIG:
 
 if settings.dry_run:
     logging.info("Dry run (no database actions)")
+
+IS_DEV = not settings.is_prod
