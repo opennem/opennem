@@ -114,7 +114,7 @@ services:
         "-f",
         "-k",
         "process",
-        "opennem.scheduler.huey",
+        "opennem.workers.scheduler.huey",
       ]
     depends_on:
       - redis
@@ -136,53 +136,6 @@ services:
       - DB_ENERGY_VIEW
       - WORKERS_RUN
       - NEMWEB_MIGRATE_DB
-      - TWILIO_SID
-      - TWILIO_AUTH_TOKEN
-      - TWILIO_FROM_NUMBER
-      - MONITORING_ALERT_SLACK_USER
-      - MONITORING_ALERT_SMS
-      - TRELLO_API_KEY
-      - TRELLO_API_SECRET
-      - APVI_TOKEN
-    labels:
-      - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
-
-  workerdb:
-    image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
-    command:
-      [
-        "wait-for",
-        "10.0.0.124:15433",
-        "--",
-        "huey_consumer",
-        "-w4",
-        "-f",
-        "-k",
-        "process",
-        "opennem.scheduler.db.huey",
-      ]
-    depends_on:
-      - redis
-    networks:
-      - frontend
-    environment:
-      - TZ
-      - ENV=production
-      - DATABASE_HOST_URL
-      - REDIS_HOST_URL
-      - GOOGLE_PLACES_API_KEY
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-      - ENV
-      - SENTRY_URL
-      - S3_DATA_BUCKET_PATH
-      - LOG_LEVEL=DEBUG
-      - CACHE_SCADA_TTL
-      - WORKERS_DB_RUN
-      - SLACK_NOTIFICATIONS=1
-      - MONITORING_SLACK_HOOK
-      - LOG_LEVEL=INFO
       - TWILIO_SID
       - TWILIO_AUTH_TOKEN
       - TWILIO_FROM_NUMBER
