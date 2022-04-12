@@ -58,6 +58,7 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 
 logger = logging.getLogger("openenm.scheduler")
 
+
 # crawler tasks
 @huey.periodic_task(crontab(minute="*/1"))
 @huey.lock_task("crawler_scheduled_live")
