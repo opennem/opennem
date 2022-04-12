@@ -1,0 +1,214 @@
+version: "3"
+services:
+  traefik:
+    image: traefik:v2.1
+    network_mode: host
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --entryPoints.web.address=:80
+      - --entryPoints.websecure.address=:443
+      - --certificatesResolvers.myresolver.acme.email=nik@infotorch.org
+      - --certificatesResolvers.myresolver.acme.storage=/data/acme.json
+      - --certificatesresolvers.myresolver.acme.dnschallenge=true
+      - --certificatesresolvers.myresolver.acme.dnschallenge.provider=route53
+    restart: unless-stopped
+    hostname: gw
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_HOSTED_ZONE_ID
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - traefik_acme:/data
+    labels:
+      # redirect
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.redirs.entrypoints=web"
+      - "traefik.http.routers.redirs.middlewares=redirect-to-https"
+      # middlewares
+      - "traefik.http.middlewares.compress.compress=true"
+      - "traefik.http.middlewares.security-headers.headers.framedeny=true"
+      - "traefik.http.middlewares.security-headers.headers.sslredirect=true"
+      # gw host
+      - "traefik.enable=true"
+      - "traefik.http.routers.gw.entrypoints=websecure"
+      - "traefik.http.routers.gw.rule=Host(`gw.dev.opennem.org.au`)"
+      - "traefik.http.routers.gw.tls=true"
+      - "traefik.http.routers.gw.tls.certresolver=myresolver"
+      # - "traefik.http.routers.gw.service=traefik"
+      - "traefik.http.services.gw.loadbalancer.server.port=8080"
+      - "traefik.http.services.gw.loadbalancer.server.scheme=http"
+      - "traefik.docker.network=frontend"
+
+  api:
+    image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
+    command:
+      [
+        "wait-for",
+        "10.0.0.124:15433",
+        "--",
+        # "uvicorn",
+        # "--host",
+        # "0.0.0.0",
+        # "--forwarded-allow-ips",
+        # "*",
+        # "opennem.api.app:app",
+        # hypercorn
+        "hypercorn",
+        "opennem.api.app:app",
+        "--bind",
+        "0.0.0.0:8000",
+        "--access-log",
+        "-",
+        "--error-log",
+        "-",
+        "--worker-class",
+        "trio"
+      ]
+    restart: on-failure
+    depends_on:
+      - redis
+    environment:
+      - TZ
+      - DATABASE_HOST_URL
+      - REDIS_HOST_URL
+      - GOOGLE_PLACES_API_KEY
+      - ENV
+      - SENTRY_URL
+      - LOG_LEVEL
+      - TWILIO_SID
+      - TWILIO_AUTH_TOKEN
+      - TWILIO_FROM_NUMBER
+      - MONITORING_ALERT_SLACK_USER
+      - MONITORING_ALERT_SMS
+      - TRELLO_API_KEY
+      - TRELLO_API_SECRET
+    networks:
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-secure.entrypoints=websecure"
+      - "traefik.http.routers.api-secure.rule=Host(`api.dev.opennem.org.au`)"
+      - "traefik.http.routers.api-secure.tls=true"
+      - "traefik.http.routers.api-secure.tls.certresolver=myresolver"
+      - "traefik.http.routers.api-secure.service=api"
+      # compress
+      - "traefik.http.routers.api-secure.middlewares=compress@docker,security-headers@docker"
+      # security headers
+      - "traefik.http.services.api.loadbalancer.server.port=8000"
+      - "traefik.http.services.api.loadbalancer.server.scheme=http"
+      - "traefik.docker.network=frontend"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  worker:
+    image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
+    command:
+      [
+        "wait-for",
+        "10.0.0.124:15433",
+        "--",
+        "huey_consumer",
+        "-w8",
+        "-f",
+        "-k",
+        "process",
+        "opennem.scheduler.huey",
+      ]
+    depends_on:
+      - redis
+    networks:
+      - frontend
+    environment:
+      - TZ
+      - DATABASE_HOST_URL
+      - REDIS_HOST_URL
+      - GOOGLE_PLACES_API_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - ENV
+      - SENTRY_URL
+      - MONITORING_SLACK_HOOK
+      - S3_DATA_BUCKET_PATH
+      - LOG_LEVEL=DEBUG
+      - CACHE_SCADA_TTL
+      - DB_ENERGY_VIEW
+      - WORKERS_RUN
+      - NEMWEB_MIGRATE_DB
+      - TWILIO_SID
+      - TWILIO_AUTH_TOKEN
+      - TWILIO_FROM_NUMBER
+      - MONITORING_ALERT_SLACK_USER
+      - MONITORING_ALERT_SMS
+      - TRELLO_API_KEY
+      - TRELLO_API_SECRET
+      - APVI_TOKEN
+    labels:
+      - "traefik.enable=false"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  workerdb:
+    image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
+    command:
+      [
+        "wait-for",
+        "10.0.0.124:15433",
+        "--",
+        "huey_consumer",
+        "-w4",
+        "-f",
+        "-k",
+        "process",
+        "opennem.scheduler.db.huey",
+      ]
+    depends_on:
+      - redis
+    networks:
+      - frontend
+    environment:
+      - TZ
+      - ENV=production
+      - DATABASE_HOST_URL
+      - REDIS_HOST_URL
+      - GOOGLE_PLACES_API_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - ENV
+      - SENTRY_URL
+      - S3_DATA_BUCKET_PATH
+      - LOG_LEVEL=DEBUG
+      - CACHE_SCADA_TTL
+      - WORKERS_DB_RUN
+      - SLACK_NOTIFICATIONS=1
+      - MONITORING_SLACK_HOOK
+      - LOG_LEVEL=INFO
+      - TWILIO_SID
+      - TWILIO_AUTH_TOKEN
+      - TWILIO_FROM_NUMBER
+      - MONITORING_ALERT_SLACK_USER
+      - MONITORING_ALERT_SMS
+      - TRELLO_API_KEY
+      - TRELLO_API_SECRET
+      - APVI_TOKEN
+    labels:
+      - "traefik.enable=false"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    networks:
+      - frontend
+    environment:
+      - TZ
+    labels:
+      - "traefik.enable=false"
+      - "com.centurylinklabs.watchtower.enable=false"
+
+networks:
+  frontend:
+
+volumes:
+  traefik_acme:
+    driver: local
