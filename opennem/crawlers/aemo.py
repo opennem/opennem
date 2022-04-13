@@ -169,6 +169,17 @@ AEMONEMRooftop = CrawlerDefinition(
     processor=run_aemo_mms_crawl,
 )
 
+AEMONEMCurrentRooftop = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.frequent,
+    name="au.nem.current.rooftop",
+    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
+    latest=False,
+    limit=2 * 12,
+    filename_filter=".*_MEASUREMENT_.*",
+    processor=run_aemo_mms_crawl,
+)
+
 AEMONEMRooftopForecast = CrawlerDefinition(
     priority=CrawlerPriority.low,
     schedule=CrawlerSchedule.four_times_a_day,
