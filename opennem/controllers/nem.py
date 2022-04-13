@@ -316,20 +316,21 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         price_field = "price_dispatch"
 
     for record in table.records:
-        primary_key = set([record.settlementdate, record.regionid])
+        # @NOTE disable pk track
+        # primary_key = set([record.settlementdate, record.regionid])
 
-        if primary_key in primary_keys:
-            continue
+        # if primary_key in primary_keys:
+        #     continue
 
-        primary_keys.append(primary_key)
+        # primary_keys.append(primary_key)
 
         records_to_store.append(
             {
                 "network_id": "NEM",
                 "created_by": "opennem.controllers.nem",
-                "network_region": record.regionid,
-                "trading_interval": record.settlementdate,
-                price_field: record.rrp,
+                "network_region": record["regionid"],
+                "trading_interval": record["settlementdate"],
+                price_field: record["rrp"],
             }
         )
 
