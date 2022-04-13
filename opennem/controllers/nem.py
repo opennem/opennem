@@ -269,9 +269,9 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
             {
                 "network_id": "NEM",
                 "created_by": "opennem.controller",
-                "facility_code": record["interconnectorid"],  # type:ignore
-                "trading_interval": record["settlementdate"],  # type:ignore
-                "generated": record.mwflow,  # type:ignore
+                "facility_code": record["interconnectorid"],
+                "trading_interval": record["settlementdate"],
+                "generated": record["mwflow"],
             }
         )
         cr.processed_records += 1
