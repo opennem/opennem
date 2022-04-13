@@ -364,7 +364,7 @@ async def parse_aemo_urls_parallel(urls: List[str]) -> AEMOTableSet:
     """Parse a list of URLs into an AEMOTableSet"""
     aemo = AEMOTableSet()
 
-    conn = aiohttp.TCPConnector(limit=None, ttl_dns_cache=300)
+    conn = aiohttp.TCPConnector(limit=0, ttl_dns_cache=300)
     session = aiohttp.ClientSession(connector=conn)
     results = None
 
@@ -374,7 +374,7 @@ async def parse_aemo_urls_parallel(urls: List[str]) -> AEMOTableSet:
     async def get_async(url, session, results):
         async with session.get(url) as response:
             obj = await response.content
-            aemo = parse_aemo_mms_csv(obj, aemo)
+            # aemo = parse_aemo_mms_csv(obj, aemo)
 
     await gather_with_concurrency(conc_req, *[get_async(i, session, results) for i in urls])
     time_taken = time.time() - now
@@ -407,4 +407,4 @@ if __name__ == "__main__":
 
     print("has table and done")
 
-    controller_returns = store_aemo_tableset(r)
+    # controller_returns = store_aemo_tableset(r)
