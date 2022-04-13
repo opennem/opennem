@@ -1,3 +1,4 @@
+# type: ignore
 """
 OpenNEM Bulk Insert Pipeline
 
@@ -24,7 +25,8 @@ BULK_INSERT_QUERY = """
     (LIKE {table_schema}{table_name} INCLUDING DEFAULTS)
     ON COMMIT DROP;
 
-    COPY __tmp_{table_name}_{tmp_table_name} FROM STDIN WITH (FORMAT CSV, HEADER TRUE, DELIMITER ',');
+    COPY __tmp_{table_name}_{tmp_table_name}
+        FROM STDIN WITH (FORMAT CSV, HEADER TRUE, DELIMITER ',');
 
     INSERT INTO {table_schema}{table_name}
         SELECT *
@@ -60,7 +62,9 @@ def build_insert_query(
 
     update_col_names = list(filter(lambda c: c, update_col_names))
 
-    primary_key_columns = [c.name for c in table.__table__.primary_key.columns.values()]  # type: ignore
+    primary_key_columns = [
+        c.name for c in table.__table__.primary_key.columns.values()
+    ]  # type: ignore
 
     if len(update_col_names):
         on_conflict = BULK_INSERT_CONFLICT_UPDATE.format(
@@ -73,7 +77,9 @@ def build_insert_query(
     _ts: str = ""
 
     if hasattr(table, "__table_args__"):
-        if isinstance(table.__table_args__, dict) and "schema" in table.__table_args__:  # type: ignore
+        if (
+            isinstance(table.__table_args__, dict) and "schema" in table.__table_args__
+        ):  # type: ignore
             _ts = table.__table_args__["schema"]  # type: ignore
 
         # for table args that are a list of args find the schema def
@@ -83,7 +89,9 @@ def build_insert_query(
                     _ts = i["schema"]  # type: ignore
 
         if not _ts:
-            logger.warn("Table schema not found for table: {}".format(table.__table__.name))
+            logger.warn(
+                "Table schema not found for table: {}".format(table.__table__.name)  # type: ignore
+            )
         else:
             table_schema = f"{_ts}."
 
