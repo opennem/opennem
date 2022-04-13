@@ -70,7 +70,7 @@ def unit_scada_generate_facility_scada(
 
         trading_interval = row[interval_field]
 
-        if facility_code_field in row:
+        if facility_code_field not in row:
             raise Exception(
                 "No such facility field: {}. Fields: {}".format(facility_code_field, fields)
             )
