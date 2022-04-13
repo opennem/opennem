@@ -272,65 +272,66 @@ def parse_aemo_mms_csv(
 
         # new table set
         # @TODO switch to match
-        if record_type == "C":
-            # @TODO csv meta stored in table
-            if table_current:
-                table_set.add_table(table_current)
+        match record_type:
+            case "C":
+                # @TODO csv meta stored in table
+                if table_current:
+                    table_set.add_table(table_current)
 
-        # new table
-        elif record_type == "I":
-            if table_current:
-                table_set.add_table(table_current)
+            # new table
+            case "I":
+                if table_current:
+                    table_set.add_table(table_current)
 
-            table_namespace = row[1]
-            table_name = row[2]
-            table_fields = [i.lower() for i in row[4:]]
+                table_namespace = row[1]
+                table_name = row[2]
+                table_fields = [i.lower() for i in row[4:]]
 
-            if namespace_filter and table_namespace.lower() not in namespace_filter:
-                table_current = None
-                continue
+                if namespace_filter and table_namespace.lower() not in namespace_filter:
+                    table_current = None
+                    continue
 
-            table_current = AEMOTableSchema(
-                name=table_name,
-                namespace=table_namespace,
-                fields=table_fields,
-                fieldnames=table_fields,
-            )
+                table_current = AEMOTableSchema(
+                    name=table_name,
+                    namespace=table_namespace,
+                    fields=table_fields,
+                    fieldnames=table_fields,
+                )
 
-            # do we have a custom shema for the table?
-            if parse_table_schemas:
-                table_schema = get_mms_schema_for_table(table_current.full_name)
+                # do we have a custom shema for the table?
+                if parse_table_schemas:
+                    table_schema = get_mms_schema_for_table(table_current.full_name)
 
-                if table_schema:
-                    table_current.set_schema(table_schema)
+                    if table_schema:
+                        table_current.set_schema(table_schema)
 
-        # new record
-        elif record_type == "D":
-            if not table_current:
-                logger.error("Have a record but not currently in a table")
-                continue
+            # new record
+            case "D":
+                if not table_current:
+                    logger.error("Have a record but not currently in a table")
+                    continue
 
-            values = row[4:]
+                values = row[4:]
 
-            if len(values) != len(table_current.fieldnames):
-                logger.error("Malformed AEMO csv - length mismatch between records and fields")
-                continue
+                if len(values) != len(table_current.fieldnames):
+                    logger.error("Malformed AEMO csv - length mismatch between records and fields")
+                    continue
 
-            record = dict(zip(table_current.fieldnames, values))
+                record = dict(zip(table_current.fieldnames, values))
 
-            for field, fieldvalue in record.items():
-                if field in MMS_DATE_FIELDS:
-                    fieldvalue_parsed = parse_date(fieldvalue, network=NetworkNEM)
-                    record[field] = fieldvalue_parsed
+                for field, fieldvalue in record.items():
+                    if field in MMS_DATE_FIELDS:
+                        fieldvalue_parsed = parse_date(fieldvalue, network=NetworkNEM)
+                        record[field] = fieldvalue_parsed
 
-                if field in MMS_DUID_FIELDS:
-                    fieldvalue_parsed = normalize_duid(fieldvalue)
-                    record[field] = fieldvalue_parsed
+                    if field in MMS_DUID_FIELDS:
+                        fieldvalue_parsed = normalize_duid(fieldvalue)
+                        record[field] = fieldvalue_parsed
 
-            table_current.add_record(record)
+                table_current.add_record(record)
 
-        else:
-            logger.error(f"Invalid AEMO record type: {record_type}")
+            case _:
+                logger.error(f"Invalid AEMO record type: {record_type}")
 
     return table_set
 
