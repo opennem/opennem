@@ -59,25 +59,31 @@ def unit_scada_generate_facility_scada(
         pass
 
     for row in records:
-        if not hasattr(row, interval_field):
-            raise Exception("No such field: '{}'. Fields: {}".format(interval_field, fields))
+        # cast it all to dicts
+        if isinstance(row, MMSBaseClass):
+            row = asdict(row)  # type: ignore
 
-        trading_interval = getattr(row, interval_field)
+        if interval_field not in row:
+            raise Exception(
+                "No such field: '{}'. Fields: {}. Data: {}".format(interval_field, fields, row)
+            )
 
-        if not hasattr(row, facility_code_field):
+        trading_interval = row[interval_field]
+
+        if facility_code_field in row:
             raise Exception(
                 "No such facility field: {}. Fields: {}".format(facility_code_field, fields)
             )
 
-        facility_code = getattr(row, facility_code_field)
+        facility_code = row[facility_code_field]
 
         energy_quantity: Optional[float] = None
 
         if energy_field:
-            if not hasattr(row, energy_field):
+            if not energy_field in row:
                 raise Exception("No energy field: {}. Fields: {}".format(energy_field, fields))
 
-            energy_quantity = clean_float(getattr(row, energy_field))
+            energy_quantity = clean_float(row[energy_field])
 
         if primary_key_track:
             pk = (trading_interval, network.code, facility_code)
