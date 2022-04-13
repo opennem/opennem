@@ -1,16 +1,33 @@
 import csv
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
+from zipfile import ZipFile
 
 import pytest
 
 from opennem.controllers.nem import generate_facility_scada, unit_scada_generate_facility_scada
+from opennem.core.downloader import file_opener
+from opennem.core.parsers.aemo.mms import AEMOTableSet, parse_aemo_mms_csv, parse_aemo_urls
 from opennem.schema.network import NetworkWEM
 
 RECORDS_PATH = Path("data/wem/facility-scada-2020-10.csv")
+NEM_FILE_PATH = Path("data/NEM_FACILITY_SCADA_DAY.zip")
 
 
-def load_wem_scada_records(limit: Optional[int] = None, intentional_duplicate: bool = False):
+def load_nem_scada_records() -> Dict[str, Any]:
+    csv_content = file_opener(NEM_FILE_PATH).decode("utf-8")
+
+    ts = parse_aemo_mms_csv(csv_content)
+
+    if not ts:
+        raise Exception("no table set")
+
+    return ts.get_table("unit_scada").records
+
+
+def load_wem_scada_records(
+    limit: Optional[int] = None, intentional_duplicate: bool = False
+) -> Dict[str, Any]:
     records = []
 
     fieldnames = [
@@ -44,6 +61,8 @@ test_wem_scada_records = load_wem_scada_records(1000)
 test_all_wem_scada_records = load_wem_scada_records()
 test_all_wem_scada_records_with_duplicates = load_wem_scada_records(intentional_duplicate=True)
 
+test_nem_large = load_nem_scada_records()
+
 
 @pytest.mark.benchmark(
     group="facility_scada_parser",
@@ -76,10 +95,7 @@ def test_benchmark_generate_facility_scada_base(benchmark, records, primary_key_
 )
 @pytest.mark.parametrize(
     "records",
-    [
-        (test_all_wem_scada_records),
-        (test_all_wem_scada_records_with_duplicates),
-    ],
+    [(test_all_wem_scada_records), (test_all_wem_scada_records_with_duplicates), (test_nem_large)],
 )
 def test_benchmark_generate_facility_scada_optimized(benchmark, records):
     benchmark(
