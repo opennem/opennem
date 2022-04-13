@@ -216,7 +216,6 @@ def run_aggregates_all(
 ) -> None:
     for network in networks:
         run_aggregates_facility_all(network)
-        run_aggregates_facility_year(network=network)
 
 
 def run_aggregates_all_days(
