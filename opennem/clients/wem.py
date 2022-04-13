@@ -14,7 +14,7 @@ See the URL constants for sources and unit tests
 import csv
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import requests
 from pydantic import ValidationError, validator
