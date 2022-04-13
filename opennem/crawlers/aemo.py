@@ -111,6 +111,7 @@ AEMONEMDispatchScada = CrawlerDefinition(
     name="au.nem.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
     latest=True,
+    # limit=5,
     processor=run_aemo_mms_crawl,
 )
 
