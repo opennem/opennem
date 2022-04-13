@@ -20,12 +20,14 @@ from opennem.utils.url import strip_query_string
 
 logger = logging.getLogger("opennem.clients.aemo_monitor")
 
+REG_URL = "https://aemo.com.au/en/energy-systems/electricity/national-electricity-market-nem/participate-in-the-market/registration"
+FORECAST_URL = (
+    "https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information",
+)
+
 
 def monitor_aemo_station_info() -> List[AEMOFileDownloadSection]:
-    start_urls = [
-        "https://aemo.com.au/en/energy-systems/electricity/national-electricity-market-nem/participate-in-the-market/registration",
-        "https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information",
-    ]
+    start_urls = [REG_URL, FORECAST_URL]
 
     file_downloads = []
 
