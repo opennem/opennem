@@ -7,9 +7,9 @@ from starlette.responses import Response
 
 from opennem.api.exceptions import OpennemBaseHttpException
 from opennem.db import get_database_session
-from opennem.db.models.opennem import Facility, FuelTech, Location, Network, Station
+from opennem.db.models.opennem import Location
 
-from .schema import LocationResponse, LocationSchema, LocationsResponse
+from .schema import LocationResponse, LocationsResponse
 
 logger = logging.getLogger("opennem.api.location")
 
