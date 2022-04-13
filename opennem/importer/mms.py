@@ -1,10 +1,5 @@
-import json
 import logging
 
-from opennem.core.facilitystatus import parse_facility_status
-from opennem.core.loader import load_data
-from opennem.core.normalizers import station_name_cleaner
-from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.stations import StationSet
 
 logger = logging.getLogger("opennem.importer.mms")
