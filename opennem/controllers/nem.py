@@ -8,6 +8,7 @@ from dataclasses import asdict
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
+import pandas as pd
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.controllers.schema import ControllerReturn
@@ -24,6 +25,20 @@ from opennem.utils.dates import parse_date
 from opennem.utils.numbers import float_to_str
 
 logger = logging.getLogger("opennem.controllers.nem")
+
+# @TODO could read this from schema
+FACILITY_SCADA_COLUMN_NAMES = [
+    "created_by",
+    "created_at",
+    "updated_at",
+    "network_id",
+    "trading_interval",
+    "facility_code",
+    "generated",
+    "eoi_quantity",
+    "is_forecast",
+    "energy_quality_flag",
+]
 
 # Helpers
 
@@ -119,6 +134,56 @@ def unit_scada_generate_facility_scada(
         return_records.append(__rec)
 
     return return_records
+
+
+def generate_facility_scada(
+    records: List[Union[Dict[str, Any], MMSBaseClass]],
+    network: NetworkSchema = NetworkNEM,
+    interval_field: str = "settlementdate",
+    facility_code_field: str = "duid",
+    power_field: str = "scadavalue",
+    energy_field: Optional[str] = None,
+    is_forecast: bool = False,
+) -> pd.DataFrame:
+    """Optimized facility scada generator"""
+    created_at = datetime.now()
+
+    df = pd.DataFrame().from_records(records)
+
+    column_renames = {
+        interval_field: "trading_interval",
+        power_field: "generated",
+        facility_code_field: "facility_code",
+    }
+
+    if energy_field:
+        column_renames[energy_field] = "eoi_quantity"
+    else:
+        df["eoi_quantity"] = None
+
+    df = df.rename(columns=column_renames)
+
+    df["created_by"] = "opennem.controller.v2"
+    df["created_at"] = created_at
+    df["updated_at"] = None
+    df["network_id"] = network.code
+    df["is_forecast"] = is_forecast
+    df["energy_quality_flag"] = 0
+
+    # cast dates
+    df.trading_interval = pd.to_datetime(df.trading_interval)
+    df.generated = pd.to_numeric(df.generated)
+
+    # fill in energies
+    if network.interval_size == 30:
+        df["eoi_quantity"] = df.generated / 2
+
+    elif network.interval_size == 15:
+        df["eoi_quantity"] = df.generated / 4
+
+    df = df[FACILITY_SCADA_COLUMN_NAMES]
+
+    return df
 
 
 def generate_balancing_summary(
