@@ -144,7 +144,7 @@ def generate_facility_scada(
     power_field: str = "scadavalue",
     energy_field: Optional[str] = None,
     is_forecast: bool = False,
-) -> pd.DataFrame:
+) -> List[Dict[str, Any]]:
     """Optimized facility scada generator"""
     created_at = datetime.now()
 
@@ -186,7 +186,15 @@ def generate_facility_scada(
     # set the index
     df.set_index(["trading_interval", "network_id", "facility_code", "is_forecast"], inplace=True)
 
-    return df
+    # @TODO drop duplicates
+    # df.drop_duplicates(df.index, inplace=True)
+
+    # records = df
+
+    # reorder columns
+    records = df.reset_index(inplace=False)[FACILITY_SCADA_COLUMN_NAMES].to_dict("records")
+
+    return records
 
 
 def generate_balancing_summary(
@@ -511,7 +519,7 @@ def process_unit_scada_optimized(table: AEMOTableSchema) -> ControllerReturn:
     )
 
     cr.processed_records = len(records)
-    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records.to_dict(), ["generated", "eoi_quantity"])  # type: ignore
+    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated", "eoi_quantity"])  # type: ignore
     cr.server_latest = max([i["trading_interval"] for i in records if i["trading_interval"]])
 
     return cr
