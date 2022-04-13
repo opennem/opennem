@@ -183,6 +183,9 @@ def generate_facility_scada(
 
     df = df[FACILITY_SCADA_COLUMN_NAMES]
 
+    # set the index
+    df.set_index(["trading_interval", "network_id", "facility_code", "is_forecast"], inplace=True)
+
     return df
 
 
