@@ -6,7 +6,7 @@ from starlette import status
 
 from opennem.api.export.map import PriorityType, priority_from_name
 from opennem.api.export.tasks import export_energy, export_power
-from opennem.scheduler import huey
+from opennem.workers.scheduler import huey
 
 logger = logging.getLogger(__name__)
 
