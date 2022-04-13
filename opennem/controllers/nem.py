@@ -53,6 +53,7 @@ def unit_scada_generate_facility_scada(
     is_forecast: bool = False,
     primary_key_track: bool = True,
 ) -> List[Dict]:
+    """@NOTE method deprecated"""
     created_at = datetime.now()
     primary_keys = []
     return_records = []
