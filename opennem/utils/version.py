@@ -4,7 +4,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Dict, Optional
 
-import tomlkit
+try:
+    import tomlkit
+except ModuleNotFoundError:
+    print("Could not import external package. virtualenv likely not activated.")
+
 from packaging.version import LegacyVersion, parse
 
 logger = logging.getLogger(__name__)
