@@ -186,8 +186,8 @@ def generate_facility_scada(
     # set the index
     df.set_index(["trading_interval", "network_id", "facility_code", "is_forecast"], inplace=True)
 
-    # @TODO drop duplicates
-    # df.drop_duplicates(df.index, inplace=True)
+    # @NOTE optimized way to drop duplicates
+    df = df[~df.index.duplicated(keep="last")]
 
     # records = df
 
