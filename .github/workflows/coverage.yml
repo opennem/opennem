@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: ‘2’
-          lfs: "true"
+          lfs: true
       - name: Setup Python
         uses: actions/setup-python@master
         with:
