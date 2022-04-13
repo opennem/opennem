@@ -528,7 +528,7 @@ def process_unit_scada_optimized(table: AEMOTableSchema) -> ControllerReturn:
 def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
-    records = unit_scada_generate_facility_scada(
+    records = generate_facility_scada(
         table.records,
         interval_field="settlementdate",
         facility_code_field="duid",
@@ -545,7 +545,7 @@ def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
 def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
-    records = unit_scada_generate_facility_scada(
+    records = generate_facility_scada(
         table.records,
         interval_field="interval_datetime",
         facility_code_field="duid",
@@ -562,7 +562,7 @@ def process_meter_data_gen_duid(table: AEMOTableSchema) -> ControllerReturn:
 def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
-    records = unit_scada_generate_facility_scada(
+    records = generate_facility_scada(
         table.records,
         interval_field="interval_datetime",
         facility_code_field="regionid",
@@ -574,7 +574,9 @@ def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
     records = [i for i in records if i]
 
     cr.processed_records = len(records)
-    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated"])
+    cr.inserted_records = bulkinsert_mms_items(
+        FacilityScada, records, ["generated", "eoi_quantity"]
+    )
     cr.server_latest = max([i["trading_interval"] for i in records])
 
     return cr
