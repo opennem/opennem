@@ -269,8 +269,8 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
             {
                 "network_id": "NEM",
                 "created_by": "opennem.controller",
-                "facility_code": record.interconnectorid,  # type:ignore
-                "trading_interval": record.settlementdate,  # type:ignore
+                "facility_code": record["interconnectorid"],  # type:ignore
+                "trading_interval": record["settlementdate"],  # type:ignore
                 "generated": record.mwflow,  # type:ignore
             }
         )
@@ -308,7 +308,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
     cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
-    primary_keys = []
+    # primary_keys = []
 
     price_field = "price"
 
@@ -372,10 +372,10 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
             {
                 "network_id": "NEM",
                 "created_by": "opennem.controller",
-                "network_region": record.regionid,
-                "trading_interval": record.settlementdate,
-                "net_interchange": record.netinterchange,
-                "demand_total": record.demand_and_nonschedgen,
+                "network_region": record["regionid"],
+                "trading_interval": record["settlementdate"],
+                "net_interchange": record["netinterchange"],
+                "demand_total": record["demand_and_nonschedgen"],
             }
         )
 
