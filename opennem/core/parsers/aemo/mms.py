@@ -238,6 +238,7 @@ def parse_aemo_mms_csv(
     content: str,
     table_set: Optional[AEMOTableSet] = None,
     namespace_filter: Optional[List[str]] = None,
+    parse_table_schemas: bool = False,
 ) -> AEMOTableSet:
     """
     Parse AEMO CSV's into schemas and return a table set
@@ -294,10 +295,11 @@ def parse_aemo_mms_csv(
             )
 
             # do we have a custom shema for the table?
-            table_schema = get_mms_schema_for_table(table_current.full_name)
+            if parse_table_schemas:
+                table_schema = get_mms_schema_for_table(table_current.full_name)
 
-            if table_schema:
-                table_current.set_schema(table_schema)
+                if table_schema:
+                    table_current.set_schema(table_schema)
 
         # new record
         elif record_type == "D":
