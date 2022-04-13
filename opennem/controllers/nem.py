@@ -42,20 +42,25 @@ def unit_scada_generate_facility_scada(
     primary_keys = []
     return_records = []
 
+    if not records:
+        return []
+
+    fields = ""
+
+    first_record = records[0]
+
+    if isinstance(first_record, MMSBaseClass):
+        first_record = asdict(first_record)  # type: ignore
+
+    try:
+        fields = ", ".join([f"'{i}'" for i in list(first_record.keys())])
+    except Exception as e:
+        logger.error("Fields error: {}".format(e))
+        pass
+
     for row in records:
-
-        fields = ""
-
-        try:
-            fields = ", ".join(asdict(row).keys())
-        except Exception:
-            pass
-
-        if isinstance(row, dict):
-            fields = row.keys()
-
         if not hasattr(row, interval_field):
-            raise Exception("No such field: {}. Fields: {}".format(interval_field, fields))
+            raise Exception("No such field: '{}'. Fields: {}".format(interval_field, fields))
 
         trading_interval = getattr(row, interval_field)
 
