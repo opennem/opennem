@@ -6,7 +6,7 @@ Parses MMS tables into OpenNEM derived database
 import logging
 from dataclasses import asdict
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from sqlalchemy.dialects.postgresql import insert
 
@@ -29,7 +29,7 @@ logger = logging.getLogger("opennem.controllers.nem")
 
 
 def unit_scada_generate_facility_scada(
-    records: List[MMSBaseClass],
+    records: List[Union[Dict[str, Any], MMSBaseClass]],
     network: NetworkSchema = NetworkNEM,
     interval_field: str = "settlementdate",
     facility_code_field: str = "duid",
@@ -80,7 +80,7 @@ def unit_scada_generate_facility_scada(
         energy_quantity: Optional[float] = None
 
         if energy_field:
-            if not energy_field in row:
+            if energy_field not in row:
                 raise Exception("No energy field: {}. Fields: {}".format(energy_field, fields))
 
             energy_quantity = clean_float(row[energy_field])
