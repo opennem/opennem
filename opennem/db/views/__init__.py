@@ -149,7 +149,7 @@ def init_database_views() -> None:
 
             try:
                 c.execute(drop_query)
-            except Exception as e:
+            except Exception:
                 logger.warn("Could not drop view {}".format(view.name))
 
             # create
