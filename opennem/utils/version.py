@@ -76,6 +76,8 @@ if pkg_meta:
     project = str(poetry_meta["name"])
     copyright = f"{CUR_YEAR}, OpenNEM"
     version = str(poetry_meta["version"])
+else:
+    raise Exception("Could not read project meta. Likely virtualenv not activated")
 
 release = version
 

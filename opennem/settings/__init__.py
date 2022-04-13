@@ -60,9 +60,16 @@ SYSTEM_STRING = platform()
 
 ENV = os.getenv("ENV", default="development")
 
+VERSION = None
+
+try:
+    VERSION = get_version()
+except Exception:
+    raise Exception("Could not get version")
+
 logging.info(f"Loading OpenNEM ENV {ENV}")
 logging.info(
-    f"OpenNEM Version: {get_version()}. Python version: {PYTHON_VERSION}. System: {SYSTEM_STRING}"
+    f"OpenNEM Version: {VERSION}. Python version: {PYTHON_VERSION}. System: {SYSTEM_STRING}"
 )
 
 env_files = load_env_file(ENV)
