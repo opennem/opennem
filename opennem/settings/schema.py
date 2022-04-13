@@ -5,7 +5,7 @@ Everything that can be changed is set here and can be overwritten with ENV setti
 """
 from datetime import timezone as pytimezone
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import BaseSettings
 from pydantic.class_validators import validator
