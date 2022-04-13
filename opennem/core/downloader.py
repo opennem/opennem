@@ -1,5 +1,7 @@
 import logging
 from io import BytesIO
+from pathlib import Path
+from typing import Optional
 from zipfile import ZipFile
 
 from opennem import settings
@@ -26,6 +28,44 @@ def url_downloader(url: str) -> bytes:
 
     if not file_mime:
         file_mime = mime_from_url(url)
+
+    # @TODO handle all this in utils/archive.py
+    # and make it all generic to handle other
+    # mime types
+    if file_mime == "application/zip":
+        with ZipFile(content) as zf:
+            if len(zf.namelist()) == 1:
+                return zf.open(zf.namelist()[0]).read()
+
+            c = []
+            stream_count = 0
+
+            for filename in zf.namelist():
+                if filename.endswith(".zip"):
+                    c.append(_handle_zip(zf.open(filename), "r"))
+                    stream_count += 1
+                else:
+                    c.append(zf.open(filename))
+
+            return chain_streams(c).read()
+
+    return content.getvalue()
+
+
+def file_opener(path: Path) -> bytes:
+    """Opens a local file, handling embedded zips and other MIME's"""
+
+    logger.debug("Opening file: {}".format(path))
+
+    if not path.is_file():
+        raise Exception("File not found: {}".format(path))
+
+    content: Optional[BytesIO] = None
+
+    with path.open("rb") as fh:
+        content = BytesIO(fh.read())
+
+    file_mime = mime_from_content(content)
 
     # @TODO handle all this in utils/archive.py
     # and make it all generic to handle other
