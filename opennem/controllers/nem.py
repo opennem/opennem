@@ -85,6 +85,16 @@ def unit_scada_generate_facility_scada(
 
             energy_quantity = clean_float(row[energy_field])
 
+        power_quantity: Optional[float] = None
+
+        if power_field not in row:
+            raise Exception("No suck power field: {}. Fields: {}".format(power_field, fields))
+
+        power_quantity = clean_float(row[power_field])
+
+        # should we track primary keys to remove duplicates?
+        # @NOTE this does occur sometimes especially on large
+        # imports of data from large sets
         if primary_key_track:
             pk = (trading_interval, network.code, facility_code)
 
@@ -100,7 +110,7 @@ def unit_scada_generate_facility_scada(
             "network_id": network.code,
             "trading_interval": trading_interval,
             "facility_code": facility_code,
-            "generated": getattr(row, power_field),
+            "generated": power_quantity,
             "eoi_quantity": energy_quantity,
             "is_forecast": is_forecast,
             "energy_quality_flag": 0,
