@@ -192,9 +192,9 @@ def generate_facility_scada(
     # records = df
 
     # reorder columns
-    records = df.reset_index(inplace=False)[FACILITY_SCADA_COLUMN_NAMES].to_dict("records")
+    clean_records = df.reset_index(inplace=False)[FACILITY_SCADA_COLUMN_NAMES].to_dict("records")
 
-    return records
+    return clean_records
 
 
 def generate_balancing_summary(
