@@ -73,7 +73,7 @@ AEMONemTradingISLatest = CrawlerDefinition(
 
 AEMONemTradingISCurrent = CrawlerDefinition(
     priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.hourly,
+    schedule=CrawlerSchedule.four_times_a_day,
     name="au.nem.current.trading_is",
     url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
     latest=False,
@@ -95,7 +95,7 @@ AEMONemDispatchISLatest = CrawlerDefinition(
 
 AEMONemDispatchISCurrent = CrawlerDefinition(
     priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.hourly,
+    schedule=CrawlerSchedule.four_times_a_day,
     name="au.nem.current.dispatch_is",
     url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
     latest=False,
@@ -117,7 +117,7 @@ AEMONEMDispatchScada = CrawlerDefinition(
 
 AEMONEMCurrentDispatchScada = CrawlerDefinition(
     priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.hourly,
+    schedule=CrawlerSchedule.four_times_a_day,
     name="au.nem.current.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
     latest=False,
@@ -171,7 +171,7 @@ AEMONEMRooftop = CrawlerDefinition(
 
 AEMONEMRooftopForecast = CrawlerDefinition(
     priority=CrawlerPriority.low,
-    schedule=CrawlerSchedule.hourly,
+    schedule=CrawlerSchedule.four_times_a_day,
     name="au.nem.rooftop_forecast",
     url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
     latest=True,
