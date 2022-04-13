@@ -500,6 +500,23 @@ def process_unit_scada(table: AEMOTableSchema) -> ControllerReturn:
     return cr
 
 
+def process_unit_scada_optimized(table: AEMOTableSchema) -> ControllerReturn:
+    cr = ControllerReturn(total_records=len(table.records))
+
+    records = generate_facility_scada(
+        table.records,  # type:ignore
+        interval_field="settlementdate",
+        facility_code_field="duid",
+        power_field="scadavalue",
+    )
+
+    cr.processed_records = len(records)
+    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records.to_dict(), ["generated", "eoi_quantity"])  # type: ignore
+    cr.server_latest = max([i["trading_interval"] for i in records if i["trading_interval"]])
+
+    return cr
+
+
 def process_unit_solution(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
@@ -579,7 +596,7 @@ def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
 
 TABLE_PROCESSOR_MAP = {
     "dispatch_interconnectorres": "process_dispatch_interconnectorres",
-    "dispatch_unit_scada": "process_unit_scada",
+    "dispatch_unit_scada": "process_unit_scada_optimized",
     "dispatch_unit_solution": "process_unit_solution",
     "meter_data_gen_duid": "process_meter_data_gen_duid",
     "rooftop_actual": "process_rooftop_actual",
