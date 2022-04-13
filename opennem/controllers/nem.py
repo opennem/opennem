@@ -585,7 +585,7 @@ def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
 def process_rooftop_forecast(table: AEMOTableSchema) -> ControllerReturn:
     cr = ControllerReturn(total_records=len(table.records))
 
-    records = unit_scada_generate_facility_scada(
+    records = generate_facility_scada(
         table.records,  # type: ignore
         interval_field="interval_datetime",
         facility_code_field="regionid",
