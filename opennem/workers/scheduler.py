@@ -215,10 +215,10 @@ def db_run_energy_gapfil() -> None:
     run_emission_update_day(days=2)
 
 
-@huey.periodic_task(crontab(hour="8", minute="30"))
-@huey.lock_task("db_run_aggregates_year")
-def db_run_aggregates_year() -> None:
-    run_aggregates_all()
+@huey.periodic_task(crontab(hour="8,16", minute="30"))
+@huey.lock_task("db_run_aggregates_all")
+def db_run_aggregates_all() -> None:
+    db_run_aggregates_all()
 
 
 @huey.periodic_task(crontab(hour="6", minute="45"))
