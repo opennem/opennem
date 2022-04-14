@@ -166,6 +166,7 @@ services:
 
   workerdb:
     image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
+    restart: unless-stopped
     command:
       [
         "wait-for",
