@@ -3,9 +3,9 @@ import os
 from io import BytesIO
 from typing import Any
 
+import boto3
 import requests
 from PIL import Image
-from smart_open import open
 
 from opennem import settings
 from opennem.utils.http import http
@@ -38,12 +38,16 @@ def write_photo_to_s3(file_path: str, data: Any, overwrite: bool = False) -> int
         if r.ok:
             return len(r.content)
 
-    with open(
-        s3_save_path,
-        "wb",
-        transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
-    ) as fh:
-        write_count = fh.write(data)
+    s3_client = boto3.client("s3")
+
+    # with open(
+    #     s3_save_path,
+    #     "wb",
+    #     transport_params=dict(multipart_upload_kwargs=UPLOAD_ARGS),
+    # ) as fh:
+    #     write_count = fh.write(data)
+
+    # s3_client.upload_file(s3_save_path)
 
     logger.info("Wrote {} to {}".format(len(data), s3_save_path))
 

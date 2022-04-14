@@ -55,8 +55,6 @@ loggers:
     level: INFO
   urllib3:
     level: ERROR
-  smart_open:
-    level: ERROR
   boto3:
     level: ERROR
   botocore:

@@ -68,6 +68,28 @@ def chain_streams(streams: Any, buffer_size: int = io.DEFAULT_BUFFER_SIZE) -> io
     return io.BufferedReader(ChainStream(), buffer_size=buffer_size)
 
 
+def _handle_zip(file_obj: Any, mode: str) -> io.BufferedReader | IO[bytes]:
+    """Handles zips of zips"""
+    with ZipFile(file_obj) as zf:
+        if len(zf.namelist()) == 1:
+            return zf.open(zf.namelist()[0])
+
+        c = []
+        stream_count = 0
+
+        for filename in zf.namelist():
+            if filename.endswith(".zip"):
+                if ZIP_LIMIT > 0 and stream_count >= ZIP_LIMIT:
+                    continue
+
+                c.append(_handle_zip(zf.open(filename), mode))
+                stream_count += 1
+            else:
+                c.append(zf.open(filename))
+
+        return chain_streams(c)
+
+
 def fix_central_directory(zfile: BytesIO) -> BytesIO:
     """
     Fixes the central directory on bad zip files

@@ -5,7 +5,7 @@ from typing import Optional
 from zipfile import ZipFile
 
 from opennem import settings
-from opennem.utils.handlers import _handle_zip, chain_streams
+from opennem.utils.archive import _handle_zip, chain_streams
 from opennem.utils.http import http
 from opennem.utils.mime import mime_from_content, mime_from_url
 

@@ -13,7 +13,7 @@ from urllib.parse import urlencode, urljoin
 from zipfile import ZipFile
 
 from opennem.core.loader import load_data
-from opennem.utils.handlers import _handle_zip, chain_streams, open
+from opennem.utils.archive import _handle_zip, chain_streams, open
 from opennem.utils.http import http
 from opennem.utils.mime import mime_from_content
 

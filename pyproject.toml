@@ -50,7 +50,6 @@ python-dotenv = "^0.19.0"
 geojson-pydantic = "^0.3.0"
 tomlkit = "^0.10.1"
 validators = "^0.18.1"
-smart-open = {extras = ["s3"], version = "^5.0.0"}
 python-magic = "^0.4.18"
 cachetools = "^5.0.0"
 psycopg2 = "^2.9.3"
