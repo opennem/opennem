@@ -141,6 +141,10 @@ class OpennemSettings(BaseSettings):
     # willy weather client
     willyweather_api_key: Optional[str]
 
+    # cloudflare
+    cloudflare_account_id: str | None
+    cloudflare_api_key: str | None
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
