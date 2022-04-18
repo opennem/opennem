@@ -21,6 +21,7 @@ import os
 import sys
 from pathlib import Path
 
+from opennem.utils.security import obfuscate_dsn_password
 from opennem.utils.version import get_version
 
 # @NOTE load first external deps in an exception block so that we can catch if the ENV is
@@ -44,7 +45,7 @@ from .schema import OpennemSettings  # noqa: E402
 # Setup logging - root logger and handlers
 __root_logger = logging.getLogger()
 __root_logger.setLevel(logging.INFO)
-__root_logger_formatter = logging.Formatter(fmt=" * %(levelname)s %(message)s")
+__root_logger_formatter = logging.Formatter(fmt=" * %(message)s")
 num_handlers = len(__root_logger.handlers)
 
 if num_handlers == 0:
@@ -102,6 +103,12 @@ except ValidationError as e:
 
     do_exit = True
 
+
+if settings.dry_run:
+    logging.info("Dry run (no database actions)")
+else:
+    logging.info("Using database connection: {}".format(obfuscate_dsn_password(settings.db_url)))
+
 # skip if logging not configed
 if LOGGING_CONFIG:
     logging.config.dictConfig(LOGGING_CONFIG)
@@ -117,8 +124,5 @@ if LOGGING_CONFIG:
     # other misc loggers
     logging.getLogger("PIL").setLevel(logging.ERROR)
 
-
-if settings.dry_run:
-    logging.info("Dry run (no database actions)")
 
 IS_DEV = not settings.is_prod
