@@ -33,6 +33,7 @@ from opennem.monitors.set_outputs import run_set_output_check
 from opennem.notifications.slack import slack_message
 from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.aggregates import run_aggregates_all
+from opennem.workers.backup import run_backup
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.facility_data_ranges import update_facility_seen_range
@@ -271,3 +272,13 @@ def schedule_facility_first_seen_check() -> None:
 def db_facility_seen_update() -> None:
     update_facility_seen_range()
     slack_message(f"Updated facility seen range on {settings.env}")
+
+
+# admin tasks
+
+
+@huey.periodic_task(crontab(day="0", hour="15", minute="45"))
+@huey.lock_task("task_run_backup")
+def task_run_backup() -> None:
+    dest_file = run_backup()
+    slack_message(f"Ran backup on {settings.env} to {dest_file}")
