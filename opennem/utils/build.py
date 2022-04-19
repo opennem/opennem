@@ -6,7 +6,7 @@ from typing import Callable, List
 
 from gitignore_parser import parse_gitignore
 
-from opennem.core.loader import PROJECT_ROOT
+from opennem import PROJECT_ROOT
 from opennem.settings import settings  # noqa: F401
 
 logger = logging.getLogger("opennem.utils.build")
