@@ -62,7 +62,7 @@ logger = logging.getLogger("openenm.scheduler")
 regular_schedule_minute_interval = 1
 
 if IS_DEV:
-    regular_schedule_minute_interval = 5
+    regular_schedule_minute_interval = 15
 
 
 # crawler tasks

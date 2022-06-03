@@ -238,4 +238,4 @@ def run_aggregates_all_days(
 
 # Debug entry point
 if __name__ == "__main__":
-    run_aggregates_all_days()
+    run_aggregates_all()

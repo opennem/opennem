@@ -24,10 +24,4 @@ git ci -m "v$VERSION"
 git tag v$VERSION
 git push -u origin master v$VERSION
 
-if [[ $# -eq 0 ]] ; then
-  echo 'Dev release'
-else
-  echo "Non development release"
-fi
-
 rm -rf build/
