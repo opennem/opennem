@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem-backend"
-version = "3.9.8"
+version = "3.9.9-alpha.0"
 description = "OpenNEM Australian Energy Data Backend"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 license = "MIT"
@@ -74,7 +74,6 @@ hypercorn = {extras = ["trio"], version = "^0.13.2"}
 
 
 [tool.poetry.dev-dependencies]
-mysqlclient = "^2.0.3"
 black = "^22.1.0"
 flake8 = "^4.0.1"
 isort = "^5.8.0"
