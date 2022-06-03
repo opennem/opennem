@@ -277,7 +277,7 @@ def db_facility_seen_update() -> None:
 # admin tasks
 
 
-@huey.periodic_task(crontab(day="0", hour="15", minute="45"))
+@huey.periodic_task(crontab(day="1", hour="15", minute="45"))
 @huey.lock_task("task_run_backup")
 def task_run_backup() -> None:
     dest_file = run_backup()
