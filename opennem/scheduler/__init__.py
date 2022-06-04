@@ -25,7 +25,6 @@ from opennem.api.export.tasks import (
     export_power,
 )
 from opennem.exporter.geojson import export_facility_geojson
-from opennem.monitors.aemo_intervals import aemo_wem_live_interval
 from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
@@ -152,7 +151,7 @@ def db_run_daily_fueltech_summary() -> None:
 
 
 # run gap fill tasks
-@huey.periodic_task(crontab(hour="*/1", minute="15"))
+@huey.periodic_task(crontab(hour="*/4", minute="15"))
 @huey.lock_task("db_run_energy_gapfil")
 def db_run_energy_gapfil() -> None:
     run_energy_gapfill(days=14)
@@ -161,13 +160,7 @@ def db_run_energy_gapfil() -> None:
     run_emission_update_day(days=2)
 
 
-@huey.periodic_task(crontab(hour="*/3", minute=45))
-@huey.lock_task("db_run_aggregates")
-def db_run_aggregates() -> None:
-    run_aggregates_all_days(days=30)
-
-
-@huey.periodic_task(crontab(hour="8", minute="30"))
+@huey.periodic_task(crontab(hour="8,16", minute="30"))
 @huey.lock_task("db_run_aggregates_year")
 def db_run_aggregates_year() -> None:
     run_aggregates_all()
