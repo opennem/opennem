@@ -31,7 +31,7 @@ from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.monitors.set_outputs import run_set_output_check
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings  # noqa: F401
-from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
+from opennem.workers.aggregates import run_aggregates_all
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.facility_data_ranges import update_facility_seen_range
