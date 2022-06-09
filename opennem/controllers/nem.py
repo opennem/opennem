@@ -174,6 +174,7 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
 
 
 def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
+    """Stores the NEM price for both dispatch price and trading price"""
     session = get_scoped_session()
     engine = get_database_engine()
 
@@ -465,7 +466,7 @@ TABLE_PROCESSOR_MAP = {
     "rooftop_actual": "process_rooftop_actual",
     "rooftop_forecast": "process_rooftop_forecast",
     "dispatch_price": "process_nem_price",
-    # "trading_price": "process_nem_price",
+    "trading_price": "process_nem_price",
     "dispatch_regionsum": "process_dispatch_regionsum",
     "trading_regionsum": "process_trading_regionsum",
 }

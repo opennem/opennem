@@ -41,7 +41,7 @@ def aggregates_facility_daily_query(
                 time_bucket_gapfill('30 minutes', fs.trading_interval) as trading_interval,
                 fs.facility_code as code,
                 coalesce(sum(fs.eoi_quantity), 0) as energy,
-                coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bs.price), 0) as market_value,
+                coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bs.price_dispatch), 0) as market_value,
                 case
                     when sum(fs.eoi_quantity) > 0 then
                         coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(f.emissions_factor_co2), 0)
