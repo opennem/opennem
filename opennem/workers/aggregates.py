@@ -38,7 +38,7 @@ def aggregates_facility_daily_query(
             sum(fs.emissions) as emissions
         from (
             select
-                time_bucket_gapfill('30 minutes', fs.trading_interval) as trading_interval,
+                time_bucket_gapfill('5 minutes', fs.trading_interval) as trading_interval,
                 fs.facility_code as code,
                 coalesce(sum(fs.eoi_quantity), 0) as energy,
                 coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bs.price_dispatch), 0) as market_value,
@@ -239,4 +239,4 @@ def run_aggregates_all_days(
 
 # Debug entry point
 if __name__ == "__main__":
-    run_aggregates_all_days()
+    run_aggregates_all()
