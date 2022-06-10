@@ -31,7 +31,7 @@ from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.monitors.set_outputs import run_set_output_check
 from opennem.notifications.slack import slack_message
 from opennem.settings import settings  # noqa: F401
-from opennem.workers.aggregates import run_aggregates_all
+from opennem.workers.aggregates import run_aggregate_days, run_aggregates_all
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.facility_data_ranges import update_facility_seen_range
@@ -159,6 +159,8 @@ def db_run_energy_gapfil() -> None:
     # Run flow updates
     run_emission_update_day(days=2)
 
+    run_aggregate_days(days=14)
+
 
 @huey.periodic_task(crontab(hour="8,16", minute="30"))
 @huey.lock_task("db_run_aggregates_year")
@@ -183,16 +185,6 @@ def monitor_opennem_intervals() -> None:
 
     for network_code in ["NEM", "WEM"]:
         check_opennem_interval_delays(network_code)
-
-
-# @NOTE temp disable new monitoring
-# @huey.periodic_task(crontab(minute="*/60"), priority=50)
-# @huey.lock_task("monitor_wem_interval")
-# def monitor_wem_interval() -> None:
-#     if settings.env != "production":
-#         return None
-
-# aemo_wem_live_interval()
 
 
 @huey.periodic_task(crontab(hour="8", minute="45"), priority=10)
