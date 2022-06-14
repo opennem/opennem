@@ -388,6 +388,14 @@ tomli = {version = "*", optional = true, markers = "python_full_version <= \"3.1
 toml = ["tomli"]
 
 [[package]]
+name = "cssselect"
+version = "1.1.0"
+description = "cssselect parses CSS3 Selectors and translates them to XPath 1.0"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[[package]]
 name = "datedelta"
 version = "1.4"
 description = "Like datetime.timedelta, for date arithmetic."
@@ -1298,6 +1306,18 @@ python-versions = ">=3.6.8"
 diagrams = ["railroad-diagrams", "jinja2"]
 
 [[package]]
+name = "pyquery"
+version = "1.4.3"
+description = "A jquery-like library for python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+cssselect = ">0.7.9"
+lxml = ">=2.1"
+
+[[package]]
 name = "pyreadline"
 version = "2.1"
 description = "A python implmementation of GNU readline."
@@ -2025,7 +2045,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "7969e5799cda362da1d13d716a10c790afce6cf0a38641e1bd272459bf93d13f"
+content-hash = "46a59640d877fcaf975c334a25635fbd4451dd11d7d388b5c96f3bf2f26c43b9"
 
 [metadata.files]
 aiodns = [
@@ -2424,6 +2444,10 @@ coverage = [
     {file = "coverage-6.4.1-cp39-cp39-win_amd64.whl", hash = "sha256:342d4aefd1c3e7f620a13f4fe563154d808b69cccef415415aece4c786665397"},
     {file = "coverage-6.4.1-pp36.pp37.pp38-none-any.whl", hash = "sha256:4803e7ccf93230accb928f3a68f00ffa80a88213af98ed338a57ad021ef06815"},
     {file = "coverage-6.4.1.tar.gz", hash = "sha256:4321f075095a096e70aff1d002030ee612b65a205a0a0f5b815280d5dc58100c"},
+]
+cssselect = [
+    {file = "cssselect-1.1.0-py2.py3-none-any.whl", hash = "sha256:f612ee47b749c877ebae5bb77035d8f4202c6ad0f0fc1271b3c18ad6c4468ecf"},
+    {file = "cssselect-1.1.0.tar.gz", hash = "sha256:f95f8dedd925fd8f54edb3d2dfb44c190d9d18512377d3c1e2388d16126879bc"},
 ]
 datedelta = [
     {file = "datedelta-1.4-py3-none-any.whl", hash = "sha256:9f7a8a2bd80d29d6cfe1036990979ea404c8e1ddbc5a73cff74d283186d12b4d"},
@@ -3209,6 +3233,10 @@ pylint-sqlalchemy = [
 pyparsing = [
     {file = "pyparsing-3.0.9-py3-none-any.whl", hash = "sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"},
     {file = "pyparsing-3.0.9.tar.gz", hash = "sha256:2b020ecf7d21b687f219b71ecad3631f644a47f01403fa1d1036b0c6416d70fb"},
+]
+pyquery = [
+    {file = "pyquery-1.4.3-py3-none-any.whl", hash = "sha256:1fc33b7699455ed25c75282bc8f80ace1ac078b0dda5a933dacbd8b1c1f83963"},
+    {file = "pyquery-1.4.3.tar.gz", hash = "sha256:a388eefb6bc4a55350de0316fbd97cda999ae669b6743ae5b99102ba54f5aa72"},
 ]
 pyreadline = [
     {file = "pyreadline-2.1.win-amd64.exe", hash = "sha256:9ce5fa65b8992dfa373bddc5b6e0864ead8f291c94fbfec05fbd5c836162e67b"},

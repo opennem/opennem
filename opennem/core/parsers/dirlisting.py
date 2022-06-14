@@ -21,8 +21,9 @@ from typing import Any, Dict, List, Optional, Union
 from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 
-from bs4 import BeautifulSoup
+from lxml import etree
 from pydantic import ValidationError, validator
+from pyquery import PyQuery as pq
 
 from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import is_number, strip_double_spaces
@@ -109,7 +110,7 @@ class DirlistingEntry(BaseConfig):
         return dt
 
     @validator("file_size", allow_reuse=True, pre=True)
-    def _parse_dirlisting_filesize(cls, value: str) -> Optional[int]:
+    def _parse_dirlisting_filesize(cls, value: str | int | float) -> Optional[int]:
         if is_number(value):
             return value
 
@@ -163,7 +164,7 @@ class DirectoryListing(BaseConfig):
         return _entries[:limit]
 
     def get_files_modified_since(self, modified_date: datetime) -> List[DirlistingEntry]:
-        modified_since = []
+        modified_since: list[DirlistingEntry] = []
 
         if self.timezone:
             # sanity check the timezone before filter
@@ -214,16 +215,16 @@ def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing
     """Parse a directory listng into a list of DirlistingEntry models"""
     dirlisting_content = url_downloader(url)
 
-    resp = BeautifulSoup(dirlisting_content.decode("utf-8"), "html.parser")
+    resp = pq(dirlisting_content.decode("utf-8"))
 
     _dirlisting_models: List[DirlistingEntry] = []
 
-    pre_area = resp.find("pre")
+    pre_area = resp("pre")
 
     if not pre_area:
         raise Exception("Invalid directory listing: no pre or bad html")
 
-    for i in pre_area.decode_contents().split("<br/>"):
+    for i in [i for i in pre_area.contents() if isinstance(i, str)]:
         # it catches the containing block so skip those
         if not i:
             continue
