@@ -31,7 +31,7 @@ huey = PriorityRedisHuey("opennem.scheduler.crawler", host=redis_host)
 
 
 # crawler tasks
-@huey.periodic_task(crontab(minute="*/1"))
+@huey.periodic_task(crontab(minute="*/5"))
 @huey.lock_task("crawler_scheduled_live")
 def crawler_scheduled_live() -> None:
     run_crawls_by_schedule(CrawlerSchedule.live)

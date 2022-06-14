@@ -208,7 +208,7 @@ def db_run_daily_fueltech_summary() -> None:
 
 
 # run gap fill tasks
-@huey.periodic_task(crontab(hour="*/1", minute="15"))
+@huey.periodic_task(crontab(hour="*/4", minute="15"))
 @huey.lock_task("db_run_energy_gapfil")
 def db_run_energy_gapfil() -> None:
     run_energy_gapfill(days=14)
@@ -240,16 +240,6 @@ def monitor_opennem_intervals() -> None:
 
     for network_code in ["NEM", "WEM"]:
         check_opennem_interval_delays(network_code)
-
-
-# @NOTE temp disable new monitoring
-# @huey.periodic_task(crontab(minute="*/60"), priority=50)
-# @huey.lock_task("monitor_wem_interval")
-# def monitor_wem_interval() -> None:
-#     if settings.env != "production":
-#         return None
-
-# aemo_wem_live_interval()
 
 
 @huey.periodic_task(crontab(hour="8", minute="45"), priority=10)

@@ -303,6 +303,7 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
 
 
 def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
+    """Stores the NEM price for both dispatch price and trading price"""
     session = get_scoped_session()
     engine = get_database_engine()
 

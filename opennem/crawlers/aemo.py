@@ -137,6 +137,16 @@ AEMONEMArchiveDispatchScada = CrawlerDefinition(
     processor=run_aemo_mms_crawl,
 )
 
+AEMONEMDispatchScadaArchive = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.nem.archive.dispatch_scada",
+    url="http://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/",
+    latest=False,
+    limit=14,
+    processor=run_aemo_mms_crawl,
+)
+
 # Next day gens and dispatch
 
 AEMONEMDispatchActualGEN = CrawlerDefinition(
@@ -154,6 +164,26 @@ AEMONEMNextDayDispatch = CrawlerDefinition(
     name="au.nem.dispatch",
     url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
     latest=True,
+    processor=run_aemo_mms_crawl,
+)
+
+AEMONEMDispatchActualGENArchive = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
+    name="au.nem.catchup.dispatch_actual_gen",
+    url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
+    latest=False,
+    limit=14,
+    processor=run_aemo_mms_crawl,
+)
+
+AEMONEMNextDayDispatchArchive = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
+    name="au.nem.catchup.dispatch",
+    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
+    latest=False,
+    limit=14,
     processor=run_aemo_mms_crawl,
 )
 
