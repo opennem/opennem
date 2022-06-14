@@ -9,9 +9,12 @@ from opennem.api.export.map import PriorityType, StatType, get_export_map, get_w
 from opennem.api.export.tasks import export_electricitymap, export_energy, export_power
 from opennem.api.stats.controllers import get_scada_range
 from opennem.core.compat.loader import get_dataset
+from opennem.crawl import get_crawl_set, run_crawl
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
-from opennem.workers.aggregates import run_aggregates_all_days
-from opennem.workers.gap_fill import run_energy_gapfill
+from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
+from opennem.workers.gap_fill.energy import run_energy_gapfill
+
+# from opennem.workers.gap_fill import run_energy_gapfill
 
 
 def run_tests() -> None:
@@ -80,8 +83,16 @@ from opennem.workers.energy import run_energy_calc
 
 #
 if __name__ == "__main__":
-    run_tests()
-    # export_energy(latest=False)
+    # run_tests()
+    # cs = get_crawl_set()
+
+    # run_crawl(cs.get_crawler("au.nem.archive.dispatch_scada"))
+    # run_crawl(cs.get_crawler("au.nem.catchup.dispatch_actual_gen"))
+    # run_crawl(cs.get_crawler("au.nem.catchup.dispatch"))
+
+    run_energy_gapfill(days=30)
+    run_aggregates_all()
+    export_energy(latest=False)
     # fallback_runner()
     # dmin = datetime.fromisoformat("2022-02-17 07:00:00+08:00")
     # dmax = dmin + timedelta(hours=1)
