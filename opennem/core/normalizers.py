@@ -186,8 +186,11 @@ __is_number = re.compile(r"^[\d\.]+$")
 __is_single_number = re.compile(r"^\d$")
 
 
-def is_number(value: Union[str, int]) -> bool:
-    if type(value) is int:
+def is_number(value: str | int | float) -> bool:
+    if isinstance(value, int):
+        return True
+
+    if isinstance(value, float):
         return True
 
     value = str(value).strip()
