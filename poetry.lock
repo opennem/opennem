@@ -558,15 +558,15 @@ SQLAlchemy = ">=0.6.1"
 
 [[package]]
 name = "geoalchemy2"
-version = "0.11.1"
+version = "0.12.1"
 description = "Using SQLAlchemy with Spatial Databases"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 packaging = "*"
-SQLAlchemy = ">=1.1"
+SQLAlchemy = ">=1.4"
 
 [[package]]
 name = "geojson"
@@ -578,8 +578,8 @@ python-versions = "*"
 
 [[package]]
 name = "geojson-pydantic"
-version = "0.3.4"
-description = "Pydantic data models for the GeoJSON spec"
+version = "0.4.2"
+description = "Pydantic data models for the GeoJSON spec."
 category = "main"
 optional = false
 python-versions = ">=3.7"
@@ -589,7 +589,7 @@ pydantic = "*"
 
 [package.extras]
 dev = ["pre-commit"]
-test = ["pytest", "pytest-cov"]
+test = ["pytest", "pytest-cov", "shapely"]
 
 [[package]]
 name = "gitdb"
@@ -944,7 +944,7 @@ et-xmlfile = "*"
 
 [[package]]
 name = "osm2geojson"
-version = "0.1.33"
+version = "0.2.0"
 description = "Parse OSM and Overpass JSON"
 category = "main"
 optional = false
@@ -1408,7 +1408,7 @@ six = ">=1.5"
 
 [[package]]
 name = "python-dotenv"
-version = "0.19.2"
+version = "0.20.0"
 description = "Read key-value pairs from a .env file and set them as environment variables"
 category = "main"
 optional = false
@@ -1735,7 +1735,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "tomlkit"
-version = "0.10.2"
+version = "0.11.0"
 description = "Style preserving TOML library"
 category = "main"
 optional = false
@@ -2025,7 +2025,7 @@ server = ["fastapi", "uvicorn"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "7bf42a317c2d62cecf795b1d13e0c21217874f409a0861472c3ab0e17a56d2b7"
+content-hash = "7969e5799cda362da1d13d716a10c790afce6cf0a38641e1bd272459bf93d13f"
 
 [metadata.files]
 aiodns = [
@@ -2546,15 +2546,16 @@ geoalchemy = [
     {file = "GeoAlchemy-0.7.2.tar.gz", hash = "sha256:78ce2f57a7982051030ccc9a59eb589bf6e0b3fad93875add4c1f7ef65f91863"},
 ]
 geoalchemy2 = [
-    {file = "GeoAlchemy2-0.11.1-py2.py3-none-any.whl", hash = "sha256:43ce38a5387c9b380b4c9d20d720c3d8cf1752ca4f5f18aa88041be11f6948a3"},
-    {file = "GeoAlchemy2-0.11.1.tar.gz", hash = "sha256:f92a0faddb5b74384dbbf3c7000433358ce8e07a180fe1d6c2843eaa0437ff08"},
+    {file = "GeoAlchemy2-0.12.1-py2.py3-none-any.whl", hash = "sha256:52298fefa58310b0a0e413da4927a34c5ebf981c4e4cfaa7b82b79d0b0ddec71"},
+    {file = "GeoAlchemy2-0.12.1.tar.gz", hash = "sha256:ef9eba79b67ff4bc720b0e1991410866fc7db013837b055a1b2cb6518b994d80"},
 ]
 geojson = [
     {file = "geojson-2.5.0-py2.py3-none-any.whl", hash = "sha256:ccbd13368dd728f4e4f13ffe6aaf725b6e802c692ba0dde628be475040c534ba"},
     {file = "geojson-2.5.0.tar.gz", hash = "sha256:6e4bb7ace4226a45d9c8c8b1348b3fc43540658359f93c3f7e03efa9f15f658a"},
 ]
 geojson-pydantic = [
-    {file = "geojson-pydantic-0.3.4.tar.gz", hash = "sha256:3464622bf94efead6757fc1fac3934e8c9efdcb3796cd9494b2eae5f452798c0"},
+    {file = "geojson-pydantic-0.4.2.tar.gz", hash = "sha256:fa475f59bd0e9fa713289c95ef6e7903fc9dab748abb173cb7aeb16ddbf5b9df"},
+    {file = "geojson_pydantic-0.4.2-py3-none-any.whl", hash = "sha256:7c577be3a06f694e80324371240176f54125abcb49726e2f104f2296dd5bac56"},
 ]
 gitdb = [
     {file = "gitdb-4.0.9-py3-none-any.whl", hash = "sha256:8033ad4e853066ba6ca92050b9df2f89301b8fc8bf7e9324d412a63f8bf1a8fd"},
@@ -2959,7 +2960,7 @@ openpyxl = [
     {file = "openpyxl-3.0.10.tar.gz", hash = "sha256:e47805627aebcf860edb4edf7987b1309c1b3632f3750538ed962bbcc3bd7449"},
 ]
 osm2geojson = [
-    {file = "osm2geojson-0.1.33.tar.gz", hash = "sha256:dd19ff10db91d8adccb61613445ee8665960c5da205c8974df693a1099c97fcd"},
+    {file = "osm2geojson-0.2.0.tar.gz", hash = "sha256:41d7dcc31faf587cc096137d0f159dc8c00319ae4f05ecf2c06db3e4cd8cb284"},
 ]
 outcome = [
     {file = "outcome-1.1.0-py2.py3-none-any.whl", hash = "sha256:c7dd9375cfd3c12db9801d080a3b63d4b0a261aa996c4c13152380587288d958"},
@@ -3240,8 +3241,8 @@ python-dateutil = [
     {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
 ]
 python-dotenv = [
-    {file = "python-dotenv-0.19.2.tar.gz", hash = "sha256:a5de49a31e953b45ff2d2fd434bbc2670e8db5273606c1e737cc6b93eff3655f"},
-    {file = "python_dotenv-0.19.2-py2.py3-none-any.whl", hash = "sha256:32b2bdc1873fd3a3c346da1c6db83d0053c3c62f28f1f38516070c4c8971b1d3"},
+    {file = "python-dotenv-0.20.0.tar.gz", hash = "sha256:b7e3b04a59693c42c36f9ab1cc2acc46fa5df8c78e178fc33a8d4cd05c8d498f"},
+    {file = "python_dotenv-0.20.0-py3-none-any.whl", hash = "sha256:d92a187be61fe482e4fd675b6d52200e7be63a12b724abbf931a40ce4fa92938"},
 ]
 python-magic = [
     {file = "python-magic-0.4.27.tar.gz", hash = "sha256:c1ba14b08e4a5f5c31a302b7721239695b2f0f058d125bd5ce1ee36b9d9d3c3b"},
@@ -3432,8 +3433,8 @@ tomli = [
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 tomlkit = [
-    {file = "tomlkit-0.10.2-py3-none-any.whl", hash = "sha256:905cf92c2111ef80d355708f47ac24ad1b6fc2adc5107455940088c9bbecaedb"},
-    {file = "tomlkit-0.10.2.tar.gz", hash = "sha256:30d54c0b914e595f3d10a87888599eab5321a2a69abc773bbefff51599b72db6"},
+    {file = "tomlkit-0.11.0-py3-none-any.whl", hash = "sha256:0f4050db66fd445b885778900ce4dd9aea8c90c4721141fde0d6ade893820ef1"},
+    {file = "tomlkit-0.11.0.tar.gz", hash = "sha256:71ceb10c0eefd8b8f11fe34e8a51ad07812cb1dc3de23247425fbc9ddc47b9dd"},
 ]
 tox = [
     {file = "tox-3.25.0-py2.py3-none-any.whl", hash = "sha256:0805727eb4d6b049de304977dfc9ce315a1938e6619c3ab9f38682bb04662a5a"},
