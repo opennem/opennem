@@ -238,8 +238,4 @@ def run_aggregates_all_days(
 
 # Debug entry point
 if __name__ == "__main__":
-<<<<<<< HEAD
     run_aggregates_all()
-=======
-    run_aggregate_days(days=7)
->>>>>>> nc9-schedule-fix
