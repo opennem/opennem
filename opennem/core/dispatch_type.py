@@ -1,3 +1,4 @@
+""" Dispatch Types """
 import enum
 
 
@@ -13,7 +14,7 @@ def dispatch_type_string(dispatch_type: DispatchType) -> str:
     return "LOAD"
 
 
-def parse_dispatch_type(dispatch_string: str):
+def parse_dispatch_type(dispatch_string: str) -> DispatchType | None:
     """
     Converts dispatch type string into an enum constant
 
