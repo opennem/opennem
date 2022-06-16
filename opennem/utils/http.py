@@ -59,7 +59,7 @@ def setup_http_cache() -> bool:
         logger.error("Request caching requires requests-cache library")
         return False
 
-    requests_cache.install_cache(".elecmon_requests_cache", expire_after=60 * 60 * 4)
+    requests_cache.install_cache(".opennem_requests_cache", expire_after=60 * 60 * 4)
     logger.info("Setup HTTP cache at: {}".format(settings.http_cache_local))
     return True
 
