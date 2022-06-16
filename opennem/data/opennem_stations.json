@@ -4348,7 +4348,7 @@
   {
     "created_by": "opennem.stations",
     "created_at": "2020-11-13T02:47:00.969029",
-    "id": 5253,
+    "id": 5254,
     "participant": null,
     "participant_id": null,
     "facilities": [
@@ -4367,7 +4367,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "solar_utility",
           "label": "",
           "renewable": true
         },
@@ -4376,57 +4376,15 @@
           "label": "Operating"
         },
         "station_id": null,
-        "code": "WALGRVG1",
-        "network_code": "WALGRVG1",
+        "code": "COLUMSF1",
+        "network_code": "COLUMSF1",
         "scada_power": null,
         "dispatch_type": "GENERATOR",
         "active": true,
         "capacity_registered": 50,
         "registered": null,
         "deregistered": null,
-        "network_region": "NSW1",
-        "unit_id": null,
-        "unit_number": null,
-        "unit_alias": null,
-        "unit_capacity": null,
-        "emissions_factor_co2": null,
-        "approved": true,
-        "approved_by": null,
-        "approved_at": null
-      },
-      {
-        "created_by": "opennem.stations",
-        "created_at": "2020-11-13T02:47:00.969029",
-        "id": null,
-        "network": {
-          "code": "NEM",
-          "country": "au",
-          "label": "NEM",
-          "regions": null,
-          "timezone": "Australia/Sydney",
-          "timezone_database": "AEST",
-          "offset": 1000,
-          "interval_size": 5
-        },
-        "fueltech": {
-          "code": "battery_charging",
-          "label": "",
-          "renewable": true
-        },
-        "status": {
-          "code": "operating",
-          "label": "Operating"
-        },
-        "station_id": null,
-        "code": "WALGRVL1",
-        "network_code": "WALGRVL1",
-        "scada_power": null,
-        "dispatch_type": "GENERATOR",
-        "active": true,
-        "capacity_registered": 50,
-        "registered": null,
-        "deregistered": null,
-        "network_region": "NSW1",
+        "network_region": "QLD1",
         "unit_id": null,
         "unit_number": null,
         "unit_alias": null,
@@ -4438,9 +4396,9 @@
       }
     ],
     "photos": null,
-    "code": "WALGRV",
-    "name": "Walgrove Battery",
-    "network_name": "Walgrove Battery",
+    "code": "COLUMSF",
+    "name": "Columboola Solar Farm",
+    "network_name": "Columboola Solar Farm",
     "location": {
       "created_by": null,
       "created_at": "2020-11-13T02:47:00.969029",
@@ -4449,8 +4407,8 @@
       "weather_nearest": null,
       "address1": "",
       "address2": "",
-      "locality": "Sydney",
-      "state": "NSW",
+      "locality": "",
+      "state": "QLD",
       "postcode": null,
       "country": "au",
       "geocode_approved": true,
@@ -4465,9 +4423,9 @@
     "approved_by": null,
     "approved_at": null,
     "network": null,
-    "description": "A 50MW/75MWh lithium ion battery will be installed at Transgrid’s Wallgrove substation in Western Sydney.",
+    "description": "The Columboola Solar Farm is a 162MWAC or 202.5 MWDC utility scale generation project situated on 410 hectares of grazing land in Western Downs, Queensland. The site is located approximately 10km north-east of Miles, and is accessible from Ryall Road off the Warrego Highway.",
     "wikipedia_link": null,
     "wikidata_id": null,
-    "website_url": "https://www.transgrid.com.au/projects-innovation/wallgrove-grid-battery"
+    "website_url": "https://columboolasolarfarm.com.au/the-solar-farm/"
   }
 ]
