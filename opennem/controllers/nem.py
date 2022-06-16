@@ -314,7 +314,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
     for record in table.records:
         # @NOTE disable pk track
-        primary_key = set([record.settlementdate, record.regionid])
+        primary_key = set(record["settlementdate"], record["regionid"])  # type: ignore
 
         if primary_key in primary_keys:
             continue
