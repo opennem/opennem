@@ -341,7 +341,11 @@ def parse_aemo_urls(urls: List[str], skip_records: bool = False) -> AEMOTableSet
     aemo = AEMOTableSet()
 
     for url in urls:
-        csv_content = url_downloader(url)
+        try:
+            csv_content = url_downloader(url)
+        except Exception as e:
+            logger.error(f"Could not fetch AEMO url {url}: {e}")
+            continue
 
         if not csv_content:
             logger.error("Could not parse URL: {}".format(url))
