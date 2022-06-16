@@ -3,7 +3,7 @@
 
 """
 import logging
-from typing import List
+from typing import List, Optional
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
@@ -15,16 +15,12 @@ logger = logging.getLogger("opennem.crawler.aemo")
 
 def run_aemo_mms_crawl(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False
-) -> ControllerReturn | None:
+) -> Optional[ControllerReturn]:
     """Runs the AEMO MMS crawlers"""
     if not crawler.url:
         raise Exception("Require a URL to run AEMO MMS crawlers")
 
-    try:
-        dirlisting = get_dirlisting(crawler.url, timezone="Australia/Brisbane")
-    except Exception as e:
-        logger.error(f"Could not fetch directory listing: {crawler.url}. {e}")
-        return None
+    dirlisting = get_dirlisting(crawler.url, timezone="Australia/Brisbane")
 
     if crawler.filename_filter:
         dirlisting.apply_filter(crawler.filename_filter)
@@ -57,7 +53,9 @@ def run_aemo_mms_crawl(
     ts = parse_aemo_urls([i.link for i in entries_to_fetch])
 
     controller_returns = store_aemo_tableset(ts)
-    controller_returns.last_modified = max([i.modified_date for i in entries_to_fetch if i.modified_date])
+    controller_returns.last_modified = max(
+        [i.modified_date for i in entries_to_fetch if i.modified_date]
+    )
 
     return controller_returns
 
