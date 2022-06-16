@@ -4427,5 +4427,88 @@
     "wikipedia_link": null,
     "wikidata_id": null,
     "website_url": "https://columboolasolarfarm.com.au/the-solar-farm/"
+  },
+  {
+    "created_by": "opennem.stations",
+    "created_at": "2020-11-13T02:47:00.969029",
+    "id": 5254,
+    "participant": null,
+    "participant_id": null,
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "solar_utility",
+          "label": "",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "SEBSF1",
+        "network_code": "SEBSF1",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 110,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "NSW1",
+        "unit_id": null,
+        "unit_number": null,
+        "unit_alias": null,
+        "unit_capacity": null,
+        "emissions_factor_co2": null,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ],
+    "photos": null,
+    "code": "SEBSF",
+    "name": "Sebastopol Solar Farm",
+    "network_name": "Sebastopol Solar Farm",
+    "location": {
+      "created_by": null,
+      "created_at": "2020-11-13T02:47:00.969029",
+      "id": null,
+      "weather_station": null,
+      "weather_nearest": null,
+      "address1": "",
+      "address2": "",
+      "locality": "Sebastopol",
+      "state": "NSW",
+      "postcode": null,
+      "country": "au",
+      "geocode_approved": true,
+      "geocode_skip": false,
+      "geocode_processed_at": null,
+      "geocode_by": null,
+      "lat": -34.60328657660709,
+      "lng": 147.55475705396842
+    },
+    "location_id": null,
+    "approved": true,
+    "approved_by": null,
+    "approved_at": null,
+    "network": null,
+    "description": "FRV Services Australia (FRV) is building a 90 megawatt (MWAC) solar farm near Sebastopol in NSW.",
+    "wikipedia_link": null,
+    "wikidata_id": null,
+    "website_url": "http://sebastopolsolarfarm.com/"
   }
 ]
