@@ -39,7 +39,6 @@ huey = "^2.2.0"
 redis = "3.4.1"
 openpyxl = "^3.0.4"
 geojson = "^2.5.0"
-uvicorn = "^0.17.5"
 fastapi = "^0.78.0"
 shapely = "^1.7.0"
 pyyaml = "^5.3.1"
@@ -102,6 +101,7 @@ pytest-cov = "^3.0.0"
 types-cachetools = "^5.0.0"
 types-PyYAML = "^6.0.4"
 aws-cdk-lib = "^2.9.0"
+uvicorn = "^0.17.5"
 pyflakes = "^2.4.0"
 
 [tool.poetry.scripts]
@@ -109,7 +109,6 @@ opennem = 'opennem.cli:main'
 
 [tool.poetry.extras]
 postgres = ["psycopg2"]
-server = ["fastapi", "uvicorn"]
 
 [tool.black]
 line-length = 120
