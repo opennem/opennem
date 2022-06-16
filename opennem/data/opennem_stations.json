@@ -4261,5 +4261,88 @@
     "wikipedia_link": "https://en.wikipedia.org/wiki/Snapper_Point_Power_Station",
     "wikidata_id": null,
     "website_url": "http://www.nexifenergy.com/project/snapper-point/"
+  },
+  {
+    "created_by": "opennem.stations",
+    "created_at": "2020-11-13T02:47:00.969029",
+    "id": 5252,
+    "participant": null,
+    "participant_id": null,
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "solar_utility",
+          "label": "",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "METZSF1",
+        "network_code": "METZSF1",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 135,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "NSW1",
+        "unit_id": null,
+        "unit_number": null,
+        "unit_alias": null,
+        "unit_capacity": null,
+        "emissions_factor_co2": null,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ],
+    "photos": null,
+    "code": "METZSF",
+    "name": "Metz Solar Farm",
+    "network_name": "Metz Solar Farmn",
+    "location": {
+      "created_by": null,
+      "created_at": "2020-11-13T02:47:00.969029",
+      "id": null,
+      "weather_station": null,
+      "weather_nearest": null,
+      "address1": "",
+      "address2": "",
+      "locality": "Armidale",
+      "state": "NSW",
+      "postcode": null,
+      "country": "au",
+      "geocode_approved": true,
+      "geocode_skip": false,
+      "geocode_processed_at": null,
+      "geocode_by": null,
+      "lat": null,
+      "lng": null
+    },
+    "location_id": null,
+    "approved": true,
+    "approved_by": null,
+    "approved_at": null,
+    "network": null,
+    "description": "Metz Solar Farm is a 135MW solar farm located 15km from Armidale",
+    "wikipedia_link": null,
+    "wikidata_id": null,
+    "website_url": "http://metzsolarfarm.com/"
   }
 ]
