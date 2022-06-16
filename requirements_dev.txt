@@ -1,3 +1,4 @@
+Warning: The lock file is not up to date with the latest changes in pyproject.toml. You may be getting outdated dependencies. Run update to update them.
 aiodns==3.0.0; python_version >= "3.6"
 aiohttp==3.8.1; python_version >= "3.6"
 aiosignal==1.2.0; python_version >= "3.6"
@@ -10,7 +11,7 @@ astroid==2.11.6; python_full_version >= "3.7.2"
 asttokens==2.0.5; python_version >= "3.8"
 async-generator==1.10; python_version >= "3.7"
 async-timeout==4.0.2; python_version >= "3.6"
-atomicwrites==1.4.0; python_version >= "3.7" and python_full_version < "3.0.0" and sys_platform == "win32" and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7") or sys_platform == "win32" and python_version >= "3.7" and python_full_version >= "3.4.0" and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7")
+atomicwrites==1.4.0; python_version >= "3.7" and python_full_version < "3.0.0" and sys_platform == "win32" or sys_platform == "win32" and python_version >= "3.7" and python_full_version >= "3.4.0"
 attrs==21.4.0; python_version >= "3.7" and python_full_version < "3.0.0" and python_version < "4.0" or python_version >= "3.7" and python_version < "4.0" and python_full_version >= "3.5.0"
 aws-cdk-lib==2.27.0; python_version >= "3.7" and python_version < "4.0"
 backcall==0.2.0; python_version >= "3.8"
@@ -27,10 +28,11 @@ certifi==2022.5.18.1; python_version >= "3.7" and python_version < "4"
 cffi==1.15.0
 charset-normalizer==2.0.12; python_version >= "3.7" and python_version < "4" and python_full_version >= "3.5.0"
 click==8.1.3; python_version >= "3.7"
-colorama==0.4.4; platform_system == "Windows" and python_version >= "3.7" and python_full_version >= "3.7.2" and sys_platform == "win32" and (python_version >= "3.8" and python_full_version < "3.0.0" and sys_platform == "win32" or sys_platform == "win32" and python_version >= "3.8" and python_full_version >= "3.5.0") and (python_version >= "3.7" and python_full_version < "3.0.0" and sys_platform == "win32" or sys_platform == "win32" and python_version >= "3.7" and python_full_version >= "3.5.0") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0") and (python_version >= "2.7" and python_full_version < "3.0.0" and platform_system == "Windows" or python_full_version >= "3.5.0" and platform_system == "Windows") and (python_version >= "3.7" and python_full_version < "3.0.0" and sys_platform == "win32" and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7") or sys_platform == "win32" and python_version >= "3.7" and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7") and python_full_version >= "3.5.0")
+colorama==0.4.4; platform_system == "Windows" and python_version >= "3.7" and python_full_version >= "3.7.2" and sys_platform == "win32" and (python_version >= "3.8" and python_full_version < "3.0.0" and sys_platform == "win32" or sys_platform == "win32" and python_version >= "3.8" and python_full_version >= "3.5.0") and (python_version >= "3.7" and python_full_version < "3.0.0" and sys_platform == "win32" or sys_platform == "win32" and python_version >= "3.7" and python_full_version >= "3.5.0") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0") and (python_version >= "2.7" and python_full_version < "3.0.0" and platform_system == "Windows" or python_full_version >= "3.5.0" and platform_system == "Windows")
 commonmark==0.9.1; python_full_version >= "3.6.3" and python_full_version < "4.0.0"
 constructs==10.1.38; python_version >= "3.7" and python_version < "4.0"
 coverage==6.4.1; python_version >= "3.7"
+cssselect==1.1.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
 datedelta==1.4; python_version >= "3.6" and python_version < "4.0"
 datetime-truncate==1.1.1
 decorator==5.1.1; python_version >= "3.8"
@@ -38,7 +40,7 @@ dill==0.3.5.1; python_full_version >= "3.7.2"
 distlib==0.3.4; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
 dnspython==2.2.1; python_version >= "3.6" and python_version < "4.0" and python_full_version >= "3.6.1"
 docopt==0.6.2
-email-validator==1.2.1; python_full_version >= "3.6.1" and python_version >= "3.7"
+email-validator==1.2.1; python_full_version >= "3.6.1"
 et-xmlfile==1.1.0; python_version >= "3.6"
 executing==0.8.3; python_version >= "3.8"
 fancycompleter==0.9.1
@@ -46,14 +48,14 @@ fastapi==0.78.0; python_full_version >= "3.6.1"
 filelock==3.7.1; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7"
 flake8==4.0.1; python_version >= "3.6"
 frozenlist==1.3.0; python_version >= "3.7"
-geoalchemy2==0.11.1; python_version >= "3.6"
+geoalchemy2==0.12.1; python_version >= "3.7"
 geoalchemy==0.7.2
-geojson-pydantic==0.3.4; python_version >= "3.7"
+geojson-pydantic==0.4.2; python_version >= "3.7"
 geojson==2.5.0
 gitdb==4.0.9; python_version >= "3.7"
 gitignore-parser==0.0.8
 gitpython==3.1.27; python_version >= "3.7"
-greenlet==1.1.2; python_version >= "3" and python_full_version < "3.0.0" and (platform_machine == "aarch64" or platform_machine == "ppc64le" or platform_machine == "x86_64" or platform_machine == "amd64" or platform_machine == "AMD64" or platform_machine == "win32" or platform_machine == "WIN32") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0") and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.7") and (python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6") or python_version >= "3" and (platform_machine == "aarch64" or platform_machine == "ppc64le" or platform_machine == "x86_64" or platform_machine == "amd64" or platform_machine == "AMD64" or platform_machine == "win32" or platform_machine == "WIN32") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0") and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.7") and python_full_version >= "3.5.0" and (python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6")
+greenlet==1.1.2; python_version >= "3" and python_full_version < "3.0.0" and (platform_machine == "aarch64" or platform_machine == "ppc64le" or platform_machine == "x86_64" or platform_machine == "amd64" or platform_machine == "AMD64" or platform_machine == "win32" or platform_machine == "WIN32") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0") and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.7") or python_version >= "3" and (platform_machine == "aarch64" or platform_machine == "ppc64le" or platform_machine == "x86_64" or platform_machine == "amd64" or platform_machine == "AMD64" or platform_machine == "win32" or platform_machine == "WIN32") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0") and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.7") and python_full_version >= "3.5.0"
 h11==0.13.0; python_full_version >= "3.7.0" and python_version >= "3.7"
 h2==4.1.0; python_full_version >= "3.6.1" and python_version >= "3.7"
 hpack==4.0.0; python_full_version >= "3.6.1" and python_version >= "3.7"
@@ -61,7 +63,7 @@ huey==2.4.3
 hypercorn==0.13.2; python_version >= "3.7"
 hyperframe==6.0.1; python_full_version >= "3.6.1" and python_version >= "3.7"
 idna==3.3
-iniconfig==1.1.1; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7"
+iniconfig==1.1.1; python_version >= "3.7"
 ipython==8.4.0; python_version >= "3.8"
 isort==5.10.1; python_full_version >= "3.6.1" and python_version < "4.0"
 jedi==0.18.1; python_version >= "3.8"
@@ -80,7 +82,7 @@ mypy==0.950; python_version >= "3.6"
 numpy==1.22.4; python_version >= "3.10"
 oauthlib==3.2.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.6"
 openpyxl==3.0.10; python_version >= "3.6"
-osm2geojson==0.1.33
+osm2geojson==0.2.0
 outcome==1.1.0; python_version >= "3.7"
 packaging==21.3; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7"
 pandas==1.4.2; python_version >= "3.8"
@@ -112,6 +114,7 @@ pygments==2.12.0; python_full_version >= "3.6.3" and python_full_version < "4.0.
 pylint-sqlalchemy==0.2.0
 pylint==2.14.1; python_full_version >= "3.7.2"
 pyparsing==3.0.9; python_full_version >= "3.6.8" and python_version >= "3.7"
+pyquery==1.4.3
 pyreadline==2.1; platform_system == "Windows"
 pyrepl==0.9.0
 pytest-benchmark==3.4.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
@@ -120,7 +123,7 @@ pytest-sugar==0.9.4
 pytest-watch==4.2.0
 pytest==7.1.2; python_version >= "3.7"
 python-dateutil==2.8.2; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.3.0")
-python-dotenv==0.19.2; python_version >= "3.5"
+python-dotenv==0.20.0; python_version >= "3.5"
 python-magic==0.4.27; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
 pytz==2022.1; python_version >= "3.8"
 pyyaml==5.4.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.6.0")
@@ -144,8 +147,8 @@ stack-data==0.2.0; python_version >= "3.8"
 starlette==0.19.1; python_version >= "3.6" and python_full_version >= "3.6.1"
 termcolor==1.1.0
 toml==0.10.2; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7"
-tomli==2.0.1; python_version < "3.11" and python_full_version >= "3.7.2" and python_version >= "3.7" and python_full_version <= "3.11.0a6" and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7")
-tomlkit==0.10.2; python_version >= "3.6" and python_version < "4.0"
+tomli==2.0.1; python_version < "3.11" and python_full_version >= "3.7.2" and python_version >= "3.7" and python_full_version <= "3.11.0a6"
+tomlkit==0.11.0; python_version >= "3.6" and python_version < "4.0"
 tox==3.25.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
 traitlets==5.2.2.post1; python_version >= "3.8"
 trio==0.21.0; python_version >= "3.7"
