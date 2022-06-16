@@ -50,17 +50,10 @@ services:
   api:
     image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
     command: [
-        # "wait-for",
-        # "10.0.0.124:15433",
-        # "--",
-        # "uvicorn",
-        # "--host",
-        # "0.0.0.0",
-        # "--forwarded-allow-ips",
-        # "*",
-        # "opennem.api.app:app",
-        # hypercorn
-                "hypercorn",
+        "wait-for",
+        "10.0.0.124:15433",
+        "--",
+        "hypercorn",
         "opennem.api.app:app",
         "--bind",
         "0.0.0.0:8000",

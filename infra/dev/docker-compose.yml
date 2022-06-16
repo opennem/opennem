@@ -49,13 +49,6 @@ services:
         "wait-for",
         "10.0.0.124:15433",
         "--",
-        # "uvicorn",
-        # "--host",
-        # "0.0.0.0",
-        # "--forwarded-allow-ips",
-        # "*",
-        # "opennem.api.app:app",
-        # hypercorn
         "hypercorn",
         "opennem.api.app:app",
         "--bind",
