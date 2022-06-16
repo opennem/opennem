@@ -2740,7 +2740,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "",
           "renewable": true
         },
@@ -2782,7 +2782,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "",
           "renewable": true
         },
@@ -3031,7 +3031,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "Battery (Charging)",
           "renewable": true
         },
@@ -3073,7 +3073,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "Battery (Discharging)",
           "renewable": true
         },
@@ -3155,7 +3155,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "Battery (Charging)",
           "renewable": true
         },
@@ -3197,7 +3197,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "Battery (Discharging)",
           "renewable": true
         },
@@ -3357,7 +3357,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "Battery (Charging)",
           "renewable": true
         },
@@ -3399,7 +3399,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "Battery (Discharging)",
           "renewable": true
         },
@@ -3711,7 +3711,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "",
           "renewable": true
         },
@@ -3753,7 +3753,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "",
           "renewable": true
         },
@@ -3909,7 +3909,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "",
           "renewable": true
         },
@@ -3951,7 +3951,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "",
           "renewable": true
         },
