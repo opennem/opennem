@@ -217,11 +217,7 @@ class AEMOTableSet(BaseModel):
         if table_lookup:
             return table_lookup.pop()
 
-        logger.debug(
-            "Looking up table: {} amongst ({})".format(
-                table_name, ", ".join([i.name for i in self.tables])
-            )
-        )
+        logger.debug("Looking up table: {} amongst ({})".format(table_name, ", ".join([i.name for i in self.tables])))
 
         return None
 
@@ -242,6 +238,7 @@ def parse_aemo_mms_csv(
     table_set: Optional[AEMOTableSet] = None,
     namespace_filter: Optional[List[str]] = None,
     parse_table_schemas: bool = False,
+    skip_records: bool = False,
 ) -> AEMOTableSet:
     """
     Parse AEMO CSV's into schemas and return a table set
@@ -307,6 +304,9 @@ def parse_aemo_mms_csv(
 
             # new record
             case "D":
+                if skip_records:
+                    continue
+
                 if not table_current:
                     logger.error("Have a record but not currently in a table")
                     continue
@@ -336,7 +336,7 @@ def parse_aemo_mms_csv(
     return table_set
 
 
-def parse_aemo_urls(urls: List[str]) -> AEMOTableSet:
+def parse_aemo_urls(urls: List[str], skip_records: bool = False) -> AEMOTableSet:
     """Parse a list of URLs into an AEMOTableSet"""
     aemo = AEMOTableSet()
 
@@ -348,7 +348,7 @@ def parse_aemo_urls(urls: List[str]) -> AEMOTableSet:
             continue
 
         csv_content_decoded = csv_content.decode("utf-8")
-        aemo = parse_aemo_mms_csv(csv_content_decoded, aemo)
+        aemo = parse_aemo_mms_csv(csv_content_decoded, aemo, skip_records=skip_records)
 
     # Count number of records
     total_records = 0
@@ -401,7 +401,9 @@ def parse_aemo_directory(directory_path: str) -> AEMOTableSet:
 # debug entry point
 if __name__ == "__main__":
     # @TODO parse into MMS schema
-    url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202204081455_0000000360913773.zip"
+    url = (
+        "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202204081455_0000000360913773.zip"
+    )
 
     r = parse_aemo_urls([url])
     assert r.has_table("unit_scada"), "has table"
