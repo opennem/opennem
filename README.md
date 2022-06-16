@@ -39,7 +39,7 @@ With poetry:
 ```sh
 $ poetry install
 $ poetry shell
-$ ./scripts/init.sh
+$ ./scripts/init.py
 ```
 
 With pip + venv:
@@ -48,7 +48,7 @@ With pip + venv:
 $ pip -m venv .venv
 $ pip install -r requirements.txt
 $ source .venv/bin/activate
-$ ./scripts/init.sh
+$ ./scripts/init.py
 ```
 
 ## Install
