@@ -53,17 +53,17 @@ class NetworkSchema(BaseConfig):
 
         return interval
 
-    def get_timezone(self, postgres_format: bool = False) -> timezone | ZoneInfo | str:
+    def get_timezone(self, postgres_format: bool = False) -> ZoneInfo | str:
         """Get the network timezone
 
         @TODO define crawl timezones vs network timezone
         @TODO clean this up and separate out postres format to another parameter
         """
-        tz: timezone | ZoneInfo | str | None = None
+        tz: ZoneInfo | str | None = None
 
         # If a fixed offset is defined for the network use that
         if self.offset:
-            tz = timezone(timedelta(seconds=self.offset * 60))
+            tz = timezone(timedelta(seconds=self.offset * 60))  # type: ignore
 
         # If the network alternatively defines a timezone
         if not tz and self.timezone:
