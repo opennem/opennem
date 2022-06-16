@@ -21,7 +21,6 @@ from typing import Any, Dict, List, Optional, Union
 from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 
-from lxml import etree
 from pydantic import ValidationError, validator
 from pyquery import PyQuery as pq
 
@@ -81,9 +80,7 @@ class DirlistingEntry(BaseConfig):
     file_size: Optional[int]
     entry_type: DirlistingEntryType = DirlistingEntryType.file
 
-    _validate_modified_date = validator("modified_date", allow_reuse=True, pre=True)(
-        parse_dirlisting_datetime
-    )
+    _validate_modified_date = validator("modified_date", allow_reuse=True, pre=True)(parse_dirlisting_datetime)
 
     @validator("aemo_created_date", always=True)
     def _validate_aemo_created_date(cls, value: Any, values: Dict[str, Any]) -> Optional[datetime]:
@@ -153,9 +150,7 @@ class DirectoryListing(BaseConfig):
     def get_directories(self) -> List[DirlistingEntry]:
         return list(filter(lambda x: x.entry_type == DirlistingEntryType.directory, self.entries))
 
-    def get_most_recent_files(
-        self, reverse: bool = True, limit: Optional[int] = None
-    ) -> List[DirlistingEntry]:
+    def get_most_recent_files(self, reverse: bool = True, limit: Optional[int] = None) -> List[DirlistingEntry]:
         _entries = list(sorted(self.get_files(), key=attrgetter("modified_date"), reverse=reverse))
 
         if not limit:
@@ -175,15 +170,12 @@ class DirectoryListing(BaseConfig):
 
             modified_since = list(
                 filter(
-                    lambda x: x.modified_date.replace(tzinfo=ZoneInfo(self.timezone))
-                    > modified_date,
+                    lambda x: x.modified_date.replace(tzinfo=ZoneInfo(self.timezone)) > modified_date,
                     self.get_files(),
                 )
             )
         else:
-            modified_since = list(
-                filter(lambda x: x.modified_date > modified_date, self.get_files())
-            )
+            modified_since = list(filter(lambda x: x.modified_date > modified_date, self.get_files()))
 
         return modified_since
 
@@ -224,7 +216,7 @@ def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing
     if not pre_area:
         raise Exception("Invalid directory listing: no pre or bad html")
 
-    for i in [i for i in pre_area.contents() if isinstance(i, str)]:
+    for i in [i for i in pre_area.html().split("<br/>") if i]:
         # it catches the containing block so skip those
         if not i:
             continue
