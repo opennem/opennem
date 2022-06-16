@@ -259,16 +259,8 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
 
     cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
-    primary_keys = []
 
     for record in table.records:
-        primary_key = set([record["settlementdate"], record["interconnectorid"]])
-
-        if primary_key in primary_keys:
-            continue
-
-        primary_keys.append(primary_key)
-
         records_to_store.append(
             {
                 "network_id": "NEM",
@@ -371,16 +363,8 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
 
     cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
-    primary_keys = []
 
     for record in table.records:
-        primary_key = set([record["settlementdate"], record["regionid"]])
-
-        if primary_key in primary_keys:
-            continue
-
-        primary_keys.append(primary_key)
-
         records_to_store.append(
             {
                 "network_id": "NEM",
