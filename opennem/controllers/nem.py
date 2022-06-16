@@ -80,16 +80,12 @@ def unit_scada_generate_facility_scada(
             row = asdict(row)  # type: ignore
 
         if interval_field not in row:
-            raise Exception(
-                "No such field: '{}'. Fields: {}. Data: {}".format(interval_field, fields, row)
-            )
+            raise Exception("No such field: '{}'. Fields: {}. Data: {}".format(interval_field, fields, row))
 
         trading_interval = row[interval_field]
 
         if facility_code_field not in row:
-            raise Exception(
-                "No such facility field: {}. Fields: {}".format(facility_code_field, fields)
-            )
+            raise Exception("No such facility field: {}. Fields: {}".format(facility_code_field, fields))
 
         facility_code = row[facility_code_field]
 
@@ -309,7 +305,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
     cr = ControllerReturn(total_records=len(table.records))
     records_to_store = []
-    # primary_keys = []
+    primary_keys = []
 
     price_field = "price"
 
@@ -318,12 +314,12 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
     for record in table.records:
         # @NOTE disable pk track
-        # primary_key = set([record.settlementdate, record.regionid])
+        primary_key = set([record.settlementdate, record.regionid])
 
-        # if primary_key in primary_keys:
-        #     continue
+        if primary_key in primary_keys:
+            continue
 
-        # primary_keys.append(primary_key)
+        primary_keys.append(primary_key)
 
         records_to_store.append(
             {
@@ -577,9 +573,7 @@ def process_rooftop_actual(table: AEMOTableSchema) -> ControllerReturn:
     records = [i for i in records if i]
 
     cr.processed_records = len(records)
-    cr.inserted_records = bulkinsert_mms_items(
-        FacilityScada, records, ["generated", "eoi_quantity"]
-    )
+    cr.inserted_records = bulkinsert_mms_items(FacilityScada, records, ["generated", "eoi_quantity"])
     cr.server_latest = max([i["trading_interval"] for i in records])
 
     return cr
