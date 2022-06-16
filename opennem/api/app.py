@@ -40,9 +40,7 @@ from opennem.utils.version import get_version
 logger = logging.getLogger(__name__)
 
 
-app = FastAPI(
-    title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None
-)
+app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None)
 
 # @TODO put CORS available/permissions in settings
 origins = [
@@ -51,9 +49,7 @@ origins = [
     "https://staging.opennem.org.au",
     "https://admin.opennem.org.au",
     "https://admin.opennem.test",
-    "http://localhost:8001",
-    "http://localhost:3000",
-    "http://127.0.0.1:8001",
+    "http://localhost:8002",
     "http://127.0.0.1:8002",
     "https://admin.opennem.localhost",
     "https://*.opennem-fe.pages.dev",
@@ -77,9 +73,7 @@ async def intercept_maintenance_mode(request: Request, call_next):  # type: igno
 
         resp_content = OpennemErrorSchema(detail="Maintenance Mode")
 
-        return OpennemExceptionResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, response_class=resp_content
-        )
+        return OpennemExceptionResponse(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, response_class=resp_content)
 
     response = await call_next(request)
     return response
@@ -87,9 +81,7 @@ async def intercept_maintenance_mode(request: Request, call_next):  # type: igno
 
 # Custom exception handler
 @app.exception_handler(OpennemBaseHttpException)
-async def opennem_exception_handler(
-    request: Request, exc: OpennemBaseHttpException
-) -> OpennemExceptionResponse:
+async def opennem_exception_handler(request: Request, exc: OpennemBaseHttpException) -> OpennemExceptionResponse:
     resp_content = OpennemErrorSchema(detail=exc.detail)
 
     return OpennemExceptionResponse(
@@ -110,9 +102,7 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> Openne
 
 @app.exception_handler(401)
 @app.exception_handler(403)
-async def http_type_exception_handler(
-    request: Request, exc: HTTPException
-) -> OpennemExceptionResponse:
+async def http_type_exception_handler(request: Request, exc: HTTPException) -> OpennemExceptionResponse:
     resp_content = OpennemErrorSchema(detail=exc.detail)
 
     return OpennemExceptionResponse(
