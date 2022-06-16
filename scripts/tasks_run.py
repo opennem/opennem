@@ -7,14 +7,9 @@ import logging
 import sys
 
 from opennem.api.export.map import priority_from_name
-from opennem.api.export.tasks import (
-    export_all_daily,
-    export_all_monthly,
-    export_energy,
-    export_metadata,
-    export_power,
-)
+from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_metadata, export_power
 from opennem.utils.version import get_version
+from opennem.workers.scheduler import huey
 
 logger = logging.getLogger("opennem.tasks")
 
@@ -32,11 +27,15 @@ def _setup_logger(verbosity: int) -> logging.Logger:
     return logger
 
 
+def flush_tasks() -> None:
+
+    huey.flush()
+    print("Flushed all tasks")
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "task", nargs="?", default="power", help="Task type to run"
-    )
+    parser.add_argument("task", nargs="?", default="power", help="Task type to run")
     parser.add_argument(
         "-p",
         "--priority",
@@ -102,11 +101,7 @@ def main():
 
     _task = globals()[task_name]
 
-    print(
-        "Running {} with priority {} and latest is {}".format(
-            task_name, priority, args.latest
-        )
-    )
+    print("Running {} with priority {} and latest is {}".format(task_name, priority, args.latest))
 
     run = _task(priority=priority, latest=args.latest)
 
