@@ -46,10 +46,17 @@ CHROME_AGENT_HEADERS = {
 
 API_CLIENT_HEADERS = {"user-agent": f"OpenNEM (v {get_version()})", "accept": "*/*"}
 
+HTTP_CACHE_SETUP = False
+
 
 def setup_http_cache() -> bool:
     """Sets up requests session local cachine using
     requests-cache if enabled in settings"""
+    global HTTP_CACHE_SETUP
+
+    if HTTP_CACHE_SETUP:
+        return True
+
     if not settings.http_cache_local:
         return False
 
@@ -61,6 +68,9 @@ def setup_http_cache() -> bool:
 
     requests_cache.install_cache(".opennem_requests_cache", expire_after=60 * 60 * 4)
     logger.info("Setup HTTP cache at: {}".format(settings.http_cache_local))
+
+    HTTP_CACHE_SETUP = True
+
     return True
 
 
