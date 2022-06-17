@@ -62,93 +62,6 @@ def run_aemo_mms_crawl(
     return controller_returns
 
 
-# Trading_IS
-
-AEMONemTradingISLatest = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nem.latest.trading_is",
-    url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)
-
-AEMONemTradingISCurrent = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.four_times_a_day,
-    name="au.nem.current.trading_is",
-    url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
-    latest=False,
-    limit=12 * 24 * 7,
-    processor=run_aemo_mms_crawl,
-)
-
-#  Dispatch_IS
-
-AEMONemDispatchISLatest = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nem.latest.dispatch_is",
-    url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)
-
-
-AEMONemDispatchISCurrent = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.four_times_a_day,
-    name="au.nem.current.dispatch_is",
-    url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
-    latest=False,
-    limit=2016,
-    processor=run_aemo_mms_crawl,
-)
-
-# Dispatch Scada
-
-AEMONEMDispatchScada = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nem.dispatch_scada",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
-    latest=True,
-    # limit=5,
-    processor=run_aemo_mms_crawl,
-)
-
-AEMONEMCurrentDispatchScada = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.four_times_a_day,
-    name="au.nem.current.dispatch_scada",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
-    latest=False,
-    # one week
-    limit=2016,
-    processor=run_aemo_mms_crawl,
-)
-
-AEMONEMArchiveDispatchScada = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.daily,
-    name="au.nem.archive.latest.dispatch_scada",
-    url="http://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/",
-    latest=False,
-    # 3 + 4d
-    limit=4,
-    processor=run_aemo_mms_crawl,
-)
-
-AEMONEMDispatchScadaArchive = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.live,
-    name="au.nem.archive.dispatch_scada",
-    url="http://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/",
-    latest=False,
-    limit=14,
-    processor=run_aemo_mms_crawl,
-)
-
 # Next day gens and dispatch
 
 AEMONEMDispatchActualGEN = CrawlerDefinition(
@@ -169,25 +82,25 @@ AEMONEMNextDayDispatch = CrawlerDefinition(
     processor=run_aemo_mms_crawl,
 )
 
-AEMONEMDispatchActualGENArchive = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.daily,
-    name="au.nem.catchup.dispatch_actual_gen",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
-    latest=False,
-    limit=14,
-    processor=run_aemo_mms_crawl,
-)
+# AEMONEMDispatchActualGENArchive = CrawlerDefinition(
+#     priority=CrawlerPriority.medium,
+#     schedule=CrawlerSchedule.daily,
+#     name="au.nem.catchup.dispatch_actual_gen",
+#     url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
+#     latest=False,
+#     limit=14,
+#     processor=run_aemo_mms_crawl,
+# )
 
-AEMONEMNextDayDispatchArchive = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.daily,
-    name="au.nem.catchup.dispatch",
-    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
-    latest=False,
-    limit=14,
-    processor=run_aemo_mms_crawl,
-)
+# AEMONEMNextDayDispatchArchive = CrawlerDefinition(
+#     priority=CrawlerPriority.medium,
+#     schedule=CrawlerSchedule.daily,
+#     name="au.nem.catchup.dispatch",
+#     url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
+#     latest=False,
+#     limit=14,
+#     processor=run_aemo_mms_crawl,
+# )
 
 # Rooftop data
 
