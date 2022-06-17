@@ -5,6 +5,7 @@ Setup main module entry point with sanity checks, settings init
 and sentry.
 """
 import sys
+from pathlib import Path
 
 # Check minimum required Python version
 if sys.version_info < (3, 10):
@@ -37,6 +38,19 @@ from opennem.utils.version import get_version  # noqa: E402
 v = "3.10.0"
 __env__ = "prod"
 __version__ = get_version()
+__package__ = "opennem"
+
+
+if __package__ not in sys.modules:
+    raise Exception(f"Could not find {__package__} module")
+
+if sys.modules[__package__].__file__:
+    MODULE_DIR_PATH = Path(sys.modules[__package__].__file__).parent  # type: ignore
+else:
+    MODULE_DIR_PATH = Path(__file__).parent
+
+DATA_DIR_PATH = MODULE_DIR_PATH / "data"
+
 
 # Setup console
 from rich.console import Console  # noqa: E402

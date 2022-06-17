@@ -53,10 +53,7 @@ if num_handlers == 0:
 
 __root_logger.handlers[0].setFormatter(__root_logger_formatter)
 
-MODULE_DIR = os.path.dirname(__file__)
-PYTHON_VERSION = ".".join(
-    [str(i) for i in (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)]
-)
+PYTHON_VERSION = ".".join([str(i) for i in (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)])
 SYSTEM_STRING = platform()
 
 ENV = os.getenv("ENV", default="development")
@@ -69,9 +66,7 @@ except Exception:
     raise Exception("Could not get version")
 
 logging.info(f"Loading OpenNEM ENV {ENV}")
-logging.info(
-    f"OpenNEM Version: {VERSION}. Python version: {PYTHON_VERSION}. System: {SYSTEM_STRING}"
-)
+logging.info(f"OpenNEM Version: {VERSION}. Python version: {PYTHON_VERSION}. System: {SYSTEM_STRING}")
 
 env_files = load_env_file(ENV)
 
