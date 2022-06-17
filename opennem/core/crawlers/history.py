@@ -115,7 +115,11 @@ def get_crawler_history(crawler_name: str, days: int = 3) -> list[datetime]:
     return models
 
 
-def get_crawler_missing_intervals(crawler_name: str, days: int = 3) -> list[datetime]:
+def get_crawler_missing_intervals(
+    crawler_name: str,
+    interval_size: int,
+    days: int = 3,
+) -> list[datetime]:
     """Gets the crawler missing intervals going back a period of days"""
     engine = get_database_engine()
 
@@ -124,7 +128,7 @@ def get_crawler_missing_intervals(crawler_name: str, days: int = 3) -> list[date
         with intervals as (
             select
                 interval
-            from generate_series(nemweb_latest_interval() - interval :days, nemweb_latest_interval(), interval  '5 minutes') AS interval
+            from generate_series(nemweb_latest_interval() - interval :days, nemweb_latest_interval(), interval  :interval_size) AS interval
         )
 
         select
@@ -141,7 +145,7 @@ def get_crawler_missing_intervals(crawler_name: str, days: int = 3) -> list[date
     """
     )
 
-    query = stmt.bindparams(crawler_name=crawler_name, days=f"{days} days")
+    query = stmt.bindparams(crawler_name=crawler_name, days=f"{days} days", interval_size=f"{interval_size} minutes")
 
     logger.debug(dedent(str(query)))
 
