@@ -10,6 +10,16 @@ from opennem import settings
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
+from opennem.crawlers.aemo import (
+    AEMONEMDispatchActualGEN,
+    AEMONEMNextDayDispatch,
+    AEMONEMRooftop,
+    AEMONEMRooftopForecast,
+)
+from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopTodayCrawler
+from opennem.crawlers.bom import BOMCapitals
+from opennem.crawlers.nemweb import AEMONemwebDispatchIS, AEMONemwebTradingIS, AEMONNemwebDispatchScada
+from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.modules import load_all_crawler_definitions
 
@@ -24,6 +34,22 @@ def load_crawlers() -> CrawlerSet:
     if settings.crawlers_module:
         # search_modules.append()
         crawler_definitions = load_all_crawler_definitions(settings.crawlers_module)
+        crawler_definitions = [
+            AEMONEMDispatchActualGEN,
+            AEMONEMNextDayDispatch,
+            AEMONEMRooftop,
+            AEMONEMRooftopForecast,
+            AEMONemwebTradingIS,
+            AEMONemwebDispatchIS,
+            AEMONNemwebDispatchScada,
+            APVIRooftopTodayCrawler,
+            APVIRooftopLatestCrawler,
+            BOMCapitals,
+            WEMBalancing,
+            WEMBalancingLive,
+            WEMFacilityScada,
+            WEMFacilityScadaLive,
+        ]
 
     for crawler_inst in crawler_definitions:
 
@@ -53,9 +79,7 @@ def load_crawlers() -> CrawlerSet:
 
     cs = CrawlerSet(crawlers=crawlers)
 
-    logger.debug(
-        "Loaded {} crawlers: {}".format(len(cs.crawlers), ", ".join([i.name for i in cs.crawlers]))
-    )
+    logger.debug("Loaded {} crawlers: {}".format(len(cs.crawlers), ", ".join([i.name for i in cs.crawlers])))
 
     return cs
 
@@ -76,9 +100,7 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
     crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
     crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
 
-    cr: Optional[ControllerReturn] = crawler.processor(
-        crawler=crawler, last_crawled=last_crawled, limit=crawler.limit
-    )
+    cr: Optional[ControllerReturn] = crawler.processor(crawler=crawler, last_crawled=last_crawled, limit=crawler.limit)
 
     if not cr:
         return None
@@ -99,11 +121,7 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
         else:
             logger.debug("{} has no server_latest return".format(crawler.name))
 
-        logger.info(
-            "Set last_processed to {} and server_latest to {}".format(
-                crawler.last_processed, cr.server_latest
-            )
-        )
+        logger.info("Set last_processed to {} and server_latest to {}".format(crawler.last_processed, cr.server_latest))
 
 
 _CRAWLER_SET = load_crawlers()
