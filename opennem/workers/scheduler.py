@@ -127,20 +127,18 @@ def schedule_custom_tasks() -> None:
         export_flows()
 
 
-@huey.periodic_task(crontab(hour="*/2", minute="15"), priority=50)
+@huey.periodic_task(crontab(hour="*/4", minute="15"), priority=50)
 @huey.lock_task("schedule_export_all_daily")
 def schedule_export_all_daily() -> None:
     if settings.workers_run:
         export_all_daily()
-        slack_message("Finished running export_all_daily on {}".format(settings.env))
 
 
-@huey.periodic_task(crontab(hour="*/2", minute="15"), priority=50)
+@huey.periodic_task(crontab(hour="*/4", minute="45"), priority=50)
 @huey.lock_task("schedule_export_all_monthly")
 def schedule_export_all_monthly() -> None:
     if settings.workers_run:
         export_all_monthly()
-        slack_message("Finished running export_all_monthly on {}".format(settings.env))
 
 
 @huey.periodic_task(crontab(hour="*/12", minute="19"))
