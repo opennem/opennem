@@ -77,19 +77,19 @@ class DirlistingEntry(BaseConfig):
     filename: Path
     link: str
     modified_date: Optional[datetime]
-    aemo_created_date: Optional[datetime]
+    aemo_interval_date: Optional[datetime]
     file_size: Optional[int]
     entry_type: DirlistingEntryType = DirlistingEntryType.file
 
     _validate_modified_date = validator("modified_date", allow_reuse=True, pre=True)(parse_dirlisting_datetime)
 
-    @validator("aemo_created_date", always=True)
+    @validator("aemo_interval_date", always=True)
     def _validate_aemo_created_date(cls, value: Any, values: Dict[str, Any]) -> Optional[datetime]:
         if value:
-            raise Exception("aemo_created_date is derived, not set")
+            raise Exception("aemo_interval_date is derived, not set")
 
         # no need to check if this exists since ValidationError will occur if not
-        _filename_value = values["filename"]
+        _filename_value = str(values["filename"])
         aemo_dt = None
 
         try:
@@ -154,6 +154,9 @@ class DirectoryListing(BaseConfig):
 
     def get_files_modified_in(self, intervals: list[datetime]) -> list[DirlistingEntry]:
         return list(filter(lambda x: x.modified_date in intervals, self.entries))
+
+    def get_files_aemo_intervals(self, intervals: list[datetime]) -> list[DirlistingEntry]:
+        return list(filter(lambda x: x.aemo_interval_date in intervals, self.entries))
 
     def get_files_modified_since(self, modified_date: datetime) -> List[DirlistingEntry]:
         modified_since: list[DirlistingEntry] = []
