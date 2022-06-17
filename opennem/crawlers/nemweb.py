@@ -141,7 +141,6 @@ AEMONemwebRooftop = CrawlerDefinition(
     schedule=CrawlerSchedule.live,
     name="au.nemweb.rooftop",
     url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
-    latest=True,
     filename_filter=".*_MEASUREMENT_.*",
     network=NetworkAEMORooftop,
     backfill_days=14,
