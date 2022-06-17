@@ -49,9 +49,11 @@ def crawl_cli_run(name: str, latest: bool = False) -> None:
 
 
 @click.command()
-def crawl_cli_flush() -> None:
+@click.option("--days", default=None, help="Only flush days")
+@click.option("--crawler", default=None, help="Crawler name to flush")
+def crawl_cli_flush(days: int | None = None, crawler: str | None = None) -> None:
     console.log("[blue]Flushing crawlers[/blue]")
-    crawlers_flush_metadata()
+    crawlers_flush_metadata(days=days, crawler_name=crawler)
 
 
 @click.command()
