@@ -26,6 +26,7 @@ from pyquery import PyQuery as pq
 
 from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import is_number, strip_double_spaces
+from opennem.core.parsers.aemo.filenames import AEMOMMSFilename, parse_aemo_filename, parse_aemo_filename_datetimes
 from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.parsers.dirlisting")
@@ -89,22 +90,15 @@ class DirlistingEntry(BaseConfig):
 
         # no need to check if this exists since ValidationError will occur if not
         _filename_value = values["filename"]
-
-        _created_date_match = re.search(_aemo_created_date_match, str(_filename_value))
-
-        if not _created_date_match:
-            return None
-
-        _dt_str = _created_date_match.group("date_created")
-
-        dt = None
+        aemo_dt = None
 
         try:
-            dt = datetime.strptime(_dt_str, "%Y%m%d%H%M")
-        except ValueError:
+            aemo_dt = parse_aemo_filename(_filename_value)
+        except Exception as e:
+            logger.error("Error parsing aemo datetime: {}".format(e))
             return None
 
-        return dt
+        return aemo_dt.date
 
     @validator("file_size", allow_reuse=True, pre=True)
     def _parse_dirlisting_filesize(cls, value: str | int | float) -> Optional[int]:
@@ -157,6 +151,9 @@ class DirectoryListing(BaseConfig):
             return _entries
 
         return _entries[:limit]
+
+    def get_files_modified_in(self, intervals: list[datetime]) -> list[DirlistingEntry]:
+        return list(filter(lambda x: x.modified_date in intervals, self.entries))
 
     def get_files_modified_since(self, modified_date: datetime) -> List[DirlistingEntry]:
         modified_since: list[DirlistingEntry] = []
