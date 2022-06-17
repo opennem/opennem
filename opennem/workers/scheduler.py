@@ -61,6 +61,12 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 logger = logging.getLogger("openenm.scheduler")
 
 regular_schedule_minute_interval = 1
+frequent_schedule_minute_interval = 2
+
+if IS_DEV:
+    regular_schedule_minute_interval = 5
+    frequent_schedule_minute_interval = 5
+
 
 # crawler tasks
 @huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
@@ -112,7 +118,7 @@ def crawler_scheduled_day() -> None:
 
 
 # export tasks
-@huey.periodic_task(crontab(minute="*/2"), priority=90)
+@huey.periodic_task(crontab(minute="*/{frequent_schedule_minute_interval}"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
     if settings.workers_run:
