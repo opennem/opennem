@@ -112,7 +112,7 @@ AEMONemwebDispatchIS = CrawlerDefinition(
 
 AEMONNemwebDispatchScada = CrawlerDefinition(
     priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.four_times_a_day,
+    schedule=CrawlerSchedule.live,
     name="au.nemweb.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
     processor=run_nemweb_aemo_crawl,
