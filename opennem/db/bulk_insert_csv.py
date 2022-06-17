@@ -62,9 +62,7 @@ def build_insert_query(
 
     update_col_names = list(filter(lambda c: c, update_col_names))
 
-    primary_key_columns = [
-        c.name for c in table.__table__.primary_key.columns.values()
-    ]  # type: ignore
+    primary_key_columns = [c.name for c in table.__table__.primary_key.columns.values()]  # type: ignore
 
     if len(update_col_names):
         on_conflict = BULK_INSERT_CONFLICT_UPDATE.format(
@@ -77,9 +75,7 @@ def build_insert_query(
     _ts: str = ""
 
     if hasattr(table, "__table_args__"):
-        if (
-            isinstance(table.__table_args__, dict) and "schema" in table.__table_args__
-        ):  # type: ignore
+        if isinstance(table.__table_args__, dict) and "schema" in table.__table_args__:  # type: ignore
             _ts = table.__table_args__["schema"]  # type: ignore
 
         # for table args that are a list of args find the schema def
@@ -89,9 +85,7 @@ def build_insert_query(
                     _ts = i["schema"]  # type: ignore
 
         if not _ts:
-            logger.warn(
-                "Table schema not found for table: {}".format(table.__table__.name)  # type: ignore
-            )
+            logger.warn("Table schema not found for table: {}".format(table.__table__.name))  # type: ignore
         else:
             table_schema = f"{_ts}."
 
@@ -192,9 +186,7 @@ def bulkinsert_mms_items(
         return 0
 
     sql_query = build_insert_query(table, update_fields)
-    csv_content = generate_bulkinsert_csv_from_records(
-        table, records, column_names=list(records[0].keys())
-    )
+    csv_content = generate_bulkinsert_csv_from_records(table, records, column_names=list(records[0].keys()))
 
     # @TODO check the scoping here
     engine = get_database_engine()
@@ -205,6 +197,7 @@ def bulkinsert_mms_items(
         cursor.copy_expert(sql_query, csv_content)
         conn.commit()
         num_records = len(records)
+        logger.info(f"Bulk inserted {len(records)} records")
     except Exception as generic_error:
         if hasattr(generic_error, "hide_parameters"):
             generic_error.hide_parameters = True  # type: ignore
