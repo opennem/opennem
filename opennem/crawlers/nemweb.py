@@ -13,7 +13,7 @@ from opennem.core.crawlers.history import (
 )
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.core.parsers.aemo.mms import parse_aemo_url, parse_aemo_urls
-from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
+from opennem.core.parsers.dirlisting import get_dirlisting
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
 
 logger = logging.getLogger("opennem.crawler.nemweb")
