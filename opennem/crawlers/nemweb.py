@@ -44,8 +44,13 @@ def run_nemweb_aemo_crawl(
     if not crawler.network or not crawler.network.interval_size:
         raise Exception("Require an interval size for network for this crawler")
 
+    backfill_days = 14
+
+    if crawler.backfill_days:
+        backfill_days = crawler.backfill_days
+
     missing_intervals = get_crawler_missing_intervals(
-        crawler_name=crawler.name, days=14, interval_size=crawler.network.interval_size
+        crawler_name=crawler.name, days=backfill_days, interval_size=crawler.network.interval_size
     )
 
     logger.debug(f"Have {len(missing_intervals)} missing intervals")
@@ -105,6 +110,7 @@ AEMONemwebTradingIS = CrawlerDefinition(
     name="au.nemweb.trading_is",
     url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
     network=NetworkNEM,
+    backfill_days=14,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -115,6 +121,7 @@ AEMONemwebDispatchIS = CrawlerDefinition(
     name="au.nemweb.dispatch_is",
     url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
     network=NetworkNEM,
+    backfill_days=2,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -124,6 +131,7 @@ AEMONNemwebDispatchScada = CrawlerDefinition(
     name="au.nemweb.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
     network=NetworkNEM,
+    backfill_days=2,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -136,6 +144,7 @@ AEMONemwebRooftop = CrawlerDefinition(
     latest=True,
     filename_filter=".*_MEASUREMENT_.*",
     network=NetworkAEMORooftop,
+    backfill_days=14,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -147,6 +156,7 @@ AEMONemwebRooftopForecast = CrawlerDefinition(
     url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
     latest=True,
     network=NetworkAEMORooftop,
+    backfill_days=14,
     processor=run_nemweb_aemo_crawl,
 )
 
