@@ -12,7 +12,7 @@ from opennem.core.crawlers.history import (
     set_crawler_history,
 )
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
-from opennem.core.parsers.aemo.mms import parse_aemo_url
+from opennem.core.parsers.aemo.mms import parse_aemo_url, parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 
 logger = logging.getLogger("opennem.crawler.nemweb")
@@ -57,23 +57,36 @@ def run_nemweb_aemo_crawl(
 
     crawl_history: list[CrawlHistoryEntry] = []
 
-    for entry in entries_to_fetch:
-        try:
-            ts = parse_aemo_url(entry.link)
+    if len(entries_to_fetch) <= 5:
+        for entry in entries_to_fetch:
+            try:
+                ts = parse_aemo_url(entry.link)
 
-            controller_returns = store_aemo_tableset(ts)
+                controller_returns = store_aemo_tableset(ts)
 
-            max_date = max([i.modified_date for i in entries_to_fetch if i.modified_date])
+                max_date = max([i.modified_date for i in entries_to_fetch if i.modified_date])
 
-            if not controller_returns.last_modified or max_date > controller_returns.last_modified:
-                controller_returns.last_modified = max_date
+                if not controller_returns.last_modified or max_date > controller_returns.last_modified:
+                    controller_returns.last_modified = max_date
 
+                if entry.aemo_interval_date:
+                    ch = CrawlHistoryEntry(
+                        interval=entry.aemo_interval_date, records=controller_returns.processed_records
+                    )
+                    crawl_history.append(ch)
+
+            except Exception as e:
+                logger.error(f"Processing error: {e}")
+    else:
+        ts = parse_aemo_urls([i.link for i in entries_to_fetch])
+
+        controller_returns = store_aemo_tableset(ts)
+        controller_returns.last_modified = max([i.modified_date for i in entries_to_fetch if i.modified_date])
+
+        for entry in entries_to_fetch:
             if entry.aemo_interval_date:
                 ch = CrawlHistoryEntry(interval=entry.aemo_interval_date, records=controller_returns.processed_records)
                 crawl_history.append(ch)
-
-        except Exception as e:
-            logger.error(f"Processing error: {e}")
 
     set_crawler_history(crawler_name=crawler.name, histories=crawl_history)
 
