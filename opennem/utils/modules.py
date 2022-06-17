@@ -1,6 +1,5 @@
 """ Utilities for loading modules """
 
-import inspect
 from importlib import import_module
 from pkgutil import iter_modules
 from typing import List
