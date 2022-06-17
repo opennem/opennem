@@ -18,7 +18,13 @@ from opennem.crawlers.aemo import (
 )
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
-from opennem.crawlers.nemweb import AEMONemwebDispatchIS, AEMONemwebTradingIS, AEMONNemwebDispatchScada
+from opennem.crawlers.nemweb import (
+    AEMONemwebDispatchIS,
+    AEMONemwebRooftop,
+    AEMONemwebRooftopForecast,
+    AEMONemwebTradingIS,
+    AEMONNemwebDispatchScada,
+)
 from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.modules import load_all_crawler_definitions
@@ -37,8 +43,8 @@ def load_crawlers() -> CrawlerSet:
         crawler_definitions = [
             AEMONEMDispatchActualGEN,
             AEMONEMNextDayDispatch,
-            AEMONEMRooftop,
-            AEMONEMRooftopForecast,
+            AEMONemwebRooftop,
+            AEMONemwebRooftopForecast,
             AEMONemwebTradingIS,
             AEMONemwebDispatchIS,
             AEMONNemwebDispatchScada,
