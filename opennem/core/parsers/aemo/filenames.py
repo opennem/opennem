@@ -19,7 +19,7 @@ class AEMODataBucketSize(enum.Enum):
 @dataclass
 class AEMOMMSFilename:
     filename: str
-    date: int
+    date: datetime
     interval: str | None = field(default=None)
     bucket_size: AEMODataBucketSize | None = field(default=None)
 
@@ -61,6 +61,10 @@ def parse_aemo_filename(filename: str) -> AEMOMMSFilename:
     if not filename_components:
         raise Exception(f"Could not parse filename {filename}")
 
-    filename_model = AEMOMMSFilename(**filename_components.groupdict())
+    filename_model = AEMOMMSFilename(
+        filename=filename_components.group("filename"),
+        date=parse_aemo_filename_datetimes(filename_components.group("date")),
+        interval=filename_components.group("interval"),
+    )
 
     return filename_model
