@@ -86,16 +86,19 @@ class DirlistingEntry(BaseConfig):
     @validator("aemo_interval_date", always=True)
     def _validate_aemo_created_date(cls, value: Any, values: Dict[str, Any]) -> Optional[datetime]:
         if value:
-            raise Exception("aemo_interval_date is derived, not set")
+            raise Exception("aemGo_interval_date is derived, not set")
 
         # no need to check if this exists since ValidationError will occur if not
-        _filename_value = str(values["filename"])
+        _filename_value: Path = values["filename"]
         aemo_dt = None
 
+        if _filename_value.suffix not in [".zip", ".csv"]:
+            return None
+
         try:
-            aemo_dt = parse_aemo_filename(_filename_value)
+            aemo_dt = parse_aemo_filename(str(_filename_value))
         except Exception as e:
-            logger.error("Error parsing aemo datetime: {}".format(e))
+            logger.info("Error parsing aemo datetime: {}".format(e))
             return None
 
         return aemo_dt.date
