@@ -14,7 +14,7 @@ import platform
 
 from huey import PriorityRedisHuey, crontab
 
-from opennem.api.export.map import PriorityType
+from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
 from opennem.api.export.tasks import (
     export_all_daily,
     export_all_monthly,
@@ -262,9 +262,16 @@ def db_facility_seen_update() -> None:
 
 
 @huey.periodic_task(crontab(hour="10", minute="15"))
-@huey.lock_task("db_facility_seen_update")
+@huey.lock_task("run_run_network_data_range_update")
 def run_run_network_data_range_update() -> None:
     run_network_data_range_update()
+
+
+@huey.periodic_task(crontab(hour="*/1", minute="30"))
+@huey.lock_task("db_facility_seen_update")
+def run_refresh_export_maps() -> None:
+    refresh_export_map()
+    refresh_weekly_export_map()
 
 
 # admin tasks

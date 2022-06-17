@@ -52,9 +52,7 @@ class PriorityType(Enum):
     history = 4
 
 
-def date_range_from_week(
-    year: int, week: int, network: Optional[NetworkSchema] = None
-) -> ScadaDateRange:
+def date_range_from_week(year: int, week: int, network: Optional[NetworkSchema] = None) -> ScadaDateRange:
     """
     Get a scada date range from week number with
     network awareness
@@ -184,7 +182,7 @@ class StatMetadata(BaseModel):
         return em
 
 
-def get_weekly_export_map() -> StatMetadata:
+def generate_weekly_export_map() -> StatMetadata:
     """
     Generate export map for weekly power series
 
@@ -261,9 +259,7 @@ def get_weekly_export_map() -> StatMetadata:
 
             if not scada_range:
                 logger.error(
-                    "Require a scada range for network {} and region {}".format(
-                        network_schema.code, region.code
-                    )
+                    "Require a scada range for network {} and region {}".format(network_schema.code, region.code)
                 )
                 continue
 
@@ -275,9 +271,7 @@ def get_weekly_export_map() -> StatMetadata:
                     network=network_schema,
                     year=year,
                     week=week,
-                    date_range=date_range_from_week(
-                        year, week, network_from_network_code(network.code)
-                    ),
+                    date_range=date_range_from_week(year, week, network_from_network_code(network.code)),
                     interval=human_to_interval(f"{network.interval_size}m"),
                     period=human_to_period("7d"),
                 )
@@ -288,14 +282,12 @@ def get_weekly_export_map() -> StatMetadata:
 
                 _exmap.append(export)
 
-    export_meta = StatMetadata(
-        date_created=datetime.now(), version=get_version(), resources=_exmap
-    )
+    export_meta = StatMetadata(date_created=datetime.now(), version=get_version(), resources=_exmap)
 
     return export_meta
 
 
-def get_export_map() -> StatMetadata:
+def generate_export_map() -> StatMetadata:
     """
     Generates a map of all export JSONs
 
@@ -463,9 +455,7 @@ def get_export_map() -> StatMetadata:
 
             if not scada_range:
                 logger.error(
-                    "Require a scada range for network {} and region {}".format(
-                        network_schema.code, region.code
-                    )
+                    "Require a scada range for network {} and region {}".format(network_schema.code, region.code)
                 )
                 continue
 
@@ -532,11 +522,45 @@ def get_export_map() -> StatMetadata:
 
             _exmap.append(export)
 
-    export_meta = StatMetadata(
-        date_created=datetime.now(), version=get_version(), resources=_exmap
-    )
+    export_meta = StatMetadata(date_created=datetime.now(), version=get_version(), resources=_exmap)
 
     return export_meta
+
+
+_EXPORT_MAP: StatMetadata | None = None
+_EXPORT_MAP_WEEKLY: StatMetadata | None = None
+
+
+def get_export_map() -> StatMetadata:
+    global _EXPORT_MAP
+
+    if _EXPORT_MAP:
+        return _EXPORT_MAP
+
+    _EXPORT_MAP = generate_export_map()
+
+    return _EXPORT_MAP
+
+
+def refresh_export_map() -> None:
+    global _EXPORT_MAP
+    _EXPORT_MAP = generate_export_map()
+
+
+def get_weekly_export_map() -> StatMetadata:
+    global _EXPORT_MAP_WEEKLY
+
+    if _EXPORT_MAP_WEEKLY:
+        return _EXPORT_MAP_WEEKLY
+
+    _EXPORT_MAP_WEEKLY = generate_weekly_export_map()
+
+    return _EXPORT_MAP_WEEKLY
+
+
+def refresh_weekly_export_map() -> None:
+    global _EXPORT_MAP_WEEKLY
+    _EXPORT_MAP_WEEKLY = generate_weekly_export_map()
 
 
 if __name__ == "__main__":
