@@ -24,7 +24,7 @@ from opennem.api.export.tasks import (
     export_metadata,
     export_power,
 )
-from opennem.crawl import CrawlerSchedule, run_crawls_by_schedule
+from opennem.crawl import CrawlerSchedule, run_crawl, run_crawls_by_schedule
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
@@ -112,7 +112,7 @@ def crawler_scheduled_day() -> None:
 
 
 # export tasks
-@huey.periodic_task(crontab(minute="*/5"), priority=90)
+@huey.periodic_task(crontab(minute="*/2"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
     if settings.workers_run:
