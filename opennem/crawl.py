@@ -10,12 +10,7 @@ from opennem import settings
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
-from opennem.crawlers.aemo import (
-    AEMONEMDispatchActualGEN,
-    AEMONEMNextDayDispatch,
-    AEMONEMRooftop,
-    AEMONEMRooftopForecast,
-)
+from opennem.crawlers.aemo import AEMONEMDispatchActualGEN, AEMONEMNextDayDispatch
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
