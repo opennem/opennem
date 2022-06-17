@@ -6,6 +6,7 @@ from typing import Callable, List, Optional
 from pydantic import Field
 
 from opennem.schema.core import BaseConfig
+from opennem.schema.network import NetworkSchema
 
 
 class CrawlerPriority(Enum):
@@ -34,6 +35,9 @@ class CrawlerDefinition(BaseConfig):
     limit: Optional[int]
     filename_filter: Optional[str]
     latest: bool = False
+
+    network: NetworkSchema | None
+    backfill_days: int | None
 
     priority: CrawlerPriority
     schedule: Optional[CrawlerSchedule]
