@@ -263,6 +263,7 @@ def db_facility_seen_update() -> None:
 @huey.lock_task("run_run_network_data_range_update")
 def run_run_network_data_range_update() -> None:
     run_network_data_range_update()
+    slack_message("Ran network data range on {}".format(settings.env))
 
 
 @huey.periodic_task(crontab(hour="*/1", minute="30"))
