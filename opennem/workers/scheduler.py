@@ -38,6 +38,7 @@ from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.gap_fill.energy import run_energy_gapfill
+from opennem.workers.network_data_range import run_network_data_range_update
 
 # Py 3.8 on MacOS changed the default multiprocessing model
 if platform.system() == "Darwin":
@@ -258,6 +259,12 @@ def schedule_facility_first_seen_check() -> None:
 def db_facility_seen_update() -> None:
     update_facility_seen_range()
     slack_message(f"Updated facility seen range on {settings.env}")
+
+
+@huey.periodic_task(crontab(hour="10", minute="15"))
+@huey.lock_task("db_facility_seen_update")
+def run_run_network_data_range_update() -> None:
+    run_network_data_range_update()
 
 
 # admin tasks
