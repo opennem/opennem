@@ -104,7 +104,7 @@ services:
         "10.0.0.124:15433",
         "--",
         "huey_consumer",
-        "-w8",
+        "-w4",
         "-f",
         "-k",
         "process",
