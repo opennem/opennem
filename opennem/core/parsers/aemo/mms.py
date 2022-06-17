@@ -338,9 +338,11 @@ def parse_aemo_mms_csv(
     return table_set
 
 
-def parse_aemo_url(url: str, skip_records: bool = False) -> AEMOTableSet:
+def parse_aemo_url(url: str, table_set: AEMOTableSet | None = None, skip_records: bool = False) -> AEMOTableSet:
     """Parse a single AEMO URL into an AEMOTableSet"""
-    aemo = AEMOTableSet()
+
+    if not table_set:
+        table_set = AEMOTableSet()
 
     try:
         csv_content = url_downloader(url)
@@ -351,17 +353,17 @@ def parse_aemo_url(url: str, skip_records: bool = False) -> AEMOTableSet:
         raise Exception("Could not parse URL: {}".format(url))
 
     csv_content_decoded = csv_content.decode("utf-8")
-    aemo = parse_aemo_mms_csv(csv_content_decoded, aemo, skip_records=skip_records, url=url)
+    table_set = parse_aemo_mms_csv(csv_content_decoded, table_set, skip_records=skip_records, url=url)
 
     # Count number of records
     total_records = 0
 
-    for table in aemo.tables:
+    for table in table_set.tables:
         total_records += len(table.records)
 
     logger.info("Parsed {} records".format(total_records))
 
-    return aemo
+    return table_set
 
 
 def parse_aemo_urls(urls: List[str], skip_records: bool = False) -> AEMOTableSet:
@@ -369,7 +371,7 @@ def parse_aemo_urls(urls: List[str], skip_records: bool = False) -> AEMOTableSet
     aemo = AEMOTableSet()
 
     for url in urls:
-        aemo = parse_aemo_url(url, skip_records=skip_records)
+        aemo = parse_aemo_url(url, table_set=aemo, skip_records=skip_records)
 
     # Count number of records
     total_records = 0
