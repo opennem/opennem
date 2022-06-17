@@ -45,10 +45,10 @@ def crawl_bom_capitals(
 
 BOMCapitals = CrawlerDefinition(
     priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.frequent,
+    schedule=CrawlerSchedule.quarter_hour,
     name="au.bom.capitals",
     url="none",
     limit=1,
-    backoff=5,
+    backoff=30,
     processor=crawl_bom_capitals,
 )
