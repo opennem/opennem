@@ -68,7 +68,7 @@ class TimeSeries(BaseConfig):
     """
 
     # Start and end dates
-    start: Optional[datetime]
+    start: datetime | None
     end: datetime = datetime.now()
 
     # The network for this date range
@@ -121,16 +121,12 @@ class TimeSeries(BaseConfig):
         # subtract the period (ie. 7d from the end for start if not all)
         if self.period == human_to_period("all"):
             start = date_trunc(start, self.interval.trunc)
-            start = start.replace(
-                hour=0, minute=0, second=0, tzinfo=self.network.get_fixed_offset()
-            )
+            start = start.replace(hour=0, minute=0, second=0, tzinfo=self.network.get_fixed_offset())
 
             # If its all per month take the end of the last month
             if self.interval == human_to_interval("1M"):
                 end = date_trunc(get_end_of_last_month(end), "day")
-                end = end.replace(
-                    hour=23, minute=59, second=59, tzinfo=self.network.get_fixed_offset()
-                )
+                end = end.replace(hour=23, minute=59, second=59, tzinfo=self.network.get_fixed_offset())
 
             self.year = None
 
