@@ -118,11 +118,10 @@ def crawler_scheduled_day() -> None:
 
 
 # export tasks
-@huey.periodic_task(crontab(minute="*/{frequent_schedule_minute_interval}"), priority=90)
+@huey.periodic_task(crontab(minute="*/2"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
-    if settings.workers_run:
-        export_power(priority=PriorityType.live)
+    export_power(priority=PriorityType.live)
 
 
 @huey.periodic_task(crontab(minute="*/15"), priority=90)
