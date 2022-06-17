@@ -153,6 +153,10 @@ class Network(Base, BaseModel):
     offset = Column(Integer, nullable=True)
     interval_size = Column(Integer, nullable=False)
 
+    # data start and end dates cached here
+    data_start_date = Column(TIMESTAMP(timezone=True), index=True, nullable=True)
+    data_end_date = Column(TIMESTAMP(timezone=True), index=True, nullable=True)
+
     # Network that is used to price this network
     network_price = Column(Text, nullable=False)
 
