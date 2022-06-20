@@ -1,19 +1,27 @@
 """ Parse MMS filenames """
 
+import enum
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkSchema
 
-__aemo_filename_re = re.compile(r"(?P<filename>[\w\_]+)_(?P<date>\d{8,14})_(?P<interval>\d{16})\.zip")
+__aemo_filename_re = re.compile(r"(?P<filename>[a-zA-Z\_]+)_(?P<date>\d{6,14})_?(?P<interval>\d{14,16})?\.(zip|csv)")
+
+
+class AEMODataBucketSize(enum.Enum):
+    interval = "interval"
+    day = "day"
+    month = "month"
 
 
 @dataclass
 class AEMOMMSFilename:
     filename: str
     date: int
-    interval: str
+    interval: str | None = field(default=None)
+    bucket_size: AEMODataBucketSize | None = field(default=None)
 
 
 def parse_aemo_filename_datetimes(dtimestr: str, network: NetworkSchema | None = None) -> datetime:

@@ -10,6 +10,7 @@ from opennem.core.parsers.aemo.filenames import AEMOMMSFilename, parse_aemo_file
     [
         ("20220415", datetime.fromisoformat("2022-04-15T00:00:00")),
         ("202206130025", datetime.fromisoformat("2022-06-13T00:25:00")),
+        ("202204210025", datetime.fromisoformat("2022-04-21T00:25:00")),
     ],
 )
 def test_parse_aemo_filename_datetimes(dtstring: str, expected: datetime) -> None:
@@ -40,6 +41,14 @@ def test_parse_aemo_filename_datetimes(dtstring: str, expected: datetime) -> Non
         (
             "PUBLIC_PRICE_REVISION_DISPATCH_20220417153013_0000000361443655.zip",
             {"filename": "PUBLIC_PRICE_REVISION_DISPATCH", "date": "20220417153013", "interval": "0000000361443655"},
+        ),
+        (
+            "FCAS_202204210025.zip",
+            {"filename": "FCAS", "date": "202204210025", "interval": None},
+        ),
+        (
+            "PUBLIC_VWAFCASPRICES_202204220000_20220423040501.zip",
+            {"filename": "PUBLIC_VWAFCASPRICES", "date": "202204220000", "interval": "20220423040501"},
         ),
     ],
 )
