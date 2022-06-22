@@ -239,6 +239,7 @@ def parse_aemo_mms_csv(
     namespace_filter: Optional[List[str]] = None,
     parse_table_schemas: bool = False,
     skip_records: bool = False,
+    url: str | None = None,
 ) -> AEMOTableSet:
     """
     Parse AEMO CSV's into schemas and return a table set
@@ -293,6 +294,7 @@ def parse_aemo_mms_csv(
                     namespace=table_namespace,
                     fields=table_fields,
                     fieldnames=table_fields,
+                    url_source=url,
                 )
 
                 # do we have a custom shema for the table?
@@ -336,23 +338,38 @@ def parse_aemo_mms_csv(
     return table_set
 
 
+def parse_aemo_url(url: str, skip_records: bool = False) -> AEMOTableSet:
+    """Parse a single AEMO URL into an AEMOTableSet"""
+    aemo = AEMOTableSet()
+
+    try:
+        csv_content = url_downloader(url)
+    except Exception as e:
+        raise Exception(f"Could not fetch AEMO url {url}: {e}")
+
+    if not csv_content:
+        raise Exception("Could not parse URL: {}".format(url))
+
+    csv_content_decoded = csv_content.decode("utf-8")
+    aemo = parse_aemo_mms_csv(csv_content_decoded, aemo, skip_records=skip_records, url=url)
+
+    # Count number of records
+    total_records = 0
+
+    for table in aemo.tables:
+        total_records += len(table.records)
+
+    logger.info("Parsed {} records".format(total_records))
+
+    return aemo
+
+
 def parse_aemo_urls(urls: List[str], skip_records: bool = False) -> AEMOTableSet:
     """Parse a list of URLs into an AEMOTableSet"""
     aemo = AEMOTableSet()
 
     for url in urls:
-        try:
-            csv_content = url_downloader(url)
-        except Exception as e:
-            logger.error(f"Could not fetch AEMO url {url}: {e}")
-            continue
-
-        if not csv_content:
-            logger.error("Could not parse URL: {}".format(url))
-            continue
-
-        csv_content_decoded = csv_content.decode("utf-8")
-        aemo = parse_aemo_mms_csv(csv_content_decoded, aemo, skip_records=skip_records)
+        aemo = parse_aemo_url(url, skip_records=skip_records)
 
     # Count number of records
     total_records = 0
