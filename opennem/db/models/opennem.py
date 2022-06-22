@@ -7,6 +7,7 @@
     - WEM
 """
 
+import enum
 from decimal import Decimal
 from typing import List, Optional
 
@@ -92,6 +93,34 @@ class CrawlMeta(Base):
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class CrawlerSource(enum.Enum):
+    nemweb = "nemweb"
+    wem = "wem"
+
+
+class CrawlHistory(Base):
+    """updated crawl meta that tracks invidual intervals"""
+
+    __tablename__ = "crawl_history"
+
+    source = Column(Enum(CrawlerSource), nullable=False, primary_key=True, default=CrawlerSource.nemweb)
+    crawler_name = Column(Text, nullable=False, primary_key=True)
+
+    network_id = Column(
+        Text,
+        ForeignKey("network.code", name="fk_crawl_info_network_code"),
+        primary_key=True,
+        nullable=False,
+    )
+    network = relationship("Network", lazy="joined")
+
+    interval = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
+    inserted_records = Column(Integer, nullable=True)
+
+    crawled_time = Column(DateTime(timezone=True), server_default=func.now())
+    processed_time = Column(DateTime(timezone=True), server_default=func.now())
 
 
 class FuelTech(Base, BaseModel):
@@ -270,9 +299,7 @@ class BomStation(Base):
 class BomObservation(Base):
     __tablename__ = "bom_observation"
 
-    observation_time = Column(
-        TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False
-    )
+    observation_time = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
 
     station_id = Column(
         Text,
@@ -514,9 +541,7 @@ class Station(Base, BaseModel):
 class Facility(Base, BaseModel):
     __tablename__ = "facility"
 
-    __table_args__ = (
-        UniqueConstraint("network_id", "code", name="excl_facility_network_id_code"),
-    )
+    __table_args__ = (UniqueConstraint("network_id", "code", name="excl_facility_network_id_code"),)
 
     def __str__(self) -> str:
         return "{} <{}>".format(self.code, self.fueltech_id)
@@ -543,9 +568,7 @@ class Facility(Base, BaseModel):
         ForeignKey("fueltech.code", name="fk_facility_fueltech_id"),
         nullable=True,
     )
-    fueltech = relationship(
-        "FuelTech", back_populates="facilities", lazy="joined", innerjoin=False
-    )
+    fueltech = relationship("FuelTech", back_populates="facilities", lazy="joined", innerjoin=False)
 
     status_id = Column(
         Text,
@@ -671,9 +694,7 @@ class FacilityScada(Base, BaseModel):
     )
     network = relationship("Network")
 
-    trading_interval = Column(
-        TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False
-    )
+    trading_interval = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
 
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
     generated = Column(Numeric, nullable=True)
@@ -688,12 +709,8 @@ class FacilityScada(Base, BaseModel):
             trading_interval.desc(),
         ),
         Index("idx_facility_scada_network_id", network_id),
-        Index(
-            "idx_facility_scada_network_id_trading_interval", network_id, trading_interval.desc()
-        ),
-        Index(
-            "idx_facility_scada_trading_interval_facility_code", trading_interval, facility_code
-        ),
+        Index("idx_facility_scada_network_id_trading_interval", network_id, trading_interval.desc()),
+        Index("idx_facility_scada_trading_interval_facility_code", trading_interval, facility_code),
         # This index is used by aggregate tables
         Index(
             "idx_facility_scada_trading_interval_desc_facility_code",
@@ -811,9 +828,7 @@ class AggregateNetworkFlows(Base, BaseModel):
 
     __tablename__ = "at_network_flows"
 
-    trading_interval = Column(
-        TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False
-    )
+    trading_interval = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
 
     network_id = Column(
         Text,
