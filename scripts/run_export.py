@@ -90,6 +90,7 @@ if __name__ == "__main__":
     run_energy_gapfill(days=30)
     run_aggregates_all()
     export_energy(latest=False)
+    export_power()
     # fallback_runner()
     # dmin = datetime.fromisoformat("2022-02-17 07:00:00+08:00")
     # dmax = dmin + timedelta(hours=1)
