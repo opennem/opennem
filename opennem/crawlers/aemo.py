@@ -103,23 +103,3 @@ AEMONEMNextDayDispatch = CrawlerDefinition(
 # )
 
 # Rooftop data
-
-AEMONEMRooftop = CrawlerDefinition(
-    priority=CrawlerPriority.high,
-    schedule=CrawlerSchedule.frequent,
-    name="au.nem.rooftop",
-    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
-    latest=True,
-    filename_filter=".*_MEASUREMENT_.*",
-    processor=run_aemo_mms_crawl,
-)
-
-
-AEMONEMRooftopForecast = CrawlerDefinition(
-    priority=CrawlerPriority.low,
-    schedule=CrawlerSchedule.four_times_a_day,
-    name="au.nem.rooftop_forecast",
-    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)

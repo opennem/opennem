@@ -14,6 +14,7 @@ from opennem.core.crawlers.history import (
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.core.parsers.aemo.mms import parse_aemo_url, parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
+from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
 
 logger = logging.getLogger("opennem.crawler.nemweb")
 
@@ -40,7 +41,12 @@ def run_nemweb_aemo_crawl(
         )
     )
 
-    missing_intervals = get_crawler_missing_intervals(crawler_name=crawler.name, days=14)
+    if not crawler.network or not crawler.network.interval_size:
+        raise Exception("Require an interval size for network for this crawler")
+
+    missing_intervals = get_crawler_missing_intervals(
+        crawler_name=crawler.name, days=14, interval_size=crawler.network.interval_size
+    )
 
     logger.debug(f"Have {len(missing_intervals)} missing intervals")
 
@@ -98,6 +104,7 @@ AEMONemwebTradingIS = CrawlerDefinition(
     schedule=CrawlerSchedule.live,
     name="au.nemweb.trading_is",
     url="http://nemweb.com.au/Reports/Current/TradingIS_Reports/",
+    network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -107,6 +114,7 @@ AEMONemwebDispatchIS = CrawlerDefinition(
     schedule=CrawlerSchedule.live,
     name="au.nemweb.dispatch_is",
     url="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/",
+    network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -115,8 +123,33 @@ AEMONNemwebDispatchScada = CrawlerDefinition(
     schedule=CrawlerSchedule.live,
     name="au.nemweb.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/",
+    network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
+
+
+AEMONemwebRooftop = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.nemweb.rooftop",
+    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/ACTUAL/",
+    latest=True,
+    filename_filter=".*_MEASUREMENT_.*",
+    network=NetworkAEMORooftop,
+    processor=run_nemweb_aemo_crawl,
+)
+
+
+AEMONemwebRooftopForecast = CrawlerDefinition(
+    priority=CrawlerPriority.low,
+    schedule=CrawlerSchedule.four_times_a_day,
+    name="au.nemweb.rooftop_forecast",
+    url="http://www.nemweb.com.au/Reports/CURRENT/ROOFTOP_PV/FORECAST/",
+    latest=True,
+    network=NetworkAEMORooftop,
+    processor=run_nemweb_aemo_crawl,
+)
+
 
 if __name__ == "__main__":
     pass
