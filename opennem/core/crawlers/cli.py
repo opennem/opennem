@@ -1,12 +1,13 @@
 """ Crawl commands cli """
 import logging
+import sys
 
 import click
 from rich.table import Table
 
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
-from opennem.crawl import get_crawl_set, run_crawl
+from opennem.crawl import get_crawl_set, run_crawl, run_crawl_urls
 from opennem.utils.timesince import timesince
 
 logger = logging.getLogger("opennem.cli")
@@ -81,6 +82,25 @@ def crawl_cli_list() -> None:
     console.print(table)
 
 
+@click.command()
+@click.option("--url", help="URL to import", default=None)
+@click.option("--url-file", help="compose file to work with", type=click.File("r"), default=sys.stdin)
+def crawl_cli_import(url_file=None, url: str | None = None):
+    if not url_file and not url:
+        raise Exception("Require one of url or url_file")
+
+    urls = []
+
+    if url_file:
+        with url_file:
+            urls = url_file.read().split("/n")
+    else:
+        urls.append(url)
+
+    run_crawl_urls(urls)
+
+
 cmd_crawl_cli.add_command(crawl_cli_run, name="run")
 cmd_crawl_cli.add_command(crawl_cli_list, name="list")
 cmd_crawl_cli.add_command(crawl_cli_flush, name="flush")
+cmd_crawl_cli.add_command(crawl_cli_import, name="import")

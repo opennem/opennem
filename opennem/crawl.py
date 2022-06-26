@@ -7,9 +7,11 @@ from typing import List, Optional
 from pydantic import ValidationError
 
 from opennem import settings
+from opennem.controllers.nem import store_aemo_tableset
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
+from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.crawlers.aemo import AEMONEMDispatchActualGEN, AEMONEMNextDayDispatch
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
@@ -125,6 +127,20 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
         logger.info("Set last_processed to {} and server_latest to {}".format(crawler.last_processed, cr.server_latest))
 
 
+def run_crawl_urls(urls: list[str]) -> None:
+    """Crawl a lsit of urls
+    @TODO support directories
+    """
+
+    for url in urls:
+        if url.endswith(".zip") or url.endswith(".csv"):
+            try:
+                ts = parse_aemo_url(url)
+                store_aemo_tableset(ts)
+            except Exception as e:
+                logger.error(e)
+
+
 _CRAWLER_SET = load_crawlers()
 
 
@@ -165,7 +181,19 @@ def get_crawl_set() -> CrawlerSet:
 
 
 if __name__ == "__main__":
-    cs = get_crawl_set()
+    urls = [
+        # "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220612.zip",
+        # "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220613.zip",
+        # "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220614.zip",
+        # "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220615.zip",
+        # "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220616.zip",
+        # dispatch is
+        "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip",
+        "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220613.zip",
+        "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220614.zip",
+        "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220615.zip",
+        # trading is
+        "https://nemweb.com.au/Reports/Archive/TradingIS_Reports/PUBLIC_TRADINGIS_20220605_20220611.zip",
+    ]
 
-    for c in cs.crawlers:
-        run_crawl(c)
+    run_crawl_urls(urls)
