@@ -36,6 +36,7 @@ from opennem.workers.aggregates import run_aggregates_all
 from opennem.workers.backup import run_backup
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
+from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.gap_fill.energy import run_energy_gapfill
 from opennem.workers.network_data_range import run_network_data_range_update
@@ -214,7 +215,14 @@ def db_run_energy_gapfil() -> None:
     run_energy_gapfill(days=14)
 
     # Run flow updates
-    run_emission_update_day(days=2)
+    run_emission_update_day(days=4)
+
+
+#  run energy tasks
+@huey.periodic_task(crontab(hour="8,12,16", minute="45"))
+@huey.lock_task("run_run_energy_update_days")
+def run_run_energy_update_days() -> None:
+    run_energy_update_days(days=7)
 
 
 @huey.periodic_task(crontab(hour="8,16", minute="30"))
