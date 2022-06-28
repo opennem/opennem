@@ -1,8 +1,9 @@
 import urllib
+from pathlib import Path
 from typing import Optional
 
 # urljoin from here so that the netlocs can be loaded
-from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse  # noqa: F401
+from urllib.parse import parse_qs, unquote, urlencode, urljoin, urlparse, urlunparse  # noqa: F401
 
 # Support S3 URI's in urllib
 urllib.parse.uses_netloc.append("s3")
@@ -39,3 +40,15 @@ def strip_query_string(url: str, param: Optional[str] = None) -> str:
     _url_clean = urlunparse(_parsed)
 
     return _url_clean
+
+
+def get_filename_from_url(url: str) -> str:
+    """Get the filename part of a url"""
+    url_components = urlparse(url)
+    url_path = Path(unquote(url_components.path))
+    return url_path.name
+
+
+if __name__ == "__main__":
+    u = "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip"
+    print(get_filename_from_url(u))
