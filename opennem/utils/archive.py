@@ -3,9 +3,17 @@ Module to handle zip files and nested zip files.
 
 """
 import io
+import os
+from asyncio.log import logger
 from io import BytesIO
+from pathlib import Path
+from tempfile import gettempdir, mkdtemp
 from typing import IO, Any
 from zipfile import ZipFile
+
+from opennem.utils.url import get_filename_from_url
+
+from .http import http
 
 # limit how many zips within zips we'll parse
 # 0 means all
@@ -136,3 +144,46 @@ def stream_zip_contents(file_obj: IO[bytes], mode: str = "w"):  # type: ignore
                 c.append(zf.open(filename))
 
         return chain_streams(c)
+
+
+def download_and_unzip(url: str) -> str:
+    """Download and unzip a multi-zip file"""
+
+    dest_dir = mkdtemp(prefix="opennem_")
+
+    logger.info(f"Saving to {dest_dir}")
+
+    filename = get_filename_from_url(url)
+
+    try:
+        response = http.get(url)
+    except Exception as e:
+        logger.error(e)
+
+    save_path = Path(dest_dir) / filename
+
+    with save_path.open("wb+") as fh:
+        fh.write(response.content)
+
+    logger.info(f"Wrote file to {save_path}")
+
+    with ZipFile(save_path) as zf:
+        zf.extractall(dest_dir)
+
+    os.remove(save_path)
+
+    for _, _, files in os.walk(dest_dir):
+        for file in files:
+            file_path = Path(dest_dir) / file
+            if file_path.suffix.lower() == ".zip":
+                with ZipFile(file_path) as zf:
+                    zf.extractall(dest_dir)
+                os.remove(file_path)
+
+    return dest_dir
+
+
+if __name__ == "__main__":
+    u = "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip"
+    d = download_and_unzip(u)
+    print(d)
