@@ -12,6 +12,7 @@ from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
 from opennem.core.parsers.aemo.mms import parse_aemo_url
+from opennem.core.parsers.aemo.url import parse_aemo_url_optimized
 from opennem.crawlers.aemo import AEMONEMDispatchActualGEN, AEMONEMNextDayDispatch
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
@@ -182,11 +183,11 @@ def get_crawl_set() -> CrawlerSet:
 
 if __name__ == "__main__":
     urls = [
-        # "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220612.zip",
-        # "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220613.zip",
-        # "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220614.zip",
-        # "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220615.zip",
-        # "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220616.zip",
+        "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220612.zip",
+        "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220613.zip",
+        "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220614.zip",
+        "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220615.zip",
+        "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220616.zip",
         # dispatch is
         "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip",
         "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220613.zip",
@@ -194,6 +195,10 @@ if __name__ == "__main__":
         "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220615.zip",
         # trading is
         "https://nemweb.com.au/Reports/Archive/TradingIS_Reports/PUBLIC_TRADINGIS_20220605_20220611.zip",
+        # test
+        # "https://nemweb.com.au/Reports/Current/DispatchIS_Reports/PUBLIC_DISPATCHIS_202207011120_0000000366159732.zip"
     ]
 
-    run_crawl_urls(urls)
+    for url in urls:
+        parse_aemo_url_optimized(url)
+    # run_crawl_urls(urls)
