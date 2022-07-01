@@ -5,8 +5,10 @@ Parse AEMO MMS CSV format which can have multiple tables and definitions per CSV
 
 import csv
 import logging
+import os
 import time
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 import aiohttp
@@ -19,6 +21,7 @@ from opennem.core.normalizers import normalize_duid
 from opennem.schema.aemo.mms import MMSBaseClass, get_mms_schema_for_table
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
+from opennem.utils.archive import download_and_unzip
 from opennem.utils.concurrency import gather_with_concurrency
 from opennem.utils.dates import parse_date
 from opennem.utils.version import get_version
@@ -384,6 +387,25 @@ def parse_aemo_urls(urls: List[str], skip_records: bool = False) -> AEMOTableSet
     return aemo
 
 
+def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None) -> AEMOTableSet:
+    """Parses a local AEMO file"""
+    if not table_set:
+        table_set = AEMOTableSet()
+
+    file_path = Path(file)
+
+    if not file_path.is_file():
+        raise Exception(f"Not a file {file_path}")
+
+    if not file_path.suffix.lower() in [".csv"]:
+        raise Exception(f"Not a CSV file {file_path}")
+
+    with file_path.open() as fh:
+        table_set = parse_aemo_mms_csv(fh.read(), table_set=table_set)
+
+    return table_set
+
+
 async def parse_aemo_urls_parallel(urls: List[str]) -> AEMOTableSet:
     """Parse a list of URLs into an AEMOTableSet"""
     aemo = AEMOTableSet()
@@ -424,13 +446,14 @@ def parse_aemo_directory(directory_path: str) -> AEMOTableSet:
 # debug entry point
 if __name__ == "__main__":
     # @TODO parse into MMS schema
-    url = (
-        "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202204081455_0000000360913773.zip"
-    )
+    u = "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip"
+    d = download_and_unzip(u)
 
-    r = parse_aemo_urls([url])
-    assert r.has_table("unit_scada"), "has table"
+    onlyfiles = [Path(d) / f for f in os.listdir(d) if (Path(d) / f).is_file()]
+    logger.debug(f"Got {len(onlyfiles)} files")
 
-    print("has table and done")
+    for f in onlyfiles:
+        print(f"parsing {f}")
+        ts = parse_aemo_file(f)
 
     # controller_returns = store_aemo_tableset(r)
