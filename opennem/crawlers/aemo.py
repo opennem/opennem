@@ -3,12 +3,15 @@
 
 """
 import logging
+import os
+from pathlib import Path
 from typing import List
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
-from opennem.core.parsers.aemo.mms import parse_aemo_urls
+from opennem.core.parsers.aemo.mms import parse_aemo_file, parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
+from opennem.utils.archive import download_and_unzip
 
 logger = logging.getLogger("opennem.crawler.aemo")
 
@@ -54,10 +57,20 @@ def run_aemo_mms_crawl(
 
     logger.info("Fetching {} entries".format(len(entries_to_fetch)))
 
-    ts = parse_aemo_urls([i.link for i in entries_to_fetch])
+    for entry in entries_to_fetch:
+        d = download_and_unzip(entry.link)
 
-    controller_returns = store_aemo_tableset(ts)
-    controller_returns.last_modified = max([i.modified_date for i in entries_to_fetch if i.modified_date])
+        onlyfiles = [Path(d) / f for f in os.listdir(d) if (Path(d) / f).is_file()]
+        logger.debug(f"Got {len(onlyfiles)} files")
+
+        for f in onlyfiles:
+            logger.info(f"parsing {f}")
+
+            if f.suffix.lower() in [".csv"]:
+                ts = parse_aemo_file(str(f))
+
+            controller_returns = store_aemo_tableset(ts)
+            controller_returns.last_modified = max([i.modified_date for i in entries_to_fetch if i.modified_date])
 
     return controller_returns
 
