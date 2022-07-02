@@ -6,7 +6,17 @@ Scratchpad to export JSON's for unit tests + testing
 from opennem.api.export.map import PriorityType, StatType, get_export_map, get_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_energy, export_power
 from opennem.api.stats.controllers import get_scada_range
+from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.compat.loader import get_dataset
+from opennem.core.crawlers.history import (
+    CrawlHistoryEntry,
+    get_crawler_history,
+    get_crawler_missing_intervals,
+    set_crawler_history,
+)
+from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
+from opennem.core.parsers.aemo.mms import parse_aemo_url, parse_aemo_urls
+from opennem.core.parsers.dirlisting import get_dirlisting
 from opennem.crawl import get_crawl_set, run_crawl
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
@@ -70,13 +80,31 @@ def load_flows() -> None:
     pass
 
 
-def fallback_runner() -> None:
-    run_energy_gapfill(days=30)
-    run_aggregates_all_days(days=30)
+def fallback_runner(days: int = 7) -> None:
+    run_energy_update_days(days=days)
+    run_aggregates_all_days(days=days)
     export_energy(latest=False)
 
 
-from opennem.workers.energy import run_energy_calc
+from opennem.workers.energy import run_energy_calc, run_energy_update_all, run_energy_update_days
+
+
+def test_parser() -> None:
+    urls = [
+        "https://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202206250930_0000000365801254.zip",
+        "https://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202206250935_0000000365801429.zip",
+        "https://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202206250940_0000000365801640.zip",
+        "https://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202206250945_0000000365801797.zip",
+    ]
+
+    r = parse_aemo_urls(urls)
+    assert r.has_table("unit_scada"), "has table"
+
+    print("has table and done")
+
+    controller_returns = store_aemo_tableset(r)
+    print(controller_returns)
+
 
 #
 if __name__ == "__main__":
@@ -87,11 +115,12 @@ if __name__ == "__main__":
     # run_crawl(cs.get_crawler("au.nem.catchup.dispatch_actual_gen"))
     # run_crawl(cs.get_crawler("au.nem.catchup.dispatch"))
 
-    run_energy_gapfill(days=30)
-    run_aggregates_all()
-    export_energy(latest=False)
-    export_power()
-    # fallback_runner()
+    # run_energy_gapfill(days=30)
+    # run_aggregates_all()
+    # export_energy(latest=False)
+    # test_parser()
+    # export_power()
+    fallback_runner()
     # dmin = datetime.fromisoformat("2022-02-17 07:00:00+08:00")
     # dmax = dmin + timedelta(hours=1)
     # export_energy(latest=True)
