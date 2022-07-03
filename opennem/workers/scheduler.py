@@ -61,8 +61,8 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 
 logger = logging.getLogger("openenm.scheduler")
 
-regular_schedule_minute_interval = 1
-frequent_schedule_minute_interval = 2
+regular_schedule_minute_interval = 2
+frequent_schedule_minute_interval = 5
 
 if IS_DEV:
     regular_schedule_minute_interval = 5
@@ -196,10 +196,10 @@ def schedule_export_metadata() -> None:
 # Monitoring tasks
 
 # set output check
-@huey.periodic_task(crontab(hour="*/12", minute="30"), priority=30)
-@huey.lock_task("schedule_run_set_output_check")
-def schedule_run_set_output_check() -> None:
-    run_set_output_check()
+# @huey.periodic_task(crontab(hour="*/12", minute="30"), priority=30)
+# @huey.lock_task("schedule_run_set_output_check")
+# def schedule_run_set_output_check() -> None:
+#     run_set_output_check()
 
 
 @huey.periodic_task(crontab(hour="10", minute="45"))
