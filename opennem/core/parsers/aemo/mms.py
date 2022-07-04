@@ -6,12 +6,10 @@ Parse AEMO MMS CSV format which can have multiple tables and definitions per CSV
 import csv
 import logging
 import os
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-import aiohttp
 from pydantic import BaseModel, validator
 from pydantic.error_wrappers import ValidationError
 from pydantic.fields import PrivateAttr
@@ -22,7 +20,6 @@ from opennem.schema.aemo.mms import MMSBaseClass, get_mms_schema_for_table
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
 from opennem.utils.archive import download_and_unzip
-from opennem.utils.concurrency import gather_with_concurrency
 from opennem.utils.dates import parse_date
 from opennem.utils.version import get_version
 
@@ -404,39 +401,6 @@ def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None) -> AEMOTab
         table_set = parse_aemo_mms_csv(fh.read(), table_set=table_set)
 
     return table_set
-
-
-async def parse_aemo_urls_parallel(urls: List[str]) -> AEMOTableSet:
-    """Parse a list of URLs into an AEMOTableSet"""
-    aemo = AEMOTableSet()
-
-    conn = aiohttp.TCPConnector(limit=0, ttl_dns_cache=300)
-    session = aiohttp.ClientSession(connector=conn)
-    results = None
-
-    conc_req = 40
-    now = time.time()
-
-    async def get_async(url, session, results):
-        async with session.get(url) as response:
-            obj = await response.content
-            # aemo = parse_aemo_mms_csv(obj, aemo)
-
-    await gather_with_concurrency(conc_req, *[get_async(i, session, results) for i in urls])
-    time_taken = time.time() - now
-
-    print(time_taken)
-    await session.close()
-
-    # Count number of records
-    total_records = 0
-
-    for table in aemo.tables:
-        total_records += len(table.records)
-
-    logger.info("Parsed {} records".format(total_records))
-
-    return aemo
 
 
 def parse_aemo_directory(directory_path: str) -> AEMOTableSet:
