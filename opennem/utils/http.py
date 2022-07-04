@@ -129,3 +129,20 @@ def mount_timeout_adaptor(session: requests.Session) -> None:
 def mount_retry_adaptor(session: requests.Session) -> None:
     session.mount("https://", adapter_retry)
     session.mount("http://", adapter_retry)
+
+
+def attach_proxy(session: requests.Session) -> requests.Session:
+    """Attach setup proxy info to the session"""
+    if not settings.http_proxy_url:
+        logger.warn("Attempting to attach proxy with no settings set")
+        return session
+
+    proxies = {
+        "http": settings.http_proxy_url,
+        "https": settings.https_proxy_url,
+    }
+
+    session = requests.Session()
+    session.proxies.update(proxies)  # type: ignore
+
+    return session
