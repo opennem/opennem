@@ -49,6 +49,6 @@ BOMCapitals = CrawlerDefinition(
     name="au.bom.capitals",
     url="none",
     limit=1,
-    backoff=30,
+    backoff=5,
     processor=crawl_bom_capitals,
 )
