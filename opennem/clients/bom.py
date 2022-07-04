@@ -11,6 +11,7 @@ from pydantic import validator
 
 from opennem.schema.core import BaseConfig
 from opennem.utils.http import (
+    attach_proxy,
     mount_retry_adaptor,
     mount_timeout_adaptor,
     retry_strategy_on_permission_denied,
@@ -41,6 +42,8 @@ STATE_TO_TIMEZONE = {
 
 
 _bom_req_session = requests.Session()
+
+attach_proxy(_bom_req_session)
 
 mount_retry_adaptor(_bom_req_session)
 _bom_req_session.mount("http://", retry_strategy_on_permission_denied)
@@ -74,9 +77,7 @@ class BOMObserationSchema(BaseConfig):
     cloud_type: Optional[str]
 
     _validate_cloud = validator("cloud", pre=True, allow_reuse=True)(_clean_bom_text_field)
-    _validate_cloud_type = validator("cloud_type", pre=True, allow_reuse=True)(
-        _clean_bom_text_field
-    )
+    _validate_cloud_type = validator("cloud_type", pre=True, allow_reuse=True)(_clean_bom_text_field)
 
     @validator("observation_time", always=True, pre=True)
     def _validate_observation_time(cls, value: str, values: Dict[str, Any]) -> Optional[datetime]:
