@@ -93,8 +93,9 @@ class OpennemSettings(BaseSettings):
 
     # cache http requests locally
     http_cache_local: bool = False
-
     http_verify_ssl: bool = True
+    http_proxy_url: str | None = None  # @note don't let it confict with env HTTP_PROXY
+    https_proxy_url: str | None = None
 
     # used in testing to not run database queries
     dry_run: bool = False
