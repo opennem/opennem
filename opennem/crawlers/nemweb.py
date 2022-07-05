@@ -159,6 +159,34 @@ AEMONemwebRooftopForecast = CrawlerDefinition(
     processor=run_nemweb_aemo_crawl,
 )
 
+# archive crawlers
+# these are not scheduled
+# @TODO could integrate these with the above and split based on max/min date
+
+AEMONemwebTradingISArchive = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    name="au.nemweb.trading_is",
+    url="http://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/",
+    network=NetworkNEM,
+    processor=run_nemweb_aemo_crawl,
+)
+
+
+AEMONemwebDispatchISArchive = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    name="au.nemweb.dispatch_is",
+    url="http://nemweb.com.au/Reports/ARCHIVE/DispatchIS_Reports/",
+    network=NetworkNEM,
+    processor=run_nemweb_aemo_crawl,
+)
+
+AEMONNemwebDispatchScadaArchive = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    name="au.nemweb.dispatch_scada",
+    url="http://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/",
+    network=NetworkNEM,
+    processor=run_nemweb_aemo_crawl,
+)
 
 if __name__ == "__main__":
     pass
