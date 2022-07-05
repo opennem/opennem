@@ -19,6 +19,7 @@ def crawl_bom_capitals(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False
 ) -> Optional[ControllerReturn]:
     bom_stations = get_stations_priority(limit=crawler.limit)
+
     cr: Optional[ControllerReturn] = None
 
     for bom_station in bom_stations:
@@ -48,7 +49,7 @@ BOMCapitals = CrawlerDefinition(
     schedule=CrawlerSchedule.quarter_hour,
     name="au.bom.capitals",
     url="none",
-    limit=1,
+    limit=None,
     backoff=5,
     processor=crawl_bom_capitals,
 )
