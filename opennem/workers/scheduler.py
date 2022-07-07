@@ -24,12 +24,11 @@ from opennem.api.export.tasks import (
     export_metadata,
     export_power,
 )
-from opennem.crawl import CrawlerSchedule, run_crawl, run_crawls_by_schedule
+from opennem.crawl import CrawlerSchedule, run_crawls_by_schedule
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
-from opennem.monitors.set_outputs import run_set_output_check
 from opennem.notifications.slack import slack_message
 from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.aggregates import run_aggregates_all
@@ -38,6 +37,7 @@ from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
+from opennem.workers.fallback import fallback_runner
 from opennem.workers.gap_fill.energy import run_energy_gapfill
 from opennem.workers.gap_fill.generated import check_generated_gaps
 from opennem.workers.network_data_range import run_network_data_range_update
@@ -117,6 +117,7 @@ def crawler_scheduled_twice_a_day() -> None:
 @huey.lock_task("crawler_scheduled_day")
 def crawler_scheduled_day() -> None:
     run_crawls_by_schedule(CrawlerSchedule.daily)
+    fallback_runner()
 
 
 # export tasks
