@@ -17,3 +17,7 @@ def fallback_runner(days: int = 7) -> None:
     run_flow_updates_all_per_year(datetime.now().year, 1)
     run_aggregates_all_days(days=days)
     export_energy(latest=False)
+
+
+if __name__ == "__main__":
+    fallback_runner()
