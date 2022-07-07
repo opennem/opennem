@@ -27,6 +27,8 @@ def get_stations_priority(limit: Optional[int] = None) -> List[BomStationSchema]
             shuffle(all_models)
 
             return_models = all_models[:limit]
+        else:
+            return_models = all_models
 
     return return_models
 
@@ -46,8 +48,6 @@ def get_stations() -> List[BomStationSchema]:
 
 def get_archive_page_for_station_code(web_code: str, archive_month: date = datetime.now()) -> str:
     """returns a station archive page for a web code and a month"""
-    url_format = (
-        "http://www.bom.gov.au/climate/dwo/{datestr}/html/IDCJDW{web_code}.{datestr}.shtml"
-    )
+    url_format = "http://www.bom.gov.au/climate/dwo/{datestr}/html/IDCJDW{web_code}.{datestr}.shtml"
 
     return url_format.format(datestr=archive_month.strftime("%Y%m"), web_code=web_code)
