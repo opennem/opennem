@@ -4720,5 +4720,73 @@
       }
     ],
     "code": "MUWAWF"
+  },
+  {
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "wind",
+          "label": "",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "MRTLSWF1",
+        "network_code": "MRTLSWF1",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 153,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "VIC1",
+        "unit_id": null,
+        "unit_number": null,
+        "unit_alias": null,
+        "unit_capacity": null,
+        "emissions_factor_co2": null,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ],
+    "code": "MRTLSWF",
+    "name": "Mortlake South Wind Farm",
+    "network_name": "Mortlake South Wind Farm",
+    "location": {
+      "address1": "",
+      "address2": "",
+      "locality": "",
+      "state": "VIC",
+      "postcode": null,
+      "country": "au",
+      "geocode_approved": true,
+      "geocode_skip": false,
+      "geocode_processed_at": null,
+      "geocode_by": null,
+      "lat": -38.1479652,
+      "lng": 142.8822464
+    },
+    "approved": true,
+    "description": "ACCIONA's fifth wind farm in Australia, with 157.5 MW of power and battery storage. The wind farm is being constructed on cleared open and level land that is predominantly used for dairy farming.",
+    "wikipedia_link": null,
+    "wikidata_id": null,
+    "website_url": "https://www.acciona.com.au/mortlake"
   }
 ]
