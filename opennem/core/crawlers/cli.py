@@ -8,6 +8,7 @@ from rich.table import Table
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
 from opennem.crawl import get_crawl_set, run_crawl, run_crawl_urls
+from opennem.utils.http import test_proxy
 from opennem.utils.timesince import timesince
 
 logger = logging.getLogger("opennem.cli")
@@ -24,6 +25,9 @@ def cmd_crawl_cli() -> None:
 @click.argument("name")
 @click.option("--latest", default=False, help="Run only server latest")
 def crawl_cli_run(name: str, latest: bool = False) -> None:
+
+    test_proxy()
+
     console.log("Run crawlers matching: {}".format(name))
 
     crawlers = get_crawl_set()

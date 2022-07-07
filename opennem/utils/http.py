@@ -146,3 +146,19 @@ def attach_proxy(session: requests.Session) -> requests.Session:
     session.proxies.update(proxies)  # type: ignore
 
     return session
+
+
+def test_proxy() -> None:
+    """Display test proxy output"""
+    req = requests.Session()
+    req = attach_proxy(req)
+    url = "http://lumtest.com/myip.json"
+
+    resp = req.get(url)
+
+    if not resp.ok:
+        logger.error("Error in test_proxy")
+
+    resp_envelope = resp.json()
+
+    logger.info("Using proxy with IP {} and country {}".format(resp_envelope["ip"], resp_envelope["country"]))

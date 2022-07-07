@@ -1,3 +1,4 @@
+#!/usr/bin/env/python
 from opennem.utils.http import attach_proxy, http
 
 
@@ -8,7 +9,7 @@ def run_req() -> None:
 
     resp = req.get(url)
 
-    print(resp.content)
+    print(resp.json())
 
 
 if __name__ == "__main__":
