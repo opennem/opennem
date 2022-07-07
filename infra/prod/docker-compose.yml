@@ -153,6 +153,7 @@ services:
       - TRELLO_API_KEY
       - TRELLO_API_SECRET
       - APVI_TOKEN
+      - HTTPS_PROXY_URL
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=false"
