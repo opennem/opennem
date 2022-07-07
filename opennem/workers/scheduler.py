@@ -39,6 +39,7 @@ from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.gap_fill.energy import run_energy_gapfill
+from opennem.workers.gap_fill.generated import check_generated_gaps
 from opennem.workers.network_data_range import run_network_data_range_update
 
 # Py 3.8 on MacOS changed the default multiprocessing model
@@ -216,6 +217,8 @@ def db_run_energy_gapfil() -> None:
 
     # Run flow updates
     run_emission_update_day(days=4)
+
+    check_generated_gaps()
 
 
 #  run energy tasks
