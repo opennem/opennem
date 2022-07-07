@@ -133,12 +133,12 @@ def mount_retry_adaptor(session: requests.Session) -> None:
 
 def attach_proxy(session: requests.Session) -> requests.Session:
     """Attach setup proxy info to the session"""
-    if not settings.http_proxy_url:
+    if not settings.https_proxy_url:
         logger.warn("Attempting to attach proxy with no settings set")
         return session
 
     proxies = {
-        "http": settings.http_proxy_url,
+        "http": settings.https_proxy_url,
         "https": settings.https_proxy_url,
     }
 
