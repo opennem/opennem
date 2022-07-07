@@ -28,6 +28,7 @@ def get_stations_priority(limit: Optional[int] = None) -> List[BomStationSchema]
 
             return_models = all_models[:limit]
         else:
+            shuffle(all_models)
             return_models = all_models
 
     return return_models
