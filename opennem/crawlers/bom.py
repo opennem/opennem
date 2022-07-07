@@ -20,6 +20,9 @@ def crawl_bom_capitals(
 ) -> Optional[ControllerReturn]:
     bom_stations = get_stations_priority(limit=crawler.limit)
 
+    if not bom_stations:
+        logger.error("Did not return any weather stations from crawler")
+
     cr: Optional[ControllerReturn] = None
 
     for bom_station in bom_stations:
