@@ -10,7 +10,7 @@ from opennem import settings
 from opennem.db import get_database_engine
 from opennem.notifications.slack import slack_message
 from opennem.schema.core import BaseConfig
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 
 logger = logging.getLogger("opennem.workers.gap_fill")
 
@@ -75,6 +75,10 @@ def query_generated_gaps(
             gapfill_type_filter = "and f.fueltech_id in ('imports', 'exports')"
         case _:
             raise Exception(f"Invalid gap fill type: {gap_type}")
+
+    # for case of WEM and rooftop check the APVI network
+    if network == NetworkWEM and gap_type == GapfillType.rooftop:
+        network = NetworkAPVI
 
     _query = query.format(
         tz=network.timezone_database,
