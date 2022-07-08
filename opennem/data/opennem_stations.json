@@ -4900,5 +4900,73 @@
     "wikipedia_link": null,
     "wikidata_id": null,
     "website_url": "https://www.iberdrolarenovablesinternacional.com/about-us/our-company/renewable-energy-park-port-augusta"
+  },
+  {
+    "facilities": [
+      {
+        "created_by": "opennem.stations",
+        "created_at": "2020-11-13T02:47:00.969029",
+        "id": null,
+        "network": {
+          "code": "NEM",
+          "country": "au",
+          "label": "NEM",
+          "regions": null,
+          "timezone": "Australia/Sydney",
+          "timezone_database": "AEST",
+          "offset": 1000,
+          "interval_size": 5
+        },
+        "fueltech": {
+          "code": "wind",
+          "label": "",
+          "renewable": true
+        },
+        "status": {
+          "code": "operating",
+          "label": "Operating"
+        },
+        "station_id": null,
+        "code": "DIAPURWF1",
+        "network_code": "DIAPURWF1",
+        "scada_power": null,
+        "dispatch_type": "GENERATOR",
+        "active": true,
+        "capacity_registered": 8,
+        "registered": null,
+        "deregistered": null,
+        "network_region": "VIC1",
+        "unit_id": null,
+        "unit_number": null,
+        "unit_alias": null,
+        "unit_capacity": null,
+        "emissions_factor_co2": null,
+        "approved": true,
+        "approved_by": null,
+        "approved_at": null
+      }
+    ],
+    "code": "DIAPURWF",
+    "name": "Diapur Wind Farm",
+    "network_name": "Diapur Wind Farm, Units 1-2",
+    "location": {
+      "address1": "266 Diapur-Lawloit Rd",
+      "address2": "",
+      "locality": "Nhill",
+      "state": "VIC",
+      "postcode": "3418",
+      "country": "au",
+      "geocode_approved": true,
+      "geocode_skip": false,
+      "geocode_processed_at": null,
+      "geocode_by": null,
+      "lat": -36.33995255346413,
+      "lng": 141.44736064716525
+    },
+    "approved": true,
+    "description": "",
+    "wikipedia_link": null,
+    "wikidata_id": null,
+    "website_url": "https://www.baywa-re.com.au/en/wind/projects/diapur-wind-farm"
   }
 ]
