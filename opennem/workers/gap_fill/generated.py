@@ -1,6 +1,7 @@
 """OpenNEM Gapfill for all intervals
 """
 
+import enum
 import logging
 from datetime import datetime
 from textwrap import dedent
@@ -21,7 +22,16 @@ class GeneratedGap(BaseConfig):
     total_generated: float | None
 
 
-def query_generated_gaps(network: NetworkSchema = NetworkNEM, days: int = 7) -> list[GeneratedGap]:
+class GapfillType(enum.Enum):
+    generated = "generated"
+    rooftop = "rooftop"
+    flows = "flows"
+
+
+def query_generated_gaps(
+    network: NetworkSchema = NetworkNEM, days: int = 7, gap_type: GapfillType = GapfillType.generated
+) -> list[GeneratedGap]:
+    """Check for data gaps"""
     engine = get_database_engine()
 
     query = """
@@ -43,7 +53,7 @@ def query_generated_gaps(network: NetworkSchema = NetworkNEM, days: int = 7) -> 
                 fs.trading_interval >= now() - interval '{days} days 2 hours'
                 and fs.trading_interval < now() - interval '2 hours'
                 and fs.network_id='{network_id}'
-                and f.fueltech_id not in ('imports', 'exports', 'solar_rooftop')
+                {gapfill_type_filter}
             group by 1, fs.network_id
         ) as t
         where
@@ -54,8 +64,24 @@ def query_generated_gaps(network: NetworkSchema = NetworkNEM, days: int = 7) -> 
 
     _results = []
 
+    gapfill_type_filter = ""
+
+    match gap_type:
+        case GapfillType.generated:
+            gapfill_type_filter = "and f.fueltech_id not in ('imports', 'exports', 'solar_rooftop')"
+        case GapfillType.rooftop:
+            gapfill_type_filter = "and f.fueltech_id in ('solar_rooftop')"
+        case GapfillType.flows:
+            gapfill_type_filter = "and f.fueltech_id in ('imports', 'exports')"
+        case _:
+            raise Exception(f"Invalid gap fill type: {gap_type}")
+
     _query = query.format(
-        tz=network.timezone_database, network_id=network.code, days=days, interval_size=network.interval_size
+        tz=network.timezone_database,
+        network_id=network.code,
+        days=days,
+        interval_size=network.interval_size,
+        gapfill_type_filter=gapfill_type_filter,
     )
 
     logger.debug(dedent(_query))
