@@ -7,10 +7,11 @@ import os
 from asyncio.log import logger
 from io import BytesIO
 from pathlib import Path
-from tempfile import gettempdir, mkdtemp
+from tempfile import mkdtemp
 from typing import IO, Any
 from zipfile import ZipFile
 
+from opennem import settings
 from opennem.utils.url import get_filename_from_url
 
 from .http import http
@@ -149,7 +150,7 @@ def stream_zip_contents(file_obj: IO[bytes], mode: str = "w"):  # type: ignore
 def download_and_unzip(url: str) -> str:
     """Download and unzip a multi-zip file"""
 
-    dest_dir = mkdtemp(prefix="opennem_")
+    dest_dir = mkdtemp(prefix=f"{settings.tmp_file_prefix}")
 
     logger.info(f"Saving to {dest_dir}")
 
