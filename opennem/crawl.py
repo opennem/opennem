@@ -14,7 +14,7 @@ from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, Cra
 from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.core.parsers.aemo.url import parse_aemo_url_optimized
 from opennem.crawlers.aemo import AEMONEMDispatchActualGEN, AEMONEMNextDayDispatch
-from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopTodayCrawler
+from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
     AEMONemwebDispatchIS,
@@ -48,6 +48,7 @@ def load_crawlers() -> CrawlerSet:
             AEMONNemwebDispatchScada,
             APVIRooftopTodayCrawler,
             APVIRooftopLatestCrawler,
+            APVIRooftopMonthCrawler,
             BOMCapitals,
             WEMBalancing,
             WEMBalancingLive,
@@ -201,4 +202,3 @@ if __name__ == "__main__":
 
     for url in urls:
         parse_aemo_url_optimized(url)
-    # run_crawl_urls(urls)
