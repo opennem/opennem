@@ -98,8 +98,13 @@ def query_generated_gaps(
     return _result_models
 
 
-def run_generated_gapfill_for_network(network: NetworkSchema = NetworkNEM, days: int = 7) -> list[GeneratedGap]:
-    generated_gaps = query_generated_gaps(network, days=days)
+def run_generated_gapfill_for_network(
+    gap_type: GapfillType,
+    network: NetworkSchema = NetworkNEM,
+    days: int = 7,
+) -> list[GeneratedGap]:
+    """Find gaps for network and gap type"""
+    generated_gaps = query_generated_gaps(network, days=days, gap_type=gap_type)
 
     logger.info("Found {} generated gaps".format(len(generated_gaps)))
 
@@ -114,12 +119,17 @@ def run_generated_gapfill_for_network(network: NetworkSchema = NetworkNEM, days:
 
 def check_generated_gaps() -> None:
     """Process for checking how many generation gaps there might be"""
-    gaps = run_generated_gapfill_for_network(days=3)
 
-    if gaps:
-        slack_message(f"Found {len(gaps)} generation gaps @nik")
+    for network in [NetworkNEM]:
+        for _, gap_type in enumerate(GapfillType):
+            gaps = run_generated_gapfill_for_network(days=3, network=network, gap_type=gap_type)
+
+            if gaps:
+                # slack_message(f"Found {len(gaps)} generation gaps @nik")
+                print(f"Found {len(gaps)} generation gaps @nik")
 
 
 # debug entry point
 if __name__ == "__main__":
-    run_generated_gapfill_for_network(days=365)
+    check_generated_gaps()
+    # run_generated_gapfill_for_network(days=365)
