@@ -125,8 +125,8 @@ def check_generated_gaps() -> None:
             gaps = run_generated_gapfill_for_network(days=3, network=network, gap_type=gap_type)
 
             if gaps:
-                # slack_message(f"Found {len(gaps)} generation gaps @nik")
-                print(f"Found {len(gaps)} generation gaps @nik")
+                slack_message(f"Found {len(gaps)} generation gaps in {network.code} for {gap_type}")
+                logger.error(f"Found {len(gaps)} generation gaps in {network.code} for {gap_type} @nik")
 
 
 # debug entry point
