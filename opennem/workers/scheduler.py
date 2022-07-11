@@ -41,6 +41,7 @@ from opennem.workers.fallback import fallback_runner
 from opennem.workers.gap_fill.energy import run_energy_gapfill
 from opennem.workers.gap_fill.generated import check_generated_gaps
 from opennem.workers.network_data_range import run_network_data_range_update
+from opennem.workers.system import clean_tmp_dir
 
 # Py 3.8 on MacOS changed the default multiprocessing model
 if platform.system() == "Darwin":
@@ -298,3 +299,9 @@ def run_refresh_export_maps() -> None:
 def task_run_backup() -> None:
     dest_file = run_backup()
     slack_message(f"Ran backup on {settings.env} to {dest_file}")
+
+
+@huey.periodic_task(crontab(hour="8,16", minute="45"))
+@huey.lock_task("run_clean_tmp_dir")
+def run_clean_tmp_dir() -> None:
+    clean_tmp_dir()
