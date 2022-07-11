@@ -145,6 +145,8 @@ class OpennemSettings(BaseSettings):
     cloudflare_account_id: str | None
     cloudflare_api_key: str | None
 
+    tmp_file_prefix: str | None = "opennem"
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
