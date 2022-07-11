@@ -32,6 +32,7 @@ class CrawlerDefinition(BaseConfig):
     version: str = Field(default="2")
     name: str
     url: Optional[str]
+    active: bool = True
     limit: Optional[int]
     filename_filter: Optional[str]
     latest: bool = False
