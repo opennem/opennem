@@ -117,12 +117,12 @@ def run_generated_gapfill_for_network(
     return generated_gaps
 
 
-def check_generated_gaps() -> None:
+def check_generated_gaps(days: int = 3) -> None:
     """Process for checking how many generation gaps there might be"""
 
     for network in [NetworkNEM]:
         for _, gap_type in enumerate(GapfillType):
-            gaps = run_generated_gapfill_for_network(days=3, network=network, gap_type=gap_type)
+            gaps = run_generated_gapfill_for_network(days=days, network=network, gap_type=gap_type)
 
             if gaps:
                 slack_message(f"Found {len(gaps)} generation gaps in {network.code} for {gap_type} @nik")
@@ -131,5 +131,5 @@ def check_generated_gaps() -> None:
 
 # debug entry point
 if __name__ == "__main__":
-    check_generated_gaps()
+    check_generated_gaps(days=30)
     # run_generated_gapfill_for_network(days=365)
