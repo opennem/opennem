@@ -7,7 +7,7 @@ ENV PYTHONFAULTHANDLER=1 \
   PIP_DISABLE_PIP_VERSION_CHECK=on \
   PIP_DEFAULT_TIMEOUT=100
 
-RUN apt-get update && apt-get install -y --no-install-recommends libmagic1 netcat libgeos-dev && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends libmagic1 netcat libgeos-dev postgresql-client-14 && rm -rf /var/lib/apt/lists/*
 
 FROM base as code_install
 
