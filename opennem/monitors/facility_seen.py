@@ -6,6 +6,7 @@ and alerts about them
 
 """
 import logging
+import re
 from datetime import datetime
 from typing import List, Optional
 
@@ -37,6 +38,8 @@ NEM_VPPS = [
     "VSQHT1V1",
 ]
 
+_dr_duids_match = re.compile(r"DR[VX]\w{3}\d{2}")
+
 
 def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
     """Filters out ignored records like dummy generators"""
@@ -65,6 +68,10 @@ def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
 
         # ignore demo VPPs
         if fac.network_id == "NEM" and fac.code in NEM_VPPS:
+            return None
+
+        # ignore drv/drx duids
+        if fac.network_id == "NEM" and re.match(_dr_duids_match, fac.code):
             return None
 
         return fac
