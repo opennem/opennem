@@ -2740,7 +2740,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "",
           "renewable": true
         },
@@ -2782,7 +2782,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "",
           "renewable": true
         },
@@ -3031,7 +3031,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "Battery (Charging)",
           "renewable": true
         },
@@ -3073,7 +3073,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "Battery (Discharging)",
           "renewable": true
         },
@@ -3167,7 +3167,7 @@
         "code": "WANDBG1",
         "network_code": "WANDBG1",
         "scada_power": null,
-        "dispatch_type": "LOAD",
+        "dispatch_type": "GENERATOR",
         "active": true,
         "capacity_registered": 123,
         "registered": null,
@@ -3209,7 +3209,7 @@
         "code": "WANDBL1",
         "network_code": "WANDBL1",
         "scada_power": null,
-        "dispatch_type": "GENERATOR",
+        "dispatch_type": "LOAD",
         "active": true,
         "capacity_registered": 123.0,
         "registered": null,
@@ -3357,7 +3357,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "Battery (Charging)",
           "renewable": true
         },
@@ -3399,7 +3399,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "Battery (Discharging)",
           "renewable": true
         },
@@ -3711,7 +3711,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "",
           "renewable": true
         },
@@ -3753,7 +3753,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "",
           "renewable": true
         },
@@ -3909,7 +3909,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_discharging",
+          "code": "battery_charging",
           "label": "",
           "renewable": true
         },
@@ -3951,7 +3951,7 @@
           "interval_size": 5
         },
         "fueltech": {
-          "code": "battery_charging",
+          "code": "battery_discharging",
           "label": "",
           "renewable": true
         },
@@ -5141,7 +5141,7 @@
         "code": "BOWWBA1L",
         "network_code": "BOWWBA1L",
         "scada_power": null,
-        "dispatch_type": "GENERATOR",
+        "dispatch_type": "LOAD",
         "active": true,
         "capacity_registered": 3.08,
         "registered": null,
@@ -5224,7 +5224,7 @@
         "code": "QBYNBL1",
         "network_code": "QBYNBL1",
         "scada_power": null,
-        "dispatch_type": "GENERATOR",
+        "dispatch_type": "LOAD",
         "active": true,
         "capacity_registered": 10,
         "registered": null,
