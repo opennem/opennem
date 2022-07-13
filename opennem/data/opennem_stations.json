@@ -5392,5 +5392,18 @@
     "wikipedia_link": null,
     "wikidata_id": null,
     "website_url": ""
+  },
+  {
+    "code": "HORNSDPR",
+    "facilities": [
+      {
+        "code": "HPRG1",
+        "capacity_registered": 150
+      },
+      {
+        "code": "HPRL1",
+        "capacity_registered": 150
+      }
+    ]
   }
 ]
