@@ -6,7 +6,7 @@ APP_VERSION=$(poetry version | sed 's/opennem-backend\ //g')
 
 # Build and push the database image
 docker buildx build \
-  -f infra/database/Dockerfile \
+  -f infra/container/Dockerfile \
   --push \
   --platform linux/arm64/v8,linux/amd64 \
-  --tag opennem/database:dev .
+  --tag opennem/opennem:dev .
