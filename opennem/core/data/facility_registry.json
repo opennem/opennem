@@ -2889,11 +2889,11 @@
     "duid_data": {
       "HPRG1": {
         "fuel_tech": "battery_discharging",
-        "registered_capacity": 100
+        "registered_capacity": 150
       },
       "HPRL1": {
         "fuel_tech": "battery_charging",
-        "registered_capacity": 120
+        "registered_capacity": 150
       }
     },
     "region_id": "SA1",
