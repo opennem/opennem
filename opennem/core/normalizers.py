@@ -101,6 +101,7 @@ STRIP_WORDS = [
     "dhl6",
     "run of river",
     "and",
+    "bess",
     "bess1",
     "h2e",
     "gen",
@@ -467,9 +468,7 @@ def clean_and_format_slashed_station_names(subject: str) -> str:
     return subject
 
 
-def station_name_run_replacements(
-    subject: str, replacement_map: Dict[str, str] = STATION_WORD_REPLACEMENTS
-) -> str:
+def station_name_run_replacements(subject: str, replacement_map: Dict[str, str] = STATION_WORD_REPLACEMENTS) -> str:
     """Run a string replacement map over a string - note that it's case sensitive"""
     for subject_string, replacement_string in replacement_map.items():
         if subject_string in subject:
@@ -490,9 +489,7 @@ def station_name_hyphenate(sub: str) -> str:
     return re.sub(r"\ To\ ", "-", sub, re.IGNORECASE)
 
 
-def skip_clean_for_matching(
-    subject: str, skip_matches: List[str] = STATION_SKIP_CLEANING_MATCHES
-) -> bool:
+def skip_clean_for_matching(subject: str, skip_matches: List[str] = STATION_SKIP_CLEANING_MATCHES) -> bool:
     """Skip station cleaning for those matching"""
     for skip_match in skip_matches:
         if skip_match.lower() in subject.lower():
@@ -755,9 +752,7 @@ def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optio
         if capacity is None:
             return None
 
-        raise Exception(
-            "Capacity clean of type {} not supported: {}".format(type(capacity), capacity)
-        )
+        raise Exception("Capacity clean of type {} not supported: {}".format(type(capacity), capacity))
 
     if cap_clean is None:
         return None
