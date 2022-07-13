@@ -3227,8 +3227,8 @@
     ],
     "photos": null,
     "code": "WANDBG",
-    "name": "Wandoan South BESS",
-    "network_name": "Wandoan South BESS",
+    "name": "Wandoan South",
+    "network_name": "Wandoan South",
     "location": {
       "created_by": null,
       "created_at": "2021-11-13T02:47:00.969029",
@@ -3982,7 +3982,7 @@
     "photos": null,
     "code": "WALGRV",
     "name": "Wallgrove Battery",
-    "network_name": "Wallgrove BESS 1",
+    "network_name": "Wallgrove 1",
     "location": {
       "created_by": null,
       "created_at": "2020-11-13T02:47:00.969029",
@@ -5242,7 +5242,7 @@
     ],
     "code": "QBYNB",
     "name": "Capital Battery",
-    "network_name": "Queanbeyan BESS",
+    "network_name": "Queanbeyan",
     "location": {
       "address1": "",
       "address2": "",
