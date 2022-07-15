@@ -31,23 +31,23 @@ class CrawlerDefinition(BaseConfig):
 
     version: str = Field(default="2")
     name: str
-    url: Optional[str]
+    url: str | None
     active: bool = True
-    limit: Optional[int]
-    filename_filter: Optional[str]
+    limit: int | None
+    filename_filter: str | None
     latest: bool = False
 
     network: NetworkSchema | None
     backfill_days: int | None
 
     priority: CrawlerPriority
-    schedule: Optional[CrawlerSchedule]
-    backoff: Optional[int]
+    schedule: CrawlerSchedule | None
+    backoff: int | None
 
     # crawl metadata
-    last_crawled: Optional[datetime]
-    last_processed: Optional[datetime]
-    server_latest: Optional[datetime]
+    last_crawled: datetime | None
+    last_processed: datetime | None
+    server_latest: datetime | None
 
     processor: Callable
 
