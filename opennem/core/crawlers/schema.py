@@ -32,6 +32,10 @@ class CrawlerDefinition(BaseConfig):
     version: str = Field(default="2")
     name: str
     url: str | None
+
+    # This is a v3 field
+    urls: list[str] | None
+
     active: bool = True
     limit: int | None
     filename_filter: str | None
