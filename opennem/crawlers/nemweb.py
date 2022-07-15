@@ -165,7 +165,7 @@ AEMONemwebRooftopForecast = CrawlerDefinition(
 
 AEMONemwebTradingISArchive = CrawlerDefinition(
     priority=CrawlerPriority.high,
-    name="au.nemweb.trading_is",
+    name="au.nemweb.archive.trading_is",
     url="http://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
@@ -174,7 +174,7 @@ AEMONemwebTradingISArchive = CrawlerDefinition(
 
 AEMONemwebDispatchISArchive = CrawlerDefinition(
     priority=CrawlerPriority.high,
-    name="au.nemweb.dispatch_is",
+    name="au.nemweb.archive.dispatch_is",
     url="http://nemweb.com.au/Reports/ARCHIVE/DispatchIS_Reports/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
@@ -182,7 +182,7 @@ AEMONemwebDispatchISArchive = CrawlerDefinition(
 
 AEMONNemwebDispatchScadaArchive = CrawlerDefinition(
     priority=CrawlerPriority.high,
-    name="au.nemweb.dispatch_scada",
+    name="au.nemweb.archive.dispatch_scada",
     url="http://www.nemweb.com.au/Reports/ARCHIVE/Dispatch_SCADA/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
