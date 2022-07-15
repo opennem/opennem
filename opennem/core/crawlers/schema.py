@@ -1,7 +1,7 @@
 """OpenNEM Crawler Definitions"""
 from datetime import datetime
 from enum import Enum
-from typing import Callable, List, Optional
+from typing import Callable
 
 from pydantic import Field
 
@@ -59,7 +59,7 @@ class CrawlerDefinition(BaseConfig):
 class CrawlerSet(BaseConfig):
     """Defines a set of crawlers"""
 
-    crawlers: List[CrawlerDefinition]
+    crawlers: list[CrawlerDefinition]
 
     def get_crawler(self, name: str) -> CrawlerDefinition:
         """Get a crawler by name"""
@@ -70,7 +70,7 @@ class CrawlerSet(BaseConfig):
 
         return _crawler_lookup.pop()
 
-    def get_crawlers_by_match(self, match: str) -> List[CrawlerDefinition]:
+    def get_crawlers_by_match(self, match: str) -> list[CrawlerDefinition]:
         """Get crawlers by match"""
         _crawler_lookup = list(filter(lambda x: match in x.name, self.crawlers))
 
@@ -79,7 +79,7 @@ class CrawlerSet(BaseConfig):
 
         return _crawler_lookup
 
-    def get_crawlers_by_schedule(self, schedule: CrawlerSchedule) -> List[CrawlerDefinition]:
+    def get_crawlers_by_schedule(self, schedule: CrawlerSchedule) -> list[CrawlerDefinition]:
         return list(
             sorted(
                 filter(lambda x: x.schedule == schedule, self.crawlers),
