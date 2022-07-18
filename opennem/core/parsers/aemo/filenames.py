@@ -16,6 +16,7 @@ __aemo_filename_re = re.compile(r"(?P<filename>[a-zA-Z\_]+)_(?P<date>\d{6,14})_?
 class AEMODataBucketSize(enum.Enum):
     interval = "interval"
     day = "day"
+    week = "week"
     month = "month"
 
 
