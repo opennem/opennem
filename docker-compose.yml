@@ -35,8 +35,4 @@ services:
 
 volumes:
   db_data: {}
-  scrapyd_data:
-    driver: local
-  scrapyd_eggs:
-    driver: local
   proxy_data: {}
