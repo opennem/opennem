@@ -21,6 +21,7 @@ from opennem.crawlers.nemweb import (
     AEMONemwebRooftop,
     AEMONemwebRooftopForecast,
     AEMONemwebTradingIS,
+    AEMONemwebTradingISArchive,
     AEMONNemwebDispatchScada,
 )
 from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
@@ -46,6 +47,7 @@ def load_crawlers() -> CrawlerSet:
             AEMONemwebTradingIS,
             AEMONemwebDispatchIS,
             AEMONNemwebDispatchScada,
+            AEMONemwebTradingISArchive,
             APVIRooftopTodayCrawler,
             APVIRooftopLatestCrawler,
             APVIRooftopMonthCrawler,
