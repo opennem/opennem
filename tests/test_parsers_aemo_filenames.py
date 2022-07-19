@@ -58,6 +58,14 @@ def test_parse_aemo_filename_datetimes(dtstring: str, expected: datetime) -> Non
                 "interval": "20220423040501",
             },
         ),
+        (
+            "PUBLIC_TRADINGIS_20210926_20211002.zip",
+            {
+                "filename": "PUBLIC_TRADINGIS",
+                "date": datetime.fromisoformat("2021-09-26T00:00:00"),
+                "interval": "20211002",
+            },
+        ),
     ],
 )
 def test_parse_aemo_filename(filename: str, components: AEMOMMSFilename) -> None:
