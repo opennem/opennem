@@ -137,7 +137,7 @@ def run_crawl_urls(urls: list[str]) -> None:
     """
 
     for url in urls:
-        if url.endswith(".zip") or url.endswith(".csv"):
+        if url.lower().endswith(".zip") or url.lower().endswith(".csv"):
             try:
                 ts = parse_aemo_url(url)
                 store_aemo_tableset(ts)
@@ -202,5 +202,8 @@ if __name__ == "__main__":
         # "https://nemweb.com.au/Reports/Current/DispatchIS_Reports/PUBLIC_DISPATCHIS_202207011120_0000000366159732.zip"
     ]
 
-    for url in urls:
-        parse_aemo_url_optimized(url)
+    # for url in urls:
+    # parse_aemo_url_optimized(url)
+
+    url = "https://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/PUBLIC_TRADINGIS_20210620_20210626.zip"
+    run_crawl_urls([url])
