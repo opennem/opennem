@@ -10,7 +10,7 @@ from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("openne.core.parsers.aemo_filename")
 
-__aemo_filename_re = re.compile(r"(?P<filename>[a-zA-Z\_]+)_(?P<date>\d{6,14})_?(?P<interval>\d{14,16})?\.(zip|csv)")
+__aemo_filename_re = re.compile(r"(?P<filename>[a-zA-Z\_]+)_(?P<date>\d{6,14})_?(?P<interval>\d{8,16})?\.(zip|csv)")
 
 
 class AEMODataBucketSize(enum.Enum):
@@ -70,7 +70,7 @@ def parse_aemo_filename(filename: str) -> AEMOMMSFilename:
     try:
         date_parsed = parse_aemo_filename_datetimes(filename_components.group("date"))
     except Exception as e:
-        logger.info("Could not parse filename {}: {}".format(filename_components.group("filename"), e))
+        logger.info("Could not parse filename datetimes {}: {}".format(filename_components.group("filename"), e))
 
     filename_model = AEMOMMSFilename(
         filename=filename_components.group("filename"),
