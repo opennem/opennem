@@ -652,7 +652,11 @@ def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
 
         record_item = None
 
-        record_item = globals()[process_meth](table)
+        try:
+            record_item = globals()[process_meth](table)
+        except Exception as e:
+            logger.error(f"Error processing {table.full_name}: {e}")
+            continue
 
         if record_item:
             cr.processed_records += record_item.processed_records
