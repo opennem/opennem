@@ -19,7 +19,6 @@ from opennem.core.normalizers import normalize_duid
 from opennem.schema.aemo.mms import MMSBaseClass, get_mms_schema_for_table
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
-from opennem.utils.archive import download_and_unzip
 from opennem.utils.dates import parse_date
 from opennem.utils.version import get_version
 
@@ -410,14 +409,8 @@ def parse_aemo_directory(directory_path: str) -> AEMOTableSet:
 # debug entry point
 if __name__ == "__main__":
     # @TODO parse into MMS schema
-    u = "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip"
-    d = download_and_unzip(u)
-
-    onlyfiles = [Path(d) / f for f in os.listdir(d) if (Path(d) / f).is_file()]
-    logger.debug(f"Got {len(onlyfiles)} files")
-
-    for f in onlyfiles:
-        print(f"parsing {f}")
-        ts = parse_aemo_file(f)
+    # url = "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip"
+    url = "https://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/PUBLIC_TRADINGIS_20210620_20210626.zip"
+    # parse_aemo_url_optimized(url)
 
     # controller_returns = store_aemo_tableset(r)
