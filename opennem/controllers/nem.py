@@ -421,13 +421,14 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     return cr
 
 
-def process_trading_regionsum(table: AEMOTableSchema) -> Dict:
+def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     engine = get_database_engine()
 
     if not table.records:
         logger.debug(table)
         raise Exception("Invalid table no records")
 
+    cr = ControllerReturn(total_records=len(table.records))
     limit = None
     records_to_store = []
     records_processed = 0
@@ -497,16 +498,19 @@ def process_trading_regionsum(table: AEMOTableSchema) -> Dict:
     try:
         session.execute(stmt)
         session.commit()
+        cr.inserted_records = cr.processed_records
+        cr.server_latest = max([i["trading_interval"] for i in records_to_store])
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
         records_to_store = []
+        cr.errors = cr.processed_records
     finally:
         session.rollback()
         session.close()
         engine.dispose()
 
-    return {"num_records": len(records_to_store)}
+    return cr
 
 
 def process_unit_scada(table: AEMOTableSchema) -> ControllerReturn:
