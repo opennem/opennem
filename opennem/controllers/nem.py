@@ -425,6 +425,7 @@ def process_trading_regionsum(table: Dict[str, Any]) -> Dict:
     engine = get_database_engine()
 
     if "records" not in table:
+        logger.debug(table)
         raise Exception("Invalid table no records")
 
     records = table["records"]
@@ -648,7 +649,7 @@ def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
             logger.info("Invalid processing function %s", process_meth)
             continue
 
-        logger.info("processing table {}".format(table.full_name))
+        logger.info("processing table {} with {} records".format(table.full_name, len(table.records)))
 
         record_item = None
 
