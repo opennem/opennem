@@ -661,6 +661,7 @@ def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
 
         try:
             record_item = globals()[process_meth](table)
+            logger.info(f"Stored {len(table.records)} records for table {table.full_name}")
         except Exception as e:
             logger.error(f"Error processing {table.full_name}: {e}")
             continue
