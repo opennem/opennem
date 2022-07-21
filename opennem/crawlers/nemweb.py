@@ -69,7 +69,8 @@ def run_nemweb_aemo_crawl(
             if entry.file_size and entry.file_size > 100_000:
                 controller_returns = parse_aemo_url_optimized(entry.link)
             else:
-                controller_returns = parse_aemo_url(entry.link)
+                ts = parse_aemo_url(entry.link)
+                controller_returns = store_aemo_tableset(ts)
 
             max_date = max([i.modified_date for i in entries_to_fetch if i.modified_date])
 
