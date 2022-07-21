@@ -77,23 +77,23 @@ def run_aemo_mms_crawl(
 
 # Next day gens and dispatch
 
-AEMONEMDispatchActualGEN = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.twice_a_day,
-    name="au.nem.dispatch_actual_gen",
-    url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)
+# AEMONEMDispatchActualGEN = CrawlerDefinition(
+#     priority=CrawlerPriority.medium,
+#     schedule=CrawlerSchedule.twice_a_day,
+#     name="au.nem.dispatch_actual_gen",
+#     url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
+#     latest=True,
+#     processor=run_aemo_mms_crawl,
+# )
 
-AEMONEMNextDayDispatch = CrawlerDefinition(
-    priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.twice_a_day,
-    name="au.nem.dispatch",
-    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
-    latest=True,
-    processor=run_aemo_mms_crawl,
-)
+# AEMONEMNextDayDispatch = CrawlerDefinition(
+#     priority=CrawlerPriority.medium,
+#     schedule=CrawlerSchedule.twice_a_day,
+#     name="au.nem.dispatch",
+#     url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
+#     latest=True,
+#     processor=run_aemo_mms_crawl,
+# )
 
 # AEMONEMDispatchActualGENArchive = CrawlerDefinition(
 #     priority=CrawlerPriority.medium,

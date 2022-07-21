@@ -12,10 +12,11 @@ from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
 from opennem.core.parsers.aemo.mms import parse_aemo_url
-from opennem.crawlers.aemo import AEMONEMDispatchActualGEN, AEMONEMNextDayDispatch
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
+    AEMONEMDispatchActualGEN,
+    AEMONEMNextDayDispatch,
     AEMONemwebDispatchIS,
     AEMONemwebDispatchISArchive,
     AEMONemwebRooftop,

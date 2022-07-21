@@ -170,5 +170,26 @@ AEMONNemwebDispatchScadaArchive = CrawlerDefinition(
     processor=run_nemweb_aemo_crawl,
 )
 
+
+# next day crawlers
+
+AEMONEMDispatchActualGEN = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.twice_a_day,
+    name="au.nem.dispatch_actual_gen",
+    url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
+    latest=True,
+    processor=run_nemweb_aemo_crawl,
+)
+
+AEMONEMNextDayDispatch = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.twice_a_day,
+    name="au.nem.dispatch",
+    url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
+    latest=True,
+    processor=run_nemweb_aemo_crawl,
+)
+
 if __name__ == "__main__":
     pass
