@@ -118,7 +118,7 @@ def crawler_scheduled_twice_a_day() -> None:
 @huey.lock_task("crawler_scheduled_day")
 def crawler_scheduled_day() -> None:
     run_crawls_by_schedule(CrawlerSchedule.daily)
-    fallback_runner()
+    # fallback_runner()
 
 
 # export tasks
