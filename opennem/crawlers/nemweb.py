@@ -179,6 +179,7 @@ AEMONEMDispatchActualGEN = CrawlerDefinition(
     name="au.nem.dispatch_actual_gen",
     url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
     latest=True,
+    network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -188,6 +189,7 @@ AEMONEMNextDayDispatch = CrawlerDefinition(
     name="au.nem.dispatch",
     url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
     latest=True,
+    network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -198,6 +200,7 @@ AEMONEMDispatchActualGENArchvie = CrawlerDefinition(
     name="au.nemweb.archive.dispatch_actual_gen",
     url="http://www.nemweb.com.au/Reports/ARCHIVE/Next_Day_Actual_Gen/",
     latest=True,
+    network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -207,6 +210,7 @@ AEMONEMNextDayDispatchArchvie = CrawlerDefinition(
     name="au.nemweb.archive.dispatch",
     url="http://nemweb.com.au/Reports/ARCHIVE/Next_Day_Dispatch/",
     latest=True,
+    network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
 )
 
