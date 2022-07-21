@@ -421,21 +421,19 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     return cr
 
 
-def process_trading_regionsum(table: Dict[str, Any]) -> Dict:
+def process_trading_regionsum(table: AEMOTableSchema) -> Dict:
     engine = get_database_engine()
 
-    if "records" not in table:
+    if not table.records:
         logger.debug(table)
         raise Exception("Invalid table no records")
-
-    records = table["records"]
 
     limit = None
     records_to_store = []
     records_processed = 0
     primary_keys = []
 
-    for record in records:
+    for record in table.records:
         trading_interval = parse_date(
             record["SETTLEMENTDATE"],
             network=NetworkNEM,
