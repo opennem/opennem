@@ -1,13 +1,10 @@
 """ Nemweb crawlers """
 import logging
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import List
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.crawlers.history import CrawlHistoryEntry, get_crawler_missing_intervals, set_crawler_history
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
-from opennem.core.parsers.aemo.mms import parse_aemo_url, parse_aemo_urls
+from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.core.parsers.dirlisting import get_dirlisting
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
