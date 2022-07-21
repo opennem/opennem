@@ -16,7 +16,9 @@ from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCraw
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
     AEMONEMDispatchActualGEN,
+    AEMONEMDispatchActualGENArchvie,
     AEMONEMNextDayDispatch,
+    AEMONEMNextDayDispatchArchvie,
     AEMONemwebDispatchIS,
     AEMONemwebDispatchISArchive,
     AEMONemwebRooftop,
@@ -52,6 +54,8 @@ def load_crawlers() -> CrawlerSet:
             AEMONemwebTradingISArchive,
             AEMONemwebDispatchISArchive,
             AEMONNemwebDispatchScadaArchive,
+            AEMONEMDispatchActualGENArchvie,
+            AEMONEMNextDayDispatchArchvie,
             APVIRooftopTodayCrawler,
             APVIRooftopLatestCrawler,
             APVIRooftopMonthCrawler,
