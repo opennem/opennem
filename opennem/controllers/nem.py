@@ -434,8 +434,12 @@ def process_trading_regionsum(table: AEMOTableSchema) -> Dict:
     primary_keys = []
 
     for record in table.records:
+
+        if not isinstance(record, dict):
+            raise Exception("Invalid record type")
+
         trading_interval = parse_date(
-            record["SETTLEMENTDATE"],
+            record["settlementdate"],
             network=NetworkNEM,
             dayfirst=False,
             date_format="%Y/%m/%d %H:%M:%S",
@@ -444,7 +448,7 @@ def process_trading_regionsum(table: AEMOTableSchema) -> Dict:
         if not trading_interval:
             continue
 
-        _pk = set([trading_interval, record["REGIONID"]])
+        _pk = set([trading_interval, record["regionid"]])
 
         if _pk in primary_keys:
             continue
@@ -453,19 +457,19 @@ def process_trading_regionsum(table: AEMOTableSchema) -> Dict:
 
         net_interchange = None
 
-        if "NETINTERCHANGE" in record:
-            net_interchange = clean_float(record["NETINTERCHANGE"])
+        if "netinterchange" in record:
+            net_interchange = clean_float(record["netinterchange"])
 
         demand_total = None
 
-        if "TOTALDEMAND" in record:
-            demand_total = clean_float(record["TOTALDEMAND"])
+        if "totaldemand" in record:
+            demand_total = clean_float(record["totaldemand"])
 
         records_to_store.append(
             {
                 "network_id": "NEM",
                 "created_by": "opennem.controller.nem",
-                "network_region": record["REGIONID"],
+                "network_region": record["regionid"],
                 "net_interchange_trading": net_interchange,
                 "trading_interval": trading_interval,
                 "demand_total": demand_total,
