@@ -191,5 +191,24 @@ AEMONEMNextDayDispatch = CrawlerDefinition(
     processor=run_nemweb_aemo_crawl,
 )
 
+
+AEMONEMDispatchActualGENArchvie = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
+    name="au.nem.dispatch_actual_gen",
+    url="http://www.nemweb.com.au/Reports/ARCHIVE/Next_Day_Actual_Gen/",
+    latest=True,
+    processor=run_nemweb_aemo_crawl,
+)
+
+AEMONEMNextDayDispatchArchvie = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
+    name="au.nem.dispatch",
+    url="http://nemweb.com.au/Reports/ARCHIVE/Next_Day_Dispatch/",
+    latest=True,
+    processor=run_nemweb_aemo_crawl,
+)
+
 if __name__ == "__main__":
     pass

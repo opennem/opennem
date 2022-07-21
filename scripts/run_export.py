@@ -3,6 +3,8 @@
 Scratchpad to export JSON's for unit tests + testing
 """
 
+from datetime import datetime
+
 from opennem.api.export.map import PriorityType, StatType, get_export_map, get_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_energy, export_power
 from opennem.api.stats.controllers import get_scada_range
@@ -20,37 +22,41 @@ from opennem.core.parsers.dirlisting import get_dirlisting
 from opennem.crawl import get_crawl_set, run_crawl
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
+from opennem.workers.emissions import run_flow_updates_all_for_nem, run_flow_updates_all_per_year
+from opennem.workers.energy import run_energy_calc, run_energy_update_all, run_energy_update_days
 from opennem.workers.gap_fill.energy import run_energy_gapfill
 
 
 def run_tests() -> None:
     export_map = get_export_map()
 
-    power = (
-        export_map.get_by_network_id("NEM")
-        .get_by_stat_type(StatType.power)
-        .get_by_network_region("SA1")
-        # .get_by_priority(PriorityType.history)
-        .get_by_priority(PriorityType.live)
-    )
+    # power = (
+    #     export_map.get_by_network_id("NEM")
+    #     .get_by_stat_type(StatType.power)
+    #     .get_by_network_region("SA1")
+    #     # .get_by_priority(PriorityType.history)
+    #     .get_by_priority(PriorityType.live)
+    # )
 
-    export_power(power.resources)
-    return None
+    # export_power(power.resources)
+    # return None
 
     # print(power.resources)
 
-    # energy_map = (
-    #     export_map.get_by_network_id("NEM")
-    #     .get_by_network_region("SA1")
-    #     .get_by_stat_type(StatType.energy)
-    #     .get_by_priority(PriorityType.monthly)
-    #     # .get_by_years([2022])
-    # )
+    energy_map = (
+        export_map.get_by_network_id("WEM")
+        # .get_by_network_region("SA1")
+        .get_by_stat_type(StatType.energy)
+        # .get_by_priority(PriorityType.monthly)
+        # .get_by_years([2022])
+    )
 
-    # if len(energy_map.resources):
-    #     export_energy(energy_map.resources)
+    if len(energy_map.resources):
+        export_energy(energy_map.resources)
+    else:
+        raise Exception("No exports")
 
-    # return None
+    return None
 
     energy_map = (
         export_map.get_by_priority(PriorityType.daily)
@@ -82,11 +88,9 @@ def load_flows() -> None:
 
 def fallback_runner(days: int = 7) -> None:
     run_energy_update_days(days=days)
+    run_flow_updates_all_per_year(datetime.now().year, 1)
     run_aggregates_all_days(days=days)
     export_energy(latest=False)
-
-
-from opennem.workers.energy import run_energy_calc, run_energy_update_all, run_energy_update_days
 
 
 def test_parser() -> None:
@@ -108,7 +112,7 @@ def test_parser() -> None:
 
 #
 if __name__ == "__main__":
-    # run_tests()
+    run_tests()
     # cs = get_crawl_set()
 
     # run_crawl(cs.get_crawler("au.nem.archive.dispatch_scada"))
@@ -120,7 +124,7 @@ if __name__ == "__main__":
     # export_energy(latest=False)
     # test_parser()
     # export_power()
-    fallback_runner()
+    # fallback_runner(days=30)
     # dmin = datetime.fromisoformat("2022-02-17 07:00:00+08:00")
     # dmax = dmin + timedelta(hours=1)
     # export_energy(latest=True)
