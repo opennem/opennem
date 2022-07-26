@@ -1,9 +1,13 @@
+""" URL utility methods """
 import urllib
 from pathlib import Path
 from typing import Optional
 
 # urljoin from here so that the netlocs can be loaded
 from urllib.parse import parse_qs, unquote, urlencode, urljoin, urlparse, urlunparse  # noqa: F401
+from xml.dom import ValidationErr
+
+import validators
 
 # Support S3 URI's in urllib
 urllib.parse.uses_netloc.append("s3")
@@ -47,6 +51,15 @@ def get_filename_from_url(url: str) -> str:
     url_components = urlparse(url)
     url_path = Path(unquote(url_components.path))
     return url_path.name
+
+
+def is_url(url: str) -> bool:
+    """Tests if a string is a URL"""
+    try:
+        validators.url(url)
+        return True
+    except validators.ValidationFailure:
+        return False
 
 
 if __name__ == "__main__":
