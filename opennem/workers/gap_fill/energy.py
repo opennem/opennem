@@ -10,13 +10,7 @@ from opennem import settings
 from opennem.core.networks import network_from_network_code
 from opennem.db import get_database_engine
 from opennem.schema.core import BaseConfig
-from opennem.schema.network import (
-    NetworkAEMORooftop,
-    NetworkAPVI,
-    NetworkNEM,
-    NetworkSchema,
-    NetworkWEM,
-)
+from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.workers.energy import run_energy_calc
 
 logger = logging.getLogger("opennem.workers.gap_fill")
@@ -79,14 +73,10 @@ def query_energy_gaps(network: NetworkSchema = NetworkNEM, days: int = 7) -> Lis
     return _result_models
 
 
-def run_energy_gapfill_for_network(
-    network: NetworkSchema = NetworkNEM, days: int = 7, run_all: bool = False
-) -> None:
+def run_energy_gapfill_for_network(network: NetworkSchema = NetworkNEM, days: int = 7, run_all: bool = False) -> None:
     energy_gaps = query_energy_gaps(network, days=days)
 
-    energy_gaps_filtered = list(
-        filter(lambda x: x.has_power is True and x.has_energy is False, energy_gaps)
-    )
+    energy_gaps_filtered = list(filter(lambda x: x.has_power is True and x.has_energy is False, energy_gaps))
 
     if run_all:
         energy_gaps_filtered = energy_gaps
@@ -109,9 +99,7 @@ def run_energy_gapfill_for_network(
         try:
             run_energy_calc(dmin, dmax, network=network_from_network_code(gap.network_id))
         except Exception:
-            logger.error(
-                "Error running {} energy gapfill for {} => {}".format(gap.network_id, dmin, dmax)
-            )
+            logger.error("Error running {} energy gapfill for {} => {}".format(gap.network_id, dmin, dmax))
 
 
 def run_energy_gapfill(
@@ -131,4 +119,7 @@ def run_energy_gapfill(
 
 # debug entry point
 if __name__ == "__main__":
-    run_energy_gapfill()
+    # run_energy_gapfill(days=365/2)
+    dmin = datetime.fromisoformat("2022-02-28T00:00:00+10:00")
+    dmax = dmin + timedelta(days=3)
+    run_energy_calc(dmin, dmax, network=network_from_network_code("NEM"))
