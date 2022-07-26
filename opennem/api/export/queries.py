@@ -134,9 +134,7 @@ def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> s
     return dedent(___query)
 
 
-def interconnector_flow_network_regions_query(
-    time_series: TimeSeries, network_region: Optional[str] = None
-) -> str:
+def interconnector_flow_network_regions_query(time_series: TimeSeries, network_region: Optional[str] = None) -> str:
     """ """
 
     __query = """
@@ -214,7 +212,7 @@ def price_network_query(
         select
             time_bucket_gapfill('{trunc}', bs.trading_interval) as trading_interval,
             {group_field},
-            avg(bs.price_dispatch) as price
+            coalesce(avg(bs.price_dispatch), avg(bs.price)) as price
         from balancing_summary bs
         where
             bs.trading_interval <= '{date_max}' and
@@ -371,9 +369,7 @@ def power_network_fueltech_query(
         # in country-wide totals
         wem_apvi_case = "or (f.network_id='APVI' and f.network_region='WEM')"
 
-    network_query = "(f.network_id IN ({}) {}) and ".format(
-        networks_to_in(networks_query), wem_apvi_case
-    )
+    network_query = "(f.network_id IN ({}) {}) and ".format(networks_to_in(networks_query), wem_apvi_case)
 
     date_max = time_series.get_range().end
     date_min = time_series.get_range().start
@@ -452,9 +448,7 @@ def power_network_rooftop_query(
         if NetworkNEM not in networks_query:
             agg_func = "max"
 
-    network_query = "(f.network_id IN ({}) {}) and ".format(
-        networks_to_in(networks_query), wem_apvi_case
-    )
+    network_query = "(f.network_id IN ({}) {}) and ".format(networks_to_in(networks_query), wem_apvi_case)
 
     date_max = time_series.get_range().end
     date_min = time_series.get_range().start
