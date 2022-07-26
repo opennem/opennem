@@ -1,15 +1,18 @@
 """ Crawl commands cli """
 import logging
 import sys
+from pathlib import Path
 
 import click
 from rich.table import Table
 
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
+from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.crawl import get_crawl_set, run_crawl, run_crawl_urls
 from opennem.utils.http import test_proxy
 from opennem.utils.timesince import timesince
+from opennem.utils.url import is_url
 
 logger = logging.getLogger("opennem.cli")
 
@@ -87,21 +90,23 @@ def crawl_cli_list() -> None:
 
 
 @click.command()
-@click.option("--url", help="URL to import", default=None)
-@click.option("--url-file", help="compose file to work with", type=click.File("r"), default=sys.stdin)
-def crawl_cli_import(url_file=None, url: str | None = None):
-    if not url_file and not url:
-        raise Exception("Require one of url or url_file")
-
+@click.argument("url")
+def crawl_cli_import(url: str):
+    """cli import crawl"""
     urls = []
 
-    if url_file:
-        with url_file:
-            urls = url_file.read().split("/n")
+    if not is_url(url):
+        url_file = Path(url)
+        if not url_file.is_file():
+            raise Exception(f"Not a url and not a file")
+
+        with url_file.open() as fh:
+            urls = fh.read().split("/n")
     else:
         urls.append(url)
 
-    run_crawl_urls(urls)
+    for u in urls:
+        parse_aemo_url_optimized(u)
 
 
 cmd_crawl_cli.add_command(crawl_cli_run, name="run")
