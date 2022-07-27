@@ -4,6 +4,7 @@ import logging
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
 from opennem.core.crawlers.history import CrawlHistoryEntry, get_crawler_missing_intervals, set_crawler_history
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
+from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.core.parsers.dirlisting import get_dirlisting
@@ -180,6 +181,7 @@ AEMONEMDispatchActualGEN = CrawlerDefinition(
     url="http://www.nemweb.com.au/Reports/CURRENT/Next_Day_Actual_Gen/",
     latest=False,
     network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.day,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -190,6 +192,7 @@ AEMONEMNextDayDispatch = CrawlerDefinition(
     url="http://nemweb.com.au/Reports/Current/Next_Day_Dispatch/",
     latest=False,
     network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.day,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -201,6 +204,7 @@ AEMONEMDispatchActualGENArchvie = CrawlerDefinition(
     url="http://www.nemweb.com.au/Reports/ARCHIVE/Next_Day_Actual_Gen/",
     latest=False,
     network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.month,
     processor=run_nemweb_aemo_crawl,
 )
 
@@ -211,6 +215,7 @@ AEMONEMNextDayDispatchArchvie = CrawlerDefinition(
     url="http://nemweb.com.au/Reports/ARCHIVE/Next_Day_Dispatch/",
     latest=False,
     network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.day,
     processor=run_nemweb_aemo_crawl,
 )
 
