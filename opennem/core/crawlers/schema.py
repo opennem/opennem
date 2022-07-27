@@ -72,9 +72,12 @@ class CrawlerSet(BaseConfig):
 
         return _crawler_lookup.pop()
 
-    def get_crawlers_by_match(self, match: str) -> list[CrawlerDefinition]:
+    def get_crawlers_by_match(self, match: str, only_active: bool = True) -> list[CrawlerDefinition]:
         """Get crawlers by match"""
         _crawler_lookup = list(filter(lambda x: match in x.name, self.crawlers))
+
+        if only_active:
+            _crawler_lookup = list(filter(lambda x: x.active, _crawler_lookup))
 
         if not _crawler_lookup:
             raise Exception(f"Could not find crawler matching {match}")
