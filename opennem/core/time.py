@@ -1,3 +1,4 @@
+""" Interval and time period definitions """
 import logging
 from typing import List, Optional
 
