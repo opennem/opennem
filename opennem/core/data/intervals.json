@@ -42,6 +42,12 @@
     "interval_sql": "7 days"
   },
   {
+    "interval": 20160,
+    "interval_human": "1f",
+    "trunc": "fortnight",
+    "interval_sql": "14 days"
+  },
+  {
     "interval": 43800,
     "interval_human": "1M",
     "trunc": "month",
