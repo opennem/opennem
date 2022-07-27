@@ -36,6 +36,12 @@
     "interval_sql": "1 day"
   },
   {
+    "interval": 10080,
+    "interval_human": "1w",
+    "trunc": "week",
+    "interval_sql": "7 days"
+  },
+  {
     "interval": 43800,
     "interval_human": "1M",
     "trunc": "month",
