@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from textwrap import dedent
 
+from datetime_truncate import truncate as date_trunc
 from sqlalchemy import text as sql
 
 from opennem.core.time import get_interval
@@ -116,7 +117,7 @@ def get_crawler_history(crawler_name: str, interval: TimeInterval, days: int = 3
 
 def get_crawler_missing_intervals(
     crawler_name: str,
-    interval_size: TimeInterval,
+    interval: TimeInterval,
     days: int = 365 * 3,
 ) -> list[datetime]:
     """Gets the crawler missing intervals going back a period of days"""
@@ -144,7 +145,7 @@ def get_crawler_missing_intervals(
     """
     )
 
-    query = stmt.bindparams(crawler_name=crawler_name, days=f"{days} days", interval_size=f"{interval_size} minutes")
+    query = stmt.bindparams(crawler_name=crawler_name, days=f"{days} days", interval_size=interval.interval_sql)
 
     logger.debug(dedent(str(query)))
 
@@ -153,10 +154,15 @@ def get_crawler_missing_intervals(
 
     models = [i[0] for i in results]
 
+    # truncate
+    # @NOTE specific >= as we trunc hour or greater
+    if interval.interval >= 60:
+        models = [date_trunc(i, interval.trunc) for i in models]
+
     return models
 
 
 if __name__ == "__main__":
-    m = get_crawler_missing_intervals("au.nemweb.trading_is", interval_size=get_interval("1M"))
-    for i in m:
+    m = get_crawler_missing_intervals("au.nemweb.trading_is", interval=get_interval("5m"), days=100)
+    for i in m[:5]:
         print(i)
