@@ -8,16 +8,46 @@ from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.core.parsers.dirlisting import get_dirlisting
+from opennem.core.time import get_interval, get_interval_by_size
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
+from opennem.schema.time import TimeInterval
 
 logger = logging.getLogger("opennem.crawler.nemweb")
+
+
+def get_time_interval_for_crawler(crawler: CrawlerDefinition) -> TimeInterval:
+    """For a crawler get its interval size"""
+    time_interval: TimeInterval | None = None
+
+    if crawler.bucket_size:
+        match crawler.bucket_size:
+            case AEMODataBucketSize.interval:
+                time_interval = get_interval_by_size(crawler.network.interval_size)
+            case AEMODataBucketSize.day:
+                time_interval = get_interval("1d")
+            case AEMODataBucketSize.week:
+                time_interval = get_interval("1w")
+            case AEMODataBucketSize.fortnight:
+                time_interval = get_interval("1f")
+            case AEMODataBucketSize.month:
+                time_interval = get_interval("1M")
+            case AEMODataBucketSize.year:
+                time_interval = get_interval("1Y")
+
+    elif crawler.network and crawler.network.interval_size:
+        time_interval = get_interval_by_size(crawler.network.interval_size)
+
+    if not time_interval:
+        raise Exception(f"Could not get a time interval for crawler: {crawler.network.code} {crawler.bucket_size}")
+
+    return time_interval
 
 
 def run_nemweb_aemo_crawl(
     crawler: CrawlerDefinition, run_fill: bool = True, last_crawled: bool = True, limit: bool = False
 ) -> ControllerReturn | None:
     """Runs the AEMO MMS crawlers"""
-    if not crawler.url:
+    if not crawler.url and not crawler.urls:
         raise Exception("Require a URL to run AEMO MMS crawlers")
 
     try:
@@ -38,13 +68,17 @@ def run_nemweb_aemo_crawl(
     if not crawler.network or not crawler.network.interval_size:
         raise Exception("Require an interval size for network for this crawler")
 
-    backfill_days = 14
+    # 2 years is default backfill
+    # @TODO make this dynamic based on NetworkSchema
+    backfill_days = 365 * 2
 
     if crawler.backfill_days:
         backfill_days = crawler.backfill_days
 
+    time_interval = get_time_interval_for_crawler(crawler)
+
     missing_intervals = get_crawler_missing_intervals(
-        crawler_name=crawler.name, days=backfill_days, interval_size=crawler.network.interval_size
+        crawler_name=crawler.name, days=backfill_days, interval=time_interval
     )
 
     logger.debug(f"Have {len(missing_intervals)} missing intervals")
