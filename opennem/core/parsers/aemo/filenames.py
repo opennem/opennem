@@ -17,7 +17,9 @@ class AEMODataBucketSize(enum.Enum):
     interval = "interval"
     day = "day"
     week = "week"
+    fortnight = "fortnight"
     month = "month"
+    year = "year"
 
 
 @dataclass
