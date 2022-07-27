@@ -5,6 +5,7 @@ from typing import Callable
 
 from pydantic import Field
 
+from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 
@@ -33,8 +34,9 @@ class CrawlerDefinition(BaseConfig):
     name: str
     url: str | None
 
-    # This is a v3 field
+    # These are v3 fields
     urls: list[str] | None
+    bucket_size: AEMODataBucketSize | None
 
     active: bool = True
     limit: int | None
