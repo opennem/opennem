@@ -32,7 +32,11 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
             select
                 time_bucket_gapfill('5 minutes', fs.trading_interval) as trading_interval,
                 fs.facility_code as code,
-                coalesce(sum(fs.eoi_quantity), 0) as energy,
+                case
+                    when sum(fs.eoi_quantity) > 0 then
+                        coalesce(sum(fs.eoi_quantity), 0)
+                    else 0
+                end as energy,
                 case
                     when sum(fs.eoi_quantity) > 0 then
                         coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bs.price_dispatch), 0)
