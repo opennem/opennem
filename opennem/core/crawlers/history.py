@@ -1,16 +1,15 @@
 """" Reads and stores crawler history """
 import logging
-from curses.ascii import CR
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
 from textwrap import dedent
-from typing import Any, Dict, Optional, Union
 
 from sqlalchemy import text as sql
 
+from opennem.core.time import get_interval
 from opennem.db import get_database_engine, get_scoped_session
-from opennem.db.models.opennem import CrawlerSource, CrawlHistory, CrawlMeta
+from opennem.db.models.opennem import CrawlHistory
+from opennem.schema.time import TimeInterval
 
 logger = logging.getLogger("opennem.crawler.history")
 
@@ -74,7 +73,7 @@ def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -
     return len(histories)
 
 
-def get_crawler_history(crawler_name: str, days: int = 3) -> list[datetime]:
+def get_crawler_history(crawler_name: str, interval: TimeInterval, days: int = 3) -> list[datetime]:
     """Gets the crawler history"""
     engine = get_database_engine()
 
@@ -86,7 +85,7 @@ def get_crawler_history(crawler_name: str, days: int = 3) -> list[datetime]:
         from
         (
             select
-                time_bucket_gapfill('5m', ch.interval) as trading_interval,
+                time_bucket_gapfill(:bucket_size, ch.interval) as trading_interval,
                 ch.crawler_name,
                 coalesce(sum(ch.inserted_records), 0) as records_inserted,
                 case when sum(ch.inserted_records) is NULL then FALSE else TRUE end as has_record
@@ -103,7 +102,7 @@ def get_crawler_history(crawler_name: str, days: int = 3) -> list[datetime]:
     """
     )
 
-    query = stmt.bindparams(crawler_name=crawler_name, days=f"{days} days")
+    query = stmt.bindparams(crawler_name=crawler_name, bucket_size=interval.interval_sql, days=f"{days} days")
 
     logger.debug(dedent(str(query)))
 
@@ -117,8 +116,8 @@ def get_crawler_history(crawler_name: str, days: int = 3) -> list[datetime]:
 
 def get_crawler_missing_intervals(
     crawler_name: str,
-    interval_size: int,
-    days: int = 3,
+    interval_size: TimeInterval,
+    days: int = 365 * 3,
 ) -> list[datetime]:
     """Gets the crawler missing intervals going back a period of days"""
     engine = get_database_engine()
@@ -158,6 +157,6 @@ def get_crawler_missing_intervals(
 
 
 if __name__ == "__main__":
-    m = get_crawler_missing_intervals("au.nemweb.trading_is", days=1)
+    m = get_crawler_missing_intervals("au.nemweb.trading_is", interval_size=get_interval("1M"))
     for i in m:
         print(i)
