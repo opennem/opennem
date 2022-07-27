@@ -64,6 +64,8 @@ def run_nemweb_aemo_crawl(
 
     for entry in entries_to_fetch:
         try:
+            # @NOTE optimization - if we're dealing with a large file unzip
+            # to disk and parse rather than in-memory. 100,000kb
             if entry.file_size and entry.file_size > 100_000:
                 controller_returns = parse_aemo_url_optimized(entry.link)
             else:
