@@ -118,7 +118,6 @@ def crawler_scheduled_twice_a_day() -> None:
 @huey.lock_task("crawler_scheduled_day")
 def crawler_scheduled_day() -> None:
     run_crawls_by_schedule(CrawlerSchedule.daily)
-    # fallback_runner()
 
 
 # export tasks
@@ -221,6 +220,13 @@ def db_run_energy_gapfil() -> None:
     run_emission_update_day(days=4)
 
     check_generated_gaps()
+
+
+# larger gap fill task and fallback runner
+@huey.periodic_task(crontab(hour="1", minute="15"))
+@huey.lock_task("run_fallback_runner")
+def run_fallback_runner() -> None:
+    fallback_runner()
 
 
 #  run energy tasks
