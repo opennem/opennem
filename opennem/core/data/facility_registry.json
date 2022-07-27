@@ -8114,7 +8114,7 @@
     },
     "duid_data": {
       "TIWEST_COG1": {
-        "registered_capacity": 42.1,
+        "registered_capacity": 120,
         "fuel_tech": "gas_ocgt"
       }
     }
