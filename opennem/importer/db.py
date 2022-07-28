@@ -3,9 +3,7 @@ import logging
 
 from opennem.core.stats.store import init_stats
 from opennem.db.load_fixtures import load_fixtures
-from opennem.importer.emissions import import_emissions_csv
 from opennem.importer.facilities import import_facilities
-from opennem.importer.interconnectors import import_nem_interconnects
 from opennem.importer.osm import init_osm
 from opennem.importer.photos import import_photos_from_fixtures
 from opennem.importer.rooftop import rooftop_facilities
@@ -31,12 +29,6 @@ def init() -> None:
     logger.info("Fixtures loaded")
 
     import_all_facilities()
-
-    import_emissions_csv()
-    logger.info("Emission data initialized")
-
-    import_nem_interconnects()
-    logger.info("Initialized interconnectors")
 
     wikidata_join_mapping()
     logger.info("Imported wikidata for stations")
