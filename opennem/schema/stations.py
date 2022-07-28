@@ -6,16 +6,14 @@
 from collections import UserList
 from typing import List, Optional
 
-from opennem.core.normalizers import string_to_upper
+from typing_extensions import Self
+
 from opennem.exporter.encoders import opennem_serialize
 from opennem.schema.opennem import StationImportSchema
 
 
 class StationSet(UserList):
-    """"""
-
-    # def __init__(self,):
-    #     pass
+    """Defines a set of stations"""
 
     def get(self, key: int) -> Optional[StationImportSchema]:
         _entry = list(filter(lambda s: s.id == key, self.data))
@@ -24,14 +22,6 @@ class StationSet(UserList):
             return None
 
         return _entry.pop()
-
-    def get_by(self, **kwargs):
-        print(kwargs)
-
-    def get_name(self, name: str) -> List[StationImportSchema]:
-        _entries = list(filter(lambda s: string_to_upper(s.name, name), self.data))
-
-        return _entries
 
     def get_code(self, code: str) -> Optional[StationImportSchema]:
         _entries = list(filter(lambda s: s.code == code, self.data))
@@ -44,10 +34,7 @@ class StationSet(UserList):
 
         return _entries.pop()
 
-    def one(self):
-        pass
-
-    def add(self, station: StationImportSchema):
+    def add(self, station: StationImportSchema) -> Self:
         if not station.code:
             raise Exception("Require a station code")
 
@@ -60,7 +47,7 @@ class StationSet(UserList):
 
         return self
 
-    def add_dict(self, station_dict: dict):
+    def add_dict(self, station_dict: dict) -> None:
         station = StationImportSchema(**station_dict)
 
         self.add(station)
@@ -68,7 +55,7 @@ class StationSet(UserList):
     def as_list(self) -> List[StationImportSchema]:
         return self.data
 
-    def json(self, indent=None):
+    def json(self, indent=None) -> str:
         _data = [i.dict() for i in self.data]
 
         return opennem_serialize(_data, indent=indent)
