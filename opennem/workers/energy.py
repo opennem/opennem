@@ -16,13 +16,7 @@ from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import FacilityScada
 from opennem.schema.dates import DatetimeRange, TimeSeries
-from opennem.schema.network import (
-    NetworkAEMORooftop,
-    NetworkAPVI,
-    NetworkNEM,
-    NetworkSchema,
-    NetworkWEM,
-)
+from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import DATE_CURRENT_YEAR, get_last_complete_day_for_network
 from opennem.utils.interval import get_human_interval
 from opennem.workers.facility_data_ranges import get_facility_seen_range
@@ -372,9 +366,7 @@ def run_energy_calc(
 
     # @TODO get rid of the hard-coded networknem part
     if flow and region and network == NetworkNEM:
-        generated_results = get_flows(
-            date_min, date_max, network_region=region, network=network, flow=flow
-        )
+        generated_results = get_flows(date_min, date_max, network_region=region, network=network, flow=flow)
     else:
         generated_results = get_generated(
             date_min,
@@ -390,11 +382,7 @@ def run_energy_calc(
 
     try:
         if len(generated_results) < 1:
-            logger.warning(
-                "No results from get_generated query for {} {} {}".format(
-                    region, date_max, fueltech_id
-                )
-            )
+            logger.warning("No results from get_generated query for {} {} {}".format(region, date_max, fueltech_id))
             return 0
 
         generated_frame = shape_energy_dataframe(generated_results, network=network)
@@ -540,18 +528,17 @@ def run_energy_update_all(
     """Runs energy update for all regions and all years for one-off
     inserts"""
     for year in range(DATE_CURRENT_YEAR, 1997, -1):
-        run_energy_update_archive(
-            year=year, fueltech=fueltech, network=network, run_clear=run_clear
-        )
+        run_energy_update_archive(year=year, fueltech=fueltech, network=network, run_clear=run_clear)
 
 
-def run_energy_update_facility(
-    facility_codes: List[str], network: NetworkSchema = NetworkNEM
-) -> None:
+def run_energy_update_facility(facility_codes: List[str], network: NetworkSchema = NetworkNEM) -> None:
     facility_seen_range = None
 
     # catch me if you can
     facility_seen_range = get_facility_seen_range(facility_codes)
+
+    if not facility_seen_range or not facility_seen_range.date_max or not facility_seen_range.date_min:
+        raise Exception("run_energy_update_facility requires a facility seen range")
 
     run_energy_calc(
         facility_seen_range.date_min,
