@@ -10,6 +10,7 @@ from opennem.db import SessionLocal
 from opennem.db.load_fixtures import load_fixtures
 from opennem.db.models.opennem import Facility, Location, Station
 from opennem.importer.emissions import import_emissions_csv
+from opennem.importer.facilities import import_facilities
 from opennem.importer.fueltechs import init_fueltechs
 from opennem.importer.interconnectors import import_nem_interconnects
 from opennem.importer.osm import init_osm
@@ -292,15 +293,9 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
         session.commit()
 
 
-def import_facilities() -> None:
-    registry_init()
-    logger.info("Registry initialized")
-
-    opennem_init()
-    logger.info("Opennem stations imported")
-
-    mms_init()
-    logger.info("MMS stations imported")
+def import_all_facilities() -> None:
+    import_facilities()
+    logger.info("OpenNEM stations imported")
 
     rooftop_facilities()
     logger.info("Rooftop stations initialized")

@@ -17,7 +17,7 @@ from opennem.db.tasks import refresh_views
 from opennem.db.views import init_aggregation_policies
 from opennem.db.views.init import init_views_cli
 from opennem.importer.all import run_all
-from opennem.importer.db import import_facilities
+from opennem.importer.db import import_all_facilities
 from opennem.importer.db import init as db_init
 from opennem.importer.emissions import import_emissions_map
 from opennem.importer.interconnectors import import_nem_interconnects
@@ -84,7 +84,7 @@ def cmd_import_opennem() -> None:
 
 @click.command()
 def cmd_import_facilities() -> None:
-    import_facilities()
+    import_all_facilities()
 
 
 @click.command()
