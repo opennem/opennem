@@ -60,27 +60,20 @@ def registry_init() -> None:
             station_model.location = Location(**location_dict)
 
         if station.location.lat and station.location.lng:
-            station_model.location.geom = "SRID=4326;POINT({} {})".format(
-                station.location.lng, station.location.lat
-            )
+            station_model.location.geom = "SRID=4326;POINT({} {})".format(station.location.lng, station.location.lat)
 
         # clean station name
         if station.name:
-            station_model.name = station_name_cleaner(station.network_name)
+            station_model.name = station.network_name
 
         if station.network_name:
-            station_model.name = station_name_cleaner(station.network_name)
+            station_model.name = station.network_name
 
         session.add(station_model)
         session.commit()
 
         for fac in station.facilities:
-            f = (
-                session.query(Facility)
-                .filter_by(code=fac.code)
-                .filter_by(network_id=fac.network.code)
-                .one_or_none()
-            )
+            f = session.query(Facility).filter_by(code=fac.code).filter_by(network_id=fac.network.code).one_or_none()
 
             if not f:
                 logger.info("Added facility {} {}".format(fac.code, fac.network.code))
@@ -207,9 +200,7 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
             station_model.location.country = station.location.country
 
         if station.location.lat and station.location.lng:
-            station_model.location.geom = "SRID=4326;POINT({} {})".format(
-                station.location.lng, station.location.lat
-            )
+            station_model.location.geom = "SRID=4326;POINT({} {})".format(station.location.lng, station.location.lat)
 
         session.add(station_model)
         session.commit()
@@ -218,10 +209,7 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
             facility_added = False
 
             facility_model = (
-                session.query(Facility)
-                .filter_by(code=fac.code)
-                .filter_by(network_id=fac.network.code)
-                .one_or_none()
+                session.query(Facility).filter_by(code=fac.code).filter_by(network_id=fac.network.code).one_or_none()
             )
 
             if facility_model and only_insert_facilities:
@@ -234,11 +222,7 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
 
             if facility_model.station_id != station_model.id:
                 facility_model.station_id = station_model.id
-                logger.debug(
-                    " => Reassigned facility {} to station {}".format(
-                        facility_model.code, station_model.code
-                    )
-                )
+                logger.debug(" => Reassigned facility {} to station {}".format(facility_model.code, station_model.code))
 
             # fueltech
             if fac.fueltech:
