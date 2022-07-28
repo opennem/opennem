@@ -55,7 +55,7 @@ class StationSet(UserList):
     def as_list(self) -> List[StationImportSchema]:
         return self.data
 
-    def json(self, indent=None) -> str:
+    def json(self, indent: int | None = None) -> str:
         _data = [i.dict() for i in self.data]
 
         return opennem_serialize(_data, indent=indent)
