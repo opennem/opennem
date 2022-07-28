@@ -6,6 +6,7 @@ in the data store as well
 
 :see_also: opennem/db/__init__.py
 """
+import dataclasses
 import decimal
 import json
 from datetime import date, datetime
@@ -20,6 +21,8 @@ class OpenNEMJSONEncoder(json.JSONEncoder):
     """JSON encoder that supports decial, datetime and dates"""
 
     def default(self, o: Any) -> Any:
+        if dataclasses.is_dataclass(o):
+            return dataclasses.asdict(o)
         if isinstance(o, decimal.Decimal):
             return float(o)
         if isinstance(o, datetime):
