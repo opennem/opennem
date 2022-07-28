@@ -4,11 +4,9 @@ from pprint import pprint
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql import text
 
 from opennem.db import db_connect
-from opennem.db.load_fixtures import update_existing_geos
-from opennem.db.models.opennem import Facility, Station
+from opennem.db.models.opennem import Station
 from opennem.geo.google_geo import place_search
 
 logger = logging.getLogger(__name__)
@@ -79,13 +77,8 @@ def opennem_geocode(limit=None):
         if limit and count >= limit:
             break
 
-    print(
-        "Geocode of opennem records done. Added {} records. Couldn't match {}".format(
-            records_added, skipped
-        )
-    )
+    print("Geocode of opennem records done. Added {} records. Couldn't match {}".format(records_added, skipped))
 
 
 if __name__ == "__main__":
-    update_existing_geos()
     opennem_geocode()

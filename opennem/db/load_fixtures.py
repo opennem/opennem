@@ -10,18 +10,9 @@ from typing import Tuple
 
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.loader import load_data
-from opennem.core.normalizers import normalize_duid, station_name_cleaner
+from opennem.core.normalizers import normalize_duid
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import (
-    BomStation,
-    Facility,
-    FacilityStatus,
-    FuelTech,
-    Network,
-    NetworkRegion,
-    Station,
-)
-from opennem.importer.compat import map_compat_facility_state
+from opennem.db.models.opennem import BomStation, Facility, FacilityStatus, FuelTech, Network, NetworkRegion, Station
 
 logger = logging.getLogger(__name__)
 
@@ -261,88 +252,6 @@ def load_bom_stations_json() -> None:
 
     logger.info("Imported {} stations".format(stations_imported))
     session.commit()
-
-
-def update_existing_geos() -> None:
-    """
-    Old method to update geos from existing facilities file on OpenNEM
-    """
-
-    station_fixture = load_data("facility_registry.json", from_fixture=True)
-
-    stations = [{"station_code": k, **v} for k, v in station_fixture.items()]
-
-    s = SessionLocal()
-
-    for station_data in stations:
-        station = None
-
-        # station_name = station_name_cleaner(station_data["display_name"])
-        station_code = normalize_duid(station_data["station_code"])
-        # station_state = map_compat_facility_state(station_data["status"]["state"])
-
-        station = s.query(Station).filter(Station.network_code == station_code).one_or_none()
-
-        if not station:
-            logger.info("Could not find station {}".format(station_code))
-            continue
-
-        if (
-            "location" in station_data
-            and "latitude" in station_data["location"]
-            and station_data["location"]["latitude"]
-        ):
-            station.geom = (
-                "SRID=4326;POINT({} {})".format(
-                    station_data["location"]["latitude"],
-                    station_data["location"]["longitude"],
-                ),
-            )
-            station.geocode_processed_at = datetime.now()
-            station.geocode_by = "opennem"
-            station.geocode_approved = True
-
-            station.updated_by = "fixture.registry"
-
-        s.add(station)
-
-        logger.info(
-            "Updated station geo location {} ({})".format(
-                station.code,
-                station.name,
-            )
-        )
-
-        facilities = [{"code": k, **v} for k, v in stations[0]["duid_data"].items()]
-
-        # update fueltechs
-        for facility_data in facilities:
-            facility_duid = facility_data["code"]
-            facility_fueltech = lookup_fueltech(facility_data["fuel_tech"])
-
-            facility = s.query(Facility).filter(Facility.network_code == facility_duid).first()
-
-            if not facility:
-                logger.error(
-                    "Could not find existing facility {} for station {}".format(
-                        facility_duid, station_code
-                    )
-                )
-                continue
-
-            if not facility.fueltech_id:
-                facility.fueltech_id = facility_fueltech
-
-            if facility.fueltech_id != facility_fueltech:
-                logger.error(
-                    "Fueltech mismatch for {}. Old is {} and new is {}".format(
-                        station_code, facility_fueltech, station.fueltech_id
-                    )
-                )
-
-            s.add(facility)
-
-        s.commit()
 
 
 def load_fixtures() -> None:
