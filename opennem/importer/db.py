@@ -11,7 +11,6 @@ from opennem.db.load_fixtures import load_fixtures
 from opennem.db.models.opennem import Facility, Location, Station
 from opennem.importer.emissions import import_emissions_csv
 from opennem.importer.facilities import import_facilities
-from opennem.importer.fueltechs import init_fueltechs
 from opennem.importer.interconnectors import import_nem_interconnects
 from opennem.importer.osm import init_osm
 from opennem.importer.photos import import_photos_from_fixtures
@@ -308,13 +307,10 @@ def init() -> None:
     load_fixtures()
     logger.info("Fixtures loaded")
 
-    import_facilities()
+    import_all_facilities()
 
     import_emissions_csv()
     logger.info("Emission data initialized")
-
-    init_fueltechs()
-    logger.info("Initialized fueltechs")
 
     import_nem_interconnects()
     logger.info("Initialized interconnectors")
