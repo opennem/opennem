@@ -10,7 +10,7 @@ from opennem import settings
 from opennem.db import get_database_engine
 from opennem.notifications.slack import slack_message
 from opennem.schema.core import BaseConfig
-from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 
 logger = logging.getLogger("opennem.workers.gap_fill")
 
@@ -120,7 +120,7 @@ def run_generated_gapfill_for_network(
 def check_generated_gaps(days: int = 3) -> None:
     """Process for checking how many generation gaps there might be"""
 
-    for network in [NetworkNEM]:
+    for network in [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop]:
         for _, gap_type in enumerate(GapfillType):
             gaps = run_generated_gapfill_for_network(days=days, network=network, gap_type=gap_type)
 
