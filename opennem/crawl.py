@@ -12,6 +12,7 @@ from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
 from opennem.core.parsers.aemo.mms import parse_aemo_url
+from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
@@ -147,8 +148,8 @@ def run_crawl_urls(urls: list[str]) -> None:
     for url in urls:
         if url.lower().endswith(".zip") or url.lower().endswith(".csv"):
             try:
-                ts = parse_aemo_url(url)
-                store_aemo_tableset(ts)
+                cr = parse_aemo_url_optimized(url)
+                logger.info(f"Parsed {url} and got {cr.inserted_records} inserted")
             except Exception as e:
                 logger.error(e)
 
@@ -214,4 +215,12 @@ if __name__ == "__main__":
     # parse_aemo_url_optimized(url)
 
     url = "https://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/PUBLIC_TRADINGIS_20210620_20210626.zip"
-    run_crawl_urls([url])
+
+    # catchup urls
+    urls = [
+        "https://nemweb.com.au/Reports/Archive/Next_Day_Dispatch/PUBLIC_NEXT_DAY_DISPATCH_20220201.zip",
+        "https://nemweb.com.au/Reports/Archive/Next_Day_Dispatch/PUBLIC_NEXT_DAY_DISPATCH_20220301.zip",
+        "https://nemweb.com.au/Reports/Archive/Next_Day_Actual_Gen/NEXT_DAY_ACTUAL_GEN_20220201.zip",
+        "https://nemweb.com.au/Reports/Archive/Next_Day_Actual_Gen/NEXT_DAY_ACTUAL_GEN_20220301.zip",
+    ]
+    run_crawl_urls(urls)
