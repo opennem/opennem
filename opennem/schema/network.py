@@ -43,7 +43,10 @@ class NetworkSchema(BaseConfig):
     interval_shift: int = Field(0, description="Size of reading shift in minutes")
 
     # support hardcoded first seen
-    data_first_seen: Optional[datetime]
+    data_first_seen: datetime | None
+    price_first_seen: datetime | None
+    interconnector_first_seen: datetime | None
+    rooftop_first_seen: datetime | None
 
     def get_interval(self) -> Optional[TimeInterval]:
         if not self.interval_size:
