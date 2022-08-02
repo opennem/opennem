@@ -114,6 +114,9 @@ NetworkNEM = NetworkSchema(
     interval_size=5,
     interval_shift=5,
     data_first_seen=datetime.fromisoformat("1998-12-07T01:50:00+10:00"),
+    price_first_seen=datetime.fromisoformat("2009-07-01T00:00:00+10:00"),
+    interconnector_first_seen=datetime.fromisoformat("2010-01-01T00:00:00+10:00"),
+    rooftop_first_seen=datetime.fromisoformat("2007-01-01T00:00:00+10:00"),
 )
 
 NetworkWEM = NetworkSchema(
@@ -125,6 +128,7 @@ NetworkWEM = NetworkSchema(
     offset=480,
     interval_size=30,
     data_first_seen=datetime.fromisoformat("2006-09-20T02:00:00+10:00"),
+    price_first_seen=datetime.fromisoformat("2009-07-01T00:00:00+10:00"),
 )
 
 NetworkAPVI = NetworkSchema(
