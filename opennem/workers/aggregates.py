@@ -39,7 +39,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
                 end as energy,
                 case
                     when sum(fs.eoi_quantity) > 0 then
-                        coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bs.price_dispatch), 0)
+                        coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bs.price_dispatch), max(bs.price), 0)
                     else 0
                 end as market_value,
                 case
