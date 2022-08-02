@@ -127,8 +127,8 @@ NetworkWEM = NetworkSchema(
     timezone_database="AWST",
     offset=480,
     interval_size=30,
-    data_first_seen=datetime.fromisoformat("2006-09-20T02:00:00+10:00"),
-    price_first_seen=datetime.fromisoformat("2009-07-01T00:00:00+10:00"),
+    data_first_seen=datetime.fromisoformat("2006-09-20T02:00:00+08:00"),
+    price_first_seen=datetime.fromisoformat("2012-01-07T08:00:00+08:00"),
 )
 
 NetworkAPVI = NetworkSchema(
