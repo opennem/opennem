@@ -113,12 +113,10 @@ def run_nemweb_aemo_crawl(
 
             if entry.aemo_interval_date:
                 ch = CrawlHistoryEntry(interval=entry.aemo_interval_date, records=controller_returns.processed_records)
-                crawl_history.append(ch)
+                set_crawler_history(crawler_name=crawler.name, histories=[ch])
 
         except Exception as e:
             logger.error(f"Processing error: {e}")
-
-    set_crawler_history(crawler_name=crawler.name, histories=crawl_history)
 
     return controller_returns
 
