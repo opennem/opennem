@@ -94,8 +94,6 @@ def run_nemweb_aemo_crawl(
 
     logger.info("Fetching {} entries".format(len(entries_to_fetch)))
 
-    crawl_history: list[CrawlHistoryEntry] = []
-
     for entry in entries_to_fetch:
         try:
             # @NOTE optimization - if we're dealing with a large file unzip
