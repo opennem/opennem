@@ -101,16 +101,6 @@ def cmd_import_all() -> None:
 
 
 @click.command()
-def cmd_import_emissions() -> None:
-    import_emissions_map("emission_factors.csv")
-
-
-@click.command()
-def cmd_import_interconnectors() -> None:
-    import_nem_interconnects()
-
-
-@click.command()
 def cmd_export_power() -> None:
     export_power(priority=PriorityType.live)
 
