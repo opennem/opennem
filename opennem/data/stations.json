@@ -21887,7 +21887,7 @@
   },
   {
     "code": "ENOCSTA",
-    "name": "Enoc Msap",
+    "name": "ENOC MSAP",
     "network_name": "ENOC MSAP VIC",
     "description": null,
     "wikipedia_link": null,
@@ -21898,7 +21898,7 @@
     "facilities": [
       {
         "network_id": "NEM",
-        "fueltech_id": null,
+        "fueltech_id": "",
         "status_id": "operating",
         "code": "VENUS1",
         "network_code": null,
