@@ -5,6 +5,7 @@ from datetime import datetime
 from textwrap import dedent
 
 from datetime_truncate import truncate as date_trunc
+from psycopg2.errors import UniqueViolation
 from sqlalchemy import text as sql
 
 from opennem.core.time import get_interval
@@ -67,9 +68,14 @@ def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -
                 inserted_records=ch.records,
                 network_id="NEM",
             )
-            session.add(model)
 
-        session.commit()
+            try:
+                session.add(model)
+                session.commit()
+            except UniqueViolation as e:
+                logger.warning(f"Unique violation for record: {model}")
+            except Exception as e:
+                logger.error(e)
 
     return len(histories)
 
