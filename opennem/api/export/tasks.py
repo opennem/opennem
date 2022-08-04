@@ -23,13 +23,7 @@ from opennem.api.export.controllers import (
     power_week,
     weather_daily,
 )
-from opennem.api.export.map import (
-    PriorityType,
-    StatExport,
-    StatType,
-    get_export_map,
-    get_weekly_export_map,
-)
+from opennem.api.export.map import PriorityType, StatExport, StatType, get_export_map, get_weekly_export_map
 from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
@@ -81,11 +75,7 @@ def export_power(
 
     output_count: int = 0
 
-    logger.info(
-        "Running {}export {} with {} stats".format(
-            "latest " if latest else "", priority, len(stats)
-        )
-    )
+    logger.info("Running {}export {} with {} stats".format("latest " if latest else "", priority, len(stats)))
 
     for power_stat in stats:
         if power_stat.stat_type != StatType.power:
@@ -99,15 +89,9 @@ def export_power(
         if NetworkNEM in date_range_networks:
             date_range_networks = [NetworkNEM]
 
-        date_range: ScadaDateRange = get_scada_range(
-            network=power_stat.network, networks=date_range_networks
-        )
+        date_range: ScadaDateRange = get_scada_range(network=power_stat.network, networks=date_range_networks)
 
-        logger.debug(
-            "Date range for {}: {} => {}".format(
-                power_stat.network.code, date_range.start, date_range.end
-            )
-        )
+        logger.debug("Date range for {}: {} => {}".format(power_stat.network.code, date_range.start, date_range.end))
 
         # Migrate to this time_series
         time_series = TimeSeries(
@@ -192,6 +176,8 @@ def export_energy(
 
     CURRENT_YEAR = datetime.now().year
 
+    logger.info(f"Running export_energy with {len(stats)} stats")
+
     for energy_stat in stats:
         if energy_stat.stat_type != StatType.energy:
             continue
@@ -211,17 +197,11 @@ def export_energy(
 
         if not date_range:
             logger.error(
-                "Skipping - Could not get date range for energy {} {}".format(
-                    energy_stat.network, date_range_networks
-                )
+                "Skipping - Could not get date range for energy {} {}".format(energy_stat.network, date_range_networks)
             )
             continue
 
-        logger.debug(
-            "Date range is: {} {} => {}".format(
-                energy_stat.network.code, date_range.start, date_range.end
-            )
-        )
+        logger.debug("Date range is: {} {} => {}".format(energy_stat.network.code, date_range.start, date_range.end))
 
         # Migrate to this time_series
         time_series = TimeSeries(
@@ -253,8 +233,7 @@ def export_energy(
                 interconnector_flows = energy_interconnector_flows_and_emissions(
                     time_series=time_series,
                     networks_query=energy_stat.networks,
-                    network_region_code=energy_stat.network_region_query
-                    or energy_stat.network_region,
+                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
                 )
                 stat_set.append_set(interconnector_flows)
 
@@ -296,8 +275,7 @@ def export_energy(
                 interconnector_flows = energy_interconnector_flows_and_emissions(
                     time_series=time_series,
                     networks_query=energy_stat.networks,
-                    network_region_code=energy_stat.network_region_query
-                    or energy_stat.network_region,
+                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
                 )
                 stat_set.append_set(interconnector_flows)
 
@@ -320,9 +298,7 @@ def export_energy(
 def export_all_monthly() -> None:
     session = get_scoped_session()
 
-    all_monthly = OpennemDataSet(
-        code="au", data=[], version=get_version(), created_at=datetime.now()
-    )
+    all_monthly = OpennemDataSet(code="au", data=[], version=get_version(), created_at=datetime.now())
 
     cpi = gov_stats_cpi()
     all_monthly.append_set(cpi)
@@ -331,18 +307,12 @@ def export_all_monthly() -> None:
     networks = [NetworkNEM, NetworkWEM]
 
     for network in networks:
-        network_regions = (
-            session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code).all()
-        )
+        network_regions = session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code).all()
 
         for network_region in network_regions:
             networks = []
 
-            logging.info(
-                "Exporting monthly for network {} and region {}".format(
-                    network.code, network_region.code
-                )
-            )
+            logging.info("Exporting monthly for network {} and region {}".format(network.code, network_region.code))
 
             if network_region.code == "WEM":
                 networks = [NetworkWEM, NetworkAPVI]
@@ -350,18 +320,12 @@ def export_all_monthly() -> None:
             if network == NetworkNEM:
                 networks = [NetworkNEM, NetworkAEMORooftop]
 
-            logger.debug(
-                "Running monthlies for {} and {}".format(network.code, network_region.code)
-            )
+            logger.debug("Running monthlies for {} and {}".format(network.code, network_region.code))
 
-            scada_range: ScadaDateRange = get_scada_range(
-                network=network, networks=networks, energy=True
-            )
+            scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks, energy=True)
 
             if not scada_range or not scada_range.start:
-                logger.error(
-                    "Could not get scada range for network {} and energy {}".format(network, True)
-                )
+                logger.error("Could not get scada range for network {} and energy {}".format(network, True))
                 continue
 
             time_series = TimeSeries(
@@ -416,11 +380,7 @@ def export_all_daily(
     cpi = gov_stats_cpi()
 
     for network in networks:
-        network_regions = (
-            session.query(NetworkRegion)
-            .filter_by(export_set=True)
-            .filter_by(network_id=network.code)
-        )
+        network_regions = session.query(NetworkRegion).filter_by(export_set=True).filter_by(network_id=network.code)
 
         if network_region_code:
             network_regions = network_regions.filter_by(code=network_region_code)
@@ -429,23 +389,17 @@ def export_all_daily(
 
         for network_region in network_regions:
 
-            logging.info(
-                "Exporting for network {} and region {}".format(network.code, network_region.code)
-            )
+            logging.info("Exporting for network {} and region {}".format(network.code, network_region.code))
 
             networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             if network_region.code == "WEM":
                 networks = [NetworkWEM, NetworkAPVI]
 
-            scada_range: ScadaDateRange = get_scada_range(
-                network=network, networks=networks, energy=True
-            )
+            scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks, energy=True)
 
             if not scada_range or not scada_range.start:
-                logger.error(
-                    "Could not get scada range for network {} and energy {}".format(network, True)
-                )
+                logger.error("Could not get scada range for network {} and energy {}".format(network, True))
                 continue
 
             time_series = TimeSeries(
@@ -551,9 +505,7 @@ def export_electricitymap() -> None:
     if not stat_set:
         raise Exception("No flow results for electricitymap export")
 
-    em_set = OpennemDataSet(
-        type="custom", version=get_version(), created_at=datetime.now(), data=[]
-    )
+    em_set = OpennemDataSet(type="custom", version=get_version(), created_at=datetime.now(), data=[])
 
     INVERT_SETS = ["VIC1->NSW1", "VIC1->SA1"]
 
