@@ -188,7 +188,11 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
             station_model = Station(code=station.code)
             station_model.created_by = "opennem.importer.facilities"
 
-        logger.debug("{} station: {}".format(add_or_update, station.code))
+        logger.debug(
+            "{} station: {} - {} (network name: {})".format(
+                add_or_update, station.code, station.name, station.network_name
+            )
+        )
 
         if station.description:
             station_model.description = station.description
@@ -197,7 +201,7 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
             station_model.name = station.name
 
         if station.network_name:
-            station_model.name = station.network_name
+            station_model.network_name = station.network_name
 
         station_model.approved = station.approved
 
