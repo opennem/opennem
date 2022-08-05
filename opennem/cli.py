@@ -16,6 +16,7 @@ from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures
 from opennem.db.tasks import refresh_views
 from opennem.db.views import init_aggregation_policies
 from opennem.db.views.init import init_views_cli
+from opennem.exporter.geojson import export_facility_geojson
 from opennem.importer.all import run_all
 from opennem.importer.db import import_all_facilities
 from opennem.importer.db import init as db_init
@@ -83,6 +84,7 @@ def cmd_import_opennem() -> None:
 @click.command()
 def cmd_import_facilities() -> None:
     import_all_facilities()
+    export_facility_geojson()
 
 
 @click.command()
