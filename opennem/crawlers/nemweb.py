@@ -180,7 +180,7 @@ AEMONemwebRooftopForecast = CrawlerDefinition(
 
 AEMONemwebTradingISArchive = CrawlerDefinition(
     priority=CrawlerPriority.high,
-    active=True,
+    active=False,
     name="au.nemweb.archive.trading_is",
     url="http://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/",
     network=NetworkNEM,
@@ -190,7 +190,7 @@ AEMONemwebTradingISArchive = CrawlerDefinition(
 
 AEMONemwebDispatchISArchive = CrawlerDefinition(
     priority=CrawlerPriority.high,
-    active=True,
+    active=False,
     name="au.nemweb.archive.dispatch_is",
     url="http://nemweb.com.au/Reports/ARCHIVE/DispatchIS_Reports/",
     network=NetworkNEM,
