@@ -177,7 +177,7 @@ def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True)
     for crawler in _CRAWLER_SET.get_crawlers_by_schedule(schedule):
         try:
             logger.debug(f"run_crawls_by_schedule running crawler {crawler.name}")
-            # run_crawl(crawler, last_crawled=last_crawled)
+            run_crawl(crawler, last_crawled=last_crawled)
         except Exception as e:
             logger.error("Error running crawl {}: {}".format(crawler.name, e))
 
@@ -195,4 +195,4 @@ def get_crawl_set() -> CrawlerSet:
 
 
 if __name__ == "__main__":
-    run_crawls_by_schedule(CrawlerSchedule.live)
+    run_crawls_by_schedule(CrawlerSchedule.frequent)
