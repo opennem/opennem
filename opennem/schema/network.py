@@ -48,6 +48,10 @@ class NetworkSchema(BaseConfig):
     interconnector_first_seen: datetime | None
     rooftop_first_seen: datetime | None
 
+    # monitoring settings
+    # in minutes, after how long to alert on delays for this network
+    monitor_interval_alert_threshold: int | None
+
     def get_interval(self) -> Optional[TimeInterval]:
         if not self.interval_size:
             return None
@@ -117,6 +121,7 @@ NetworkNEM = NetworkSchema(
     price_first_seen=datetime.fromisoformat("2009-07-01T00:00:00+10:00"),
     interconnector_first_seen=datetime.fromisoformat("2010-01-01T00:00:00+10:00"),
     rooftop_first_seen=datetime.fromisoformat("2007-01-01T00:00:00+10:00"),
+    monitor_interval_alert_threshold=10,
 )
 
 NetworkWEM = NetworkSchema(
@@ -129,6 +134,8 @@ NetworkWEM = NetworkSchema(
     interval_size=30,
     data_first_seen=datetime.fromisoformat("2006-09-20T02:00:00+08:00"),
     price_first_seen=datetime.fromisoformat("2012-01-07T08:00:00+08:00"),
+    # WEM is slower to update at times. set to 3 hours.
+    monitor_interval_alert_threshold=60 * 3,
 )
 
 NetworkAPVI = NetworkSchema(
