@@ -24,7 +24,14 @@ from opennem.api.export.tasks import (
     export_metadata,
     export_power,
 )
-from opennem.crawl import CrawlerSchedule, run_crawls_by_schedule
+from opennem.crawl import CrawlerSchedule, run_crawl, run_crawls_by_schedule
+from opennem.crawlers.bom import BOMCapitals
+from opennem.crawlers.nemweb import (
+    AEMONemwebDispatchIS,
+    AEMONemwebRooftop,
+    AEMONemwebTradingIS,
+    AEMONNemwebDispatchScada,
+)
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
@@ -63,7 +70,7 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 
 logger = logging.getLogger("openenm.scheduler")
 
-regular_schedule_minute_interval = 2
+regular_schedule_minute_interval = 1
 frequent_schedule_minute_interval = 5
 
 if IS_DEV:
@@ -71,13 +78,38 @@ if IS_DEV:
     frequent_schedule_minute_interval = 5
 
 
-# crawler tasks
+# crawler tasks live
 @huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
-@huey.lock_task("crawler_scheduled_live")
-def crawler_scheduled_live() -> None:
-    run_crawls_by_schedule(CrawlerSchedule.live)
+@huey.lock_task("crawler_live_nemweb_dispatch_scada")
+def crawl_run_aemo_nemweb_dispatch_scada() -> None:
+    run_crawl(AEMONNemwebDispatchScada)
 
 
+@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
+@huey.lock_task("crawler_live_nemweb_dispatch_is")
+def crawler_live_nemweb_dispatch_is() -> None:
+    run_crawl(AEMONemwebDispatchIS)
+
+
+@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
+@huey.lock_task("crawler_live_nemweb_trading_is")
+def crawler_live_nemweb_trading_is() -> None:
+    run_crawl(AEMONemwebTradingIS)
+
+
+@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
+@huey.lock_task("crawler_live_nemweb_rooftop")
+def crawler_live_nemweb_rooftop() -> None:
+    run_crawl(AEMONemwebRooftop)
+
+
+@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
+@huey.lock_task("crawler_run_bom_capitals")
+def crawler_run_bom_capitals() -> None:
+    run_crawl(BOMCapitals)
+
+
+# crawler tasks otehr
 @huey.periodic_task(crontab(minute="*/5"))
 @huey.lock_task("crawler_scheduled_frequent")
 def crawler_scheduled_frequent() -> None:
