@@ -176,7 +176,8 @@ def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True)
 
     for crawler in _CRAWLER_SET.get_crawlers_by_schedule(schedule):
         try:
-            run_crawl(crawler, last_crawled=last_crawled)
+            logger.debug(f"run_crawls_by_schedule running crawler {crawler.name}")
+            # run_crawl(crawler, last_crawled=last_crawled)
         except Exception as e:
             logger.error("Error running crawl {}: {}".format(crawler.name, e))
 
@@ -194,33 +195,4 @@ def get_crawl_set() -> CrawlerSet:
 
 
 if __name__ == "__main__":
-    urls = [
-        "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220612.zip",
-        "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220613.zip",
-        "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220614.zip",
-        "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220615.zip",
-        "https://nemweb.com.au/Reports/Archive/Dispatch_Reports/PUBLIC_DISPATCH_20220616.zip",
-        # dispatch is
-        "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220612.zip",
-        "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220613.zip",
-        "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220614.zip",
-        "https://nemweb.com.au/Reports/Archive/DispatchIS_Reports/PUBLIC_DISPATCHIS_20220615.zip",
-        # trading is
-        "https://nemweb.com.au/Reports/Archive/TradingIS_Reports/PUBLIC_TRADINGIS_20220605_20220611.zip",
-        # test
-        # "https://nemweb.com.au/Reports/Current/DispatchIS_Reports/PUBLIC_DISPATCHIS_202207011120_0000000366159732.zip"
-    ]
-
-    # for url in urls:
-    # parse_aemo_url_optimized(url)
-
-    url = "https://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/PUBLIC_TRADINGIS_20210620_20210626.zip"
-
-    # catchup urls
-    urls = [
-        "https://nemweb.com.au/Reports/Archive/Next_Day_Dispatch/PUBLIC_NEXT_DAY_DISPATCH_20220201.zip",
-        "https://nemweb.com.au/Reports/Archive/Next_Day_Dispatch/PUBLIC_NEXT_DAY_DISPATCH_20220301.zip",
-        "https://nemweb.com.au/Reports/Archive/Next_Day_Actual_Gen/NEXT_DAY_ACTUAL_GEN_20220201.zip",
-        "https://nemweb.com.au/Reports/Archive/Next_Day_Actual_Gen/NEXT_DAY_ACTUAL_GEN_20220301.zip",
-    ]
-    run_crawl_urls(urls)
+    run_crawls_by_schedule(CrawlerSchedule.live)
