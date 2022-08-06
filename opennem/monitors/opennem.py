@@ -20,6 +20,7 @@ def get_slack_admin_alert_string() -> str | None:
 
 
 def check_opennem_interval_delays(network_code: str) -> bool:
+    """Runs periodically and alerts if there is a current delay in output of power intervals"""
     network = network_from_network_code(network_code)
 
     env = ""
