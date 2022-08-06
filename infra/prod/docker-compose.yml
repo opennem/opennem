@@ -119,6 +119,7 @@ services:
         "--",
         "huey_consumer",
         "-w8",
+        "-f",
         "-k",
         "process",
         "opennem.workers.scheduler.huey",
