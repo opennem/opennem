@@ -10,6 +10,15 @@ from opennem.utils.http import http
 logger = logging.getLogger("opennem.monitors.opennem")
 
 
+def get_slack_admin_alert_string() -> str | None:
+    """Get the part of the slack message that alerts admin"""
+    if not settings.slack_admin_alert:
+        logger.warning(f"Have no slack_admin_alert set")
+        return None
+
+    return " @".join(settings.slack_admin_alert)
+
+
 def check_opennem_interval_delays(network_code: str) -> bool:
     network = network_from_network_code(network_code)
 
@@ -44,7 +53,7 @@ def check_opennem_interval_delays(network_code: str) -> bool:
         logger.error("Could not read history date for opennem interval monitor")
         return False
 
-    now_date = datetime.now().astimezone(network.get_timezone())
+    now_date = datetime.now().astimezone(network.get_timezone())  # type: ignore
 
     time_delta = chop_delta_microseconds(now_date - history_date)
 
@@ -52,9 +61,7 @@ def check_opennem_interval_delays(network_code: str) -> bool:
 
     if time_delta > timedelta(hours=3):
         slack_message(
-            "*WARNING*: OpenNEM {} interval delay on {} currently: {}\n".format(
-                network.code, settings.env, time_delta
-            )
+            "*WARNING*: OpenNEM {} interval delay on {} currently: {}\n".format(network.code, settings.env, time_delta)
         )
 
     return True

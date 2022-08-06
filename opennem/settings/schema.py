@@ -147,7 +147,7 @@ class OpennemSettings(BaseSettings):
 
     tmp_file_prefix: str | None = "opennem_"
 
-    slack_admin_alert: list[str] | None = ["@nik"]
+    slack_admin_alert: list[str] | None = ["nik"]
 
     # pylint: disable=no-self-argument
     @validator("log_level")
