@@ -62,7 +62,7 @@ def check_opennem_interval_delays(network_code: str) -> bool:
     # get the slack admin alert string
     slack_admin_alert = get_slack_admin_alert_string()
 
-    if time_delta > timedelta(minutes=settings.monitor_interval_alert_threshold):
+    if time_delta > timedelta(minutes=settings.monitor_interval_alert_threshold or 60):
         slack_message(
             f"*WARNING*: OpenNEM {network.code} interval delay on {settings.env} currently: {time_delta}. {slack_admin_alert}\n"
         )
