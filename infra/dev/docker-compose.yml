@@ -105,7 +105,6 @@ services:
         "--",
         "huey_consumer",
         "-w4",
-        "-f",
         "-k",
         "process",
         "opennem.workers.scheduler.huey",
