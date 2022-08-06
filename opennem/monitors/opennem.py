@@ -13,7 +13,7 @@ logger = logging.getLogger("opennem.monitors.opennem")
 def get_slack_admin_alert_string() -> str | None:
     """Get the part of the slack message that alerts admin"""
     if not settings.slack_admin_alert:
-        logger.warning(f"Have no slack_admin_alert set")
+        logger.warning("Have no slack_admin_alert set")
         return None
 
     return " @".join(settings.slack_admin_alert)
