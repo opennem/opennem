@@ -103,7 +103,7 @@ def crawler_live_nemweb_rooftop() -> None:
     run_crawl(AEMONemwebRooftop)
 
 
-@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
+@huey.periodic_task(crontab(minute=f"*/10"))
 @huey.lock_task("crawler_run_bom_capitals")
 def crawler_run_bom_capitals() -> None:
     run_crawl(BOMCapitals)

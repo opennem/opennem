@@ -49,7 +49,7 @@ def crawl_bom_capitals(
 
 BOMCapitals = CrawlerDefinition(
     priority=CrawlerPriority.medium,
-    schedule=CrawlerSchedule.frequent,
+    schedule=CrawlerSchedule.live,
     name="au.bom.capitals",
     url="none",
     limit=None,
