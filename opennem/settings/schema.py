@@ -149,6 +149,9 @@ class OpennemSettings(BaseSettings):
 
     slack_admin_alert: list[str] | None = ["nik"]
 
+    # alert threshold level in minutes for interval delay monitoring
+    monitor_interval_alert_threshold: int | None = 10
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> Optional[str]:
