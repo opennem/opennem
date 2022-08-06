@@ -3,15 +3,17 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from textwrap import dedent
+from typing import Dict
 
 from datetime_truncate import truncate as date_trunc
-from psycopg2.errors import UniqueViolation
 from sqlalchemy import text as sql
+from sqlalchemy.dialects.postgresql import insert
 
 from opennem.core.time import get_interval
 from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.models.opennem import CrawlHistory
 from opennem.schema.time import TimeInterval
+from opennem.utils.dates import get_today_opennem
 
 logger = logging.getLogger("opennem.crawler.history")
 
@@ -30,6 +32,7 @@ class CrawlHistoryGap:
 def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -> int:
     """Sets the crawler history"""
     engine = get_database_engine()
+    session = get_scoped_session()
 
     history_intervals = [i.interval for i in histories]
 
@@ -60,26 +63,43 @@ def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -
 
     logger.debug(f"Got {len(existing_intervals)} existing intervals for crawler {crawler_name}")
 
-    with get_scoped_session() as session:
-        for ch in histories:
-            if ch.interval in existing_intervals:
-                continue
+    # Persist the crawl history records
+    crawl_history_records: list[Dict[str, datetime | str | int | None]] = []
 
-            model = CrawlHistory(
-                source="nemweb",
-                crawler_name=crawler_name,
-                interval=ch.interval,
-                inserted_records=ch.records,
-                network_id="NEM",
-            )
+    for ch in histories:
+        crawl_history_records.append(
+            {
+                "source": "nemweb",
+                "crawler_name": crawler_name,
+                "network_id": "NEM",
+                "interval": ch.interval,
+                "inserted_records": ch.records,
+                "crawled_time": None,
+                "processed_time": get_today_opennem(),
+            }
+        )
 
-            try:
-                session.add(model)
-                session.commit()
-            except UniqueViolation as e:
-                logger.warning(f"Unique violation for record: {model}")
-            except Exception as e:
-                logger.error(e)
+    # insert
+    stmt = insert(CrawlHistory).values(crawl_history_records)
+    stmt.bind = engine  # type: ignore
+    stmt = stmt.on_conflict_do_update(  # type: ignore
+        index_elements=["source", "crawler_name", "network_id", "interval"],
+        set_={
+            "inserted_records": stmt.excluded.inserted_records,  # type: ignore
+            "crawled_time": stmt.excluded.crawled_time,  # type: ignore
+            "processed_time": stmt.excluded.processed_time,  # type: ignore
+        },
+    )
+
+    try:
+        session.execute(stmt)
+        session.commit()
+    except Exception as e:
+        logger.error(f"set_crawler_history error updating records: {e}")
+    finally:
+        session.rollback()
+        session.close()
+        engine.dispose()
 
     return len(histories)
 
