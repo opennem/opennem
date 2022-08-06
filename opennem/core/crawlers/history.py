@@ -31,8 +31,12 @@ def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -
     """Sets the crawler history"""
     engine = get_database_engine()
 
-    date_max = max([i.interval for i in histories])
-    date_min = min([i.interval for i in histories])
+    history_intervals = [i.interval for i in histories]
+
+    logger.debug(f"Have {len(history_intervals)} history intervals for {crawler_name}")
+
+    date_max = max(history_intervals)
+    date_min = min(history_intervals)
 
     logger.debug(f"date_max and date_max: {date_max}, {date_min}")
 
