@@ -38,7 +38,7 @@ def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -
     date_max = max(history_intervals)
     date_min = min(history_intervals)
 
-    logger.debug(f"date_max and date_max: {date_max}, {date_min}")
+    logger.debug(f"crawler {crawler_name} date range: {date_min}, {date_max}")
 
     stmt = sql(
         """
@@ -58,7 +58,7 @@ def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -
 
     existing_intervals = [i[0] for i in results]
 
-    logger.debug(f"Got {len(existing_intervals)} existing intervals")
+    logger.debug(f"Got {len(existing_intervals)} existing intervals for crawler {crawler_name}")
 
     with get_scoped_session() as session:
         for ch in histories:
