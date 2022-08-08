@@ -35,14 +35,14 @@
     "unit": "MWh"
   },
   {
-    "name": "energy_giga",
+    "name": "energy_gig",
     "name_alias": "energy_giga",
     "unit_type": "energy",
     "unit": "GWh"
   },
   {
     "name": "demand.energy_giga",
-    "name_alias": "demand.energy_giga",
+    "name_alias": "demand.energy",
     "unit_type": "energy",
     "unit": "GWh"
   },
