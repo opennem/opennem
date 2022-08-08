@@ -14,6 +14,7 @@ from typing import List, Optional
 
 from opennem.api.export.controllers import (
     NoResults,
+    demand_network_region_daily,
     demand_week,
     energy_fueltech_daily,
     energy_interconnector_flows_and_emissions,
@@ -226,6 +227,13 @@ def export_energy(
 
             if not stat_set:
                 continue
+
+            # @NOTE temporary NEM only and region only
+            if energy_stat.network == NetworkNEM and energy_stat.network_region:
+                demand_energy_and_value = demand_network_region_daily(
+                    time_series=time_series, network=NetworkNEM, network_region_code=energy_stat.network_region
+                )
+                stat_set.append_set(demand_energy_and_value)
 
             # Hard coded to NEM only atm but we'll put has_interconnectors
             # in the metadata to automate all this

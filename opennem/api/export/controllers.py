@@ -5,6 +5,7 @@ from typing import List, Optional
 from opennem.api.exceptions import OpennemBaseHttpException, OpenNEMInvalidNetworkRegion
 from opennem.api.export.queries import (
     country_stats_query,
+    demand_network_region_query,
     energy_network_fueltech_query,
     energy_network_interconnector_emissions_query,
     interconnector_flow_network_regions_query,
@@ -426,6 +427,67 @@ def power_week(
     return result
 
 
+def demand_network_region_daily(
+    time_series: TimeSeries,
+    network: NetworkSchema,
+    network_region_code: str | None = None,
+) -> OpennemDataSet | None:
+    """Gets demand market_value and energy for a network -> network_region"""
+    engine = get_database_engine()
+
+    query = demand_network_region_query(
+        time_series=time_series,
+        network_region=network_region_code,
+        network=network,
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 1 else None) for i in row]
+
+    results_market_value = [
+        DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in row
+    ]
+
+    if len(results_energy) < 1:
+        logger.error("No results from query: {}".format(query))
+        return None
+
+    # demand based values for VWP
+    stats = stats_factory(
+        stats=results_energy,
+        units=get_unit("demand.energy_giga"),
+        network=time_series.network,
+        fueltech_group=True,
+        interval=time_series.interval,
+        region=network_region_code,
+        period=time_series.period,
+        localize=True,
+    )
+
+    if not stats:
+        raise Exception(f"Not stats for demand_network_region_daily: {network_region_code}")
+
+    stats_market_value = stats_factory(
+        stats=results_market_value,
+        units=get_unit("demand.market_value"),
+        network=time_series.network,
+        fueltech_group=True,
+        interval=time_series.interval,
+        region=network_region_code,
+        period=time_series.period,
+        code=time_series.network.code.lower(),
+        localize=True,
+    )
+
+    if stats_market_value:
+        stats.append_set(stats_market_value)
+
+    return stats
+
+
 def energy_fueltech_daily(
     time_series: TimeSeries,
     network_region_code: Optional[str] = None,
@@ -500,34 +562,6 @@ def energy_fueltech_daily(
     )
 
     stats.append_set(stats_emissions)
-
-    # demand based values for VWP
-    stats_demand_energy = stats_factory(
-        stats=results_energy,
-        units=get_unit("demand.energy_giga"),
-        network=time_series.network,
-        fueltech_group=True,
-        interval=time_series.interval,
-        region=network_region_code,
-        period=time_series.period,
-        localize=True,
-    )
-
-    stats.append_set(stats_demand_energy)
-
-    stats_market_value = stats_factory(
-        stats=results_market_value,
-        units=get_unit("demand.market_value"),
-        network=time_series.network,
-        fueltech_group=True,
-        interval=time_series.interval,
-        region=network_region_code,
-        period=time_series.period,
-        code=time_series.network.code.lower(),
-        localize=True,
-    )
-
-    stats.append_set(stats_market_value)
 
     return stats
 

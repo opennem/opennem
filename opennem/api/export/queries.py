@@ -474,6 +474,47 @@ def power_network_rooftop_query(
 
 
 """
+Demand queries
+"""
+
+
+def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema, network_region: str | None) -> str:
+    """Get the network demand energy and market_value"""
+    ___query = """
+        select
+            trading_day,
+            network_id,
+            network_region,
+            demand_energy,
+            demand_market_value
+        from at_network_demand
+        where
+            network_id = 'NEM'
+            {network_region}
+            and trading_day >= '{date_min}'::date
+            and trading_day < '{date_max}'::date
+        order by
+            1 asc
+    """
+
+    network_region_query = ""
+
+    if network_region:
+        network_region_query = f"and network_region='{network_region}'"
+
+    query = dedent(
+        ___query.format(
+            date_min=time_series.start.date(),
+            date_max=time_series.end.date(),
+            network_id=network.code,
+            network_region=network_region_query,
+        )
+    )
+
+    return query
+
+
+"""
 Energy Queries
 """
 

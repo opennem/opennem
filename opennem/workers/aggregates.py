@@ -323,4 +323,4 @@ def run_aggregates_all_days(
 if __name__ == "__main__":
     # run_aggregates_all()
     # run_aggregates_demand_network()
-    run_aggregates_demand_network_days(days=3)
+    run_aggregates_demand_network_days(days=30)
