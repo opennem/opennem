@@ -38,7 +38,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
                 where
                     bs.network_id = '{network_id}'
                     and bs.trading_interval >= '{date_min}'
-                    and bs.trading_interval < '{date_max}'
+                    and bs.trading_interval <= '{date_max}'
                 group by
                     1, 2, 3
             ) as fs
@@ -63,7 +63,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
         date_min=date_min_offset,
         date_max=date_max_offset,
         network_id=network.code,
-        intervals_per_hour=network.intervals_per_hour * 1000,
+        intervals_per_hour=network.intervals_per_hour,
     )
 
     return dedent(query)
