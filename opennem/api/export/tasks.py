@@ -228,12 +228,10 @@ def export_energy(
             if not stat_set:
                 continue
 
-            # @NOTE temporary NEM only and region only
-            if energy_stat.network == NetworkNEM:
-                demand_energy_and_value = demand_network_region_daily(
-                    time_series=time_series, network=NetworkNEM, network_region_code=energy_stat.network_region
-                )
-                stat_set.append_set(demand_energy_and_value)
+            demand_energy_and_value = demand_network_region_daily(
+                time_series=time_series, network=NetworkNEM, network_region_code=energy_stat.network_region
+            )
+            stat_set.append_set(demand_energy_and_value)
 
             # Hard coded to NEM only atm but we'll put has_interconnectors
             # in the metadata to automate all this
@@ -276,6 +274,11 @@ def export_energy(
 
             if not stat_set:
                 continue
+
+            demand_energy_and_value = demand_network_region_daily(
+                time_series=time_series, network=NetworkNEM, network_region_code=energy_stat.network_region
+            )
+            stat_set.append_set(demand_energy_and_value)
 
             # Hard coded to NEM only atm but we'll put has_interconnectors
             # in the metadata to automate all this
@@ -353,6 +356,11 @@ def export_all_monthly() -> None:
             if not stat_set:
                 continue
 
+            demand_energy_and_value = demand_network_region_daily(
+                time_series=time_series, network=NetworkNEM, network_region_code=network_region.code
+            )
+            stat_set.append_set(demand_energy_and_value)
+
             if network == NetworkNEM:
                 interconnector_flows = energy_interconnector_flows_and_emissions(
                     time_series=time_series,
@@ -426,6 +434,11 @@ def export_all_daily(
 
             if not stat_set:
                 continue
+
+            demand_energy_and_value = demand_network_region_daily(
+                time_series=time_series, network=NetworkNEM, network_region_code=network_region.code
+            )
+            stat_set.append_set(demand_energy_and_value)
 
             # Hard coded to NEM only atm but we'll put has_interconnectors
             # in the metadata to automate all this
