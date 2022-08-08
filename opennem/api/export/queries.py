@@ -492,7 +492,7 @@ def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema,
             network_id = '{network_id}'
             {network_region}
             and trading_day >= '{date_min}'::date
-            and trading_day < '{date_max}'::date
+            and trading_day <= '{date_max}'::date
         group by 1,2 {group_by}
         order by
             1 asc
