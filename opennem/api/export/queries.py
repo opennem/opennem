@@ -503,11 +503,13 @@ def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema,
     if network_region:
         network_region_query = f"and network_region='{network_region}'"
 
+    date_range = time_series.get_range()
+
     query = dedent(
         ___query.format(
             trunc=time_series.interval.trunc,
-            date_min=time_series.start.date(),
-            date_max=time_series.end.date(),
+            date_min=date_range.start.date(),
+            date_max=date_range.end.date(),
             network_id=network.code,
             network_region=network_region_query,
         )
