@@ -36,29 +36,29 @@ class OpennemSettings(BaseSettings):
 
     cache_url: RedisDsn = "redis://127.0.0.1"
 
-    sentry_url: Optional[str]
+    sentry_url: str | None
 
-    prometheus_url: Optional[str]
+    prometheus_url: str | None
 
     # This is the module where crawlers are found
     crawlers_module: str = "opennem.crawlers"
 
-    google_places_api_key: Optional[str] = None
+    google_places_api_key: str | None = None
 
     requests_cache_path: str = ".requests"
 
     # Slack notifications
     slack_notifications: bool = False
 
-    slack_hook_url: Optional[str]
+    slack_hook_url: str | None
 
     # twilio setup
-    twilio_sid: Optional[str]
-    twilio_auth_token: Optional[str]
-    twilio_from_number: Optional[str]
+    twilio_sid: str | None
+    twilio_auth_token: str | None
+    twilio_from_number: str | None
 
     # APVI
-    apvi_token: Optional[str]
+    apvi_token: str | None
 
     export_local: bool = False
 
@@ -66,10 +66,9 @@ class OpennemSettings(BaseSettings):
     backup_bucket_path: str = "backups.opennem.org.au"
     photos_bucket_path: str = "s3://photos.opennem.org.au/"
 
+    # opennem output settings
     interval_default: str = "15m"
-
     period_default: str = "7d"
-
     precision_default: int = 4
 
     # show database debug
@@ -121,7 +120,7 @@ class OpennemSettings(BaseSettings):
     templates_dir: str = "templates"
 
     # monitoring
-    monitoring_alert_sms: Optional[str] = None
+    monitoring_alert_sms: str | None = None
     monitoring_alert_slack_user: Optional[List[str]] = None
 
     # api key cookie settings
@@ -131,15 +130,15 @@ class OpennemSettings(BaseSettings):
     api_auth_cookie_domain: str = "opennem.org.au"
 
     # trello key / secret for feedback endpoint
-    trello_api_key: Optional[str]
-    trello_api_secret: Optional[str]
+    trello_api_key: str | None
+    trello_api_secret: str | None
 
     # feedback
     # this is the feedback board
     feedback_trello_board_id: str = "60a48f32c97cf221e3d4bec1"
 
     # willy weather client
-    willyweather_api_key: Optional[str]
+    willyweather_api_key: str | None
 
     # cloudflare
     cloudflare_account_id: str | None
@@ -154,7 +153,7 @@ class OpennemSettings(BaseSettings):
 
     # pylint: disable=no-self-argument
     @validator("log_level")
-    def validate_log_level(cls, log_value: str) -> Optional[str]:
+    def validate_log_level(cls, log_value: str) -> str | None:
 
         _log_value = log_value.upper().strip()
 
@@ -193,7 +192,6 @@ class OpennemSettings(BaseSettings):
             "_static_folder_path": {"env": "STATIC_PATH"},
             "db_url": {"env": "DATABASE_HOST_URL"},
             "cache_url": {"env": "REDIS_HOST_URL"},
-            "slack_notifications": {"env": "SLACK_NOTIFICATIONS"},
             "slack_hook_url": {"env": "MONITORING_SLACK_HOOK"},
             "s3_bucket_path": {"env": "S3_DATA_BUCKET_PATH"},
             "server_port": {"env": "PORT"},
