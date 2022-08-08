@@ -484,7 +484,7 @@ def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema,
         select
             date_trunc('{trunc}', trading_day) as trading_day,
             network_id,
-            network_region,
+            {network_region_select}
             sum(demand_energy),
             sum(demand_market_value)
         from at_network_demand
@@ -493,15 +493,18 @@ def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema,
             {network_region}
             and trading_day >= '{date_min}'::date
             and trading_day < '{date_max}'::date
-        group by 1,2,3
+        group by 1,2 {group_by}
         order by
             1 asc
     """
 
     network_region_query = ""
+    group_by = ""
 
     if network_region:
         network_region_query = f"and network_region='{network_region}'"
+        network_region_select = "network_region,"
+        group_by = ",3"
 
     date_range = time_series.get_range()
 
@@ -512,6 +515,8 @@ def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema,
             date_max=date_range.end.date(),
             network_id=network.code,
             network_region=network_region_query,
+            network_region_select=network_region_select,
+            group_by=group_by,
         )
     )
 
