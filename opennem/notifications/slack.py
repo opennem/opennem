@@ -1,3 +1,4 @@
+""" Module to send slack messages """
 import logging
 import sys
 from typing import List, Optional
@@ -28,12 +29,13 @@ def _slack_tag_list(user_list: List[str]) -> str:
     return _tag_list
 
 
-def slack_message(msg: str, tag_users: List[str] = None) -> bool:
+def slack_message(msg: str, tag_users: list[str] = None) -> bool:
     """
     Post a slack message to the watchdog channel
 
     """
     if not settings.slack_notifications:
+        logger.error("Slack endpoint not configured in environment")
         return False
 
     if not settings.slack_hook_url:
@@ -65,8 +67,9 @@ def slack_message(msg: str, tag_users: List[str] = None) -> bool:
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
+        logger.info("No params")
         sys.exit(1)
 
     msg_args = sys.argv[1:]
     slack_msg = " ".join([str(i) for i in msg_args])
-    slack_message(slack_msg)
+    slack_return = slack_message(slack_msg, tag_users=["nik"])
