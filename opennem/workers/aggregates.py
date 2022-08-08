@@ -30,7 +30,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
             sum(fs.emissions) as emissions
         from (
             select
-                time_bucket_gapfill('5 minutes', fs.trading_interval) as trading_interval,
+                time_bucket_gapfill('{network_interval_size} minutes', fs.trading_interval) as trading_interval,
                 fs.facility_code as code,
                 case
                     when sum(fs.eoi_quantity) > 0 then
@@ -96,6 +96,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
         date_max=date_max_offset,
         network_id=network.code,
         trading_offset=trading_offset,
+        netowrk_interval_size=network.interval_size,
     )
 
     return dedent(query)
