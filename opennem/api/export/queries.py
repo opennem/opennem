@@ -489,7 +489,7 @@ def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema,
             sum(demand_market_value)
         from at_network_demand
         where
-            network_id = 'NEM'
+            network_id = '{network_id}'
             {network_region}
             and trading_day >= '{date_min}'::date
             and trading_day < '{date_max}'::date
