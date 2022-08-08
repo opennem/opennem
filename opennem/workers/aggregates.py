@@ -16,6 +16,66 @@ logger = logging.getLogger("opennem.workers.aggregates")
 DRY_RUN = os.environ.get("DRY_RUN", False)
 
 
+def aggregates_network_demand_query(date_max: datetime, date_min: datetime, network: NetworkSchema) -> str:
+    """This query updates the aggregate demand table with market_value and energy"""
+
+    __query = """
+        insert into at_network_demand
+            select
+                date_trunc('day', fs.trading_interval at time zone n.timezone_database) as trading_day,
+                fs.network_id,
+                fs.network_region,
+                round(sum(fs.energy), 2) as demand_energy,
+                round(sum(fs.vwp), 2) as demand_market_value
+            from (
+                select
+                    time_bucket_gapfill('5 minutes', fs.trading_interval) as trading_interval,
+                    fs.network_id,
+                    f.network_region,
+                    (sum(bs.demand_total) / 12000) as energy,
+                    (sum(bs.demand_total) / 12000) * max(bs.price) as vwp
+                from facility_scada fs
+                left join facility f on fs.facility_code = f.code
+                left join network n on fs.network_id = n.code
+                left join balancing_summary bs on
+                    bs.trading_interval - INTERVAL '5 minutes' = fs.trading_interval
+                    and bs.network_id = n.network_price
+                    and bs.network_region = f.network_region
+                    and fs.network_id = 'NEM'
+                where
+                    fs.is_forecast is False
+                    and fs.network_id = 'NEM'
+                    and fs.trading_interval >= '{date_min_offset}'
+                    and fs.trading_interval < '{date_max_offset}'
+                group by
+                    1, 2, 3
+            ) as fs
+            left join network n on fs.network_id = n.code
+            group by
+                1, 2, 3
+        on conflict (trading_day, network_id, network_region) DO UPDATE set
+                demand_energy = EXCLUDED.demand_energy,
+                demand_market_value = EXCLUDED.demand_market_value;
+
+    """
+
+    date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset())
+    date_max_offset = (date_max + timedelta(days=1)).replace(tzinfo=network.get_fixed_offset())
+
+    if date_max_offset <= date_min_offset:
+        raise Exception(
+            "aggregates_network_demand_query: date_max ({}) is before date_min ({})".format(date_max_offset, date_min)
+        )
+
+    query = __query.format(
+        date_min=date_min_offset,
+        date_max=date_max_offset,
+        network_id=network.code,
+    )
+
+    return dedent(query)
+
+
 def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, network: NetworkSchema) -> str:
     """This is the query to update the at_facility_daily aggregate"""
 
