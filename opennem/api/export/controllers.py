@@ -462,7 +462,6 @@ def demand_network_region_daily(
         network=time_series.network,
         fueltech_group=False,
         interval=time_series.interval,
-        # region=network_region_code,
         period=time_series.period,
         localize=True,
     )
@@ -476,7 +475,6 @@ def demand_network_region_daily(
         network=time_series.network,
         fueltech_group=False,
         interval=time_series.interval,
-        # region=network_region_code,
         period=time_series.period,
         code=time_series.network.code.lower(),
         localize=True,
