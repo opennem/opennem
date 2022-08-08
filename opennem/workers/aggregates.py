@@ -9,7 +9,7 @@ from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.utils.dates import DATE_CURRENT_YEAR
+from opennem.utils.dates import DATE_CURRENT_YEAR, get_today_nem
 
 logger = logging.getLogger("opennem.workers.aggregates")
 
@@ -22,19 +22,18 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
     __query = """
         insert into at_network_demand
             select
-                date_trunc('day', fs.trading_interval at time zone n.timezone_database) as trading_day,
+                date_trunc('day', fs.trading_interval at time zone 'AEST') as trading_day,
                 fs.network_id,
                 fs.network_region,
-                round(sum(fs.energy), 2) as energy,
-                round(sum(fs.vwp), 2) as vwp,
-                round(sum(fs.vwp) / sum(fs.energy), 2) as price
+                sum(fs.energy) as demand_energy,
+                sum(fs.market_value) as demand_market_value
             from (
                 select
                     time_bucket_gapfill('5 minutes', bs.trading_interval) as trading_interval,
                     bs.network_id,
                     bs.network_region,
                     (sum(bs.demand_total) / 12000) as energy,
-                    (sum(bs.demand_total) / 12000) * max(bs.price) as vwp
+                    (sum(bs.demand_total) / 12000) * max(bs.price) as market_value
                 from balancing_summary bs
                 where
                     bs.network_id = 'NEM'
@@ -52,7 +51,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
     """
 
     date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset())
-    date_max_offset = (date_max + timedelta(days=1)).replace(tzinfo=network.get_fixed_offset())
+    date_max_offset = date_max.replace(hour=0, minute=0, second=0, microsecond=0)
 
     if date_max_offset <= date_min_offset:
         raise Exception(
@@ -220,6 +219,23 @@ def _get_year_range(year: int, network: NetworkSchema = NetworkNEM) -> Tuple[dat
     return date_min, date_max
 
 
+def run_aggregates_demand_network() -> None:
+    """Run the demand aggregates"""
+
+    exec_aggregates_network_demand_query(
+        date_min=NetworkNEM.data_first_seen, date_max=get_today_nem(), network=NetworkNEM
+    )  # type: ignore
+
+
+def run_aggregates_demand_network_days(days: int = 3) -> None:
+    """Run the demand aggregates"""
+
+    date_max = get_today_nem().replace(hour=0, minute=0, second=0, microsecond=0)
+    date_min = date_max - timedelta(days=days)
+
+    exec_aggregates_network_demand_query(date_min=date_min, date_max=date_max, network=NetworkNEM)  # type: ignore
+
+
 def run_aggregates_facility_year(year: int = DATE_CURRENT_YEAR, network: NetworkSchema = NetworkNEM) -> None:
     """Run aggregates for a single year
 
@@ -284,6 +300,8 @@ def run_aggregates_all(
     for network in networks:
         run_aggregates_facility_all(network)
 
+    run_aggregates_demand_network()
+
 
 def run_aggregates_all_days(
     days: int = 7,
@@ -298,7 +316,11 @@ def run_aggregates_all_days(
         logger.info("Running for Network {} range {} => {}".format(network.code, date_start, date_end))
         exec_aggregates_facility_daily_query(date_min=date_start, date_max=date_end, network=network)
 
+    run_aggregates_demand_network_days(days=days)
+
 
 # Debug entry point
 if __name__ == "__main__":
-    run_aggregates_all()
+    # run_aggregates_all()
+    # run_aggregates_demand_network()
+    run_aggregates_demand_network_days(days=3)
