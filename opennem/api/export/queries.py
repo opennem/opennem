@@ -482,7 +482,7 @@ def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema,
     """Get the network demand energy and market_value"""
     ___query = """
         select
-            date_part('{trunc}', trading_day) as trading_day,
+            date_trunc('{trunc}', trading_day) as trading_day,
             network_id,
             network_region,
             sum(demand_energy),
