@@ -1,3 +1,4 @@
+""" Runs queries to populate the aggregate tables with facility data"""
 import logging
 import os
 from datetime import datetime, timedelta
