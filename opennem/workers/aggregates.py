@@ -32,8 +32,8 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
                     time_bucket_gapfill('5 minutes', bs.trading_interval) as trading_interval,
                     bs.network_id,
                     bs.network_region,
-                    (sum(bs.demand_total) / 12000) as energy,
-                    (sum(bs.demand_total) / 12000) * max(bs.price) as market_value
+                    (sum(bs.demand_total) / 12) as energy,
+                    (sum(bs.demand_total) / 12) * max(bs.price) as market_value
                 from balancing_summary bs
                 where
                     bs.network_id = 'NEM'
