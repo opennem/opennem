@@ -10,15 +10,6 @@ from opennem.utils.http import http
 logger = logging.getLogger("opennem.monitors.opennem")
 
 
-def get_slack_admin_alert_string() -> str | None:
-    """Get the part of the slack message that alerts admin"""
-    if not settings.slack_admin_alert:
-        logger.warning("Have no slack_admin_alert set")
-        return None
-
-    return " @".join(settings.slack_admin_alert)
-
-
 def check_opennem_interval_delays(network_code: str) -> bool:
     """Runs periodically and alerts if there is a current delay in output of power intervals"""
     network = network_from_network_code(network_code)
@@ -60,12 +51,12 @@ def check_opennem_interval_delays(network_code: str) -> bool:
 
     logger.debug("Live time: {},  delay: {}".format(history_date, time_delta))
 
-    # get the slack admin alert string
-    slack_admin_alert = get_slack_admin_alert_string()
+    alert_threshold = network.monitor_interval_alert_threshold or settings.monitor_interval_alert_threshold or 60
 
-    if time_delta > timedelta(minutes=settings.monitor_interval_alert_threshold or 60):
+    if time_delta > timedelta(minutes=alert_threshold):
         slack_message(
-            f"*WARNING*: OpenNEM {network.code} interval delay on {settings.env} currently: {time_delta}. {slack_admin_alert}\n"
+            f"*WARNING*: OpenNEM {network.code} interval delay on {settings.env} currently: {time_delta}.\n",
+            tag_users=settings.monitoring_alert_slack_user,
         )
 
     return True
