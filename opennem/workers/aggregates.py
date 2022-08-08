@@ -63,7 +63,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
         date_min=date_min_offset,
         date_max=date_max_offset,
         network_id=network.code,
-        intervals_per_hour=network.intervals_per_hour,
+        intervals_per_hour=network.intervals_per_hour * 1000,
     )
 
     return dedent(query)
