@@ -226,7 +226,7 @@ def run_aggregates_demand_network() -> None:
 
     for network in [NetworkNEM, NetworkWEM]:
         exec_aggregates_network_demand_query(
-            date_min=NetworkNEM.data_first_seen, date_max=get_today_nem(), network=NetworkWEM
+            date_min=NetworkNEM.data_first_seen, date_max=get_today_nem(), network=network
         )  # type: ignore
 
 
