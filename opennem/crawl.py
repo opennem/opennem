@@ -7,11 +7,9 @@ from typing import List, Optional
 from pydantic import ValidationError
 
 from opennem import settings
-from opennem.controllers.nem import store_aemo_tableset
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
-from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
