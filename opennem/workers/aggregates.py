@@ -22,7 +22,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
     __query = """
         insert into at_network_demand
             select
-                date_trunc('day', fs.trading_interval at time zone 'AEST') as trading_day,
+                date_trunc('day', fs.trading_interval at time zone n.timezone_database) as trading_day,
                 fs.network_id,
                 fs.network_region,
                 sum(fs.energy) as demand_energy,
@@ -32,16 +32,17 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
                     time_bucket_gapfill('5 minutes', bs.trading_interval) as trading_interval,
                     bs.network_id,
                     bs.network_region,
-                    (sum(bs.demand_total) / 12) as energy,
-                    (sum(bs.demand_total) / 12) * max(bs.price) as market_value
+                    (sum(coalesce(bs.demand_total, bs.generation_total)) / {intervals_per_hour}) as energy,
+                    (sum(coalesce(bs.demand_total, bs.generation_total)) / {intervals_per_hour}) * max(bs.price) as market_value
                 from balancing_summary bs
                 where
-                    bs.network_id = 'NEM'
+                    bs.network_id = '{network_id}'
                     and bs.trading_interval >= '{date_min}'
                     and bs.trading_interval < '{date_max}'
                 group by
                     1, 2, 3
             ) as fs
+            left join network n on fs.network_id = n.code
             group by
                 1, 2, 3
         on conflict (trading_day, network_id, network_region) DO UPDATE set
@@ -62,6 +63,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
         date_min=date_min_offset,
         date_max=date_max_offset,
         network_id=network.code,
+        intervals_per_hour=network.intervals_per_hour,
     )
 
     return dedent(query)
@@ -222,9 +224,10 @@ def _get_year_range(year: int, network: NetworkSchema = NetworkNEM) -> Tuple[dat
 def run_aggregates_demand_network() -> None:
     """Run the demand aggregates"""
 
-    exec_aggregates_network_demand_query(
-        date_min=NetworkNEM.data_first_seen, date_max=get_today_nem(), network=NetworkNEM
-    )  # type: ignore
+    for network in [NetworkNEM, NetworkWEM]:
+        exec_aggregates_network_demand_query(
+            date_min=NetworkNEM.data_first_seen, date_max=get_today_nem(), network=NetworkWEM
+        )  # type: ignore
 
 
 def run_aggregates_demand_network_days(days: int = 3) -> None:
@@ -233,7 +236,8 @@ def run_aggregates_demand_network_days(days: int = 3) -> None:
     date_max = get_today_nem().replace(hour=0, minute=0, second=0, microsecond=0)
     date_min = date_max - timedelta(days=days)
 
-    exec_aggregates_network_demand_query(date_min=date_min, date_max=date_max, network=NetworkNEM)  # type: ignore
+    for network in [NetworkNEM, NetworkWEM]:
+        exec_aggregates_network_demand_query(date_min=date_min, date_max=date_max, network=network)  # type: ignore
 
 
 def run_aggregates_facility_year(year: int = DATE_CURRENT_YEAR, network: NetworkSchema = NetworkNEM) -> None:
