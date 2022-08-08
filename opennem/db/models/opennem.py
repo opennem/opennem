@@ -867,3 +867,32 @@ class AggregateNetworkFlows(Base, BaseModel):
             network_region,
         ),
     )
+
+
+class AggregateNetworkDemand(Base):
+    """
+    Network demand aggregates for energy and price
+    """
+
+    __tablename__ = "at_network_demand"
+
+    trading_day = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
+
+    network_id = Column(
+        Text,
+        ForeignKey("network.code", name="fk_at_facility_daily_network_code"),
+        primary_key=True,
+        index=True,
+        nullable=False,
+    )
+    network = relationship("Network")
+
+    network_region = Column(Text, primary_key=True)
+
+    demand_energy = Column(Numeric, nullable=True)
+    demand_market_value = Column(Numeric, nullable=True)
+
+    __table_args__ = (
+        Index("idx_at_network_demand_network_id_trading_interval", network_id, trading_day.desc()),
+        Index("idx_at_network_demand_trading_interval_network_region", trading_day, network_id, network_region),
+    )
