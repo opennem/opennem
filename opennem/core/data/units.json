@@ -31,7 +31,7 @@
   {
     "name": "demand.energy_mega",
     "name_alias": "demand.energy_mega",
-    "unit_type": "demand.energy",
+    "unit_type": "energy",
     "unit": "MWh"
   },
   {
@@ -43,7 +43,7 @@
   {
     "name": "demand.energy_giga",
     "name_alias": "demand.energy_giga",
-    "unit_type": "demand.energy",
+    "unit_type": "energy",
     "unit": "GWh"
   },
   {
@@ -59,7 +59,7 @@
   },
   {
     "name": "demand.market_value",
-    "unit_type": "demand.market_value",
+    "unit_type": "market_value",
     "unit": "AUD"
   },
   {
