@@ -57,7 +57,7 @@ def slack_message(msg: str, tag_users: list[str] = None) -> bool:
 
     """
     if not settings.slack_notifications:
-        logger.error("Slack endpoint not configured in environment")
+        logger.info("Slack endpoint not configured in environment")
         return False
 
     if not settings.slack_hook_url:
