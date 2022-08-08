@@ -485,8 +485,8 @@ def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema,
             date_trunc('{trunc}', trading_day) as trading_day,
             network_id,
             {network_region_select}
-            sum(demand_energy),
-            sum(demand_market_value)
+            round(sum(demand_energy), 4),
+            round(sum(demand_market_value), 4)
         from at_network_demand
         where
             network_id = '{network_id}'
