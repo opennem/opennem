@@ -229,7 +229,7 @@ def export_energy(
                 continue
 
             # @NOTE temporary NEM only and region only
-            if energy_stat.network == NetworkNEM and energy_stat.network_region:
+            if energy_stat.network == NetworkNEM:
                 demand_energy_and_value = demand_network_region_daily(
                     time_series=time_series, network=NetworkNEM, network_region_code=energy_stat.network_region
                 )
