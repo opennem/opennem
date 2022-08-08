@@ -55,20 +55,11 @@ def weather_daily(
         logger.debug(query)
         row = list(c.execute(query))
 
-    temp_avg = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None)
-        for i in row
-    ]
+    temp_avg = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
 
-    temp_min = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None)
-        for i in row
-    ]
+    temp_min = [DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row]
 
-    temp_max = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None)
-        for i in row
-    ]
+    temp_max = [DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row]
 
     if len(temp_avg) < 1:
         logger.info(f"No weather results for {station_code}")
@@ -126,10 +117,7 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
         logger.debug(query)
         row = list(c.execute(query))
 
-    stats = [
-        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
-        for i in row
-    ]
+    stats = [DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None) for i in row]
 
     if len(stats) < 1:
         logger.error("No results for gov_stats_cpi returing blank set")
@@ -164,15 +152,9 @@ def power_flows_region_week(
         logger.error("No results from interconnector_power_flow query for {}".format(time_series))
         return None
 
-    imports = [
-        DataQueryResult(interval=i[0], result=i[2], group_by="imports" if len(i) > 1 else None)
-        for i in row
-    ]
+    imports = [DataQueryResult(interval=i[0], result=i[2], group_by="imports" if len(i) > 1 else None) for i in row]
 
-    exports = [
-        DataQueryResult(interval=i[0], result=i[3], group_by="exports" if len(i) > 1 else None)
-        for i in row
-    ]
+    exports = [DataQueryResult(interval=i[0], result=i[3], group_by="exports" if len(i) > 1 else None) for i in row]
 
     result = stats_factory(
         imports,
@@ -186,9 +168,7 @@ def power_flows_region_week(
     )
 
     if not result:
-        logger.error(
-            "No results from interconnector_power_flow stats facoty for {}".format(time_series)
-        )
+        logger.error("No results from interconnector_power_flow stats facoty for {}".format(time_series))
         return None
 
     result_exports = stats_factory(
@@ -219,15 +199,10 @@ def power_flows_network_week(
         row = list(c.execute(query))
 
     if len(row) < 1:
-        logger.error(
-            "No results from interconnector_flow_network_regions_query with {}".format(time_series)
-        )
+        logger.error("No results from interconnector_flow_network_regions_query with {}".format(time_series))
         return None
 
-    imports = [
-        DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None)
-        for i in row
-    ]
+    imports = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
 
     result = stats_factory(
         imports,
@@ -243,9 +218,7 @@ def power_flows_network_week(
     )
 
     if not result:
-        logger.error(
-            "No results from interconnector_flow_network_regions_query with {}".format(time_series)
-        )
+        logger.error("No results from interconnector_flow_network_regions_query with {}".format(time_series))
         return None
 
     return result
@@ -272,10 +245,7 @@ def demand_week(
         logger.error("No results from network_demand_query with {}".format(time_series))
         return None
 
-    demand = [
-        DataQueryResult(interval=i[0], result=i[2], group_by="demand" if len(i) > 1 else None)
-        for i in row
-    ]
+    demand = [DataQueryResult(interval=i[0], result=i[2], group_by="demand" if len(i) > 1 else None) for i in row]
 
     result = stats_factory(
         demand,
@@ -316,10 +286,7 @@ def power_week(
         logger.debug(query)
         row = list(c.execute(query))
 
-    stats = [
-        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-        for i in row
-    ]
+    stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
     if len(stats) < 1:
         logger.error("No results from power week query with {}".format(time_series))
@@ -342,9 +309,7 @@ def power_week(
         return None
 
     if include_capacities and network_region_code:
-        region_fueltech_capacities = get_facility_capacities(
-            time_series.network, network_region_code
-        )
+        region_fueltech_capacities = get_facility_capacities(time_series.network, network_region_code)
 
         for ft in result.data:
             if ft.fuel_tech in region_fueltech_capacities:
@@ -364,10 +329,7 @@ def power_week(
         logger.debug(query)
         row = list(c.execute(query))
 
-    stats_price = [
-        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-        for i in row
-    ]
+    stats_price = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
     stats_market_value = stats_factory(
         stats=stats_price,
@@ -397,10 +359,7 @@ def power_week(
         logger.debug(query)
         row = list(c.execute(query))
 
-    rooftop_power = [
-        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-        for i in row
-    ]
+    rooftop_power = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
     rooftop = stats_factory(
         rooftop_power,
@@ -435,8 +394,7 @@ def power_week(
             row = list(c.execute(query))
 
         rooftop_forecast_power = [
-            DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-            for i in row
+            DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row
         ]
 
         rooftop_forecast = stats_factory(
@@ -486,19 +444,14 @@ def energy_fueltech_daily(
         logger.debug(query)
         row = list(c.execute(query))
 
-    results_energy = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None)
-        for i in row
-    ]
+    results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
 
     results_market_value = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None)
-        for i in row
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row
     ]
 
     results_emissions = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None)
-        for i in row
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row
     ]
 
     if len(results_energy) < 1:
@@ -548,6 +501,34 @@ def energy_fueltech_daily(
 
     stats.append_set(stats_emissions)
 
+    # demand based values for VWP
+    stats_demand_energy = stats_factory(
+        stats=results_energy,
+        units=get_unit("demand.energy_giga"),
+        network=time_series.network,
+        fueltech_group=True,
+        interval=time_series.interval,
+        region=network_region_code,
+        period=time_series.period,
+        localize=True,
+    )
+
+    stats.append_set(stats_demand_energy)
+
+    stats_market_value = stats_factory(
+        stats=results_market_value,
+        units=get_unit("demand.market_value"),
+        network=time_series.network,
+        fueltech_group=True,
+        interval=time_series.interval,
+        region=network_region_code,
+        period=time_series.period,
+        code=time_series.network.code.lower(),
+        localize=True,
+    )
+
+    stats.append_set(stats_market_value)
+
     return stats
 
 
@@ -578,12 +559,8 @@ def energy_interconnector_flows_and_emissions(
 
     exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[2]) for i in row]
 
-    import_emissions = [
-        DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row
-    ]
-    export_emissions = [
-        DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row
-    ]
+    import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
+    export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
 
     import_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[5]) for i in row]
     export_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[6]) for i in row]
