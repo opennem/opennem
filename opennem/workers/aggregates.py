@@ -149,7 +149,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
         date_max=date_max_offset,
         network_id=network.code,
         trading_offset=trading_offset,
-        netowrk_interval_size=network.interval_size,
+        network_interval_size=network.interval_size,
     )
 
     return dedent(query)
