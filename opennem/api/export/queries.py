@@ -499,6 +499,7 @@ def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema,
     """
 
     network_region_query = ""
+    network_region_select = ""
     group_by = ""
 
     if network_region:
