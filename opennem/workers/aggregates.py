@@ -309,8 +309,7 @@ def run_aggregates_all(
     for network in networks:
         run_aggregates_facility_all(network)
 
-    for network in [NetworkNEM, NetworkWEM]:
-        run_aggregates_demand_network(network=network)
+    run_aggregates_demand_network()
 
 
 def run_aggregates_all_days(
