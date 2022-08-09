@@ -225,6 +225,11 @@ def run_aggregates_demand_network() -> None:
     """Run the demand aggregates"""
 
     for network in [NetworkNEM, NetworkWEM]:
+
+        if not network.data_first_seen:
+            logger.error(f"run_aggregates_demand_network: Network {network.code} has no data_first_seen")
+            continue
+
         exec_aggregates_network_demand_query(
             date_min=network.data_first_seen, date_max=get_today_nem(), network=network
         )  # type: ignore
