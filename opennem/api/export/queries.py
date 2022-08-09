@@ -478,7 +478,7 @@ Demand queries
 """
 
 
-def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema, network_region: str | None) -> str:
+def demand_network_region_query(time_series: TimeSeries, network_region: str | None) -> str:
     """Get the network demand energy and market_value"""
     ___query = """
         select
@@ -514,7 +514,7 @@ def demand_network_region_query(time_series: TimeSeries, network: NetworkSchema,
             trunc=time_series.interval.trunc,
             date_min=date_range.start.date(),
             date_max=date_range.end.date(),
-            network_id=network.code,
+            network_id=time_series.network.code,
             network_region=network_region_query,
             network_region_select=network_region_select,
             group_by=group_by,

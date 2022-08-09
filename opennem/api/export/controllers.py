@@ -429,17 +429,12 @@ def power_week(
 
 def demand_network_region_daily(
     time_series: TimeSeries,
-    network: NetworkSchema,
     network_region_code: str | None = None,
 ) -> OpennemDataSet | None:
     """Gets demand market_value and energy for a network -> network_region"""
     engine = get_database_engine()
 
-    query = demand_network_region_query(
-        time_series=time_series,
-        network_region=network_region_code,
-        network=network,
-    )
+    query = demand_network_region_query(time_series=time_series, network_region=network_region_code)
 
     with engine.connect() as c:
         logger.debug(query)
