@@ -499,7 +499,7 @@ def demand_network_region_query(time_series: TimeSeries, network_region: str | N
     """
 
     network_region_query = ""
-    network_region_select = f"'{network.code}' as network_region,"
+    network_region_select = f"'{time_series.network.code}' as network_region,"
     group_by = ""
 
     if network_region:
