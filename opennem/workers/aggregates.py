@@ -232,7 +232,7 @@ def run_aggregates_demand_network() -> None:
 
         exec_aggregates_network_demand_query(
             date_min=network.data_first_seen, date_max=get_today_nem(), network=network
-        )  # type: ignore
+        )
 
 
 def run_aggregates_demand_network_days(days: int = 3) -> None:
