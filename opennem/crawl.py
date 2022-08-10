@@ -92,7 +92,7 @@ def load_crawlers() -> CrawlerSet:
     return cs
 
 
-def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False) -> None:
+def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False) -> None:
     """Runs a crawl from the crawl definition with ability to overwrite last crawled and obey the defined
     limit"""
 
@@ -108,7 +108,9 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
     crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
     crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
 
-    cr: Optional[ControllerReturn] = crawler.processor(crawler=crawler, last_crawled=last_crawled, limit=crawler.limit)
+    cr: Optional[ControllerReturn] = crawler.processor(
+        crawler=crawler, last_crawled=last_crawled, limit=crawler.limit, latest=latest
+    )
 
     if not cr:
         return None
