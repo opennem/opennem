@@ -5,7 +5,7 @@ Parses MMS tables into OpenNEM derived database
 
 import logging
 from dataclasses import asdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
@@ -322,7 +322,9 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
 
     for record in table.records:
         # @NOTE disable pk track
-        primary_key = set([record["settlementdate"], record["regionid"]])  # type: ignore
+        trading_interval = parse_date(record["settlementdate"])
+
+        primary_key = set([trading_interval, record["regionid"]])  # type: ignore
 
         if primary_key in primary_keys:
             continue
@@ -334,7 +336,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
                 "network_id": "NEM",
                 "created_by": "opennem.controllers.nem",
                 "network_region": record["regionid"],
-                "trading_interval": record["settlementdate"],
+                "trading_interval": trading_interval,
                 price_field: record["rrp"],
             }
         )
@@ -374,20 +376,29 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     primary_keys = []
 
     for record in table.records:
-        primary_key = set([record["settlementdate"], record["regionid"]])
+        if not isinstance(record, dict):
+            continue
+
+        trading_interval = parse_date(record.get("settlementdate"))
+
+        primary_key = set([trading_interval, record["regionid"]])
 
         if primary_key in primary_keys:
             continue
 
         primary_keys.append(primary_key)
 
+        if "demand_and_nonschedgen" not in record:
+            raise Exception("bad value in dispatch_regionsum")
+
         records_to_store.append(
             {
                 "network_id": "NEM",
                 "created_by": "opennem.controller",
                 "network_region": record["regionid"],
-                "trading_interval": record["settlementdate"],
+                "trading_interval": trading_interval,
                 "net_interchange": record["netinterchange"],
+                "demand": record["totaldemand"],
                 "demand_total": record["demand_and_nonschedgen"],
             }
         )
@@ -401,6 +412,7 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         set_={
             "net_interchange": stmt.excluded.net_interchange,
             "demand_total": stmt.excluded.demand_total,
+            "demand": stmt.excluded.demand,
         },
     )
 
@@ -461,11 +473,6 @@ def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         if "netinterchange" in record:
             net_interchange = clean_float(record["netinterchange"])
 
-        demand_total = None
-
-        if "totaldemand" in record:
-            demand_total = clean_float(record["totaldemand"])
-
         records_to_store.append(
             {
                 "network_id": "NEM",
@@ -473,7 +480,6 @@ def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
                 "network_region": record["regionid"],
                 "net_interchange_trading": net_interchange,
                 "trading_interval": trading_interval,
-                "demand_total": demand_total,
             }
         )
 
@@ -488,7 +494,6 @@ def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     stmt = stmt.on_conflict_do_update(
         index_elements=["trading_interval", "network_id", "network_region"],
         set_={
-            "demand_total": stmt.excluded.demand_total,
             "net_interchange_trading": stmt.excluded.net_interchange_trading,
         },
     )
