@@ -742,6 +742,7 @@ class BalancingSummary(Base, BaseModel):
     generation_non_scheduled = Column(Numeric, nullable=True)
     generation_total = Column(Numeric, nullable=True)
     net_interchange = Column(Numeric, nullable=True)
+    demand = Column(Numeric, nullable=True)
     demand_total = Column(Numeric, nullable=True)
     price = Column(Numeric, nullable=True)
     price_dispatch = Column(Numeric, nullable=True)
