@@ -21,7 +21,7 @@ Currently supports:
 
 ## Requirements
 
- * Python 3.9+ (see `.python-version` with `pyenv`)
+ * Python 3.10+ (see `.python-version` with `pyenv`)
  * Docker and `docker-compose` if you want to run the local dev stack
 
 ## Local Development Environment
@@ -51,6 +51,10 @@ $ source .venv/bin/activate
 $ ./scripts/init.py
 ```
 
+## Initialization
+
+The init script will setup all facilities from the latest `stations.json` file - crawl the last 7 days of data and run all the aggregate methods required for output.
+
 ## Install
 
 You can install this project with python `pip`:
@@ -72,19 +76,6 @@ Postgres:
 ```sh
 $ pip install psycopg2
 ```
-
-## Install Extras
-
-The package contains extra modules that can be installed:
-
-```sh
-$ poetry install -E postgres
-```
-
-The list of extras are:
-
- * `postgres` - Postgres database drivers
- * `server` - API server
 
 ## Usage
 
