@@ -19,6 +19,7 @@ from opennem.importer.opennem import opennem_import
 from opennem.settings import settings
 from opennem.workers.aggregates import run_aggregate_days, run_aggregates_all
 from opennem.workers.energy import run_energy_update_archive, run_energy_update_days
+from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.gap_fill.energy import run_energy_gapfill
 from opennem.workers.network_data_range import run_network_data_range_update
 
@@ -44,6 +45,7 @@ def run_init() -> None:
     export_facility_geojson()
     run_crawls()
     run_network_data_range_update()
+    update_facility_seen_range()
     run_exports()
 
 
