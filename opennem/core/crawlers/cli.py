@@ -53,7 +53,7 @@ def crawl_cli_run(name: str, latest: bool = False) -> None:
                 c.name, c.version, c.last_crawled, c.last_processed, c.server_latest
             )
         )
-        run_crawl(c, last_crawled=latest)
+        run_crawl(c, last_crawled=latest, latest=latest)
 
 
 @click.command()
