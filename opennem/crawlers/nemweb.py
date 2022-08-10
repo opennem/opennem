@@ -192,6 +192,7 @@ AEMONemwebTradingISArchive = CrawlerDefinition(
     url="http://nemweb.com.au/Reports/ARCHIVE/TradingIS_Reports/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
+    bulk_insert=True,
 )
 
 
@@ -202,6 +203,7 @@ AEMONemwebDispatchISArchive = CrawlerDefinition(
     url="http://nemweb.com.au/Reports/ARCHIVE/DispatchIS_Reports/",
     network=NetworkNEM,
     processor=run_nemweb_aemo_crawl,
+    bulk_insert=True,
 )
 
 AEMONNemwebDispatchScadaArchive = CrawlerDefinition(
