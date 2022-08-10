@@ -12,7 +12,9 @@ from opennem.utils.archive import download_and_unzip
 logger = logging.getLogger("opennem.core.parsers.aemo.nemweb")
 
 
-def parse_aemo_url_optimized(url: str, table_set: AEMOTableSet | None = None) -> ControllerReturn:
+def parse_aemo_url_optimized(
+    url: str, table_set: AEMOTableSet | None = None, persist_to_db: bool = True
+) -> ControllerReturn | AEMOTableSet:
     """Optimized version of aemo url parser that stores the files locally in tmp
     and parses them individually to resolve memory pressure"""
     d = download_and_unzip(url)
@@ -28,6 +30,9 @@ def parse_aemo_url_optimized(url: str, table_set: AEMOTableSet | None = None) ->
             continue
 
         ts = parse_aemo_file(str(f))
+
+        if not persist_to_db:
+            return ts
 
         controller_returns = store_aemo_tableset(ts)
         cr.inserted_records += controller_returns.inserted_records
