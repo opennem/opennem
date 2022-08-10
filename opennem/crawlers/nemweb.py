@@ -81,7 +81,7 @@ def run_nemweb_aemo_crawl(
 
     entries_to_fetch: list[DirlistingEntry] = dirlisting.get_files()
 
-    if not latest:
+    if latest:
         time_interval = get_time_interval_for_crawler(crawler)
 
         missing_intervals = get_crawler_missing_intervals(
