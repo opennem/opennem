@@ -45,6 +45,7 @@ class CrawlerDefinition(BaseConfig):
 
     network: NetworkSchema | None
     backfill_days: int | None
+    bulk_insert: bool = Field(default=False)
 
     priority: CrawlerPriority
     schedule: CrawlerSchedule | None
