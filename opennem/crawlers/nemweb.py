@@ -7,7 +7,7 @@ from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, Cra
 from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
-from opennem.core.parsers.dirlisting import get_dirlisting
+from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 from opennem.core.time import get_interval, get_interval_by_size
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
 from opennem.schema.time import TimeInterval
@@ -44,7 +44,11 @@ def get_time_interval_for_crawler(crawler: CrawlerDefinition) -> TimeInterval:
 
 
 def run_nemweb_aemo_crawl(
-    crawler: CrawlerDefinition, run_fill: bool = True, last_crawled: bool = True, limit: bool = False
+    crawler: CrawlerDefinition,
+    run_fill: bool = True,
+    last_crawled: bool = True,
+    limit: bool = False,
+    latest: bool = False,
 ) -> ControllerReturn | None:
     """Runs the AEMO MMS crawlers"""
     if not crawler.url and not crawler.urls:
@@ -75,24 +79,27 @@ def run_nemweb_aemo_crawl(
     if crawler.backfill_days:
         backfill_days = crawler.backfill_days
 
-    time_interval = get_time_interval_for_crawler(crawler)
+    entries_to_fetch: list[DirlistingEntry] = dirlisting.get_files()
 
-    missing_intervals = get_crawler_missing_intervals(
-        crawler_name=crawler.name, days=backfill_days, interval=time_interval
-    )
+    if not latest:
+        time_interval = get_time_interval_for_crawler(crawler)
 
-    logger.debug(f"Have {len(missing_intervals)} missing intervals")
+        missing_intervals = get_crawler_missing_intervals(
+            crawler_name=crawler.name, days=backfill_days, interval=time_interval
+        )
 
-    if not missing_intervals:
-        logger.info("Nothing to do")
+        logger.debug(f"Have {len(missing_intervals)} missing intervals")
 
-    entries_to_fetch = dirlisting.get_files_aemo_intervals(missing_intervals)
+        if not missing_intervals:
+            logger.info("Nothing to do")
+
+        entries_to_fetch = dirlisting.get_files_aemo_intervals(missing_intervals)
 
     if not entries_to_fetch:
         logger.info("Nothing to do")
         return None
 
-    logger.info("Fetching {} entries".format(len(entries_to_fetch)))
+    logger.info(f"Fetching {latest=} {len(entries_to_fetch)} entries")
 
     for entry in entries_to_fetch:
         try:
