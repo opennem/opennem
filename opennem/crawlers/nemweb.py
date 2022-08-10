@@ -6,7 +6,7 @@ from opennem.core.crawlers.history import CrawlHistoryEntry, get_crawler_missing
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.core.parsers.aemo.mms import parse_aemo_url
-from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
+from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized, parse_aemo_url_optimized_bulk
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 from opennem.core.time import get_interval, get_interval_by_size
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
@@ -105,7 +105,9 @@ def run_nemweb_aemo_crawl(
         try:
             # @NOTE optimization - if we're dealing with a large file unzip
             # to disk and parse rather than in-memory. 100,000kb
-            if entry.file_size and entry.file_size > 100_000:
+            if crawler.bulk_insert:
+                controller_returns = parse_aemo_url_optimized_bulk(entry.link, persist_to_db=True)
+            elif entry.file_size and entry.file_size > 100_000:
                 controller_returns = parse_aemo_url_optimized(entry.link)
             else:
                 ts = parse_aemo_url(entry.link)
