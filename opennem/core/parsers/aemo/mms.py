@@ -4,15 +4,16 @@ Parse AEMO MMS CSV format which can have multiple tables and definitions per CSV
 """
 
 import csv
+import json
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 from pydantic import BaseModel, validator
 from pydantic.error_wrappers import ValidationError
 from pydantic.fields import PrivateAttr
+from typing_extensions import Self
 
 from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import normalize_duid
@@ -167,6 +168,17 @@ class AEMOTableSet(BaseModel):
             _names.append(_t.full_name)
 
         return _names
+
+    @staticmethod
+    def from_json(filename: str) -> Self:
+        """Parse an AEMOTableSet from a JSON file"""
+        file_path = Path(filename)
+
+        if not file_path.is_file():
+            raise Exception(f"File not found: {filename}")
+
+        with file_path.open() as fh:
+            json_data = json.loads(fh.read())
 
     def has_table(self, table_name: str) -> bool:
         found_table: bool = False
