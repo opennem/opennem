@@ -16,7 +16,7 @@ logger = logging.getLogger("opennem.crawlers.apvi")
 
 
 def crawl_apvi_forecasts(
-    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False
+    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False
 ) -> ControllerReturn:
     """Runs the APVI crawl definition"""
     apvi_return = ControllerReturn()
@@ -34,10 +34,7 @@ def crawl_apvi_forecasts(
             apvi_return.inserted_records += apvi_forecast_return.inserted_records
             apvi_return.errors += apvi_forecast_return.errors
 
-            if (
-                not apvi_return.server_latest
-                or apvi_return.server_latest < apvi_forecast_return.server_latest
-            ):
+            if not apvi_return.server_latest or apvi_return.server_latest < apvi_forecast_return.server_latest:
                 apvi_return.server_latest = apvi_forecast_return.server_latest
 
     return apvi_return

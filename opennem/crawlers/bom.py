@@ -16,7 +16,7 @@ logger = logging.getLogger("opennem.crawler.bom")
 
 
 def crawl_bom_capitals(
-    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False
+    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False
 ) -> Optional[ControllerReturn]:
     bom_stations = get_stations_priority(limit=crawler.limit)
 
