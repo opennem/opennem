@@ -36,7 +36,7 @@ def crawl_cli_run(name: str, latest: bool = False) -> None:
     crawlers = get_crawl_set()
 
     try:
-        crawlers_filtered = crawlers.get_crawlers_by_match(name)
+        crawlers_filtered = crawlers.get_crawlers_by_match(name, only_active=False)
     except Exception as e:
         console.log("[red]Could not find crawlers for {}[/red]: {}".format(name, e))
         return None
