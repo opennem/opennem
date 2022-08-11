@@ -45,7 +45,7 @@ def run_init() -> None:
     export_facility_geojson()
     run_crawls()
     run_network_data_range_update()
-    update_facility_seen_range()
+    update_facility_seen_range(include_first_seen=True)
     run_exports()
 
 
