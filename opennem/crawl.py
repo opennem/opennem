@@ -96,7 +96,7 @@ def load_crawlers() -> CrawlerSet:
     return cs
 
 
-def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False) -> None:
+def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = True) -> None:
     """Runs a crawl from the crawl definition with ability to overwrite last crawled and obey the defined
     limit"""
 
