@@ -41,7 +41,7 @@ class AEMOTableSchema(BaseConfig):
     name: str
     namespace: str
     fieldnames: List[str]
-    _records: List[Union[MMSBaseClass, Dict[str, Any]]] = []
+    _records: List[MMSBaseClass | Dict[str, Any] | list] = []
 
     # optionally it has a schema
     _record_schema: Optional[MMSBaseClass] = PrivateAttr()
@@ -98,7 +98,7 @@ class AEMOTableSchema(BaseConfig):
     def records(self) -> List[Union[MMSBaseClass, Dict[str, Any]]]:
         return self._records
 
-    def add_record(self, record: Union[Dict, MMSBaseClass]) -> bool:
+    def add_record(self, record: Union[Dict, MMSBaseClass], values_only: bool = False) -> bool:
         if isinstance(record, dict) and hasattr(self, "_record_schema") and self._record_schema:
             _record = None
 
@@ -123,9 +123,16 @@ class AEMOTableSchema(BaseConfig):
                 logger.error("Record error: {}".format(e))
                 return False
 
-            self._records.append(_record)
+            if values_only:
+                self._records.append(list(_record.values()))
+            else:
+                self._records.append(_record)
+
         else:
-            self._records.append(record)
+            if values_only:
+                self._records.append(list(record.values()))
+            else:
+                self._records.append(record)
 
         return True
 
@@ -203,12 +210,12 @@ class AEMOTableSet(BaseModel):
 
         return found_table
 
-    def add_table(self, table: AEMOTableSchema) -> bool:
+    def add_table(self, table: AEMOTableSchema, values_only: bool = False) -> bool:
         _existing_table = self.get_table(table.full_name)
 
         if _existing_table:
             for r in table.records:
-                _existing_table.add_record(r)
+                _existing_table.add_record(r, values_only=values_only)
         else:
             self.tables.append(table)
 
@@ -251,6 +258,7 @@ def parse_aemo_mms_csv(
     parse_table_schemas: bool = False,
     skip_records: bool = False,
     url: str | None = None,
+    values_only: bool = False,
 ) -> AEMOTableSet:
     """
     Parse AEMO CSV's into schemas and return a table set
@@ -285,12 +293,12 @@ def parse_aemo_mms_csv(
             case "C":
                 # @TODO csv meta stored in table
                 if table_current:
-                    table_set.add_table(table_current)
+                    table_set.add_table(table_current, values_only=values_only)
 
             # new table
             case "I":
                 if table_current:
-                    table_set.add_table(table_current)
+                    table_set.add_table(table_current, values_only=values_only)
 
                 table_namespace = row[1]
                 table_name = row[2]
@@ -341,7 +349,7 @@ def parse_aemo_mms_csv(
                         fieldvalue_parsed = normalize_duid(fieldvalue)
                         record[field] = fieldvalue_parsed
 
-                table_current.add_record(record)
+                table_current.add_record(record, values_only=values_only)
 
             case _:
                 logger.error(f"Invalid AEMO record type: {record_type}")
@@ -349,7 +357,9 @@ def parse_aemo_mms_csv(
     return table_set
 
 
-def parse_aemo_url(url: str, table_set: AEMOTableSet | None = None, skip_records: bool = False) -> AEMOTableSet:
+def parse_aemo_url(
+    url: str, table_set: AEMOTableSet | None = None, skip_records: bool = False, values_only: bool = False
+) -> AEMOTableSet:
     """Parse a single AEMO URL into an AEMOTableSet"""
 
     if not table_set:
@@ -364,7 +374,9 @@ def parse_aemo_url(url: str, table_set: AEMOTableSet | None = None, skip_records
         raise Exception("Could not parse URL: {}".format(url))
 
     csv_content_decoded = csv_content.decode("utf-8")
-    table_set = parse_aemo_mms_csv(csv_content_decoded, table_set, skip_records=skip_records, url=url)
+    table_set = parse_aemo_mms_csv(
+        csv_content_decoded, table_set, skip_records=skip_records, url=url, values_only=values_only
+    )
 
     # Count number of records
     total_records = 0
@@ -377,12 +389,12 @@ def parse_aemo_url(url: str, table_set: AEMOTableSet | None = None, skip_records
     return table_set
 
 
-def parse_aemo_urls(urls: List[str], skip_records: bool = False) -> AEMOTableSet:
+def parse_aemo_urls(urls: List[str], skip_records: bool = False, values_only: bool = False) -> AEMOTableSet:
     """Parse a list of URLs into an AEMOTableSet"""
     aemo = AEMOTableSet()
 
     for url in urls:
-        aemo = parse_aemo_url(url, table_set=aemo, skip_records=skip_records)
+        aemo = parse_aemo_url(url, table_set=aemo, skip_records=skip_records, values_only=values_only)
 
     # Count number of records
     total_records = 0
@@ -395,7 +407,7 @@ def parse_aemo_urls(urls: List[str], skip_records: bool = False) -> AEMOTableSet
     return aemo
 
 
-def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None) -> AEMOTableSet:
+def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None, values_only: bool = False) -> AEMOTableSet:
     """Parses a local AEMO file"""
     if not table_set:
         table_set = AEMOTableSet()
@@ -409,7 +421,7 @@ def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None) -> AEMOTab
         raise Exception(f"Not a CSV file {file_path}")
 
     with file_path.open() as fh:
-        table_set = parse_aemo_mms_csv(fh.read(), table_set=table_set)
+        table_set = parse_aemo_mms_csv(fh.read(), table_set=table_set, values_only=values_only)
 
     return table_set
 
