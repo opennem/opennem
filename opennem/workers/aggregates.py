@@ -22,7 +22,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
     __query = """
         insert into at_network_demand
             select
-                date_trunc('day', fs.trading_interval at time zone n.timezone_database) as trading_day,
+                date_trunc('day', fs.trading_interval at time zone n.timezone_database {network_interval_offset}) as trading_day,
                 fs.network_id,
                 fs.network_region,
                 sum(fs.energy) as demand_energy,
@@ -59,7 +59,13 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
             "aggregates_network_demand_query: date_max ({}) is before date_min ({})".format(date_max_offset, date_min)
         )
 
+    network_interval_offset = ""
+
+    if network.interval_shift:
+        network_interval_offset = f" - interval '{network.interval_shift} minutes'"
+
     query = __query.format(
+        network_interval_offset=network_interval_offset,
         date_min=date_min_offset,
         date_max=date_max_offset,
         network_id=network.code,
