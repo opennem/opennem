@@ -32,8 +32,8 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
                     time_bucket_gapfill('5 minutes', bs.trading_interval) as trading_interval,
                     bs.network_id,
                     bs.network_region,
-                    (sum(coalesce(bs.demand_total, bs.generation_total)) / {intervals_per_hour}) as energy,
-                    (sum(coalesce(bs.demand_total, bs.generation_total)) / {intervals_per_hour}) * max(bs.price_dispatch) * 1000 as market_value
+                    (sum(coalesce(bs.demand_total, bs.demand)) / {intervals_per_hour}) as energy,
+                    (sum(coalesce(bs.demand_total, bs.demand)) / {intervals_per_hour}) * max(bs.price_dispatch) * 1000 as market_value
                 from balancing_summary bs
                 where
                     bs.network_id = '{network_id}'
