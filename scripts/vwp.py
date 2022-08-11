@@ -22,6 +22,8 @@ logger = logging.getLogger("opennem.vwp")
 
 V2_VWP_FIXTURE_PATH = Path(__file__).parent / "vic_daily_vwp_2022_10.csv"
 
+NOTEBOOK_VWP_FIXTURE_PATH = Path(__file__).parent.parent / "notebooks" / "data" / "vic1_jan_vwp.csv"
+
 TABLESET_PATH = Path(__file__).parent / "aemo_demand_price_data_tableset.json"
 
 COMPARISON_START_DATE = datetime.fromisoformat("2022-01-01T00:00:00")
@@ -103,12 +105,28 @@ def get_server_vwp() -> list[VWPBucket]:
     return result_models
 
 
-def compare_vwp() -> list[VWPBucket]:
-    fixture_values = read_vwp_data_fixture()
-    server_values = get_server_vwp()
+def get_notebook_vwp() -> list[VWPBucket]:
+    """Gets vwp from the notebook output"""
+    records: list[VWPBucket] = []
+
+    with open(NOTEBOOK_VWP_FIXTURE_PATH) as fh:
+        csvreader = csv.DictReader(fh)
+        for record in csvreader:
+            model = VWPBucket(
+                interval=datetime.strptime(record.get("settlementdate").removesuffix(" 00:00:00+10:00"), "%Y-%m-%d"),
+                value=record.get("price"),
+            )
+
+            records.append(model)
+
+    logger.debug(f"Got {len(records)} notebook values")
+
+    return records
+
+
+def compare_vwp(fixture_values: list[VWPBucket], server_values: list[VWPBucket]) -> list[VWPBucket]:
 
     delta_models: list[VWPBucket] = []
-
     matching_intervals = 0
 
     for fixture_val in fixture_values:
@@ -213,8 +231,7 @@ def get_aemo_tableset() -> AEMOTableSet:
     return ts
 
 
-if __name__ == "__main__":
-    get_aemo_raw_values()
+def dump_tableset_csvs() -> None:
 
     ts = get_aemo_tableset()
 
@@ -224,8 +241,15 @@ if __name__ == "__main__":
         print(f"Have table {table.full_name}")
         table.to_csv(str(csv_path / f"{table.full_name}.csv"))
 
-    # delta_models = compare_vwp()
-    # plot_deltas(delta_models)
+
+if __name__ == "__main__":
+    # get_aemo_raw_values()
+    fixture_values = read_vwp_data_fixture()
+    server_values = get_server_vwp()
+    local_notebook_values = get_notebook_vwp()
+
+    delta_models = compare_vwp(fixture_values, local_notebook_values)
+    plot_deltas(delta_models)
 
     # ts = pydantic.parse_file_as(path=str(fn), type_=AEMOTableSet)
     # ts = read_aemo_dispatchis()
