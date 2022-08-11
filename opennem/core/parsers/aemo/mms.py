@@ -8,9 +8,9 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, validator
 from pydantic.error_wrappers import ValidationError
 from pydantic.fields import PrivateAttr
 from typing_extensions import Self
@@ -41,7 +41,7 @@ class AEMOTableSchema(BaseConfig):
     name: str
     namespace: str
     fieldnames: List[str]
-    _records: List[MMSBaseClass | Dict[str, Any] | list] = []
+    records: List[Dict[str, Any] | list] = Field(default_factory=list)
 
     # optionally it has a schema
     _record_schema: Optional[MMSBaseClass] = PrivateAttr()
@@ -94,10 +94,6 @@ class AEMOTableSchema(BaseConfig):
 
         return True
 
-    @property
-    def records(self) -> List[Union[MMSBaseClass, Dict[str, Any]]]:
-        return self._records
-
     def add_record(self, record: Union[Dict, MMSBaseClass], values_only: bool = False) -> bool:
         if isinstance(record, dict) and hasattr(self, "_record_schema") and self._record_schema:
             _record = None
@@ -124,17 +120,17 @@ class AEMOTableSchema(BaseConfig):
                 return False
 
             if values_only:
-                self._records.append(list(_record.values()))
+                self.records.append(list(_record.values()))
             else:
-                self._records.append(_record)
+                self.records.append(_record)
 
         else:
             if values_only and isinstance(record, dict):
-                self._records.append(list(record.values()))
+                self.records.append(list(record.values()))
             elif values_only and isinstance(record, list):
-                self._records.append(record)
+                self.records.append(record)
             else:
-                self._records.append(record)
+                self.records.append(record)
 
         return True
 
