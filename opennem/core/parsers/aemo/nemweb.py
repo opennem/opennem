@@ -23,26 +23,30 @@ def parse_aemo_url_optimized(
     onlyfiles = [Path(d) / f for f in os.listdir(d) if (Path(d) / f).is_file()]
     logger.debug(f"Got {len(onlyfiles)} files")
 
+    if not table_set:
+        table_set = AEMOTableSet()
+
     for f in onlyfiles:
         logger.info(f"parsing {f}")
 
         if f.suffix.lower() not in [".csv"]:
             continue
 
-        ts = parse_aemo_file(str(f))
+        table_set = parse_aemo_file(str(f), table_set=table_set)
 
-        if not persist_to_db:
-            return ts
+        if persist_to_db:
+            controller_returns = store_aemo_tableset(table_set)
+            cr.inserted_records += controller_returns.inserted_records
 
-        controller_returns = store_aemo_tableset(ts)
-        cr.inserted_records += controller_returns.inserted_records
+            if (
+                cr.last_modified
+                and controller_returns.last_modified
+                and cr.last_modified < controller_returns.last_modified
+            ):
+                cr.last_modified = controller_returns.last_modified
 
-        if (
-            cr.last_modified
-            and controller_returns.last_modified
-            and cr.last_modified < controller_returns.last_modified
-        ):
-            cr.last_modified = controller_returns.last_modified
+    if not persist_to_db:
+        return table_set
 
     return cr
 
