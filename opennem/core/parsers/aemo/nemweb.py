@@ -13,7 +13,7 @@ logger = logging.getLogger("opennem.core.parsers.aemo.nemweb")
 
 
 def parse_aemo_url_optimized(
-    url: str, table_set: AEMOTableSet | None = None, persist_to_db: bool = True
+    url: str, table_set: AEMOTableSet | None = None, persist_to_db: bool = True, values_only: bool = False
 ) -> ControllerReturn | AEMOTableSet:
     """Optimized version of aemo url parser that stores the files locally in tmp
     and parses them individually to resolve memory pressure"""
@@ -32,7 +32,7 @@ def parse_aemo_url_optimized(
         if f.suffix.lower() not in [".csv"]:
             continue
 
-        table_set = parse_aemo_file(str(f), table_set=table_set)
+        table_set = parse_aemo_file(str(f), table_set=table_set, values_only=values_only)
 
         if persist_to_db:
             controller_returns = store_aemo_tableset(table_set)
