@@ -129,8 +129,10 @@ class AEMOTableSchema(BaseConfig):
                 self._records.append(_record)
 
         else:
-            if values_only:
+            if values_only and isinstance(record, dict):
                 self._records.append(list(record.values()))
+            elif values_only and isinstance(record, list):
+                self._records.append(record)
             else:
                 self._records.append(record)
 
