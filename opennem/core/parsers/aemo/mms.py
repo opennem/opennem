@@ -156,6 +156,18 @@ class AEMOTableSchema(BaseConfig):
 
         return _df
 
+    def to_csv(self, filename: str) -> None:
+        logger.info(f"Writing table {self.full_name} with {len(self.records)} records")
+
+        with open(filename, "w") as fh:
+            csvwriter = csv.DictWriter(fh, fieldnames=self.fieldnames)
+            csvwriter.writeheader()
+
+            for record in self.records:
+                csvwriter.writerow(dict(zip(self.fieldnames, record)))
+
+        logger.info(f"Wrote records to {self.full_name}")
+
     class Config:
         underscore_attrs_are_private = True
 
