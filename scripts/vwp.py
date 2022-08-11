@@ -58,7 +58,7 @@ def get_vwp_query() -> str:
 
     __query = """
         select
-            date_trunc('day', fs.trading_interval at time zone n.timezone_database) as trading_day,
+            date_trunc('day', fs.trading_interval at time zone n.timezone_database - interval '5 minutes') as trading_day,
             fs.network_id,
             fs.network_region,
             sum(fs.energy) as energy,
@@ -131,6 +131,9 @@ def compare_vwp(fixture_values: list[VWPBucket], server_values: list[VWPBucket])
 
     for fixture_val in fixture_values:
         server_val = list(filter(lambda x: x.interval == fixture_val.interval, server_values))
+
+        if fixture_val.interval <= COMPARISON_START_DATE or fixture_val.interval >= COMPARISON_END_DATE:
+            continue
 
         if not server_val:
             logger.error(f"Could not find {fixture_val.interval} in server values")
@@ -248,7 +251,7 @@ if __name__ == "__main__":
     server_values = get_server_vwp()
     local_notebook_values = get_notebook_vwp()
 
-    delta_models = compare_vwp(fixture_values, local_notebook_values)
+    delta_models = compare_vwp(fixture_values, server_values)
     plot_deltas(delta_models)
 
     # ts = pydantic.parse_file_as(path=str(fn), type_=AEMOTableSet)
