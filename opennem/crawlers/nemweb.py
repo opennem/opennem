@@ -48,7 +48,7 @@ def run_nemweb_aemo_crawl(
     run_fill: bool = True,
     last_crawled: bool = True,
     limit: bool = False,
-    latest: bool = False,
+    latest: bool = True,
 ) -> ControllerReturn | None:
     """Runs the AEMO MMS crawlers"""
     if not crawler.url and not crawler.urls:
