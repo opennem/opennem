@@ -26,8 +26,8 @@ def cmd_crawl_cli() -> None:
 
 @click.command()
 @click.argument("name")
-@click.option("--latest", default=False, help="Run only server latest")
-def crawl_cli_run(name: str, latest: bool = False) -> None:
+@click.option("--all", default=False, help="Run only server latest")
+def crawl_cli_run(name: str, all: bool = False) -> None:
 
     test_proxy()
 
@@ -53,7 +53,7 @@ def crawl_cli_run(name: str, latest: bool = False) -> None:
                 c.name, c.version, c.last_crawled, c.last_processed, c.server_latest
             )
         )
-        run_crawl(c, latest=latest)
+        run_crawl(c, latest=not all)
 
 
 @click.command()
