@@ -229,7 +229,7 @@ def export_energy(
                 continue
 
             demand_energy_and_value = demand_network_region_daily(
-                time_series=time_series, network_region_code=energy_stat.network_region
+                time_series=time_series, network_region_code=energy_stat.network_region, networks=energy_stat.networks
             )
             stat_set.append_set(demand_energy_and_value)
 
@@ -276,7 +276,7 @@ def export_energy(
                 continue
 
             demand_energy_and_value = demand_network_region_daily(
-                time_series=time_series, network_region_code=energy_stat.network_region
+                time_series=time_series, network_region_code=energy_stat.network_region, networks=energy_stat.networks
             )
             stat_set.append_set(demand_energy_and_value)
 
@@ -357,7 +357,7 @@ def export_all_monthly() -> None:
                 continue
 
             demand_energy_and_value = demand_network_region_daily(
-                time_series=time_series, network_region_code=network_region.code
+                time_series=time_series, network_region_code=network_region.code, networks=networks
             )
             stat_set.append_set(demand_energy_and_value)
 
@@ -436,7 +436,7 @@ def export_all_daily(
                 continue
 
             demand_energy_and_value = demand_network_region_daily(
-                time_series=time_series, network_region_code=network_region.code
+                time_series=time_series, network_region_code=network_region.code, networks=networks
             )
             stat_set.append_set(demand_energy_and_value)
 
