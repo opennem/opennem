@@ -47,7 +47,7 @@ def check_opennem_interval_delays(network_code: str) -> bool:
 
     now_date = datetime.now().astimezone(network.get_timezone())  # type: ignore
 
-    time_delta = chop_delta_microseconds(now_date - history_date)
+    time_delta = chop_delta_microseconds(now_date - history_date) - timedelta(minutes=network.interval_size)
 
     logger.debug("Live time: {},  delay: {}".format(history_date, time_delta))
 
