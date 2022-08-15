@@ -20,7 +20,7 @@ from opennem.utils.dates import date_series
 
 logger = logging.getLogger("opennem.vwp")
 
-V2_VWP_FIXTURE_PATH = Path(__file__).parent / "vic_daily_vwp_2022_10.csv"
+V2_VWP_FIXTURE_PATH = Path(__file__).parent / "vic_daily_vwp_2022.csv"
 
 NOTEBOOK_VWP_FIXTURE_PATH = Path(__file__).parent.parent / "notebooks" / "data" / "vic1_jan_vwp.csv"
 
@@ -28,7 +28,7 @@ TABLESET_PATH = Path(__file__).parent / "aemo_demand_price_data_tableset.json"
 
 COMPARISON_START_DATE = datetime.fromisoformat("2022-01-01T00:00:00")
 
-COMPARISON_END_DATE = datetime.fromisoformat("2022-01-31:00:00")
+COMPARISON_END_DATE = datetime.fromisoformat("2022-08-01:00:00")
 
 
 @dataclass
