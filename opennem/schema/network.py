@@ -134,8 +134,8 @@ NetworkWEM = NetworkSchema(
     interval_size=30,
     data_first_seen=datetime.fromisoformat("2006-09-20T02:00:00+08:00"),
     price_first_seen=datetime.fromisoformat("2012-01-07T08:00:00+08:00"),
-    # WEM is slower to update at times. set to 3 hours.
-    monitor_interval_alert_threshold=60 * 3,
+    # WEM is slower to update at times. set to 4 hours.
+    monitor_interval_alert_threshold=60 * 4,
 )
 
 NetworkAPVI = NetworkSchema(
