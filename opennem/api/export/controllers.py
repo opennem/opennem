@@ -200,7 +200,7 @@ def power_flows_network_week(
         row = list(c.execute(query))
 
     if len(row) < 1:
-        logger.error("No results from interconnector_flow_network_regions_query with {}".format(time_series))
+        logger.warning("No results from interconnector_flow_network_regions_query with {}".format(time_series))
         return None
 
     imports = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
