@@ -19,17 +19,8 @@ depends_on = None
 
 def upgrade() -> None:
     op.add_column("balancing_summary", sa.Column("demand", sa.Numeric(), nullable=True))
-    op.create_index(
-        "idx_facility_scada_trading_interval_facility_code",
-        "facility_scada",
-        ["trading_interval", "facility_code"],
-        unique=False,
-    )
 
 
 def downgrade() -> None:
-    op.drop_index(
-        "idx_facility_scada_trading_interval_facility_code",
-        table_name="facility_scada",
-    )
+
     op.drop_column("balancing_summary", "demand")
