@@ -478,8 +478,17 @@ Demand queries
 """
 
 
-def demand_network_region_query(time_series: TimeSeries, network_region: str | None) -> str:
+def demand_network_region_query(
+    time_series: TimeSeries, network_region: str | None, networks: list[NetworkSchema] = []
+) -> str:
     """Get the network demand energy and market_value"""
+
+    if not networks:
+        networks = [time_series.network]
+
+    if time_series.network not in networks:
+        networks.append(time_series.network)
+
     ___query = """
         select
             date_trunc('{trunc}', trading_day) as trading_day,
@@ -489,10 +498,10 @@ def demand_network_region_query(time_series: TimeSeries, network_region: str | N
             round(sum(demand_market_value), 4)
         from at_network_demand
         where
-            network_id = '{network_id}'
+            {network_query}
             {network_region}
-            and trading_day >= '{date_min}'::date
-            and trading_day <= '{date_max}'::date
+            trading_day >= '{date_min}'::date and
+            trading_day <= '{date_max}'::date
         group by 1,2 {group_by}
         order by
             1 asc
@@ -503,11 +512,15 @@ def demand_network_region_query(time_series: TimeSeries, network_region: str | N
     group_by = ""
 
     if network_region:
-        network_region_query = f"and network_region='{network_region}'"
+        network_region_query = f"network_region='{network_region}' and"
         network_region_select = "network_region,"
         group_by = ",3"
 
     date_range = time_series.get_range()
+
+    networks_list = networks_to_in(networks)
+
+    network_query = "network_id IN ({}) and ".format(networks_list)
 
     query = dedent(
         ___query.format(
@@ -518,6 +531,7 @@ def demand_network_region_query(time_series: TimeSeries, network_region: str | N
             network_region=network_region_query,
             network_region_select=network_region_select,
             group_by=group_by,
+            network_query=network_query,
         )
     )
 
