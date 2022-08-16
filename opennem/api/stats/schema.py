@@ -224,30 +224,21 @@ class OpennemDataSet(BaseConfig):
             # find the ids that are not unique
             _msg = ""
             _id_duplicates = [
-                item
-                for item, count in Counter(_id_values).items()
-                if count > 1 and isinstance(item, str)
+                item for item, count in Counter(_id_values).items() if count > 1 and isinstance(item, str)
             ]
 
             if _id_duplicates:
-                _msg = ", ".join(_id_duplicates)
+                _duplicate_ids = ", ".join(_id_duplicates)
+                _msg = f"{len(_id_values)} ids and {len(_duplicate_ids)} duplicates: {_duplicate_ids} "
 
-            raise ValueError(
-                f"OpennemDataSet has duplicate id{'s' if len(_id_duplicates) > 1 else ''}: {_msg}"
-            )
+            raise ValueError(f"OpennemDataSet has duplicate id{'s' if len(_id_duplicates) > 1 else ''}: {_msg}")
 
         return value
 
-    _version_fromstr = validator("created_at", allow_reuse=True, pre=True)(
-        optionally_parse_string_datetime
-    )
+    _version_fromstr = validator("created_at", allow_reuse=True, pre=True)(optionally_parse_string_datetime)
 
-    _created_at_trim = validator("created_at", allow_reuse=True, pre=True)(
-        chop_datetime_microseconds
-    )
-    _network_lowercase = validator("network", allow_reuse=True, pre=True)(
-        optionaly_lowercase_string
-    )
+    _created_at_trim = validator("created_at", allow_reuse=True, pre=True)(chop_datetime_microseconds)
+    _network_lowercase = validator("network", allow_reuse=True, pre=True)(optionaly_lowercase_string)
 
 
 class RegionFlowResult(BaseConfig):
