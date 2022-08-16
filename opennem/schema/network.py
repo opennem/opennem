@@ -52,6 +52,10 @@ class NetworkSchema(BaseConfig):
     # in minutes, after how long to alert on delays for this network
     monitor_interval_alert_threshold: int | None
 
+    # additional networks that make up this network
+    # ex. ROOFTOP, APVI etc.
+    subnetworks: list["NetworkSchema"] | None
+
     def get_interval(self) -> Optional[TimeInterval]:
         if not self.interval_size:
             return None
@@ -96,6 +100,13 @@ class NetworkSchema(BaseConfig):
     def intervals_per_hour(self) -> float:
         return 60 / self.interval_size
 
+    def get_networks_query(self) -> list["NetworkSchema"]:
+        """Returns a full list of network and sub-networks for queries"""
+        if not self.subnetworks:
+            return [self]
+
+        return [self] + self.subnetworks
+
 
 class NetworkRegion(BaseConfig):
     code: str
@@ -106,38 +117,6 @@ class NetworkRegion(BaseConfig):
     offset: Optional[int] = Field(None, description="Network time offset in minutes")
 
 
-# @TODO move this to db + fixture
-
-NetworkNEM = NetworkSchema(
-    code="NEM",
-    label="NEM",
-    country="au",
-    timezone="Australia/Brisbane",
-    timezone_database="AEST",
-    offset=600,
-    interval_size=5,
-    interval_shift=5,
-    data_first_seen=datetime.fromisoformat("1998-12-07T01:50:00+10:00"),
-    price_first_seen=datetime.fromisoformat("2009-07-01T00:00:00+10:00"),
-    interconnector_first_seen=datetime.fromisoformat("2010-01-01T00:00:00+10:00"),
-    rooftop_first_seen=datetime.fromisoformat("2007-01-01T00:00:00+10:00"),
-    monitor_interval_alert_threshold=10,
-)
-
-NetworkWEM = NetworkSchema(
-    code="WEM",
-    label="WEM",
-    country="au",
-    timezone="Australia/Perth",
-    timezone_database="AWST",
-    offset=480,
-    interval_size=30,
-    data_first_seen=datetime.fromisoformat("2006-09-20T02:00:00+08:00"),
-    price_first_seen=datetime.fromisoformat("2012-01-07T08:00:00+08:00"),
-    # WEM is slower to update at times. set to 4 hours.
-    monitor_interval_alert_threshold=60 * 4,
-)
-
 NetworkAPVI = NetworkSchema(
     code="APVI",
     label="APVI",
@@ -147,19 +126,6 @@ NetworkAPVI = NetworkSchema(
     offset=600,
     interval_size=15,
     data_first_seen=datetime.fromisoformat("2015-03-20T06:15:00+10:00"),
-)
-
-# This is a "virtual" network that is made up of
-# NEM + WEM
-NetworkAU = NetworkSchema(
-    code="AU",
-    label="AU",
-    country="au",
-    timezone="Australia/Sydney",
-    timezone_database="AEST",
-    offset=600,
-    interval_size=30,
-    data_first_seen=datetime.fromisoformat("1998-12-07T01:50:00+10:00"),
 )
 
 
@@ -184,6 +150,54 @@ NetworkAEMORooftopBackfill = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=30,
+)
+
+
+NetworkNEM = NetworkSchema(
+    code="NEM",
+    label="NEM",
+    country="au",
+    timezone="Australia/Brisbane",
+    timezone_database="AEST",
+    offset=600,
+    interval_size=5,
+    interval_shift=5,
+    data_first_seen=datetime.fromisoformat("1998-12-07T01:50:00+10:00"),
+    price_first_seen=datetime.fromisoformat("2009-07-01T00:00:00+10:00"),
+    interconnector_first_seen=datetime.fromisoformat("2010-01-01T00:00:00+10:00"),
+    rooftop_first_seen=datetime.fromisoformat("2007-01-01T00:00:00+10:00"),
+    monitor_interval_alert_threshold=10,
+    subnetworks=[NetworkAEMORooftop, NetworkAEMORooftopBackfill],
+)
+
+NetworkWEM = NetworkSchema(
+    code="WEM",
+    label="WEM",
+    country="au",
+    timezone="Australia/Perth",
+    timezone_database="AWST",
+    offset=480,
+    interval_size=30,
+    data_first_seen=datetime.fromisoformat("2006-09-20T02:00:00+08:00"),
+    price_first_seen=datetime.fromisoformat("2012-01-07T08:00:00+08:00"),
+    # WEM is slower to update at times. set to 4 hours.
+    monitor_interval_alert_threshold=60 * 4,
+    subnetworks=[NetworkAPVI],
+)
+
+
+# This is a "virtual" network that is made up of
+# NEM + WEM
+NetworkAU = NetworkSchema(
+    code="AU",
+    label="AU",
+    country="au",
+    timezone="Australia/Sydney",
+    timezone_database="AEST",
+    offset=600,
+    interval_size=30,
+    data_first_seen=datetime.fromisoformat("1998-12-07T01:50:00+10:00"),
+    subnetworks=[NetworkNEM, NetworkWEM],
 )
 
 
