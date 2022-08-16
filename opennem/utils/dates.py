@@ -231,8 +231,8 @@ def week_series(
 
 
 def week_series_datetimes(
-    start: Union[datetime, date],
-    end: Union[datetime, date],
+    start: datetime,
+    end: datetime,
     length: int | None = None,
 ) -> Generator[tuple[datetime, datetime], None, None]:
     """
