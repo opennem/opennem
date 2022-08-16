@@ -248,9 +248,9 @@ def week_series_datetimes(
 
     for week_i in range(0, length):
         if reverse:
-            cur_date = start - timedelta(weeks=week_i)
+            cur_date = start.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(weeks=week_i)
         else:
-            cur_date = start + timedelta(weeks=week_i)
+            cur_date = start.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(weeks=week_i)
 
         yield get_week_range_from_datetime(cur_date)
 
