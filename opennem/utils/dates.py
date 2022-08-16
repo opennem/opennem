@@ -252,7 +252,7 @@ def week_series_datetimes(
         else:
             cur_date = start + timedelta(weeks=week_i)
 
-        yield cur_date
+        yield get_week_range_from_datetime(cur_date)
 
 
 def get_week_range_from_datetime(subject: datetime) -> tuple[datetime, datetime]:
@@ -260,6 +260,11 @@ def get_week_range_from_datetime(subject: datetime) -> tuple[datetime, datetime]
     start = subject - timedelta(days=subject.weekday())
     end = start + timedelta(days=6)
     return (start, end)
+
+
+def get_week_number_from_datetime(subject: datetime) -> int:
+    """Get the week number from a datetime"""
+    return subject.isocalendar().week
 
 
 def chop_delta_microseconds(delta: timedelta) -> timedelta:
