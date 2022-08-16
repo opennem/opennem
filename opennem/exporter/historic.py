@@ -9,8 +9,7 @@ This is called from the scheduler in opennem.workers.scheduler to run every morn
 """
 
 import logging
-from datetime import datetime, timedelta
-from typing import List, Optional
+from datetime import timedelta
 
 from opennem.api.export.controllers import (
     demand_network_region_daily,
@@ -18,18 +17,16 @@ from opennem.api.export.controllers import (
     energy_interconnector_flows_and_emissions,
     weather_daily,
 )
-from opennem.api.export.map import PriorityType, StatExport, StatType, get_export_map, get_weekly_export_map
 from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range
-from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
-from opennem.api.time import human_to_interval, human_to_period
+from opennem.api.stats.schema import ScadaDateRange
+from opennem.api.time import human_to_period
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.dates import TimeSeries
-from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_week_number_from_datetime, week_series_datetimes
-from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.export.historic")
 
@@ -37,7 +34,7 @@ logger = logging.getLogger("opennem.export.historic")
 def export_historic_intervals(limit: int | None = None) -> None:
     session = get_scoped_session()
 
-    networks = [NetworkWEM]
+    networks = [NetworkNEM, NetworkWEM]
 
     for network in networks:
         network_regions = session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code).all()
