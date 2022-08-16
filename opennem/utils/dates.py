@@ -230,6 +230,30 @@ def week_series(
         yield cur_cal[0], cur_cal[1]
 
 
+def week_series_datetimes(
+    start: Union[datetime, date],
+    end: Union[datetime, date],
+    length: Optional[int] = None,
+) -> Generator[datetime, None, None]:
+    """
+    Generate week series M -> S
+    """
+    reverse = False
+
+    if end < start:
+        reverse = True
+
+    length = total_weeks(start, end)
+
+    for week_i in range(0, length):
+        if reverse:
+            cur_date = start - timedelta(weeks=week_i)
+        else:
+            cur_date = start + timedelta(weeks=week_i)
+
+        yield cur_date
+
+
 def chop_delta_microseconds(delta: timedelta) -> timedelta:
     """Removes microsevonds from a timedelta"""
     return delta - timedelta(microseconds=delta.microseconds)
