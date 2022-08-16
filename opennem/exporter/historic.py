@@ -15,6 +15,7 @@ from opennem.api.export.controllers import (
     demand_network_region_daily,
     energy_fueltech_daily,
     energy_interconnector_flows_and_emissions,
+    power_week,
     weather_daily,
 )
 from opennem.api.export.utils import write_output
@@ -26,7 +27,7 @@ from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
-from opennem.utils.dates import get_week_number_from_datetime, week_series_datetimes
+from opennem.utils.dates import get_today_opennem, get_week_number_from_datetime, week_series_datetimes
 
 logger = logging.getLogger("opennem.export.historic")
 
@@ -48,7 +49,7 @@ def export_historic_intervals(limit: int | None = None) -> None:
             if network == NetworkNEM:
                 networks = [NetworkNEM, NetworkAEMORooftop]
 
-            scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks, energy=True)
+            scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks, energy=False)
 
             if not scada_range or not scada_range.start:
                 logger.error("Could not get scada range for network {} and energy {}".format(network, True))
@@ -59,9 +60,12 @@ def export_historic_intervals(limit: int | None = None) -> None:
             ):
                 week_number = get_week_number_from_datetime(week_start)
 
+                if week_start > get_today_opennem():
+                    continue
+
                 logging.info(
-                    "Exporting historic intervals for network {} and region {} and year {} and week {}".format(
-                        network.code, network_region.code, week_start.year, week_number
+                    "Exporting historic intervals for network {} and region {} and year {} and week {} ({} => {})".format(
+                        network.code, network_region.code, week_start.year, week_number, week_start, week_end
                     )
                 )
 
@@ -73,7 +77,7 @@ def export_historic_intervals(limit: int | None = None) -> None:
                     period=human_to_period("7d"),
                 )
 
-                stat_set = energy_fueltech_daily(
+                stat_set = power_week(
                     time_series=time_series,
                     networks_query=networks,
                     network_region_code=network_region.code,
@@ -108,9 +112,7 @@ def export_historic_intervals(limit: int | None = None) -> None:
                     except Exception:
                         pass
 
-                save_path = (
-                    f"v3/stats/historic/{network.code}/{network_region.code}/{week_start.year}/{week_number}.json"
-                )
+                save_path = f"v3/stats/historic/weekly/{network.code}/{network_region.code}/{week_start.year}/week_{week_number}.json"
 
                 logger.info(f"Will save to {save_path}")
 
@@ -118,4 +120,4 @@ def export_historic_intervals(limit: int | None = None) -> None:
 
 
 if __name__ == "__main__":
-    export_historic_intervals(limit=52)
+    export_historic_intervals(limit=3)
