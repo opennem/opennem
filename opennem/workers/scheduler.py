@@ -35,6 +35,7 @@ from opennem.crawlers.nemweb import (
 )
 from opennem.crawlers.wem import WEMBalancingLive, WEMFacilityScadaLive
 from opennem.exporter.geojson import export_facility_geojson
+from opennem.exporter.historic import export_historic_intervals
 from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
@@ -203,6 +204,20 @@ def schedule_power_weeklies() -> None:
     Run weekly power outputs
     """
     export_power(priority=PriorityType.history, latest=True)
+
+
+@huey.periodic_task(crontab(hour="10", minute="15"))
+@huey.lock_task("run_export_historic_intervals")
+def run_export_historic_intervals() -> None:
+    """Run historic exports"""
+    export_historic_intervals()
+
+
+@huey.periodic_task(crontab(hour="*/4", minute="45"))
+@huey.lock_task("run_export_latest_historic_intervals")
+def run_export_latest_historic_intervals() -> None:
+    """Run latest historic exports"""
+    export_historic_intervals(limit=2)
 
 
 @huey.periodic_task(crontab(hour="*/1", minute="15,45"), priority=50)
