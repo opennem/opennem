@@ -233,8 +233,8 @@ def week_series(
 def week_series_datetimes(
     start: Union[datetime, date],
     end: Union[datetime, date],
-    length: Optional[int] = None,
-) -> Generator[datetime, None, None]:
+    length: int | None = None,
+) -> Generator[tuple[datetime, datetime], None, None]:
     """
     Generate week series M -> S
     """
@@ -243,7 +243,8 @@ def week_series_datetimes(
     if end < start:
         reverse = True
 
-    length = total_weeks(start, end)
+    if not length:
+        length = total_weeks(start, end)
 
     for week_i in range(0, length):
         if reverse:
@@ -252,6 +253,13 @@ def week_series_datetimes(
             cur_date = start + timedelta(weeks=week_i)
 
         yield cur_date
+
+
+def get_week_range_from_datetime(subject: datetime) -> tuple[datetime, datetime]:
+    """Get the datetime range of a week from a datetime"""
+    start = subject - timedelta(days=subject.weekday())
+    end = start + timedelta(days=6)
+    return (start, end)
 
 
 def chop_delta_microseconds(delta: timedelta) -> timedelta:
