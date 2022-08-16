@@ -112,7 +112,7 @@ def export_historic_intervals(limit: int | None = None) -> None:
                     except Exception:
                         pass
 
-                save_path = f"v3/stats/historic/weekly/{network.code}/{network_region.code}/{week_start.year}/week_{week_number}.json"
+                save_path = f"v3/stats/historic/weekly/{network.code}/{network_region.code}/year/{week_start.year}/week/{week_number}.json"
 
                 logger.info(f"Will save to {save_path}")
 
@@ -120,4 +120,4 @@ def export_historic_intervals(limit: int | None = None) -> None:
 
 
 if __name__ == "__main__":
-    export_historic_intervals(limit=3)
+    export_historic_intervals(limit=52)
