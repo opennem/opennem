@@ -28,12 +28,15 @@ from opennem.crawl import CrawlerSchedule, run_crawl, run_crawls_by_schedule
 from opennem.crawlers.apvi import APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
+    AEMONEMDispatchActualGEN,
+    AEMONEMNextDayDispatch,
     AEMONemwebDispatchIS,
     AEMONemwebRooftop,
+    AEMONemwebRooftopForecast,
     AEMONemwebTradingIS,
     AEMONNemwebDispatchScada,
 )
-from opennem.crawlers.wem import WEMBalancingLive, WEMFacilityScadaLive
+from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.exporter.historic import export_historic_intervals
 from opennem.monitors.emissions import alert_missing_emission_factors
@@ -47,7 +50,8 @@ from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
-from opennem.workers.fallback import fallback_runner
+
+# from opennem.workers.fallback import fallback_runner
 from opennem.workers.gap_fill.energy import run_energy_gapfill
 from opennem.workers.gap_fill.generated import check_generated_gaps
 from opennem.workers.network_data_range import run_network_data_range_update
@@ -86,6 +90,7 @@ if IS_DEV:
 @huey.lock_task("crawler_live_nemweb_dispatch_scada")
 def crawl_run_aemo_nemweb_dispatch_scada() -> None:
     run_crawl(AEMONNemwebDispatchScada)
+    export_power(priority=PriorityType.live)
 
 
 @huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
@@ -120,56 +125,49 @@ def crawler_run_apvi_today() -> None:
 
 
 @huey.periodic_task(crontab(minute="*/5"))
-@huey.lock_task("crawler_run_wem_balancing")
-def crawler_run_wem_balancing() -> None:
+@huey.lock_task("crawler_run_wem_balancing_live")
+def crawler_run_wem_balancing_live() -> None:
     run_crawl(WEMBalancingLive)
 
 
 @huey.periodic_task(crontab(minute="*/5"))
-@huey.lock_task("crawler_run_wem_scada")
-def crawler_run_wem_scada() -> None:
+@huey.lock_task("crawler_run_wem_scada_live")
+def crawler_run_wem_scada_live() -> None:
     run_crawl(WEMFacilityScadaLive)
 
 
-# crawler run others
-@huey.periodic_task(crontab(minute="*/15"), retries=3, retry_delay=30)
-@huey.lock_task("crawler_scheduled_quarter_hour")
-def crawler_scheduled_quarter_hour() -> None:
-    run_crawls_by_schedule(CrawlerSchedule.quarter_hour)
+@huey.periodic_task(crontab(hour="*/1"))
+@huey.lock_task("crawler_run_wem_facility_scada")
+def crawler_run_wem_facility_scada() -> None:
+    run_crawl(WEMFacilityScada)
 
 
-@huey.periodic_task(crontab(hour="*", minute="3,33"), retries=3, retry_delay=30)
-@huey.lock_task("crawler_scheduled_half_hour")
-def crawler_scheduled_half_hour() -> None:
-    run_crawls_by_schedule(CrawlerSchedule.half_hour)
-
-
-@huey.periodic_task(crontab(hour="*/1", minute="2"), retries=5, retry_delay=90)
-@huey.lock_task("crawler_scheduled_hourly")
-def crawler_scheduled_hourly() -> None:
-    run_crawls_by_schedule(CrawlerSchedule.hourly)
+@huey.periodic_task(crontab(hour="*/1"))
+@huey.lock_task("crawler_run_wem_balancing")
+def crawler_run_wem_balancing() -> None:
+    run_crawl(WEMBalancing)
 
 
 @huey.periodic_task(crontab(hour="*/6", minute="33"), retries=5, retry_delay=90)
-@huey.lock_task("crawler_scheduled_four_times_a_day")
-def crawler_scheduled_four_times_a_day() -> None:
-    run_crawls_by_schedule(CrawlerSchedule.four_times_a_day)
+@huey.lock_task("crawler_run_aemo_nemweb_rooftop_forecast")
+def crawler_run_aemo_nemweb_rooftop_forecast() -> None:
+    run_crawl(AEMONemwebRooftopForecast)
+
+
+@huey.periodic_task(crontab(hour="5,13", minute="41"), retries=5, retry_delay=90)
+@huey.lock_task("crawler_run_aemo_nemweb_dispatch_actual_gen")
+def crawler_run_aemo_nemweb_dispatch_actual_gen() -> None:
+    run_crawl(AEMONEMDispatchActualGEN)
 
 
 @huey.periodic_task(crontab(hour="6,13", minute="41"), retries=5, retry_delay=90)
-@huey.lock_task("crawler_scheduled_twice_a_day")
-def crawler_scheduled_twice_a_day() -> None:
-    run_crawls_by_schedule(CrawlerSchedule.twice_a_day)
-
-
-@huey.periodic_task(crontab(hour="5,6,15", minute="45"), retries=5, retry_delay=120)
-@huey.lock_task("crawler_scheduled_day")
-def crawler_scheduled_day() -> None:
-    run_crawls_by_schedule(CrawlerSchedule.daily)
+@huey.lock_task("crawler_run_aemo_nemweb_dispatch_actual_load")
+def crawler_run_aemo_nemweb_dispatch_actual_load() -> None:
+    run_crawl(AEMONEMNextDayDispatch)
 
 
 # export tasks
-@huey.periodic_task(crontab(minute="*/2"), priority=90)
+@huey.periodic_task(crontab(minute="*/10"), priority=90)
 @huey.lock_task("schedule_live_tasks")
 def schedule_live_tasks() -> None:
     export_power(priority=PriorityType.live)
@@ -206,13 +204,6 @@ def schedule_power_weeklies() -> None:
     export_power(priority=PriorityType.history, latest=True)
 
 
-@huey.periodic_task(crontab(hour="10", minute="15"))
-@huey.lock_task("run_export_historic_intervals")
-def run_export_historic_intervals() -> None:
-    """Run historic exports"""
-    export_historic_intervals()
-
-
 @huey.periodic_task(crontab(hour="*/4", minute="45"))
 @huey.lock_task("run_export_latest_historic_intervals")
 def run_export_latest_historic_intervals() -> None:
@@ -220,21 +211,21 @@ def run_export_latest_historic_intervals() -> None:
     export_historic_intervals(limit=2)
 
 
-@huey.periodic_task(crontab(hour="*/1", minute="15,45"), priority=50)
+@huey.periodic_task(crontab(hour="*/4", minute="15"), priority=90)
 @huey.lock_task("schedule_hourly_tasks")
 def schedule_hourly_tasks() -> None:
     if settings.workers_run:
         export_energy(priority=PriorityType.daily, latest=True)
 
 
-@huey.periodic_task(crontab(hour="*/2", minute="45"))
+@huey.periodic_task(crontab(hour="10", minute="45"))
 @huey.lock_task("schedule_daily_tasks")
 def schedule_daily_tasks() -> None:
     if settings.workers_run:
         export_energy(priority=PriorityType.daily)
 
 
-@huey.periodic_task(crontab(hour="*/2", minute="15"), priority=30)
+@huey.periodic_task(crontab(hour="12", minute="15"), priority=30)
 @huey.lock_task("schedule_energy_monthlies")
 def schedule_energy_monthlies() -> None:
     if settings.workers_run:
@@ -273,34 +264,36 @@ def db_run_daily_fueltech_summary() -> None:
 
 
 # run gap fill tasks
-@huey.periodic_task(crontab(hour="*/4", minute="15"))
+@huey.periodic_task(crontab(hour="10", minute="15"))
 @huey.lock_task("db_run_energy_gapfil")
 def db_run_energy_gapfil() -> None:
-    run_energy_gapfill(days=14)
+    days = 14
+    run_energy_gapfill(days=days)
 
     # Run flow updates
-    run_emission_update_day(days=4)
+    run_emission_update_day(days=days)
 
     check_generated_gaps()
 
-    run_aggregates_all_days(days=14)
+    run_aggregates_all_days(days=days)
 
 
 # larger gap fill task and fallback runner
 @huey.periodic_task(crontab(hour="1", minute="15"))
 @huey.lock_task("run_fallback_runner")
 def run_fallback_runner() -> None:
-    fallback_runner()
+    return None
+    # fallback_runner()
 
 
 #  run energy tasks
-@huey.periodic_task(crontab(hour="8,12,16", minute="45"))
+@huey.periodic_task(crontab(hour="8,16", minute="45"))
 @huey.lock_task("run_run_energy_update_days")
 def run_run_energy_update_days() -> None:
     run_energy_update_days(days=7)
 
 
-@huey.periodic_task(crontab(hour="8,16", minute="30"))
+@huey.periodic_task(crontab(hour="8", minute="30"), retries=4, retry_delay=120)
 @huey.lock_task("db_run_aggregates_all")
 def db_run_aggregates_all() -> None:
     run_aggregates_all()
@@ -340,7 +333,7 @@ def schedule_facility_first_seen_check() -> None:
         facility_first_seen_check()
 
 
-@huey.periodic_task(crontab(hour="9,18", minute="45"))
+@huey.periodic_task(crontab(hour="9", minute="45"))
 @huey.lock_task("db_facility_seen_update")
 def db_facility_seen_update() -> None:
     update_facility_seen_range()
@@ -354,8 +347,8 @@ def run_run_network_data_range_update() -> None:
     slack_message("Ran network data range on {}".format(settings.env))
 
 
-@huey.periodic_task(crontab(hour="*/1", minute="30"))
-@huey.lock_task("db_facility_seen_update")
+@huey.periodic_task(crontab(hour="1,12", minute="30"))
+@huey.lock_task("run_refresh_export_maps")
 def run_refresh_export_maps() -> None:
     refresh_export_map()
     refresh_weekly_export_map()
