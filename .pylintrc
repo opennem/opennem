@@ -1,6 +1,6 @@
 [MASTER]
 ignore=.ipython,.jupyter
-load-plugins=pylint_sqlalchemy
+; load-plugins=pylint_sqlalchemy
 extension-pkg-whitelist=pydantic
 
 [MESSAGES CONTROL]
@@ -15,12 +15,12 @@ ignored-classes=scoped_session,Session
 
 # Set the output format. Available formats are text, parseable, colorized, msvs
 # (visual studio) and html
-output-format=text
+; output-format=text
 
 # Include message's id in output
-include-ids=yes
+; include-ids=yes
 
 # Put messages in a separate file for each module / package specified on the
 # command line instead of printing them on stdout. Reports (if any) will be
 # written in a file name "pylint_global.[txt|html]".
-files-output=no
+; files-output=no
