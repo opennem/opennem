@@ -264,10 +264,10 @@ def db_run_daily_fueltech_summary() -> None:
 
 
 # run gap fill tasks
-@huey.periodic_task(crontab(hour="10", minute="15"))
+@huey.periodic_task(crontab(hour="7", minute="15"))
 @huey.lock_task("db_run_energy_gapfil")
 def db_run_energy_gapfil() -> None:
-    days = 14
+    days = 2
     run_energy_gapfill(days=days)
 
     # Run flow updates
@@ -290,7 +290,8 @@ def run_fallback_runner() -> None:
 @huey.periodic_task(crontab(hour="8,16", minute="45"))
 @huey.lock_task("run_run_energy_update_days")
 def run_run_energy_update_days() -> None:
-    run_energy_update_days(days=7)
+    pass
+    # run_energy_update_days(days=7)
 
 
 @huey.periodic_task(crontab(hour="8", minute="30"), retries=4, retry_delay=120)
