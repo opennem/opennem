@@ -50,6 +50,7 @@ from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import run_emission_update_day
 from opennem.workers.energy import run_energy_update_days
 from opennem.workers.facility_data_ranges import update_facility_seen_range
+from opennem.workers.fallback import daily_runner
 
 # from opennem.workers.fallback import fallback_runner
 from opennem.workers.gap_fill.energy import run_energy_gapfill
@@ -279,11 +280,10 @@ def db_run_energy_gapfil() -> None:
 
 
 # larger gap fill task and fallback runner
-@huey.periodic_task(crontab(hour="1", minute="15"))
+@huey.periodic_task(crontab(hour="7", minute="15"), retries=5, retry_delay=120)
 @huey.lock_task("run_fallback_runner")
 def run_fallback_runner() -> None:
-    return None
-    # fallback_runner()
+    daily_runner()
 
 
 #  run energy tasks
@@ -294,7 +294,7 @@ def run_run_energy_update_days() -> None:
     # run_energy_update_days(days=7)
 
 
-@huey.periodic_task(crontab(hour="8", minute="30"), retries=4, retry_delay=120)
+@huey.periodic_task(crontab(hour="18", minute="30"), retries=4, retry_delay=120)
 @huey.lock_task("db_run_aggregates_all")
 def db_run_aggregates_all() -> None:
     run_aggregates_all()
