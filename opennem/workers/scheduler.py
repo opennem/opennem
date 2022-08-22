@@ -280,7 +280,7 @@ def db_run_energy_gapfil() -> None:
 
 
 # larger gap fill task and fallback runner
-@huey.periodic_task(crontab(hour="7", minute="15"), retries=5, retry_delay=120)
+@huey.periodic_task(crontab(hour="7,14", minute="15"), retries=5, retry_delay=120)
 @huey.lock_task("run_fallback_runner")
 def run_fallback_runner() -> None:
     daily_runner()
