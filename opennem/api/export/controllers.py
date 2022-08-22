@@ -6,6 +6,7 @@ from opennem.api.exceptions import OpennemBaseHttpException, OpenNEMInvalidNetwo
 from opennem.api.export.queries import (
     country_stats_query,
     demand_network_region_query,
+    emission_network_fueltech_query,
     energy_network_fueltech_query,
     energy_network_interconnector_emissions_query,
     interconnector_flow_network_regions_query,
@@ -423,6 +424,44 @@ def power_week(
         logger.error("No rooftop or rooftop forecast")
 
     result.append_set(rooftop)
+
+    return result
+
+
+def emissions_for_network_interval(
+    time_series: TimeSeries,
+    network_region_code: str = None,
+) -> OpennemDataSet | None:
+    engine = get_database_engine()
+
+    if network_region_code and not re.match(_valid_region, network_region_code):
+        raise OpenNEMInvalidNetworkRegion()
+
+    query = emission_network_fueltech_query(
+        time_series=time_series,
+        network_region=network_region_code,
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+
+    if len(stats) < 1:
+        logger.error("No results from emissions_for_network_interval query with {}".format(time_series))
+        return None
+
+    result = stats_factory(
+        stats,
+        # code=network_region_code or network.code,
+        network=time_series.network,
+        interval=time_series.interval,
+        period=time_series.period,
+        units=get_unit("emissions"),
+        region=network_region_code,
+        fueltech_group=True,
+    )
 
     return result
 
