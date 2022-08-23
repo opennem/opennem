@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 
 from opennem.api.export.controllers import (
     demand_network_region_daily,
+    emissions_for_network_interval,
     energy_interconnector_flows_and_emissions,
     power_week,
     weather_daily,
@@ -63,6 +64,13 @@ def export_network_intervals_for_week(
     if not stat_set:
         return None
 
+    # emissions for network
+    emission_intervals = emissions_for_network_interval(
+        time_series=time_series, network_region_code=network_region.code
+    )
+    stat_set.append_set(emission_intervals)
+
+    # demand and pricing
     demand_energy_and_value = demand_network_region_daily(
         time_series=time_series, network_region_code=network_region.code, networks=network.get_networks_query()
     )
@@ -131,4 +139,4 @@ def export_historic_intervals(limit: int | None = None) -> None:
 
 
 if __name__ == "__main__":
-    export_historic_intervals(limit=52)
+    export_historic_intervals(limit=1)
