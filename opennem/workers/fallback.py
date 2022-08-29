@@ -19,7 +19,7 @@ def fallback_runner(days: int = 7) -> None:
     export_energy(latest=False)
 
 
-def daily_runner(days: int = 7) -> None:
+def daily_runner(days: int = 2) -> None:
     run_energy_gapfill(days=days)
     run_flow_updates_all_per_year(datetime.now().year, 1)
     run_aggregates_all_days(days=days)
