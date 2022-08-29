@@ -27,4 +27,4 @@ def daily_runner(days: int = 2) -> None:
 
 
 if __name__ == "__main__":
-    fallback_runner(days=365 + 40)
+    daily_runner(days=365 + 40)
