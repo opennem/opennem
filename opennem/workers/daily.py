@@ -1,6 +1,5 @@
 """
-
-@TODO rename this module
+Runs daily export task JSONs for OpenNEM website
 """
 
 
