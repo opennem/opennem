@@ -20,6 +20,8 @@ from opennem.utils.dates import chop_datetime_microseconds
 from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import sigfig_compact
 
+ValidNumber = Union[float, int, None, Decimal]
+
 
 def optionaly_lowercase_string(value: str) -> str:
     """Read from settings if we want output schema string
@@ -48,11 +50,11 @@ def number_output(n: Union[float, int, None]) -> Optional[Union[float, int, None
     return sigfig_compact(n)
 
 
-def data_validate(values: List[Union[float, int, None, Decimal]]) -> List[Union[float, int, None]]:
+def data_validate(values: list[ValidNumber]) -> list[ValidNumber]:
     """Validate and format list of numeric data values"""
     return list(
         map(
-            number_output,
+            number_output,  # type: ignore
             values,
         )
     )
