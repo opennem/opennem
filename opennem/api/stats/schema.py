@@ -50,7 +50,7 @@ def number_output(n: Union[float, int, None]) -> Optional[Union[float, int, None
     return sigfig_compact(n)
 
 
-def data_validate(values: list[ValidNumber]) -> list[ValidNumber]:
+def format_number_series(values: list[ValidNumber]) -> list[ValidNumber]:
     """Validate and format list of numeric data values"""
     return list(
         map(
@@ -93,7 +93,7 @@ class OpennemDataHistory(BaseConfig):
     data: List
 
     # validators
-    _data_valid = validator("data", allow_reuse=True, pre=True)(data_validate)
+    _data_valid = validator("data", allow_reuse=True, pre=True)(format_number_series)
 
     def get_date(self, dt: date) -> Optional[Union[float, int]]:
         """Get value for a specific date"""
