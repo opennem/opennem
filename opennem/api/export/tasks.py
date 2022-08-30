@@ -148,6 +148,7 @@ def export_power(
                     network_region=power_stat.network_region,
                     include_min_max=False,
                     unit_name="temperature",
+                    network=power_stat.network,
                 )
                 stat_set.append_set(weather_set)
             except Exception:
@@ -379,6 +380,7 @@ def export_all_monthly() -> None:
                         time_series=time_series,
                         station_code=bom_station,
                         network_region=network_region.code,
+                        network=network,
                     )
                     all_monthly.append_set(weather_stats)
                 except Exception:
