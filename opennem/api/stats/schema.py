@@ -4,9 +4,10 @@ import math
 from collections import Counter
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, Optional, Tuple, Union, list
+from typing import Any, Optional, Tuple, Union
 from zoneinfo import ZoneInfo
 
+import pydantic
 from pydantic import validator
 
 from opennem.api.time import human_to_interval
@@ -300,3 +301,9 @@ class ScadaDateRange(BaseConfig):
 
     def get_end_sql(self, as_date: bool = False) -> str:
         return "'{}'".format(self.get_end() if not as_date else self.get_end().date())
+
+
+def load_opennem_dataset_from_file(file_path: str) -> OpennemDataSet:
+    """Reads the stored tableset fixture path and returns an AEMOTableSet"""
+    data_set = pydantic.parse_file_as(path=str(file_path), type_=OpennemDataSet)
+    return data_set
