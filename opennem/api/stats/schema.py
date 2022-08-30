@@ -4,7 +4,8 @@ import math
 from collections import Counter
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Optional, Tuple, Union, list
+from zoneinfo import ZoneInfo
 
 from pydantic import validator
 
@@ -90,7 +91,7 @@ class OpennemDataHistory(BaseConfig):
     start: datetime
     last: datetime
     interval: str
-    data: List
+    data: list
 
     # validators
     _data_valid = validator("data", allow_reuse=True, pre=True)(format_number_series)
@@ -105,7 +106,7 @@ class OpennemDataHistory(BaseConfig):
 
         return _get_value.pop()[1]
 
-    def values(self) -> List[Tuple[datetime, float]]:
+    def values(self) -> list[Tuple[datetime, float]]:
         interval_obj = get_human_interval(self.interval)
         interval_def = human_to_interval(self.interval)
         inclusive = False
@@ -181,11 +182,11 @@ class OpennemDataSet(BaseConfig):
     region: Optional[str]
     created_at: Optional[datetime]
 
-    data: List[OpennemData] = []
+    data: list[OpennemData] = []
 
     # Properties
     @property
-    def ids(self) -> List[str]:
+    def ids(self) -> list[str]:
         """Return a list of data ids in this data set"""
         id_list = [i.id for i in self.data if i.id and isinstance(i.id, str)]
 
@@ -218,7 +219,7 @@ class OpennemDataSet(BaseConfig):
     # Validators
     # pylint: disable=no-self-argument
     @validator("data")
-    def validate_data_unique(cls, value: List[OpennemData]) -> List[OpennemData]:
+    def validate_data_unique(cls, value: list[OpennemData]) -> list[OpennemData]:
         """Validate the data being set to make sure there are no duplicate ids"""
         _id_values = [i.id for i in value]
 
@@ -275,7 +276,7 @@ class ScadaDateRange(BaseConfig):
     network: Optional[NetworkSchema]
 
     def _get_value_localized(self, field_name: str = "start") -> Any:
-        timezone = settings.timezone
+        timezone: ZoneInfo | str = settings.timezone  # type: ignore
         date_aware = getattr(self, field_name)
 
         if self.network:
