@@ -25,7 +25,7 @@ class OpennemSettings(BaseSettings):
 
     log_level: str = "DEBUG"
 
-    timezone: pytimezone = pytimezone.utc
+    timezone: pytimezone | str = pytimezone.utc
 
     # Set maintenance mode - workers won't run and API will return a MaintenanceMode response
     maintenance_mode: bool = False
