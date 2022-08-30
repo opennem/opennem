@@ -44,6 +44,7 @@ def weather_daily(
     unit_name: str = "temperature_mean",
     include_min_max: bool = True,
     network_region: Optional[str] = None,
+    network: NetworkSchema | None = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     units = get_unit(unit_name)
@@ -56,6 +57,13 @@ def weather_daily(
     with engine.connect() as c:
         logger.debug(query)
         row = list(c.execute(query))
+
+    # if a network has been passed convert intervals
+    # to local network timezone
+    localize = False
+
+    if network:
+        localize = True
 
     temp_avg = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
 
@@ -75,7 +83,7 @@ def weather_daily(
         region=network_region,
         code="bom",
         group_field="temperature",
-        localize=False,
+        localize=localize,
     )
 
     if not stats:
