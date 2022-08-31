@@ -17,14 +17,14 @@ ValidNumber = float | int | None | Decimal
     ["series", "interval_size", "start_date", "end_date", "expected"],
     [
         (
-            generate_random_number_series(30),
+            generate_random_number_series(31),
             get_human_interval("1d"),
             datetime(2019, 1, 1),
             datetime(2019, 1, 31),
             True,
         ),
         (
-            generate_random_number_series(12),
+            generate_random_number_series(13),
             get_human_interval("5m"),
             datetime.fromisoformat("2020-01-01T00:00:00+10:00"),
             datetime.fromisoformat("2020-01-01T01:00:00+10:00"),
@@ -55,20 +55,20 @@ power_series = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_7d.j
     ["series_id", "expected_validation"],
     [
         ("au.nem.nsw1.fuel_tech.coal_black.power", True),
-        ("au.nem.nsw1.fuel_tech.coal_black.power", True),
         ("au.nem.nsw1.fuel_tech.wind.power", True),
-        ("nem.nsw1.au.price", True),
+        ("au.nem.nsw1.price", True),
         ("au.nem.nsw1.fuel_tech.solar_rooftop.power", True),
-        ("nem.nsw1.demand.demand", True),
+        ("au.nem.nsw1.demand", True),
     ],
 )
-def _test_validate_power_series(series_id: str, expected_validation: bool) -> None:
+def test_validate_power_series(series_id: str, expected_validation: bool) -> None:
     """Test the power series from the local fixture"""
     test_case = power_series.get_id(series_id)
 
     # @TODO error on this test case
     if not test_case:
-        return None
+        ids_all = ", ".join(power_series.ids)
+        raise Exception(f"No id found: {series_id}. Have ids: {ids_all}")
 
     test_case_history = test_case.history
 
@@ -102,7 +102,7 @@ energy_series = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_1y.
         ("au.nem.nsw1.temperature_min", True),
     ],
 )
-def _test_validate_energy_series(series_id: str, expected_validation: bool) -> None:
+def test_validate_energy_series(series_id: str, expected_validation: bool) -> None:
     """Test the energy series from the local fixture"""
 
     test_case = energy_series.get_id(series_id)

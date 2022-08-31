@@ -333,7 +333,7 @@ def num_intervals_between_datetimes(interval: timedelta | datedelta, start_date:
     """
     Returns the number of intervals between two datetimes. If the interval is a day or larger it is inclusive.
     """
-    intervals = int((end_date - start_date) / interval)
+    intervals = int((end_date - start_date) / interval) + 1
 
     return intervals
 
