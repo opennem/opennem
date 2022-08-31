@@ -1,4 +1,3 @@
-import random
 from datetime import datetime, timedelta
 from decimal import Decimal
 
@@ -6,7 +5,7 @@ import pytest
 from datedelta import datedelta
 
 from opennem.api.stats.schema import load_opennem_dataset_from_file
-from opennem.core.validators.data import SeriesEdgeType, validate_data_outputs
+from opennem.core.validators.data import validate_data_outputs
 from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import generate_random_number_series
 from opennem.utils.tests import TEST_FIXTURE_PATH
@@ -15,14 +14,13 @@ ValidNumber = float | int | None | Decimal
 
 
 @pytest.mark.parametrize(
-    ["series", "interval_size", "start_date", "end_date", "edge_type", "expected"],
+    ["series", "interval_size", "start_date", "end_date", "expected"],
     [
         (
             generate_random_number_series(30),
             get_human_interval("1d"),
             datetime(2019, 1, 1),
             datetime(2019, 1, 31),
-            SeriesEdgeType.posts,
             True,
         ),
         (
@@ -30,7 +28,6 @@ ValidNumber = float | int | None | Decimal
             get_human_interval("5m"),
             datetime.fromisoformat("2020-01-01T00:00:00+10:00"),
             datetime.fromisoformat("2020-01-01T01:00:00+10:00"),
-            SeriesEdgeType.posts,
             True,
         ),
     ],
@@ -40,11 +37,13 @@ def test_validate_data_outputs(
     interval_size: timedelta | datedelta,
     start_date: datetime,
     end_date: datetime,
-    edge_type: SeriesEdgeType,
     expected: bool,
 ) -> None:
     subject_value = validate_data_outputs(
-        series, interval_size=interval_size, start_date=start_date, end_date=end_date, edge_type=edge_type
+        series,
+        interval_size=interval_size,
+        start_date=start_date,
+        end_date=end_date,
     )
     assert subject_value == expected, "This test should pass"
 
@@ -78,7 +77,6 @@ def _test_validate_power_series(series_id: str, expected_validation: bool) -> No
         test_case_history.get_interval(),
         test_case_history.start,
         test_case_history.last,
-        SeriesEdgeType.rails,
     )
 
     assert series_is_validated == expected_validation
@@ -120,7 +118,6 @@ def _test_validate_energy_series(series_id: str, expected_validation: bool) -> N
         test_case_history.get_interval(),
         test_case_history.start,
         test_case_history.last,
-        SeriesEdgeType.rails,
     )
 
     assert series_is_validated == True

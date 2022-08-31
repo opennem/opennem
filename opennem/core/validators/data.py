@@ -3,29 +3,13 @@ OpenNEM Data Validators
 
 """
 
-import enum
 from datetime import datetime, timedelta
 
 from datedelta import datedelta
 
 from opennem.api.stats.schema import ValidNumber, load_opennem_dataset_from_file
+from opennem.utils.dates import num_intervals_between_datetimes
 from opennem.utils.tests import TEST_FIXTURE_PATH
-
-
-class SeriesEdgeType(enum.Enum):
-    """
-    Enum for series edge types
-    """
-
-    posts = "posts"
-    rails = "rails"
-
-
-def date_diff(interval: timedelta | datedelta, start_date: datetime, end_date: datetime) -> int:
-    """
-    Returns the number of intervals between two datetimes
-    """
-    return int((end_date - start_date) / interval)
 
 
 def validate_data_outputs(
@@ -33,23 +17,14 @@ def validate_data_outputs(
     interval_size: timedelta | datedelta,
     start_date: datetime,
     end_date: datetime,
-    edge_type: SeriesEdgeType,
 ) -> bool:
     """
     Checks that the series has the correct length considering start and end date and the series edge type
     """
-    number_of_intervals = date_diff(interval_size, start_date, end_date)
+    number_of_intervals = num_intervals_between_datetimes(interval_size, start_date, end_date)
 
-    if edge_type == SeriesEdgeType.posts:
-        if len(series) != number_of_intervals:
-            raise Exception(
-                f"validate_data_outputs: Got {len(series)} intervals, expected {number_of_intervals} for type {edge_type}"
-            )
-    elif edge_type == SeriesEdgeType.rails:
-        if len(series) != number_of_intervals + 1:
-            raise Exception(
-                f"validate_data_outputs: Got {len(series)} intervals, expected {number_of_intervals} for type {edge_type}"
-            )
+    if len(series) != number_of_intervals:
+        raise Exception(f"validate_data_outputs: Got {len(series)} intervals, expected {number_of_intervals}")
 
     return True
 

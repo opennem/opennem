@@ -331,12 +331,9 @@ def subtract_days(subject: Optional[datetime] = None, days: int = 30) -> datetim
 
 def num_intervals_between_datetimes(interval: timedelta | datedelta, start_date: datetime, end_date: datetime) -> int:
     """
-    Returns the number of intervals between two datetimes
+    Returns the number of intervals between two datetimes. If the interval is a day or larger it is inclusive.
     """
     intervals = int((end_date - start_date) / interval)
-
-    if interval >= timedelta(days=1):
-        intervals += 1
 
     return intervals
 
