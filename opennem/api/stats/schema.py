@@ -15,6 +15,7 @@ from pydantic import validator
 from opennem.api.time import human_to_interval
 from opennem.core.compat.utils import translate_id_v3_to_v2
 from opennem.core.fueltechs import map_v3_fueltech
+from opennem.core.validators.data import validate_data_outputs
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.response import ResponseStatus
@@ -95,12 +96,12 @@ class OpennemDataHistory(BaseConfig):
     start: datetime
     last: datetime
     interval: str
-    data: list
+    data: list[ValidNumber] = pydantic.Field(..., description="Data values")
 
     # validators
-    _data_valid = validator("data", allow_reuse=True, pre=True)(format_number_series)
+    _data_format = validator("data", allow_reuse=True, pre=True)(format_number_series)
 
-    def get_date(self, dt: date) -> Optional[Union[float, int]]:
+    def get_date(self, dt: date) -> float | Decimal | None:
         """Get value for a specific date"""
         _values = self.values()
         _get_value = list(filter(lambda x: x[0].date() == dt, _values))
@@ -113,34 +114,18 @@ class OpennemDataHistory(BaseConfig):
     def get_interval(self) -> timedelta | datedelta:
         return get_human_interval(self.interval)
 
-    def values(self) -> list[Tuple[datetime, float]]:
+    def values(self) -> list[tuple[datetime, ValidNumber]]:
         interval_obj = get_human_interval(self.interval)
-        interval_def = human_to_interval(self.interval)
-        inclusive = False
         dt = self.start
 
-        if interval_def.interval < 1440:
-            inclusive = True
-
-        # return as list rather than generate
+        # return as list rather than generate as optimization
         timeseries_data = []
-
-        # rewind back one interval
-        if inclusive:
-            # dt -= interval_obj
-            pass
 
         for v in self.data:
             timeseries_data.append((dt, v))
             dt = dt + interval_obj
 
-        # @TODO do some sanity checking here
-        # if dt != self.last:
-        #     raise Exception(
-        #         "Mismatch between start, last and interval size. Got {} and {}".format(
-        #             dt, self.last
-        #         )
-        #     )
+        assert validate_data_outputs(self.data, self.get_interval(), self.start, self.last) is True
 
         return timeseries_data
 
