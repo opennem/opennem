@@ -30,7 +30,7 @@ from opennem.utils.dates import num_intervals_between_datetimes
             timedelta(days=1),
             datetime.fromisoformat("2022-01-01T00:00:00"),
             datetime.fromisoformat("2022-01-05T00:00:00"),
-            4,
+            5,
         ),
     ],
 )

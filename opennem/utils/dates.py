@@ -333,7 +333,12 @@ def num_intervals_between_datetimes(interval: timedelta | datedelta, start_date:
     """
     Returns the number of intervals between two datetimes
     """
-    return int((end_date - start_date) / interval)
+    intervals = int((end_date - start_date) / interval)
+
+    if interval >= timedelta(days=1):
+        intervals += 1
+
+    return intervals
 
 
 def is_valid_isodate(date: str, check_timezone: bool = False) -> bool:
