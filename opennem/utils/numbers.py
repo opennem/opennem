@@ -1,5 +1,6 @@
 import decimal
 import logging
+import random
 import re
 from datetime import datetime
 from math import floor, log, pow  # noqa: no-name-module
@@ -15,6 +16,11 @@ DEFAULT_PRECISION = settings.precision_default
 
 ctx = decimal.Context()
 ctx.prec = 20
+
+
+def generate_random_number_series(length: int, max_value: float = 100.00) -> list[float]:
+    """ """
+    return [round(random.uniform(0, max_value), 2) for _ in range(length)]
 
 
 def float_to_str(f: float) -> str:
@@ -138,9 +144,7 @@ def trim_nulls(series: Dict) -> Dict:
     return series
 
 
-def pad_time_series(
-    series: Dict, start_date: datetime, end_date: datetime, pad_with: Optional[int] = 0
-) -> Dict:
+def pad_time_series(series: Dict, start_date: datetime, end_date: datetime, pad_with: Optional[int] = 0) -> Dict:
     """Pad out time series to start and end date"""
 
     series_dates = series.keys()
