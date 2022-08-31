@@ -192,7 +192,6 @@ def stats_factory(
 
             if units.name_alias:
                 group_fields.append(units.name_alias)
-
             elif units.unit_type:
                 group_fields.append(units.unit_type)
 
@@ -220,7 +219,7 @@ def stats_factory(
             if region and (region.lower() != network.code.lower()):
                 _id_list.append(region.lower())
 
-            if group_code:
+            if group_code and include_group_code:
                 _id_list.append(group_code.lower())
 
             if units and units.name_alias:
