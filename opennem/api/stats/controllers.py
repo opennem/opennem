@@ -10,12 +10,7 @@ from starlette import status
 
 from opennem.api.time import human_to_interval
 from opennem.db import get_database_engine
-from opennem.schema.network import (
-    NetworkAEMORooftop,
-    NetworkAEMORooftopBackfill,
-    NetworkAPVI,
-    NetworkSchema,
-)
+from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
@@ -24,13 +19,7 @@ from opennem.utils.sql import duid_in_case
 from opennem.utils.timezone import is_aware, make_aware
 from opennem.utils.version import get_version
 
-from .schema import (
-    DataQueryResult,
-    OpennemData,
-    OpennemDataHistory,
-    OpennemDataSet,
-    ScadaDateRange,
-)
+from .schema import DataQueryResult, OpennemData, OpennemDataHistory, OpennemDataSet, ScadaDateRange
 
 logger = logging.getLogger(__name__)
 
@@ -95,9 +84,7 @@ def stats_factory(
         # continue
 
         # Cast trailing nulls
-        if (not units.name.startswith("temperature") or (units.cast_nulls is True)) and (
-            cast_nulls is True
-        ):
+        if (not units.name.startswith("temperature") or (units.cast_nulls is True)) and (cast_nulls is True):
             data_value = cast_trailing_nulls(data_value)
 
         data_trimmed = dict(zip(data_sorted.keys(), data_value))
@@ -227,6 +214,7 @@ def stats_factory(
             # network.country if network else None,
 
             if network:
+                _id_list.append(network.country.lower())
                 _id_list.append(network.code.lower())
 
             if region and (region.lower() != network.code.lower()):
