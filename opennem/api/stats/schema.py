@@ -4,6 +4,7 @@ import math
 from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+from pathlib import Path
 from typing import Any, Optional, Tuple, Union
 from zoneinfo import ZoneInfo
 
@@ -307,7 +308,7 @@ class ScadaDateRange(BaseConfig):
         return "'{}'".format(self.get_end() if not as_date else self.get_end().date())
 
 
-def load_opennem_dataset_from_file(file_path: str) -> OpennemDataSet:
+def load_opennem_dataset_from_file(file_path: str | Path) -> OpennemDataSet:
     """Reads the stored tableset fixture path and returns an AEMOTableSet"""
     data_set = pydantic.parse_file_as(path=str(file_path), type_=OpennemDataSet)
     return data_set
