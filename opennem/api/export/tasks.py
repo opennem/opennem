@@ -526,7 +526,8 @@ def export_electricitymap() -> None:
     stat_set = power_flows_network_week(time_series=time_series)
 
     if not stat_set:
-        raise Exception("No flow results for electricitymap export")
+        logger.warning("No flow results for electricitymap export")
+        return None
 
     em_set = OpennemDataSet(type="custom", version=get_version(), created_at=datetime.now(), data=[])
 
