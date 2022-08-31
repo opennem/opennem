@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import math
 from collections import Counter
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import Any, Optional, Tuple, Union
 from zoneinfo import ZoneInfo
 
 import pydantic
+from datedelta import datedelta
 from pydantic import validator
 
 from opennem.api.time import human_to_interval
@@ -106,6 +107,9 @@ class OpennemDataHistory(BaseConfig):
             return None
 
         return _get_value.pop()[1]
+
+    def get_interval(self) -> timedelta | datedelta:
+        return get_human_interval(self.interval)
 
     def values(self) -> list[Tuple[datetime, float]]:
         interval_obj = get_human_interval(self.interval)
