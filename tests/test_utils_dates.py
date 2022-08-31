@@ -16,14 +16,14 @@ from opennem.utils.dates import num_intervals_between_datetimes
             timedelta(minutes=5),
             datetime.fromisoformat("2022-01-01T00:00:00"),
             datetime.fromisoformat("2022-01-01T01:00:00"),
-            12,
+            13,
         ),
         # tz aware
         (
             timedelta(minutes=5),
             datetime.fromisoformat("2022-01-01T00:00:00+10:00"),
             datetime.fromisoformat("2022-01-01T01:00:00+10:00"),
-            12,
+            13,
         ),
         # days
         (
