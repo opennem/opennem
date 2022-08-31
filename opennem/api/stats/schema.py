@@ -21,6 +21,7 @@ from opennem.schema.response import ResponseStatus
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
 from opennem.settings import settings
 from opennem.utils.dates import chop_datetime_microseconds
+from opennem.utils.http import http
 from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import sigfig_compact
 
@@ -309,6 +310,23 @@ class ScadaDateRange(BaseConfig):
 
 
 def load_opennem_dataset_from_file(file_path: str | Path) -> OpennemDataSet:
-    """Reads the stored tableset fixture path and returns an AEMOTableSet"""
+    """
+    Reads the stored tableset fixture path and returns an OpennemDataSet
+    """
     data_set = pydantic.parse_file_as(path=str(file_path), type_=OpennemDataSet)
+
+    return data_set
+
+
+def load_opennem_dataset_from_url(url: str) -> OpennemDataSet:
+    """
+    Reads an OpenNEM URL and returns an OpennemDataSet
+    """
+    response = http.get(url)
+
+    if not response.ok:
+        raise Exception(f"Could not download from {url}: {response.status_code}")
+
+    data_set = pydantic.parse_obj_as(response.json(), type_=OpennemDataSet)
+
     return data_set
