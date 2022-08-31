@@ -12,7 +12,7 @@ curl https://data.dev.opennem.org.au/v3/stats/au/NEM/${REGION_TO_FETCH:u}/power/
 
 curl https://data.dev.opennem.org.au/v3/stats/au/NEM/${REGION_TO_FETCH:u}/energy/${CURRENT_YEAR}.json --output - --silent | jq . > tests/fixtures/nem_${REGION_TO_FETCH:l}_1y.json
 
-# git add tests/fixtures/nem_${name,l}_7d.json
-# git add tests/fixtures/nem_${name,l}_1y.json
+git add tests/fixtures/nem_${REGION_TO_FETCH:l}_7d.json
+git add tests/fixtures/nem_${REGION_TO_FETCH:l}_1y.json
 
-# git s .
+git commit -m "Refreshed fixtures for ${REGION_TO_FETCH:l}"
