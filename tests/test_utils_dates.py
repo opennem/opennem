@@ -1,0 +1,39 @@
+"""
+Unit tests for date utils in opennem.utils.dates
+
+"""
+from datetime import datetime, timedelta
+
+import pytest
+
+from opennem.utils.dates import num_intervals_between_datetimes
+
+
+@pytest.mark.parametrize(
+    ["interval", "date_start", "date_end", "expected"],
+    [
+        (
+            timedelta(minutes=5),
+            datetime.fromisoformat("2022-01-01T00:00:00"),
+            datetime.fromisoformat("2022-01-01T01:00:00"),
+            12,
+        ),
+        # tz aware
+        (
+            timedelta(minutes=5),
+            datetime.fromisoformat("2022-01-01T00:00:00+10:00"),
+            datetime.fromisoformat("2022-01-01T01:00:00+10:00"),
+            12,
+        ),
+        # days
+        (
+            timedelta(days=1),
+            datetime.fromisoformat("2022-01-01T00:00:00"),
+            datetime.fromisoformat("2022-01-05T00:00:00"),
+            4,
+        ),
+    ],
+)
+def test_date_diff(interval: timedelta, date_start: datetime, date_end: datetime, expected: int) -> None:
+    subject_number_of_intervals = num_intervals_between_datetimes(interval, date_start, date_end)
+    assert subject_number_of_intervals == expected, "Got the expected number of intervals between dates"

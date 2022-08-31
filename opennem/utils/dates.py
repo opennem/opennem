@@ -5,7 +5,7 @@ from datetime import timezone as pytimezone
 from typing import Any, Generator, Optional, Tuple, Union
 from zoneinfo import ZoneInfo
 
-# ParserError isn't a concrete type
+from datedelta import datedelta
 from dateutil.parser import ParserError, parse  # type: ignore
 from dateutil.relativedelta import relativedelta
 
@@ -327,6 +327,13 @@ def subtract_days(subject: Optional[datetime] = None, days: int = 30) -> datetim
         subject = datetime.now(pytimezone.utc)
 
     return subject - timedelta(days=days)
+
+
+def num_intervals_between_datetimes(interval: timedelta | datedelta, start_date: datetime, end_date: datetime) -> int:
+    """
+    Returns the number of intervals between two datetimes
+    """
+    return int((end_date - start_date) / interval)
 
 
 def is_valid_isodate(date: str, check_timezone: bool = False) -> bool:
