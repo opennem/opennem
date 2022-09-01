@@ -129,6 +129,7 @@ def run_crawl(
     if cr.errors > 0:
         has_errors = True
         logger.error("Crawl controller error for {}: {}".format(crawler.name, cr.error_detail))
+        return None
 
     if not has_errors:
         if cr.server_latest:
