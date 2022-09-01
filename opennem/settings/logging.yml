@@ -19,7 +19,7 @@ handlers:
     stream: ext://sys.stdout
   file_debug:
     class: logging.FileHandler
-    level: DEBUG
+    level: WARNING
     formatter: standard
     filename: debug-run.log
   file_archive:
