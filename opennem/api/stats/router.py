@@ -121,10 +121,7 @@ def power_station(
     with engine.connect() as c:
         results = list(c.execute(query))
 
-    stats = [
-        DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None)
-        for i in results
-    ]
+    stats = [DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None) for i in results]
 
     if len(stats) < 1:
         raise HTTPException(
@@ -246,19 +243,14 @@ def energy_station(
             detail="Station stats not found",
         )
 
-    results_energy = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None)
-        for i in row
-    ]
+    results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
 
     results_market_value = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None)
-        for i in row
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row
     ]
 
     results_emissions = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None)
-        for i in row
+        DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row
     ]
 
     if len(results_energy) < 1:
@@ -301,7 +293,8 @@ def energy_station(
         network=network,
         interval=interval_obj,
         period=period_obj,
-        code=network.code.lower(),
+        code=station_code,
+        include_group_code=True,
     )
 
     stats.append_set(stats_emissions)
@@ -362,10 +355,7 @@ def power_flows_network_week(
     if len(row) < 1:
         raise Exception("No results from query: {}".format(query))
 
-    imports = [
-        DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None)
-        for i in row
-    ]
+    imports = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
 
     result = stats_factory(
         imports,
@@ -447,9 +437,7 @@ def power_network_region_fueltech(
         period=period_obj,
     )
 
-    stat_set = power_week(
-        time_series, network_region_code, include_capacities=True, networks_query=networks
-    )
+    stat_set = power_week(time_series, network_region_code, include_capacities=True, networks_query=networks)
 
     if not stat_set:
         raise Exception("No results")
@@ -516,10 +504,7 @@ def emission_factor_per_network(  # type: ignore
             detail="No results",
         )
 
-    emission_factors = [
-        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-        for i in row
-    ]
+    emission_factors = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
     result = stats_factory(
         emission_factors,
@@ -609,10 +594,7 @@ def fueltech_demand_mix(
             detail="No results",
         )
 
-    result_set = [
-        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-        for i in row
-    ]
+    result_set = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
     result = stats_factory(
         result_set,
@@ -715,10 +697,7 @@ def price_network_endpoint(
             detail="No results",
         )
 
-    result_set = [
-        DataQueryResult(interval=i[0], result=i[3], group_by=i[2] if len(i) > 1 else None)
-        for i in row
-    ]
+    result_set = [DataQueryResult(interval=i[0], result=i[3], group_by=i[2] if len(i) > 1 else None) for i in row]
 
     result = stats_factory(
         result_set,
