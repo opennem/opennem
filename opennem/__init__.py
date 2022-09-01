@@ -5,6 +5,7 @@ Setup main module entry point with sanity checks, settings init
 and sentry.
 """
 import sys
+from datetime import datetime
 from pathlib import Path
 
 # Check minimum required Python version
@@ -56,3 +57,7 @@ DATA_DIR_PATH = MODULE_DIR_PATH / "data"
 from rich.console import Console  # noqa: E402
 
 console = Console()
+
+
+# Log current timezone to console
+logging.info(f"Current timezone: {str(datetime.now().astimezone().tzinfo)} (settings: {settings.timezone})")
