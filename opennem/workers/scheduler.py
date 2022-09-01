@@ -272,8 +272,9 @@ def run_refresh_export_maps() -> None:
 @huey.periodic_task(crontab(day="1", hour="15", minute="45"))
 @huey.lock_task("task_run_backup")
 def task_run_backup() -> None:
-    dest_file = run_backup()
-    slack_message(f"Ran backup on {settings.env} to {dest_file}")
+    # dest_file = run_backup()
+    # slack_message(f"Ran backup on {settings.env} to {dest_file}")
+    pass
 
 
 @huey.periodic_task(crontab(hour="8,16", minute="45"))
