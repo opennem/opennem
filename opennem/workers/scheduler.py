@@ -191,25 +191,11 @@ def schedule_power_weeklies() -> None:
     export_power(priority=PriorityType.history, latest=True)
 
 
-@huey.periodic_task(crontab(hour="*/4", minute="45"))
+@huey.periodic_task(crontab(hour="8", minute="45"))
 @huey.lock_task("run_export_latest_historic_intervals")
 def run_export_latest_historic_intervals() -> None:
     """Run latest historic exports"""
     export_historic_intervals(limit=1)
-
-
-@huey.periodic_task(crontab(hour="*/4", minute="15"), priority=90)
-@huey.lock_task("schedule_hourly_tasks")
-def schedule_hourly_tasks() -> None:
-    if settings.workers_run:
-        export_energy(priority=PriorityType.daily, latest=True)
-
-
-@huey.periodic_task(crontab(hour="10", minute="45"))
-@huey.lock_task("schedule_daily_tasks")
-def schedule_daily_tasks() -> None:
-    if settings.workers_run:
-        export_energy(priority=PriorityType.daily)
 
 
 @huey.periodic_task(crontab(hour="12", minute="15"), priority=30)
