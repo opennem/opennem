@@ -7,6 +7,7 @@ import logging
 from datetime import datetime
 
 from opennem import settings
+from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_energy
 from opennem.notifications.slack import slack_message
 from opennem.workers.aggregates import run_aggregates_all_days
@@ -21,7 +22,16 @@ def daily_runner(days: int = 2) -> None:
     run_flow_updates_all_per_year(datetime.now().year, 1)
     run_emission_update_day(days=days)
     run_aggregates_all_days(days=days)
+
+    # run exports for latest year
     export_energy(latest=True)
+
+    # run exports for all
+    export_map = get_export_map()
+    energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
+    export_energy(energy_exports.resources)
+
+    # send a slack message when done
     slack_message(f"ran daily_runner on {settings.env}")
 
 
