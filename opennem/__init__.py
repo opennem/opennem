@@ -60,4 +60,4 @@ console = Console()
 
 
 # Log current timezone to console
-logging.info(f"Current timezone: {str(datetime.now().astimezone().tzinfo)} (settings: {settings.timezone})")
+logging.info(f" * Current timezone: {str(datetime.now().astimezone().tzinfo)} (settings: {settings.timezone})")
