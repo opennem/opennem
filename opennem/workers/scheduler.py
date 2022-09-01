@@ -277,7 +277,7 @@ def task_run_backup() -> None:
     pass
 
 
-@huey.periodic_task(crontab(hour="8,16", minute="45"))
+@huey.periodic_task(crontab(hour="23", minute="55"))
 @huey.lock_task("run_clean_tmp_dir")
 def run_clean_tmp_dir() -> None:
     clean_tmp_dir()
