@@ -19,7 +19,6 @@ from opennem.api.export.tasks import (
     export_all_daily,
     export_all_monthly,
     export_electricitymap,
-    export_energy,
     export_flows,
     export_metadata,
     export_power,
@@ -141,12 +140,17 @@ def crawler_run_aemo_nemweb_rooftop_forecast() -> None:
 
 # daily tasks
 # run daily morning task
-@huey.periodic_task(crontab(hour="6", minute="15"), retries=3, retry_delay=120)
+@huey.periodic_task(crontab(hour="6,7", minute="15,45"), retries=3, retry_delay=120)
 @huey.lock_task("db_run_energy_gapfil")
 def db_run_energy_gapfil() -> None:
-    run_crawl(AEMONEMDispatchActualGEN)
-    run_crawl(AEMONEMNextDayDispatch)
-    daily_runner(days=2)
+    dispatch_actuals = run_crawl(AEMONEMDispatchActualGEN)
+    dispatch_gen = run_crawl(AEMONEMNextDayDispatch)
+
+    if not dispatch_gen or not dispatch_actuals:
+        return None
+
+    if dispatch_actuals.inserted_records or dispatch_gen.inserted_records:
+        daily_runner(days=2)
 
 
 # export tasks
