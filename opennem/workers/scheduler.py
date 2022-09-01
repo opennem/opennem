@@ -107,29 +107,31 @@ def crawler_run_bom_capitals() -> None:
 
 
 # crawler tasks frequent
-@huey.periodic_task(crontab(minute="*/5"))
-@huey.lock_task("crawler_run_apvi_today")
-def crawler_run_apvi_today() -> None:
-    run_crawl(APVIRooftopTodayCrawler)
-
-
-@huey.periodic_task(crontab(minute="*/5"))
+@huey.periodic_task(crontab(minute="*/15"))
 @huey.lock_task("crawler_run_wem_balancing_live")
 def crawler_run_wem_balancing_live() -> None:
-    run_crawl(WEMBalancingLive)
-    run_crawl(WEMFacilityScadaLive)
+    apvi = run_crawl(APVIRooftopTodayCrawler)
+    wem_balancing = run_crawl(WEMBalancingLive)
+    wem_scada = run_crawl(WEMFacilityScadaLive)
+
+    if not apvi or not wem_balancing or not wem_scada:
+        return None
+
+    if apvi.inserted_records or wem_balancing.inserted_records or wem_scada.inserted_records:
+        export_power(priority=PriorityType.live)
 
 
-@huey.periodic_task(crontab(hour="*/1"))
+@huey.periodic_task(crontab(hour="*/1", minute="30"))
 @huey.lock_task("crawler_run_wem_facility_scada")
 def crawler_run_wem_facility_scada() -> None:
-    run_crawl(WEMFacilityScada)
+    wem_scada = run_crawl(WEMFacilityScada)
+    wem_balancing = run_crawl(WEMBalancing)
 
+    if not wem_scada or not wem_balancing:
+        return None
 
-@huey.periodic_task(crontab(hour="*/1"))
-@huey.lock_task("crawler_run_wem_balancing")
-def crawler_run_wem_balancing() -> None:
-    run_crawl(WEMBalancing)
+    if wem_scada.inserted_records or wem_balancing.inserted_records:
+        export_power(priority=PriorityType.live)
 
 
 @huey.periodic_task(crontab(hour="*/6", minute="33"), retries=5, retry_delay=90)
