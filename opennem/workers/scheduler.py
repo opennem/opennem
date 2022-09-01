@@ -84,26 +84,21 @@ if IS_DEV:
 @huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
 @huey.lock_task("crawler_live_nemweb_dispatch_scada")
 def crawl_run_aemo_nemweb_dispatch_scada() -> None:
-    run_crawl(AEMONNemwebDispatchScada)
-    export_power(priority=PriorityType.live)
+    dispatch_scada = run_crawl(AEMONNemwebDispatchScada)
+    dispatch_is = run_crawl(AEMONemwebDispatchIS)
+    trading_is = run_crawl(AEMONemwebTradingIS)
+    rooftop = run_crawl(AEMONemwebRooftop)
 
+    if not dispatch_scada or not dispatch_is or not trading_is or not rooftop:
+        return None
 
-@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
-@huey.lock_task("crawler_live_nemweb_dispatch_is")
-def crawler_live_nemweb_dispatch_is() -> None:
-    run_crawl(AEMONemwebDispatchIS)
-
-
-@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
-@huey.lock_task("crawler_live_nemweb_trading_is")
-def crawler_live_nemweb_trading_is() -> None:
-    run_crawl(AEMONemwebTradingIS)
-
-
-@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
-@huey.lock_task("crawler_live_nemweb_rooftop")
-def crawler_live_nemweb_rooftop() -> None:
-    run_crawl(AEMONemwebRooftop)
+    if (
+        dispatch_scada.inserted_records
+        or dispatch_is.inserted_records
+        or trading_is.inserted_records
+        or rooftop.inserted_records
+    ):
+        export_power(priority=PriorityType.live)
 
 
 @huey.periodic_task(crontab(minute="*/10"))
@@ -123,11 +118,6 @@ def crawler_run_apvi_today() -> None:
 @huey.lock_task("crawler_run_wem_balancing_live")
 def crawler_run_wem_balancing_live() -> None:
     run_crawl(WEMBalancingLive)
-
-
-@huey.periodic_task(crontab(minute="*/5"))
-@huey.lock_task("crawler_run_wem_scada_live")
-def crawler_run_wem_scada_live() -> None:
     run_crawl(WEMFacilityScadaLive)
 
 
@@ -160,12 +150,6 @@ def db_run_energy_gapfil() -> None:
 
 
 # export tasks
-@huey.periodic_task(crontab(minute="*/10"), priority=90)
-@huey.lock_task("schedule_live_tasks")
-def schedule_live_tasks() -> None:
-    export_power(priority=PriorityType.live)
-
-
 @huey.periodic_task(crontab(minute="*/15"), priority=90)
 @huey.lock_task("schedule_custom_tasks")
 def schedule_custom_tasks() -> None:
@@ -182,13 +166,14 @@ def schedule_export_all_daily() -> None:
         export_all_monthly()
 
 
-@huey.periodic_task(crontab(hour="*/12", minute="19"))
+@huey.periodic_task(crontab(hour="12", minute="19"))
 @huey.lock_task("schedule_power_weeklies")
 def schedule_power_weeklies() -> None:
     """
     Run weekly power outputs
     """
     export_power(priority=PriorityType.history, latest=True)
+    slack_message(f"Weekly power outputs complete on {settings.env}")
 
 
 @huey.periodic_task(crontab(hour="8", minute="45"))
@@ -196,13 +181,7 @@ def schedule_power_weeklies() -> None:
 def run_export_latest_historic_intervals() -> None:
     """Run latest historic exports"""
     export_historic_intervals(limit=1)
-
-
-@huey.periodic_task(crontab(hour="12", minute="15"), priority=30)
-@huey.lock_task("schedule_energy_monthlies")
-def schedule_energy_monthlies() -> None:
-    if settings.workers_run:
-        export_energy(priority=PriorityType.monthly)
+    slack_message(f"Historic interval outputs complete on {settings.env}")
 
 
 # geojson maps
