@@ -96,7 +96,9 @@ def load_crawlers() -> CrawlerSet:
     return cs
 
 
-def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = True) -> None:
+def run_crawl(
+    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = True
+) -> ControllerReturn | None:
     """Runs a crawl from the crawl definition with ability to overwrite last crawled and obey the defined
     limit"""
 
@@ -136,6 +138,8 @@ def run_crawl(crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool
             logger.debug("{} has no server_latest return".format(crawler.name))
 
         logger.info("Set last_processed to {} and server_latest to {}".format(crawler.last_processed, cr.server_latest))
+
+    return cr
 
 
 def run_crawl_urls(urls: list[str]) -> None:
