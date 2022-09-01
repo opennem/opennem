@@ -14,7 +14,7 @@ from opennem.workers.aggregates import run_aggregates_all_days
 from opennem.workers.emissions import run_emission_update_day, run_flow_updates_all_per_year
 from opennem.workers.gap_fill.energy import run_energy_gapfill
 
-logger = logging.getLogger("opennem.worker.fallback")
+logger = logging.getLogger("opennem.worker.daily")
 
 
 def daily_runner(days: int = 2) -> None:
@@ -36,4 +36,4 @@ def daily_runner(days: int = 2) -> None:
 
 
 if __name__ == "__main__":
-    daily_runner(days=365 + 40)
+    daily_runner()
