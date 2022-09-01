@@ -2,6 +2,7 @@ import logging
 import math
 from datetime import date, datetime, timedelta
 from datetime import timezone as pytimezone
+from datetime import tzinfo
 from typing import Any, Generator, Optional, Tuple, Union
 from zoneinfo import ZoneInfo
 
@@ -354,6 +355,11 @@ def is_valid_isodate(date: str, check_timezone: bool = False) -> bool:
             return False
 
     return True
+
+
+def get_current_timezone() -> str:
+    """Get the current timezone"""
+    return str(DATE_CURRENT.astimezone().tzinfo)
 
 
 def get_quarter(dt: datetime) -> int:
