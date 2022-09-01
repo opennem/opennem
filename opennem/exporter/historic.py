@@ -47,6 +47,9 @@ def export_network_intervals_for_week(
         )
     )
 
+    if week_end > get_today_opennem():
+        week_end = get_today_opennem() - timedelta(days=1)
+
     time_series = TimeSeries(
         start=week_start,
         end=week_end + timedelta(days=1),
