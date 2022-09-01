@@ -88,14 +88,11 @@ def crawl_run_aemo_nemweb_dispatch_scada() -> None:
     trading_is = run_crawl(AEMONemwebTradingIS)
     rooftop = run_crawl(AEMONemwebRooftop)
 
-    if not dispatch_scada or not dispatch_is or not trading_is or not rooftop:
-        return None
-
     if (
-        dispatch_scada.inserted_records
-        or dispatch_is.inserted_records
-        or trading_is.inserted_records
-        or rooftop.inserted_records
+        (dispatch_scada and dispatch_scada.inserted_records)
+        or (dispatch_is and dispatch_is.inserted_records)
+        or (trading_is and trading_is.inserted_records)
+        or (rooftop and rooftop.inserted_records)
     ):
         export_power(priority=PriorityType.live)
 
@@ -114,10 +111,11 @@ def crawler_run_wem_balancing_live() -> None:
     wem_balancing = run_crawl(WEMBalancingLive)
     wem_scada = run_crawl(WEMFacilityScadaLive)
 
-    if not apvi or not wem_balancing or not wem_scada:
-        return None
-
-    if apvi.inserted_records or wem_balancing.inserted_records or wem_scada.inserted_records:
+    if (
+        (apvi and apvi.inserted_records)
+        or (wem_balancing and wem_balancing.inserted_records)
+        or (wem_scada and wem_scada.inserted_records)
+    ):
         export_power(priority=PriorityType.live)
 
 
@@ -127,10 +125,7 @@ def crawler_run_wem_facility_scada() -> None:
     wem_scada = run_crawl(WEMFacilityScada)
     wem_balancing = run_crawl(WEMBalancing)
 
-    if not wem_scada or not wem_balancing:
-        return None
-
-    if wem_scada.inserted_records or wem_balancing.inserted_records:
+    if (wem_scada and wem_scada.inserted_records) or (wem_balancing and wem_balancing.inserted_records):
         export_power(priority=PriorityType.live)
 
 
@@ -148,10 +143,7 @@ def db_run_energy_gapfil() -> None:
     dispatch_actuals = run_crawl(AEMONEMDispatchActualGEN)
     dispatch_gen = run_crawl(AEMONEMNextDayDispatch)
 
-    if not dispatch_gen or not dispatch_actuals:
-        return None
-
-    if dispatch_actuals.inserted_records or dispatch_gen.inserted_records:
+    if (dispatch_actuals and dispatch_actuals.inserted_records) or (dispatch_gen and dispatch_gen.inserted_records):
         daily_runner(days=2)
 
 
