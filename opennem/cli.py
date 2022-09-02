@@ -25,7 +25,7 @@ from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_import
 from opennem.settings import settings
 from opennem.workers.aggregates import run_aggregate_days
-from opennem.workers.daily import daily_runner
+from opennem.workers.daily import all_runner, daily_runner
 from opennem.workers.energy import run_energy_update_archive, run_energy_update_days
 
 logger = logging.getLogger("opennem.cli")
@@ -155,6 +155,11 @@ def cmd_task_daily(days: int) -> None:
     daily_runner(days=days)
 
 
+@click.command()
+def cmd_task_all() -> None:
+    all_runner()
+
+
 main.add_command(cmd_crawl_cli, name="crawl")
 main.add_command(cmd_db, name="db")
 main.add_command(cmd_import, name="import")
@@ -183,6 +188,7 @@ cmd_weather.add_command(cmd_weather_init, name="init")
 
 cmd_task.add_command(cmd_task_energy, name="energy")
 cmd_task.add_command(cmd_task_daily, name="daily")
+cmd_task.add_command(cmd_task_all, name="all")
 
 if __name__ == "__main__":
     try:
