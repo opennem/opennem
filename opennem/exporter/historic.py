@@ -27,7 +27,12 @@ from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.utils.dates import get_today_opennem, get_week_number_from_datetime, week_series_datetimes
+from opennem.utils.dates import (
+    get_last_complete_day_for_network,
+    get_today_opennem,
+    get_week_number_from_datetime,
+    week_series_datetimes,
+)
 
 logger = logging.getLogger("opennem.export.historic")
 
@@ -47,8 +52,8 @@ def export_network_intervals_for_week(
         )
     )
 
-    if week_end > get_today_opennem():
-        week_end = get_today_opennem() - timedelta(days=1)
+    if week_end > get_last_complete_day_for_network(network):
+        week_end = get_last_complete_day_for_network(network)
 
     time_series = TimeSeries(
         start=week_start,
