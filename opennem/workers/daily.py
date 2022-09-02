@@ -8,10 +8,14 @@ from datetime import datetime
 
 from opennem import settings
 from opennem.api.export.map import PriorityType, StatType, get_export_map
-from opennem.api.export.tasks import export_energy
+from opennem.api.export.tasks import export_energy, export_power
 from opennem.notifications.slack import slack_message
-from opennem.workers.aggregates import run_aggregates_all_days
-from opennem.workers.emissions import run_emission_update_day, run_flow_updates_all_per_year
+from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
+from opennem.workers.emissions import (
+    run_emission_update_day,
+    run_flow_updates_all_for_nem,
+    run_flow_updates_all_per_year,
+)
 from opennem.workers.gap_fill.energy import run_energy_gapfill
 
 logger = logging.getLogger("opennem.worker.daily")
@@ -33,6 +37,18 @@ def daily_runner(days: int = 2) -> None:
 
     # send a slack message when done
     slack_message(f"ran daily_runner on {settings.env}")
+
+
+def all_runner() -> None:
+    """Like the daily runner but refreshes all tasks"""
+    run_energy_gapfill(days=365)
+    run_flow_updates_all_for_nem()
+    run_emission_update_day(days=365)
+    run_aggregates_all()
+
+    export_power(latest=False)
+    export_energy(latest=False)
+    slack_message(f"ran all_runner on {settings.env}")
 
 
 if __name__ == "__main__":
