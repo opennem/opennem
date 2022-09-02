@@ -26,7 +26,7 @@ def cmd_crawl_cli() -> None:
 
 @click.command()
 @click.argument("name")
-@click.option("--all", default=False, help="Run only server latest")
+@click.option("--all", default=False, is_flag=True, help="Run all")
 def crawl_cli_run(name: str, all: bool = False) -> None:
 
     test_proxy()
