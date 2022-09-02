@@ -18,6 +18,7 @@ from opennem.db.tasks import refresh_views
 from opennem.db.views import init_aggregation_policies
 from opennem.db.views.init import init_views_cli
 from opennem.exporter.geojson import export_facility_geojson
+from opennem.exporter.historic import export_historic_intervals
 from opennem.importer.all import run_all
 from opennem.importer.db import import_all_facilities
 from opennem.importer.db import init as db_init
@@ -137,6 +138,9 @@ def cmd_weather_init() -> None:
     load_bom_stations_json()
 
 
+# Tasks
+
+
 @click.group()
 def cmd_task() -> None:
     pass
@@ -157,7 +161,22 @@ def cmd_task_daily(days: int) -> None:
 
 @click.command()
 def cmd_task_all() -> None:
+    """
+    Runs gap fill, daily and aggregate tasks
+    """
     all_runner()
+
+
+@click.command()
+@click.option("--weeks", required=False, type=int, default=None)
+def cmd_task_historic(weeks: int | None) -> None:
+    """
+    Runs the historic exports for number of weeks
+
+    Args:
+        weeks (int | None): number of weeks to run
+    """
+    export_historic_intervals(limit=weeks)
 
 
 main.add_command(cmd_crawl_cli, name="crawl")
@@ -189,6 +208,7 @@ cmd_weather.add_command(cmd_weather_init, name="init")
 cmd_task.add_command(cmd_task_energy, name="energy")
 cmd_task.add_command(cmd_task_daily, name="daily")
 cmd_task.add_command(cmd_task_all, name="all")
+cmd_task.add_command(cmd_task_historic, name="historic")
 
 if __name__ == "__main__":
     try:
