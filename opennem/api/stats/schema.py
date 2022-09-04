@@ -312,6 +312,6 @@ def load_opennem_dataset_from_url(url: str) -> OpennemDataSet:
     if not response.ok:
         raise Exception(f"Could not download from {url}: {response.status_code}")
 
-    data_set = pydantic.parse_obj_as(response.json(), type_=OpennemDataSet)
+    data_set = pydantic.parse_obj_as(obj=response.json(), type_=OpennemDataSet)
 
     return data_set
