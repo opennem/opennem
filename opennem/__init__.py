@@ -36,7 +36,7 @@ warnings.filterwarnings("ignore", module="openpyxl")
 from opennem.utils.version import get_version  # noqa: E402
 
 # Module variables
-v = "3.10.0"
+v = "3.11.1"
 __env__ = "prod"
 __version__ = get_version()
 __package__ = "opennem"
