@@ -97,9 +97,7 @@ def export_network_intervals_for_week(
     if bom_station:
         try:
             weather_stats = weather_daily(
-                time_series=time_series,
-                station_code=bom_station,
-                network_region=network_region.code,
+                time_series=time_series, station_code=bom_station, network_region=network_region.code, network=network
             )
             stat_set.append_set(weather_stats)
         except Exception:
@@ -147,4 +145,4 @@ def export_historic_intervals(limit: int | None = None) -> None:
 
 
 if __name__ == "__main__":
-    export_historic_intervals(limit=1)
+    export_historic_intervals(limit=52)
