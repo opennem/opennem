@@ -5,7 +5,6 @@ run with either the opennem entry point or:
 $ python -m opennem.cli
 """
 import logging
-from email.policy import default
 from typing import Optional
 
 import click
