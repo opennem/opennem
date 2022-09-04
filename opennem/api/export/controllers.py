@@ -98,7 +98,7 @@ def weather_daily(
             region=network_region,
             code="bom",
             group_field="temperature",
-            localize=False,
+            localize=localize,
         )
 
         stats_max = stats_factory(
@@ -109,7 +109,7 @@ def weather_daily(
             region=network_region,
             code="bom",
             group_field="temperature",
-            localize=False,
+            localize=localize,
         )
 
         stats.append_set(stats_min)
