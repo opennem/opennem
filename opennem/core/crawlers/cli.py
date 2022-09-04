@@ -9,7 +9,7 @@ from rich.table import Table
 from opennem import console
 from opennem.core.crawlers.crawler import crawlers_flush_metadata, crawlers_get_crawl_metadata
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
-from opennem.crawl import get_crawl_set, run_crawl, run_crawl_urls
+from opennem.crawl import get_crawl_set, run_crawl
 from opennem.utils.http import test_proxy
 from opennem.utils.timesince import timesince
 from opennem.utils.url import is_url
