@@ -489,7 +489,7 @@ def emission_network_fueltech_query(
             ft.code as fueltech_code,
             case
                 when sum(fs.generated) > 0 then
-                    sum(fs.generated) / {intervals_per_hour} * max(f.emissions_factor_co2)
+                    sum(fs.generated) / {intervals_per_hour} * max(f.emissions_factor_co2) / 1000
                 else 0
             end as emissions,
             coalesce(max(fs.generated), 0) as fueltech_power
