@@ -24,6 +24,8 @@ if settings.sentry_enabled:
 
 import logging  # noqa: E402,F401
 
+logger = logging.getLogger("opennem")
+
 # Clean up default loggers so they're less noisy
 # Kill warnings from various modules
 import warnings  # noqa: E402
@@ -58,6 +60,5 @@ from rich.console import Console  # noqa: E402
 
 console = Console()
 
-
 # Log current timezone to console
-logging.info(f" * Current timezone: {str(datetime.now().astimezone().tzinfo)} (settings: {settings.timezone})")
+print(f" * Current timezone: {str(datetime.now().astimezone().tzinfo)} (settings: {settings.timezone})")
