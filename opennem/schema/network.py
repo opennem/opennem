@@ -56,6 +56,9 @@ class NetworkSchema(BaseConfig):
     # ex. ROOFTOP, APVI etc.
     subnetworks: list["NetworkSchema"] | None
 
+    # Does the network have flows
+    has_interconnectors: bool = Field(False, description="Network has interconnectors")
+
     def get_interval(self) -> Optional[TimeInterval]:
         if not self.interval_size:
             return None
@@ -167,6 +170,7 @@ NetworkNEM = NetworkSchema(
     interconnector_first_seen=datetime.fromisoformat("2010-01-01T00:00:00+10:00"),
     rooftop_first_seen=datetime.fromisoformat("2007-01-01T00:00:00+10:00"),
     monitor_interval_alert_threshold=10,
+    has_interconnectors=True,
     subnetworks=[NetworkAEMORooftop, NetworkAEMORooftopBackfill],
 )
 
