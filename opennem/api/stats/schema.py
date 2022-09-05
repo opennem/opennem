@@ -114,10 +114,13 @@ class OpennemDataHistory(BaseConfig):
         last = values.get("last", None)
 
         if not interval or not start or not last:
-            raise ValidationErr(f"Missing interval or start or last for data validation")
+            raise ValidationErr("Missing interval or start or last for data validation")
 
-        if not isinstance(start, datetime) or not isinstance(last, datetime):
-            raise ValidationErr(f"Start is not a datetime")
+        if not isinstance(start, datetime):
+            raise ValidationErr(f"Start is not a datetime: {start}")
+
+        if not isinstance(last, datetime):
+            raise ValidationErr(f"Last is not a datetime: {last}")
 
         assert validate_data_outputs(field_value, interval, start, last) is True
 
