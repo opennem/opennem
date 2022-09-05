@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Optional, Tuple, Union
+from xml.dom import ValidationErr
 from zoneinfo import ZoneInfo
 
 import pydantic
@@ -100,6 +101,27 @@ class OpennemDataHistory(BaseConfig):
 
     # validators
     _data_format = validator("data", allow_reuse=True, pre=True)(format_number_series)
+
+    @validator("data", pre=True, always=True)
+    def validate_data(
+        cls, field_value: list[ValidNumber], values: dict[str, datetime | str | list[ValidNumber]]
+    ) -> list[ValidNumber]:
+        if not field_value:
+            return field_value
+
+        interval = values.get("interval", None)
+        start = values.get("start", None)
+        last = values.get("last", None)
+
+        if not interval or not start or not last:
+            raise ValidationErr(f"Missing interval or start or last for data validation")
+
+        if not isinstance(start, datetime) or not isinstance(last, datetime):
+            raise ValidationErr(f"Start is not a datetime")
+
+        assert validate_data_outputs(field_value, interval, start, last) is True
+
+        return field_value
 
     def get_date(self, dt: date) -> float | Decimal | None:
         """Get value for a specific date"""
