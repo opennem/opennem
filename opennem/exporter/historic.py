@@ -84,7 +84,8 @@ def export_network_intervals_for_week(
     )
     stat_set.append_set(demand_energy_and_value)
 
-    if network == NetworkNEM:
+    # flows
+    if network.has_interconnectors:
         interconnector_flows = energy_interconnector_flows_and_emissions(
             time_series=time_series,
             networks_query=network.get_networks_query(),
@@ -92,6 +93,7 @@ def export_network_intervals_for_week(
         )
         stat_set.append_set(interconnector_flows)
 
+    # weather
     bom_station = get_network_region_weather_station(network_region.code)
 
     if bom_station:
@@ -103,6 +105,7 @@ def export_network_intervals_for_week(
         except Exception:
             pass
 
+    # save out on s3 (or locally for dev)
     save_path = (
         f"v3/stats/historic/weekly/{network.code}/{network_region.code}/year/{week_start.year}/week/{week_number}.json"
     )
