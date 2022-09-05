@@ -115,16 +115,21 @@ def export_network_intervals_for_week(
     return written_bytes
 
 
-def export_historic_intervals(limit: int | None = None) -> None:
+def export_historic_intervals(
+    limit: int | None = None,
+    networks: list[NetworkSchema] = [NetworkNEM, NetworkWEM],
+    network_region_code: str | None = None,
+) -> None:
     """ """
     session = get_scoped_session()
 
-    networks = [NetworkNEM, NetworkWEM]
-
     for network in networks:
-        network_regions: list[NetworkRegion] = (
-            session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code).all()
-        )
+        query = session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code)
+
+        if network_region_code:
+            query = query.filter(NetworkRegion.code == network_region_code)
+
+        network_regions: list[NetworkRegion] = query.all()
 
         for network_region in network_regions:
             scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks, energy=False)
@@ -148,4 +153,4 @@ def export_historic_intervals(limit: int | None = None) -> None:
 
 
 if __name__ == "__main__":
-    export_historic_intervals(limit=52)
+    export_historic_intervals(limit=1, networks=[NetworkNEM], network_region_code="NSW1")
