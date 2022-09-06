@@ -52,7 +52,7 @@ def export_network_intervals_for_week(
     # time_range is a v4 feature
     time_series = TimeSeries(
         start=week_start,
-        end=week_end,
+        end=week_end + timedelta(days=1),
         network=network,
         interval=network.get_interval(),
         period=human_to_period("7d"),
@@ -163,4 +163,4 @@ def export_historic_intervals(
 
 
 if __name__ == "__main__":
-    export_historic_intervals(limit=1, networks=[NetworkNEM], network_region_code="NSW1")
+    export_historic_intervals(limit=2, networks=[NetworkNEM], network_region_code="NSW1")
