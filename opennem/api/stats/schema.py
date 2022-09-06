@@ -113,9 +113,9 @@ class OpennemDataHistory(BaseConfig):
         if not field_value:
             return field_value
 
-        interval = values.get("interval", None)
-        start = values.get("start", None)
-        last = values.get("last", None)
+        interval: str | None = values.get("interval", None)
+        start: datetime | None = values.get("start", None)
+        last: datetime | None = values.get("last", None)
 
         if not interval or not start or not last:
             raise ValidationErr("Missing interval or start or last for data validation")
@@ -128,7 +128,9 @@ class OpennemDataHistory(BaseConfig):
 
         logger.debug(f"{len(field_value)} values at {interval} interval from {start} to {last}")
 
-        validation_output = validate_data_outputs(field_value, interval, start, last)
+        interval_obj = get_human_interval(interval)
+
+        validation_output = validate_data_outputs(field_value, interval_obj, start, last)
 
         if not validation_output:
             raise ValidationErr(f"Data validation failed: {validation_output}")
