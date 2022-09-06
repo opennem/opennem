@@ -176,14 +176,6 @@ def schedule_power_weeklies() -> None:
     slack_message(f"Weekly power outputs complete on {settings.env}")
 
 
-@huey.periodic_task(crontab(hour="23", minute="14"))
-@huey.lock_task("run_export_latest_historic_intervals")
-def run_export_latest_historic_intervals() -> None:
-    """Run latest historic exports"""
-    export_historic_intervals(limit=1)
-    slack_message(f"Historic interval outputs complete on {settings.env}")
-
-
 # geojson maps
 @huey.periodic_task(crontab(minute="*/30"), priority=50)
 @huey.lock_task("schedule_export_geojson")

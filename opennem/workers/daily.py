@@ -9,7 +9,9 @@ from datetime import datetime
 from opennem import settings
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_energy, export_power
+from opennem.exporter.historic import export_historic_intervals
 from opennem.notifications.slack import slack_message
+from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days, run_aggregates_demand_network
 from opennem.workers.emissions import (
     run_emission_update_day,
@@ -34,6 +36,9 @@ def daily_runner(days: int = 2) -> None:
     export_map = get_export_map()
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
     export_energy(energy_exports.resources)
+
+    for network in [NetworkNEM, NetworkWEM]:
+        export_historic_intervals(limit=1, networks=[network])
 
     # send a slack message when done
     slack_message(f"ran daily_runner on {settings.env}")
