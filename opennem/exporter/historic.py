@@ -129,6 +129,17 @@ def export_historic_intervals(
     session = get_scoped_session()
 
     for network in networks:
+
+        if not network.data_first_seen:
+            raise Exception(f"Network {network.code} has no data first seen")
+
+        # get the last complete day for the network
+        network_last_complete_day = get_last_complete_day_for_network(network)
+        network_last_completed_week_start = network_last_complete_day - timedelta(
+            days=network_last_complete_day.weekday()
+        )
+
+        # query out the regions and filter
         query = session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code)
 
         if network_region_code:
@@ -136,19 +147,11 @@ def export_historic_intervals(
 
         network_regions: list[NetworkRegion] = query.all()
 
+        # loop through the networks
         for network_region in network_regions:
-            scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks, energy=False)
-
-            if not scada_range or not scada_range.start:
-                logger.error("Could not get scada range for network {}".format(network))
-                continue
-
             for week_start, week_end in week_series_datetimes(
-                start=scada_range.end, end=scada_range.start, length=limit
+                start=network_last_completed_week_start, end=network.data_first_seen, length=limit
             ):
-                if week_start > get_today_opennem():
-                    continue
-
                 try:
                     export_network_intervals_for_week(
                         week_start, week_end, network=network, network_region=network_region
