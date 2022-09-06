@@ -23,7 +23,7 @@ from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
-from opennem.schema.dates import TimeSeries
+from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
 from opennem.schema.time import TimePeriod
@@ -327,7 +327,10 @@ def power_week(
 
     # price
 
+    # adjust the interval size
     time_series_price = time_series.copy()
+    if time_series.time_range:
+        time_series.time_range.interval = human_to_interval("30m")
 
     query = price_network_query(
         time_series=time_series_price,

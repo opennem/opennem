@@ -12,6 +12,14 @@ from opennem.schema.stats import StatTypes
 
 
 def weather_observation_query(time_series: TimeSeries, station_codes: List[str]) -> str:
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        date_end = time_series.time_range.end
+        date_start = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+        date_end = time_series_range.end
+        date_start = time_series_range.start
 
     if time_series.interval.interval >= 1440:
         # @TODO replace with mv
@@ -54,12 +62,14 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
         ) as t
         group by 1, 2
         order by 1 asc;
-        """.format(
+        """
+
+        query = __query.format(
             trunc=time_series.interval.trunc,
             tz=time_series.network.timezone_database,
             station_codes=",".join(["'{}'".format(i) for i in station_codes]),
-            date_start=time_series.get_range().start,
-            date_end=time_series.get_range().end,
+            date_start=date_start,
+            date_end=date_end,
         )
 
     else:
@@ -90,13 +100,15 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
             fs.observation_time >= '{date_start}'
         group by 1, 2
         order by 1 desc;
-        """.format(
+        """
+
+        query = __query.format(
             station_codes=",".join(["'{}'".format(i) for i in station_codes]),
-            date_start=time_series.get_range().start,
-            date_end=time_series.get_range().end,
+            date_start=date_start,
+            date_end=date_end,
         )
 
-    return dedent(__query)
+    return dedent(query)
 
 
 def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> str:
@@ -236,8 +248,14 @@ def price_network_query(
     if len(networks_query) > 1:
         group_field = "'AU'"
 
-    date_max = time_series.get_range().end
-    date_min = time_series.get_range().start
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+        date_max = time_series_range.end
+        date_min = time_series_range.start
 
     query = dedent(
         __query.format(
@@ -293,8 +311,14 @@ def network_demand_query(
 
     network_query = "bs.network_id IN ({}) and ".format(networks_to_in(networks_query))
 
-    date_max = time_series.get_range().end
-    date_min = time_series.get_range().start
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+        date_max = time_series_range.end
+        date_min = time_series_range.start
 
     query = __query.format(
         timezone=time_series.network.timezone_database,
@@ -371,9 +395,17 @@ def power_network_fueltech_query(
 
     network_query = "(f.network_id IN ({}) {}) and ".format(networks_to_in(networks_query), wem_apvi_case)
 
-    date_max = time_series.get_range().end
-    date_min = time_series.get_range().start
+    # Get the data time range
+    # use the new v2 feature if it has been provided otherwise use the old method
+    if time_series.time_range:
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+        date_max = time_series_range.end
+        date_min = time_series_range.start
 
+    # If we have a fueltech filter, add it to the query
     fueltechs_exclude = ", ".join("'{}'".format(i) for i in fueltechs_excluded)
 
     query = dedent(
@@ -450,8 +482,14 @@ def power_network_rooftop_query(
 
     network_query = "(f.network_id IN ({}) {}) and ".format(networks_to_in(networks_query), wem_apvi_case)
 
-    date_max = time_series.get_range().end
-    date_min = time_series.get_range().start
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+        date_max = time_series_range.end
+        date_min = time_series_range.start
 
     if forecast:
         # @TODO work out what in get_range is mashing this
@@ -517,8 +555,15 @@ def emission_network_fueltech_query(
         network_region_query = f"f.network_region='{network_region}' and "
 
     network_query = f"f.network_id ='{time_series.network.code}' and"
-    date_max = time_series.get_range().end
-    date_min = time_series.get_range().start
+
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+        date_max = time_series_range.end
+        date_min = time_series_range.start
 
     fueltechs_exclude = ", ".join("'{}'".format(i) for i in fueltechs_excluded)
 
@@ -582,7 +627,14 @@ def demand_network_region_query(
         network_region_select = "network_region,"
         group_by = ",3"
 
-    date_range = time_series.get_range()
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+        date_max = time_series_range.end
+        date_min = time_series_range.start
 
     networks_list = networks_to_in(networks)
 
@@ -591,8 +643,8 @@ def demand_network_region_query(
     query = dedent(
         ___query.format(
             trunc=time_series.interval.trunc,
-            date_min=date_range.start.date(),
-            date_max=date_range.end.date(),
+            date_min=date_min,
+            date_max=date_max,
             network_id=time_series.network.code,
             network_region=network_region_query,
             network_region_select=network_region_select,

@@ -13,26 +13,20 @@ from datetime import datetime, timedelta
 
 from opennem.api.export.controllers import (
     demand_network_region_daily,
+    demand_week,
     emissions_for_network_interval,
     energy_interconnector_flows_and_emissions,
     power_week,
     weather_daily,
 )
 from opennem.api.export.utils import write_output
-from opennem.api.stats.controllers import get_scada_range
-from opennem.api.stats.schema import ScadaDateRange
-from opennem.api.time import human_to_period
+from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
-from opennem.schema.dates import TimeSeries
-from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.utils.dates import (
-    get_last_complete_day_for_network,
-    get_today_opennem,
-    get_week_number_from_datetime,
-    week_series_datetimes,
-)
+from opennem.schema.dates import DatetimeRange, TimeSeries
+from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.utils.dates import get_last_complete_day_for_network, get_week_number_from_datetime, week_series_datetimes
 
 logger = logging.getLogger("opennem.export.historic")
 
@@ -55,12 +49,14 @@ def export_network_intervals_for_week(
     if week_end > get_last_complete_day_for_network(network):
         week_end = get_last_complete_day_for_network(network)
 
+    # time_range is a v4 feature
     time_series = TimeSeries(
         start=week_start,
-        end=week_end + timedelta(days=1),
+        end=week_end,
         network=network,
         interval=network.get_interval(),
         period=human_to_period("7d"),
+        time_range=DatetimeRange(start=week_start, end=week_end, interval=network.get_interval()),
     )
 
     stat_set = power_week(
@@ -84,9 +80,10 @@ def export_network_intervals_for_week(
     stat_set.append_set(emission_intervals)
 
     # demand and pricing
-    demand_energy_and_value = demand_network_region_daily(
-        time_series=time_series, network_region_code=network_region.code, networks=network.get_networks_query()
-    )
+    # adjust interval size
+    time_series.interval = human_to_interval("5m")
+
+    demand_energy_and_value = demand_week(time_series=time_series, network_region_code=network_region.code)
     stat_set.append_set(demand_energy_and_value)
 
     # flows
@@ -102,6 +99,7 @@ def export_network_intervals_for_week(
     bom_station = get_network_region_weather_station(network_region.code)
 
     if bom_station:
+        time_series.interval = human_to_interval("30m")
         try:
             weather_stats = weather_daily(
                 time_series=time_series, station_code=bom_station, network_region=network_region.code, network=network
