@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import logging
 import math
 from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Optional, Tuple, Union
+from typing import Any, Optional, Union
 from xml.dom import ValidationErr
 from zoneinfo import ZoneInfo
 
@@ -28,6 +29,9 @@ from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import sigfig_compact
 
 ValidNumber = Union[float, int, None, Decimal]
+
+
+logger = logging.getLogger("opennem.stats.schema")
 
 
 def optionaly_lowercase_string(value: str) -> str:
@@ -122,7 +126,12 @@ class OpennemDataHistory(BaseConfig):
         if not isinstance(last, datetime):
             raise ValidationErr(f"Last is not a datetime: {last}")
 
-        assert validate_data_outputs(field_value, interval, start, last) is True
+        logger.debug(f"{len(field_value)} values at {interval} interval from {start} to {last}")
+
+        validation_output = validate_data_outputs(field_value, interval, start, last)
+
+        if not validation_output:
+            raise ValidationErr(f"Data validation failed: {validation_output}")
 
         return field_value
 
