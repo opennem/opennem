@@ -88,12 +88,13 @@ def export_network_intervals_for_week(
 
     # flows
     if network.has_interconnectors:
-        interconnector_flows = energy_interconnector_flows_and_emissions(
-            time_series=time_series,
-            networks_query=network.get_networks_query(),
-            network_region_code=network_region.code,
-        )
-        stat_set.append_set(interconnector_flows)
+        pass
+        # interconnector_flows = energy_interconnector_flows_and_emissions(
+        #     time_series=time_series,
+        #     networks_query=network.get_networks_query(),
+        #     network_region_code=network_region.code,
+        # )
+        # stat_set.append_set(interconnector_flows)
 
     # weather
     bom_station = get_network_region_weather_station(network_region.code)
