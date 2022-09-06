@@ -152,6 +152,9 @@ def export_historic_intervals(
             for week_start, week_end in week_series_datetimes(
                 start=network_last_completed_week_start, end=network.data_first_seen, length=limit
             ):
+                if week_end > network_last_complete_day:
+                    week_end = network_last_complete_day
+
                 try:
                     export_network_intervals_for_week(
                         week_start, week_end, network=network, network_region=network_region
