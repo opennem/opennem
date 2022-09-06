@@ -93,6 +93,9 @@ class TimeSeries(BaseConfig):
     # Default forward forecast time period
     forecast_period: str = "7d"
 
+    # This is a v2 feature where the range and bucket size is specified using a time range
+    time_range: DatetimeRange | None
+
     def __str__(self) -> str:
         """Return an informative stringified object for debugging and exceptions"""
         _build_str = (
