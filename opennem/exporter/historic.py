@@ -70,6 +70,11 @@ def export_network_intervals_for_week(
     )
 
     if not stat_set:
+        logger.error(
+            "No historic intervals for network {} and region {} and year {} and week {} ({} => {})".format(
+                network.code, network_region.code, week_start.year, week_number, week_start, week_end
+            )
+        )
         return None
 
     # emissions for network
