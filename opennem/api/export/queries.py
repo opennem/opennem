@@ -14,12 +14,12 @@ from opennem.schema.stats import StatTypes
 def weather_observation_query(time_series: TimeSeries, station_codes: List[str]) -> str:
     # Get the time range using either the old way or the new v4 way
     if time_series.time_range:
-        date_end = time_series.time_range.end
         date_start = time_series.time_range.start
+        date_end = time_series.time_range.end
     else:
         time_series_range = time_series.get_range()
-        date_end = time_series_range.end
         date_start = time_series_range.start
+        date_end = time_series_range.end
 
     if time_series.interval.interval >= 1440:
         # @TODO replace with mv
