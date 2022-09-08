@@ -187,12 +187,21 @@ def interconnector_flow_network_regions_query(time_series: TimeSeries, network_r
     if network_region:
         region_query = f"and f.network_region='{network_region}'"
 
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+        date_max = time_series_range.end
+        date_min = time_series_range.start
+
     query = __query.format(
         timezone=time_series.network.timezone_database,
         network_id=time_series.network.code,
         region_query=region_query,
-        date_start=time_series.get_range().start,
-        date_end=time_series.get_range().end,
+        date_start=date_min,
+        date_end=date_max,
     )
 
     return dedent(query)
