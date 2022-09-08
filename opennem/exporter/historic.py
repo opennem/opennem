@@ -11,14 +11,7 @@ This is called from the scheduler in opennem.workers.scheduler to run every morn
 import logging
 from datetime import datetime, timedelta
 
-from opennem.api.export.controllers import (
-    demand_network_region_daily,
-    demand_week,
-    emissions_for_network_interval,
-    energy_interconnector_flows_and_emissions,
-    power_week,
-    weather_daily,
-)
+from opennem.api.export.controllers import demand_week, power_and_emissions_for_network_interval, weather_daily
 from opennem.api.export.utils import write_output
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
@@ -59,10 +52,9 @@ def export_network_intervals_for_week(
         time_range=DatetimeRange(start=week_start, end=week_end + timedelta(days=1), interval=network.get_interval()),
     )
 
-    stat_set = power_week(
-        time_series=time_series,
-        networks_query=network.get_networks_query(),
-        network_region_code=network_region.code,
+    # power and emissions for network
+    stat_set = power_and_emissions_for_network_interval(
+        time_series=time_series, network_region_code=network_region.code
     )
 
     if not stat_set:
@@ -72,12 +64,6 @@ def export_network_intervals_for_week(
             )
         )
         return None
-
-    # emissions for network
-    emission_intervals = emissions_for_network_interval(
-        time_series=time_series, network_region_code=network_region.code
-    )
-    stat_set.append_set(emission_intervals)
 
     # demand and pricing
     # adjust interval size
@@ -163,4 +149,4 @@ def export_historic_intervals(
 
 
 if __name__ == "__main__":
-    export_historic_intervals(limit=52)
+    export_historic_intervals(limit=3, network_region_code="NSW1", networks=[NetworkNEM])

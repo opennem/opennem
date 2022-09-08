@@ -6,12 +6,12 @@ from opennem.api.exceptions import OpennemBaseHttpException, OpenNEMInvalidNetwo
 from opennem.api.export.queries import (
     country_stats_query,
     demand_network_region_query,
-    emission_network_fueltech_query,
     energy_network_fueltech_query,
     energy_network_interconnector_emissions_query,
     interconnector_flow_network_regions_query,
     interconnector_power_flow,
     network_demand_query,
+    power_and_emissions_network_fueltech_query,
     power_network_fueltech_query,
     power_network_rooftop_query,
     price_network_query,
@@ -439,7 +439,7 @@ def power_week(
     return result
 
 
-def emissions_for_network_interval(
+def power_and_emissions_for_network_interval(
     time_series: TimeSeries,
     network_region_code: str = None,
 ) -> OpennemDataSet | None:
@@ -448,7 +448,7 @@ def emissions_for_network_interval(
     if network_region_code and not re.match(_valid_region, network_region_code):
         raise OpenNEMInvalidNetworkRegion()
 
-    query = emission_network_fueltech_query(
+    query = power_and_emissions_network_fueltech_query(
         time_series=time_series,
         network_region=network_region_code,
     )
@@ -457,15 +457,25 @@ def emissions_for_network_interval(
         logger.debug(query)
         row = list(c.execute(query))
 
-    stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    power_stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    emission_stats = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
 
-    if len(stats) < 1:
+    if len(power_stats) < 1:
         logger.error("No results from emissions_for_network_interval query with {}".format(time_series))
         return None
 
-    result = stats_factory(
-        stats,
-        # code=network_region_code or network.code,
+    power_result = stats_factory(
+        power_stats,
+        network=time_series.network,
+        interval=time_series.interval,
+        period=time_series.period,
+        units=get_unit("power"),
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    emissions_result = stats_factory(
+        emission_stats,
         network=time_series.network,
         interval=time_series.interval,
         period=time_series.period,
@@ -474,7 +484,10 @@ def emissions_for_network_interval(
         fueltech_group=True,
     )
 
-    return result
+    if emissions_result:
+        power_result.append_set(emissions_result)
+
+    return power_result
 
 
 def demand_network_region_daily(
