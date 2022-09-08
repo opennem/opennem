@@ -13,9 +13,12 @@ from opennem.schema.stats import StatTypes
 
 def weather_observation_query(time_series: TimeSeries, station_codes: List[str]) -> str:
     # Get the time range using either the old way or the new v4 way
+    fence_post_delta: timedelta = timedelta(minutes=0)
+
     if time_series.time_range:
         date_start = time_series.time_range.start
         date_end = time_series.time_range.end
+        fence_post_delta = timedelta(minutes=30)
     else:
         time_series_range = time_series.get_range()
         date_start = time_series_range.start
@@ -112,8 +115,8 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
 
         query = __query.format(
             station_codes=",".join(["'{}'".format(i) for i in station_codes]),
-            date_start=date_start - timedelta(minutes=30),
-            date_end=date_end,
+            date_start=date_start,
+            date_end=date_end - fence_post_delta,
             tz=time_series.network.timezone_database,
         )
 
