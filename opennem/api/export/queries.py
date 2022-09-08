@@ -75,30 +75,38 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
     else:
         __query = """
         select
-            time_bucket_gapfill('30 minutes', fs.observation_time) as ot,
-            fs.station_id as station_id,
+            t.ot at time zone '{tz}' as observation_time,
+            t.station_id,
+            t.temp_air,
+            t.temp_min,
+            t.temp_max
+        from (
+            select
+                time_bucket_gapfill('30 minutes', fs.observation_time) as ot,
+                fs.station_id as station_id,
 
-            case when min(fs.temp_air) is not null
-                then avg(fs.temp_air)
-                else NULL
-            end as temp_air,
+                case when min(fs.temp_air) is not null
+                    then avg(fs.temp_air)
+                    else NULL
+                end as temp_air,
 
-            case when min(fs.temp_min) is not null
-                then min(fs.temp_min)
-                else min(fs.temp_air)
-            end as temp_min,
+                case when min(fs.temp_min) is not null
+                    then min(fs.temp_min)
+                    else min(fs.temp_air)
+                end as temp_min,
 
-            case when max(fs.temp_max) is not null
-                then max(fs.temp_max)
-                else max(fs.temp_air)
-            end as temp_max
+                case when max(fs.temp_max) is not null
+                    then max(fs.temp_max)
+                    else max(fs.temp_air)
+                end as temp_max
 
-        from bom_observation fs
-        where
-            fs.station_id in ({station_codes}) and
-            fs.observation_time <= '{date_end}' and
-            fs.observation_time >= '{date_start}'
-        group by 1, 2
+            from bom_observation fs
+            where
+                fs.station_id in ({station_codes}) and
+                fs.observation_time <= '{date_end}' and
+                fs.observation_time >= '{date_start}'
+            group by 1, 2
+        ) as t
         order by 1 desc;
         """
 
@@ -106,6 +114,7 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
             station_codes=",".join(["'{}'".format(i) for i in station_codes]),
             date_start=date_start,
             date_end=date_end,
+            tz=time_series.network.timezone_database,
         )
 
     return dedent(query)
