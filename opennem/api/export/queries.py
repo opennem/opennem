@@ -112,7 +112,7 @@ def weather_observation_query(time_series: TimeSeries, station_codes: List[str])
 
         query = __query.format(
             station_codes=",".join(["'{}'".format(i) for i in station_codes]),
-            date_start=date_start,
+            date_start=date_start - timedelta(minutes=30),
             date_end=date_end,
             tz=time_series.network.timezone_database,
         )
