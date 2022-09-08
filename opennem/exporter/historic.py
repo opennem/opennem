@@ -85,15 +85,21 @@ def export_network_intervals_for_week(
     # weather
     bom_station = get_network_region_weather_station(network_region.code)
 
-    if bom_station:
-        time_series.interval = human_to_interval("30m")
-        try:
-            weather_stats = weather_daily(
-                time_series=time_series, station_code=bom_station, network_region=network_region.code, network=network
-            )
-            stat_set.append_set(weather_stats)
-        except Exception:
-            pass
+    if not bom_station:
+        raise Exception(f"No weather station found for {network_region.code}")
+
+    time_series.interval = human_to_interval("30m")
+    try:
+        weather_stats = weather_daily(
+            time_series=time_series,
+            station_code=bom_station,
+            network_region=network_region.code,
+            network=network,
+            include_min_max=False,
+        )
+        stat_set.append_set(weather_stats)
+    except Exception as e:
+        logger.error(f"Error getting weather stats for {network_region.code}: {e}")
 
     # save out on s3 (or locally for dev)
     save_path = (
