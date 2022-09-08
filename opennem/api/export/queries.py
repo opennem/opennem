@@ -523,6 +523,13 @@ def emission_network_fueltech_query(
 
     __query = """
         select
+            t.trading_interval at time zone '{timezone}',
+            t.fueltech_code,
+            sum(t.fueltech_power),
+            sum(t.emissions)
+        from
+        (
+            select
             time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
             ft.code as fueltech_code,
             case
@@ -543,6 +550,9 @@ def emission_network_fueltech_query(
             fs.trading_interval >= '{date_min}'
             {fueltech_filter}
         group by 1, f.code, 2
+        ) as t
+        group by 1, 2
+        order by 1 desc;
     """
 
     network_region_query: str = ""
