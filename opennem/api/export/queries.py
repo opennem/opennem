@@ -514,10 +514,9 @@ def power_network_rooftop_query(
 """ Emission Queries """
 
 
-def emission_network_fueltech_query(
+def power_and_emissions_network_fueltech_query(
     time_series: TimeSeries,
     network_region: Optional[str] = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
 ) -> str:
     """Query emission stats for each network and fueltech"""
 
@@ -530,26 +529,26 @@ def emission_network_fueltech_query(
         from
         (
             select
-            time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
-            ft.code as fueltech_code,
-            case
-                when sum(fs.generated) > 0 then
-                    sum(fs.generated) / {intervals_per_hour} * max(f.emissions_factor_co2)
-                else 0
-            end as emissions,
-            coalesce(max(fs.generated), 0) as fueltech_power
-        from facility_scada fs
-        join facility f on fs.facility_code = f.code
-        join fueltech ft on f.fueltech_id = ft.code
-        where
-            fs.is_forecast is False and
-            f.fueltech_id is not null and
-            {network_query}
-            {network_region_query}
-            fs.trading_interval <= '{date_max}' and
-            fs.trading_interval >= '{date_min}'
-            {fueltech_filter}
-        group by 1, f.code, 2
+                time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
+                ft.code as fueltech_code,
+                case
+                    when sum(fs.generated) > 0 then
+                        sum(fs.generated) / {intervals_per_hour} * max(f.emissions_factor_co2)
+                    else 0
+                end as emissions,
+                coalesce(max(fs.generated), 0) as fueltech_power
+            from facility_scada fs
+            join facility f on fs.facility_code = f.code
+            join fueltech ft on f.fueltech_id = ft.code
+            where
+                fs.is_forecast is False and
+                f.fueltech_id is not null and
+                {network_query}
+                {network_region_query}
+                fs.trading_interval <= '{date_max}' and
+                fs.trading_interval >= '{date_min}'
+                {fueltech_filter}
+            group by 1, f.code, 2
         ) as t
         group by 1, 2
         order by 1 desc;
