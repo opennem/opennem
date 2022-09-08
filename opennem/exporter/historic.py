@@ -93,6 +93,7 @@ def export_network_intervals_for_week(
         weather_stats = weather_daily(
             time_series=time_series,
             station_code=bom_station,
+            unit_name="temperature",
             network_region=network_region.code,
             network=network,
             include_min_max=False,
