@@ -11,7 +11,12 @@ This is called from the scheduler in opennem.workers.scheduler to run every morn
 import logging
 from datetime import datetime, timedelta
 
-from opennem.api.export.controllers import demand_week, power_and_emissions_for_network_interval, weather_daily
+from opennem.api.export.controllers import (
+    demand_week,
+    power_and_emissions_for_network_interval,
+    power_flows_region_week,
+    weather_daily,
+)
 from opennem.api.export.utils import write_output
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
@@ -74,13 +79,11 @@ def export_network_intervals_for_week(
 
     # flows
     if network.has_interconnectors:
-        pass
-        # interconnector_flows = energy_interconnector_flows_and_emissions(
-        #     time_series=time_series,
-        #     networks_query=network.get_networks_query(),
-        #     network_region_code=network_region.code,
-        # )
-        # stat_set.append_set(interconnector_flows)
+        interconnector_flows = power_flows_region_week(
+            time_series=time_series,
+            network_region_code=network_region.code,
+        )
+        stat_set.append_set(interconnector_flows)
 
     # weather
     bom_station = get_network_region_weather_station(network_region.code)
