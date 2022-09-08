@@ -199,10 +199,11 @@ def power_flows_region_week(
 
 def power_flows_network_week(
     time_series: TimeSeries,
+    network_region_code: str | None = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
-    query = interconnector_flow_network_regions_query(time_series=time_series)
+    query = interconnector_flow_network_regions_query(time_series=time_series, network_region=network_region_code)
 
     with engine.connect() as c:
         logger.debug(query)
