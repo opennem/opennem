@@ -148,14 +148,25 @@ def interconnector_power_flow(time_series: TimeSeries, network_region: str) -> s
     order by trading_interval desc;
 
 
-    """.format(
+    """
+
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+        date_max = time_series_range.end
+        date_min = time_series_range.start
+
+    query = ___query.format(
         network_id=time_series.network.code,
         region=network_region,
-        date_start=time_series.get_range().start,
-        date_end=time_series.get_range().end,
+        date_start=date_min,
+        date_end=date_max,
     )
 
-    return dedent(___query)
+    return dedent(query)
 
 
 def interconnector_flow_network_regions_query(time_series: TimeSeries, network_region: Optional[str] = None) -> str:
