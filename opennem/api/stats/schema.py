@@ -255,6 +255,9 @@ class OpennemDataSet(BaseConfig):
         if not isinstance(value, list):
             raise Exception("Did not get a valid list as values")
 
+        if not value:
+            return None
+
         if isinstance(value[0], OpennemData):
             _id_values = [i.id for i in value]
             sorting_key_method = lambda x: x.id  # noqa:E731
