@@ -32,8 +32,8 @@ def test_schema_loader() -> None:
 
     assert isinstance(a.data[0].history.start, datetime), "Has history and a start date"
 
-    assert a.data[0].id == "nem.nsw1.fuel_tech.coal_brown.power", "Has an id"
-    assert a.data[0].id_v2() == "nsw1.fuel_tech.brown_coal.power", "Has correct v2 id"
+    assert a.data[0].id == "nem.nsw1.fuel_tech.coal_black.power", "Has an id"
+    assert a.data[0].id_v2() == "nsw1.fuel_tech.black_coal.power", "Has correct v2 id"
 
     values = a.data[0].history.values()
 
