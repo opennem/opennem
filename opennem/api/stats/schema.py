@@ -253,7 +253,7 @@ class OpennemDataSet(BaseConfig):
         # this can be loaded with either a dict or with a model
 
         if not isinstance(value, list):
-            raise Exception("Did not get a valid list as values")
+            return None
 
         if not value:
             return None
