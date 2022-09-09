@@ -247,16 +247,16 @@ class OpennemDataSet(BaseConfig):
     # Validators
     # pylint: disable=no-self-argument
     @validator("data", pre=True, allow_reuse=True)
-    def validate_data_unique(cls, value: list[OpennemData | dict[str, Any]], **kwargs) -> list[OpennemData] | None:
+    def validate_data_unique(cls, value: list[OpennemData | dict[str, Any]], **kwargs) -> list[OpennemData]:
         """Validate the data being set to make sure there are no duplicate ids"""
 
         # this can be loaded with either a dict or with a model
 
         if not isinstance(value, list):
-            return None
+            return []
 
         if not value:
-            return None
+            return []
 
         if isinstance(value[0], OpennemData):
             _id_values = [i.id for i in value]
