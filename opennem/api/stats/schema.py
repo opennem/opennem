@@ -247,9 +247,22 @@ class OpennemDataSet(BaseConfig):
     # Validators
     # pylint: disable=no-self-argument
     @validator("data", pre=True, allow_reuse=True)
-    def validate_data_unique(cls, value: list[OpennemData], **kwargs) -> list[OpennemData]:
+    def validate_data_unique(cls, value: list[OpennemData | dict[str, Any]], **kwargs) -> list[OpennemData]:
         """Validate the data being set to make sure there are no duplicate ids"""
-        _id_values = [i.id for i in value]
+
+        # this can be loaded with either a dict or with a model
+
+        if not isinstance(value, list):
+            raise Exception("Did not get a valid list as values")
+
+        if isinstance(value[0], OpennemData):
+            _id_values = [i.id for i in value]
+            sorting_key_method = lambda x: x.id  # noqa:E731
+        elif isinstance(value[0], dict):
+            _id_values = [i["id"] for i in value]
+            sorting_key_method = lambda x: x["id"]  # noqa:E731
+        else:
+            raise Exception("Not a valid value type")
 
         if len(_id_values) != len(set(_id_values)):
             # find the ids that are not unique
@@ -264,7 +277,7 @@ class OpennemDataSet(BaseConfig):
 
             raise ValueError(f"OpennemDataSet has duplicate id{'s' if len(_id_duplicates) > 1 else ''}: {_msg}")
 
-        return sorted(value, key=lambda x: x.id)  # type: ignore
+        return sorted(value, key=sorting_key_method)  # type: ignore
 
     _version_fromstr = validator("created_at", allow_reuse=True, pre=True)(optionally_parse_string_datetime)
 
