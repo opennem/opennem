@@ -149,7 +149,7 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
 def power_flows_region_week(
     time_series: TimeSeries,
     network_region_code: str,
-    include_emissions: bool = True,
+    include_emissions: bool = False,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
