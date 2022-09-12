@@ -39,6 +39,7 @@ class NetworkSchema(BaseConfig):
     offset: Optional[int] = Field(None, description="Network time offset in minutes")
 
     interval_size: int = Field(..., description="Size of network interval in minutes")
+    interval_size_price: int | None = Field(None, description="Size of network price interval in minutes")
 
     interval_shift: int = Field(0, description="Size of reading shift in minutes")
 
@@ -164,6 +165,7 @@ NetworkNEM = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=5,
+    interval_size_price=5,
     interval_shift=5,
     data_first_seen=datetime.fromisoformat("1998-12-07T01:50:00+10:00"),
     price_first_seen=datetime.fromisoformat("2009-07-01T00:00:00+10:00"),
@@ -182,6 +184,7 @@ NetworkWEM = NetworkSchema(
     timezone_database="AWST",
     offset=480,
     interval_size=30,
+    interval_size_price=5,
     data_first_seen=datetime.fromisoformat("2006-09-20T02:00:00+08:00"),
     price_first_seen=datetime.fromisoformat("2012-01-07T08:00:00+08:00"),
     # WEM is slower to update at times. set to 4 hours.
