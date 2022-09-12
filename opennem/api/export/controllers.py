@@ -149,6 +149,7 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
 def power_flows_region_week(
     time_series: TimeSeries,
     network_region_code: str,
+    include_emissions: bool = True,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
 
@@ -170,7 +171,6 @@ def power_flows_region_week(
         imports,
         # code=network_region_code or network.code,
         network=time_series.network,
-        period=human_to_period("7d"),
         interval=human_to_interval("5m"),
         units=get_unit("power"),
         region=network_region_code,
@@ -185,7 +185,6 @@ def power_flows_region_week(
         exports,
         # code=network_region_code or network.code,
         network=time_series.network,
-        period=human_to_period("7d"),
         interval=human_to_interval("5m"),
         units=get_unit("power"),
         region=network_region_code,
@@ -193,6 +192,49 @@ def power_flows_region_week(
     )
 
     result.append_set(result_exports)
+
+    if include_emissions:
+        unit_emissions = get_unit("emissions")
+
+        query = energy_network_interconnector_emissions_query(
+            time_series=time_series,
+            network_region=network_region_code,
+            # networks_query=networks_query,
+        )
+
+        with engine.connect() as c:
+            logger.debug(query)
+            row = list(c.execute(query))
+
+        if len(row) < 1:
+            return None
+
+        import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
+        export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
+
+        result_import_emissions = stats_factory(
+            import_emissions,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=unit_emissions,
+            region=network_region_code,
+            fueltech_group=True,
+            localize=False,
+        )
+
+        result.append_set(result_import_emissions)
+
+        result_export_emissions = stats_factory(
+            export_emissions,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=unit_emissions,
+            region=network_region_code,
+            fueltech_group=True,
+            localize=False,
+        )
+
+        result.append_set(result_export_emissions)
 
     return result
 
@@ -512,7 +554,7 @@ def power_and_emissions_for_network_interval(
         raise Exception(
             f"No power results for {time_series.network.code} in region {network_region_code} and date \
                 range {time_series.time_range.start} => {time_series.time_range.end}"
-        )
+        )  # type: ignore
 
     emissions_result = stats_factory(
         emission_stats,
