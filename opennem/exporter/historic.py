@@ -15,6 +15,7 @@ from opennem.api.export.controllers import (
     demand_week,
     power_and_emissions_for_network_interval,
     power_flows_region_week,
+    price_for_network_interval,
     weather_daily,
 )
 from opennem.api.export.utils import write_output
@@ -76,6 +77,9 @@ def export_network_intervals_for_week(
 
     demand_energy_and_value = demand_week(time_series=time_series, network_region_code=network_region.code)
     stat_set.append_set(demand_energy_and_value)
+
+    price_for_network = price_for_network_interval(time_series=time_series, network_region_code=network_region.code)
+    stat_set.append_set(price_for_network)
 
     # flows
     if network.has_interconnectors:
