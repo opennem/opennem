@@ -1,3 +1,8 @@
+"""
+Tests for the per-interval export series in opennem.exporter.historic
+
+
+"""
 from datetime import date
 from enum import Enum
 from itertools import groupby
@@ -14,6 +19,9 @@ class SeriesType(str, Enum):
     power = "power"
     emissions = "emissions"
     energy = "energy"
+    demand = "demand"
+    price = "price"
+    temperature = "temperature"
 
 
 energy_series = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_1y.json")
@@ -85,6 +93,8 @@ def compare_series_values_approx_by_date(
             raise Exception(f"Date {dt} not in yearly_energy_dict")
 
         # 5% tolerance
+        # required as the series won't precisely match as naive energy sum per
+        # interval vs full per-hour AUC-energy sum
         if energy_value != pytest.approx(power_value, 0.5):
             print(f"{fueltech_id}.{series_type.value} Mismatch: {dt}: {power_value} {energy_value}")
 
@@ -99,4 +109,37 @@ def compare_series_values_approx_by_date(
     ],
 )
 def test_compare_historic_series(fueltech_id: str, series_type: SeriesType) -> None:
+    """Tests the values of the historic series against the daily energy series"""
     compare_series_values_approx_by_date(fueltech_id, series_type)
+
+
+@pytest.mark.parametrize(
+    ["series_type", "fueltech_id"],
+    [
+        (SeriesType.power, "coal_black"),
+        (SeriesType.power, "wind"),
+        (SeriesType.emissions, "coal_black"),
+        (SeriesType.power, "imports"),
+        (SeriesType.emissions, "imports"),
+        (SeriesType.power, "exports"),
+        (SeriesType.emissions, "exports"),
+        (SeriesType.demand, None),
+        (SeriesType.temperature, None),
+        (SeriesType.price, None),
+    ],
+)
+def test_historic_contains_all_ids(series_type: SeriesType, fueltech_id: str | None) -> None:
+    series_id_components = ["au.nem.nsw1"]
+
+    if fueltech_id:
+        series_id_components.append("fuel_tech")
+        series_id_components.append(fueltech_id)
+
+    series_id_components.append(series_type.value)
+
+    series_id = ".".join(series_id_components)
+
+    series_set = historic_series.get_id(series_id)
+
+    if not series_set:
+        raise Exception(f"Could not find id: {series_id}")
