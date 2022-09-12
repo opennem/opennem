@@ -508,6 +508,11 @@ def power_and_emissions_for_network_interval(
         fueltech_group=True,
     )
 
+    if not power_result:
+        raise Exception(
+            f"No power results for {time_series.network.code} in region {network_region_code} and date range {time_series.time_range.start} => {time_series.time_range.end}"
+        )
+
     emissions_result = stats_factory(
         emission_stats,
         network=time_series.network,
