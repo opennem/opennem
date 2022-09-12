@@ -1,5 +1,7 @@
 set -euxo pipefail
 
+. scripts/refresh_fixtures.sh
+
 pytest
 
 # # run flake
