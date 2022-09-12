@@ -86,6 +86,7 @@ def export_network_intervals_for_week(
         interconnector_flows = power_flows_region_week(
             time_series=time_series,
             network_region_code=network_region.code,
+            include_emissions=True,
         )
         stat_set.append_set(interconnector_flows)
 
