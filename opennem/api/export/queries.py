@@ -821,7 +821,18 @@ def energy_network_interconnector_emissions_query(
 
     timezone = time_series.network.timezone_database
     network_region_query = ""
-    date_range = time_series.get_range()
+
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        interval_trunc = time_series.get_range().interval.trunc
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+
+        interval_trunc = time_series_range.interval.trunc
+        date_max = time_series_range.end
+        date_min = time_series_range.start
 
     if network_region:
         network_region_query = f"""
@@ -831,10 +842,10 @@ def energy_network_interconnector_emissions_query(
     query = dedent(
         __query.format(
             timezone=timezone,
-            trunc=date_range.interval.trunc,
+            trunc=interval_trunc,
             network_id=time_series.network.code,
-            date_min=date_range.start,
-            date_max=date_range.end,
+            date_min=date_min,
+            date_max=date_max,
             network_region_query=network_region_query,
         )
     )
