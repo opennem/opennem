@@ -440,6 +440,39 @@ def power_week(
     return result
 
 
+def price_for_network_interval(
+    time_series: TimeSeries,
+    network_region_code: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
+) -> OpennemDataSet | None:
+    """Returns price per interval for a network or network region"""
+    engine = get_database_engine()
+
+    query = price_network_query(
+        time_series=time_series,
+        network_region=network_region_code,
+        networks_query=networks_query,
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        row = list(c.execute(query))
+
+    price_data = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+
+    price_set = stats_factory(
+        stats=price_data,
+        code=network_region_code or time_series.network.code.lower(),
+        units=get_unit("price"),
+        network=time_series.network,
+        interval=time_series.interval,
+        region=network_region_code,
+        period=time_series.period,
+    )
+
+    return price_set
+
+
 def power_and_emissions_for_network_interval(
     time_series: TimeSeries,
     network_region_code: str = None,
