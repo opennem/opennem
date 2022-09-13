@@ -1,3 +1,6 @@
+"""
+Defines units used throughout the OpenNEM Projects
+"""
 from typing import List
 
 from opennem.core.loader import load_data
@@ -15,9 +18,7 @@ def load_units() -> List[UnitDefinition]:
     ), "Unique names for aliases required"
 
     # unique names in
-    assert len([i.name for i in units]) == len(
-        set([i.name for i in units])
-    ), "Unique unit names required"
+    assert len([i.name for i in units]) == len(set([i.name for i in units])), "Unique unit names required"
 
     return units
 
