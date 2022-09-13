@@ -10,6 +10,7 @@ from itertools import groupby
 import pytest
 
 from opennem.api.stats.schema import OpennemDataHistory, load_opennem_dataset_from_file, load_opennem_dataset_from_url
+from opennem.utils.security import get_random_string
 from opennem.utils.tests import TEST_FIXTURE_PATH
 
 ValidNumber = float | int
@@ -25,8 +26,9 @@ class SeriesType(str, Enum):
 
 
 energy_series = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_1y.json")
-historic_series = load_opennem_dataset_from_url(
-    "https://data.dev.opennem.org.au/v3/stats/historic/weekly/NEM/NSW1/year/2022/week/35.json"
+historic_series = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_week.json")
+historic_series_live = load_opennem_dataset_from_url(
+    f"https://data.dev.opennem.org.au/v3/stats/historic/weekly/NEM/NSW1/year/2022/week/36.json?q={get_random_string()}"
 )
 
 
@@ -108,6 +110,8 @@ def compare_series_values_approx_by_date(
         ("coal_black", SeriesType.emissions),
         ("gas_ccgt", SeriesType.power),
         ("gas_ccgt", SeriesType.emissions),
+        ("exports", SeriesType.power),
+        ("exports", SeriesType.emissions),
     ],
 )
 def test_compare_historic_series(fueltech_id: str, series_type: SeriesType) -> None:
