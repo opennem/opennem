@@ -14,6 +14,7 @@ from opennem.exporter.geojson import export_facility_geojson
 from opennem.importer.all import run_all
 from opennem.importer.db import import_facilities
 from opennem.importer.db import init as db_init
+from opennem.importer.interconnectors import import_nem_interconnects
 from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_import
 from opennem.settings import settings
@@ -38,6 +39,7 @@ def init_db() -> None:
     load_fixtures()
     opennem_import()
     import_facilities()
+    import_nem_interconnects()
 
 
 def run_init() -> None:
