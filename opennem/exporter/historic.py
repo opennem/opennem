@@ -168,4 +168,5 @@ def export_historic_intervals(
 
 
 if __name__ == "__main__":
-    export_historic_intervals(limit=3, network_region_code="NSW1", networks=[NetworkNEM])
+    export_historic_intervals()
+    # export_historic_intervals(limit=1, network_region_code="NSW1", networks=[NetworkNEM])
