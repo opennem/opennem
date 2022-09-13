@@ -9,7 +9,7 @@ from itertools import groupby
 
 import pytest
 
-from opennem.api.stats.schema import OpennemDataHistory, load_opennem_dataset_from_file
+from opennem.api.stats.schema import OpennemDataHistory, load_opennem_dataset_from_file, load_opennem_dataset_from_url
 from opennem.utils.tests import TEST_FIXTURE_PATH
 
 ValidNumber = float | int
@@ -25,7 +25,9 @@ class SeriesType(str, Enum):
 
 
 energy_series = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_1y.json")
-historic_series = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_week.json")
+historic_series = load_opennem_dataset_from_url(
+    "https://data.dev.opennem.org.au/v3/stats/historic/weekly/NEM/NSW1/year/2022/week/35.json"
+)
 
 
 def group_historic_by_day(
