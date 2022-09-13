@@ -5222,13 +5222,13 @@
   },
   {
     "code": "SNOWY1",
-    "name": "Snowy Interconnector",
+    "name": "Snowy 1 ",
     "network_name": "Tumut 3",
     "description": null,
     "wikipedia_link": null,
     "wikidata_id": null,
     "website_url": null,
-    "approved": true,
+    "approved": false,
     "approved_by": "opennem.init",
     "facilities": [
       {
@@ -6330,7 +6330,7 @@
       "osm_way_id": null,
       "place_id": null,
       "geocode_by": null,
-      "geocode_approved": false,
+      "geocode_approved": true,
       "geocode_skip": false
     }
   },
