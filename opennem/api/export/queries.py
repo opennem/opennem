@@ -625,6 +625,84 @@ def power_and_emissions_network_fueltech_query(
     return query
 
 
+def power_network_interconnector_emissions_query(
+    time_series: TimeSeries,
+    network_region: Optional[str] = None,
+    networks_query: Optional[List[NetworkSchema]] = None,
+) -> str:
+    """
+    Get emissions for a network or network + region
+    based on a year
+    """
+
+    if not networks_query:
+        networks_query = [time_series.network]
+
+    if time_series.network not in networks_query:
+        networks_query.append(time_series.network)
+
+    __query = """
+    select
+        t.trading_interval at time zone '{timezone}' as trading_interval,
+        sum(t.imports_energy),
+        sum(t.exports_energy),
+        abs(sum(t.emissions_imports)),
+        abs(sum(t.emissions_exports)),
+        sum(t.market_value_imports) as market_value_imports,
+        sum(t.market_value_exports) as market_value_exports
+    from (
+        select
+            time_bucket_gapfill('5 min', t.trading_interval) as trading_interval,
+            t.network_id,
+            t.network_region,
+            coalesce(t.energy_imports, 0) as imports_energy,
+            coalesce(t.energy_exports, 0) as exports_energy,
+            coalesce(t.emissions_imports, 0) as emissions_imports,
+            coalesce(t.emissions_exports, 0) as emissions_exports,
+            coalesce(t.market_value_imports, 0) as market_value_imports,
+            coalesce(t.market_value_exports, 0) as market_value_exports
+        from at_network_flows t
+        where
+            t.trading_interval <= '{date_max}' and
+            t.trading_interval >= '{date_min}' and
+            t.network_id = '{network_id}' and
+            {network_region_query}
+    ) as t
+    group by 1
+    order by 1 desc
+
+    """
+
+    timezone = time_series.network.timezone_database
+    network_region_query = ""
+
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+    else:
+        time_series_range = time_series.get_range()
+        date_max = time_series_range.end
+        date_min = time_series_range.start
+
+    if network_region:
+        network_region_query = f"""
+            t.network_region = '{network_region}'
+        """
+
+    query = dedent(
+        __query.format(
+            timezone=timezone,
+            network_id=time_series.network.code,
+            date_min=date_min,
+            date_max=date_max,
+            network_region_query=network_region_query,
+        )
+    )
+
+    return query
+
+
 """
 Demand queries
 """
