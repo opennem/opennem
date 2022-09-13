@@ -112,6 +112,8 @@ def compare_series_values_approx_by_date(
         ("gas_ccgt", SeriesType.emissions),
         ("exports", SeriesType.power),
         ("exports", SeriesType.emissions),
+        ("imports", SeriesType.power),
+        ("imports", SeriesType.emissions),
     ],
 )
 def test_compare_historic_series(fueltech_id: str, series_type: SeriesType) -> None:
