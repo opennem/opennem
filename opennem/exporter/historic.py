@@ -88,6 +88,10 @@ def export_network_intervals_for_week(
             network_region_code=network_region.code,
             include_emissions=True,
         )
+
+        if not interconnector_flows:
+            raise Exception("No interconnector flows")
+
         stat_set.append_set(interconnector_flows)
 
     # weather
