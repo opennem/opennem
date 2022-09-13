@@ -90,6 +90,7 @@ pdbpp==0.10.3
 pexpect==4.8.0; sys_platform != "win32" and python_version >= "3.8"
 pickleshare==0.7.5; python_version >= "3.8"
 pillow==9.2.0; python_version >= "3.7"
+pint==0.19.2; python_version >= "3.8"
 platformdirs==2.5.2; python_version >= "3.7" and python_full_version >= "3.7.2" and (python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7")
 pluggy==1.0.0; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7"
 priority==2.0.0; python_full_version >= "3.6.1" and python_version >= "3.7"

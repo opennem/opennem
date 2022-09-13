@@ -56,6 +56,7 @@ outcome==1.2.0; python_version >= "3.7"
 packaging==21.3; python_version >= "3.7"
 pandas==1.4.4; python_version >= "3.8"
 pillow==9.2.0; python_version >= "3.7"
+pint==0.19.2; python_version >= "3.8"
 priority==2.0.0; python_full_version >= "3.6.1" and python_version >= "3.7"
 psycopg2==2.9.3; python_version >= "3.6"
 py-trello==0.18.0
