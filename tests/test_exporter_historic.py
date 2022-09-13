@@ -129,6 +129,8 @@ def test_compare_historic_series(fueltech_id: str, series_type: SeriesType) -> N
         (SeriesType.emissions, "imports"),
         (SeriesType.power, "exports"),
         (SeriesType.emissions, "exports"),
+        (SeriesType.power, "imports"),
+        (SeriesType.emissions, "imports"),
         (SeriesType.demand, None),
         (SeriesType.temperature, None),
         (SeriesType.price, None),
