@@ -77,16 +77,15 @@ def import_nem_interconnects() -> None:
         logger.debug(interconnector)
 
         interconnector_station = (
-            session.query(Station)
-            .filter_by(code=interconnector.interconnectorid)
-            .filter_by(network_code="NEM")
+            session.query(Station).filter_by(code=interconnector.interconnectorid)
+            # .filter_by(network_code="NEM")
             .one_or_none()
         )
 
         if interconnector_station:
             logging.debug(f"Found existing interconnector station: {interconnector_station.code}")
         else:
-            logging.debug(f"Creating new interconnector station: {interconnector_station.code}")
+            logging.debug(f"Creating new interconnector station: {interconnector.interconnectorid}")
 
             interconnector_station = Station(
                 code=interconnector.interconnectorid,
