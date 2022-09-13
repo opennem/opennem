@@ -11,10 +11,10 @@ from xml.dom import ValidationErr
 from zoneinfo import ZoneInfo
 
 import pydantic
+import requests
 from datedelta import datedelta
 from pydantic import validator
 
-from opennem.api.time import human_to_interval
 from opennem.core.compat.utils import translate_id_v3_to_v2
 from opennem.core.fueltechs import map_v3_fueltech
 from opennem.core.validators.data import validate_data_outputs
@@ -24,7 +24,6 @@ from opennem.schema.response import ResponseStatus
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
 from opennem.settings import settings
 from opennem.utils.dates import chop_datetime_microseconds
-from opennem.utils.http import http
 from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import sigfig_compact
 
@@ -359,7 +358,7 @@ def load_opennem_dataset_from_url(url: str) -> OpennemDataSet:
     """
     Reads an OpenNEM URL and returns an OpennemDataSet
     """
-    response = http.get(url)
+    response = requests.get(url)
 
     if not response.ok:
         raise Exception(f"Could not download from {url}: {response.status_code}")
