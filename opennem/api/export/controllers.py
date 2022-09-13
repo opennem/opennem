@@ -13,6 +13,7 @@ from opennem.api.export.queries import (
     network_demand_query,
     power_and_emissions_network_fueltech_query,
     power_network_fueltech_query,
+    power_network_interconnector_emissions_query,
     power_network_rooftop_query,
     price_network_query,
     weather_observation_query,
@@ -149,30 +150,32 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
 def power_flows_region_week(
     time_series: TimeSeries,
     network_region_code: str,
-    include_emissions: bool = False,
 ) -> Optional[OpennemDataSet]:
+    """Gets the power flows for the most recent week for a region. Used in export_power for the JSON export sets"""
     engine = get_database_engine()
+    unit_power = get_unit("power")
 
-    query = interconnector_power_flow(time_series=time_series, network_region=network_region_code)
+    query = interconnector_power_flow(
+        time_series=time_series,
+        network_region=network_region_code,
+    )
 
     with engine.connect() as c:
         logger.debug(query)
-        row = list(c.execute(query))
+        rows = list(c.execute(query))
 
-    if len(row) < 1:
-        logger.error("No results from interconnector_power_flow query for {}".format(time_series))
+    if not rows:
+        logger.error(f"No results from interconnector_power_flow query for {time_series.interval}")
         return None
 
-    imports = [DataQueryResult(interval=i[0], result=i[2], group_by="imports" if len(i) > 1 else None) for i in row]
-
-    exports = [DataQueryResult(interval=i[0], result=i[3], group_by="exports" if len(i) > 1 else None) for i in row]
+    imports = [DataQueryResult(interval=i[0], result=i[1], group_by="imports" if len(i) > 1 else None) for i in rows]
+    exports = [DataQueryResult(interval=i[0], result=i[2], group_by="exports" if len(i) > 1 else None) for i in rows]
 
     result = stats_factory(
         imports,
-        # code=network_region_code or network.code,
         network=time_series.network,
-        interval=human_to_interval("5m"),
-        units=get_unit("power"),
+        interval=time_series.interval,
+        units=unit_power,
         region=network_region_code,
         fueltech_group=True,
     )
@@ -183,10 +186,62 @@ def power_flows_region_week(
 
     result_exports = stats_factory(
         exports,
-        # code=network_region_code or network.code,
         network=time_series.network,
-        interval=human_to_interval("5m"),
-        units=get_unit("power"),
+        interval=time_series.interval,
+        units=unit_power,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    result.append_set(result_exports)
+
+    return result
+
+
+def network_flows_for_region(
+    time_series: TimeSeries,
+    network_region_code: str,
+    include_emissions: bool = False,
+) -> OpennemDataSet | None:
+    "Network flows with optional emissions for a region. Up to last_complete_day"
+
+    engine = get_database_engine()
+    unit_power = get_unit("power")
+
+    query = power_network_interconnector_emissions_query(
+        time_series=time_series,
+        network_region=network_region_code,
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        rows = list(c.execute(query))
+
+    if not rows:
+        logger.error(f"No results from interconnector_power_flow query for {time_series.interval}")
+        return None
+
+    imports = [DataQueryResult(interval=i[0], result=i[1], group_by="imports" if len(i) > 1 else None) for i in rows]
+    exports = [DataQueryResult(interval=i[0], result=i[2], group_by="exports" if len(i) > 1 else None) for i in rows]
+
+    result = stats_factory(
+        imports,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=unit_power,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    if not result:
+        logger.error("No results from interconnector_power_flow stats facoty for {}".format(time_series))
+        return None
+
+    result_exports = stats_factory(
+        exports,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=unit_power,
         region=network_region_code,
         fueltech_group=True,
     )
@@ -196,21 +251,8 @@ def power_flows_region_week(
     if include_emissions:
         unit_emissions = get_unit("emissions")
 
-        query = energy_network_interconnector_emissions_query(
-            time_series=time_series,
-            network_region=network_region_code,
-            # networks_query=networks_query,
-        )
-
-        with engine.connect() as c:
-            logger.debug(query)
-            row = list(c.execute(query))
-
-        if len(row) < 1:
-            return None
-
-        import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
-        export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
+        import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in rows]
+        export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in rows]
 
         result_import_emissions = stats_factory(
             import_emissions,
