@@ -8,11 +8,14 @@ echo "Refreshing fixtures"
 CURRENT_YEAR=$(date +%Y)
 REGION_TO_FETCH="NSW1"
 
-curl https://data.dev.opennem.org.au/v3/stats/au/NEM/${REGION_TO_FETCH:u}/power/7d.json --output - --silent | jq . > tests/fixtures/nem_${REGION_TO_FETCH:l}_7d.json
+print "Fetching https://data.dev.opennem.org.au/v3/stats/au/NEM/${REGION_TO_FETCH:u}/power/7d.json"
+curl https://data.opennem.org.au/v3/stats/au/NEM/${REGION_TO_FETCH:u}/power/7d.json --output - --silent | jq . > tests/fixtures/nem_${REGION_TO_FETCH:l}_7d.json
 
-curl https://data.dev.opennem.org.au/v3/stats/au/NEM/${REGION_TO_FETCH:u}/energy/${CURRENT_YEAR}.json --output - --silent | jq . > tests/fixtures/nem_${REGION_TO_FETCH:l}_1y.json
+print "Fetching https://data.dev.opennem.org.au/v3/stats/au/NEM/${REGION_TO_FETCH:u}/energy/${CURRENT_YEAR}.json"
+curl https://data.opennem.org.au/v3/stats/au/NEM/${REGION_TO_FETCH:u}/energy/${CURRENT_YEAR}.json --output - --silent | jq . > tests/fixtures/nem_${REGION_TO_FETCH:l}_1y.json
 
-curl https://data.dev.opennem.org.au/v3/stats/historic/weekly/NEM/${REGION_TO_FETCH:u}/year/2022/week/35.json --output - --silent | jq . > tests/fixtures/nem_${REGION_TO_FETCH:l}_week.json
+print "Fetching https://data.dev.opennem.org.au/v3/stats/historic/weekly/NEM/${REGION_TO_FETCH:u}/year/2022/week/36.json"
+curl https://data.dev.opennem.org.au/v3/stats/historic/weekly/NEM/${REGION_TO_FETCH:u}/year/2022/week/36.json --output - --silent | jq . > tests/fixtures/nem_${REGION_TO_FETCH:l}_week.json
 
 git add tests/fixtures/nem_${REGION_TO_FETCH:l}_7d.json
 git add tests/fixtures/nem_${REGION_TO_FETCH:l}_1y.json
