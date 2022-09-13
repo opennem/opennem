@@ -13,8 +13,8 @@ from datetime import datetime, timedelta
 
 from opennem.api.export.controllers import (
     demand_week,
+    network_flows_for_region,
     power_and_emissions_for_network_interval,
-    power_flows_region_week,
     price_for_network_interval,
     weather_daily,
 )
@@ -83,7 +83,7 @@ def export_network_intervals_for_week(
 
     # flows
     if network.has_interconnectors:
-        interconnector_flows = power_flows_region_week(
+        interconnector_flows = network_flows_for_region(
             time_series=time_series,
             network_region_code=network_region.code,
             include_emissions=True,
