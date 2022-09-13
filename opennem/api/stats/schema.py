@@ -102,6 +102,9 @@ class OpennemDataHistory(BaseConfig):
     interval: str
     data: list[ValidNumber] = pydantic.Field(..., description="Data values")
 
+    # link the parent id
+    _parent_id: str | None
+
     # validators
     _data_format = validator("data", allow_reuse=True, pre=True)(format_number_series)
 
@@ -132,7 +135,7 @@ class OpennemDataHistory(BaseConfig):
         validation_output = validate_data_outputs(field_value, interval_obj, start, last)
 
         if not validation_output:
-            raise ValidationErr(f"Data validation failed: {validation_output}")
+            raise ValidationErr(f"Data validation failed: {validation_output} for id {self._parent_id}")
 
         return field_value
 
