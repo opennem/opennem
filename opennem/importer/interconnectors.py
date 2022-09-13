@@ -17,7 +17,7 @@ from opennem.db.models.opennem import Facility, Location, Station
 from opennem.schema.aemo.mms import MarketConfigInterconnector
 from opennem.utils.mime import decode_bytes
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.importer.interconnectors")
 
 # INTERCONNECTOR_TABLE = "market_config_interconnector"  # full name with namespace
 INTERCONNECTOR_TABLE = "interconnector"
@@ -58,12 +58,13 @@ def import_nem_interconnects() -> None:
     if not int_table:
         logger.error("Could not fetch table: {}".format(INTERCONNECTOR_TABLE))
 
+    if not int_table.records:
+        logger.error("Could not fetch records for table: {}".format(INTERCONNECTOR_TABLE))
+
     records: List[MarketConfigInterconnector] = int_table.records
 
     for interconnector in records:
         if not isinstance(interconnector, MarketConfigInterconnector):
-            logger.debug(interconnector)
-
             if isinstance(interconnector, dict) and "interconnectorid" in interconnector:
                 interconnector = MarketConfigInterconnector(**interconnector)
                 # raise Exception("Not what we're looking for ")
@@ -78,23 +79,27 @@ def import_nem_interconnects() -> None:
         interconnector_station = (
             session.query(Station)
             .filter_by(code=interconnector.interconnectorid)
-            .filter_by(network_code=interconnector.interconnectorid)
+            .filter_by(network_code="NEM")
             .one_or_none()
         )
 
-        if not interconnector_station:
+        if interconnector_station:
+            logging.debug(f"Found existing interconnector station: {interconnector_station.code}")
+        else:
+            logging.debug(f"Creating new interconnector station: {interconnector_station.code}")
+
             interconnector_station = Station(
                 code=interconnector.interconnectorid,
-                network_code=interconnector.interconnectorid,
+                network_code="NEM",
             )
 
+        # leave this as false so that they don't appear in geojson / facilities page
         interconnector_station.approved = False
+
         interconnector_station.created_by = "opennem.importer.interconnectors"
 
         if not interconnector_station.location:
-            interconnector_station.location = Location(
-                state=state_from_network_region(interconnector.regionfrom)
-            )
+            interconnector_station.location = Location(state=state_from_network_region(interconnector.regionfrom))
 
         interconnector_station.name = interconnector.description
 
@@ -130,11 +135,12 @@ def import_nem_interconnects() -> None:
 
         interconnector_station.facilities.append(int_facility)
 
-        session.add(interconnector_station)
-
-        logger.debug("Created interconnector station: {}".format(interconnector_station.code))
-
-    session.commit()
+        try:
+            session.add(interconnector_station)
+            session.commit()
+            logger.info("Created interconnector station: {}".format(interconnector_station.code))
+        except Exception as e:
+            logger.error(f"Could not commit interconnector stations: {e}")
 
     return None
 
