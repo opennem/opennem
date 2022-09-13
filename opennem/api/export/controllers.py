@@ -168,8 +168,8 @@ def power_flows_region_week(
         logger.error(f"No results from interconnector_power_flow query for {time_series.interval}")
         return None
 
-    imports = [DataQueryResult(interval=i[0], result=i[1], group_by="imports" if len(i) > 1 else None) for i in rows]
-    exports = [DataQueryResult(interval=i[0], result=i[2], group_by="exports" if len(i) > 1 else None) for i in rows]
+    imports = [DataQueryResult(interval=i[0], result=i[2], group_by="imports" if len(i) > 1 else None) for i in rows]
+    exports = [DataQueryResult(interval=i[0], result=i[3], group_by="exports" if len(i) > 1 else None) for i in rows]
 
     result = stats_factory(
         imports,
