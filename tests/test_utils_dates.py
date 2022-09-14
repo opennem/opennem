@@ -8,6 +8,7 @@ import datedelta
 import pytest
 
 from opennem.utils.dates import num_intervals_between_datetimes
+from opennem.utils.interval import get_human_interval
 
 
 @pytest.mark.parametrize(
@@ -39,6 +40,13 @@ from opennem.utils.dates import num_intervals_between_datetimes
             datetime.fromisoformat("2022-01-01T00:00:00"),
             datetime.fromisoformat("2022-05-01T00:00:00"),
             5,
+        ),
+        # quarters
+        (
+            get_human_interval("1Q"),
+            datetime.fromisoformat("2022-01-01T00:00:00"),
+            datetime.fromisoformat("2022-06-01T00:00:00"),
+            2,
         ),
     ],
 )

@@ -14,6 +14,7 @@ TIME_INTERVALS = {
 
 DATE_INTERVALS = {
     "M": "months",
+    "Q": "months",
     "Y": "years",
 }
 
@@ -21,7 +22,7 @@ VALID_INTERVALS = list(TIME_INTERVALS.keys()) + list(DATE_INTERVALS.keys())
 
 VALID_INTERVAL_OPTIONS = ", ".join(VALID_INTERVALS)
 
-_interval_parser = re.compile(r"(?P<value>\d+)(?P<unit>[smhdwMY]?)", re.IGNORECASE)
+_interval_parser = re.compile(r"(?P<value>\d+)(?P<unit>[smhdwMYQ]?)", re.IGNORECASE)
 
 
 def get_human_interval(interval_human: str) -> Union[timedelta, datedelta]:
@@ -41,7 +42,12 @@ def get_human_interval(interval_human: str) -> Union[timedelta, datedelta]:
         return timedelta(**{TIME_INTERVALS[unit]: value})
 
     if unit in DATE_INTERVALS.keys():
-        return datedelta(**{DATE_INTERVALS[unit]: value})
+        unit_name = DATE_INTERVALS[unit]
+
+        if unit == "Q":
+            value *= 3
+
+        return datedelta(**{unit_name: value})
 
     raise Exception("Not a valid interval: {}".format(interval_human))
 
