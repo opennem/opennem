@@ -71,13 +71,14 @@ def export_network_intervals_for_week(
         )
         return None
 
-    # demand and pricing
+    # demand
     # adjust interval size
-    time_series.interval = human_to_interval("5m")
-
+    time_series.interval = human_to_interval("30m")
     demand_energy_and_value = demand_week(time_series=time_series, network_region_code=network_region.code)
     stat_set.append_set(demand_energy_and_value)
 
+    # pricing
+    time_series.interval = human_to_interval("5m")
     price_for_network = price_for_network_interval(time_series=time_series, network_region_code=network_region.code)
     stat_set.append_set(price_for_network)
 
@@ -164,7 +165,7 @@ def export_historic_intervals(
                         week_start, week_end, network=network, network_region=network_region
                     )
                 except Exception as e:
-                    logger.error(f"export_historic_intervals error: {e}")
+                    raise Exception(f"export_historic_intervals error: {e}")
 
 
 if __name__ == "__main__":
