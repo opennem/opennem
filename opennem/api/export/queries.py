@@ -317,18 +317,24 @@ def network_demand_query(
 
     __query = """
     select
-        trading_interval at time zone '{timezone}',
-        network_id,
-        max(demand_total) as demand
-    from balancing_summary bs
-    where
-        bs.trading_interval <= '{date_max}' and
-        bs.trading_interval >= '{date_min}' and
-        {network_query}
-        {network_region_query}
-        1=1
-    group by
-        1, {groups_additional}
+        t.trading_interval at time zone '{timezone}' as trading_interval,
+        t.network_id,
+        t.demand
+    from (
+        select
+            time_bucket_gapfill('{interval}', trading_interval) as trading_interval,
+            network_id,
+            coalesce(max(demand_total), 0) as demand
+        from balancing_summary bs
+        where
+            bs.trading_interval <= '{date_max}' and
+            bs.trading_interval >= '{date_min}' and
+            {network_query}
+            {network_region_query}
+            1=1
+        group by
+            1, {groups_additional}
+    ) as t
     order by 1 desc;
     """
 
@@ -354,6 +360,7 @@ def network_demand_query(
 
     query = __query.format(
         timezone=time_series.network.timezone_database,
+        interval=time_series.interval.interval_sql,
         date_max=date_max,
         date_min=date_min,
         network_id=time_series.network.code,
