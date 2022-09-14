@@ -346,8 +346,7 @@ def demand_week(
         demand,
         # code=network_region_code or network.code,
         network=time_series.network,
-        period=human_to_period("7d"),
-        interval=human_to_interval("5m"),
+        interval=time_series.interval,
         units=get_unit("demand"),
         region=network_region_code,
     )
