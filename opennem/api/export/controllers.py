@@ -647,7 +647,6 @@ def demand_network_region_daily(
         interval=time_series.interval,
         period=time_series.period,
         region=network_region_code,
-        network=time_series.network,
     )
 
     if not stats:
@@ -661,7 +660,7 @@ def demand_network_region_daily(
         interval=time_series.interval,
         period=time_series.period,
         code=time_series.network.code.lower(),
-        network=time_series.network,
+        region=network_region_code,
     )
 
     if stats_market_value:
