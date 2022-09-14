@@ -4,6 +4,7 @@ Unit tests for date utils in opennem.utils.dates
 """
 from datetime import datetime, timedelta
 
+import datedelta
 import pytest
 
 from opennem.utils.dates import num_intervals_between_datetimes
@@ -30,6 +31,13 @@ from opennem.utils.dates import num_intervals_between_datetimes
             timedelta(days=1),
             datetime.fromisoformat("2022-01-01T00:00:00"),
             datetime.fromisoformat("2022-01-05T00:00:00"),
+            5,
+        ),
+        # months
+        (
+            datedelta.MONTH,
+            datetime.fromisoformat("2022-01-01T00:00:00"),
+            datetime.fromisoformat("2022-05-01T00:00:00"),
             5,
         ),
     ],

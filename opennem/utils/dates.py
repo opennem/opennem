@@ -334,7 +334,18 @@ def num_intervals_between_datetimes(interval: timedelta | datedelta, start_date:
     """
     Returns the number of intervals between two datetimes. If the interval is a day or larger it is inclusive.
     """
-    intervals = int((end_date - start_date) / interval) + 1
+
+    if isinstance(interval, timedelta):
+        intervals = int((end_date - start_date) / interval) + 1
+    elif isinstance(interval, datedelta):
+        intervals = 1
+        while True:
+            start_date += interval
+            if start_date > end_date:
+                break
+            intervals += 1
+    else:
+        raise Exception(f"Invalid interval type: {type(interval)}")
 
     return intervals
 
