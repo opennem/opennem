@@ -202,6 +202,7 @@ def network_flows_for_region(
     time_series: TimeSeries,
     network_region_code: str,
     include_emissions: bool = False,
+    include_emission_factors: bool = False,
 ) -> OpennemDataSet | None:
     "Network flows with optional emissions for a region. Up to last_complete_day"
 
@@ -271,6 +272,36 @@ def network_flows_for_region(
             network=time_series.network,
             interval=time_series.interval,
             units=unit_emissions,
+            region=network_region_code,
+            fueltech_group=True,
+            localize=False,
+        )
+
+        result.append_set(result_export_emissions)
+
+    if include_emission_factors:
+        unit_emissions_factor = get_unit("emissions_factor")
+
+        import_emissions_factors = [DataQueryResult(interval=i[0], group_by="imports", result=i[7]) for i in rows]
+        export_emissions_factors = [DataQueryResult(interval=i[0], group_by="exports", result=i[8]) for i in rows]
+
+        result_import_emissions_factors = stats_factory(
+            import_emissions_factors,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=unit_emissions_factor,
+            region=network_region_code,
+            fueltech_group=True,
+            localize=False,
+        )
+
+        result.append_set(result_import_emissions_factors)
+
+        result_export_emissions = stats_factory(
+            export_emissions_factors,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=unit_emissions_factor,
             region=network_region_code,
             fueltech_group=True,
             localize=False,

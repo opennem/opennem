@@ -11,6 +11,7 @@ This is called from the scheduler in opennem.workers.scheduler to run every morn
 import logging
 from datetime import datetime, timedelta
 
+from opennem import settings
 from opennem.api.export.controllers import (
     demand_week,
     network_flows_for_region,
@@ -88,6 +89,7 @@ def export_network_intervals_for_week(
             time_series=time_series,
             network_region_code=network_region.code,
             include_emissions=True,
+            include_emission_factors=settings.debug,  # only on dev
         )
 
         if not interconnector_flows:
@@ -169,5 +171,5 @@ def export_historic_intervals(
 
 
 if __name__ == "__main__":
-    export_historic_intervals()
-    # export_historic_intervals(limit=1, network_region_code="NSW1", networks=[NetworkNEM])
+    # export_historic_intervals()
+    export_historic_intervals(limit=1, networks=[NetworkNEM], network_region_code="NSW1")
