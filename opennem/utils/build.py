@@ -6,7 +6,7 @@ from typing import Callable, List
 
 from gitignore_parser import parse_gitignore
 
-from opennem import PROJECT_ROOT
+from opennem import PROJECT_PATH
 from opennem.settings import settings  # noqa: F401
 
 logger = logging.getLogger("opennem.utils.build")
@@ -24,7 +24,7 @@ TEST = None
 def read_gitignore() -> Callable:
     """Reads the gitignore file and returns a method that can check if a path
     matches the globs"""
-    _gitignore_path = PROJECT_ROOT / ".gitignore"
+    _gitignore_path = PROJECT_PATH / ".gitignore"
 
     if not _gitignore_path.is_file():
         logger.warning("Could not find an ignore file at: {}".format(_gitignore_path))
@@ -39,7 +39,7 @@ def _build_ignore_matcher() -> List[Path]:
     _d = []
 
     for ignore_path in _IGNORE_PATHS:
-        ignore_full_path = PROJECT_ROOT / ignore_path
+        ignore_full_path = PROJECT_PATH / ignore_path
 
         if not ignore_full_path.is_dir():
             logger.warn(f"Ignore path {ignore_path} does not exist")
@@ -59,7 +59,7 @@ def _check_file_in_ignore_path(file_path: Path) -> bool:
 
         logger.debug(f"{str(file_path): <100} {str(p): <100} - {str(r)}")
 
-        if Path(r) == PROJECT_ROOT:
+        if Path(r) == PROJECT_PATH:
             return False
 
     return True
@@ -72,10 +72,10 @@ def cmd_clean_project() -> None:
     count_ignored = 0
     limit = 0
 
-    logger.info("Running from project root: {}".format(PROJECT_ROOT))
+    logger.info("Running from project root: {}".format(PROJECT_PATH))
 
     for _glob in _CLEAN_GLOBS:
-        _glob_matches = Path(PROJECT_ROOT).rglob(_glob)
+        _glob_matches = Path(PROJECT_PATH).rglob(_glob)
 
         for _m in _glob_matches:
             count_total += 1
