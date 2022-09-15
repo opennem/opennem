@@ -53,6 +53,7 @@ else:
     MODULE_DIR_PATH = Path(__file__).parent
 
 DATA_DIR_PATH = MODULE_DIR_PATH / "data"
+PROJECT_PATH = MODULE_DIR_PATH.parent
 
 
 # Setup console
@@ -62,3 +63,4 @@ console = Console()
 
 # Log current timezone to console
 print(f" * Current timezone: {str(datetime.now().astimezone().tzinfo)} (settings: {settings.timezone})")
+print(f" * Running from {PROJECT_PATH}")
