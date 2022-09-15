@@ -58,8 +58,13 @@ def group_historic_by_day(
         # convert to energy at MWh
         if series_type == SeriesType.power and not is_flow:
             series_sum /= 12000
-        elif series_type == SeriesType.power and is_flow:
+
+        if series_type == SeriesType.power and is_flow:
+            series_sum *= 12
             series_sum /= 1000
+
+        if series_type == SeriesType.emissions and is_flow:
+            series_sum *= 12
 
         values_dict[dt] = series_sum
 
