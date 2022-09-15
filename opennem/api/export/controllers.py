@@ -590,6 +590,7 @@ def price_for_network_interval(
 def power_and_emissions_for_network_interval(
     time_series: TimeSeries,
     network_region_code: str = None,
+    include_emission_factors: bool = False,
 ) -> OpennemDataSet | None:
     engine = get_database_engine()
 
@@ -640,6 +641,23 @@ def power_and_emissions_for_network_interval(
 
     if emissions_result:
         power_result.append_set(emissions_result)
+
+    if include_emission_factors:
+        emission_factor_unit = get_unit("emissions_factor")
+
+        emission_factor_results = [
+            DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row
+        ]
+
+        emission_factor_set = stats_factory(
+            emission_factor_results,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=emission_factor_unit,
+            region=network_region_code,
+            fueltech_group=True,
+        )
+        power_result.append_set(emission_factor_set)
 
     return power_result
 
