@@ -564,7 +564,13 @@ def power_and_emissions_network_fueltech_query(
             t.trading_interval at time zone '{timezone}',
             t.fueltech_code,
             sum(t.fueltech_power),
-            sum(t.emissions)
+            sum(t.emissions),
+            case
+                when sum(t.fueltech_power) <= 0
+                    then 0
+                else
+                    sum(t.emissions) / sum(t.fueltech_power) * {intervals_per_hour}
+            end
         from
         (
             select
@@ -659,12 +665,12 @@ def power_network_interconnector_emissions_query(
         sum(t.market_value_exports) / {market_value_scale} as market_value_exports,
         case
             when sum(t.imports_energy) > 0 then
-                (sum(t.imports_energy) / {energy_scale}) / (abs(sum(t.emissions_imports)) / {emissions_scale})
+                sum(t.emissions_imports) / sum(t.imports_energy) / {energy_scale}
             else 0.0
         end as imports_emission_factor,
         case
             when sum(t.emissions_exports) > 0 then
-                (sum(t.exports_energy) / {energy_scale}) / (abs(sum(t.emissions_exports)) / {emissions_scale})
+                sum(t.emissions_exports) / sum(t.exports_energy) / {energy_scale}
             else 0.0
         end as exports_emission_factor
     from (
@@ -691,9 +697,9 @@ def power_network_interconnector_emissions_query(
     """
 
     # scale using opennem.units eventually (placeholder sql var)
-    energy_scale: int = 12
-    emissions_scale: int = 12
-    market_value_scale: int = 12
+    energy_scale: int = 1
+    emissions_scale: int = 1
+    market_value_scale: int = 1
 
     timezone = time_series.network.timezone_database
     network_region_query = ""
