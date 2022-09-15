@@ -4,7 +4,8 @@ from datetime import datetime
 
 from opennem import settings
 from opennem.api.export.map import PriorityType, StatType, get_export_map
-from opennem.api.export.tasks import export_energy, export_power
+from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
+from opennem.api.stats.schema import load_opennem_dataset_from_url
 from opennem.exporter.historic import export_historic_intervals
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkNEM, NetworkWEM
@@ -26,5 +27,35 @@ def run_export_all() -> None:
     export_energy(energy_exports.resources)
 
 
+def run_weekly() -> None:
+    pass
+
+
+def test_ids() -> None:
+    u = "https://data.opennem.org.au/v3/stats/au/all/monthly.json"
+
+    ds = load_opennem_dataset_from_url(u)
+    ids = []
+
+    for series in ds.data:
+        if series.id:
+            ids.append(series.id)
+
+    unique_ids = list(set(ids))
+
+    print(f"have {len(ids)} ids and {len(unique_ids)} unique ids")
+
+    if len(ids) - len(unique_ids) != 0:
+        print("ERROR: duplicate ids")
+
+        duplicate_ids = list(set(ids) - set(unique_ids))
+        for i in duplicate_ids:
+            print(i)
+
+
 if __name__ == "__main__":
-    run_export_all()
+    # run_export_all()
+    # export_all_daily()
+
+    export_all_monthly()
+    # test_ids()
