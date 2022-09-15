@@ -58,6 +58,8 @@ def group_historic_by_day(
         # convert to energy at MWh
         if series_type == SeriesType.power and not is_flow:
             series_sum /= 12000
+        elif series_type == SeriesType.power and is_flow:
+            series_sum /= 1000
 
         values_dict[dt] = series_sum
 
@@ -139,7 +141,7 @@ def compare_series_values_approx_by_date(
 def test_compare_historic_series(fueltech_id: str, series_type: SeriesType) -> None:
     """Tests the values of the historic series against the daily energy series"""
     compare_series_values_approx_by_date(
-        fueltech_id, historic_series=nem_nsw1_week_live, energy_series=energy_series, series_type=series_type
+        fueltech_id, historic_series=nem_nsw1_week_local, energy_series=energy_series, series_type=series_type
     )
 
 
@@ -171,7 +173,7 @@ def test_historic_contains_all_ids(series_type: SeriesType, fueltech_id: str | N
 
     series_id = ".".join(series_id_components)
 
-    series_set = nem_nsw1_week_live.get_id(series_id)
+    series_set = nem_nsw1_week_local.get_id(series_id)
 
     if not series_set:
         raise Exception(f"Could not find id: {series_id}")
@@ -181,7 +183,10 @@ def test_historic_contains_all_ids(series_type: SeriesType, fueltech_id: str | N
 if __name__ == "__main__":
     try:
         compare_series_values_approx_by_date(
-            "exports", historic_series=nem_nsw1_week_live, energy_series=energy_series, series_type=SeriesType.emissions
+            "exports",
+            historic_series=nem_nsw1_week_local,
+            energy_series=energy_series,
+            series_type=SeriesType.power,
         )
     except Exception as e:
         print(e)
