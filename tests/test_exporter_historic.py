@@ -9,7 +9,12 @@ from itertools import groupby
 
 import pytest
 
-from opennem.api.stats.schema import OpennemDataHistory, load_opennem_dataset_from_file, load_opennem_dataset_from_url
+from opennem.api.stats.schema import (
+    OpennemDataHistory,
+    OpennemDataSet,
+    load_opennem_dataset_from_file,
+    load_opennem_dataset_from_url,
+)
 from opennem.utils.security import get_random_string
 from opennem.utils.tests import TEST_FIXTURE_PATH
 
@@ -26,14 +31,16 @@ class SeriesType(str, Enum):
 
 
 energy_series = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_1y.json")
-historic_series = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_week.json")
-historic_series_live = load_opennem_dataset_from_url(
+nem_nsw1_week_local = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_week.json")
+nem_nsw1_week_live = load_opennem_dataset_from_url(
     f"https://data.dev.opennem.org.au/v3/stats/historic/weekly/NEM/NSW1/year/2022/week/36.json?q={get_random_string()}"
 )
 
 
 def group_historic_by_day(
-    series: OpennemDataHistory, series_type: SeriesType = SeriesType.power
+    series: OpennemDataHistory,
+    series_type: SeriesType = SeriesType.power,
+    is_flow: bool = False,
 ) -> dict[date, ValidNumber]:
     values_dict: dict[date, ValidNumber] = {}
 
@@ -45,8 +52,11 @@ def group_historic_by_day(
 
         series_sum = sum(values_series)
 
+        if not series_sum:
+            continue
+
         # convert to energy at MWh
-        if series_sum and series_type == SeriesType.power:
+        if series_type == SeriesType.power and not is_flow:
             series_sum /= 12000
 
         values_dict[dt] = series_sum
@@ -60,6 +70,8 @@ def group_historic_by_day(
 
 def compare_series_values_approx_by_date(
     fueltech_id: str,
+    historic_series: OpennemDataSet,
+    energy_series: OpennemDataSet,
     series_type: SeriesType = SeriesType.power,
 ) -> None:
     # 1. Historic Series
@@ -71,7 +83,15 @@ def compare_series_values_approx_by_date(
     if not historic_series_fueltech or not historic_series_fueltech.history:
         raise Exception(f"Could not find series {historic_series_id}")
 
-    historic_series_values = group_historic_by_day(historic_series_fueltech.history, series_type=series_type)
+    # if its a flow type we don't need to do the sum
+    is_flow = False
+
+    if fueltech_id in ["imports", "exports"]:
+        is_flow = True
+
+    historic_series_values = group_historic_by_day(
+        historic_series_fueltech.history, series_type=series_type, is_flow=is_flow
+    )
 
     # 2. Energy Series
     # grouped by day already
@@ -90,7 +110,7 @@ def compare_series_values_approx_by_date(
     energy_series_daily_dict = {i[0].date(): i[1] for i in energy_series_values}
 
     # compare dates
-    for dt, power_value in historic_series_values.items():
+    for dt, historic_value in historic_series_values.items():
         energy_value = energy_series_daily_dict.get(dt)
 
         if not energy_value:
@@ -99,8 +119,8 @@ def compare_series_values_approx_by_date(
         # 5% tolerance
         # required as the series won't precisely match as naive energy sum per
         # interval vs full per-hour AUC-energy sum
-        if energy_value != pytest.approx(power_value, 0.5):
-            print(f"{fueltech_id}.{series_type.value} Mismatch: {dt}: {power_value} {energy_value}")
+        if energy_value != pytest.approx(historic_value, 0.5):
+            raise Exception(f"{fueltech_id}.{series_type.value} Mismatch: {dt}: {historic_value} {energy_value}")
 
 
 @pytest.mark.parametrize(
@@ -118,7 +138,9 @@ def compare_series_values_approx_by_date(
 )
 def test_compare_historic_series(fueltech_id: str, series_type: SeriesType) -> None:
     """Tests the values of the historic series against the daily energy series"""
-    compare_series_values_approx_by_date(fueltech_id, series_type)
+    compare_series_values_approx_by_date(
+        fueltech_id, historic_series=nem_nsw1_week_live, energy_series=energy_series, series_type=series_type
+    )
 
 
 @pytest.mark.parametrize(
@@ -149,7 +171,17 @@ def test_historic_contains_all_ids(series_type: SeriesType, fueltech_id: str | N
 
     series_id = ".".join(series_id_components)
 
-    series_set = historic_series.get_id(series_id)
+    series_set = nem_nsw1_week_live.get_id(series_id)
 
     if not series_set:
         raise Exception(f"Could not find id: {series_id}")
+
+
+# debug entry point for unit tests
+if __name__ == "__main__":
+    try:
+        compare_series_values_approx_by_date(
+            "exports", historic_series=nem_nsw1_week_live, energy_series=energy_series, series_type=SeriesType.emissions
+        )
+    except Exception as e:
+        print(e)
