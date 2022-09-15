@@ -612,6 +612,7 @@ class Facility(Base, BaseModel):
     unit_alias = Column(Text, nullable=True)
     unit_capacity = Column(Numeric, nullable=True)
 
+    # t CO2-e /MWh
     emissions_factor_co2 = Column(Numeric, nullable=True)
 
     # interconnector metadata
@@ -701,9 +702,15 @@ class FacilityScada(Base, BaseModel):
     trading_interval = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
 
     facility_code = Column(Text, nullable=False, primary_key=True, index=True)
+
+    # MW
     generated = Column(Numeric, nullable=True)
+
     is_forecast = Column(Boolean, default=False, primary_key=True)
+
+    # MWh
     eoi_quantity = Column(Numeric, nullable=True)
+
     energy_quality_flag = Column(Numeric, nullable=False, default=0)
 
     __table_args__ = (
@@ -811,8 +818,12 @@ class AggregateFacilityDaily(Base):
 
     fueltech_id = Column(Text, nullable=True)
 
+    # MWh
     energy = Column(Numeric, nullable=True)
+
     market_value = Column(Numeric, nullable=True)
+
+    # tCO2-e
     emissions = Column(Numeric, nullable=True)
 
     __table_args__ = (
