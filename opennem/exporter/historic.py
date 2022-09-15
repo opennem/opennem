@@ -61,7 +61,7 @@ def export_network_intervals_for_week(
 
     # power and emissions for network
     stat_set = power_and_emissions_for_network_interval(
-        time_series=time_series, network_region_code=network_region.code
+        time_series=time_series, network_region_code=network_region.code, include_emission_factors=True
     )
 
     if not stat_set:
