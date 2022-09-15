@@ -857,12 +857,14 @@ class AggregateNetworkFlows(Base, BaseModel):
 
     network_region = Column(Text, index=True, primary_key=True, nullable=False)
 
+    # GWh
     energy_imports = Column(Numeric, nullable=True)
     energy_exports = Column(Numeric, nullable=True)
 
     market_value_imports = Column(Numeric, nullable=True)
     market_value_exports = Column(Numeric, nullable=True)
 
+    # tCO2-e
     emissions_imports = Column(Numeric, nullable=True)
     emissions_exports = Column(Numeric, nullable=True)
 
