@@ -656,7 +656,17 @@ def power_network_interconnector_emissions_query(
         abs(sum(t.emissions_imports)) / {emissions_scale},
         abs(sum(t.emissions_exports)) / {emissions_scale},
         sum(t.market_value_imports) / {market_value_scale} as market_value_imports,
-        sum(t.market_value_exports) / {market_value_scale} as market_value_exports
+        sum(t.market_value_exports) / {market_value_scale} as market_value_exports,
+        case
+            when sum(t.imports_energy) > 0 then
+                (sum(t.imports_energy) / {energy_scale}) / (abs(sum(t.emissions_imports)) / {emissions_scale})
+            else 0.0
+        end as imports_emission_factor,
+        case
+            when sum(t.emissions_exports) > 0 then
+                (sum(t.exports_energy) / {energy_scale}) / (abs(sum(t.emissions_exports)) / {emissions_scale})
+            else 0.0
+        end as exports_emission_factor
     from (
         select
             time_bucket_gapfill('5 min', t.trading_interval) as trading_interval,
