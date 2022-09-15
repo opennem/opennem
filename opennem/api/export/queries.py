@@ -651,12 +651,12 @@ def power_network_interconnector_emissions_query(
     __query = """
     select
         t.trading_interval at time zone '{timezone}' as trading_interval,
-        sum(t.imports_energy),
-        sum(t.exports_energy),
-        abs(sum(t.emissions_imports)),
-        abs(sum(t.emissions_exports)),
-        sum(t.market_value_imports) as market_value_imports,
-        sum(t.market_value_exports) as market_value_exports
+        sum(t.imports_energy) / {scale},
+        sum(t.exports_energy) / {scale},
+        abs(sum(t.emissions_imports)) / {scale},
+        abs(sum(t.emissions_exports)) / {scale},
+        sum(t.market_value_imports) / {scale} as market_value_imports,
+        sum(t.market_value_exports) / {scale} as market_value_exports
     from (
         select
             time_bucket_gapfill('5 min', t.trading_interval) as trading_interval,
@@ -680,6 +680,9 @@ def power_network_interconnector_emissions_query(
 
     """
 
+    # scale using opennem.units eventually (placeholder sql var)
+    scale: int = 1
+
     timezone = time_series.network.timezone_database
     network_region_query = ""
 
@@ -699,6 +702,7 @@ def power_network_interconnector_emissions_query(
 
     query = dedent(
         __query.format(
+            scale=scale,
             timezone=timezone,
             network_id=time_series.network.code,
             date_min=date_min,
