@@ -152,7 +152,7 @@ class AEMOTableSchema(BaseConfig):
             try:
                 _df = _df.set_index(_index_keys)
             except KeyError:
-                logger.warn("Could not set index with columns: {}".format(", ".join(_index_keys)))
+                logger.warning("Could not set index with columns: {}".format(", ".join(_index_keys)))
 
         return _df
 

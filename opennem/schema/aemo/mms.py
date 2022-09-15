@@ -50,17 +50,17 @@ class MMSBase(BaseModel):
         allow_population_by_field_name = True
         alias_generator = mms_alias_generator
 
-    _validate_interval_datetime = validator(
-        "interval_datetime", pre=True, allow_reuse=True, check_fields=False
-    )(lambda x: parse_date(x, network=NetworkNEM))
+    _validate_interval_datetime = validator("interval_datetime", pre=True, allow_reuse=True, check_fields=False)(
+        lambda x: parse_date(x, network=NetworkNEM)
+    )
 
-    _validate_settlementdate = validator(
-        "settlementdate", pre=True, allow_reuse=True, check_fields=False
-    )(lambda x: parse_date(x, network=NetworkNEM))
+    _validate_settlementdate = validator("settlementdate", pre=True, allow_reuse=True, check_fields=False)(
+        lambda x: parse_date(x, network=NetworkNEM)
+    )
 
-    _validate_lastchanged = validator(
-        "lastchanged", pre=True, allow_reuse=True, check_fields=False
-    )(lambda x: parse_date(x, network=NetworkNEM))
+    _validate_lastchanged = validator("lastchanged", pre=True, allow_reuse=True, check_fields=False)(
+        lambda x: parse_date(x, network=NetworkNEM)
+    )
 
 
 class ParticipantMNSPInterconnector(MMSBase):
@@ -365,7 +365,7 @@ TABLE_TO_SCHEMA_MAP = {
 
 def get_mms_schema_for_table(table_name: str) -> Optional[MMSBaseClass]:
     if table_name.upper() not in TABLE_TO_SCHEMA_MAP.keys():
-        logger.warn("No schema found for table: {}".format(table_name))
+        logger.warning("No schema found for table: {}".format(table_name))
         return None
 
     return TABLE_TO_SCHEMA_MAP[table_name.upper()]  # type: ignore

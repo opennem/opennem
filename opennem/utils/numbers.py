@@ -155,11 +155,11 @@ def pad_time_series(series: Dict, start_date: datetime, end_date: datetime, pad_
 
     if start_date < series_min_date:
         # @TODO date - date / interval
-        logger.warn("Start date padding out")
+        logger.warning("Start date padding out")
         to_pad += 1
 
     if end_date > series_max_date:
-        logger.warn("End date pad out")
+        logger.warning("End date pad out")
         to_pad += 1
 
     return series

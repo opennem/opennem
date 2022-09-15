@@ -294,7 +294,7 @@ def string_to_title(subject: str) -> str:
 
 def normalize_string(subject: str) -> str:
     """Deprecated function alias"""
-    logger.warn("normalize_string is deprecated")
+    logger.warning("normalize_string is deprecated")
     return string_to_title(subject)
 
 
@@ -382,7 +382,7 @@ def blockwords_to_snake_case(subject: str) -> str:
 
 def normalize_aemo_region(region_code: str = "") -> str:
     """Alias for string to upper"""
-    logger.warn("normalize_aemo_region is going to be deprecated")
+    logger.warning("normalize_aemo_region is going to be deprecated")
     return string_to_upper(region_code)
 
 

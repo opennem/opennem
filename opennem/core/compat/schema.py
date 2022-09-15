@@ -86,8 +86,6 @@ class OpennemDataSetV2(BaseConfig):
             raise Exception(f"Could not search id {id}")
 
         if len(_ds) > 1:
-            logger.warn(
-                "Found more than one id matching {}: {}".format(id, ", ".join([i.id for i in _ds]))
-            )
+            logger.warning("Found more than one id matching {}: {}".format(id, ", ".join([i.id for i in _ds])))
 
         return _ds.pop()

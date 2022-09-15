@@ -27,7 +27,7 @@ def read_gitignore() -> Callable:
     _gitignore_path = PROJECT_ROOT / ".gitignore"
 
     if not _gitignore_path.is_file():
-        logger.warn("Could not find an ignore file at: {}".format(_gitignore_path))
+        logger.warning("Could not find an ignore file at: {}".format(_gitignore_path))
         return lambda x: False
 
     gitignores = parse_gitignore(_gitignore_path)
@@ -99,9 +99,7 @@ def cmd_clean_project() -> None:
             else:
                 count_cleaned += 1
 
-    logger.info(
-        f"Completed. Scanned {count_total} files and deleted {count_cleaned} ignoring {count_ignored}"
-    )
+    logger.info(f"Completed. Scanned {count_total} files and deleted {count_cleaned} ignoring {count_ignored}")
 
 
 if __name__ == "__main__":

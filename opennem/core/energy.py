@@ -59,9 +59,7 @@ def __trading_energy_generator(
             trading_interval = d_ti.index[0] + timedelta(minutes=5)
         # interpolate if it isn't padded out
         elif d_ti[power_field].count() != 7:
-            index_interpolated = pd.date_range(
-                start=t_i, end=t_f, freq="5min", tz=NetworkNEM.get_timezone()
-            )
+            index_interpolated = pd.date_range(start=t_i, end=t_f, freq="5min", tz=NetworkNEM.get_timezone())
 
             d_ti = d_ti.reset_index()
             d_ti = d_ti.set_index("trading_interval")
@@ -70,7 +68,7 @@ def __trading_energy_generator(
             d_ti[power_field] = d_ti[power_field].replace(np.NaN, 0)
 
             if d_ti[power_field].count() != 7:
-                logger.warn("Interpolated frame didn't match generated count")
+                logger.warning("Interpolated frame didn't match generated count")
 
         try:
             if d_ti.fueltech_id.all() != "solar_rooftop":
@@ -118,9 +116,7 @@ def __trading_energy_generator_hour(
             trading_interval = d_ti.index[0] + timedelta(minutes=5)
         # interpolate if it isn't padded out
         elif d_ti[power_field].count() != 7:
-            index_interpolated = pd.date_range(
-                start=t_i, end=t_f, freq="5min", tz=NetworkNEM.get_timezone()
-            )
+            index_interpolated = pd.date_range(start=t_i, end=t_f, freq="5min", tz=NetworkNEM.get_timezone())
 
             d_ti = d_ti.reset_index()
             d_ti = d_ti.set_index("trading_interval")
@@ -129,7 +125,7 @@ def __trading_energy_generator_hour(
             d_ti[power_field] = d_ti[power_field].replace(np.NaN, 0)
 
             if d_ti[power_field].count() != 7:
-                logger.warn("Interpolated frame didn't match generated count")
+                logger.warning("Interpolated frame didn't match generated count")
 
         try:
             if d_ti.fueltech_id.all() != "solar_rooftop":
@@ -190,9 +186,7 @@ def _energy_aggregate_compat(df: pd.DataFrame) -> pd.DataFrame:
         for duid in sorted(df.facility_code.unique()):
             energy_genrecs += [d for d in __trading_energy_generator(df, day, duid)]
 
-    df = pd.DataFrame(
-        energy_genrecs, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"]
-    )
+    df = pd.DataFrame(energy_genrecs, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"])
 
     return df
 
@@ -208,9 +202,7 @@ def _energy_aggregate_hours(df: pd.DataFrame) -> pd.DataFrame:
         for duid in sorted(df.facility_code.unique()):
             energy_genrecs += [d for d in __trading_energy_generator_hour(df, hour, duid)]
 
-    df = pd.DataFrame(
-        energy_genrecs, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"]
-    )
+    df = pd.DataFrame(energy_genrecs, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"])
 
     return df
 
@@ -252,9 +244,7 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> Optional[float]:
     return bucket_energy
 
 
-def _energy_aggregate(
-    df: pd.DataFrame, power_column: str = "generated", zero_fill: bool = False
-) -> pd.DataFrame:
+def _energy_aggregate(df: pd.DataFrame, power_column: str = "generated", zero_fill: bool = False) -> pd.DataFrame:
     """v3 version of energy aggregate for energy_sum - iterates over time bucekts with edges"""
     in_cap = {}
     capture: Dict[str, Any] = {}
@@ -287,14 +277,10 @@ def _energy_aggregate(
         else:
             capture[duid].append(value[power_column])
 
-    return pd.DataFrame(
-        values, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"]
-    )
+    return pd.DataFrame(values, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"])
 
 
-def shape_energy_dataframe(
-    gen_series: List[Dict], network: NetworkSchema = NetworkNEM
-) -> pd.DataFrame:
+def shape_energy_dataframe(gen_series: List[Dict], network: NetworkSchema = NetworkNEM) -> pd.DataFrame:
     """Shapes a list of dicts into a dataframe for energy_sum"""
     df = pd.DataFrame(
         gen_series,
@@ -312,9 +298,7 @@ def shape_energy_dataframe(
     df.generated = pd.to_numeric(df.generated)
 
     # timezone from network
-    df.trading_interval = df.apply(
-        lambda x: pd.Timestamp(x.trading_interval, tz=network.get_fixed_offset()), axis=1
-    )
+    df.trading_interval = df.apply(lambda x: pd.Timestamp(x.trading_interval, tz=network.get_fixed_offset()), axis=1)
 
     return df
 
@@ -336,11 +320,7 @@ def energy_sum(
         df = df.set_index(["trading_interval"])
         if hours:
             if len(list(get_hour_range(df))) == 0:
-                logger.warning(
-                    "energy_sum error for network {}: Got no hours from hour range".format(
-                        network.code
-                    )
-                )
+                logger.warning("energy_sum error for network {}: Got no hours from hour range".format(network.code))
 
             df = _energy_aggregate_hours(df)
         else:

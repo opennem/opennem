@@ -4,16 +4,9 @@ from pathlib import Path
 from typing import List
 
 from opennem.db import get_database_engine
-from opennem.db.views.queries import (
-    get_all_views_query,
-    get_query_drop_view,
-    get_view_unique_index_query,
-)
+from opennem.db.views.queries import get_all_views_query, get_query_drop_view, get_view_unique_index_query
 
-from .continuous_aggregates import (
-    create_continuous_aggregation_query,
-    remove_continuous_aggregation_query,
-)
+from .continuous_aggregates import create_continuous_aggregation_query, remove_continuous_aggregation_query
 from .schema import ContinuousAggregationPolicy, ViewDefinition
 
 logger = logging.getLogger("opennem.db.views")
@@ -21,9 +14,7 @@ logger = logging.getLogger("opennem.db.views")
 VIEW_PATH = Path(__file__).parent.parent / "fixtures" / "views"
 
 
-AggregationPolicy30Minutes = ContinuousAggregationPolicy(
-    interval="30 minutes", start_interval="2 hours"
-)
+AggregationPolicy30Minutes = ContinuousAggregationPolicy(interval="30 minutes", start_interval="2 hours")
 
 AggregationPolicy2Hours = ContinuousAggregationPolicy(
     interval="2 hours", start_interval="6 hours", end_interval="2 hours"
@@ -150,7 +141,7 @@ def init_database_views() -> None:
             try:
                 c.execute(drop_query)
             except Exception:
-                logger.warn("Could not drop view {}".format(view.name))
+                logger.warning("Could not drop view {}".format(view.name))
 
             # create
             create_query = get_view_content(view)
@@ -192,7 +183,7 @@ def init_aggregation_policies() -> None:
                 logger.debug(drop_query)
                 c.execute(drop_query)
             except Exception:
-                logger.warn("Could not drop continuous aggregation query: {}".format(view.name))
+                logger.warning("Could not drop continuous aggregation query: {}".format(view.name))
                 pass
 
             create_query = create_continuous_aggregation_query(view)
@@ -202,22 +193,14 @@ def init_aggregation_policies() -> None:
             try:
                 c.execute(create_query)
             except Exception as e:
-                logger.warn("Could not create continuous aggregation query: {}".format(e))
+                logger.warning("Could not create continuous aggregation query: {}".format(e))
 
 
 def get_materialized_view_names() -> List[str]:
     """Returns a list of material view names in priority order"""
-    return list(
-        v.name
-        for v in filter(
-            lambda x: x.materialized is True and x.aggregation_policy is None, _VIEW_MAP
-        )
-    )
+    return list(v.name for v in filter(lambda x: x.materialized is True and x.aggregation_policy is None, _VIEW_MAP))
 
 
 def get_timescale_view_names() -> List[str]:
     """Returns a list of timescale view names in priority order"""
-    return list(
-        v.name
-        for v in filter(lambda x: x.materialized is True and x.aggregation_policy, _VIEW_MAP)
-    )
+    return list(v.name for v in filter(lambda x: x.materialized is True and x.aggregation_policy, _VIEW_MAP))

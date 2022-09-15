@@ -47,12 +47,10 @@ def twilio_message(msg: str) -> bool:
         return False
 
     if not settings.monitoring_alert_sms:
-        logger.warn("No receiving alert SMS defined")
+        logger.warning("No receiving alert SMS defined")
         return False
 
-    twilio_client.messages.create(
-        to=settings.monitoring_alert_sms, from_=settings.twilio_from_number, body=msg
-    )
+    twilio_client.messages.create(to=settings.monitoring_alert_sms, from_=settings.twilio_from_number, body=msg)
 
     return True
 
