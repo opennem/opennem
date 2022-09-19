@@ -697,9 +697,9 @@ def power_network_interconnector_emissions_query(
     """
 
     # scale using opennem.units eventually (placeholder sql var)
-    energy_scale: int = 1
-    emissions_scale: int = 1
-    market_value_scale: int = 1
+    energy_scale: int = time_series.network.intervals_per_hour
+    emissions_scale: int = time_series.network.intervals_per_hour
+    market_value_scale: int = time_series.network.intervals_per_hour
 
     timezone = time_series.network.timezone_database
     network_region_query = ""
