@@ -94,7 +94,7 @@
   {
     "name": "emissions_factor",
     "unit_type": "emissions_factor",
-    "unit": "tCO2e/MW"
+    "unit": "tCO2e/MWh"
   },
   {
     "name": "cpi",
