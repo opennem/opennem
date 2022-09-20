@@ -8,24 +8,43 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Tuple
 
-from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.loader import load_data
-from opennem.core.normalizers import normalize_duid
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import BomStation, Facility, FacilityStatus, FuelTech, Network, NetworkRegion, Station
+from opennem.db.models.opennem import BomStation, FacilityStatus, FuelTech, FuelTechGroup, Network, NetworkRegion
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.db.load_fixtures")
 
 
 def load_fueltechs() -> None:
     """
-    Load the fueltechs fixture
+    Load the fueltechs and fueltech groups fixture
     """
-    fixture = load_data("fueltechs.json", from_fixture=True)
+    fueltech_groups = load_data("fueltech_groups.json", from_fixture=True)
+    fueltechs = load_data("fueltechs.json", from_fixture=True)
 
     s = SessionLocal()
 
-    for ft in fixture:
+    for ftg in fueltech_groups:
+        fueltech_group = s.query(FuelTechGroup).filter_by(code=ftg["code"]).one_or_none()
+
+        if not fueltech_group:
+            fueltech_group = FuelTechGroup(
+                code=ftg["code"],
+            )
+
+        fueltech_group.label = ftg.get("label")
+
+        try:
+            s.add(fueltech_group)
+            s.commit()
+            logger.info("Loaded fueltech group {}".format(fueltech_group.code))
+        except Exception:
+            logger.error("Have fueltech group {}".format(fueltech_group.code))
+            s.rollback()
+        finally:
+            pass
+
+    for ft in fueltechs:
         fueltech = s.query(FuelTech).filter_by(code=ft["code"]).one_or_none()
 
         if not fueltech:
@@ -33,8 +52,9 @@ def load_fueltechs() -> None:
                 code=ft["code"],
             )
 
-        fueltech.label = ft["label"]
-        fueltech.renewable = ft["renewable"]
+        fueltech.label = ft.get("label", "")
+        fueltech.renewable = ft.get("renewable", False)
+        fueltech.fueltech_group_id = ft.get("fueltech_group_id")
 
         try:
             s.add(fueltech)
