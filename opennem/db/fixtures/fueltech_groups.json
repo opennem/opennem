@@ -1,0 +1,42 @@
+[
+  {
+    "code": "coal",
+    "label": "Coal"
+  },
+  {
+    "code": "gas",
+    "label": "Gas"
+  },
+  {
+    "code": "wind",
+    "label": "Wind"
+  },
+  {
+    "code": "solar",
+    "label": "Solar"
+  },
+  {
+    "code": "battery_charging",
+    "label": "Battery (Charging)"
+  },
+  {
+    "code": "battery_discharging",
+    "label": "Battery (Discharging)"
+  },
+  {
+    "code": "hydro",
+    "label": "Hyrdo"
+  },
+  {
+    "code": "distillate",
+    "label": "Distillate"
+  },
+  {
+    "code": "bioenergy",
+    "label": "Bioenergy"
+  },
+  {
+    "code": "pumps",
+    "label": "Pumps"
+  }
+]
