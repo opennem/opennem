@@ -2,92 +2,110 @@
   {
     "code": "battery_charging",
     "label": "Battery (Charging)",
-    "renewable": true
+    "renewable": true,
+    "fueltech_group_id": "battery_charging"
   },
   {
     "code": "battery_discharging",
     "label": "Battery (Discharging)",
-    "renewable": true
+    "renewable": true,
+    "fueltech_group_id": "battery_discharging"
   },
   {
     "code": "bioenergy_biogas",
     "label": "Biogas",
-    "renewable": false
+    "renewable": false,
+    "fueltech_group_id": "bioenergy"
   },
   {
     "code": "bioenergy_biomass",
     "label": "Biomass",
-    "renewable": false
+    "renewable": false,
+    "fueltech_group_id": "bioenergy"
   },
   {
     "code": "coal_black",
     "label": "Coal (Black)",
-    "renewable": false
+    "renewable": false,
+    "fueltech_group_id": "coal"
   },
   {
     "code": "coal_brown",
     "label": "Coal (Brown)",
-    "renewable": false
+    "renewable": false,
+    "fueltech_group_id": "coal"
   },
   {
     "code": "distillate",
     "label": "Distillate",
-    "renewable": false
+    "renewable": false,
+    "fueltech_group_id": "distillate"
   },
   {
     "code": "gas_ccgt",
     "label": "Gas (CCGT)",
-    "renewable": false
+    "renewable": false,
+    "fueltech_group_id": "gas"
   },
   {
     "code": "gas_ocgt",
     "label": "Gas (OCGT)",
-    "renewable": false
+    "renewable": false,
+    "fueltech_group_id": "gas"
   },
   {
     "code": "gas_recip",
     "label": "Gas (Reciprocating)",
-    "renewable": false
+    "renewable": false,
+    "fueltech_group_id": "gas"
   },
   {
     "code": "gas_steam",
     "label": "Gas (Steam)",
-    "renewable": false
+    "renewable": false,
+    "fueltech_group_id": "gas"
   },
   {
     "code": "gas_wcmg",
     "label": "Gas (Coal Mine Waste)",
-    "renewable": false
+    "renewable": false,
+    "fueltech_group_id": "gas"
   },
   {
     "code": "hydro",
     "label": "Hyrdo",
-    "renewable": true
+    "renewable": true,
+    "fueltech_group_id": "hydro"
   },
   {
     "code": "pumps",
     "label": "Pumps",
-    "renewable": true
+    "renewable": true,
+    "fueltech_group_id": "pumps"
   },
   {
     "code": "solar_utility",
     "label": "Solar (Utility)",
-    "renewable": true
+    "renewable": true,
+    "fueltech_group_id": "solar"
   },
   {
     "code": "solar_thermal",
     "label": "Solar (Thermal)",
-    "renewable": true
+    "renewable": true,
+    "fueltech_group_id": "solar"
   },
   {
     "code": "solar_rooftop",
     "label": "Solar (Rooftop)",
-    "renewable": true
+    "renewable": true,
+    "fueltech_group_id": "solar"
   },
   {
     "code": "wind",
     "label": "Wind",
-    "renewable": true
+    "renewable": true,
+    "fueltech_group_id": "wind"
   },
   {
     "code": "aggregator_vpp",
