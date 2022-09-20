@@ -123,12 +123,20 @@ class CrawlHistory(Base):
     processed_time = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class FuelTechGroup(Base, BaseModel):
+    __tablename__ = "fueltech_group"
+
+    code = Column(Text, primary_key=True)
+    label = Column(Text, nullable=True)
+
+
 class FuelTech(Base, BaseModel):
     __tablename__ = "fueltech"
 
     code = Column(Text, primary_key=True)
     label = Column(Text, nullable=True)
     renewable = Column(Boolean, default=False)
+    fueltech_group_id = Column(Text, ForeignKey("fueltech_group.code"), nullable=True)
 
     facilities = relationship("Facility")
 
