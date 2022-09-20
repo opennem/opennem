@@ -12,7 +12,7 @@ import click
 from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_all_monthly, export_energy, export_power
 from opennem.core.crawlers.cli import cmd_crawl_cli
-from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures
+from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures, load_fueltechs
 from opennem.db.tasks import refresh_views
 from opennem.db.views import init_aggregation_policies
 from opennem.db.views.init import init_views_cli
@@ -87,6 +87,11 @@ def cmd_import_opennem() -> None:
 def cmd_import_facilities() -> None:
     import_all_facilities()
     export_facility_geojson()
+
+
+@click.command()
+def cmd_import_fueltechs() -> None:
+    load_fueltechs()
 
 
 @click.command()
@@ -189,6 +194,7 @@ cmd_import.add_command(cmd_import_opennem, name="opennem")
 cmd_import.add_command(cmd_import_mms, name="mms")
 cmd_import.add_command(cmd_import_all, name="all")
 cmd_import.add_command(cmd_import_facilities, name="facilities")
+cmd_import.add_command(cmd_import_fueltechs, name="fueltechs")
 cmd_import.add_command(cmd_import_bom_stations, name="bom")
 
 cmd_export.add_command(cmd_export_all, name="all")
