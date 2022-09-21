@@ -26,7 +26,12 @@ from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.utils.dates import get_last_complete_day_for_network, get_week_number_from_datetime, week_series_datetimes
+from opennem.utils.dates import (
+    get_last_complete_day_for_network,
+    get_week_number_from_datetime,
+    get_week_start_from_week_num,
+    week_series_datetimes,
+)
 
 logger = logging.getLogger("opennem.export.historic")
 
@@ -170,6 +175,29 @@ def export_historic_intervals(
                     raise Exception(f"export_historic_intervals error: {e}")
 
 
+def export_historic_for_year_and_week_no(
+    year: int, week_no: int, networks: list[NetworkSchema], network_region_code: str | None = None
+) -> None:
+    """Export historic intervals for a particular year and week"""
+    session = get_scoped_session()
+
+    for network in networks:
+        week_start = get_week_start_from_week_num(year, week_no).astimezone(network.get_timezone())  # type: ignore
+        week_end = week_start + timedelta(days=6)
+
+        # query out the regions and filter
+        query = session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code)
+
+        if network_region_code:
+            query = query.filter(NetworkRegion.code == network_region_code)
+
+        network_regions: list[NetworkRegion] = query.all()
+
+        for network_region in network_regions:
+            export_network_intervals_for_week(week_start, week_end, network=network, network_region=network_region)
+
+
 if __name__ == "__main__":
     # export_historic_intervals()
-    export_historic_intervals(limit=1, networks=[NetworkNEM], network_region_code="NSW1")
+    # export_historic_intervals(limit=52)
+    export_historic_for_year_and_week_no(2022, 36, [NetworkNEM], network_region_code="NSW1")
