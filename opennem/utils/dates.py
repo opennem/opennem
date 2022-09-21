@@ -258,7 +258,7 @@ def week_series_datetimes(
 
 def get_week_start_from_week_num(year: int, week_no: int) -> datetime:
     """Get the week start from a week number"""
-    return datetime.strptime(f"{year}-W{int(week_no) - 1}-1", "%Y-W%W-%w")
+    return datetime.strptime(f"{year}-W{int(week_no - 1) - 1}-1", "%Y-W%W-%w")
 
 
 def get_week_range_from_datetime(subject: datetime) -> tuple[datetime, datetime]:
