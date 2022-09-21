@@ -256,6 +256,11 @@ def week_series_datetimes(
         yield get_week_range_from_datetime(cur_date)
 
 
+def get_week_start_from_week_num(year: int, week_no: int) -> datetime:
+    """Get the week start from a week number"""
+    return datetime.strptime(f"{year}-W{int(week_no) - 1}-1", "%Y-W%W-%w")
+
+
 def get_week_range_from_datetime(subject: datetime) -> tuple[datetime, datetime]:
     """Get the datetime range of a week from a datetime"""
     start = subject - timedelta(days=subject.weekday())
