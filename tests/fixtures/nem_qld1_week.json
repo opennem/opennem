@@ -1,10 +1,10 @@
 {
   "type": "power",
-  "version": "3.11.3-alpha.10",
+  "version": "3.11.3-beta.0",
   "network": "nem",
   "code": "QLD1",
   "region": "QLD1",
-  "created_at": "2022-09-22T06:03:36+10:00",
+  "created_at": "2022-09-22T09:33:04+10:00",
   "data": [
     {
       "id": "au.nem.qld1.demand",
@@ -57378,11 +57378,11 @@
           13.3,
           13.3,
           13.1,
-          13.2,
+          null,
           13,
-          12.9,
+          null,
           12.5,
-          12.3,
+          null,
           11.8,
           11.9,
           13,
