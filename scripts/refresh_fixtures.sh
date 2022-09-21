@@ -10,6 +10,9 @@ REGIONS_ALL=("NSW1" "QLD1" "VIC1" "TAS1" "SA1")
 REGION_TO_FETCH="NSW1"
 WEEK_TO_FETCH="36"
 
+# refresh exports
+python -c "from opennem.schema.network import NetworkNEM; from opennem.exporter.historic import export_historic_for_year_and_week_no; export_historic_for_year_and_week_no(2022, 36, [NetworkNEM])"
+
 for i in "${REGIONS_ALL[@]}"
 do
    :
