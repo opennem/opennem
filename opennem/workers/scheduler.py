@@ -41,6 +41,7 @@ from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.notifications.slack import slack_message
+from opennem.schema.network import NetworkNEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import daily_runner
 from opennem.workers.daily_summary import run_daily_fueltech_summary
@@ -196,7 +197,7 @@ def db_run_daily_fueltech_summary() -> None:
     if settings.env != "production":
         return None
 
-    run_daily_fueltech_summary()
+    run_daily_fueltech_summary(network=NetworkNEM)
 
 
 @huey.periodic_task(crontab(minute="*/60"), priority=80)
