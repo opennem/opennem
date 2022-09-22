@@ -3,22 +3,19 @@ Tests for the per-interval export series in opennem.exporter.historic
 
 
 """
+from dataclasses import dataclass
 from datetime import date
 from enum import Enum
 from itertools import groupby
 
 import pytest
 
-from opennem.api.stats.schema import (
-    OpennemDataHistory,
-    OpennemDataSet,
-    load_opennem_dataset_from_file,
-    load_opennem_dataset_from_url,
-)
-from opennem.utils.security import get_random_string
+from opennem.api.stats.schema import OpennemDataHistory, OpennemDataSet, load_opennem_dataset_from_file
 from opennem.utils.tests import TEST_FIXTURE_PATH
 
 ValidNumber = float | int
+
+REGIONS = ["NSW1", "VIC1", "SA1", "QLD1", "TAS1"]
 
 
 class SeriesType(str, Enum):
@@ -30,11 +27,27 @@ class SeriesType(str, Enum):
     temperature = "temperature"
 
 
-energy_series = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_1y.json")
-nem_nsw1_week_local = load_opennem_dataset_from_file(TEST_FIXTURE_PATH / "nem_nsw1_week.json")
-nem_nsw1_week_live = load_opennem_dataset_from_url(
-    f"https://data.dev.opennem.org.au/v3/stats/historic/weekly/NEM/NSW1/year/2022/week/36.json?q={get_random_string()}"
-)
+@dataclass
+class RegionSeries:
+    power: OpennemDataSet
+    daily: OpennemDataSet
+    weekly: OpennemDataSet
+
+
+FIXTURE_SET: dict[str, RegionSeries] = {}
+
+
+def load_region_fixtures() -> None:
+    for region in REGIONS:
+        if region not in FIXTURE_SET:
+            FIXTURE_SET[region] = RegionSeries(
+                power=load_opennem_dataset_from_file(TEST_FIXTURE_PATH / f"nem_{region.lower()}_7d.json"),
+                daily=load_opennem_dataset_from_file(TEST_FIXTURE_PATH / f"nem_{region.lower()}_1y.json"),
+                weekly=load_opennem_dataset_from_file(TEST_FIXTURE_PATH / f"nem_{region.lower()}_week.json"),
+            )
+
+
+load_region_fixtures()
 
 
 def group_historic_by_day(
@@ -131,43 +144,46 @@ def compare_series_values_approx_by_date(
 
 
 @pytest.mark.parametrize(
-    ["fueltech_id", "series_type"],
+    ["region_id", "fueltech_id", "series_type"],
     [
-        ("coal_black", SeriesType.power),
-        ("coal_black", SeriesType.emissions),
-        ("gas_ccgt", SeriesType.power),
-        ("gas_ccgt", SeriesType.emissions),
-        ("exports", SeriesType.power),
-        ("exports", SeriesType.emissions),
-        ("imports", SeriesType.power),
-        ("imports", SeriesType.emissions),
+        ("NSW1", "coal_black", SeriesType.power),
+        ("NSW1", "coal_black", SeriesType.emissions),
+        ("NSW1", "gas_ccgt", SeriesType.power),
+        ("NSW1", "gas_ccgt", SeriesType.emissions),
+        ("NSW1", "exports", SeriesType.power),
+        ("NSW1", "exports", SeriesType.emissions),
+        ("NSW1", "imports", SeriesType.power),
+        ("NSW1", "imports", SeriesType.emissions),
     ],
 )
-def test_compare_historic_series(fueltech_id: str, series_type: SeriesType) -> None:
+def test_compare_nem_weekly_series(region_id: str, fueltech_id: str, series_type: SeriesType) -> None:
     """Tests the values of the historic series against the daily energy series"""
+    weekly_series = FIXTURE_SET[region_id].weekly
+    daily_series = FIXTURE_SET[region_id].daily
+
     compare_series_values_approx_by_date(
-        fueltech_id, historic_series=nem_nsw1_week_local, energy_series=energy_series, series_type=series_type
+        fueltech_id, historic_series=weekly_series, energy_series=daily_series, series_type=series_type
     )
 
 
 @pytest.mark.parametrize(
-    ["series_type", "fueltech_id"],
+    ["region_id", "series_type", "fueltech_id"],
     [
-        (SeriesType.power, "coal_black"),
-        (SeriesType.power, "wind"),
-        (SeriesType.emissions, "coal_black"),
-        (SeriesType.power, "imports"),
-        (SeriesType.emissions, "imports"),
-        (SeriesType.power, "exports"),
-        (SeriesType.emissions, "exports"),
-        (SeriesType.power, "imports"),
-        (SeriesType.emissions, "imports"),
-        (SeriesType.demand, None),
-        (SeriesType.temperature, None),
-        (SeriesType.price, None),
+        ("NSW1", SeriesType.power, "coal_black"),
+        ("NSW1", SeriesType.power, "wind"),
+        ("NSW1", SeriesType.emissions, "coal_black"),
+        ("NSW1", SeriesType.power, "imports"),
+        ("NSW1", SeriesType.emissions, "imports"),
+        ("NSW1", SeriesType.power, "exports"),
+        ("NSW1", SeriesType.emissions, "exports"),
+        ("NSW1", SeriesType.power, "imports"),
+        ("NSW1", SeriesType.emissions, "imports"),
+        ("NSW1", SeriesType.demand, None),
+        ("NSW1", SeriesType.temperature, None),
+        ("NSW1", SeriesType.price, None),
     ],
 )
-def test_historic_contains_all_ids(series_type: SeriesType, fueltech_id: str | None) -> None:
+def test_weekly_contains_all_ids(region_id: str, series_type: SeriesType, fueltech_id: str | None) -> None:
     series_id_components = ["au.nem.nsw1"]
 
     if fueltech_id:
@@ -178,7 +194,7 @@ def test_historic_contains_all_ids(series_type: SeriesType, fueltech_id: str | N
 
     series_id = ".".join(series_id_components)
 
-    series_set = nem_nsw1_week_local.get_id(series_id)
+    series_set = FIXTURE_SET[region_id].weekly.get_id(series_id)
 
     if not series_set:
         raise Exception(f"Could not find id: {series_id}")
@@ -189,8 +205,8 @@ if __name__ == "__main__":
     try:
         compare_series_values_approx_by_date(
             "exports",
-            historic_series=nem_nsw1_week_local,
-            energy_series=energy_series,
+            historic_series=FIXTURE_SET["NSW1"].weekly,
+            energy_series=FIXTURE_SET["NSW1"].daily,
             series_type=SeriesType.power,
         )
     except Exception as e:
