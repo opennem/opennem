@@ -142,6 +142,8 @@ services:
       - APVI_TOKEN
       - HTTPS_PROXY_URL
       - SLACK_ADMIN_ALERT
+      - CLOUDFLARE_ACCOUNT_ID
+      - CLOUDFLARE_API_KEY
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=true"
