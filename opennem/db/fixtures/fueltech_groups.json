@@ -1,42 +1,52 @@
 [
   {
     "code": "coal",
-    "label": "Coal"
+    "label": "Coal",
+    "color": "#4a4a4a"
   },
   {
     "code": "gas",
-    "label": "Gas"
+    "label": "Gas",
+    "color": "#FF8813"
   },
   {
     "code": "wind",
-    "label": "Wind"
+    "label": "Wind",
+    "color": "#417505"
   },
   {
     "code": "solar",
-    "label": "Solar"
+    "label": "Solar",
+    "color": "#FED500"
   },
   {
     "code": "battery_charging",
-    "label": "Battery (Charging)"
+    "label": "Battery (Charging)",
+    "color": "#B2DAEF"
   },
   {
     "code": "battery_discharging",
-    "label": "Battery (Discharging)"
+    "label": "Battery (Discharging)",
+    "color": "#00A2FA"
   },
   {
     "code": "hydro",
-    "label": "Hyrdo"
+    "label": "Hyrdo",
+    "color": "#4582B4"
   },
   {
     "code": "distillate",
-    "label": "Distillate"
+    "label": "Distillate",
+    "color": "#F35020"
   },
   {
     "code": "bioenergy",
-    "label": "Bioenergy"
+    "label": "Bioenergy",
+    "color": "#A3886F"
   },
   {
     "code": "pumps",
-    "label": "Pumps"
+    "label": "Pumps",
+    "color": "#88AFD0"
   }
 ]

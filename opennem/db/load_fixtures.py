@@ -33,6 +33,7 @@ def load_fueltechs() -> None:
             )
 
         fueltech_group.label = ftg.get("label")
+        fueltech_group.color = ftg.get("color")
 
         try:
             s.add(fueltech_group)
