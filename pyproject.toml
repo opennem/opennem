@@ -156,6 +156,10 @@ force_grid_wrap = 0
 use_parentheses = true
 line_length = 120
 
+[tool.refurb]
+ignore = []
+load = ["opennem"]
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
