@@ -421,13 +421,20 @@ def run_flow_updates_all_per_year(year_start: int, years: int = 1) -> None:
             )
 
 
-def run_flow_updates_all_for_nem() -> None:
-    run_flow_updates_all_per_year(datetime.now().year, 28)
+def run_flow_updates_all_for_network(network: NetworkSchema) -> None:
+    """Run the entire emissions flow for a network"""
+    current_year = datetime.now().year
+
+    if not network.data_first_seen:
+        raise FlowWorkerException(f"No data first seen for network {network.code}")
+
+    for year in range(current_year, network.data_first_seen.year, -1):
+        run_flow_updates_all_per_year(year)
 
 
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_flow_updates_all_for_nem()
+    run_flow_updates_all_for_network(network=NetworkNEM)
     # run_emission_update_day(days=12)
     # run_flow_updates_all_per_year(datetime.now().year, 1)
