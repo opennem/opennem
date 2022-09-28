@@ -128,6 +128,7 @@ class FuelTechGroup(Base, BaseModel):
 
     code = Column(Text, primary_key=True)
     label = Column(Text, nullable=True)
+    color = Column(Text, nullable=True)
 
 
 class FuelTech(Base, BaseModel):
