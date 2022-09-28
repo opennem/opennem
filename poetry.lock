@@ -1573,6 +1573,17 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 hiredis = ["hiredis (>=0.1.3)"]
 
 [[package]]
+name = "refurb"
+version = "1.0.0"
+description = "A tool for refurbish and modernize Python codebases"
+category = "dev"
+optional = false
+python-versions = ">=3.10,<4.0"
+
+[package.dependencies]
+mypy = ">=0.981,<0.982"
+
+[[package]]
 name = "requests"
 version = "2.28.1"
 description = "Python HTTP for Humans."
@@ -2196,7 +2207,7 @@ postgres = ["psycopg2"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "d8febac92381ed499c285d50dc0551ed52be9640409fd46aa6eef12c4e6534c6"
+content-hash = "5c989756525bc44a6174ea09797d71d795bb18f62e843a2136b645aceee1ce76"
 
 [metadata.files]
 aiodns = [
@@ -3730,6 +3741,10 @@ pyyaml = [
 redis = [
     {file = "redis-3.4.1-py2.py3-none-any.whl", hash = "sha256:b205cffd05ebfd0a468db74f0eedbff8df1a7bfc47521516ade4692991bb0833"},
     {file = "redis-3.4.1.tar.gz", hash = "sha256:0dcfb335921b88a850d461dc255ff4708294943322bd55de6cfd68972490ca1f"},
+]
+refurb = [
+    {file = "refurb-1.0.0-py3-none-any.whl", hash = "sha256:02f594820b6b2ff63c44679eb14729271a1806089e70b17c6981ea09ee30845c"},
+    {file = "refurb-1.0.0.tar.gz", hash = "sha256:c3015ef2db9bc8feb64c7646cfa6850a7bde9e2f03a6d4b2be832e85cdd0c0c7"},
 ]
 requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},

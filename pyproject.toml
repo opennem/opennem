@@ -105,6 +105,7 @@ aws-cdk-lib = "^2.9.0"
 uvicorn = "^0.18.2"
 pyflakes = "^2.4.0"
 mccabe = "^0.7.0"
+refurb = "^1.0.0"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
