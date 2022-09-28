@@ -20,6 +20,10 @@ else:
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 
+class SettingsException(Exception):
+    pass
+
+
 class OpennemSettings(BaseSettings):
     env: str = "development"
 
@@ -158,7 +162,7 @@ class OpennemSettings(BaseSettings):
         _log_value = log_value.upper().strip()
 
         if _log_value not in SUPPORTED_LOG_LEVEL_NAMES:
-            raise Exception("Invalid log level: {}".format(_log_value))
+            raise SettingsException(f"Invalid log level: {_log_value}")
 
         return _log_value
 
@@ -168,22 +172,20 @@ class OpennemSettings(BaseSettings):
 
     @property
     def static_folder_path(self) -> str:
-        _path: Path = Path(self._static_folder_path)
+        static_path: Path = Path(self._static_folder_path)
 
-        if not _path.is_dir():
-            raise Exception("{} is not a folder".format(_path))
+        if not static_path.is_dir():
+            raise SettingsException(f"{static_path} is not a folder")
 
-        return str(_path.resolve())
+        return str(static_path.resolve())
 
     @property
     def debug(self) -> bool:
-        if self.env in ["development", "staging"]:
-            return True
-        return False
+        return self.env in ("development", "staging")
 
     @property
     def is_prod(self) -> bool:
-        return self.env == "production" or self.env == "prod"
+        return self.env in ("production", "prod")
 
     class Config:
         fields = {
