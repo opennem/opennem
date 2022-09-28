@@ -15,6 +15,10 @@ from opennem.schema.time import TimeInterval
 from .core import BaseConfig
 
 
+class NetworkSchemaException(Exception):
+    pass
+
+
 class NetworkNetworkRegion(BaseConfig):
     code: str
 
@@ -61,12 +65,7 @@ class NetworkSchema(BaseConfig):
     has_interconnectors: bool = Field(False, description="Network has interconnectors")
 
     def get_interval(self) -> Optional[TimeInterval]:
-        if not self.interval_size:
-            return None
-
-        interval = get_interval_by_size(self.interval_size)
-
-        return interval
+        return get_interval_by_size(self.interval_size) if self.interval_size else None
 
     def get_timezone(self, postgres_format: bool = False) -> ZoneInfo | str:
         """Get the network timezone
@@ -74,29 +73,19 @@ class NetworkSchema(BaseConfig):
         @TODO define crawl timezones vs network timezone
         @TODO clean this up and separate out postres format to another parameter
         """
-        tz: ZoneInfo | str | None = None
-
-        # If a fixed offset is defined for the network use that
-        if self.offset:
-            tz = timezone(timedelta(seconds=self.offset * 60))  # type: ignore
-
+        tz: timezone | ZoneInfo | None = timezone(timedelta(seconds=self.offset * 60)) if self.offset else None
         # If the network alternatively defines a timezone
         if not tz and self.timezone:
             tz = ZoneInfo(self.timezone)
 
-        if postgres_format:
-            return str(tz)[:3]
-
-        return tz
+        return str(tz)[:3] if postgres_format else tz
 
     def get_crawl_timezone(self) -> Any:
-        tz = ZoneInfo(self.timezone)
-
-        return tz
+        return ZoneInfo(self.timezone)
 
     def get_fixed_offset(self) -> Union[Any, tzinfo]:
         if not self.offset:
-            raise Exception("No offset set")
+            raise NetworkSchemaException("No offset set")
 
         return timezone(timedelta(seconds=self.offset * 60))
 
@@ -106,10 +95,7 @@ class NetworkSchema(BaseConfig):
 
     def get_networks_query(self) -> list["NetworkSchema"]:
         """Returns a full list of network and sub-networks for queries"""
-        if not self.subnetworks:
-            return [self]
-
-        return [self] + self.subnetworks
+        return [self] + self.subnetworks if self.subnetworks else [self]
 
 
 class NetworkRegion(BaseConfig):
