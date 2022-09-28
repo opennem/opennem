@@ -78,7 +78,7 @@ class NetworkSchema(BaseConfig):
         if not tz and self.timezone:
             tz = ZoneInfo(self.timezone)
 
-        return str(tz)[:3] if postgres_format else tz
+        return str(tz)[:3] if postgres_format and tz else tz
 
     def get_crawl_timezone(self) -> Any:
         return ZoneInfo(self.timezone)
