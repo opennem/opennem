@@ -245,12 +245,12 @@ def calc_flow_for_day(day: datetime) -> pd.DataFrame:
     return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter)
 
 
-def calc_flows_for_range(date_start: datetime, date_end: datetime) -> pd.DataFrame:
+def calc_flows_for_range(date_start: datetime, date_end: datetime, network: NetworkSchema) -> pd.DataFrame:
     """For a particular day calculate all flow values"""
 
-    df_inter = load_interconnector_intervals(date_start=date_start, date_end=date_end)
+    df_inter = load_interconnector_intervals(date_start=date_start, date_end=date_end, network=network)
 
-    df_energy = load_energy_emission_mv_intervals(date_start=date_start, date_end=date_end)
+    df_energy = load_energy_emission_mv_intervals(date_start=date_start, date_end=date_end, network=network)
 
     return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter)
 
@@ -344,11 +344,14 @@ def run_and_store_emission_flows(day: datetime) -> None:
     insert_flows(emissions_day)
 
 
-def run_and_store_flows_for_range(date_start: datetime, date_end: datetime) -> None:
+def run_and_store_flows_for_range(date_start: datetime, date_end: datetime, network: NetworkSchema | None = None) -> None:
     """Runs and stores emission flows into the aggregate table"""
 
+    if not network:
+        network = NetworkNEM
+
     try:
-        emissions_day = calc_flows_for_range(date_start, date_end)
+        emissions_day = calc_flows_for_range(date_start, date_end, network=network)
     except Exception as e:
         logger.error(f"Flow storage error: {e}")
         return None
@@ -393,8 +396,13 @@ def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) ->
         current_day -= timedelta(days=1)
 
 
-def run_flow_updates_all_per_year(year_start: int, years: int = 1) -> None:
+def run_flow_updates_all_per_year(year_start: int, years: int = 1, network = NetworkSchema | None = None) -> None:
     """Run emission flow updates by year"""
+
+    # default to NEM for now with no param
+    if not network:
+        network = NetworkNEM
+
     for year in range(year_start, year_start - years, -1):
         date_start = datetime.fromisoformat(f"{year}-01-01T00:00:00+10:00")
         date_end = datetime.fromisoformat(f"{year}-12-31T00:00:00+10:00") + timedelta(days=1)
@@ -404,13 +412,14 @@ def run_flow_updates_all_per_year(year_start: int, years: int = 1) -> None:
         if date_end > today_nem:
             date_end = today_nem + timedelta(days=1)
 
-        if NetworkNEM.data_first_seen and year == NetworkNEM.data_first_seen.year:
+        if network.data_first_seen and year == network.data_first_seen.year:
             date_start = NetworkNEM.data_first_seen
 
-        if NetworkNEM.data_first_seen and year < NetworkNEM.data_first_seen.year:
-            logger.info(f"Skipping year {year} since it is earler than earliest date {NetworkNEM.data_first_seen}")
-
+        if network.data_first_seen and year < network.data_first_seen.year:
+            logger.info(f"Skipping year {year} since it is earler than earliest date {network.data_first_seen}")
             continue
+
+        if
 
         logger.info(f"Running flow_updates_per_year for {year} ({date_start} => {date_end})")
 
@@ -429,7 +438,7 @@ def run_flow_updates_all_for_network(network: NetworkSchema) -> None:
         raise FlowWorkerException(f"No data first seen for network {network.code}")
 
     for year in range(current_year, network.data_first_seen.year, -1):
-        run_flow_updates_all_per_year(year)
+        run_flow_updates_all_per_year(year, network=network)
 
 
 # debug entry point
