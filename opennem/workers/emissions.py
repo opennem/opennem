@@ -344,7 +344,9 @@ def run_and_store_emission_flows(day: datetime) -> None:
     insert_flows(emissions_day)
 
 
-def run_and_store_flows_for_range(date_start: datetime, date_end: datetime, network: NetworkSchema | None = None) -> None:
+def run_and_store_flows_for_range(
+    date_start: datetime, date_end: datetime, network: NetworkSchema | None = None
+) -> None:
     """Runs and stores emission flows into the aggregate table"""
 
     if not network:
@@ -413,13 +415,14 @@ def run_flow_updates_all_per_year(year_start: int, years: int = 1, network: Netw
             date_end = today_nem + timedelta(days=1)
 
         if network.data_first_seen and year == network.data_first_seen.year:
-            date_start = NetworkNEM.data_first_seen
+            date_start = network.data_first_seen
 
         if network.data_first_seen and year < network.data_first_seen.year:
             logger.info(f"Skipping year {year} since it is earler than earliest date {network.data_first_seen}")
             continue
 
-        if
+        if network.data_first_seen and date_start < network.data_first_seen:
+            date_start = network.data_first_seen
 
         logger.info(f"Running flow_updates_per_year for {year} ({date_start} => {date_end})")
 
@@ -437,7 +440,7 @@ def run_flow_updates_all_for_network(network: NetworkSchema) -> None:
     if not network.data_first_seen:
         raise FlowWorkerException(f"No data first seen for network {network.code}")
 
-    for year in range(current_year, network.data_first_seen.year, -1):
+    for year in range(current_year, network.data_first_seen.year - 1, -1):
         run_flow_updates_all_per_year(year, network=network)
 
 
