@@ -389,14 +389,14 @@ def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) ->
     current_day = date_start
 
     while current_day >= date_end:
-        logger.info("Running emission update for {}".format(current_day))
+        logger.info(f"Running emission update for {current_day}")
 
         run_and_store_emission_flows(current_day)
 
         current_day -= timedelta(days=1)
 
 
-def run_flow_updates_all_per_year(year_start: int, years: int = 1, network = NetworkSchema | None = None) -> None:
+def run_flow_updates_all_per_year(year_start: int, years: int = 1, network: NetworkSchema | None = None) -> None:
     """Run emission flow updates by year"""
 
     # default to NEM for now with no param
