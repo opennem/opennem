@@ -259,12 +259,14 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
 
+    datetime_now = datetime.now()
+
     flow_results.reset_index(inplace=True)
 
     # Add metadata
     flow_results["created_by"] = "opennem.worker.emissions"
     flow_results["created_at"] = ""
-    flow_results["updated_at"] = datetime.now()
+    flow_results["updated_at"] = datetime_now
 
     # # reorder columns
     columns = [
