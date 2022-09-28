@@ -42,17 +42,17 @@ def save_image_to_cloudflare(image: bytes) -> CloudflareImageResponse:
     try:
         response = http.post(cfimage_url, headers=headers, files=file_upload)
 
-        if not response.ok:
-            logger.debug(response.text)
-            raise CloudflareImageException(f"Response error: {response.status_code}")
-
-        try:
-            json_response = response.json()
-        except ValueError:
-            raise CloudflareImageException("Bad response json")
-
     except RequestException as e:
-        raise CloudflareImageException(f"Request error: {e}")
+        raise CloudflareImageException(f"Request error: {e}") from e
+
+    if not response.ok:
+        logger.debug(response.text)
+        raise CloudflareImageException(f"Response error: {response.status_code}")
+
+    try:
+        json_response = response.json()
+    except ValueError:
+        raise CloudflareImageException("Bad response json") from e
 
     if not json_response:
         raise CloudflareImageException("No json response")
@@ -67,7 +67,10 @@ def save_image_to_cloudflare(image: bytes) -> CloudflareImageResponse:
     if not json_response["success"]:
         raise CloudflareImageException("Bad response no success")
 
-    model = CloudflareImageResponse(**json_response["result"])
+    try:
+        model = CloudflareImageResponse(**json_response["result"])
+    except Exception as e:
+        raise CloudflareImageException("Bad response model") from e
 
     return model
 
