@@ -1,23 +1,16 @@
 """
 Daily summary - fueltechs as proportion of demand
-and other stats per network
+and other stats per network query
 """
 import logging
 from datetime import datetime, timedelta
-from operator import attrgetter
 from textwrap import dedent
-from typing import List
 
 from datetime_truncate import truncate as date_trunc
 
-from opennem.core.templates import serve_template
-from opennem.db import get_database_engine
-from opennem.notifications.slack import slack_message
-from opennem.schema.core import BaseConfig
-from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.settings import settings  # noqa: F401
-from opennem.utils.dates import DATE_YESTERDAY
+from opennem.schema.network import NetworkSchema
 from opennem.utils.sql import duid_in_case
+from opennem.utils.timezone import is_aware
 
 logger = logging.getLogger("opennem.workers.daily_summary")
 
@@ -39,7 +32,6 @@ order by 1 desc),
 
 ftt as (select
     date_trunc('day', fs.trading_interval at time zone '{tz}') as trading_day,
---    fs.network_id,
     sum(fs.eoi_quantity) as generated_total
 from facility_scada fs
 left join facility f on f.code = fs.facility_code
@@ -54,9 +46,9 @@ order by 1 desc)
 
 select
     date_trunc('day', fs.trading_interval at time zone '{tz}') as trading_day,
-    fs.network_id,
-    f.fueltech_id,
-    ft.label,
+    ftg.code,
+    ftg.label,
+    ftg.color,
     ft.renewable,
     round(sum(fs.eoi_quantity), 2) as energy,
     round(max(ftt.generated_total), 2) as generated_total,
@@ -65,6 +57,7 @@ select
 from facility_scada fs
 left join facility f on fs.facility_code = f.code
 join fueltech ft on f.fueltech_id = ft.code
+join fueltech_group ftg on ft.fueltech_group_id = ftg.code
 left join dt on dt.trading_day = date_trunc('day', fs.trading_interval at time zone '{tz}')
 left join ftt on ftt.trading_day = date_trunc('day', fs.trading_interval at time zone '{tz}')
 where
@@ -73,15 +66,24 @@ where
     and fs.network_id IN ('{network_id}', 'AEMO_ROOFTOP')
     and f.fueltech_id not in ({fueltechs_excluded})
     and f.dispatch_type = 'GENERATOR'
-group by 1, 3, 2, 4, 5;
+group by 1, 2, 3, 4, 5;
 """
 
 
-def get_daily_fueltech_summary_query(day: datetime = DATE_YESTERDAY, network: NetworkSchema = NetworkNEM) -> str:
-    EXCLUDE_FUELTECHS = ["imports", "exports", "interconnector", "battery_discharging"]
+def get_daily_fueltech_summary_query(
+    day: datetime, network: NetworkSchema, fueltechs_excluded: list[str] = None
+) -> str:
+    """Get the fueltech summary query for a day and for a network"""
 
-    day_date = day.replace(tzinfo=network.get_fixed_offset())
+    # default list of excluded fueltechs
+    if fueltechs_excluded is None:
+        fueltechs_excluded = ["imports", "exports", "interconnector", "battery_discharging"]
 
+    # If the date doesn't have a timezone apply network timezone
+    if not is_aware(day):
+        day_date = day.replace(tzinfo=network.get_fixed_offset())
+
+    # Trunc the date to midnight and add the end of day as max
     date_min = date_trunc(day_date, truncate_to="day")
     date_max = date_min + timedelta(days=1)
 
@@ -90,7 +92,7 @@ def get_daily_fueltech_summary_query(day: datetime = DATE_YESTERDAY, network: Ne
         date_max=date_max,
         tz=network.timezone_database,
         network_id=network.code,
-        fueltechs_excluded=duid_in_case(EXCLUDE_FUELTECHS),
+        fueltechs_excluded=duid_in_case(fueltechs_excluded),
     )
 
     return dedent(query)
