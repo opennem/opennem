@@ -41,21 +41,14 @@ class AEMOClosureRecord(BaseConfig):
     expected_closure_year: Optional[int]
     expected_closure_date: Optional[datetime]
 
-    _validate_closure_year = validator("expected_closure_year", pre=True)(
-        _clean_expected_closure_year
-    )
+    _validate_closure_year = validator("expected_closure_year", pre=True)(_clean_expected_closure_year)
 
-    _clean_duid = validator("duid", pre=True)(normalize_duid)
+    _clean_duid = validator("duid", pre=True, allow_reuse=True)(normalize_duid)
 
 
 def parse_aemo_closures_xls() -> List[AEMOClosureRecord]:
     """Parse the AEMO NEM closures spreadsheet"""
-    aemo_path = (
-        Path(__file__).parent.parent.parent
-        / "data"
-        / "aemo"
-        / "generating-unit-expected-closure-year.xlsx"
-    )
+    aemo_path = Path(__file__).parent.parent.parent / "data" / "aemo" / "generating-unit-expected-closure-year.xlsx"
 
     if not aemo_path.is_file():
         raise Exception("Not found: {}".format(aemo_path))
