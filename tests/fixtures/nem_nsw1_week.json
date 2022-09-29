@@ -1,10 +1,10 @@
 {
   "type": "power",
-  "version": "3.11.3-beta.1",
+  "version": "3.11.3-beta.2",
   "network": "nem",
   "code": "NSW1",
   "region": "NSW1",
-  "created_at": "2022-09-29T10:07:00+10:00",
+  "created_at": "2022-09-29T12:44:17+10:00",
   "data": [
     {
       "id": "au.nem.nsw1.demand",
