@@ -15,14 +15,7 @@ import platform
 from huey import PriorityRedisHuey, crontab
 
 from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
-from opennem.api.export.tasks import (
-    export_all_daily,
-    export_all_monthly,
-    export_electricitymap,
-    export_flows,
-    export_metadata,
-    export_power,
-)
+from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
 from opennem.crawl import run_crawl
 from opennem.crawlers.apvi import APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
@@ -41,10 +34,8 @@ from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.notifications.slack import slack_message
-from opennem.schema.network import NetworkNEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import daily_runner
-from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
@@ -219,7 +210,7 @@ def db_facility_seen_update() -> None:
 @huey.lock_task("run_run_network_data_range_update")
 def run_run_network_data_range_update() -> None:
     run_network_data_range_update()
-    slack_message("Ran network data range on {}".format(settings.env))
+    slack_message(f"Ran network data range on {settings.env}")
 
 
 @huey.periodic_task(crontab(hour="1,12", minute="30"))
