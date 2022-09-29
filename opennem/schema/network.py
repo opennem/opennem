@@ -8,7 +8,6 @@ from zoneinfo import ZoneInfo
 
 from pydantic import Field
 
-from opennem import settings
 from opennem.core.time import get_interval_by_size
 from opennem.schema.time import TimeInterval
 
@@ -88,6 +87,9 @@ class NetworkSchema(BaseConfig):
             raise NetworkSchemaException("No offset set")
 
         return timezone(timedelta(seconds=self.offset * 60))
+
+    def get_offset_string(self) -> str:
+        return self.get_fixed_offset().replace("UTC", "") if isinstance(self.get_fixed_offset(), timezone) else ""
 
     @property
     def intervals_per_hour(self) -> float:
