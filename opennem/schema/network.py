@@ -89,7 +89,7 @@ class NetworkSchema(BaseConfig):
         return timezone(timedelta(seconds=self.offset * 60))
 
     def get_offset_string(self) -> str:
-        return self.get_fixed_offset().replace("UTC", "") if isinstance(self.get_fixed_offset(), timezone) else ""
+        return str(self.get_fixed_offset()).replace("UTC", "") if isinstance(self.get_fixed_offset(), timezone) else ""
 
     @property
     def intervals_per_hour(self) -> float:
