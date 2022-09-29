@@ -144,7 +144,6 @@ services:
       - SLACK_ADMIN_ALERT
       - CLOUDFLARE_ACCOUNT_ID
       - CLOUDFLARE_API_KEY
-      - MONITORING_SLACK_HOOK
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=true"
