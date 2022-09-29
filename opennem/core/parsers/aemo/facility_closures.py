@@ -29,10 +29,7 @@ CLOSURE_SHEET_FIELDS = [
 
 def _clean_expected_closure_year(closure_year: Union[str, int]) -> Optional[int]:
     """Clean up expected closure year because sometimes they just put comments in the field"""
-    if is_number(closure_year):
-        return int(closure_year)
-
-    return None
+    return int(closure_year) if is_number(closure_year) else None
 
 
 class AEMOClosureRecord(BaseConfig):
