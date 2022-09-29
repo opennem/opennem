@@ -14,8 +14,17 @@ with Betamax.configure() as config:
 PATH_TESTS_ROOT = Path(__file__).parent
 PATH_TESTS_FIXTURES = PATH_TESTS_ROOT / "fixtures"
 
+
+class TestSetupException(Exception):
+    pass
+
+
+class TestException(Exception):
+    pass
+
+
 if not PATH_TESTS_FIXTURES.is_dir():
-    raise Exception("Test fixtures path not found: {}".format(PATH_TESTS_FIXTURES))
+    raise TestSetupException("Test fixtures path not found: {}".format(PATH_TESTS_FIXTURES))
 
 
 def load_fixture_file(filename: str) -> str:
@@ -23,7 +32,7 @@ def load_fixture_file(filename: str) -> str:
     fixture_path = PATH_TESTS_FIXTURES / Path(filename)
 
     if not fixture_path.is_file():
-        raise Exception("Not a file: {}".format(filename))
+        raise TestSetupException("Not a file: {}".format(filename))
 
     fixture_content = ""
 
@@ -38,11 +47,9 @@ def load_fixture_file_binary(filename: str, directory: str = "files") -> io.Byte
     fixture_path = PATH_TESTS_FIXTURES / directory / filename
 
     if not fixture_path.is_file():
-        raise Exception("Could not find excel fixture at {}".format(fixture_path))
+        raise TestSetupException("Could not find excel fixture at {}".format(fixture_path))
 
-    fixture_content = io.open(fixture_path, mode="rb")
-
-    return fixture_content
+    return io.open(fixture_path, mode="rb")
 
 
 @pytest.fixture
