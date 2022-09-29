@@ -82,11 +82,10 @@ def load_interconnector_intervals(
     return df_gen
 
 
-def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime) -> pd.DataFrame:
+def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, network: NetworkSchema) -> pd.DataFrame:
     """Fetch all emission, market value and emission intervals by network region"""
 
     engine = get_database_engine()
-    network = NetworkNEM
 
     query = """
         select
@@ -113,7 +112,7 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime) 
                     bs.network_region,
                     locf(bs.price) as price
                 from balancing_summary bs
-                    where bs.network_id='NE{network_id}M'
+                    where bs.network_id='{network_id}'
             ) as  bsn on
                 bsn.trading_interval = fs.trading_interval
                 and bsn.network_id = n.network_price
