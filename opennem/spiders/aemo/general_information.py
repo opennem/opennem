@@ -1,14 +1,8 @@
+import contextlib
 from io import BytesIO
 
-try:
+with contextlib.suppress(ImportError):
     from openpyxl import load_workbook
-except ImportError:
-    pass
-
-from opennem.pipelines.aemo.general_information import (
-    GeneralInformationGrouperPipeline,
-    GeneralInformationStoragePipeline,
-)
 
 
 # class AEMOGeneralInformationCurrentSpider(scrapy.Spider):
@@ -51,8 +45,6 @@ class Spider:
         "SurveyEffective",
     ]
 
-    pipelines_extra = set([GeneralInformationGrouperPipeline, GeneralInformationStoragePipeline])
-
     def parse(self, response):
         wb = load_workbook(BytesIO(response.body), data_only=True)
 
@@ -64,7 +56,7 @@ class Spider:
 
             # pick out the columns we want
             # lots of hidden columns in the sheet
-            row_collapsed = row[0:10] + (row[11],) + row[12:19] + row[21:]
+            row_collapsed = row[:10] + (row[11],) + row[12:19] + row[21:]
 
             return_dict = dict(zip(self.keys, list(row_collapsed)))
 
