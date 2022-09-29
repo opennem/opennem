@@ -49,7 +49,7 @@ def google_geocode(query, region=None, api_key=None, return_full_response=False)
 
     url_params["components"] = "|".join(f"{k}:{v}" for k, v in query_components.items())
 
-    results = requests.get(GOOGLE_PLACES_URL, params=url_params).json()
+    results = http.get(GOOGLE_PLACES_URL, params=url_params).json()
 
     logging.debug(results)
 
