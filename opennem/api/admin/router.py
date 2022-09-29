@@ -36,9 +36,7 @@ def scraper_stats(
     if not len(results):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not implemented")
 
-    result = []
-
-    result.append(
+    result = [
         ScraperStatsResult(
             network=NetworkWEM,
             stats=ScraperStats(
@@ -47,7 +45,7 @@ def scraper_stats(
                 scada_min=results[0][2],
             ),
         )
-    )
+    ]
 
     result.append(
         ScraperStatsResult(
