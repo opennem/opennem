@@ -13,6 +13,7 @@ from opennem.exporter.historic import export_historic_intervals
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days, run_aggregates_demand_network
+from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import (
     run_emission_update_day,
     run_flow_updates_all_for_network,
@@ -44,6 +45,10 @@ def daily_runner(days: int = 2) -> None:
 
     export_all_daily()
     export_all_monthly()
+
+    # Skip if we're not on prod
+    if settings.env != "production":
+        run_daily_fueltech_summary(network=NetworkNEM)
 
     # send a slack message when done
     slack_message(f"Ran daily_runner on {settings.env}")
