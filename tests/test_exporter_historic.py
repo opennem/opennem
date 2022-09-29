@@ -13,6 +13,8 @@ import pytest
 from opennem.api.stats.schema import OpennemDataHistory, OpennemDataSet, load_opennem_dataset_from_file
 from opennem.utils.tests import TEST_FIXTURE_PATH
 
+from .conftest import TestException
+
 ValidNumber = float | int
 
 REGIONS = ["NSW1", "VIC1", "SA1", "QLD1", "TAS1"]
@@ -101,13 +103,9 @@ def compare_series_values_approx_by_date(
     historic_series_fueltech = historic_series.get_id(historic_series_id)
 
     if not historic_series_fueltech or not historic_series_fueltech.history:
-        raise Exception(f"Could not find series {historic_series_id}")
+        raise TestException(f"Could not find series {historic_series_id}")
 
-    # if its a flow type we don't need to do the sum
-    is_flow = False
-
-    if fueltech_id in ["imports", "exports"]:
-        is_flow = True
+    is_flow = fueltech_id in {"imports", "exports"}
 
     historic_series_values = group_historic_by_day(
         historic_series_fueltech.history, series_type=series_type, is_flow=is_flow
@@ -122,7 +120,7 @@ def compare_series_values_approx_by_date(
     energy_series_fueltech = energy_series.get_id(energy_series_id)
 
     if not energy_series_fueltech:
-        raise Exception(f"Could not find energy series with id {energy_series_id}")
+        raise TestException(f"Could not find energy series with id {energy_series_id}")
 
     energy_series_values = energy_series_fueltech.history.values()
 
@@ -134,13 +132,13 @@ def compare_series_values_approx_by_date(
         energy_value = energy_series_daily_dict.get(dt)
 
         if not energy_value:
-            raise Exception(f"Date {dt} not in yearly_energy_dict")
+            raise TestException(f"Date {dt} not in yearly_energy_dict")
 
         # 5% tolerance
         # required as the series won't precisely match as naive energy sum per
         # interval vs full per-hour AUC-energy sum
         if energy_value != pytest.approx(historic_value, 0.5):
-            raise Exception(f"{fueltech_id}.{series_type.value} Mismatch: {dt}: {historic_value} {energy_value}")
+            raise TestException(f"{fueltech_id}.{series_type.value} Mismatch: {dt}: {historic_value} {energy_value}")
 
 
 @pytest.mark.parametrize(
@@ -187,8 +185,7 @@ def test_weekly_contains_all_ids(region_id: str, series_type: SeriesType, fuelte
     series_id_components = ["au.nem.nsw1"]
 
     if fueltech_id:
-        series_id_components.append("fuel_tech")
-        series_id_components.append(fueltech_id)
+        series_id_components.extend(("fuel_tech", fueltech_id))
 
     series_id_components.append(series_type.value)
 
@@ -197,7 +194,7 @@ def test_weekly_contains_all_ids(region_id: str, series_type: SeriesType, fuelte
     series_set = FIXTURE_SET[region_id].weekly.get_id(series_id)
 
     if not series_set:
-        raise Exception(f"Could not find id: {series_id}")
+        raise TestException(f"Could not find id: {series_id}")
 
 
 # debug entry point for unit tests
