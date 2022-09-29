@@ -31,11 +31,7 @@ def test_ids() -> None:
     u = "https://data.opennem.org.au/v3/stats/au/all/monthly.json"
 
     ds = load_opennem_dataset_from_url(u)
-    ids = []
-
-    for series in ds.data:
-        if series.id:
-            ids.append(series.id)
+    ids = [series.id for series in ds.data if series.id]
 
     unique_ids = list(set(ids))
 
