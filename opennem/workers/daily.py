@@ -39,7 +39,7 @@ def daily_runner(days: int = 2) -> None:
     export_energy(energy_exports.resources)
 
     # export historic intervals
-    for network in {NetworkNEM, NetworkWEM}:
+    for network in [NetworkNEM, NetworkWEM]:
         export_historic_intervals(limit=1, networks=[network])
 
     export_all_daily()
