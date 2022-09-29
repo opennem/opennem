@@ -52,7 +52,7 @@ def save_image_to_cloudflare(image: bytes) -> CloudflareImageResponse:
 
     try:
         json_response = response.json()
-    except ValueError:
+    except ValueError as e:
         raise CloudflareImageException("Bad response json") from e
 
     if not json_response:
