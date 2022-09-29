@@ -8,14 +8,13 @@ from datetime import datetime
 
 from opennem import settings
 from opennem.api.export.map import PriorityType, StatType, get_export_map
-from opennem.api.export.tasks import export_energy, export_power
+from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.exporter.historic import export_historic_intervals
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days, run_aggregates_demand_network
 from opennem.workers.emissions import (
     run_emission_update_day,
-    run_flow_updates_all_for_nem,
     run_flow_updates_all_for_network,
     run_flow_updates_all_per_year,
 )
@@ -25,6 +24,7 @@ logger = logging.getLogger("opennem.worker.daily")
 
 
 def daily_runner(days: int = 2) -> None:
+    """Daily task runner - runs after success of overnight crawls"""
     run_energy_gapfill(days=days)
     run_flow_updates_all_per_year(datetime.now().year, 1)
     run_emission_update_day(days=days)
@@ -42,6 +42,9 @@ def daily_runner(days: int = 2) -> None:
     for network in {NetworkNEM, NetworkWEM}:
         export_historic_intervals(limit=1, networks=[network])
 
+    export_all_daily()
+    export_all_monthly()
+
     # send a slack message when done
     slack_message(f"Ran daily_runner on {settings.env}")
 
@@ -58,6 +61,9 @@ def all_runner() -> None:
     # run the exports for all
     export_power(latest=False)
     export_energy(latest=False)
+
+    export_all_daily()
+    export_all_monthly()
 
     # send slack message when done
     slack_message(f"ran all_runner on {settings.env}")
