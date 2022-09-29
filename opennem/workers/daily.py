@@ -12,7 +12,7 @@ from opennem.api.export.tasks import export_all_daily, export_all_monthly, expor
 from opennem.exporter.historic import export_historic_intervals
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkNEM, NetworkWEM
-from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days, run_aggregates_demand_network
+from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import (
     run_emission_update_day,
