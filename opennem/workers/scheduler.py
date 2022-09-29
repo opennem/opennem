@@ -183,15 +183,6 @@ def schedule_export_metadata() -> None:
 
 
 # Monitoring tasks
-@huey.periodic_task(crontab(hour="23", minute="45"))
-@huey.lock_task("db_run_daily_fueltech_summary")
-def db_run_daily_fueltech_summary() -> None:
-    if settings.env != "production":
-        return None
-
-    run_daily_fueltech_summary(network=NetworkNEM)
-
-
 @huey.periodic_task(crontab(minute="*/60"), priority=80)
 @huey.lock_task("monitor_opennem_intervals")
 def monitor_opennem_intervals() -> None:
