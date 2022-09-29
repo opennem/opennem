@@ -16,6 +16,7 @@ from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_da
 from opennem.workers.emissions import (
     run_emission_update_day,
     run_flow_updates_all_for_nem,
+    run_flow_updates_all_for_network,
     run_flow_updates_all_per_year,
 )
 from opennem.workers.gap_fill.energy import run_energy_gapfill
@@ -38,7 +39,7 @@ def daily_runner(days: int = 2) -> None:
     export_energy(energy_exports.resources)
 
     # export historic intervals
-    for network in [NetworkNEM, NetworkWEM]:
+    for network in {NetworkNEM, NetworkWEM}:
         export_historic_intervals(limit=1, networks=[network])
 
     # send a slack message when done
@@ -50,7 +51,7 @@ def all_runner() -> None:
     run_energy_gapfill(days=365)
 
     # populates the aggregate tables
-    run_flow_updates_all_for_nem()
+    run_flow_updates_all_for_network(network=NetworkNEM)
     run_emission_update_day(days=365)
     run_aggregates_all()
 
