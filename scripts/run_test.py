@@ -10,11 +10,7 @@ from opennem.exporter.historic import export_historic_intervals
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days, run_aggregates_demand_network
-from opennem.workers.emissions import (
-    run_emission_update_day,
-    run_flow_updates_all_for_nem,
-    run_flow_updates_all_per_year,
-)
+from opennem.workers.emissions import run_emission_update_day, run_flow_updates_all_per_year
 from opennem.workers.gap_fill.energy import run_energy_gapfill
 
 logger = logging.getLogger("opennem.run_test")
