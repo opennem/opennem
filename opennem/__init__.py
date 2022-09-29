@@ -62,5 +62,5 @@ from rich.console import Console  # noqa: E402
 console = Console()
 
 # Log current timezone to console
-print(f" * Current timezone: {str(datetime.now().astimezone().tzinfo)} (settings: {settings.timezone})")
+print(f" * Current timezone: {datetime.now().astimezone().tzinfo} (settings: {settings.timezone})")
 print(f" * Running from {PROJECT_PATH}")
