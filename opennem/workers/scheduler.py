@@ -156,14 +156,6 @@ def schedule_custom_tasks() -> None:
         export_flows()
 
 
-@huey.periodic_task(crontab(hour="22", minute="15"), priority=50)
-@huey.lock_task("schedule_export_all_daily")
-def schedule_export_all_daily() -> None:
-    if settings.workers_run:
-        export_all_daily()
-        export_all_monthly()
-
-
 @huey.periodic_task(crontab(hour="2", minute="19"))
 @huey.lock_task("schedule_power_weeklies")
 def schedule_power_weeklies() -> None:
