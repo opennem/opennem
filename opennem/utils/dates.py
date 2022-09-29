@@ -273,6 +273,11 @@ def get_week_number_from_datetime(subject: datetime) -> int:
     return subject.isocalendar().week
 
 
+def get_current_week_for_network(network: NetworkSchema) -> int:
+    """Gets the current week for a network"""
+    return datetime.now().astimezone(network.get_fixed_offset()).date().isocalendar().week
+
+
 def chop_delta_microseconds(delta: timedelta) -> timedelta:
     """Removes microsevonds from a timedelta"""
     return delta - timedelta(microseconds=delta.microseconds)
