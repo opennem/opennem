@@ -367,8 +367,8 @@ def demand_week(
         logger.debug(query)
         row = list(c.execute(query))
 
-    if len(row) < 1:
-        logger.error("No results from network_demand_query with {}".format(time_series))
+    if not row:
+        logger.error(f"No results from network_demand_query with {time_series}")
         return None
 
     demand = [DataQueryResult(interval=i[0], result=i[2], group_by="demand" if len(i) > 1 else None) for i in row]
@@ -383,7 +383,7 @@ def demand_week(
     )
 
     if not result:
-        logger.error("No results from network_demand_query with {}".format(time_series))
+        logger.error(f"No results from network_demand_query with {time_series}")
         return None
 
     return result
@@ -840,9 +840,6 @@ def energy_interconnector_flows_and_emissions(
         region=network_region_code,
         fueltech_group=True,
     )
-
-    if not result:
-        raise Exception("No results from flow controller")
 
     result_exports = stats_factory(
         exports,
