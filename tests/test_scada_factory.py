@@ -25,10 +25,7 @@ def get_power_example() -> OpennemDataSet:
             test_rows.append([dt, ft, v])
             dt = dt + timedelta(minutes=5)
 
-    stats = [
-        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-        for i in test_rows
-    ]
+    stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in test_rows]
 
     assert len(stats) == 6, "Should have 6 stats"
 
@@ -37,7 +34,6 @@ def get_power_example() -> OpennemDataSet:
         code=network_region_code or network.code,
         network=network,
         interval=interval,
-        period=period,
         units=units,
         region=network_region_code,
         fueltech_group=True,
@@ -101,7 +97,6 @@ def test_power_data_series() -> None:
         assert isinstance(data_set, OpennemData), "Data set is a valid data set schema"
         assert hasattr(data_set, "id"), "Has an id"
         assert hasattr(data_set, "type"), "Has a type attribute"
-        assert hasattr(data_set, "code"), "Has a code"
         assert hasattr(data_set, "units"), "Has units attribute"
         assert hasattr(data_set, "history"), "Has history"
 
