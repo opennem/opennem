@@ -44,7 +44,7 @@ class DailySummary(BaseConfig):
 
     @property
     def renewable_proportion(self) -> float:
-        return sum([i.demand_proportion for i in filter(lambda x: x.renewable is True, self.results)])
+        return sum(i.demand_proportion for i in filter(lambda x: x.renewable is True, self.results))
 
     @property
     def total_energy(self) -> float:
