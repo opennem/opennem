@@ -19,7 +19,9 @@ logger = logging.getLogger("opennem.run_test")
 def run_export_all() -> None:
     # run exports for all
     export_map = get_export_map()
-    energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
+    energy_exports = (
+        export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly).get_by_network_region("NSW1")
+    )
     export_energy(energy_exports.resources)
 
 
@@ -48,6 +50,7 @@ def test_ids() -> None:
 if __name__ == "__main__":
     # run_export_all()
     # export_all_daily()
+    run_export_all()
 
-    export_all_monthly()
+    # export_all_monthly()
     # test_ids()
