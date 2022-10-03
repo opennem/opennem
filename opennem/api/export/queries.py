@@ -763,8 +763,8 @@ def demand_network_region_query(
         where
             {network_query}
             {network_region}
-            trading_day >= '{date_min}'::date and
-            trading_day <= '{date_max}'::date
+            trading_day >= '{date_min}' and
+            trading_day <= '{date_max}'
         group by 1,2 {group_by}
         order by
             1 asc
