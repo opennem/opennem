@@ -14,6 +14,8 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 
+from datetime_truncate import truncate as date_trunc
+
 from opennem.api.export.controllers import (
     NoResults,
     demand_network_region_daily,
@@ -340,7 +342,9 @@ def export_all_monthly() -> None:
                 interval=human_to_interval("1M"),
                 period=human_to_period("all"),
                 time_range=DatetimeRange(
-                    start=scada_range.start, end=scada_range.end, interval=human_to_interval("1M")
+                    start=date_trunc(scada_range.start, "month"),
+                    end=date_trunc(scada_range.end, "month"),
+                    interval=human_to_interval("1M"),
                 ),
             )
 
@@ -423,7 +427,9 @@ def export_all_daily(networks: List[NetworkSchema] = None, network_region_code: 
                 interval=human_to_interval("1d"),
                 period=human_to_period("all"),
                 time_range=DatetimeRange(
-                    start=scada_range.start, end=scada_range.end, interval=human_to_interval("1d")
+                    start=date_trunc(scada_range.start, "day"),
+                    end=date_trunc(scada_range.end, "day"),
+                    interval=human_to_interval("1d"),
                 ),
             )
 
