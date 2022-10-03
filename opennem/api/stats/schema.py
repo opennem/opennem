@@ -176,7 +176,6 @@ class OpennemData(BaseConfig):
     network: Optional[str]
     region: Optional[str]
     data_type: str
-    code: Optional[str]
     units: str
 
     interval: Optional[TimeIntervalAPI]
@@ -208,7 +207,6 @@ class OpennemDataSet(BaseConfig):
     response_status: ResponseStatus = ResponseStatus.OK
     version: Optional[str]
     network: Optional[str]
-    code: Optional[str]
     region: Optional[str]
     created_at: Optional[datetime]
 
