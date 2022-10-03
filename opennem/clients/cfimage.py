@@ -78,7 +78,7 @@ def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
 
 
 if __name__ == "__main__":
-    path = Path("data/screenshot_croppedVNOWWDGH.png")
+    path = Path("data/opennem-logo.png")
 
     with path.open("br") as fh:
         image_content = fh.read()
