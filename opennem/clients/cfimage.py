@@ -25,6 +25,10 @@ class CloudflareImageResponse(BaseModel):
     uploaded: datetime
     variants: list[str]
 
+    @property
+    def url(self) -> str | None:
+        return self.variants.pop() if self.variants else None
+
 
 def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
     if not settings.cloudflare_api_key or not settings.cloudflare_account_id:
@@ -73,6 +77,8 @@ def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
         model = CloudflareImageResponse(**json_response["result"])
     except Exception as e:
         raise CloudflareImageException("Bad response model") from e
+
+    logger.info(f"Uploaded to cf and got {len(model.variants)} varianes: {','.join(model.variants)}")
 
     return model
 
