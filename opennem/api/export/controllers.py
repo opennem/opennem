@@ -815,7 +815,10 @@ def energy_interconnector_flows_and_emissions(
         logger.debug(query)
         row = list(c.execute(query))
 
-    if len(row) < 1:
+    if not row:
+        logger.error(
+            f"No results from energy_interconnector_flows_and_emissions for {time_series.network} {network_region_code} and {time_series.start} => {time_series.end}"
+        )
         return None
 
     imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[1]) for i in row]
