@@ -2,14 +2,14 @@
 Daily summary - fueltechs as proportion of demand
 and other stats per network
 """
+import io
 import logging
 from datetime import datetime, timedelta
 from operator import attrgetter
 
 import matplotlib.pyplot as plt
-import seaborn as sns
-from datetime_truncate import truncate as date_trunc
 
+from opennem.clients.cfimage import save_image_to_cloudflare
 from opennem.core.templates import serve_template
 from opennem.db import get_database_engine
 from opennem.notifications.slack import slack_message
@@ -18,7 +18,6 @@ from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.settings import settings
 from opennem.utils.dates import get_last_complete_day_for_network  # noqa: F401
-from opennem.utils.sql import duid_in_case
 
 logger = logging.getLogger("opennem.controllers.summary.daily")
 
@@ -39,6 +38,7 @@ class DailySummaryResult(BaseConfig):
 class DailySummary(BaseConfig):
     trading_day: datetime
     network: str
+    chart_url: str | None
 
     results: list[DailySummaryResult]
 
@@ -48,7 +48,7 @@ class DailySummary(BaseConfig):
 
     @property
     def total_energy(self) -> float:
-        return sum([i.energy for i in self.results])
+        return sum(i.energy for i in self.results)
 
     @property
     def records(self) -> list[DailySummaryResult]:
@@ -107,35 +107,61 @@ def get_daily_fueltech_summary(network: NetworkSchema) -> DailySummary:
     return ds
 
 
-def plot_daily_fueltech_summary(network: NetworkSchema) -> None:
+def plot_daily_fueltech_summary(daily_summary: DailySummary) -> io.BytesIO:
     """Returns a chart of the daily fueltech summary"""
-    ds = get_daily_fueltech_summary(network=network)
+    chart_records = daily_summary.records_chart()
 
-    chart_records = ds.records_chart()
-
+    # font and format settings
+    font = {
+        "family": '"IBM Plex Serif",Georgia,"Times New Roman",Times,serif',
+        "weight": "400",
+        "color": "black",
+        "size": 16,
+    }
     data = [i.demand_proportion for i in chart_records]
     labels = [i.fueltech_label for i in chart_records]
     colors = [i.fueltech_color for i in chart_records]
 
     # create pie chart
-    plt.pie(data, labels=labels, colors=colors, autopct="%.0f%%")
-    plt.show()
+    _, ax = plt.subplots()
+
+    ax.pie(data, labels=labels, colors=colors, autopct="%.0f%%", textprops={**font, **{"size": 8}})
+
+    day_formatted = daily_summary.trading_day.strftime("%a %-d %b %Y")
+    ax.set_title(f"OpenNEM Daily Summary for {daily_summary.network.upper()} for {day_formatted}", fontdict=font)
+    # ax.legend()
+
+    # save to buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png")
+    buf.seek(0)
+
+    return buf
+
+
+def render_daily_fueltech_summary_tweet_text(daily_summary: DailySummary) -> str:
+    """Renders daily fueltech summary text"""
+    _render = serve_template("tweet_daily_summary.md", ds=daily_summary)
+
+    logging.debug(_render)
+
+    return _render
 
 
 def run_daily_fueltech_summary(network: NetworkSchema) -> None:
     """Produces daily fueltech summary slack message"""
     ds = get_daily_fueltech_summary(network=network)
 
-    _render = serve_template("tweet_daily_summary.md", ds=ds)
+    summary_plot = plot_daily_fueltech_summary(daily_summary=ds)
 
-    logger.debug(_render)
+    summary_text = render_daily_fueltech_summary_tweet_text(daily_summary=ds)
+
+    cfimage = save_image_to_cloudflare(summary_plot)
 
     if settings.dry_run:
         return None
 
-    slack_sent = slack_message(_render)
-
-    if slack_sent:
+    if slack_message(msg=summary_text, image_url=cfimage.url, image_alt="Daily Summary"):
         logger.info("Sent slack message")
 
     else:
@@ -143,5 +169,5 @@ def run_daily_fueltech_summary(network: NetworkSchema) -> None:
 
 
 if __name__ == "__main__":
-    # run_daily_fueltech_summary(network=NetworkNEM)
-    plot_daily_fueltech_summary(network=NetworkNEM)
+    run_daily_fueltech_summary(network=NetworkNEM)
+    # plot_daily_fueltech_summary(network=NetworkNEM)
