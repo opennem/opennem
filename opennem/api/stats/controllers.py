@@ -28,7 +28,6 @@ def stats_factory(
     stats: List[DataQueryResult],
     units: UnitDefinition,
     interval: TimeInterval,
-    period: Optional[TimePeriod] = None,
     network: Optional[NetworkSchema] = None,
     timezone: Optional[Union[timezone, str]] = None,
     code: Optional[str] = None,
@@ -38,7 +37,6 @@ def stats_factory(
     group_field: Optional[str] = None,
     data_id: Optional[str] = None,
     localize: Optional[bool] = True,
-    include_code: Optional[bool] = True,
     cast_nulls: Optional[bool] = True,
 ) -> OpennemDataSet:
     """
@@ -149,9 +147,6 @@ def stats_factory(
             history=history,
         )
 
-        if include_code:
-            data.code = group_code
-
         if network:
             data.network = network.code.lower()
 
@@ -247,9 +242,6 @@ def stats_factory(
         created_at=dt_now,
         version=get_version(),
     )
-
-    if include_code:
-        stat_set.code = code
 
     if network:
         stat_set.network = network.code
