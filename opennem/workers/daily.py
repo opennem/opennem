@@ -47,7 +47,7 @@ def daily_runner(days: int = 2) -> None:
     export_all_monthly()
 
     # Skip if we're not on prod
-    if settings.env != "production":
+    if settings.env == "production":
         run_daily_fueltech_summary(network=NetworkNEM)
 
     # send a slack message when done
