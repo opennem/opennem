@@ -740,10 +740,12 @@ Demand queries
 
 
 def demand_network_region_query(
-    time_series: TimeSeries, network_region: str | None, networks: list[NetworkSchema] = []
+    time_series: TimeSeries, network_region: str | None, networks: list[NetworkSchema] = None
 ) -> str:
     """Get the network demand energy and market_value"""
 
+    if networks is None:
+        networks = []
     if not networks:
         networks = [time_series.network]
 
@@ -788,9 +790,9 @@ def demand_network_region_query(
 
     networks_list = networks_to_in(networks)
 
-    network_query = "network_id IN ({}) and ".format(networks_list)
+    network_query = f"network_id IN ({networks_list}) and "
 
-    query = dedent(
+    return dedent(
         ___query.format(
             trunc=time_series.interval.trunc,
             date_min=date_min,
@@ -802,8 +804,6 @@ def demand_network_region_query(
             network_query=network_query,
         )
     )
-
-    return query
 
 
 """
