@@ -46,9 +46,7 @@ def export_network_intervals_for_week(
     week_number = get_week_number_from_datetime(week_start)
 
     logging.info(
-        "Exporting historic intervals for network {} and region {} and year {} and week {} ({} => {})".format(
-            network.code, network_region.code, week_start.year, week_number, week_start, week_end
-        )
+        f"Exporting historic intervals for network {network.code} and region {network_region.code} and year {week_start.year} and week {week_number} ({week_start} => {week_end})"
     )
 
     if week_end > get_last_complete_day_for_network(network):
@@ -71,10 +69,9 @@ def export_network_intervals_for_week(
 
     if not stat_set:
         logger.error(
-            "No historic intervals for network {} and region {} and year {} and week {} ({} => {})".format(
-                network.code, network_region.code, week_start.year, week_number, week_start, week_end
-            )
+            f"No historic intervals for network {network.code} and region {network_region.code} and year {week_start.year} and week {week_number} ({week_start} => {week_end})"
         )
+
         return None
 
     # demand
