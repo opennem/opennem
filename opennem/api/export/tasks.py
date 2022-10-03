@@ -8,6 +8,8 @@ require the API
 
 """
 
+
+import contextlib
 import logging
 from datetime import datetime
 from typing import List, Optional
@@ -76,7 +78,7 @@ def export_power(
 
     output_count: int = 0
 
-    logger.info("Running {}export {} with {} stats".format("latest " if latest else "", priority, len(stats)))
+    logger.info(f'Running {"latest " if latest else ""}export {priority} with {len(stats)} stats')
 
     for power_stat in stats:
         if power_stat.stat_type != StatType.power:
@@ -92,7 +94,7 @@ def export_power(
 
         date_range: ScadaDateRange = get_scada_range(network=power_stat.network, networks=date_range_networks)
 
-        logger.debug("Date range for {}: {} => {}".format(power_stat.network.code, date_range.start, date_range.end))
+        logger.debug(f"Date range for {power_stat.network.code}: {date_range.start} => {date_range.end}")
 
         # Migrate to this time_series
         time_series = TimeSeries(
@@ -111,13 +113,8 @@ def export_power(
         )
 
         if not stat_set:
-            logger.info(
-                "No power stat set for {} {} {}".format(
-                    power_stat.period,
-                    power_stat.networks,
-                    power_stat.network_region,
-                )
-            )
+            logger.info(f"No power stat set for {power_stat.period} {power_stat.networks} {power_stat.network_region}")
+
             continue
 
         demand_set = demand_week(
@@ -129,19 +126,17 @@ def export_power(
         stat_set.append_set(demand_set)
 
         if power_stat.network_region:
-            flow_set = power_flows_region_week(
+            if flow_set := power_flows_region_week(
                 time_series=time_series,
                 network_region_code=power_stat.network_region,
-            )
-
-            if flow_set:
+            ):
                 stat_set.append_set(flow_set)
 
         time_series_weather = time_series.copy()
         time_series_weather.interval = human_to_interval("30m")
 
         if power_stat.bom_station:
-            try:
+            with contextlib.suppress(Exception):
                 weather_set = weather_daily(
                     time_series=time_series_weather,
                     station_code=power_stat.bom_station,
@@ -151,9 +146,6 @@ def export_power(
                     network=power_stat.network,
                 )
                 stat_set.append_set(weather_set)
-            except Exception:
-                pass
-
         write_output(power_stat.path, stat_set)
         output_count += 1
 
