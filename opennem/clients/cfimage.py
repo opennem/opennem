@@ -26,7 +26,7 @@ class CloudflareImageResponse(BaseModel):
     variants: list[str]
 
 
-def save_image_to_cloudflare(image: bytes) -> CloudflareImageResponse:
+def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
     if not settings.cloudflare_api_key or not settings.cloudflare_account_id:
         raise CloudflareImageException("API not configured with account id and key")
 
@@ -36,7 +36,8 @@ def save_image_to_cloudflare(image: bytes) -> CloudflareImageResponse:
 
     cfimage_url = CF_URL.format(account_id=settings.cloudflare_account_id)
 
-    file_upload = {"file": BytesIO(image)}
+    image_handle = BytesIO(image) if isinstance(image, bytes) else image
+    file_upload = {"file": image_handle}
 
     json_response: Optional[Dict[str, Any]] = None
 
