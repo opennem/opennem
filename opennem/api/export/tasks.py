@@ -36,7 +36,7 @@ from opennem.core.network_region_bom_station_map import get_network_region_weath
 from opennem.core.network_regions import get_network_regions
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
-from opennem.schema.dates import TimeSeries
+from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import (
     NetworkAEMORooftop,
     NetworkAEMORooftopBackfill,
@@ -339,6 +339,9 @@ def export_all_monthly() -> None:
                 network=network,
                 interval=human_to_interval("1M"),
                 period=human_to_period("all"),
+                time_range=DatetimeRange(
+                    start=scada_range.start, end=scada_range.end, interval=human_to_interval("1M")
+                ),
             )
 
             stat_set = energy_fueltech_daily(
@@ -378,10 +381,13 @@ def export_all_monthly() -> None:
     write_output("v3/stats/au/all/monthly.json", all_monthly)
 
 
-def export_all_daily(
-    networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM],
-    network_region_code: Optional[str] = None,
-) -> None:
+def export_all_daily(networks: List[NetworkSchema] = None, network_region_code: Optional[str] = None) -> None:
+    """Export dailies for all networks and regions"""
+
+    # default list of networks
+    if networks is None:
+        networks = [NetworkNEM, NetworkWEM]
+
     session = get_scoped_session()
 
     cpi = gov_stats_cpi()
@@ -396,7 +402,7 @@ def export_all_daily(
 
         for network_region in network_regions:
 
-            logging.info("Exporting for network {} and region {}".format(network.code, network_region.code))
+            logging.info(f"Exporting for network {network.code} and region {network_region.code}")
 
             networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
@@ -406,7 +412,8 @@ def export_all_daily(
             scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks, energy=True)
 
             if not scada_range or not scada_range.start:
-                logger.error("Could not get scada range for network {} and energy {}".format(network, True))
+                logger.error(f"Could not get scada range for network {network} and energy True")
+
                 continue
 
             time_series = TimeSeries(
@@ -415,6 +422,9 @@ def export_all_daily(
                 network=network,
                 interval=human_to_interval("1d"),
                 period=human_to_period("all"),
+                time_range=DatetimeRange(
+                    start=scada_range.start, end=scada_range.end, interval=human_to_interval("1d")
+                ),
             )
 
             stat_set = energy_fueltech_daily(
@@ -441,19 +451,14 @@ def export_all_daily(
                 )
                 stat_set.append_set(interconnector_flows)
 
-            bom_station = get_network_region_weather_station(network_region.code)
-
-            if bom_station:
-                try:
+            if bom_station := get_network_region_weather_station(network_region.code):
+                with contextlib.suppress(Exception):
                     weather_stats = weather_daily(
                         time_series=time_series,
                         station_code=bom_station,
                         network_region=network_region.code,
                     )
                     stat_set.append_set(weather_stats)
-                except Exception:
-                    pass
-
             if cpi:
                 stat_set.append_set(cpi)
 
@@ -535,7 +540,6 @@ def export_electricitymap() -> None:
             time_series,
             region,
             include_capacities=True,
-            include_code=False,
             networks_query=[NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill],
         )
 
@@ -559,7 +563,6 @@ def export_electricitymap() -> None:
         "WEM",
         include_capacities=True,
         networks_query=[NetworkWEM, NetworkAPVI],
-        include_code=False,
     )
 
     if power_set:
