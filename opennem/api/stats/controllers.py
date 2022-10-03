@@ -11,7 +11,7 @@ from starlette import status
 from opennem.api.time import human_to_interval
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkSchema
-from opennem.schema.time import TimeInterval, TimePeriod
+from opennem.schema.time import TimeInterval
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
 from opennem.utils.numbers import cast_trailing_nulls, trim_nulls
