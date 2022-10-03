@@ -81,10 +81,10 @@ def get_daily_fueltech_summary_query(
 
     # If the date doesn't have a timezone apply network timezone
     if not is_aware(day):
-        day_date = day.replace(tzinfo=network.get_fixed_offset())
+        day = day.replace(tzinfo=network.get_fixed_offset())
 
     # Trunc the date to midnight and add the end of day as max
-    date_min = date_trunc(day_date, truncate_to="day")
+    date_min = date_trunc(day, truncate_to="day")
     date_max = date_min + timedelta(days=1)
 
     query = __daily_summary_fueltech_query.format(
