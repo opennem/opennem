@@ -134,7 +134,7 @@ try:
         name="static",
     )
 except Exception as e:
-    logger.info("Error initializing static hosting: {}".format(e))
+    logger.info(f"Error initializing static hosting: {e}")
 
 
 @app.get("/robots.txt", response_class=FileResponse, include_in_schema=False)
@@ -142,7 +142,7 @@ def robots_txt() -> FileResponse:
     if not settings.debug:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    return FileResponse(settings.static_folder_path + "/robots.txt")
+    return FileResponse(f"{settings.static_folder_path}/robots.txt")
 
 
 @app.get(
