@@ -744,14 +744,6 @@ def demand_network_region_query(
 ) -> str:
     """Get the network demand energy and market_value"""
 
-    if networks is None:
-        networks = []
-    if not networks:
-        networks = [time_series.network]
-
-    if time_series.network not in networks:
-        networks.append(time_series.network)
-
     ___query = """
         select
             date_trunc('{trunc}', trading_day) as trading_day,
@@ -788,7 +780,7 @@ def demand_network_region_query(
         date_max = time_series_range.end
         date_min = time_series_range.start
 
-    networks_list = networks_to_in(networks)
+    networks_list = networks_to_in(time_series.network.get_networks_query())
 
     network_query = f"network_id IN ({networks_list}) and "
 
