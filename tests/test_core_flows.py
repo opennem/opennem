@@ -4,12 +4,7 @@ from pathlib import Path
 import pytest
 
 from opennem.api.stats.schema import OpennemData
-from opennem.core.flows import (
-    FlowDirection,
-    fueltech_to_flow,
-    generated_flow_station_id,
-    invert_flow_set,
-)
+from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id, invert_flow_set
 from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
 
 NSW1 = NetworkRegionSchema(code="NSW1", network_id="NEM")
@@ -40,9 +35,7 @@ def test_generated_flow_station_id(
     flow_direction: FlowDirection,
     code_expected: str,
 ) -> None:
-    code = generated_flow_station_id(
-        network=network, network_region=network_region, flow_direction=flow_direction
-    )
+    code = generated_flow_station_id(network=network, network_region=network_region, flow_direction=flow_direction)
     assert code == code_expected, "Code return matches"
 
 
@@ -65,6 +58,5 @@ def test_fixture_invert_flow() -> None:
     inverted = invert_flow_set(fixture)
 
     assert "SA1->VIC1" in inverted.id, "id changed correctly"
-    assert inverted.code == "SA1->VIC1", "code changed correctly"
     assert inverted.history.data[0] == -157.3, "data point 1 inverted"
     assert inverted.history.data[1] == 144.9, "data point 2 inverted"
