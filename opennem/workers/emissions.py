@@ -233,13 +233,13 @@ def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.D
     return energy_flows
 
 
-def calc_flow_for_day(day: datetime) -> pd.DataFrame:
+def calc_flow_for_day(day: datetime, network: NetworkSchema) -> pd.DataFrame:
     """For a particular day calculate all flow values"""
     day_next = day + timedelta(days=1)
 
-    df_inter = load_interconnector_intervals(date_start=day, date_end=day_next)
+    df_inter = load_interconnector_intervals(date_start=day, date_end=day_next, network=network)
 
-    df_energy = load_energy_emission_mv_intervals(date_start=day, date_end=day_next)
+    df_energy = load_energy_emission_mv_intervals(date_start=day, date_end=day_next, network=network)
 
     return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter)
 
@@ -264,7 +264,7 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
 
     # Add metadata
     flow_results["created_by"] = "opennem.worker.emissions"
-    flow_results["created_at"] = ""
+    flow_results["created_at"] = datetime_now
     flow_results["updated_at"] = datetime_now
 
     # # reorder columns
@@ -300,6 +300,7 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
             "emissions_exports",
             "market_value_imports",
             "market_value_exports",
+            "updated_at",
         ],
     )
     conn = get_database_engine().raw_connection()
@@ -312,6 +313,7 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
     )
 
     try:
+        logger.debug(sql_query)
         cursor.copy_expert(sql_query, csv_content)
         conn.commit()
     except Exception as e:
@@ -448,4 +450,4 @@ if __name__ == "__main__":
     logger.info("starting")
     run_flow_updates_all_for_network(network=NetworkNEM)
     # run_emission_update_day(days=12)
-    # run_flow_updates_all_per_year(datetime.now().year, 1)
+    # run_flow_updates_all_per_year(2014, 1)
