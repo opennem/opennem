@@ -23,9 +23,26 @@ class SlackMessageBlockMarkdown:
 
 
 @dataclasses.dataclass
+class SlackMessageBlockImage:
+    image_url: str
+    alt_text: str
+    type: str = dataclasses.field(default="image")
+
+
+@dataclasses.dataclass
 class SlackMessageBlock:
-    text: SlackMessageBlockMarkdown
+    text: SlackMessageBlockMarkdown | None
+    accessory: SlackMessageBlockImage | None
+    block_id: str = dataclasses.field(default="")
     type: str = dataclasses.field(default="section")
+
+
+@dataclasses.dataclass
+class SlackMessage:
+    """Slack message block"""
+
+    blocks: list[SlackMessageBlock]
+    text: str = dataclasses.field(default="")
 
 
 def _slack_tag_list(user_list: List[str]) -> str:
@@ -37,19 +54,15 @@ def _slack_tag_list(user_list: List[str]) -> str:
     Returns:
         str: string to tag
     """
-    _tag_list = " ".join([f"@{i.strip().lstrip('@')}" for i in user_list if i])
-
-    return _tag_list
+    return " ".join([f"@{i.strip().lstrip('@')}" for i in user_list if i])
 
 
-def slack_create_markdown_block(message: str) -> SlackMessageBlock:
-    """Creates a slack block"""
-    markdown_block = SlackMessageBlockMarkdown(text=message)
-    msg_block = SlackMessageBlock(text=markdown_block)
-    return msg_block
-
-
-def slack_message(msg: str, tag_users: list[str] = None) -> bool:
+def slack_message(
+    msg: str | None = None,
+    tag_users: list[str] | None = None,
+    image_url: str | None = None,
+    image_alt: str | None = None,
+) -> bool:
     """
     Post a slack message to the watchdog channel
 
@@ -69,25 +82,36 @@ def slack_message(msg: str, tag_users: list[str] = None) -> bool:
         return False
 
     alert_url = settings.slack_hook_url
-    tag_list: str | None = ""
+    tag_list = _slack_tag_list(tag_users) if tag_users else ""
+    text_block: str = f"{msg} {tag_list}" if msg else ""
 
-    if tag_users:
-        tag_list = _slack_tag_list(tag_users)
+    # if we tag users
+    if tag_list:
+        text_block += f" {tag_list}"
 
-    composed_message = f"{msg} {tag_list}"
+    blocks: list[SlackMessageBlock | SlackMessageBlockImage] = []
 
-    blocks = []
+    if image_url:
+        img_block = SlackMessageBlockImage(image_url=image_url, alt_text=image_alt)
+        blocks.append(img_block)
 
-    msg_block = slack_create_markdown_block(message=composed_message)
+    # if we have a text block
+    if text_block:
+        msg_block = SlackMessageBlock(text=None, accessory=None, block_id="section_1")
+        msg_block.text = SlackMessageBlockMarkdown(text=text_block)
+        blocks.append(msg_block)
 
-    blocks.append(msg_block)
+    logger.info(f"Sending message: {text_block} with image {image_url}")
 
-    logger.info("Sending message: {}".format(composed_message))
+    slack_message = SlackMessage(text="Daily Summary", blocks=blocks)
 
-    resp = requests.post(alert_url, json={"text": "", "blocks": [dataclasses.asdict(i) for i in blocks]})
+    # as dict and exclude empty fields
+    slack_body = dataclasses.asdict(slack_message, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
+
+    resp = requests.post(alert_url, json=slack_body)
 
     if resp.status_code != 200:
-        logger.error("Error sending slack message")
+        logger.error(f"Error sending slack message: {resp.status_code}: {resp.text}")
         return False
 
     return True
