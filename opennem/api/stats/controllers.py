@@ -52,13 +52,13 @@ def stats_factory(
     if network:
         timezone = network.get_timezone()
 
-    group_codes = list(set([i.group_by for i in stats if i.group_by]))
+    group_codes = list({i.group_by for i in stats if i.group_by})
 
     stats_grouped = []
 
     for group_code in group_codes:
 
-        data_grouped: Dict[datetime, Any] = dict()
+        data_grouped: Dict[datetime, Any] = {}
 
         for stat in stats:
             if stat.group_by != group_code:
@@ -75,7 +75,7 @@ def stats_factory(
         data_value = list(data_sorted.values())
 
         # Skip null series
-        if len([i for i in data_value if i]) == 0:
+        if not [i for i in data_value if i]:
             continue
 
         # @TODO possible bring this back
@@ -108,12 +108,10 @@ def stats_factory(
             if timezone and not is_aware(end):
                 end = make_aware(end, timezone)
 
-            if timezone and localize and network and network.offset:
-                tz = network.get_timezone()
-
-                if tz:
-                    start = start.astimezone(tz)
-                    end = end.astimezone(tz)
+        if timezone and localize and network and network.offset:
+            if tz := network.get_timezone():
+                start = start.astimezone(tz)
+                end = end.astimezone(tz)
 
         # Everything needs a timezone even flat dates
         if network and timezone and not is_aware(start):
@@ -183,12 +181,9 @@ def stats_factory(
             # setattr(data, group_field, group_code)
 
             if network:
-                group_fields.append(network.country.lower())
-                group_fields.append(network.code.lower())
-
-            if region:
-                if region.lower() != network.code.lower():
-                    group_fields.append(region.lower())
+                group_fields.extend((network.country.lower(), network.code.lower()))
+            if region and region.lower() != network.code.lower():
+                group_fields.append(region.lower())
 
             if units.name_alias:
                 group_fields.append(units.name_alias)
@@ -196,9 +191,7 @@ def stats_factory(
                 group_fields.append(units.unit_type)
 
             if group_code and include_group_code:
-                group_fields.append(group_code)
-                group_fields.append(group_field)
-
+                group_fields.extend((group_code, group_field))
             data.id = ".".join([f for f in group_fields if f])
             data.type = units.unit_type
 
@@ -213,19 +206,18 @@ def stats_factory(
             # network.country if network else None,
 
             if network:
-                _id_list.append(network.country.lower())
-                _id_list.append(network.code.lower())
-
+                _id_list.extend((network.country.lower(), network.code.lower()))
             if region and (region.lower() != network.code.lower()):
                 _id_list.append(region.lower())
 
             if group_code and include_group_code:
                 _id_list.append(group_code.lower())
 
-            if units and units.name_alias:
-                _id_list.append(units.name_alias)
-            elif units and units.name:
-                _id_list.append(units.name)
+            if units:
+                if units.name_alias:
+                    _id_list.append(units.name_alias)
+                elif units.name:
+                    _id_list.append(units.name)
 
             data.id = ".".join([f for f in _id_list if f])
             data.type = units.unit_type
