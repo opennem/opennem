@@ -40,7 +40,7 @@ def stats_factory(
     localize: Optional[bool] = True,
     include_code: Optional[bool] = True,
     cast_nulls: Optional[bool] = True,
-) -> Optional[OpennemDataSet]:
+) -> OpennemDataSet:
     """
     Takes a list of data query results and returns OpennemDataSets
 
