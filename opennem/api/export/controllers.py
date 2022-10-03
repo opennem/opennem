@@ -648,9 +648,9 @@ def power_and_emissions_for_network_interval(
 
 def demand_network_region_daily(
     time_series: TimeSeries,
-    network_region_code: str | None = None,
+    network_region_code: str,
     networks: list[NetworkSchema] = [],
-) -> OpennemDataSet | None:
+) -> OpennemDataSet | None:  # sourcery skip: raise-specific-error
     """Gets demand market_value and energy for a network -> network_region"""
     engine = get_database_engine()
 
@@ -666,8 +666,8 @@ def demand_network_region_daily(
         DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in row
     ]
 
-    if len(results_energy) < 1:
-        logger.error("No results from query: {}".format(query))
+    if not results_energy:
+        logger.error(f"No results from query: {query}")
         return None
 
     # demand based values for VWP
@@ -683,7 +683,7 @@ def demand_network_region_daily(
     if not stats:
         raise Exception(f"Not stats for demand_network_region_daily: {network_region_code}")
 
-    stats_market_value = stats_factory(
+    if stats_market_value := stats_factory(
         stats=results_market_value,
         units=get_unit("demand.market_value"),
         network=time_series.network,
@@ -691,9 +691,7 @@ def demand_network_region_daily(
         interval=time_series.interval,
         code=time_series.network.code.lower(),
         region=network_region_code,
-    )
-
-    if stats_market_value:
+    ):
         stats.append_set(stats_market_value)
 
     return stats

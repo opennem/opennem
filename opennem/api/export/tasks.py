@@ -316,7 +316,7 @@ def export_all_monthly() -> None:
         for network_region in network_regions:
             networks = []
 
-            logging.info("Exporting monthly for network {} and region {}".format(network.code, network_region.code))
+            logging.info(f"Exporting monthly for network {network.code} and region {network_region.code}")
 
             if network_region.code == "WEM":
                 networks = [NetworkWEM, NetworkAPVI]
@@ -324,12 +324,13 @@ def export_all_monthly() -> None:
             if network == NetworkNEM:
                 networks = [NetworkNEM, NetworkAEMORooftop]
 
-            logger.debug("Running monthlies for {} and {}".format(network.code, network_region.code))
+            logger.debug(f"Running monthlies for {network.code} and {network_region.code}")
 
             scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks, energy=True)
 
             if not scada_range or not scada_range.start:
-                logger.error("Could not get scada range for network {} and energy {}".format(network, True))
+                logger.error(f"Could not get scada range for network {network} and energy True")
+
                 continue
 
             time_series = TimeSeries(
@@ -354,7 +355,7 @@ def export_all_monthly() -> None:
             )
             stat_set.append_set(demand_energy_and_value)
 
-            if network == NetworkNEM:
+            if network.has_interconnectors:
                 interconnector_flows = energy_interconnector_flows_and_emissions(
                     time_series=time_series,
                     networks_query=networks,
@@ -364,10 +365,8 @@ def export_all_monthly() -> None:
 
             all_monthly.append_set(stat_set)
 
-            bom_station = get_network_region_weather_station(network_region.code)
-
-            if bom_station:
-                try:
+            if bom_station := get_network_region_weather_station(network_region.code):
+                with contextlib.suppress(Exception):
                     weather_stats = weather_daily(
                         time_series=time_series,
                         station_code=bom_station,
@@ -375,8 +374,6 @@ def export_all_monthly() -> None:
                         network=network,
                     )
                     all_monthly.append_set(weather_stats)
-                except Exception:
-                    pass
 
     write_output("v3/stats/au/all/monthly.json", all_monthly)
 
