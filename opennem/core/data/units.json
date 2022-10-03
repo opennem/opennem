@@ -19,7 +19,7 @@
   {
     "name": "demand_mega",
     "name_alias": "demand",
-    "unit_type": "demand",
+    "unit_type": "power",
     "unit": "MW"
   },
   {
