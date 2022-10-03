@@ -948,7 +948,7 @@ def energy_network_interconnector_emissions_query(
             t.network_region = '{network_region}'
         """
 
-    query = dedent(
+    return dedent(
         __query.format(
             timezone=timezone,
             trunc=interval_trunc,
@@ -958,5 +958,3 @@ def energy_network_interconnector_emissions_query(
             network_region_query=network_region_query,
         )
     )
-
-    return query
