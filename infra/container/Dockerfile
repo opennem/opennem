@@ -1,4 +1,4 @@
-FROM python:3.10 as base
+FROM python:3.10.5 as base
 
 ENV PYTHONFAULTHANDLER=1 \
   PYTHONUNBUFFERED=1 \
