@@ -248,7 +248,7 @@ def stats_factory(
     )
 
     if include_code:
-        stat_set.code = group_code
+        stat_set.code = code
 
     if network:
         stat_set.network = network.code
