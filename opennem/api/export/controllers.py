@@ -737,6 +737,7 @@ def energy_fueltech_daily(
         interval=time_series.interval,
         region=network_region_code,
         localize=True,
+        code=time_series.network.code.lower(),
     )
 
     if not stats:
