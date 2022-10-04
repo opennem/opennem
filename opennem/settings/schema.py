@@ -155,6 +155,9 @@ class OpennemSettings(BaseSettings):
     # alert threshold level in minutes for interval delay monitoring
     monitor_interval_alert_threshold: int | None = 10
 
+    # feature flags
+    flows_and_emissions_v2: bool = False
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> str | None:

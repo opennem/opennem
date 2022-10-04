@@ -172,6 +172,7 @@ class OpennemData(BaseConfig):
     id: Optional[str]
     type: Optional[str]
     fuel_tech: Optional[str]
+    code: str | None
 
     network: Optional[str]
     region: Optional[str]
@@ -190,16 +191,10 @@ class OpennemData(BaseConfig):
 
     # conveniance methods
     def id_v2(self) -> Optional[str]:
-        if self.id:
-            return translate_id_v3_to_v2(self.id)
-
-        return None
+        return translate_id_v3_to_v2(self.id) if self.id else None
 
     def fueltech_v2(self) -> Optional[str]:
-        if self.fuel_tech:
-            return map_v3_fueltech(self.fuel_tech)
-
-        return None
+        return map_v3_fueltech(self.fuel_tech) if self.fuel_tech else None
 
 
 class OpennemDataSet(BaseConfig):
@@ -207,6 +202,7 @@ class OpennemDataSet(BaseConfig):
     response_status: ResponseStatus = ResponseStatus.OK
     version: Optional[str]
     network: Optional[str]
+    code: str | None
     region: Optional[str]
     created_at: Optional[datetime]
 

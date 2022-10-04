@@ -64,8 +64,8 @@ def invert_flow_set(flow_set: OpennemData) -> OpennemData:
 
         flow_set_inverted.id = new_id
 
-    if flow_set_inverted.region:
-        flow_set_inverted.region = _invert_flowid(flow_set_inverted.region)
+    if flow_set_inverted.code:
+        flow_set_inverted.code = _invert_flowid(flow_set_inverted.code)
 
     def _save_invert(value: Optional[int]) -> Optional[int]:
         if value:
