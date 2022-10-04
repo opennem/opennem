@@ -60,9 +60,7 @@ services:
         "--access-log",
         "-",
         "--error-log",
-        "-",
-        "--worker-class",
-        "trio"
+        "-"
       ]
     restart: always
     depends_on:

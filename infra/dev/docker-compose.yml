@@ -56,9 +56,7 @@ services:
         "--access-log",
         "-",
         "--error-log",
-        "-",
-        "--worker-class",
-        "trio"
+        "-"
       ]
     restart: on-failure
     depends_on:
