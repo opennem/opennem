@@ -25,6 +25,28 @@ def run_export_all() -> None:
     export_energy(energy_exports.resources)
 
 
+def run_export_power_for_region(region_code: str) -> None:
+    # run exports for all
+    export_map = get_export_map()
+    power_exports = (
+        export_map.get_by_stat_type(StatType.power)
+        .get_by_priority(PriorityType.live)
+        .get_by_network_region(region_code)
+    )
+    export_power(power_exports.resources)
+
+
+def run_export_energy_for_region(region_code: str) -> None:
+    # run exports for all
+    export_map = get_export_map()
+    energ_exports = (
+        export_map.get_by_stat_type(StatType.energy)
+        .get_by_priority(PriorityType.monthly)
+        .get_by_network_region(region_code)
+    )
+    export_energy(energ_exports.resources)
+
+
 def run_weekly() -> None:
     pass
 
@@ -50,7 +72,10 @@ def test_ids() -> None:
 if __name__ == "__main__":
     # run_export_all()
     # export_all_daily()
-    run_export_all()
-
+    # run_export_all()
+    # run_export_power_for_region("NSW1")
+    # export_all_monthly()
+    # export_all_daily()
     # export_all_monthly()
     # test_ids()
+    run_export_energy_for_region("NSW1")

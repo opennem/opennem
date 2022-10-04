@@ -776,7 +776,6 @@ def energy_interconnector_flows_and_emissions(
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
-    period: TimePeriod = human_to_period("1Y")
     unit_energy = get_unit("energy_giga")
     unit_emissions = get_unit("emissions")
 
