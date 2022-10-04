@@ -106,13 +106,7 @@ def power_station(
     if not date_max:
         date_max = network_range.end
 
-    time_series = TimeSeries(
-        start=date_min,
-        end=date_max,
-        network=network,
-        period=period,
-        interval=interval,
-    )
+    time_series = TimeSeries(start=date_min, end=date_max, network=network, interval=interval, period=period)
 
     query = power_facility_query(time_series, station.facility_codes)
 
@@ -134,7 +128,6 @@ def power_station(
         code=station_code,
         network=network,
         interval=interval,
-        period=period,
         include_group_code=True,
         units=units,
     )
@@ -264,7 +257,6 @@ def energy_station(
         units=units,
         network=network,
         interval=interval_obj,
-        period=period_obj,
         code=station_code,
         include_group_code=True,
     )
@@ -280,7 +272,6 @@ def energy_station(
         units=get_unit("market_value"),
         network=network,
         interval=interval_obj,
-        period=period_obj,
         code=station_code,
         include_group_code=True,
     )
@@ -292,7 +283,6 @@ def energy_station(
         units=get_unit("emissions"),
         network=network,
         interval=interval_obj,
-        period=period_obj,
         code=station_code,
         include_group_code=True,
     )
@@ -352,7 +342,7 @@ def power_flows_network_week(
         logger.debug(query)
         row = list(c.execute(query))
 
-    if len(row) < 1:
+    if not row:
         raise Exception("No results from query: {}".format(query))
 
     imports = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
@@ -361,7 +351,6 @@ def power_flows_network_week(
         imports,
         # code=network_region_code or network.code,
         network=time_series.network,
-        period=time_series.period,
         interval=time_series.interval,
         units=get_unit("regional_trade"),
         # fueltech_group=True,
@@ -498,7 +487,7 @@ def emission_factor_per_network(  # type: ignore
         logger.debug(query)
         row = list(c.execute(query))
 
-    if len(row) < 1:
+    if not row:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No results",
@@ -509,7 +498,6 @@ def emission_factor_per_network(  # type: ignore
     result = stats_factory(
         emission_factors,
         network=time_series.network,
-        period=time_series.period,
         interval=time_series.interval,
         units=get_unit("emissions_factor"),
         group_field="emission_factor",
@@ -588,7 +576,7 @@ def fueltech_demand_mix(
         logger.debug(query)
         row = list(c.execute(query))
 
-    if len(row) < 1:
+    if not row:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No results",
@@ -599,7 +587,6 @@ def fueltech_demand_mix(
     result = stats_factory(
         result_set,
         network=time_series.network,
-        period=time_series.period,
         interval=time_series.interval,
         units=get_unit("emissions_factor"),
         group_field="emission_factor",
@@ -691,7 +678,7 @@ def price_network_endpoint(
         logger.debug(query)
         row = list(c.execute(query))
 
-    if len(row) < 1:
+    if not row:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No results",
@@ -702,7 +689,6 @@ def price_network_endpoint(
     result = stats_factory(
         result_set,
         network=time_series.network,
-        period=time_series.period,
         interval=time_series.interval,
         units=get_unit("price"),
         group_field="price",
