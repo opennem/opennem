@@ -38,6 +38,7 @@ def stats_factory(
     data_id: Optional[str] = None,
     localize: Optional[bool] = True,
     cast_nulls: Optional[bool] = True,
+    include_code: bool = True,
 ) -> OpennemDataSet:
     """
     Takes a list of data query results and returns OpennemDataSets
@@ -147,6 +148,9 @@ def stats_factory(
             history=history,
         )
 
+        if include_code:
+            data.code = group_code
+
         if network:
             data.network = network.code.lower()
 
@@ -242,6 +246,9 @@ def stats_factory(
         created_at=dt_now,
         version=get_version(),
     )
+
+    if include_code:
+        stat_set.code = group_code
 
     if network:
         stat_set.network = network.code
