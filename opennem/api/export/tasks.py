@@ -407,19 +407,18 @@ def export_all_monthly() -> None:
                     )
                     stat_set.append_set(interconnector_flows)
                 else:
-                    pass
-                    # interconnector_flows = energy_interconnector_region_daily(
-                    #     time_series=time_series,
-                    #     # networks_query=energy_stat.networks,
-                    #     network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                    # )
-                    # stat_set.append_set(interconnector_flows)
+                    interconnector_flows = energy_interconnector_region_daily(
+                        time_series=time_series,
+                        # networks_query=energy_stat.networks,
+                        network_region_code=network_region.code,
+                    )
+                    stat_set.append_set(interconnector_flows)
 
-                    # interconnector_emissions = energy_interconnector_emissions_region_daily(
-                    #     time_series=time_series,
-                    #     networks_query=energy_stat.networks,
-                    #     network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                    # )
+                    interconnector_emissions = energy_interconnector_emissions_region_daily(
+                        time_series=time_series,
+                        networks_query=networks,
+                        network_region_code=network_region.code,
+                    )
                     stat_set.append_set(interconnector_emissions)
 
             all_monthly.append_set(stat_set)
