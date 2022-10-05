@@ -157,6 +157,7 @@ services:
       - SLACK_ADMIN_ALERT
       - CLOUDFLARE_ACCOUNT_ID
       - CLOUDFLARE_API_KEY
+      - FLOWS_AND_EMISSIONS_V2
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=false"
