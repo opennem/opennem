@@ -85,7 +85,7 @@ def export_power(
 
     output_count: int = 0
 
-    logger.info(f'Running {"latest " if latest else ""}export {priority} with {len(stats)} stats')
+    logger.info(f"Running export_power {latest=} {priority} with {len(stats)} stats")
 
     for power_stat in stats:
         if power_stat.stat_type != StatType.power:
