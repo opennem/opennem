@@ -128,7 +128,7 @@ class OpennemDataHistory(BaseConfig):
         if not isinstance(last, datetime):
             raise ValidationErr(f"Last is not a datetime: {last}")
 
-        logger.debug(f"{len(field_value)} values at {interval} interval from {start} to {last}")
+        # logger.debug(f"{len(field_value)} values at {interval} interval from {start} to {last}")
 
         interval_obj = get_human_interval(interval)
 
