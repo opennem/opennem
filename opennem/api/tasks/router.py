@@ -19,8 +19,8 @@ def export_energy_task(priority: PriorityType, latest: bool) -> None:
 
 
 @huey.task()
-def export_power_task(priority: PriorityType, latest: bool) -> None:
-    export_power(priority=priority, latest=latest)
+def export_power_task(priority: PriorityType) -> None:
+    export_power(priority=priority)
 
 
 @router.get("/worker/task")
