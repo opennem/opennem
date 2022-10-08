@@ -323,7 +323,7 @@ def power_flows_network_week(
         logger.debug(query)
         row = list(c.execute(query))
 
-    if len(row) < 1:
+    if not row:
         logger.warning("No results from interconnector_flow_network_regions_query with {}".format(time_series))
         return None
 
@@ -335,7 +335,7 @@ def power_flows_network_week(
         network=time_series.network,
         interval=time_series.interval,
         units=get_unit("regional_trade"),
-        # fueltech_group=True,
+        fueltech_group=True,
         group_field="power",
         include_group_code=True,
     )
@@ -391,7 +391,7 @@ def power_week(
     network_region_code: str = None,
     networks_query: Optional[List[NetworkSchema]] = None,
     include_capacities: bool = False,
-) -> Optional[OpennemDataSet]:
+) -> Optional[OpennemDataSet]:  # sourcery skip: use-fstring-for-formatting
     engine = get_database_engine()
 
     if network_region_code and not re.match(_valid_region, network_region_code):
@@ -409,7 +409,7 @@ def power_week(
 
     stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
-    if len(stats) < 1:
+    if not stats:
         logger.error("No results from power week query with {}".format(time_series))
         return None
 
@@ -421,6 +421,7 @@ def power_week(
         units=get_unit("power"),
         region=network_region_code,
         fueltech_group=True,
+        include_code=True,
     )
 
     if not result:
@@ -460,6 +461,7 @@ def power_week(
         network=time_series.network,
         interval=time_series.interval,
         region=network_region_code,
+        include_code=True,
     )
 
     result.append_set(stats_market_value)
@@ -490,6 +492,7 @@ def power_week(
         region=network_region_code,
         fueltech_group=True,
         cast_nulls=False,
+        include_code=True,
     )
 
     # rooftop forecast
