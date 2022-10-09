@@ -91,7 +91,7 @@ def sync_aemo_table_map() -> None:
     mms_map = parse_aemo_dirlisting(AEMO_BASE_URL)
 
     with open(AEMO_MAP_PATH, "w+") as fh:
-        json.dump(mms_map, fh, indent=4, sort_keys=True, default=str)
+        json.dump(mms_map.data, fh, indent=4, sort_keys=True, default=str)
 
     logger.info(f"Synced AEMO map to {AEMO_MAP_PATH}")
 
