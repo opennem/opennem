@@ -29,12 +29,10 @@ def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerReturn:
     cr.total_records = len(forecast_set.intervals)
 
     for _rec in forecast_set.intervals:
-        records_to_store.append(
-            {**_rec.dict(exclude={"state"}), "created_by": "apvi.controller", "is_forecast": False}
-        )
+        records_to_store.append({**_rec.dict(exclude={"state"}), "created_by": "apvi.controller", "is_forecast": False})
         cr.processed_records += 1
 
-    if len(records_to_store) < 1:
+    if not records_to_store:
         return cr
 
     stmt = insert(FacilityScada).values(records_to_store)
@@ -52,7 +50,7 @@ def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerReturn:
         session.commit()
         cr.inserted_records = len(records_to_store)
     except Exception as e:
-        logger.error("Error: {}".format(e))
+        logger.error(f"Error: {e}")
         cr.errors = len(records_to_store)
         cr.error_detail.append(str(e))
     finally:
@@ -71,9 +69,7 @@ def update_apvi_facility_capacities(forecast_set: APVIForecastSet) -> None:
 
     for state_capacity in forecast_set.capacities:
 
-        state_facility: Facility = (
-            session.query(Facility).filter_by(code=state_capacity.facility_code).one_or_none()
-        )
+        state_facility: Facility = session.query(Facility).filter_by(code=state_capacity.facility_code).one_or_none()
 
         if not state_facility:
             raise Exception("Could not find rooftop facility for %s", state_capacity.facility_code)
