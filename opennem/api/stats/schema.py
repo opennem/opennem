@@ -7,13 +7,12 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Optional, Union
-from xml.dom import ValidationErr
 from zoneinfo import ZoneInfo
 
 import pydantic
 import requests
 from datedelta import datedelta
-from pydantic import validator
+from pydantic import ValidationError, validator
 
 from opennem.core.compat.utils import translate_id_v3_to_v2
 from opennem.core.fueltechs import map_v3_fueltech
@@ -115,18 +114,18 @@ class OpennemDataHistory(BaseConfig):
         if not field_value:
             return field_value
 
-        interval: str | None = values.get("interval", None)
+        interval: str | None = values.get("interval")
         start: datetime | None = values.get("start", None)
         last: datetime | None = values.get("last", None)
 
         if not interval or not start or not last:
-            raise ValidationErr("Missing interval or start or last for data validation")
+            raise ValidationError("Missing interval or start or last for data validation")
 
         if not isinstance(start, datetime):
-            raise ValidationErr(f"Start is not a datetime: {start}")
+            raise ValidationError(f"Start is not a datetime: {start}")
 
         if not isinstance(last, datetime):
-            raise ValidationErr(f"Last is not a datetime: {last}")
+            raise ValidationError(f"Last is not a datetime: {last}")
 
         # logger.debug(f"{len(field_value)} values at {interval} interval from {start} to {last}")
 
@@ -135,7 +134,7 @@ class OpennemDataHistory(BaseConfig):
         validation_output = validate_data_outputs(field_value, interval_obj, start, last)
 
         if not validation_output:
-            raise ValidationErr(f"Data validation failed: {validation_output}")
+            raise ValidationError(f"Data validation failed: {validation_output}")
 
         return field_value
 
