@@ -1,9 +1,3 @@
-record_type,code,station_id,name,network,network_region,active,status,fueltech,unit_number,unit_capacity,capacity_registered,comissioned,locality,state,lat,lng,comment
-STATION,0NSISF,,Singleton Solar Farm,NEM,NSW1,,,,,,,,Singleton,NSW,-32.591768,151.179716,
-FACILITY,0NSISF_1,0NSISF,,NEM,,,operating,solar_utility,1,0.47,0.47,1998,,,,,
-FACILITY,PIONEER,,,,,FALSE,,,,,,,,,,,
-FACILITY,GOSNELLS,,,,,,,,1,2,2,,,,,,
-FACILITY,ATLAS,,,,,,,,1,1.1,1.1,,,,,,
-FACILITY,PUMP1,,,,,,,pumps,,,,,,,,,
-FACILITY,PUMP2,,,,,,,pumps,,,,,,,,,
-FACILITY,GULLRWF2,,,,,FALSE,,,,,,,,,,,duid change to biala
+version https://git-lfs.github.com/spec/v1
+oid sha256:2ece1c95feea67ca7ce9929ee9d201acde21ffc1ed18317013cbcf239fd4258c
+size 587

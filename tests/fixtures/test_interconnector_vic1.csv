@@ -1,4 +1,3 @@
-"trading_interval","facility_power","flow_from","flow_to"
-"2021-01-04 04:50:00+00",-434.60001,"TAS1","VIC1"
-"2021-01-04 04:50:00+00",734.91876,"VIC1","NSW1"
-"2021-01-04 04:50:00+00",154,"VIC1","SA1"
+version https://git-lfs.github.com/spec/v1
+oid sha256:2c5a88eea2ba5e3219bee5acc7600828d118ea851917cf4460d4092635354730
+size 199

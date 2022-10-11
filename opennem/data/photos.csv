@@ -1,3 +1,3 @@
-network_id,station_code,is_primary,image_url,author,author_link,license,license_link
-NEM,ERARING,FALSE,https://upload.wikimedia.org/wikipedia/commons/4/4e/Eraring-Power-Station_carpark.jpg,Webaware,https://commons.wikimedia.org/wiki/User:Webaware,Public Domain,https://creativecommons.org/publicdomain/zero/1.0/
-NEM,BRYB1WF1,FALSE,https://www.berrybankwindfarm.globalpower-generation.com.au/wp-content/uploads/2020/12/01.-Crane-ready-in-WTG-16.-General-view..jpg
+version https://git-lfs.github.com/spec/v1
+oid sha256:17f471506f0a0512a4599aa18934709267b858504a09a067779e112f85355237
+size 463
