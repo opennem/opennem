@@ -242,7 +242,7 @@ def calc_flow_for_day(day: datetime, network: NetworkSchema) -> pd.DataFrame:
 
     df_energy = load_energy_emission_mv_intervals(date_start=day, date_end=day_next, network=network)
 
-    scale = 1 if day.year() < 2021 and network == NetworkNEM else network.intervals_per_hour
+    scale = 1 if day.year < 2021 and network == NetworkNEM else network.intervals_per_hour
 
     return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter, scale=scale)
 
@@ -254,7 +254,7 @@ def calc_flows_for_range(date_start: datetime, date_end: datetime, network: Netw
 
     df_energy = load_energy_emission_mv_intervals(date_start=date_start, date_end=date_end, network=network)
 
-    scale = 1 if date_end.year() < 2021 and network == NetworkNEM else network.intervals_per_hour
+    scale = 1 if date_end < 2021 and network == NetworkNEM else network.intervals_per_hour
 
     return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter, scale=scale)
 
@@ -334,9 +334,9 @@ def run_and_store_emission_flows(day: datetime) -> None:
     """Runs and stores emission flows into the aggregate table"""
 
     try:
-        emissions_day = calc_flow_for_day(day)
+        emissions_day = calc_flow_for_day(day, network=NetworkNEM)
     except Exception as e:
-        logger.error(f"Flow storage error: {e}")
+        logger.exception(f"Flow storage error: {e}")
         return None
 
     if emissions_day.empty:
@@ -361,7 +361,7 @@ def run_and_store_flows_for_range(
     try:
         emissions_day = calc_flows_for_range(date_start, date_end, network=network)
     except Exception as e:
-        logger.error(f"Flow storage error: {e}")
+        logger.exception(f"Flow storage error: {e}")
         return None
 
     if emissions_day.empty:
