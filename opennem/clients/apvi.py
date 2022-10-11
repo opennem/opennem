@@ -238,9 +238,7 @@ def get_apvi_rooftop_today() -> Optional[APVIForecastSet]:
         apvi_forecast_set.server_latest = apvi_server_latest
     except ValidationError:
         logger.error(
-            "APVI validation error for server_latest: {} <{}>".format(
-                apvi_server_latest, repr(apvi_server_latest)
-            )
+            "APVI validation error for server_latest: {} <{}>".format(apvi_server_latest, repr(apvi_server_latest))
         )
 
     return apvi_forecast_set
@@ -294,14 +292,11 @@ def get_apvi_rooftop_data(day: Optional[datetime] = None) -> Optional[APVIForeca
                 [
                     float(v) / 100 * postcode_capacity[k]
                     for k, v in record.items()
-                    if k.startswith(prefix)
-                    and v
-                    and k in postcode_capacity
-                    and k[:2] not in WA_NON_SWIS
+                    if k.startswith(prefix) and v and k in postcode_capacity and k[:2] not in WA_NON_SWIS
                 ]
             )
 
-            if not generated:
+            if not generated or generated <= 0:
                 continue
 
             _interval_records.append(
@@ -336,9 +331,7 @@ def get_apvi_rooftop_data(day: Optional[datetime] = None) -> Optional[APVIForeca
             unit_number = installations[state.lower()]
 
         _state_capacity_models.append(
-            APVIStateRooftopCapacity(
-                state=state, capacity_registered=capacity_registered, unit_number=unit_number
-            )
+            APVIStateRooftopCapacity(state=state, capacity_registered=capacity_registered, unit_number=unit_number)
         )
 
     apvi_server_latest: Optional[datetime] = None
@@ -348,17 +341,13 @@ def get_apvi_rooftop_data(day: Optional[datetime] = None) -> Optional[APVIForeca
     if trading_intervals:
         apvi_server_latest = max(trading_intervals)
 
-    apvi_forecast_set = APVIForecastSet(
-        crawled=_run_at, intervals=_interval_records, capacities=_state_capacity_models
-    )
+    apvi_forecast_set = APVIForecastSet(crawled=_run_at, intervals=_interval_records, capacities=_state_capacity_models)
 
     try:
         apvi_forecast_set.server_latest = apvi_server_latest
     except ValidationError:
         logger.error(
-            "APVI validation error for server_latest: {} <{}>".format(
-                apvi_server_latest, repr(apvi_server_latest)
-            )
+            "APVI validation error for server_latest: {} <{}>".format(apvi_server_latest, repr(apvi_server_latest))
         )
 
     return apvi_forecast_set

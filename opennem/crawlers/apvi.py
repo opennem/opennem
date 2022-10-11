@@ -44,7 +44,7 @@ def run_apvi_crawl(day: Optional[datetime] = None) -> ControllerReturn:
     apvi_forecast_set: Optional[APVIForecastSet] = None
 
     if day:
-        logger.info("Getting APVI data for day {}".format(day))
+        logger.info(f"Getting APVI data for day {day}")
         apvi_forecast_set = get_apvi_rooftop_data(day)
     else:
         logger.info("Getting APVI data from today")
