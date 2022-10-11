@@ -841,7 +841,17 @@ def energy_network_fueltech_query(
     """
 
     network_region_query = ""
-    date_range = time_series.get_range()
+
+    # Get the time range using either the old way or the new v4 way
+    if time_series.time_range:
+        date_max = time_series.time_range.end
+        date_min = time_series.time_range.start
+        trunc = time_series.time_range.trunc
+    else:
+        time_series_range = time_series.get_range()
+        date_max = time_series_range.end
+        date_min = time_series_range.start
+        trunc = time_series_range.trunc
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and"
@@ -856,20 +866,18 @@ def energy_network_fueltech_query(
 
     networks_list = networks_to_in(networks_query)
 
-    network_query = "(t.network_id IN ({}) {}) and ".format(networks_list, network_apvi_wem)
+    network_query = f"(t.network_id IN ({networks_list}) {network_apvi_wem}) and "
 
-    query = dedent(
+    return dedent(
         __query.format(
-            trunc=date_range.interval.trunc,
-            date_min=date_range.start.date(),
-            date_max=date_range.end.date(),
+            trunc=trunc,
+            date_min=date_min,
+            date_max=date_max,
             network_query=network_query,
             network_region_query=network_region_query,
             coalesce_with=coalesce_with,
         )
     )
-
-    return query
 
 
 def energy_network_interconnector_emissions_query(
