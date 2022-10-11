@@ -846,12 +846,12 @@ def energy_network_fueltech_query(
     if time_series.time_range:
         date_max = time_series.time_range.end
         date_min = time_series.time_range.start
-        trunc = time_series.time_range.interval.interval_sql
     else:
         time_series_range = time_series.get_range()
         date_max = time_series_range.end
         date_min = time_series_range.start
-        trunc = time_series_range.trunc
+
+    trunc = time_series.interval.trunc
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and"
