@@ -25,7 +25,7 @@ from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem
 
-logger = logging.getLogger("opennem.workers.flows")
+logger = logging.getLogger("opennem.workers.emissions")
 
 
 class FlowWorkerException(Exception):
@@ -453,6 +453,6 @@ def run_flow_updates_all_for_network(network: NetworkSchema) -> None:
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_flow_updates_all_for_network(network=NetworkNEM)
+    # run_flow_updates_all_for_network(network=NetworkNEM)
     # run_emission_update_day(days=12)
-    # run_flow_updates_all_per_year(2014, 1)
+    # run_flow_updates_all_per_year(2014, 1, network=NetworkNEM)
