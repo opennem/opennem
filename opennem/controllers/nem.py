@@ -262,7 +262,7 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
     primary_keys = []
 
     for record in table.records:
-        primary_key = set([record["settlementdate"], record["interconnectorid"]])
+        primary_key = {record["settlementdate"], record["interconnectorid"]}
 
         if primary_key in primary_keys:
             continue
@@ -292,7 +292,7 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
         session.execute(stmt)
         session.commit()
         cr.inserted_records = cr.processed_records
-        cr.server_latest = max([i["trading_interval"] for i in records_to_store])
+        cr.server_latest = max(i["trading_interval"] for i in records_to_store)
     except Exception as e:
         logger.error("Error inserting records")
         logger.error(e)
