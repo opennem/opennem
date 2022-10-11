@@ -153,7 +153,7 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, 
     return df_gen
 
 
-def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.DataFrame) -> pd.DataFrame:
+def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.DataFrame, scale: int) -> pd.DataFrame:
     """Merge the dataframes and break down into simple frame"""
 
     region_from = pd.merge(
@@ -207,20 +207,22 @@ def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.D
 
     energy_flows = pd.DataFrame(
         {
-            "energy_imports": f.groupby(["trading_interval", "interconnector_region_from"]).energy_imports.sum() / 12,
-            "energy_exports": f.groupby(["trading_interval", "interconnector_region_from"]).energy_exports.sum() / 12,
+            "energy_imports": f.groupby(["trading_interval", "interconnector_region_from"]).energy_imports.sum()
+            / scale,
+            "energy_exports": f.groupby(["trading_interval", "interconnector_region_from"]).energy_exports.sum()
+            / scale,
             "emissions_imports": f.groupby(["trading_interval", "interconnector_region_from"]).emission_imports.sum()
-            / 12,
+            / scale,
             "emissions_exports": f.groupby(["trading_interval", "interconnector_region_from"]).emission_exports.sum()
-            / 12,
+            / scale,
             "market_value_imports": f.groupby(
                 ["trading_interval", "interconnector_region_from"]
             ).market_value_imports.sum()
-            / 12,
+            / scale,
             "market_value_exports": f.groupby(
                 ["trading_interval", "interconnector_region_from"]
             ).market_value_exports.sum()
-            / 12,
+            / scale,
         }
     )
 
@@ -236,12 +238,13 @@ def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.D
 def calc_flow_for_day(day: datetime, network: NetworkSchema) -> pd.DataFrame:
     """For a particular day calculate all flow values"""
     day_next = day + timedelta(days=1)
-
     df_inter = load_interconnector_intervals(date_start=day, date_end=day_next, network=network)
 
     df_energy = load_energy_emission_mv_intervals(date_start=day, date_end=day_next, network=network)
 
-    return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter)
+    scale = 1 if day.year() < 2021 and network == NetworkNEM else network.intervals_per_hour
+
+    return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter, scale=scale)
 
 
 def calc_flows_for_range(date_start: datetime, date_end: datetime, network: NetworkSchema) -> pd.DataFrame:
@@ -251,7 +254,9 @@ def calc_flows_for_range(date_start: datetime, date_end: datetime, network: Netw
 
     df_energy = load_energy_emission_mv_intervals(date_start=date_start, date_end=date_end, network=network)
 
-    return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter)
+    scale = 1 if date_end.year() < 2021 and network == NetworkNEM else network.intervals_per_hour
+
+    return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter, scale=scale)
 
 
 def insert_flows(flow_results: pd.DataFrame) -> int:
