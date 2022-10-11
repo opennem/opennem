@@ -56,8 +56,12 @@ def test_export_power_envelope() -> None:
     # check created_at
     assert hasattr(power_set, "created_at"), "Has a created_at attribute"
     assert power_set.created_at is not None, "Has a created_at value"
-    assert isinstance(power_set.created_at, str), "created_at is a str"
-    assert isinstance(datetime.fromisoformat(power_set.created_at), datetime), "created_at is a datetime"
+    assert isinstance(power_set.created_at, datetime), "created_at is a datetime"
+
+
+def has_string_attribute(obj: object, attribute: str) -> bool:
+    """Check if an object has a string attribute"""
+    return hasattr(obj, attribute) and getattr(obj, attribute) is not None and isinstance(getattr(obj, attribute), str)
 
 
 def test_export_power_fueltech_attributes() -> None:
@@ -68,5 +72,40 @@ def test_export_power_fueltech_attributes() -> None:
 
     for series_id in all_fueltech_ids:
         series_data = power_set.get_id(series_id)
-        assert hasattr(series_data, "fueltech_id"), "Has the fueltech_id attribute"
-        assert hasattr(series_data, "code"), "Has a code attribute"
+
+        # check network
+        assert has_string_attribute(series_data, "network"), "Has a network attribute"
+        assert series_data.network.lower() == "nem", "network is nem"
+
+        # check fueltech_id
+        assert has_string_attribute(series_data, "fueltech_id"), "Has the fueltech_id attribute"
+
+
+def test_export_power_check_attributes() -> None:
+    """Test the fueltech attributes"""
+    power_set = FIXTURE_SET["NSW1"].power
+
+    all_fueltech_ids = [i.id for i in power_set.data if i.id]
+
+    for series_id in all_fueltech_ids:
+        series_data = power_set.get_id(series_id)
+
+        # check network
+        assert has_string_attribute(series_data, "network"), "Has a network attribute"
+        assert series_data.network.lower() == "nem", "network is nem"
+
+        # check fueltech_id
+        assert has_string_attribute(series_data, "code"), "Has a code attribute"
+
+        # type attributes
+        # @NOTE 'type' will be deprecated in v4
+        # @DEPRECATED
+        assert has_string_attribute(series_data, "type"), "Has a type attribute"
+        assert has_string_attribute(series_data, "data_type"), "Has a data_type attribute"
+
+        # units
+        assert has_string_attribute(series_data, "units"), "Has a units attribute"
+
+        # check region
+        assert has_string_attribute(series_data, "region"), "Has a region attribute"
+        assert series_data.region.lower() == "nsw1", "region is nsw1"
