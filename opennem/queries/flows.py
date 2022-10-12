@@ -1,8 +1,43 @@
 """ Flow queries """
+import logging
+from datetime import datetime
 from textwrap import dedent
 
 from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkSchema
+
+logger = logging.getLogger("opennem.queries.flows")
+
+
+def get_interconnector_intervals_query(date_start: datetime, date_end: datetime, network: NetworkSchema) -> str:
+    """Load interconenctor intervals"""
+    query = """
+        select
+            time_bucket_gapfill('5min', fs.trading_interval) as trading_interval,
+            f.interconnector_region_from,
+            f.interconnector_region_to,
+            coalesce(sum(fs.generated), 0) as generated
+        from facility_scada fs
+        left join facility f
+            on fs.facility_code = f.code
+        where
+            fs.trading_interval >= '{date_start}'
+            and fs.trading_interval < '{date_end}'
+            and f.interconnector is True
+            and f.network_id = '{network_id}'
+        group by 1, 2, 3
+        order by
+            1 asc;
+
+    """.format(
+        date_start=date_start.replace(tz=network.get_fixed_offset()),
+        date_end=date_end.replace(tz=network.get_fixed_offset()),
+        network_id=network.code,
+    )
+
+    logger.debug(query)
+
+    return query
 
 
 def energy_network_flow_query(
