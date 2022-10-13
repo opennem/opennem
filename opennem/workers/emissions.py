@@ -22,6 +22,7 @@ from opennem import settings
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import AggregateNetworkFlows
+from opennem.queries.flows import get_interconnector_intervals_query
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem
 
@@ -45,32 +46,7 @@ def load_interconnector_intervals(
     if date_start >= date_end:
         raise FlowWorkerException("load_interconnector_intervals: date_start is more recent than date_end")
 
-    query = """
-        select
-            time_bucket_gapfill('5min', fs.trading_interval) as trading_interval,
-            f.interconnector_region_from,
-            f.interconnector_region_to,
-            coalesce(sum(fs.generated), 0) as generated
-        from facility_scada fs
-        left join facility f
-            on fs.facility_code = f.code
-        where
-            fs.trading_interval >= '{date_start}T00:00:00{offset}'
-            and fs.trading_interval < '{date_end}T00:00:00{offset}'
-            and f.interconnector is True
-            and f.network_id = '{network_id}'
-        group by 1, 2, 3
-        order by
-            1 asc;
-
-    """.format(
-        date_start=date_start.date(),
-        date_end=date_end.date(),
-        offset=network.get_offset_string(),
-        network_id=network.code,
-    )
-
-    logger.debug(query)
+    query = get_interconnector_intervals_query(date_start=date_start, date_end=date_end, network=network)
 
     df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
 
@@ -242,9 +218,9 @@ def calc_flow_for_day(day: datetime, network: NetworkSchema) -> pd.DataFrame:
 
     df_energy = load_energy_emission_mv_intervals(date_start=day, date_end=day_next, network=network)
 
-    scale = 1 if day.year < 2021 and network == NetworkNEM else network.intervals_per_hour
-
-    return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter, scale=scale)
+    return merge_interconnector_and_energy_data(
+        df_energy=df_energy, df_inter=df_inter, scale=network.intervals_per_hour
+    )
 
 
 def calc_flows_for_range(date_start: datetime, date_end: datetime, network: NetworkSchema) -> pd.DataFrame:
@@ -254,9 +230,9 @@ def calc_flows_for_range(date_start: datetime, date_end: datetime, network: Netw
 
     df_energy = load_energy_emission_mv_intervals(date_start=date_start, date_end=date_end, network=network)
 
-    scale = 1 if date_end < 2021 and network == NetworkNEM else network.intervals_per_hour
-
-    return merge_interconnector_and_energy_data(df_energy=df_energy, df_inter=df_inter, scale=scale)
+    return merge_interconnector_and_energy_data(
+        df_energy=df_energy, df_inter=df_inter, scale=network.intervals_per_hour
+    )
 
 
 def insert_flows(flow_results: pd.DataFrame) -> int:
@@ -337,11 +313,11 @@ def run_and_store_emission_flows(day: datetime) -> None:
         emissions_day = calc_flow_for_day(day, network=NetworkNEM)
     except Exception as e:
         logger.exception(f"Flow storage error: {e}")
-        return None
+        raise Exception(f"flow storage error")
 
     if emissions_day.empty:
         logger.warning(f"No results for {day}")
-        return None
+        raise Exception("No results")
 
     records_to_store: List[Dict] = emissions_day.to_dict("records")
 
@@ -453,6 +429,6 @@ def run_flow_updates_all_for_network(network: NetworkSchema) -> None:
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    # run_flow_updates_all_for_network(network=NetworkNEM)
+    run_flow_updates_all_for_network(network=NetworkNEM)
     # run_emission_update_day(days=12)
     # run_flow_updates_all_per_year(2014, 1, network=NetworkNEM)
