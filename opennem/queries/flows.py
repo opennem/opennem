@@ -30,8 +30,8 @@ def get_interconnector_intervals_query(date_start: datetime, date_end: datetime,
             1 asc;
 
     """.format(
-        date_start=date_start.replace(tz=network.get_fixed_offset()),
-        date_end=date_end.replace(tz=network.get_fixed_offset()),
+        date_start=date_start,
+        date_end=date_end,
         network_id=network.code,
     )
 
