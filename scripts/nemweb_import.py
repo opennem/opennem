@@ -53,14 +53,10 @@ class DispatchUnitSolutionOld(BaseConfig):
     is_forecast: bool = False
     energy_quality_flag: int = 0
 
-    _trading_interval_timezone = validator("trading_interval", pre=True, allow_reuse=True)(
-        _trading_interval_timezone
-    )
+    _trading_interval_timezone = validator("trading_interval", pre=True, allow_reuse=True)(_trading_interval_timezone)
 
     _normalize_network_id = validator("network_id", pre=True, allow_reuse=True)(string_to_upper)
-    _normalize_facility_code = validator("facility_code", pre=True, allow_reuse=True)(
-        string_to_upper
-    )
+    _normalize_facility_code = validator("facility_code", pre=True, allow_reuse=True)(string_to_upper)
     _normalize_generated = validator("generated", pre=True, allow_reuse=True)(clean_float)
     _normalize_energy = validator("eoi_quantity", pre=True, allow_reuse=True)(clean_float)
 
@@ -83,16 +79,10 @@ class BalancingSummaryImport(BaseConfig):
     price_dispatch: Optional[float]
     net_interchange_trading: Optional[float]
 
-    _trading_interval_timezone = validator("trading_interval", pre=True, allow_reuse=True)(
-        _trading_interval_timezone
-    )
+    _trading_interval_timezone = validator("trading_interval", pre=True, allow_reuse=True)(_trading_interval_timezone)
     _normalize_price = validator("price", pre=True, allow_reuse=True)(clean_float)
-    _normalize_net_interchange = validator("net_interchange", pre=True, allow_reuse=True)(
-        clean_float
-    )
-    _normalize_net_interchange_trading = validator(
-        "net_interchange_trading", pre=True, allow_reuse=True
-    )(clean_float)
+    _normalize_net_interchange = validator("net_interchange", pre=True, allow_reuse=True)(clean_float)
+    _normalize_net_interchange_trading = validator("net_interchange_trading", pre=True, allow_reuse=True)(clean_float)
     _normalize_demand_total = validator("demand_total", pre=True, allow_reuse=True)(clean_float)
 
 
@@ -191,7 +181,7 @@ def get_regionsum_import_query(limit: Optional[int] = None) -> str:
 
 
 def insert_scada_records(records: List[DispatchUnitSolutionOld]) -> int:
-    """ Bulk insert the scada records """
+    """Bulk insert the scada records"""
 
     records_to_store = [i.dict() for i in records]
 
@@ -236,7 +226,7 @@ def insert_scada_records(records: List[DispatchUnitSolutionOld]) -> int:
 def insert_balancing_summary_records(
     records: List[BalancingSummaryImport], update_fields: List[str] = ["price"]
 ) -> int:
-    """ Bulk insert the balancing_summary records """
+    """Bulk insert the balancing_summary records"""
 
     records_to_store = [i.dict() for i in records]
 
@@ -299,9 +289,7 @@ def import_nemweb_scada() -> None:
 
             results_raw = list(c.execute(query))
 
-            logger.info(
-                "Got {} rows for year {} and month {}".format(len(results_raw), year, month)
-            )
+            logger.info("Got {} rows for year {} and month {}".format(len(results_raw), year, month))
 
         results_schema = [
             DispatchUnitSolutionOld(
