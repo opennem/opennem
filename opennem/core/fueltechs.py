@@ -3,7 +3,7 @@ import logging
 from pkgutil import get_data
 from typing import Dict, List, Optional
 
-from opennem.core.dispatch_type import DispatchType, dispatch_type_string, parse_dispatch_type
+from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
 from opennem.schema.fueltech import FueltechSchema
 
@@ -25,7 +25,7 @@ def clean_fueltech(ft: str) -> Optional[str]:
 
     @TODO replace with a compiled regexp
     """
-    if not type(ft) is str:
+    if type(ft) is not str:
         return None
 
     if ft == "-":
@@ -58,7 +58,7 @@ def load_fueltech_map(fixture_name: str) -> Dict:
     ]
 
     # Funky encoding because of save from Excel .. leave it
-    csv_data = get_data("opennem", "core/data/{}".format(fixture_name))
+    csv_data = get_data("opennem", f"core/data/{fixture_name}")
 
     if not csv_data:
         raise Exception("Could not load fixture: {}".format(fixture_name))
@@ -110,7 +110,7 @@ def lookup_fueltech(
     if techtype_desc:
         ttd = clean_fueltech(techtype_desc)
 
-    lookup_set = tuple([ft, ftd, tt, ttd, dispatch_type.value.lower()])
+    lookup_set = {ft, ftd, tt, ttd, dispatch_type.value.lower()}
 
     # Lookup legacy fuel tech types and map them
     if ft and ft in LEGACY_FUELTECH_MAP.keys():
@@ -119,7 +119,7 @@ def lookup_fueltech(
     if lookup_set in fueltech_map:
         return fueltech_map[lookup_set]
 
-    logger.warning("Found fueltech {}, {}, {}, {} with no mapping".format(ft, tt, ftd, ttd))
+    logger.warning(f"Found fueltech {ft}, {tt}, {ftd}, {ttd} with no mapping")
 
     return None
 
@@ -135,10 +135,7 @@ def map_v2_fueltech(
     ft = clean_fueltech(fueltech)
 
     # Lookup legacy fuel tech types and map them
-    if ft in LEGACY_FUELTECH_MAP.keys():
-        return LEGACY_FUELTECH_MAP[ft]
-
-    return ft
+    return LEGACY_FUELTECH_MAP[ft] if ft in LEGACY_FUELTECH_MAP.keys() else ft
 
 
 def map_v3_fueltech(
@@ -151,12 +148,9 @@ def map_v3_fueltech(
 
     ft = clean_fueltech(fueltech)
 
-    # Lookup legacy fuel tech types and map them
-    for v2_fueltech, v3_fueltech in LEGACY_FUELTECH_MAP.items():
-        if v3_fueltech == fueltech:
-            return v2_fueltech
-
-    return ft
+    return next(
+        (v2_fueltech for v2_fueltech, v3_fueltech in LEGACY_FUELTECH_MAP.items() if v3_fueltech == fueltech), ft
+    )
 
 
 def get_fueltechs() -> List[FueltechSchema]:
@@ -178,9 +172,7 @@ _FUELTECHS: List[FueltechSchema] = get_fueltechs()
 def get_fueltech(code: str) -> FueltechSchema:
     _code = code.strip().lower()
 
-    _lookup = list(filter(lambda x: x.code == _code, _FUELTECHS))
-
-    if not _lookup:
+    if _lookup := list(filter(lambda x: x.code == _code, _FUELTECHS)):
+        return _lookup.pop()
+    else:
         raise Exception(f"Fueltech {_code} not found")
-
-    return _lookup.pop()
