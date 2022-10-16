@@ -552,7 +552,7 @@ def export_flows() -> None:
 def export_electricitymap() -> None:
     date_range = get_scada_range(network=NetworkNEM)
 
-    if not date_range.start:
+    if not date_range or date_range.start:
         raise Exception("Could not get a scada range in EM export")
 
     interchange_stat = StatExport(
