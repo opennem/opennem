@@ -537,7 +537,7 @@ def power_week(
         ):
             rooftop.data[0].forecast = rooftop_forecast.data[0].history
     else:
-        logger.error("No rooftop or rooftop forecast")
+        logger.warning("No rooftop or rooftop forecast")
 
     result.append_set(rooftop)
 
