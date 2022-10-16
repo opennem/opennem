@@ -9,10 +9,11 @@ from datetime import datetime
 from opennem import settings
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
+from opennem.db.tasks import refresh_material_views
 from opennem.exporter.historic import export_historic_intervals
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkNEM, NetworkWEM
-from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
+from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days, run_aggregates_facility_year
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import (
     run_emission_update_day,
@@ -26,10 +27,22 @@ logger = logging.getLogger("opennem.worker.daily")
 
 def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
+    CURRENT_YEAR = datetime.now().year
+
     run_energy_gapfill(days=days)
-    run_flow_updates_all_per_year(datetime.now().year, 1)
+
+    run_flow_updates_all_per_year(CURRENT_YEAR, 1)
+
+    for network in [NetworkNEM, NetworkWEM]:
+        run_aggregates_facility_year(year=CURRENT_YEAR, network=network)
+
+    # flows and flow emissions
     run_emission_update_day(days=days)
-    run_aggregates_all_days(days=days)
+
+    # feature flag for emissions
+    if not settings.flows_and_emissions_v2:
+        for view_name in ["mv_facility_all", "mv_interchange_energy_nem_region", "mv_region_emissions"]:
+            refresh_material_views(view_name=view_name)
 
     # run exports for latest year
     export_energy(latest=True)
