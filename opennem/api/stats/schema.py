@@ -345,9 +345,10 @@ def load_opennem_dataset_from_file(file_path: str | Path) -> OpennemDataSet:
     """
     Reads the stored tableset fixture path and returns an OpennemDataSet
     """
-    data_set = pydantic.parse_file_as(path=str(file_path), type_=OpennemDataSet)
+    if not file_path.is_file():
+        raise Exception(f"File does not exist: {file_path}")
 
-    return data_set
+    return pydantic.parse_file_as(path=str(file_path), type_=OpennemDataSet)
 
 
 def load_opennem_dataset_from_url(url: str) -> OpennemDataSet:
