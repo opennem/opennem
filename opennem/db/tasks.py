@@ -8,9 +8,7 @@ from opennem.utils.dates import subtract_days
 logger = logging.getLogger("opennem.db.tasks")
 
 
-def refresh_timescale_views(
-    view_name: Optional[str] = None, all: bool = False, days: int = 7
-) -> None:
+def refresh_timescale_views(view_name: Optional[str] = None, all: bool = False, days: int = 7) -> None:
     """refresh timescale views"""
     __query = """
     CALL refresh_continuous_aggregate(
@@ -22,7 +20,7 @@ def refresh_timescale_views(
 
     engine = get_database_engine()
     dt = subtract_days(days=days)
-    date_from = "'{}'".format(dt.strftime("%Y-%m-%d"))
+    date_from = f"""'{dt.strftime("%Y-%m-%d")}'"""
 
     if all:
         date_from = "NULL"
@@ -42,12 +40,10 @@ def refresh_timescale_views(
             try:
                 c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
             except Exception as e:
-                logger.error("Could not run refresh: {}".format(e))
+                logger.error(f"Could not run refresh: {e}")
 
 
-def refresh_material_views(
-    view_name: Optional[str] = None, concurrently: bool = True, with_data: bool = True
-) -> None:
+def refresh_material_views(view_name: Optional[str] = None, concurrently: bool = True, with_data: bool = True) -> None:
     """Refresh material views"""
     __query = "REFRESH MATERIALIZED VIEW {is_concurrent} {view} {data_spec}"
 
@@ -72,7 +68,7 @@ def refresh_material_views(
             try:
                 c.execution_options(isolation_level="AUTOCOMMIT").execute(query)
             except Exception as e:
-                logger.error("Could not run material refresh: {}".format(e))
+                logger.error(f"Could not run material refresh: {e}")
 
 
 def refresh_views() -> None:
