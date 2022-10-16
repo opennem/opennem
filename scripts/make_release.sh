@@ -25,5 +25,5 @@ git add pyproject.toml requirements.txt requirements_dev.txt
 git ci -m "v$VERSION"
 
 git tag v$VERSION
-git push -u origin master v$VERSION
+git push -u origin v$VERSION
 
