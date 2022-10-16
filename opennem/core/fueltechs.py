@@ -83,9 +83,6 @@ def load_fueltech_map(fixture_name: str) -> Dict:
     return fueltech_map
 
 
-FUELTECH_MAP = load_fueltech_map("aemo_fueltech_map.csv")
-
-
 def lookup_fueltech(
     fueltype: str,
     fueltype_desc: Optional[str] = None,
@@ -99,6 +96,8 @@ def lookup_fueltech(
 
     """
     tt, ftd, ttd = None, None, None
+
+    fueltech_map = load_fueltech_map("aemo_fueltech_map.csv")
 
     ft = clean_fueltech(fueltype)
 
@@ -117,8 +116,8 @@ def lookup_fueltech(
     if ft and ft in LEGACY_FUELTECH_MAP.keys():
         return LEGACY_FUELTECH_MAP[ft]
 
-    if lookup_set in FUELTECH_MAP:
-        return FUELTECH_MAP[lookup_set]
+    if lookup_set in fueltech_map:
+        return fueltech_map[lookup_set]
 
     logger.warning("Found fueltech {}, {}, {}, {} with no mapping".format(ft, tt, ftd, ttd))
 
