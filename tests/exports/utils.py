@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from opennem.api.stats.schema import OpennemDataHistory, OpennemDataSet, load_opennem_dataset_from_file
+from opennem.api.stats.schema import OpennemDataSet, load_opennem_dataset_from_file
 from opennem.utils.tests import TEST_FIXTURE_PATH
 
 ValidNumber = float | int
