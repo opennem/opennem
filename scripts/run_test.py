@@ -16,12 +16,14 @@ from opennem.workers.gap_fill.energy import run_energy_gapfill
 logger = logging.getLogger("opennem.run_test")
 
 
-def run_export_all() -> None:
+def run_export_all(network_region_code: str | None = None) -> None:
     # run exports for all
     export_map = get_export_map()
-    energy_exports = (
-        export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly).get_by_network_region("NSW1")
-    )
+    energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
+
+    if network_region_code:
+        energy_exports = energy_exports.get_by_network_region(network_region_code)
+
     export_energy(energy_exports.resources)
 
 
@@ -72,10 +74,19 @@ def test_ids() -> None:
 if __name__ == "__main__":
     # run_export_all()
     # export_all_daily()
+    # export_energy(latest=True)
     # run_export_all()
     # run_export_power_for_region("NSW1")
     # export_all_monthly()
     # export_all_daily()
     # export_all_monthly()
     # test_ids()
-    run_export_energy_for_region("NSW1")
+    # export_energy(latest=True)
+
+    # run_flow_updates_all_per_year(2009, 1)
+    # run_flow_updates_all_per_year(2010, 1)
+    # run_flow_updates_all_per_year(2011, 1)
+    run_export_all()
+
+    # export_power()
+    # run_export_energy_for_region("NSW1")
