@@ -40,6 +40,7 @@ from opennem.controllers.output.flows import (
 from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.core.network_regions import get_network_regions
+from opennem.core.time import get_interval
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.dates import DatetimeRange, TimeSeries
@@ -212,6 +213,8 @@ def export_energy(
             year=energy_stat.year,
             interval=energy_stat.interval,
             period=human_to_period("1Y"),
+            # v4 fields
+            time_range=DatetimeRange(start=date_range.start, end=date_range.end, interval=get_interval("1Y")),
         )
 
         if energy_stat.year:
@@ -374,12 +377,12 @@ def export_all_monthly() -> None:
                 start=scada_range.start,
                 end=scada_range.end,
                 network=network,
-                interval=human_to_interval("1M"),
+                interval=get_interval("1M"),
                 period=human_to_period("all"),
                 time_range=DatetimeRange(
                     start=date_trunc(scada_range.start, "month"),
                     end=date_trunc(scada_range.end, "month"),
-                    interval=human_to_interval("1M"),
+                    interval=get_interval("1M"),
                 ),
             )
 
@@ -480,7 +483,7 @@ def export_all_daily(networks: List[NetworkSchema] = None, network_region_code: 
                 time_range=DatetimeRange(
                     start=date_trunc(scada_range.start, "day"),
                     end=date_trunc(scada_range.end, "day"),
-                    interval=human_to_interval("1d"),
+                    interval=get_interval("1d"),
                 ),
             )
 
