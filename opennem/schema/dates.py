@@ -79,7 +79,7 @@ class TimeSeries(BaseConfig):
     interval: TimeInterval
 
     # The length of the series to extract
-    period: TimePeriod
+    period: TimePeriod | None
 
     # extract a particular year
     year: Optional[int]
