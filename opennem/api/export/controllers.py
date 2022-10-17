@@ -24,6 +24,7 @@ from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
+from opennem.queries.flows import get_network_flows_emissions_market_value_query
 from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
@@ -774,19 +775,15 @@ def energy_fueltech_daily(
     return stats
 
 
-def energy_interconnector_flows_and_emissions(
-    time_series: TimeSeries,
-    network_region_code: str,
-    networks_query: Optional[List[NetworkSchema]] = None,
+def energy_interconnector_flows_and_emissions_v2(
+    time_series: TimeSeries, network_region_code: str
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     unit_energy = get_unit("energy_giga")
     unit_emissions = get_unit("emissions")
 
-    query = energy_network_interconnector_emissions_query(
-        time_series=time_series,
-        network_region=network_region_code,
-        networks_query=networks_query,
+    query = get_network_flows_emissions_market_value_query(
+        time_series=time_series, network_region_code=network_region_code
     )
 
     with engine.connect() as c:
