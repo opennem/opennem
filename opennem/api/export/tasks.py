@@ -39,7 +39,6 @@ from opennem.controllers.output.flows import (
 )
 from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
-from opennem.core.network_regions import get_network_regions
 from opennem.core.time import get_interval
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
@@ -198,12 +197,11 @@ def export_energy(
         )
 
         if not date_range:
-            logger.error(
-                "Skipping - Could not get date range for energy {} {}".format(energy_stat.network, date_range_networks)
-            )
+            logger.error(f"Skipping - Could not get date range for energy {energy_stat.network} {date_range_networks}")
+
             continue
 
-        logger.debug("Date range is: {} {} => {}".format(energy_stat.network.code, date_range.start, date_range.end))
+        logger.debug(f"Date range is: {energy_stat.network.code} {date_range.start} => {date_range.end}")
 
         # Migrate to this time_series
         time_series = TimeSeries(
@@ -236,8 +234,6 @@ def export_energy(
             )
             stat_set.append_set(demand_energy_and_value)
 
-            # Hard coded to NEM only atm but we'll put has_interconnectors
-            # in the metadata to automate all this
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
                 if settings.flows_and_emissions_v2:
                     interconnector_flows = energy_interconnector_flows_and_emissions(
@@ -270,10 +266,9 @@ def export_energy(
                     )
                     stat_set.append_set(weather_stats)
                 except NoResults as e:
-                    logger.info("No results for weather result: {}".format(e))
+                    logger.info(f"No results for weather result: {e}")
                 except Exception as e:
-                    logger.error("weather_stat exception: {}".format(e))
-                    pass
+                    logger.error(f"weather_stat exception: {e}")
             else:
                 logger.info("Stat set has no bom station")
 
@@ -298,8 +293,6 @@ def export_energy(
             )
             stat_set.append_set(demand_energy_and_value)
 
-            # Hard coded to NEM only atm but we'll put has_interconnectors
-            # in the metadata to automate all this
             if energy_stat.network == NetworkNEM and energy_stat.network_region:
                 if settings.flows_and_emissions_v2:
                     interconnector_flows = energy_interconnector_flows_and_emissions(
@@ -332,7 +325,7 @@ def export_energy(
                     )
                     stat_set.append_set(weather_stats)
                 except NoResults as e:
-                    logger.info("No weather results: {}".format(e))
+                    logger.info(f"No weather results: {e}")
                 except Exception:
                     pass
 
@@ -591,7 +584,7 @@ def export_electricitymap() -> None:
         if ds.code in INVERT_SETS:
             ds_inverted = invert_flow_set(ds)
             em_set.data.append(ds_inverted)
-            logging.info("Inverted {}".format(ds.code))
+            logging.info(f"Inverted {ds.code}")
         else:
             em_set.data.append(ds)
 
