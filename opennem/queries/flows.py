@@ -153,3 +153,54 @@ def energy_network_interconnector_emissions_query(
             network_region_query=network_region_query,
         )
     )
+
+
+def get_network_flows_emissions_market_value_query(time_series: TimeSeries, network_region_code: str) -> str:
+    """Gets the flow energy (in GWh) and the market value (in $) and emissions
+    for a given network and network region
+
+    Used in export task controllers and the API
+
+    @TODO abstract scale per opennem.units"""
+
+    __query = """
+        select
+            date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_interval,
+            sum(t.imports_energy) / 1000 as imports_energy,
+            sum(t.exports_energy) / 1000 as exports_energy,
+            abs(sum(t.emissions_imports)) as imports_emissions,
+            abs(sum(t.emissions_exports)) as exports_emissions,
+            sum(t.market_value_imports) as imports_market_value,
+            sum(t.market_value_exports) as exports_market_value
+        from (
+            select
+                time_bucket_gapfill('5 min', t.trading_interval) as trading_interval,
+                t.network_id,
+                t.network_region,
+                coalesce(t.energy_imports, 0) as imports_energy,
+                coalesce(t.energy_exports, 0) as exports_energy,
+                coalesce(t.emissions_imports, 0) as emissions_imports,
+                coalesce(t.emissions_exports, 0) as emissions_exports,
+                coalesce(t.market_value_imports, 0) as market_value_imports,
+                coalesce(t.market_value_exports, 0) as market_value_exports
+            from at_network_flows t
+            where
+                t.trading_interval < '{date_max}' and
+                t.trading_interval >= '{date_min}' and
+                t.network_id = '{network_id}' and
+                t.network_region = '{network_region_code}'
+        ) as t
+        group by 1
+        order by 1 desc
+    """
+
+    return dedent(
+        __query.format(
+            timezone=time_series.network.timezone_database,
+            trunc="day",
+            network_id=time_series.network.code,
+            date_min=time_series.time_range.start,
+            date_max=time_series.time_range.end,
+            network_region_code=network_region_code,
+        )
+    )
