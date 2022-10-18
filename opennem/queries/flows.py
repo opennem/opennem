@@ -197,7 +197,7 @@ def get_network_flows_emissions_market_value_query(time_series: TimeSeries, netw
     return dedent(
         __query.format(
             timezone=time_series.network.timezone_database,
-            trunc="day",
+            trunc=time_series.time_range.interval.trunc,
             network_id=time_series.network.code,
             date_min=time_series.time_range.start,
             date_max=time_series.time_range.end,
