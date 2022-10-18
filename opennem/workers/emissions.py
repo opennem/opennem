@@ -415,14 +415,14 @@ def run_flow_updates_all_per_year(year_start: int, years: int = 1, network: Netw
             )
 
 
-def run_flow_updates_all_for_network(network: NetworkSchema) -> None:
+def run_flow_updates_all_for_network(network: NetworkSchema, to_year: int | None = None) -> None:
     """Run the entire emissions flow for a network"""
     current_year = datetime.now().year
 
     if not network.data_first_seen:
         raise FlowWorkerException(f"No data first seen for network {network.code}")
 
-    for year in range(current_year, network.data_first_seen.year - 1, -1):
+    for year in range(current_year, to_year or network.data_first_seen.year - 1, -1):
         run_flow_updates_all_per_year(year, network=network)
 
 
