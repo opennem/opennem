@@ -212,7 +212,7 @@ def export_energy(
             interval=energy_stat.interval,
             period=human_to_period("1Y"),
             # v4 fields
-            time_range=DatetimeRange(start=date_range.start, end=date_range.end, interval=get_interval("1Y")),
+            time_range=DatetimeRange(start=date_range.start, end=date_range.end, interval=energy_stat.interval),
         )
 
         if energy_stat.year:
@@ -278,6 +278,9 @@ def export_energy(
             time_series.interval = human_to_interval("1M")
             time_series.year = None
 
+            # v4 series
+            time_series.time_range.interval = human_to_interval("1M")
+
             stat_set = energy_fueltech_daily(
                 time_series=time_series,
                 networks_query=energy_stat.networks,
@@ -292,7 +295,7 @@ def export_energy(
             )
             stat_set.append_set(demand_energy_and_value)
 
-            if energy_stat.network == NetworkNEM and energy_stat.network_region:
+            if energy_stat.network.has_interconnectors and energy_stat.network_region:
                 if settings.flows_and_emissions_v2:
                     interconnector_flows = energy_interconnector_flows_and_emissions_v2(
                         time_series=time_series,
