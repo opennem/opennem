@@ -348,7 +348,10 @@ def load_opennem_dataset_from_file(file_path: str | Path) -> OpennemDataSet:
     if not file_path.is_file():
         raise Exception(f"File does not exist: {file_path}")
 
-    return pydantic.parse_file_as(path=str(file_path), type_=OpennemDataSet)
+    try:
+        return pydantic.parse_file_as(path=str(file_path), type_=OpennemDataSet)
+    except Exception as e:
+        raise Exception(f"Error loading file: {file_path} - {e}")
 
 
 def load_opennem_dataset_from_url(url: str) -> OpennemDataSet:
