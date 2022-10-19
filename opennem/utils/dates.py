@@ -270,7 +270,7 @@ def get_week_range_from_datetime(subject: datetime) -> tuple[datetime, datetime]
 
 def get_week_number_from_datetime(subject: datetime) -> int:
     """Get the week number from a datetime"""
-    return subject.isocalendar().week
+    return subject.isocalendar().week + 1
 
 
 def get_current_week_for_network(network: NetworkSchema) -> int:
