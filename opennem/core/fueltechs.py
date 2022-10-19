@@ -66,7 +66,7 @@ def load_fueltech_map(fixture_name: str) -> Dict:
     csv_data = get_data("opennem", f"core/data/{fixture_name}")
 
     if not csv_data:
-        raise Exception("Could not load fixture: {}".format(fixture_name))
+        raise FueltechException(f"Could not load fixture: {fixture_name}")
 
     csv_data = csv_data.decode("utf-8-sig").splitlines()
 
@@ -180,4 +180,4 @@ def get_fueltech(code: str) -> FueltechSchema:
     if _lookup := list(filter(lambda x: x.code == _code, _FUELTECHS)):
         return _lookup.pop()
     else:
-        raise Exception(f"Fueltech {_code} not found")
+        raise FueltechException(f"Fueltech {_code} not found")
