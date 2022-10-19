@@ -47,9 +47,12 @@ def export_network_intervals_for_week(
     week_end: datetime,
     network: NetworkSchema,
     network_region: NetworkRegion,
+    week_number: int | None = None,
 ) -> int | None:
     """ """
-    week_number = get_week_number_from_datetime(week_start)
+
+    if not week_number:
+        week_number = get_week_number_from_datetime(week_start)
 
     logging.info(
         f"Exporting historic intervals for network {network.code} and region {network_region.code} and year {week_start.year} and week {week_number} ({week_start} => {week_end})"
@@ -201,7 +204,9 @@ def export_historic_for_year_and_week_no(
         network_regions: list[NetworkRegion] = query.all()
 
         for network_region in network_regions:
-            export_network_intervals_for_week(week_start, week_end, network=network, network_region=network_region)
+            export_network_intervals_for_week(
+                week_start, week_end, network=network, network_region=network_region, week_number=week_no
+            )
 
 
 if __name__ == "__main__":
