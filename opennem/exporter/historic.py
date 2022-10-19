@@ -185,6 +185,9 @@ def export_historic_for_year_and_week_no(
     """Export historic intervals for a particular year and week"""
     session = get_scoped_session()
 
+    network_codes = ", ".join([n.code for n in networks])
+    logger.debug(f"Exporting historic for year {year} and week {week_no} and networks {network_codes}")
+
     for network in networks:
         week_start = get_week_start_from_week_num(year, week_no).astimezone(network.get_timezone())  # type: ignore
         week_end = week_start + timedelta(days=6)
