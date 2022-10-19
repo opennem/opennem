@@ -36,6 +36,12 @@ from opennem.utils.dates import (
 logger = logging.getLogger("opennem.export.historic")
 
 
+class ExporterHistoricException(Exception):
+    """Specific exception for this worker"""
+
+    pass
+
+
 def export_network_intervals_for_week(
     week_start: datetime,
     week_end: datetime,
@@ -95,7 +101,7 @@ def export_network_intervals_for_week(
         )
 
         if not interconnector_flows:
-            raise Exception("No interconnector flows")
+            raise ExporterHistoricException("No interconnector flows")
 
         stat_set.append_set(interconnector_flows)
 
@@ -103,7 +109,7 @@ def export_network_intervals_for_week(
     bom_station = get_network_region_weather_station(network_region.code)
 
     if not bom_station:
-        raise Exception(f"No weather station found for {network_region.code}")
+        raise ExporterHistoricException(f"No weather station found for {network_region.code}")
 
     time_series.interval = human_to_interval("30m")
     try:
@@ -130,17 +136,18 @@ def export_network_intervals_for_week(
 
 
 def export_historic_intervals(
-    limit: int | None = None,
-    networks: list[NetworkSchema] = [NetworkNEM, NetworkWEM],
-    network_region_code: str | None = None,
+    limit: int | None = None, networks: list[NetworkSchema] = None, network_region_code: str | None = None
 ) -> None:
     """ """
+    if networks is None:
+        networks = [NetworkNEM, NetworkWEM]
+
     session = get_scoped_session()
 
     for network in networks:
 
         if not network.data_first_seen:
-            raise Exception(f"Network {network.code} has no data first seen")
+            raise ExporterHistoricException(f"Network {network.code} has no data first seen")
 
         # get the last complete day for the network
         network_last_complete_day = get_last_complete_day_for_network(network)
@@ -169,7 +176,7 @@ def export_historic_intervals(
                         week_start, week_end, network=network, network_region=network_region
                     )
                 except Exception as e:
-                    raise Exception(f"export_historic_intervals error: {e}")
+                    raise ExporterHistoricException(f"export_historic_intervals error: {e}")
 
 
 def export_historic_for_year_and_week_no(
