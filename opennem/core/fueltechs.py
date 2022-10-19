@@ -9,6 +9,11 @@ from opennem.schema.fueltech import FueltechSchema
 
 logger = logging.getLogger(__name__)
 
+
+class FueltechException(Exception):
+    pass
+
+
 LEGACY_FUELTECH_MAP = {
     "brown_coal": "coal_brown",
     "black_coal": "coal_black",
@@ -74,8 +79,6 @@ def load_fueltech_map(fixture_name: str) -> Dict:
 
         records = list(map(clean_fueltech, record))
 
-        # records[4] = parse_dispatch_type(records[4])
-
         key = tuple(records)
 
         fueltech_map[key] = line["fueltech_map"]
@@ -110,7 +113,9 @@ def lookup_fueltech(
     if techtype_desc:
         ttd = clean_fueltech(techtype_desc)
 
-    lookup_set = {ft, ftd, tt, ttd, dispatch_type.value.lower()}
+    # @NOTE don't touch this line - it creates a tuple that is used as the lookup
+    # key. should match what is in the generated map
+    lookup_set = ft, ftd, tt, ttd, dispatch_type.value.lower()
 
     # Lookup legacy fuel tech types and map them
     if ft and ft in LEGACY_FUELTECH_MAP.keys():
