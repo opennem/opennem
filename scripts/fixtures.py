@@ -33,7 +33,7 @@ WEEK_TO_FETCH = CURRENT_WEEK - 1 if CURRENT_WEEK > 1 else 52
 
 
 def export_historic_weekly() -> None:
-    export_historic_for_year_and_week_no(2022, WEEK_TO_FETCH, [NetworkNEM])
+    export_historic_for_year_and_week_no(CURRENT_YEAR, WEEK_TO_FETCH, [NetworkNEM])
 
 
 def export_energy_all() -> None:
