@@ -48,7 +48,7 @@ class Plot:
     legend: bool = field(default=True)
 
 
-def chart_line(plot: Plot, show: bool = False) -> None:
+def chart_line(plot: Plot, show: bool = False, destination_file: str | None = None) -> None:
     """Creates a line chart from the series and returns"""
     _, ax = plt.subplots()
 
@@ -69,6 +69,10 @@ def chart_line(plot: Plot, show: bool = False) -> None:
     if plot.destination_file:
         plt.savefig(plot.destination_file)
         logger.info(f"Saved figure to {plot.destination_file}")
+
+    if destination_file:
+        plt.savefig(destination_file)
+        logger.info(f"Saved figure to {destination_file}")
 
     return plot
 
