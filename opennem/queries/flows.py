@@ -177,18 +177,19 @@ def get_network_flows_emissions_market_value_query(time_series: TimeSeries, netw
                 time_bucket_gapfill('5 min', t.trading_interval) as trading_interval,
                 t.network_id,
                 t.network_region,
-                coalesce(t.energy_imports, 0) as imports_energy,
-                coalesce(t.energy_exports, 0) as exports_energy,
-                coalesce(t.emissions_imports, 0) as emissions_imports,
-                coalesce(t.emissions_exports, 0) as emissions_exports,
-                coalesce(t.market_value_imports, 0) as market_value_imports,
-                coalesce(t.market_value_exports, 0) as market_value_exports
+                coalesce(sum(t.energy_imports), 0) as imports_energy,
+                coalesce(sum(t.energy_exports), 0) as exports_energy,
+                coalesce(sum(t.emissions_imports), 0) as emissions_imports,
+                coalesce(sum(t.emissions_exports), 0) as emissions_exports,
+                coalesce(sum(t.market_value_imports), 0) as market_value_imports,
+                coalesce(sum(t.market_value_exports), 0) as market_value_exports
             from at_network_flows t
             where
                 t.trading_interval < '{date_max}' and
                 t.trading_interval >= '{date_min}' and
                 t.network_id = '{network_id}' and
                 t.network_region = '{network_region_code}'
+            group by 1, 2, 3
         ) as t
         group by 1
         order by 1 desc
