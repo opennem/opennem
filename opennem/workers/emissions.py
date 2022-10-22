@@ -202,6 +202,10 @@ def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.D
         }
     )
 
+    # include factors
+    energy_flows["emission_factor_imports"] = energy_flows["emissions_imports"] / energy_flows["energy_imports"]
+    energy_flows["emission_factor_exports"] = energy_flows["emissions_exports"] / energy_flows["energy_exports"]
+
     energy_flows["network_id"] = "NEM"
 
     energy_flows.reset_index(inplace=True)
