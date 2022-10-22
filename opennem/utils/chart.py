@@ -56,9 +56,13 @@ def chart_line(plot: Plot, show: bool = False, destination_file: str | None = No
         ax.set_title(plot.title)
 
     for s in plot.series:
-        ax.plot(s.x(), s.y(), s.color, label=s.label)
+        if len(s.values) <= 1:
+            ax.bar(s.y(), s.color, label=s.label)
+        else:
+            ax.plot(s.x(), s.y(), s.color, label=s.label)
+
         ax.axhline(0, color="grey", linewidth=0.8)
-        ax.set_ylabel(s.label)
+        ax.set_ylabel("value")
 
     if plot.legend:
         ax.legend()
