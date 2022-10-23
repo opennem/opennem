@@ -13,7 +13,14 @@ from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, Cra
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
-from opennem.crawlers.mms import AEMOMMSDispatchInterconnector
+from opennem.crawlers.mms import (
+    AEMOMMSDispatchInterconnector,
+    AEMOMMSDispatchPrice,
+    AEMOMMSDispatchRegionsum,
+    AEMOMMSDispatchScada,
+    AEMOMMSTradingPrice,
+    AEMOMMSTradingRegionsum,
+)
 from opennem.crawlers.nemweb import (
     AEMONEMDispatchActualGEN,
     AEMONEMDispatchActualGENArchvie,
@@ -64,6 +71,11 @@ def load_crawlers() -> CrawlerSet:
             WEMFacilityScadaLive,
             # MMS Crawlers
             AEMOMMSDispatchInterconnector,
+            AEMOMMSDispatchRegionsum,
+            AEMOMMSDispatchPrice,
+            AEMOMMSDispatchScada,
+            AEMOMMSTradingPrice,
+            AEMOMMSTradingRegionsum,
         ]
 
     for crawler_inst in crawler_definitions:
