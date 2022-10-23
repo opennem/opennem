@@ -1,22 +1,17 @@
 """ MMS crawler """
 import logging
 from datetime import datetime
-from time import timezone
-from zoneinfo import ZoneInfo
 
 from opennem.controllers.nem import ControllerReturn, store_aemo_tableset
-from opennem.core.crawlers.history import CrawlHistoryEntry, get_crawler_missing_intervals, set_crawler_history
+from opennem.core.crawlers.history import CrawlHistoryEntry, set_crawler_history
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 from opennem.core.parsers.aemo.filenames import AEMODataBucketSize
 from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized, parse_aemo_url_optimized_bulk
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
-from opennem.core.time import get_interval, get_interval_by_size
 
 # from opennem.crawl import run_crawl
-from opennem.crawlers.nemweb import run_nemweb_aemo_crawl
-from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
-from opennem.schema.time import TimeInterval
+from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_last_complete_day_for_network, month_series
 
 logger = logging.getLogger("opennem.crawler.nemweb")
@@ -184,7 +179,12 @@ AEMOMMSTradingRegionsum = CrawlerDefinition(
 )
 
 
-if __name__ == "__main__":
-    # run_crawl(AEMOMMSDispatchInterconnector)
-    pass
-    # run_crawl(AEMOMMSDispatchRegionsum)
+AEMOMMSDispatchScada = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.mms.dispatch_scada",
+    filename_filter=".*_DISPATCH_UNIT_SCADA.*",
+    network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.month,
+    processor=run_aemo_mms_crawl,
+)
