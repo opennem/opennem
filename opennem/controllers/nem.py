@@ -5,7 +5,7 @@ Parses MMS tables into OpenNEM derived database
 
 import logging
 from dataclasses import asdict
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
@@ -269,13 +269,16 @@ def process_dispatch_interconnectorres(table: AEMOTableSchema) -> ControllerRetu
 
         primary_keys.append(primary_key)
 
+        if "meteredmwflow" not in record:
+            raise Exception(f"No meteredmwflow in record: {record}")
+
         records_to_store.append(
             {
                 "network_id": "NEM",
                 "created_by": "opennem.controller",
                 "facility_code": record["interconnectorid"],
                 "trading_interval": record["settlementdate"],
-                "generated": record["mwflow"],
+                "generated": record.get("meteredmwflow", 0),
             }
         )
         cr.processed_records += 1
@@ -666,7 +669,7 @@ def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
 
         try:
             record_item = globals()[process_meth](table)
-            logger.info(f"Stored {len(table.records)} records for table {table.full_name}")
+            logger.info(f"Stored {record_item.inserted_records} records for table {table.full_name}")
         except Exception as e:
             logger.error(f"Error processing {table.full_name}: {e}")
             continue
