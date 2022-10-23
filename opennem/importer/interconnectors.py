@@ -76,6 +76,10 @@ def import_nem_interconnects() -> None:
 
         logger.debug(interconnector)
 
+        if interconnector.interconnectorid.endswith("-2"):
+            logger.info(f"Skipping old interconnector {interconnector.interconnectorid}")
+            continue
+
         interconnector_station = (
             session.query(Station).filter_by(code=interconnector.interconnectorid)
             # .filter_by(network_code="NEM")
