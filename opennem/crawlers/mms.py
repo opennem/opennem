@@ -12,7 +12,8 @@ from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized, parse_aemo_url_optimized_bulk
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 from opennem.core.time import get_interval, get_interval_by_size
-from opennem.crawl import run_crawl
+
+# from opennem.crawl import run_crawl
 from opennem.crawlers.nemweb import run_nemweb_aemo_crawl
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
 from opennem.schema.time import TimeInterval
@@ -23,6 +24,7 @@ logger = logging.getLogger("opennem.crawler.nemweb")
 MMS_ARCHIVE_URL_FORMAT = "https://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/{year}/MMSDM_{year}_{month:02}/MMSDM_Historical_Data_SQLLoader/DATA/"
 
 MMS_START = datetime.fromisoformat("2009-07-01T00:00:00+10:00")
+# MMS_START = datetime.fromisoformat("2019-08-01T00:00:00+10:00") # test value
 
 
 class AEMOCrawlerMMSException(Exception):
@@ -47,10 +49,19 @@ def run_aemo_mms_crawl(
 
     crawler_return: ControllerReturn | None = None
 
+    # track how many processed
+    processed = 0
+
     for mms_crawl_date in month_series(
         start=MMS_START,
         end=get_last_complete_day_for_network(NetworkNEM),
+        reverse=True,
     ):
+        if crawler.limit and crawler.limit <= processed:
+            logger.info(f"Hit process limit of {crawler.limit} have processed {processed}")
+
+            return crawler_return
+
         crawler.url = get_mms_archive_url(mms_crawl_date.year, mms_crawl_date.month)
         cr = process_mms_url(crawler)
 
@@ -58,6 +69,8 @@ def run_aemo_mms_crawl(
             crawler_return = cr
         else:
             crawler_return.inserted_records += cr.inserted_records
+
+        processed += 1
 
     return crawler_return
 
@@ -122,9 +135,56 @@ AEMOMMSDispatchInterconnector = CrawlerDefinition(
     filename_filter=".*_DISPATCHINTERCONNECTORRES_.*",
     network=NetworkNEM,
     bucket_size=AEMODataBucketSize.month,
+    # limit=1,
+    processor=run_aemo_mms_crawl,
+)
+
+
+AEMOMMSDispatchPrice = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.mms.dispatch_price",
+    filename_filter=".*_DISPATCHPRICE_.*",
+    network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.month,
+    processor=run_aemo_mms_crawl,
+)
+
+
+AEMOMMSDispatchRegionsum = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.mms.dispatch_regionsum",
+    filename_filter=".*_DISPATCHREGIONSUM_.*",
+    network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.month,
+    processor=run_aemo_mms_crawl,
+)
+
+
+AEMOMMSTradingPrice = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.mms.trading_price",
+    filename_filter=".*_TRADINGPRICE_.*",
+    network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.month,
+    processor=run_aemo_mms_crawl,
+)
+
+
+AEMOMMSTradingRegionsum = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.mms.trading_regionsum",
+    filename_filter=".*_TRADINGREGIONSUM_.*",
+    network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.month,
     processor=run_aemo_mms_crawl,
 )
 
 
 if __name__ == "__main__":
-    run_crawl(AEMOMMSDispatchInterconnector)
+    # run_crawl(AEMOMMSDispatchInterconnector)
+    pass
+    # run_crawl(AEMOMMSDispatchRegionsum)
