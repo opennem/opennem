@@ -2,16 +2,20 @@
 """ Script to test OpenNEM flows """
 import csv
 import logging
+from collections import namedtuple
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
+from itertools import groupby
 from pathlib import Path
+from pprint import pprint
 from textwrap import dedent, indent
 from typing import Dict
 
 import pandas as pd
 import pydantic
+from datetime_truncate import truncate as date_trunc
 
-from opennem.api.stats.schema import ValidNumber
+from opennem.api.stats.schema import ValidNumber, load_opennem_dataset_from_url
 from opennem.controllers.flows import get_network_interconnector_intervals
 from opennem.controllers.nem import store_aemo_tableset
 from opennem.core.parsers.aemo.mms import AEMOTableSet, parse_aemo_url
@@ -101,9 +105,6 @@ def get_network_flows_emissions_market_value_query(time_series: TimeSeries, netw
     )
 
 
-from collections import namedtuple
-
-
 def flow_plot(date_start: datetime, date_end: datetime) -> None:
     """Plot flows"""
     engine = get_database_engine()
@@ -143,65 +144,133 @@ def plot_emissions_from_fixtures() -> Dict:
     """ """
     data = {}
 
-    for year in [2022, 2015]:
+    for year in [2022, 2019]:
         data[year] = {}
 
+        date_start = datetime.fromisoformat(f"{year}-08-01T00:00:00+10:00")
+        date_end = datetime.fromisoformat(f"{year}-09-01T00:00:00+10:00")
+
         # interconnector data
-        df_inter = get_flow_fixture_dataframe(f"interconnector_intervals_{year}.csv")
+        # df_inter = get_flow_fixture_dataframe(f"interconnector_intervals_{year}_new.csv")
+        df_inter = load_interconnector_intervals(date_start, date_end, network=NetworkNEM)
 
         # energy data
         df_gen = get_flow_fixture_dataframe(f"energy_set_{year}.csv")
         df_gen["price"] = df_gen["market_value"] / df_gen["generated"]
         df_gen["emission_factor"] = df_gen["emissions"] / df_gen["generated"]
 
+        # emission data
+        edf = merge_interconnector_and_energy_data(
+            df_energy=df_gen, df_inter=df_inter, scale=NetworkNEM.intervals_per_hour
+        ).reset_index()
+
         # assign objects
         data[year]["interconnector"] = df_inter
         data[year]["energy"] = df_gen
-
-        edf = merge_interconnector_and_energy_data(
-            df_energy=data[year]["energy"], df_inter=data[year]["interconnector"], scale=NetworkNEM.intervals_per_hour
-        ).reset_index()
-
         data[year]["emissions"] = edf
 
     return data
 
 
-def part_date(ts: pd.Timestamp) -> datetime:
+def part_date(ts: pd.Timestamp | datetime) -> datetime:
     """Convert pandas timestamp to parted datetime"""
-    dt = ts.to_pydatetime()
+    dt = ts if isinstance(ts, (date, datetime)) else ts.to_pydatetime()
     dt = dt.replace(year=2022)
     return dt
 
 
+def group_values_by_day(df: pd.DataFrame, field_name: str, bucket_size: str) -> list[Dict]:
+    """Group values on trading_interval by day"""
+    records = df.to_dict("records")
+
+    records_grouped = {}
+
+    for k, v in groupby(records, key=lambda x: date_trunc(x["trading_interval"].to_pydatetime(), bucket_size)):
+        if k not in records_grouped:
+            records_grouped[k] = 0
+
+        records_grouped[k] += sum(i[field_name] for i in list(v))
+
+    return records_grouped
+
+
 def run_fixture_test(
-    set_name: str = "emissions", field_name: str = "energy_imports", filter_field: str = "network_region"
-) -> None:
+    set_name: str = "emissions",
+    field_name: str = "energy_imports",
+    filter_field: str = "network_region",
+    show: bool = False,
+    save_plot: bool = False,
+    sum_total: bool = False,
+    bucket_size: str = "day",
+) -> list[PlotSeries]:
     """ """
     data = plot_emissions_from_fixtures()
 
     plot_series = []
 
-    colors = {2015: "blue", 2022: "red"}
+    colors = {2019: "blue", 2022: "red"}
 
-    for year in [2022, 2015]:
+    for year in [2022, 2019]:
         edf = data[year][set_name]
-        series = edf[edf[filter_field] == "NSW1"][field_name]
-        series = series.reset_index()
+        edf = edf.reset_index()
+        series = edf[edf[filter_field] == "NSW1"]
+
+        # write out the entire series
+        if not sum_total:
+            values = [
+                PlotIntegerValues(interval=part_date(r["trading_interval"]), value=r[field_name])
+                for r in series.to_dict("records")
+            ]
+
+        # if we sum_total then group by bucket_size
+        if sum_total:
+            values = [
+                PlotIntegerValues(interval=part_date(interval) if not bucket_size == "month" else interval, value=value)
+                for interval, value in group_values_by_day(series, field_name, bucket_size=bucket_size).items()
+            ]
+
+        label = f"{year} {set_name} {field_name} by {bucket_size}" if sum_total else f"{year} {set_name} {field_name}"
 
         plot_series.append(
             PlotSeries(
-                values=[
-                    PlotIntegerValues(interval=part_date(r["trading_interval"]), value=r[field_name])
-                    for r in series.to_dict("records")
-                ],
-                label=f"{year} {set_name} {field_name}",
+                values=values,
+                label=label,
                 color=colors.get(year, "grey"),
             )
         )
 
     p = Plot(series=plot_series, title="Data comparison", legend=True)
-    chart_line(plot=p, show=True)
+
+    is_sum = f"_sum_{bucket_size}" if sum_total else ""
+    destination_file = f"notebooks/flows/{set_name}_{field_name}{is_sum}.png" if save_plot else None
+
+    chart_line(plot=p, show=show, destination_file=destination_file)
+
+    return plot_series
+
+
+def compare_to_net_intervals() -> None:
+    """Compare values to net intervals"""
+    URL = "https://data.opennem.org.au/v3/stats/au/NEM/NSW1/energy/all.json"
+
+    net_all = load_opennem_dataset_from_url(URL)
+
+    id = "au.nem.nsw1.fuel_tech.imports.energy"
+
+    ds = net_all.get_id(id)
+
+    if not ds or not ds.history:
+        raise Exception("No id {id}")
+
+    value_2015 = ds.history.get_date(datetime.fromisoformat("2015-08-01T00:00:00+10:00").date())
+    value_2022 = ds.history.get_date(datetime.fromisoformat("2022-08-01T00:00:00+10:00").date())
+
+    print(value_2015, value_2022)
+
+    data = plot_emissions_from_fixtures()
+    print(
+        data[2015]["emissions"]["energy_imports"].sum() / 1000, data[2022]["emissions"]["energy_imports"].sum() / 1000
+    )
 
 
 def run_test() -> None:
@@ -234,10 +303,33 @@ def run_test() -> None:
         ),
     ]
     p = Plot(series=series, title="Flow comparison", legend=True)
-    chart_line(plot=p, show=True)
+    chart_line(plot=p, show=True, destination_file="test.png")
+
+
+def save_charts() -> None:
+    run_fixture_test("energy", "generated", save_plot=True)
+    run_fixture_test("energy", "price", save_plot=True)
+    run_fixture_test("energy", "emission_factor", save_plot=True)
+
+    run_fixture_test("interconnector", "generated", "interconnector_region_from", save_plot=True)
+
+    run_fixture_test("emissions", "energy_imports", save_plot=True)
+    # run_fixture_test("emissions", "energy_exports", save_plot=True)
+    # run_fixture_test("emissions", "energy_imports", save_plot=True, sum_total=True)
+    # run_fixture_test("emissions", "energy_exports", save_plot=True, sum_total=True)
+
+    # run_fixture_test("emissions", "energy_exports", save_plot=True, sum_total=True, bucket_size="month")
+
+    # run_fixture_test("emissions", "emissions_imports", save_plot=True)
+    # run_fixture_test("emissions", "emissions_exports", save_plot=True)
+    # run_fixture_test("emissions", "emissions_imports", save_plot=True, sum_total=True)
+    # run_fixture_test("emissions", "emissions_exports", save_plot=True, sum_total=True)
+
+    # run_fixture_test("emissions", "emission_factor_imports", save_plot=True)
+    # run_fixture_test("emissions", "emission_factor_exports", save_plot=True)
 
 
 if __name__ == "__main__":
     # get_aemo_raw_values()
-    run_fixture_test("interconnector", "generated", "interconnector_region_from")
-    # run_fixture_test("energy", "generated")
+    save_charts()
+    # compare_to_net_intervals()
