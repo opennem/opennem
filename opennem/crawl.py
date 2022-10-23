@@ -13,6 +13,7 @@ from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, Cra
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
+from opennem.crawlers.mms import AEMOMMSDispatchInterconnector
 from opennem.crawlers.nemweb import (
     AEMONEMDispatchActualGEN,
     AEMONEMDispatchActualGENArchvie,
@@ -61,6 +62,8 @@ def load_crawlers() -> CrawlerSet:
             WEMBalancingLive,
             WEMFacilityScada,
             WEMFacilityScadaLive,
+            # MMS Crawlers
+            AEMOMMSDispatchInterconnector,
         ]
 
     for crawler_inst in crawler_definitions:
@@ -157,15 +160,14 @@ def run_crawl_urls(urls: list[str]) -> None:
                 logger.error(e)
 
 
-_CRAWLER_SET = load_crawlers()
+_CRAWLER_SET: CrawlerSet | None = None
 
 
 def run_crawls_all(last_crawled: bool = True) -> None:
     """Runs all the crawl definitions"""
-    if not _CRAWLER_SET.crawlers:
-        raise Exception("No crawlers found")
+    cs = get_crawl_set()
 
-    for crawler in _CRAWLER_SET.crawlers:
+    for crawler in cs.crawlers:
         try:
             run_crawl(crawler, last_crawled=last_crawled)
         except Exception as e:
@@ -174,10 +176,9 @@ def run_crawls_all(last_crawled: bool = True) -> None:
 
 def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True) -> None:
     """Gets the crawlers by schedule and runs them"""
-    if not _CRAWLER_SET.crawlers:
-        raise Exception("No crawlers found")
+    cs = get_crawl_set()
 
-    for crawler in _CRAWLER_SET.get_crawlers_by_schedule(schedule):
+    for crawler in cs.get_crawlers_by_schedule(schedule):
         try:
             logger.debug(f"run_crawls_by_schedule running crawler {crawler.name}")
             run_crawl(crawler, last_crawled=last_crawled)
@@ -187,13 +188,17 @@ def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True)
 
 def get_crawler_names() -> List[str]:
     """Get a list of crawler names"""
-    crawler_names: List[str] = [i.name for i in _CRAWLER_SET.crawlers]
-
-    return crawler_names
+    cs = get_crawl_set()
+    return [i.name for i in cs.crawlers]
 
 
 def get_crawl_set() -> CrawlerSet:
     """Access method for crawler set"""
+    global _CRAWLER_SET
+
+    if not _CRAWLER_SET:
+        _CRAWLER_SET = load_crawlers()
+
     return _CRAWLER_SET
 
 
