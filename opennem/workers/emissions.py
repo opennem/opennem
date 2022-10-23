@@ -161,24 +161,23 @@ def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.D
 
     f = pd.concat([df_merged, df_merged_inverted])
 
-    f["energy_exports"] = f.apply(lambda x: x.generated if x.generated and x.generated > 0 else 0, axis=1)
-    f["energy_imports"] = f.apply(lambda x: abs(x.generated) if x.generated and x.generated < 0 else 0, axis=1)
+    f["energy_exports"] = f.apply(lambda x: x.generated if x.generated and x.generated >= 0 else 0, axis=1)
+    f["energy_imports"] = f.apply(lambda x: x.generated if x.generated and x.generated <= 0 else 0, axis=1)
 
     f["emission_exports"] = f.apply(
-        lambda x: x.generated * x.emission_factor_to if x.generated and x.generated > 0 else 0,
+        lambda x: x.generated * x.emission_factor_to if x.generated and x.generated >= 0 else 0,
         axis=1,
     )
     f["emission_imports"] = f.apply(
-        lambda x: abs(x.generated * x.emission_factor) if x.generated and x.generated < 0 else 0,
+        lambda x: x.generated * x.emission_factor if x.generated and x.generated <= 0 else 0,
         axis=1,
     )
 
     f["market_value_exports"] = f.apply(
-        lambda x: x.generated * x.price_to if x.generated and x.generated > 0 else 0, axis=1
+        lambda x: x.generated * x.price_to if x.generated and x.generated >= 0 else 0, axis=1
     )
-
     f["market_value_imports"] = f.apply(
-        lambda x: abs(x.generated * x.price) if x.generated and x.generated < 0 else 0, axis=1
+        lambda x: x.generated * x.price if x.generated and x.generated <= 0 else 0, axis=1
     )
 
     energy_flows = pd.DataFrame(
