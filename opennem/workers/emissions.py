@@ -76,8 +76,8 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, 
                 fs.trading_interval as trading_interval,
                 f.network_region as network_region,
                 sum(fs.generated) as power,
-                sum(fs.generated) * max(bsn.price) as market_value,
-                sum(fs.generated) * max(f.emissions_factor_co2) as emissions
+                coalesce(sum(fs.generated) * max(bsn.price), 0) as market_value,
+                coalesce(sum(fs.generated) * max(f.emissions_factor_co2), 0) as emissions
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
             left join network n on f.network_id = n.code
