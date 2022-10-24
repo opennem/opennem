@@ -43,6 +43,8 @@ class DatetimeRange(BaseConfig):
 
     interval: TimeInterval
 
+    year: int | None = None
+
     @property
     def trunc(self) -> str:
         return self.interval.interval_human
@@ -98,12 +100,10 @@ class TimeSeries(BaseConfig):
 
     def __str__(self) -> str:
         """Return an informative stringified object for debugging and exceptions"""
-        _build_str = (
+        return (
             f"Network {self.network.code} at interval {self.interval.interval_human} and "
             f"period {self.period.period_human} between {self.start} and {self.end}"
         )
-
-        return _build_str
 
     def get_range(self) -> DatetimeRange:
         """Return a DatetimeRange from the time series for queries"""
@@ -113,7 +113,7 @@ class TimeSeries(BaseConfig):
         # If its a forward looking forecast
         # jump out early
         if self.forecast:
-            start = self.end + timedelta(minutes=self.interval.interval)
+            start = self.end
             end = self.end + get_human_interval(self.forecast_period)
 
             start = start.astimezone(self.network.get_fixed_offset())
@@ -200,6 +200,4 @@ class TimeSeries(BaseConfig):
         if not end.tzinfo or end.tzinfo != self.network.get_fixed_offset():
             end = end.astimezone(self.network.get_fixed_offset())
 
-        dtr = DatetimeRange(start=start, end=end, interval=self.interval)
-
-        return dtr
+        return DatetimeRange(start=start, end=end, interval=self.interval)
