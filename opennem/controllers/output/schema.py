@@ -15,7 +15,6 @@ End is the most recent time chronoligally ordered:
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
-from typing import Optional
 
 from datetime_truncate import truncate as date_trunc
 
@@ -33,7 +32,7 @@ def valid_trunc(trunc: str) -> str:
     return trunc
 
 
-class DatetimeRange(BaseConfig):
+class ExportDatetimeRange(BaseConfig):
     """Sime start/end date used for sql queries"""
 
     start: datetime
@@ -63,15 +62,13 @@ class DatetimeRange(BaseConfig):
         return count
 
 
-class TimeSeries(BaseConfig):
-    """A time series. Consisting of a start and
-    end date (inclusive), a bucket size, timezone info
+class OpennemExportSeries(BaseConfig):
+    """An export series, consisting of date range, a bucket size, timezone info
     and methods to extract DatetimeRange's for sql queries
     """
 
-    # Start and end dates
-    start: datetime | None
-    end: datetime = datetime.now()
+    start: datetime
+    end: datetime
 
     # The network for this date range
     # used for timezone and offsets
@@ -84,19 +81,16 @@ class TimeSeries(BaseConfig):
     period: TimePeriod | None
 
     # extract a particular year
-    year: Optional[int]
+    year: int | None
 
     # extract a particular month
-    month: Optional[date]
+    month: date | None
 
     # Forecast means the time series goes forward from now
     forecast: bool = False
 
     # Default forward forecast time period
     forecast_period: str = "7d"
-
-    # This is a v2 feature where the range and bucket size is specified using a time range
-    time_range: DatetimeRange | None
 
     def __str__(self) -> str:
         """Return an informative stringified object for debugging and exceptions"""
@@ -105,7 +99,7 @@ class TimeSeries(BaseConfig):
             f"period {self.period.period_human} between {self.start} and {self.end}"
         )
 
-    def get_range(self) -> DatetimeRange:
+    def get_range(self) -> ExportDatetimeRange:
         """Return a DatetimeRange from the time series for queries"""
         start = self.start
         end = self.end
@@ -119,7 +113,7 @@ class TimeSeries(BaseConfig):
             start = start.astimezone(self.network.get_fixed_offset())
             end = end.astimezone(self.network.get_fixed_offset())
 
-            return DatetimeRange(start=start, end=end, interval=self.interval)
+            return ExportDatetimeRange(start=start, end=end, interval=self.interval)
 
         # subtract the period (ie. 7d from the end for start if not all)
         if self.period == human_to_period("all"):
@@ -200,4 +194,4 @@ class TimeSeries(BaseConfig):
         if not end.tzinfo or end.tzinfo != self.network.get_fixed_offset():
             end = end.astimezone(self.network.get_fixed_offset())
 
-        return DatetimeRange(start=start, end=end, interval=self.interval)
+        return ExportDatetimeRange(start=start, end=end, interval=self.interval)

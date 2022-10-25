@@ -21,10 +21,10 @@ from opennem.api.export.controllers import (
 )
 from opennem.api.export.utils import write_output
 from opennem.api.time import human_to_interval, human_to_period
+from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
-from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import (
     get_last_complete_day_for_network,
@@ -62,13 +62,12 @@ def export_network_intervals_for_week(
         week_end = get_last_complete_day_for_network(network)
 
     # time_range is a v4 feature
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=week_start,
         end=week_end + timedelta(days=1),
         network=network,
         interval=network.get_interval(),
         period=human_to_period("7d"),
-        time_range=DatetimeRange(start=week_start, end=week_end + timedelta(days=1), interval=network.get_interval()),
     )
 
     # power and emissions for network
@@ -133,9 +132,7 @@ def export_network_intervals_for_week(
         f"v3/stats/historic/weekly/{network.code}/{network_region.code}/year/{week_start.year}/week/{week_number}.json"
     )
 
-    written_bytes = write_output(save_path, stat_set)
-
-    return written_bytes
+    return write_output(save_path, stat_set)
 
 
 def export_historic_intervals(
@@ -210,6 +207,6 @@ def export_historic_for_year_and_week_no(
 
 
 if __name__ == "__main__":
-    # export_historic_intervals()
+    # export_historic_intervals(limit=52 * 2)
     # export_historic_intervals(limit=52)
     export_historic_for_year_and_week_no(2022, 36, [NetworkNEM], network_region_code="NSW1")

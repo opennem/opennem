@@ -3,18 +3,18 @@ import re
 
 from opennem.api.stats.controllers import stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet, RegionFlowEmissionsResult
+from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import net_flows_emissions
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
 from opennem.queries.flows import energy_network_flow_query, energy_network_interconnector_emissions_query
-from opennem.schema.dates import TimeSeries
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.controllers.flows")
 
 
 def energy_interconnector_region_daily(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: str,
 ) -> OpennemDataSet | None:
     """Old version of interconnector region daily"""
@@ -95,7 +95,7 @@ def energy_interconnector_region_daily(
 
 
 def energy_interconnector_emissions_region_daily(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: str,
     networks_query: list[NetworkSchema] | None = None,
 ) -> OpennemDataSet | None:

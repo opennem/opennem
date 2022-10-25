@@ -3,14 +3,14 @@ import logging
 from datetime import datetime
 from textwrap import dedent
 
-from opennem.schema.dates import TimeSeries
+from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.queries.flows")
 
 
 def get_interconnector_intervals_query(date_start: datetime, date_end: datetime, network: NetworkSchema) -> str:
-    """Load interconenctor intervals"""
+    """Load interconenctor intervals v1"""
     query = """
         select
             time_bucket_gapfill('5min', fs.trading_interval) as trading_interval,
@@ -41,13 +41,13 @@ def get_interconnector_intervals_query(date_start: datetime, date_end: datetime,
 
 
 def energy_network_flow_query(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region: str,
     networks_query: list[NetworkSchema] | None = None,
 ) -> str:
     """
     Get emissions for a network or network + region
-    based on a year
+    based on a year v1
     """
 
     if not networks_query:
@@ -95,7 +95,7 @@ def energy_network_flow_query(
 
 
 def energy_network_interconnector_emissions_query(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
 ) -> str:
@@ -131,13 +131,9 @@ def energy_network_interconnector_emissions_query(
     network_region_query = ""
 
     # Get the time range using either the old way or the new v4 way
-    if time_series.time_range:
-        date_max = time_series.time_range.end
-        date_min = time_series.time_range.start
-    else:
-        time_series_range = time_series.get_range()
-        date_max = time_series_range.end
-        date_min = time_series_range.start
+    time_series_range = time_series.get_range()
+    date_max = time_series_range.end
+    date_min = time_series_range.start
 
     if network_region:
         network_region_query = f"""
@@ -155,7 +151,7 @@ def energy_network_interconnector_emissions_query(
     )
 
 
-def get_network_flows_emissions_market_value_query(time_series: TimeSeries, network_region_code: str) -> str:
+def get_network_flows_emissions_market_value_query(time_series: OpennemExportSeries, network_region_code: str) -> str:
     """Gets the flow energy (in GWh) and the market value (in $) and emissions
     for a given network and network region
 
@@ -195,13 +191,35 @@ def get_network_flows_emissions_market_value_query(time_series: TimeSeries, netw
         order by 1 desc
     """
 
+    __query_new = """
+        select
+            date_trunc('{trunc}', time_bucket('5 min', t.trading_interval at time zone '{timezone}')) as trading_interval,
+            t.network_id,
+            t.network_region,
+            coalesce(sum(t.energy_imports) / 1000, 0) as imports_energy,
+            coalesce(sum(t.energy_exports) / 1000, 0) as exports_energy,
+            coalesce(sum(t.emissions_imports), 0) as emissions_imports,
+            coalesce(sum(t.emissions_exports), 0) as emissions_exports,
+            coalesce(sum(t.market_value_imports), 0) as market_value_imports,
+            coalesce(sum(t.market_value_exports), 0) as market_value_exports
+        from at_network_flows t
+        where
+            t.trading_interval < '{date_max}' and
+            t.trading_interval >= '{date_min}' and
+            t.network_id = '{network_id}' and
+            t.network_region = '{network_region_code}'
+        group by 1, 2, 3
+        order by 1 desc
+    """
+    date_range = time_series.get_range()
+
     return dedent(
         __query.format(
             timezone=time_series.network.timezone_database,
-            trunc=time_series.time_range.interval.trunc,
+            trunc=date_range.interval.trunc,
             network_id=time_series.network.code,
-            date_min=time_series.time_range.start,
-            date_max=time_series.time_range.end,
+            date_min=date_range.start,
+            date_max=date_range.end,
             network_region_code=network_region_code,
         )
     )

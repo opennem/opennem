@@ -8,12 +8,12 @@ from datetime import datetime, timedelta
 from textwrap import dedent
 from typing import List, Optional
 
-from opennem.schema.dates import TimeSeries
+from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.utils.sql import duid_in_case
 
 
 def power_facility_query(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     facility_codes: List[str],
 ) -> str:
 
@@ -55,7 +55,7 @@ def power_facility_query(
     return query
 
 
-def energy_facility_query(time_series: TimeSeries, facility_codes: List[str]) -> str:
+def energy_facility_query(time_series: OpennemExportSeries, facility_codes: List[str]) -> str:
     """
     Get Energy for a list of facility codes
     """
@@ -79,7 +79,7 @@ def energy_facility_query(time_series: TimeSeries, facility_codes: List[str]) ->
 
     date_range = time_series.get_range()
 
-    query = dedent(
+    return dedent(
         __query.format(
             facility_codes_parsed=duid_in_case(facility_codes),
             trunc=time_series.interval.trunc,
@@ -88,12 +88,9 @@ def energy_facility_query(time_series: TimeSeries, facility_codes: List[str]) ->
             timezone=time_series.network.timezone_database,
         )
     )
-    return query
 
 
-def emission_factor_region_query(
-    time_series: TimeSeries, network_region_code: Optional[str] = None
-) -> str:
+def emission_factor_region_query(time_series: OpennemExportSeries, network_region_code: Optional[str] = None) -> str:
     __query = """
         select
             f.trading_interval at time zone '{timezone}' as ti,
@@ -116,7 +113,7 @@ def emission_factor_region_query(
 
     date_range = time_series.get_range()
 
-    query = dedent(
+    return dedent(
         __query.format(
             network_region_query=network_region_query,
             network_id=time_series.network.code,
@@ -126,10 +123,9 @@ def emission_factor_region_query(
             timezone=time_series.network.timezone_database,
         )
     )
-    return query
 
 
-def network_fueltech_demand_query(time_series: TimeSeries) -> str:
+def network_fueltech_demand_query(time_series: OpennemExportSeries) -> str:
     __query = """
         select
             fs.trading_interval at time zone '{tz}' as trading_interval,
@@ -152,7 +148,7 @@ def network_fueltech_demand_query(time_series: TimeSeries) -> str:
 
     date_min: datetime = date_range.end - timedelta(days=1)
 
-    query = dedent(
+    return dedent(
         __query.format(
             network_id=time_series.network.code,
             trunc=time_series.interval.trunc,
@@ -161,10 +157,9 @@ def network_fueltech_demand_query(time_series: TimeSeries) -> str:
             tz=time_series.network.timezone_database,
         )
     )
-    return query
 
 
-def network_region_price_query(time_series: TimeSeries) -> str:
+def network_region_price_query(time_series: OpennemExportSeries) -> str:
     __query = """
         select
             time_bucket('{trunc}', bs.trading_interval) as trading_interval,
@@ -190,7 +185,7 @@ def network_region_price_query(time_series: TimeSeries) -> str:
         network_regions: str = ",".join([f"'{i.code}'" for i in time_series.network.regions])
         network_regions_query = f"and bs.network_region IN ({network_regions})"
 
-    query = dedent(
+    return dedent(
         __query.format(
             network_id=time_series.network.code,
             trunc=time_series.interval.interval_human,
@@ -199,4 +194,3 @@ def network_region_price_query(time_series: TimeSeries) -> str:
             network_regions_query=network_regions_query,
         )
     )
-    return query

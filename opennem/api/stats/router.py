@@ -10,12 +10,12 @@ from starlette import status
 from opennem.api.export.controllers import power_week
 from opennem.api.export.queries import interconnector_flow_network_regions_query
 from opennem.api.time import human_to_interval, human_to_period
+from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, Station
-from opennem.schema.dates import TimeSeries
 from opennem.schema.network import (
     NetworkAEMORooftop,
     NetworkAEMORooftopBackfill,
@@ -106,7 +106,7 @@ def power_station(
     if not date_max:
         date_max = network_range.end
 
-    time_series = TimeSeries(start=date_min, end=date_max, network=network, interval=interval, period=period)
+    time_series = OpennemExportSerie(start=date_min, end=date_max, network=network, interval=interval, period=period)
 
     query = power_facility_query(time_series, station.facility_codes)
 
@@ -212,7 +212,7 @@ def energy_station(
     if not date_end:
         date_end = network_range.end
 
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=date_start,
         end=date_end,
         network=network,
@@ -328,7 +328,7 @@ def power_flows_network_week(
     if not network:
         raise Exception("Network not found")
 
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=scada_range.start,
         month=month,
         network=network,
@@ -417,7 +417,7 @@ def power_network_region_fueltech(
     elif network == NetworkWEM:
         networks.append(NetworkAPVI)
 
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=scada_range.start,
         month=month,
         network=network,
@@ -474,7 +474,7 @@ def emission_factor_per_network(  # type: ignore
             detail="Network not found",
         )
 
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=scada_range.start,
         network=network,
         interval=interval_obj,
@@ -563,7 +563,7 @@ def fueltech_demand_mix(
             detail="Network not found",
         )
 
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=scada_range.start,
         network=network,
         interval=interval_obj,
@@ -662,7 +662,7 @@ def price_network_endpoint(
             detail="Network not found",
         )
 
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=scada_range.start,
         network=network,
         interval=interval_obj,

@@ -14,8 +14,6 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 
-from datetime_truncate import truncate as date_trunc
-
 from opennem.api.export.controllers import (
     NoResults,
     demand_network_region_daily,
@@ -37,12 +35,12 @@ from opennem.controllers.output.flows import (
     energy_interconnector_emissions_region_daily,
     energy_interconnector_region_daily,
 )
+from opennem.controllers.output.schema import ExportDatetimeRange, OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.core.time import get_interval
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
-from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import (
     NetworkAEMORooftop,
     NetworkAEMORooftopBackfill,
@@ -104,7 +102,7 @@ def export_power(
         logger.debug(f"Date range for {power_stat.network.code}: {date_range.start} => {date_range.end}")
 
         # Migrate to this time_series
-        time_series = TimeSeries(
+        time_series = OpennemExportSeries(
             start=date_range.start,
             end=date_range.end,
             network=power_stat.network,
@@ -204,15 +202,13 @@ def export_energy(
         logger.debug(f"Date range is: {energy_stat.network.code} {date_range.start} => {date_range.end}")
 
         # Migrate to this time_series
-        time_series = TimeSeries(
+        time_series = OpennemExportSeries(
             start=date_range.start,
             end=date_range.end,
             network=energy_stat.network,
             year=energy_stat.year,
             interval=energy_stat.interval,
             period=human_to_period("1Y"),
-            # v4 fields
-            time_range=DatetimeRange(start=date_range.start, end=date_range.end, interval=energy_stat.interval),
         )
 
         if energy_stat.year:
@@ -277,9 +273,7 @@ def export_energy(
             time_series.period = human_to_period("all")
             time_series.interval = human_to_interval("1M")
             time_series.year = None
-
-            # v4 series
-            time_series.time_range.interval = human_to_interval("1M")
+            time_series.interval = human_to_interval("1M")
 
             stat_set = energy_fueltech_daily(
                 time_series=time_series,
@@ -367,17 +361,12 @@ def export_all_monthly() -> None:
 
                 continue
 
-            time_series = TimeSeries(
+            time_series = OpennemExportSeries(
                 start=scada_range.start,
                 end=scada_range.end,
                 network=network,
                 interval=get_interval("1M"),
                 period=human_to_period("all"),
-                time_range=DatetimeRange(
-                    start=date_trunc(scada_range.start, "month"),
-                    end=date_trunc(scada_range.end, "month"),
-                    interval=get_interval("1M"),
-                ),
             )
 
             stat_set = energy_fueltech_daily(
@@ -467,17 +456,12 @@ def export_all_daily(networks: List[NetworkSchema] = None, network_region_code: 
 
                 continue
 
-            time_series = TimeSeries(
+            time_series = OpennemExportSeries(
                 start=scada_range.start,
                 end=scada_range.end,
                 network=network,
                 interval=human_to_interval("1d"),
                 period=human_to_period("all"),
-                time_range=DatetimeRange(
-                    start=date_trunc(scada_range.start, "day"),
-                    end=date_trunc(scada_range.end, "day"),
-                    interval=get_interval("1d"),
-                ),
             )
 
             stat_set = energy_fueltech_daily(
@@ -530,7 +514,7 @@ def export_flows() -> None:
         period=human_to_period("7d"),
     )
 
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=date_range.start,
         end=date_range.end,
         network=interchange_stat.network,
@@ -560,7 +544,7 @@ def export_electricitymap() -> None:
         period=human_to_period("1d"),
     )
 
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=date_range.start,
         end=date_range.end,
         network=interchange_stat.network,
@@ -601,7 +585,7 @@ def export_electricitymap() -> None:
     date_range = get_scada_range(network=NetworkWEM)
 
     # WEM custom
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=date_range.start,
         end=date_range.end,
         network=NetworkWEM,

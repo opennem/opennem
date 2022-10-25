@@ -7,7 +7,6 @@ from opennem.api.export.queries import (
     country_stats_query,
     demand_network_region_query,
     energy_network_fueltech_query,
-    energy_network_interconnector_emissions_query,
     interconnector_flow_network_regions_query,
     interconnector_power_flow,
     network_demand_query,
@@ -21,14 +20,13 @@ from opennem.api.export.queries import (
 from opennem.api.facility.capacities import get_facility_capacities
 from opennem.api.stats.controllers import stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
-from opennem.api.time import human_to_interval, human_to_period
+from opennem.api.time import human_to_interval
+from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
 from opennem.queries.flows import get_network_flows_emissions_market_value_query
-from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
-from opennem.schema.time import TimePeriod
 
 _valid_region = re.compile(r"^\w{1,4}\d?$")
 
@@ -41,7 +39,7 @@ class NoResults(OpennemBaseHttpException):
 
 
 def weather_daily(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     station_code: str,
     unit_name: str = "temperature_mean",
     include_min_max: bool = True,
@@ -60,20 +58,14 @@ def weather_daily(
         logger.debug(query)
         row = list(c.execute(query))
 
-    # if a network has been passed convert intervals
-    # to local network timezone
-    localize = False
-
-    if network:
-        localize = True
-
+    localize = bool(network)
     temp_avg = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
 
     temp_min = [DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row]
 
     temp_max = [DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row]
 
-    if len(temp_avg) < 1:
+    if not temp_avg:
         logger.info(f"No weather results for {station_code}")
         raise NoResults()
 
@@ -148,7 +140,7 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
 
 
 def power_flows_region_week(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: str,
 ) -> Optional[OpennemDataSet]:
     """Gets the power flows for the most recent week for a region. Used in export_power for the JSON export sets"""
@@ -199,7 +191,7 @@ def power_flows_region_week(
 
 
 def network_flows_for_region(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: str,
     include_emissions: bool = False,
     include_emission_factors: bool = False,
@@ -313,7 +305,7 @@ def network_flows_for_region(
 
 
 def power_flows_network_week(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: str | None = None,
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
@@ -349,7 +341,7 @@ def power_flows_network_week(
 
 
 def demand_week(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: Optional[str],
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
@@ -388,7 +380,7 @@ def demand_week(
 
 
 def power_week(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: str = None,
     networks_query: Optional[List[NetworkSchema]] = None,
     include_capacities: bool = False,
@@ -546,7 +538,7 @@ def power_week(
 
 
 def price_for_network_interval(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
 ) -> OpennemDataSet | None:
@@ -578,7 +570,7 @@ def price_for_network_interval(
 
 
 def power_and_emissions_for_network_interval(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: str = None,
     include_emission_factors: bool = False,
 ) -> OpennemDataSet | None:
@@ -599,7 +591,7 @@ def power_and_emissions_for_network_interval(
     power_stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
     emission_stats = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
 
-    if len(power_stats) < 1:
+    if not power_stats:
         logger.error("No results from emissions_for_network_interval query with {}".format(time_series))
         return None
 
@@ -651,7 +643,7 @@ def power_and_emissions_for_network_interval(
 
 
 def demand_network_region_daily(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: str,
     networks: list[NetworkSchema] = [],
 ) -> OpennemDataSet | None:  # sourcery skip: raise-specific-error
@@ -702,7 +694,7 @@ def demand_network_region_daily(
 
 
 def energy_fueltech_daily(
-    time_series: TimeSeries,
+    time_series: OpennemExportSeries,
     network_region_code: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
 ) -> Optional[OpennemDataSet]:
@@ -776,7 +768,7 @@ def energy_fueltech_daily(
 
 
 def energy_interconnector_flows_and_emissions_v2(
-    time_series: TimeSeries, network_region_code: str
+    time_series: OpennemExportSeries, network_region_code: str
 ) -> Optional[OpennemDataSet]:
     engine = get_database_engine()
     unit_energy = get_unit("energy_giga")
