@@ -69,11 +69,10 @@ def daily_runner(days: int = 7) -> None:
 
 def all_runner() -> None:
     """Like the daily runner but refreshes all tasks"""
-    run_energy_gapfill(days=365)
+    run_energy_gapfill(days=365 * 14)
 
     # populates the aggregate tables
     run_flow_updates_all_for_network(network=NetworkNEM)
-    run_emission_update_day(days=365)
     run_aggregates_all()
 
     # run the exports for all
@@ -88,4 +87,4 @@ def all_runner() -> None:
 
 
 if __name__ == "__main__":
-    daily_runner(14)
+    all_runner()
