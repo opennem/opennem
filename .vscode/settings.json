@@ -22,14 +22,9 @@
   },
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
-  "python.linting.pycodestyleEnabled": true,
   "python.linting.mypyEnabled": true,
   "python.linting.flake8Enabled": true,
-  "python.analysis.disabled": [
-    "no-self-argument"
-  ],
+  "python.linting.flake8Path": "ruff",
   "python.testing.unittestEnabled": false,
-  "python.testing.nosetestsEnabled": false,
   "python.analysis.typeshedPaths": ["${workspaceFolder}/opennem/subs"],
-  "python.autoComplete.typeshedPaths": ["${workspaceFolder}/opennem/subs"]
 }

@@ -2,12 +2,9 @@ set -euxo pipefail
 
 pytest
 
-# run referb
-# refurb opennem
-
-# # run flake
-flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-flake8 . --count --exit-zero --max-complexity=14 --max-line-length=127 --statistics
+# run ruff linter
+# ruff . --select=E9,F63,F7,F82 --show-source --statistics
+ruff . --exit-zero
 
 # @TODO run mypy
 
@@ -25,5 +22,5 @@ git add pyproject.toml requirements.txt requirements_dev.txt
 git ci -m "v$VERSION"
 
 git tag v$VERSION
-git push -u origin v$VERSION
+git push -u origin master v$VERSION
 
