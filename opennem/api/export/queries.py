@@ -452,7 +452,7 @@ def power_network_rooftop_query(
 
     __query = """
         select
-            time_bucket_gapfill('30 minutes', fs.trading_interval)  AS trading_interval,
+            time_bucket('30 minutes', fs.trading_interval at time zone '{timezone}')  AS trading_interval,
             ft.code as fueltech_code,
             coalesce({agg_func}(fs.generated), 0) as facility_power
         from facility_scada fs
