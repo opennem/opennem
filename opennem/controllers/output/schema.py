@@ -69,7 +69,7 @@ class OpennemExportSeries(BaseConfig):
     """
 
     start: datetime
-    end: datetime
+    end: datetime | None
 
     # The network for this date range
     # used for timezone and offsets
