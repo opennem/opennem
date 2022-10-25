@@ -105,8 +105,6 @@ class OpennemExportSeries(BaseConfig):
         start = self.start
         end = self.end
 
-        print(self.interval)
-
         # @TODO do a proper time trim method
         if self.interval.interval == 30:
             replace_min_start = 30 if start.minute >= 30 else 0
@@ -114,8 +112,6 @@ class OpennemExportSeries(BaseConfig):
 
             start = start.replace(minute=replace_min_start, second=0, microsecond=0)
             end = end.replace(minute=replace_min_end, second=0, microsecond=0)
-
-            print("30 min unterval crops: ", start, end)
 
         # If its a forward looking forecast
         # jump out early
