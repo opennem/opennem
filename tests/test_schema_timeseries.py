@@ -4,7 +4,7 @@ from typing import Union
 import pytest
 
 from opennem.api.time import human_to_interval, human_to_period
-from opennem.schema.dates import TimeSeries
+from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.schema.network import NetworkNEM
 
 
@@ -13,7 +13,7 @@ from opennem.schema.network import NetworkNEM
     [
         # Test 1 hour inclusive
         (
-            TimeSeries(
+            OpennemExportSeries(
                 start=datetime.fromisoformat("2021-01-15 12:00:00+00:00"),
                 end=datetime.fromisoformat("2021-01-15 13:00:00+00:00"),
                 network=NetworkNEM,
@@ -28,7 +28,7 @@ from opennem.schema.network import NetworkNEM
         ),
         # Test 1 week inclusive
         (
-            TimeSeries(
+            OpennemExportSeries(
                 start=datetime.fromisoformat("1997-05-05 12:45:00+00:00"),
                 end=datetime.fromisoformat("2021-01-15 12:45:00+00:00"),
                 network=NetworkNEM,
@@ -59,7 +59,7 @@ from opennem.schema.network import NetworkNEM
         #     15,
         # ),
         (
-            TimeSeries(
+            OpennemExportSeries(
                 start=datetime.fromisoformat("1997-05-05 12:45:00+00:00"),
                 end=datetime.fromisoformat("2021-02-15 12:45:00+00:00"),
                 network=NetworkNEM,
@@ -74,7 +74,7 @@ from opennem.schema.network import NetworkNEM
             365,
         ),
         (
-            TimeSeries(
+            OpennemExportSeries(
                 start=datetime.fromisoformat("1997-05-05 12:45:00+00:00"),
                 end=datetime.fromisoformat("2021-02-15 12:45:00+00:00"),
                 network=NetworkNEM,
@@ -90,7 +90,7 @@ from opennem.schema.network import NetworkNEM
         ),
         # All
         (
-            TimeSeries(
+            OpennemExportSeries(
                 start=datetime.fromisoformat("1997-05-05 12:45:00+00:00"),
                 end=datetime.fromisoformat("2020-02-15 12:45:00+00:00"),
                 network=NetworkNEM,
@@ -105,7 +105,7 @@ from opennem.schema.network import NetworkNEM
         ),
         # Forecasts
         (
-            TimeSeries(
+            OpennemExportSeries(
                 start=datetime.fromisoformat("1997-05-05 12:45:00+00:00"),
                 end=datetime.fromisoformat("2021-01-15 12:45:00+00:00"),
                 network=NetworkNEM,
@@ -122,7 +122,7 @@ from opennem.schema.network import NetworkNEM
     ],
 )
 def test_schema_timeseries(
-    ts: TimeSeries,
+    ts: OpennemExportSeries,
     start_expected: Union[datetime, date],
     end_expected: Union[datetime, date],
     interval_expected: str,
