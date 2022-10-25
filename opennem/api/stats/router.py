@@ -106,7 +106,7 @@ def power_station(
     if not date_max:
         date_max = network_range.end
 
-    time_series = OpennemExportSerie(start=date_min, end=date_max, network=network, interval=interval, period=period)
+    time_series = OpennemExportSeries(start=date_min, end=date_max, network=network, interval=interval, period=period)
 
     query = power_facility_query(time_series, station.facility_codes)
 
