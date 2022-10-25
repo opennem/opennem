@@ -432,8 +432,6 @@ def power_week(
 
     # adjust the interval size
     time_series_price = time_series.copy()
-    if time_series.time_range:
-        time_series.time_range.interval = human_to_interval("30m")
 
     query = price_network_query(
         time_series=time_series_price,
