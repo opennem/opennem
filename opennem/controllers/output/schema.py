@@ -24,6 +24,7 @@ from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.utils.dates import get_end_of_last_month
 from opennem.utils.interval import get_human_interval
+from opennem.utils.timezone import is_aware
 from opennem.utils.version import CUR_YEAR
 
 
@@ -104,16 +105,31 @@ class OpennemExportSeries(BaseConfig):
         start = self.start
         end = self.end
 
+        print(self.interval)
+
+        # @TODO do a proper time trim method
+        if self.interval.interval == 30:
+            replace_min_start = 30 if start.minute >= 30 else 0
+            replace_min_end = 30 if end.minute >= 30 else 0
+
+            start = start.replace(minute=replace_min_start, second=0, microsecond=0)
+            end = end.replace(minute=replace_min_end, second=0, microsecond=0)
+
+            print("30 min unterval crops: ", start, end)
+
         # If its a forward looking forecast
         # jump out early
         if self.forecast:
-            start = self.end
-            end = self.end + get_human_interval(self.forecast_period)
+            # add an interval since we do < in queries
+            forecast_start = end
+            forecast_end = forecast_start + get_human_interval(self.forecast_period)
 
-            start = start.astimezone(self.network.get_fixed_offset())
-            end = end.astimezone(self.network.get_fixed_offset())
+            if not is_aware(forecast_start):
+                forecast_start = forecast_start.astimezone(self.network.get_fixed_offset())
+            if not is_aware(forecast_end):
+                forecast_end = forecast_end.astimezone(self.network.get_fixed_offset())
 
-            return ExportDatetimeRange(start=start, end=end, interval=self.interval)
+            return ExportDatetimeRange(start=forecast_start, end=forecast_end, interval=self.interval)
 
         # subtract the period (ie. 7d from the end for start if not all)
         if self.period == human_to_period("all"):
@@ -127,7 +143,7 @@ class OpennemExportSeries(BaseConfig):
 
             self.year = None
 
-        else:
+        elif self.period:
             start = self.end - get_human_interval(self.period.period_human)
 
         if self.year:

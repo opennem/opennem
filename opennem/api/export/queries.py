@@ -468,8 +468,8 @@ def power_network_rooftop_query(
                 f.fueltech_id = 'solar_rooftop' and
                 {network_query}
                 {network_region_query}
-                fs.trading_interval <= '{date_max}' and
-                fs.trading_interval >= '{date_min}'
+                fs.trading_interval >= '{date_min}' and
+                fs.trading_interval < '{date_max}'
             group by 1, 2
         ) as t
         group by 1, 2
@@ -502,8 +502,8 @@ def power_network_rooftop_query(
 
     # Get the time range using either the old way or the new v4 way
     time_series_range = time_series.get_range()
-    date_max = time_series_range.end
     date_min = time_series_range.start
+    date_max = time_series_range.end
 
     if time_series.forecast:
         # @TODO work out what in get_range is mashing this
@@ -515,8 +515,8 @@ def power_network_rooftop_query(
             network_query=network_query,
             network_region_query=network_region_query,
             timezone=timezone,
-            date_max=date_max,
             date_min=date_min,
+            date_max=date_max,
             forecast_query=forecast_query,
             agg_func=agg_func,
         )

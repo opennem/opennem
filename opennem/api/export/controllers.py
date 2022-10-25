@@ -462,6 +462,8 @@ def power_week(
     time_series_rooftop = time_series.copy()
     time_series_rooftop.interval = human_to_interval("30m")
 
+    logger.debug(time_series_rooftop)
+
     query = power_network_rooftop_query(
         time_series=time_series_rooftop,
         networks_query=networks_query,
@@ -492,6 +494,8 @@ def power_week(
     if rooftop and rooftop.data:
         time_series_rooftop_forecast = time_series_rooftop.copy()
         time_series_rooftop_forecast.forecast = True
+
+        logger.debug(time_series_rooftop_forecast)
 
         query = power_network_rooftop_query(
             time_series=time_series_rooftop_forecast, networks_query=networks_query, network_region=network_region_code
