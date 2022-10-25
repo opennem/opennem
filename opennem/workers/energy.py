@@ -7,6 +7,7 @@ from typing import Dict, List, Optional
 from opennem import settings
 from opennem.api.stats.controllers import duid_in_case, get_scada_range
 from opennem.api.time import human_to_interval, human_to_period
+from opennem.controllers.output.schema import ExportDatetimeRange, OpennemExportSeries
 from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.core.facility.fueltechs import load_fueltechs
 from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id
@@ -15,7 +16,6 @@ from opennem.core.networks import get_network_region_schema
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import FacilityScada
-from opennem.schema.dates import DatetimeRange, TimeSeries
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import DATE_CURRENT_YEAR, get_last_complete_day_for_network
 from opennem.utils.interval import get_human_interval
@@ -333,10 +333,10 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
     return len(records_to_store)
 
 
-def get_date_range(network: NetworkSchema) -> DatetimeRange:
+def get_date_range(network: NetworkSchema) -> ExportDatetimeRange:
     date_range = get_scada_range(network=NetworkNEM)
 
-    time_series = TimeSeries(
+    time_series = OpennemExportSeries(
         start=date_range.start,
         end=date_range.end,
         interval=human_to_interval("1d"),
