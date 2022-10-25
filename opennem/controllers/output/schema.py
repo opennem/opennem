@@ -142,6 +142,11 @@ class OpennemExportSeries(BaseConfig):
         elif self.period:
             start = self.end - get_human_interval(self.period.period_human)
 
+            # trim again
+            if self.interval.interval == 30:
+                replace_min_start = 30 if start.minute >= 30 else 0
+                start = start.replace(minute=replace_min_start, second=0, microsecond=0)
+
         if self.year:
             if self.year > end.year:
                 raise Exception("Specified year is great than end year")
@@ -200,10 +205,9 @@ class OpennemExportSeries(BaseConfig):
             )
 
         # localize times
-        if not start.tzinfo or start.tzinfo != self.network.get_fixed_offset():
+        if not is_aware(start):
             start = start.astimezone(self.network.get_fixed_offset())
-
-        if not end.tzinfo or end.tzinfo != self.network.get_fixed_offset():
+        if not is_aware(end):
             end = end.astimezone(self.network.get_fixed_offset())
 
         return ExportDatetimeRange(start=start, end=end, interval=self.interval)
