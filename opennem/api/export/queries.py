@@ -440,7 +440,6 @@ def power_network_rooftop_query(
     time_series: OpennemExportSeries,
     network_region: Optional[str] = None,
     networks_query: Optional[List[NetworkSchema]] = None,
-    forecast: bool = False,
 ) -> str:
     """Query power stats"""
 
@@ -474,7 +473,7 @@ def power_network_rooftop_query(
     agg_func = "sum"
     timezone: str = time_series.network.timezone_database
 
-    forecast_query = f"fs.is_forecast is {forecast} and"
+    forecast_query = f"fs.is_forecast is {time_series.forecast} and"
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and "
@@ -498,12 +497,12 @@ def power_network_rooftop_query(
     date_max = time_series_range.end
     date_min = time_series_range.start
 
-    if forecast:
+    if time_series.forecast:
         # @TODO work out what in get_range is mashing this
         date_min = date_min + timedelta(minutes=30)
-        date_max = date_min + timedelta(hours=3)
+        date_max = date_min + timedelta(hours=12)
 
-    query = dedent(
+    return dedent(
         __query.format(
             network_query=network_query,
             network_region_query=network_region_query,
@@ -514,8 +513,6 @@ def power_network_rooftop_query(
             agg_func=agg_func,
         )
     )
-
-    return query
 
 
 """ Emission Queries """

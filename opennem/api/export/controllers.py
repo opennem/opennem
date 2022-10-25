@@ -491,14 +491,10 @@ def power_week(
 
     if rooftop and rooftop.data:
         time_series_rooftop_forecast = time_series_rooftop.copy()
-        time_series_rooftop_forecast.start = rooftop.data[0].history.last
         time_series_rooftop_forecast.forecast = True
 
         query = power_network_rooftop_query(
-            time_series=time_series_rooftop_forecast,
-            networks_query=networks_query,
-            network_region=network_region_code,
-            forecast=True,
+            time_series=time_series_rooftop_forecast, networks_query=networks_query, network_region=network_region_code
         )
 
         with engine.connect() as c:
