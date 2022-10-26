@@ -29740,5 +29740,57 @@
       "geocode_approved": false,
       "geocode_skip": false
     }
+  },
+  {
+    "code": "MOUSF",
+    "name": "Moura",
+    "network_name": "Moura Solar Farm",
+    "description": "Moura Solar Farm is a 110MW project located 6.5km south west of the township of Banana, Queensland.",
+    "wikipedia_link": null,
+    "wikidata_id": null,
+    "website_url": "https://mourasolar.com.au/",
+    "approved": true,
+    "approved_by": "opennem.init",
+    "facilities": [
+      {
+        "network_id": "NEM",
+        "fueltech_id": "solar_utility",
+        "status_id": "operating",
+        "code": "MOUSF1",
+        "network_code": null,
+        "network_region": "QLD1",
+        "network_name": null,
+        "dispatch_type": "GENERATOR",
+        "interconnector": false,
+        "interconnector_region_to": null,
+        "interconnector_region_from": null,
+        "capacity_registered": 99.0,
+        "expected_closure_date": null,
+        "expected_closure_year": null,
+        "registered": null,
+        "deregistered": null,
+        "unit_id": null,
+        "unit_number": 36,
+        "unit_alias": null,
+        "unit_capacity": 2.27,
+        "emissions_factor_co2": null
+      }
+    ],
+    "location": {
+      "address1": null,
+      "address2": null,
+      "locality": "Banana",
+      "state": "QLD",
+      "postcode": "4702",
+      "country": "AU",
+      "geocode_processed_at": null,
+      "lat": -24.509628260067526,
+      "lng": 150.07664771206112,
+      "osm_way_id": null,
+      "place_id": null,
+      "geocode_by": null,
+      "geocode_approved": false,
+      "geocode_skip": false
+    }
   }
 ]
