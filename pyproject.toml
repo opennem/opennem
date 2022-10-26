@@ -115,7 +115,7 @@ opennem = 'opennem.cli:main'
 postgres = ["psycopg2"]
 
 [tool.ruff]
-line-length = 120
+line-length = 130
 exclude = [
   ".git",
   ".venv",
@@ -130,7 +130,7 @@ exclude = [
 ]
 
 [tool.black]
-line-length = 120
+line-length = 130
 target_version = ['py310']
 include = '\.pyi?$'
 exclude = '''
