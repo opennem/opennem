@@ -34,3 +34,8 @@ repos:
         entry: poetry run black --config pyproject.toml
         types: [python]
         language: system
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.0.82
+    hooks:
+      - id: lint

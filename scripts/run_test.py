@@ -2,20 +2,9 @@
 import logging
 from datetime import datetime
 
-from opennem import settings
 from opennem.api.export.map import PriorityType, StatType, get_export_map
-from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
+from opennem.api.export.tasks import export_energy, export_power
 from opennem.api.stats.schema import load_opennem_dataset_from_url
-from opennem.exporter.historic import export_historic_intervals
-from opennem.notifications.slack import slack_message
-from opennem.schema.network import NetworkNEM, NetworkWEM
-from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days, run_aggregates_demand_network
-from opennem.workers.emissions import (
-    run_emission_update_day,
-    run_flow_updates_all_for_network,
-    run_flow_updates_all_per_year,
-)
-from opennem.workers.gap_fill.energy import run_energy_gapfill
 
 logger = logging.getLogger("opennem.run_test")
 
@@ -103,6 +92,7 @@ if __name__ == "__main__":
     # export_energy(latest=True)
 
     # run_flow_updates_all_per_year
+    run_export_current_year("NSW1")
 
     # run_flow_updates_all_per_year(2009, 1)
     # run_flow_updates_all_per_year(2010, 1)
@@ -114,5 +104,5 @@ if __name__ == "__main__":
     # run_flow_updates_all_for_network(NetworkNEM)
     # run_export_current_year("NSW1")
     # export_energy(latest=True)
-    export_power()
+    # export_power()
     # run_export_energy_for_region("NSW1")
