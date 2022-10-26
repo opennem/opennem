@@ -29688,5 +29688,57 @@
       "geocode_approved": false,
       "geocode_skip": false
     }
+  },
+  {
+    "code": "WSTWYSF",
+    "name": "West Wyalong",
+    "network_name": "West Wyalong Solar Farm",
+    "description": "West Wyalong solar farm is a 107MW project located near Wyalong, NSW. Snowy Hydro will purchase two-thirds of the power generated from the solar project through a 15-year PPA. ",
+    "wikipedia_link": null,
+    "wikidata_id": null,
+    "website_url": null,
+    "approved": true,
+    "approved_by": "opennem.init",
+    "facilities": [
+      {
+        "network_id": "NEM",
+        "fueltech_id": "solar_utility",
+        "status_id": "operating",
+        "code": "WSTWYSF1",
+        "network_code": null,
+        "network_region": "NSW1",
+        "network_name": null,
+        "dispatch_type": "GENERATOR",
+        "interconnector": false,
+        "interconnector_region_to": null,
+        "interconnector_region_from": null,
+        "capacity_registered": 105.0,
+        "expected_closure_date": null,
+        "expected_closure_year": null,
+        "registered": null,
+        "deregistered": null,
+        "unit_id": null,
+        "unit_number": 29,
+        "unit_alias": null,
+        "unit_capacity": 3.103,
+        "emissions_factor_co2": null
+      }
+    ],
+    "location": {
+      "address1": "228-230 Blands Ln",
+      "address2": null,
+      "locality": "Wyalong",
+      "state": "NSW",
+      "postcode": "2671",
+      "country": "AU",
+      "geocode_processed_at": null,
+      "lat": -33.7956353638098,
+      "lng": 147.3145445846548,
+      "osm_way_id": null,
+      "place_id": null,
+      "geocode_by": null,
+      "geocode_approved": false,
+      "geocode_skip": false
+    }
   }
 ]
