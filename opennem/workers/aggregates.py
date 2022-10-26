@@ -51,7 +51,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
 
     """
 
-    date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset())
+    date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset(), microsecond=0)
     date_max_offset = date_max.replace(hour=0, minute=0, second=0, microsecond=0)
 
     if date_max_offset <= date_min_offset:
@@ -143,7 +143,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
     if network == NetworkNEM:
         trading_offset = "- INTERVAL '5 minutes'"
 
-    date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset())
+    date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset(), microsecond=0)
     date_max_offset = (date_max + timedelta(days=1)).replace(tzinfo=network.get_fixed_offset())
 
     if date_max_offset <= date_min_offset:
@@ -337,5 +337,13 @@ def run_aggregates_all_days(
 # Debug entry point
 if __name__ == "__main__":
     # run_aggregates_all()
-    run_aggregates_demand_network()
+    # run_aggregates_demand_network()
+    run_aggregates_facility_year(2022, network=NetworkNEM)
     # run_aggregates_demand_network_days(days=30)
+
+
+def run_facility_aggregate_for_range() -> None:
+    network = NetworkNEM
+    date_start = datetime.fromisoformat("2022-01-01 00:00:00+10:00")
+    date_end = date_start + timedelta(days=1)
+    exec_aggregates_facility_daily_query(date_min=date_start, date_max=date_end, network=network)
