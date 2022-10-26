@@ -1,10 +1,10 @@
 {
   "type": "energy",
-  "version": "3.11.5-alpha.1",
+  "version": "3.11.7-alpha.0",
   "network": "nem",
   "code": "nem",
   "region": "VIC1",
-  "created_at": "2022-10-25T14:40:00+10:00",
+  "created_at": "2022-10-26T12:12:31+10:00",
   "data": [
     {
       "id": "au.nem.vic1.demand.energy",
