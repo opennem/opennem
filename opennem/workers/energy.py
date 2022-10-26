@@ -34,9 +34,9 @@ def get_generated_query(
     date_min: datetime,
     date_max: datetime,
     network: NetworkSchema,
-    network_region: Optional[str] = None,
-    fueltech_id: Optional[str] = None,
-    facility_codes: Optional[List[str]] = None,
+    network_region: str | None = None,
+    fueltech_id: str | None = None,
+    facility_codes: list[str] | None = None,
 ) -> str:
     # @TODO support refresh energies for a single duid or station
 
@@ -94,7 +94,7 @@ def get_clear_query(
     date_min: datetime,
     date_max: datetime,
     network: NetworkSchema,
-    fueltech_id: Optional[str] = None,
+    fueltech_id: str | None = None,
 ) -> str:
     """Clear the energies for the range we're about to update"""
 
@@ -144,7 +144,7 @@ def get_flows_query(
     network_region_schema_lookup = get_network_region_schema(NetworkNEM, network_region)
 
     if not network_region_schema_lookup or len(network_region_schema_lookup) < 1:
-        raise Exception("Could not get network region schema for {}".format(network_region))
+        raise Exception(f"Could not get network region schema for {network_region}")
 
     network_region_schema = network_region_schema_lookup.pop()
 
@@ -184,10 +184,10 @@ def get_generated(
     date_max: datetime,
     network: NetworkSchema,
     run_clear: bool = False,
-    network_region: Optional[str] = None,
-    fueltech_id: Optional[str] = None,
-    facility_codes: Optional[List[str]] = None,
-) -> List[Dict]:
+    network_region: str | None = None,
+    fueltech_id: str | None = None,
+    facility_codes: list[str] | None = None,
+) -> list[dict]:
     """Gets generated values for a date range for a network and network region
     and optionally for a single fueltech"""
 
@@ -221,7 +221,7 @@ def get_generated(
             except Exception as e:
                 logger.error(e)
 
-    logger.debug("Got back {} rows".format(len(results)))
+    logger.debug(f"Got back {len(results)} rows")
 
     return results
 
@@ -232,7 +232,7 @@ def get_flows(
     network_region: str,
     network: NetworkSchema,
     flow: FlowDirection,
-) -> List[Dict]:
+) -> list[dict]:
     """Gets flows"""
 
     query = get_flows_query(network_region, date_min, date_max, network, flow)
@@ -250,12 +250,12 @@ def get_flows(
             except Exception as e:
                 logger.error(e)
 
-    logger.debug("Got back {} flow rows".format(len(results)))
+    logger.debug(f"Got back {len(results)} flow rows")
 
     return results
 
 
-def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
+def insert_energies(results: list[dict], network: NetworkSchema) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
 
@@ -285,7 +285,7 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
     ]
     esdf = esdf[columns]
 
-    records_to_store: List[Dict] = esdf.to_dict("records")
+    records_to_store: list[dict] = esdf.to_dict("records")
 
     for record in records_to_store[:5]:
         logger.debug(record)
@@ -325,10 +325,10 @@ def insert_energies(results: List[Dict], network: NetworkSchema) -> int:
         cursor.copy_expert(sql_query, csv_content)
         conn.commit()
     except Exception as e:
-        logger.error("Error inserting records: {}".format(e))
+        logger.error(f"Error inserting records: {e}")
         return 0
 
-    logger.info("Inserted {} records".format(len(records_to_store)))
+    logger.info(f"Inserted {len(records_to_store)} records")
 
     return len(records_to_store)
 
@@ -351,13 +351,13 @@ def run_energy_calc(
     date_min: datetime,
     date_max: datetime,
     network: NetworkSchema,
-    region: Optional[str] = None,
-    fueltech_id: Optional[str] = None,
-    facility_codes: Optional[List[str]] = None,
+    region: str | None = None,
+    fueltech_id: str | None = None,
+    facility_codes: list[str] | None = None,
     run_clear: bool = False,
 ) -> int:
     """Runs the actual energy calc - believe it or not"""
-    generated_results: List[Dict] = []
+    generated_results: list[dict] = []
 
     flow = None
 
@@ -382,14 +382,14 @@ def run_energy_calc(
 
     try:
         if len(generated_results) < 1:
-            logger.warning("No results from get_generated query for {} {} {}".format(region, date_max, fueltech_id))
+            logger.warning(f"No results from get_generated query for {region} {date_max} {fueltech_id}")
             return 0
 
         generated_frame = shape_energy_dataframe(generated_results, network=network)
 
         num_records = insert_energies(generated_frame, network=network)
 
-        logger.info("Done {} for {} => {}".format(region, date_min, date_max))
+        logger.info(f"Done {region} for {date_min} => {date_max}")
     except Exception as e:
         error_traceback = e.with_traceback()
 
@@ -402,18 +402,18 @@ def run_energy_calc(
 
 
 def run_energy_update_archive(
-    year: Optional[int] = None,
-    months: Optional[List[int]] = None,
-    days: Optional[int] = None,
-    regions: Optional[List[str]] = None,
-    fueltech: Optional[str] = None,
+    year: int | None = None,
+    months: list[int] | None = None,
+    days: int | None = None,
+    regions: list[str] | None = None,
+    fueltech: str | None = None,
     network: NetworkSchema = NetworkNEM,
     run_clear: bool = False,
 ) -> None:
 
     date_range = get_date_range(network=network)
 
-    years: List[int] = []
+    years: list[int] = []
 
     if not year:
         years = [i for i in range(YEAR_EARLIEST, DATE_CURRENT_YEAR + 1)]
@@ -468,7 +468,7 @@ def run_energy_update_archive(
 
             if date_min > date_max:
                 # slack_message("Reached end of energy archive")
-                logger.debug("Reached end of archive {} {}".format(date_min, date_max))
+                logger.debug(f"Reached end of archive {date_min} {date_max}")
                 break
 
             for region in regions:
@@ -484,7 +484,7 @@ def run_energy_update_archive(
 
 
 def run_energy_update_days(
-    networks: Optional[List[NetworkSchema]] = None,
+    networks: list[NetworkSchema] | None = None,
     days: int = 1,
     fueltech: str = None,
     region: str = None,
@@ -523,7 +523,7 @@ def run_energy_update_days(
 
 
 def run_energy_update_all(
-    network: NetworkSchema = NetworkNEM, fueltech: Optional[str] = None, run_clear: bool = False
+    network: NetworkSchema = NetworkNEM, fueltech: str | None = None, run_clear: bool = False
 ) -> None:
     """Runs energy update for all regions and all years for one-off
     inserts"""
@@ -531,7 +531,7 @@ def run_energy_update_all(
         run_energy_update_archive(year=year, fueltech=fueltech, network=network, run_clear=run_clear)
 
 
-def run_energy_update_facility(facility_codes: List[str], network: NetworkSchema = NetworkNEM) -> None:
+def run_energy_update_facility(facility_codes: list[str], network: NetworkSchema = NetworkNEM) -> None:
     facility_seen_range = None
 
     # catch me if you can
@@ -561,4 +561,21 @@ def _test_case() -> None:
 
 # debug entry point
 if __name__ == "__main__":
-    run_energy_update_days(days=32)
+    # run_energy_update_days(days=32)
+    date_min = datetime.fromisoformat("2022-01-01T00:00:00+10:00")
+    date_max = date_min + timedelta(days=1)
+
+    while True:
+        logger.info(f"Running for {date_min} => {date_max}")
+        date_min += timedelta(days=1)
+        date_max += timedelta(days=1)
+
+        if date_max >= datetime.fromisoformat("2022-02-01T00:00:00+10:00"):
+            break
+
+        run_energy_calc(
+            date_min,
+            date_max,
+            network=NetworkNEM,
+            run_clear=False,
+        )
