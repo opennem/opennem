@@ -1,4 +1,3 @@
-import pytest
 
 from opennem.core.unit_parser import parse_unit_duid, parse_unit_number
 

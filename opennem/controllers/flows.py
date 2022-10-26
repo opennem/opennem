@@ -1,7 +1,6 @@
 """ Flow controllers """
 from datetime import datetime
 
-import pandas as pd
 
 from opennem.db import get_database_engine
 from opennem.queries.flows import get_interconnector_intervals_query

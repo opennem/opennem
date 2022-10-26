@@ -2,7 +2,6 @@ import logging
 import math
 from datetime import date, datetime, timedelta
 from datetime import timezone as pytimezone
-from datetime import tzinfo
 from typing import Any, Generator, Optional, Tuple, Union
 from zoneinfo import ZoneInfo
 

@@ -10,10 +10,16 @@ from opennem.exporter.historic import export_historic_intervals
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days, run_aggregates_demand_network
-from opennem.workers.emissions import run_emission_update_day, run_flow_updates_all_per_year
+from opennem.workers.emissions import (
+    run_emission_update_day,
+    run_flow_updates_all_for_network,
+    run_flow_updates_all_per_year,
+)
 from opennem.workers.gap_fill.energy import run_energy_gapfill
 
 logger = logging.getLogger("opennem.run_test")
+
+CURRENT_YEAR = datetime.now().year
 
 
 def run_export_all(network_region_code: str | None = None) -> None:
@@ -36,6 +42,19 @@ def run_export_power_for_region(region_code: str) -> None:
         .get_by_network_region(region_code)
     )
     export_power(power_exports.resources)
+
+
+def run_export_current_year(network_region: str) -> None:
+    """Run export for latest year"""
+    export_map = get_export_map()
+    energy_exports = (
+        export_map.get_by_stat_type(StatType.energy)
+        .get_by_priority(PriorityType.daily)
+        .get_by_year(CURRENT_YEAR)
+        .get_by_network_region(network_region)
+    )
+    logger.info(f"Running {len(energy_exports.resources)} exports")
+    export_energy(energy_exports.resources)
 
 
 def run_export_energy_for_region(region_code: str) -> None:
@@ -83,10 +102,17 @@ if __name__ == "__main__":
     # test_ids()
     # export_energy(latest=True)
 
+    # run_flow_updates_all_per_year
+
     # run_flow_updates_all_per_year(2009, 1)
     # run_flow_updates_all_per_year(2010, 1)
-    # run_flow_updates_all_per_year(2011, 1)
-    run_export_all()
-
-    # export_power()
+    # run_flow_updates_all_per_year(2015, 1)
+    # run_flow_updates_all_per_year(2019, 1)
+    # run_flow_updates_all_per_year(2020, 1)
+    # run_flow_updates_all_per_year(2021, 1)
+    # run_flow_updates_all_per_year(2022, 1)
+    # run_flow_updates_all_for_network(NetworkNEM)
+    # run_export_current_year("NSW1")
+    # export_energy(latest=True)
+    export_power()
     # run_export_energy_for_region("NSW1")

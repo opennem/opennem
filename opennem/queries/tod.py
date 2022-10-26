@@ -4,9 +4,7 @@ and other stats per network
 """
 import logging
 from datetime import datetime, timedelta
-from operator import attrgetter
 from textwrap import dedent
-from typing import List
 
 from datetime_truncate import truncate as date_trunc
 

@@ -1,4 +1,3 @@
-import pytest
 
 from opennem.core.unit_parser import unit_has_alias
 

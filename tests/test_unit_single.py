@@ -1,4 +1,3 @@
-import pytest
 
 from opennem.core.unit_single import facility_unit_numbers_are_single
 

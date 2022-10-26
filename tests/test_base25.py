@@ -1,4 +1,3 @@
-import pytest
 
 from opennem.utils import base25
 

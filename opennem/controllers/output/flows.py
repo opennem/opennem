@@ -1,5 +1,4 @@
 import logging
-import re
 
 from opennem.api.stats.controllers import stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet, RegionFlowEmissionsResult

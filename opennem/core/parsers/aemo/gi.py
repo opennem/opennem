@@ -250,7 +250,6 @@ if __name__ == "__main__":
     records = parse_aemo_general_information(str(aemo_gi_testfile))
     records = list(filter(lambda x: x.status_id in ["committed", "commissioning"], records))
 
-    from pprint import pprint
 
     # pprint(records)
     facility_matcher(records=records)

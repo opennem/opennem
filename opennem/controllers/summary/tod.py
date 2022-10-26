@@ -2,12 +2,9 @@
 Time of Day Summary Controller
 """
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from operator import attrgetter
-from textwrap import dedent
-from typing import List
 
-from datetime_truncate import truncate as date_trunc
 
 from opennem.core.templates import serve_template
 from opennem.db import get_database_engine

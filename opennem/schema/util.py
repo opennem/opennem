@@ -1,4 +1,3 @@
-import re
 
 
 def first_or_none(values=None):

@@ -1,7 +1,6 @@
 import csv
 from pathlib import Path
 from typing import Any, Dict, Optional
-from zipfile import ZipFile
 
 import pytest
 

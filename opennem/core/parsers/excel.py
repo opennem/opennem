@@ -4,7 +4,6 @@ from typing import BinaryIO, Dict, List, Optional, Tuple, Union
 from openpyxl import load_workbook
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from pydantic import BaseConfig
 
 from opennem.utils.mime import mime_from_content
 from opennem.utils.xls import convert_to_xlxs

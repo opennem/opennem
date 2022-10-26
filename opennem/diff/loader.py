@@ -1,4 +1,3 @@
-import json
 from operator import attrgetter
 from typing import Any, List
 

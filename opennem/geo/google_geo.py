@@ -11,7 +11,6 @@ Methods to use and access the Google Places API
 """
 import logging
 import time
-from datetime import timedelta
 from typing import Any
 
 from opennem import settings

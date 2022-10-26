@@ -1,5 +1,4 @@
 """ Unit tests for the flows worker """
-from pathlib import Path
 
 import pandas as pd
 

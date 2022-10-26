@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from geoalchemy2.elements import WKBElement
 from geoalchemy2.shape import to_shape
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, validator
 from shapely import geometry
 
 from opennem.api.photo.schema import Photo
