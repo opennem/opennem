@@ -25,7 +25,7 @@ from opennem.workers.gap_fill.energy import run_energy_gapfill
 logger = logging.getLogger("opennem.worker.daily")
 
 
-def daily_runner(days: int = 7) -> None:
+def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
     CURRENT_YEAR = datetime.now().year
 
@@ -62,6 +62,8 @@ def daily_runner(days: int = 7) -> None:
     # Skip if we're not on prod
     if settings.env == "production":
         run_daily_fueltech_summary(network=NetworkNEM)
+
+    run_daily_fueltech_summary(network=NetworkNEM)
 
     # send a slack message when done
     slack_message(f"Ran daily_runner on {settings.env}")
