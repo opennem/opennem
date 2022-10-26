@@ -3,7 +3,6 @@ import logging
 import os
 from datetime import datetime, timedelta
 from textwrap import dedent
-from typing import List, Tuple
 
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.stats.schema import ScadaDateRange
@@ -20,35 +19,36 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
     """This query updates the aggregate demand table with market_value and energy"""
 
     __query = """
-        insert into at_network_demand
+    insert into at_network_demand
+        select
+            date_trunc('day', fs.trading_interval at time zone n.timezone_database {network_interval_offset})
+                as trading_day,
+            fs.network_id,
+            fs.network_region,
+            sum(fs.energy) as demand_energy,
+            sum(fs.market_value) as demand_market_value
+        from (
             select
-                date_trunc('day', fs.trading_interval at time zone n.timezone_database {network_interval_offset}) as trading_day,
-                fs.network_id,
-                fs.network_region,
-                sum(fs.energy) as demand_energy,
-                sum(fs.market_value) as demand_market_value
-            from (
-                select
-                    time_bucket_gapfill('5 minutes', bs.trading_interval) as trading_interval,
-                    bs.network_id,
-                    bs.network_region,
-                    (sum(coalesce(bs.demand_total, bs.demand)) / {intervals_per_hour}) as energy,
-                    (sum(coalesce(bs.demand_total, bs.demand)) / {intervals_per_hour}) * max(bs.price_dispatch) * 1000 as market_value
-                from balancing_summary bs
-                where
-                    bs.network_id = '{network_id}'
-                    and bs.trading_interval >= '{date_min}'
-                    and bs.trading_interval <= '{date_max}'
-                group by
-                    1, 2, 3
-            ) as fs
-            left join network n on fs.network_id = n.code
+                time_bucket_gapfill('5 minutes', bs.trading_interval) as trading_interval,
+                bs.network_id,
+                bs.network_region,
+                (sum(coalesce(bs.demand_total, bs.demand)) / {intervals_per_hour}) as energy,
+                (sum(coalesce(bs.demand_total, bs.demand)) / {intervals_per_hour})
+                    * max(bs.price_dispatch) * 1000 as market_value
+            from balancing_summary bs
+            where
+                bs.network_id = '{network_id}'
+                and bs.trading_interval >= '{date_min}'
+                and bs.trading_interval <= '{date_max}'
             group by
                 1, 2, 3
-        on conflict (trading_day, network_id, network_region) DO UPDATE set
-                demand_energy = EXCLUDED.demand_energy,
-                demand_market_value = EXCLUDED.demand_market_value;
-
+        ) as fs
+        left join network n on fs.network_id = n.code
+        group by
+            1, 2, 3
+    on conflict (trading_day, network_id, network_region) DO UPDATE set
+            demand_energy = EXCLUDED.demand_energy,
+            demand_market_value = EXCLUDED.demand_market_value;
     """
 
     date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset(), microsecond=0)
@@ -56,7 +56,7 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
 
     if date_max_offset <= date_min_offset:
         raise Exception(
-            "aggregates_network_demand_query: date_max ({}) is before date_min ({})".format(date_max_offset, date_min)
+            f"aggregates_network_demand_query: date_max ({date_max_offset}) is before date_min ({date_min})"
         )
 
     network_interval_offset = ""
@@ -144,11 +144,11 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
         trading_offset = "- INTERVAL '5 minutes'"
 
     date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset(), microsecond=0)
-    date_max_offset = (date_max + timedelta(days=1)).replace(tzinfo=network.get_fixed_offset())
+    date_max_offset = (date_max + timedelta(days=1)).replace(tzinfo=network.get_fixed_offset(), microsecond=0)
 
     if date_max_offset <= date_min_offset:
         raise Exception(
-            "aggregates_facility_daily_query: date_max ({}) is before date_min ({})".format(date_max_offset, date_min)
+            f"aggregates_facility_daily_query: date_max ({date_max_offset}) is before date_min ({date_min})"
         )
 
     query = __query.format(
@@ -169,7 +169,7 @@ def exec_aggregates_network_demand_query(date_min: datetime, date_max: datetime,
 
     if date_max < date_min:
         raise Exception(
-            "exec_aggregates_network_demand_query: date_max ({}) is prior to date_min ({})".format(date_max, date_min)
+            f"exec_aggregates_network_demand_query: date_max ({date_max}) is prior to date_min ({date_min})"
         )
 
     query = aggregates_network_demand_query(date_min=date_min, date_max=date_max, network=network)
@@ -194,7 +194,7 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
     # or place it all in a schema that validates
     if date_max < date_min:
         raise Exception(
-            "exec_aggregates_facility_daily_query: date_max ({}) is prior to date_min ({})".format(date_max, date_min)
+            f"exec_aggregates_facility_daily_query: date_max ({date_max}) is prior to date_min ({date_min})"
         )
 
     query = aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
@@ -214,7 +214,7 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
     return resp_code
 
 
-def _get_year_range(year: int, network: NetworkSchema = NetworkNEM) -> Tuple[datetime, datetime]:
+def _get_year_range(year: int, network: NetworkSchema = NetworkNEM) -> tuple[datetime, datetime]:
     """Get a date range for a year with end exclusive"""
     tz = network.get_fixed_offset()
 
@@ -259,7 +259,7 @@ def run_aggregates_facility_year(year: int = DATE_CURRENT_YEAR, network: Network
         network (NetworkSchema, optional): [description]. Defaults to NetworkNEM.
     """
     date_min, date_max = _get_year_range(year)
-    logger.info("Running for year {} - range : {} {}".format(year, date_min, date_max))
+    logger.info(f"Running for year {year} - range : {date_min} {date_max}")
 
     exec_aggregates_facility_daily_query(date_min, date_max, network)
 
@@ -276,7 +276,7 @@ def run_aggregates_facility_all(network: NetworkSchema) -> None:
     scada_range: ScadaDateRange = get_scada_range(network=network)
 
     if not scada_range:
-        logger.error("Could not find a scada range for {}".format(network.code))
+        logger.error(f"Could not find a scada range for {network.code}")
         return None
 
     exec_aggregates_facility_daily_query(date_min=scada_range.start, date_max=scada_range.end, network=network)
@@ -310,7 +310,7 @@ def run_rooftop_fix() -> None:
 
 
 def run_aggregates_all(
-    networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
+    networks: list[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
 ) -> None:
     for network in networks:
         run_aggregates_facility_all(network)
@@ -320,7 +320,7 @@ def run_aggregates_all(
 
 def run_aggregates_all_days(
     days: int = 7,
-    networks: List[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
+    networks: list[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
 ) -> None:
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -328,7 +328,7 @@ def run_aggregates_all_days(
     date_start = today - timedelta(days=days)
 
     for network in networks:
-        logger.info("Running for Network {} range {} => {}".format(network.code, date_start, date_end))
+        logger.info(f"Running for Network {network.code} range {date_start} => {date_end}")
         exec_aggregates_facility_daily_query(date_min=date_start, date_max=date_end, network=network)
 
     run_aggregates_demand_network_days(days=days)
