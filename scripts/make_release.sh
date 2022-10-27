@@ -1,6 +1,8 @@
 set -euxo pipefail
 
-pytest
+if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi.
+
+#pytest
 
 # run ruff linter
 # ruff . --select=E9,F63,F7,F82 --show-source --statistics
@@ -23,4 +25,3 @@ git ci -m "v$VERSION"
 
 git tag v$VERSION
 git push -u origin master v$VERSION
-
