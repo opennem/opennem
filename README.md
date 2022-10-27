@@ -149,6 +149,12 @@ $ opennem -h
 
 Settings for Visual Studio Code are stored in `.vscode`. Code is kept formatted and linted using `pylint`, `black` and `isort` with settings defined in `pyproject.toml`
 
+[Pre-commit](https://pre-commit.com/) hooks run before every commit. To setup:
+
+```
+$ pre-commit install
+```
+
 ## Testing
 
 Tests are in `tests/`
