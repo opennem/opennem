@@ -12,11 +12,15 @@ from opennem.core.networks import network_from_network_code
 from opennem.db import get_database_engine
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.utils.dates import get_last_complete_day_for_network
+from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem
 from opennem.utils.timezone import is_aware
 from opennem.workers.energy import run_energy_calc
 
 logger = logging.getLogger("opennem.workers.gap_fill")
+
+
+class GapFillEnergyException(Exception):
+    pass
 
 
 class EnergyGap(BaseConfig):
@@ -86,15 +90,10 @@ def query_energy_gaps(date_min: datetime, date_max: datetime, network: NetworkSc
     return [EnergyGap(**i) for i in results]
 
 
-def run_energy_gapfill_for_network_by_days(
-    network: NetworkSchema = NetworkNEM, days: int = 7, fill_all: bool = False, fill_gaps: bool = True
-) -> None:
-    """Run energy gapfilling. If fill all it will ignore if it has energy. If fill gaps it will only fill gaps"""
-
-    # calculate
-    date_max = get_last_complete_day_for_network(network)
-    date_min = date_max - timedelta(days=days)
-
+def run_energy_gapfill(
+    date_min: datetime, date_max: datetime, network: NetworkSchema, fill_all: bool = False, fill_gaps: bool = True
+) -> list[EnergyGap]:
+    """ """
     energy_gaps = query_energy_gaps(date_min=date_min, date_max=date_max, network=network)
 
     energy_gaps_filtered = list(filter(lambda x: x.has_power is True and x.has_energy is False, energy_gaps))
@@ -124,13 +123,49 @@ def run_energy_gapfill_for_network_by_days(
         except Exception:
             logger.error(f"Error running {gap.network_id} energy gapfill for {dmin} => {dmax}")
 
+    return energy_gaps_filtered
 
-def run_energy_gapfill_previous_days(
-    days: int = 14,
-    networks: list[NetworkSchema] = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop],
-    run_all: bool = False,
+
+def run_energy_gapfill_for_network_by_days(
+    network: NetworkSchema = NetworkNEM, days: int = 7, fill_all: bool = False, fill_gaps: bool = True
 ) -> None:
+    """Run energy gapfilling. If fill all it will ignore if it has energy. If fill gaps it will only fill gaps"""
+
+    # calculate
+    date_max = get_last_complete_day_for_network(network)
+    date_min = date_max - timedelta(days=days)
+
+    run_energy_gapfill(date_min, date_max=date_max, network=network, fill_all=fill_all, fill_gaps=fill_gaps)
+
+
+def run_energy_gapfill_for_network(network: NetworkSchema) -> None:
+    """Run energy gapfille for a network by year"""
+
+    if not network or not network.data_first_seen:
+        raise GapFillEnergyException("Require network date first seen to run")
+
+    current_year = datetime.now().year
+
+    for year in range(current_year, network.data_first_seen.year - 1, -1):
+        date_start = datetime(year=year, month=1, day=1, hour=0, minute=0, second=0, tzinfo=network.get_fixed_offset())
+        date_end = date_start.replace(year=year + 1)
+
+        if year == current_year:
+            date_end = date_trunc(get_today_nem(), "hour")
+
+        if year == network.data_first_seen.year:
+            date_start = date_trunc(network.data_first_seen, "hour") + timedelta(hours=1)
+
+        logging.info(f"Running for {date_start} => {date_end}")
+
+        run_energy_gapfill(date_min=date_start, date_max=date_end, network=network, fill_all=False, fill_gaps=True)
+
+
+def run_energy_gapfill_previous_days(days: int = 14, networks: list[NetworkSchema] = None, run_all: bool = False) -> None:
     """Run gapfill of energy values - will find gaps in energy values and run energy_sum"""
+    if networks is None:
+        networks = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop]
+
     for network in networks:
         logger.info(f"Running energy gapfill for {network.code}")
 
@@ -150,9 +185,11 @@ if __name__ == "__main__":
     # energy_intervals = query_energy_gaps(network=network_from_network_code("NEM"), days=301)
     # energy_gaps = list(filter(lambda x: x.has_energy is False, energy_intervals))
 
-    energy_gaps = run_energy_gapfill_for_network_by_days(network=NetworkNEM, fill_gaps=False)
+    run_energy_gapfill_for_network(NetworkNEM)
 
-    print(f"{len(energy_gaps)} gaps")
+    # energy_gaps = run_energy_gapfill_for_network_by_days(network=NetworkNEM, fill_gaps=False)
 
-    for i in energy_gaps:
-        print(i.interval, i.has_power, i.has_energy, i.total_energy)
+    # print(f"{len(energy_gaps)} gaps")
+
+    # for i in energy_gaps:
+    #     print(i.interval, i.has_power, i.has_energy, i.total_energy)

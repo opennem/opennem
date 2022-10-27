@@ -20,7 +20,7 @@ from opennem.workers.emissions import (
     run_flow_updates_all_for_network,
     run_flow_updates_all_per_year,
 )
-from opennem.workers.gap_fill.energy import run_energy_gapfill
+from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network, run_energy_gapfill_for_network_by_days
 
 logger = logging.getLogger("opennem.worker.daily")
 
@@ -29,7 +29,7 @@ def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
     CURRENT_YEAR = datetime.now().year
 
-    run_energy_gapfill(days=days)
+    run_energy_gapfill_for_network_by_days(days=days)
 
     run_flow_updates_all_per_year(CURRENT_YEAR, 1)
 
@@ -71,7 +71,7 @@ def daily_runner(days: int = 2) -> None:
 
 def all_runner() -> None:
     """Like the daily runner but refreshes all tasks"""
-    run_energy_gapfill(days=365 * 14)
+    run_energy_gapfill_for_network(network=NetworkNEM)
 
     # populates the aggregate tables
     run_flow_updates_all_for_network(network=NetworkNEM)
