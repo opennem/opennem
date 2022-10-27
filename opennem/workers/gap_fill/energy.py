@@ -175,6 +175,15 @@ def run_energy_gapfill_previous_days(days: int = 14, networks: list[NetworkSchem
             logger.error(f"gap_fill run error: {e}")
 
 
+def run_energy_gapfill_for_last_hour(network: NetworkSchema) -> None:
+    """Run energy gapfill for the last hour"""
+
+    date_max = date_trunc(get_today_nem(), "hour")
+    date_min = date_max - timedelta(hours=1)
+
+    run_energy_gapfill(date_min, date_max=date_max, network=network, fill_all=False, fill_gaps=True)
+
+
 # debug entry point
 if __name__ == "__main__":
     # run_energy_gapfill(days=365/2)
