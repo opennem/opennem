@@ -1,0 +1,10 @@
+[flake8]
+# extend-ignore = E203
+exclude =
+    .git,
+    __pycache__,
+    notebooks,
+    build,
+    dist
+max-complexity = 15
+max-line-length = 130

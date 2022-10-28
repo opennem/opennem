@@ -106,6 +106,7 @@ pyflakes = "^2.4.0"
 mccabe = "^0.7.0"
 ruff = "^0.0.85"
 pyupgrade = "^3.1.0"
+flake8 = "^5.0.4"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
@@ -129,7 +130,7 @@ exclude = [
 ]
 
 [tool.black]
-line-length = 120
+line-length = 130
 target_version = ['py310']
 include = '\.pyi?$'
 exclude = '''
