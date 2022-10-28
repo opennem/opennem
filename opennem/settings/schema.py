@@ -5,7 +5,7 @@ Everything that can be changed is set here and can be overwritten with ENV setti
 """
 from datetime import timezone as pytimezone
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 
 from pydantic import BaseSettings
 from pydantic.class_validators import validator
@@ -37,6 +37,9 @@ class OpennemSettings(BaseSettings):
     # @NOTE pydantic settings assignment type mismatch from mypy
     # https://github.com/samuelcolvin/pydantic/issues/1490
     db_url: PostgresSqlAlchemyDsn = "postgresql://user:pass@127.0.0.1:15444/opennem"  # type: ignore
+
+    # if we're doing a dry run
+    dry_run: bool = False
 
     cache_url: RedisDsn = "redis://127.0.0.1"
 
@@ -99,9 +102,6 @@ class OpennemSettings(BaseSettings):
     http_verify_ssl: bool = True
     https_proxy_url: str | None = None  # @note don't let it confict with env HTTP_PROXY
 
-    # used in testing to not run database queries
-    dry_run: bool = False
-
     _static_folder_path: str = "opennem/static/"
 
     # output schema options
@@ -125,7 +125,7 @@ class OpennemSettings(BaseSettings):
 
     # monitoring
     monitoring_alert_sms: str | None = None
-    monitoring_alert_slack_user: Optional[List[str]] = None
+    monitoring_alert_slack_user: list[str] | None = None
 
     # api key cookie settings
     api_app_auth_name: str = "onau"
