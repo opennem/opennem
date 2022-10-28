@@ -1,6 +1,6 @@
 set -euxo pipefail
 
-if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi.
+if [[ "${TRACE-0}" == "1" ]]; then set -o xtrace; fi
 
 #pytest
 
@@ -25,3 +25,5 @@ git ci -m "v$VERSION"
 
 git tag v$VERSION
 git push -u origin master v$VERSION
+
+# end of file
