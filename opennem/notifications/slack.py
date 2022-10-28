@@ -2,7 +2,6 @@
 import dataclasses
 import logging
 import sys
-from typing import List
 
 import requests
 from validators import ValidationFailure
@@ -41,11 +40,11 @@ class SlackMessageBlock:
 class SlackMessage:
     """Slack message block"""
 
-    blocks: list[SlackMessageBlock]
+    blocks: list[SlackMessageBlock | SlackMessageBlockImage]
     text: str = dataclasses.field(default="")
 
 
-def _slack_tag_list(user_list: List[str]) -> str:
+def _slack_tag_list(user_list: list[str]) -> str:
     """List of slack usernames to alert to a string
 
     Args:
@@ -59,6 +58,7 @@ def _slack_tag_list(user_list: List[str]) -> str:
 
 def slack_message(
     msg: str | None = None,
+    text: str | None = None,
     tag_users: list[str] | None = None,
     image_url: str | None = None,
     image_alt: str | None = None,
@@ -103,7 +103,7 @@ def slack_message(
 
     logger.info(f"Sending message: {text_block} with image {image_url}")
 
-    slack_message = SlackMessage(text="Daily Summary", blocks=blocks)
+    slack_message = SlackMessage(text=text or "", blocks=blocks)
 
     # as dict and exclude empty fields
     slack_body = dataclasses.asdict(slack_message, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
