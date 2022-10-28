@@ -83,17 +83,15 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
     """
 
     trading_offset = "- INTERVAL '5 minutes'" if network == NetworkNEM else ""
-    date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset(), microsecond=0)
-    date_max_offset = (date_max + timedelta(days=1)).replace(tzinfo=network.get_fixed_offset(), microsecond=0)
 
-    if date_max_offset <= date_min_offset:
+    if date_max <= date_min:
         raise AggregateFacilityDailyException(
-            f"aggregates_facility_daily_query: date_max ({date_max_offset}) is before date_min ({date_min})"
+            f"aggregates_facility_daily_query: date_max ({date_max}) is before date_min ({date_min})"
         )
 
     query = __query.format(
-        date_min=date_min_offset,
-        date_max=date_max_offset,
+        date_min=date_min,
+        date_max=date_max,
         network_id=network.code,
         trading_offset=trading_offset,
         network_interval_size=network.interval_size,
