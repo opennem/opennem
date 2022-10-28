@@ -7,13 +7,14 @@ import logging
 from datetime import datetime
 
 from opennem import settings
+from opennem.aggregates.facility_daily import run_aggregate_facility_all_by_year, run_aggregates_facility_year
+from opennem.aggregates.network_demand import run_aggregates_demand_network
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.db.tasks import refresh_material_views
 from opennem.exporter.historic import export_historic_intervals
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
-from opennem.workers.aggregates import run_aggregates_all, run_aggregates_facility_year
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import (
     run_emission_update_day,
@@ -31,10 +32,16 @@ def daily_runner(days: int = 2) -> None:
 
     run_energy_gapfill_for_network_by_days(days=days)
 
+    # aggregates
+    # 1. flows
     run_flow_updates_all_per_year(CURRENT_YEAR, 1)
 
+    # 2. facilities
     for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
         run_aggregates_facility_year(year=CURRENT_YEAR, network=network)
+
+    # 3. network demand
+    run_aggregates_demand_network()
 
     # flows and flow emissions
     run_emission_update_day(days=days)
@@ -75,7 +82,9 @@ def all_runner() -> None:
 
     # populates the aggregate tables
     run_flow_updates_all_for_network(network=NetworkNEM)
-    run_aggregates_all()
+
+    for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
+        run_aggregate_facility_all_by_year(network=network)
 
     # run the exports for all
     export_power(latest=False)
