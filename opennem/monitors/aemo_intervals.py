@@ -1,9 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 
-from opennem.monitors.aemo_wem_live_intervals import (
-    get_aemo_wem_live_facility_intervals_recent_date,
-)
+from opennem.monitors.aemo_wem_live_intervals import get_aemo_wem_live_facility_intervals_recent_date
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkWEM
 from opennem.settings import settings
@@ -24,15 +22,15 @@ def aemo_wem_live_interval() -> bool:
 
     live_delta = chop_delta_microseconds(now_date - live_most_recent)
 
-    logger.debug("Live time: {},  delay: {}".format(live_most_recent, live_delta))
+    logger.debug(f"Live time: {live_most_recent},  delay: {live_delta}")
 
     # @TODO move the minutes into settings
     if live_delta > timedelta(minutes=90):
         slack_message(
-            "*WARNING*: AEMO Live intervals for WEM on {} curently delayed by {}\n\nAEMO feed most recent: {}".format(
-                settings.env, live_delta, live_most_recent
-            )
+            f"*WARNING*: AEMO Live intervals for WEM on {settings.env} curently delayed by \
+                 {live_delta}\n\nAEMO feed most recent: {live_most_recent}"
         )
+
         return True
 
     return False
