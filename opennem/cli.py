@@ -5,7 +5,6 @@ run with either the opennem entry point or:
 $ python -m opennem.cli
 """
 import logging
-from typing import Optional
 
 import click
 
@@ -24,7 +23,6 @@ from opennem.importer.db import init as db_init
 from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_import
 from opennem.settings import settings
-from opennem.workers.aggregates import run_aggregate_days
 from opennem.workers.daily import all_runner, daily_runner
 from opennem.workers.energy import run_energy_update_archive, run_energy_update_days
 
@@ -127,7 +125,6 @@ def cmd_export_energy_monthly() -> None:
 @click.command()
 def cmd_export_all() -> None:
     run_energy_update_days(days=5)
-    run_aggregate_days(days=5)
     export_energy(latest=True)
     export_energy(priority=PriorityType.monthly)
 
@@ -153,7 +150,7 @@ def cmd_task() -> None:
 @click.command()
 @click.option("--year", required=True, type=int)
 @click.option("--fueltech", required=False, type=str)
-def cmd_task_energy(year: int, fueltech: Optional[str] = None) -> None:
+def cmd_task_energy(year: int, fueltech: str | None = None) -> None:
     run_energy_update_archive(year, fueltech=fueltech)
 
 
