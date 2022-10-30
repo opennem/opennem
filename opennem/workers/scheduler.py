@@ -137,7 +137,7 @@ def db_run_energy_gapfil() -> None:
     dispatch_gen = run_crawl(AEMONEMNextDayDispatch)
 
     if (dispatch_actuals and dispatch_actuals.inserted_records) or (dispatch_gen and dispatch_gen.inserted_records):
-        daily_runner(days=3)
+        daily_runner()
 
 
 # export tasks
