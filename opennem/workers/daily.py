@@ -4,7 +4,7 @@ Runs daily export task JSONs for OpenNEM website
 
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from opennem import settings
 from opennem.aggregates.facility_daily import run_aggregate_facility_all_by_year, run_aggregates_facility_year
@@ -15,22 +15,33 @@ from opennem.db.tasks import refresh_material_views
 from opennem.exporter.historic import export_historic_intervals
 from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
+from opennem.utils.dates import get_today_nem
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.emissions import (
     run_emission_update_day,
     run_flow_updates_all_for_network,
     run_flow_updates_all_per_year,
 )
-from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network, run_energy_gapfill_for_network_by_days
+from opennem.workers.energy import run_energy_calc
+from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network
 
 logger = logging.getLogger("opennem.worker.daily")
+
+
+def energy_runner() -> None:
+    """Energy Runner"""
+    dmax = get_today_nem().replace(hour=0, minute=0, second=0, microsecond=0)
+    dmin = dmax - timedelta(days=1)
+
+    for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
+        run_energy_calc(dmin, dmax, network=network)
 
 
 def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
     CURRENT_YEAR = datetime.now().year
 
-    run_energy_gapfill_for_network_by_days(days=days)
+    energy_runner()
 
     # aggregates
     # 1. flows
@@ -98,4 +109,4 @@ def all_runner() -> None:
 
 
 if __name__ == "__main__":
-    all_runner()
+    energy_runner()

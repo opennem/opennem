@@ -34,15 +34,13 @@ from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.notifications.slack import slack_message
-from opennem.schema.network import NetworkNEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import daily_runner
 from opennem.workers.facility_data_ranges import update_facility_seen_range
-from opennem.workers.gap_fill.energy import run_energy_gapfill_for_last_hour
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
 
-# Py 3.8 on MacOS changed the default multiprocessing model
+# Py 3.8+ on MacOS changed the default multiprocessing model
 if platform.system() == "Darwin":
     import multiprocessing
 
@@ -226,7 +224,8 @@ def run_refresh_export_maps() -> None:
 @huey.periodic_task(crontab(hour="*/1", minute="10"))
 @huey.lock_task("run_run_energy_gapfill_for_last_hour")
 def run_run_energy_gapfill_for_last_hour() -> None:
-    run_energy_gapfill_for_last_hour(network=NetworkNEM)
+    # run_energy_gapfill_for_last_hour(network=NetworkNEM)
+    pass
 
 
 # admin tasks
