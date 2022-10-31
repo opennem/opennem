@@ -8,7 +8,7 @@ from opennem import settings
 from opennem.aggregates.utils import get_aggregate_year_range
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.utils.dates import get_today_opennem
+from opennem.utils.dates import chop_datetime_microseconds, get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_daily")
 
@@ -90,8 +90,8 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
         )
 
     query = __query.format(
-        date_min=date_min,
-        date_max=date_max,
+        date_min=chop_datetime_microseconds(date_min),
+        date_max=chop_datetime_microseconds(date_max),
         network_id=network.code,
         trading_offset=trading_offset,
         network_interval_size=network.interval_size,
