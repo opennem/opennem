@@ -35,7 +35,7 @@ from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.notifications.slack import slack_message
 from opennem.settings import IS_DEV, settings  # noqa: F401
-from opennem.workers.daily import daily_runner
+from opennem.workers.daily import daily_runner, energy_runner_hours
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
@@ -220,12 +220,11 @@ def run_refresh_export_maps() -> None:
     refresh_weekly_export_map()
 
 
-# gapfill tasks
+# energy worker tasks
 @huey.periodic_task(crontab(hour="*/1", minute="10"))
-@huey.lock_task("run_run_energy_gapfill_for_last_hour")
-def run_run_energy_gapfill_for_last_hour() -> None:
-    # run_energy_gapfill_for_last_hour(network=NetworkNEM)
-    pass
+@huey.lock_task("run_energy_runner_hours")
+def run_energy_runner_hours() -> None:
+    energy_runner_hours(hours=1)
 
 
 # admin tasks
