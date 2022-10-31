@@ -46,6 +46,22 @@ def energy_runner_hours(hours: int = 1) -> None:
         run_energy_calc(dmin, dmax, network=network)
 
 
+def run_export_for_year(year: int, network_region_code: str | None = None) -> None:
+    """Run export for latest year"""
+    export_map = get_export_map()
+    energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.daily).get_by_year(year)
+
+    if network_region_code:
+        energy_exports = energy_exports.get_by_network_region(network_region_code)
+
+    logger.info(f"Running {len(energy_exports.resources)} exports")
+
+    export_energy(energy_exports.resources)
+
+
+# The actual daily runners
+
+
 def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
     CURRENT_YEAR = datetime.now().year
@@ -74,6 +90,7 @@ def daily_runner(days: int = 2) -> None:
 
     # run exports for latest year
     export_energy(latest=True)
+    run_export_for_year(CURRENT_YEAR - 1)
 
     # run exports for all
     export_map = get_export_map()
