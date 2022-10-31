@@ -97,18 +97,18 @@ def daily_runner(days: int = 2) -> None:
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
     export_energy(energy_exports.resources)
 
+    # Skip if we're not on prod
+    if settings.env == "production":
+        run_daily_fueltech_summary(network=NetworkNEM)
+
+    run_daily_fueltech_summary(network=NetworkNEM)
+
     # export historic intervals
     for network in [NetworkNEM, NetworkWEM]:
         export_historic_intervals(limit=1, networks=[network])
 
     export_all_daily()
     export_all_monthly()
-
-    # Skip if we're not on prod
-    if settings.env == "production":
-        run_daily_fueltech_summary(network=NetworkNEM)
-
-    run_daily_fueltech_summary(network=NetworkNEM)
 
     # send a slack message when done
     slack_message(f"Ran daily_runner on {settings.env}")
