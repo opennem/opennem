@@ -28,10 +28,10 @@ from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network
 logger = logging.getLogger("opennem.worker.daily")
 
 
-def energy_runner() -> None:
+def energy_runner(days: int = 1) -> None:
     """Energy Runner"""
     dmax = get_today_nem().replace(hour=0, minute=0, second=0, microsecond=0)
-    dmin = dmax - timedelta(days=1)
+    dmin = dmax - timedelta(days=days)
 
     for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
         run_energy_calc(dmin, dmax, network=network)
@@ -41,6 +41,7 @@ def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
     CURRENT_YEAR = datetime.now().year
 
+    # Energy
     energy_runner()
 
     # aggregates
