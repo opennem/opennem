@@ -42,7 +42,7 @@ def daily_runner(days: int = 2) -> None:
     CURRENT_YEAR = datetime.now().year
 
     # Energy
-    energy_runner()
+    energy_runner(days=days)
 
     # aggregates
     # 1. flows
