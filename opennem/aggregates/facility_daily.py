@@ -177,7 +177,7 @@ def run_aggregate_facility_days(days: int = 1, network: NetworkSchema | None = N
     # This is Sydney time as the data is published in local time
     # today_midnight in NEM time
     date_max = get_today_opennem().replace(minute=0, second=0, microsecond=0)
-    date_min = (date_max - timedelta(days=days - 1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    date_min = (date_max - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
 
     exec_aggregates_facility_daily_query(date_min, date_max, network)
 
