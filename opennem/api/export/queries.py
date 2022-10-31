@@ -779,20 +779,30 @@ def energy_network_fueltech_query(
 
     __query = """
     select
-        time_bucket_gapfill('{trunc}', t.trading_day),
+        date_trunc('{trunc}', t.trading_day) as trading_interval,
         t.fueltech_id,
-        coalesce(sum(t.energy) / 1000, {coalesce_with}) as fueltech_energy,
-        coalesce(sum(t.market_value), {coalesce_with}) as fueltech_market_value,
-        coalesce(sum(t.emissions), {coalesce_with}) as fueltech_emissions
-    from at_facility_daily t
-    left join facility f on t.facility_code = f.code
-    where
-        t.trading_day <= '{date_max}'::date and
-        t.trading_day >= '{date_min}'::date and
-        t.fueltech_id not in ('imports', 'exports', 'interconnector') and
-        {network_query}
-        {network_region_query}
-        1=1
+        sum(t.fueltech_energy),
+        sum(t.fueltech_market_value),
+        sum(t.fueltech_emissions)
+    from
+    (
+        select
+            time_bucket_gapfill('1d', t.trading_day) as trading_day,
+            t.fueltech_id,
+            coalesce(sum(t.energy) / 1000, {coalesce_with}) as fueltech_energy,
+            coalesce(sum(t.market_value), {coalesce_with}) as fueltech_market_value,
+            coalesce(sum(t.emissions), {coalesce_with}) as fueltech_emissions
+        from at_facility_daily t
+        left join facility f on t.facility_code = f.code
+        where
+            t.trading_day <= '{date_max}'::date and
+            t.trading_day >= '{date_min}'::date and
+            t.fueltech_id not in ('imports', 'exports', 'interconnector') and
+            {network_query}
+            {network_region_query}
+            1=1
+        group by 1, 2
+    ) as t
     group by 1, 2
     order by 1 desc;
     """
@@ -804,7 +814,7 @@ def energy_network_fueltech_query(
     date_max = time_series_range.end
     date_min = time_series_range.start
 
-    trunc = time_series_range.interval.interval_sql
+    trunc = time_series_range.interval.trunc
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and"
