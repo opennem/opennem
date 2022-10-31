@@ -1,6 +1,5 @@
 from datetime import timedelta
 from textwrap import dedent
-from typing import List, Optional
 
 from sqlalchemy import sql
 from sqlalchemy.sql.elements import TextClause
@@ -159,9 +158,7 @@ def interconnector_power_flow(time_series: OpennemExportSeries, network_region: 
     return dedent(query)
 
 
-def interconnector_flow_network_regions_query(
-    time_series: OpennemExportSeries, network_region: Optional[str] = None
-) -> str:
+def interconnector_flow_network_regions_query(time_series: OpennemExportSeries, network_region: str | None = None) -> str:
     """ """
 
     __query = """
@@ -228,8 +225,8 @@ def country_stats_query(stat_type: StatTypes, country: str = "au") -> TextClause
 def price_network_query(
     time_series: OpennemExportSeries,
     group_field: str = "bs.network_id",
-    network_region: Optional[str] = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
+    network_region: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
 ) -> str:
 
     if not networks_query:
@@ -286,8 +283,8 @@ def price_network_query(
 
 def network_demand_query(
     time_series: OpennemExportSeries,
-    network_region: Optional[str] = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
+    network_region: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
 ) -> str:
     if not networks_query:
         networks_query = [time_series.network]
@@ -327,7 +324,7 @@ def network_demand_query(
 
     groups_additional = ", ".join(group_keys)
 
-    network_query = "bs.network_id IN ({}) and ".format(networks_to_in(networks_query))
+    network_query = f"bs.network_id IN ({networks_to_in(networks_query)}) and "
 
     # Get the time range using either the old way or the new v4 way
     time_series_range = time_series.get_range()
@@ -350,8 +347,8 @@ def network_demand_query(
 
 def power_network_fueltech_query(
     time_series: OpennemExportSeries,
-    network_region: Optional[str] = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
+    network_region: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
 ) -> str:
     """Query power stats"""
 
@@ -408,7 +405,7 @@ def power_network_fueltech_query(
         # in country-wide totals
         wem_apvi_case = "or (f.network_id='APVI' and f.network_region='WEM')"
 
-    network_query = "(f.network_id IN ({}) {}) and ".format(networks_to_in(networks_query), wem_apvi_case)
+    network_query = f"(f.network_id IN ({networks_to_in(networks_query)}) {wem_apvi_case}) and "
 
     # Get the data time range
     # use the new v2 feature if it has been provided otherwise use the old method
@@ -417,7 +414,7 @@ def power_network_fueltech_query(
     date_min = time_series_range.start
 
     # If we have a fueltech filter, add it to the query
-    fueltechs_exclude = ", ".join("'{}'".format(i) for i in fueltechs_excluded)
+    fueltechs_exclude = ", ".join(f"'{i}'" for i in fueltechs_excluded)
 
     query = dedent(
         __query.format(
@@ -438,8 +435,8 @@ def power_network_fueltech_query(
 
 def power_network_rooftop_query(
     time_series: OpennemExportSeries,
-    network_region: Optional[str] = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
+    network_region: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
 ) -> str:
     """Query power stats"""
 
@@ -498,7 +495,7 @@ def power_network_rooftop_query(
         if NetworkNEM not in networks_query:
             agg_func = "max"
 
-    network_query = "(f.network_id IN ({}) {}) and ".format(networks_to_in(networks_query), wem_apvi_case)
+    network_query = f"(f.network_id IN ({networks_to_in(networks_query)}) {wem_apvi_case}) and "
 
     # Get the time range using either the old way or the new v4 way
     time_series_range = time_series.get_range()
@@ -527,7 +524,7 @@ def power_network_rooftop_query(
 
 def power_and_emissions_network_fueltech_query(
     time_series: OpennemExportSeries,
-    network_region: Optional[str] = None,
+    network_region: str | None = None,
 ) -> str:
     """Query emission stats for each network and fueltech"""
 
@@ -587,7 +584,7 @@ def power_and_emissions_network_fueltech_query(
     date_max = time_series_range.end
     date_min = time_series_range.start
 
-    fueltechs_exclude = ", ".join("'{}'".format(i) for i in fueltechs_excluded)
+    fueltechs_exclude = ", ".join(f"'{i}'" for i in fueltechs_excluded)
 
     query = dedent(
         __query.format(
@@ -608,8 +605,8 @@ def power_and_emissions_network_fueltech_query(
 
 def power_network_interconnector_emissions_query(
     time_series: OpennemExportSeries,
-    network_region: Optional[str] = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
+    network_region: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
 ) -> str:
     """
     Get emissions for a network or network + region
@@ -765,9 +762,9 @@ Energy Queries
 
 def energy_network_fueltech_query(
     time_series: OpennemExportSeries,
-    network_region: Optional[str] = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
-    coalesce_with: Optional[int] = 0,
+    network_region: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
+    coalesce_with: int | None = 0,
 ) -> str:
     """
     Get Energy for a network or network + region
@@ -782,7 +779,7 @@ def energy_network_fueltech_query(
 
     __query = """
     select
-        date_trunc('{trunc}', t.trading_day),
+        time_bucket_gapfill('{trunc}', t.trading_day),
         t.fueltech_id,
         coalesce(sum(t.energy) / 1000, {coalesce_with}) as fueltech_energy,
         coalesce(sum(t.market_value), {coalesce_with}) as fueltech_market_value,
@@ -807,7 +804,7 @@ def energy_network_fueltech_query(
     date_max = time_series_range.end
     date_min = time_series_range.start
 
-    trunc = time_series_range.interval.trunc
+    trunc = time_series_range.interval.interval_sql
 
     if network_region:
         network_region_query = f"f.network_region='{network_region}' and"
@@ -838,8 +835,8 @@ def energy_network_fueltech_query(
 
 def energy_network_interconnector_emissions_query(
     time_series: OpennemExportSeries,
-    network_region: Optional[str] = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
+    network_region: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
 ) -> str:
     """
     Get emissions for a network or network + region
