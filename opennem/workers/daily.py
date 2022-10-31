@@ -30,8 +30,8 @@ logger = logging.getLogger("opennem.worker.daily")
 
 def energy_runner(days: int = 1) -> None:
     """Energy Runner"""
-    dmax = get_today_nem().replace(hour=0, minute=0, second=0, microsecond=0)
-    dmin = dmax - timedelta(days=days)
+    dmax = get_today_nem()
+    dmin = (dmax - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
 
     for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
         run_energy_calc(dmin, dmax, network=network)
@@ -39,7 +39,7 @@ def energy_runner(days: int = 1) -> None:
 
 def energy_runner_hours(hours: int = 1) -> None:
     """Energy Runner"""
-    dmax = get_today_nem().replace(hour=0, minute=0, second=0, microsecond=0)
+    dmax = get_today_nem().replace(minute=0, second=0, microsecond=0)
     dmin = dmax - timedelta(hours=hours)
 
     for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
@@ -136,4 +136,4 @@ def all_runner() -> None:
 
 
 if __name__ == "__main__":
-    energy_runner()
+    daily_runner(days=2)
