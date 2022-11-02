@@ -2,7 +2,6 @@
 
 """
 import logging
-from typing import List, Optional
 
 from pydantic import ValidationError
 
@@ -11,7 +10,12 @@ from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
-from opennem.crawlers.apvi import APVIRooftopLatestCrawler, APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
+from opennem.crawlers.apvi import (
+    APVIRooftopAllCrawler,
+    APVIRooftopLatestCrawler,
+    APVIRooftopMonthCrawler,
+    APVIRooftopTodayCrawler,
+)
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.mms import (
     AEMOMMSDispatchInterconnector,
@@ -64,13 +68,16 @@ def load_crawlers() -> CrawlerSet:
             AEMONEMDispatchActualGENArchvie,
             AEMONEMNextDayDispatchArchvie,
             AEMONNemwebDispatchScadaArchive,
+            AEMONemwebTradingISArchive,
+            AEMONemwebDispatchISArchive,
             # APVI
             APVIRooftopTodayCrawler,
             APVIRooftopLatestCrawler,
             APVIRooftopMonthCrawler,
-            AEMONemwebTradingISArchive,
-            AEMONemwebDispatchISArchive,
+            APVIRooftopAllCrawler,
+            # BOM
             BOMCapitals,
+            # WEM
             WEMBalancing,
             WEMBalancingLive,
             WEMFacilityScada,
@@ -92,7 +99,7 @@ def load_crawlers() -> CrawlerSet:
             crawlers.append(crawler_inst)
             continue
 
-        crawler_updated_with_meta: Optional[CrawlerDefinition] = None
+        crawler_updated_with_meta: CrawlerDefinition | None = None
 
         try:
             crawler_field_values = {
@@ -104,7 +111,7 @@ def load_crawlers() -> CrawlerSet:
                 **crawler_field_values,
             )
         except ValidationError as e:
-            logger.error("Validation error for crawler {}: {}".format(crawler_inst.name, e))
+            logger.error(f"Validation error for crawler {crawler_inst.name}: {e}")
             raise Exception("Crawler initiation error")
 
         if crawler_updated_with_meta:
@@ -135,7 +142,7 @@ def run_crawl(
     crawler_set_meta(crawler.name, CrawlStatTypes.version, crawler.version)
     crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
 
-    cr: Optional[ControllerReturn] = crawler.processor(
+    cr: ControllerReturn | None = crawler.processor(
         crawler=crawler, last_crawled=last_crawled, limit=crawler.limit, latest=latest
     )
 
@@ -145,11 +152,11 @@ def run_crawl(
     # run here
     has_errors = False
 
-    logger.info("Inserted {} of {} records".format(cr.inserted_records, cr.total_records))
+    logger.info(f"Inserted {cr.inserted_records} of {cr.total_records} records")
 
     if cr.errors > 0:
         has_errors = True
-        logger.error("Crawl controller error for {}: {}".format(crawler.name, cr.error_detail))
+        logger.error(f"Crawl controller error for {crawler.name}: {cr.error_detail}")
         return None
 
     if not has_errors:
@@ -157,9 +164,9 @@ def run_crawl(
             crawler_set_meta(crawler.name, CrawlStatTypes.latest_processed, cr.server_latest)
             crawler_set_meta(crawler.name, CrawlStatTypes.server_latest, cr.server_latest)
         else:
-            logger.debug("{} has no server_latest return".format(crawler.name))
+            logger.debug(f"{crawler.name} has no server_latest return")
 
-        logger.info("Set last_processed to {} and server_latest to {}".format(crawler.last_processed, cr.server_latest))
+        logger.info(f"Set last_processed to {crawler.last_processed} and server_latest to {cr.server_latest}")
 
     return cr
 
@@ -189,7 +196,7 @@ def run_crawls_all(last_crawled: bool = True) -> None:
         try:
             run_crawl(crawler, last_crawled=last_crawled)
         except Exception as e:
-            logger.error("Error running crawl {}: {}".format(crawler.name, e))
+            logger.error(f"Error running crawl {crawler.name}: {e}")
 
 
 def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True) -> None:
@@ -201,10 +208,10 @@ def run_crawls_by_schedule(schedule: CrawlerSchedule, last_crawled: bool = True)
             logger.debug(f"run_crawls_by_schedule running crawler {crawler.name}")
             run_crawl(crawler, last_crawled=last_crawled)
         except Exception as e:
-            logger.error("Error running crawl {}: {}".format(crawler.name, e))
+            logger.error(f"Error running crawl {crawler.name}: {e}")
 
 
-def get_crawler_names() -> List[str]:
+def get_crawler_names() -> list[str]:
     """Get a list of crawler names"""
     cs = get_crawl_set()
     return [i.name for i in cs.crawlers]

@@ -4,7 +4,6 @@
 
 import logging
 from datetime import datetime
-from typing import Optional
 
 from opennem.clients.apvi import APVIForecastSet, get_apvi_rooftop_data, get_apvi_rooftop_today
 from opennem.controllers.apvi import store_apvi_forecastset, update_apvi_facility_capacities
@@ -13,6 +12,8 @@ from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, Cra
 from opennem.utils.dates import date_series, get_today_nem
 
 logger = logging.getLogger("opennem.crawlers.apvi")
+
+APVI_MIN_DATE = datetime.fromisoformat("2015-03-01T00:00:00+10:00")
 
 
 def crawl_apvi_forecasts(
@@ -26,8 +27,19 @@ def crawl_apvi_forecasts(
         return apvi_forecast_return
 
     # run the entire date range
-    else:
+    elif crawler.limit:
         for date in date_series(get_today_nem().date(), length=crawler.limit, reverse=True):
+            apvi_forecast_return = run_apvi_crawl(date)
+            apvi_return.processed_records += apvi_forecast_return.processed_records
+            apvi_return.total_records += apvi_forecast_return.total_records
+            apvi_return.inserted_records += apvi_forecast_return.inserted_records
+            apvi_return.errors += apvi_forecast_return.errors
+
+            if not apvi_return.server_latest or apvi_return.server_latest < apvi_forecast_return.server_latest:
+                apvi_return.server_latest = apvi_forecast_return.server_latest
+
+    else:
+        for date in date_series(get_today_nem().date(), APVI_MIN_DATE, reverse=True):
             apvi_forecast_return = run_apvi_crawl(date)
             apvi_return.processed_records += apvi_forecast_return.processed_records
             apvi_return.total_records += apvi_forecast_return.total_records
@@ -40,8 +52,8 @@ def crawl_apvi_forecasts(
     return apvi_return
 
 
-def run_apvi_crawl(day: Optional[datetime] = None) -> ControllerReturn:
-    apvi_forecast_set: Optional[APVIForecastSet] = None
+def run_apvi_crawl(day: datetime | None = None) -> ControllerReturn:
+    apvi_forecast_set: APVIForecastSet | None = None
 
     if day:
         logger.info(f"Getting APVI data for day {day}")
@@ -87,6 +99,17 @@ APVIRooftopMonthCrawler = CrawlerDefinition(
     schedule=CrawlerSchedule.daily,
     name="apvi.month.data",
     limit=30,
+    url="none",
+    latest=False,
+    processor=crawl_apvi_forecasts,
+)
+
+
+APVIRooftopAllCrawler = CrawlerDefinition(
+    priority=CrawlerPriority.medium,
+    schedule=CrawlerSchedule.daily,
+    name="apvi.all.data",
+    limit=None,
     url="none",
     latest=False,
     processor=crawl_apvi_forecasts,
