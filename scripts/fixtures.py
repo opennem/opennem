@@ -2,25 +2,14 @@
 """
 Script for methods to run for fixtures
 """
-
-
 import logging
 from datetime import datetime
 
-from opennem import settings
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_energy, export_power
 from opennem.exporter.historic import export_historic_for_year_and_week_no
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_current_week_for_network
-from opennem.workers.aggregates import run_aggregates_all, run_aggregates_all_days
-from opennem.workers.daily_summary import run_daily_fueltech_summary
-from opennem.workers.emissions import (
-    run_emission_update_day,
-    run_flow_updates_all_for_network,
-    run_flow_updates_all_per_year,
-)
-from opennem.workers.gap_fill.energy import run_energy_gapfill
 
 logger = logging.getLogger("opennem.scripts.fixtures")
 
@@ -48,9 +37,7 @@ def export_energy_current_year() -> None:
     """Export energy data for current year"""
     # run exports for all
     export_map = get_export_map()
-    energy_exports = (
-        export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.daily).get_by_year(CURRENT_YEAR)
-    )
+    energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.daily).get_by_year(CURRENT_YEAR)
     export_energy(energy_exports.resources)
 
 
