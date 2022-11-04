@@ -15,6 +15,12 @@ from opennem.utils.dates import date_series, get_today_nem
 logger = logging.getLogger("opennem.crawlers.apvi")
 
 
+class APVICrawlerException(Exception):
+    """Specific Exception"""
+
+    pass
+
+
 def crawl_apvi_forecasts(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False
 ) -> ControllerReturn:
@@ -22,13 +28,16 @@ def crawl_apvi_forecasts(
     apvi_return = ControllerReturn()
 
     if crawler.latest:
-        apvi_forecast_return = run_apvi_crawl()
-        return apvi_forecast_return
+        return run_apvi_crawl()
 
     # run the entire date range
     elif crawler.limit:
         for date in date_series(get_today_nem().date(), length=crawler.limit, reverse=True):
             apvi_forecast_return = run_apvi_crawl(date)
+
+            if not apvi_forecast_return or not apvi_forecast_return.server_latest:
+                raise APVICrawlerException("Bad run_apvi_crawl return none or no server_latest")
+
             apvi_return.processed_records += apvi_forecast_return.processed_records
             apvi_return.total_records += apvi_forecast_return.total_records
             apvi_return.inserted_records += apvi_forecast_return.inserted_records
@@ -45,6 +54,9 @@ def crawl_apvi_forecasts(
             apvi_return.total_records += apvi_forecast_return.total_records
             apvi_return.inserted_records += apvi_forecast_return.inserted_records
             apvi_return.errors += apvi_forecast_return.errors
+
+            if not apvi_forecast_return or not apvi_forecast_return.server_latest:
+                raise APVICrawlerException("Bad run_apvi_crawl return none or no server_latest")
 
             if not apvi_return.server_latest or apvi_return.server_latest < apvi_forecast_return.server_latest:
                 apvi_return.server_latest = apvi_forecast_return.server_latest
