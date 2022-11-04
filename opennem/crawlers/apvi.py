@@ -9,11 +9,10 @@ from opennem.clients.apvi import APVIForecastSet, get_apvi_rooftop_data, get_apv
 from opennem.controllers.apvi import store_apvi_forecastset, update_apvi_facility_capacities
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
+from opennem.schema.network import NetworkAPVI
 from opennem.utils.dates import date_series, get_today_nem
 
 logger = logging.getLogger("opennem.crawlers.apvi")
-
-APVI_MIN_DATE = datetime.fromisoformat("2015-03-01T00:00:00+10:00")
 
 
 def crawl_apvi_forecasts(
@@ -38,8 +37,9 @@ def crawl_apvi_forecasts(
             if not apvi_return.server_latest or apvi_return.server_latest < apvi_forecast_return.server_latest:
                 apvi_return.server_latest = apvi_forecast_return.server_latest
 
+    # run all
     else:
-        for date in date_series(get_today_nem().date(), APVI_MIN_DATE, reverse=True):
+        for date in date_series(get_today_nem().date(), NetworkAPVI.data_first_seen, reverse=True):
             apvi_forecast_return = run_apvi_crawl(date)
             apvi_return.processed_records += apvi_forecast_return.processed_records
             apvi_return.total_records += apvi_forecast_return.total_records
