@@ -3,7 +3,7 @@
 
 """
 from datetime import datetime, timedelta, timezone, tzinfo
-from typing import Any, List, Optional, Union
+from typing import Any
 from zoneinfo import ZoneInfo
 
 from pydantic import Field
@@ -25,7 +25,7 @@ class NetworkNetworkRegion(BaseConfig):
 class NetworkRegionSchema(BaseConfig):
     network_id: str
     code: str
-    timezone: Optional[str]
+    timezone: str | None
 
 
 class NetworkSchema(BaseConfig):
@@ -33,13 +33,13 @@ class NetworkSchema(BaseConfig):
     country: str
     label: str
 
-    regions: Optional[List[NetworkNetworkRegion]]
+    regions: list[NetworkNetworkRegion] | None
 
     timezone: str = Field(..., description="Network timezone")
 
     timezone_database: str = Field("UTC", description="Database timezone format")
 
-    offset: Optional[int] = Field(None, description="Network time offset in minutes")
+    offset: int | None = Field(None, description="Network time offset in minutes")
 
     interval_size: int = Field(..., description="Size of network interval in minutes")
     interval_size_price: int | None = Field(None, description="Size of network price interval in minutes")
@@ -60,10 +60,13 @@ class NetworkSchema(BaseConfig):
     # ex. ROOFTOP, APVI etc.
     subnetworks: list["NetworkSchema"] | None
 
+    # fueltechs provided by this network
+    fueltechs: list[str] | None = Field(None, description="Fueltechs provided by this network")
+
     # Does the network have flows
     has_interconnectors: bool = Field(False, description="Network has interconnectors")
 
-    def get_interval(self) -> Optional[TimeInterval]:
+    def get_interval(self) -> TimeInterval | None:
         return get_interval_by_size(self.interval_size) if self.interval_size else None
 
     def get_timezone(self, postgres_format: bool = False) -> ZoneInfo | str:
@@ -82,7 +85,7 @@ class NetworkSchema(BaseConfig):
     def get_crawl_timezone(self) -> Any:
         return ZoneInfo(self.timezone)
 
-    def get_fixed_offset(self) -> Union[Any, tzinfo]:
+    def get_fixed_offset(self) -> Any | tzinfo:
         if not self.offset:
             raise NetworkSchemaException("No offset set")
 
@@ -104,9 +107,9 @@ class NetworkRegion(BaseConfig):
     code: str
     network: NetworkSchema
 
-    timezone: Optional[str] = Field(None, description="Network timezone")
-    timezone_database: Optional[str] = Field("UTC", description="Database timezone format")
-    offset: Optional[int] = Field(None, description="Network time offset in minutes")
+    timezone: str | None = Field(None, description="Network timezone")
+    timezone_database: str | None = Field("UTC", description="Database timezone format")
+    offset: int | None = Field(None, description="Network time offset in minutes")
 
 
 NetworkAPVI = NetworkSchema(
