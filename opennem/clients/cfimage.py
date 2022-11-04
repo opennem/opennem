@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 from pydantic import BaseModel
 from requests.exceptions import RequestException
@@ -43,7 +43,7 @@ def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
     image_handle = BytesIO(image) if isinstance(image, bytes) else image
     file_upload = {"file": image_handle}
 
-    json_response: Optional[Dict[str, Any]] = None
+    json_response: dict[str, Any] | None = None
 
     try:
         response = http.post(cfimage_url, headers=headers, files=file_upload)
@@ -53,7 +53,7 @@ def save_image_to_cloudflare(image: bytes | BytesIO) -> CloudflareImageResponse:
 
     if not response.ok:
         logger.debug(response.text)
-        raise CloudflareImageException(f"Response error: {response.status_code}")
+        raise CloudflareImageException(f"Response error: {response.status_code}. {response.text}")
 
     try:
         json_response = response.json()
