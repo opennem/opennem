@@ -524,6 +524,9 @@ def run_energy_update_days(
 def run_energy_update_all(network: NetworkSchema = NetworkNEM, fueltech: str | None = None, run_clear: bool = False) -> None:
     """Runs energy update for all regions and all years for one-off
     inserts"""
+    if not network.data_first_seen:
+        raise Exception(f"Require a data_first_seen attribute for network {network.code}")
+
     for year in range(DATE_CURRENT_YEAR, network.data_first_seen.year, -1):
         run_energy_update_archive(year=year, fueltech=fueltech, network=network, run_clear=run_clear)
 
