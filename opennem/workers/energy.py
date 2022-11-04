@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timedelta
 from itertools import groupby
 from textwrap import dedent
-from typing import Dict, List, Optional
 
 from opennem import settings
 from opennem.api.stats.controllers import duid_in_case, get_scada_range
@@ -522,12 +521,10 @@ def run_energy_update_days(
             )
 
 
-def run_energy_update_all(
-    network: NetworkSchema = NetworkNEM, fueltech: str | None = None, run_clear: bool = False
-) -> None:
+def run_energy_update_all(network: NetworkSchema = NetworkNEM, fueltech: str | None = None, run_clear: bool = False) -> None:
     """Runs energy update for all regions and all years for one-off
     inserts"""
-    for year in range(DATE_CURRENT_YEAR, 1997, -1):
+    for year in range(DATE_CURRENT_YEAR, network.data_first_seen.year, -1):
         run_energy_update_archive(year=year, fueltech=fueltech, network=network, run_clear=run_clear)
 
 
