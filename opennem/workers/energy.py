@@ -447,6 +447,14 @@ def run_energy_update_archive(
     else:
         fueltechs = ALL_FUELTECH_CODES
 
+    EXCLUDED_FUELTECHS_FROM_ENERGY = ["imports", "exports", "interconnector", "nuclear"]
+
+    for excluded_fueltech_id in EXCLUDED_FUELTECHS_FROM_ENERGY:
+        try:
+            fueltechs.remove(excluded_fueltech_id)
+        except ValueError:
+            pass
+
     for y in years:
         for month in months:
             date_min = datetime(
