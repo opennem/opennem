@@ -356,6 +356,14 @@ def run_energy_calc(
     run_clear: bool = False,
 ) -> int:
     """Runs the actual energy calc - believe it or not"""
+
+    logger.info(
+        f"Running energy calc for {network.code} region {region} fueltech {fueltech_id} and range {date_min} => {date_max}"
+    )
+
+    if settings.dry_run:
+        return 0
+
     generated_results: list[dict] = []
 
     flow = None
@@ -559,18 +567,15 @@ def _test_case() -> None:
     )
 
 
-# debug entry point
-if __name__ == "__main__":
-    # run_energy_update_days(days=32)
-    date_min = datetime.fromisoformat("2022-01-01T00:00:00+10:00")
+def run_energy_worker_for_year(year: int) -> None:
+    date_min = datetime.fromisoformat(f"{year}-01-01T00:00:00+10:00")
     date_max = date_min + timedelta(days=1)
 
     while True:
         logger.info(f"Running for {date_min} => {date_max}")
-        date_min += timedelta(days=1)
-        date_max += timedelta(days=1)
 
-        if date_max >= datetime.fromisoformat("2022-02-01T00:00:00+10:00"):
+        if date_max > datetime.fromisoformat(f"{year + 1}-01-01T00:00:00+10:00"):
+            logger.info("Done")
             break
 
         run_energy_calc(
@@ -579,3 +584,11 @@ if __name__ == "__main__":
             network=NetworkNEM,
             run_clear=False,
         )
+
+        date_min += timedelta(days=1)
+        date_max += timedelta(days=1)
+
+
+# debug entry point
+if __name__ == "__main__":
+    run_energy_update_all(network=NetworkNEM)
