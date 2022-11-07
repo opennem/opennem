@@ -1,7 +1,6 @@
 import csv
 import logging
 from pkgutil import get_data
-from typing import Dict, List, Optional
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
@@ -23,7 +22,7 @@ LEGACY_FUELTECH_MAP = {
 }
 
 
-def clean_fueltech(ft: str) -> Optional[str]:
+def clean_fueltech(ft: str) -> str | None:
     """
     Clean the fueltech strings that come out of the spreadsheets
     or other sources
@@ -44,7 +43,7 @@ def clean_fueltech(ft: str) -> Optional[str]:
     return ft
 
 
-def load_fueltech_map(fixture_name: str) -> Dict:
+def load_fueltech_map(fixture_name: str) -> dict:
     """
     Reads the CSV to load the fueltech map
 
@@ -88,11 +87,11 @@ def load_fueltech_map(fixture_name: str) -> Dict:
 
 def lookup_fueltech(
     fueltype: str,
-    fueltype_desc: Optional[str] = None,
-    techtype: Optional[str] = None,
-    techtype_desc: Optional[str] = None,
+    fueltype_desc: str | None = None,
+    techtype: str | None = None,
+    techtype_desc: str | None = None,
     dispatch_type: DispatchType = DispatchType.GENERATOR,
-) -> Optional[str]:
+) -> str | None:
     """
     Takes fueltech strings from AEMO or other sources and maps them
     to opennem fueltechs using the csv file in the data directory
@@ -153,16 +152,14 @@ def map_v3_fueltech(
 
     ft = clean_fueltech(fueltech)
 
-    return next(
-        (v2_fueltech for v2_fueltech, v3_fueltech in LEGACY_FUELTECH_MAP.items() if v3_fueltech == fueltech), ft
-    )
+    return next((v2_fueltech for v2_fueltech, v3_fueltech in LEGACY_FUELTECH_MAP.items() if v3_fueltech == fueltech), ft)
 
 
-def get_fueltechs() -> List[FueltechSchema]:
+def get_fueltechs() -> list[FueltechSchema]:
     fixture = load_data("fueltechs.json", from_fixture=True)
 
     fueltechs = []
-    f: Dict = None
+    f: dict = None
 
     for f in fixture:
         _f = FueltechSchema(**f)
@@ -171,7 +168,7 @@ def get_fueltechs() -> List[FueltechSchema]:
     return fueltechs
 
 
-_FUELTECHS: List[FueltechSchema] = get_fueltechs()
+_FUELTECHS: list[FueltechSchema] = get_fueltechs()
 
 
 def get_fueltech(code: str) -> FueltechSchema:
@@ -181,3 +178,6 @@ def get_fueltech(code: str) -> FueltechSchema:
         return _lookup.pop()
     else:
         raise FueltechException(f"Fueltech {_code} not found")
+
+
+ALL_FUELTECH_CODES = [i.code for i in get_fueltechs()]
