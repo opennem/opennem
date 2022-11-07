@@ -764,7 +764,7 @@ def energy_network_fueltech_query(
     time_series: OpennemExportSeries,
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
-    coalesce_with: int | None = 0,
+    coalesce_with: int | None = None,
 ) -> str:
     """
     Get Energy for a network or network + region
