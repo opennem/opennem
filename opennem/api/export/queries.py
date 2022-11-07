@@ -840,7 +840,7 @@ def energy_network_fueltech_query(
             date_max=date_max,
             network_query=network_query,
             network_region_query=network_region_query,
-            coalesce_with=coalesce_with,
+            coalesce_with=coalesce_with or "NULL",
         )
     )
 
