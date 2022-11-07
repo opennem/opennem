@@ -1,32 +1,28 @@
 from operator import attrgetter
-from typing import Any, List
+from typing import Any
 
 from opennem.core.loader import load_data
 from opennem.core.normalizers import clean_capacity, normalize_whitespace
-from opennem.importer.compat import (
-    map_compat_facility_state,
-    map_compat_fueltech,
-    map_compat_network_region,
-)
+from opennem.importer.compat import map_compat_facility_state, map_compat_fueltech, map_compat_network_region
 
 from .schema import FacilitySchema, StationSchema
 
 __all__ = ["load_registry", "load_current"]
 
 
-def _sort_stations(records: List[Any]) -> List[Any]:
+def _sort_stations(records: list[Any]) -> list[Any]:
     return sorted(records, key=attrgetter("state", "name"))
 
 
-def _sort_facilities(records: List[Any]) -> List[Any]:
+def _sort_facilities(records: list[Any]) -> list[Any]:
     return sorted(records, key=attrgetter("duid", "status"))
 
 
-def _get_state_from_current(station, facilities: List[Any]) -> str:
+def _get_state_from_current(station, facilities: list[Any]) -> str:
     state = station.get("state")
 
     if not state:
-        facility_states = list(set([f.network_region for f in facilities if f.network_region]))
+        facility_states = list({f.network_region for f in facilities if f.network_region})
 
         state = facility_states.pop()
 
@@ -41,7 +37,7 @@ def _get_state_from_current(station, facilities: List[Any]) -> str:
     return state
 
 
-def load_registry() -> List[StationSchema]:
+def load_registry() -> list[StationSchema]:
     """
     Loads the facility registry into a list of Station schema's
     """
@@ -82,7 +78,7 @@ def load_registry() -> List[StationSchema]:
     return records
 
 
-def load_current() -> List[StationSchema]:
+def load_current() -> list[StationSchema]:
     """
     Load the current project station data into a list of station schemas
     """

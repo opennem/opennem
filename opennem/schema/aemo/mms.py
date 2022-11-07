@@ -2,12 +2,10 @@
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import BaseModel, validator
-from pydantic.error_wrappers import ValidationError
 
-from opennem.core.normalizers import clean_float, normalize_aemo_region, normalize_duid
+from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import parse_date
 
@@ -29,7 +27,7 @@ def validate_date(date_value: str) -> datetime:
     dt = parse_date(date_value)
 
     if not dt:
-        raise ValueError("Not a valid date: {}".format(date_value))
+        raise ValueError(f"Not a valid date: {date_value}")
 
     return dt
 
@@ -39,8 +37,8 @@ def capitalize_string(string_val: str) -> str:
 
 
 class MMSBase(BaseModel):
-    _interval_field: Optional[str]
-    _primary_keys: Optional[List[str]] = None
+    _interval_field: str | None
+    _primary_keys: list[str] | None = None
 
     class Config:
         anystr_strip_whitespace = True
@@ -73,17 +71,17 @@ class ParticipantMNSPInterconnector(MMSBase):
     fromregion: str
     toregion: str
     maxcapacity: float
-    tlf: Optional[float]
-    lhsfactor: Optional[float]
-    meterflowconstant: Optional[float]
+    tlf: float | None
+    lhsfactor: float | None
+    meterflowconstant: float | None
     authoriseddate: datetime
     authorisedby: str
-    lastchanged: Optional[datetime]
-    from_region_tlf: Optional[float]
-    to_region_tlf: Optional[float]
+    lastchanged: datetime | None
+    from_region_tlf: float | None
+    to_region_tlf: float | None
 
     @validator("linkid", pre=True)
-    def validate_linkid(cls, value: str) -> Optional[str]:
+    def validate_linkid(cls, value: str) -> str | None:
         return normalize_duid(value)
 
     @validator("effectivedate", pre=True)
@@ -91,7 +89,7 @@ class ParticipantMNSPInterconnector(MMSBase):
         dt = parse_date(value)
 
         if not dt:
-            raise ValueError("Not a valid date: {}".format(value))
+            raise ValueError(f"Not a valid date: {value}")
 
         return dt
 
@@ -100,7 +98,7 @@ class ParticipantMNSPInterconnector(MMSBase):
         f = clean_float(value)
 
         if not f:
-            raise ValueError("Not a valid capacity: {}".format(value))
+            raise ValueError(f"Not a valid capacity: {value}")
 
         return f
 
@@ -109,21 +107,21 @@ class ParticipantMNSPInterconnector(MMSBase):
         dt = parse_date(value)
 
         if not dt:
-            logger.error("Not a valid date: {}".format(value))
-            raise ValueError("Not a valid authoriseddate: {}".format(value))
+            logger.error(f"Not a valid date: {value}")
+            raise ValueError(f"Not a valid authoriseddate: {value}")
 
         return dt
 
     @validator("lastchanged", pre=True)
-    def validate_lastchanged(cls, value: Optional[str]) -> Optional[datetime]:
+    def validate_lastchanged(cls, value: str | None) -> datetime | None:
         if not value or value == "":
             return None
 
         dt = parse_date(value)
 
         if not dt:
-            logger.error("Not a valid date: {}".format(value))
-            raise ValueError("Not a valid lastchanged: {}".format(value))
+            logger.error(f"Not a valid date: {value}")
+            raise ValueError(f"Not a valid lastchanged: {value}")
 
         return dt
 
@@ -149,11 +147,11 @@ class MarketConfigInterconnector(MMSBase):
 
 class DispatchUnitSolutionSchema(MMSBase):
     _interval_field = "settlementdate"
-    _primary_keys: List[str] = ["settlementdate", "duid"]
+    _primary_keys: list[str] = ["settlementdate", "duid"]
 
     settlementdate: datetime
     duid: str
-    initialmw: Optional[float]
+    initialmw: float | None
 
     _validate_duid = validator("duid")(normalize_duid)
     _validate_initialmw = validator("initialmw")(clean_float)
@@ -161,7 +159,7 @@ class DispatchUnitSolutionSchema(MMSBase):
 
 class TradingPriceSchema(MMSBase):
     _interval_field = "settlementdate"
-    _primary_keys: List[str] = ["settlementdate", "regionid"]
+    _primary_keys: list[str] = ["settlementdate", "regionid"]
 
     settlementdate: datetime
     runno: int
@@ -193,7 +191,7 @@ class TradingPriceSchema(MMSBase):
 
 class TradingInterconnectorRes(MMSBase):
     _interval_field = "settlementdate"
-    _primary_keys: List[str] = ["settlementdate", "interconnectorid"]
+    _primary_keys: list[str] = ["settlementdate", "interconnectorid"]
 
     settlementdate: datetime
     runno: int
@@ -207,7 +205,7 @@ class TradingInterconnectorRes(MMSBase):
 
 class DispatchInterconnectorRes(MMSBase):
     _interval_field = "settlementdate"
-    _primary_keys: List[str] = ["settlementdate", "interconnectorid"]
+    _primary_keys: list[str] = ["settlementdate", "interconnectorid"]
 
     settlementdate: datetime
     runno: int
@@ -235,7 +233,7 @@ class DispatchInterconnectorRes(MMSBase):
 
 class DispatchPriceSchema(MMSBase):
     _interval_field = "settlementdate"
-    _primary_keys: List[str] = ["settlementdate", "regionid"]
+    _primary_keys: list[str] = ["settlementdate", "regionid"]
 
     settlementdate: datetime
     runno: int
@@ -269,7 +267,7 @@ class DispatchPriceSchema(MMSBase):
 
 class DispatchRegionSum(MMSBase):
     _interval_field = "settlementdate"
-    _primary_keys: List[str] = ["settlementdate", "regionid"]
+    _primary_keys: list[str] = ["settlementdate", "regionid"]
 
     settlementdate: datetime
     runno: int
@@ -292,7 +290,7 @@ class DispatchRegionSum(MMSBase):
 
 class DispatchUnitScada(MMSBase):
     _interval_field = "settlementdate"
-    _primary_keys: List[str] = ["settlementdate", "duid"]
+    _primary_keys: list[str] = ["settlementdate", "duid"]
 
     settlementdate: datetime
     duid: str
@@ -301,7 +299,7 @@ class DispatchUnitScada(MMSBase):
 
 class MeterDataGenDUID(MMSBase):
     _interval_field = "interval_datetime"
-    _primary_keys: List[str] = ["interval_datetime", "duid"]
+    _primary_keys: list[str] = ["interval_datetime", "duid"]
 
     interval_datetime: datetime
     duid: str
@@ -310,7 +308,7 @@ class MeterDataGenDUID(MMSBase):
 
 class RooftopForecast(MMSBase):
     _interval_field = "interval_datetime"
-    _primary_keys: List[str] = ["interval_datetime", "regionid"]
+    _primary_keys: list[str] = ["interval_datetime", "regionid"]
 
     interval_datetime: datetime
     lastchanged: datetime
@@ -323,7 +321,7 @@ class RooftopForecast(MMSBase):
 
 class RooftopActual(MMSBase):
     _interval_field = "interval_datetime"
-    _primary_keys: List[str] = ["interval_datetime", "regionid"]
+    _primary_keys: list[str] = ["interval_datetime", "regionid"]
 
     interval_datetime: datetime
     lastchanged: datetime
@@ -336,7 +334,7 @@ class RooftopActual(MMSBase):
 @dataclass
 class MMSBaseClass:
     _interval_field: str = field(default="settlementdate")
-    _primary_keys: List[str] = field(default_factory=lambda: ["settlementdate", "duid"])
+    _primary_keys: list[str] = field(default_factory=lambda: ["settlementdate", "duid"])
 
 
 @dataclass
@@ -363,9 +361,9 @@ TABLE_TO_SCHEMA_MAP = {
 }
 
 
-def get_mms_schema_for_table(table_name: str) -> Optional[MMSBaseClass]:
+def get_mms_schema_for_table(table_name: str) -> MMSBaseClass | None:
     if table_name.upper() not in TABLE_TO_SCHEMA_MAP.keys():
-        logger.warning("No schema found for table: {}".format(table_name))
+        logger.warning(f"No schema found for table: {table_name}")
         return None
 
     return TABLE_TO_SCHEMA_MAP[table_name.upper()]  # type: ignore

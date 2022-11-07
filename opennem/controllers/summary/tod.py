@@ -5,16 +5,13 @@ import logging
 from datetime import datetime
 from operator import attrgetter
 
-
 from opennem.core.templates import serve_template
 from opennem.db import get_database_engine
 from opennem.notifications.slack import slack_message
 from opennem.queries.summary import get_daily_fueltech_summary_query
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.settings import settings
 from opennem.utils.dates import get_last_complete_day_for_network  # noqa: F401
-from opennem.utils.sql import duid_in_case
 
 logger = logging.getLogger("opennem.controllers.summary.tod")
 

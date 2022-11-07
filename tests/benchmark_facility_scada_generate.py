@@ -1,19 +1,19 @@
 import csv
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 import pytest
 
 from opennem.controllers.nem import generate_facility_scada, unit_scada_generate_facility_scada
 from opennem.core.downloader import file_opener
-from opennem.core.parsers.aemo.mms import AEMOTableSet, parse_aemo_mms_csv, parse_aemo_urls
+from opennem.core.parsers.aemo.mms import parse_aemo_mms_csv
 from opennem.schema.network import NetworkWEM
 
 RECORDS_PATH = Path("data/wem/facility-scada-2020-10.csv")
 NEM_FILE_PATH = Path("data/NEM_FACILITY_SCADA_DAY.zip")
 
 
-def load_nem_scada_records() -> Dict[str, Any]:
+def load_nem_scada_records() -> dict[str, Any]:
     csv_content = file_opener(NEM_FILE_PATH).decode("utf-8")
 
     ts = parse_aemo_mms_csv(csv_content)
@@ -24,9 +24,7 @@ def load_nem_scada_records() -> Dict[str, Any]:
     return ts.get_table("unit_scada").records
 
 
-def load_wem_scada_records(
-    limit: Optional[int] = None, intentional_duplicate: bool = False
-) -> Dict[str, Any]:
+def load_wem_scada_records(limit: int | None = None, intentional_duplicate: bool = False) -> dict[str, Any]:
     records = []
 
     fieldnames = [

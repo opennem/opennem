@@ -1,4 +1,3 @@
-# coding: utf-8
 from sqlalchemy import CHAR, Column, Index, Numeric, String, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base

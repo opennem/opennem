@@ -7,9 +7,8 @@ Revises: 9956c679a0f6
 Create Date: 2021-09-29 23:11:38.441307
 
 """
-from alembic import op
 import sqlalchemy as sa
-import geoalchemy2
+from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.

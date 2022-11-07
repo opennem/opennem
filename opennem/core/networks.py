@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List, Optional
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
@@ -12,7 +11,6 @@ from opennem.schema.network import (
     NetworkSchema,
     NetworkWEM,
 )
-from opennem.utils.timezone import is_aware
 
 NEM_STATES = ["QLD", "NSW", "VIC", "ACT", "TAS", "SA", "NT"]
 
@@ -28,7 +26,7 @@ def state_from_network_region(network_region: str) -> str:
     if _state in NEM_STATES:
         return _state
 
-    raise Exception("State {} not found".format(network_region))
+    raise Exception(f"State {network_region} not found")
 
 
 def network_from_state(state: str) -> NetworkSchema:
@@ -40,7 +38,7 @@ def network_from_state(state: str) -> NetworkSchema:
     if state in ["QLD", "NSW", "VIC", "ACT", "TAS", "SA", "NT"]:
         return NetworkNEM
 
-    raise Exception("Unknown network {}".format(state))
+    raise Exception(f"Unknown network {state}")
 
 
 def network_from_network_region(
@@ -53,7 +51,7 @@ def network_from_network_region(
     if network_region in ["NEM", "NSW1", "QLD1", "SA1", "VIC1", "TAS1"]:
         return NetworkNEM
 
-    raise Exception("Unknown network {}".format(network_region))
+    raise Exception(f"Unknown network {network_region}")
 
 
 def network_from_network_code(network_code: str) -> NetworkSchema:
@@ -76,12 +74,10 @@ def network_from_network_code(network_code: str) -> NetworkSchema:
     if len(network_lookup):
         return network_lookup.pop()
 
-    raise Exception("Unknown network {}".format(network_code))
+    raise Exception(f"Unknown network {network_code}")
 
 
-def get_network_region_schema(
-    network: NetworkSchema, network_region_code: Optional[str] = None
-) -> List[NetworkRegionSchema]:
+def get_network_region_schema(network: NetworkSchema, network_region_code: str | None = None) -> list[NetworkRegionSchema]:
     """Return regions for a network"""
     s = SessionLocal()
     regions_query = s.query(NetworkRegion).filter_by(network_id=network.code)

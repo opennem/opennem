@@ -1,11 +1,9 @@
 """ URL utility methods """
 import urllib
 from pathlib import Path
-from typing import Optional
 
 # urljoin from here so that the netlocs can be loaded
 from urllib.parse import parse_qs, unquote, urlencode, urljoin, urlparse, urlunparse  # noqa: F401
-from xml.dom import ValidationErr
 
 import validators
 
@@ -25,7 +23,7 @@ def bucket_to_website(bucket_path: str, to_scheme: str = "https") -> str:
     return bucket_path_parsed.geturl()
 
 
-def strip_query_string(url: str, param: Optional[str] = None) -> str:
+def strip_query_string(url: str, param: str | None = None) -> str:
     """strip the query string from an URL
 
     Args:

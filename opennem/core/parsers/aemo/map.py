@@ -3,14 +3,13 @@ import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from opennem import DATA_DIR_PATH
 from opennem.controllers.nem import store_aemo_tableset
 from opennem.core.parsers.aemo.filenames import parse_aemo_filename
-from opennem.core.parsers.aemo.mms import parse_aemo_mms_csv, parse_aemo_urls
+from opennem.core.parsers.aemo.mms import parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntryType, get_dirlisting
-from opennem.utils.http import http
 
 logger = logging.getLogger("opennem.mms.dirparser")
 
@@ -21,9 +20,7 @@ AEMO_MAP_PATH = DATA_DIR_PATH / "aemo_map.json"
 
 def check_tableset() -> None:
     # @TODO parse into MMS schema
-    url = (
-        "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202204081455_0000000360913773.zip"
-    )
+    url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202204081455_0000000360913773.zip"
 
     r = parse_aemo_urls([url])
     assert r.has_table("unit_scada"), "has table"
@@ -35,7 +32,7 @@ def check_tableset() -> None:
 
 @dataclass
 class AEMOMMSMapSet:
-    data: Dict[str, Any] = field(default_factory=dict)
+    data: dict[str, Any] = field(default_factory=dict)
     found_files: list[str] = field(default_factory=list)
 
 

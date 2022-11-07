@@ -4,7 +4,6 @@ import logging
 from sqlalchemy.sql import text
 
 from opennem.db import get_database_engine
-from opennem.schema.core import BaseConfig
 
 
 def query_crawler_gaps() -> None:
@@ -20,6 +19,9 @@ def query_crawler_gaps() -> None:
 
     """
     )
+
+    with engine.begin() as conn:
+        conn.execute(query)
 
 
 logger = logging.getLogger("openne.gap_fill.crawlers")

@@ -4,10 +4,10 @@
  * Understands the MMS schema and parses records
 """
 
-MMS_DOWNLOAD_URL_TEMPLATE = "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/{year}/MMSDM_{year}_{month}/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_{table}_{year}{month}010000.zip"
-
-
-from opennem.utils.http import http
+MMS_DOWNLOAD_URL_TEMPLATE = (
+    "http://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/{year}/"
+    "MMSDM_{year}_{month}/MMSDM_Historical_Data_SQLLoader/DATA/PUBLIC_DVD_{table}_{year}{month}010000.zip"
+)
 
 
 def run_aemo_download() -> None:

@@ -12,7 +12,6 @@ require the API
 import contextlib
 import logging
 from datetime import datetime
-from typing import List, Optional
 
 from opennem.api.export.controllers import (
     NoResults,
@@ -35,7 +34,7 @@ from opennem.controllers.output.flows import (
     energy_interconnector_emissions_region_daily,
     energy_interconnector_region_daily,
 )
-from opennem.controllers.output.schema import ExportDatetimeRange, OpennemExportSeries
+from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.core.time import get_interval
@@ -56,9 +55,9 @@ logger = logging.getLogger("opennem.export.tasks")
 
 
 def export_power(
-    stats: List[StatExport] = None,
-    priority: Optional[PriorityType] = None,
-    latest: Optional[bool] = False,
+    stats: list[StatExport] = None,
+    priority: PriorityType | None = None,
+    latest: bool | None = False,
 ) -> None:
     """
     Export power stats from the export map
@@ -156,9 +155,9 @@ def export_power(
 
 
 def export_energy(
-    stats: List[StatExport] = None,
-    priority: Optional[PriorityType] = None,
-    latest: Optional[bool] = False,
+    stats: list[StatExport] = None,
+    priority: PriorityType | None = None,
+    latest: bool | None = False,
 ) -> None:
     """
     Export energy stats from the export map
@@ -190,9 +189,7 @@ def export_energy(
         if NetworkNEM in date_range_networks:
             date_range_networks = [NetworkNEM]
 
-        date_range: ScadaDateRange = get_scada_range(
-            network=energy_stat.network, networks=date_range_networks, energy=True
-        )
+        date_range: ScadaDateRange = get_scada_range(network=energy_stat.network, networks=date_range_networks, energy=True)
 
         if not date_range:
             logger.error(f"Skipping - Could not get date range for energy {energy_stat.network} {date_range_networks}")
@@ -421,7 +418,7 @@ def export_all_monthly() -> None:
     write_output("v3/stats/au/all/monthly.json", all_monthly)
 
 
-def export_all_daily(networks: List[NetworkSchema] = None, network_region_code: Optional[str] = None) -> None:
+def export_all_daily(networks: list[NetworkSchema] = None, network_region_code: str | None = None) -> None:
     """Export dailies for all networks and regions"""
 
     # default list of networks

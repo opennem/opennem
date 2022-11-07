@@ -16,7 +16,10 @@ from opennem.utils.dates import get_last_complete_day_for_network, month_series
 
 logger = logging.getLogger("opennem.crawler.nemweb")
 
-MMS_ARCHIVE_URL_FORMAT = "https://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/{year}/MMSDM_{year}_{month:02}/MMSDM_Historical_Data_SQLLoader/DATA/"
+MMS_ARCHIVE_URL_FORMAT = (
+    "https://nemweb.com.au/Data_Archive/Wholesale_Electricity/MMSDM/{year}"
+    "/MMSDM_{year}_{month:02}/MMSDM_Historical_Data_SQLLoader/DATA/"
+)
 
 MMS_START = datetime.fromisoformat("2009-07-01T00:00:00+10:00")
 # MMS_START = datetime.fromisoformat("2019-08-01T00:00:00+10:00") # test value
@@ -86,9 +89,7 @@ def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None:
     if crawler.filename_filter:
         dirlisting.apply_filter(crawler.filename_filter)
 
-    logger.debug(
-        f"Got {dirlisting.count} entries, {dirlisting.file_count} files and {dirlisting.directory_count} directories"
-    )
+    logger.debug(f"Got {dirlisting.count} entries, {dirlisting.file_count} files and {dirlisting.directory_count} directories")
 
     entries_to_fetch: list[DirlistingEntry] = dirlisting.get_files()
 

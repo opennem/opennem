@@ -18,21 +18,14 @@ import re
 
 # from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from openpyxl import load_workbook
 from pydantic import validator
-from pydantic.types import conint
 from sqlalchemy.sql import select
 
-import opennem  # noqa: 401
-from opennem.core.normalizers import (
-    clean_capacity,
-    clean_float,
-    normalize_duid,
-    station_name_cleaner,
-)
-from opennem.db import SessionLocal, get_database_engine
+from opennem.core.normalizers import clean_float, normalize_duid, station_name_cleaner
+from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility
 from opennem.schema.core import BaseConfig
 
@@ -92,7 +85,7 @@ AEMO_GI_STATUS_MAP = {
 }
 
 
-def aemo_gi_fueltech_to_fueltech(gi_fueltech: Optional[str]) -> Optional[str]:
+def aemo_gi_fueltech_to_fueltech(gi_fueltech: str | None) -> str | None:
     if not gi_fueltech:
         return None
 
@@ -102,7 +95,7 @@ def aemo_gi_fueltech_to_fueltech(gi_fueltech: Optional[str]) -> Optional[str]:
     return AEMO_GI_FUELTECH_MAP[gi_fueltech]
 
 
-def aemo_gi_status_map(gi_status: Optional[str]) -> Optional[str]:
+def aemo_gi_status_map(gi_status: str | None) -> str | None:
     if not gi_status:
         return None
 
@@ -112,7 +105,7 @@ def aemo_gi_status_map(gi_status: Optional[str]) -> Optional[str]:
     return AEMO_GI_STATUS_MAP[gi_status]
 
 
-def aemo_gi_capacity_cleaner(cap: Optional[str]) -> Optional[float]:
+def aemo_gi_capacity_cleaner(cap: str | None) -> float | None:
     """Custom capacity cleaner because sometimes its parsed as silly
     text like a range (ie. '150 - 180'"""
     if isinstance(cap, int) or isinstance(cap, float):
@@ -138,11 +131,11 @@ def aemo_gi_capacity_cleaner(cap: Optional[str]) -> Optional[float]:
 class AEMOGIRecord(BaseConfig):
     name: str
     region: str
-    fueltech_id: Optional[str]
-    status_id: Optional[str]
-    duid: Optional[str]
-    units_no: Optional[int]
-    capacity_registered: Optional[float]
+    fueltech_id: str | None
+    status_id: str | None
+    duid: str | None
+    units_no: int | None
+    capacity_registered: float | None
 
     # expected_closure_year: Optional[int]
     # expected_closure_date: Optional[datetime]
@@ -152,12 +145,10 @@ class AEMOGIRecord(BaseConfig):
     # )
 
     _clean_duid = validator("duid", pre=True, allow_reuse=True)(normalize_duid)
-    _clean_capacity = validator("capacity_registered", pre=True, allow_reuse=True)(
-        aemo_gi_capacity_cleaner
-    )
+    _clean_capacity = validator("capacity_registered", pre=True, allow_reuse=True)(aemo_gi_capacity_cleaner)
 
 
-def parse_aemo_general_information(filename: str) -> List[AEMOGIRecord]:
+def parse_aemo_general_information(filename: str) -> list[AEMOGIRecord]:
     wb = load_workbook(filename, data_only=True)
 
     SHEET_KEY = "ExistingGeneration&NewDevs"
@@ -173,9 +164,7 @@ def parse_aemo_general_information(filename: str) -> List[AEMOGIRecord]:
 
         # pick out the columns we want
         # lots of hidden columns in the sheet
-        row_collapsed = [
-            row[excel_column_to_column_index(i) - 1] for i in GI_EXISTING_NEW_GEN_KEYS.values()
-        ]
+        row_collapsed = [row[excel_column_to_column_index(i) - 1] for i in GI_EXISTING_NEW_GEN_KEYS.values()]
 
         return_dict = dict(zip(GI_EXISTING_NEW_GEN_KEYS, list(row_collapsed)))
 
@@ -185,7 +174,7 @@ def parse_aemo_general_information(filename: str) -> List[AEMOGIRecord]:
             break
 
         if return_dict is None:
-            raise Exception("Failed on row: {}".format(row))
+            raise Exception(f"Failed on row: {row}")
 
         return_dict = {
             **return_dict,
@@ -203,20 +192,18 @@ def parse_aemo_general_information(filename: str) -> List[AEMOGIRecord]:
     return records
 
 
-def get_unique_values_for_field(records: List[Dict], field_name: str) -> List[Any]:
-    return list(set([i[field_name] for i in records]))
+def get_unique_values_for_field(records: list[dict], field_name: str) -> list[Any]:
+    return list({i[field_name] for i in records})
 
 
-def facility_matcher(records: List[AEMOGIRecord]) -> None:
+def facility_matcher(records: list[AEMOGIRecord]) -> None:
     with SessionLocal() as sess:
 
         for gi_record in records:
             if not gi_record.duid:
                 continue
 
-            gi_lookup: Optional[Facility] = sess.execute(
-                select(Facility).where(Facility.code == gi_record.duid)
-            ).one_or_none()
+            gi_lookup: Facility | None = sess.execute(select(Facility).where(Facility.code == gi_record.duid)).one_or_none()
 
             if not gi_lookup:
                 logger.info(f"MISS: {gi_record.duid} {gi_record.name}")
@@ -224,9 +211,7 @@ def facility_matcher(records: List[AEMOGIRecord]) -> None:
 
             gi_db: Facility = gi_lookup[0]
 
-            logger.info(
-                f"HIT {gi_record.duid} {gi_record.name} - currently {gi_db.status_id} change to => {gi_record.status_id}"
-            )
+            logger.info(f"HIT {gi_record.duid} {gi_record.name} - currently {gi_db.status_id} change to => {gi_record.status_id}")
 
             gi_db.status_id = gi_record.status_id
 
@@ -237,9 +222,7 @@ def facility_matcher(records: List[AEMOGIRecord]) -> None:
 
 # debug entrypoint
 if __name__ == "__main__":
-    aemo_gi_testfile = (
-        Path(__file__).parent.parent.parent.parent / "data" / "aemo" / "nem_gi_202107.xlsx"
-    )
+    aemo_gi_testfile = Path(__file__).parent.parent.parent.parent / "data" / "aemo" / "nem_gi_202107.xlsx"
 
     if not aemo_gi_testfile.is_file():
         print(f"file not found: {aemo_gi_testfile}")
@@ -249,7 +232,6 @@ if __name__ == "__main__":
 
     records = parse_aemo_general_information(str(aemo_gi_testfile))
     records = list(filter(lambda x: x.status_id in ["committed", "commissioning"], records))
-
 
     # pprint(records)
     facility_matcher(records=records)

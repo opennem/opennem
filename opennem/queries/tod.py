@@ -8,11 +8,7 @@ from textwrap import dedent
 
 from datetime_truncate import truncate as date_trunc
 
-from opennem.core.templates import serve_template
-from opennem.db import get_database_engine
-from opennem.notifications.slack import slack_message
 from opennem.queries.utils import list_to_case_statement
-from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.settings import settings  # noqa: F401
 from opennem.utils.dates import DATE_YESTERDAY

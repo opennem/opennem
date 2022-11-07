@@ -17,7 +17,7 @@ from datetime import datetime
 from enum import Enum
 from operator import attrgetter
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 
@@ -26,13 +26,14 @@ from pyquery import PyQuery as pq
 
 from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import is_number, strip_double_spaces
-from opennem.core.parsers.aemo.filenames import AEMOMMSFilename, parse_aemo_filename, parse_aemo_filename_datetimes
+from opennem.core.parsers.aemo.filenames import parse_aemo_filename
 from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.parsers.dirlisting")
 
 __iis_line_match = re.compile(
-    r"(?P<modified_date>.*[AM|PM])\ {2,}(?P<file_size>(\d{1,}|\<dir\>))\ <a href=['\"]?(?P<link>[^'\" >]+)['\"]>(?P<filename>[^\<]+)"
+    r"(?P<modified_date>.*[AM|PM])\ {2,}(?P<file_size>(\d{1,}|\<dir\>))\ "
+    r"<a href=['\"]?(?P<link>[^'\" >]+)['\"]>(?P<filename>[^\<]+)"
 )
 
 
@@ -40,7 +41,7 @@ __iis_line_match = re.compile(
 _aemo_created_date_match = re.compile(r"\_(?P<date_created>\d{12})\_")
 
 
-def parse_dirlisting_datetime(datetime_string: Union[str, datetime]) -> Optional[datetime]:
+def parse_dirlisting_datetime(datetime_string: str | datetime) -> datetime | None:
     """Parses dates from directory listings. Primarily used for modified time"""
 
     # sometimes it already parses via pydantic
@@ -54,7 +55,7 @@ def parse_dirlisting_datetime(datetime_string: Union[str, datetime]) -> Optional
 
     _FORMAT_STRINGS = ["%A, %B %d, %Y %I:%M %p"]
 
-    datetime_parsed: Optional[datetime] = None
+    datetime_parsed: datetime | None = None
 
     for _fs in _FORMAT_STRINGS:
         try:
@@ -63,7 +64,7 @@ def parse_dirlisting_datetime(datetime_string: Union[str, datetime]) -> Optional
             pass
 
     if not datetime_string:
-        logger.error("Error parsing dirlisting datetime string: {}".format(datetime_string))
+        logger.error(f"Error parsing dirlisting datetime string: {datetime_string}")
 
     return datetime_parsed
 
@@ -76,15 +77,15 @@ class DirlistingEntryType(Enum):
 class DirlistingEntry(BaseConfig):
     filename: Path
     link: str
-    modified_date: Optional[datetime]
-    aemo_interval_date: Optional[datetime]
-    file_size: Optional[int]
+    modified_date: datetime | None
+    aemo_interval_date: datetime | None
+    file_size: int | None
     entry_type: DirlistingEntryType = DirlistingEntryType.file
 
     _validate_modified_date = validator("modified_date", allow_reuse=True, pre=True)(parse_dirlisting_datetime)
 
     @validator("aemo_interval_date", always=True)
-    def _validate_aemo_created_date(cls, value: Any, values: Dict[str, Any]) -> Optional[datetime]:
+    def _validate_aemo_created_date(cls, value: Any, values: dict[str, Any]) -> datetime | None:
         if value:
             raise Exception("aemGo_interval_date is derived, not set")
 
@@ -98,20 +99,20 @@ class DirlistingEntry(BaseConfig):
         try:
             aemo_dt = parse_aemo_filename(str(_filename_value))
         except Exception as e:
-            logger.info("Error parsing aemo datetime: {}".format(e))
+            logger.info(f"Error parsing aemo datetime: {e}")
             return None
 
         return aemo_dt.date
 
     @validator("file_size", allow_reuse=True, pre=True)
-    def _parse_dirlisting_filesize(cls, value: str | int | float) -> Optional[int]:
+    def _parse_dirlisting_filesize(cls, value: str | int | float) -> int | None:
         if is_number(value):
             return value
 
         return None
 
     @validator("entry_type", always=True)
-    def _validate_entry_type(cls, value: Any, values: Dict[str, Any]) -> DirlistingEntryType:
+    def _validate_entry_type(cls, value: Any, values: dict[str, Any]) -> DirlistingEntryType:
         if not values["file_size"]:
             return DirlistingEntryType.directory
 
@@ -123,8 +124,8 @@ class DirlistingEntry(BaseConfig):
 
 class DirectoryListing(BaseConfig):
     url: str
-    timezone: Optional[str]
-    entries: List[DirlistingEntry] = []
+    timezone: str | None
+    entries: list[DirlistingEntry] = []
 
     @property
     def count(self) -> int:
@@ -141,13 +142,13 @@ class DirectoryListing(BaseConfig):
     def apply_filter(self, pattern: str) -> None:
         self.entries = list(filter(lambda x: re.match(pattern, x.link), self.entries))
 
-    def get_files(self) -> List[DirlistingEntry]:
+    def get_files(self) -> list[DirlistingEntry]:
         return list(filter(lambda x: x.entry_type == DirlistingEntryType.file, self.entries))
 
-    def get_directories(self) -> List[DirlistingEntry]:
+    def get_directories(self) -> list[DirlistingEntry]:
         return list(filter(lambda x: x.entry_type == DirlistingEntryType.directory, self.entries))
 
-    def get_most_recent_files(self, reverse: bool = True, limit: Optional[int] = None) -> List[DirlistingEntry]:
+    def get_most_recent_files(self, reverse: bool = True, limit: int | None = None) -> list[DirlistingEntry]:
         _entries = list(sorted(self.get_files(), key=attrgetter("modified_date"), reverse=reverse))
 
         if not limit:
@@ -161,7 +162,7 @@ class DirectoryListing(BaseConfig):
     def get_files_aemo_intervals(self, intervals: list[datetime]) -> list[DirlistingEntry]:
         return list(filter(lambda x: x.aemo_interval_date in intervals, self.entries))
 
-    def get_files_modified_since(self, modified_date: datetime) -> List[DirlistingEntry]:
+    def get_files_modified_since(self, modified_date: datetime) -> list[DirlistingEntry]:
         modified_since: list[DirlistingEntry] = []
 
         if self.timezone:
@@ -169,7 +170,7 @@ class DirectoryListing(BaseConfig):
             try:
                 ZoneInfo(self.timezone)
             except ValueError:
-                raise Exception("Invalid dirlisting timezone: {}".format(self.timezone))
+                raise Exception(f"Invalid dirlisting timezone: {self.timezone}")
 
             modified_since = list(
                 filter(
@@ -183,36 +184,36 @@ class DirectoryListing(BaseConfig):
         return modified_since
 
 
-def parse_dirlisting_line(dirlisting_line: str) -> Optional[DirlistingEntry]:
+def parse_dirlisting_line(dirlisting_line: str) -> DirlistingEntry | None:
     """Parses a single line from a dirlisting page"""
     if not dirlisting_line:
         return None
 
     matches = re.search(__iis_line_match, dirlisting_line)
 
-    model: Optional[DirlistingEntry] = None
+    model: DirlistingEntry | None = None
 
     if not matches:
-        logger.error("Could not match dirlisting line: {}".format(dirlisting_line))
+        logger.error(f"Could not match dirlisting line: {dirlisting_line}")
         return None
 
     try:
         model = DirlistingEntry(**matches.groupdict())
     except ValidationError as e:
-        logger.error("Error in validating dirlisting line: {}".format(e))
+        logger.error(f"Error in validating dirlisting line: {e}")
     except ValueError as e:
-        logger.error("Error parsing dirlisting line: {}".format(e))
+        logger.error(f"Error parsing dirlisting line: {e}")
 
     return model
 
 
-def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing:
+def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryListing:
     """Parse a directory listng into a list of DirlistingEntry models"""
     dirlisting_content = url_downloader(url)
 
     resp = pq(dirlisting_content.decode("utf-8"))
 
-    _dirlisting_models: List[DirlistingEntry] = []
+    _dirlisting_models: list[DirlistingEntry] = []
 
     pre_area = resp("pre")
 
@@ -241,6 +242,6 @@ def get_dirlisting(url: str, timezone: Optional[str] = None) -> DirectoryListing
 
     listing_model = DirectoryListing(url=url, timezone=timezone, entries=_dirlisting_models)
 
-    logger.debug("Got back {} models".format(len(listing_model.entries)))
+    logger.debug(f"Got back {len(listing_model.entries)} models")
 
     return listing_model

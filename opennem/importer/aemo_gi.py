@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime
 from itertools import groupby
-from typing import List, Optional, Union
 
 from openpyxl import load_workbook
 
@@ -9,12 +8,7 @@ from opennem.core.facility.fueltechs import parse_facility_fueltech
 from opennem.core.facilitystatus import map_aemo_facility_status, parse_facility_status
 from opennem.core.fueltechs import lookup_fueltech
 from opennem.core.loader import PROJECT_DATA_PATH, load_data
-from opennem.core.normalizers import (
-    clean_capacity,
-    normalize_aemo_region,
-    normalize_duid,
-    station_name_cleaner,
-)
+from opennem.core.normalizers import clean_capacity, normalize_aemo_region, normalize_duid, station_name_cleaner
 from opennem.core.stations.station_code_from_duids import station_code_from_duids
 from opennem.core.stations.station_name_code_map import station_name_code_map
 from opennem.core.unit_codes import get_unit_code
@@ -50,7 +44,7 @@ FACILITY_KEYS = [
 ]
 
 
-def parse_comissioned_date(date_str: Union[str, datetime]) -> Optional[datetime]:
+def parse_comissioned_date(date_str: str | datetime) -> datetime | None:
     dt = None
 
     if type(date_str) is datetime:
@@ -60,14 +54,12 @@ def parse_comissioned_date(date_str: Union[str, datetime]) -> Optional[datetime]
         if type(date_str) is str:
             dt = datetime.strptime(date_str, "%d/%m/%y")
     except ValueError:
-        logger.error("Error parsing date: {}".format(date_str))
+        logger.error(f"Error parsing date: {date_str}")
 
     return dt
 
 
-def lookup_station_code(
-    duids: List[str], station_name: str, station_code_map: dict
-) -> Optional[str]:
+def lookup_station_code(duids: list[str], station_name: str, station_code_map: dict) -> str | None:
 
     station_code = None
     station_name = station_name.strip()
@@ -83,11 +75,7 @@ def lookup_station_code(
     if not station_code:
         station_code = station_code_from_duids(duids)
 
-        logger.info(
-            "Had to generate station code from duids: {} from {}".format(
-                station_code, ",".join(duids)
-            )
-        )
+        logger.info("Had to generate station code from duids: {} from {}".format(station_code, ",".join(duids)))
 
     return station_code
 
@@ -203,7 +191,7 @@ def gi_grouper(records, station_code_map):
         facilities = list(facilities)
 
         if not station_code:
-            raise Exception("Unmapped station {}: {}".format(station_code, facilities))
+            raise Exception(f"Unmapped station {station_code}: {facilities}")
 
         if station_code not in coded_records:
             coded_records[station_code] = {
@@ -242,7 +230,7 @@ def load_gi():
     aemo_path = PROJECT_DATA_PATH / "aemo" / "nem_gi_202007.xlsx"
 
     if not aemo_path.is_file():
-        raise Exception("Not found: {}".format(aemo_path))
+        raise Exception(f"Not found: {aemo_path}")
 
     wb = load_workbook(aemo_path, data_only=True)
 
@@ -280,7 +268,7 @@ def gi_export():
     with open("data/nem_gi.json", "w") as fh:
         fh.write(nem_gi.json(indent=4))
 
-    logger.info("Wrote {} records".format(nem_gi.length))
+    logger.info(f"Wrote {nem_gi.length} records")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -8,12 +7,7 @@ from starlette import status
 from opennem.db import get_database_session
 from opennem.db.models.opennem import Facility
 
-from .schema import (
-    FacilityModification,
-    FacilityModificationTypes,
-    FacilityRecord,
-    FacilityUpdateResponse,
-)
+from .schema import FacilityModification, FacilityModificationTypes, FacilityRecord, FacilityUpdateResponse
 
 router = APIRouter()
 
@@ -22,7 +16,7 @@ router = APIRouter()
     "/",
     name="Facilities",
     description="Get facilities",
-    response_model=List[FacilityRecord],
+    response_model=list[FacilityRecord],
 )
 def facilities(
     session: Session = Depends(get_database_session),

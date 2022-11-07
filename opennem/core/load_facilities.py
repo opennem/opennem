@@ -8,11 +8,7 @@ from opennem.core.normalizers import clean_capacity, normalize_duid, station_nam
 from opennem.core.station_duid_map import facility_map_station
 from opennem.db import db_connect
 from opennem.db.models.opennem import Facility, Station
-from opennem.importer.compat import (
-    map_compat_facility_state,
-    map_compat_fueltech,
-    map_compat_network_region,
-)
+from opennem.importer.compat import map_compat_facility_state, map_compat_fueltech, map_compat_network_region
 
 logger = logging.getLogger(__name__)
 
@@ -36,9 +32,7 @@ def load_opennem_facilities():
             facility_duid = facility_data["code"]
             station_name = station_name_cleaner(station_data["display_name"])
             # station_code = normalize_duid(station_data["station_code"])
-            station_code = facility_map_station(
-                facility_duid, normalize_duid(station_data["station_code"])
-            )
+            station_code = facility_map_station(facility_duid, normalize_duid(station_data["station_code"]))
             station_state = map_compat_facility_state(station_data["status"]["state"])
             station_network = "WEM" if station_data["location"]["state"] == "WA" else "NEM"
 
@@ -53,7 +47,7 @@ def load_opennem_facilities():
                     network_name=station_data["display_name"],
                     created_by="opennem.load_facilities",
                 )
-                logger.info("Created station: {} {} ".format(station_name, station_code))
+                logger.info(f"Created station: {station_name} {station_code} ")
 
                 s.add(station)
                 s.commit()
@@ -78,11 +72,9 @@ def load_opennem_facilities():
             facility = None
 
             try:
-                facility = (
-                    s.query(Facility).filter(Facility.network_code == facility_duid).one_or_none()
-                )
+                facility = s.query(Facility).filter(Facility.network_code == facility_duid).one_or_none()
             except MultipleResultsFound:
-                logger.error("Multiple facilities found for duid {}".format(facility_duid))
+                logger.error(f"Multiple facilities found for duid {facility_duid}")
 
                 # facility = (
                 #     s.query(Facility)
@@ -99,11 +91,7 @@ def load_opennem_facilities():
                     created_by="opennem.load_facilities",
                 )
 
-                logger.info(
-                    "Created facility: {} {} to station {} ".format(
-                        facility_duid, facility_fueltech, station_code
-                    )
-                )
+                logger.info(f"Created facility: {facility_duid} {facility_fueltech} to station {station_code} ")
 
             if not facility.unit_id:
                 facility.unit_id = 1
