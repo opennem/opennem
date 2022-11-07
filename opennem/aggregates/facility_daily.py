@@ -149,7 +149,7 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema) -> None:
         year (int, optional): [description]. Defaults to DATE_CURRENT_YEAR.
         network (NetworkSchema, optional): [description]. Defaults to NetworkNEM.
     """
-    date_min, date_max = get_aggregate_year_range(year)
+    date_min, date_max = get_aggregate_year_range(year, network=network)
     logger.info(f"Running for year {year} - range : {date_min} {date_max}")
 
     exec_aggregates_facility_daily_query(date_min, date_max, network)
