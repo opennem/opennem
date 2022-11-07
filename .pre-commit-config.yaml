@@ -5,7 +5,7 @@ default_stages: [commit, push]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.5.0
+    rev: v4.3.0
     hooks:
       - id: check-yaml
       - id: end-of-file-fixer
@@ -36,6 +36,6 @@ repos:
         language: system
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.82
+    rev: v0.0.104
     hooks:
-      - id: lint
+      - id: ruff
