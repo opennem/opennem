@@ -8,10 +8,13 @@ from zoneinfo import ZoneInfo
 
 from pydantic import Field
 
+from opennem.core.fueltechs import ALL_FUELTECH_CODES
 from opennem.core.time import get_interval_by_size
 from opennem.schema.time import TimeInterval
 
 from .core import BaseConfig
+
+all_fueltechs_without_rooftop = ALL_FUELTECH_CODES.remove("solar_rooftop")
 
 
 class NetworkSchemaException(Exception):
@@ -121,6 +124,7 @@ NetworkAPVI = NetworkSchema(
     offset=600,
     interval_size=15,
     data_first_seen=datetime.fromisoformat("2015-03-20T06:15:00+10:00"),
+    fueltechs=["solar_rooftop"],
 )
 
 
@@ -133,6 +137,7 @@ NetworkAEMORooftop = NetworkSchema(
     offset=600,
     interval_size=30,
     data_first_seen=datetime.fromisoformat("2016-08-01T00:30:00+10:00"),
+    fueltechs=["solar_rooftop"],
 )
 
 # This is the network for derived solar_rooftop data
@@ -145,6 +150,7 @@ NetworkAEMORooftopBackfill = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=30,
+    fueltechs=["solar_rooftop"],
 )
 
 
@@ -165,6 +171,7 @@ NetworkNEM = NetworkSchema(
     monitor_interval_alert_threshold=10,
     has_interconnectors=True,
     subnetworks=[NetworkAEMORooftop, NetworkAEMORooftopBackfill],
+    fueltechs=all_fueltechs_without_rooftop,
 )
 
 NetworkWEM = NetworkSchema(
@@ -181,6 +188,7 @@ NetworkWEM = NetworkSchema(
     # WEM is slower to update at times. set to 4 hours.
     monitor_interval_alert_threshold=60 * 4,
     subnetworks=[NetworkAPVI],
+    fueltechs=all_fueltechs_without_rooftop,
 )
 
 
