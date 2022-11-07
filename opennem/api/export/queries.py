@@ -825,7 +825,9 @@ def energy_network_fueltech_query(
 
     if time_series.network == NetworkWEM:
         network_apvi_wem = "or (t.network_id='APVI' and f.network_region in ('WEM'))"
-        networks_query.pop(networks_query.index(NetworkAPVI))
+
+        if NetworkAPVI in networks_query:
+            networks_query.pop(networks_query.index(NetworkAPVI))
 
     networks_list = networks_to_in(networks_query)
 
