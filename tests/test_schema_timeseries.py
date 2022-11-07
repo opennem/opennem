@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from typing import Union
 
 import pytest
 
@@ -21,8 +20,8 @@ from opennem.schema.network import NetworkNEM
                 period=human_to_period("1h"),
             ),
             # Also testing timezone shift from UTC to NEM time
-            datetime.fromisoformat("2021-01-15 22:00:00+10:00"),
-            datetime.fromisoformat("2021-01-15 23:00:00+10:00"),
+            datetime.fromisoformat("2021-01-15 12:00:00+00:00"),
+            datetime.fromisoformat("2021-01-15 13:00:00+00:00"),
             "5m",
             13,  # number of 5 minute intervals in an hour _inclusive_
         ),
@@ -36,8 +35,8 @@ from opennem.schema.network import NetworkNEM
                 period=human_to_period("7d"),
             ),
             # Also testing timezone shift from UTC to NEM time
-            datetime.fromisoformat("2021-01-08 22:45:00+10:00"),
-            datetime.fromisoformat("2021-01-15 22:45:00+10:00"),
+            datetime.fromisoformat("2021-01-08T12:45:00+00:00"),
+            datetime.fromisoformat("2021-01-15T12:45:00+00:00"),
             "5m",
             2017,  # number of 5 minute intervals in a year
         ),
@@ -114,8 +113,8 @@ from opennem.schema.network import NetworkNEM
                 forecast=True,
             ),
             # Also testing timezone shift from UTC to NEM time
-            datetime.fromisoformat("2021-01-15 22:45:00+10:00"),
-            datetime.fromisoformat("2021-01-22 22:45:00+10:00"),
+            datetime.fromisoformat("2021-01-15 12:45:00+00:00"),
+            datetime.fromisoformat("2021-01-22 12:45:00+00:00"),
             "5m",
             2017,  # number of 5 minute intervals in a week
         ),
@@ -123,8 +122,8 @@ from opennem.schema.network import NetworkNEM
 )
 def test_schema_timeseries(
     ts: OpennemExportSeries,
-    start_expected: Union[datetime, date],
-    end_expected: Union[datetime, date],
+    start_expected: datetime | date,
+    end_expected: datetime | date,
     interval_expected: str,
     length_expected: int,
 ) -> None:
