@@ -8,8 +8,8 @@ from opennem.api.stats.controllers import duid_in_case, get_scada_range
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.controllers.output.schema import ExportDatetimeRange, OpennemExportSeries
 from opennem.core.energy import energy_sum, shape_energy_dataframe
-from opennem.core.facility.fueltechs import load_fueltechs
 from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id
+from opennem.core.fueltechs import ALL_FUELTECH_CODES
 from opennem.core.network_regions import get_network_regions
 from opennem.core.networks import get_network_region_schema
 from opennem.db import get_database_engine
@@ -437,10 +437,15 @@ def run_energy_update_archive(
     if network == NetworkAPVI:
         regions = ["WEM"]
 
-    fueltechs = [fueltech]
+    # list of fueltech codes to run
+    fueltechs: list[str] = []
 
-    if not fueltech:
-        fueltechs = [i for i in load_fueltechs().keys()]
+    if fueltech:
+        fueltechs = [fueltech]
+    elif network.fueltechs:
+        fueltechs = network.fueltechs
+    else:
+        fueltechs = ALL_FUELTECH_CODES
 
     for y in years:
         for month in months:
