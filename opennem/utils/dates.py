@@ -1,8 +1,9 @@
 import logging
 import math
+from collections.abc import Generator
 from datetime import date, datetime, timedelta
 from datetime import timezone as pytimezone
-from typing import Any, Generator, Optional, Tuple, Union
+from typing import Any
 from zoneinfo import ZoneInfo
 
 from datedelta import datedelta
@@ -39,7 +40,7 @@ DATE_YESTERDAY = DATE_CURRENT - timedelta(days=1)
 DATE_CURRENT_YEAR = DATE_CURRENT.year
 
 
-def optimized_data_parser(date_str: str) -> Optional[datetime]:
+def optimized_data_parser(date_str: str) -> datetime | None:
     """
     Turns out that dateutil's date parser is slow since
     it does a lot of string parsing. Here we try matching
@@ -61,15 +62,15 @@ def optimized_data_parser(date_str: str) -> Optional[datetime]:
 
 
 def parse_date(
-    date_str: Union[str, datetime],
-    date_format: Optional[str] = None,
-    network: Optional[NetworkSchema] = None,
+    date_str: str | datetime,
+    date_format: str | None = None,
+    network: NetworkSchema | None = None,
     dayfirst: bool = True,
     yearfirst: bool = False,
     is_utc: bool = False,
     timezone: pytimezone = None,
     use_optimized: bool = True,
-) -> Optional[datetime]:
+) -> datetime | None:
     dt_return = None
 
     if isinstance(date_str, datetime):
@@ -127,10 +128,10 @@ def parse_date(
 
 
 def date_series(
-    start: Union[datetime, date] = None,
-    end: Union[datetime, date] = None,
+    start: datetime | date = None,
+    end: datetime | date = None,
     length: int = 30,
-    interval: Union[timedelta, relativedelta] = timedelta(days=1),
+    interval: timedelta | relativedelta = timedelta(days=1),
     reverse: bool = False,
 ) -> Generator[datetime, None, None]:
     """
@@ -175,7 +176,7 @@ def date_series(
 total_months = lambda dt: dt.month + 12 * dt.year  # noqa: E731
 
 
-def total_weeks(d1: Union[datetime, date], d2: Union[datetime, date]) -> int:
+def total_weeks(d1: datetime | date, d2: datetime | date) -> int:
     monday1 = d1 - timedelta(days=d1.weekday())
     monday2 = d2 - timedelta(days=d2.weekday())
 
@@ -183,9 +184,9 @@ def total_weeks(d1: Union[datetime, date], d2: Union[datetime, date]) -> int:
 
 
 def month_series(
-    start: Union[datetime, date],
-    end: Union[datetime, date],
-    length: Optional[int] = None,
+    start: datetime | date,
+    end: datetime | date,
+    length: int | None = None,
     reverse: bool = False,
 ) -> Generator[datetime, None, None]:
     """
@@ -205,10 +206,10 @@ def month_series(
 
 
 def week_series(
-    start: Union[datetime, date],
-    end: Union[datetime, date],
-    length: Optional[int] = None,
-) -> Generator[Tuple[int, int], None, None]:
+    start: datetime | date,
+    end: datetime | date,
+    length: int | None = None,
+) -> Generator[tuple[int, int], None, None]:
     """
     Generate week series M -> S
     """
@@ -282,7 +283,7 @@ def chop_delta_microseconds(delta: timedelta) -> timedelta:
     return delta - timedelta(microseconds=delta.microseconds)
 
 
-def chop_datetime_microseconds(dt: datetime) -> Optional[datetime]:
+def chop_datetime_microseconds(dt: datetime) -> datetime | None:
     """Removes the microseconds portion of a datetime"""
 
     if not dt:
@@ -294,7 +295,7 @@ def chop_datetime_microseconds(dt: datetime) -> Optional[datetime]:
     return dt - timedelta(microseconds=dt.microsecond)
 
 
-def chop_timezone(dt: datetime) -> Optional[datetime]:
+def chop_timezone(dt: datetime) -> datetime | None:
     """Removes the timezone of a datetime"""
 
     if not dt:
@@ -306,7 +307,7 @@ def chop_timezone(dt: datetime) -> Optional[datetime]:
     return dt.replace(tzinfo=None)
 
 
-def get_date_component(format_str: str, dt: datetime = None, tz: Optional[Any] = None) -> str:
+def get_date_component(format_str: str, dt: datetime = None, tz: Any | None = None) -> str:
     """
     Get the format string part out of a date
 
@@ -321,7 +322,7 @@ def get_date_component(format_str: str, dt: datetime = None, tz: Optional[Any] =
         try:
             dt = dt.astimezone(tz)
         except Exception:
-            raise Exception("Invalid timezone: {}".format(tz))
+            raise Exception(f"Invalid timezone: {tz}")
 
     date_str_component = dt.strftime(format_str)
 
@@ -332,7 +333,7 @@ def subtract_week(subject: datetime) -> datetime:
     return subject - timedelta(days=7)
 
 
-def subtract_days(subject: Optional[datetime] = None, days: int = 30) -> datetime:
+def subtract_days(subject: datetime | None = None, days: int = 30) -> datetime:
     if not subject:
         subject = datetime.now(pytimezone.utc)
 
@@ -398,9 +399,7 @@ def strip_timezone(dt: datetime) -> datetime:
     return dt.replace(tzinfo=None)
 
 
-def optionally_parse_string_datetime(
-    value: Optional[Union[str, datetime, date]] = None
-) -> Optional[Union[str, datetime, date]]:
+def optionally_parse_string_datetime(value: str | datetime | date | None = None) -> str | datetime | date | None:
     """Parse a string or date or datetime back into a datetime optionally"""
     if not value:
         return value
@@ -409,7 +408,7 @@ def optionally_parse_string_datetime(
         try:
             return datetime.fromisoformat(value)
         except ValueError:
-            logger.error("Could not parse optional date: {}".format(value))
+            logger.error(f"Could not parse optional date: {value}")
             return None
 
     if isinstance(value, datetime):
@@ -426,6 +425,13 @@ def get_last_complete_day_for_network(network: NetworkSchema) -> datetime:
     )
 
     return today_midnight
+
+
+def get_last_completed_interval_for_network(network: NetworkSchema) -> datetime:
+    """Get the last completed network time for a network. Live wall clock"""
+    now_network = datetime.now(network.get_fixed_offset())
+
+    return now_network.replace(minute=now_network.minute - (now_network.minute % network.interval_size), second=0, microsecond=0)
 
 
 def unix_timestamp_to_aware_datetime(timestamp: int, timezone: str) -> datetime:
