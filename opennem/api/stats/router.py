@@ -23,7 +23,7 @@ from opennem.schema.network import (
     NetworkNetworkRegion,
     NetworkWEM,
 )
-from opennem.utils.dates import get_last_completed_interval_for_network
+from opennem.utils.dates import get_last_completed_interval_for_network, is_aware
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_balancing_range, get_scada_range, stats_factory
@@ -68,6 +68,16 @@ def power_station(
         )
 
     latest_network_interval = get_last_completed_interval_for_network(network=network)
+
+    # make all times aware
+    if since and not is_aware(since):
+        since = since.astimezone(network.get_fixed_offset())
+
+    if date_min and not is_aware(date_min):
+        date_min = date_min.astimezone(network.get_fixed_offset())
+
+    if date_max and not is_aware(date_max):
+        date_max = date_max.astimezone(network.get_fixed_offset())
 
     if not since:
         since = latest_network_interval - human_to_timedelta("7d")
