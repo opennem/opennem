@@ -6,7 +6,6 @@
 
 from datetime import datetime, timedelta
 from textwrap import dedent
-from typing import List, Optional
 
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.utils.sql import duid_in_case
@@ -14,7 +13,7 @@ from opennem.utils.sql import duid_in_case
 
 def power_facility_query(
     time_series: OpennemExportSeries,
-    facility_codes: List[str],
+    facility_codes: list[str],
 ) -> str:
 
     __query = """
@@ -33,7 +32,7 @@ def power_facility_query(
             join facility f on fs.facility_code = f.code
             where
                 fs.trading_interval <= '{date_max}' and
-                fs.trading_interval > '{date_min}' and
+                fs.trading_interval >= '{date_min}' and
                 fs.facility_code in ({facility_codes_parsed})
             group by 1, 3
         ) as t
@@ -55,7 +54,7 @@ def power_facility_query(
     return query
 
 
-def energy_facility_query(time_series: OpennemExportSeries, facility_codes: List[str]) -> str:
+def energy_facility_query(time_series: OpennemExportSeries, facility_codes: list[str]) -> str:
     """
     Get Energy for a list of facility codes
     """
@@ -90,7 +89,7 @@ def energy_facility_query(time_series: OpennemExportSeries, facility_codes: List
     )
 
 
-def emission_factor_region_query(time_series: OpennemExportSeries, network_region_code: Optional[str] = None) -> str:
+def emission_factor_region_query(time_series: OpennemExportSeries, network_region_code: str | None = None) -> str:
     __query = """
         select
             f.trading_interval at time zone '{timezone}' as ti,
