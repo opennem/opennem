@@ -1,6 +1,5 @@
 import logging
 from datetime import date, datetime
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from sqlalchemy.engine.base import Engine
@@ -24,6 +23,7 @@ from opennem.schema.network import (
     NetworkNetworkRegion,
     NetworkWEM,
 )
+from opennem.utils.dates import get_last_completed_interval_for_network
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_balancing_range, get_scada_range, stats_factory
@@ -52,14 +52,13 @@ def power_station(
     station_code: str = Query(..., description="Station code"),
     network_code: str = Query(..., description="Network code"),
     since: datetime = Query(None, description="Since time"),
+    date_min: datetime = Query(None, description="From datetime"),
+    date_max: datetime = Query(None, description="To datetime"),
     interval_human: str = Query(None, description="Interval"),
     period_human: str = Query("7d", description="Period"),
     session: Session = Depends(get_database_session),
     engine=Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet:
-    if not since:
-        since = datetime.now() - human_to_timedelta("7d")
-
     network = network_from_network_code(network_code)
 
     if not network:
@@ -68,18 +67,23 @@ def power_station(
             detail="No such network",
         )
 
+    latest_network_interval = get_last_completed_interval_for_network(network=network)
+
+    if not since:
+        since = latest_network_interval - human_to_timedelta("7d")
+
     if not interval_human:
         # @NOTE rooftop data is 15m
         if station_code.startswith("ROOFTOP"):
             interval_human = "15m"
         else:
-            interval_human = "{}m".format(network.interval_size)
+            interval_human = f"{network.interval_size}m"
 
     interval = human_to_interval(interval_human)
     period = human_to_period(period_human)
     units = get_unit("power")
 
-    station: Optional[Station] = (
+    station: Station | None = (
         session.query(Station)
         .join(Facility)
         .filter(Station.code == station_code)
@@ -93,20 +97,22 @@ def power_station(
 
     facilities_date_range = station.scada_range
 
+    logger.debug(f"Facilities date range: {facilities_date_range}")
+
     stats = []
 
-    date_min = facilities_date_range.date_min
-    date_max = facilities_date_range.date_max
-
-    network_range = get_scada_range(network=network)
+    if not date_max:
+        date_max = latest_network_interval
 
     if not date_min:
-        date_min = network_range.start
+        date_min = since
 
-    if not date_max:
-        date_max = network_range.end
+        if date_min < facilities_date_range.date_min:
+            date_min = facilities_date_range.date_min
 
     time_series = OpennemExportSeries(start=date_min, end=date_max, network=network, interval=interval, period=period)
+
+    logger.debug(time_series)
 
     query = power_facility_query(time_series, station.facility_codes)
 
@@ -178,13 +184,13 @@ def energy_station(
         if station_code.startswith("ROOFTOP"):
             interval = "15m"
         else:
-            interval = "{}m".format(network.interval_size)
+            interval = f"{network.interval_size}m"
 
     interval_obj = human_to_interval(interval)
     period_obj = human_to_period(period)
     units = get_unit("energy")
 
-    station: Optional[Station] = (
+    station: Station | None = (
         session.query(Station)
         .join(Station.facilities)
         .filter(Station.code == station_code)
@@ -238,13 +244,9 @@ def energy_station(
 
     results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
 
-    results_market_value = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row
-    ]
+    results_market_value = [DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row]
 
-    results_emissions = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row
-    ]
+    results_emissions = [DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row]
 
     if len(results_energy) < 1:
         raise HTTPException(
@@ -310,7 +312,7 @@ def power_flows_network_week(
     engine=Depends(get_database_engine),  # type: ignore
     network_code: str = Query(..., description="Network code"),
     month: date = Query(datetime.now().date(), description="Month to query"),
-) -> Optional[OpennemDataSet]:
+) -> OpennemDataSet | None:
     engine = get_database_engine()
 
     network = network_from_network_code(network_code)
@@ -343,7 +345,7 @@ def power_flows_network_week(
         row = list(c.execute(query))
 
     if not row:
-        raise Exception("No results from query: {}".format(query))
+        raise Exception(f"No results from query: {query}")
 
     imports = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
 
@@ -444,7 +446,7 @@ def emission_factor_per_network(  # type: ignore
     engine=Depends(get_database_engine),  # type: ignore
     network_code: str = Query(..., description="Network code"),
     interval: str = Query("30m", description="Interval size"),
-) -> Optional[OpennemDataSet]:
+) -> OpennemDataSet | None:
     engine = get_database_engine()
 
     network = None
@@ -621,7 +623,7 @@ def fueltech_demand_mix(
 def price_network_endpoint(
     engine: Engine = Depends(get_database_engine),
     network_code: str = Path(..., description="Network code"),
-    network_region: Optional[str] = Query(None, description="Network region code"),
+    network_region: str | None = Query(None, description="Network region code"),
     forecasts: bool = Query(False, description="Include price forecasts"),
 ) -> OpennemDataSet:
     """Returns network and network region price info for interval which defaults to network
