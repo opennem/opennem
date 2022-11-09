@@ -133,7 +133,7 @@ def date_series(
     length: int = 30,
     interval: timedelta | relativedelta = timedelta(days=1),
     reverse: bool = False,
-) -> Generator[datetime, None, None]:
+) -> Generator[date, None, None]:
     """
     Generate a datetime series
 
