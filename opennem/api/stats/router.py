@@ -117,7 +117,7 @@ def power_station(
     if not date_min:
         date_min = since
 
-        if date_min < facilities_date_range.date_min:
+        if facilities_date_range.date_min and date_min < facilities_date_range.date_min:
             date_min = facilities_date_range.date_min
 
     time_series = OpennemExportSeries(start=date_min, end=date_max, network=network, interval=interval, period=period)
