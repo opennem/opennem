@@ -109,8 +109,6 @@ def power_station(
 
     logger.debug(f"Facilities date range: {facilities_date_range}")
 
-    stats = []
-
     if not date_max:
         date_max = latest_network_interval
 
@@ -133,7 +131,7 @@ def power_station(
 
     stats = [DataQueryResult(interval=i[0], result=i[1], group_by=i[2] if len(i) > 1 else None) for i in results]
 
-    if len(stats) < 1:
+    if not stats:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Station stats not found",
