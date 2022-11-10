@@ -3,9 +3,9 @@
 """
 
 import logging
-from datetime import datetime
+from datetime import date
 
-from opennem.clients.apvi import APVIForecastSet, get_apvi_rooftop_data, get_apvi_rooftop_today
+from opennem.clients.apvi import APVIForecastSet, get_apvi_rooftop_data
 from opennem.controllers.apvi import store_apvi_forecastset, update_apvi_facility_capacities
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
@@ -64,15 +64,13 @@ def crawl_apvi_forecasts(
     return apvi_return
 
 
-def run_apvi_crawl(day: datetime | None = None) -> ControllerReturn:
+def run_apvi_crawl(day: date | None = None) -> ControllerReturn:
+    """Run the APVI crawl for a given day"""
+
     apvi_forecast_set: APVIForecastSet | None = None
 
-    if day:
-        logger.info(f"Getting APVI data for day {day}")
-        apvi_forecast_set = get_apvi_rooftop_data(day)
-    else:
-        logger.info("Getting APVI data from today")
-        apvi_forecast_set = get_apvi_rooftop_today()
+    logger.info(f"Getting APVI data for day {day}")
+    apvi_forecast_set = get_apvi_rooftop_data(day)
 
     if not apvi_forecast_set:
         raise Exception("Could not get APVI forecast set")
