@@ -1,6 +1,7 @@
 import io
+from collections.abc import Callable
 from pathlib import Path
-from typing import BinaryIO, Callable, Union
+from typing import BinaryIO
 
 import pytest
 from betamax import Betamax
@@ -19,12 +20,12 @@ class TestSetupException(Exception):
     pass
 
 
-class TestException(Exception):
+class OpennemTestException(Exception):
     pass
 
 
 if not PATH_TESTS_FIXTURES.is_dir():
-    raise TestSetupException("Test fixtures path not found: {}".format(PATH_TESTS_FIXTURES))
+    raise TestSetupException(f"Test fixtures path not found: {PATH_TESTS_FIXTURES}")
 
 
 def load_fixture_file(filename: str) -> str:
@@ -32,7 +33,7 @@ def load_fixture_file(filename: str) -> str:
     fixture_path = PATH_TESTS_FIXTURES / Path(filename)
 
     if not fixture_path.is_file():
-        raise TestSetupException("Not a file: {}".format(filename))
+        raise TestSetupException(f"Not a file: {filename}")
 
     fixture_content = ""
 
@@ -47,9 +48,9 @@ def load_fixture_file_binary(filename: str, directory: str = "files") -> io.Byte
     fixture_path = PATH_TESTS_FIXTURES / directory / filename
 
     if not fixture_path.is_file():
-        raise TestSetupException("Could not find excel fixture at {}".format(fixture_path))
+        raise TestSetupException(f"Could not find excel fixture at {fixture_path}")
 
-    return io.open(fixture_path, mode="rb")
+    return open(fixture_path, mode="rb")
 
 
 @pytest.fixture
@@ -83,6 +84,6 @@ def xlsx_file(load_file: Callable) -> BinaryIO:
 
 
 @pytest.fixture
-def aemo_nemweb_dispatch_scada(load_file: Callable) -> Union[str, bytes]:
+def aemo_nemweb_dispatch_scada(load_file: Callable) -> str | bytes:
     zip_file = load_fixture_file_binary("PUBLIC_DISPATCHSCADA_202109021255_0000000348376188.zip")
     return load_data_zip(zip_file).content

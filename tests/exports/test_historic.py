@@ -9,7 +9,7 @@ from itertools import groupby
 import pytest
 
 from opennem.api.stats.schema import OpennemDataHistory, OpennemDataSet
-from tests.conftest import TestException
+from tests.conftest import OpennemTestException
 
 from .utils import FIXTURE_SET, SeriesType, ValidNumber
 
@@ -65,13 +65,11 @@ def compare_series_values_approx_by_date(
     historic_series_fueltech = historic_series.get_id(historic_series_id)
 
     if not historic_series_fueltech or not historic_series_fueltech.history:
-        raise TestException(f"Could not find series {historic_series_id}")
+        raise OpennemTestException(f"Could not find series {historic_series_id}")
 
     is_flow = fueltech_id in {"imports", "exports"}
 
-    historic_series_values = group_historic_by_day(
-        historic_series_fueltech.history, series_type=series_type, is_flow=is_flow
-    )
+    historic_series_values = group_historic_by_day(historic_series_fueltech.history, series_type=series_type, is_flow=is_flow)
 
     # 2. Energy Series
     # grouped by day already
@@ -82,7 +80,7 @@ def compare_series_values_approx_by_date(
     energy_series_fueltech = energy_series.get_id(energy_series_id)
 
     if not energy_series_fueltech:
-        raise TestException(f"Could not find energy series with id {energy_series_id}")
+        raise OpennemTestException(f"Could not find energy series with id {energy_series_id}")
 
     energy_series_values = energy_series_fueltech.history.values()
 
@@ -94,13 +92,13 @@ def compare_series_values_approx_by_date(
         energy_value = energy_series_daily_dict.get(dt)
 
         if not energy_value:
-            raise TestException(f"Date {dt} not in yearly_energy_dict")
+            raise OpennemTestException(f"Date {dt} not in yearly_energy_dict")
 
         # 5% tolerance
         # required as the series won't precisely match as naive energy sum per
         # interval vs full per-hour AUC-energy sum
         if energy_value != pytest.approx(historic_value, 0.5):
-            raise TestException(f"{fueltech_id}.{series_type.value} Mismatch: {dt}: {historic_value} {energy_value}")
+            raise OpennemTestException(f"{fueltech_id}.{series_type.value} Mismatch: {dt}: {historic_value} {energy_value}")
 
 
 @pytest.mark.parametrize(
@@ -156,7 +154,7 @@ def test_weekly_contains_all_ids(region_id: str, series_type: SeriesType, fuelte
     series_set = FIXTURE_SET[region_id].weekly.get_id(series_id)
 
     if not series_set:
-        raise TestException(f"Could not find id: {series_id}")
+        raise OpennemTestException(f"Could not find id: {series_id}")
 
 
 # debug entry point for unit tests
