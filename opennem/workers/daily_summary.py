@@ -39,6 +39,7 @@ class DailySummary(BaseConfig):
     trading_day: datetime
     network: str
     chart_url: str | None
+    environment: str | None
 
     results: list[DailySummaryResult]
 
@@ -116,7 +117,7 @@ def plot_daily_fueltech_summary(daily_summary: DailySummary) -> io.BytesIO:
         "family": '"IBM Plex Serif",Georgia,"Times New Roman",Times,serif',
         "weight": "400",
         "color": "black",
-        "size": 16,
+        "size": 14,
     }
     data = [i.demand_proportion for i in chart_records]
     labels = [i.fueltech_label for i in chart_records]
@@ -128,7 +129,9 @@ def plot_daily_fueltech_summary(daily_summary: DailySummary) -> io.BytesIO:
     ax.pie(data, labels=labels, colors=colors, autopct="%.0f%%", textprops={**font, **{"size": 8}})
 
     day_formatted = daily_summary.trading_day.strftime("%a %-d %b %Y")
-    ax.set_title(f"OpenNEM Daily Summary for {daily_summary.network.upper()} for {day_formatted}", fontdict=font)
+    env_string = " (DEV)" if not settings.is_prod else ""
+
+    ax.set_title(f"OpenNEM Daily Summary for {daily_summary.network.upper()} for {day_formatted} {env_string}", fontdict=font)
     # ax.legend()
 
     # save to buffer
@@ -150,6 +153,10 @@ def render_daily_fueltech_summary_tweet_text(daily_summary: DailySummary) -> str
 
 def run_daily_fueltech_summary(network: NetworkSchema) -> None:
     """Produces daily fueltech summary slack message"""
+
+    if not settings.send_daily_fueltech_summary:
+        return None
+
     ds = get_daily_fueltech_summary(network=network)
 
     summary_plot = plot_daily_fueltech_summary(daily_summary=ds)

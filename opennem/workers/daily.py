@@ -17,11 +17,7 @@ from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_today_nem
 from opennem.workers.daily_summary import run_daily_fueltech_summary
-from opennem.workers.emissions import (
-    run_emission_update_day,
-    run_flow_updates_all_for_network,
-    run_flow_updates_all_per_year,
-)
+from opennem.workers.emissions import run_emission_update_day, run_flow_updates_all_for_network, run_flow_updates_all_per_year
 from opennem.workers.energy import run_energy_calc
 from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network
 
@@ -96,10 +92,6 @@ def daily_runner(days: int = 2) -> None:
     export_map = get_export_map()
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
     export_energy(energy_exports.resources)
-
-    # Skip if we're not on prod
-    if settings.env == "production":
-        run_daily_fueltech_summary(network=NetworkNEM)
 
     run_daily_fueltech_summary(network=NetworkNEM)
 

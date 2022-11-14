@@ -158,6 +158,9 @@ class OpennemSettings(BaseSettings):
     # feature flags
     flows_and_emissions_v2: bool = False
 
+    # send daily fueltech summary
+    send_daily_fueltech_summary: bool = True
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> str | None:
