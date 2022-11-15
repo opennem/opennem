@@ -193,6 +193,10 @@ class OpennemSettings(BaseSettings):
     def is_prod(self) -> bool:
         return self.env in ("production", "prod")
 
+    @property
+    def is_dev(self) -> bool:
+        return self.env in ("development", "staging")
+
     class Config:
         fields = {
             "env": {"env": "ENV"},
