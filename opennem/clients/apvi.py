@@ -96,12 +96,12 @@ def get_apvi_uri(date: date | None = None) -> str:
 class APVIForecastInterval(BaseConfig):
     trading_interval: datetime
     network_id: str = APVI_NETWORK_CODE
-    state: str
+    state: str | None
     facility_code: str | None
     generated: float | None
     eoi_quantity: float | None
 
-    _validate_state = validator("state", pre=True, allow_reuse=True)(lambda x: x.strip().upper())
+    _validate_state = validator("state", pre=True, allow_reuse=True)(lambda x: x.strip().upper() if x else None)
 
     @validator("trading_interval", pre=True)
     def _validate_trading_interval(cls, value: Any) -> datetime:
