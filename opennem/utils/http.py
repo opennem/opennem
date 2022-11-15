@@ -8,7 +8,9 @@
 
 """
 import logging
+from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 from urllib.request import Request
 
 import requests
@@ -67,7 +69,7 @@ def setup_http_cache() -> bool:
         return False
 
     requests_cache.install_cache(".opennem_requests_cache", expire_after=60 * 60 * 4)
-    logger.info("Setup HTTP cache at: {}".format(settings.http_cache_local))
+    logger.info(f"Setup HTTP cache at: {settings.http_cache_local}")
 
     HTTP_CACHE_SETUP = True
 
@@ -162,3 +164,32 @@ def test_proxy() -> None:
     resp_envelope = resp.json()
 
     logger.info("Using proxy with IP {} and country {}".format(resp_envelope["ip"], resp_envelope["country"]))
+
+
+def download_file(url: str, destination_directory: Path) -> Path | None:
+    """Downloads a file from a URL to a destination directory"""
+    if not destination_directory.exists():
+        destination_directory.mkdir(parents=True)
+
+    local_filename = urlparse(url).path.split("/")[-1]
+
+    local_path = destination_directory / local_filename
+
+    if local_path.exists():
+        logger.info(f"File exists: {local_path}")
+        return local_path
+
+    logger.info(f"Downloading file: {local_filename}")
+
+    r = http.get(url, stream=True)
+
+    if r.status_code != 200:
+        logger.error(f"Error downloading file: {url}")
+        return None
+
+    with open(local_path, "wb") as f:
+        for chunk in r.iter_content(chunk_size=1024):
+            if chunk:
+                f.write(chunk)
+
+    return local_path
