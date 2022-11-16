@@ -120,9 +120,12 @@ class APVIForecastInterval(BaseConfig):
         return interval_time
 
     @validator("facility_code", always=True, pre=True)
-    def _validate_facility_code(cls, value: Any, values: dict[str, Any]) -> str:
+    def _validate_facility_code(cls, value: Any, values: dict[str, Any]) -> str | None:
         """Generate an OpenNEM derived facility code for APVI facilities"""
-        state = values["state"]
+        state = values.get("state", None)
+
+        if not state:
+            return None
 
         return f"{ROOFTOP_CODE}_{APVI_NETWORK_CODE}_{state.upper()}"
 
