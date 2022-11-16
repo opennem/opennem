@@ -166,7 +166,7 @@ def test_proxy() -> None:
     logger.info("Using proxy with IP {} and country {}".format(resp_envelope["ip"], resp_envelope["country"]))
 
 
-def download_file(url: str, destination_directory: Path) -> Path | None:
+def download_file(url: str, destination_directory: Path, expect_content_type: str | None = None) -> Path | None:
     """Downloads a file from a URL to a destination directory"""
     if not destination_directory.exists():
         destination_directory.mkdir(parents=True)
@@ -184,7 +184,11 @@ def download_file(url: str, destination_directory: Path) -> Path | None:
     r = http.get(url, stream=True)
 
     if r.status_code != 200:
-        logger.error(f"Error downloading file: {url}")
+        logger.error(f"Error {r.status_code} downloading file: {url}")
+        return None
+
+    if expect_content_type and r.headers["Content-Type"] != expect_content_type:
+        logger.error(f"Content type mismatch: {r.headers['Content-Type']} != {expect_content_type}")
         return None
 
     with open(local_path, "wb") as f:
