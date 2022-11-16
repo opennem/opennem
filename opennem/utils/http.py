@@ -183,8 +183,8 @@ def download_file(url: str, destination_directory: Path, expect_content_type: st
 
     r = http.get(url, stream=True)
 
-    if r.status_code != 200:
-        logger.error(f"Error {r.status_code} downloading file: {url}")
+    if not r.ok or not r.status_code == 200:
+        logger.error(f"Error {r.status_code} downloading file: {local_filename}")
         return None
 
     if expect_content_type and r.headers["Content-Type"] != expect_content_type:
