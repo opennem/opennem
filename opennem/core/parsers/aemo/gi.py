@@ -15,21 +15,35 @@ purpose - to import new facilities and updates into the OpenNEM database.
 
 import logging
 import re
-
-# from datetime import datetime
+from datetime import date
 from pathlib import Path
+from tempfile import mkdtemp
 from typing import Any
 
+from dateutil.relativedelta import relativedelta
 from openpyxl import load_workbook
 from pydantic import validator
-from sqlalchemy.sql import select
 
+from opennem import settings
 from opennem.core.normalizers import clean_float, normalize_duid, station_name_cleaner
-from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility
 from opennem.schema.core import BaseConfig
+from opennem.utils.dates import get_today_opennem
+from opennem.utils.http import download_file
 
 logger = logging.getLogger("opennem.parsers.aemo.gi")
+
+
+AEMO_GI_DOWNLOAD_URL = (
+    "https://www.aemo.com.au/-/media/files/electricity/nem/planning_and_forecasting/"
+    "generation_information/2022/nem-generation-information-{month}-{year}.xlsx?la=en"
+)
+
+
+class OpennemAEMOGIParserException(Exception):
+    """Exception raised in this module"""
+
+    pass
+
 
 GI_EXISTING_NEW_GEN_KEYS = {
     "region": "A",
@@ -86,6 +100,7 @@ AEMO_GI_STATUS_MAP = {
 
 
 def aemo_gi_fueltech_to_fueltech(gi_fueltech: str | None) -> str | None:
+    """Map AEMO GI fueltech to OpenNEM fueltech"""
     if not gi_fueltech:
         return None
 
@@ -96,6 +111,7 @@ def aemo_gi_fueltech_to_fueltech(gi_fueltech: str | None) -> str | None:
 
 
 def aemo_gi_status_map(gi_status: str | None) -> str | None:
+    """Map AEMO GI status to OpenNEM status"""
     if not gi_status:
         return None
 
@@ -130,6 +146,7 @@ def aemo_gi_capacity_cleaner(cap: str | None) -> float | None:
 
 class AEMOGIRecord(BaseConfig):
     name: str
+    name_network: str
     region: str
     fueltech_id: str | None
     status_id: str | None
@@ -137,24 +154,20 @@ class AEMOGIRecord(BaseConfig):
     units_no: int | None
     capacity_registered: float | None
 
-    # expected_closure_year: Optional[int]
-    # expected_closure_date: Optional[datetime]
-
-    # _validate_closure_year = validator("expected_closure_year", pre=True)(
-    #     _clean_expected_closure_year
-    # )
-
     _clean_duid = validator("duid", pre=True, allow_reuse=True)(normalize_duid)
     _clean_capacity = validator("capacity_registered", pre=True, allow_reuse=True)(aemo_gi_capacity_cleaner)
 
 
-def parse_aemo_general_information(filename: str) -> list[AEMOGIRecord]:
-    wb = load_workbook(filename, data_only=True)
+def parse_aemo_general_information(filename: Path) -> list[AEMOGIRecord]:
+    """Primary record parser for GI information. Takes the spreadsheet location from a path,
+    parses it and the relevant sheet and returns a list of GI records"""
+
+    wb = load_workbook(str(filename), data_only=True)
 
     SHEET_KEY = "ExistingGeneration&NewDevs"
 
     if SHEET_KEY not in wb:
-        raise Exception("Doesn't look like a GI spreadsheet")
+        raise OpennemAEMOGIParserException("Doesn't look like a GI spreadsheet")
 
     ws = wb[SHEET_KEY]
 
@@ -174,12 +187,16 @@ def parse_aemo_general_information(filename: str) -> list[AEMOGIRecord]:
             break
 
         if return_dict is None:
-            raise Exception(f"Failed on row: {row}")
+            raise OpennemAEMOGIParserException(f"Failed on row: {row}")
+
+        if return_dict["region"] is None or return_dict["region"] not in ["NSW1", "QLD1", "SA1", "TAS1", "VIC1"]:
+            continue
 
         return_dict = {
             **return_dict,
             **{
                 "name": station_name_cleaner(return_dict["StationName"]),
+                "name_network": return_dict["StationName"],
                 "status_id": aemo_gi_status_map(return_dict["UnitStatus"]),
                 "fueltech_id": aemo_gi_fueltech_to_fueltech(return_dict["FuelSummary"]),
             },
@@ -189,6 +206,8 @@ def parse_aemo_general_information(filename: str) -> list[AEMOGIRecord]:
 
         records.append(return_model)
 
+    logger.info(f"Parsed {len(records)} records")
+
     return records
 
 
@@ -196,43 +215,54 @@ def get_unique_values_for_field(records: list[dict], field_name: str) -> list[An
     return list({i[field_name] for i in records})
 
 
-def facility_matcher(records: list[AEMOGIRecord]) -> None:
-    with SessionLocal() as sess:
+def get_aemo_gi_download_url(month: date) -> str:
+    """Get the AEMO GI download URL for a given month"""
+    return AEMO_GI_DOWNLOAD_URL.format(month=month.strftime("%B").lower(), year=month.strftime("%Y"))
 
-        for gi_record in records:
-            if not gi_record.duid:
-                continue
 
-            gi_lookup: Facility | None = sess.execute(select(Facility).where(Facility.code == gi_record.duid)).one_or_none()
+def download_latest_aemo_gi_file() -> Path:
+    """This will download the latest GI file into a local temp directory
+    and return the path to it"""
 
-            if not gi_lookup:
-                logger.info(f"MISS: {gi_record.duid} {gi_record.name}")
-                continue
+    gi_saved_path: Path | None = None
+    dest_dir = Path(mkdtemp(prefix=f"{settings.tmp_file_prefix}"))
 
-            gi_db: Facility = gi_lookup[0]
+    this_month = get_today_opennem()
+    last_month = this_month - relativedelta(months=1)
 
-            logger.info(f"HIT {gi_record.duid} {gi_record.name} - currently {gi_db.status_id} change to => {gi_record.status_id}")
+    for download_date in [this_month, last_month]:
+        download_url = get_aemo_gi_download_url(download_date)
 
-            gi_db.status_id = gi_record.status_id
+        logger.info(f"Downloading AEMO GI file from {download_url}")
 
-            sess.add(gi_db)
+        try:
+            gi_saved_path = download_file(
+                download_url, dest_dir, expect_content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
 
-        sess.commit()
+            if gi_saved_path:
+                return gi_saved_path
+        except Exception as e:
+            logger.error(f"Failed to download AEMO GI file: {e}")
+            continue
+
+    if not gi_saved_path:
+        raise OpennemAEMOGIParserException("Failed to download AEMO GI file")
+
+    return gi_saved_path
+
+
+def download_and_parse_aemo_gi_file() -> list[AEMOGIRecord]:
+    """This will download the latest GI file and parse it"""
+    gi_latest_path = download_latest_aemo_gi_file()
+    records = parse_aemo_general_information(gi_latest_path)
+
+    return records
 
 
 # debug entrypoint
 if __name__ == "__main__":
-    aemo_gi_testfile = Path(__file__).parent.parent.parent.parent / "data" / "aemo" / "nem_gi_202107.xlsx"
+    records = download_and_parse_aemo_gi_file()
 
-    if not aemo_gi_testfile.is_file():
-        print(f"file not found: {aemo_gi_testfile}")
-        raise Exception("nahhh file")
-
-    logger.info(f"Loading: {aemo_gi_testfile}")
-
-    records = parse_aemo_general_information(str(aemo_gi_testfile))
-    records = list(filter(lambda x: x.status_id in ["committed", "commissioning"], records))
-
-    # pprint(records)
-    facility_matcher(records=records)
-    # pprint(get_unique_values_for_field(records, "Region"))
+    for r in records:
+        print(f"{r.name_network} -> {r.capacity_registered}")
