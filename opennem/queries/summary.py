@@ -8,8 +8,8 @@ from textwrap import dedent
 
 from datetime_truncate import truncate as date_trunc
 
+from opennem.queries.utils import list_to_case
 from opennem.schema.network import NetworkSchema
-from opennem.utils.sql import duid_in_case
 from opennem.utils.timezone import is_aware
 
 logger = logging.getLogger("opennem.workers.daily_summary")
@@ -70,9 +70,7 @@ group by 1, 2, 3, 4, 5;
 """
 
 
-def get_daily_fueltech_summary_query(
-    day: datetime, network: NetworkSchema, fueltechs_excluded: list[str] = None
-) -> str:
+def get_daily_fueltech_summary_query(day: datetime, network: NetworkSchema, fueltechs_excluded: list[str] = None) -> str:
     """Get the fueltech summary query for a day and for a network"""
 
     # default list of excluded fueltechs
@@ -92,7 +90,7 @@ def get_daily_fueltech_summary_query(
         date_max=date_max,
         tz=network.timezone_database,
         network_id=network.code,
-        fueltechs_excluded=duid_in_case(fueltechs_excluded),
+        fueltechs_excluded=list_to_case(fueltechs_excluded),
     )
 
     return dedent(query)

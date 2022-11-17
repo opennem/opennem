@@ -2,7 +2,7 @@ import logging
 from collections import OrderedDict
 from datetime import datetime, timedelta, timezone
 from textwrap import dedent
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from datetime_truncate import truncate as date_trunc
 from fastapi.exceptions import HTTPException
@@ -10,12 +10,12 @@ from starlette import status
 
 from opennem.api.time import human_to_interval
 from opennem.db import get_database_engine
+from opennem.queries.utils import duid_to_case
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkSchema
 from opennem.schema.time import TimeInterval
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
 from opennem.utils.numbers import cast_trailing_nulls, trim_nulls
-from opennem.utils.sql import duid_in_case
 from opennem.utils.timezone import is_aware, make_aware
 from opennem.utils.version import get_version
 
@@ -25,19 +25,19 @@ logger = logging.getLogger(__name__)
 
 
 def stats_factory(
-    stats: List[DataQueryResult],
+    stats: list[DataQueryResult],
     units: UnitDefinition,
     interval: TimeInterval,
-    network: Optional[NetworkSchema] = None,
-    timezone: Optional[Union[timezone, str]] = None,
-    code: Optional[str] = None,
-    region: Optional[str] = None,
+    network: NetworkSchema | None = None,
+    timezone: timezone | str | None = None,
+    code: str | None = None,
+    region: str | None = None,
     include_group_code: bool = False,
-    fueltech_group: Optional[bool] = False,
-    group_field: Optional[str] = None,
-    data_id: Optional[str] = None,
-    localize: Optional[bool] = True,
-    cast_nulls: Optional[bool] = True,
+    fueltech_group: bool | None = False,
+    group_field: str | None = None,
+    data_id: str | None = None,
+    localize: bool | None = True,
+    cast_nulls: bool | None = True,
     include_code: bool = True,
 ) -> OpennemDataSet:
     """
@@ -57,7 +57,7 @@ def stats_factory(
 
     for group_code in group_codes:
 
-        data_grouped: Dict[datetime, Any] = {}
+        data_grouped: dict[datetime, Any] = {}
 
         for stat in stats:
             if stat.group_by != group_code:
@@ -259,20 +259,20 @@ def stats_factory(
     return stat_set
 
 
-def networks_to_in(networks: List[NetworkSchema]) -> str:
-    codes = ["'{}'".format(n.code) for n in networks]
+def networks_to_in(networks: list[NetworkSchema]) -> str:
+    codes = [f"'{n.code}'" for n in networks]
 
     return ", ".join(codes)
 
 
 @cache_scada_result
 def get_scada_range(
-    network: Optional[NetworkSchema] = None,
-    networks: Optional[List[NetworkSchema]] = None,
-    network_region: Optional[str] = None,
-    facilities: Optional[List[str]] = None,
+    network: NetworkSchema | None = None,
+    networks: list[NetworkSchema] | None = None,
+    network_region: str | None = None,
+    facilities: list[str] | None = None,
     energy: bool = False,
-) -> Optional[ScadaDateRange]:
+) -> ScadaDateRange | None:
     """Get the start and end dates for a network query. This is more efficient
     than providing or querying the range at query time
     """
@@ -299,7 +299,7 @@ def get_scada_range(
     field_name = "generated"
 
     # List of fueltechs to exclude from query
-    excluded_fueltechs: List[str] = ["imports", "exports"]
+    excluded_fueltechs: list[str] = ["imports", "exports"]
 
     # If we don't have a rooftop network we exclude solar_rooftop from the query
     # @TODO define the rooftop networks in the schema
@@ -328,7 +328,7 @@ def get_scada_range(
 
     if networks:
         net_case = networks_to_in(networks)
-        network_query = "f.network_id IN ({}) and ".format(net_case)
+        network_query = f"f.network_id IN ({net_case}) and "
 
     network_region_query = ""
 
@@ -338,8 +338,8 @@ def get_scada_range(
     facility_query = ""
 
     if facilities:
-        fac_case = duid_in_case(facilities)
-        facility_query = "f.code IN ({}) and ".format(fac_case)
+        fac_case = duid_to_case(facilities)
+        facility_query = f"f.code IN ({fac_case}) and "
 
     scada_range_query = dedent(
         __query.format(
@@ -349,7 +349,7 @@ def get_scada_range(
             network_query=network_query,
             network_region_query=network_region_query,
             timezone=timezone,
-            excluded_fueltechs=", ".join(["'{}'".format(i) for i in list(excluded_fueltechs)]),
+            excluded_fueltechs=", ".join([f"'{i}'" for i in list(excluded_fueltechs)]),
         )
     )
 
@@ -382,11 +382,11 @@ def get_scada_range(
 
 
 def get_balancing_range(
-    network: Optional[NetworkSchema] = None,
-    network_region: Optional[str] = None,
+    network: NetworkSchema | None = None,
+    network_region: str | None = None,
     field_name: str = "price",
     include_forecasts: bool = False,
-) -> Optional[ScadaDateRange]:
+) -> ScadaDateRange | None:
     """Get the start and end dates for a balancing query. This is more efficient
     than providing or querying the range at query time
     """

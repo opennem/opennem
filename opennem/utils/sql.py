@@ -1,12 +1,13 @@
-from typing import List
+""" SQL query utilities """
 
 from sqlalchemy.sql.functions import GenericFunction
 
 from opennem.core.normalizers import normalize_duid
 
 
-def duid_in_case(facility_codes: List[str]) -> str:
-    return ",".join(["'{}'".format(i) for i in map(normalize_duid, facility_codes)])
+def duid_in_case(facility_codes: list[str]) -> str:
+    """Converts a list of facility codes to an IN statement"""
+    return ",".join([f"'{i}'" for i in map(normalize_duid, facility_codes)])
 
 
 class time_bucket(GenericFunction):

@@ -4,7 +4,7 @@ from itertools import groupby
 from textwrap import dedent
 
 from opennem import settings
-from opennem.api.stats.controllers import duid_in_case, get_scada_range
+from opennem.api.stats.controllers import get_scada_range
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.controllers.output.schema import ExportDatetimeRange, OpennemExportSeries
 from opennem.core.energy import energy_sum, shape_energy_dataframe
@@ -15,6 +15,7 @@ from opennem.core.networks import get_network_region_schema
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import FacilityScada
+from opennem.queries.utils import duid_to_case
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import DATE_CURRENT_YEAR, get_last_complete_day_for_network
 from opennem.utils.interval import get_human_interval
@@ -69,7 +70,7 @@ def get_generated_query(
         fueltech_match = f"and f.fueltech_id = '{fueltech_id}'"
 
     if facility_codes:
-        facility_match = f"and f.code in ({duid_in_case(facility_codes)})"
+        facility_match = f"and f.code in ({duid_to_case(facility_codes)})"
 
     if network_region:
         network_region_query = f"and f.network_region='{network_region}'"

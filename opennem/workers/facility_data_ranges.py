@@ -11,8 +11,8 @@ from datetime import datetime
 from textwrap import dedent
 
 from opennem.db import get_database_engine
+from opennem.queries.utils import duid_to_case
 from opennem.schema.core import BaseConfig
-from opennem.utils.sql import duid_in_case
 
 logger = logging.getLogger("opennem.workers.facility_data_ranges")
 
@@ -40,7 +40,7 @@ def get_update_seen_query(
     """
 
     fs = "" if include_first_seen else "--"
-    facility_codes_query = f"and f.code in ({duid_in_case(facility_codes)})" if facility_codes else ""
+    facility_codes_query = f"and f.code in ({duid_to_case(facility_codes)})" if facility_codes else ""
 
     query = __query.format(fs=fs, facility_codes_query=facility_codes_query)
 
@@ -100,7 +100,7 @@ def get_facility_seen_range(facility_codes: list[str]) -> FacilitySeenRange:
     engine = get_database_engine()
     result = []
 
-    query = __query.format(facilities=duid_in_case(facility_codes))
+    query = __query.format(facilities=duid_to_case(facility_codes))
 
     with engine.connect() as c:
         logger.debug(query)

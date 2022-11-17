@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from textwrap import dedent
 
 from opennem.controllers.output.schema import OpennemExportSeries
-from opennem.utils.sql import duid_in_case
+from opennem.queries.utils import duid_to_case
 
 
 def power_facility_query(
@@ -43,7 +43,7 @@ def power_facility_query(
     date_range = time_series.get_range()
 
     query = __query.format(
-        facility_codes_parsed=duid_in_case(facility_codes),
+        facility_codes_parsed=duid_to_case(facility_codes),
         trunc=time_series.interval.interval_sql,
         period=time_series.period.period_sql,
         timezone=time_series.network.timezone_database,
@@ -80,7 +80,7 @@ def energy_facility_query(time_series: OpennemExportSeries, facility_codes: list
 
     return dedent(
         __query.format(
-            facility_codes_parsed=duid_in_case(facility_codes),
+            facility_codes_parsed=duid_to_case(facility_codes),
             trunc=time_series.interval.trunc,
             date_max=date_range.end,
             date_min=date_range.start,
