@@ -227,8 +227,9 @@ def run_energy_runner_hours() -> None:
     energy_runner_hours(hours=1)
 
 
-# admin tasks
+# system tasks
 @huey.periodic_task(crontab(hour="23", minute="55"))
 @huey.lock_task("run_clean_tmp_dir")
 def run_clean_tmp_dir() -> None:
     clean_tmp_dir()
+    slack_message("Cleaned tmp dir")

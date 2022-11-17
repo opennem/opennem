@@ -12,13 +12,15 @@ from opennem import settings
 
 logger = logging.getLogger("opennem.workers.system")
 
-CLEAN_OLDER_THAN_DAYS = 1
+CLEAN_OLDER_THAN_HOURS = 2
 
 
-def clean_tmp_dir() -> None:
-    """Cleans up the temp directory for files older than the constant"""
+def clean_tmp_dir(dry_run: bool = False) -> None:
+    """Cleans up the temp directory for files older than CLEAN_OLDER_THAN_HOURS hours"""
     tmp_dir = Path(gettempdir())
     now_epoch = time.time()
+
+    logger.debug(f"Temp directory: {tmp_dir} running at {now_epoch}")
 
     if not tmp_dir.is_dir():
         raise Exception(f"Not a directory: {tmp_dir}")
@@ -32,14 +34,20 @@ def clean_tmp_dir() -> None:
         if dir_entry_path.name.startswith(settings.tmp_file_prefix):
             mtime = os.stat(dir_entry_path).st_mtime
 
-            if mtime <= now_epoch - (CLEAN_OLDER_THAN_DAYS * 86400):
-                logger.info(f"Will remove: {dir_entry_path}")
+            if mtime >= now_epoch - (CLEAN_OLDER_THAN_HOURS * 3600):
+                logger.info(f"Keeping: {dir_entry_path} - {mtime}")
+                continue
 
-                try:
-                    rmtree(dir_entry_path)
-                except Exception as e:
-                    logger.error(f"Error removing {dir_entry_path}: {e}")
+            logger.info(f"Will remove: {dir_entry_path}")
+
+            if dry_run:
+                continue
+
+            try:
+                rmtree(dir_entry_path)
+            except Exception as e:
+                logger.error(f"Error removing {dir_entry_path}: {e}")
 
 
 if __name__ == "__main__":
-    clean_tmp_dir()
+    clean_tmp_dir(dry_run=True)
