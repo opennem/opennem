@@ -45,24 +45,24 @@ group by 1
 order by 1 desc)
 
 select
-    date_trunc('day', fs.trading_interval at time zone '{tz}') as trading_day,
+    fs.trading_day as trading_day,
     ftg.code,
     ftg.label,
     ftg.color,
     ft.renewable,
-    round(sum(fs.eoi_quantity), 2) as energy,
+    round(sum(fs.energy), 2) as energy,
     round(max(ftt.generated_total), 2) as generated_total,
     round(max(dt.demand_total), 2) as demand_total,
-    round( sum(fs.eoi_quantity) / max(ftt.generated_total) * 100, 2) as generated_proportion
-from facility_scada fs
+    round( sum(fs.energy) / max(ftt.generated_total) * 100, 2) as generated_proportion
+from at_facility_daily fs
 left join facility f on fs.facility_code = f.code
 join fueltech ft on f.fueltech_id = ft.code
 join fueltech_group ftg on ft.fueltech_group_id = ftg.code
-left join dt on dt.trading_day = date_trunc('day', fs.trading_interval at time zone '{tz}')
-left join ftt on ftt.trading_day = date_trunc('day', fs.trading_interval at time zone '{tz}')
+left join dt on dt.trading_day = fs.trading_day
+left join ftt on ftt.trading_day = fs.trading_day
 where
-    fs.trading_interval >= '{date_min}'
-    and fs.trading_interval < '{date_max}'
+    fs.trading_day >= '{date_min}'
+    and fs.trading_day < '{date_max}'
     and fs.network_id IN ('{network_id}', 'AEMO_ROOFTOP')
     and f.fueltech_id not in ({fueltechs_excluded})
     and f.dispatch_type = 'GENERATOR'
