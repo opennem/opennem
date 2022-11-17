@@ -36,6 +36,6 @@ repos:
         language: system
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.108
+    rev: v0.0.124
     hooks:
       - id: ruff
