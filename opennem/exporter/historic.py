@@ -55,7 +55,8 @@ def export_network_intervals_for_week(
         week_number = get_week_number_from_datetime(week_start)
 
     logging.info(
-        f"Exporting historic intervals for network {network.code} and region {network_region.code} and year {week_start.year} and week {week_number} ({week_start} => {week_end})"
+        f"Exporting historic intervals for network {network.code} and region "
+        f"{network_region.code} and year {week_start.year} and week {week_number} ({week_start} => {week_end})"
     )
 
     if week_end > get_last_complete_day_for_network(network):
@@ -77,7 +78,8 @@ def export_network_intervals_for_week(
 
     if not stat_set:
         logger.error(
-            f"No historic intervals for network {network.code} and region {network_region.code} and year {week_start.year} and week {week_number} ({week_start} => {week_end})"
+            f"No historic intervals for network {network.code} and region "
+            f"{network_region.code} and year {week_start.year} and week {week_number} ({week_start} => {week_end})"
         )
 
         return None
@@ -102,8 +104,8 @@ def export_network_intervals_for_week(
             include_emission_factors=settings.debug,  # only on dev
         )
 
-        if not interconnector_flows:
-            raise ExporterHistoricException("No interconnector flows")
+        # if not interconnector_flows:
+        # raise ExporterHistoricException("No interconnector flows")
 
         stat_set.append_set(interconnector_flows)
 
@@ -128,9 +130,7 @@ def export_network_intervals_for_week(
         logger.error(f"Error getting weather stats for {network_region.code}: {e}")
 
     # save out on s3 (or locally for dev)
-    save_path = (
-        f"v3/stats/historic/weekly/{network.code}/{network_region.code}/year/{week_start.year}/week/{week_number}.json"
-    )
+    save_path = f"v3/stats/historic/weekly/{network.code}/{network_region.code}/year/{week_start.year}/week/{week_number}.json"
 
     return write_output(save_path, stat_set)
 
@@ -151,9 +151,7 @@ def export_historic_intervals(
 
         # get the last complete day for the network
         network_last_complete_day = get_last_complete_day_for_network(network)
-        network_last_completed_week_start = network_last_complete_day - timedelta(
-            days=network_last_complete_day.weekday()
-        )
+        network_last_completed_week_start = network_last_complete_day - timedelta(days=network_last_complete_day.weekday())
 
         # query out the regions and filter
         query = session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code)
@@ -172,9 +170,7 @@ def export_historic_intervals(
                     week_end = network_last_complete_day
 
                 try:
-                    export_network_intervals_for_week(
-                        week_start, week_end, network=network, network_region=network_region
-                    )
+                    export_network_intervals_for_week(week_start, week_end, network=network, network_region=network_region)
                 except Exception as e:
                     raise ExporterHistoricException(f"export_historic_intervals error: {e}")
 
@@ -208,5 +204,5 @@ def export_historic_for_year_and_week_no(
 
 if __name__ == "__main__":
     # export_historic_intervals(limit=52 * 2)
-    # export_historic_intervals(limit=52)
-    export_historic_for_year_and_week_no(2022, 36, [NetworkNEM], network_region_code="NSW1")
+    export_historic_intervals()
+    # export_historic_for_year_and_week_no(2022, 36, [NetworkNEM], network_region_code="NSW1")
