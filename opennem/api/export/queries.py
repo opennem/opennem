@@ -6,7 +6,7 @@ from sqlalchemy.sql.elements import TextClause
 
 from opennem.api.stats.controllers import networks_to_in
 from opennem.controllers.output.schema import OpennemExportSeries
-from opennem.schema.network import NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.schema.network import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.stats import StatTypes
 
 
@@ -823,7 +823,7 @@ def energy_network_fueltech_query(
     # and not double-count all of AU
     network_apvi_wem = ""
 
-    if time_series.network == NetworkWEM:
+    if time_series.network in [NetworkWEM, NetworkAU]:
         network_apvi_wem = "or (t.network_id='APVI' and f.network_region in ('WEM'))"
 
         if NetworkAPVI in networks_query:
