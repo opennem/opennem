@@ -9,6 +9,11 @@ from datetime import datetime, timedelta
 from opennem import settings
 from opennem.aggregates.facility_daily import run_aggregate_facility_all_by_year, run_aggregates_facility_year
 from opennem.aggregates.network_demand import run_aggregates_demand_network
+from opennem.aggregates.network_flows import (
+    run_emission_update_day,
+    run_flow_updates_all_for_network,
+    run_flow_updates_all_per_year,
+)
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.db.tasks import refresh_material_views
@@ -17,7 +22,6 @@ from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_today_nem
 from opennem.workers.daily_summary import run_daily_fueltech_summary
-from opennem.workers.emissions import run_emission_update_day, run_flow_updates_all_for_network, run_flow_updates_all_per_year
 from opennem.workers.energy import run_energy_calc
 from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network
 

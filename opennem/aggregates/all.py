@@ -2,9 +2,9 @@
 
 from opennem.aggregates.facility_daily import run_aggregate_facility_all_by_year, run_aggregate_facility_days
 from opennem.aggregates.network_demand import run_aggregates_demand_network, run_aggregates_demand_network_days
+from opennem.aggregates.network_flows import run_emission_update_day, run_flow_updates_all_for_network
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
-from opennem.workers.emissions import run_emission_update_day, run_flow_updates_all_for_network
 from opennem.workers.energy import run_energy_update_all
 
 

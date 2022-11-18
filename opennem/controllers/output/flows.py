@@ -6,7 +6,11 @@ from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import net_flows_emissions
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
-from opennem.queries.flows import energy_network_flow_query, energy_network_interconnector_emissions_query
+from opennem.queries.flows import (
+    energy_network_flow_query,
+    energy_network_interconnector_emissions_query,
+    power_network_flow_query,
+)
 from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("opennem.controllers.flows")
@@ -158,6 +162,62 @@ def energy_interconnector_emissions_region_daily(
         region=network_region_code,
         fueltech_group=True,
         localize=False,
+    )
+
+    result.append_set(result_exports)
+
+    return result
+
+
+def power_flows_per_interval(
+    time_series: OpennemExportSeries,
+    network_region_code: str,
+) -> OpennemDataSet | None:
+    """Gets the power flows for the most recent week for a region from the aggregate table
+
+    Supports down to a resolution of per-interval
+
+    @NOTE this is behind feature flag settings.opennem_power_flows
+    """
+    engine = get_database_engine()
+    unit_power = get_unit("power")
+
+    query = power_network_flow_query(
+        time_series=time_series,
+        network_region=network_region_code,
+    )
+
+    with engine.connect() as c:
+        logger.debug(query)
+        rows = list(c.execute(query))
+
+    if not rows:
+        logger.error(f"No results from interconnector_power_flow query for {time_series.interval}")
+        return None
+
+    imports = [DataQueryResult(interval=i[0], result=i[2], group_by="imports" if len(i) > 1 else None) for i in rows]
+    exports = [DataQueryResult(interval=i[0], result=i[3], group_by="exports" if len(i) > 1 else None) for i in rows]
+
+    result = stats_factory(
+        imports,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=unit_power,
+        region=network_region_code,
+        fueltech_group=True,
+    )
+
+    if not result:
+        logger.error(f"No results from interconnector_power_flow stats facoty for {time_series}")
+        return None
+
+    result_exports = stats_factory(
+        exports,
+        network=time_series.network,
+        interval=time_series.interval,
+        units=unit_power,
+        region=network_region_code,
+        fueltech_group=True,
     )
 
     result.append_set(result_exports)

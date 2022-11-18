@@ -14,6 +14,7 @@ import platform
 
 from huey import PriorityRedisHuey, crontab
 
+from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
 from opennem.crawl import run_crawl
@@ -34,6 +35,7 @@ from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.notifications.slack import slack_message
+from opennem.schema.network import NetworkNEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import daily_runner, energy_runner_hours
 from opennem.workers.facility_data_ranges import update_facility_seen_range
@@ -83,6 +85,9 @@ def crawl_run_aemo_nemweb_dispatch_scada() -> None:
         or (trading_is and trading_is.inserted_records)
         or (rooftop and rooftop.inserted_records)
     ):
+        if dispatch_scada and dispatch_scada.server_latest:
+            run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
+
         export_power(priority=PriorityType.live)
 
 

@@ -40,6 +40,46 @@ def get_interconnector_intervals_query(date_start: datetime, date_end: datetime,
     return query
 
 
+def power_network_flow_query(time_series: OpennemExportSeries, network_region: str) -> str:
+    """Get interconnector region flows using the aggregate tables"""
+
+    ___query = """
+    select
+        time_bucket_gapfill({interval}, nf.trading_interval) as trading_interval,
+        nf.network_id,
+        nf.network_region,
+        avg(nf.energy_imports) as energy_imports,
+        avg(nf.energy_exports) as energy_exports,
+        avg(nf.emission_imports) as emission_imports,
+        avg(nf.emission_exports) as emission_exports,
+        avg(nf.market_value_imports) as market_value_imports,
+        avg(nf.market_value_exports) as emarket_value_exports
+    from at_network_flows nf
+    where
+        bs.network_id = '{network_id}' and
+        bs.network_region= '{network_region}' and
+        bs.trading_interval <= '{date_end}' and
+        bs.trading_interval >= '{date_start}'
+    group by 1, 2, 3
+    order by 1 desc;
+
+
+    """
+
+    time_series_range = time_series.get_range()
+    date_max = time_series_range.end
+    date_min = time_series_range.start
+
+    query = ___query.format(
+        network_id=time_series.network.code,
+        network_region=network_region,
+        date_start=date_min,
+        date_end=date_max,
+    )
+
+    return dedent(query)
+
+
 def energy_network_flow_query(
     time_series: OpennemExportSeries,
     network_region: str,

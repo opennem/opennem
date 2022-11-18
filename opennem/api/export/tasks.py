@@ -33,6 +33,7 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.controllers.output.flows import (
     energy_interconnector_emissions_region_daily,
     energy_interconnector_region_daily,
+    power_flows_per_interval,
 )
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
@@ -130,11 +131,16 @@ def export_power(
         stat_set.append_set(demand_set)
 
         if power_stat.network_region:
-            if flow_set := power_flows_region_week(
-                time_series=time_series,
-                network_region_code=power_stat.network_region,
-            ):
-                stat_set.append_set(flow_set)
+            # @NOTE feature flag on flows + emissions + mv from aggregate tables
+            if settings.opennem_power_flows:
+                if flow_set := power_flows_per_interval(time_series=time_series, network_region_code=power_stat.network_region):
+                    stat_set.append_set(flow_set)
+            else:
+                if flow_set := power_flows_region_week(
+                    time_series=time_series,
+                    network_region_code=power_stat.network_region,
+                ):
+                    stat_set.append_set(flow_set)
 
         time_series_weather = time_series.copy()
         time_series_weather.interval = human_to_interval("30m")

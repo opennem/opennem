@@ -158,6 +158,7 @@ services:
       - CLOUDFLARE_ACCOUNT_ID
       - CLOUDFLARE_API_KEY
       - FLOWS_AND_EMISSIONS_V2
+      - OPENNEM_POWER_FLOWS
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=false"
