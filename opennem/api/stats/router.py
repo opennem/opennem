@@ -169,6 +169,8 @@ def power_station(
 def energy_station(
     engine=Depends(get_database_engine),  # type: ignore
     session: Session = Depends(get_database_session),
+    date_min: datetime = Query(None, description="From datetime"),
+    date_max: datetime = Query(None, description="To datetime"),
     network_code: str = Query(..., description="Network code"),
     station_code: str = Query(..., description="Station Code"),
     interval: str = Query(None, description="Interval"),
@@ -195,6 +197,13 @@ def energy_station(
             interval = f"{network.interval_size}m"
 
     interval_obj = human_to_interval(interval)
+
+    if interval_obj.interval < 60:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Interval for energy must be 1 hour or greater",
+        )
+
     period_obj = human_to_period(period)
     units = get_unit("energy")
 
