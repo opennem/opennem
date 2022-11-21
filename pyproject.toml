@@ -104,7 +104,7 @@ aws-cdk-lib = "^2.9.0"
 uvicorn = "^0.19.0"
 pyflakes = "^2.4.0"
 mccabe = "^0.7.0"
-ruff = "^0.0.85"
+ruff = "^0.0.137"
 pyupgrade = "^3.1.0"
 flake8 = "^5.0.4"
 
@@ -115,6 +115,7 @@ opennem = 'opennem.cli:main'
 postgres = ["psycopg2"]
 
 [tool.ruff]
+target-version = "Py311"
 line-length = 130
 exclude = [
   ".git",
