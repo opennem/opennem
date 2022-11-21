@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime, timedelta
 
+from opennem.clients.slack import slack_message
 from opennem.core.networks import network_from_network_code
-from opennem.notifications.slack import slack_message
 from opennem.settings import settings
 from opennem.utils.dates import chop_delta_microseconds, parse_date
 from opennem.utils.http import http
@@ -24,7 +24,7 @@ def check_opennem_interval_delays(network_code: str) -> bool:
     resp = http.get(url)
 
     if resp.status_code != 200 or not resp.ok:
-        logger.error("Error retrieving: {}".format(url))
+        logger.error(f"Error retrieving: {url}")
         return False
 
     resp_json = resp.json()
@@ -49,7 +49,7 @@ def check_opennem_interval_delays(network_code: str) -> bool:
 
     time_delta = chop_delta_microseconds(now_date - history_date) - timedelta(minutes=network.interval_size)
 
-    logger.debug("Live time: {},  delay: {}".format(history_date, time_delta))
+    logger.debug(f"Live time: {history_date},  delay: {time_delta}")
 
     alert_threshold = network.monitor_interval_alert_threshold or settings.monitor_interval_alert_threshold or 60
 

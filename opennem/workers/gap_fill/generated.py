@@ -7,8 +7,8 @@ from datetime import datetime
 from textwrap import dedent
 
 from opennem import settings
+from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
-from opennem.notifications.slack import slack_message
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
 
@@ -66,15 +66,14 @@ def query_generated_gaps(
 
     gapfill_type_filter = ""
 
-    match gap_type:
-        case GapfillType.generated:
-            gapfill_type_filter = "and f.fueltech_id not in ('imports', 'exports', 'solar_rooftop')"
-        case GapfillType.rooftop:
-            gapfill_type_filter = "and f.fueltech_id in ('solar_rooftop')"
-        case GapfillType.flows:
-            gapfill_type_filter = "and f.fueltech_id in ('imports', 'exports')"
-        case _:
-            raise Exception(f"Invalid gap fill type: {gap_type}")
+    if gap_type == GapfillType.generated:
+        gapfill_type_filter = "and f.fueltech_id not in ('imports', 'exports', 'solar_rooftop')"
+    elif gap_type == GapfillType.rooftop:
+        gapfill_type_filter = "and f.fueltech_id in ('solar_rooftop')"
+    elif gap_type == GapfillType.flows:
+        gapfill_type_filter = "and f.fueltech_id in ('imports', 'exports')"
+    else:
+        raise Exception(f"Invalid gap fill type: {gap_type}")
 
     # for case of WEM and rooftop check the APVI network
     if network == NetworkWEM and gap_type == GapfillType.rooftop:
@@ -106,10 +105,10 @@ def run_generated_gapfill_for_network(
     """Find gaps for network and gap type"""
     generated_gaps = query_generated_gaps(network, days=days, gap_type=gap_type)
 
-    logger.info("Found {} generated gaps".format(len(generated_gaps)))
+    logger.info(f"Found {len(generated_gaps)} generated gaps")
 
     for gap in generated_gaps:
-        logger.info("{} Running for interval {} with power: {}".format(gap.network_id, gap.interval, gap.has_power))
+        logger.info(f"{gap.network_id} Running for interval {gap.interval} with power: {gap.has_power}")
 
         if settings.dry_run:
             continue

@@ -488,7 +488,6 @@ def run_energy_update_archive(
                 date_max = date_range.end
 
             if date_min > date_max:
-                # slack_message("Reached end of energy archive")
                 logger.debug(f"Reached end of archive {date_min} {date_max}")
                 break
 

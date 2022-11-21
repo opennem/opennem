@@ -10,9 +10,9 @@ from operator import attrgetter
 import matplotlib.pyplot as plt
 
 from opennem.clients.cfimage import save_image_to_cloudflare
+from opennem.clients.slack import slack_message
 from opennem.core.templates import serve_template
 from opennem.db import get_database_engine
-from opennem.notifications.slack import slack_message
 from opennem.queries.summary import get_daily_fueltech_summary_query
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema

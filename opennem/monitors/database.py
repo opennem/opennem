@@ -3,12 +3,11 @@ OpenNEM Check Database Status
 """
 
 from datetime import datetime
-from typing import Optional
 
+from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
-from opennem.notifications.slack import slack_message
 
-LAST_ALERTED: Optional[datetime] = None
+LAST_ALERTED: datetime | None = None
 
 
 def _test_connection() -> None:
@@ -40,12 +39,12 @@ def check_database_live() -> None:
         _test_connection()
     except Exception as e:
         has_error = True
-        msg = "Database connection error: {}".format(e.__class__)
+        msg = f"Database connection error: {e.__class__}"
 
     if has_error:
         global LAST_ALERTED
 
-        msg_was_sent = slack_message("Opennem {}".format(msg), tag_users=["nik"])
+        msg_was_sent = slack_message(f"Opennem {msg}", tag_users=["nik"])
 
         if msg_was_sent:
             LAST_ALERTED = datetime.now()

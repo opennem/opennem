@@ -8,10 +8,9 @@ and alerts about them
 import logging
 import re
 from datetime import datetime
-from typing import List, Optional
 
+from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
-from opennem.notifications.slack import slack_message
 from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.monitors.facility_seen")
@@ -20,8 +19,8 @@ logger = logging.getLogger("opennem.monitors.facility_seen")
 class FacilitySeen(BaseConfig):
     code: str
     network_id: str
-    seen_first: Optional[datetime]
-    seen_last: Optional[datetime]
+    seen_first: datetime | None
+    seen_last: datetime | None
 
 
 # This is a list of NEM VPP's that aren't mapped yet
@@ -41,10 +40,10 @@ NEM_VPPS = [
 _dr_duids_match = re.compile(r"DR[VX]\w{3}\d{2}")
 
 
-def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
+def ignored_duids(fac_records: list[FacilitySeen]) -> list[FacilitySeen]:
     """Filters out ignored records like dummy generators"""
 
-    def fac_is_ignored(fac: FacilitySeen) -> Optional[FacilitySeen]:
+    def fac_is_ignored(fac: FacilitySeen) -> FacilitySeen | None:
 
         # dummy generators for AEMO NEM
         if fac.network_id == "NEM" and fac.code.startswith("DG_"):
@@ -81,7 +80,7 @@ def ignored_duids(fac_records: List[FacilitySeen]) -> List[FacilitySeen]:
     return fac_filtered
 
 
-def get_facility_first_seen(period: Optional[str] = None) -> List[FacilitySeen]:
+def get_facility_first_seen(period: str | None = None) -> list[FacilitySeen]:
     """Run this and it'll check if there are new facilities in
     scada data and let you know which ones
 
@@ -108,12 +107,12 @@ def get_facility_first_seen(period: Optional[str] = None) -> List[FacilitySeen]:
         logger.debug(query)
         row = list(c.execute(query))
 
-    records: List[FacilitySeen] = [FacilitySeen(code=r[0], network_id=r[1]) for r in row]
+    records: list[FacilitySeen] = [FacilitySeen(code=r[0], network_id=r[1]) for r in row]
 
     return records
 
 
-def facility_first_seen_check() -> List[FacilitySeen]:
+def facility_first_seen_check() -> list[FacilitySeen]:
     """Find new DUIDs and alert on them"""
     facs = get_facility_first_seen("3 days")
 
@@ -122,7 +121,7 @@ def facility_first_seen_check() -> List[FacilitySeen]:
     facs_out = []
 
     for fac in facs_filtered:
-        msg = "Found new facility on network {} with DUID: {}".format(fac.network_id, fac.code)
+        msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}"
         slack_message(msg)
         logger.info(msg)
         facs_out.append(fac)
@@ -130,7 +129,7 @@ def facility_first_seen_check() -> List[FacilitySeen]:
     return facs_out
 
 
-def facility_unmapped_all(filter: bool = True) -> List[FacilitySeen]:
+def facility_unmapped_all(filter: bool = True) -> list[FacilitySeen]:
     """Find new DUIDs and alert on them"""
     facs = get_facility_first_seen()
 
@@ -145,4 +144,4 @@ if __name__ == "__main__":
     seen_facilities = facility_unmapped_all()
 
     for f in seen_facilities:
-        logger.info("Unmapped: {} {}".format(f.network_id, f.code))
+        logger.info(f"Unmapped: {f.network_id} {f.code}")

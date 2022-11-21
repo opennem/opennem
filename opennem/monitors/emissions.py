@@ -3,25 +3,24 @@ OpenNEM Monitor emission factors for facilities
 
 """
 import logging
-from typing import List, Optional
 
+from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
-from opennem.notifications.slack import slack_message
 from opennem.schema.core import BaseConfig
 
 logger = logging.getLogger("opennem.monitors.facility_seen")
 
 
 class FacilityEmissionsRecord(BaseConfig):
-    station_name: Optional[str] = ""
+    station_name: str | None = ""
     network_id: str
     network_region: str
     facility_code: str
-    emissions_factor_co2: Optional[float] = None
+    emissions_factor_co2: float | None = None
     fueltech_id: str
 
 
-def get_facility_no_emission_factor(only_operating: bool = False) -> List[FacilityEmissionsRecord]:
+def get_facility_no_emission_factor(only_operating: bool = False) -> list[FacilityEmissionsRecord]:
     """Run this and it'll check if there are new facilities in
     that don't have emission factors
     """
@@ -58,7 +57,7 @@ def get_facility_no_emission_factor(only_operating: bool = False) -> List[Facili
         logger.debug(__query)
         row = list(c.execute(__query))
 
-    records: List[FacilityEmissionsRecord] = [
+    records: list[FacilityEmissionsRecord] = [
         FacilityEmissionsRecord(
             station_name=r[0],
             network_id=r[1],

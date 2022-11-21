@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime, timedelta
 
+from opennem.clients.slack import slack_message
 from opennem.monitors.aemo_wem_live_intervals import get_aemo_wem_live_facility_intervals_recent_date
-from opennem.notifications.slack import slack_message
 from opennem.schema.network import NetworkWEM
 from opennem.settings import settings
 from opennem.utils.dates import chop_delta_microseconds
