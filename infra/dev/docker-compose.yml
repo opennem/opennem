@@ -70,13 +70,9 @@ services:
       - ENV
       - SENTRY_URL
       - LOG_LEVEL
-      - TWILIO_SID
-      - TWILIO_AUTH_TOKEN
-      - TWILIO_FROM_NUMBER
       - MONITORING_ALERT_SLACK_USER
       - MONITORING_ALERT_SMS
-      - TRELLO_API_KEY
-      - TRELLO_API_SECRET
+      - GITHUB_FEEDBACK_ACCESS_TOKEN
     networks:
       - frontend
     labels:
@@ -130,13 +126,8 @@ services:
       - DB_ENERGY_VIEW
       - WORKERS_RUN
       - NEMWEB_MIGRATE_DB
-      - TWILIO_SID
-      - TWILIO_AUTH_TOKEN
-      - TWILIO_FROM_NUMBER
       - MONITORING_ALERT_SLACK_USER
       - MONITORING_ALERT_SMS
-      - TRELLO_API_KEY
-      - TRELLO_API_SECRET
       - APVI_TOKEN
       - HTTPS_PROXY_URL
       - SLACK_ADMIN_ALERT
@@ -144,6 +135,7 @@ services:
       - CLOUDFLARE_API_KEY
       - FLOWS_AND_EMISSIONS_V2
       - OPENNEM_POWER_FLOWS
+      - GITHUB_FEEDBACK_ACCESS_TOKEN
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=true"

@@ -74,6 +74,7 @@ Pint = "^0.19.2"
 seaborn = "^0.12.0"
 twilio = "^7.14.1"
 fastapi-cache2 = {extras = ["redis"], version = "^0.1.9"}
+PyGithub = "^1.57"
 
 
 [tool.poetry.dev-dependencies]
@@ -115,7 +116,7 @@ opennem = 'opennem.cli:main'
 postgres = ["psycopg2"]
 
 [tool.ruff]
-target-version = "Py311"
+target-version = "py311"
 line-length = 130
 exclude = [
   ".git",

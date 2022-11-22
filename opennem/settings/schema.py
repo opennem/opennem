@@ -56,13 +56,7 @@ class OpennemSettings(BaseSettings):
 
     # Slack notifications
     slack_notifications: bool = False
-
     slack_hook_url: str | None
-
-    # twilio setup
-    twilio_sid: str | None
-    twilio_auth_token: str | None
-    twilio_from_number: str | None
 
     # APVI
     apvi_token: str | None
@@ -133,13 +127,8 @@ class OpennemSettings(BaseSettings):
     api_app_auth_key_length: int = 24
     api_auth_cookie_domain: str = "opennem.org.au"
 
-    # trello key / secret for feedback endpoint
-    trello_api_key: str | None
-    trello_api_secret: str | None
-
-    # feedback
-    # this is the feedback board
-    feedback_trello_board_id: str = "60a48f32c97cf221e3d4bec1"
+    # Github API
+    github_feedback_access_token: str | None = None
 
     # willy weather client
     willyweather_api_key: str | None

@@ -75,14 +75,10 @@ services:
       - GOOGLE_PLACES_API_KEY
       - ENV
       - SENTRY_URL
-      - TWILIO_SID
-      - TWILIO_AUTH_TOKEN
-      - TWILIO_FROM_NUMBER
       - MONITORING_ALERT_SLACK_USER
       - MONITORING_ALERT_SMS
-      - TRELLO_API_KEY
-      - TRELLO_API_SECRET
       - MAINTENANCE_MODE
+      - GITHUB_FEEDBACK_ACCESS_TOKEN
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-secure.entrypoints=websecure"
@@ -145,13 +141,8 @@ services:
       - DB_ENERGY_VIEW
       - WORKERS_RUN=1
       - LOG_LEVEL=INFO
-      - TWILIO_SID
-      - TWILIO_AUTH_TOKEN
-      - TWILIO_FROM_NUMBER
       - MONITORING_ALERT_SLACK_USER
       - MONITORING_ALERT_SMS
-      - TRELLO_API_KEY
-      - TRELLO_API_SECRET
       - APVI_TOKEN
       - HTTPS_PROXY_URL
       - SLACK_ADMIN_ALERT
@@ -159,6 +150,7 @@ services:
       - CLOUDFLARE_API_KEY
       - FLOWS_AND_EMISSIONS_V2
       - OPENNEM_POWER_FLOWS
+      - GITHUB_FEEDBACK_ACCESS_TOKEN
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=false"
