@@ -9,7 +9,6 @@ import os
 from datetime import datetime
 from itertools import groupby
 from textwrap import dedent
-from typing import List, Optional
 
 from datetime_truncate import truncate as date_trunc
 from dateutil.relativedelta import relativedelta
@@ -18,9 +17,8 @@ from sqlalchemy.engine.base import Engine
 
 from opennem.core.normalizers import clean_float, string_to_upper
 from opennem.db import db_connect, get_database_engine
+from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records  # type: ignore
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
-from opennem.pipelines.bulk_insert import build_insert_query
-from opennem.pipelines.csv import generate_csv_from_records
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
 from opennem.settings import settings  # noqa: F401
@@ -30,26 +28,27 @@ logger = logging.getLogger("opennem.importer.nemweb")
 
 # These are from min/max SETTLEMENTDATE on nemweb DISPATCH_UNIT_SOLUTION_OLD
 NEMWEB_DISPATCH_OLD_MIN_DATE = datetime.fromisoformat("1998-12-07 01:40:00")
-NEMWEB_DISPATCH_OLD_MAX_DATE = datetime.fromisoformat("2014-08-01 00:00:00")
+NEMWEB_DISPATCH_OLD_MAX_DATE = datetime.fromisoformat("2009-08-01 00:00:00")
+# NEMWEB_DISPATCH_OLD_MAX_DATE = datetime.fromisoformat("2014-08-01 00:00:00")
 
 # TRADING_PRICE min date (going back from)
 NEMWEB_TRADING_PRICE_MIN_DATE = datetime.fromisoformat("2009-07-01 00:00:00")
 
 
 def _trading_interval_timezone(dt: datetime) -> datetime:
-    return dt.replace(tzinfo=NetworkNEM.get_timezone())
+    return dt.replace(tzinfo=NetworkNEM.get_timezone())  # type: ignore
 
 
 # Defines a schema for return results from DISPATHC_UNIT_SOLUTION_OLD
 class DispatchUnitSolutionOld(BaseConfig):
     created_by: str = "opennem.importer.nemweb"
     created_at: datetime = datetime.now()
-    updated_at: Optional[str]
+    updated_at: str | None
     network_id: str = "NEM"
     trading_interval: datetime
     facility_code: str
-    generated: Optional[float]
-    eoi_quantity: Optional[float]
+    generated: float | None
+    eoi_quantity: float | None
     is_forecast: bool = False
     energy_quality_flag: int = 0
 
@@ -64,20 +63,20 @@ class DispatchUnitSolutionOld(BaseConfig):
 class BalancingSummaryImport(BaseConfig):
     created_by: str = "opennem.importer.nemweb"
     created_at: datetime = datetime.now()
-    updated_at: Optional[str]
+    updated_at: str | None
     network_id: str = "NEM"
     trading_interval: datetime
-    forecast_load: Optional[float]
-    generation_scheduled: Optional[float]
-    generation_non_scheduled: Optional[float]
-    generation_total: Optional[float]
-    price: Optional[float]
+    forecast_load: float | None
+    generation_scheduled: float | None
+    generation_non_scheduled: float | None
+    generation_total: float | None
+    price: float | None
     network_region: str
     is_forecast: bool = False
-    net_interchange: Optional[float]
-    demand_total: Optional[float]
-    price_dispatch: Optional[float]
-    net_interchange_trading: Optional[float]
+    net_interchange: float | None
+    demand_total: float | None
+    price_dispatch: float | None
+    net_interchange_trading: float | None
 
     _trading_interval_timezone = validator("trading_interval", pre=True, allow_reuse=True)(_trading_interval_timezone)
     _normalize_price = validator("price", pre=True, allow_reuse=True)(clean_float)
@@ -133,7 +132,7 @@ def get_scada_old_query(year: int, month: int) -> str:
     return dedent(query)
 
 
-def get_trading_price_import_query(limit: Optional[int] = None) -> str:
+def get_trading_price_import_query(limit: int | None = None) -> str:
     """Join TRADING_PRICE with regionids and return from min date
 
     @NOTE all of these SETTLEMENTDATES come back in UTC+10 with no tzinfo
@@ -158,7 +157,7 @@ def get_trading_price_import_query(limit: Optional[int] = None) -> str:
     return dedent(query)
 
 
-def get_regionsum_import_query(limit: Optional[int] = None) -> str:
+def get_regionsum_import_query(limit: int | None = None) -> str:
 
     __query = """
     select
@@ -180,7 +179,7 @@ def get_regionsum_import_query(limit: Optional[int] = None) -> str:
     return dedent(query)
 
 
-def insert_scada_records(records: List[DispatchUnitSolutionOld]) -> int:
+def insert_scada_records(records: list[DispatchUnitSolutionOld]) -> int:
     """Bulk insert the scada records"""
 
     records_to_store = [i.dict() for i in records]
@@ -215,17 +214,15 @@ def insert_scada_records(records: List[DispatchUnitSolutionOld]) -> int:
         cursor.copy_expert(sql_query, csv_content)
         conn.commit()
     except Exception as e:
-        logger.error("Error inserting records: {}".format(e))
+        logger.error(f"Error inserting records: {e}")
         return 0
 
-    logger.info("Inserted {} records".format(len(records_to_store)))
+    logger.info(f"Inserted {len(records_to_store)} records")
 
     return len(records_to_store)
 
 
-def insert_balancing_summary_records(
-    records: List[BalancingSummaryImport], update_fields: List[str] = ["price"]
-) -> int:
+def insert_balancing_summary_records(records: list[BalancingSummaryImport], update_fields: list[str] = ["price"]) -> int:
     """Bulk insert the balancing_summary records"""
 
     records_to_store = [i.dict() for i in records]
@@ -261,10 +258,10 @@ def insert_balancing_summary_records(
         cursor.copy_expert(sql_query, csv_content)
         conn.commit()
     except Exception as e:
-        logger.error("Error inserting records: {}".format(e))
+        logger.error(f"Error inserting records: {e}")
         return 0
 
-    logger.info("Inserted {} records".format(len(records_to_store)))
+    logger.info(f"Inserted {len(records_to_store)} records")
 
     return len(records_to_store)
 
@@ -289,7 +286,7 @@ def import_nemweb_scada() -> None:
 
             results_raw = list(c.execute(query))
 
-            logger.info("Got {} rows for year {} and month {}".format(len(results_raw), year, month))
+            logger.info(f"Got {len(results_raw)} rows for year {year} and month {month}")
 
         results_schema = [
             DispatchUnitSolutionOld(
@@ -316,7 +313,7 @@ def import_nemweb_price() -> None:
 
         results_raw = list(c.execute(query))
 
-        logger.info("Got {} rows from TRADING_PRICE".format(len(results_raw)))
+        logger.info(f"Got {len(results_raw)} rows from TRADING_PRICE")
 
         results_schema = [
             BalancingSummaryImport(
@@ -341,7 +338,7 @@ def import_nemweb_regionsum() -> None:
 
         results_raw = list(c.execute(query))
 
-        logger.info("Got {} rows from REGIONSUM".format(len(results_raw)))
+        logger.info(f"Got {len(results_raw)} rows from REGIONSUM")
 
         results_schema = [
             BalancingSummaryImport(
