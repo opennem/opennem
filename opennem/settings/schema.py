@@ -55,7 +55,7 @@ class OpennemSettings(BaseSettings):
     requests_cache_path: str = ".requests"
 
     # Slack notifications
-    slack_notifications: bool = False
+    slack_notifications: bool = True
     slack_hook_url: str | None
 
     # APVI
