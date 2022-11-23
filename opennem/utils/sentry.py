@@ -1,11 +1,12 @@
 import sentry_sdk
+from fastapi import HTTPException
 from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from opennem.clients.bom import BOMParsingException
 from opennem.settings import settings
 
-_SENTRY_IGNORE_EXCEPTION_TYPES = BOMParsingException
+_SENTRY_IGNORE_EXCEPTION_TYPES = [BOMParsingException, HTTPException]
 
 
 def _sentry_before_send(event, hint):
