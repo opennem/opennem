@@ -2,15 +2,7 @@ from datetime import datetime
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
-from opennem.schema.network import (
-    NETWORKS,
-    NetworkAPVI,
-    NetworkAU,
-    NetworkNEM,
-    NetworkRegionSchema,
-    NetworkSchema,
-    NetworkWEM,
-)
+from opennem.schema.network import NETWORKS, NetworkAPVI, NetworkAU, NetworkNEM, NetworkRegionSchema, NetworkSchema, NetworkWEM
 
 NEM_STATES = ["QLD", "NSW", "VIC", "ACT", "TAS", "SA", "NT"]
 
@@ -54,7 +46,7 @@ def network_from_network_region(
     raise Exception(f"Unknown network {network_region}")
 
 
-def network_from_network_code(network_code: str) -> NetworkSchema:
+def network_from_network_code(network_code: str) -> NetworkSchema | None:
     network_code = network_code.upper().strip()
 
     if network_code in ["AU"]:
@@ -74,7 +66,7 @@ def network_from_network_code(network_code: str) -> NetworkSchema:
     if len(network_lookup):
         return network_lookup.pop()
 
-    raise Exception(f"Unknown network {network_code}")
+    return None
 
 
 def get_network_region_schema(network: NetworkSchema, network_region_code: str | None = None) -> list[NetworkRegionSchema]:
