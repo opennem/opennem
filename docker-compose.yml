@@ -25,6 +25,19 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/
 
+  mysql:
+    image: mariadb
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - TZ
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    ports:
+      - ${HOST:-127.0.0.1}:15444:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+
   proxy:
     image: wildcat/scylla
     ports:
@@ -36,3 +49,4 @@ services:
 volumes:
   db_data: {}
   proxy_data: {}
+  mysql_data: {}
