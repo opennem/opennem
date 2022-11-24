@@ -476,6 +476,9 @@ def emission_factor_per_network(  # type: ignore
     except Exception:
         raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
 
+    if not network:
+        return HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+
     interval_obj = human_to_interval(interval)
 
     if not valid_database_interval(interval_obj):
