@@ -14,9 +14,7 @@ def human_to_interval(interval_human: str) -> TimeInterval:
     if interval_human not in INTERVALS_SUPPORTED:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interval not supported. Select one of: {}".format(
-                ", ".join(INTERVALS_SUPPORTED)
-            ),
+            detail="Interval not supported. Select one of: {}".format(", ".join(INTERVALS_SUPPORTED)),
         )
 
     return get_interval(interval_human)
@@ -28,9 +26,23 @@ def human_to_period(period_human: str) -> TimePeriod:
     if period_human not in PERIODS_SUPPORTED:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Period not supported. Select one of: {} not {}".format(
-                ", ".join(PERIODS_SUPPORTED), period_human
-            ),
+            detail="Period not supported. Select one of: {} not {}".format(", ".join(PERIODS_SUPPORTED), period_human),
         )
 
     return get_period(period_human)
+
+
+def valid_database_interval(interval: TimeInterval) -> bool:
+    """
+    Checks if an interval is valid for the database (timescaledb)
+
+    """
+    invalid_interval_truncs = ["week", "fortnight", "quarter"]
+
+    if interval.trunc in invalid_interval_truncs:
+        return False
+
+    if interval.interval < 1:
+        return False
+
+    return True
