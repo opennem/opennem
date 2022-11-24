@@ -8,7 +8,7 @@ from starlette import status
 
 from opennem.api.export.controllers import power_week
 from opennem.api.export.queries import interconnector_flow_network_regions_query
-from opennem.api.time import human_to_interval, human_to_period
+from opennem.api.time import human_to_interval, human_to_period, valid_database_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.networks import network_from_network_code
@@ -197,6 +197,9 @@ def energy_station(
             interval = f"{network.interval_size}m"
 
     interval_obj = human_to_interval(interval)
+
+    if not valid_database_interval(interval_obj):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Not a valid interval size")
 
     if interval_obj.interval < 60:
         raise HTTPException(
@@ -474,6 +477,10 @@ def emission_factor_per_network(  # type: ignore
         raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
 
     interval_obj = human_to_interval(interval)
+
+    if not valid_database_interval(interval_obj):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Not a valid interval size")
+
     period_obj = human_to_period("7d")
 
     if not interval_obj:
