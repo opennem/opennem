@@ -40,16 +40,20 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
                     when sum(fs.eoi_quantity) > 0 then
                         coalesce(sum(fs.eoi_quantity), 0)
                     else 0
+                    -- coalesce(sum(fs.generated) / {intervals_per_hour}, 0)
                 end as energy,
                 case
                     when sum(fs.eoi_quantity) > 0 then
                         coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bs.price_dispatch), max(bs.price), 0)
                     else 0
+                    -- coalesce(sum(fs.generated) / {intervals_per_hour}, 0) *
+                    -- coalesce(max(bs.price_dispatch), max(bs.price), 0)
                 end as market_value,
                 case
                     when sum(fs.eoi_quantity) > 0 then
                         coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(f.emissions_factor_co2), 0)
                     else 0
+                    -- coalesce(sum(fs.generated) / {intervals_per_hour}, 0) * coalesce(max(f.emissions_factor_co2), 0)
                 end as emissions
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
@@ -95,6 +99,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
         network_id=network.code,
         trading_offset=trading_offset,
         network_interval_size=network.interval_size,
+        intervals_per_hour=network.intervals_per_hour,
     )
 
     return dedent(query)
