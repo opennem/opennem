@@ -130,6 +130,10 @@ def run_crawl(
     """Runs a crawl from the crawl definition with ability to overwrite last crawled and obey the defined
     limit"""
 
+    if not settings.run_crawlers:
+        logger.info(f"Crawlers are disabled. Skipping {crawler.name}")
+        return None
+
     logger.info(
         "Crawling: {}. (Last Crawled: {}. Limit: {}. Server latest: {})".format(
             crawler.name, crawler.last_crawled, crawler.limit, crawler.server_latest
