@@ -790,6 +790,17 @@ backends = ["redis (>=3.0.0)"]
 redis = ["redis (>=3.0.0)"]
 
 [[package]]
+name = "humanize"
+version = "4.4.0"
+description = "Python humanize utilities"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+tests = ["freezegun", "pytest", "pytest-cov"]
+
+[[package]]
 name = "hypercorn"
 version = "0.14.3"
 description = "A ASGI Server based on Hyper libraries and inspired by Gunicorn"
@@ -2320,7 +2331,7 @@ postgres = ["psycopg2"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "799f7f331cee3496e26842153878f4d87ab7d7ede168b202113e76ac77cace9d"
+content-hash = "828b0602c256968418e27f7d8829869aab28b4d8b93570ff7cc69ffe121459a9"
 
 [metadata.files]
 aiodns = [
@@ -3051,6 +3062,10 @@ hpack = [
 ]
 huey = [
     {file = "huey-2.4.4.tar.gz", hash = "sha256:6a27a7862a7a982c0508ad4e548d95765e3b0d97093a51106f07540837a09c86"},
+]
+humanize = [
+    {file = "humanize-4.4.0-py3-none-any.whl", hash = "sha256:8830ebf2d65d0395c1bd4c79189ad71e023f277c2c7ae00f263124432e6f2ffa"},
+    {file = "humanize-4.4.0.tar.gz", hash = "sha256:efb2584565cc86b7ea87a977a15066de34cdedaf341b11c851cfcfd2b964779c"},
 ]
 hypercorn = [
     {file = "Hypercorn-0.14.3-py3-none-any.whl", hash = "sha256:7c491d5184f28ee960dcdc14ab45d14633ca79d72ddd13cf4fcb4cb854d679ab"},
