@@ -8,26 +8,13 @@
 """
 
 import enum
+import uuid
 from decimal import Decimal
-from typing import List, Optional
 
 from geoalchemy2 import Geometry
 from shapely import wkb
-from sqlalchemy import (
-    Boolean,
-    Column,
-    Date,
-    DateTime,
-    Enum,
-    ForeignKey,
-    Index,
-    Integer,
-    LargeBinary,
-    Numeric,
-    Text,
-    func,
-)
-from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
+from sqlalchemy import Boolean, Column, Date, DateTime, Enum, ForeignKey, Index, Integer, LargeBinary, Numeric, Text, func
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP, UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.mutable import MutableDict
@@ -43,7 +30,7 @@ Base = declarative_base()
 metadata = Base.metadata
 
 
-class BaseModel(object):
+class BaseModel:
     """
     Base model for both NEM and WEM
 
@@ -121,6 +108,20 @@ class CrawlHistory(Base):
 
     crawled_time = Column(DateTime(timezone=True), server_default=func.now())
     processed_time = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class TaskProfile(Base):
+    """updated crawl meta that tracks invidual intervals"""
+
+    __tablename__ = "task_profile"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    task_name = Column(Text, nullable=False)
+    time_start = Column(DateTime(timezone=True), nullable=False)
+    time_end = Column(DateTime(timezone=True), nullable=True)
+    time_sql = Column(DateTime(timezone=True), nullable=True)
+    time_cpu = Column(DateTime(timezone=True), nullable=True)
+    errors = Column(Integer, default=0, nullable=False)
 
 
 class FuelTechGroup(Base, BaseModel):
@@ -264,9 +265,9 @@ class Photo(Base):
     approved_at = Column(DateTime(timezone=True), nullable=True)
 
     @hybrid_property
-    def photo_url(self) -> Optional[str]:
+    def photo_url(self) -> str | None:
         if self.name:
-            return "https://photos.opennem.org.au/{}".format(self.name)
+            return f"https://photos.opennem.org.au/{self.name}"
 
         return None
 
@@ -295,14 +296,14 @@ class BomStation(Base):
     geom = Column(Geometry("POINT", srid=4326, spatial_index=False))
 
     @hybrid_property
-    def lat(self) -> Optional[float]:
+    def lat(self) -> float | None:
         if self.geom:
             return wkb.loads(bytes(self.geom.data)).y
 
         return None
 
     @hybrid_property
-    def lng(self) -> Optional[float]:
+    def lng(self) -> float | None:
         if self.geom:
             return wkb.loads(bytes(self.geom.data)).x
 
@@ -393,14 +394,14 @@ class Location(Base):
     boundary = Column(Geometry("POLYGON", srid=4326, spatial_index=True))
 
     @hybrid_property
-    def lat(self) -> Optional[float]:
+    def lat(self) -> float | None:
         if self.geom:
             return wkb.loads(bytes(self.geom.data)).y
 
         return None
 
     @hybrid_property
-    def lng(self) -> Optional[float]:
+    def lng(self) -> float | None:
         if self.geom:
             return wkb.loads(bytes(self.geom.data)).x
 
@@ -413,10 +414,10 @@ class Station(Base, BaseModel):
     __table_args__ = (UniqueConstraint("code", name="excl_station_network_duid"),)
 
     def __str__(self) -> str:
-        return "{} <{}>".format(self.name, self.code)
+        return f"{self.name} <{self.code}>"
 
     def __repr__(self) -> str:
-        return "{} {} <{}>".format(self.__class__, self.name, self.code)
+        return f"{self.__class__} {self.name} <{self.code}>"
 
     id = Column(
         Integer,
@@ -481,19 +482,19 @@ class Station(Base, BaseModel):
     website_url = Column(Text, nullable=True)
 
     @hybrid_property
-    def facility_codes(self) -> List[str]:
+    def facility_codes(self) -> list[str]:
         """Returns a list of facility codes for this station
 
         Returns:
             List[str]: facility codes
         """
 
-        _fac_codes = list(set([f.code for f in self.facilities]))
+        _fac_codes = list({f.code for f in self.facilities})
 
         return _fac_codes
 
     @hybrid_property
-    def scada_range(self) -> Optional[FacilitySeenRange]:
+    def scada_range(self) -> FacilitySeenRange | None:
         """[summary]
 
         Returns:
@@ -516,13 +517,13 @@ class Station(Base, BaseModel):
         return fsr
 
     @hybrid_property
-    def capacity_registered(self) -> Optional[float]:
+    def capacity_registered(self) -> float | None:
         """
         This is the sum of registered capacities for all units for
         this station
 
         """
-        cap_reg: Optional[float] = None
+        cap_reg: float | None = None
 
         for fac in self.facilities:  # pylint: disable=no-member
             if (
@@ -557,10 +558,10 @@ class Facility(Base, BaseModel):
     __table_args__ = (UniqueConstraint("network_id", "code", name="excl_facility_network_id_code"),)
 
     def __str__(self) -> str:
-        return "{} <{}>".format(self.code, self.fueltech_id)
+        return f"{self.code} <{self.fueltech_id}>"
 
     def __repr__(self) -> str:
-        return "{} {} <{}>".format(self.__class__, self.code, self.fueltech_id)
+        return f"{self.__class__} {self.code} <{self.fueltech_id}>"
 
     id = Column(
         Integer,
@@ -638,7 +639,7 @@ class Facility(Base, BaseModel):
     approved_at = Column(DateTime(timezone=True), nullable=True)
 
     @hybrid_property
-    def capacity_aggregate(self) -> Optional[float]:
+    def capacity_aggregate(self) -> float | None:
         """
         This is unit_no * unit_capacity and can differ from registered
 
@@ -661,11 +662,11 @@ class Facility(Base, BaseModel):
         return cap_aggr
 
     @hybrid_property
-    def status_label(self) -> Optional[str]:
+    def status_label(self) -> str | None:
         return self.status.label if self.status else None
 
     @hybrid_property
-    def fueltech_label(self) -> Optional[str]:
+    def fueltech_label(self) -> str | None:
         return self.fueltech.label if self.fueltech else None
 
     @hybrid_property
