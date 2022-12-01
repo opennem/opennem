@@ -87,6 +87,7 @@ def daily_runner(days: int = 2) -> None:
     if not settings.flows_and_emissions_v2:
         for view_name in ["mv_facility_all", "mv_interchange_energy_nem_region", "mv_region_emissions"]:
             refresh_material_views(view_name=view_name)
+            slack_message(f"refreshed materizlied views on {settings.env}")
 
     # run exports for latest year
     export_energy(latest=True)

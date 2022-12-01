@@ -133,7 +133,7 @@ def crawler_run_aemo_nemweb_rooftop_forecast() -> None:
 # run daily morning task
 
 # Checks for the overnights from aemo and then runs the daily runner
-@huey.periodic_task(crontab(hour="19,20,21", minute="15,45"), retries=3, retry_delay=120)
+@huey.periodic_task(crontab(hour="15,16,17,18,19,20,21", minute="20,45"), retries=3, retry_delay=120)
 @huey.lock_task("db_run_energy_gapfil")
 def db_run_energy_gapfil() -> None:
     dispatch_actuals = run_crawl(AEMONEMDispatchActualGEN)
