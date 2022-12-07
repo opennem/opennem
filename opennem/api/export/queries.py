@@ -450,7 +450,7 @@ def power_network_rooftop_query(
         select
             t.trading_interval at time zone '{timezone}' as trading_interval,
             t.fueltech_code,
-            sum(t.facility_power)
+            coalesce(sum(t.facility_power), 0) as power
         from (
 
             select
