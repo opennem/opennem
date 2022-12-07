@@ -8,7 +8,6 @@ from json.decoder import JSONDecodeError
 from typing import Any
 from urllib.parse import urlencode
 
-import requests
 from pydantic import ValidationError, validator
 
 from opennem import settings
@@ -17,6 +16,7 @@ from opennem.importer.rooftop import ROOFTOP_CODE
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
 from opennem.utils.dates import get_today_opennem, parse_date
+from opennem.utils.http import http
 from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
@@ -162,7 +162,8 @@ class APVIForecastSet(BaseConfig):
     capacities: list[APVIStateRooftopCapacity] | None
 
 
-_apvi_request_session = requests.Session()
+_apvi_request_session = http
+
 _apvi_request_session.headers.update({"User-Agent": f"OpenNEM/{get_version()}"})
 
 
