@@ -64,6 +64,7 @@ h11==0.14.0; python_version >= "3.7" and python_version < "4.0" and python_full_
 h2==4.1.0; python_full_version >= "3.6.1" and python_version >= "3.7"
 hpack==4.0.0; python_full_version >= "3.6.1" and python_version >= "3.7"
 huey==2.4.4
+humanize==4.4.0; python_version >= "3.7"
 hypercorn==0.14.3; python_version >= "3.7"
 hyperframe==6.0.1; python_full_version >= "3.6.1" and python_version >= "3.7"
 idna==3.4; python_version >= "3.7" and python_version < "4" and (python_version >= "3.7" and python_full_version < "3.0.0" or python_version >= "3.7" and python_full_version >= "3.5.0") and python_full_version >= "3.6.2"
