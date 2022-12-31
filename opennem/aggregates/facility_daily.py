@@ -1,6 +1,6 @@
 """ Runs queries to populate the aggregate tables with facility data"""
 import logging
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from textwrap import dedent
 from typing import Any
 
@@ -154,6 +154,12 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema) -> None:
         year (int, optional): [description]. Defaults to DATE_CURRENT_YEAR.
         network (NetworkSchema, optional): [description]. Defaults to NetworkNEM.
     """
+    today = get_today_opennem()
+
+    # First day of year we want to do _last_ year
+    if today.date() == date(year, 1, 1):
+        year -= 1
+
     date_min, date_max = get_aggregate_year_range(year, network=network)
     logger.info(f"Running for year {year} - range : {date_min} {date_max}")
 
