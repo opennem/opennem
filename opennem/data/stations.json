@@ -27953,15 +27953,15 @@
     }
   },
   {
-    "code": "MUJA",
-    "name": "Muja CD",
-    "network_name": "Muja CD",
-    "description": null,
+    "code": "MUJA_AB",
+    "name": "Muja AB",
+    "network_name": "Muja AB",
+    "description": "Muja AB is a retired coal plant with 4x 60MW units.",
     "wikipedia_link": null,
     "wikidata_id": null,
     "website_url": null,
     "approved": true,
-    "approved_by": "opennem.registry",
+    "approved_by": "opennem.init",
     "facilities": [
       {
         "network_id": "WEM",
@@ -28054,7 +28054,36 @@
         "unit_alias": null,
         "unit_capacity": null,
         "emissions_factor_co2": 0.92
-      },
+      }
+    ],
+    "location": {
+      "address1": "",
+      "address2": "",
+      "locality": "",
+      "state": "WA",
+      "postcode": "",
+      "country": "AU",
+      "geocode_processed_at": null,
+      "lat": -33.445811,
+      "lng": 116.306655,
+      "osm_way_id": "32787295",
+      "place_id": null,
+      "geocode_by": "opennem.registry",
+      "geocode_approved": true,
+      "geocode_skip": false
+    }
+  },
+  {
+    "code": "MUJA",
+    "name": "Muja CD",
+    "network_name": "Muja CD",
+    "description": "Muja Power Station is a power station 22 km (14 mi) east of Collie, Western Australia. It has eight steam turbines served by coal-fired boilers that together generate a total capacity of 854 megawatts of electricity. It is the largest power station in the South West Interconnected System, accounting for roughly 15 percent of capacity",
+    "wikipedia_link": "https://en.wikipedia.org/wiki/Muja_Power_Station",
+    "wikidata_id": null,
+    "website_url": "https://www.synergy.net.au/",
+    "approved": true,
+    "approved_by": "opennem.registry",
+    "facilities": [
       {
         "network_id": "WEM",
         "fueltech_id": "coal_black",
