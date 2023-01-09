@@ -50,6 +50,7 @@ from opennem.schema.network import (
     NetworkWEM,
 )
 from opennem.settings import settings
+from opennem.utils.dates import get_last_complete_day_for_network
 from opennem.utils.version import get_version
 
 logger = logging.getLogger("opennem.export.tasks")
@@ -452,16 +453,15 @@ def export_all_daily(networks: list[NetworkSchema] = None, network_region_code: 
             if network_region.code == "WEM":
                 networks = [NetworkWEM, NetworkAPVI]
 
-            scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks, energy=True)
+            last_day = get_last_complete_day_for_network(network=network)
 
-            if not scada_range or not scada_range.start:
+            if not last_day or not network.data_first_seen:
                 logger.error(f"Could not get scada range for network {network} and energy True")
-
                 continue
 
             time_series = OpennemExportSeries(
-                start=scada_range.start,
-                end=scada_range.end,
+                start=network.data_first_seen,
+                end=last_day,
                 network=network,
                 interval=human_to_interval("1d"),
                 period=human_to_period("all"),
