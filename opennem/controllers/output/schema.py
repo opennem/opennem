@@ -22,10 +22,9 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
-from opennem.utils.dates import get_end_of_last_month
+from opennem.utils.dates import get_end_of_last_month, get_today_opennem
 from opennem.utils.interval import get_human_interval
 from opennem.utils.timezone import is_aware
-from opennem.utils.version import CUR_YEAR
 
 
 def valid_trunc(trunc: str) -> str:
@@ -171,9 +170,11 @@ class OpennemExportSeries(BaseConfig):
                 tzinfo=self.network.get_fixed_offset(),
             )
 
-            if self.year == CUR_YEAR:
+            current_year = get_today_opennem().year
+
+            if self.year == current_year:
                 end = datetime(
-                    year=CUR_YEAR,
+                    year=current_year,
                     month=self.end.month,
                     day=self.end.day,
                     hour=23,
