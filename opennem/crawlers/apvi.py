@@ -43,11 +43,18 @@ def crawl_apvi_forecasts(
             apvi_return.inserted_records += apvi_forecast_return.inserted_records
             apvi_return.errors += apvi_forecast_return.errors
 
-            if not apvi_return.server_latest or apvi_return.server_latest < apvi_forecast_return.server_latest:
+            if not apvi_forecast_return.server_latest:
+                logger.warn(f"Did not get server_latest from run_apvi_crawl for date {date}")
+                continue
+
+            if not apvi_return.server_latest or (apvi_return.server_latest < apvi_forecast_return.server_latest):
                 apvi_return.server_latest = apvi_forecast_return.server_latest
 
     # run all
     else:
+        if not NetworkAPVI.data_first_seen:
+            raise Exception("Require data_first_seen for network to parse")
+
         for date in date_series(get_today_nem().date(), NetworkAPVI.data_first_seen, reverse=True):
             apvi_forecast_return = run_apvi_crawl(date)
             apvi_return.processed_records += apvi_forecast_return.processed_records
