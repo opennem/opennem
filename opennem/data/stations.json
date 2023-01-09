@@ -20671,6 +20671,29 @@
         "unit_alias": null,
         "unit_capacity": 4.2,
         "emissions_factor_co2": null
+      },
+      {
+        "network_id": "NEM",
+        "fueltech_id": "wind",
+        "status_id": "operating",
+        "code": "BRYB2WF2",
+        "network_code": null,
+        "network_region": "VIC1",
+        "network_name": null,
+        "dispatch_type": "GENERATOR",
+        "interconnector": false,
+        "interconnector_region_to": null,
+        "interconnector_region_from": null,
+        "capacity_registered": 109.0,
+        "expected_closure_date": null,
+        "expected_closure_year": null,
+        "registered": null,
+        "deregistered": null,
+        "unit_id": null,
+        "unit_number": 26,
+        "unit_alias": null,
+        "unit_capacity": 4.038,
+        "emissions_factor_co2": null
       }
     ],
     "location": {
