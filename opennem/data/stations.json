@@ -29896,5 +29896,57 @@
       "geocode_approved": false,
       "geocode_skip": false
     }
+  },
+  {
+    "code": "EDENVSF",
+    "name": "Edenvale",
+    "network_name": "Edenvale Solar Park",
+    "description": "The Edenvale Solar Park project (the Project) is a 204 megawatt solar farm under construction in the Western Downs region of Queensland.",
+    "wikipedia_link": null,
+    "wikidata_id": null,
+    "website_url": "https://edenvalesolarpark.com/",
+    "approved": true,
+    "approved_by": "opennem.init",
+    "facilities": [
+      {
+        "network_id": "NEM",
+        "fueltech_id": "solar_utility",
+        "status_id": "operating",
+        "code": "EDENVSF1",
+        "network_code": null,
+        "network_region": "QLD1",
+        "network_name": null,
+        "dispatch_type": "GENERATOR",
+        "interconnector": false,
+        "interconnector_region_to": null,
+        "interconnector_region_from": null,
+        "capacity_registered": 180.0,
+        "expected_closure_date": null,
+        "expected_closure_year": null,
+        "registered": null,
+        "deregistered": null,
+        "unit_id": null,
+        "unit_number": 72,
+        "unit_alias": null,
+        "unit_capacity": 2.027,
+        "emissions_factor_co2": null
+      }
+    ],
+    "location": {
+      "address1": "1080 Avenue Road",
+      "address2": null,
+      "locality": "Crossroads",
+      "state": "QLD",
+      "postcode": "4413",
+      "country": "AU",
+      "geocode_processed_at": null,
+      "lat": -26.947486249430344,
+      "lng": 150.5784941355202,
+      "osm_way_id": null,
+      "place_id": null,
+      "geocode_by": null,
+      "geocode_approved": false,
+      "geocode_skip": false
+    }
   }
 ]
