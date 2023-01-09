@@ -2,20 +2,19 @@ import logging
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, Optional
 
 try:
     import tomlkit
 except ModuleNotFoundError:
     print("Could not import external package. virtualenv likely not activated.")
 
-from packaging.version import LegacyVersion, parse
+from packaging.version import parse
 
 logger = logging.getLogger(__name__)
 
 
 # get metadata from pyproject.toml
-def get_project_meta() -> Optional[Dict]:
+def get_project_meta() -> dict | None:
     pyproject = Path(__file__).parent / "../../pyproject.toml"
 
     if not pyproject.is_file():
@@ -29,14 +28,14 @@ def get_project_meta() -> Optional[Dict]:
     try:
         project_meta = tomlkit.parse(file_contents)
     except Exception as e:
-        logger.error("Error parsing project metadata: {}".format(e))
+        logger.error(f"Error parsing project metadata: {e}")
         return None
 
     return dict(project_meta)
 
 
 # get version from VERSION file
-def get_pkg_version() -> Optional[str]:
+def get_pkg_version() -> str | None:
     import pkgutil
 
     pkg_data = None
@@ -62,7 +61,7 @@ def get_scm_version() -> None:
     try:
         from setuptools_scm import get_version
 
-        version = get_version(root=pth.join("..", ".."), relative_to=__file__)
+        get_version(root=pth.join("..", ".."), relative_to=__file__)
     except Exception:
         raise ImportError("setuptools_scm broken or not installed")
 
@@ -88,16 +87,13 @@ class VersionPart(Enum):
     PATCH = "patch"
 
 
-def get_version(version_part: Optional[VersionPart] = None) -> str:
+def get_version(version_part: VersionPart | None = None) -> str:
     if not version:
         return ""
 
     version_parsed = parse(version)
 
     if not version_part:
-        return version
-
-    if isinstance(version_parsed, LegacyVersion):
         return version
 
     if version_part == VersionPart.MAJOR:
