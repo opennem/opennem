@@ -53,7 +53,7 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
         avg(nf.emission_imports) as emission_imports,
         avg(nf.emission_exports) as emission_exports,
         avg(nf.market_value_imports) as market_value_imports,
-        avg(nf.market_value_exports) as emarket_value_exports
+        avg(nf.market_value_exports) as market_value_exports
     from at_network_flows nf
     where
         bs.network_id = '{network_id}' and
