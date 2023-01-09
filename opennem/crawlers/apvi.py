@@ -35,7 +35,7 @@ def crawl_apvi_forecasts(
         for date in date_series(get_today_nem().date(), length=crawler.limit, reverse=True):
             apvi_forecast_return = run_apvi_crawl(date)
 
-            if not apvi_forecast_return or not apvi_forecast_return.server_latest:
+            if not apvi_forecast_return:
                 raise APVICrawlerException("Bad run_apvi_crawl return none or no server_latest")
 
             apvi_return.processed_records += apvi_forecast_return.processed_records
