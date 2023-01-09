@@ -19,7 +19,7 @@ from opennem.api.export.map import PriorityType, refresh_export_map, refresh_wee
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
 from opennem.clients.slack import slack_message
 from opennem.crawl import run_crawl
-from opennem.crawlers.apvi import APVIRooftopTodayCrawler
+from opennem.crawlers.apvi import APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
 from opennem.crawlers.nemweb import (
     AEMONEMDispatchActualGEN,
@@ -127,6 +127,7 @@ def crawler_run_wem_facility_scada() -> None:
 @huey.lock_task("crawler_run_aemo_nemweb_rooftop_forecast")
 def crawler_run_aemo_nemweb_rooftop_forecast() -> None:
     run_crawl(AEMONemwebRooftopForecast)
+    run_crawl(APVIRooftopMonthCrawler)
 
 
 # daily tasks
