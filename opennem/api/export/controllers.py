@@ -1,6 +1,5 @@
 import logging
 import re
-from typing import List, Optional
 
 from opennem.api.exceptions import OpennemBaseHttpException, OpenNEMInvalidNetworkRegion
 from opennem.api.export.queries import (
@@ -43,9 +42,9 @@ def weather_daily(
     station_code: str,
     unit_name: str = "temperature_mean",
     include_min_max: bool = True,
-    network_region: Optional[str] = None,
+    network_region: str | None = None,
     network: NetworkSchema | None = None,
-) -> Optional[OpennemDataSet]:
+) -> OpennemDataSet | None:
     engine = get_database_engine()
     units = get_unit(unit_name)
 
@@ -112,7 +111,7 @@ def weather_daily(
     return stats
 
 
-def gov_stats_cpi() -> Optional[OpennemDataSet]:
+def gov_stats_cpi() -> OpennemDataSet | None:
     engine = get_database_engine()
 
     query = country_stats_query(StatTypes.CPI)
@@ -142,7 +141,7 @@ def gov_stats_cpi() -> Optional[OpennemDataSet]:
 def power_flows_region_week(
     time_series: OpennemExportSeries,
     network_region_code: str,
-) -> Optional[OpennemDataSet]:
+) -> OpennemDataSet | None:
     """Gets the power flows for the most recent week for a region. Used in export_power for the JSON export sets"""
     engine = get_database_engine()
     unit_power = get_unit("power")
@@ -173,7 +172,7 @@ def power_flows_region_week(
     )
 
     if not result:
-        logger.error("No results from interconnector_power_flow stats facoty for {}".format(time_series))
+        logger.error(f"No results from interconnector_power_flow stats facoty for {time_series}")
         return None
 
     result_exports = stats_factory(
@@ -227,7 +226,7 @@ def network_flows_for_region(
     )
 
     if not result:
-        logger.error("No results from interconnector_power_flow stats facoty for {}".format(time_series))
+        logger.error(f"No results from interconnector_power_flow stats facoty for {time_series}")
         return None
 
     result_exports = stats_factory(
@@ -274,9 +273,8 @@ def network_flows_for_region(
     if include_emission_factors:
         unit_emissions_factor = get_unit("emissions_factor")
 
+        # import factors
         import_emissions_factors = [DataQueryResult(interval=i[0], group_by="imports", result=i[7]) for i in rows]
-        export_emissions_factors = [DataQueryResult(interval=i[0], group_by="exports", result=i[8]) for i in rows]
-
         result_import_emissions_factors = stats_factory(
             import_emissions_factors,
             network=time_series.network,
@@ -289,6 +287,8 @@ def network_flows_for_region(
 
         result.append_set(result_import_emissions_factors)
 
+        # export factors
+        export_emissions_factors = [DataQueryResult(interval=i[0], group_by="exports", result=i[8]) for i in rows]
         result_export_emissions = stats_factory(
             export_emissions_factors,
             network=time_series.network,
@@ -307,7 +307,7 @@ def network_flows_for_region(
 def power_flows_network_week(
     time_series: OpennemExportSeries,
     network_region_code: str | None = None,
-) -> Optional[OpennemDataSet]:
+) -> OpennemDataSet | None:
     engine = get_database_engine()
 
     query = interconnector_flow_network_regions_query(time_series=time_series, network_region=network_region_code)
@@ -317,7 +317,7 @@ def power_flows_network_week(
         row = list(c.execute(query))
 
     if not row:
-        logger.warning("No results from interconnector_flow_network_regions_query with {}".format(time_series))
+        logger.warning(f"No results from interconnector_flow_network_regions_query with {time_series}")
         return None
 
     imports = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
@@ -334,7 +334,7 @@ def power_flows_network_week(
     )
 
     if not result:
-        logger.error("No results from interconnector_flow_network_regions_query with {}".format(time_series))
+        logger.error(f"No results from interconnector_flow_network_regions_query with {time_series}")
         return None
 
     return result
@@ -342,9 +342,9 @@ def power_flows_network_week(
 
 def demand_week(
     time_series: OpennemExportSeries,
-    network_region_code: Optional[str],
-    networks_query: Optional[List[NetworkSchema]] = None,
-) -> Optional[OpennemDataSet]:
+    network_region_code: str | None,
+    networks_query: list[NetworkSchema] | None = None,
+) -> OpennemDataSet | None:
     engine = get_database_engine()
 
     query = network_demand_query(
@@ -382,9 +382,9 @@ def demand_week(
 def power_week(
     time_series: OpennemExportSeries,
     network_region_code: str = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
+    networks_query: list[NetworkSchema] | None = None,
     include_capacities: bool = False,
-) -> Optional[OpennemDataSet]:  # sourcery skip: use-fstring-for-formatting
+) -> OpennemDataSet | None:  # sourcery skip: use-fstring-for-formatting
     engine = get_database_engine()
 
     if network_region_code and not re.match(_valid_region, network_region_code):
@@ -403,7 +403,7 @@ def power_week(
     stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
     if not stats:
-        logger.error("No results from power week query with {}".format(time_series))
+        logger.error(f"No results from power week query with {time_series}")
         return None
 
     result = stats_factory(
@@ -418,7 +418,7 @@ def power_week(
     )
 
     if not result:
-        logger.error("No results from power week status factory with {}".format(time_series))
+        logger.error(f"No results from power week status factory with {time_series}")
         return None
 
     if include_capacities and network_region_code:
@@ -505,9 +505,7 @@ def power_week(
             logger.debug(query)
             row = list(c.execute(query))
 
-        rooftop_forecast_power = [
-            DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row
-        ]
+        rooftop_forecast_power = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
 
         rooftop_forecast = stats_factory(
             rooftop_forecast_power,
@@ -520,12 +518,7 @@ def power_week(
         )
 
     if rooftop and rooftop_forecast:
-        if (
-            hasattr(rooftop, "data")
-            and len(rooftop.data) > 0
-            and rooftop_forecast.data
-            and len(rooftop_forecast.data) > 0
-        ):
+        if hasattr(rooftop, "data") and len(rooftop.data) > 0 and rooftop_forecast.data and len(rooftop_forecast.data) > 0:
             rooftop.data[0].forecast = rooftop_forecast.data[0].history
     else:
         logger.warning("No rooftop or rooftop forecast")
@@ -590,7 +583,7 @@ def power_and_emissions_for_network_interval(
     emission_stats = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
 
     if not power_stats:
-        logger.error("No results from emissions_for_network_interval query with {}".format(time_series))
+        logger.error(f"No results from emissions_for_network_interval query with {time_series}")
         return None
 
     power_result = stats_factory(
@@ -656,9 +649,7 @@ def demand_network_region_daily(
 
     results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 1 else None) for i in row]
 
-    results_market_value = [
-        DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in row
-    ]
+    results_market_value = [DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in row]
 
     if not results_energy:
         logger.error(f"No results from query: {query}")
@@ -693,9 +684,9 @@ def demand_network_region_daily(
 
 def energy_fueltech_daily(
     time_series: OpennemExportSeries,
-    network_region_code: Optional[str] = None,
-    networks_query: Optional[List[NetworkSchema]] = None,
-) -> Optional[OpennemDataSet]:
+    network_region_code: str | None = None,
+    networks_query: list[NetworkSchema] | None = None,
+) -> OpennemDataSet | None:
     engine = get_database_engine()
     units = get_unit("energy_giga")
 
@@ -711,13 +702,9 @@ def energy_fueltech_daily(
 
     results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
 
-    results_market_value = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row
-    ]
+    results_market_value = [DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row]
 
-    results_emissions = [
-        DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row
-    ]
+    results_emissions = [DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row]
 
     if not results_energy:
         logger.error(f"No results from query: {query}")
@@ -767,14 +754,12 @@ def energy_fueltech_daily(
 
 def energy_interconnector_flows_and_emissions_v2(
     time_series: OpennemExportSeries, network_region_code: str
-) -> Optional[OpennemDataSet]:
+) -> OpennemDataSet | None:
     engine = get_database_engine()
     unit_energy = get_unit("energy_giga")
     unit_emissions = get_unit("emissions")
 
-    query = get_network_flows_emissions_market_value_query(
-        time_series=time_series, network_region_code=network_region_code
-    )
+    query = get_network_flows_emissions_market_value_query(time_series=time_series, network_region_code=network_region_code)
 
     with engine.connect() as c:
         logger.debug(query)
@@ -782,7 +767,8 @@ def energy_interconnector_flows_and_emissions_v2(
 
     if not row:
         logger.error(
-            f"No results from energy_interconnector_flows_and_emissions for {time_series.network} {network_region_code} and {time_series.start} => {time_series.end}"
+            f"No results from energy_interconnector_flows_and_emissions for {time_series.network} "
+            "{network_region_code} and {time_series.start} => {time_series.end}"
         )
         return None
 

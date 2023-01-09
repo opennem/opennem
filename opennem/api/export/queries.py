@@ -634,7 +634,7 @@ def power_network_interconnector_emissions_query(
             else 0.0
         end as imports_emission_factor,
         case
-            when sum(t.emissions_exports) > 0 then
+            when sum(t.exports_energy) > 0 then
                 sum(t.emissions_exports) / sum(t.exports_energy) / {energy_scale}
             else 0.0
         end as exports_emission_factor
