@@ -21,6 +21,7 @@ from opennem.api.export.controllers import (
 )
 from opennem.api.export.utils import write_output
 from opennem.api.time import human_to_interval, human_to_period
+from opennem.clients.slack import slack_message
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.db import get_scoped_session
@@ -173,6 +174,11 @@ def export_historic_intervals(
                     export_network_intervals_for_week(week_start, week_end, network=network, network_region=network_region)
                 except Exception as e:
                     raise ExporterHistoricException(f"export_historic_intervals error: {e}")
+
+            slack_message(
+                f"Ran historic interval export for {network_region} for date range {network.data_first_seen}"
+                " => {network_last_completed_week_start}"
+            )
 
 
 def export_historic_for_year_and_week_no(
