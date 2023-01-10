@@ -624,6 +624,7 @@ class Facility(Base, BaseModel):
 
     # t CO2-e /MWh
     emissions_factor_co2 = Column(Numeric, nullable=True)
+    emission_factor_source = Column(Text, nullable=True)
 
     # interconnector metadata
     interconnector = Column(Boolean, default=False, index=True)

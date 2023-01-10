@@ -188,11 +188,7 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
             station_model = Station(code=station.code)
             station_model.created_by = "opennem.importer.facilities"
 
-        logger.debug(
-            "{} station: {} - {} (network name: {})".format(
-                add_or_update, station.code, station.name, station.network_name
-            )
-        )
+        logger.debug(f"{add_or_update} station: {station.code} - {station.name} (network name: {station.network_name})")
 
         if station.description:
             station_model.description = station.description
@@ -237,7 +233,7 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
             station_model.location.country = station.location.country
 
         if station.location.lat and station.location.lng:
-            station_model.location.geom = "SRID=4326;POINT({} {})".format(station.location.lng, station.location.lat)
+            station_model.location.geom = f"SRID=4326;POINT({station.location.lng} {station.location.lat})"
 
         session.add(station_model)
         session.commit()
@@ -245,12 +241,10 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
         for fac in station.facilities:
             facility_added = False
 
-            facility_model = (
-                session.query(Facility).filter_by(code=fac.code).filter_by(network_id=fac.network_id).one_or_none()
-            )
+            facility_model = session.query(Facility).filter_by(code=fac.code).filter_by(network_id=fac.network_id).one_or_none()
 
             if facility_model and only_insert_facilities:
-                logger.debug(" => skip updating {}".format(facility_model.code))
+                logger.debug(f" => skip updating {facility_model.code}")
                 continue
 
             if not facility_model:
@@ -294,6 +288,9 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
 
             if fac.emissions_factor_co2:
                 facility_model.emissions_factor_co2 = fac.emissions_factor_co2
+
+            if fac.emission_factor_source:
+                facility_model.emission_factor_source = fac.emission_factor_source
 
             if fac.approved:
                 facility_model.approved = fac.approved
