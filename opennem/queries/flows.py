@@ -220,7 +220,13 @@ def get_network_flows_emissions_market_value_query(time_series: OpennemExportSer
             abs(sum(t.emissions_imports)) as imports_emissions,
             abs(sum(t.emissions_exports)) as exports_emissions,
             sum(t.market_value_imports) as imports_market_value,
-            sum(t.market_value_exports) as exports_market_value
+            sum(t.market_value_exports) as exports_market_value,
+            case when abs(sum(t.imports_energy)) > 0 then
+                sum(t.emissions_imports) / abs(sum(t.imports_energy))
+            else 0 end as imports_market_value_rrp,
+            case when abs(sum(t.exports_energy)) > 0 then
+                sum(t.emissions_exports) / sum(t.exports_energy)
+            else 0 end as export_emission_factor
         from (
             select
                 time_bucket_gapfill('5 min', t.trading_interval) as trading_interval,
