@@ -4,7 +4,6 @@ OpenNEM API
 Primary Router. All the main setup of the API is here.
 """
 import logging
-from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -137,23 +136,27 @@ except Exception as e:
     logger.info(f"Error initializing static hosting: {e}")
 
 
-@app.get("/robots.txt", response_class=FileResponse, include_in_schema=False)
-def robots_txt() -> FileResponse:
+@app.get(
+    "/robots.txt",
+    response_class=FileResponse,
+    include_in_schema=False,
+)
+def robots_txt() -> str:
     if not settings.debug:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    return FileResponse(f"{settings.static_folder_path}/robots.txt")
+    return f"{settings.static_folder_path}/robots.txt"
 
 
 @app.get(
     "/networks",
-    response_model=List[APINetworkSchema],
+    response_model=list[APINetworkSchema],
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
 )
 def networks(
     session: Session = Depends(get_database_session),
-) -> List[APINetworkSchema]:
+) -> list[APINetworkSchema]:
     networks = session.query(Network).join(Network.regions).all()
 
     if not networks:
@@ -164,14 +167,14 @@ def networks(
 
 @app.get(
     "/networks/regions",
-    response_model=List[APINetworkRegion],
+    response_model=list[APINetworkRegion],
     response_model_exclude_none=True,
     response_model_exclude_unset=True,
 )
 def network_regions(
     session: Session = Depends(get_database_session),
     network_code: str = Query(..., description="Network code"),
-) -> List[APINetworkRegion]:
+) -> list[APINetworkRegion]:
     network_id = network_code.upper()
 
     network_regions = session.query(NetworkRegion).filter_by(network_id=network_id).all()
@@ -186,10 +189,10 @@ def network_regions(
     return response
 
 
-@app.get("/fueltechs", response_model=List[FueltechSchema])
+@app.get("/fueltechs", response_model=list[FueltechSchema])
 def fueltechs(
     session: Session = Depends(get_database_session),
-) -> List[FueltechSchema]:
+) -> list[FueltechSchema]:
     fueltechs = session.query(FuelTech).all()
 
     if not fueltechs:
@@ -198,16 +201,16 @@ def fueltechs(
     return [FueltechSchema.from_orm(i) for i in fueltechs]
 
 
-@app.get("/intervals", response_model=List[TimeInterval])
-def intervals() -> List[TimeInterval]:
+@app.get("/intervals", response_model=list[TimeInterval])
+def intervals() -> list[TimeInterval]:
     return INTERVALS
 
 
-@app.get("/periods", response_model=List[TimePeriod])
-def periods() -> List[TimePeriod]:
+@app.get("/periods", response_model=list[TimePeriod])
+def periods() -> list[TimePeriod]:
     return PERIODS
 
 
-@app.get("/units", response_model=List[UnitDefinition])
-def units() -> List[UnitDefinition]:
+@app.get("/units", response_model=list[UnitDefinition])
+def units() -> list[UnitDefinition]:
     return UNITS
