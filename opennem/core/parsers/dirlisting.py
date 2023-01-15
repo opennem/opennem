@@ -53,7 +53,8 @@ def parse_dirlisting_datetime(datetime_string: str | datetime) -> datetime | Non
     if not datetime_string:
         logger.error("No dirlisting datetime string")
 
-    _FORMAT_STRINGS = ["%A, %B %d, %Y %I:%M %p"]
+    # Wednesday, December 28, 2022 9:10
+    _FORMAT_STRINGS = ["%A, %B %d, %Y %I:%M %p", "%A, %B %d, %Y %I:%M"]
 
     datetime_parsed: datetime | None = None
 

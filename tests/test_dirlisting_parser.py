@@ -1,14 +1,9 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Union
 
 import pytest
 
-from opennem.core.parsers.dirlisting import (
-    DirlistingEntry,
-    parse_dirlisting_datetime,
-    parse_dirlisting_line,
-)
+from opennem.core.parsers.dirlisting import DirlistingEntry, parse_dirlisting_datetime, parse_dirlisting_line
 
 from .conftest import PATH_TESTS_FIXTURES
 
@@ -17,7 +12,7 @@ def load_fixture(filename: str = "nemweb_dirlisting.html") -> str:
     fixture_path = PATH_TESTS_FIXTURES / Path(filename)
 
     if not fixture_path.is_file():
-        raise Exception("Not a file: {}".format(filename))
+        raise Exception(f"Not a file: {filename}")
 
     fixture_content = ""
 
@@ -29,7 +24,10 @@ def load_fixture(filename: str = "nemweb_dirlisting.html") -> str:
 
 @pytest.mark.parametrize(
     ["datetime_string", "datetime_expected"],
-    [("Monday, November 8, 2021  2:30 PM", datetime.fromisoformat("2021-11-08T14:30"))],
+    [
+        ("Monday, November 8, 2021  2:30 PM", datetime.fromisoformat("2021-11-08T14:30")),
+        ("Wednesday, December 28, 2022 9:10", datetime.fromisoformat("2022-12-28T09:10")),
+    ],
 )
 def test_parse_dirlisting_datetime(datetime_string: str, datetime_expected: datetime) -> None:
     datetime_subject = parse_dirlisting_datetime(datetime_string)
@@ -40,17 +38,22 @@ def test_parse_dirlisting_datetime(datetime_string: str, datetime_expected: date
     ["line", "result"],
     [
         (
-            '     Monday, November 8, 2021  2:30 PM        18166 <a href="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/PUBLIC_DISPATCHIS_202111081435_0000000352251582.zip">PUBLIC_DISPATCHIS_202111081435_0000000352251582.zip</a>',
+            "     Monday, November 8, 2021  2:30 PM        18166 "
+            '<a href="http://nemweb.com.au/Reports/Current/DispatchIS'
+            '_Reports/PUBLIC_DISPATCHIS_202111081435_0000000352251582.zip">'
+            "PUBLIC_DISPATCHIS_202111081435_0000000352251582.zip</a>",
             {
                 "filename": Path("PUBLIC_DISPATCHIS_202111081435_0000000352251582.zip"),
                 "modified_date": datetime.fromisoformat("2021-11-08T14:30:00"),
                 # "aemo_created_date": datetime.fromisoformat("2021-11-08T14:35:00"),
                 "file_size": 18166,
-                "link": "http://nemweb.com.au/Reports/Current/DispatchIS_Reports/PUBLIC_DISPATCHIS_202111081435_0000000352251582.zip",
+                "link": "http://nemweb.com.au/Reports/Current/DispatchIS_Reports/"
+                "PUBLIC_DISPATCHIS_202111081435_0000000352251582.zip",
             },
         ),
         (
-            'Monday, February 11, 2019  4:31 PM        <dir> <a href="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/DUPLICATE/">DUPLICATE</a>',
+            "Monday, February 11, 2019  4:31 PM        <dir> "
+            '<a href="http://nemweb.com.au/Reports/Current/DispatchIS_Reports/DUPLICATE/">DUPLICATE</a>',
             {
                 "filename": Path("DUPLICATE"),
                 "modified_date": datetime.fromisoformat("2019-02-11T16:31:00"),
@@ -60,7 +63,7 @@ def test_parse_dirlisting_datetime(datetime_string: str, datetime_expected: date
         ),
     ],
 )
-def test_dirlisting_line(line: str, result: Dict[str, Union[str, datetime, int]]) -> None:
+def test_dirlisting_line(line: str, result: dict[str, str | datetime | int]) -> None:
     result_model = DirlistingEntry(**result)
     dirlisting_line_result = parse_dirlisting_line(line)
 
