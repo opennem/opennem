@@ -50,16 +50,16 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
         nf.network_region,
         avg(nf.energy_imports) as energy_imports,
         avg(nf.energy_exports) as energy_exports,
-        avg(nf.emission_imports) as emission_imports,
-        avg(nf.emission_exports) as emission_exports,
+        avg(nf.emissions_imports) as emission_imports,
+        avg(nf.emissions_exports) as emission_exports,
         avg(nf.market_value_imports) as market_value_imports,
         avg(nf.market_value_exports) as market_value_exports
     from at_network_flows nf
     where
-        bs.network_id = '{network_id}' and
-        bs.network_region= '{network_region}' and
-        bs.trading_interval <= '{date_end}' and
-        bs.trading_interval >= '{date_start}'
+        nf.network_id = '{network_id}' and
+        nf.network_region= '{network_region}' and
+        nf.trading_interval <= '{date_end}' and
+        nf.trading_interval >= '{date_start}'
     group by 1, 2, 3
     order by 1 desc;
 
