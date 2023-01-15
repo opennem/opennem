@@ -137,6 +137,7 @@ services:
       - FLOWS_AND_EMISSIONS_V2
       - OPENNEM_POWER_FLOWS
       - GITHUB_FEEDBACK_ACCESS_TOKEN
+      - RUN_CRAWLERS
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=true"
