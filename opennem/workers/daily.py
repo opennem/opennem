@@ -80,17 +80,21 @@ def daily_runner(days: int = 2) -> None:
     # 3. network demand
     run_aggregates_demand_network()
 
-    # flows and flow emissions
+    #  flows and flow emissions
     run_emission_update_day(days=days)
 
-    # feature flag for emissions
+    #  feature flag for emissions
+    #  this will only refresh views on the old version of flows and emissions
     if not settings.flows_and_emissions_v2:
         for view_name in ["mv_facility_all", "mv_interchange_energy_nem_region", "mv_region_emissions"]:
             refresh_material_views(view_name=view_name)
             slack_message(f"refreshed materizlied views on {settings.env}")
 
-    # run exports for latest year
+    # 4. Run Exports
+    #  run exports for latest year
     export_energy(latest=True)
+
+    #  run exports for last year
     run_export_for_year(CURRENT_YEAR - 1)
 
     # run exports for all
@@ -98,6 +102,7 @@ def daily_runner(days: int = 2) -> None:
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
     export_energy(energy_exports.resources)
 
+    # 5. Run and send out the daily fueltech summary
     run_daily_fueltech_summary(network=NetworkNEM)
 
     # export historic intervals
