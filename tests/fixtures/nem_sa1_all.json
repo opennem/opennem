@@ -1,10 +1,10 @@
 {
   "type": "energy",
-  "version": "3.11.11-alpha.3",
+  "version": "3.11.12-alpha.0",
   "network": "nem",
   "code": "nem",
   "region": "SA1",
-  "created_at": "2023-01-09T14:47:48+10:00",
+  "created_at": "2023-01-16T08:17:52+10:00",
   "data": [
     {
       "id": "au.nem.sa1.demand.energy",

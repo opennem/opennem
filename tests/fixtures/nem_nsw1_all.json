@@ -1,10 +1,10 @@
 {
   "type": "energy",
-  "version": "3.11.11-alpha.3",
+  "version": "3.11.12-alpha.0",
   "network": "nem",
   "code": "nem",
   "region": "NSW1",
-  "created_at": "2023-01-09T14:33:39+10:00",
+  "created_at": "2023-01-16T08:06:57+10:00",
   "data": [
     {
       "id": "au.nem.nsw1.demand.energy",
