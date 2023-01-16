@@ -16489,7 +16489,7 @@
       {
         "network_id": "NEM",
         "fueltech_id": "gas_ocgt",
-        "status_id": "commissioning",
+        "status_id": "operating",
         "code": "SNAPPER1",
         "network_code": null,
         "network_region": "SA1",
