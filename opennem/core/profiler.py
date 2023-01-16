@@ -118,6 +118,8 @@ def profile_task(
             if persist_profile:
                 id = log_task_profile_to_database(task.__name__, dtime_start, dtime_end)
 
+            id_msg: str = ""
+
             if link_tracing:
                 id_msg = f"({get_id_profile_url(id)})" if id else ""
 
