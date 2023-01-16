@@ -38,6 +38,7 @@ from opennem.controllers.output.flows import (
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
+from opennem.core.profiler import profile_task
 from opennem.core.time import get_interval
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
@@ -425,6 +426,7 @@ def export_all_monthly() -> None:
     write_output("v3/stats/au/all/monthly.json", all_monthly)
 
 
+@profile_task(send_slack=True)
 def export_all_daily(networks: list[NetworkSchema] = None, network_region_code: str | None = None) -> None:
     """Export dailies for all networks and regions"""
 
@@ -504,6 +506,7 @@ def export_all_daily(networks: list[NetworkSchema] = None, network_region_code: 
             write_output(f"v3/stats/au/{network_region.code}/daily.json", stat_set)
 
 
+@profile_task(send_slack=True)
 def export_flows() -> None:
     date_range = get_scada_range(network=NetworkNEM)
 
@@ -531,6 +534,7 @@ def export_flows() -> None:
         write_output(f"v3/stats/au/{interchange_stat.network.code}/flows/7d.json", stat_set)
 
 
+@profile_task(send_slack=True)
 def export_electricitymap() -> None:
     date_range = get_scada_range(network=NetworkNEM)
 
