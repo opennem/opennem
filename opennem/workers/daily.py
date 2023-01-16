@@ -17,6 +17,7 @@ from opennem.aggregates.network_flows import (
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.clients.slack import slack_message
+from opennem.core.profiler import profile_task
 from opennem.db.tasks import refresh_material_views
 from opennem.exporter.historic import export_historic_intervals
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
@@ -28,6 +29,7 @@ from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network
 logger = logging.getLogger("opennem.worker.daily")
 
 
+@profile_task(send_slack=True)
 def energy_runner(days: int = 1) -> None:
     """Energy Runner"""
     dmax = get_today_nem()
@@ -62,6 +64,7 @@ def run_export_for_year(year: int, network_region_code: str | None = None) -> No
 # The actual daily runners
 
 
+@profile_task(send_slack=True)
 def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
     CURRENT_YEAR = datetime.now().year
@@ -138,4 +141,5 @@ def all_runner() -> None:
 
 
 if __name__ == "__main__":
-    daily_runner(days=2)
+    # daily_runner(days=2)
+    energy_runner()
