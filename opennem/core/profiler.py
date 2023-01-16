@@ -90,14 +90,13 @@ def profile_task(
         bind_sqlalchemy_events()
 
     def profile_task_decorator(task: Any, *args: Any, **kwargs: Any) -> Any:
-
-        time_start = time.perf_counter()
-        dtime_start = datetime.now()
-
         @functools.wraps(task)
         def _task_profile_wrapper(*args: Any, **kwargs: Any) -> Any:
             """Wrapper for the task"""
             logger.info(f"Running task: {task.__name__}")
+
+            time_start = time.perf_counter()
+            dtime_start = datetime.now()
 
             run_task_output = task(*args, **kwargs)
 
