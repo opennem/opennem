@@ -47,7 +47,7 @@ services:
     command:
       [
         "wait-for",
-        "10.0.0.124:15433",
+        "opennem03:15433",
         "--",
         "hypercorn",
         "opennem.api.app:app",
@@ -96,7 +96,7 @@ services:
     command:
       [
         "wait-for",
-        "10.0.0.124:15433",
+        "opennem03:15433",
         "--",
         "huey_consumer",
         "-w4",
