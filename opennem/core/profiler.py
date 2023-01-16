@@ -42,7 +42,7 @@ def bind_sqlalchemy_events() -> None:
         logger.debug("Total Time: %f", total)
 
 
-def log_task_profile_to_database(task_name: str, time_start: datetime, time_end: datetime) -> str:
+def log_task_profile_to_database(task_name: str, time_start: datetime, time_end: datetime) -> uuid.UUID:
     """Log the task profile to the database"""
 
     engine = get_database_engine()
@@ -97,10 +97,18 @@ def profile_task(send_slack: bool = False, profile_sql: bool = False, persist_pr
 
             dtime_end = datetime.now()
 
-            human_interval = naturaldelta(dtime_end - dtime_start)
+            wall_clock_time = dtime_end - dtime_start
             completed_time_seconds = round(time.perf_counter() - time_start)
+            completed_time_percentage = round(completed_time_seconds / wall_clock_time.total_seconds() * 100, 2)
 
-            id: str | None = None
+            # sql message
+            sql_percentage: str = ""
+
+            if profile_sql:
+                sql_time = round(0, 2)
+                sql_percentage = f" sql:{sql_time}%" if sql_time else ""
+
+            id: uuid.UUID | None = None
 
             if persist_profile:
                 id = log_task_profile_to_database(task.__name__, dtime_start, dtime_end)
@@ -108,7 +116,8 @@ def profile_task(send_slack: bool = False, profile_sql: bool = False, persist_pr
             id_msg = f"[{id}]" if id else ""
 
             profile_message = (
-                f"[{settings.env}] Completed task {task.__name__} in {human_interval} [perf:{completed_time_seconds}] {id_msg}"
+                f"[{settings.env}] Completed task {task.__name__} in {naturaldelta(wall_clock_time)} "
+                f"[cpu: {completed_time_percentage}%{sql_percentage}] {id_msg}"
             )
 
             if send_slack:
