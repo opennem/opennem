@@ -15,7 +15,7 @@ from collections.abc import Callable
 from datetime import datetime
 from typing import Any
 
-from humanize import naturaldelta
+from humanize import precisedelta
 from sqlalchemy import event as sa_event
 from sqlalchemy import text as sql_text
 from sqlalchemy.engine import Engine
@@ -25,6 +25,10 @@ from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
 
 logger = logging.getLogger("opennem.profiler")
+
+
+def get_id_profile_url(id: uuid.UUID) -> str:
+    return f"https://trading.internal.opennem.org.au/profile/{settings.env.lower()}/{id}"
 
 
 def bind_sqlalchemy_events() -> None:
@@ -77,7 +81,9 @@ def log_task_profile_to_database(task_name: str, time_start: datetime, time_end:
     return id
 
 
-def profile_task(send_slack: bool = False, profile_sql: bool = False, persist_profile: bool = True) -> Callable:
+def profile_task(
+    send_slack: bool = False, profile_sql: bool = False, persist_profile: bool = True, link_tracing: bool = False
+) -> Callable:
     """Profile a task and log the time taken to run it"""
 
     if profile_sql:
@@ -113,11 +119,12 @@ def profile_task(send_slack: bool = False, profile_sql: bool = False, persist_pr
             if persist_profile:
                 id = log_task_profile_to_database(task.__name__, dtime_start, dtime_end)
 
-            id_msg = f"[{id}]" if id else ""
+            if link_tracing:
+                id_msg = f"({get_id_profile_url(id)})" if id else ""
 
             profile_message = (
-                f"[{settings.env}] Completed task {task.__name__} in {naturaldelta(wall_clock_time)} "
-                f"[cpu: {completed_time_percentage}%{sql_percentage}] {id_msg}"
+                f"[{settings.env}]{id_msg} `{task.__name__}` in {precisedelta(wall_clock_time)} "
+                f"[cpu: {completed_time_percentage}%{sql_percentage}]"
             )
 
             if send_slack:
@@ -132,7 +139,7 @@ def profile_task(send_slack: bool = False, profile_sql: bool = False, persist_pr
     return profile_task_decorator
 
 
-@profile_task()
+@profile_task(send_slack=True)
 def test_task(message: str | None = None) -> None:
     """Test task"""
     time.sleep(random.randint(1, 3))
