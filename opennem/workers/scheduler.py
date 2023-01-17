@@ -18,6 +18,7 @@ from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
 from opennem.clients.slack import slack_message
+from opennem.core.startup import worker_startup_alert
 from opennem.crawl import run_crawl
 from opennem.crawlers.apvi import APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
@@ -69,6 +70,8 @@ if IS_DEV:
     regular_schedule_minute_interval = 5
     frequent_schedule_minute_interval = 5
 
+# send the startup message to slack
+worker_startup_alert()
 
 # crawler tasks live
 @huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
