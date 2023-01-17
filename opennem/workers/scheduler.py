@@ -88,7 +88,7 @@ def crawl_run_aemo_nemweb_dispatch_scada() -> None:
         if dispatch_scada and dispatch_scada.server_latest:
             run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
 
-        export_power(priority=PriorityType.live)
+        export_power()
 
 
 @huey.periodic_task(crontab(minute="*/10"))
