@@ -147,7 +147,11 @@ def nem_overnight_schedule_crawl() -> None:
     dispatch_gen = run_crawl(AEMONEMNextDayDispatch)
 
     if (dispatch_actuals and dispatch_actuals.inserted_records) or (dispatch_gen and dispatch_gen.inserted_records):
-        slack_message("Obtained overnight NEM data")
+        total_records = dispatch_actuals.inserted_records if dispatch_actuals and dispatch_actuals.inserted_records else 0
+        total_records += dispatch_gen.inserted_records if dispatch_gen and dispatch_gen.inserted_records else 0
+
+        slack_message("Obtained overnight NEM data with {total_records} records}")
+
         daily_runner()
 
 
