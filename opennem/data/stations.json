@@ -16374,7 +16374,7 @@
   },
   {
     "code": "SATGN",
-    "name": "Temporary Eration North",
+    "name": "Temporary Generation North",
     "network_name": "Temporary Generation North",
     "description": null,
     "wikipedia_link": null,
@@ -16386,7 +16386,7 @@
       {
         "network_id": "NEM",
         "fueltech_id": "distillate",
-        "status_id": "operating",
+        "status_id": "retired",
         "code": "SATGN1",
         "network_code": "NEM",
         "network_region": "SA1",
@@ -16426,7 +16426,7 @@
   },
   {
     "code": "SATGS",
-    "name": "Temporary Eration South",
+    "name": "Temporary Generation South",
     "network_name": "Temporary Generation South",
     "description": null,
     "wikipedia_link": null,
