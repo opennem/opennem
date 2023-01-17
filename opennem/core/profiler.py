@@ -15,7 +15,6 @@ from collections.abc import Callable
 from datetime import datetime
 from typing import Any
 
-from humanize import precisedelta
 from sqlalchemy import event as sa_event
 from sqlalchemy import text as sql_text
 from sqlalchemy.engine import Engine
@@ -24,6 +23,7 @@ from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
 from opennem.utils.dates import chop_delta_microseconds
+from opennem.utils.timedelta import timedelta_to_string
 
 logger = logging.getLogger("opennem.profiler")
 
@@ -105,11 +105,8 @@ def profile_task(
 
             # calculate wall clock time
             wall_clock_time = chop_delta_microseconds(dtime_end - dtime_start)
-            wall_clock_human = precisedelta(wall_clock_time, minimum_unit="minutes")
 
-            # trim human wall clock time
-            if wall_clock_time.seconds < 60:
-                wall_clock_human = precisedelta(wall_clock_time, minimum_unit="seconds")
+            wall_clock_human = timedelta_to_string(wall_clock_time)
 
             id: uuid.UUID | None = None
 
@@ -125,10 +122,10 @@ def profile_task(
             method_args_string: str = ""
 
             if include_args:
-                args_string = ", ".join(args) if args else ""
+                args_string = ", ".join([f"'{i}'" for i in args]) if args else ""
                 kwargs_string = ", ".join(f"{key}={value}" for key, value in kwargs.items())
 
-                if args_string:
+                if args_string and kwargs_string:
                     args_string += ", "
 
                 method_args_string = f"({args_string}{kwargs_string})"
