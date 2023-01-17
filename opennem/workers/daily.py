@@ -115,9 +115,6 @@ def daily_runner(days: int = 2) -> None:
     export_all_daily()
     export_all_monthly()
 
-    # send a slack message when done
-    slack_message(f"Ran daily_runner on {settings.env}")
-
 
 def all_runner() -> None:
     """Like the daily runner but refreshes all tasks"""
