@@ -115,7 +115,9 @@ def profile_task(
             # calculate wall clock time
             wall_clock_time = chop_delta_microseconds(dtime_end - dtime_start)
 
-            wall_clock_human = timedelta_to_string(wall_clock_time)
+            wall_clock_human = (
+                timedelta_to_string(wall_clock_time) if wall_clock_time.seconds < 500 else f"{wall_clock_time.total_seconds()}"
+            )
 
             id: uuid.UUID | None = None
 
