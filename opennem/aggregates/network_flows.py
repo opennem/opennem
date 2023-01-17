@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 from opennem import settings
+from opennem.core.profiler import profile_task
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import AggregateNetworkFlows
@@ -382,6 +383,7 @@ def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) ->
         current_day -= timedelta(days=1)
 
 
+@profile_task(send_slack=True)
 def run_flow_updates_all_per_year(year_start: int, years: int = 1, network: NetworkSchema | None = None) -> None:
     """Run emission flow updates by year"""
 
