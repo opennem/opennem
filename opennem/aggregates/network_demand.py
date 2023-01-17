@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from textwrap import dedent
 
 from opennem import settings
+from opennem.core.profiler import profile_task
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.utils.dates import get_today_nem
@@ -102,6 +103,7 @@ def exec_aggregates_network_demand_query(date_min: datetime, date_max: datetime,
     return False
 
 
+@profile_task(send_slack=True)
 def run_aggregates_demand_network(networks: list[NetworkSchema] | None = None) -> None:
     """Run the demand aggregates for each provided network"""
 
@@ -117,6 +119,7 @@ def run_aggregates_demand_network(networks: list[NetworkSchema] | None = None) -
         exec_aggregates_network_demand_query(date_min=network.data_first_seen, date_max=get_today_nem(), network=network)
 
 
+@profile_task(send_slack=True)
 def run_aggregates_demand_network_days(days: int = 3) -> None:
     """Run the demand aggregates"""
 
