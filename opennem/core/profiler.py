@@ -86,7 +86,7 @@ def profile_task(
     send_slack: bool = False,
     persist_profile: bool = True,
     link_tracing: bool = False,
-    include_args: bool = True,
+    include_args: bool = False,
 ) -> Callable:
     """Profile a task and log the time taken to run it"""
 
