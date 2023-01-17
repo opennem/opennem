@@ -84,15 +84,11 @@ def log_task_profile_to_database(task_name: str, time_start: datetime, time_end:
 
 def profile_task(
     send_slack: bool = False,
-    profile_sql: bool = False,
     persist_profile: bool = True,
     link_tracing: bool = False,
-    include_cpu: bool = False,
+    include_args: bool = True,
 ) -> Callable:
     """Profile a task and log the time taken to run it"""
-
-    if profile_sql:
-        bind_sqlalchemy_events()
 
     def profile_task_decorator(task: Any, *args: Any, **kwargs: Any) -> Any:
         @functools.wraps(task)
@@ -100,29 +96,20 @@ def profile_task(
             """Wrapper for the task"""
             logger.info(f"Running task: {task.__name__}")
 
-            time_start = time.perf_counter()
+            # time_start = time.perf_counter()
             dtime_start = datetime.now()
 
             run_task_output = task(*args, **kwargs)
 
             dtime_end = datetime.now()
 
+            # calculate wall clock time
             wall_clock_time = chop_delta_microseconds(dtime_end - dtime_start)
-            completed_time_seconds = round(time.perf_counter() - time_start)
-            completed_time_percentage = round(completed_time_seconds / wall_clock_time.total_seconds() * 100, 2)
-
-            # trim wall clock time
             wall_clock_human = precisedelta(wall_clock_time, minimum_unit="minutes")
 
+            # trim human wall clock time
             if wall_clock_time.seconds < 60:
                 wall_clock_human = precisedelta(wall_clock_time, minimum_unit="seconds")
-
-            # sql message
-            sql_percentage: str = ""
-
-            if profile_sql:
-                sql_time = round(0, 2)
-                sql_percentage = f" sql:{sql_time}%" if sql_time else ""
 
             id: uuid.UUID | None = None
 
@@ -134,9 +121,19 @@ def profile_task(
             if link_tracing:
                 id_msg = f"({get_id_profile_url(id)})" if id else ""
 
-            profile_message = f"[{settings.env}]{id_msg} `{task.__name__}` in " f"{wall_clock_human} "
+            # argument string
+            method_args_string: str = ""
 
-            profile_message += f"[cpu: {completed_time_percentage}%{sql_percentage}]" if include_cpu else ""
+            if include_args:
+                args_string = ", ".join(args) if args else ""
+                kwargs_string = ", ".join(f"{key}={value}" for key, value in kwargs.items())
+
+                if args_string:
+                    args_string += ", "
+
+                method_args_string = f"({args_string}{kwargs_string})"
+
+            profile_message = f"[{settings.env}]{id_msg} `{task.__name__}{method_args_string}` in " f"{wall_clock_human} "
 
             if send_slack:
                 slack_message(profile_message)
