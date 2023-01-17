@@ -57,6 +57,7 @@ from opennem.utils.version import get_version
 logger = logging.getLogger("opennem.export.tasks")
 
 
+@profile_task(send_slack=True)
 def export_power(
     stats: list[StatExport] = None,
     priority: PriorityType | None = None,
@@ -162,6 +163,7 @@ def export_power(
         output_count += 1
 
 
+@profile_task(send_slack=True)
 def export_energy(
     stats: list[StatExport] = None,
     priority: PriorityType | None = None,
