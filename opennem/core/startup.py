@@ -16,9 +16,19 @@ def startup_banner_message() -> str:
     return f"[{settings.env.lower()}] OpenNEM `v{get_version()}` worker started on host `{node()}`"
 
 
+def deploy_banner_message() -> str:
+    """This is a banner that is created on new deploy or startup"""
+    return f"------ OpenNEM `v{get_version()}` deployed on `{settings.env.lower()}` ------"
+
+
 def worker_startup_alert() -> None:
     """This is fired when the worker starts"""
     slack_message(startup_banner_message())
+
+
+def deploy_banner_alert() -> None:
+    """This is fired when the worker starts"""
+    slack_message(deploy_banner_message())
 
 
 def console_startup_banner() -> None:
