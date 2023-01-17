@@ -165,7 +165,7 @@ def export_power(
 
 @profile_task(send_slack=True)
 def export_energy(
-    stats: list[StatExport] = None,
+    stats: list[StatExport] = [],
     priority: PriorityType | None = None,
     latest: bool | None = False,
 ) -> None:
