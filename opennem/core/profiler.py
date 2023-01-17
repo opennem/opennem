@@ -82,7 +82,11 @@ def log_task_profile_to_database(task_name: str, time_start: datetime, time_end:
 
 
 def profile_task(
-    send_slack: bool = False, profile_sql: bool = False, persist_profile: bool = True, link_tracing: bool = False
+    send_slack: bool = False,
+    profile_sql: bool = False,
+    persist_profile: bool = True,
+    link_tracing: bool = False,
+    include_cpu: bool = False,
 ) -> Callable:
     """Profile a task and log the time taken to run it"""
 
@@ -106,6 +110,12 @@ def profile_task(
             completed_time_seconds = round(time.perf_counter() - time_start)
             completed_time_percentage = round(completed_time_seconds / wall_clock_time.total_seconds() * 100, 2)
 
+            # trim wall clock time
+            wall_clock_human = precisedelta(wall_clock_time, minimum_unit="minutes")
+
+            if wall_clock_time.min:
+                wall_clock_human = precisedelta(wall_clock_time, minimum_unit="seconds")
+
             # sql message
             sql_percentage: str = ""
 
@@ -123,10 +133,9 @@ def profile_task(
             if link_tracing:
                 id_msg = f"({get_id_profile_url(id)})" if id else ""
 
-            profile_message = (
-                f"[{settings.env}]{id_msg} `{task.__name__}` in {precisedelta(wall_clock_time)} "
-                f"[cpu: {completed_time_percentage}%{sql_percentage}]"
-            )
+            profile_message = f"[{settings.env}]{id_msg} `{task.__name__}` in " f"{wall_clock_human} "
+
+            profile_message += f"[cpu: {completed_time_percentage}%{sql_percentage}]" if include_cpu else ""
 
             if send_slack:
                 slack_message(profile_message)
