@@ -9,7 +9,7 @@ def timedelta_to_string(td_object: timedelta) -> str:
 
     strings = []
     for period_name, period_seconds in periods:
-        if seconds > period_seconds:
+        if seconds >= period_seconds:
             period_value, seconds = divmod(seconds, period_seconds)
             strings.append(f"{period_value}{period_name}")
 
