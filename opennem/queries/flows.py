@@ -48,12 +48,12 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
         time_bucket_gapfill('{interval}', nf.trading_interval) as trading_interval,
         nf.network_id,
         nf.network_region,
-        avg(nf.energy_imports) as energy_imports,
-        avg(nf.energy_exports) as energy_exports,
-        avg(nf.emissions_imports) as emission_imports,
-        avg(nf.emissions_exports) as emission_exports,
-        avg(nf.market_value_imports) as market_value_imports,
-        avg(nf.market_value_exports) as market_value_exports
+        avg(nf.energy_imports) * {unit_scale} as energy_imports,
+        avg(nf.energy_exports) * {unit_scale} as energy_exports,
+        avg(nf.emissions_imports) * {unit_scale} as emission_imports,
+        avg(nf.emissions_exports) * {unit_scale} as emission_exports,
+        avg(nf.market_value_imports) * {unit_scale} as market_value_imports,
+        avg(nf.market_value_exports) * {unit_scale} as market_value_exports
     from at_network_flows nf
     where
         nf.network_id = '{network_id}' and
@@ -76,6 +76,8 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
         network_region=network_region,
         date_start=date_min,
         date_end=date_max,
+        # @NOTE since at_network_flows is calculated as an energy we need to multiple it back out
+        unit_scale=12,
     )
 
     return dedent(query)
