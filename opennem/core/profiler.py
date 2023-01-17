@@ -23,6 +23,7 @@ from sqlalchemy.engine import Engine
 from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
+from opennem.utils.dates import chop_delta_microseconds
 
 logger = logging.getLogger("opennem.profiler")
 
@@ -106,14 +107,14 @@ def profile_task(
 
             dtime_end = datetime.now()
 
-            wall_clock_time = dtime_end - dtime_start
+            wall_clock_time = chop_delta_microseconds(dtime_end - dtime_start)
             completed_time_seconds = round(time.perf_counter() - time_start)
             completed_time_percentage = round(completed_time_seconds / wall_clock_time.total_seconds() * 100, 2)
 
             # trim wall clock time
             wall_clock_human = precisedelta(wall_clock_time, minimum_unit="minutes")
 
-            if wall_clock_time.min:
+            if wall_clock_time.seconds < 60:
                 wall_clock_human = precisedelta(wall_clock_time, minimum_unit="seconds")
 
             # sql message
