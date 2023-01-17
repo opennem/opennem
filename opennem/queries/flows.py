@@ -48,12 +48,22 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
         time_bucket_gapfill('{interval}', nf.trading_interval) as trading_interval,
         nf.network_id,
         nf.network_region,
-        avg(nf.energy_imports) * {unit_scale} as energy_imports,
-        avg(nf.energy_exports) * {unit_scale} as energy_exports,
-        avg(nf.emissions_imports) * {unit_scale} as emission_imports,
-        avg(nf.emissions_exports) * {unit_scale} as emission_exports,
-        avg(nf.market_value_imports) * {unit_scale} as market_value_imports,
-        avg(nf.market_value_exports) * {unit_scale} as market_value_exports
+        max(nf.energy_imports) * {unit_scale} as energy_imports,
+        max(nf.energy_exports) * {unit_scale} as energy_exports,
+        max(nf.emissions_imports) * {unit_scale} as emission_imports,
+        max(nf.emissions_exports) * {unit_scale} as emission_exports,
+        max(nf.market_value_imports) * {unit_scale} as market_value_imports,
+        max(nf.market_value_exports) * {unit_scale} as market_value_exports,
+        case when abs(max(nf.emissions_imports)) > 0
+            then
+                abs(max(nf.energy_imports)) / abs(max(nf.emissions_imports))
+            else 0
+        end as intensity_imports,
+        case when max(nf.emissions_exports) > 0
+            then
+                max(nf.energy_exports) / max(nf.emissions_exports)
+            else 0
+        end as intensity_exports
     from at_network_flows nf
     where
         nf.network_id = '{network_id}' and

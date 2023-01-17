@@ -172,6 +172,7 @@ def energy_interconnector_emissions_region_daily(
 def power_flows_per_interval(
     time_series: OpennemExportSeries,
     network_region_code: str,
+    include_emissions_and_factors: bool = True,
 ) -> OpennemDataSet | None:
     """Gets the power flows for the most recent week for a region from the aggregate table
 
@@ -197,6 +198,14 @@ def power_flows_per_interval(
 
     imports = [DataQueryResult(interval=i[0], result=i[3], group_by="imports" if len(i) > 1 else None) for i in rows]
     exports = [DataQueryResult(interval=i[0], result=i[4], group_by="exports" if len(i) > 1 else None) for i in rows]
+    emissions_imports = [DataQueryResult(interval=i[0], result=i[5], group_by="imports" if len(i) > 1 else None) for i in rows]
+    emissions_exports = [DataQueryResult(interval=i[0], result=i[6], group_by="exports" if len(i) > 1 else None) for i in rows]
+    emissions_factor_imports = [
+        DataQueryResult(interval=i[0], result=i[9], group_by="imports" if len(i) > 1 else None) for i in rows
+    ]
+    emissions_factor_exports = [
+        DataQueryResult(interval=i[0], result=i[10], group_by="exports" if len(i) > 1 else None) for i in rows
+    ]
 
     result = stats_factory(
         imports,
@@ -221,5 +230,50 @@ def power_flows_per_interval(
     )
 
     result.append_set(result_exports)
+
+    if include_emissions_and_factors:
+        result_emissions_imports = stats_factory(
+            emissions_imports,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=get_unit("emissions"),
+            region=network_region_code,
+            fueltech_group=True,
+        )
+
+        result.append_set(result_emissions_imports)
+
+        result_emissions_exports = stats_factory(
+            emissions_exports,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=get_unit("emissions"),
+            region=network_region_code,
+            fueltech_group=True,
+        )
+
+        result.append_set(result_emissions_exports)
+
+        result_emissions_factor_imports = stats_factory(
+            emissions_factor_imports,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=get_unit("emissions_factor"),
+            region=network_region_code,
+            fueltech_group=True,
+        )
+
+        result.append_set(result_emissions_factor_imports)
+
+        result_emissions_factor_exports = stats_factory(
+            emissions_factor_exports,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=get_unit("emissions_factor"),
+            region=network_region_code,
+            fueltech_group=True,
+        )
+
+        result.append_set(result_emissions_factor_exports)
 
     return result
