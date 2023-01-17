@@ -90,6 +90,12 @@ def crawl_run_aemo_nemweb_dispatch_scada() -> None:
 
         export_power()
 
+    if dispatch_scada and dispatch_scada.inserted_records:
+        slack_message(
+            f"New NEM dispatch data for interval {dispatch_scada.last_modified}"
+            f" with {dispatch_scada.inserted_records} inserted records"
+        )
+
 
 @huey.periodic_task(crontab(minute="*/10"))
 @huey.lock_task("crawler_run_bom_capitals")
