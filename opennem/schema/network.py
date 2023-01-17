@@ -14,7 +14,7 @@ from opennem.schema.time import TimeInterval
 
 from .core import BaseConfig
 
-all_fueltechs_without_rooftop = ALL_FUELTECH_CODES.remove("solar_rooftop")
+all_fueltechs_without_rooftop = ALL_FUELTECH_CODES.remove("solar_rooftop") if ALL_FUELTECH_CODES else []
 
 
 class NetworkSchemaException(Exception):
@@ -68,6 +68,14 @@ class NetworkSchema(BaseConfig):
 
     # Does the network have flows
     has_interconnectors: bool = Field(False, description="Network has interconnectors")
+
+    def __str__(self) -> str:
+        """String representation of network schema"""
+        return f"NetworkSchema({self.code})"
+
+    def __repr__(self) -> str:
+        """String representation of network schema"""
+        return f"NetworkSchema({self.code})"
 
     def get_interval(self) -> TimeInterval | None:
         return get_interval_by_size(self.interval_size) if self.interval_size else None
