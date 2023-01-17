@@ -64,7 +64,7 @@ def run_export_for_year(year: int, network_region_code: str | None = None) -> No
 # The actual daily runners
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=True, include_args=True)
 def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
     CURRENT_YEAR = datetime.now().year

@@ -148,7 +148,7 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
     return result
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=True, include_args=True)
 def run_aggregates_facility_year(year: int, network: NetworkSchema) -> None:
     """Run aggregates for a single year
 

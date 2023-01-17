@@ -355,7 +355,7 @@ def run_flow_update_for_interval(interval: datetime, network: NetworkSchema | No
     return run_and_store_flows_for_range(date_start, date_end, network=network)
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=True, include_args=True)
 def run_emission_update_day(days: int = 1, day: datetime | None = None, offset_days: int = 1) -> None:
     """Run emission calcs for number of days"""
     # This is Sydney time as the data is published in local time
@@ -385,7 +385,7 @@ def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) ->
         current_day -= timedelta(days=1)
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=True, include_args=True)
 def run_flow_updates_all_per_year(year_start: int, years: int = 1, network: NetworkSchema | None = None) -> None:
     """Run emission flow updates by year"""
 
