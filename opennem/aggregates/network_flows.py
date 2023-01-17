@@ -25,7 +25,7 @@ from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_rec
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.queries.flows import get_interconnector_intervals_query
 from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem, is_aware
+from opennem.utils.dates import get_last_complete_day_for_network, get_last_completed_interval_for_network, is_aware
 
 logger = logging.getLogger("opennem.aggregates.flows")
 
@@ -397,10 +397,10 @@ def run_flow_updates_all_per_year(year_start: int, years: int = 1, network: Netw
         date_start = datetime.fromisoformat(f"{year}-01-01T00:00:00+10:00")
         date_end = datetime.fromisoformat(f"{year}-12-31T00:00:00+10:00") + timedelta(days=1)
 
-        today_nem = get_today_nem()
+        today_nem = get_last_completed_interval_for_network(network=network)
 
         if date_end > today_nem:
-            date_end = today_nem + timedelta(days=1)
+            date_end = today_nem
 
         if network.data_first_seen and year == network.data_first_seen.year:
             date_start = network.data_first_seen
