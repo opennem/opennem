@@ -59,7 +59,7 @@ logger = logging.getLogger("opennem.export.tasks")
 
 @profile_task(send_slack=True)
 def export_power(
-    stats: list[StatExport] = None,
+    stats: list[StatExport] = [],
     priority: PriorityType | None = None,
     latest: bool | None = False,
 ) -> None:
@@ -429,7 +429,7 @@ def export_all_monthly() -> None:
 
 
 @profile_task(send_slack=True)
-def export_all_daily(networks: list[NetworkSchema] = None, network_region_code: str | None = None) -> None:
+def export_all_daily(networks: list[NetworkSchema] = [], network_region_code: str | None = None) -> None:
     """Export dailies for all networks and regions"""
 
     # default list of networks
