@@ -24,6 +24,7 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.clients.slack import slack_message
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
+from opennem.core.profiler import profile_task
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
@@ -136,6 +137,7 @@ def export_network_intervals_for_week(
     return write_output(save_path, stat_set)
 
 
+@profile_task(send_slack=True)
 def export_historic_intervals(
     limit: int | None = None, networks: list[NetworkSchema] = [], network_region_code: str | None = None
 ) -> None:
@@ -181,6 +183,7 @@ def export_historic_intervals(
             )
 
 
+@profile_task(send_slack=True)
 def export_historic_for_year_and_week_no(
     year: int, week_no: int, networks: list[NetworkSchema], network_region_code: str | None = None
 ) -> None:
