@@ -137,7 +137,7 @@ def export_network_intervals_for_week(
 
 
 def export_historic_intervals(
-    limit: int | None = None, networks: list[NetworkSchema] = None, network_region_code: str | None = None
+    limit: int | None = None, networks: list[NetworkSchema] = [], network_region_code: str | None = None
 ) -> None:
     """ """
     if networks is None:
@@ -176,8 +176,8 @@ def export_historic_intervals(
                     raise ExporterHistoricException(f"export_historic_intervals error: {e}")
 
             slack_message(
-                f"Ran historic interval export for {network_region} for date range {network.data_first_seen}"
-                " => {network_last_completed_week_start}"
+                f"Ran historic interval export for {network} in {network_region.code} for date range {network.data_first_seen}"
+                f" => {network_last_completed_week_start}"
             )
 
 
