@@ -22,6 +22,7 @@ from sqlalchemy.engine import Engine
 from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
+from opennem.schema.network import NetworkSchema
 from opennem.utils.dates import chop_delta_microseconds
 from opennem.utils.timedelta import timedelta_to_string
 
@@ -45,6 +46,14 @@ def bind_sqlalchemy_events() -> None:
         total = time.time() - conn.info["query_start_time"].pop(-1)
         logger.debug("Query Complete!")
         logger.debug("Total Time: %f", total)
+
+
+def parse_kwargs_value(value: Any) -> str:
+    """Parses profiler argument objects. This should be done
+    using dunder methods but pydantic has a bug with sub-classes"""
+    if isinstance(value, NetworkSchema):
+        return f"NetworkSchema({value.code})"
+    return str(value)
 
 
 def log_task_profile_to_database(task_name: str, time_start: datetime, time_end: datetime) -> uuid.UUID:
@@ -123,7 +132,7 @@ def profile_task(
 
             if include_args:
                 args_string = ", ".join([f"'{i}'" for i in args]) if args else ""
-                kwargs_string = ", ".join(f"{key}={value}" for key, value in kwargs.items())
+                kwargs_string = ", ".join(f"{key}={parse_kwargs_value(value)}" for key, value in kwargs.items())
 
                 if args_string and kwargs_string:
                     args_string += ", "
