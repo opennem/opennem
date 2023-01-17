@@ -16438,7 +16438,7 @@
       {
         "network_id": "NEM",
         "fueltech_id": "distillate",
-        "status_id": "operating",
+        "status_id": "retired",
         "code": "SATGS1",
         "network_code": "NEM",
         "network_region": "SA1",
