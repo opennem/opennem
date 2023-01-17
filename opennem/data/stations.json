@@ -26725,7 +26725,8 @@
         "unit_number": null,
         "unit_alias": null,
         "unit_capacity": null,
-        "emissions_factor_co2": null
+        "emissions_factor_co2": 0.057,
+        "emission_factor_source": "opennem_estimated"
       }
     ],
     "location": {
@@ -26829,7 +26830,8 @@
         "unit_number": null,
         "unit_alias": null,
         "unit_capacity": null,
-        "emissions_factor_co2": null
+        "emissions_factor_co2": 0.057,
+        "emission_factor_source": "opennem_estimated"
       }
     ],
     "location": {
@@ -27112,7 +27114,8 @@
         "unit_number": null,
         "unit_alias": null,
         "unit_capacity": null,
-        "emissions_factor_co2": null
+        "emissions_factor_co2": 0.057,
+        "emission_factor_source": "opennem_estimated"
       }
     ],
     "location": {
@@ -27372,7 +27375,8 @@
         "unit_number": null,
         "unit_alias": null,
         "unit_capacity": null,
-        "emissions_factor_co2": null
+        "emissions_factor_co2": 0.057,
+        "emission_factor_source": "opennem_estimated"
       }
     ],
     "location": {
@@ -27528,7 +27532,8 @@
         "unit_number": null,
         "unit_alias": null,
         "unit_capacity": null,
-        "emissions_factor_co2": null
+        "emissions_factor_co2": 0.057,
+        "emission_factor_source": "opennem_estimated"
       }
     ],
     "location": {
@@ -27632,7 +27637,8 @@
         "unit_number": null,
         "unit_alias": null,
         "unit_capacity": null,
-        "emissions_factor_co2": 0.57
+        "emissions_factor_co2": 0.057,
+        "emission_factor_source": "opennem_estimated"
       }
     ],
     "location": {
