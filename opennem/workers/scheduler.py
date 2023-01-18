@@ -174,7 +174,6 @@ def schedule_power_weeklies() -> None:
     Run weekly power outputs
     """
     export_power(priority=PriorityType.history, latest=True)
-    slack_message(f"Weekly power outputs complete on {settings.env}")
 
 
 # geojson maps
