@@ -167,11 +167,11 @@ def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.D
     f["energy_imports"] = f.apply(lambda x: x.generated if x.generated and x.generated <= 0 else 0, axis=1)
 
     f["emission_exports"] = f.apply(
-        lambda x: x.energy_exports * x.emission_factor if x.generated and x.generated >= 0 else 0,
+        lambda x: x.energy_exports * x.emission_factor_to if x.generated and x.generated >= 0 else 0,
         axis=1,
     )
     f["emission_imports"] = f.apply(
-        lambda x: x.energy_imports * x.emission_factor_to if x.generated and x.generated <= 0 else 0,
+        lambda x: x.energy_imports * x.emission_factor if x.generated and x.generated <= 0 else 0,
         axis=1,
     )
 
