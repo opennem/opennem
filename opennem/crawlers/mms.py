@@ -66,7 +66,8 @@ def run_aemo_mms_crawl(
         if not crawler_return:
             crawler_return = cr
         else:
-            crawler_return.inserted_records += cr.inserted_records
+            if cr and cr.inserted_records:
+                crawler_return.inserted_records += cr.inserted_records
 
         processed += 1
 
