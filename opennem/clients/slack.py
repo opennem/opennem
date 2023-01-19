@@ -85,10 +85,6 @@ def slack_message(
     tag_list = _slack_tag_list(tag_users) if tag_users else ""
     text_block: str = f"{msg} {tag_list}" if msg else ""
 
-    # if we tag users
-    if tag_list:
-        text_block += f" {tag_list}"
-
     blocks: list[SlackMessageBlock | SlackMessageBlockImage] = []
 
     if image_url:
