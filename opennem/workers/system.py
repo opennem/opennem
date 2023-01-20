@@ -9,12 +9,14 @@ from shutil import rmtree
 from tempfile import gettempdir
 
 from opennem import settings
+from opennem.core.profiler import profile_task
 
 logger = logging.getLogger("opennem.workers.system")
 
 CLEAN_OLDER_THAN_HOURS = 2
 
 
+@profile_task(send_slack=True)
 def clean_tmp_dir(dry_run: bool = False) -> None:
     """Cleans up the temp directory for files older than CLEAN_OLDER_THAN_HOURS hours"""
     tmp_dir = Path(gettempdir())

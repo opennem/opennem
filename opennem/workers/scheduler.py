@@ -249,4 +249,3 @@ def run_energy_runner_hours() -> None:
 @huey.lock_task("run_clean_tmp_dir")
 def run_clean_tmp_dir() -> None:
     clean_tmp_dir()
-    slack_message("Cleaned tmp dir")
