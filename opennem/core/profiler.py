@@ -111,6 +111,8 @@ def profile_task(
     persist_profile: bool = True,
     link_tracing: bool = False,
     include_args: bool = False,
+    message_fmt: str | None = None,
+    message_prepend: bool = True,
 ) -> Callable:
     """Profile a task and log the time taken to run it
 
@@ -162,6 +164,21 @@ def profile_task(
                 method_args_string = f"({args_string}{kwargs_string})"
 
             profile_message = f"[{settings.env}]{id_msg} `{task.__name__}{method_args_string}` in " f"{wall_clock_human} "
+
+            if message_fmt:
+                profile_message = (
+                    f"[{settings.env}] "
+                    + message_fmt.format(**{**globals(), **locals(), **kwargs})
+                    + f" `{task.__name__}` "
+                    + f" in {wall_clock_human}"
+                )
+
+                if not message_prepend:
+                    profile_message = (
+                        f"[{settings.env}] `{task.__name__}` "
+                        + message_fmt.format(**{**globals(), **locals(), **kwargs})
+                        + f" in {wall_clock_human}"
+                    )
 
             if send_slack:
                 slack_message(profile_message)
