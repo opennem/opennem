@@ -8,6 +8,7 @@ from datetime import datetime
 
 from sqlalchemy import text as sql
 
+from opennem.core.profiler import profile_task
 from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.models.opennem import Network
 
@@ -67,6 +68,7 @@ def update_network_data_ranges(data_ranges: list[NetworkDataDateRanges]) -> None
         sess.commit()
 
 
+@profile_task(send_slack=True)
 def run_network_data_range_update() -> None:
     """Runs the network data range update"""
     data_ranges = get_network_data_ranges()
