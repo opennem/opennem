@@ -12,7 +12,7 @@ import random
 import time
 import uuid
 from collections.abc import Callable
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from sqlalchemy import event as sa_event
@@ -23,7 +23,6 @@ from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkSchema
-from opennem.utils.dates import chop_delta_microseconds
 from opennem.utils.timedelta import timedelta_to_string
 
 logger = logging.getLogger("opennem.profiler")
@@ -31,6 +30,22 @@ logger = logging.getLogger("opennem.profiler")
 
 def get_id_profile_url(id: uuid.UUID) -> str:
     return f"https://tracing.internal.opennem.org.au/profile/{settings.env.lower()}/{id}"
+
+
+def get_now() -> datetime:
+    """Utility function to get now
+
+    @NOTE add timezone
+    """
+    if settings.timezone:
+        return datetime.now().astimezone(settings.timezone)
+
+    return datetime.now(timezone.UTC)
+
+
+def chop_delta_microseconds(delta: timedelta) -> timedelta:
+    """Removes microsevonds from a timedelta"""
+    return delta - timedelta(microseconds=delta.microseconds)
 
 
 def bind_sqlalchemy_events() -> None:
@@ -97,7 +112,10 @@ def profile_task(
     link_tracing: bool = False,
     include_args: bool = False,
 ) -> Callable:
-    """Profile a task and log the time taken to run it"""
+    """Profile a task and log the time taken to run it
+
+    send_slack: send the message to slack
+    """
 
     def profile_task_decorator(task: Any, *args: Any, **kwargs: Any) -> Any:
         @functools.wraps(task)
@@ -106,11 +124,11 @@ def profile_task(
             logger.info(f"Running task: {task.__name__}")
 
             # time_start = time.perf_counter()
-            dtime_start = datetime.now()
+            dtime_start = get_now()
 
             run_task_output = task(*args, **kwargs)
 
-            dtime_end = datetime.now()
+            dtime_end = get_now()
 
             # calculate wall clock time
             wall_clock_time = chop_delta_microseconds(dtime_end - dtime_start)
