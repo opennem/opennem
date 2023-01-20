@@ -222,7 +222,6 @@ def schedule_facility_first_seen_check() -> None:
 @huey.lock_task("db_facility_seen_update")
 def db_facility_seen_update() -> None:
     update_facility_seen_range()
-    slack_message(f"Updated facility seen range on {settings.env}")
 
 
 @huey.periodic_task(crontab(hour="22", minute="45"))

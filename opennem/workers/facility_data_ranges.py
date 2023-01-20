@@ -10,6 +10,7 @@ import logging
 from datetime import datetime
 from textwrap import dedent
 
+from opennem.core.profiler import profile_task
 from opennem.db import get_database_engine
 from opennem.queries.utils import duid_to_case
 from opennem.schema.core import BaseConfig
@@ -47,6 +48,7 @@ def get_update_seen_query(
     return dedent(query)
 
 
+@profile_task(send_slack=True)
 def update_facility_seen_range(
     include_first_seen: bool = False,
     facility_codes: list[str] | None = None,
