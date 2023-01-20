@@ -137,7 +137,7 @@ def export_network_intervals_for_week(
     return write_output(save_path, stat_set)
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=True, include_args=True)
 def export_historic_intervals(
     limit: int | None = None, networks: list[NetworkSchema] = [], network_region_code: str | None = None
 ) -> None:
