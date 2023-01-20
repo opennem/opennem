@@ -30,7 +30,7 @@ logger = logging.getLogger("opennem.profiler")
 
 
 def get_id_profile_url(id: uuid.UUID) -> str:
-    return f"https://trading.internal.opennem.org.au/profile/{settings.env.lower()}/{id}"
+    return f"https://tracing.internal.opennem.org.au/profile/{settings.env.lower()}/{id}"
 
 
 def bind_sqlalchemy_events() -> None:
