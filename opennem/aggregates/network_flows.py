@@ -342,7 +342,7 @@ def run_and_store_flows_for_range(date_start: datetime, date_end: datetime, netw
     return inserted_records
 
 
-@profile_task(send_slack=settings.is_dev)
+@profile_task(send_slack=settings.is_dev, include_args=True)
 def run_flow_update_for_interval(interval: datetime, network: NetworkSchema | None = None) -> int | None:
     """Runs and stores emission flows for a particular interval"""
 
