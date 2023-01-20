@@ -166,19 +166,15 @@ def profile_task(
             profile_message = f"[{settings.env}]{id_msg} `{task.__name__}{method_args_string}` in " f"{wall_clock_human} "
 
             if message_fmt:
-                profile_message = (
-                    f"[{settings.env}] "
-                    + message_fmt.format(**{**globals(), **locals(), **kwargs})
-                    + f" `{task.__name__}` "
-                    + f" in {wall_clock_human}"
-                )
+                custom_message = message_fmt.format(**{**globals(), **locals(), **kwargs})
 
-                if not message_prepend:
-                    profile_message = (
-                        f"[{settings.env}] `{task.__name__}` "
-                        + message_fmt.format(**{**globals(), **locals(), **kwargs})
-                        + f" in {wall_clock_human}"
-                    )
+                profile_message = (
+                    f"[{settings.env}] " + custom_message
+                    if not message_prepend
+                    else "" + f" `{task.__name__}` " + custom_message
+                    if message_prepend
+                    else "" + f" in {wall_clock_human}"
+                )
 
             if send_slack:
                 slack_message(profile_message)
