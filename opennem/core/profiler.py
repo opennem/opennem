@@ -12,8 +12,9 @@ import random
 import time
 import uuid
 from collections.abc import Callable
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import event as sa_event
 from sqlalchemy import text as sql_text
@@ -37,10 +38,7 @@ def get_now() -> datetime:
 
     @NOTE add timezone
     """
-    if settings.timezone:
-        return datetime.now().astimezone(settings.timezone)
-
-    return datetime.now(timezone.UTC)
+    return datetime.now().astimezone(ZoneInfo("Australia/Sydney"))
 
 
 def chop_delta_microseconds(delta: timedelta) -> timedelta:
