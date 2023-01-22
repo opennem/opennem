@@ -22,7 +22,6 @@ from opennem.db.tasks import refresh_material_views
 from opennem.exporter.historic import export_historic_intervals
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.utils.dates import get_today_nem
-from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.energy import run_energy_calc
 from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network
 
@@ -104,9 +103,6 @@ def daily_runner(days: int = 2) -> None:
     export_map = get_export_map()
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
     export_energy(energy_exports.resources)
-
-    # 5. Run and send out the daily fueltech summary
-    run_daily_fueltech_summary(network=NetworkNEM)
 
     # export historic intervals
     for network in [NetworkNEM, NetworkWEM]:

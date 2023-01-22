@@ -39,6 +39,7 @@ from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.schema.network import NetworkNEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import daily_runner, energy_runner_hours
+from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
@@ -156,6 +157,13 @@ def nem_overnight_schedule_crawl() -> None:
         slack_message(f"[{settings.env}] Obtained overnight NEM data with {total_records} records." "Triggering daily runner")
 
         daily_runner()
+
+
+# run summary
+@huey.periodic_task(crontab(hour="10", minute="40"), retries=3, retry_delay=120)
+@huey.lock_task("nem_summary_schedule_crawl")
+def nem_summary_schedule_crawl() -> None:
+    run_daily_fueltech_summary(network=NetworkNEM)
 
 
 # export tasks
