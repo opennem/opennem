@@ -6,8 +6,7 @@ will run once a day from scheduler
 
 import logging
 
-from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility
+from opennem.db import get_database_engine
 
 logger = logging.getLogger("opennem.workers.facility_status")
 
@@ -26,33 +25,54 @@ def update_opennem_facility_status() -> None:
 
     logger.info("Updating facility status")
 
-    with SessionLocal() as sess:
+    engine = get_database_engine()
+
+    with engine.begin() as conn:
         # find all facilities that are commissioning
         # and have generation data
         # and update their status to operating
         # otherwise they're committed
-        q = (
-            sess.query(Facility)
-            .filter(Facility.status_id == "commissioning")
-            .filter(Facility.data_last_seen.any())
-            .update({"status_id": "operating"}, synchronize_session=False)
-        )
 
-        logger.info(f"Updated {q} facilities to operating")
+        _query = """
+        with operational_facs as (
+            select
+                f.code,
+                f.status_id,
+                f.data_last_seen
+            from facility f
+            where
+                f.status_id = 'commissioning'
+                and f.data_last_seen is not null
+        )
+        update facility f set
+            status_id = 'operating'
+        from operational_facs
+            where f.code = operational_facs.code
+        """
+        conn.execute(_query)
 
         # find all facilities that are commissioning
         # and have no generation data
         # and update their status to committed
-        q = (
-            sess.query(Facility)
-            .filter(Facility.status_id == "commissioning")
-            .filter(~Facility.data_last_seen)
-            .update({"status_id": "committed"}, synchronize_session=False)
+        _query = """
+        with operational_facs as (
+            select
+                f.code,
+                f.status_id,
+                f.data_last_seen
+            from facility f
+            where
+                f.status_id = 'commissioning'
+                and f.data_last_seen is null
         )
+        update facility f set
+            status_id = 'committed'
+        from operational_facs
+            where f.code = operational_facs.code
 
-        logger.info(f"Updated {q} facilities to committed")
+        """
 
-        sess.commit()
+        conn.execute(_query)
 
     logger.info("Finished updating facility status")
 

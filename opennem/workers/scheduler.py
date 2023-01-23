@@ -41,6 +41,7 @@ from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import daily_runner, energy_runner_hours
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.facility_data_ranges import update_facility_seen_range
+from opennem.workers.facility_status import update_opennem_facility_status
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
 
@@ -161,9 +162,15 @@ def nem_overnight_schedule_crawl() -> None:
 
 # run summary
 @huey.periodic_task(crontab(hour="10", minute="40"), retries=3, retry_delay=120)
-@huey.lock_task("nem_summary_schedule_crawl")
+@huey.lock_task("run_daily_fueltech_summary")
 def nem_summary_schedule_crawl() -> None:
     run_daily_fueltech_summary(network=NetworkNEM)
+
+
+@huey.periodic_task(crontab(hour="10", minute="50"), retries=3, retry_delay=120)
+@huey.lock_task("run_update_opennem_facility_status")
+def run_update_opennem_facility_status() -> None:
+    update_opennem_facility_status()
 
 
 # export tasks
