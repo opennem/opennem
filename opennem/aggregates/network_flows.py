@@ -175,6 +175,19 @@ def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.D
         axis=1,
     )
 
+    # @NOTE bad hack for issue 144 TAS1 specific
+    # https://github.com/opennem/opennem/issues/144
+    f["emission_exports"] = f.apply(
+        lambda x: x.energy_exports * x.emission_factor if x.generated and x.generated >= 0 and x.network_region == "TAS1" else 0,
+        axis=1,
+    )
+    f["emission_imports"] = f.apply(
+        lambda x: x.energy_imports * x.emission_factor_to
+        if x.generated and x.generated <= 0 and x.network_region == "TAS1"
+        else 0,
+        axis=1,
+    )
+
     f["market_value_exports"] = f.apply(lambda x: x.generated * x.price_to if x.generated and x.generated >= 0 else 0, axis=1)
     f["market_value_imports"] = f.apply(lambda x: x.generated * x.price if x.generated and x.generated <= 0 else 0, axis=1)
 
@@ -435,7 +448,7 @@ def run_flow_updates_all_for_network(network: NetworkSchema, to_year: int | None
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_flow_updates_all_for_network(network=NetworkNEM)
+    run_flow_updates_all_for_network(network=NetworkNEM, to_year=2020)
     # run_emission_update_day(days=12)
     # run_flow_updates_all_per_year(2014, 1, network=NetworkNEM)
     # run_flow_update_for_interval(datetime.fromisoformat("2022-11-18T14:40:00+10:00"), network=NetworkNEM)
