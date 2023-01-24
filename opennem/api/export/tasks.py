@@ -334,7 +334,7 @@ def export_energy(
             write_output(energy_stat.path, stat_set)
 
 
-def export_all_monthly(network_region_code: str | None = None) -> None:
+def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: str | None = None) -> None:
     session = get_scoped_session()
 
     all_monthly = OpennemDataSet(code="au", data=[], version=get_version(), created_at=datetime.now())
@@ -343,7 +343,8 @@ def export_all_monthly(network_region_code: str | None = None) -> None:
     all_monthly.append_set(cpi)
 
     # Iterate networks and network regions
-    networks = [NetworkNEM, NetworkWEM]
+    if not networks:
+        networks = [NetworkNEM, NetworkWEM]
 
     for network in networks:
         network_regions_query = session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code)
