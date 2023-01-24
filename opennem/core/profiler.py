@@ -30,6 +30,7 @@ logger = logging.getLogger("opennem.profiler")
 
 
 def get_id_profile_url(id: uuid.UUID) -> str:
+    """Link to internal tracing profile for a given id"""
     return f"https://tracing.internal.opennem.org.au/profile/{settings.env.lower()}/{id}"
 
 
@@ -67,6 +68,19 @@ def parse_kwargs_value(value: Any) -> str:
     if isinstance(value, NetworkSchema):
         return f"NetworkSchema({value.code})"
     return str(value)
+
+
+def format_args_into_string(args: tuple[str], kwargs: dict[str, str]) -> str:
+    """This takes args and kwargs from the profiled method and formats
+    them out into a string for logging."""
+    args_string = ", ".join([f"'{i}'" for i in args]) if args else ""
+    kwargs_string = ", ".join(f"{key}={parse_kwargs_value(value)}" for key, value in kwargs.items())
+
+    # add a separator if both default and named args are present
+    if args_string and kwargs_string:
+        args_string += ", "
+
+    return f"({args_string}{kwargs_string})"
 
 
 def log_task_profile_to_database(task_name: str, time_start: datetime, time_end: datetime) -> uuid.UUID:
@@ -114,7 +128,12 @@ def profile_task(
 ) -> Callable:
     """Profile a task and log the time taken to run it
 
-    send_slack: send the message to slack
+    :param send_slack: Send a slack message with the profile
+    :param persist_profile: Persist the profile to the database
+    :param link_tracing: Add a link to the profile in the logs
+    :param include_args: Include the arguments passed to the task in the logs
+    :param message_fmt: A custom message format
+    :param message_prepend: Prepend the message with the task name
     """
 
     def profile_task_decorator(task: Any, *args: Any, **kwargs: Any) -> Any:
@@ -153,16 +172,12 @@ def profile_task(
             method_args_string: str = ""
 
             if include_args:
-                args_string = ", ".join([f"'{i}'" for i in args]) if args else ""
-                kwargs_string = ", ".join(f"{key}={parse_kwargs_value(value)}" for key, value in kwargs.items())
+                method_args_string = format_args_into_string(args, kwargs)
 
-                if args_string and kwargs_string:
-                    args_string += ", "
-
-                method_args_string = f"({args_string}{kwargs_string})"
-
+            # default message format
             profile_message = f"[{settings.env}]{id_msg} `{task.__name__}{method_args_string}` in " f"{wall_clock_human} "
 
+            # custom message format
             if message_fmt:
                 custom_message = message_fmt.format(**{**globals(), **locals(), **kwargs})
 
