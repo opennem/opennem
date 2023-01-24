@@ -90,19 +90,39 @@ def energy_facility_query(time_series: OpennemExportSeries, facility_codes: list
 
 
 def emission_factor_region_query(time_series: OpennemExportSeries, network_region_code: str | None = None) -> str:
+
     __query = """
         select
-            f.trading_interval at time zone '{timezone}' as ti,
-            f.network_region,
-            avg(f.emissions_per_mw) * 2
-        from mv_region_emissions_45d f
+            t.trading_interval at time zone '{timezone}',
+            t.network_region,
+            sum(t.power) as generated,
+            sum(t.emissions) as emissions,
+            sum(t.power) / sum(t.emissions) as emissions_factor
+        from
+        (
+            select
+                fs.trading_interval as trading_interval,
+                f.network_region as network_region,
+                sum(fs.generated) as power,
+                coalesce(sum(fs.generated) * max(f.emissions_factor_co2), 0) as emissions
+            from facility_scada fs
+            left join facility f on fs.facility_code = f.code
+            left join network n on f.network_id = n.code
+            where
+                fs.is_forecast is False and
+                f.interconnector = False and
+                f.network_id = '{network_id}' and
+                fs.generated > 0
+            group by
+                1, f.code, 2
+        ) as t
         where
             f.network_id='{network_id}' and
             {network_region_query}
-            f.trading_interval <= '{date_max}' and
-            f.trading_interval >= '{date_min}'
+            t.trading_interval >= '{date_min}' and
+            t.trading_interval < '{date_max}'
         group by 1, 2
-        order by 1 asc;
+        order by 1 asc, 2;
     """
 
     network_region_query = ""
