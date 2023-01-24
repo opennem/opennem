@@ -383,6 +383,7 @@ def export_all_monthly() -> None:
             )
 
             if not stat_set:
+                logger.error(f"Could not get a monthly stat set for {network.code} and {network_region.code}")
                 continue
 
             demand_energy_and_value = demand_network_region_daily(
