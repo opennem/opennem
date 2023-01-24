@@ -14,6 +14,9 @@ def check_opennem_interval_delays(network_code: str) -> bool:
     """Runs periodically and alerts if there is a current delay in output of power intervals"""
     network = network_from_network_code(network_code)
 
+    if not network or not network.code:
+        raise Exception(f"Could not run check interval for network code: {network_code}")
+
     env = ""
 
     if settings.debug:
@@ -55,7 +58,7 @@ def check_opennem_interval_delays(network_code: str) -> bool:
 
     if time_delta > timedelta(minutes=alert_threshold):
         slack_message(
-            f"*WARNING*: OpenNEM {network.code} interval delay on {settings.env} currently: {time_delta}.\n",
+            f"[{settings.env}] *WARNING*: OpenNEM {network.code} " f"interval delay on {settings.env} currently: {time_delta}.\n",
             tag_users=settings.monitoring_alert_slack_user,
         )
 
