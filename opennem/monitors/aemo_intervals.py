@@ -27,7 +27,7 @@ def aemo_wem_live_interval() -> bool:
     # @TODO move the minutes into settings
     if live_delta > timedelta(minutes=90):
         slack_message(
-            f"*WARNING*: AEMO Live intervals for WEM on {settings.env} curently delayed by \
+            f"[{settings.env}] *WARNING*: AEMO Live intervals for WEM on {settings.env} curently delayed by \
                  {live_delta}\n\nAEMO feed most recent: {live_most_recent}"
         )
 
