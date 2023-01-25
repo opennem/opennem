@@ -6,7 +6,7 @@ from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Union
 from zoneinfo import ZoneInfo
 
 import pydantic
@@ -45,7 +45,7 @@ def optionaly_lowercase_string(value: str) -> str:
     return value
 
 
-def number_output(n: Union[float, int, None]) -> Optional[Union[float, int, None, Decimal]]:
+def number_output(n: float | int | None) -> float | int | None | Decimal | None:
     """Format numbers for data series outputs"""
     if n is None:
         return None
@@ -69,9 +69,7 @@ def format_number_series(values: list[ValidNumber]) -> list[ValidNumber]:
     )
 
 
-def optionally_parse_string_datetime(
-    value: Optional[Union[str, datetime, date]] = None
-) -> Optional[Union[str, datetime, date]]:
+def optionally_parse_string_datetime(value: str | datetime | date | None = None) -> str | datetime | date | None:
     if not value:
         return value
 
@@ -168,42 +166,42 @@ class OpennemDataHistory(BaseConfig):
 
 
 class OpennemData(BaseConfig):
-    id: Optional[str]
-    type: Optional[str]
-    fuel_tech: Optional[str]
+    id: str | None
+    type: str | None
+    fuel_tech: str | None
     code: str | None
 
-    network: Optional[str]
-    region: Optional[str]
+    network: str | None
+    region: str | None
     data_type: str
     units: str
 
-    interval: Optional[TimeIntervalAPI]
-    period: Optional[TimePeriodAPI]
+    interval: TimeIntervalAPI | None
+    period: TimePeriodAPI | None
 
     history: OpennemDataHistory
-    forecast: Optional[OpennemDataHistory]
+    forecast: OpennemDataHistory | None
 
-    x_capacity_at_present: Optional[float]
+    x_capacity_at_present: float | None
 
     # validators
 
     # conveniance methods
-    def id_v2(self) -> Optional[str]:
+    def id_v2(self) -> str | None:
         return translate_id_v3_to_v2(self.id) if self.id else None
 
-    def fueltech_v2(self) -> Optional[str]:
+    def fueltech_v2(self) -> str | None:
         return map_v3_fueltech(self.fuel_tech) if self.fuel_tech else None
 
 
 class OpennemDataSet(BaseConfig):
-    type: Optional[str]
+    type: str | None
     response_status: ResponseStatus = ResponseStatus.OK
-    version: Optional[str]
-    network: Optional[str]
+    version: str | None
+    network: str | None
     code: str | None
-    region: Optional[str]
-    created_at: Optional[datetime]
+    region: str | None
+    created_at: datetime | None
 
     data: list[OpennemData] = []
 
@@ -216,7 +214,7 @@ class OpennemDataSet(BaseConfig):
         return id_list
 
     # Methods
-    def append_set(self, subject_set: Optional[OpennemDataSet] = None) -> None:
+    def append_set(self, subject_set: OpennemDataSet | None = None) -> None:
         if not subject_set:
             return None
 
@@ -231,7 +229,7 @@ class OpennemDataSet(BaseConfig):
 
         return None
 
-    def get_id(self, id: str) -> Optional[OpennemData]:
+    def get_id(self, id: str) -> OpennemData | None:
         _ds = list(filter(lambda x: x.id == id, self.data))
 
         if len(_ds) < 1:
@@ -265,9 +263,7 @@ class OpennemDataSet(BaseConfig):
         if len(_id_values) != len(set(_id_values)):
             # find the ids that are not unique
             _msg = ""
-            _id_duplicates = [
-                item for item, count in Counter(_id_values).items() if count > 1 and isinstance(item, str)
-            ]
+            _id_duplicates = [item for item, count in Counter(_id_values).items() if count > 1 and isinstance(item, str)]
 
             if _id_duplicates:
                 _duplicate_ids = ", ".join(_id_duplicates)
@@ -287,32 +283,32 @@ class RegionFlowResult(BaseConfig):
     interval: datetime
     flow_from: str
     flow_to: str
-    generated: Optional[float]
-    flow_from_energy: Optional[float]
-    flow_to_energy: Optional[float]
+    generated: float | None
+    flow_from_energy: float | None
+    flow_to_energy: float | None
 
 
 class RegionFlowEmissionsResult(BaseConfig):
     interval: datetime
     flow_from: str
     flow_to: str
-    energy: Optional[float]
-    flow_from_emissions: Optional[float]
-    flow_to_emissions: Optional[float]
-    flow_from_intensity: Optional[float]
-    flow_to_intensity: Optional[float]
+    energy: float | None
+    flow_from_emissions: float | None
+    flow_to_emissions: float | None
+    flow_from_intensity: float | None
+    flow_to_intensity: float | None
 
 
 class DataQueryResult(BaseConfig):
     interval: datetime
-    result: Union[float, int, None, Decimal]
-    group_by: Optional[str]
+    result: float | int | None | Decimal
+    group_by: str | None
 
 
 class ScadaDateRange(BaseConfig):
     start: datetime
     end: datetime
-    network: Optional[NetworkSchema]
+    network: NetworkSchema | None
 
     def _get_value_localized(self, field_name: str = "start") -> Any:
         timezone: ZoneInfo | str = settings.timezone  # type: ignore
@@ -335,10 +331,10 @@ class ScadaDateRange(BaseConfig):
         return self._get_value_localized("end")
 
     def get_start_sql(self, as_date: bool = False) -> str:
-        return "'{}'".format(self.get_start() if not as_date else self.get_start().date())
+        return f"'{self.get_start() if not as_date else self.get_start().date()}'"
 
     def get_end_sql(self, as_date: bool = False) -> str:
-        return "'{}'".format(self.get_end() if not as_date else self.get_end().date())
+        return f"'{self.get_end() if not as_date else self.get_end().date()}'"
 
 
 def load_opennem_dataset_from_file(file_path: str | Path) -> OpennemDataSet:
