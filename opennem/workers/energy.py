@@ -11,7 +11,6 @@ from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.core.flows import FlowDirection, fueltech_to_flow, generated_flow_station_id
 from opennem.core.fueltechs import ALL_FUELTECH_CODES
 from opennem.core.network_regions import get_network_regions
-from opennem.core.networks import get_network_region_schema
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import FacilityScada
@@ -141,14 +140,7 @@ def get_flows_query(
     if flow == FlowDirection.exports:
         flow_direction = ">"
 
-    network_region_schema_lookup = get_network_region_schema(NetworkNEM, network_region)
-
-    if not network_region_schema_lookup or len(network_region_schema_lookup) < 1:
-        raise Exception(f"Could not get network region schema for {network_region}")
-
-    network_region_schema = network_region_schema_lookup.pop()
-
-    facility_code = generated_flow_station_id(NetworkNEM, network_region_schema, flow)
+    facility_code = generated_flow_station_id(NetworkNEM, network_region, flow)
 
     query = """
     select

@@ -8,14 +8,29 @@ from datetime import datetime
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.flows import FlowDirection, generated_flow_station_id
-from opennem.core.networks import get_network_region_schema, state_from_network_region
+from opennem.core.networks import state_from_network_region
 from opennem.db import SessionLocal
-from opennem.db.models.opennem import Facility, Location, Station
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.db.models.opennem import Facility, Location, NetworkRegion, Station
+from opennem.schema.network import NetworkNEM, NetworkRegionSchema, NetworkSchema
 
 logger = logging.getLogger("opennem.importer.trading_flows")
 
 IMPORTER_NAME = "opennem.importer.trading_flows"
+
+
+def get_network_region_schema(network: NetworkSchema, network_region_code: str | None = None) -> list[NetworkRegionSchema]:
+    """Return regions for a network"""
+    s = SessionLocal()
+    regions_query = s.query(NetworkRegion).filter_by(network_id=network.code)
+
+    if network_region_code:
+        regions_query = regions_query.filter_by(code=network_region_code)
+
+    regions_result = regions_query.all()
+
+    regions = [NetworkRegionSchema.from_orm(i) for i in regions_result]
+
+    return regions
 
 
 def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
@@ -32,10 +47,7 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
         flow_station_id = generated_flow_station_id(network, network_region)
 
         flow_station = (
-            session.query(Station)
-            .filter_by(code=flow_station_id)
-            .filter_by(network_code=flow_station_id)
-            .one_or_none()
+            session.query(Station).filter_by(code=flow_station_id).filter_by(network_code=flow_station_id).one_or_none()
         )
 
         if not flow_station:
@@ -51,9 +63,7 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
             network.code.upper(), state_from_network_region(network_region.code.upper())
         )
 
-        flow_facilities = [
-            (i, generated_flow_station_id(network, network_region, i)) for i in FlowDirection
-        ]
+        flow_facilities = [(i, generated_flow_station_id(network, network_region, i)) for i in FlowDirection]
 
         for (flow_direction, flow_facility_id) in flow_facilities:
             flow_facility_model = (
@@ -83,9 +93,7 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
 
             session.add(flow_station)
 
-            logger.info(
-                "Created network trading flow station facility: {}".format(flow_facility_id)
-            )
+            logger.info(f"Created network trading flow station facility: {flow_facility_id}")
 
     session.commit()
 

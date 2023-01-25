@@ -2,12 +2,11 @@ from datetime import datetime
 from enum import Enum
 from itertools import groupby
 from operator import attrgetter
-from typing import Optional
 
 from datetime_truncate import truncate as date_trunc
 
 from opennem.api.stats.schema import DataQueryResult, OpennemData, RegionFlowEmissionsResult, RegionFlowResult
-from opennem.schema.network import NetworkRegionSchema, NetworkSchema
+from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval
 
 
@@ -16,7 +15,7 @@ class FlowDirection(Enum):
     exports = "exports"
 
 
-def fueltech_to_flow(fueltech_id: str) -> Optional[FlowDirection]:
+def fueltech_to_flow(fueltech_id: str) -> FlowDirection | None:
     """Check if a fueltech is a flow and if so return the enum"""
     if not fueltech_id:
         raise Exception("Require a fueltech")
@@ -35,10 +34,10 @@ def fueltech_to_flow(fueltech_id: str) -> Optional[FlowDirection]:
 
 def generated_flow_station_id(
     network: NetworkSchema,
-    network_region: NetworkRegionSchema,
-    flow_direction: Optional[FlowDirection] = None,
+    network_region_code: str,
+    flow_direction: FlowDirection | None = None,
 ) -> str:
-    name_components = [network.code, "flow", network_region.code]
+    name_components = [network.code, "flow", network_region_code]
 
     if flow_direction:
         name_components.append(flow_direction.value)
@@ -73,7 +72,7 @@ def invert_flow_set(flow_set: OpennemData) -> OpennemData:
     if flow_set_inverted.code:
         flow_set_inverted.code = _invert_flowid(flow_set_inverted.code)
 
-    def _save_invert(value: Optional[int]) -> Optional[int]:
+    def _save_invert(value: int | None) -> int | None:
         if value:
             return -value
         return None
@@ -86,7 +85,7 @@ def invert_flow_set(flow_set: OpennemData) -> OpennemData:
 def net_flows(
     region: str,
     data: list[RegionFlowResult],
-    interval: Optional[TimeInterval] = None,
+    interval: TimeInterval | None = None,
 ) -> dict[str, list[DataQueryResult]]:
     """
     Calculates net region flows for a region from a RegionFlowResult
