@@ -43,7 +43,12 @@ class ExporterHistoricException(Exception):
     pass
 
 
-@profile_task(send_slack=True, include_args=True)
+@profile_task(
+    send_slack=True,
+    include_args=False,
+    message_fmt="Exported historic intervals for `{network.code}`, region `{network_region.code}` week num `{week_number}`",
+    message_prepend=True,
+)
 def export_network_intervals_for_week(
     week_start: datetime,
     week_end: datetime,
@@ -208,5 +213,5 @@ def export_historic_for_year_and_week_no(
 
 if __name__ == "__main__":
     # export_historic_intervals(limit=52 * 2)
-    export_historic_intervals()
-    # export_historic_for_year_and_week_no(2022, 36, [NetworkNEM], network_region_code="NSW1")
+    # export_historic_intervals()
+    export_historic_for_year_and_week_no(2022, 36, [NetworkNEM], network_region_code="NSW1")
