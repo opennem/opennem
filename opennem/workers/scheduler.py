@@ -155,7 +155,7 @@ def nem_overnight_schedule_crawl() -> None:
         total_records = dispatch_actuals.inserted_records if dispatch_actuals and dispatch_actuals.inserted_records else 0
         total_records += dispatch_gen.inserted_records if dispatch_gen and dispatch_gen.inserted_records else 0
 
-        slack_message(f"[{settings.env}] Obtained overnight NEM data with {total_records} records." "Triggering daily runner")
+        slack_message(f"[{settings.env}] Obtained overnight NEM data with {total_records} records. Triggering daily runner")
 
         daily_runner()
 
