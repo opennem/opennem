@@ -367,7 +367,7 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
                 networks = [NetworkWEM, NetworkAPVI]
 
             if network == NetworkNEM:
-                networks = [NetworkNEM, NetworkAPVI]
+                networks = [NetworkNEM, NetworkAEMORooftop]
 
             logger.debug(f"Running monthlies for {network.code} and {network_region.code}")
 
