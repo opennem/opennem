@@ -57,7 +57,7 @@ from opennem.utils.version import get_version
 logger = logging.getLogger("opennem.export.tasks")
 
 
-@profile_task(send_slack=True, include_args=True)
+@profile_task(send_slack=True, include_args=True, message_fmt="Running export_power {latest=} {priority} with {len(stats)} stats")
 def export_power(
     stats: list[StatExport] = [],
     priority: PriorityType | None = None,
