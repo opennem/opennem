@@ -218,7 +218,7 @@ def monitor_opennem_intervals() -> None:
         check_opennem_interval_delays(network_code)
 
 
-@huey.periodic_task(crontab(hour="21", minute="45"), priority=10)
+@huey.periodic_task(crontab(hour="21", minute="15"), priority=10)
 @huey.lock_task("monitor_emission_factors")
 def monitor_emission_factors() -> None:
     alert_missing_emission_factors()
