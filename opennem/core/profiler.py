@@ -22,6 +22,7 @@ from sqlalchemy.engine import Engine
 from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
+from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.network import NetworkSchema
 from opennem.utils.timedelta import timedelta_to_string
 
@@ -66,6 +67,10 @@ def parse_kwargs_value(value: Any) -> str:
     using dunder methods but pydantic has a bug with sub-classes"""
     if isinstance(value, NetworkSchema):
         return f"NetworkSchema({value.code})"
+
+    if isinstance(value, NetworkRegion):
+        return f"NetworkRegion({value.code})"
+
     return str(value)
 
 
