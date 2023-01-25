@@ -166,25 +166,27 @@ def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.D
     f["energy_exports"] = f.apply(lambda x: x.generated if x.generated and x.generated >= 0 else 0, axis=1)
     f["energy_imports"] = f.apply(lambda x: x.generated if x.generated and x.generated <= 0 else 0, axis=1)
 
-    f["emission_exports"] = f.apply(
-        lambda x: x.energy_exports * x.emission_factor_to if x.generated and x.generated >= 0 else 0,
-        axis=1,
-    )
-    f["emission_imports"] = f.apply(
-        lambda x: x.energy_imports * x.emission_factor if x.generated and x.generated <= 0 else 0,
-        axis=1,
-    )
+    # f["emission_exports"] = f.apply(
+    #     lambda x: x.energy_exports * x.emission_factor_to if x.generated and x.generated >= 0 else 0,
+    #     axis=1,
+    # )
+    # f["emission_imports"] = f.apply(
+    #     lambda x: x.energy_imports * x.emission_factor if x.generated and x.generated <= 0 else 0,
+    #     axis=1,
+    # )
 
     # @NOTE bad hack for issue 144 TAS1 specific
     # https://github.com/opennem/opennem/issues/144
     f["emission_exports"] = f.apply(
-        lambda x: x.energy_exports * x.emission_factor if x.generated and x.generated >= 0 and x.network_region == "TAS1" else 0,
+        lambda x: x.energy_exports * x.emission_factor
+        if x.generated and x.generated >= 0 and x.network_region == "TAS1"
+        else x.energy_imports * x.emission_factor_to,
         axis=1,
     )
     f["emission_imports"] = f.apply(
         lambda x: x.energy_imports * x.emission_factor_to
         if x.generated and x.generated <= 0 and x.network_region == "TAS1"
-        else 0,
+        else x.energy_imports * x.emission_factor,
         axis=1,
     )
 
