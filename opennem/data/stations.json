@@ -28165,7 +28165,7 @@
       {
         "network_id": "WEM",
         "fueltech_id": "coal_black",
-        "status_id": "operating",
+        "status_id": "retired",
         "code": "MUJA_G5",
         "network_code": "WEM",
         "network_region": "WEM",
