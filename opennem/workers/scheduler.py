@@ -98,7 +98,7 @@ def crawl_run_aemo_nemweb_dispatch_scada() -> None:
     if dispatch_scada and dispatch_scada.inserted_records:
         slack_message(
             f"[{settings.env}] New NEM dispatch data for interval `{dispatch_scada.last_modified}`"
-            f" with `{dispatch_scada.inserted_records}` inserted records"
+            f" with `{dispatch_scada.inserted_records}` inserted records and updated flow tasks"
         )
 
 
