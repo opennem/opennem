@@ -172,7 +172,7 @@ def profile_task(
             method_args_string: str = ""
 
             if include_args:
-                method_args_string = format_args_into_string(args, kwargs)
+                method_args_string = format_args_into_string(args, kwargs)  # type: ignore
 
             # default message format
             profile_message = f"[{settings.env}]{id_msg} `{task.__name__}{method_args_string}` in " f"{wall_clock_human} "
@@ -201,7 +201,7 @@ def profile_task(
     return profile_task_decorator
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=True, message_fmt="took {wall_clock_human} to complete", message_prepend=True)
 def test_task(message: str | None = None) -> None:
     """Test task"""
     time.sleep(random.randint(1, 3))
