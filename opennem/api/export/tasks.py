@@ -519,7 +519,7 @@ def export_all_daily(networks: list[NetworkSchema] = [], network_region_code: st
             write_output(f"v3/stats/au/{network_region.code}/daily.json", stat_set)
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=False)
 def export_flows() -> None:
     date_range = get_scada_range(network=NetworkNEM)
 
@@ -547,7 +547,7 @@ def export_flows() -> None:
         write_output(f"v3/stats/au/{interchange_stat.network.code}/flows/7d.json", stat_set)
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=False)
 def export_electricitymap() -> None:
     date_range = get_scada_range(network=NetworkNEM)
 
