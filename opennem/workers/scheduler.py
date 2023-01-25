@@ -188,7 +188,7 @@ def schedule_power_weeklies() -> None:
     """
     Run weekly power outputs
     """
-    export_power(priority=PriorityType.history, latest=True)
+    export_power(priority=PriorityType.history, latest=False)
 
 
 # geojson maps
