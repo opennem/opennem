@@ -9,6 +9,7 @@
 
 import enum
 import uuid
+from datetime import datetime
 from decimal import Decimal
 
 from geoalchemy2 import Geometry
@@ -23,11 +24,21 @@ from sqlalchemy.sql.schema import UniqueConstraint
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
+from opennem.schema.core import BaseConfig
 from opennem.utils.sql import time_bucket
-from opennem.workers.facility_data_ranges import FacilitySeenRange
 
 Base = declarative_base()
 metadata = Base.metadata
+
+#
+
+
+class FacilitySeenRange(BaseConfig):
+    date_min: datetime | None
+    date_max: datetime | None
+
+
+# db models
 
 
 class BaseModel:
