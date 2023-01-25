@@ -71,6 +71,9 @@ def parse_kwargs_value(value: Any) -> str:
     if isinstance(value, NetworkRegion):
         return f"NetworkRegion({value.code})"
 
+    if hasattr(value, "code"):
+        return f"{value.code}"
+
     return str(value)
 
 
