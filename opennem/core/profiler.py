@@ -8,7 +8,6 @@ Optionally log to the database or another data persistance option
 
 import functools
 import logging
-import random
 import time
 import uuid
 from collections.abc import Callable
@@ -179,7 +178,11 @@ def profile_task(
 
             # custom message format
             if message_fmt:
-                custom_message = message_fmt.format(**{**globals(), **locals(), **kwargs})
+                combined_arg_and_env_dict = {**locals(), **kwargs}
+
+                logger.debug(combined_arg_and_env_dict)
+
+                custom_message = message_fmt.format(**combined_arg_and_env_dict)
 
                 profile_message = (
                     f"[{settings.env}] " + custom_message
@@ -201,12 +204,12 @@ def profile_task(
     return profile_task_decorator
 
 
-@profile_task(send_slack=True, message_fmt="took {wall_clock_human} to complete", message_prepend=True)
+@profile_task(send_slack=True, message_fmt="arg={message}=", message_prepend=True)
 def test_task(message: str | None = None) -> None:
     """Test task"""
-    time.sleep(random.randint(1, 3))
+    # time.sleep(random.randint(1, ))
     print(f"complete: {message}")
 
 
 if __name__ == "__main__":
-    test_task("test mess")
+    test_task(message="test mess")
