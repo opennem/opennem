@@ -6,6 +6,7 @@ as well as the time taken to run them.
 Optionally log to the database or another data persistance option
 """
 
+import enum
 import functools
 import logging
 import time
@@ -27,6 +28,32 @@ from opennem.schema.network import NetworkSchema
 from opennem.utils.timedelta import timedelta_to_string
 
 logger = logging.getLogger("opennem.profiler")
+
+
+# levels of profiler
+class ProfilerLevel(enum.Enum):
+    """Profiler levels"""
+
+    NOISY = 0
+    INFO = 1
+    ESSENTIAL = 2
+
+
+def profiler_level_string_to_enum(level: str) -> ProfilerLevel:
+    """Converts a string to a profiler level"""
+    if level.upper() == "NOISY":
+        return ProfilerLevel.NOISY
+
+    if level.upper == "INFO":
+        return ProfilerLevel.INFO
+
+    if level.upper == "ESSENTIAL":
+        return ProfilerLevel.ESSENTIAL
+
+    raise Exception("Invalid profiler level")
+
+
+PROFILE_LEVEL = profiler_level_string_to_enum(settings.profiler_level)
 
 
 def get_id_profile_url(id: uuid.UUID) -> str:
@@ -132,6 +159,7 @@ def profile_task(
     include_args: bool = False,
     message_fmt: str | None = None,
     message_prepend: bool = True,
+    level: ProfilerLevel = ProfilerLevel.NOISY,
 ) -> Callable:
     """Profile a task and log the time taken to run it
 
@@ -155,6 +183,10 @@ def profile_task(
             run_task_output = task(*args, **kwargs)
 
             dtime_end = get_now()
+
+            if level and level.value < PROFILE_LEVEL.value:
+                logger.debug(f"Task {task.__name__} complete and returning since not level")
+                return run_task_output
 
             # calculate wall clock time
             wall_clock_time = chop_delta_microseconds(dtime_end - dtime_start)

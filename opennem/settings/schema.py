@@ -152,6 +152,9 @@ class OpennemSettings(BaseSettings):
     # send daily fueltech summary
     send_daily_fueltech_summary: bool = True
 
+    # profiler options
+    profiler_level: str = "NOISY"
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> str | None:
