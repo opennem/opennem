@@ -8,12 +8,14 @@ Optionally log to the database or another data persistance option
 
 import enum
 import functools
+import inspect
 import logging
 import time
 import uuid
 from collections.abc import Callable
 from datetime import datetime, timedelta
-from typing import Any
+from types import FrameType
+from typing import Any, cast
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import event as sa_event
@@ -30,7 +32,7 @@ from opennem.utils.timedelta import timedelta_to_string
 logger = logging.getLogger("opennem.profiler")
 
 
-# levels of profiler
+# levels of profiler, and methods and the global used down in the decorator
 class ProfilerLevel(enum.Enum):
     """Profiler levels"""
 
@@ -54,6 +56,17 @@ def profiler_level_string_to_enum(level: str) -> ProfilerLevel:
 
 
 PROFILE_LEVEL = profiler_level_string_to_enum(settings.profiler_level)
+
+
+# method used to discover the invokee
+def profile_retrieve_caller_name() -> str:
+    """Return the calling function's name.
+
+    @NOTE need to step up twice since it's a decorator. Don't use this on
+    other generic methods
+    """
+    # Ref: https://stackoverflow.com/a/57712700/
+    return cast(FrameType, cast(FrameType, inspect.currentframe()).f_back.f_back).f_code.co_name
 
 
 def get_id_profile_url(id: uuid.UUID) -> str:
@@ -117,7 +130,7 @@ def format_args_into_string(args: tuple[str], kwargs: dict[str, str]) -> str:
     return f"({args_string}{kwargs_string})"
 
 
-def log_task_profile_to_database(task_name: str, time_start: datetime, time_end: datetime) -> uuid.UUID:
+def log_task_profile_to_database(task_name: str, time_start: datetime, time_end: datetime, invokee_name: str = "") -> uuid.UUID:
     """Log the task profile to the database"""
 
     engine = get_database_engine()
@@ -176,6 +189,15 @@ def profile_task(
         def _task_profile_wrapper(*args: Any, **kwargs: Any) -> Any:
             """Wrapper for the task"""
             logger.info(f"Running task: {task.__name__}")
+
+            # get the method that invoked this method for logging purposes
+            invokee_method_name: str = ""
+
+            try:
+                invokee_method_name = profile_retrieve_caller_name()
+                logger.info(f"Invoked by: {invokee_method_name}")
+            except Exception as e:
+                logger.error(e)
 
             # time_start = time.perf_counter()
             dtime_start = get_now()
@@ -244,6 +266,10 @@ def profile_task(
     return profile_task_decorator
 
 
+def run_outer_test_task() -> None:
+    test_task(message="test inner")
+
+
 @profile_task(send_slack=True, message_fmt="arg={message}=", message_prepend=True)
 def test_task(message: str | None = None) -> None:
     """Test task"""
@@ -252,4 +278,5 @@ def test_task(message: str | None = None) -> None:
 
 
 if __name__ == "__main__":
-    test_task(message="test mess")
+    # test_task(message="test mess")
+    run_outer_test_task()
