@@ -60,7 +60,7 @@ logger = logging.getLogger("opennem.export.tasks")
 @profile_task(
     send_slack=True,
     include_args=True,
-    message_fmt="{invokee_method_name} ran export_power {latest=} {priority} with {len(stats)} stats",
+    message_fmt="{invokee_method_name} ran export_power latest={latest} {priority}",
     message_prepend=True,
 )
 def export_power(
@@ -170,7 +170,7 @@ def export_power(
 
 @profile_task(
     send_slack=True,
-    message_fmt="{invokee_method_name} ran energy export: {latest=} with {len(stats)} stats",
+    message_fmt="{invokee_method_name} ran energy export: latest={latest}",
     message_prepend=True,
 )
 def export_energy(
