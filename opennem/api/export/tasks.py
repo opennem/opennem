@@ -57,7 +57,12 @@ from opennem.utils.version import get_version
 logger = logging.getLogger("opennem.export.tasks")
 
 
-@profile_task(send_slack=True, include_args=True, message_fmt="Running export_power {latest=} {priority} with {len(stats)} stats")
+@profile_task(
+    send_slack=True,
+    include_args=True,
+    message_fmt="{invokee_method_name} ran export_power {latest=} {priority} with {len(stats)} stats",
+    message_prepend=True,
+)
 def export_power(
     stats: list[StatExport] = [],
     priority: PriorityType | None = None,
@@ -163,7 +168,11 @@ def export_power(
         output_count += 1
 
 
-@profile_task(send_slack=True)
+@profile_task(
+    send_slack=True,
+    message_fmt="{invokee_method_name} ran energy export: {latest=} with {len(stats)} stats",
+    message_prepend=True,
+)
 def export_energy(
     stats: list[StatExport] = [],
     priority: PriorityType | None = None,
@@ -652,7 +661,11 @@ def export_metadata() -> bool:
 if __name__ == "__main__":
     # export_power(priority=PriorityType.live)
     # export_energy(latest=True)
-    export_electricitymap()
+
+    def daily_runner() -> None:
+        export_energy(latest=True)
+
+    daily_runner()
     # export_all_monthly()
     # export_all_daily()
     # export_electricitymap()
