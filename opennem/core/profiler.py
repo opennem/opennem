@@ -27,7 +27,8 @@ from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.network import NetworkSchema
-from opennem.utils.timedelta import timedelta_to_string
+
+# from opennem.utils.timedelta import timedelta_to_string
 
 logger = logging.getLogger("opennem.profiler")
 
@@ -213,11 +214,13 @@ def profile_task(
             # calculate wall clock time
             wall_clock_time = chop_delta_microseconds(dtime_end - dtime_start)
 
-            wall_clock_human = (
-                timedelta_to_string(wall_clock_time)
-                if wall_clock_time.total_seconds() <= 1000
-                else f"{wall_clock_time.total_seconds()}s"
-            )
+            # wall_clock_human = (
+            #     timedelta_to_string(wall_clock_time)
+            #     if wall_clock_time.total_seconds() <= 1000
+            #     else f"{wall_clock_time.total_seconds()}s"
+            # )
+
+            wall_clock_human = f"{wall_clock_time.total_seconds()}s"
 
             id: uuid.UUID | None = None
 
