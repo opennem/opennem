@@ -244,7 +244,12 @@ def profile_task(
 
                 logger.debug(combined_arg_and_env_dict)
 
-                custom_message = message_fmt.format(**combined_arg_and_env_dict)
+                custom_message = ""
+
+                try:
+                    custom_message = message_fmt.format(**combined_arg_and_env_dict)
+                except Exception as e:
+                    logger.error(e)
 
                 profile_message = (
                     f"[{settings.env}] " + custom_message
