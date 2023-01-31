@@ -42,6 +42,15 @@ class ProfilerLevel(enum.Enum):
     ESSENTIAL = 2
 
 
+class ProfilerRetentionTime(enum.Enum):
+    """How long to retain profiler record for"""
+
+    FOREVER = "forever"
+    MONTH = "month"
+    WEEK = "week"
+    DAY = "day"
+
+
 def profiler_level_string_to_enum(level: str) -> ProfilerLevel:
     """Converts a string to a profiler level"""
     if level.upper() == "NOISY":
@@ -131,7 +140,13 @@ def format_args_into_string(args: tuple[str], kwargs: dict[str, str]) -> str:
     return f"({args_string}{kwargs_string})"
 
 
-def log_task_profile_to_database(task_name: str, time_start: datetime, time_end: datetime, invokee_name: str = "") -> uuid.UUID:
+def log_task_profile_to_database(
+    task_name: str,
+    time_start: datetime,
+    time_end: datetime,
+    invokee_name: str = "",
+    retention_period: ProfilerRetentionTime | None = None,
+) -> uuid.UUID:
     """Log the task profile to the database"""
 
     engine = get_database_engine()
@@ -146,13 +161,15 @@ def log_task_profile_to_database(task_name: str, time_start: datetime, time_end:
                         task_name,
                         time_start,
                         time_end,
-                        errors
+                        errors,
+                        retention_period
                     ) VALUES (
                         :id,
                         :task_name,
                         :time_start,
                         :time_end,
-                        :errors
+                        :errors,
+                        :retention_period
                     ) returning id
                     """
             ),
@@ -161,6 +178,7 @@ def log_task_profile_to_database(task_name: str, time_start: datetime, time_end:
             time_start=time_start,
             time_end=time_end,
             errors=0,
+            retention_period=retention_period.value if retention_period else "",
         )
 
     return id
@@ -174,6 +192,7 @@ def profile_task(
     message_fmt: str | None = None,
     message_prepend: bool = True,
     level: ProfilerLevel = ProfilerLevel.NOISY,
+    retention_period: ProfilerRetentionTime = ProfilerRetentionTime.FOREVER,
 ) -> Callable:
     """Profile a task and log the time taken to run it
 
@@ -214,18 +233,14 @@ def profile_task(
             # calculate wall clock time
             wall_clock_time = chop_delta_microseconds(dtime_end - dtime_start)
 
-            # wall_clock_human = (
-            #     timedelta_to_string(wall_clock_time)
-            #     if wall_clock_time.total_seconds() <= 1000
-            #     else f"{wall_clock_time.total_seconds()}s"
-            # )
-
             wall_clock_human = f"{wall_clock_time.total_seconds()}s"
 
             id: uuid.UUID | None = None
 
             if persist_profile:
-                id = log_task_profile_to_database(task.__name__, dtime_start, dtime_end)
+                id = log_task_profile_to_database(
+                    task_name=task.__name__, time_start=dtime_start, time_end=dtime_end, retention_period=retention_period
+                )
 
             id_msg: str = ""
 

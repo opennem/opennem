@@ -134,6 +134,9 @@ class TaskProfile(Base):
     time_cpu = Column(DateTime(timezone=True), nullable=True)
     errors = Column(Integer, default=0, nullable=False)
 
+    # this is an enum of retention times - see profiler
+    retention_period = Column(Text, nullable=True, index=True)
+
 
 class FuelTechGroup(Base, BaseModel):
     __tablename__ = "fueltech_group"
