@@ -123,6 +123,12 @@ def crawler_run_wem_balancing_live() -> None:
     ):
         export_power(priority=PriorityType.live)
 
+    if wem_scada and wem_scada.inserted_records:
+        slack_message(
+            f"[{settings.env}] New WEM scada data for interval `{wem_scada.last_modified}`"
+            f" with `{wem_scada.inserted_records}` inserted records and updated flow tasks"
+        )
+
 
 @huey.periodic_task(crontab(hour="*/1", minute="30"))
 @huey.lock_task("crawler_run_wem_facility_scada")
