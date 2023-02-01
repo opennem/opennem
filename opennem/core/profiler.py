@@ -112,6 +112,21 @@ def bind_sqlalchemy_events() -> None:
         logger.debug("Total Time: %f", total)
 
 
+def cleanup_database_task_profiles_basedon_retention() -> None:
+    """This will clean up the database tasks based on their retention period"""
+    engine = get_database_engine()
+
+    query = """
+        delete from task_profile where
+            (retention_period = 'day' and now() - interval '1 day' < time_start) or
+            (retention_period = 'week' and now() - interval '7 days' < time_start) or
+            (retention_period = 'month' and now() - interval '30 days' < time_start)
+    """
+
+    with engine.connect() as conn:
+        conn.execute(sql_text(query))
+
+
 def parse_kwargs_value(value: Any) -> str:
     """Parses profiler argument objects. This should be done
     using dunder methods but pydantic has a bug with sub-classes"""
