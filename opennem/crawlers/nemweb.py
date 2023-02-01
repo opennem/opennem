@@ -65,6 +65,9 @@ def run_nemweb_aemo_crawl(
     if not crawler.url and not crawler.urls:
         raise Exception("Require a URL to run AEMO MMS crawlers")
 
+    if not crawler.url:
+        raise Exception("Require a URL to run AEMO MMS crawlers")
+
     try:
         dirlisting = get_dirlisting(crawler.url, timezone="Australia/Brisbane")
     except Exception as e:
