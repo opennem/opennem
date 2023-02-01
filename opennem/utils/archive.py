@@ -119,6 +119,30 @@ def fix_central_directory(zfile: BytesIO) -> BytesIO:
     return zfile
 
 
+def fix_central_directory_file(zip_file_path: Path) -> Path:
+    """
+    Fixes the central directory on bad zip files
+    """
+    # @NOTE See http://bugs.python.org/issue10694
+
+    with zip_file_path.open("wb") as zfile:
+        content = zfile.read()
+
+        # reverse find: this string of bytes is the end of
+        #  the zip's central directory.
+        pos = content.rfind(b"\x50\x4b\x05\x06")
+
+        if pos > 0:
+            zfile.seek(pos + 20)
+            zfile.truncate()
+            zfile.write(b"\x00\x00")  # Zip file comment length: 0 byte length;
+            zfile.seek(0)
+
+        zip_file_path.write_bytes(zfile.read())
+
+    return zip_file_path
+
+
 def stream_zip_contents(file_obj: IO[bytes], mode: str = "w"):  # type: ignore
     """
     Steram out the entire contents of a zipfile
@@ -169,7 +193,12 @@ def download_and_unzip(url: str) -> str:
     logger.info(f"Wrote file to {save_path}")
 
     with ZipFile(save_path) as zf:
-        zf.extractall(dest_dir)
+        try:
+            zf.extractall(dest_dir)
+        except Exception as e:
+            logger.error(e)
+            zf = fix_central_directory_file(save_path)
+            zf.extractall(dest_dir)
 
     os.remove(save_path)
 
