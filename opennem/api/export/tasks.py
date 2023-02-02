@@ -38,7 +38,7 @@ from opennem.controllers.output.flows import (
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.flows import invert_flow_set
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
-from opennem.core.profiler import profile_task
+from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.core.time import get_interval
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
@@ -62,6 +62,8 @@ logger = logging.getLogger("opennem.export.tasks")
     include_args=True,
     message_fmt="{invokee_method_name} ran export_power {priority}",
     message_prepend=True,
+    level=ProfilerLevel.NOISY,
+    retention_period=ProfilerRetentionTime.WEEK,
 )
 def export_power(
     stats: list[StatExport] = [],
@@ -172,6 +174,8 @@ def export_power(
     send_slack=True,
     message_fmt="{invokee_method_name} ran energy export",
     message_prepend=True,
+    level=ProfilerLevel.NOISY,
+    retention_period=ProfilerRetentionTime.WEEK,
 )
 def export_energy(
     stats: list[StatExport] = [],
@@ -448,7 +452,11 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
     write_output("v3/stats/au/all/monthly.json", all_monthly)
 
 
-@profile_task(send_slack=True)
+@profile_task(
+    send_slack=True,
+    level=ProfilerLevel.NOISY,
+    retention_period=ProfilerRetentionTime.WEEK,
+)
 def export_all_daily(networks: list[NetworkSchema] = [], network_region_code: str | None = None) -> None:
     """Export dailies for all networks and regions"""
 
@@ -528,7 +536,11 @@ def export_all_daily(networks: list[NetworkSchema] = [], network_region_code: st
             write_output(f"v3/stats/au/{network_region.code}/daily.json", stat_set)
 
 
-@profile_task(send_slack=False)
+@profile_task(
+    send_slack=False,
+    level=ProfilerLevel.NOISY,
+    retention_period=ProfilerRetentionTime.WEEK,
+)
 def export_flows() -> None:
     date_range = get_scada_range(network=NetworkNEM)
 
@@ -556,7 +568,11 @@ def export_flows() -> None:
         write_output(f"v3/stats/au/{interchange_stat.network.code}/flows/7d.json", stat_set)
 
 
-@profile_task(send_slack=False)
+@profile_task(
+    send_slack=False,
+    level=ProfilerLevel.NOISY,
+    retention_period=ProfilerRetentionTime.WEEK,
+)
 def export_electricitymap() -> None:
     date_range = get_scada_range(network=NetworkNEM)
 
