@@ -68,7 +68,7 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
         session.commit()
         cr.inserted_records = len(records_to_store)
     except Exception as e:
-        logger.error("Error: {}".format(e))
+        logger.error(f"Error: {e}")
         cr.errors = len(records_to_store)
         cr.error_detail.append(str(e))
     finally:
@@ -92,7 +92,12 @@ def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> Contr
     cr.total_records = len(balancing_set.intervals)
     cr.server_latest = balancing_set.server_latest
 
+    primary_keys = []
+
     for _rec in balancing_set.intervals:
+        if (_rec.trading_interval, _rec.facility_code) in primary_keys:
+            continue
+
         records_to_store.append(
             {
                 "created_by": "wem.controller",
@@ -123,7 +128,7 @@ def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> Contr
         session.commit()
         cr.inserted_records = len(records_to_store)
     except Exception as e:
-        logger.error("Error: {}".format(e))
+        logger.error(f"Error: {e}")
         cr.errors = len(records_to_store)
         cr.error_detail.append(str(e))
     finally:
