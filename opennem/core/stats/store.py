@@ -44,7 +44,7 @@ def store_stats_database(statset: StatsSet) -> int:
 
     num_records = len(records_to_store)
 
-    logger.info("Wrote {} records to database".format(num_records))
+    logger.info(f"Wrote {num_records} records to database")
 
     return num_records
 
@@ -61,8 +61,10 @@ def store_stats_json(records_to_store: StatsSet) -> bool:
 
 
 def init_stats() -> None:
+    """Gets the CPI stats (only stat for now), persists to database and updates the local JSON cache"""
     r = stat_au_cpi()
     store_stats_database(r)
+    store_stats_json(r)
 
 
 if __name__ == "__main__":
