@@ -44,7 +44,7 @@ class ExporterHistoricException(Exception):
 
 
 @profile_task(
-    send_slack=True,
+    send_slack=False,
     include_args=False,
     message_fmt="Exported historic intervals for `{network.code}`, region `{network_region.code}` week num `{week_number}`",
     message_prepend=True,
