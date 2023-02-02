@@ -1,7 +1,7 @@
 {
     "name": "au.cpi",
     "source_url": "https://www.rba.gov.au/statistics/tables/xls/g01hist.xls",
-    "fetched_date": "2021-01-05T17:01:04.968272",
+    "fetched_date": "2023-02-09T17:10:14.892975",
     "stats": [
         {
             "stat_date": "1922-06-01T00:00:00",
@@ -2366,6 +2366,60 @@
             "country": "au",
             "stat_type": "CPI",
             "value": 116.2
+        },
+        {
+            "stat_date": "2020-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 117.2
+        },
+        {
+            "stat_date": "2021-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 117.9
+        },
+        {
+            "stat_date": "2021-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 118.8
+        },
+        {
+            "stat_date": "2021-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 119.7
+        },
+        {
+            "stat_date": "2021-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 121.3
+        },
+        {
+            "stat_date": "2022-03-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 123.9
+        },
+        {
+            "stat_date": "2022-06-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 126.1
+        },
+        {
+            "stat_date": "2022-09-30T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 128.4
+        },
+        {
+            "stat_date": "2022-12-31T00:00:00",
+            "country": "au",
+            "stat_type": "CPI",
+            "value": 130.8
         }
     ]
 }
