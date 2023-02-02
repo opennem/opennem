@@ -3,6 +3,7 @@
 Update facility intervals and balancing summary for WEM
 """
 import logging
+from datetime import datetime
 
 from sqlalchemy.dialects.postgresql import insert
 
@@ -28,7 +29,17 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
     cr.total_records = len(balancing_set.intervals)
     cr.server_latest = balancing_set.server_latest
 
+    primary_keys = []
+
     for _rec in balancing_set.intervals:
+        if not _rec.trading_day_interval:
+            continue
+
+        if (_rec.trading_day_interval) in primary_keys:
+            continue
+
+        primary_keys.append(_rec.trading_day_interval)
+
         records_to_store.append(
             {
                 "created_by": "wem.controller",
@@ -92,7 +103,7 @@ def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> Contr
     cr.total_records = len(balancing_set.intervals)
     cr.server_latest = balancing_set.server_latest
 
-    primary_keys = []
+    primary_keys: set(datetime, str) = []
 
     for _rec in balancing_set.intervals:
         if (_rec.trading_interval, _rec.facility_code) in primary_keys:
