@@ -37,9 +37,10 @@ logger = logging.getLogger("opennem.profiler")
 class ProfilerLevel(enum.Enum):
     """Profiler levels"""
 
-    NOISY = 0
-    INFO = 1
-    ESSENTIAL = 2
+    NOISY = "noisy"
+    DEBUG = "debug"
+    INFO = "info"
+    ESSENTIAL = "essential"
 
 
 class ProfilerRetentionTime(enum.Enum):
