@@ -137,6 +137,9 @@ class TaskProfile(Base):
     # this is an enum of retention times - see profiler
     retention_period = Column(Text, nullable=True, index=True)
 
+    # level of message - also an enum but stores as text
+    level = Column(Text, nullable=True, index=True)
+
 
 class FuelTechGroup(Base, BaseModel):
     __tablename__ = "fueltech_group"
