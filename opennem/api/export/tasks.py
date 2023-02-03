@@ -454,6 +454,8 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
 
 @profile_task(
     send_slack=True,
+    message_fmt="{invokee_method_name} ran export all daily tasks export",
+    message_prepend=True,
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
@@ -538,6 +540,8 @@ def export_all_daily(networks: list[NetworkSchema] = [], network_region_code: st
 
 @profile_task(
     send_slack=False,
+    message_fmt="{invokee_method_name} ran export flows",
+    message_prepend=True,
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
@@ -570,6 +574,8 @@ def export_flows() -> None:
 
 @profile_task(
     send_slack=False,
+    message_fmt="{invokee_method_name} ran export electricity map",
+    message_prepend=True,
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
