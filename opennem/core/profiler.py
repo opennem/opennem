@@ -37,10 +37,10 @@ logger = logging.getLogger("opennem.profiler")
 class ProfilerLevel(enum.Enum):
     """Profiler levels"""
 
-    NOISY = "noisy"
-    DEBUG = "debug"
-    INFO = "info"
-    ESSENTIAL = "essential"
+    NOISY = 0
+    DEBUG = 1
+    INFO = 2
+    ESSENTIAL = 3
 
 
 class ProfilerRetentionTime(enum.Enum):
@@ -161,6 +161,7 @@ def log_task_profile_to_database(
     time_start: datetime,
     time_end: datetime,
     invokee_name: str = "",
+    level: ProfilerLevel | None = None,
     retention_period: ProfilerRetentionTime | None = None,
 ) -> uuid.UUID:
     """Log the task profile to the database"""
@@ -178,7 +179,8 @@ def log_task_profile_to_database(
                         time_start,
                         time_end,
                         errors,
-                        retention_period
+                        retention_period,
+                        level,
                     ) VALUES (
                         :id,
                         :task_name,
@@ -186,6 +188,7 @@ def log_task_profile_to_database(
                         :time_end,
                         :errors,
                         :retention_period
+                        :level
                     ) returning id
                     """
             ),
@@ -195,6 +198,7 @@ def log_task_profile_to_database(
             time_end=time_end,
             errors=0,
             retention_period=retention_period.value if retention_period else "",
+            level=level.name.lower() if level else "",
         )
 
     return id
@@ -255,7 +259,11 @@ def profile_task(
 
             if persist_profile:
                 id = log_task_profile_to_database(
-                    task_name=task.__name__, time_start=dtime_start, time_end=dtime_end, retention_period=retention_period
+                    task_name=task.__name__,
+                    time_start=dtime_start,
+                    time_end=dtime_end,
+                    retention_period=retention_period,
+                    level=level,
                 )
 
             id_msg: str = ""
