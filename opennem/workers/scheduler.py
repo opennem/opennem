@@ -61,7 +61,7 @@ redis_host = None
 if settings.cache_url:
     redis_host = settings.cache_url.host
 
-huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
+huey = PriorityRedisHuey("opennem.scheduler", host=redis_host, immediate=True, immediate_use_memory=False)
 
 logger = logging.getLogger("openenm.scheduler")
 
