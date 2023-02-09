@@ -61,7 +61,8 @@ redis_host = None
 if settings.cache_url:
     redis_host = settings.cache_url.host
 
-huey = PriorityRedisHuey("opennem.scheduler", host=redis_host, immediate=True, immediate_use_memory=False)
+# huey = PriorityRedisHuey("opennem.scheduler", host=redis_host, immediate=True, immediate_use_memory=False)
+huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 
 logger = logging.getLogger("openenm.scheduler")
 
@@ -74,6 +75,7 @@ if IS_DEV:
 
 # send the startup message to slack
 worker_startup_alert()
+
 
 # crawler tasks live
 @huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"), priority=10)
@@ -149,6 +151,7 @@ def crawler_run_aemo_nemweb_rooftop_forecast() -> None:
 
 # daily tasks
 # run daily morning task
+
 
 # Checks for the overnights from aemo and then runs the daily runner
 @huey.periodic_task(crontab(hour="*/1", minute="20,30"), retries=3, retry_delay=120, priority=50)
