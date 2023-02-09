@@ -76,7 +76,7 @@ if IS_DEV:
 worker_startup_alert()
 
 # crawler tasks live
-@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"))
+@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"), priority=10)
 @huey.lock_task("crawler_live_nemweb_dispatch_scada")
 def crawl_run_aemo_nemweb_dispatch_scada() -> None:
     dispatch_scada = run_crawl(AEMONNemwebDispatchScada)
@@ -102,14 +102,14 @@ def crawl_run_aemo_nemweb_dispatch_scada() -> None:
         )
 
 
-@huey.periodic_task(crontab(minute="*/10"))
+@huey.periodic_task(crontab(minute="*/10"), priority=1)
 @huey.lock_task("crawler_run_bom_capitals")
 def crawler_run_bom_capitals() -> None:
     run_crawl(BOMCapitals)
 
 
 # crawler tasks frequent
-@huey.periodic_task(crontab(minute="*/15"))
+@huey.periodic_task(crontab(minute="*/15"), priority=10)
 @huey.lock_task("crawler_run_wem_balancing_live")
 def crawler_run_wem_balancing_live() -> None:
     apvi = run_crawl(APVIRooftopTodayCrawler)
@@ -151,7 +151,7 @@ def crawler_run_aemo_nemweb_rooftop_forecast() -> None:
 # run daily morning task
 
 # Checks for the overnights from aemo and then runs the daily runner
-@huey.periodic_task(crontab(hour="*/1", minute="20,30"), retries=3, retry_delay=120)
+@huey.periodic_task(crontab(hour="*/1", minute="20,30"), retries=3, retry_delay=120, priority=50)
 @huey.lock_task("nem_overnight_schedule_crawl")
 def nem_overnight_schedule_crawl() -> None:
     dispatch_actuals = run_crawl(AEMONEMDispatchActualGEN)
