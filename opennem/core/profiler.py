@@ -180,14 +180,14 @@ def log_task_profile_to_database(
                         time_end,
                         errors,
                         retention_period,
-                        level,
+                        level
                     ) VALUES (
                         :id,
                         :task_name,
                         :time_start,
                         :time_end,
                         :errors,
-                        :retention_period
+                        :retention_period,
                         :level
                     ) returning id
                     """
