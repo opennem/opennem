@@ -10,7 +10,6 @@ import enum
 import functools
 import inspect
 import logging
-import time
 import uuid
 from collections.abc import Callable
 from datetime import datetime, timedelta
@@ -18,9 +17,7 @@ from types import FrameType
 from typing import Any, cast
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import event as sa_event
 from sqlalchemy import text as sql_text
-from sqlalchemy.engine import Engine
 
 from opennem import settings
 from opennem.clients.slack import slack_message
@@ -77,7 +74,7 @@ def profile_retrieve_caller_name() -> str:
     other generic methods
     """
     # Ref: https://stackoverflow.com/a/57712700/
-    return cast(FrameType, cast(FrameType, inspect.currentframe()).f_back.f_back).f_code.co_name
+    return cast(FrameType, cast(FrameType, inspect.currentframe()).f_back.f_back).f_code.co_name  # type: ignore
 
 
 def get_id_profile_url(id: uuid.UUID) -> str:
@@ -96,21 +93,6 @@ def get_now() -> datetime:
 def chop_delta_microseconds(delta: timedelta) -> timedelta:
     """Removes microsevonds from a timedelta"""
     return delta - timedelta(microseconds=delta.microseconds)
-
-
-def bind_sqlalchemy_events() -> None:
-    """Binds event listeners on sqlalchemy to log queries and times"""
-
-    @sa_event.listens_for(Engine, "before_cursor_execute")
-    def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
-        conn.info.setdefault("query_start_time", []).append(time.time())
-        logger.debug("Start Query: %s", statement)
-
-    @sa_event.listens_for(Engine, "after_cursor_execute")
-    def after_cursor_execute(conn, cursor, statement, parameters, context, executemany):
-        total = time.time() - conn.info["query_start_time"].pop(-1)
-        logger.debug("Query Complete!")
-        logger.debug("Total Time: %f", total)
 
 
 def cleanup_database_task_profiles_basedon_retention() -> None:
