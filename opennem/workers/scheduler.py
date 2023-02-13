@@ -18,6 +18,7 @@ from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
 from opennem.clients.slack import slack_message
+from opennem.core.profiler import cleanup_database_task_profiles_basedon_retention
 from opennem.core.startup import worker_startup_alert
 from opennem.crawl import run_crawl
 from opennem.crawlers.apvi import APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
@@ -273,3 +274,9 @@ def run_energy_runner_hours() -> None:
 @huey.lock_task("run_clean_tmp_dir")
 def run_clean_tmp_dir() -> None:
     clean_tmp_dir()
+
+
+@huey.periodic_task(crontab(hour="22", minute="55"))
+@huey.lock_task("run_cleanup_database_task_profiles_basedon_retention")
+def run_cleanup_database_task_profiles_basedon_retention() -> None:
+    cleanup_database_task_profiles_basedon_retention()
