@@ -7,6 +7,7 @@ from typing import Any
 
 from opennem import DATA_DIR_PATH
 from opennem.controllers.nem import store_aemo_tableset
+from opennem.controllers.schema import ControllerReturn
 from opennem.core.parsers.aemo.filenames import parse_aemo_filename
 from opennem.core.parsers.aemo.mms import parse_aemo_urls
 from opennem.core.parsers.dirlisting import DirlistingEntryType, get_dirlisting
@@ -18,7 +19,7 @@ AEMO_BASE_URL = "https://nemweb.com.au/Reports/CURRENT/"
 AEMO_MAP_PATH = DATA_DIR_PATH / "aemo_map.json"
 
 
-def check_tableset() -> None:
+def check_tableset() -> ControllerReturn:
     # @TODO parse into MMS schema
     url = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/PUBLIC_DISPATCHSCADA_202204081455_0000000360913773.zip"
 
@@ -37,16 +38,10 @@ class AEMOMMSMapSet:
 
 
 def parse_aemo_dirlisting(dirurl: str, mapset: AEMOMMSMapSet | None = None) -> AEMOMMSMapSet:
-
     if not mapset:
         mapset = AEMOMMSMapSet()
 
-    try:
-        dirlist = get_dirlisting(dirurl)
-    except Exception as e:
-        logger.error(f"Error download {dirurl}")
-        logger.debug(e)
-        return None
+    dirlist = get_dirlisting(dirurl)
 
     for i in dirlist.entries:
         if i.entry_type == DirlistingEntryType.directory:
