@@ -1,7 +1,8 @@
 import logging
+from io import BytesIO
 from itertools import groupby
 from pathlib import Path
-from typing import IO, Any, Dict, List, Optional, Union
+from typing import IO, Any
 
 from openpyxl import load_workbook
 
@@ -22,6 +23,8 @@ from opennem.schema.stations import StationSet
 logger = logging.getLogger("opennem.parsers.aemo.rel")
 
 participant_keys = ["name", "abn"]
+
+AEMO_REL_GENERATOR_SHEETNAME = "Generators and Scheduled Loads"
 
 FACILITY_KEYS = [
     "participant",
@@ -44,10 +47,7 @@ FACILITY_KEYS = [
 ]
 
 
-def lookup_station_code(
-    duids: List[str], station_name: str, station_code_map: dict
-) -> Optional[str]:
-
+def lookup_station_code(duids: list[str], station_name: str, station_code_map: dict) -> str | None:
     station_code = None
     station_name = station_name.strip()
 
@@ -68,12 +68,16 @@ def lookup_station_code(
     return station_code
 
 
-def rel_grouper(records: List[Dict], station_code_map: Dict) -> Dict[str, Any]:
+def rel_grouper(records: list[dict], station_code_map: dict) -> dict[str, Any]:
     records_parsed = []
 
     for _id, i in enumerate(records, start=2000):
         name = station_name_cleaner(i["station_name"])
         duid = normalize_duid(i["duid"])
+
+        if not duid:
+            raise Exception(f"No duid for {name}")
+
         unit = parse_unit_duid(i["unit_no"], duid)
         fueltech = lookup_fueltech(
             i["fuel_source_primary"],
@@ -101,7 +105,7 @@ def rel_grouper(records: List[Dict], station_code_map: Dict) -> Dict[str, Any]:
             }
         )
 
-    grouped_records: Dict[str, Any] = {}
+    grouped_records: dict[str, Any] = {}
 
     for key, v in groupby(records_parsed, key=lambda v: v["station_code"]):
         station_code = str(key)
@@ -112,21 +116,17 @@ def rel_grouper(records: List[Dict], station_code_map: Dict) -> Dict[str, Any]:
 
         grouped_records[station_code] += list(v)
 
-    coded_records: Dict[str, Any] = {}
+    coded_records: dict[str, Any] = {}
     _id = 2000
 
     for station_code, rel in grouped_records.items():
         station_name = rel[0]["network_name"]
 
         if station_code in coded_records:
-            raise Exception(
-                "Code conflict: {}. {} {}".format(
-                    station_code, station_name, coded_records[station_code]
-                )
-            )
+            raise Exception(f"Code conflict: {station_code}. {station_name} {coded_records[station_code]}")
 
         if not station_code:
-            raise Exception("Unmapped station: {}".format(rel))
+            raise Exception(f"Unmapped station: {rel}")
 
         coded_records[station_code] = {
             "name": station_name_cleaner(station_name),
@@ -141,11 +141,11 @@ def rel_grouper(records: List[Dict], station_code_map: Dict) -> Dict[str, Any]:
     return coded_records
 
 
-def load_rel() -> List[Dict[str, Any]]:
+def load_rel() -> list[dict[str, Any]]:
     aemo_path: Path = Path(PROJECT_DATA_PATH) / "aemo" / "nem_rel_202108.xls"
 
     if not aemo_path.is_file():
-        raise Exception("Not found: {}".format(aemo_path))
+        raise Exception(f"Not found: {aemo_path}")
 
     wb = load_workbook(aemo_path, data_only=True)
 
@@ -190,18 +190,14 @@ def rel_export() -> None:
     with open("data/rel.json", "w") as fh:
         fh.write(nem_rel.json(indent=4))
 
-    logger.info("Wrote {} records".format(nem_rel.length))
+    logger.info(f"Wrote {nem_rel.length} records")
 
 
 # new
 
-from io import BytesIO, open
 
-AEMO_REL_GENERATOR_SHEETNAME = "Generators and Scheduled Loads"
-
-
-def parse_aemo_rel_generators(filename: Union[str, Path, BytesIO]) -> StationSet:
-    fh: Optional[BytesIO] = None
+def parse_aemo_rel_generators(filename: str | Path | BytesIO) -> StationSet:
+    fh: BytesIO | None = None
 
     if isinstance(filename, str):
         filename = Path(filename)
@@ -230,7 +226,7 @@ def parse_aemo_rel_generators(filename: Union[str, Path, BytesIO]) -> StationSet
         _row_schema = AEMORelGeneratorRecord(**_row_dict)
         generator_records.append(_row_schema)
 
-    s = StationSet()
+    # s = StationSet()
 
     return generator_records
 
