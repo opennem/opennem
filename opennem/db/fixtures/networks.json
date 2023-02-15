@@ -52,5 +52,16 @@
     "offset": 600,
     "interval_size": 30,
     "export_set": false
+  },
+  {
+    "code": "OPENNEM_ROOFTOP_BACKFILL",
+    "country": "au",
+    "label": "OpenNEM Rooftop Backfill",
+    "timezone": "Australia/Sydney",
+    "timezone_database": "AEST",
+    "network_price": "NEM",
+    "offset": 600,
+    "interval_size": 30,
+    "export_set": false
   }
 ]

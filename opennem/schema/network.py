@@ -150,6 +150,7 @@ NetworkAEMORooftop = NetworkSchema(
 
 # This is the network for derived solar_rooftop data
 # that predates AEMORooftop
+# @NOTE deprecated
 NetworkAEMORooftopBackfill = NetworkSchema(
     code="AEMO_ROOFTOP_BACKFILL",
     label="AEMO Rooftop Backfill",
@@ -161,6 +162,17 @@ NetworkAEMORooftopBackfill = NetworkSchema(
     fueltechs=["solar_rooftop"],
 )
 
+# This is the new backfill network derived from APVI data
+NetworkOpenNEMRooftopBackfill = NetworkSchema(
+    code="OPENNEM_ROOFTOP_BACKFILL",
+    label="OpenNEM Rooftop Backfill",
+    country="au",
+    timezone="Australia/Sydney",
+    timezone_database="AEST",
+    offset=600,
+    interval_size=30,
+    fueltechs=["solar_rooftop"],
+)
 
 NetworkNEM = NetworkSchema(
     code="NEM",
