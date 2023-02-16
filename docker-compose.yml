@@ -12,7 +12,7 @@ services:
   postgres:
     # image: opennem/database:dev
     # image: timescale/timescaledb-ha:pg14-ts2.7-latest
-    image: timescale/timescaledb-postgis:latest
+    image: timescale/timescaledb-ha:pg15-latest
     shm_size: "2GB"
     restart: unless-stopped
     env_file: ./.env
