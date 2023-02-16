@@ -180,7 +180,8 @@ def log_task_profile_to_database(
                         time_end,
                         errors,
                         retention_period,
-                        level
+                        level,
+                        invokee_name
                     ) VALUES (
                         :id,
                         :task_name,
@@ -188,7 +189,8 @@ def log_task_profile_to_database(
                         :time_end,
                         :errors,
                         :retention_period,
-                        :level
+                        :level,
+                        :invokee_name
                     ) returning id
                     """
             ),
@@ -199,6 +201,7 @@ def log_task_profile_to_database(
             errors=0,
             retention_period=retention_period.value if retention_period else "",
             level=level.name.lower() if level else "",
+            invokee_name=invokee_name.lower() if invokee_name else "",
         )
 
     return id
