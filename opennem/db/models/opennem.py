@@ -140,6 +140,9 @@ class TaskProfile(Base):
     # level of message - also an enum but stores as text
     level = Column(Text, nullable=True, index=True)
 
+    # level of message - also an enum but stores as text
+    invokee_name = Column(Text, nullable=True, index=True)
+
 
 class FuelTechGroup(Base, BaseModel):
     __tablename__ = "fueltech_group"
@@ -760,7 +763,6 @@ class FacilityScada(Base, BaseModel):
 
 
 class BalancingSummary(Base, BaseModel):
-
     __tablename__ = "balancing_summary"
 
     network_id = Column(
