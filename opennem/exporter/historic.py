@@ -45,9 +45,7 @@ class ExporterHistoricException(Exception):
 
 @profile_task(
     send_slack=False,
-    include_args=False,
     message_fmt="Exported historic intervals for `{network.code}`, region `{network_region.code}` week num `{week_number}`",
-    message_prepend=True,
 )
 def export_network_intervals_for_week(
     week_start: datetime,
@@ -142,7 +140,7 @@ def export_network_intervals_for_week(
     return write_output(save_path, stat_set)
 
 
-@profile_task(send_slack=True, include_args=True)
+@profile_task(send_slack=False)
 def export_historic_intervals(
     limit: int | None = None, networks: list[NetworkSchema] = [], network_region_code: str | None = None
 ) -> None:
@@ -153,7 +151,6 @@ def export_historic_intervals(
     session = get_scoped_session()
 
     for network in networks:
-
         if not network.data_first_seen:
             raise ExporterHistoricException(f"Network {network.code} has no data first seen")
 
@@ -183,7 +180,7 @@ def export_historic_intervals(
                     raise ExporterHistoricException(f"export_historic_intervals error: {e}")
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=False)
 def export_historic_for_year_and_week_no(
     year: int, week_no: int, networks: list[NetworkSchema], network_region_code: str | None = None
 ) -> None:
