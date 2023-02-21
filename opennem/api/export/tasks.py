@@ -59,9 +59,7 @@ logger = logging.getLogger("opennem.export.tasks")
 
 @profile_task(
     send_slack=False,
-    include_args=True,
     message_fmt="{invokee_method_name} ran export_power {priority}",
-    message_prepend=True,
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
@@ -171,9 +169,8 @@ def export_power(
 
 
 @profile_task(
-    send_slack=True,
+    send_slack=False,
     message_fmt="{invokee_method_name} ran energy export",
-    message_prepend=True,
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
@@ -232,7 +229,6 @@ def export_energy(
         )
 
         if energy_stat.year:
-
             if latest and energy_stat.year != CURRENT_YEAR:
                 continue
 
@@ -415,7 +411,6 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
             stat_set.append_set(demand_energy_and_value)
 
             if network.has_interconnectors:
-
                 if settings.flows_and_emissions_v2:
                     interconnector_flows = energy_interconnector_flows_and_emissions_v2(
                         time_series=time_series,
@@ -455,7 +450,6 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
 @profile_task(
     send_slack=True,
     message_fmt="{invokee_method_name} ran export all daily tasks export",
-    message_prepend=True,
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
@@ -479,7 +473,6 @@ def export_all_daily(networks: list[NetworkSchema] = [], network_region_code: st
         network_regions = network_regions.all()
 
         for network_region in network_regions:
-
             logging.info(f"Exporting for network {network.code} and region {network_region.code}")
 
             networks = [NetworkNEM, NetworkAPVI]
@@ -541,7 +534,6 @@ def export_all_daily(networks: list[NetworkSchema] = [], network_region_code: st
 @profile_task(
     send_slack=False,
     message_fmt="{invokee_method_name} ran export flows",
-    message_prepend=True,
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
@@ -575,7 +567,6 @@ def export_flows() -> None:
 @profile_task(
     send_slack=False,
     message_fmt="{invokee_method_name} ran export electricity map",
-    message_prepend=True,
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
