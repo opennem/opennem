@@ -77,11 +77,6 @@ def profile_retrieve_caller_name() -> str:
     return cast(FrameType, cast(FrameType, inspect.currentframe()).f_back.f_back).f_code.co_name  # type: ignore
 
 
-def get_id_profile_url(id: uuid.UUID) -> str:
-    """Link to internal tracing profile for a given id"""
-    return f"https://tracing.internal.opennem.org.au/profile/{settings.env.lower()}/{id}"
-
-
 def get_now() -> datetime:
     """Utility function to get now
 
@@ -191,11 +186,7 @@ def log_task_profile_to_database(
 
 def profile_task(
     send_slack: bool = False,
-    persist_profile: bool = True,
-    link_tracing: bool = False,
-    include_args: bool = False,
     message_fmt: str | None = None,
-    message_prepend: bool = True,
     level: ProfilerLevel = ProfilerLevel.NOISY,
     retention_period: ProfilerRetentionTime = ProfilerRetentionTime.FOREVER,
 ) -> Callable:
@@ -240,35 +231,21 @@ def profile_task(
 
             wall_clock_human = f"{wall_clock_time.total_seconds()}s"
 
-            id: uuid.UUID | None = None
+            id = log_task_profile_to_database(
+                task_name=task.__name__,
+                time_start=dtime_start,
+                time_end=dtime_end,
+                retention_period=retention_period,
+                level=level,
+            )
 
-            if persist_profile:
-                id = log_task_profile_to_database(
-                    task_name=task.__name__,
-                    time_start=dtime_start,
-                    time_end=dtime_end,
-                    retention_period=retention_period,
-                    level=level,
-                )
-
-            id_msg: str = ""
-
-            if link_tracing:
-                id_msg = f"({get_id_profile_url(id)})" if id else ""
-
-            # argument string
-            method_args_string: str = ""
-
-            if include_args:
-                method_args_string = format_args_into_string(args, kwargs)  # type: ignore
+            combined_arg_and_env_dict = {**locals(), **kwargs}
 
             # default message format
-            profile_message = f"[{settings.env}]{id_msg} `{task.__name__}{method_args_string}` in " f"{wall_clock_human} "
+            profile_message = f"[{settings.env}] `{task.__name__}` in " f"{wall_clock_human} "
 
             # custom message format
             if message_fmt:
-                combined_arg_and_env_dict = {**locals(), **kwargs}
-
                 logger.debug(combined_arg_and_env_dict)
 
                 custom_message = ""
@@ -278,13 +255,7 @@ def profile_task(
                 except Exception as e:
                     logger.error(e)
 
-                profile_message = (
-                    f"[{settings.env}] " + custom_message
-                    if not message_prepend
-                    else "" + f" `{task.__name__}` " + custom_message
-                    if message_prepend
-                    else "" + f" in {wall_clock_human}"
-                )
+                profile_message = f"[{settings.env}] " + custom_message + f" in {wall_clock_human}"
 
             if send_slack:
                 slack_message(profile_message)
