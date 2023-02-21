@@ -408,8 +408,6 @@ def run_flow_updates_for_date_range(date_start: datetime, date_end: datetime) ->
 @profile_task(
     send_slack=True,
     message_fmt="Ran flow updated all for last year",
-    message_prepend=True,
-    include_args=True,
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.FOREVER,
 )
