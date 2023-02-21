@@ -16,7 +16,7 @@ logger = logging.getLogger("opennem.workers.system")
 CLEAN_OLDER_THAN_HOURS = 2
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=False)
 def clean_tmp_dir(dry_run: bool = False) -> None:
     """Cleans up the temp directory for files older than CLEAN_OLDER_THAN_HOURS hours"""
     tmp_dir = Path(gettempdir())
