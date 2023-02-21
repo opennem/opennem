@@ -28,7 +28,7 @@ from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network
 logger = logging.getLogger("opennem.worker.daily")
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=False)
 def energy_runner(days: int = 1) -> None:
     """Energy Runner"""
     dmax = get_today_nem()
@@ -63,7 +63,7 @@ def run_export_for_year(year: int, network_region_code: str | None = None) -> No
 # The actual daily runners
 
 
-@profile_task(send_slack=True, include_args=True)
+@profile_task(send_slack=False)
 def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
     CURRENT_YEAR = datetime.now().year
