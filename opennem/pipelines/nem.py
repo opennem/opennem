@@ -27,8 +27,7 @@ class NemPipelineNoNewData(Exception):
 @profile_task(
     send_slack=True,
     message_fmt=(
-        "NEM pipeline for interval {run_task_output.server_latest} inserted"
-        " {run_task_output.inserted_records} records and finished in {duration}"
+        "NEM pipeline for interval {run_task_output.server_latest} inserted" " {run_task_output.inserted_records} records"
     ),
 )
 def nem_per_interval_check() -> None:
