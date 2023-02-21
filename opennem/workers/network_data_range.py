@@ -68,7 +68,7 @@ def update_network_data_ranges(data_ranges: list[NetworkDataDateRanges]) -> None
         sess.commit()
 
 
-@profile_task(send_slack=True)
+@profile_task(send_slack=False)
 def run_network_data_range_update() -> None:
     """Runs the network data range update"""
     data_ranges = get_network_data_ranges()

@@ -103,7 +103,7 @@ def exec_aggregates_network_demand_query(date_min: datetime, date_max: datetime,
     return False
 
 
-@profile_task(send_slack=True, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
+@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregates_demand_network(networks: list[NetworkSchema] | None = None) -> None:
     """Run the demand aggregates for each provided network"""
 
@@ -111,7 +111,6 @@ def run_aggregates_demand_network(networks: list[NetworkSchema] | None = None) -
         networks = [NetworkNEM, NetworkWEM]
 
     for network in networks:
-
         if not network.data_first_seen:
             logger.error(f"run_aggregates_demand_network: Network {network.code} has no data_first_seen")
             continue
@@ -119,7 +118,7 @@ def run_aggregates_demand_network(networks: list[NetworkSchema] | None = None) -
         exec_aggregates_network_demand_query(date_min=network.data_first_seen, date_max=get_today_nem(), network=network)
 
 
-@profile_task(send_slack=True, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
+@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregates_demand_network_days(days: int = 3) -> None:
     """Run the demand aggregates"""
 

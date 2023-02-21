@@ -357,7 +357,7 @@ def run_and_store_flows_for_range(date_start: datetime, date_end: datetime, netw
     return inserted_records
 
 
-@profile_task(send_slack=False, include_args=True, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
+@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_flow_update_for_interval(interval: datetime, network: NetworkSchema | None = None) -> int | None:
     """Runs and stores emission flows for a particular interval"""
 
@@ -371,10 +371,8 @@ def run_flow_update_for_interval(interval: datetime, network: NetworkSchema | No
 
 
 @profile_task(
-    send_slack=True,
+    send_slack=False,
     message_fmt="Ran emission update for day {day}",
-    message_prepend=True,
-    include_args=True,
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.FOREVER,
 )

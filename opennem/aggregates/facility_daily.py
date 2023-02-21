@@ -148,7 +148,7 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
     return result
 
 
-@profile_task(send_slack=True, include_args=True, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
+@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregates_facility_year(year: int, network: NetworkSchema) -> None:
     """Run aggregates for a single year
 
@@ -168,7 +168,7 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema) -> None:
     exec_aggregates_facility_daily_query(date_min, date_max, network)
 
 
-@profile_task(send_slack=True, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
+@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregate_facility_all_by_year(network: NetworkSchema | None = None) -> None:
     """Runs the facility aggregate for a network for all years in its range"""
     if not network or not network.data_first_seen:
@@ -181,7 +181,7 @@ def run_aggregate_facility_all_by_year(network: NetworkSchema | None = None) -> 
         run_aggregates_facility_year(year=year, network=network)
 
 
-@profile_task(send_slack=True, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
+@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregate_facility_days(days: int = 1, network: NetworkSchema | None = None) -> None:
     """Run energy sum update for yesterday. This task is scheduled
     in scheduler/db"""
