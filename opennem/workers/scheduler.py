@@ -14,7 +14,6 @@ import platform
 
 from huey import PriorityRedisHuey, crontab
 
-from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
 from opennem.clients.slack import slack_message
@@ -23,20 +22,13 @@ from opennem.core.startup import worker_startup_alert
 from opennem.crawl import run_crawl
 from opennem.crawlers.apvi import APVIRooftopMonthCrawler, APVIRooftopTodayCrawler
 from opennem.crawlers.bom import BOMCapitals
-from opennem.crawlers.nemweb import (
-    AEMONEMDispatchActualGEN,
-    AEMONEMNextDayDispatch,
-    AEMONemwebDispatchIS,
-    AEMONemwebRooftop,
-    AEMONemwebRooftopForecast,
-    AEMONemwebTradingIS,
-    AEMONNemwebDispatchScada,
-)
+from opennem.crawlers.nemweb import AEMONEMDispatchActualGEN, AEMONEMNextDayDispatch, AEMONemwebRooftopForecast
 from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
+from opennem.pipelines.nem import nem_per_interval_check
 from opennem.schema.network import NetworkNEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import daily_runner, energy_runner_hours
@@ -67,42 +59,15 @@ huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 
 logger = logging.getLogger("openenm.scheduler")
 
-regular_schedule_minute_interval = 1
-frequent_schedule_minute_interval = 5
-
-if IS_DEV:
-    regular_schedule_minute_interval = 5
-    frequent_schedule_minute_interval = 5
-
 # send the startup message to slack
 worker_startup_alert()
 
 
 # crawler tasks live
-@huey.periodic_task(crontab(minute=f"*/{regular_schedule_minute_interval}"), priority=10)
+@huey.periodic_task(crontab(minute="*/1"), priority=10, retries=5, retry_delay=30)
 @huey.lock_task("crawler_live_nemweb_dispatch_scada")
 def crawl_run_aemo_nemweb_dispatch_scada() -> None:
-    dispatch_scada = run_crawl(AEMONNemwebDispatchScada)
-    dispatch_is = run_crawl(AEMONemwebDispatchIS)
-    trading_is = run_crawl(AEMONemwebTradingIS)
-    rooftop = run_crawl(AEMONemwebRooftop)
-
-    if (
-        (dispatch_scada and dispatch_scada.inserted_records)
-        or (dispatch_is and dispatch_is.inserted_records)
-        or (trading_is and trading_is.inserted_records)
-        or (rooftop and rooftop.inserted_records)
-    ):
-        if dispatch_scada and dispatch_scada.server_latest:
-            run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
-
-        export_power()
-
-    if dispatch_scada and dispatch_scada.inserted_records:
-        slack_message(
-            f"[{settings.env}] New NEM dispatch data for interval `{dispatch_scada.last_modified}`"
-            f" with `{dispatch_scada.inserted_records}` inserted records and updated flow tasks"
-        )
+    nem_per_interval_check()
 
 
 @huey.periodic_task(crontab(minute="*/10"), priority=1)
