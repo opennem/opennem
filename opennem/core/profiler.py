@@ -273,7 +273,7 @@ def run_outer_test_task() -> None:
     test_task(message="test inner")
 
 
-@profile_task(send_slack=True, message_fmt="arg={message}=", message_prepend=True)
+@profile_task(send_slack=True, message_fmt="arg={message}=")
 def test_task(message: str | None = None) -> None:
     """Test task"""
     # time.sleep(random.randint(1, ))
