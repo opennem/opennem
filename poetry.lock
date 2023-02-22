@@ -2389,7 +2389,7 @@ postgres = ["psycopg2"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "aade903582977e3978a8483fd93f5644d6bd32fdef81f78a127d78152b6f6e1e"
+content-hash = "367b46691f28e693406d368c75e85bf73206a6925cb0fbbb9b1d839def6c8989"
 
 [metadata.files]
 aiodns = [
