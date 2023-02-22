@@ -41,7 +41,7 @@ class OpennemSettings(BaseSettings):
     # if we're doing a dry run
     dry_run: bool = False
 
-    cache_url: RedisDsn = "redis://127.0.0.1"
+    cache_url: RedisDsn = RedisDsn("redis://127.0.0.1")
 
     sentry_url: str | None
 
@@ -158,7 +158,6 @@ class OpennemSettings(BaseSettings):
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> str | None:
-
         _log_value = log_value.upper().strip()
 
         if _log_value not in SUPPORTED_LOG_LEVEL_NAMES:
