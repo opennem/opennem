@@ -15,24 +15,21 @@ from huey import PriorityRedisHuey, crontab
 
 from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
-from opennem.clients.slack import slack_message
 from opennem.core.profiler import cleanup_database_task_profiles_basedon_retention
 from opennem.core.startup import worker_startup_alert
 from opennem.crawl import run_crawl
-from opennem.crawlers.apvi import APVIRooftopMonthCrawler
 from opennem.crawlers.bom import BOMCapitals
-from opennem.crawlers.nemweb import AEMONEMDispatchActualGEN, AEMONEMNextDayDispatch, AEMONemwebRooftopForecast
 from opennem.crawlers.wem import WEMBalancing, WEMFacilityScada
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.pipelines.crontab import network_interval_crontab
-from opennem.pipelines.nem import nem_per_interval_check
+from opennem.pipelines.nem import nem_per_day_check, nem_per_interval_check
 from opennem.pipelines.wem import wem_per_interval_check
 from opennem.schema.network import NetworkNEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
-from opennem.workers.daily import daily_runner, energy_runner_hours
+from opennem.workers.daily import energy_runner_hours
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.facility_status import update_opennem_facility_status
@@ -77,31 +74,15 @@ def crawler_run_wem_facility_scada() -> None:
         export_power(priority=PriorityType.live)
 
 
-@huey.periodic_task(crontab(hour="*/6", minute="33"), retries=5, retry_delay=90)
-@huey.lock_task("crawler_run_aemo_nemweb_rooftop_forecast")
-def crawler_run_aemo_nemweb_rooftop_forecast() -> None:
-    run_crawl(AEMONemwebRooftopForecast)
-    run_crawl(APVIRooftopMonthCrawler)
-
-
 # daily tasks
 # run daily morning task
 
 
 # Checks for the overnights from aemo and then runs the daily runner
-@huey.periodic_task(crontab(hour="*/1", minute="20,30"), retries=3, retry_delay=120, priority=50)
-@huey.lock_task("nem_overnight_schedule_crawl")
-def nem_overnight_schedule_crawl() -> None:
-    dispatch_actuals = run_crawl(AEMONEMDispatchActualGEN)
-    dispatch_gen = run_crawl(AEMONEMNextDayDispatch)
-
-    if (dispatch_actuals and dispatch_actuals.inserted_records) or (dispatch_gen and dispatch_gen.inserted_records):
-        total_records = dispatch_actuals.inserted_records if dispatch_actuals and dispatch_actuals.inserted_records else 0
-        total_records += dispatch_gen.inserted_records if dispatch_gen and dispatch_gen.inserted_records else 0
-
-        slack_message(f"[{settings.env}] Obtained overnight NEM data with {total_records} records. Triggering daily runner")
-
-        daily_runner()
+@huey.periodic_task(crontab(hour="5,15", minute="20"), retries=3, retry_delay=120, priority=50)
+@huey.lock_task("nem_overnight_check")
+def nem_overnight_check() -> None:
+    nem_per_day_check()
 
 
 # run summary
