@@ -79,7 +79,7 @@ def crawler_run_wem_facility_scada() -> None:
 
 
 # Checks for the overnights from aemo and then runs the daily runner
-@huey.periodic_task(crontab(hour="5,15", minute="20"), retries=3, retry_delay=120, priority=50)
+@huey.periodic_task(crontab(hour="5,15", minute="20"), retries=3, retry_delay=60, priority=50)
 @huey.lock_task("nem_overnight_check")
 def nem_overnight_check() -> None:
     nem_per_day_check()
