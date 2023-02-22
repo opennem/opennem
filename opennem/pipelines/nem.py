@@ -60,7 +60,7 @@ def nem_per_interval_check() -> ControllerReturn:
 def nem_rooftop_crawl() -> None:
     """Runs the NEM rooftop crawler every rooftop interval (30 min)"""
     rooftop = run_crawl(AEMONemwebRooftop)
-    rooftop = run_crawl(AEMONemwebRooftopForecast)
+    _ = run_crawl(AEMONemwebRooftopForecast)
 
     if not rooftop or not rooftop.inserted_records:
         raise NemPipelineNoNewData("No new rooftop data")

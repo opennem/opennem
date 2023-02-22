@@ -19,15 +19,14 @@ from opennem.core.profiler import cleanup_database_task_profiles_basedon_retenti
 from opennem.core.startup import worker_startup_alert
 from opennem.crawl import run_crawl
 from opennem.crawlers.bom import BOMCapitals
-from opennem.crawlers.wem import WEMBalancing, WEMFacilityScada
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.pipelines.crontab import network_interval_crontab
-from opennem.pipelines.nem import nem_per_day_check, nem_per_interval_check
+from opennem.pipelines.nem import nem_per_day_check, nem_per_interval_check, nem_rooftop_crawl
 from opennem.pipelines.wem import wem_per_interval_check
-from opennem.schema.network import NetworkNEM, NetworkWEM
+from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkWEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import energy_runner_hours
 from opennem.workers.daily_summary import run_daily_fueltech_summary
@@ -57,25 +56,18 @@ def crawler_run_wem_per_interval() -> None:
     wem_per_interval_check()
 
 
+@huey.periodic_task(
+    network_interval_crontab(network=NetworkAEMORooftop, number_minutes=1), priority=50, retries=5, retry_delay=15
+)
+@huey.lock_task("crawler_run_nem_rooftop_per_interval")
+def crawler_run_nem_rooftop_per_interval() -> None:
+    nem_rooftop_crawl()
+
+
 @huey.periodic_task(crontab(minute="*/10"), priority=1)
 @huey.lock_task("crawler_run_bom_capitals")
 def crawler_run_bom_capitals() -> None:
     run_crawl(BOMCapitals)
-
-
-# crawler tasks frequent
-@huey.periodic_task(crontab(hour="*/1", minute="30"))
-@huey.lock_task("crawler_run_wem_facility_scada")
-def crawler_run_wem_facility_scada() -> None:
-    wem_scada = run_crawl(WEMFacilityScada)
-    wem_balancing = run_crawl(WEMBalancing)
-
-    if (wem_scada and wem_scada.inserted_records) or (wem_balancing and wem_balancing.inserted_records):
-        export_power(priority=PriorityType.live)
-
-
-# daily tasks
-# run daily morning task
 
 
 # Checks for the overnights from aemo and then runs the daily runner
