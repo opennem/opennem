@@ -6,7 +6,6 @@ All the processing pipelines for the NEM network
 import logging
 
 from opennem.aggregates.network_flows import run_flow_update_for_interval
-from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_power
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
@@ -17,7 +16,8 @@ from opennem.crawlers.nemweb import (  # AEMONEMDispatchActualGEN,; AEMONEMNextD
     AEMONemwebTradingIS,
     AEMONNemwebDispatchScada,
 )
-from opennem.schema.network import NetworkNEM
+from opennem.pipelines.export import run_export_power_latest_for_network
+from opennem.schema.network import NetworkAU, NetworkNEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
 
 logger = logging.getLogger("opennem.pipelines.nem")
@@ -27,19 +27,6 @@ class NemPipelineNoNewData(Exception):
     """ """
 
     pass
-
-
-def run_export_power_latest_for_network(network_region_code: str | None = None) -> None:
-    """Run export for latest year"""
-    export_map = get_export_map()
-    latest_power_exports = export_map.get_by_stat_type(StatType.power).get_by_priority(PriorityType.live).get_by_network_id("NEM")
-
-    if network_region_code:
-        latest_power_exports = latest_power_exports.get_by_network_region(network_region_code)
-
-    logger.info(f"Running {len(latest_power_exports.resources)} exports")
-
-    export_power(stats=latest_power_exports.resources)
 
 
 @profile_task(
@@ -52,29 +39,19 @@ def run_export_power_latest_for_network(network_region_code: str | None = None) 
 def nem_per_interval_check() -> ControllerReturn:
     """This task runs per interval and checks for new data"""
     dispatch_scada = run_crawl(AEMONNemwebDispatchScada)
-    dispatch_is = run_crawl(AEMONemwebDispatchIS)
-    trading_is = run_crawl(AEMONemwebTradingIS)
+    run_crawl(AEMONemwebDispatchIS)
+    run_crawl(AEMONemwebTradingIS)
 
     if not dispatch_scada or not dispatch_scada.inserted_records:
         raise NemPipelineNoNewData("No new dispatch scada data")
 
-    if (
-        (dispatch_scada and dispatch_scada.inserted_records)
-        or (dispatch_is and dispatch_is.inserted_records)
-        or (trading_is and trading_is.inserted_records)
-    ):
-        if dispatch_scada and dispatch_scada.server_latest:
-            run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
+    if dispatch_scada and dispatch_scada.server_latest:
+        run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
 
-        run_export_power_latest_for_network()
+    run_export_power_latest_for_network(network=NetworkNEM)
+    run_export_power_latest_for_network(network=NetworkAU)
 
-        return dispatch_scada
-
-    # if dispatch_scada and dispatch_scada.inserted_records:
-    #     slack_message(
-    #         f"[{settings.env}] New NEM dispatch data for interval `{dispatch_scada.server_latest}`"
-    #         f" with `{dispatch_scada.inserted_records}` inserted records and updated flow tasks"
-    #     )
+    return dispatch_scada
 
 
 def nem_rooftop_crawl() -> None:
