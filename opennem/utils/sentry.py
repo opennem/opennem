@@ -4,9 +4,10 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from opennem.clients.bom import BOMParsingException
+from opennem.pipelines.nem import NemPipelineNoNewData
 from opennem.settings import settings
 
-_SENTRY_IGNORE_EXCEPTION_TYPES = [BOMParsingException, HTTPException]
+_SENTRY_IGNORE_EXCEPTION_TYPES = [BOMParsingException, HTTPException, NemPipelineNoNewData]
 
 
 def _sentry_before_send(event, hint):
