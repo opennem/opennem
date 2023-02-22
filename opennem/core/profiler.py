@@ -252,10 +252,9 @@ def profile_task(
 
                 try:
                     custom_message = message_fmt.format(**combined_arg_and_env_dict)
+                    profile_message = f"[{settings.env}] " + custom_message + f" in {wall_clock_human}"
                 except Exception as e:
                     logger.error(e)
-
-                profile_message = f"[{settings.env}] " + custom_message + f" in {wall_clock_human}"
 
             if send_slack:
                 slack_message(profile_message)
