@@ -13,7 +13,7 @@ _SENTRY_IGNORE_EXCEPTION_TYPES = [BOMParsingException, HTTPException, NemPipelin
 def _sentry_before_send(event, hint):
     """Hook to sentry sending and excelude some exception types"""
     if "exc_info" in hint:
-        exc_type, exc_value, tb = hint["exc_info"]
+        _, exc_value, _ = hint["exc_info"]
         if isinstance(exc_value, _SENTRY_IGNORE_EXCEPTION_TYPES):
             return None
     return event
@@ -27,4 +27,7 @@ def setup_sentry() -> None:
             environment=settings.env,
             before_send=_sentry_before_send,
             integrations=[RedisIntegration(), SqlalchemyIntegration()],
+            _experiments={
+                "profiles_sample_rate": 1.0,
+            },
         )
