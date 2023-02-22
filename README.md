@@ -39,6 +39,7 @@ With poetry:
 ```sh
 $ poetry install
 $ poetry shell
+$ alembic upgrade head
 $ ./scripts/init.py
 ```
 
@@ -48,6 +49,7 @@ With pip + venv:
 $ pip -m venv .venv
 $ pip install -r requirements.txt
 $ source .venv/bin/activate
+$ alembic upgrade head
 $ ./scripts/init.py
 ```
 
@@ -55,27 +57,6 @@ $ ./scripts/init.py
 
 The init script will setup all facilities from the latest `stations.json` file - crawl the last 7 days of data and run all the aggregate methods required for output.
 
-## Install
-
-You can install this project with python `pip`:
-
-```sh
-$ pip install opennem
-```
-
-Or alternatively with docker:
-
-```
-$ docker pull opennem/opennem
-```
-
-Bundled with sqlite support. Other database drivers are optional and not installed by default. Install a supported database driver:
-
-Postgres:
-
-```sh
-$ pip install psycopg2
-```
 
 ## Usage
 
