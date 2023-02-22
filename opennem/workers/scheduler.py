@@ -51,7 +51,7 @@ worker_startup_alert()
 
 
 # crawler tasks live
-@huey.periodic_task(crontab(minute="*/1"), priority=10, retries=5, retry_delay=30)
+@huey.periodic_task(crontab(minute="*/5"), priority=50, retries=5, retry_delay=15)
 @huey.lock_task("crawler_run_nem_per_interval")
 def crawler_run_nem_per_interval() -> None:
     nem_per_interval_check()

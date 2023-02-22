@@ -8,6 +8,7 @@ import logging
 from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_power
+from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
 from opennem.crawl import run_crawl
 from opennem.crawlers.nemweb import (  # AEMONEMDispatchActualGEN,; AEMONEMNextDayDispatch,; AEMONemwebRooftopForecast,
@@ -48,11 +49,14 @@ def run_export_power_latest_for_network(network_region_code: str | None = None) 
         " {run_task_output.inserted_records} records for {run_task_output.server_latest} interval"
     ),
 )
-def nem_per_interval_check() -> None:
+def nem_per_interval_check() -> ControllerReturn:
     """This task runs per interval and checks for new data"""
     dispatch_scada = run_crawl(AEMONNemwebDispatchScada)
     dispatch_is = run_crawl(AEMONemwebDispatchIS)
     trading_is = run_crawl(AEMONemwebTradingIS)
+
+    if not dispatch_scada or not dispatch_scada.inserted_records:
+        raise NemPipelineNoNewData("No new dispatch scada data")
 
     if (
         (dispatch_scada and dispatch_scada.inserted_records)
