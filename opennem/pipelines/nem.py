@@ -45,8 +45,8 @@ def run_export_power_latest_for_network(network_region_code: str | None = None) 
 @profile_task(
     send_slack=True,
     message_fmt=(
-        "NEM per_interval pipeline processed"
-        " {run_task_output.inserted_records} records for {run_task_output.server_latest} interval"
+        "`NEM`: per_interval pipeline processed"
+        " `{run_task_output.inserted_records}` new records for interval `{run_task_output.server_latest}`"
     ),
 )
 def nem_per_interval_check() -> ControllerReturn:
