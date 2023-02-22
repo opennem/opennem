@@ -5,17 +5,11 @@ Everything that can be changed is set here and can be overwritten with ENV setti
 """
 from datetime import timezone as pytimezone
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from pydantic import BaseSettings
 from pydantic.class_validators import validator
 
 from opennem.schema.types import PostgresSqlAlchemyDsn
-
-if TYPE_CHECKING:
-    RedisDsn = str
-else:
-    from pydantic import RedisDsn
 
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
@@ -41,7 +35,7 @@ class OpennemSettings(BaseSettings):
     # if we're doing a dry run
     dry_run: bool = False
 
-    cache_url: RedisDsn = RedisDsn("redis://127.0.0.1")
+    cache_url: str = "redis://127.0.0.1"
 
     sentry_url: str | None
 

@@ -37,12 +37,7 @@ from opennem.workers.facility_status import update_opennem_facility_status
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
 
-redis_host = None
-
-if settings.cache_url:
-    redis_host = settings.cache_url.host  # type: ignore
-
-huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
+huey = PriorityRedisHuey("opennem.scheduler", url=settings.cache_url)
 
 logger = logging.getLogger("openenm.scheduler")
 
