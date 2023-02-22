@@ -10,7 +10,6 @@ Primary scheduler runs:
 
 """
 import logging
-import platform
 
 from huey import PriorityRedisHuey, crontab
 
@@ -38,23 +37,11 @@ from opennem.workers.facility_status import update_opennem_facility_status
 from opennem.workers.network_data_range import run_network_data_range_update
 from opennem.workers.system import clean_tmp_dir
 
-# Py 3.8+ on MacOS changed the default multiprocessing model
-if platform.system() == "Darwin":
-    import multiprocessing
-
-    try:
-        multiprocessing.set_start_method("fork")
-    except RuntimeError:
-        # sometimes it has already been set by
-        # other libs
-        pass
-
 redis_host = None
 
 if settings.cache_url:
-    redis_host = settings.cache_url.host
+    redis_host = settings.cache_url.host  # type: ignore
 
-# huey = PriorityRedisHuey("opennem.scheduler", host=redis_host, immediate=True, immediate_use_memory=False)
 huey = PriorityRedisHuey("opennem.scheduler", host=redis_host)
 
 logger = logging.getLogger("openenm.scheduler")
@@ -65,8 +52,8 @@ worker_startup_alert()
 
 # crawler tasks live
 @huey.periodic_task(crontab(minute="*/1"), priority=10, retries=5, retry_delay=30)
-@huey.lock_task("crawler_live_nemweb_dispatch_scada")
-def crawl_run_aemo_nemweb_dispatch_scada() -> None:
+@huey.lock_task("crawler_run_nem_per_interval")
+def crawler_run_nem_per_interval() -> None:
     nem_per_interval_check()
 
 
