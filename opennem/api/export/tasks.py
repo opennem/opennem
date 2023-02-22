@@ -59,7 +59,6 @@ logger = logging.getLogger("opennem.export.tasks")
 
 @profile_task(
     send_slack=False,
-    message_fmt="{invokee_method_name} ran export_power {priority}",
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
@@ -170,7 +169,6 @@ def export_power(
 
 @profile_task(
     send_slack=False,
-    message_fmt="{invokee_method_name} ran energy export",
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
