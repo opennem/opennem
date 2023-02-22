@@ -27,7 +27,7 @@ from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.pipelines.crontab import network_interval_crontab
 from opennem.pipelines.nem import nem_per_day_check, nem_per_interval_check
 from opennem.pipelines.wem import wem_per_interval_check
-from opennem.schema.network import NetworkNEM
+from opennem.schema.network import NetworkNEM, NetworkWEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import energy_runner_hours
 from opennem.workers.daily_summary import run_daily_fueltech_summary
@@ -51,7 +51,7 @@ def crawler_run_nem_per_interval() -> None:
     nem_per_interval_check()
 
 
-@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=15)
+@huey.periodic_task(network_interval_crontab(network=NetworkWEM, number_minutes=1), priority=50, retries=5, retry_delay=15)
 @huey.lock_task("crawler_run_wem_per_interval")
 def crawler_run_wem_per_interval() -> None:
     wem_per_interval_check()

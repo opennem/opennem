@@ -4,8 +4,8 @@ import logging
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
 from opennem.crawl import run_crawl
-from opennem.crawlers.apvi import APVIRooftopTodayCrawler
-from opennem.crawlers.wem import WEMBalancingLive, WEMFacilityScadaLive
+from opennem.crawlers.apvi import APVIRooftopLatestCrawler
+from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.pipelines.nem import NemPipelineNoNewData
 from opennem.schema.network import NetworkWEM
@@ -23,20 +23,17 @@ logger = logging.getLogger("opennem.pipelines.wem")
 )
 def wem_per_interval_check() -> ControllerReturn:
     """This task runs per interval and checks for new data"""
-    apvi = run_crawl(APVIRooftopTodayCrawler)
-    wem_balancing = run_crawl(WEMBalancingLive)
+    _ = run_crawl(APVIRooftopLatestCrawler)
+    _ = run_crawl(WEMBalancingLive)
     wem_scada = run_crawl(WEMFacilityScadaLive)
+
+    # non-live wem data
+    _ = run_crawl(WEMFacilityScada)
+    _ = run_crawl(WEMBalancing)
 
     if not wem_scada or not wem_scada.inserted_records:
         raise NemPipelineNoNewData("No WEM pipeline data")
 
-    if (
-        (apvi and apvi.inserted_records)
-        or (wem_balancing and wem_balancing.inserted_records)
-        or (wem_scada and wem_scada.inserted_records)
-    ):
-        run_export_power_latest_for_network(network=NetworkWEM)
+    run_export_power_latest_for_network(network=NetworkWEM)
 
-        return wem_scada
-
-    raise NemPipelineNoNewData("No WEM pipeline data")
+    return wem_scada
