@@ -92,7 +92,6 @@ def load_crawlers() -> CrawlerSet:
         ]
 
     for crawler_inst in crawler_definitions:
-
         _meta = crawler_get_all_meta(crawler_inst.name)
 
         if not _meta:
@@ -156,7 +155,7 @@ def run_crawl(
     # run here
     has_errors = False
 
-    logger.info(f"Inserted {cr.inserted_records} of {cr.total_records} records")
+    logger.info(f"{crawler.name} Inserted {cr.inserted_records} of {cr.total_records} records")
 
     if cr.errors > 0:
         has_errors = True
