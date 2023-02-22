@@ -1,5 +1,4 @@
 import logging
-from typing import Dict, Optional
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.db import SessionLocal
@@ -33,11 +32,17 @@ STATE_NETWORK_REGION_MAP = [
     {"state": "TAS", "network": "AEMO_ROOFTOP_BACKFILL", "network_region": "TAS1"},
     {"state": "SA", "network": "AEMO_ROOFTOP_BACKFILL", "network_region": "SA1"},
     {"state": "NT", "network": "AEMO_ROOFTOP_BACKFILL", "network_region": "NT1"},
+    # Opennem backfill derives from APVI data
+    {"state": "NSW", "network": "OPENNEM_ROOFTOP_BACKFILL", "network_region": "NSW1"},
+    {"state": "QLD", "network": "OPENNEM_ROOFTOP_BACKFILL", "network_region": "QLD1"},
+    {"state": "VIC", "network": "OPENNEM_ROOFTOP_BACKFILL", "network_region": "VIC1"},
+    {"state": "TAS", "network": "OPENNEM_ROOFTOP_BACKFILL", "network_region": "TAS1"},
+    {"state": "SA", "network": "OPENNEM_ROOFTOP_BACKFILL", "network_region": "SA1"},
+    {"state": "NT", "network": "OPENNEM_ROOFTOP_BACKFILL", "network_region": "NT1"},
 ]
 
 
 def rooftop_facilities() -> None:
-
     session = SessionLocal()
 
     for state_map in STATE_NETWORK_REGION_MAP:
@@ -50,7 +55,7 @@ def rooftop_facilities() -> None:
         rooftop_station = session.query(Station).filter_by(code=state_rooftop_code).one_or_none()
 
         if not rooftop_station:
-            logger.info("Creating new station {}".format(state_rooftop_code))
+            logger.info(f"Creating new station {state_rooftop_code}")
             rooftop_station = Station(
                 code=state_rooftop_code,
             )
@@ -67,7 +72,7 @@ def rooftop_facilities() -> None:
         rooftop_fac = session.query(Facility).filter_by(code=state_rooftop_code).one_or_none()
 
         if not rooftop_fac:
-            logger.info("Creating new facility {}".format(state_rooftop_code))
+            logger.info(f"Creating new facility {state_rooftop_code}")
             rooftop_fac = Facility(code=state_rooftop_code)
 
         network = state_map["network"]
@@ -80,7 +85,7 @@ def rooftop_facilities() -> None:
         rooftop_fac.network_region = state_map["network_region"]
         rooftop_fac.fueltech_id = "solar_rooftop"
         rooftop_fac.status_id = "operating"
-        rooftop_fac.active = True
+        rooftop_fac.active = False
         rooftop_fac.dispatch_type = DispatchType.GENERATOR
         rooftop_fac.approved_by = "opennem.importer.rooftop"
         rooftop_fac.created_by = "opennem.importer.rooftop"
@@ -93,7 +98,7 @@ def rooftop_facilities() -> None:
     session.commit()
 
 
-def rooftop_remap_regionids(rooftop_record: Optional[Dict]) -> Optional[Dict]:
+def rooftop_remap_regionids(rooftop_record: dict | None) -> dict | None:
     """Map an AEMO region code to a rooftop station code"""
 
     if not rooftop_record:

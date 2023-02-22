@@ -6,11 +6,11 @@
 import logging
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Tuple
 
 from opennem.core.loader import load_data
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import BomStation, FacilityStatus, FuelTech, FuelTechGroup, Network, NetworkRegion
+from opennem.importer.rooftop import rooftop_facilities
 
 logger = logging.getLogger("opennem.db.load_fixtures")
 
@@ -38,9 +38,9 @@ def load_fueltechs() -> None:
         try:
             s.add(fueltech_group)
             s.commit()
-            logger.info("Loaded fueltech group {}".format(fueltech_group.code))
+            logger.info(f"Loaded fueltech group {fueltech_group.code}")
         except Exception:
-            logger.error("Have fueltech group {}".format(fueltech_group.code))
+            logger.error(f"Have fueltech group {fueltech_group.code}")
             s.rollback()
         finally:
             pass
@@ -60,9 +60,9 @@ def load_fueltechs() -> None:
         try:
             s.add(fueltech)
             s.commit()
-            logger.info("Loaded fueltech {}".format(fueltech.code))
+            logger.info(f"Loaded fueltech {fueltech.code}")
         except Exception:
-            logger.error("Have {}".format(fueltech.code))
+            logger.error(f"Have {fueltech.code}")
 
 
 def load_facilitystatus() -> None:
@@ -86,9 +86,9 @@ def load_facilitystatus() -> None:
         try:
             s.add(facility_status)
             s.commit()
-            logger.debug("Loaded status {}".format(facility_status.code))
+            logger.debug(f"Loaded status {facility_status.code}")
         except Exception:
-            logger.error("Have {}".format(facility_status.code))
+            logger.error(f"Have {facility_status.code}")
 
 
 def load_networks() -> None:
@@ -122,9 +122,9 @@ def load_networks() -> None:
         try:
             s.add(network_model)
             s.commit()
-            logger.debug("Loaded network {}".format(network_model.code))
+            logger.debug(f"Loaded network {network_model.code}")
         except Exception:
-            logger.error("Have {}".format(network_model.code))
+            logger.error(f"Have {network_model.code}")
 
 
 def load_network_regions() -> None:
@@ -137,9 +137,7 @@ def load_network_regions() -> None:
 
     for network_region in fixture:
         network_region_model = (
-            s.query(NetworkRegion)
-            .filter_by(code=network_region["code"], network_id=network_region["network_id"])
-            .one_or_none()
+            s.query(NetworkRegion).filter_by(code=network_region["code"], network_id=network_region["network_id"]).one_or_none()
         )
 
         if not network_region_model:
@@ -150,9 +148,9 @@ def load_network_regions() -> None:
         try:
             s.add(network_region_model)
             s.commit()
-            logger.debug("Loaded network region {}".format(network_region_model.code))
+            logger.debug(f"Loaded network region {network_region_model.code}")
         except Exception:
-            logger.error("Have {}".format(network_region_model.code))
+            logger.error(f"Have {network_region_model.code}")
 
 
 """
@@ -165,7 +163,7 @@ def parse_date(date_str: str) -> date:
     return dt.date()
 
 
-def parse_fixed_line(line: str) -> Tuple[str, str, str, date, Decimal, Decimal]:
+def parse_fixed_line(line: str) -> tuple[str, str, str, date, Decimal, Decimal]:
     """
     Parses a fixed-width CSV from the funky BOM format
     """
@@ -204,13 +202,13 @@ def load_bom_stations_csv() -> None:
                 registered=registered,
             )
 
-        station.geom = "SRID=4326;POINT({} {})".format(lat, lng)
+        station.geom = f"SRID=4326;POINT({lat} {lng})"
 
         try:
             s.add(station)
             s.commit()
         except Exception:
-            logger.error("Have {}".format(station.code))
+            logger.error(f"Have {station.code}")
 
 
 def load_bom_stations_json() -> None:
@@ -232,7 +230,6 @@ def load_bom_stations_json() -> None:
     stations_imported = 0
 
     for bom_station in bom_stations:
-
         if "code" not in bom_station:
             logger.error("Invalida bom station ..")
             continue
@@ -271,7 +268,7 @@ def load_bom_stations_json() -> None:
         stations_imported += 1
         session.add(station)
 
-    logger.info("Imported {} stations".format(stations_imported))
+    logger.info(f"Imported {stations_imported} stations")
     session.commit()
 
 
@@ -281,6 +278,7 @@ def load_fixtures() -> None:
     load_networks()
     load_network_regions()
     load_bom_stations_json()
+    rooftop_facilities()
 
 
 if __name__ == "__main__":

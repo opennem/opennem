@@ -163,6 +163,7 @@ NetworkAEMORooftopBackfill = NetworkSchema(
 )
 
 # This is the new backfill network derived from APVI data
+# from
 NetworkOpenNEMRooftopBackfill = NetworkSchema(
     code="OPENNEM_ROOFTOP_BACKFILL",
     label="OpenNEM Rooftop Backfill",
@@ -190,7 +191,7 @@ NetworkNEM = NetworkSchema(
     rooftop_first_seen=datetime.fromisoformat("2007-01-01T00:00:00+10:00"),
     monitor_interval_alert_threshold=10,
     has_interconnectors=True,
-    subnetworks=[NetworkAEMORooftop, NetworkAEMORooftopBackfill],
+    subnetworks=[NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill],
     fueltechs=all_fueltechs_without_rooftop,
 )
 
