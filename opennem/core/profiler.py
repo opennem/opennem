@@ -193,11 +193,9 @@ def profile_task(
     """Profile a task and log the time taken to run it
 
     :param send_slack: Send a slack message with the profile
-    :param persist_profile: Persist the profile to the database
-    :param link_tracing: Add a link to the profile in the logs
-    :param include_args: Include the arguments passed to the task in the logs
-    :param message_fmt: A custom message format
-    :param message_prepend: Prepend the message with the task name
+    :param message_fmt: A custom message format string
+    :param level: The level of the profiler
+    :retention_period: The retention period of the profiler
     """
 
     def profile_task_decorator(task: Any, *args: Any, **kwargs: Any) -> Any:
