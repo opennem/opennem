@@ -39,7 +39,7 @@ services:
       # gw host
       - "traefik.enable=true"
       - "traefik.http.routers.gw.entrypoints=websecure"
-      - "traefik.http.routers.gw.rule=Host(`gw.prod.opennem.org.au`)"
+      - "traefik.http.routers.gw.rule=Host(`gw.staging.opennem.org.au`)"
       - "traefik.http.routers.gw.tls=true"
       - "traefik.http.routers.gw.tls.certresolver=myresolver"
       # - "traefik.http.routers.gw.service=traefik"
@@ -50,9 +50,9 @@ services:
   api:
     image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
     command: [
-        "wait-for",
-        "10.0.0.124:15433",
-        "--",
+        # "wait-for",
+        # "10.0.0.124:15433",
+        # "--",
         "hypercorn",
         "opennem.api.app:app",
         "--bind",
@@ -84,8 +84,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-secure.entrypoints=websecure"
-      # - "traefik.http.routers.api-secure.rule=Host(`api.opennem.org.au`) || Host(`api.prod.opennem.org.au`)"
-      - "traefik.http.routers.api-secure.rule=Host(`api.opennem.org.au`)"
+      - "traefik.http.routers.api-secure.rule=Host(`api.staging.opennem.org.au`)"
       - "traefik.http.routers.api-secure.tls=true"
       - "traefik.http.routers.api-secure.tls.certresolver=resolver_apex"
       - "traefik.http.routers.api-secure.service=api"
@@ -111,9 +110,9 @@ services:
     restart: unless-stopped
     command:
       [
-        "wait-for",
-        "10.0.0.124:15433",
-        "--",
+        # "wait-for",
+        # "10.0.0.124:15433",
+        # "--",
         "huey_consumer",
         "-w8",
         "-f",
@@ -137,7 +136,7 @@ services:
       - SENTRY_URL
       - SLACK_NOTIFICATIONS=1
       - MONITORING_SLACK_HOOK
-      - S3_DATA_BUCKET_PATH=data.opennem.org.au
+      - S3_DATA_BUCKET_PATH=data.staging.opennem.org.au
       - LOG_LEVEL=DEBUG
       - CACHE_SCADA_TTL
       - DB_ENERGY_VIEW
