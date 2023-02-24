@@ -227,7 +227,12 @@ def profile_task(
             # calculate wall clock time
             wall_clock_time = chop_delta_microseconds(dtime_end - dtime_start)
 
-            wall_clock_human = f"{wall_clock_time.total_seconds()}s"
+            wall_clock_time_seconds = wall_clock_time.total_seconds()
+
+            if wall_clock_time_seconds >= 1:
+                wall_clock_time_seconds = round(wall_clock_time_seconds, 0)
+
+            wall_clock_human = f"{wall_clock_time_seconds}s"
 
             id = log_task_profile_to_database(
                 task_name=task.__name__,
