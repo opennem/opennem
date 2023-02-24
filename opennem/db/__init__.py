@@ -1,26 +1,36 @@
+""" OpenNEM Database Module
+
+
+Provides database engine connections and sessions across the entire
+project
+
+
+"""
 import logging
-from typing import Generator, Optional
+from collections.abc import Generator
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 from opennem.exporter.encoders import opennem_deserialize, opennem_serialize
 from opennem.settings import settings
 
 DeclarativeBase = declarative_base()
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.db")
 
 
-def db_connect(
-    db_conn_str: Optional[str] = None, debug: bool = False, timeout: int = 100
-) -> Engine:
+def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int = 10) -> Engine:
     """
     Performs database connection using database settings from settings.py.
 
     Returns sqlalchemy engine instance
+
+    :param db_conn_str: Database connection string
+    :param debug: Debug mode will render queries and info to terminal
+    :param timeout: Database connection timeout
     """
     if not db_conn_str:
         db_conn_str = settings.db_url
@@ -66,23 +76,22 @@ def get_database_engine() -> Engine:
     """
     Gets a database engine connection
 
+    @NOTE deprecate this eventually
     """
     _engine = db_connect()
     return _engine
 
 
-SessionLocal = scoped_session(
-    sessionmaker(autocommit=False, autoflush=False, bind=get_database_engine())
-)
+engine = get_database_engine()
+
+SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 
-def get_scoped_session():
-    return scoped_session(
-        sessionmaker(autocommit=False, autoflush=False, bind=get_database_engine())
-    )()
+def get_scoped_session() -> Session:
+    return scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))()
 
 
-def get_database_session() -> Generator[sessionmaker, None, None]:
+def get_database_session() -> Generator[Session, None, None]:
     """
     Gets a database session
 
