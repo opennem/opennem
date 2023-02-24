@@ -6,7 +6,7 @@ import logging
 from pydantic import ValidationError
 
 from opennem.controllers.schema import ControllerReturn
-from opennem.core.crawlers.meta import CrawlStatTypes, crawler_get_all_meta, crawler_set_meta
+from opennem.core.crawlers.meta import CrawlStatTypes, crawler_set_meta, crawlers_get_all_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.crawlers.apvi import (
@@ -92,10 +92,10 @@ def load_crawlers(live_load: bool = False) -> CrawlerSet:
             AEMOMMSTradingRegionsum,
         ]
 
-    for crawler_inst in crawler_definitions:
-        _meta = crawler_get_all_meta(crawler_inst.name)
+    crawler_meta = crawlers_get_all_meta()
 
-        if not _meta:
+    for crawler_inst in crawler_definitions:
+        if crawler_inst.name not in crawler_meta:
             crawlers.append(crawler_inst)
             continue
 
@@ -104,7 +104,7 @@ def load_crawlers(live_load: bool = False) -> CrawlerSet:
         try:
             crawler_field_values = {
                 **crawler_inst.dict(),
-                **_meta,
+                **crawler_meta[crawler_inst.name],
                 "version": "2",
             }
             crawler_updated_with_meta = CrawlerDefinition(

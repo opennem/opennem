@@ -7,9 +7,11 @@ Gets metadata about crawls from the database
 import logging
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
-from opennem.db import get_scoped_session
+from sqlalchemy.orm import Session
+
+from opennem.db import SessionLocal
 from opennem.db.models.opennem import CrawlMeta
 
 logger = logging.getLogger("opennem.spider.meta")
@@ -35,24 +37,41 @@ class CrawlStatTypes(Enum):
     data = "data"
 
 
-def crawler_get_all_meta(crawler_name: str) -> Optional[Dict[str, Any]]:
-    """Get crawler metadata by crawler name"""
-    with get_scoped_session() as session:
-        spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
+def crawlers_get_all_meta() -> dict[str, Any] | None:
+    """Get all crawler metadata"""
+    crawler_meta_dict = {}
+
+    with SessionLocal() as session:
+        spider_meta = session.query(CrawlMeta).all()
 
         if not spider_meta:
             return None
 
-        if not spider_meta.data:
-            return None
+        for spider in spider_meta:
+            if not spider.data:
+                continue
 
-        return spider_meta.data
+            crawler_meta_dict[spider.spider_name] = spider.data
+
+    return crawler_meta_dict
 
 
-def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> Optional[Union[str, datetime]]:
+def crawler_get_all_meta(crawler_name: str, session: Session) -> dict[str, Any] | None:
+    """Get crawler metadata by crawler name"""
+    spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
+
+    if not spider_meta:
+        return None
+
+    if not spider_meta.data:
+        return None
+
+    return spider_meta.data
+
+
+def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> str | datetime | None:
     """Crawler get specific stat type from metadata for crawler name"""
-    with get_scoped_session() as session:
-
+    with SessionLocal() as session:
         spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
 
         if not spider_meta:
@@ -79,7 +98,7 @@ def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> Optional[Union[s
 
 def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None:
     """Set a crawler metadata stat type by name"""
-    with get_scoped_session() as session:
+    with SessionLocal() as session:
         if key == CrawlStatTypes.server_latest:
             current_value = crawler_get_meta(crawler_name, key)
 
@@ -87,11 +106,7 @@ def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None
                 if current_value and current_value >= value:
                     return None
             except TypeError:
-                logger.error(
-                    "Error comparing {} ({}) and {} ({})".format(
-                        current_value, type(current_value), value, type(value)
-                    )
-                )
+                logger.error(f"Error comparing {current_value} ({type(current_value)}) and {value} ({type(value)})")
 
         spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
 
@@ -100,11 +115,12 @@ def crawler_set_meta(crawler_name: str, key: CrawlStatTypes, value: Any) -> None
 
         spider_meta.data[key.value] = value
 
-        logger.debug("Spider {} meta: Set {} to {}".format(crawler_name, key.value, value))
+        logger.debug(f"Spider {crawler_name} meta: Set {key.value} to {value}")
 
         session.add(spider_meta)
         session.commit()
 
 
 if __name__ == "__main__":
-    crawler_set_meta("au.nem.latest.dispatch_scada", CrawlStatTypes.last_crawled, datetime.now())
+    # crawler_set_meta("au.nem.latest.dispatch_scada", CrawlStatTypes.last_crawled, datetime.now())
+    print(crawlers_get_all_meta())
