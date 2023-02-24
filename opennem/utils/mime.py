@@ -10,7 +10,7 @@ import re
 import string
 import subprocess
 from io import BytesIO
-from typing import BinaryIO, Optional
+from typing import BinaryIO
 from zipfile import BadZipFile, ZipFile
 
 try:
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 CONTENT_TYPES = ["utf-8", "utf-8-sig", "latin-1"]
 
 
-def mime_from_content(content: BinaryIO) -> Optional[str]:
+def mime_from_content(content: BinaryIO) -> str | None:
     """
     Use libmime to get mime type from content stream
     """
@@ -45,20 +45,20 @@ def mime_from_content(content: BinaryIO) -> Optional[str]:
 
         file_mime = magic.from_buffer(_file_buffer, mime=True)
     except Exception as e:
-        logger.error("Error parsing mime from content: {}".format(e))
+        logger.error(f"Error parsing mime from content: {e}")
         return None
 
-    logger.debug("Using magic to get mime type {}".format(file_mime))
+    logger.debug(f"Using magic to get mime type {file_mime}")
 
     return file_mime
 
 
-def mime_from_url(url: str) -> Optional[str]:
+def mime_from_url(url: str) -> str | None:
     """
     Use python mimetypes dir to get mime type from file extension
     """
     file_mime, _ = mimetypes.guess_type(url)
-    logger.debug("Using mimetypes to get mime type {}".format(file_mime))
+    logger.debug(f"Using mimetypes to get mime type {file_mime}")
     return file_mime
 
 
@@ -99,7 +99,7 @@ def is_zip(fh: BinaryIO, test_zip: bool = True) -> bool:
 def _is_textfile_proc(fn):
     """Linux only proc to check if a file is text"""
     msg = subprocess.Popen(["file", fn], stdout=subprocess.PIPE).communicate()[0]
-    return re.search("text", msg) != None
+    return re.search("text", msg) is not None
 
 
 def is_textfile(fh: BinaryIO) -> bool:

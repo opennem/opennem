@@ -13,14 +13,14 @@ logger = logging.getLogger(__name__)
 
 
 def build_address_string(station_record):
-    l = [
+    address_components = [
         station_record.network_name,
         station_record.locality,
         station_record.state,
         "Australia",
     ]
 
-    address_string = ", ".join(str(i) for i in l if i)
+    address_string = ", ".join(str(i) for i in address_components if i)
 
     return address_string
 
@@ -30,7 +30,7 @@ def opennem_geocode(limit=None):
     session = sessionmaker(bind=engine)
     s = session()
 
-    records = s.query(Station).filter(Station.geom == None).filter(Station.geocode_skip == False)
+    records = s.query(Station).filter(Station.geom is None).filter(Station.geocode_skip is False)
 
     count = 0
     skipped = 0
@@ -39,7 +39,7 @@ def opennem_geocode(limit=None):
     for r in records:
         geo_address_string = build_address_string(r)
 
-        logger.info("Geocoding record: {}".format(geo_address_string))
+        logger.info(f"Geocoding record: {geo_address_string}")
         continue
 
         google_result = place_search(geo_address_string)
@@ -53,7 +53,7 @@ def opennem_geocode(limit=None):
 
             lat = result["geometry"]["location"]["lat"]
             lng = result["geometry"]["location"]["lng"]
-            r.geom = "SRID=4326;POINT({} {})".format(lng, lat)
+            r.geom = f"SRID=4326;POINT({lng} {lat})"
 
             r.geocode_processed_at = datetime.now()
             r.geocode_by = "google"
@@ -69,7 +69,7 @@ def opennem_geocode(limit=None):
                 pass
             except Exception as e:
                 skipped += 1
-                logger.error("Error: {}".format(e))
+                logger.error(f"Error: {e}")
         else:
             skipped += 1
 
@@ -77,7 +77,7 @@ def opennem_geocode(limit=None):
         if limit and count >= limit:
             break
 
-    print("Geocode of opennem records done. Added {} records. Couldn't match {}".format(records_added, skipped))
+    print(f"Geocode of opennem records done. Added {records_added} records. Couldn't match {skipped}")
 
 
 if __name__ == "__main__":

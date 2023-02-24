@@ -84,7 +84,7 @@ def query_energy_gaps(date_min: datetime, date_max: datetime, network: NetworkSc
 
     logger.debug(dedent(query))
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         results = c.execute(query)
 
     return [EnergyGap(**i) for i in results]

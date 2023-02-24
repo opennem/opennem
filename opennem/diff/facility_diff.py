@@ -6,7 +6,6 @@
 
 import logging
 from itertools import chain
-from typing import List
 
 from mdutils.mdutils import MdUtils
 
@@ -28,7 +27,7 @@ def report_changed_names(registry, current):
         if in_current and len(in_current):
             station_current = in_current[0]
             if station_current.name != station.name:
-                renames.append("`{}` renamed to `{}`".format(station.name, station_current.name))
+                renames.append(f"`{station.name}` renamed to `{station_current.name}`")
 
     return renames
 
@@ -62,7 +61,7 @@ def report_changed_capacities(registry_units, current_units):
 
         if in_current and len(in_current):
             unit_current = in_current[0]
-            if unit_current.capacity == None and unit.capacity:
+            if unit_current.capacity is None and unit.capacity:
                 renames.append(
                     "{} (`{}`) added capacity `{}`".format(
                         unit_current.name,
@@ -70,11 +69,7 @@ def report_changed_capacities(registry_units, current_units):
                         unit.capacity,
                     )
                 )
-            elif (
-                unit_current.capacity
-                and unit.capacity
-                and round(unit_current.capacity, 0) != round(unit.capacity, 0)
-            ):
+            elif unit_current.capacity and unit.capacity and round(unit_current.capacity, 0) != round(unit.capacity, 0):
                 renames.append(
                     "{} (`{}`) capacity `{}` changed to `{}`".format(
                         unit_current.name,
@@ -87,10 +82,8 @@ def report_changed_capacities(registry_units, current_units):
     return renames
 
 
-def records_diff(subject: List[object], comparitor: List[object], key: str = "code") -> List[str]:
-    diff_keys = list(
-        set([getattr(i, key) for i in subject]) - set([getattr(i, key) for i in comparitor])
-    )
+def records_diff(subject: list[object], comparitor: list[object], key: str = "code") -> list[str]:
+    diff_keys = list({getattr(i, key) for i in subject} - {getattr(i, key) for i in comparitor})
 
     diff_records = list(filter(lambda x: getattr(x, key) in diff_keys, subject))
 
@@ -112,45 +105,40 @@ def stations_in_new_not_in_registry(registry, current):
 
     list_table = ["Name", "Code", "Facilities"]
 
-    [
-        list_table.extend([i.name, str(i.code) if i.code else "", str(len(i.facilities))])
-        for i in diff_stations
-    ]
+    [list_table.extend([i.name, str(i.code) if i.code else "", str(len(i.facilities))]) for i in diff_stations]
 
     return list_table
 
 
-get_num_rows = lambda records, columns: int(len(records) / columns)
+def get_num_rows(records, columns):
+    return int(len(records) / columns)
 
 
 def run_diff():
-    diff_report = {}
+    {}
 
     registry = load_registry()
     current = load_current()
 
-    nem_mms = load_data("mms.json", True)
-    nem_gi = load_data("nem_gi.json", True)
-    nem_rel = load_data("rel.json", True)
+    load_data("mms.json", True)
+    load_data("nem_gi.json", True)
+    load_data("rel.json", True)
 
     registry_units = list(chain(*[s.facilities for s in registry]))
     current_units = list(chain(*[s.facilities for s in current]))
 
     registry_station_codes = [station.code for station in registry]
-    current_station_codes = [station.code for station in current]
+    [station.code for station in current]
 
     registry_station_names = [station.name for station in registry]
-    current_station_names = [station.name for station in current]
+    [station.name for station in current]
 
-    new_stations = list(
-        set(
-            [
-                station.name
-                for station in current
-                if station.name not in registry_station_names
-                and station.code not in registry_station_codes
-            ]
-        )
+    list(
+        {
+            station.name
+            for station in current
+            if station.name not in registry_station_names and station.code not in registry_station_codes
+        }
     )
 
     md = MdUtils(file_name="data/diff_report.md", title="Opennem Report")

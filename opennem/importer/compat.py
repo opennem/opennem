@@ -31,7 +31,7 @@ def map_compat_network_region(network_region: str) -> str:
     and there are networks within geos like DKIS (NT)
     and NWIS (WA) that need to retain their network_region
     """
-    if not network_region or not type(network_region) is str:
+    if not network_region or type(network_region) is not str:
         return network_region
 
     network_region = network_region.strip()

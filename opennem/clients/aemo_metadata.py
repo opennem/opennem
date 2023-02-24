@@ -7,7 +7,6 @@ Client to monitor files available on the AEMO website
 """
 
 import logging
-from typing import List
 
 from bs4 import BeautifulSoup
 from pydantic import ValidationError
@@ -20,13 +19,16 @@ from opennem.utils.url import strip_query_string
 
 logger = logging.getLogger("opennem.clients.aemo_monitor")
 
-REG_URL = "https://aemo.com.au/en/energy-systems/electricity/national-electricity-market-nem/participate-in-the-market/registration"
+REG_URL = (
+    "https://aemo.com.au/en/energy-systems/electricity/national-electricity-market-nem/participate-in-the-market/registration"
+)
 FORECAST_URL = (
-    "https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information",
+    "https://www.aemo.com.au/energy-systems/electricity/"
+    "national-electricity-market-nem/nem-forecasting-and-planning/forecasting-and-planning-data/generation-information",
 )
 
 
-def monitor_aemo_station_info() -> List[AEMOFileDownloadSection]:
+def monitor_aemo_station_info() -> list[AEMOFileDownloadSection]:
     start_urls = [REG_URL, FORECAST_URL]
 
     file_downloads = []
@@ -79,6 +81,6 @@ def monitor_aemo_station_info() -> List[AEMOFileDownloadSection]:
             )
             file_downloads.append(section_model)
         except ValidationError as e:
-            logger.error("Validation error: {}".format(e), logging.ERROR)
+            logger.error(f"Validation error: {e}", logging.ERROR)
 
     return file_downloads

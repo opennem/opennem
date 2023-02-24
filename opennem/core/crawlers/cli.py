@@ -27,24 +27,23 @@ def cmd_crawl_cli() -> None:
 @click.argument("name")
 @click.option("--all", default=False, is_flag=True, help="Run all")
 def crawl_cli_run(name: str, all: bool = False) -> None:
-
     test_proxy()
 
-    console.log("Run crawlers matching: {}".format(name))
+    console.log(f"Run crawlers matching: {name}")
 
     crawlers = get_crawl_set()
 
     try:
         crawlers_filtered = crawlers.get_crawlers_by_match(name, only_active=False)
     except Exception as e:
-        console.log("[red]Could not find crawlers for {}[/red]: {}".format(name, e))
+        console.log(f"[red]Could not find crawlers for {name}[/red]: {e}")
         return None
 
     if not crawlers_filtered:
-        console.log("No crawlers found matchin [red]{}[/red]".format(name))
+        console.log(f"No crawlers found matchin [red]{name}[/red]")
         return None
 
-    console.log("[green]Running {} crawlers[/green]".format(len(crawlers_filtered)))
+    console.log(f"[green]Running {len(crawlers_filtered)} crawlers[/green]")
 
     for c in crawlers_filtered:
         console.log(
@@ -80,9 +79,9 @@ def crawl_cli_list() -> None:
         table.add_row(
             c.name,
             str(c.version),
-            "{} ({})".format(c.last_crawled, timesince(c.last_crawled)),
-            "{} ({})".format(c.last_processed, timesince(c.last_processed)),
-            "{} ({})".format(c.server_latest, timesince(c.server_latest)),
+            f"{c.last_crawled} ({timesince(c.last_crawled)})",
+            f"{c.last_processed} ({timesince(c.last_processed)})",
+            f"{c.server_latest} ({timesince(c.server_latest)})",
         )
 
     console.print(table)
@@ -97,7 +96,7 @@ def crawl_cli_import(url: str):
     if not is_url(url):
         url_file = Path(url)
         if not url_file.is_file():
-            raise Exception(f"Not a url and not a file")
+            raise Exception("Not a url and not a file")
 
         with url_file.open() as fh:
             urls = fh.read().split("/n")

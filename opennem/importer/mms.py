@@ -71,7 +71,6 @@ order by 1 asc
 
 
 def mms_import() -> StationSet:
-
     mms = StationSet()
 
     # for s in _mms.values():
@@ -103,7 +102,7 @@ def mms_export():
     """
     mms = mms_import()
 
-    mms_duid_station_map = mms_station_map_from_records(mms)
+    mms_station_map_from_records(mms)
 
     with open("data/mms2.json", "w") as fh:
         fh.write(mms.json(indent=4))

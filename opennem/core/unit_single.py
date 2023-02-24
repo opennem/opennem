@@ -11,7 +11,7 @@ def facility_unit_numbers_are_single(facility_duid: str) -> bool:
 
     """
 
-    if not type(SINGLE_UNITS) is list:
+    if type(SINGLE_UNITS) is not list:
         raise Exception("Error loading facility station map: not a list")
 
     return facility_duid in SINGLE_UNITS

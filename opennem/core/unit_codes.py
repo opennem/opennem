@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 
 from opennem.core.normalizers import normalize_duid
 from opennem.core.unit_parser import UnitSchema
@@ -7,8 +6,8 @@ from opennem.core.unit_parser import UnitSchema
 
 def get_unit_code(
     unit: UnitSchema,
-    duid: Optional[str] = None,
-    station_name: Optional[str] = None,
+    duid: str | None = None,
+    station_name: str | None = None,
 ) -> str:
     """
     This takes the duid from the network and the unit info and creates a unique
@@ -21,7 +20,6 @@ def get_unit_code(
     # @TODO - check if we can strip, probably not a good idea
 
     if not duid:
-
         if not station_name:
             raise Exception("Cannot generate a unit code without both duid and station name")
 
@@ -68,7 +66,7 @@ def get_basecode(station_name: str) -> str:
     We prefix these with 0N
     """
 
-    if not type(station_name) is str or not station_name:
+    if type(station_name) is not str or not station_name:
         raise Exception("Expected to generate a code with no station name")
 
     MIN_DUID_LENGTH = 4

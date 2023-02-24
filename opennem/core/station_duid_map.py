@@ -1,5 +1,3 @@
-from typing import Optional
-
 from opennem.core.loader import load_data
 
 STATION_CODE_REMAP = {"SWAN_B": "SWANBANK", "SWAN_E": "SWANBANK_E"}
@@ -15,13 +13,13 @@ def map_old_station_names(station_code: str) -> str:
 STATION_DUID_MAP = load_data("facility_duid_map.json")
 
 
-def facility_map_station(duid: str, default_station: Optional[str] = None) -> Optional[str]:
+def facility_map_station(duid: str, default_station: str | None = None) -> str | None:
     """
     Maps duid -> station code
 
     """
 
-    if not type(STATION_DUID_MAP) is dict:
+    if type(STATION_DUID_MAP) is not dict:
         raise Exception("Station duid map invalid data type")
 
     if duid in STATION_DUID_MAP:

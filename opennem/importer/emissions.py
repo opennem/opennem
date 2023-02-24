@@ -1,6 +1,5 @@
 import csv
 import logging
-from typing import Dict, List, Optional
 
 from opennem.core.loader import load_data
 from opennem.core.normalizers import clean_float, normalize_duid
@@ -16,7 +15,6 @@ def import_mms_emissions() -> None:
 
     facility_poll_map = {
         # from wem
-        "KWINANA_C5": 0.877,
         "KWINANA_C5": 0.877,
     }
 
@@ -46,7 +44,7 @@ def import_mms_emissions() -> None:
     return emission_map
 
 
-def import_dump_emissions() -> List[Dict]:
+def import_dump_emissions() -> list[dict]:
     content = load_data("emissions_output.csv", from_project=True, skip_loaders=True)
 
     csv_content = content.splitlines()
@@ -93,23 +91,18 @@ def import_emissions_map(file_name: str) -> None:
         emissions_intensity = clean_float(rec["emissions_factor_co2"])
 
         if not facility_code:
-            logger.info("No emissions intensity for {}".format(facility_code))
+            logger.info(f"No emissions intensity for {facility_code}")
             continue
 
-        facility = (
-            session.query(Facility)
-            .filter_by(code=facility_code)
-            .filter_by(network_id=network_id)
-            .one_or_none()
-        )
+        facility = session.query(Facility).filter_by(code=facility_code).filter_by(network_id=network_id).one_or_none()
 
         if not facility:
-            logger.info("No stored facility for {}".format(facility_code))
+            logger.info(f"No stored facility for {facility_code}")
             continue
 
         facility.emissions_factor_co2 = emissions_intensity
         session.add(facility)
-        logger.info("Updated {} to {}".format(facility_code, emissions_intensity))
+        logger.info(f"Updated {facility_code} to {emissions_intensity}")
 
     session.commit()
 
@@ -120,13 +113,11 @@ def check_emissions_map() -> None:
     content = load_data("emission_factors.csv", from_project=True, skip_loaders=True)
     mms_emissions = import_dump_emissions()
 
-    def get_emissions_for_code(facility_code: str) -> Optional[Dict]:
-        facility_lookup = list(
-            filter(lambda x: x["facility_code"] == facility_code, mms_emissions)
-        )
+    def get_emissions_for_code(facility_code: str) -> dict | None:
+        facility_lookup = list(filter(lambda x: x["facility_code"] == facility_code, mms_emissions))
 
         if not facility_lookup or len(facility_lookup) < 1:
-            logger.error("Could not find facility {} in MMS emmissions data".format(facility_code))
+            logger.error(f"Could not find facility {facility_code} in MMS emmissions data")
             return None
 
         facility = facility_lookup.pop()

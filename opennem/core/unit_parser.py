@@ -1,6 +1,5 @@
 import logging
 import re
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -24,12 +23,12 @@ class UnitSchema(BaseModel):
     id: int = 1
 
     # The unit alias
-    alias: Optional[str] = None
+    alias: str | None = None
 
     # The number of units
     number: int = 1
 
-    capacity: Optional[int]
+    capacity: int | None
 
 
 def is_number(v: str) -> bool:
@@ -73,7 +72,7 @@ def parse_unit_number(unit_input: str, force_single: bool = False) -> UnitSchema
 
     has_alias = False
 
-    if unit_input == None:
+    if unit_input is None:
         unit_input = ""
 
     # Normalize to string
@@ -114,10 +113,8 @@ def parse_unit_number(unit_input: str, force_single: bool = False) -> UnitSchema
         if unit_alias_search and unit_alias_search.lastindex == 1:
             unit_alias = unit_alias_search.group(1)
 
-        if not unit_alias or not type(unit_alias) is str:
-            raise Exception(
-                "Error extracting alias from {}: Got {}".format(unit_input, unit_alias)
-            )
+        if not unit_alias or type(unit_alias) is not str:
+            raise Exception(f"Error extracting alias from {unit_input}: Got {unit_alias}")
 
         # remove the unit alias
         unit_input = re.sub(r"[A-Za-z]{1,6}\d{1,2}\-", "", unit_input)
@@ -131,10 +128,8 @@ def parse_unit_number(unit_input: str, force_single: bool = False) -> UnitSchema
         if unit_alias_search and unit_alias_search.lastindex == 1:
             unit_alias = unit_alias_search.group(1)
 
-        if not unit_alias or not type(unit_alias) is str:
-            raise Exception(
-                "Error extracting alias from {}: Got {}".format(unit_input, unit_alias)
-            )
+        if not unit_alias or type(unit_alias) is not str:
+            raise Exception(f"Error extracting alias from {unit_input}: Got {unit_alias}")
 
         # remove the unit alias
         unit_input = re.sub(r"[A-Za-z\ ]", "", unit_input)
@@ -158,11 +153,7 @@ def parse_unit_number(unit_input: str, force_single: bool = False) -> UnitSchema
         unit_max = int(unit_range_match.group(2))
 
         if unit_max < unit_id:
-            raise Exception(
-                "Invalid max unit number {} on id {} for range {}".format(
-                    unit_max, unit_id, unit_input
-                )
-            )
+            raise Exception(f"Invalid max unit number {unit_max} on id {unit_id} for range {unit_input}")
 
         unit_no += unit_max - unit_id + 1
 

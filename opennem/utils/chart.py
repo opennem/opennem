@@ -7,8 +7,6 @@ from decimal import Decimal
 
 import matplotlib.pyplot as plt
 
-from opennem.api.stats.schema import ValidNumber
-
 ValidNumber = float | int | Decimal
 
 

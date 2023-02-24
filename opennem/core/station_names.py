@@ -11,7 +11,7 @@ def station_map_name(station_name: str) -> str:
     if type(station_name) is not str:
         return station_name
 
-    if not type(STATION_NAME_MAP) is dict:
+    if type(STATION_NAME_MAP) is not dict:
         raise Exception("Error loading station name maps: not a dict")
 
     if station_name in STATION_NAME_MAP:
