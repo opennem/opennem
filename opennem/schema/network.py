@@ -131,7 +131,8 @@ NetworkAPVI = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=15,
-    data_first_seen=datetime.fromisoformat("2015-03-20T06:15:00+10:00"),
+    # data_first_seen=datetime.fromisoformat("2015-03-20T06:15:00+10:00"),
+    data_first_seen=datetime.fromisoformat("2015-10-26T00:00:00+10:00"),
     fueltechs=["solar_rooftop"],
 )
 
@@ -228,4 +229,4 @@ NetworkAU = NetworkSchema(
 )
 
 
-NETWORKS = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAU, NetworkAEMORooftop, NetworkAEMORooftop]
+NETWORKS = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAU, NetworkAEMORooftop, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
