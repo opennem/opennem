@@ -46,14 +46,15 @@ from opennem.utils.modules import load_all_crawler_definitions
 logger = logging.getLogger("opennem.crawler")
 
 
-def load_crawlers() -> CrawlerSet:
+def load_crawlers(live_load: bool = False) -> CrawlerSet:
     """Loads all the crawler definitions from a module and returns a CrawlSet"""
     crawlers = []
-    crawler_definitions = []
+    crawler_definitions: list[CrawlerDefinition] = []
 
     if settings.crawlers_module:
-        # search_modules.append()
-        crawler_definitions = load_all_crawler_definitions(settings.crawlers_module)
+        if live_load:
+            crawler_definitions = load_all_crawler_definitions(settings.crawlers_module)
+
         crawler_definitions = [
             # NEM
             AEMONEMDispatchActualGEN,
