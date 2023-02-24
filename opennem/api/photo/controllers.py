@@ -3,11 +3,10 @@ import os
 from io import BytesIO
 from typing import Any
 
-import boto3
 import requests
 from PIL import Image
 
-from opennem import settings
+from opennem.settings import settings
 from opennem.utils.http import http
 from opennem.utils.url import bucket_to_website
 
@@ -38,7 +37,7 @@ def write_photo_to_s3(file_path: str, data: Any, overwrite: bool = False) -> int
         if r.ok:
             return len(r.content)
 
-    s3_client = boto3.client("s3")
+    # s3_client = boto3.client("s3")
 
     # with open(
     #     s3_save_path,
@@ -49,7 +48,7 @@ def write_photo_to_s3(file_path: str, data: Any, overwrite: bool = False) -> int
 
     # s3_client.upload_file(s3_save_path)
 
-    logger.info("Wrote {} to {}".format(len(data), s3_save_path))
+    logger.info(f"Wrote {len(data)} to {s3_save_path}")
 
     return write_count
 

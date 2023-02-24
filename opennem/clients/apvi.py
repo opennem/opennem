@@ -10,11 +10,11 @@ from urllib.parse import urlencode
 
 from pydantic import ValidationError, validator
 
-from opennem import settings
 from opennem.core.normalizers import is_number
 from opennem.importer.rooftop import ROOFTOP_CODE
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
+from opennem.settings import settings
 from opennem.utils.dates import get_today_opennem, parse_date
 from opennem.utils.http import http
 from opennem.utils.version import get_version

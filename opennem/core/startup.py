@@ -3,8 +3,8 @@
 import sys
 from platform import node, platform
 
-from opennem import settings
 from opennem.clients.slack import slack_message
+from opennem.settings import settings
 from opennem.utils.version import get_version
 
 PYTHON_VERSION = ".".join([str(i) for i in (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)])

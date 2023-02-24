@@ -3,12 +3,11 @@
 
 """
 
-from typing import Optional
 
 WEM_CODE_SUFFIXES = ["plant"]
 
 
-def parse_wem_facility_code(facility_code: str) -> Optional[str]:
+def parse_wem_facility_code(facility_code: str) -> str | None:
     """
     Parses WEM facility codes into station_code and facility_code
 
@@ -17,8 +16,8 @@ def parse_wem_facility_code(facility_code: str) -> Optional[str]:
     ex. PINJAR_GT7 becomes PINJAR and PINJAR_GT7
     """
 
-    if not type(facility_code) is str:
-        raise Exception("Invalid facilty code: {}".format(facility_code))
+    if type(facility_code) is not str:
+        raise Exception(f"Invalid facilty code: {facility_code}")
 
     if not facility_code:
         # Exception?

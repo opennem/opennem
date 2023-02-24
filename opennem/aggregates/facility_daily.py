@@ -4,11 +4,11 @@ from datetime import date, datetime, timedelta
 from textwrap import dedent
 from typing import Any
 
-from opennem import settings
 from opennem.aggregates.utils import get_aggregate_year_range
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.settings import settings
 from opennem.utils.dates import chop_datetime_microseconds, get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_daily")

@@ -5,7 +5,7 @@ import logging
 
 from github import Github
 
-from opennem import settings
+from opennem.settings import settings
 
 logger = logging.getLogger("opennem.clients.github")
 

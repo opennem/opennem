@@ -8,7 +8,7 @@ from typing import Any
 from pydantic import BaseModel
 from requests.exceptions import RequestException
 
-from opennem import settings
+from opennem.settings import settings
 from opennem.utils.http import API_CLIENT_HEADERS, http
 
 logger = logging.getLogger("opennem.clients.cfimage")

@@ -8,7 +8,7 @@ def facility_duid_map(duid: str) -> str:
     Maps a DUID to a Facility code
 
     """
-    if not type(FACILITY_DUID_MAP) is dict:
+    if type(FACILITY_DUID_MAP) is not dict:
         raise Exception("Facility duid map invalid data type")
 
     if duid in FACILITY_DUID_MAP:

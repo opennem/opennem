@@ -6,11 +6,11 @@ import logging
 from datetime import datetime
 from textwrap import dedent
 
-from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
+from opennem.settings import settings
 
 logger = logging.getLogger("opennem.workers.gap_fill")
 

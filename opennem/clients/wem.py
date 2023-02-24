@@ -14,28 +14,28 @@ See the URL constants for sources and unit tests
 import csv
 import logging
 from datetime import datetime, timedelta
-from typing import Any, List, Optional, Union
+from typing import Any
 
 import requests
 from pydantic import ValidationError, validator
 
-from opennem import settings
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkWEM
+from opennem.settings import settings
 from opennem.utils.dates import get_date_component, parse_date
 from opennem.utils.random_agent import get_random_agent
 
 logger = logging.getLogger("opennem.client.wem")
 
-_AEMO_WEM_LIVE_SCADA_URL = (
-    "https://aemo.com.au/aemo/data/wa/infographic/facility-intervals-last96.csv"
-)
+_AEMO_WEM_LIVE_SCADA_URL = "https://aemo.com.au/aemo/data/wa/infographic/facility-intervals-last96.csv"
 
 _AEMO_WEM_LIVE_BALANCING_URL = "https://data.wa.aemo.com.au/public/infographic/neartime/pulse.csv"
 
 _AEMO_WEM_SCADA_URL = "https://data.wa.aemo.com.au/public/public-data/datafiles/facility-scada/facility-scada-{year}-{month}.csv"
 
-_AEMO_WEM_BALANCING_SUMMARY_URL = "http://data.wa.aemo.com.au/public/public-data/datafiles/balancing-summary/balancing-summary-{year}.csv"
+_AEMO_WEM_BALANCING_SUMMARY_URL = (
+    "http://data.wa.aemo.com.au/public/public-data/datafiles/balancing-summary/balancing-summary-{year}.csv"
+)
 
 
 def _wem_balancing_summary_field_alias(field_name: str) -> str:
@@ -43,7 +43,7 @@ def _wem_balancing_summary_field_alias(field_name: str) -> str:
     return field_name.strip().upper()
 
 
-def _empty_string_to_none(field_value: Optional[Union[str, float]]) -> Optional[Union[str, float]]:
+def _empty_string_to_none(field_value: str | float | None) -> str | float | None:
     if not field_value:
         return None
 
@@ -55,30 +55,22 @@ def _empty_string_to_none(field_value: Optional[Union[str, float]]) -> Optional[
 
 class WEMBalancingSummaryInterval(BaseConfig):
     trading_day_interval: datetime
-    forecast_eoi_mw: Optional[float]
-    forecast_mw: Optional[float]
-    price: Optional[float]  # some forecasts don't have a price
-    forecast_nsg_mw: Optional[float]
-    actual_nsg_mw: Optional[float]
-    actual_total_generation: Optional[float]
+    forecast_eoi_mw: float | None
+    forecast_mw: float | None
+    price: float | None  # some forecasts don't have a price
+    forecast_nsg_mw: float | None
+    actual_nsg_mw: float | None
+    actual_total_generation: float | None
 
     _validator_price = validator("price", pre=True, allow_reuse=True)(_empty_string_to_none)
 
-    _validator_actual_nsw = validator("actual_nsg_mw", pre=True, allow_reuse=True)(
-        _empty_string_to_none
-    )
+    _validator_actual_nsw = validator("actual_nsg_mw", pre=True, allow_reuse=True)(_empty_string_to_none)
 
-    _validator_actual_total_gen = validator("actual_total_generation", pre=True, allow_reuse=True)(
-        _empty_string_to_none
-    )
+    _validator_actual_total_gen = validator("actual_total_generation", pre=True, allow_reuse=True)(_empty_string_to_none)
 
-    _validator_forecast_eoi_mw = validator("forecast_eoi_mw", pre=True, allow_reuse=True)(
-        _empty_string_to_none
-    )
+    _validator_forecast_eoi_mw = validator("forecast_eoi_mw", pre=True, allow_reuse=True)(_empty_string_to_none)
 
-    _validator_forecast_nsg_mw = validator("forecast_nsg_mw", pre=True, allow_reuse=True)(
-        _empty_string_to_none
-    )
+    _validator_forecast_nsg_mw = validator("forecast_nsg_mw", pre=True, allow_reuse=True)(_empty_string_to_none)
 
     @validator("trading_day_interval", pre=True)
     def _validate_trading_interval(cls, value: Any) -> datetime:
@@ -100,9 +92,9 @@ class WEMBalancingSummaryInterval(BaseConfig):
 class WEMBalancingSummarySet(BaseConfig):
     crawled_at: datetime
     live: bool = True
-    intervals: List[WEMBalancingSummaryInterval]
-    source_url: Optional[str]
-    server_latest: Optional[datetime]
+    intervals: list[WEMBalancingSummaryInterval]
+    source_url: str | None
+    server_latest: datetime | None
 
     @property
     def count(self) -> int:
@@ -113,16 +105,16 @@ class WEMGenerationInterval(BaseConfig):
     trading_interval: datetime
     network_id: str = "WEM"
     facility_code: str
-    power: Optional[float]
-    eoi_quantity: Optional[float]
-    generated_scheduled: Optional[float]
-    generated_non_scheduled: Optional[float]
+    power: float | None
+    eoi_quantity: float | None
+    generated_scheduled: float | None
+    generated_non_scheduled: float | None
 
     created_by: str = "controllers.wem"
     created_at: datetime = datetime.now()
 
     @property
-    def generated(self) -> Optional[float]:
+    def generated(self) -> float | None:
         if self.power:
             return self.power
 
@@ -139,17 +131,11 @@ class WEMGenerationInterval(BaseConfig):
 
     _validator_power = validator("power", pre=True, allow_reuse=True)(_empty_string_to_none)
 
-    _validator_eoi_quantity = validator("eoi_quantity", pre=True, allow_reuse=True)(
-        _empty_string_to_none
-    )
+    _validator_eoi_quantity = validator("eoi_quantity", pre=True, allow_reuse=True)(_empty_string_to_none)
 
-    _validator_generated_scheduled = validator("generated_scheduled", pre=True, allow_reuse=True)(
-        _empty_string_to_none
-    )
+    _validator_generated_scheduled = validator("generated_scheduled", pre=True, allow_reuse=True)(_empty_string_to_none)
 
-    _validator_generated_non_scheduled = validator(
-        "generated_non_scheduled", pre=True, allow_reuse=True
-    )(_empty_string_to_none)
+    _validator_generated_non_scheduled = validator("generated_non_scheduled", pre=True, allow_reuse=True)(_empty_string_to_none)
 
     @validator("trading_interval", pre=True)
     def _validate_trading_interval(cls, value: Any) -> datetime:
@@ -164,9 +150,9 @@ class WEMGenerationInterval(BaseConfig):
 class WEMFacilityIntervalSet(BaseConfig):
     crawled_at: datetime
     live: bool = True
-    intervals: List[WEMGenerationInterval]
-    source_url: Optional[str]
-    server_latest: Optional[datetime]
+    intervals: list[WEMGenerationInterval]
+    source_url: str | None
+    server_latest: datetime | None
 
     @property
     def count(self) -> int:
@@ -181,7 +167,7 @@ class WEMFileNotFoundException(Exception):
     pass
 
 
-def wem_downloader(url: str, for_date: Optional[datetime] = None) -> str:
+def wem_downloader(url: str, for_date: datetime | None = None) -> str:
     """Downloads WEM content using the session"""
     url_params = {
         "day": get_date_component("%d", dt=for_date),
@@ -201,9 +187,7 @@ def wem_downloader(url: str, for_date: Optional[datetime] = None) -> str:
         raise WEMFileNotFoundException()
 
     if not response.ok:
-        raise Exception(
-            "Get WEM facility intervals summary error: {}".format(response.status_code)
-        )
+        raise Exception(f"Get WEM facility intervals summary error: {response.status_code}")
 
     # @TODO mime detect and decoding
     _content = response.content.decode("utf-8")
@@ -211,7 +195,7 @@ def wem_downloader(url: str, for_date: Optional[datetime] = None) -> str:
     return _content
 
 
-def parse_wem_live_balancing_summary(content: str) -> List[WEMBalancingSummaryInterval]:
+def parse_wem_live_balancing_summary(content: str) -> list[WEMBalancingSummaryInterval]:
     """Parses a WEM live balancing summary response into models"""
     _models = []
     csvreader = csv.DictReader(content.split("\n"))
@@ -225,7 +209,7 @@ def parse_wem_live_balancing_summary(content: str) -> List[WEMBalancingSummaryIn
         try:
             _m = WEMBalancingSummaryInterval(**_csv_rec)
         except ValidationError as e:
-            logger.error("Validation error for record: {}".format(e))
+            logger.error(f"Validation error for record: {e}")
             logger.debug(_csv_rec)
 
         if _m:
@@ -236,7 +220,7 @@ def parse_wem_live_balancing_summary(content: str) -> List[WEMBalancingSummaryIn
     return _models
 
 
-def parse_wem_balancing_summary(content: str) -> List[WEMBalancingSummaryInterval]:
+def parse_wem_balancing_summary(content: str) -> list[WEMBalancingSummaryInterval]:
     """Parses the wem nemweb balancing summary"""
     _models = []
     csvreader = csv.DictReader(content.split("\n"))
@@ -258,7 +242,7 @@ def parse_wem_balancing_summary(content: str) -> List[WEMBalancingSummaryInterva
         try:
             _m = WEMBalancingSummaryInterval(**_csv_rec)
         except ValidationError as e:
-            logger.error("Validation error for record: {}".format(e))
+            logger.error(f"Validation error for record: {e}")
             logger.debug(_csv_rec)
 
         if _m:
@@ -276,11 +260,9 @@ def get_wem_live_balancing_summary() -> WEMBalancingSummarySet:
 
     _models = parse_wem_live_balancing_summary(resp)
 
-    server_latest: Optional[datetime] = None
+    server_latest: datetime | None = None
 
-    all_trading_intervals = list(
-        set([i.trading_day_interval for i in _models if i.price is not None])
-    )
+    all_trading_intervals = list({i.trading_day_interval for i in _models if i.price is not None})
 
     if all_trading_intervals:
         server_latest = max(all_trading_intervals)
@@ -305,17 +287,9 @@ def get_wem_balancing_summary() -> WEMBalancingSummarySet:
 
     _models = parse_wem_balancing_summary(resp)
 
-    server_latest: Optional[datetime] = None
+    server_latest: datetime | None = None
 
-    all_trading_intervals = list(
-        set(
-            [
-                i.trading_day_interval
-                for i in _models
-                if i.forecast_eoi_mw is None and i.forecast_mw is None
-            ]
-        )
-    )
+    all_trading_intervals = list({i.trading_day_interval for i in _models if i.forecast_eoi_mw is None and i.forecast_mw is None})
 
     if all_trading_intervals:
         server_latest = max(all_trading_intervals)
@@ -354,7 +328,7 @@ def _remap_wem_facility_interval_field(field_name: str) -> str:
     return WEM_FACILITY_INTERVAL_FIELD_REMAP[field_name]
 
 
-def parse_wem_facility_intervals(content: str) -> List[WEMGenerationInterval]:
+def parse_wem_facility_intervals(content: str) -> list[WEMGenerationInterval]:
     """parses the wem live generation intervals for each facility"""
 
     _models = []
@@ -374,7 +348,7 @@ def parse_wem_facility_intervals(content: str) -> List[WEMGenerationInterval]:
         try:
             _m = WEMGenerationInterval(**_csv_rec)
         except ValidationError as e:
-            logger.error("Validation error for record: {}".format(e))
+            logger.error(f"Validation error for record: {e}")
             logger.debug(_csv_rec)
 
         if _m:
@@ -390,9 +364,9 @@ def get_wem_live_facility_intervals() -> WEMFacilityIntervalSet:
     content = wem_downloader(_AEMO_WEM_LIVE_SCADA_URL)
     _models = parse_wem_facility_intervals(content)
 
-    server_latest: Optional[datetime] = None
+    server_latest: datetime | None = None
 
-    all_trading_intervals = list(set([i.trading_interval for i in _models]))
+    all_trading_intervals = list({i.trading_interval for i in _models})
 
     if all_trading_intervals:
         server_latest = max(all_trading_intervals)
@@ -408,12 +382,12 @@ def get_wem_live_facility_intervals() -> WEMFacilityIntervalSet:
     return wem_set
 
 
-def get_wem_facility_intervals(from_date: Optional[datetime] = None) -> WEMFacilityIntervalSet:
+def get_wem_facility_intervals(from_date: datetime | None = None) -> WEMFacilityIntervalSet:
     """Obtains WEM facility intervals from NEM web. Will default to most recent date
 
     @TODO not yet smart enough to know if it should check current or archive
     """
-    content: Optional[str] = None
+    content: str | None = None
 
     try:
         content = wem_downloader(_AEMO_WEM_SCADA_URL, from_date)
@@ -427,9 +401,9 @@ def get_wem_facility_intervals(from_date: Optional[datetime] = None) -> WEMFacil
 
     _models = parse_wem_facility_intervals(content)
 
-    server_latest: Optional[datetime] = None
+    server_latest: datetime | None = None
 
-    all_trading_intervals = list(set([i.trading_interval for i in _models]))
+    all_trading_intervals = list({i.trading_interval for i in _models})
 
     if all_trading_intervals:
         server_latest = max(all_trading_intervals)

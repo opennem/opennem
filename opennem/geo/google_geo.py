@@ -13,7 +13,7 @@ import logging
 import time
 from typing import Any
 
-from opennem import settings
+from opennem.settings import settings
 from opennem.utils.http import http
 
 logging.basicConfig(level=logging.INFO)
@@ -24,7 +24,6 @@ QUERY_LIMIT = 0
 
 
 def google_geocode(query, region=None, api_key=None, return_full_response=False):
-
     GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/geocode/json"
 
     query_params = {}
@@ -79,7 +78,6 @@ def google_geocode(query, region=None, api_key=None, return_full_response=False)
 
 
 def lookup_placeid(place_id, api_key=None, retry=0):
-
     GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/details/json"
 
     url_params = {
@@ -89,7 +87,7 @@ def lookup_placeid(place_id, api_key=None, retry=0):
 
     results = http.get(GOOGLE_PLACES_URL, params=url_params).json()
 
-    if not "status" in results:
+    if "status" not in results:
         raise Exception("Invalid response")
 
     if results["status"] == "REQUEST_DENIED":
@@ -107,15 +105,14 @@ def lookup_placeid(place_id, api_key=None, retry=0):
         logging.error("Error results for %s", place_id)
         raise Exception("No results: {}".format(results["status"]))
 
-    if not "result" in results:
+    if "result" not in results:
         logging.error("No result for %s", place_id)
-        raise Exception("No result: {}".format(place_id))
+        raise Exception(f"No result: {place_id}")
 
     return results["result"]
 
 
 def place_autocomplete(query, region=None, api_key=None, return_full_response=False):
-
     GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
 
     query_params = {}
@@ -144,7 +141,7 @@ def place_autocomplete(query, region=None, api_key=None, return_full_response=Fa
 
     logging.debug(results)
 
-    if not "status" in results:
+    if "status" not in results:
         raise Exception("Invalid response")
 
     if results["status"] == "REQUEST_DENIED":
@@ -171,12 +168,11 @@ def place_autocomplete(query, region=None, api_key=None, return_full_response=Fa
 
 
 def place_search(query: str, api_key: str | None = None, return_full_response=False):
-
     GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
 
-    query_params = {}
+    {}
 
-    query_components = {}
+    {}
 
     url_params = {
         "key": settings.google_places_api_key,

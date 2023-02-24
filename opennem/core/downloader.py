@@ -1,10 +1,9 @@
 import logging
 from io import BytesIO
 from pathlib import Path
-from typing import Optional
 from zipfile import ZipFile
 
-from opennem import settings
+from opennem.settings import settings
 from opennem.utils.archive import _handle_zip, chain_streams
 from opennem.utils.http import http
 from opennem.utils.mime import mime_from_content, mime_from_url
@@ -15,12 +14,12 @@ logger = logging.getLogger("opennem.downloader")
 def url_downloader(url: str) -> bytes:
     """Downloads a URL and returns content, handling embedded zips and other MIME's"""
 
-    logger.debug("Downloading: {}".format(url))
+    logger.debug(f"Downloading: {url}")
 
     r = http.get(url, verify=settings.http_verify_ssl)
 
     if not r.ok:
-        raise Exception("Bad link returned {}: {}".format(r.status_code, url))
+        raise Exception(f"Bad link returned {r.status_code}: {url}")
 
     content = BytesIO(r.content)
 
@@ -55,12 +54,12 @@ def url_downloader(url: str) -> bytes:
 def file_opener(path: Path) -> bytes:
     """Opens a local file, handling embedded zips and other MIME's"""
 
-    logger.debug("Opening file: {}".format(path))
+    logger.debug(f"Opening file: {path}")
 
     if not path.is_file():
-        raise Exception("File not found: {}".format(path))
+        raise Exception(f"File not found: {path}")
 
-    content: Optional[BytesIO] = None
+    content: BytesIO | None = None
 
     with path.open("rb") as fh:
         content = BytesIO(fh.read())

@@ -24,9 +24,9 @@ from dateutil.relativedelta import relativedelta
 from openpyxl import load_workbook
 from pydantic import validator
 
-from opennem import settings
 from opennem.core.normalizers import clean_float, normalize_duid, station_name_cleaner
 from opennem.schema.core import BaseConfig
+from opennem.settings import settings
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.http import download_file
 
@@ -174,7 +174,6 @@ def parse_aemo_general_information(filename: Path) -> list[AEMOGIRecord]:
     records = []
 
     for row in ws.iter_rows(min_row=3, values_only=True):
-
         # pick out the columns we want
         # lots of hidden columns in the sheet
         row_collapsed = [row[excel_column_to_column_index(i) - 1] for i in GI_EXISTING_NEW_GEN_KEYS.values()]

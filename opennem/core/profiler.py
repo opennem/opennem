@@ -19,11 +19,11 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import text as sql_text
 
-from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.network import NetworkSchema
+from opennem.settings import settings
 
 # from opennem.utils.timedelta import timedelta_to_string
 

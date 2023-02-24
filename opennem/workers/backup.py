@@ -13,8 +13,8 @@ from urllib.parse import urlparse
 
 import boto3
 
-from opennem import settings
 from opennem.db import get_database_engine
+from opennem.settings import settings
 from opennem.utils.dates import TODAY_NEM
 from opennem.utils.security import get_random_string
 
@@ -46,11 +46,11 @@ def run_timescaledb_restore(pre: bool = True) -> bool:
 def run_pg_dump(dest_file: Path) -> Path:
     """Runs pg_dump to the destination file. Uses database from settings"""
 
-    logger.debug("Will save db to {}".format(dest_file))
+    logger.debug(f"Will save db to {dest_file}")
 
     pg_dump_cmd = [
         "pg_dump",
-        "--dbname={}".format(settings.db_url),
+        f"--dbname={settings.db_url}",
         "-Fc",
         # "-j",  # jobs to run
         # "4",
@@ -74,7 +74,7 @@ def run_pg_dump(dest_file: Path) -> Path:
 
     except Exception as e:
         if "No such file or directory" in str(e):
-            raise OpennemBackupException("Could not find command: {}".format(pg_dump_cmd[0]))
+            raise OpennemBackupException(f"Could not find command: {pg_dump_cmd[0]}")
         raise OpennemBackupException(e)
 
     return dest_file
@@ -84,13 +84,13 @@ def upload_backup_to_s3(backup_path: Path) -> str:
     """Upload the backup file to s3"""
 
     if not backup_path.is_file():
-        raise OpennemBackupException("Not a file: {}".format(backup_path))
+        raise OpennemBackupException(f"Not a file: {backup_path}")
 
     date_today = TODAY_NEM.strftime("%Y%M%d")
-    backup_name = "{}_{}.db".format(urlparse(settings.db_url).path, date_today)
+    backup_name = f"{urlparse(settings.db_url).path}_{date_today}.db"
     s3_client = boto3.client("s3")
 
-    logger.debug("Saving to {}".format(backup_name))
+    logger.debug(f"Saving to {backup_name}")
 
     s3_client.upload_file(str(backup_path), settings.backup_bucket_path, backup_name)
 
@@ -99,7 +99,7 @@ def upload_backup_to_s3(backup_path: Path) -> str:
 
 def run_backup() -> str:
     _temp_folder = mkdtemp()
-    dest_file = Path(_temp_folder) / "opennem_backup_{}.db".format(get_random_string())
+    dest_file = Path(_temp_folder) / f"opennem_backup_{get_random_string()}.db"
 
     try:
         run_timescaledb_restore()
@@ -107,9 +107,9 @@ def run_backup() -> str:
         backup_size = os.path.getsize(backup_file)
 
         if backup_size < 1:
-            raise OpennemBackupException("Zero sized file at {}".format(backup_file))
+            raise OpennemBackupException(f"Zero sized file at {backup_file}")
 
-        logger.info("Saved to {}".format(backup_file))
+        logger.info(f"Saved to {backup_file}")
 
         s3_save_path = upload_backup_to_s3(dest_file)
 

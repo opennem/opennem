@@ -15,10 +15,10 @@ if sys.version_info < (3, 10):
 
 
 # Setup sentry
-from opennem.settings import settings  # noqa: E402
+from opennem.settings import settings as opennem_settings  # noqa: E402
 from opennem.utils.sentry import setup_sentry  # noqa: E402
 
-if settings.sentry_enabled:
+if opennem_settings.sentry_enabled:
     setup_sentry()
 
 
@@ -62,5 +62,5 @@ from rich.console import Console  # noqa: E402
 console = Console()
 
 # Log current timezone to console
-print(f" * Current timezone: {datetime.now().astimezone().tzinfo} (settings: {settings.timezone})")
+print(f" * Current timezone: {datetime.now().astimezone().tzinfo} (settings: {opennem_settings.timezone})")
 print(f" * Running from {PROJECT_PATH}")
