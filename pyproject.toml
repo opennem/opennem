@@ -112,6 +112,9 @@ opennem = 'opennem.cli:main'
 [tool.poetry.extras]
 postgres = ["psycopg2"]
 
+[tool.poetry.group.dev.dependencies]
+pyright = "^1.1.295"
+
 [tool.ruff]
 target-version = "py311"
 line-length = 130
