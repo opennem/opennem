@@ -175,9 +175,11 @@ force_grid_wrap = 0
 use_parentheses = true
 line_length = 130
 
-[tool.refurb]
-ignore = []
-load = ["opennem"]
+[tool.pyright]
+include = "opennem/**/*.py"
+python_version = "3.11"
+strict = true
+reportMissingImports = "error"
 
 [build-system]
 requires = ["poetry>=0.12"]
