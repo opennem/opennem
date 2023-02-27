@@ -3,6 +3,12 @@ on:
   create:
     tags:
       - v*
+  schedule:
+    - cron: "0 2 * * 0" # Weekly on Sundays at 02:00
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   buildimage:
@@ -11,11 +17,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+
       - name: Install buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           version: latest
+
       - name: Build the Docker image
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
@@ -25,3 +33,16 @@ jobs:
           registry: docker.pkg.github.com
           dockerfile: infra/container/Dockerfile
           tag_semver: true
+          platforms: linux/amd64,linux/arm64
+          cache: ${{ github.event_name != 'schedule' }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ap-southeast-2
+          role-to-assume: arn:aws:iam::696911118106:role/github-action-ecr
+          role-session-name: GithubActionBuild
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
