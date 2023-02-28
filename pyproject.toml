@@ -180,6 +180,7 @@ include = "opennem/**/*.py"
 python_version = "3.11"
 strict = true
 reportMissingImports = "error"
+reportMissingTypeStubs = false
 
 [build-system]
 requires = ["poetry>=0.12"]
