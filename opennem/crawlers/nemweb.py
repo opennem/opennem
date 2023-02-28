@@ -29,6 +29,9 @@ def get_time_interval_for_crawler(crawler: CrawlerDefinition) -> TimeInterval:
     """For a crawler get its interval size"""
     time_interval: TimeInterval | None = None
 
+    if not crawler.network:
+        raise NemwebCrawlerException("Require a crawler that defines a network")
+
     if crawler.bucket_size:
         if crawler.bucket_size == AEMODataBucketSize.interval:
             if not crawler.network.interval_size:
@@ -109,6 +112,8 @@ def run_nemweb_aemo_crawl(
 
     logger.info(f"Fetching {latest=} {len(entries_to_fetch)} entries")
 
+    controller_returns: ControllerReturn | None = None
+
     for entry in entries_to_fetch:
         try:
             # @NOTE optimization - if we're dealing with a large file unzip
@@ -120,6 +125,9 @@ def run_nemweb_aemo_crawl(
             else:
                 ts = parse_aemo_url(entry.link)
                 controller_returns = store_aemo_tableset(ts)
+
+            if not isinstance(controller_returns, ControllerReturn):
+                raise Exception("Controller returns not a ControllerReturn")
 
             max_date = max([i.modified_date for i in entries_to_fetch if i.modified_date])
 
@@ -136,6 +144,8 @@ def run_nemweb_aemo_crawl(
     return controller_returns
 
 
+# TRADING_PRICE
+# TRADING_INTERCONNECTORRES
 AEMONemwebTradingIS = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
@@ -147,6 +157,9 @@ AEMONemwebTradingIS = CrawlerDefinition(
 )
 
 
+# DISPATCH_PRICE
+# DISPATCH_REGIONSUM
+# DISPATCH_INTERCONNECTORRES
 AEMONemwebDispatchIS = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
@@ -157,6 +170,7 @@ AEMONemwebDispatchIS = CrawlerDefinition(
     processor=run_nemweb_aemo_crawl,
 )
 
+# DISPATCH_SCADA
 AEMONNemwebDispatchScada = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
