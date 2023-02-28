@@ -30,7 +30,8 @@ jobs:
           name: opennem/opennem/opennem
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
+          # registry: docker.pkg.github.com
+          registry: ghcr.io
           dockerfile: infra/container/Dockerfile
           tag_semver: true
           platforms: linux/amd64,linux/arm64
