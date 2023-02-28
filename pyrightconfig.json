@@ -1,0 +1,9 @@
+{
+  "include": ["opennem/**/*.py"],
+  "pythonVersion": "3.11",
+  // "strict": ["opennem"],
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "venvPath": "/Users/n/Library/Caches/pypoetry/virtualenvs/",
+  "venv": "opennem-backend-D7ibsH3r-py3.11"
+}
