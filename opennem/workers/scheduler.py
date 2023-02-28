@@ -24,7 +24,15 @@ from opennem.monitors.emissions import alert_missing_emission_factors
 from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.pipelines.crontab import network_interval_crontab
-from opennem.pipelines.nem import NemPipelineNoNewData, nem_per_day_check, nem_per_interval_check, nem_rooftop_crawl
+from opennem.pipelines.nem import (
+    NemPipelineNoNewData,
+    nem_dispatch_is_crawl,
+    nem_dispatch_scada_crawl,
+    nem_per_day_check,
+    nem_rooftop_crawl,
+    nem_trading_is_crawl,
+    per_interval_flows_and_exports,
+)
 from opennem.pipelines.wem import wem_per_interval_check
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkWEM
 from opennem.settings import IS_DEV, settings  # noqa: F401
@@ -44,19 +52,33 @@ worker_startup_alert()
 
 
 # crawler tasks live per interval for each network
-@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=15)
-@huey.lock_task("crawler_run_nem_per_interval")
-def crawler_run_nem_per_interval() -> None:
-    try:
-        nem_per_interval_check()
-    except NemPipelineNoNewData:
-        pass
 
 
-@huey.periodic_task(network_interval_crontab(network=NetworkWEM, number_minutes=1), priority=50, retries=5, retry_delay=15)
-@huey.lock_task("crawler_run_wem_per_interval")
-def crawler_run_wem_per_interval() -> None:
-    wem_per_interval_check()
+@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=10)
+@huey.lock_task("crawler_run_nem_dispatch_scada_crawl")
+def crawler_run_nem_dispatch_scada_crawl() -> None:
+    """dispatch_scada for NEM crawl"""
+    nem_dispatch_scada_crawl()
+
+
+@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=10)
+@huey.lock_task("crawler_run_nem_dispatch_is_crawl")
+def crawler_run_nem_dispatch_is_crawl() -> None:
+    """dispatch_is for NEM crawl"""
+    nem_dispatch_is_crawl()
+
+
+@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=10)
+@huey.lock_task("crawler_run_nem_trading_is_crawl")
+def crawler_run_nem_trading_is_crawl() -> None:
+    """dispatch_is for NEM crawl"""
+    nem_trading_is_crawl()
+
+
+@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=30)
+@huey.lock_task("run_per_interval_flows_and_exports")
+def run_per_interval_flows_and_exports() -> None:
+    per_interval_flows_and_exports()
 
 
 @huey.periodic_task(
@@ -68,6 +90,12 @@ def crawler_run_nem_rooftop_per_interval() -> None:
         nem_rooftop_crawl()
     except NemPipelineNoNewData:
         pass
+
+
+@huey.periodic_task(network_interval_crontab(network=NetworkWEM, number_minutes=1), priority=50, retries=5, retry_delay=15)
+@huey.lock_task("crawler_run_wem_per_interval")
+def crawler_run_wem_per_interval() -> None:
+    wem_per_interval_check()
 
 
 @huey.periodic_task(crontab(minute="*/10"), priority=1)

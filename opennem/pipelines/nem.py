@@ -5,7 +5,6 @@ All the processing pipelines for the NEM network
 """
 import logging
 
-from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
 from opennem.crawl import run_crawl
@@ -32,6 +31,23 @@ class NemPipelineNoNewData(Exception):
     pass
 
 
+# Crawler tasks
+
+
+def nem_dispatch_is_crawl() -> ControllerReturn:
+    cr = run_crawl(AEMONemwebDispatchIS)
+
+    if not cr or not cr.inserted_records:
+        raise NemPipelineNoNewData("No new dispatch is data")
+
+
+def nem_trading_is_crawl() -> None:
+    cr = run_crawl(AEMONemwebTradingIS)
+
+    if not cr or not cr.inserted_records:
+        raise NemPipelineNoNewData("No new dispatch is data")
+
+
 @profile_task(
     send_slack=True,
     message_fmt=(
@@ -39,17 +55,12 @@ class NemPipelineNoNewData(Exception):
         " `{run_task_output.inserted_records}` new records for interval `{run_task_output.server_latest}`"
     ),
 )
-def nem_per_interval_check() -> ControllerReturn:
+def nem_dispatch_scada_crawl() -> ControllerReturn:
     """This task runs per interval and checks for new data"""
     dispatch_scada = run_crawl(AEMONNemwebDispatchScada)
-    run_crawl(AEMONemwebDispatchIS)
-    run_crawl(AEMONemwebTradingIS)
 
     if not dispatch_scada or not dispatch_scada.inserted_records:
         raise NemPipelineNoNewData("No new dispatch scada data")
-
-    if dispatch_scada and dispatch_scada.server_latest:
-        run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
 
     run_export_power_latest_for_network(network=NetworkNEM)
     run_export_power_latest_for_network(network=NetworkAU)
