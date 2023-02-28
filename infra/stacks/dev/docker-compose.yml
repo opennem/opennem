@@ -1,4 +1,41 @@
 version: "3"
+
+x-app: &default-app
+  restart: on-failure
+  depends_on:
+    - redis
+  networks:
+    - frontend
+  environment:
+    - TZ
+    - TIMEZONE
+    - ENV
+    - DATABASE_HOST_URL
+    - REDIS_HOST_URL
+    - GOOGLE_PLACES_API_KEY
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - SENTRY_URL
+    - MONITORING_SLACK_HOOK
+    - S3_DATA_BUCKET_PATH
+    - LOG_LEVEL
+    - CACHE_SCADA_TTL
+    - DB_ENERGY_VIEW
+    - WORKERS_RUN
+    - SLACK_NOTIFICATIONS
+    - NEMWEB_MIGRATE_DB
+    - MONITORING_ALERT_SLACK_USER
+    - MONITORING_ALERT_SMS
+    - APVI_TOKEN
+    - HTTPS_PROXY_URL
+    - SLACK_ADMIN_ALERT
+    - CLOUDFLARE_ACCOUNT_ID
+    - CLOUDFLARE_API_KEY
+    - FLOWS_AND_EMISSIONS_V2
+    - OPENNEM_POWER_FLOWS
+    - GITHUB_FEEDBACK_ACCESS_TOKEN
+    - RUN_CRAWLERS
+
 services:
   traefik:
     image: traefik:v2.1
@@ -43,6 +80,7 @@ services:
       - "traefik.docker.network=frontend"
 
   api:
+    <<: *default-app
     image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
     command:
       [
@@ -58,23 +96,6 @@ services:
         "--error-log",
         "-"
       ]
-    restart: on-failure
-    depends_on:
-      - redis
-    environment:
-      - TZ
-      - TIMEZONE
-      - DATABASE_HOST_URL
-      - REDIS_HOST_URL
-      - GOOGLE_PLACES_API_KEY
-      - ENV
-      - SENTRY_URL
-      - LOG_LEVEL
-      - MONITORING_ALERT_SLACK_USER
-      - MONITORING_ALERT_SMS
-      - GITHUB_FEEDBACK_ACCESS_TOKEN
-    networks:
-      - frontend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-secure.entrypoints=websecure"
@@ -88,9 +109,9 @@ services:
       - "traefik.http.services.api.loadbalancer.server.port=8000"
       - "traefik.http.services.api.loadbalancer.server.scheme=http"
       - "traefik.docker.network=frontend"
-      - "com.centurylinklabs.watchtower.enable=true"
 
   worker:
+    <<: *default-app
     image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
     restart: unless-stopped
     command:
@@ -105,42 +126,8 @@ services:
         "process",
         "opennem.workers.scheduler.huey",
       ]
-    depends_on:
-      - redis
-    networks:
-      - frontend
-    environment:
-      - TZ
-      - TIMEZONE
-      - DATABASE_HOST_URL
-      - REDIS_HOST_URL
-      - GOOGLE_PLACES_API_KEY
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-      - ENV
-      - SENTRY_URL
-      - MONITORING_SLACK_HOOK
-      - S3_DATA_BUCKET_PATH
-      - LOG_LEVEL=DEBUG
-      - CACHE_SCADA_TTL
-      - DB_ENERGY_VIEW
-      - WORKERS_RUN
-      - SLACK_NOTIFICATIONS=1
-      - NEMWEB_MIGRATE_DB
-      - MONITORING_ALERT_SLACK_USER
-      - MONITORING_ALERT_SMS
-      - APVI_TOKEN
-      - HTTPS_PROXY_URL
-      - SLACK_ADMIN_ALERT
-      - CLOUDFLARE_ACCOUNT_ID
-      - CLOUDFLARE_API_KEY
-      - FLOWS_AND_EMISSIONS_V2
-      - OPENNEM_POWER_FLOWS
-      - GITHUB_FEEDBACK_ACCESS_TOKEN
-      - RUN_CRAWLERS
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
 
   redis:
     image: redis:6-alpine
@@ -151,7 +138,6 @@ services:
       - TZ
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=false"
 
 networks:
   frontend:
