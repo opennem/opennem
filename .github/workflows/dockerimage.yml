@@ -6,9 +6,9 @@ on:
   schedule:
     - cron: "0 2 * * 0" # Weekly on Sundays at 02:00
 
-permissions:
-  id-token: write
-  contents: read
+# permissions:
+#   id-token: write
+#   contents: read
 
 jobs:
   buildimage:
