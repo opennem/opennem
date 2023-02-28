@@ -358,14 +358,16 @@ def run_and_store_flows_for_range(date_start: datetime, date_end: datetime, netw
 
 
 @profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
-def run_flow_update_for_interval(interval: datetime, network: NetworkSchema | None = None) -> int | None:
+def run_flow_update_for_interval(
+    interval: datetime, network: NetworkSchema | None = None, number_of_intervals: int = 1
+) -> int | None:
     """Runs and stores emission flows for a particular interval"""
 
     if not network:
         network = NetworkNEM
 
     date_end = interval
-    date_start = interval - timedelta(minutes=network.interval_size)
+    date_start = interval - timedelta(minutes=network.interval_size) * number_of_intervals
 
     return run_and_store_flows_for_range(date_start, date_end, network=network)
 
