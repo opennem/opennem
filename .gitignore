@@ -123,3 +123,4 @@ scratch/
 .opennem_requests_cache.sqlite
 scripts/run_export.py
 scheduler_dev.py
+run_test.py
