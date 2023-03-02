@@ -19,7 +19,7 @@ class SettingsException(Exception):
 
 
 class OpennemSettings(BaseSettings):
-    env: str = "development"
+    env: str = "local"
 
     log_level: str = "DEBUG"
 
@@ -177,7 +177,7 @@ class OpennemSettings(BaseSettings):
 
     @property
     def debug(self) -> bool:
-        return self.env in ("development", "staging")
+        return self.env in ("local", "development", "staging")
 
     @property
     def is_prod(self) -> bool:
@@ -185,7 +185,7 @@ class OpennemSettings(BaseSettings):
 
     @property
     def is_dev(self) -> bool:
-        return self.env in ("development", "staging")
+        return self.env in ("local", "development", "staging")
 
     class Config:
         fields = {

@@ -14,6 +14,12 @@ Will load environment in order:
  * system env
  * pydantic settings
 
+Environments:
+  * local (default)
+  * development
+  * staging
+  * production
+
 """
 import logging
 import logging.config
@@ -56,7 +62,7 @@ __root_logger.handlers[0].setFormatter(__root_logger_formatter)
 PYTHON_VERSION = ".".join([str(i) for i in (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)])
 SYSTEM_STRING = platform()
 
-ENV = os.getenv("ENV", default="development")
+ENV = os.getenv("ENV", default="local")
 
 VERSION = None
 
