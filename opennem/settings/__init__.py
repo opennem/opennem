@@ -37,7 +37,7 @@ from platform import platform
 
 from pydantic.error_wrappers import _display_error_loc, _display_error_type_and_ctx
 
-from opennem.settings.log import LOGGING_CONFIG
+from opennem.settings.log_config import LOGGING_CONFIG
 from opennem.settings.utils import load_env_file
 
 from .schema import OpennemSettings  # noqa: E402
