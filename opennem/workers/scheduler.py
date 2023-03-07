@@ -31,7 +31,6 @@ from opennem.pipelines.nem import (
     nem_per_day_check,
     nem_rooftop_crawl,
     nem_trading_is_crawl,
-    per_interval_flows_and_exports,
 )
 from opennem.pipelines.wem import wem_per_interval_check
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkWEM
@@ -78,7 +77,9 @@ def crawler_run_nem_trading_is_crawl() -> None:
 @huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=30)
 @huey.lock_task("run_per_interval_flows_and_exports")
 def run_per_interval_flows_and_exports() -> None:
-    per_interval_flows_and_exports()
+    pass
+    # @note Disabled
+    # per_interval_flows_and_exports()
 
 
 @huey.periodic_task(
