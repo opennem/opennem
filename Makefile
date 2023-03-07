@@ -1,23 +1,25 @@
+.DEFAULT_GOAL := all
 UPGRADE_ARGS ?= --upgrade
+isort = isort opennem tests
+black = black opennem tests
+ruff = ruff opennem tests
 
+
+.PHONY: test
 test:
 	pytest tests -v
 
-tox-test:
-	tox -p all
+.PHONY: format
+format:
+	$(isort)
+	$(black)
+	$(ruff) --fix --exit-zero
 
-pylint:
-	tox -e pylint
-
-black:
-	black -l 120 opennem docs tests setup.py
-	black -v --ipynb notebooks/*.ipynb
-
-mypy:
-	mypy --config-file ./mypy.ini opennem
+.PHONY: pyright
+pyright:
+	pyright
 
 install:
-	# ARCHFLAGS="-arch x86_64" pip install -r ./requirements.txt
 	pip install -r ./requirements.txt
 
 build:
@@ -33,12 +35,5 @@ cleandist:
 codecov:
 	pytest --cov=./opennem
 
-release: build
-	pip install twine
-	twine check dist/*
-	twine upload dist/*
 
-spider_deploy:
-	scrapyd-deploy dev
-
-.PHONY: test black install build release
+.PHONY: install build release pyright
