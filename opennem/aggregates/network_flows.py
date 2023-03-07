@@ -88,10 +88,10 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, 
             left join network n on f.network_id = n.code
             left join (
                 select
-                    time_bucket_gapfill('5 min', bs.trading_interval) as trading_interval,
+                    bs.trading_interval as trading_interval,
                     bs.network_id,
                     bs.network_region,
-                    locf(bs.price) as price
+                    bs.price as price
                 from balancing_summary bs
                     where bs.network_id='{network_id}'
             ) as  bsn on
@@ -131,8 +131,34 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, 
     return df_gen
 
 
+def calculate_flow_for_interval(df_energy_and_emissions: pd.DataFrame, df_interconnector: pd.DataFrame) -> pd.DataFrame:
+    """Calculate the flow for a given interval
+
+    df_energy_and_emissions:
+        generation and emissions data for each network region
+            - energy (MWh)
+            - emissions (tCO2)
+    df_interconnector:
+        interconnector data for each regional flow direction energy that is
+            - energy (MWh)
+
+    returns
+        a dataframe for each region with the following columns
+            - emissions imported (tCO2)
+            - emissions exported (tCO2)
+
+    """
+    pass
+
+
 def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.DataFrame, scale: int) -> pd.DataFrame:
-    """Merge the dataframes and break down into simple frame"""
+    """Merge the dataframes and break down into simple frame
+
+    params:
+        df_energy: energy data
+        df_inter: interconnector data
+
+    """
 
     region_from = pd.merge(
         df_inter,
@@ -352,12 +378,15 @@ def run_and_store_flows_for_range(date_start: datetime, date_end: datetime, netw
 
     inserted_records = insert_flows(emissions_day)
 
-    logger.info(f"Inserted {inserted_records} records")
-
     return inserted_records
 
 
-@profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
+@profile_task(
+    send_slack=True,
+    level=ProfilerLevel.INFO,
+    retention_period=ProfilerRetentionTime.MONTH,
+    message_fmt="Ran flow update for interval {interval}",
+)
 def run_flow_update_for_interval(
     interval: datetime, network: NetworkSchema | None = None, number_of_intervals: int = 1
 ) -> int | None:
@@ -462,7 +491,8 @@ def run_flow_updates_all_for_network(network: NetworkSchema, to_year: int | None
 # debug entry point
 if __name__ == "__main__":
     logger.info("starting")
-    run_flow_updates_all_for_network(network=NetworkNEM, to_year=2020)
+    # run_flow_updates_all_for_network(network=NetworkNEM, to_year=2020)
     # run_emission_update_day(days=12)
     # run_flow_updates_all_per_year(2014, 1, network=NetworkNEM)
     # run_flow_update_for_interval(datetime.fromisoformat("2022-11-18T14:40:00+10:00"), network=NetworkNEM)
+    run_flow_update_for_interval(datetime.fromisoformat("2023-03-07T00:00:00+10:00"), network=NetworkNEM, number_of_intervals=1)
