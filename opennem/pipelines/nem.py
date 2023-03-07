@@ -5,6 +5,7 @@ All the processing pipelines for the NEM network
 """
 import logging
 
+from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
 from opennem.crawl import run_crawl
@@ -34,7 +35,7 @@ class NemPipelineNoNewData(Exception):
 # Crawler tasks
 
 
-def nem_dispatch_is_crawl() -> ControllerReturn:
+def nem_dispatch_is_crawl() -> None:
     cr = run_crawl(AEMONemwebDispatchIS)
 
     if not cr or not cr.inserted_records:
@@ -61,6 +62,9 @@ def nem_dispatch_scada_crawl() -> ControllerReturn:
 
     if not dispatch_scada or not dispatch_scada.inserted_records:
         raise NemPipelineNoNewData("No new dispatch scada data")
+
+    if dispatch_scada.server_latest:
+        run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
 
     run_export_power_latest_for_network(network=NetworkNEM)
     run_export_power_latest_for_network(network=NetworkAU)
@@ -102,7 +106,10 @@ def nem_per_day_check() -> ControllerReturn:
         daily_runner()
 
         return ControllerReturn(
-            server_latest=dispatch_actuals.server_latest, total_records=total_records, inserted_records=total_records
+            server_latest=dispatch_actuals.server_latest,
+            total_records=total_records,
+            inserted_records=total_records,
+            last_modified=None,
         )
 
     raise NemPipelineNoNewData("No new dispatch actuals data")
