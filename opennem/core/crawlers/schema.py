@@ -1,7 +1,7 @@
 """OpenNEM Crawler Definitions"""
+from collections.abc import Callable
 from datetime import datetime
 from enum import Enum
-from typing import Callable
 
 from pydantic import Field
 
@@ -35,26 +35,26 @@ class CrawlerDefinition(BaseConfig):
     url: str | None
 
     # These are v3 fields
-    urls: list[str] | None
-    bucket_size: AEMODataBucketSize | None
+    urls: list[str] | None = []
+    bucket_size: AEMODataBucketSize | None = None
 
     active: bool = True
-    limit: int | None
-    filename_filter: str | None
+    limit: int | None = None
+    filename_filter: str | None = None
     latest: bool = False
 
-    network: NetworkSchema | None
-    backfill_days: int | None
+    network: NetworkSchema | None = None
+    backfill_days: int | None = None
     bulk_insert: bool = Field(default=False)
 
     priority: CrawlerPriority
-    schedule: CrawlerSchedule | None
-    backoff: int | None
+    schedule: CrawlerSchedule | None = None
+    backoff: int | None = None
 
     # crawl metadata
-    last_crawled: datetime | None
-    last_processed: datetime | None
-    server_latest: datetime | None
+    last_crawled: datetime | None = None
+    last_processed: datetime | None = None
+    server_latest: datetime | None = None
 
     processor: Callable
 
