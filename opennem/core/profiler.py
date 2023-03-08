@@ -230,7 +230,9 @@ def profile_task(
             wall_clock_time_seconds = wall_clock_time.total_seconds()
 
             if wall_clock_time_seconds >= 1:
-                wall_clock_time_seconds = round(wall_clock_time_seconds, 0)
+                wall_clock_time_seconds = int(wall_clock_time_seconds)
+            else:
+                wall_clock_time_seconds = round(wall_clock_time_seconds, 2)
 
             wall_clock_human = f"{wall_clock_time_seconds}s"
 
