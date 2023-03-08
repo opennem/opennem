@@ -25,7 +25,6 @@ from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.pipelines.crontab import network_interval_crontab
 from opennem.pipelines.nem import (
-    NemPipelineNoNewData,
     nem_dispatch_is_crawl,
     nem_dispatch_scada_crawl,
     nem_per_day_check,
@@ -87,10 +86,7 @@ def run_per_interval_flows_and_exports() -> None:
 )
 @huey.lock_task("crawler_run_nem_rooftop_per_interval")
 def crawler_run_nem_rooftop_per_interval() -> None:
-    try:
-        nem_rooftop_crawl()
-    except NemPipelineNoNewData:
-        pass
+    nem_rooftop_crawl()
 
 
 @huey.periodic_task(network_interval_crontab(network=NetworkWEM, number_minutes=1), priority=50, retries=5, retry_delay=15)
