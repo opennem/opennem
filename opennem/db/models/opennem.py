@@ -25,7 +25,6 @@ from sqlalchemy.sql.schema import UniqueConstraint
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
 from opennem.schema.core import BaseConfig
-from opennem.utils.sql import time_bucket
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -754,11 +753,11 @@ class FacilityScada(Base, BaseModel):
         Index("idx_facility_scada_network_id_trading_interval", network_id, trading_interval.desc()),
         Index("idx_facility_scada_trading_interval_facility_code", trading_interval, facility_code),
         # This index is used by aggregate tables
-        Index(
-            "idx_facility_scada_trading_interval_desc_facility_code",
-            time_bucket("'00:30:00'::interval", trading_interval).desc(),
-            facility_code,
-        ),
+        # Index(
+        #     "idx_facility_scada_trading_interval_desc_facility_code",
+        #     time_bucket("'00:30:00'::interval", trading_interval).desc(),
+        #     facility_code,
+        # ),
     )
 
 
