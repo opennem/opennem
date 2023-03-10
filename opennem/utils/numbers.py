@@ -4,7 +4,7 @@ import random
 import re
 from datetime import datetime
 from math import floor, log, pow  # noqa: no-name-module
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 from opennem.settings import settings
 
@@ -48,7 +48,7 @@ def num_sigfigs(n: float, sig: int) -> float:
     return round(n * multi) / multi
 
 
-def sigfig_compact(n: Union[float, int], precision: int = DEFAULT_PRECISION) -> Union[float, int]:
+def sigfig_compact(n: float | int, precision: int = DEFAULT_PRECISION) -> float | int:
     """
     Compact significant figure formatting
     """
@@ -101,7 +101,7 @@ def human2bytes(s: str) -> int:
     return int(num * prefix[letter])
 
 
-def cast_trailing_nulls(series: List) -> List:
+def cast_trailing_nulls(series: list) -> list:
     """
     Cast trailing None's in a list series to 0's
     """
@@ -114,7 +114,7 @@ def cast_trailing_nulls(series: List) -> List:
     return series
 
 
-def trim_nulls(series: Dict) -> Dict:
+def trim_nulls(series: dict) -> dict:
     """
     Trime preceding and trailing nulls in dict
     """
@@ -144,7 +144,7 @@ def trim_nulls(series: Dict) -> Dict:
     return series
 
 
-def pad_time_series(series: Dict, start_date: datetime, end_date: datetime, pad_with: Optional[int] = 0) -> Dict:
+def pad_time_series(series: dict, start_date: datetime, end_date: datetime, pad_with: int | None = 0) -> dict:
     """Pad out time series to start and end date"""
 
     series_dates = series.keys()
@@ -168,7 +168,7 @@ def pad_time_series(series: Dict, start_date: datetime, end_date: datetime, pad_
 __re_filesize_from_string = re.compile(r"^(\d+\.?\d+?).*?(KB|MB)$")
 
 
-def filesize_from_string(subject: str) -> Tuple[Optional[float], Optional[str]]:
+def filesize_from_string(subject: str) -> tuple[float | None, str | None]:
     """Extract a file size from a string.
 
     Returns size and units
@@ -180,8 +180,8 @@ def filesize_from_string(subject: str) -> Tuple[Optional[float], Optional[str]]:
     if not m:
         return None, None
 
-    size: Optional[float] = None
-    units: Optional[str] = None
+    size: float | None = None
+    units: str | None = None
 
     try:
         size = float(m.group(1))

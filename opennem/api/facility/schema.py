@@ -1,6 +1,5 @@
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
 
 from pydantic import Field
 
@@ -14,34 +13,34 @@ class FacilityRecord(ApiBase):
 
     network: NetworkSchema
 
-    fueltech: Optional[FueltechSchema]
+    fueltech: FueltechSchema | None
 
-    status: Optional[FacilityStatusSchema]
+    status: FacilityStatusSchema | None
 
-    station_id: Optional[int]
+    station_id: int | None
 
     # @TODO no longer optional
     code: str = ""
 
     dispatch_type: DispatchType
-    capacity_registered: Optional[float]
+    capacity_registered: float | None
 
-    registered: Optional[datetime]
-    deregistered: Optional[datetime]
+    registered: datetime | None
+    deregistered: datetime | None
 
-    network_region: Optional[str]
+    network_region: str | None
 
-    unit_id: Optional[int]
-    unit_number: Optional[int]
-    unit_alias: Optional[str]
-    unit_capacity: Optional[float]
+    unit_id: int | None
+    unit_number: int | None
+    unit_alias: str | None
+    unit_capacity: float | None
 
-    created_by: Optional[str]
-    created_at: Optional[datetime]
+    created_by: str | None
+    created_at: datetime | None
 
     approved: bool = False
-    approved_by: Optional[str]
-    approved_at: Optional[datetime]
+    approved_by: str | None
+    approved_at: datetime | None
 
 
 class FacilityUpdateResponse(ApiBase):
@@ -52,7 +51,7 @@ class FacilityUpdateResponse(ApiBase):
 class FacilityResponse(ApiBase):
     success: bool = False
     record_num: int
-    records: Optional[List[FacilityRecord]]
+    records: list[FacilityRecord] | None
 
 
 class FacilityModificationTypes(str, Enum):
@@ -61,5 +60,5 @@ class FacilityModificationTypes(str, Enum):
 
 
 class FacilityModification(ApiBase):
-    comment: Optional[str] = Field(None)
+    comment: str | None = Field(None)
     modification: FacilityModificationTypes

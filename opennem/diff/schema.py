@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from pydantic import BaseModel, validator
 
 from opennem.core.normalizers import normalize_whitespace
@@ -16,15 +14,15 @@ class FacilitySchema(SchemaBase):
     status: str
     duid: str
     name: str
-    fueltech: Optional[str] = None
-    capacity: Optional[float] = None
+    fueltech: str | None = None
+    capacity: float | None = None
 
 
 class StationSchema(SchemaBase):
     name: str
-    code: Optional[str] = None
-    state: Optional[str] = None
-    facilities: List[FacilitySchema] = []
+    code: str | None = None
+    state: str | None = None
+    facilities: list[FacilitySchema] = []
 
     @classmethod
     @validator("name")

@@ -3,7 +3,6 @@ View utils
 
 """
 
-from typing import List, Optional
 
 _INDEX_PREFIX = "idx"
 
@@ -11,10 +10,10 @@ _INDEX_PREFIX = "idx"
 def format_offset(offset: str) -> str:
     """Format an offset interval"""
     # @TODO check valid intervals?
-    return "INTERVAL '{}'".format(offset)
+    return f"INTERVAL '{offset}'"
 
 
-def get_index_name(table_name: str, keys: Optional[List[str]] = None, unique: bool = False) -> str:
+def get_index_name(table_name: str, keys: list[str] | None = None, unique: bool = False) -> str:
     keys_list = "_".join(keys) if keys else None
 
     name_components = [

@@ -6,7 +6,6 @@ OpenNEM AEMO facility closure dates parser.
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional, Union
 
 from openpyxl import load_workbook
 from pydantic import ValidationError
@@ -27,28 +26,28 @@ CLOSURE_SHEET_FIELDS = [
 ]
 
 
-def _clean_expected_closure_year(closure_year: Union[str, int]) -> Optional[int]:
+def _clean_expected_closure_year(closure_year: str | int) -> int | None:
     """Clean up expected closure year because sometimes they just put comments in the field"""
     return int(closure_year) if is_number(closure_year) else None
 
 
 class AEMOClosureRecord(BaseConfig):
     station_name: str
-    duid: Optional[str]
-    expected_closure_year: Optional[int]
-    expected_closure_date: Optional[datetime]
+    duid: str | None
+    expected_closure_year: int | None
+    expected_closure_date: datetime | None
 
     _validate_closure_year = validator("expected_closure_year", pre=True)(_clean_expected_closure_year)
 
     _clean_duid = validator("duid", pre=True, allow_reuse=True)(normalize_duid)
 
 
-def parse_aemo_closures_xls() -> List[AEMOClosureRecord]:
+def parse_aemo_closures_xls() -> list[AEMOClosureRecord]:
     """Parse the AEMO NEM closures spreadsheet"""
     aemo_path = Path(__file__).parent.parent.parent / "data" / "aemo" / "generating-unit-expected-closure-year.xlsx"
 
     if not aemo_path.is_file():
-        raise Exception("Not found: {}".format(aemo_path))
+        raise Exception(f"Not found: {aemo_path}")
 
     # @TODO split here to read ByteIO from download / local file
     wb = load_workbook(aemo_path, data_only=True)
@@ -67,7 +66,7 @@ def parse_aemo_closures_xls() -> List[AEMOClosureRecord]:
         try:
             r = AEMOClosureRecord(**return_dict)
         except ValidationError as e:
-            logger.error("Validation error: {}. {}".format(e, return_dict))
+            logger.error(f"Validation error: {e}. {return_dict}")
 
         if r:
             records.append(r)

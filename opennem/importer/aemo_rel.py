@@ -1,6 +1,5 @@
 import logging
 from itertools import groupby
-from typing import List, Optional
 
 from openpyxl import load_workbook
 
@@ -41,10 +40,7 @@ FACILITY_KEYS = [
 ]
 
 
-def lookup_station_code(
-    duids: List[str], station_name: str, station_code_map: dict
-) -> Optional[str]:
-
+def lookup_station_code(duids: list[str], station_name: str, station_code_map: dict) -> str | None:
     station_code = None
     station_name = station_name.strip()
 
@@ -101,7 +97,6 @@ def rel_grouper(records, station_code_map):
     grouped_records = {}
 
     for key, v in groupby(records_parsed, key=lambda v: v["station_code"]):
-
         # key = k[1
         if key not in grouped_records:
             grouped_records[key] = []
@@ -115,14 +110,10 @@ def rel_grouper(records, station_code_map):
         station_name = rel[0]["network_name"]
 
         if station_code in coded_records:
-            raise Exception(
-                "Code conflict: {}. {} {}".format(
-                    station_code, station_name, coded_records[station_code]
-                )
-            )
+            raise Exception(f"Code conflict: {station_code}. {station_name} {coded_records[station_code]}")
 
         if not station_code:
-            raise Exception("Unmapped station: {}".format(rel))
+            raise Exception(f"Unmapped station: {rel}")
 
         coded_records[station_code] = {
             "name": station_name_cleaner(station_name),
@@ -141,7 +132,7 @@ def load_rel():
     aemo_path = PROJECT_DATA_PATH / "aemo" / "nem_rel_202006.xlsx"
 
     if not aemo_path.is_file():
-        raise Exception("Not found: {}".format(aemo_path))
+        raise Exception(f"Not found: {aemo_path}")
 
     wb = load_workbook(aemo_path, data_only=True)
 
@@ -183,7 +174,7 @@ def rel_export():
     with open("data/rel.json", "w") as fh:
         fh.write(nem_rel.json(indent=4))
 
-    logger.info("Wrote {} records".format(nem_rel.length))
+    logger.info(f"Wrote {nem_rel.length} records")
 
 
 if __name__ == "__main__":

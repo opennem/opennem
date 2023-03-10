@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
@@ -11,10 +9,10 @@ from .schema import ScraperStats, ScraperStatsResult
 router = APIRouter()
 
 
-@router.get("/scraper/stats", response_model=List[ScraperStatsResult])
+@router.get("/scraper/stats", response_model=list[ScraperStatsResult])
 def scraper_stats(
     engine=Depends(get_database_engine),
-) -> List[ScraperStatsResult]:
+) -> list[ScraperStatsResult]:
     query = """
         select
             count(fs.trading_interval),

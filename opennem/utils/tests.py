@@ -7,7 +7,7 @@ TEST_FIXTURE_PATH = Path(__file__).parent.parent.parent / "tests" / "fixtures"
 
 
 if not TEST_FIXTURE_PATH.is_dir():
-    raise Exception("Not a directory: {}".format(TEST_FIXTURE_PATH))
+    raise Exception(f"Not a directory: {TEST_FIXTURE_PATH}")
 
 
 def load_fixture(fixture_name: str) -> Any:
@@ -15,7 +15,7 @@ def load_fixture(fixture_name: str) -> Any:
     fixture_path = TEST_FIXTURE_PATH / fixture_name
 
     if not fixture_path.is_file():
-        raise Exception("Not a file: {}".format(fixture_path))
+        raise Exception(f"Not a file: {fixture_path}")
 
     fixture = None
 

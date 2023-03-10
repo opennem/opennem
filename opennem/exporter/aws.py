@@ -5,7 +5,7 @@ Writes OpennemDataSet's to AWS S3 buckets
 """
 import json
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import boto3
 from botocore.exceptions import ClientError
@@ -35,16 +35,13 @@ class OpennemDataSetSerializeS3:
     def load(self, key: str) -> Any:
         return json.load(self.bucket.Object(key=key).get()["Body"])
 
-    def dump(self, key: str, stat_set: OpennemDataSet, exclude: Optional[set] = None) -> Any:
-
+    def dump(self, key: str, stat_set: OpennemDataSet, exclude: set | None = None) -> Any:
         indent = None
 
         if settings.debug:
             indent = 4
 
-        stat_set_content = stat_set.json(
-            exclude_unset=self.exclude_unset, indent=indent, exclude=exclude
-        )
+        stat_set_content = stat_set.json(exclude_unset=self.exclude_unset, indent=indent, exclude=exclude)
 
         obj = self.bucket.Object(key=key)
         _write_response = obj.put(Body=stat_set_content, ContentType="application/json")
@@ -62,9 +59,7 @@ class OpennemDataSetSerializeS3:
         return _write_response
 
 
-def write_statset_to_s3(
-    stat_set: OpennemDataSet, file_path: str, exclude: set = None, exclude_unset: bool = False
-) -> int:
+def write_statset_to_s3(stat_set: OpennemDataSet, file_path: str, exclude: set = None, exclude_unset: bool = False) -> int:
     """
     Write an Opennem data set to an s3 bucket using boto
     """
@@ -86,10 +81,10 @@ def write_statset_to_s3(
         return 0
 
     if "ResponseMetadata" not in write_response:
-        raise Exception("Error writing stat set to {} invalid write response".format(file_path))
+        raise Exception(f"Error writing stat set to {file_path} invalid write response")
 
     if "HTTPStatusCode" not in write_response["ResponseMetadata"]:
-        raise Exception("Error writing stat set to {} invalid write response".format(file_path))
+        raise Exception(f"Error writing stat set to {file_path} invalid write response")
 
     if write_response["ResponseMetadata"]["HTTPStatusCode"] != 200:
         raise Exception(
@@ -125,10 +120,10 @@ def write_to_s3(content: str, file_path: str, content_type: str = "application/j
         return 0
 
     if "ResponseMetadata" not in write_response:
-        raise Exception("Error writing stat set to {} invalid write response".format(file_path))
+        raise Exception(f"Error writing stat set to {file_path} invalid write response")
 
     if "HTTPStatusCode" not in write_response["ResponseMetadata"]:
-        raise Exception("Error writing stat set to {} invalid write response".format(file_path))
+        raise Exception(f"Error writing stat set to {file_path} invalid write response")
 
     if write_response["ResponseMetadata"]["HTTPStatusCode"] != 200:
         raise Exception(

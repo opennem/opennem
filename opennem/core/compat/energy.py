@@ -4,24 +4,21 @@ OpenNEM v2 Energy Methods
 
 """
 from datetime import date, datetime, timedelta
-from typing import List, Tuple
 
 import pandas as pd
 
-GeneratedEnergyForDuid = Tuple[date, str, float]
+GeneratedEnergyForDuid = tuple[date, str, float]
 
 
 def __trapezium_integration(d_ti: pd.DataFrame, power_column: str = "INITIALMW") -> float:
     """Trapezium integration fixed at 6 intervals and 30 minutes"""
     if power_column not in d_ti:
-        raise Exception("No column {}".format(power_column))
+        raise Exception(f"No column {power_column}")
 
     return 0.5 * (d_ti[power_column] * [1, 2, 2, 2, 2, 2, 1]).sum() / 12
 
 
-def __trading_energy_generator(
-    df: pd.DataFrame, duid_id: str, sel_day: date
-) -> List[GeneratedEnergyForDuid]:
+def __trading_energy_generator(df: pd.DataFrame, duid_id: str, sel_day: date) -> list[GeneratedEnergyForDuid]:
     df.sort_index(inplace=True)
     t_start = datetime(sel_day.year, sel_day.month, sel_day.day, 0, 5)
     generated_values = []
@@ -40,7 +37,7 @@ def __trading_energy_generator(
     return generated_values
 
 
-def trading_energy_data(df: pd.DataFrame, duids: List[str], sel_day: date) -> pd.DataFrame:
+def trading_energy_data(df: pd.DataFrame, duids: list[str], sel_day: date) -> pd.DataFrame:
     energy_genrecs = []
 
     for duid in duids:

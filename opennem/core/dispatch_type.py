@@ -33,4 +33,4 @@ def parse_dispatch_type(dispatch_string: str) -> DispatchType | None:
     if dispatch_string == "generator":
         return DispatchType.GENERATOR
 
-    raise Exception("Unknown dispatch type: {}".format(dispatch_string))
+    raise Exception(f"Unknown dispatch type: {dispatch_string}")

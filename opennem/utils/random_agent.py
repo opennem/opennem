@@ -5,22 +5,17 @@ an external file.
 This replaces unreliable external libraries that don't get updated.
 """
 from random import choice
-from typing import List
 
 from opennem.core.loader import load_data
 
-_RANDOM_AGENTS: List[str] = []
+_RANDOM_AGENTS: list[str] = []
 
 
-def _load_user_agents() -> List[str]:
+def _load_user_agents() -> list[str]:
     """Load list of user agents from data source"""
     _agents: bytes = load_data("user_agents.txt", from_project=True)
 
-    agents = [
-        i.decode("utf-8")
-        for i in _agents.splitlines()
-        if len(i) > 0 and not i.decode("utf-8").startswith("More ")
-    ]
+    agents = [i.decode("utf-8") for i in _agents.splitlines() if len(i) > 0 and not i.decode("utf-8").startswith("More ")]
 
     return agents
 

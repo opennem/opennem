@@ -9,7 +9,7 @@ import csv
 import logging
 from datetime import datetime
 from io import StringIO
-from typing import Any, Dict, List, Optional, TypeVar, Union
+from typing import Any, TypeVar
 
 from sqlalchemy.sql.schema import Column, Table
 
@@ -41,14 +41,14 @@ BULK_INSERT_CONFLICT_UPDATE = """
 
 def build_insert_query(
     table: Table,
-    update_cols: List[Union[str, Column]] = None,
+    update_cols: list[str | Column] = None,
 ) -> str:
     """
     Builds the bulk insert query
     """
     on_conflict = "DO NOTHING"
 
-    def get_column_name(column: Union[str, Column]) -> str:
+    def get_column_name(column: str | Column) -> str:
         if isinstance(column, Column) and hasattr(column, "name"):
             return column.name
         if isinstance(column, str):
@@ -85,7 +85,7 @@ def build_insert_query(
                     _ts = i["schema"]  # type: ignore
 
         if not _ts:
-            logger.warning("Table schema not found for table: {}".format(table.__table__.name))  # type: ignore
+            logger.warning(f"Table schema not found for table: {table.__table__.name}")  # type: ignore
         else:
             table_schema = f"{_ts}."
 
@@ -111,8 +111,8 @@ def build_insert_query(
 
 def generate_bulkinsert_csv_from_records(
     table: ORMTableType,
-    records: List[Dict],
-    column_names: Optional[List[str]] = None,
+    records: list[dict],
+    column_names: list[str] | None = None,
 ) -> StringIO:
     """
     Take a list of dict records and a table schema and generate a csv
@@ -136,14 +136,12 @@ def generate_bulkinsert_csv_from_records(
         for field_name in record_field_names:
             if field_name not in table_column_names:
                 raise Exception(
-                    "Column name from records not found in table: {}. Have {}".format(
-                        field_name, ", ".join(table_column_names)
-                    )
+                    "Column name from records not found in table: {}. Have {}".format(field_name, ", ".join(table_column_names))
                 )
 
         for column_name in table_column_names:
             if column_name not in record_field_names:
-                raise Exception("Missing value for column {}".format(column_name))
+                raise Exception(f"Missing value for column {column_name}")
 
         column_names = record_field_names
         # column_names = table_column_names
@@ -167,7 +165,7 @@ def generate_bulkinsert_csv_from_records(
         try:
             csvwriter.writerow(record)
         except Exception:
-            logger.error("Error writing row in bulk insert: {}".format(record))
+            logger.error(f"Error writing row in bulk insert: {record}")
 
     # rewind it back to the start
     csv_buffer.seek(0)
@@ -177,8 +175,8 @@ def generate_bulkinsert_csv_from_records(
 
 def bulkinsert_mms_items(
     table: ORMTableType,
-    records: List[Dict],
-    update_fields: Optional[List[Union[str, Column[Any]]]] = None,
+    records: list[dict],
+    update_fields: list[str | Column[Any]] | None = None,
 ) -> int:
     num_records = 0
 
@@ -209,7 +207,7 @@ def bulkinsert_mms_items(
     return num_records
 
 
-def pad_column_null(records: List[Dict], column_name: str) -> List[Dict]:
+def pad_column_null(records: list[dict], column_name: str) -> list[dict]:
     """Adds missing column name into the list of table records"""
     a = []
 
@@ -220,9 +218,9 @@ def pad_column_null(records: List[Dict], column_name: str) -> List[Dict]:
 
 
 def generate_csv_from_records(
-    table: Union[Table, FacilityScada, BalancingSummary],
-    records: List[Dict],
-    column_names: Optional[List[str]] = None,
+    table: Table | FacilityScada | BalancingSummary,
+    records: list[dict],
+    column_names: list[str] | None = None,
 ) -> StringIO:
     """
     Take a list of dict records and a table schema and generate a csv
@@ -246,14 +244,12 @@ def generate_csv_from_records(
         for field_name in record_field_names:
             if field_name not in table_column_names:
                 raise Exception(
-                    "Column name from records not found in table: {}. Have {}".format(
-                        field_name, ", ".join(table_column_names)
-                    )
+                    "Column name from records not found in table: {}. Have {}".format(field_name, ", ".join(table_column_names))
                 )
 
         for column_name in table_column_names:
             if column_name not in record_field_names:
-                raise Exception("Missing value for column {}".format(column_name))
+                raise Exception(f"Missing value for column {column_name}")
 
         column_names = record_field_names
         # column_names = table_column_names

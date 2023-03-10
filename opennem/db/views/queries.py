@@ -4,7 +4,6 @@ Queries to drop views and create primary key indexes
 """
 
 from textwrap import dedent
-from typing import Optional
 
 from opennem.db.views.utils import get_index_name
 
@@ -15,8 +14,7 @@ def query_materialized(viewdef: ViewDefinition) -> str:
     return "materialized" if viewdef.materialized else ""
 
 
-def get_query_drop_view(viewdef: ViewDefinition) -> Optional[str]:
-
+def get_query_drop_view(viewdef: ViewDefinition) -> str | None:
     __query = "drop {materialized} view if exists {view_name} cascade;"
 
     query = __query.format(
@@ -27,8 +25,7 @@ def get_query_drop_view(viewdef: ViewDefinition) -> Optional[str]:
     return dedent(query)
 
 
-def get_view_unique_index_query(viewdef: ViewDefinition) -> Optional[str]:
-
+def get_view_unique_index_query(viewdef: ViewDefinition) -> str | None:
     if not viewdef.primary_key:
         return None
 

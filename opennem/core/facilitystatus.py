@@ -44,11 +44,11 @@ def map_aemo_facility_status(facility_status: str) -> str:
     if unit_status.startswith("emerging"):
         return "emerging"
 
-    raise Exception("Could not find AEMO status for facility status: {}".format(unit_status))
+    raise Exception(f"Could not find AEMO status for facility status: {unit_status}")
 
 
 def parse_facility_status(status_code: str) -> dict:
     if status_code not in FACILITY_STATUS_FIXTURE.keys():
-        raise Exception("Invalid facility status: {}".format(status_code))
+        raise Exception(f"Invalid facility status: {status_code}")
 
     return FACILITY_STATUS_FIXTURE[status_code]

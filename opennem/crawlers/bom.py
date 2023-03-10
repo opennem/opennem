@@ -4,7 +4,6 @@
 import logging
 from datetime import datetime
 from time import sleep
-from typing import Optional
 
 from opennem.clients.bom import get_bom_observations
 from opennem.controllers.bom import store_bom_observation_intervals
@@ -17,28 +16,28 @@ logger = logging.getLogger("opennem.crawler.bom")
 
 def crawl_bom_capitals(
     crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False
-) -> Optional[ControllerReturn]:
+) -> ControllerReturn | None:
     bom_stations = get_stations_priority(limit=crawler.limit)
 
     if not bom_stations:
         logger.error("Did not return any weather stations from crawler")
 
-    cr: Optional[ControllerReturn] = None
+    cr: ControllerReturn | None = None
 
     for bom_station in bom_stations:
         try:
             if not bom_station.feed_url:
-                logger.error("Station {} has no feed url - skipping ".format(bom_station.code))
+                logger.error(f"Station {bom_station.code} has no feed url - skipping ")
                 continue
 
             bom_observations = get_bom_observations(bom_station.feed_url, bom_station.code)
             cr = store_bom_observation_intervals(bom_observations)
 
             if crawler.backoff and crawler.backoff > 0:
-                logger.info("Backing off for {}".format(crawler.backoff))
+                logger.info(f"Backing off for {crawler.backoff}")
                 sleep(crawler.backoff)
         except Exception as e:
-            logger.info("Bom error for station {}: {}".format(bom_station.name, e))
+            logger.info(f"Bom error for station {bom_station.name}: {e}")
 
     if cr:
         cr.last_modified = datetime.now()

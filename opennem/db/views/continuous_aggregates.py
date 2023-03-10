@@ -1,10 +1,9 @@
 from textwrap import dedent
-from typing import Optional
 
 from .schema import ViewDefinition
 
 
-def create_continuous_aggregation_query(viewdef: ViewDefinition) -> Optional[str]:
+def create_continuous_aggregation_query(viewdef: ViewDefinition) -> str | None:
     """Get an update query for a continuous aggregation policy"""
 
     if not viewdef.aggregation_policy:
@@ -30,7 +29,7 @@ def create_continuous_aggregation_query(viewdef: ViewDefinition) -> Optional[str
     return dedent(query)
 
 
-def remove_continuous_aggregation_query(viewdef: ViewDefinition) -> Optional[str]:
+def remove_continuous_aggregation_query(viewdef: ViewDefinition) -> str | None:
     """Remove a continuous aggregation policy"""
 
     if not viewdef.aggregation_policy:

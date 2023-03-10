@@ -6,7 +6,6 @@
 """
 
 import logging
-from typing import List
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.loader import load_data
@@ -49,19 +48,19 @@ def import_nem_interconnects() -> None:
         return None
 
     if not aemo_table_set.has_table(INTERCONNECTOR_TABLE):
-        logger.error("Could not find table {}".format(INTERCONNECTOR_TABLE))
+        logger.error(f"Could not find table {INTERCONNECTOR_TABLE}")
         logger.info("Have tables: {}".format(", ".join([i.name for i in aemo_table_set.tables])))
         return None
 
     int_table = aemo_table_set.get_table(INTERCONNECTOR_TABLE)
 
     if not int_table:
-        logger.error("Could not fetch table: {}".format(INTERCONNECTOR_TABLE))
+        logger.error(f"Could not fetch table: {INTERCONNECTOR_TABLE}")
 
     if not int_table.records:
-        logger.error("Could not fetch records for table: {}".format(INTERCONNECTOR_TABLE))
+        logger.error(f"Could not fetch records for table: {INTERCONNECTOR_TABLE}")
 
-    records: List[MarketConfigInterconnector] = int_table.records
+    records: list[MarketConfigInterconnector] = int_table.records
 
     for interconnector in records:
         if not isinstance(interconnector, MarketConfigInterconnector):
@@ -141,7 +140,7 @@ def import_nem_interconnects() -> None:
         try:
             session.add(interconnector_station)
             session.commit()
-            logger.info("Created interconnector station: {}".format(interconnector_station.code))
+            logger.info(f"Created interconnector station: {interconnector_station.code}")
         except Exception as e:
             logger.error(f"Could not commit interconnector stations: {e}")
 

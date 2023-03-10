@@ -7,7 +7,6 @@ Source: https://www.rba.gov.au/statistics/tables/xls/g01hist.xls?v=2020-12-24-16
 
 import logging
 from datetime import datetime
-from typing import List
 
 import xlrd
 from pydantic.error_wrappers import ValidationError
@@ -20,12 +19,12 @@ logger = logging.getLogger("opennem.stats.au.api")
 AU_CPI_URL = "https://www.rba.gov.au/statistics/tables/xls/g01hist.xls"
 
 
-def fetch_au_cpi() -> List[AUCpiData]:
+def fetch_au_cpi() -> list[AUCpiData]:
     """Gets australian CPI figures and parses into JSON"""
     r = http.get(AU_CPI_URL)
 
     if not r.ok:
-        raise Exception("Problem grabbing CPI source: {}".format(r.status_code))
+        raise Exception(f"Problem grabbing CPI source: {r.status_code}")
 
     wb = xlrd.open_workbook(file_contents=r.content)
 
@@ -47,7 +46,7 @@ def fetch_au_cpi() -> List[AUCpiData]:
         try:
             cpi_record = AUCpiData(quarter_date=row[0], cpi_value=row[1])
         except ValidationError as e:
-            logger.info("Invalid CPI data: {}".format(e))
+            logger.info(f"Invalid CPI data: {e}")
             continue
 
         if cpi_record:
@@ -56,8 +55,7 @@ def fetch_au_cpi() -> List[AUCpiData]:
     return records
 
 
-def au_cpi_to_statset(records: List[AUCpiData]) -> StatsSet:
-
+def au_cpi_to_statset(records: list[AUCpiData]) -> StatsSet:
     stat_set = [
         StatDatabase(
             stat_date=i.quarter_date,

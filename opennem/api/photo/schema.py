@@ -1,5 +1,3 @@
-from typing import Optional
-
 from opennem.api.schema import ApiBase
 
 
@@ -7,12 +5,12 @@ class Photo(ApiBase):
     hash_id: str
     width: int
     height: int
-    photo_url: Optional[str]
+    photo_url: str | None
 
-    license_type: Optional[str]
-    license_link: Optional[str]
-    author: Optional[str]
-    author_link: Optional[str]
+    license_type: str | None
+    license_link: str | None
+    author: str | None
+    author_link: str | None
 
-    is_primary: Optional[bool]
-    order: Optional[int]
+    is_primary: bool | None
+    order: int | None

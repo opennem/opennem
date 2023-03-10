@@ -3,8 +3,8 @@ OpenNEM cache utilities
 
 """
 import logging
+from collections.abc import Callable
 from functools import wraps
-from typing import Callable, Dict, List, Optional
 
 from cachetools import TTLCache
 
@@ -27,12 +27,12 @@ def cache_scada_result(func: Callable) -> Callable:
 
     @wraps(func)
     def _cache_scada_wrapper(
-        network: Optional[NetworkSchema] = None,
-        networks: Optional[List[NetworkSchema]] = None,
-        network_region: Optional[str] = None,
-        facilities: Optional[List[str]] = None,
+        network: NetworkSchema | None = None,
+        networks: list[NetworkSchema] | None = None,
+        network_region: str | None = None,
+        facilities: list[str] | None = None,
         energy: bool = False,
-    ) -> Optional[ScadaDateRange]:
+    ) -> ScadaDateRange | None:
         key_list = []
 
         if network:
@@ -47,19 +47,19 @@ def cache_scada_result(func: Callable) -> Callable:
         key_list.append(str(energy))
 
         key = frozenset(key_list)
-        ret: Optional[ScadaDateRange] = None
+        ret: ScadaDateRange | None = None
 
         try:
-            _val: Dict = scada_cache[key]
+            _val: dict = scada_cache[key]
             ret = ScadaDateRange(**_val)
 
-            logger.debug("scada range HIT at key: {}".format(key))
+            logger.debug(f"scada range HIT at key: {key}")
 
             return ret
         except KeyError:
             ret = func(network, networks, network_region, facilities, energy)
 
-            logger.debug("scada range MISS at key: {}".format(key))
+            logger.debug(f"scada range MISS at key: {key}")
 
             if ret:
                 scada_cache[key] = ret.dict()

@@ -2,7 +2,6 @@ import csv
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import List
 
 from opennem.api.photo.controllers import write_photo_to_s3
 from opennem.core.loader import load_data
@@ -29,13 +28,13 @@ CSV_IMPORT_FORMAT_COLUMNS = [
 ]
 
 
-def get_import_photo_data(file_name: str = "photos.csv") -> List[PhotoImportSchema]:
+def get_import_photo_data(file_name: str = "photos.csv") -> list[PhotoImportSchema]:
     photo_file_path: Path = load_data("photos.csv", from_project=True, return_path=True)
 
     if not photo_file_path.is_file():
-        raise Exception("Could not import photo file data: {}".format(str(photo_file_path)))
+        raise Exception(f"Could not import photo file data: {str(photo_file_path)}")
 
-    photo_records: List[PhotoImportSchema] = []
+    photo_records: list[PhotoImportSchema] = []
 
     with photo_file_path.open() as fh:
         # skip csv header
@@ -55,24 +54,20 @@ def import_photos_from_fixtures() -> None:
     photo_records = get_import_photo_data()
 
     for photo_record in photo_records:
-        station = (
-            session.query(Station).filter(Station.code == photo_record.station_code).one_or_none()
-        )
+        station = session.query(Station).filter(Station.code == photo_record.station_code).one_or_none()
 
         if not station:
-            logger.error("Could not find station {}".format(photo_record.station_code))
+            logger.error(f"Could not find station {photo_record.station_code}")
             continue
 
         img = get_image_from_web(photo_record.image_url)
 
         if not img:
-            logger.error("No image for {}".format(photo_record.image_url))
+            logger.error(f"No image for {photo_record.image_url}")
             continue
 
         hash_id = image_get_crypto_hash(img)[-8:]
-        file_name = "{}_{}_{}.{}".format(
-            hash_id, station.name.replace(" ", "_"), "original", "jpeg"
-        )
+        file_name = "{}_{}_{}.{}".format(hash_id, station.name.replace(" ", "_"), "original", "jpeg")
 
         photo = session.query(Photo).filter_by(hash_id=hash_id).one_or_none()
 

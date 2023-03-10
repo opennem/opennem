@@ -5,10 +5,9 @@ Some methods adapted from the Django project
 """
 from datetime import datetime, timedelta
 from datetime import timezone as pytimezone
-from typing import Union
 
 
-def get_fixed_timezone(offset: Union[timedelta, int]) -> pytimezone:
+def get_fixed_timezone(offset: timedelta | int) -> pytimezone:
     """Return a tzinfo instance with a fixed offset from UTC."""
 
     if isinstance(offset, timedelta):

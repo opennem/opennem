@@ -1,6 +1,5 @@
 """ Interval and time period definitions """
 import logging
-from typing import List, Optional
 
 from opennem.core.loader import load_data
 from opennem.schema.time import TimeInterval, TimePeriod
@@ -8,7 +7,7 @@ from opennem.schema.time import TimeInterval, TimePeriod
 logger = logging.getLogger(__name__)
 
 
-def load_intervals() -> List[TimeInterval]:
+def load_intervals() -> list[TimeInterval]:
     interval_dicts = load_data("intervals.json")
 
     intervals = [TimeInterval(**i) for i in interval_dicts]
@@ -16,7 +15,7 @@ def load_intervals() -> List[TimeInterval]:
     return intervals
 
 
-def load_periods() -> List[TimePeriod]:
+def load_periods() -> list[TimePeriod]:
     period_dicts = load_data("periods.json")
 
     periods = [TimePeriod(**i) for i in period_dicts]
@@ -33,7 +32,7 @@ PERIODS = load_periods()
 PERIODS_SUPPORTED = [i.period_human for i in PERIODS]
 
 
-def get_interval_by_size(interval_size: int) -> Optional[TimeInterval]:
+def get_interval_by_size(interval_size: int) -> TimeInterval | None:
     """
     Get an interval by size
 
@@ -43,7 +42,7 @@ def get_interval_by_size(interval_size: int) -> Optional[TimeInterval]:
     if interval_lookup:
         return interval_lookup.pop()
 
-    logger.error("Invalid interval {} not mapped".format(interval_size))
+    logger.error(f"Invalid interval {interval_size} not mapped")
 
     return None
 
@@ -54,7 +53,7 @@ def get_interval(interval_human: str) -> TimeInterval:
     if interval_lookup:
         return interval_lookup.pop()
 
-    raise Exception("Invalid interval {} not mapped".format(interval_human))
+    raise Exception(f"Invalid interval {interval_human} not mapped")
 
 
 def get_period(period_human: str) -> TimePeriod:
@@ -63,4 +62,4 @@ def get_period(period_human: str) -> TimePeriod:
     if period_lookup:
         return period_lookup.pop()
 
-    raise Exception("Invalid interval {} not mapped".format(period_human))
+    raise Exception(f"Invalid interval {period_human} not mapped")

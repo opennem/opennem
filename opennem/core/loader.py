@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path
 from pkgutil import get_data, get_loader
-from typing import Any, List, Optional, Union
+from typing import Any
 
 logger = logging.getLogger("opennem.core.loader")
 
@@ -58,13 +58,7 @@ def load_data(
 
     """
     data_path = (
-        PROJECT_DATA_PATH
-        if from_project
-        else FIXTURE_PATH
-        if from_fixture
-        else SETTINGS_PATH
-        if from_settings
-        else DATA_PATH
+        PROJECT_DATA_PATH if from_project else FIXTURE_PATH if from_fixture else SETTINGS_PATH if from_settings else DATA_PATH
     )
 
     file_path = Path(file_name)
@@ -115,13 +109,12 @@ def get_data_path() -> Path:
     data_path = pkg_path / PROJECT_DATA_PATH
 
     if not data_path.is_dir():
-        raise Exception("No data path: {}".format(data_path))
+        raise Exception(f"No data path: {data_path}")
 
     return data_path
 
 
 def load_data_string(file_path: Path) -> str:
-
     content = ""
 
     with open(file_path) as fh:
@@ -133,12 +126,12 @@ def load_data_string(file_path: Path) -> str:
 @dataclass
 class ZipFileReturn:
     filename: str
-    content: Union[str, bytes]
+    content: str | bytes
 
 
-def load_data_zip(file_path: Union[Path, BytesIO], decode_return: bool = True) -> ZipFileReturn:
+def load_data_zip(file_path: Path | BytesIO, decode_return: bool = True) -> ZipFileReturn:
     """Loadds a ZipFile from a file path or buffer and returns an object with the content"""
-    content: Union[str, bytes] = ""
+    content: str | bytes = ""
 
     with zipfile.ZipFile(file_path) as zf:
         zip_files = zf.namelist()
@@ -150,9 +143,7 @@ def load_data_zip(file_path: Union[Path, BytesIO], decode_return: bool = True) -
                 content = content.decode("utf-8")
 
         if len(zip_files) != 1:
-            raise Exception(
-                "Zero or more than one file in zip file. Have {}".format(len(zip_files))
-            )
+            raise Exception(f"Zero or more than one file in zip file. Have {len(zip_files)}")
 
     return ZipFileReturn(filename=zip_files[0], content=content)
 
@@ -165,7 +156,7 @@ def load_data_json(file_content: str) -> Any:
     return fixture
 
 
-def load_data_csv(file_path: Path) -> Optional[List[dict]]:
+def load_data_csv(file_path: Path) -> list[dict] | None:
     """
     Load a CSV file
 

@@ -1,8 +1,8 @@
 """OpenNEM build utils. Called in user scripts with common commands"""
 import logging
+from collections.abc import Callable
 from os.path import commonprefix
 from pathlib import Path
-from typing import Callable, List
 
 from gitignore_parser import parse_gitignore
 
@@ -27,7 +27,7 @@ def read_gitignore() -> Callable:
     _gitignore_path = PROJECT_PATH / ".gitignore"
 
     if not _gitignore_path.is_file():
-        logger.warning("Could not find an ignore file at: {}".format(_gitignore_path))
+        logger.warning(f"Could not find an ignore file at: {_gitignore_path}")
         return lambda x: False
 
     gitignores = parse_gitignore(_gitignore_path)
@@ -35,7 +35,7 @@ def read_gitignore() -> Callable:
     return gitignores
 
 
-def _build_ignore_matcher() -> List[Path]:
+def _build_ignore_matcher() -> list[Path]:
     _d = []
 
     for ignore_path in _IGNORE_PATHS:
@@ -51,7 +51,6 @@ def _build_ignore_matcher() -> List[Path]:
 
 
 def _check_file_in_ignore_path(file_path: Path) -> bool:
-
     ignore_paths = _build_ignore_matcher()
 
     for p in ignore_paths:
@@ -72,7 +71,7 @@ def cmd_clean_project() -> None:
     count_ignored = 0
     limit = 0
 
-    logger.info("Running from project root: {}".format(PROJECT_PATH))
+    logger.info(f"Running from project root: {PROJECT_PATH}")
 
     for _glob in _CLEAN_GLOBS:
         _glob_matches = Path(PROJECT_PATH).rglob(_glob)

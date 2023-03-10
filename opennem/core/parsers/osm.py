@@ -3,7 +3,6 @@ OpenNEM Open Street Map Parser
 
 """
 import logging
-from typing import Dict
 
 import osm2geojson
 from geoalchemy2.elements import WKBElement
@@ -22,7 +21,7 @@ def get_osm_way_url(way_id: str) -> str:
     return OSM_API_WAY_URI.format(way_id=way_id)
 
 
-def get_osm_way(way_id: str) -> Dict:
+def get_osm_way(way_id: str) -> dict:
     """Returns the xml payload from the osm api"""
     way_url = get_osm_way_url(way_id)
 
@@ -30,13 +29,11 @@ def get_osm_way(way_id: str) -> Dict:
 
     if not way_resp.ok:
         logger.error("No way")
-        raise Exception("Could not get way: {}".format(way_resp.status_code))
+        raise Exception(f"Could not get way: {way_resp.status_code}")
 
     way_resp_content = way_resp.text
 
-    geojson_response = osm2geojson.xml2geojson(
-        way_resp_content, filter_used_refs=False, log_level="INFO"
-    )
+    geojson_response = osm2geojson.xml2geojson(way_resp_content, filter_used_refs=False, log_level="INFO")
 
     if not isinstance(geojson_response, dict):
         raise Exception("Did not get a valid server response from OSM API")

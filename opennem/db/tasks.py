@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from opennem.db import get_database_engine
 from opennem.db.views import get_materialized_view_names, get_timescale_view_names
@@ -8,7 +7,7 @@ from opennem.utils.dates import subtract_days
 logger = logging.getLogger("opennem.db.tasks")
 
 
-def refresh_timescale_views(view_name: Optional[str] = None, all: bool = False, days: int = 7) -> None:
+def refresh_timescale_views(view_name: str | None = None, all: bool = False, days: int = 7) -> None:
     """refresh timescale views"""
     __query = """
     CALL refresh_continuous_aggregate(
@@ -43,7 +42,7 @@ def refresh_timescale_views(view_name: Optional[str] = None, all: bool = False, 
                 logger.error(f"Could not run refresh: {e}")
 
 
-def refresh_material_views(view_name: Optional[str] = None, concurrently: bool = True, with_data: bool = True) -> None:
+def refresh_material_views(view_name: str | None = None, concurrently: bool = True, with_data: bool = True) -> None:
     """Refresh material views"""
     __query = "REFRESH MATERIALIZED VIEW {is_concurrent} {view} {data_spec}"
 

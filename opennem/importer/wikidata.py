@@ -63,7 +63,7 @@ def wikidata_join() -> None:
         station_lookup = session.query(Station).filter(Station.name == station_name).all()
 
         if len(station_lookup) == 0:
-            logger.info("Didn't find a station for {}".format(station_name))
+            logger.info(f"Didn't find a station for {station_name}")
 
         if len(station_lookup) == 1:
             station = station_lookup.pop()
@@ -73,10 +73,10 @@ def wikidata_join() -> None:
             station.wikidata_id = entry.get("wikidata_id")
 
             session.add(station)
-            logger.info("Updated station {}".format(station_name))
+            logger.info(f"Updated station {station_name}")
 
         if len(station_lookup) > 1:
-            logger.info("Found multiple for station {}".format(station_name))
+            logger.info(f"Found multiple for station {station_name}")
 
     session.commit()
 
@@ -103,17 +103,13 @@ def wikidata_join_mapping() -> None:
                 "wikidata_id",
             ],
         )
-        wikidata_mappings = {
-            i["code"]: i["wikidata_id"]
-            for i in list(csvreader)
-            if i["wikidata_id"] and i["code"] != "code"
-        }
+        wikidata_mappings = {i["code"]: i["wikidata_id"] for i in list(csvreader) if i["wikidata_id"] and i["code"] != "code"}
 
     for station_code, wikidata_id in wikidata_mappings.items():
         wikidata_record_lookup = list(filter(lambda x: x["wikidata_id"] == wikidata_id, wikidata))
 
         if len(wikidata_record_lookup) == 0:
-            logger.error("Could not find {}".format(wikidata_id))
+            logger.error(f"Could not find {wikidata_id}")
             continue
 
         wikidata_record = wikidata_record_lookup.pop()
@@ -121,7 +117,7 @@ def wikidata_join_mapping() -> None:
         station = session.query(Station).filter(Station.code == station_code).one_or_none()
 
         if not station:
-            logger.error("Didn't find a station for {}".format(station_code))
+            logger.error(f"Didn't find a station for {station_code}")
             continue
 
         station.description = wikidata_record.get("description")
@@ -129,13 +125,12 @@ def wikidata_join_mapping() -> None:
         station.wikidata_id = wikidata_record.get("wikidata_id")
 
         session.add(station)
-        logger.info("Updated station {}".format(station_code))
+        logger.info(f"Updated station {station_code}")
 
     session.commit()
 
 
 def wikidata_parse() -> None:
-
     # query: https://w.wiki/dVi
     # download the simplified json and save to wikidata.json
     wikidata = load_data("wikidata.json", from_project=True)
@@ -169,7 +164,7 @@ def wikidata_parse() -> None:
         out_entries.append(new_entry)
         current += 1
 
-        print("Done {} of {}".format(current, total_entries))
+        print(f"Done {current} of {total_entries}")
 
     with open("data/wikidata-parsed.json", "w") as fh:
         json.dump(out_entries, fh)
@@ -200,15 +195,14 @@ def wikidata_photos() -> None:
         stations = session.query(Station).filter(Station.wikidata_id == wiki_id).all()
 
         if not stations or len(stations) == 0:
-            logger.error("Could not find station {}".format(name))
+            logger.error(f"Could not find station {name}")
             continue
 
         for station in stations:
-
             img = get_image(image_url)
 
             if not img:
-                logger.error("No image for {}".format(name))
+                logger.error(f"No image for {name}")
                 continue
 
             hash_id = image_get_crypto_hash(img)[-8:]

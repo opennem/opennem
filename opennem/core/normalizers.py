@@ -9,7 +9,7 @@ import itertools
 import logging
 import re
 from decimal import Decimal
-from typing import Dict, List, Optional, Pattern, Union
+from re import Pattern
 
 from opennem.core.station_names import station_map_name
 
@@ -176,7 +176,7 @@ _ACCENT_TRANSLATION = str.maketrans(_ACCENT_REPLACE_MAP)
 __match_twitter_handle = re.compile(r"^@?[A-Za-z\_]{1,15}$")
 
 
-def validate_twitter_handle(twitter_handle: str) -> Optional[re.Match]:
+def validate_twitter_handle(twitter_handle: str) -> re.Match | None:
     """Validate a twitter handle. Optional @, length up to 15 characters"""
     return re.match(__match_twitter_handle, twitter_handle)
 
@@ -202,7 +202,7 @@ def is_number(value: str | int | float) -> bool:
     return False
 
 
-def is_single_number(value: Union[str, int]) -> bool:
+def is_single_number(value: str | int) -> bool:
     value = str(value).strip()
 
     if re.match(__is_single_number, value):
@@ -210,7 +210,7 @@ def is_single_number(value: Union[str, int]) -> bool:
     return False
 
 
-def clean_float(number: Union[str, int, float]) -> Optional[float]:
+def clean_float(number: str | int | float) -> float | None:
     num_return = None
 
     if isinstance(number, str):
@@ -346,7 +346,7 @@ def snake_to_camel(string: str) -> str:
     return "".join(word.capitalize() for word in string.split("_"))
 
 
-def _build_split_re(split_words: List[str]) -> Pattern[str]:
+def _build_split_re(split_words: list[str]) -> Pattern[str]:
     _regexp_format = ("({})").format("|".join(_SPLIT_WORDS))
     _split_regexp = re.compile(_regexp_format)
 
@@ -358,7 +358,7 @@ _SPLIT_WORDS = ["settlement", "total", "net", "type", "id", "scheduled", "semi",
 _split_words_regexp = _build_split_re(_SPLIT_WORDS)
 
 
-def capitalized_block_to_words(string: str) -> List[str]:
+def capitalized_block_to_words(string: str) -> list[str]:
     """Converts capitalized block words into a list so it can be rejoined"""
     subject: str = string
 
@@ -391,7 +391,7 @@ def string_is_equal_case_insensitive(subject: str, value: str) -> bool:
     return subject.strip().lower() == value.strip().lower()
 
 
-def normalize_duid(duid: Optional[str]) -> Optional[str]:
+def normalize_duid(duid: str | None) -> str | None:
     """Take what is supposed to be a DUID and clean it up so we always return a string, even if its blank"""
     duid = duid or ""
 
@@ -431,7 +431,7 @@ def name_normalizer(name: str) -> str:
 # Station name cleaner
 
 
-def clean_station_numbers_to_string(part: Union[str, int]) -> str:
+def clean_station_numbers_to_string(part: str | int) -> str:
     """
     Clean the number part of a station name and remove it completely if its a large number
     """
@@ -449,7 +449,7 @@ def clean_station_numbers_to_string(part: Union[str, int]) -> str:
     return ""
 
 
-def strip_words_from_sentence(subject: str, strip_words: List[str] = STRIP_WORDS) -> str:
+def strip_words_from_sentence(subject: str, strip_words: list[str] = STRIP_WORDS) -> str:
     for w in strip_words:
         if f" {w}" in subject:
             subject = subject.replace(f" {w}", " ")
@@ -468,7 +468,7 @@ def clean_and_format_slashed_station_names(subject: str) -> str:
     return subject
 
 
-def station_name_run_replacements(subject: str, replacement_map: Dict[str, str] = STATION_WORD_REPLACEMENTS) -> str:
+def station_name_run_replacements(subject: str, replacement_map: dict[str, str] = STATION_WORD_REPLACEMENTS) -> str:
     """Run a string replacement map over a string - note that it's case sensitive"""
     for subject_string, replacement_string in replacement_map.items():
         if subject_string in subject:
@@ -489,7 +489,7 @@ def station_name_hyphenate(sub: str) -> str:
     return re.sub(r"\ To\ ", "-", sub, re.IGNORECASE)
 
 
-def skip_clean_for_matching(subject: str, skip_matches: List[str] = STATION_SKIP_CLEANING_MATCHES) -> bool:
+def skip_clean_for_matching(subject: str, skip_matches: list[str] = STATION_SKIP_CLEANING_MATCHES) -> bool:
     """Skip station cleaning for those matching"""
     for skip_match in skip_matches:
         if skip_match.lower() in subject.lower():
@@ -534,10 +534,10 @@ def station_name_cleaner(station_name: str) -> str:
 
     # Split the name up into parts and go through each one
     name_components = [str(i) for i in station_clean_name.strip().split(" ")]
-    name_components_parsed: List[str] = []
+    name_components_parsed: list[str] = []
 
     for _comp in name_components:
-        comp: Optional[str] = str(_comp)
+        comp: str | None = str(_comp)
 
         if not comp:
             continue
@@ -635,7 +635,7 @@ def _old_station_name_cleaner(facility_name: str) -> str:
     name_components_parsed = []
 
     for _comp in name_components:
-        comp: Optional[str] = str(_comp)
+        comp: str | None = str(_comp)
 
         if not comp:
             continue
@@ -690,12 +690,12 @@ def _old_station_name_cleaner(facility_name: str) -> str:
     if todae_match:
         todae_name, todae_rest = todae_match.groups()
 
-        name_clean = "{} ({})".format(todae_rest, todae_name)
+        name_clean = f"{todae_rest} ({todae_name})"
 
     return name_clean
 
 
-def participant_name_filter(participant_name: str) -> Optional[str]:
+def participant_name_filter(participant_name: str) -> str | None:
     participant_name = strip_whitespace(participant_name)
 
     _p = participant_name.strip().replace("Pty Ltd", "").replace("Ltd", "").replace("/", " / ")
@@ -710,13 +710,13 @@ def participant_name_filter(participant_name: str) -> Optional[str]:
     return _p
 
 
-def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optional[float]:
+def clean_capacity(capacity: str | int | float, round_to: int = 6) -> float | None:
     """
     Takes a capacity and cleans it up into a float
 
     @TODO support unit conversion
     """
-    cap_clean: Optional[str] = None
+    cap_clean: str | None = None
 
     if capacity is None or capacity == "-":
         return None
@@ -752,7 +752,7 @@ def clean_capacity(capacity: Union[str, int, float], round_to: int = 6) -> Optio
         if capacity is None:
             return None
 
-        raise Exception("Capacity clean of type {} not supported: {}".format(type(capacity), capacity))
+        raise Exception(f"Capacity clean of type {type(capacity)} not supported: {capacity}")
 
     if cap_clean is None:
         return None

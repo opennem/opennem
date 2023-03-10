@@ -6,7 +6,7 @@ import logging
 from datetime import datetime
 from enum import Enum
 from json.decoder import JSONDecodeError
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import requests
 from pydantic.main import BaseModel
@@ -29,7 +29,7 @@ class AEMOPeriodType(Enum):
 class AEMO5MinAPIResponse(BaseModel):
     settlement_date: datetime
     period_type: AEMOPeriodType
-    net_interchange: Optional[float]
+    net_interchange: float | None
     region_id: str
     rrp: float
     scheduled_generation: float
@@ -46,7 +46,7 @@ class AEMO5MinAPIResponse(BaseModel):
         anystr_strip_whitespace = True
 
 
-def get_aemo_viz_request_headers() -> Dict[str, str]:
+def get_aemo_viz_request_headers() -> dict[str, str]:
     """http request headers for AEMO viz"""
     return {
         "User-Agent": get_random_agent(),
@@ -55,17 +55,16 @@ def get_aemo_viz_request_headers() -> Dict[str, str]:
     }
 
 
-def obj_blockwords_to_snake(obj: Dict[str, Any]) -> Dict[str, Any]:
+def obj_blockwords_to_snake(obj: dict[str, Any]) -> dict[str, Any]:
     """Converts block cased keys in a dict like SETTLEMENTDATE into settlement_date"""
     return {blockwords_to_snake_case(k): v for k, v in obj.items()}
 
 
-def get_aemo_5min_data(interval: str = "5MIN") -> Optional[Dict]:
-
+def get_aemo_5min_data(interval: str = "5MIN") -> dict | None:
     interval = interval.upper()
 
     if interval not in ["5MIN", "30MIN"]:
-        raise Exception("Not a supported interval: {}".format(interval))
+        raise Exception(f"Not a supported interval: {interval}")
 
     r = requests.post(
         AEMO_5MIN_API_ENDPOINT,
@@ -74,7 +73,7 @@ def get_aemo_5min_data(interval: str = "5MIN") -> Optional[Dict]:
     )
 
     if not r.ok:
-        logger.error("Response {}: {}".format(r.status_code, str(r.content)))
+        logger.error(f"Response {r.status_code}: {str(r.content)}")
         logger.debug(r.request.headers)
         logger.debug(r.headers)
         return None
@@ -82,32 +81,29 @@ def get_aemo_5min_data(interval: str = "5MIN") -> Optional[Dict]:
     try:
         resp_json = r.json()
     except JSONDecodeError as e:
-        logger.error("Error decoding JSON: {}".format(e))
+        logger.error(f"Error decoding JSON: {e}")
         logger.debug(r.content)
         return None
 
-    if not isinstance(resp_json, Dict):
+    if not isinstance(resp_json, dict):
         logger.error("Did not get correct response type")
         return None
 
     if AEMO_5MIN_RESPONSE_KEY not in resp_json:
-        logger.error("Response key {} missing in payload.".format(AEMO_5MIN_RESPONSE_KEY))
+        logger.error(f"Response key {AEMO_5MIN_RESPONSE_KEY} missing in payload.")
         return None
 
     return resp_json
 
 
-def aemo_parse_5min_api(aemo_response_data: Dict) -> List[AEMO5MinAPIResponse]:
+def aemo_parse_5min_api(aemo_response_data: dict) -> list[AEMO5MinAPIResponse]:
     """Parse the viz response into models"""
-    model_response = [
-        AEMO5MinAPIResponse(**obj_blockwords_to_snake(i))
-        for i in aemo_response_data[AEMO_5MIN_RESPONSE_KEY]
-    ]
+    model_response = [AEMO5MinAPIResponse(**obj_blockwords_to_snake(i)) for i in aemo_response_data[AEMO_5MIN_RESPONSE_KEY]]
 
     return model_response
 
 
-def get_aemo_5min(interval_size: str = "5MIN") -> List[AEMO5MinAPIResponse]:
+def get_aemo_5min(interval_size: str = "5MIN") -> list[AEMO5MinAPIResponse]:
     """Run the live get and parse it"""
     aemo_viz_data = get_aemo_5min_data(interval=interval_size)
 

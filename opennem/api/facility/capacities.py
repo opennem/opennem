@@ -5,15 +5,12 @@ OpenNEM Facility Capacities
 """
 
 from textwrap import dedent
-from typing import Dict
 
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkSchema
 
 
-def facility_capacity_network_region_fueltech_query(
-    network: NetworkSchema, network_region: str
-) -> str:
+def facility_capacity_network_region_fueltech_query(network: NetworkSchema, network_region: str) -> str:
     query = """
     select
         f.fueltech_id,
@@ -32,12 +29,10 @@ def facility_capacity_network_region_fueltech_query(
     return dedent(query)
 
 
-def get_facility_capacities(network: NetworkSchema, network_region: str) -> Dict:
+def get_facility_capacities(network: NetworkSchema, network_region: str) -> dict:
     engine = get_database_engine()
 
-    query = facility_capacity_network_region_fueltech_query(
-        network=network, network_region=network_region
-    )
+    query = facility_capacity_network_region_fueltech_query(network=network, network_region=network_region)
     results = []
 
     with engine.connect() as c:

@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -40,12 +39,10 @@ class StationNoFacilities(OpennemBaseHttpException):
 def stations(
     response: Response,
     session: Session = Depends(get_database_session),
-    facilities_include: Optional[bool] = Query(True, description="Include facilities in records"),
-    only_approved: Optional[bool] = Query(
-        False, description="Only show approved stations not those pending"
-    ),
-    name: Optional[str] = None,
-    limit: Optional[int] = None,
+    facilities_include: bool | None = Query(True, description="Include facilities in records"),
+    only_approved: bool | None = Query(False, description="Only show approved stations not those pending"),
+    name: str | None = None,
+    limit: int | None = None,
     page: int = 1,
 ) -> StationsResponse:
     stations = session.query(Station).join(Location).enable_eagerloads(True)
@@ -59,7 +56,7 @@ def stations(
         stations = stations.filter(Station.approved == True)  # noqa: E712
 
     if name:
-        stations = stations.filter(Station.name.like("%{}%".format(name)))
+        stations = stations.filter(Station.name.like(f"%{name}%"))
 
     stations = stations.order_by(
         Station.name,
@@ -88,8 +85,7 @@ def station_record(
     id: int,
     session: Session = Depends(get_database_session),
 ) -> StationResponse:
-
-    logger.debug("get {}".format(id))
+    logger.debug(f"get {id}")
 
     station = session.query(Station).get(id)
 
@@ -117,7 +113,6 @@ def station(
     session: Session = Depends(get_database_session),
     only_generators: bool = Query(True, description="Show only generators"),
 ) -> Station:
-
     station_query = (
         session.query(Station)
         .filter(Station.code == station_code)

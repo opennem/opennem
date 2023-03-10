@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -10,10 +8,10 @@ from opennem.schema.opennem import LocationSchema
 router = APIRouter()
 
 
-@router.get("/", description="Locations", response_model=List[LocationSchema])
+@router.get("/", description="Locations", response_model=list[LocationSchema])
 def locations(
     session: Session = Depends(get_database_session),
-) -> List[LocationSchema]:
+) -> list[LocationSchema]:
     locations = session.query(Location).all()
 
     return locations

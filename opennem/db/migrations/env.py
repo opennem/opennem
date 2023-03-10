@@ -27,7 +27,7 @@ config.set_main_option("sqlalchemy.url", settings.db_url)
 target_metadata = [opennem.metadata]
 
 
-def exclude_tables_from_config(config_: Dict[str, Any]) -> List[str]:
+def exclude_tables_from_config(config_: dict[str, Any]) -> list[str]:
     """Read list of tables to exclude from config section and return as a list"""
     tables = []
     tables_ = config_.get("tables", None)
@@ -39,9 +39,7 @@ def exclude_tables_from_config(config_: Dict[str, Any]) -> List[str]:
 exclude_tables = exclude_tables_from_config(config.get_section("alembic:exclude"))
 
 
-def include_object(
-    object: SchemaItem, name: str, type_: str, reflected: bool, compare_to: Optional[SchemaItem]
-) -> bool:
+def include_object(object: SchemaItem, name: str, type_: str, reflected: bool, compare_to: SchemaItem | None) -> bool:
     """Pluggable include object method to support skipping some migration tables"""
     if type_ == "table" and name in exclude_tables:
         return False

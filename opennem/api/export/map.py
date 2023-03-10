@@ -8,21 +8,13 @@ from __future__ import annotations
 import logging
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import List, Optional
 
 from pydantic import BaseModel
 
 from opennem.api.stats.controllers import ScadaDateRange, get_scada_range
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
-from opennem.core.networks import (
-    NetworkAPVI,
-    NetworkAU,
-    NetworkNEM,
-    NetworkSchema,
-    NetworkWEM,
-    network_from_network_code,
-)
+from opennem.core.networks import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM, network_from_network_code
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import Network
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill
@@ -52,7 +44,7 @@ class PriorityType(Enum):
     history = 4
 
 
-def date_range_from_week(year: int, week: int, network: Optional[NetworkSchema] = None) -> ScadaDateRange:
+def date_range_from_week(year: int, week: int, network: NetworkSchema | None = None) -> ScadaDateRange:
     """
     Get a scada date range from week number with
     network awareness
@@ -72,7 +64,7 @@ def priority_from_name(priority_name: str) -> PriorityType:
     priority_names = [i.name for i in PriorityType]
 
     if priority_name not in priority_names:
-        raise Exception("Could not find priority: {}".format(priority_name))
+        raise Exception(f"Could not find priority: {priority_name}")
 
     return PriorityType[priority_name]
 
@@ -84,16 +76,16 @@ class StatExport(BaseModel):
     priority: PriorityType = PriorityType.live
     country: str
     network: NetworkSchema
-    networks: Optional[List[NetworkSchema]]
-    network_region: Optional[str]
-    network_region_query: Optional[str]
-    date_range: Optional[ScadaDateRange]
-    bom_station: Optional[str]
-    year: Optional[int]
-    week: Optional[int]
-    period: Optional[TimePeriod]
+    networks: list[NetworkSchema] | None
+    network_region: str | None
+    network_region_query: str | None
+    date_range: ScadaDateRange | None
+    bom_station: str | None
+    year: int | None
+    week: int | None
+    period: TimePeriod | None
     interval: TimeInterval
-    file_path: Optional[str]
+    file_path: str | None
 
     @property
     def path(self) -> str:
@@ -124,15 +116,15 @@ class StatExport(BaseModel):
 
         dir_path = "/".join([str(i) for i in _path_components])
 
-        return "{}.json".format(dir_path)
+        return f"{dir_path}.json"
 
 
 class StatMetadata(BaseModel):
     """Defines a set of export maps with methods to filter"""
 
     date_created: datetime
-    version: Optional[str]
-    resources: List[StatExport]
+    version: str | None
+    resources: list[StatExport]
 
     def get_by_stat_type(self, stat_type: StatType) -> StatMetadata:
         em = self.copy()
@@ -165,7 +157,7 @@ class StatMetadata(BaseModel):
 
     def get_by_years(
         self,
-        years: List[int],
+        years: list[int],
     ) -> StatMetadata:
         em = self.copy()
         em.resources = list(filter(lambda s: s.year in years, self.resources))
@@ -196,7 +188,7 @@ def generate_weekly_export_map() -> StatMetadata:
     if not networks:
         raise Exception("No networks")
 
-    countries = list(set([network.country for network in networks]))
+    countries = list({network.country for network in networks})
 
     _exmap = []
 
@@ -229,7 +221,7 @@ def generate_weekly_export_map() -> StatMetadata:
         scada_range = get_scada_range(network=network_schema)
 
         if not scada_range:
-            raise Exception("Require a scada range for network: {}".format(network.code))
+            raise Exception(f"Require a scada range for network: {network.code}")
 
         for year, week in week_series(scada_range.end, scada_range.start):
             export = StatExport(
@@ -258,9 +250,7 @@ def generate_weekly_export_map() -> StatMetadata:
             scada_range = get_scada_range(network=network_schema, network_region=region.code)
 
             if not scada_range:
-                logger.error(
-                    "Require a scada range for network {} and region {}".format(network_schema.code, region.code)
-                )
+                logger.error(f"Require a scada range for network {network_schema.code} and region {region.code}")
                 continue
 
             for year, week in week_series(scada_range.end, scada_range.start):
@@ -299,7 +289,7 @@ def generate_export_map() -> StatMetadata:
     if not networks:
         raise Exception("No networks")
 
-    countries = list(set([network.country for network in networks]))
+    countries = list({network.country for network in networks})
 
     _exmap = []
 
@@ -397,7 +387,7 @@ def generate_export_map() -> StatMetadata:
         _exmap.append(export)
 
         if not scada_range:
-            raise Exception("Require a scada range for network: {}".format(network.code))
+            raise Exception(f"Require a scada range for network: {network.code}")
 
         for year in range(
             datetime.now().year,
@@ -454,9 +444,7 @@ def generate_export_map() -> StatMetadata:
             bom_station = get_network_region_weather_station(region.code)
 
             if not scada_range:
-                logger.error(
-                    "Require a scada range for network {} and region {}".format(network_schema.code, region.code)
-                )
+                logger.error(f"Require a scada range for network {network_schema.code} and region {region.code}")
                 continue
 
             export = StatExport(

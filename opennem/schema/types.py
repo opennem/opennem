@@ -4,7 +4,8 @@ OpenNEM Custom Schema Types
 
 """
 
-from typing import Any, Callable, Dict, Generator, Union
+from collections.abc import Callable, Generator
+from typing import Any
 
 from pydantic.networks import AnyUrl
 from pydantic.utils import update_not_none
@@ -31,7 +32,7 @@ class TwitterHandle(str):
     """Twitter Handle type for Pydantic schemas"""
 
     @classmethod
-    def __modify_schema__(cls, field_schema: Dict[str, Any]) -> None:
+    def __modify_schema__(cls, field_schema: dict[str, Any]) -> None:
         field_schema.update(type="string", format="twitter_handle")
 
     @classmethod
@@ -40,7 +41,7 @@ class TwitterHandle(str):
         yield cls.validate
 
     @classmethod
-    def validate(cls, value: Union[str]) -> str:
+    def validate(cls, value: str) -> str:
         if validate_twitter_handle(value):
             return value
 
@@ -58,10 +59,8 @@ class UrlsafeString(str):
     max_length = 128
 
     @classmethod
-    def __modify_schema__(cls, field_schema: Dict[str, Any]) -> None:
-        update_not_none(
-            field_schema, minLength=cls.min_length, maxLength=cls.max_length, format="api_key"
-        )
+    def __modify_schema__(cls, field_schema: dict[str, Any]) -> None:
+        update_not_none(field_schema, minLength=cls.min_length, maxLength=cls.max_length, format="api_key")
 
     @classmethod
     def __get_validators__(cls) -> "CallableGenerator":
@@ -70,10 +69,8 @@ class UrlsafeString(str):
         yield urlsafe_str_validator
 
     @classmethod
-    def validate(cls, value: Union[str]) -> str:
+    def validate(cls, value: str) -> str:
         if cls.min_length <= len(value) <= cls.max_length:
             return value
 
-        raise ValueError(
-            "Invalid length. Must be between {} and {}".format(cls.min_length, cls.max_length)
-        )
+        raise ValueError(f"Invalid length. Must be between {cls.min_length} and {cls.max_length}")

@@ -3,7 +3,6 @@ OpenNEM String Validators
 
 Used in Pydantic schemas
 """
-from typing import Union
 
 from pydantic.errors import PydanticTypeError, StrError
 
@@ -14,7 +13,7 @@ class UrlsafeStrError(PydanticTypeError):
     msg_template = "url safe str type expected"
 
 
-def urlsafe_str_validator(v: str) -> Union[str]:
+def urlsafe_str_validator(v: str) -> str:
     """Validate that a string is url safe. Assumes already passed through string validation"""
 
     if not isinstance(v, str):

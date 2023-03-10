@@ -1,18 +1,16 @@
-from typing import List, Optional
-
 from opennem.api.schema import ApiBase
 from opennem.schema.opennem import OpennemBaseDataSchema
 
 
 class LocationSchema(ApiBase):
-    id: Optional[int]
+    id: int | None
 
-    address1: Optional[str] = ""
-    address2: Optional[str] = ""
-    locality: Optional[str] = ""
-    state: Optional[str] = ""
-    postcode: Optional[str] = ""
-    country: Optional[str] = "au"
+    address1: str | None = ""
+    address2: str | None = ""
+    locality: str | None = ""
+    state: str | None = ""
+    postcode: str | None = ""
+    country: str | None = "au"
 
     # Geo fields
     # place_id: Optional[str]
@@ -23,8 +21,8 @@ class LocationSchema(ApiBase):
     # geom: Optional[Any] = None
     # boundary: Optional[Any]
 
-    lat: Optional[float]
-    lng: Optional[float]
+    lat: float | None
+    lng: float | None
 
 
 class LocationResponse(OpennemBaseDataSchema):
@@ -32,4 +30,4 @@ class LocationResponse(OpennemBaseDataSchema):
 
 
 class LocationsResponse(OpennemBaseDataSchema):
-    data: List[LocationSchema]
+    data: list[LocationSchema]

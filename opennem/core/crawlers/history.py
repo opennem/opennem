@@ -3,7 +3,6 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from textwrap import dedent
-from typing import Dict
 
 from datetime_truncate import truncate as date_trunc
 from sqlalchemy import text as sql
@@ -64,7 +63,7 @@ def set_crawler_history(crawler_name: str, histories: list[CrawlHistoryEntry]) -
     logger.debug(f"Got {len(existing_intervals)} existing intervals for crawler {crawler_name}")
 
     # Persist the crawl history records
-    crawl_history_records: list[Dict[str, datetime | str | int | None]] = []
+    crawl_history_records: list[dict[str, datetime | str | int | None]] = []
 
     for ch in histories:
         crawl_history_records.append(
@@ -158,7 +157,11 @@ def get_crawler_missing_intervals(
         with intervals as (
             select
                 interval
-            from generate_series(nemweb_latest_interval() - interval :days, nemweb_latest_interval(), interval  :interval_size) AS interval
+            from generate_series(
+                nemweb_latest_interval() - interval :days,
+                nemweb_latest_interval(),
+                interval  :interval_size
+            ) AS interval
         )
 
         select

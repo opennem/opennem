@@ -26,7 +26,7 @@ def check_metadata_status() -> bool:
     try:
         metadata = StatMetadata.parse_obj(resp_json)
     except ValidationError as e:
-        logger.error("Validation error in metadata: {}".format(e))
+        logger.error(f"Validation error in metadata: {e}")
 
     if not metadata:
         return False
@@ -41,7 +41,7 @@ def check_metadata_status() -> bool:
         r = requests.get(resource_website_path)
 
         if r.status_code != 200:
-            logger.error("Error with metadata resource: {}".format(resource_website_path))
+            logger.error(f"Error with metadata resource: {resource_website_path}")
 
     return True
 

@@ -4,7 +4,6 @@ that haven't yet been assigned an DUID or STATIONID. They are derived from the n
 
 """
 
-from typing import Optional
 
 from opennem.core import base24
 from opennem.core.normalizers import is_number
@@ -39,7 +38,7 @@ def oid_to_id(oid: str) -> int:
     pass
 
 
-def get_network_region(network_region: str) -> Optional[str]:
+def get_network_region(network_region: str) -> str | None:
     """
     Trim the numbers off the end of nem regions
 
@@ -93,11 +92,7 @@ def get_ocode(station) -> str:
 
     ocode_values = []
 
-    [
-        ocode_values.append(str(i).lower())
-        for i in values
-        if i is not None and str(i).lower() not in ocode_values
-    ]
+    [ocode_values.append(str(i).lower()) for i in values if i is not None and str(i).lower() not in ocode_values]
 
     ocode = ".".join(ocode_values)
 

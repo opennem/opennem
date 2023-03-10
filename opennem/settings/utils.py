@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from typing import List, Optional
 from urllib.parse import urlparse
 
 BASE_ENV_FILE_NAME = ".env"
@@ -30,7 +29,7 @@ def _is_env_file(env_file_path: str) -> bool:
     return (_cwd / Path(env_file_path)).is_file()
 
 
-def load_env_file(environment: Optional[str]) -> List[str]:
+def load_env_file(environment: str | None) -> list[str]:
     """
     Returns a list of env files to load
     """
@@ -39,7 +38,7 @@ def load_env_file(environment: Optional[str]) -> List[str]:
     if environment:
         environment_suffix = environment.strip().lower()
 
-        env_files.append("{}.{}".format(BASE_ENV_FILE_NAME, environment_suffix))
+        env_files.append(f"{BASE_ENV_FILE_NAME}.{environment_suffix}")
 
     env_files_exist = [str(i) for i in env_files if _is_env_file(i)]
 

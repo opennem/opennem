@@ -1,5 +1,4 @@
 import logging
-from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
@@ -29,12 +28,12 @@ class LocationNotFound(OpennemBaseHttpException):
 def locations(
     response: Response,
     session: Session = Depends(get_database_session),
-    limit: Optional[int] = None,
+    limit: int | None = None,
     page: int = 1,
-    id: Optional[List[str]] = Query(None),
+    id: list[str] | None = Query(None),
 ) -> LocationsResponse:
     location_query = session.query(Location).enable_eagerloads(True)
-    locations: List[Location] = []
+    locations: list[Location] = []
 
     if id:
         location_query = location_query.filter(Location.id.in_(id))

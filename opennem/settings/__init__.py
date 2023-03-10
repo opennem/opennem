@@ -75,14 +75,14 @@ env_files = load_env_file(ENV)
 # @TODO add logging
 for _env_file in env_files:
     _env_full_path = Path(_env_file).resolve()
-    logging.info("Loading env file: {}".format(_env_full_path))
+    logging.info(f"Loading env file: {_env_full_path}")
     load_dotenv(dotenv_path=_env_file, override=True)
 
 # @NOTE don't use pydantics env file support since it doesn't support multiple
 try:
     settings: OpennemSettings = OpennemSettings()
 except ValidationError as e:
-    logging.error("{} validation errors in settings schema".format(len(e.errors())))
+    logging.error(f"{len(e.errors())} validation errors in settings schema")
 
     for err_no, _validation_error in enumerate(e.errors()):
         logging.error(
@@ -102,7 +102,7 @@ except ValidationError as e:
 if settings.dry_run:
     logging.info("Dry run (no database actions)")
 else:
-    logging.info("Using database connection: {}".format(obfuscate_dsn_password(settings.db_url)))
+    logging.info(f"Using database connection: {obfuscate_dsn_password(settings.db_url)}")
 
 # skip if logging not configed
 if LOGGING_CONFIG:

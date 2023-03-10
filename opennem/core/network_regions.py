@@ -1,13 +1,9 @@
-from typing import List, Optional
-
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.network import NetworkSchema
 
 
-def get_network_regions(
-    network: NetworkSchema, network_region: Optional[str] = None
-) -> List[NetworkRegion]:
+def get_network_regions(network: NetworkSchema, network_region: str | None = None) -> list[NetworkRegion]:
     """Return regions for a network"""
     with SessionLocal() as s:
         regions = s.query(NetworkRegion).filter_by(network_id=network.code)

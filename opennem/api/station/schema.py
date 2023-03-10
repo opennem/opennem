@@ -1,6 +1,5 @@
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
 
 from pydantic import Field
 
@@ -12,25 +11,25 @@ from opennem.schema.opennem import OpennemBaseDataSchema
 
 class FueltechSchema(ApiBase):
     code: str
-    label: Optional[str]
-    renewable: Optional[bool]
+    label: str | None
+    renewable: bool | None
 
 
 class FacilityStatusSchema(ApiBase):
     code: str
-    label: Optional[str]
+    label: str | None
 
 
 class FacilitySchema(ApiBase):
-    id: Optional[int]
+    id: int | None
 
     network: NetworkSchema = NetworkNEM
 
-    fueltech: Optional[FueltechSchema]
+    fueltech: FueltechSchema | None
 
-    status: Optional[FacilityStatusSchema]
+    status: FacilityStatusSchema | None
 
-    station_id: Optional[int]
+    station_id: int | None
 
     # @TODO no longer optional
     code: str = ""
@@ -39,36 +38,36 @@ class FacilitySchema(ApiBase):
 
     active: bool = True
 
-    capacity_registered: Optional[float]
+    capacity_registered: float | None
 
-    registered: Optional[datetime]
-    deregistered: Optional[datetime]
-    expected_closure_date: Optional[datetime]
-    expected_closure_year: Optional[int]
+    registered: datetime | None
+    deregistered: datetime | None
+    expected_closure_date: datetime | None
+    expected_closure_year: int | None
 
-    network_region: Optional[str]
+    network_region: str | None
 
-    unit_id: Optional[int]
-    unit_number: Optional[int]
-    unit_alias: Optional[str]
-    unit_capacity: Optional[float]
+    unit_id: int | None
+    unit_number: int | None
+    unit_alias: str | None
+    unit_capacity: float | None
 
-    emissions_factor_co2: Optional[float]
+    emissions_factor_co2: float | None
 
     approved: bool = False
-    approved_by: Optional[str]
-    approved_at: Optional[datetime]
+    approved_by: str | None
+    approved_at: datetime | None
 
 
 class LocationSchema(ApiBase):
-    id: Optional[int]
+    id: int | None
 
-    address1: Optional[str] = ""
-    address2: Optional[str] = ""
-    locality: Optional[str] = ""
-    state: Optional[str] = ""
-    postcode: Optional[str] = ""
-    country: Optional[str] = "au"
+    address1: str | None = ""
+    address2: str | None = ""
+    locality: str | None = ""
+    state: str | None = ""
+    postcode: str | None = ""
+    country: str | None = "au"
 
     # Geo fields
     # place_id: Optional[str]
@@ -79,8 +78,8 @@ class LocationSchema(ApiBase):
     # geom: Optional[Any] = None
     # boundary: Optional[Any]
 
-    lat: Optional[float]
-    lng: Optional[float]
+    lat: float | None
+    lng: float | None
 
 
 class StationRecord(ApiBase):
@@ -88,26 +87,26 @@ class StationRecord(ApiBase):
 
     code: str
 
-    name: Optional[str]
+    name: str | None
 
     # Original network fields
-    network_name: Optional[str]
+    network_name: str | None
 
     # location: Optional[LocationSchema]
     location_id: int
 
-    facilities: List[FacilitySchema]
+    facilities: list[FacilitySchema]
 
     approved: bool = False
 
     # network: Optional[NetworkSchema] = None
 
-    description: Optional[str]
-    wikipedia_link: Optional[str]
-    wikidata_id: Optional[str]
+    description: str | None
+    wikipedia_link: str | None
+    wikidata_id: str | None
 
-    created_by: Optional[str]
-    created_at: Optional[datetime]
+    created_by: str | None
+    created_at: datetime | None
 
 
 class StationResponse(OpennemBaseDataSchema):
@@ -115,7 +114,7 @@ class StationResponse(OpennemBaseDataSchema):
 
 
 class StationsResponse(OpennemBaseDataSchema):
-    data: List[StationRecord]
+    data: list[StationRecord]
 
 
 class StationUpdateResponse(ApiBase):
@@ -129,5 +128,5 @@ class StationModificationTypes(str, Enum):
 
 
 class StationModification(ApiBase):
-    comment: Optional[str] = Field(None)
+    comment: str | None = Field(None)
     modification: StationModificationTypes

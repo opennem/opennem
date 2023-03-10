@@ -25,16 +25,11 @@ def load_facility_fueltech_map() -> None:
     update_count = 0
 
     for facility_duid, facility_fueltech in facility_fueltech_map.items():
-
         facilities = s.query(Facility).filter(Facility.network_code == facility_duid).all()
 
         for f in facilities:
             if f.fueltech_id:
-                logger.debug(
-                    "Skipping {} because it already has a fueltech of {}".format(
-                        f.code, f.fueltech_id
-                    )
-                )
+                logger.debug(f"Skipping {f.code} because it already has a fueltech of {f.fueltech_id}")
                 continue
 
             f.fueltech_id = facility_fueltech
@@ -42,7 +37,7 @@ def load_facility_fueltech_map() -> None:
             update_count += 1
 
     s.commit()
-    logger.info("Updated {} fueltechs for facilities".format(update_count))
+    logger.info(f"Updated {update_count} fueltechs for facilities")
 
 
 if __name__ == "__main__":

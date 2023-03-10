@@ -16,9 +16,7 @@ def obfuscate_dsn_password(dsn: str) -> str:
     if dsn_parsed.password:
         host_info = dsn_parsed.netloc.rpartition("@")[-1]
 
-        dsn_parsed = dsn_parsed._replace(
-            netloc="{}:*****@{}".format(dsn_parsed.username, host_info)
-        )
+        dsn_parsed = dsn_parsed._replace(netloc=f"{dsn_parsed.username}:*****@{host_info}")
 
     obfuscated_dsn = dsn_parsed.geturl()
 

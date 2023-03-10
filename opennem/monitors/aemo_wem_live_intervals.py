@@ -21,17 +21,13 @@ def get_aemo_wem_live_facility_intervals_recent_date() -> datetime:
     req = http.get(LIVE_FACILITIES, headers=REQ_HEADERS)
 
     if req.status_code != 200:
-        logger.error(
-            "WEM live facility intervals returning non 200: {} {}".format(
-                LIVE_FACILITIES, req.status_code
-            )
-        )
+        logger.error(f"WEM live facility intervals returning non 200: {LIVE_FACILITIES} {req.status_code}")
 
     csv_content = req.content
     csvreader = csv.DictReader(csv_content.decode("utf-8").split("\n"))
 
     if not csvreader.fieldnames or len(csvreader.fieldnames) < 1:
-        logger.error("WEM live facility intervals returning bad CSV: {}".format(LIVE_FACILITIES))
+        logger.error(f"WEM live facility intervals returning bad CSV: {LIVE_FACILITIES}")
 
     records = unit_scada_generate_facility_scada(
         records=csvreader,

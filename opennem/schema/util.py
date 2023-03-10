@@ -1,5 +1,3 @@
-
-
 def first_or_none(values=None):
     if values and type(values) is list and len(values) > 0:
         return values[0]

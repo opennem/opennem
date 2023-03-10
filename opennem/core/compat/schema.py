@@ -4,7 +4,6 @@ OpenNEM v2 formatted output exports as Pydantic schemas
 """
 import logging
 from datetime import date, datetime
-from typing import List, Optional, Tuple, Union
 
 from pydantic import validator
 
@@ -26,16 +25,16 @@ def fix_v2_date(date_str: str) -> str:
 
 
 class OpennemDataHistoryV2(BaseConfig):
-    start: Union[datetime, date]
-    last: Union[datetime, date]
+    start: datetime | date
+    last: datetime | date
     interval: str
-    data: List[Optional[float]]
+    data: list[float | None]
 
     # validators
     _start_date = validator("start", allow_reuse=True, pre=True)(fix_v2_date)
     _end_date = validator("last", allow_reuse=True, pre=True)(fix_v2_date)
 
-    def values(self) -> List[Tuple[date, Optional[float]]]:
+    def values(self) -> list[tuple[date, float | None]]:
         interval_obj = get_human_interval(self.interval)
         dt = self.start
 
@@ -58,19 +57,19 @@ class OpennemDataHistoryV2(BaseConfig):
 class OpennemDataV2(BaseConfig):
     id: str
     region: str
-    type: Optional[str]
+    type: str | None
     units: str
-    fuel_tech: Optional[str]
+    fuel_tech: str | None
 
     history: OpennemDataHistoryV2
-    forecast: Optional[OpennemDataHistoryV2]
+    forecast: OpennemDataHistoryV2 | None
 
 
 class OpennemDataSetV2(BaseConfig):
     version: str = "v2"
-    data: List[OpennemDataV2]
+    data: list[OpennemDataV2]
 
-    def get_id(self, id: str) -> Optional[OpennemDataV2]:
+    def get_id(self, id: str) -> OpennemDataV2 | None:
         _ds = list(filter(lambda x: x.id == id, self.data))
 
         if len(_ds) < 1:
@@ -78,7 +77,7 @@ class OpennemDataSetV2(BaseConfig):
 
         return _ds.pop()
 
-    def search_id(self, id: str) -> Optional[OpennemDataV2]:
+    def search_id(self, id: str) -> OpennemDataV2 | None:
         """Search for an id matching"""
         _ds = list(filter(lambda x: x.id.find(id) > 0, self.data))
 

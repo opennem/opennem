@@ -1,6 +1,5 @@
 import calendar
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
 from opennem.utils.timezone import is_aware
 
@@ -24,8 +23,8 @@ TIMESINCE_CHUNKS = (
 
 
 def timesince(
-    d: Optional[datetime] = None,
-    now: Optional[datetime] = None,
+    d: datetime | None = None,
+    now: datetime | None = None,
     reversed: bool = False,
     depth: int = 2,
     none_value: str = "Never",
@@ -107,7 +106,7 @@ def timesince(
     return ", ".join(result)
 
 
-def timeuntil(d: datetime, now: Optional[datetime] = None, depth: int = 2) -> str:
+def timeuntil(d: datetime, now: datetime | None = None, depth: int = 2) -> str:
     """
     Like timesince, but return a string measuring the time until the given time.
     """

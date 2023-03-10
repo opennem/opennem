@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from typing import Optional
 from zoneinfo import ZoneInfo
 
 from sqlalchemy.dialects.postgresql import insert
@@ -20,13 +19,11 @@ def store_bom_observation_intervals(observations: BOMObservationReturn) -> Contr
 
     cr = ControllerReturn(total_records=len(observations.observations))
 
-    latest_forecast: Optional[datetime] = max(
-        [o.observation_time for o in observations.observations if o.observation_time]
-    )
+    latest_forecast: datetime | None = max([o.observation_time for o in observations.observations if o.observation_time])
 
     if latest_forecast:
         latest_forecast = latest_forecast.astimezone(ZoneInfo("Australia/Sydney"))
-        logger.debug("server_latest is {}".format(latest_forecast))
+        logger.debug(f"server_latest is {latest_forecast}")
 
         cr.server_latest = latest_forecast
 
@@ -75,7 +72,7 @@ def store_bom_observation_intervals(observations: BOMObservationReturn) -> Contr
             session.execute(stmt)
             session.commit()
         except Exception as e:
-            logger.error("Error: {}".format(e))
+            logger.error(f"Error: {e}")
             cr.errors = cr.processed_records
             cr.error_detail.append(str(e))
         finally:

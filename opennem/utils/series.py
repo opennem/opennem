@@ -6,12 +6,11 @@ Utilities to work on series
 from datetime import datetime
 from math import isclose
 from operator import add
-from typing import Dict, List, Tuple
 
 from opennem.utils.dates import strip_timezone
 
 
-def add_series(*args) -> List:
+def add_series(*args) -> list:
     return list(map(add, *args))
 
 
@@ -68,9 +67,7 @@ def are_approx_equal(actual: float, desired: float) -> bool:
     return isclose(actual, desired, abs_tol=0.5, rel_tol=0.0001)
 
 
-def series_are_equal(
-    s1: List[Tuple[datetime, float]], s2: List[Tuple[datetime, float]], full_equality: bool = False
-) -> Dict:
+def series_are_equal(s1: list[tuple[datetime, float]], s2: list[tuple[datetime, float]], full_equality: bool = False) -> dict:
     s2d = {strip_timezone(i[0]): i[1] for i in s2}
     s1d = {strip_timezone(i[0]): i[1] for i in s1}
     d = dict()
@@ -85,9 +82,7 @@ def series_are_equal(
     return d
 
 
-def series_joined(
-    s1: List[Tuple[datetime, float]], s2: List[Tuple[datetime, float]], full_equality: bool = False
-) -> Dict:
+def series_joined(s1: list[tuple[datetime, float]], s2: list[tuple[datetime, float]], full_equality: bool = False) -> dict:
     s2d = {strip_timezone(i[0]): i[1] for i in s2}
     s1d = {strip_timezone(i[0]): i[1] for i in s1}
     d = dict()
@@ -100,10 +95,10 @@ def series_joined(
 
 
 def series_not_close(
-    s1: List[Tuple[datetime, float]],
-    s2: List[Tuple[datetime, float]],
+    s1: list[tuple[datetime, float]],
+    s2: list[tuple[datetime, float]],
     full_equality: bool = False,
-) -> Dict:
+) -> dict:
     s2d = {strip_timezone(i[0]): i[1] for i in s2}
     s1d = {strip_timezone(i[0]): i[1] for i in s1}
     d = dict()
@@ -123,9 +118,9 @@ def series_not_close(
 
 
 def series_trim_to_date(
-    s1: List[Tuple[datetime, float]],
-    s2: List[Tuple[datetime, float]],
-) -> Tuple[List, List]:
+    s1: list[tuple[datetime, float]],
+    s2: list[tuple[datetime, float]],
+) -> tuple[list, list]:
     s2d = {strip_timezone(i[0]): i[1] for i in s2}
     s1d = {strip_timezone(i[0]): i[1] for i in s1}
     d1 = []

@@ -4,7 +4,7 @@ Schemas for stats
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, List
+from typing import Any
 
 from pydantic import BaseModel
 from pydantic.class_validators import validator
@@ -46,7 +46,7 @@ class StatsSet(BaseModel):
     name: str
     source_url: str
     fetched_date: datetime
-    stats: List[StatDatabase]
+    stats: list[StatDatabase]
 
 
 class AUCpiData(BaseModel):

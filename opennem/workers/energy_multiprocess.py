@@ -6,7 +6,6 @@ import logging
 import multiprocessing
 import sys
 from datetime import datetime
-from typing import List, Optional, Tuple
 
 import click
 
@@ -24,8 +23,8 @@ CUR_MONTH = datetime.now().month
 
 
 def _build_args_list(
-    year: Optional[int], region: Optional[str], fueltech: Optional[str]
-) -> List[Tuple[Optional[int], int, Optional[str], Optional[str]]]:
+    year: int | None, region: str | None, fueltech: str | None
+) -> list[tuple[int | None, int, str | None, str | None]]:
     args_list = []
 
     network = NetworkNEM
@@ -60,17 +59,13 @@ def _build_args_list(
     return args_list
 
 
-def _worker_wrap(
-    year: Optional[int], months: int, region: str, fueltech_id: Optional[str]
-) -> None:
+def _worker_wrap(year: int | None, months: int, region: str, fueltech_id: str | None) -> None:
     """Map to named args"""
-    return run_energy_update_archive(
-        year=year, months=[months], regions=[region], fueltech=fueltech_id
-    )
+    return run_energy_update_archive(year=year, months=[months], regions=[region], fueltech=fueltech_id)
 
 
-def energy_process(args_list: List, worker_count: Optional[int]) -> None:
-    logger.debug("Starting with {} workers".format(WORKER_COUNT))
+def energy_process(args_list: list, worker_count: int | None) -> None:
+    logger.debug(f"Starting with {WORKER_COUNT} workers")
 
     if not worker_count:
         worker_count = WORKER_COUNT
@@ -85,13 +80,13 @@ def energy_process(args_list: List, worker_count: Optional[int]) -> None:
 @click.option("--fueltech", required=False, type=str)
 @click.option("--region", required=False, type=str)
 def cli(
-    year: Optional[int] = None,
-    fueltech: Optional[str] = None,
-    region: Optional[str] = None,
-    workers: Optional[int] = None,
+    year: int | None = None,
+    fueltech: str | None = None,
+    region: str | None = None,
+    workers: int | None = None,
 ) -> None:
     args_list = _build_args_list(year=year, region=region, fueltech=fueltech)
-    click.echo("Running {} items".format(len(args_list)))
+    click.echo(f"Running {len(args_list)} items")
     energy_process(args_list, worker_count=workers)
 
 

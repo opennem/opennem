@@ -1,5 +1,5 @@
 """Excel parser for OpenNEM"""
-from typing import BinaryIO, Dict, List, Optional, Tuple, Union
+from typing import BinaryIO
 
 from openpyxl import load_workbook
 from openpyxl.workbook.workbook import Workbook
@@ -9,7 +9,7 @@ from opennem.utils.mime import mime_from_content
 from opennem.utils.xls import convert_to_xlxs
 
 
-def detect_sheat_data_dimensions(sheet: Worksheet) -> Tuple[int, int]:
+def detect_sheat_data_dimensions(sheet: Worksheet) -> tuple[int, int]:
     """Calculates how many rows and columns to skip on a sheet"""
     min_col = 0
     min_row = 0
@@ -33,10 +33,10 @@ def detect_sheat_data_dimensions(sheet: Worksheet) -> Tuple[int, int]:
     return min_col, min_row
 
 
-def parse_workbook_sheet(sheet: Worksheet) -> List[Dict]:
+def parse_workbook_sheet(sheet: Worksheet) -> list[dict]:
     min_col, min_row = detect_sheat_data_dimensions(sheet)
 
-    print("{} has min_col {} and min_row {}".format(sheet.title, min_col, min_row))
+    print(f"{sheet.title} has min_col {min_col} and min_row {min_row}")
 
     return []
 
@@ -44,13 +44,13 @@ def parse_workbook_sheet(sheet: Worksheet) -> List[Dict]:
 def parse_workbook(
     fh: BinaryIO,
     convert_xls: bool = True,
-    worksheet: Optional[str] = None,
-) -> Union[Workbook, Worksheet]:
+    worksheet: str | None = None,
+) -> Workbook | Worksheet:
     """Parse an excel file (with conversion) into a dict of lists for each sheet"""
 
     fh.seek(0)
     fh_mime = mime_from_content(fh)
-    wb: Optional[Workbook] = None
+    wb: Workbook | None = None
 
     if fh_mime in ["application/CDFV2"]:
         if convert_xls:

@@ -2,7 +2,6 @@
 
 
 """
-from typing import List, Optional
 
 from opennem.schema.core import BaseConfig
 
@@ -14,8 +13,8 @@ class ContinuousAggregationPolicy(BaseConfig):
     timescale db. The map will destroy/create these"""
 
     interval: str
-    start_interval: Optional[str]
-    end_interval: Optional[str]
+    start_interval: str | None
+    end_interval: str | None
 
     @property
     def schedule_interval(self) -> str:
@@ -50,12 +49,12 @@ class ViewDefinition(BaseConfig):
 
     filepath: str
 
-    view_content: Optional[str]
+    view_content: str | None
 
     # Creates a unique index
-    primary_key: Optional[List[str]]
+    primary_key: list[str] | None
 
     # Create other indexes
-    indexes: Optional[List[str]]
+    indexes: list[str] | None
 
-    aggregation_policy: Optional[ContinuousAggregationPolicy]
+    aggregation_policy: ContinuousAggregationPolicy | None

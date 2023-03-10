@@ -4,14 +4,13 @@ Get a list of stations from the local database
 """
 from datetime import date, datetime
 from random import shuffle
-from typing import List, Optional
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import BomStation
 from opennem.schema.bom import BomStationSchema
 
 
-def get_stations_priority(limit: Optional[int] = None) -> List[BomStationSchema]:
+def get_stations_priority(limit: int | None = None) -> list[BomStationSchema]:
     """This gets all the capital stations which are required for the linked regions"""
     with SessionLocal() as session:
         stations = session.query(BomStation).filter(BomStation.priority < 2).all()
@@ -34,7 +33,7 @@ def get_stations_priority(limit: Optional[int] = None) -> List[BomStationSchema]
     return return_models
 
 
-def get_stations() -> List[BomStationSchema]:
+def get_stations() -> list[BomStationSchema]:
     """Get all weather stations
 
     @NOTE This is a bit redundant

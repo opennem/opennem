@@ -1,4 +1,3 @@
-from typing import List
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -22,12 +21,12 @@ router = APIRouter()
 @router.get(
     "/station",
     description="List of weather stations",
-    response_model=List[WeatherStation],
+    response_model=list[WeatherStation],
     response_model_exclude_unset=True,
 )
 def station(
     session: Session = Depends(get_database_session),
-) -> List[WeatherStation]:
+) -> list[WeatherStation]:
     """
     Get a list of all stations
 
@@ -42,7 +41,7 @@ def station(
     description="Weather station record",
     response_model=WeatherStation,
     response_model_exclude_unset=True,
-    response_model_exclude=set(["observations"]),
+    response_model_exclude={"observations"},
 )
 def station_record(
     station_code: str = Query(..., description="Station code"),
@@ -70,7 +69,7 @@ def station_observations_api(
     station_code: str = Query(None, description="Station code"),
     interval_human: str = Query("15m", description="Interval"),
     period_human: str = Query("7d", description="Period"),
-    station_codes: List[str] = [],
+    station_codes: list[str] = [],
     timezone: str = None,
     offset: str = None,
     year: int = None,
@@ -106,10 +105,7 @@ def station_observations_api(
     with engine.connect() as c:
         results = list(c.execute(query))
 
-    stats = [
-        DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None)
-        for i in results
-    ]
+    stats = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in results]
 
     if len(stats) < 1:
         raise HTTPException(

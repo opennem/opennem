@@ -9,7 +9,6 @@ import logging
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
 from opennem.api.export.map import StatType
@@ -37,7 +36,7 @@ INCLUDE_MONTHLY = False
 REGION = os.environ.get("REGION", None)
 
 
-def load_statset_v2(statset: List[Dict]) -> OpennemDataSetV2:
+def load_statset_v2(statset: list[dict]) -> OpennemDataSetV2:
     return OpennemDataSetV2(data=[OpennemDataV2.parse_obj(i) for i in statset])
 
 
@@ -45,7 +44,7 @@ def get_v2_url(
     stat_type: StatType,
     network_region: str,
     bucket_size: str = "daily",
-    year: Optional[int] = None,
+    year: int | None = None,
     testing: bool = False,
 ) -> str:
     """
@@ -68,7 +67,6 @@ def get_v2_url(
         url_components += [network_region.lower(), "energy", bucket_size, "all"]
 
     elif stat_type == StatType.energy and bucket_size == "daily":
-
         if not year:
             year = CUR_YEAR
 
@@ -85,9 +83,7 @@ def get_v2_url(
     return url
 
 
-def get_v3_url(
-    stat_type: StatType, network_region: str, bucket_size: str = "daily", year: int = CUR_YEAR
-) -> str:
+def get_v3_url(stat_type: StatType, network_region: str, bucket_size: str = "daily", year: int = CUR_YEAR) -> str:
     """
     Get v3 url
 
@@ -130,11 +126,11 @@ def get_v3_url(
 class DiffComparisonSet(BaseConfig):
     stat_type: StatType
     network_region: str
-    bucket_size: Optional[str]
-    year: Optional[int]
+    bucket_size: str | None
+    year: int | None
 
-    v2: Optional[OpennemDataSetV2]
-    v3: Optional[OpennemDataSet]
+    v2: OpennemDataSetV2 | None
+    v3: OpennemDataSet | None
 
     @property
     def urlv2(self) -> str:
@@ -149,10 +145,10 @@ class DiffComparisonSet(BaseConfig):
             req_url = getattr(self, f"url{version}")
 
             r = http.get(req_url)
-            logger.debug("Loading: {}".format(req_url))
+            logger.debug(f"Loading: {req_url}")
 
             if not r.ok:
-                logger.error("invalid {} url: {}".format(version, req_url))
+                logger.error(f"invalid {version} url: {req_url}")
 
             statset = None
 
@@ -165,32 +161,26 @@ class DiffComparisonSet(BaseConfig):
                 self.v3 = statset
 
 
-def get_url_map(regions: List[NetworkRegion]) -> List[DiffComparisonSet]:
+def get_url_map(regions: list[NetworkRegion]) -> list[DiffComparisonSet]:
     urls = []
 
     for region in regions:
-        a = DiffComparisonSet(
-            stat_type=StatType.power, network_region=region.code, bucket_size="7d"
-        )
+        a = DiffComparisonSet(stat_type=StatType.power, network_region=region.code, bucket_size="7d")
         urls.append(a)
 
         # v2 dailies only go back to 2019
         # @WARN 2018 isn't complete in jan/feb on v2
         for y in [2021, 2020, 2019]:
-            a = DiffComparisonSet(
-                stat_type=StatType.energy, network_region=region.code, bucket_size="daily", year=y
-            )
+            a = DiffComparisonSet(stat_type=StatType.energy, network_region=region.code, bucket_size="daily", year=y)
             urls.append(a)
 
-        a = DiffComparisonSet(
-            stat_type=StatType.energy, network_region=region.code, bucket_size="monthly"
-        )
+        a = DiffComparisonSet(stat_type=StatType.energy, network_region=region.code, bucket_size="monthly")
         urls.append(a)
 
     return urls
 
 
-def validate_url_map(url_map: List[DiffComparisonSet]) -> bool:
+def validate_url_map(url_map: list[DiffComparisonSet]) -> bool:
     success = True
 
     for us in url_map:
@@ -199,21 +189,20 @@ def validate_url_map(url_map: List[DiffComparisonSet]) -> bool:
             r = http.get(req_url)
 
             if not r.ok:
-                logger.error("invalid {} url: {}".format(version, req_url))
+                logger.error(f"invalid {version} url: {req_url}")
                 success = False
 
     return success
 
 
-def load_url_map(url_map: List[DiffComparisonSet]) -> List[DiffComparisonSet]:
-
+def load_url_map(url_map: list[DiffComparisonSet]) -> list[DiffComparisonSet]:
     for us in url_map:
         for version in ["v2", "v3"]:
             req_url = getattr(us, f"url{version}")
             r = http.get(req_url)
 
             if not r.ok:
-                logger.error("invalid {} url: {}".format(version, req_url))
+                logger.error(f"invalid {version} url: {req_url}")
 
             statset = None
 
@@ -228,9 +217,7 @@ def load_url_map(url_map: List[DiffComparisonSet]) -> List[DiffComparisonSet]:
     return url_map
 
 
-def get_network_regions(
-    network: NetworkSchema, network_region: Optional[str] = None
-) -> List[NetworkRegion]:
+def get_network_regions(network: NetworkSchema, network_region: str | None = None) -> list[NetworkRegion]:
     """Return regions for a network"""
     s = SessionLocal()
     regions = s.query(NetworkRegion).filter_by(network_id=network.code)
@@ -243,7 +230,7 @@ def get_network_regions(
     return regions
 
 
-def get_id_diff(seriesv2: OpennemDataV2, seriesv3: OpennemData) -> Optional[List[str]]:
+def get_id_diff(seriesv2: OpennemDataV2, seriesv3: OpennemData) -> list[str] | None:
     id2_diffs = sorted([i.id for i in seriesv2])
     id3_diffs = sorted([i.id_v2() for i in seriesv3])
 
@@ -255,11 +242,11 @@ def get_id_diff(seriesv2: OpennemDataV2, seriesv3: OpennemData) -> Optional[List
     return diff
 
 
-def get_data_by_id(id: str, series: List[Dict]) -> Optional[Dict]:
+def get_data_by_id(id: str, series: list[dict]) -> dict | None:
     id_s = list(filter(lambda x: x["id"] == id, series))
 
     if len(id_s) < 1:
-        logger.error("Could not find id {} in series".format(id))
+        logger.error(f"Could not find id {id} in series")
         return None
 
     return id_s.pop()
@@ -286,11 +273,7 @@ def run_diff() -> str:
             logger.error("Error getting schemas for v2 or v3")
             continue
 
-        logger.info(
-            "Comparing {} {} for {}".format(
-                statset.stat_type.value, statset.bucket_size, statset.network_region
-            )
-        )
+        logger.info(f"Comparing {statset.stat_type.value} {statset.bucket_size} for {statset.network_region}")
         logger.info(statset.urlv2)
         logger.info(statset.urlv3)
 
@@ -310,11 +293,11 @@ def run_diff() -> str:
 
         logger.info("v2 has ids:")
         for i in id2_diffs:
-            logger.info("\t{}".format(i))
+            logger.info(f"\t{i}")
 
         logger.info("v3 has ids:")
         for i in id3_diffs:
-            logger.info("\t{}".format(i))
+            logger.info(f"\t{i}")
 
         id_diff = list(set(id2_diffs) - set(id3_diffs))
 
@@ -329,17 +312,17 @@ def run_diff() -> str:
         logger.info("Comparing each id field")
 
         for i in id2_diffs:
-            logger.info(" = comparing {}".format(i))
+            logger.info(f" = comparing {i}")
 
             v2i = statset.v2.get_id(i)
             v3i = statset.v3.get_id(translate_id_v2_to_v3(i))
 
             if not v3i:
-                logger.error("    missing in v3: {}".format(translate_id_v2_to_v3(i)))
+                logger.error(f"    missing in v3: {translate_id_v2_to_v3(i)}")
                 continue
 
             if not v2i:
-                logger.error("    error getting id {} from v2".format(i))
+                logger.error(f"    error getting id {i} from v2")
                 continue
 
             if "imports" in v2i.id:
@@ -361,35 +344,23 @@ def run_diff() -> str:
                 if v2i.fuel_tech == v3i.fueltech_v2():
                     logger.info("  * fueltech matches")
                 else:
-                    logger.error(
-                        "  * fueltech DOESNT MATCH: {} and {}".format(
-                            v2i.fuel_tech, v3i.fueltech_v2()
-                        )
-                    )
+                    logger.error(f"  * fueltech DOESNT MATCH: {v2i.fuel_tech} and {v3i.fueltech_v2()}")
 
             if v2i.history:
                 logger.info("  * comparing history:")
                 score_tested += 1
 
                 if len(v2i.history.data) != len(v3i.history.data):
-                    logger.error(
-                        "    - data length mismatch v2 {} v3 {}".format(
-                            len(v2i.history.data), len(v3i.history.data)
-                        )
-                    )
+                    logger.error(f"    - data length mismatch v2 {len(v2i.history.data)} v3 {len(v3i.history.data)}")
 
-                data_matches = series_are_equal(
-                    v2i.history.values(), v3i.history.values(), full_equality=FULL
-                )
+                data_matches = series_are_equal(v2i.history.values(), v3i.history.values(), full_equality=FULL)
 
                 buckets_total += len(data_matches.keys())
 
                 if False in list(data_matches.values()):
                     logger.error("    - values don't match ")
 
-                    mismatch_values = series_not_close(
-                        v2i.history.values(), v3i.history.values(), full_equality=FULL
-                    )
+                    mismatch_values = series_not_close(v2i.history.values(), v3i.history.values(), full_equality=FULL)
 
                     score += 1
 
@@ -462,9 +433,7 @@ def run_diff() -> str:
                         )
                     )
                 else:
-                    logger.error(
-                        "    - Error matching data values: {}".format(len(data_matches.keys()))
-                    )
+                    logger.error(f"    - Error matching data values: {len(data_matches.keys())}")
 
             # remaining attributes
             for v2ikey in v2i.dict().keys():
@@ -472,12 +441,12 @@ def run_diff() -> str:
                     continue
 
                 if not hasattr(v3i, v2ikey):
-                    logger.error("  * key {} is missing".format(v2ikey))
+                    logger.error(f"  * key {v2ikey} is missing")
                 else:
                     data_matches = getattr(v2i, v2ikey) == getattr(v3i, v2ikey)
 
                     if data_matches:
-                        logger.info("  * key {} exists and matches ".format(v2ikey))
+                        logger.info(f"  * key {v2ikey} exists and matches ")
                     else:
                         logger.error(
                             "  * key {} DOESNT MATCH. values: v2'{}' and v3'{}'".format(
@@ -505,21 +474,21 @@ def commit_diffs(score: str) -> None:
     rw_dir = Path(__file__).parent.parent.parent.parent / "dataquality"
 
     if not rw_dir.is_dir():
-        raise Exception("not a git directory: {}".format(rw_dir))
+        raise Exception(f"not a git directory: {rw_dir}")
 
     repo = Repo(rw_dir)
     author = committer = Actor("OpenNEM Data Quality", "sysadmin@opennem.org.au")
 
     repo.index.add(["csv"])
     repo.index.commit(
-        "Commit full csvs for {}.".format(settings.env),
+        f"Commit full csvs for {settings.env}.",
         author=author,
         committer=committer,
     )
 
     repo.index.add(["diff"])
     repo.index.commit(
-        "Commit version diffs for {}. Score: {}".format(settings.env, score),
+        f"Commit version diffs for {settings.env}. Score: {score}",
         author=author,
         committer=committer,
     )
@@ -537,13 +506,12 @@ def run_data_diff() -> None:
     statsetmap = load_url_map(statsetmap)
 
     for statset in statsetmap:
-        print("{} {} {} ".format(statset.stat_type, statset.bucket_size, statset.network_region))
+        print(f"{statset.stat_type} {statset.bucket_size} {statset.network_region} ")
         print(statset.v2)
         print(statset.v3)
 
 
 if __name__ == "__main__":
-
     files = glob.glob("../dataquality/diff/*")
 
     for f in files:

@@ -7,18 +7,11 @@ pydantic schemas that can be output by the api
 Customisation is that our Facility Schemas have optional geometries
 rather than required.
 """
-from typing import Any, Dict, List, Optional, Sequence, Union
+from collections.abc import Sequence
+from typing import Any, Union
 
 from geojson_pydantic.features import FeatureCollection
-from geojson_pydantic.geometries import (
-    GeometryCollection,
-    LineString,
-    MultiLineString,
-    MultiPoint,
-    MultiPolygon,
-    Point,
-    Polygon,
-)
+from geojson_pydantic.geometries import GeometryCollection, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon
 from pydantic import BaseModel
 
 Geometry = Union[Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon]
@@ -30,7 +23,7 @@ class FacilityGeoBase(BaseModel):
 
 
 class FacilityGeometryCollection(FacilityGeoBase, GeometryCollection):
-    geometries: List[Geometry]
+    geometries: list[Geometry]
 
 
 class FacilityFeature(BaseModel):
@@ -39,12 +32,12 @@ class FacilityFeature(BaseModel):
     """
 
     # @TODO - correct schema for GeoJSON that supports both versions
-    bbox: Optional[Any]
-    properties: Optional[Any]
-    geometry: Optional[Geometry]  # type: ignore
+    bbox: Any | None
+    properties: Any | None
+    geometry: Geometry | None  # type: ignore
 
 
 class FacilityGeo(FacilityGeoBase, FeatureCollection):
     name: str = "opennem"
-    crs: Optional[Dict]
+    crs: dict | None
     features: Sequence[FacilityFeature]  # type: ignore

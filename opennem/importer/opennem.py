@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import Dict, List
 
 from opennem.core.facilitystations import facility_station_join_by_name
 from opennem.core.loader import load_data
@@ -33,20 +32,18 @@ def opennem_import_patches():
         record_type = rec["record_type"]
 
         if record_type not in RECORD_MODEL_MAP:
-            raise Exception(
-                "Invalid record type: {} is not a valid record type".format(record_type)
-            )
+            raise Exception(f"Invalid record type: {record_type} is not a valid record type")
 
         record_model = RECORD_MODEL_MAP[record_type]
 
     return record_model
 
 
-def record_diff(subject: List, comparitor: List) -> Dict:
+def record_diff(subject: list, comparitor: list) -> dict:
     return {k: comparitor[k] for k in set(comparitor) - set(subject)}
 
 
-def station_reindex(stations: Dict) -> Dict:
+def station_reindex(stations: dict) -> dict:
     """
     reindexes the opnnem formatted facilities from a list
     to a dict keyed by duid
@@ -64,7 +61,7 @@ def station_reindex(stations: Dict) -> Dict:
         fac_duids = [i["code"] for i in facs]
 
         if len(set(fac_duids)) != len(fac_duids):
-            logger.info("Station {} has dupe duids".format(station_code))
+            logger.info(f"Station {station_code} has dupe duids")
             # raise Exception("error")
 
         station["facilities"] = {i.get("code"): i for i in facs}
@@ -75,7 +72,7 @@ def station_reindex(stations: Dict) -> Dict:
     return stations_return
 
 
-def opennem_import() -> List[StationSchema]:
+def opennem_import() -> list[StationSchema]:
     """
     This is the main method that overlays AEMO data and produces facilities
 
@@ -90,23 +87,22 @@ def opennem_import() -> List[StationSchema]:
     # REL
     for station_code, rel_station in nem_rel.items():
         if station_code not in opennem.keys():
-            logger.info("REL: New record {}".format(station_code))
+            logger.info(f"REL: New record {station_code}")
             opennem[station_code] = rel_station
 
         else:
-            logger.info("REL: Existing record {}".format(station_code))
+            logger.info(f"REL: Existing record {station_code}")
             om_station = opennem.get(station_code)
 
             if not om_station:
                 continue
 
             for rel_facility_duid, rel_facility in rel_station["facilities"].items():
-
                 if not rel_facility_duid:
                     continue
 
                 if rel_facility_duid not in om_station["facilities"].keys():
-                    logger.info(" ==> Added duid {} to station ".format(rel_facility_duid))
+                    logger.info(f" ==> Added duid {rel_facility_duid} to station ")
                     om_station["facilities"][rel_facility_duid] = rel_facility
                     continue
 
@@ -144,34 +140,29 @@ def opennem_import() -> List[StationSchema]:
 
     # GI
     for station_code, gi_station in nem_gi.items():
-        if station_code not in opennem.keys() and not facility_station_join_by_name(
-            gi_station["name"]
-        ):
-            logger.info("GI: New record {}".format(station_code))
+        if station_code not in opennem.keys() and not facility_station_join_by_name(gi_station["name"]):
+            logger.info(f"GI: New record {station_code}")
             gi_station["created_by"] = "aemo_gi"
             opennem[station_code] = gi_station
             continue
 
         station_name = gi_station["name"]
 
-        station_name_existing = list(
-            filter(lambda x: x["name"] == gi_station["name"], opennem.values())
-        )
+        station_name_existing = list(filter(lambda x: x["name"] == gi_station["name"], opennem.values()))
 
         if len(station_name_existing) and facility_station_join_by_name(station_name):
             station_code = station_name_existing[0]["code"]
-            logger.info("GI: found existing station we're joining to: {}".format(station_code))
+            logger.info(f"GI: found existing station we're joining to: {station_code}")
         elif station_code not in opennem.keys():
             opennem[station_code] = gi_station
 
-        logger.info("GI: Existing record {}".format(station_code))
+        logger.info(f"GI: Existing record {station_code}")
         om_station = opennem.get(station_code)
 
         if not om_station:
             continue
 
         for gi_facility_duid, gi_facility in gi_station["facilities"].items():
-
             if not gi_facility_duid:
                 continue
 
@@ -181,7 +172,7 @@ def opennem_import() -> List[StationSchema]:
             om_facility = om_station["facilities"][gi_facility_duid]
 
             if gi_facility_duid not in om_station["facilities"].keys():
-                logger.info(" ==> Added duid {} to station ".format(gi_facility_duid))
+                logger.info(f" ==> Added duid {gi_facility_duid} to station ")
                 om_station["facilities"][gi_facility_duid] = gi_facility
                 continue
 
@@ -204,7 +195,7 @@ def opennem_import() -> List[StationSchema]:
     for station_code, registry_station in registry.items():
         if station_code not in opennem.keys():
             if registry_station.get("state") == "WA":
-                logger.info("Registry: New record {}".format(station_code))
+                logger.info(f"Registry: New record {station_code}")
                 opennem[station_code] = registry_station
 
             continue
@@ -221,28 +212,18 @@ def opennem_import() -> List[StationSchema]:
         om_station["lng"] = lng
 
         if lat and lng:
-            logger.info("Registry: set lat and lng for {}".format(station_code))
+            logger.info(f"Registry: set lat and lng for {station_code}")
 
         for facility_code, registry_facility in registry_station.get("facilities", {}).items():
-
             if facility_code not in om_station["facilities"]:
-                logger.info(
-                    "Registry: {} has facility {} not in opennem".format(
-                        station_code, facility_code
-                    )
-                )
+                logger.info(f"Registry: {station_code} has facility {facility_code} not in opennem")
                 continue
 
-            if (
-                registry_facility["status"]
-                and not om_station["facilities"][facility_code]["status"]
-            ):
+            if registry_facility["status"] and not om_station["facilities"][facility_code]["status"]:
                 logger.info("Registry: set status to {}".format(registry_facility["status"]))
                 om_station["facilities"][facility_code]["status"] = registry_station["status"]
 
-            if registry_facility["fueltech"] and not om_station["facilities"][facility_code].get(
-                "fueltech", None
-            ):
+            if registry_facility["fueltech"] and not om_station["facilities"][facility_code].get("fueltech", None):
                 om_station["facilities"][facility_code]["fueltech"] = registry_facility["fueltech"]
 
             logger.info(

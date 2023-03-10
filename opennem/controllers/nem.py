@@ -6,7 +6,7 @@ Parses MMS tables into OpenNEM derived database
 import logging
 from dataclasses import asdict
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import pandas as pd
 from sqlalchemy.dialects.postgresql import insert
@@ -44,15 +44,15 @@ FACILITY_SCADA_COLUMN_NAMES = [
 
 
 def unit_scada_generate_facility_scada(
-    records: List[Union[Dict[str, Any], MMSBaseClass]],
+    records: list[dict[str, Any] | MMSBaseClass],
     network: NetworkSchema = NetworkNEM,
     interval_field: str = "settlementdate",
     facility_code_field: str = "duid",
     power_field: str = "scadavalue",
-    energy_field: Optional[str] = None,
+    energy_field: str | None = None,
     is_forecast: bool = False,
     primary_key_track: bool = True,
-) -> List[Dict]:
+) -> list[dict]:
     """@NOTE method deprecated"""
     created_at = datetime.now()
     primary_keys = []
@@ -71,7 +71,7 @@ def unit_scada_generate_facility_scada(
     try:
         fields = ", ".join([f"'{i}'" for i in list(first_record.keys())])
     except Exception as e:
-        logger.error("Fields error: {}".format(e))
+        logger.error(f"Fields error: {e}")
         pass
 
     for row in records:
@@ -80,27 +80,27 @@ def unit_scada_generate_facility_scada(
             row = asdict(row)  # type: ignore
 
         if interval_field not in row:
-            raise Exception("No such field: '{}'. Fields: {}. Data: {}".format(interval_field, fields, row))
+            raise Exception(f"No such field: '{interval_field}'. Fields: {fields}. Data: {row}")
 
         trading_interval = row[interval_field]
 
         if facility_code_field not in row:
-            raise Exception("No such facility field: {}. Fields: {}".format(facility_code_field, fields))
+            raise Exception(f"No such facility field: {facility_code_field}. Fields: {fields}")
 
         facility_code = row[facility_code_field]
 
-        energy_quantity: Optional[float] = None
+        energy_quantity: float | None = None
 
         if energy_field:
             if energy_field not in row:
-                raise Exception("No energy field: {}. Fields: {}".format(energy_field, fields))
+                raise Exception(f"No energy field: {energy_field}. Fields: {fields}")
 
             energy_quantity = clean_float(row[energy_field])
 
-        power_quantity: Optional[float] = None
+        power_quantity: float | None = None
 
         if power_field not in row:
-            raise Exception("No suck power field: {}. Fields: {}".format(power_field, fields))
+            raise Exception(f"No suck power field: {power_field}. Fields: {fields}")
 
         power_quantity = clean_float(row[power_field])
 
@@ -134,14 +134,14 @@ def unit_scada_generate_facility_scada(
 
 
 def generate_facility_scada(
-    records: List[Union[Dict[str, Any], MMSBaseClass]],
+    records: list[dict[str, Any] | MMSBaseClass],
     network: NetworkSchema = NetworkNEM,
     interval_field: str = "settlementdate",
     facility_code_field: str = "duid",
     power_field: str = "scadavalue",
-    energy_field: Optional[str] = None,
+    energy_field: str | None = None,
     is_forecast: bool = False,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """Optimized facility scada generator"""
     created_at = datetime.now()
 
@@ -195,13 +195,13 @@ def generate_facility_scada(
 
 
 def generate_balancing_summary(
-    records: List[Dict],
+    records: list[dict],
     interval_field: str = "SETTLEMENTDATE",
     network_region_field: str = "REGIONID",
-    price_field: Optional[str] = None,
+    price_field: str | None = None,
     network: NetworkSchema = NetworkNEM,
     limit: int = 0,
-) -> List[Dict]:
+) -> list[dict]:
     created_at = datetime.now()
     primary_keys = []
     return_records = []
@@ -209,7 +209,6 @@ def generate_balancing_summary(
     created_by = ""
 
     for row in records:
-
         trading_interval = parse_date(row[interval_field], network=network, dayfirst=False)
 
         network_region = None
@@ -327,7 +326,7 @@ def process_nem_price(table: AEMOTableSchema) -> ControllerReturn:
         # @NOTE disable pk track
         trading_interval = parse_date(record["settlementdate"])
 
-        primary_key = set([trading_interval, record["regionid"]])  # type: ignore
+        primary_key = {trading_interval, record["regionid"]}  # type: ignore
 
         if primary_key in primary_keys:
             continue
@@ -384,7 +383,7 @@ def process_dispatch_regionsum(table: AEMOTableSchema) -> ControllerReturn:
 
         trading_interval = parse_date(record.get("settlementdate"))
 
-        primary_key = set([trading_interval, record["regionid"]])
+        primary_key = {trading_interval, record["regionid"]}
 
         if primary_key in primary_keys:
             continue
@@ -450,7 +449,6 @@ def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
     primary_keys = []
 
     for record in table.records:
-
         if not isinstance(record, dict):
             raise Exception("Invalid record type")
 
@@ -464,7 +462,7 @@ def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         if not trading_interval:
             continue
 
-        _pk = set([trading_interval, record["regionid"]])
+        _pk = {trading_interval, record["regionid"]}
 
         if _pk in primary_keys:
             continue
@@ -489,7 +487,7 @@ def process_trading_regionsum(table: AEMOTableSchema) -> ControllerReturn:
         records_processed += 1
 
         if limit and records_processed >= limit:
-            logger.info("Reached limit of: {} {}".format(limit, records_processed))
+            logger.info(f"Reached limit of: {limit} {records_processed}")
             break
 
     stmt = insert(BalancingSummary).values(records_to_store)
@@ -663,7 +661,7 @@ def store_aemo_tableset(tableset: AEMOTableSet) -> ControllerReturn:
             logger.info("Invalid processing function %s", process_meth)
             continue
 
-        logger.info("processing table {} with {} records".format(table.full_name, len(table.records)))
+        logger.info(f"processing table {table.full_name} with {len(table.records)} records")
 
         record_item = None
 

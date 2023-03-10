@@ -1,4 +1,4 @@
-"""
+r"""
 Do some sanity checking on all outputs to make sure they're not shifting ¯\_(ツ)_/¯
 
 We get the latest month x times a day and just store the results. Make sure they're consitent.
@@ -9,7 +9,6 @@ import io
 import logging
 from csv import DictReader, DictWriter
 from datetime import date, datetime, timedelta
-from typing import Dict, List, Optional
 
 import requests
 
@@ -33,7 +32,7 @@ def get_last_month() -> date:
     return date(lastMonth.year, lastMonth.month, 1)
 
 
-def _get_current_csv_content() -> Optional[str]:
+def _get_current_csv_content() -> str | None:
     # @TODO abstract out dev.
     check_url = "https://data.dev.opennem.org.au/checks/all_output_checks.csv"
     r = requests.get(check_url)
@@ -44,7 +43,7 @@ def _get_current_csv_content() -> Optional[str]:
     return r.content.decode("utf-8")
 
 
-def _get_current_records() -> List[Dict]:
+def _get_current_records() -> list[dict]:
     """Gets the current csv storing all out history"""
     current_csv = _get_current_csv_content()
 
@@ -56,7 +55,7 @@ def _get_current_records() -> List[Dict]:
         current_records = list(csv_input)
         return current_records
     except Exception as e:
-        logger.error("Error getting current CSV: {}".format(e))
+        logger.error(f"Error getting current CSV: {e}")
         return []
 
 
@@ -70,7 +69,7 @@ def run_set_output_check() -> None:
 
     check_date = get_last_month()
 
-    logger.info("Checking {}".format(check_date))
+    logger.info(f"Checking {check_date}")
 
     check_result = {
         "run_dt": str(datetime.now()),
@@ -92,7 +91,7 @@ def run_set_output_check() -> None:
 
     current_records = _get_current_records()
 
-    logger.info("Have {} current records".format(len(current_records)))
+    logger.info(f"Have {len(current_records)} current records")
 
     current_records.append(check_result)
 

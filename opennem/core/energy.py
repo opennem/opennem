@@ -8,8 +8,9 @@ Uses an average in 30 minute buckets
 
 """
 import logging
+from collections.abc import Generator
 from datetime import date, datetime, timedelta
-from typing import Any, Dict, Generator, List, Optional, Union
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -22,17 +23,15 @@ logger = logging.getLogger("opennem.compat.energy")
 
 class ScadaResultCompat(BaseConfig):
     interval: datetime
-    code: Optional[str]
-    generated: Union[float, int, None]
+    code: str | None
+    generated: float | int | None
 
 
 def __trapezium_integration(d_ti: pd.Series, power_field: str = "MWH_READING") -> pd.Series:
     return 0.5 * (d_ti[power_field] * [1, 2, 2, 2, 2, 2, 1]).sum() / 12
 
 
-def __trading_energy_generator(
-    df: pd.DataFrame, date: date, duid_id: str, power_field: str = "generated"
-) -> pd.DataFrame:
+def __trading_energy_generator(df: pd.DataFrame, date: date, duid_id: str, power_field: str = "generated") -> pd.DataFrame:
     return_cols = []
 
     t_start = datetime(date.year, date.month, date.day, 0, 5, tzinfo=NetworkNEM.get_fixed_offset())
@@ -75,7 +74,7 @@ def __trading_energy_generator(
                 energy_value = __trapezium_integration(d_ti, power_field)
                 trading_interval = d_ti.index[-2]
         except ValueError as e:
-            logger.error("Error with {} at {} {}: {}".format(duid_id, t_i, t_f, e))
+            logger.error(f"Error with {duid_id} at {t_i} {t_f}: {e}")
 
         if not d_ti.index.empty:
             return_cols.append(
@@ -132,7 +131,7 @@ def __trading_energy_generator_hour(
                 energy_value = __trapezium_integration(d_ti, power_field)
                 trading_interval = d_ti.index[-2]
         except ValueError as e:
-            logger.error("Error with {} at {} {}: {}".format(duid_id, t_i, t_f, e))
+            logger.error(f"Error with {duid_id} at {t_i} {t_f}: {e}")
 
         if not d_ti.index.empty:
             return_cols.append(
@@ -164,7 +163,7 @@ def get_hour_range(df: pd.DataFrame) -> Generator[datetime, None, None]:
     min_date = df.index.min()
     max_date = df.index.max()
 
-    logger.debug("Datafram date range is {} -> {}".format(min_date, max_date))
+    logger.debug(f"Datafram date range is {min_date} -> {max_date}")
 
     cur_hour = min_date
 
@@ -198,7 +197,7 @@ def _energy_aggregate_hours(df: pd.DataFrame) -> pd.DataFrame:
     hours = list(get_hour_range(df))
 
     for hour in hours:
-        logger.info("Running for hour: {}".format(hour))
+        logger.info(f"Running for hour: {hour}")
         for duid in sorted(df.facility_code.unique()):
             energy_genrecs += [d for d in __trading_energy_generator_hour(df, hour, duid)]
 
@@ -207,7 +206,7 @@ def _energy_aggregate_hours(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _trapezium_integration_variable(d_ti: pd.Series) -> Optional[float]:
+def _trapezium_integration_variable(d_ti: pd.Series) -> float | None:
     """Gapfill version of trap int - will fill out"""
     # Clear no numbers
     d_ti = d_ti.dropna()
@@ -247,10 +246,10 @@ def _trapezium_integration_variable(d_ti: pd.Series) -> Optional[float]:
 def _energy_aggregate(df: pd.DataFrame, power_column: str = "generated", zero_fill: bool = False) -> pd.DataFrame:
     """v3 version of energy aggregate for energy_sum - iterates over time bucekts with edges"""
     in_cap = {}
-    capture: Dict[str, Any] = {}
+    capture: dict[str, Any] = {}
     values = []
-    dt: Optional[datetime] = None
-    reading_stops: List[int] = [0, 30]
+    dt: datetime | None = None
+    reading_stops: list[int] = [0, 30]
 
     for index, value in df.iterrows():
         i, network_id, duid = index
@@ -280,7 +279,7 @@ def _energy_aggregate(df: pd.DataFrame, power_column: str = "generated", zero_fi
     return pd.DataFrame(values, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"])
 
 
-def shape_energy_dataframe(gen_series: List[Dict], network: NetworkSchema = NetworkNEM) -> pd.DataFrame:
+def shape_energy_dataframe(gen_series: list[dict], network: NetworkSchema = NetworkNEM) -> pd.DataFrame:
     """Shapes a list of dicts into a dataframe for energy_sum"""
     df = pd.DataFrame(
         gen_series,
@@ -320,7 +319,7 @@ def energy_sum(
         df = df.set_index(["trading_interval"])
         if hours:
             if len(list(get_hour_range(df))) == 0:
-                logger.warning("energy_sum error for network {}: Got no hours from hour range".format(network.code))
+                logger.warning(f"energy_sum error for network {network.code}: Got no hours from hour range")
 
             df = _energy_aggregate_hours(df)
         else:

@@ -1,6 +1,5 @@
 import re
 from datetime import datetime, timedelta
-from typing import Union
 
 from datedelta import datedelta
 
@@ -25,12 +24,12 @@ VALID_INTERVAL_OPTIONS = ", ".join(VALID_INTERVALS)
 _interval_parser = re.compile(r"(?P<value>\d+)(?P<unit>[smhdwMYQ]?)", re.IGNORECASE)
 
 
-def get_human_interval(interval_human: str) -> Union[timedelta, datedelta]:
+def get_human_interval(interval_human: str) -> timedelta | datedelta:
     """Parses a human interval like 1m or 1Y into a timedelta or datedelta"""
     interval_match = re.match(_interval_parser, interval_human.strip())
 
     if not interval_match:
-        raise Exception("Not a valid interval: {}".format(interval_human))
+        raise Exception(f"Not a valid interval: {interval_human}")
 
     unit = interval_match.group("unit")
     value = int(interval_match.group("value"))
@@ -49,7 +48,7 @@ def get_human_interval(interval_human: str) -> Union[timedelta, datedelta]:
 
         return datedelta(**{unit_name: value})
 
-    raise Exception("Not a valid interval: {}".format(interval_human))
+    raise Exception(f"Not a valid interval: {interval_human}")
 
 
 def add_human_inerval(dt: datetime, interval_human: str) -> datetime:

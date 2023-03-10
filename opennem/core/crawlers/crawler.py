@@ -5,7 +5,6 @@
 import logging
 from datetime import datetime
 from textwrap import dedent
-from typing import List, Optional
 
 from opennem.db import get_database_engine
 from opennem.schema.core import BaseConfig
@@ -15,14 +14,14 @@ logger = logging.getLogger("opennem.crawlers.crawler")
 
 class CrawlMetadata(BaseConfig):
     name: str
-    version: Optional[float]
-    last_crawled: Optional[datetime]
-    last_processed: Optional[datetime]
-    server_latest: Optional[datetime]
-    force_run: Optional[bool] = False
+    version: float | None
+    last_crawled: datetime | None
+    last_processed: datetime | None
+    server_latest: datetime | None
+    force_run: bool | None = False
 
 
-def crawlers_get_crawl_metadata() -> List[CrawlMetadata]:
+def crawlers_get_crawl_metadata() -> list[CrawlMetadata]:
     """Get a return of metadata schemas for all crawlers from the database"""
     engine = get_database_engine()
 
@@ -92,9 +91,7 @@ def crawlers_flush_metadata(days: int | None = None, crawler_name: str | None = 
     if days:
         days_clause_history = f"interval >= now() - interval '{days} days'"
 
-    history_query = __history_query.format(
-        crawler_clause_history=crawler_clause_history, days_clause_history=days_clause_history
-    )
+    history_query = __history_query.format(crawler_clause_history=crawler_clause_history, days_clause_history=days_clause_history)
 
     logger.debug(dedent(meta_query))
     logger.debug(dedent(history_query))
@@ -109,4 +106,4 @@ if __name__ == "__main__":
     metas = crawlers_get_crawl_metadata()
 
     for m in metas:
-        logger.info("{} {} {} {} {}".format(m.name, m.version, m.last_crawled, m.last_processed, m.server_latest))
+        logger.info(f"{m.name} {m.version} {m.last_crawled} {m.last_processed} {m.server_latest}")

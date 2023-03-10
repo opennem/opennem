@@ -4,7 +4,6 @@ OpenNEM API authentication schemas
 """
 
 from datetime import datetime
-from typing import Optional
 
 from opennem.schema.core import BaseConfig
 from opennem.schema.opennem import OpennemBaseDataSchema
@@ -15,7 +14,7 @@ class AuthApiKeyRecord(BaseConfig):
     """Schema for an API Key database entry or definition"""
 
     keyid: UrlsafeString
-    description: Optional[str]
+    description: str | None
     revoked: bool = True
     created_at: datetime
 

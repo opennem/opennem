@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from pydantic import BaseModel, Field
 
 
@@ -14,7 +12,7 @@ class ApiBase(BaseModel):
 
 class UpdateResponse(BaseModel):
     success: bool = True
-    records: List = []
+    records: list = []
 
 
 class FueltechResponse(ApiBase):
@@ -26,7 +24,7 @@ class FueltechResponse(ApiBase):
 
 class APINetworkRegion(ApiBase):
     code: str
-    timezone: Optional[str]
+    timezone: str | None
 
 
 class APINetworkSchema(ApiBase):
@@ -34,6 +32,6 @@ class APINetworkSchema(ApiBase):
     country: str
     label: str
 
-    regions: Optional[List[APINetworkRegion]]
-    timezone: Optional[str] = Field(None, description="Network timezone")
+    regions: list[APINetworkRegion] | None
+    timezone: str | None = Field(None, description="Network timezone")
     interval_size: int = Field(..., description="Size of network interval in minutes")

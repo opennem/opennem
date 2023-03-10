@@ -3,7 +3,6 @@ import sys
 import termios
 import tty
 from distutils.util import strtobool
-from typing import Optional
 
 
 def getch() -> str:
@@ -18,7 +17,7 @@ def getch() -> str:
     return ch
 
 
-def prompt_user_yes_or_no(question: str, default: Optional[str] = None) -> bool:
+def prompt_user_yes_or_no(question: str, default: str | None = None) -> bool:
     """Prompts the user to confirm input"""
     prompt: str = ""
 
@@ -33,7 +32,7 @@ def prompt_user_yes_or_no(question: str, default: Optional[str] = None) -> bool:
 
     c: str = ""
 
-    print("{} {}: ".format(question, prompt), end="", flush=True)
+    print(f"{question} {prompt}: ", end="", flush=True)
 
     while c not in ("y", "n"):
         print(c)

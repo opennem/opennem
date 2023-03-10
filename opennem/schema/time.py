@@ -1,5 +1,4 @@
 from datetime import timedelta
-from typing import Optional
 
 from pydantic import Field
 
@@ -23,7 +22,7 @@ class TimeInterval(BaseConfig):
 
     trunc: str
 
-    def get_sql_join(self, field="trading_interval", timezone="UTC") -> Optional[str]:
+    def get_sql_join(self, field="trading_interval", timezone="UTC") -> str | None:
         if self.interval >= 60:
             return ""
 

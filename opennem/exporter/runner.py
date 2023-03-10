@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import List
 
 from pydantic import ValidationError
 
@@ -11,11 +10,11 @@ from opennem.schema.opennem import StationSchema
 logger = logging.getLogger("opennem.exporter")
 
 
-def load_stations(file_path: str = "opennem.json") -> List[StationSchema]:
+def load_stations(file_path: str = "opennem.json") -> list[StationSchema]:
     with open("data/opennem.json") as fh:
         __data = json.load(fh)
 
-    stations: List[StationSchema] = []
+    stations: list[StationSchema] = []
 
     for i in __data.values():
         try:

@@ -4,7 +4,6 @@ OpenNEM API Auth Router
 
 """
 
-from typing import Dict
 
 from fastapi import APIRouter, Depends
 
@@ -15,8 +14,7 @@ router = APIRouter()
 
 
 @router.get("/logout")
-def auth_logout() -> Dict:
-
+def auth_logout() -> dict:
     _response = {"status": "OK"}
 
     return _response

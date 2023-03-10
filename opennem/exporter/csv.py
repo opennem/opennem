@@ -1,12 +1,11 @@
 import csv
 from io import StringIO
-from typing import Dict, List
 
 from opennem.core.facility_duid_map import duid_is_retired
 from opennem.schema.opennem import StationSchema
 
 
-def stations_csv_records(stations: List[StationSchema]) -> List[Dict]:
+def stations_csv_records(stations: list[StationSchema]) -> list[dict]:
     records = []
 
     for station in stations:
@@ -45,7 +44,6 @@ def stations_csv_records(stations: List[StationSchema]) -> List[Dict]:
 
 
 def stations_csv_serialize(stations, csv_stream=None) -> StringIO:
-
     if not csv_stream:
         csv_stream = StringIO()
 

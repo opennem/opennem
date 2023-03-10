@@ -4,16 +4,14 @@ Parse AEMO MMS CSV format which can have multiple tables and definitions per CSV
 """
 
 import csv
-import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from pydantic import BaseModel, Field, validator
 from pydantic.error_wrappers import ValidationError
 from pydantic.fields import PrivateAttr
-from typing_extensions import Self
 
 from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import normalize_duid
@@ -40,25 +38,25 @@ logger = logging.getLogger(__name__)
 class AEMOTableSchema(BaseConfig):
     name: str
     namespace: str
-    fieldnames: List[str]
-    records: List[Dict[str, Any] | list] = Field(default_factory=list)
+    fieldnames: list[str]
+    records: list[dict[str, Any] | list] = Field(default_factory=list)
 
     # optionally it has a schema
-    _record_schema: Optional[MMSBaseClass] = PrivateAttr()
+    _record_schema: MMSBaseClass | None = PrivateAttr()
 
     # the url this table was taken from if any
-    url_source: Optional[str]
+    url_source: str | None = None
 
     # the original content ?!?!
     # @NOTE does this make sense .. (it doesnt because it can be super large)
-    content_source: Optional[str]
+    content_source: str | None = None
 
     @property
     def full_name(self) -> str:
-        return "{}_{}".format(self.namespace, self.name)
+        return f"{self.namespace}_{self.name}"
 
     @property
-    def primary_key(self) -> Optional[List[str]]:
+    def primary_key(self) -> list[str] | None:
         if (
             hasattr(self, "_record_schema")
             and isinstance(self._record_schema, MMSBaseClass)
@@ -81,7 +79,7 @@ class AEMOTableSchema(BaseConfig):
         return _namespace_name
 
     @validator("fieldnames")
-    def validate_fieldnames(cls, fieldnames: List[str]) -> List[str]:
+    def validate_fieldnames(cls, fieldnames: list[str]) -> list[str]:
         if not isinstance(fieldnames, list):
             return []
 
@@ -94,12 +92,12 @@ class AEMOTableSchema(BaseConfig):
 
         return True
 
-    def add_record(self, record: Union[Dict, MMSBaseClass], values_only: bool = False) -> bool:
+    def add_record(self, record: dict | MMSBaseClass, values_only: bool = False) -> bool:
         if isinstance(record, dict) and hasattr(self, "_record_schema") and self._record_schema:
             _record = None
 
             if not isinstance(record, dict):
-                raise Exception("Could not add record, not a dict: {}".format(record))
+                raise Exception(f"Could not add record, not a dict: {record}")
 
             try:
                 _record = self._record_schema(**record)  # type: ignore
@@ -113,10 +111,12 @@ class AEMOTableSchema(BaseConfig):
 
                     if record and isinstance(record, dict) and ve_fieldname in record:
                         ve_val = record[ve_fieldname]
+                        logger.debug(f"Error: {ve_val}")
 
                 return False
+
             except Exception as e:
-                logger.error("Record error: {}".format(e))
+                logger.error(f"Record error: {e}")
                 return False
 
             if values_only:
@@ -148,7 +148,7 @@ class AEMOTableSchema(BaseConfig):
                 _index_keys = self._record_schema._primary_keys  # type: ignore
 
         if len(_index_keys) > 0:
-            logger.debug("Setting index to {}".format(_index_keys))
+            logger.debug(f"Setting index to {_index_keys}")
             try:
                 _df = _df.set_index(_index_keys)
             except KeyError:
@@ -175,27 +175,16 @@ class AEMOTableSchema(BaseConfig):
 class AEMOTableSet(BaseModel):
     version: str = get_version()
     generated: datetime = datetime.now()
-    tables: List[AEMOTableSchema] = []
+    tables: list[AEMOTableSchema] = []
 
     @property
-    def table_names(self) -> List[str]:
-        _names: List[str] = []
+    def table_names(self) -> list[str]:
+        _names: list[str] = []
 
         for _t in self.tables:
             _names.append(_t.full_name)
 
         return _names
-
-    @staticmethod
-    def from_json(filename: str) -> Self:
-        """Parse an AEMOTableSet from a JSON file"""
-        file_path = Path(filename)
-
-        if not file_path.is_file():
-            raise Exception(f"File not found: {filename}")
-
-        with file_path.open() as fh:
-            json_data = json.loads(fh.read())
 
     def has_table(self, table_name: str) -> bool:
         found_table: bool = False
@@ -231,7 +220,7 @@ class AEMOTableSet(BaseModel):
 
         return True
 
-    def get_table(self, table_name: str) -> Optional[AEMOTableSchema]:
+    def get_table(self, table_name: str) -> AEMOTableSchema | None:
         if not self.has_table(table_name):
             return None
 
@@ -263,8 +252,8 @@ MMS_DUID_FIELDS = ["duid"]
 
 def parse_aemo_mms_csv(
     content: str,
-    table_set: Optional[AEMOTableSet] = None,
-    namespace_filter: Optional[List[str]] = None,
+    table_set: AEMOTableSet | None = None,
+    namespace_filter: list[str] | None = None,
     parse_table_schemas: bool = False,
     skip_records: bool = False,
     url: str | None = None,
@@ -294,7 +283,7 @@ def parse_aemo_mms_csv(
         record_type = row[0].strip().upper()
 
         if record_type not in AEMO_ROW_HEADER_TYPES:
-            logger.info("Skipping row, invalid type: {}".format(record_type))
+            logger.info(f"Skipping row, invalid type: {record_type}")
             continue
 
         # new table set
@@ -381,12 +370,10 @@ def parse_aemo_url(
         raise Exception(f"Could not fetch AEMO url {url}: {e}")
 
     if not csv_content:
-        raise Exception("Could not parse URL: {}".format(url))
+        raise Exception(f"Could not parse URL: {url}")
 
     csv_content_decoded = csv_content.decode("utf-8")
-    table_set = parse_aemo_mms_csv(
-        csv_content_decoded, table_set, skip_records=skip_records, url=url, values_only=values_only
-    )
+    table_set = parse_aemo_mms_csv(csv_content_decoded, table_set, skip_records=skip_records, url=url, values_only=values_only)
 
     # Count number of records
     total_records = 0
@@ -394,12 +381,12 @@ def parse_aemo_url(
     for table in table_set.tables:
         total_records += len(table.records)
 
-    logger.info("Parsed {} records".format(total_records))
+    logger.info(f"Parsed {total_records} records")
 
     return table_set
 
 
-def parse_aemo_urls(urls: List[str], skip_records: bool = False, values_only: bool = False) -> AEMOTableSet:
+def parse_aemo_urls(urls: list[str], skip_records: bool = False, values_only: bool = False) -> AEMOTableSet:
     """Parse a list of URLs into an AEMOTableSet"""
     aemo = AEMOTableSet()
 
@@ -412,7 +399,7 @@ def parse_aemo_urls(urls: List[str], skip_records: bool = False, values_only: bo
     for table in aemo.tables:
         total_records += len(table.records)
 
-    logger.info("Parsed {} records".format(total_records))
+    logger.info(f"Parsed {total_records} records")
 
     return aemo
 
@@ -427,7 +414,7 @@ def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None, values_onl
     if not file_path.is_file():
         raise Exception(f"Not a file {file_path}")
 
-    if not file_path.suffix.lower() in [".csv"]:
+    if file_path.suffix.lower() not in [".csv"]:
         raise Exception(f"Not a CSV file {file_path}")
 
     with file_path.open() as fh:

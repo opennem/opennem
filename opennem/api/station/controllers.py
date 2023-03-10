@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from sqlalchemy.orm.session import Session
 
 from opennem.db.models.opennem import Facility, Station
@@ -8,10 +6,10 @@ from opennem.db.models.opennem import Facility, Station
 def get_stations(
     session: Session,
     only_approved: bool = True,
-    name: Optional[str] = None,
-    limit: Optional[int] = None,
+    name: str | None = None,
+    limit: int | None = None,
     page: int = 1,
-) -> List[Station]:
+) -> list[Station]:
     """
     API controller that gets all stations sorted and joined
 
@@ -27,7 +25,7 @@ def get_stations(
     )
 
     if name:
-        stations = stations.filter(Station.name.like("%{}%".format(name)))
+        stations = stations.filter(Station.name.like(f"%{name}%"))
 
     if only_approved:
         stations = stations.filter(Station.approved.is_(True))

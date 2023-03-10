@@ -4,9 +4,7 @@
 
 """
 from collections import UserList
-from typing import List, Optional
-
-from typing_extensions import Self
+from typing import Self
 
 from opennem.exporter.encoders import opennem_serialize
 from opennem.schema.opennem import StationImportSchema
@@ -15,7 +13,7 @@ from opennem.schema.opennem import StationImportSchema
 class StationSet(UserList):
     """Defines a set of stations"""
 
-    def get(self, key: int) -> Optional[StationImportSchema]:
+    def get(self, key: int) -> StationImportSchema | None:
         _entry = list(filter(lambda s: s.id == key, self.data))
 
         if not _entry or len(_entry) == 0:
@@ -23,7 +21,7 @@ class StationSet(UserList):
 
         return _entry.pop()
 
-    def get_code(self, code: str) -> Optional[StationImportSchema]:
+    def get_code(self, code: str) -> StationImportSchema | None:
         _entries = list(filter(lambda s: s.code == code, self.data))
 
         if not _entries or len(_entries) == 0:
@@ -41,7 +39,7 @@ class StationSet(UserList):
         _key = station.code
 
         if self.get_code(_key):
-            raise Exception("Duplicate code {}".format(_key))
+            raise Exception(f"Duplicate code {_key}")
 
         self.data.append(station)
 
@@ -52,7 +50,7 @@ class StationSet(UserList):
 
         self.add(station)
 
-    def as_list(self) -> List[StationImportSchema]:
+    def as_list(self) -> list[StationImportSchema]:
         return self.data
 
     def json(self, indent: int | None = None) -> str:

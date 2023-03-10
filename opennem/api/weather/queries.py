@@ -1,5 +1,4 @@
 from textwrap import dedent
-from typing import List, Optional, Union
 
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.core.normalizers import normalize_duid
@@ -8,17 +7,17 @@ from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.utils.time import human_to_timedelta
 
 
-def station_id_case(station_codes: List[str]) -> str:
-    return ",".join(["'{}'".format(i) for i in map(normalize_duid, station_codes)])
+def station_id_case(station_codes: list[str]) -> str:
+    return ",".join([f"'{i}'" for i in map(normalize_duid, station_codes)])
 
 
 def observation_query(
-    station_codes: List[str],
+    station_codes: list[str],
     interval: TimeInterval,
     network: NetworkSchema = NetworkNEM,
-    period: Optional[TimePeriod] = None,
-    scada_range: Optional[ScadaDateRange] = None,
-    year: Optional[Union[str, int]] = None,
+    period: TimePeriod | None = None,
+    scada_range: ScadaDateRange | None = None,
+    year: str | int | None = None,
 ) -> str:
     if isinstance(year, int):
         year = str(year)
@@ -50,20 +49,18 @@ def observation_query(
     date_start_condition = ""
 
     if period:
-        date_start_condition = "{date_end}::timestamp - '{period}'::interval".format(
-            date_end=date_end, period=period.period_sql
-        )
+        date_start_condition = f"{date_end}::timestamp - '{period.period_sql}'::interval"
         date_start_condition = "'{}'".format(scada_range.get_end() - human_to_timedelta("7d"))
 
     if year:
-        date_start_condition = "'{year}-12-31'::date".format(year=int(year) - 1)
-        date_end = "'{year}-12-31'::date".format(year=year)
+        date_start_condition = f"'{int(year) - 1}-12-31'::date"
+        date_end = f"'{year}-12-31'::date"
 
     if not period and not year:
         if not scada_range:
             raise Exception("require a scada range ")
 
-        date_start_condition = "'{}'".format(scada_range.get_start())
+        date_start_condition = f"'{scada_range.get_start()}'"
 
     query = dedent(
         __query.format(
@@ -79,7 +76,7 @@ def observation_query(
 
 
 def observation_query_all(
-    station_codes: List[str],
+    station_codes: list[str],
     scada_range: ScadaDateRange,
     network: NetworkSchema = NetworkNEM,
 ) -> str:

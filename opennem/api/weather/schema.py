@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from typing import List, Optional
 
 from opennem.api.schema import ApiBase
 
@@ -10,23 +9,23 @@ class WeatherObservation(ApiBase):
 
     temp_apparent: float
     temp_air: float
-    press_qnh: Optional[float]
-    wind_dir: Optional[str]
-    wind_spd: Optional[float]
-    wind_gust: Optional[float]
-    humidity: Optional[float]
-    cloud: Optional[str]
-    cloud_type: Optional[str]
+    press_qnh: float | None
+    wind_dir: str | None
+    wind_spd: float | None
+    wind_gust: float | None
+    humidity: float | None
+    cloud: str | None
+    cloud_type: str | None
 
 
 class WeatherStation(ApiBase):
     code: str
     state: str
     name_alias: str
-    registered: Optional[date]
+    registered: date | None
     website_url: str
     altitude: int
     lat: float
     lng: float
 
-    observations: Optional[List[WeatherObservation]]
+    observations: list[WeatherObservation] | None

@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 from geojson_pydantic.geometries import Point
 
 from opennem.db.models.opennem import Station
@@ -7,7 +5,7 @@ from opennem.db.models.opennem import Station
 from .schema import FacilityFeature, FacilityGeo
 
 
-def stations_to_geojson(stations: List[Station]) -> FacilityGeo:
+def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
     features = []
 
     for station in stations:
@@ -17,7 +15,7 @@ def stations_to_geojson(stations: List[Station]) -> FacilityGeo:
         if not station.facilities or len(station.facilities) < 1:
             continue
 
-        feature_dict: Dict = dict(properties=dict())
+        feature_dict: dict = dict(properties=dict())
 
         feature_dict["properties"] = {
             "station_id": station.id,
@@ -37,7 +35,6 @@ def stations_to_geojson(stations: List[Station]) -> FacilityGeo:
             feature_dict["properties"]["osm_way_id"] = station.location.osm_way_id
 
         for facility in station.facilities:
-
             if not facility.fueltech:
                 continue
 

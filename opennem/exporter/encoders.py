@@ -10,7 +10,7 @@ import dataclasses
 import decimal
 import json
 from datetime import date, datetime
-from typing import Any, Optional
+from typing import Any
 
 from geojson import GeoJSONEncoder
 
@@ -31,7 +31,7 @@ class OpenNEMJSONEncoder(json.JSONEncoder):
             return str(o)
         if isinstance(o, DispatchType):
             return dispatch_type_string(o)
-        return super(OpenNEMJSONEncoder, self).default(o)
+        return super().default(o)
 
 
 class OpenNEMGeoJSONEncoder(GeoJSONEncoder, OpenNEMJSONEncoder):
@@ -44,7 +44,7 @@ class OpenNEMGeoJSONEncoder(GeoJSONEncoder, OpenNEMJSONEncoder):
             return o.isoformat()
         if isinstance(o, DispatchType):
             return dispatch_type_string(o)
-        return super(OpenNEMGeoJSONEncoder, self).default(o)
+        return super().default(o)
 
 
 def opennem_deserialize(serialized: str) -> Any:
@@ -60,7 +60,7 @@ def opennem_deserialize(serialized: str) -> Any:
     return obj_serialized
 
 
-def opennem_serialize(obj: Any, indent: Optional[int] = None) -> str:
+def opennem_serialize(obj: Any, indent: int | None = None) -> str:
     """Use custom OpenNEM serializer which supports custom types and GeoJSON"""
     obj_deserialized = None
 

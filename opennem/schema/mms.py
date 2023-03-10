@@ -4,7 +4,6 @@
 """
 OpenNEM MMS Schemas
 """
-from typing import Optional
 
 from pydantic import BaseModel, validator
 
@@ -18,10 +17,10 @@ class MMSBase(BaseModel):
 
 
 class MMSParticipant(MMSBase):
-    code: Optional[str]
+    code: str | None
     name: str
     country: str = "au"
-    abn: Optional[str]
+    abn: str | None
 
     @classmethod
     @validator("code")
@@ -42,7 +41,7 @@ class MMSStation(MMSBase):
 
 
 class MMSFacility(MMSBase):
-    code: Optional[str]
+    code: str | None
     name: str
 
     @classmethod

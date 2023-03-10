@@ -2,7 +2,6 @@
 
 from importlib import import_module
 from pkgutil import iter_modules
-from typing import List
 
 from opennem.core.crawlers.schema import CrawlerDefinition
 
@@ -42,7 +41,7 @@ def walk_modules(path: str):
     return mods
 
 
-def load_all_crawler_definitions(path: str) -> List[CrawlerDefinition]:
+def load_all_crawler_definitions(path: str) -> list[CrawlerDefinition]:
     crawler_definitions = []
 
     try:
@@ -50,7 +49,7 @@ def load_all_crawler_definitions(path: str) -> List[CrawlerDefinition]:
             for crawler_class in iter_crawler_definitions(module):
                 crawler_definitions.append(crawler_class)
     except ImportError as e:
-        raise Exception("Error importing: {}".format(e))
+        raise Exception(f"Error importing: {e}")
 
     return crawler_definitions
 
