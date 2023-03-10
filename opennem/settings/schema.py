@@ -37,9 +37,9 @@ class OpennemSettings(BaseSettings):
 
     cache_url: str = "redis://127.0.0.1"
 
-    sentry_url: str | None
+    sentry_url: str | None = None
 
-    prometheus_url: str | None
+    prometheus_url: str | None = None
 
     # This is the module where crawlers are found
     crawlers_module: str = "opennem.crawlers"
@@ -50,10 +50,10 @@ class OpennemSettings(BaseSettings):
 
     # Slack notifications
     slack_notifications: bool = True
-    slack_hook_url: str | None
+    slack_hook_url: str | None = None
 
     # APVI
-    apvi_token: str | None
+    apvi_token: str | None = None
 
     export_local: bool = False
 
@@ -125,11 +125,11 @@ class OpennemSettings(BaseSettings):
     github_feedback_access_token: str | None = None
 
     # willy weather client
-    willyweather_api_key: str | None
+    willyweather_api_key: str | None = None
 
     # cloudflare
-    cloudflare_account_id: str | None
-    cloudflare_api_key: str | None
+    cloudflare_account_id: str | None = None
+    cloudflare_api_key: str | None = None
 
     tmp_file_prefix: str | None = "opennem_"
 
