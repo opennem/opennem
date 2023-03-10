@@ -151,6 +151,7 @@ services:
       - FLOWS_AND_EMISSIONS_V2
       - OPENNEM_POWER_FLOWS
       - GITHUB_FEEDBACK_ACCESS_TOKEN
+      - SLACK_DATA_WEBHOOK
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=false"

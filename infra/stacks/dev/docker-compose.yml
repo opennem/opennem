@@ -35,6 +35,7 @@ x-app: &default-app
     - OPENNEM_POWER_FLOWS
     - GITHUB_FEEDBACK_ACCESS_TOKEN
     - RUN_CRAWLERS
+    - SLACK_DATA_WEBHOOK
 
 services:
   traefik:

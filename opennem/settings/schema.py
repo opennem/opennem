@@ -52,6 +52,9 @@ class OpennemSettings(BaseSettings):
     slack_notifications: bool = True
     slack_hook_url: str | None = None
 
+    # web hook for data channel
+    slack_data_webhook: str | None = None
+
     # APVI
     apvi_token: str | None = None
 
