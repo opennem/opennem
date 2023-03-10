@@ -62,26 +62,37 @@ def slack_message(
     tag_users: list[str] | None = None,
     image_url: str | None = None,
     image_alt: str | None = None,
+    alert_webhook_url: str | None = None,
 ) -> bool:
     """
     Post a slack message to the watchdog channel
 
     supports markdown and tagging users
 
+    :param msg: Message to send
+    :param text: Text to send
+    :param tag_users: List of users to tag
+    :param image_url: Image url to send
+    :param image_alt: Image alt text
+    :param alert_webhook_url: Override the webhook url
+    :return: True if sent
     """
+
     if not settings.slack_notifications:
         logger.info("Slack endpoint not configured in environment")
         return False
 
-    if not settings.slack_hook_url:
+    if not alert_webhook_url:
+        alert_webhook_url = settings.slack_hook_url
+
+    if not alert_webhook_url:
         logger.error("No slack notification endpoint configured")
         return False
 
-    if isinstance(valid_url(settings.slack_hook_url), ValidationFailure):
+    if isinstance(valid_url(alert_webhook_url), ValidationFailure):
         logger.error("No slack notification endpoint configured bad url")
         return False
 
-    alert_url = settings.slack_hook_url
     tag_list = _slack_tag_list(tag_users) if tag_users else ""
     text_block: str = f"{msg} {tag_list}" if msg else ""
 
@@ -104,7 +115,7 @@ def slack_message(
     # as dict and exclude empty fields
     slack_body = dataclasses.asdict(slack_message, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
-    resp = requests.post(alert_url, json=slack_body)
+    resp = requests.post(alert_webhook_url, json=slack_body)
 
     if resp.status_code != 200:
         logger.error(f"Error sending slack message: {resp.status_code}: {resp.text}")
