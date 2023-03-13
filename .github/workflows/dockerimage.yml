@@ -25,13 +25,12 @@ jobs:
           version: latest
 
       - name: Build the Docker image
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v4
         with:
           name: opennem/opennem/opennem
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
-          # registry: ghcr.io
+          registry: ghcr.io
           dockerfile: infra/container/Dockerfile
           tag_semver: true
           platforms: linux/amd64,linux/arm64
