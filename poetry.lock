@@ -3593,7 +3593,7 @@ files = [
 name = "tomlkit"
 version = "0.11.6"
 description = "Style preserving TOML library"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 files = [
@@ -4029,4 +4029,4 @@ postgres = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "2d395480bf3d4c193c5fa813ec3ac82f51f033ab55a3569a6ce1eb2d287f41f5"
+content-hash = "f5c5c0ba9571409b4512672886cf49a494ac62cb09dd5ac179b61c6e2f858355"
