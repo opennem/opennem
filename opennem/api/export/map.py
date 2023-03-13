@@ -20,11 +20,11 @@ from opennem.db.models.opennem import Network
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.utils.dates import week_series
-from opennem.utils.version import VersionPart, get_version
+from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)
 
-VERSION_MAJOR = get_version(version_part=VersionPart.MAJOR)
+VERSION_MAJOR = get_version().split(".")[0]
 STATS_FOLDER = "stats"
 
 

@@ -1,14 +1,11 @@
 import logging
 from datetime import datetime
-from enum import Enum
 from pathlib import Path
 
 try:
     import tomlkit
 except ModuleNotFoundError:
     print("Could not import external package. virtualenv likely not activated.")
-
-from packaging.version import parse
 
 logger = logging.getLogger(__name__)
 
@@ -55,17 +52,6 @@ def get_pkg_version() -> str | None:
     return version
 
 
-def get_scm_version() -> None:
-    import os.path as pth
-
-    try:
-        from setuptools_scm import get_version
-
-        get_version(root=pth.join("..", ".."), relative_to=__file__)
-    except Exception:
-        raise ImportError("setuptools_scm broken or not installed")
-
-
 pkg_meta = get_project_meta()
 version = None
 
@@ -81,28 +67,7 @@ else:
 release = version
 
 
-class VersionPart(Enum):
-    MAJOR = "major"
-    MINOR = "minor"
-    PATCH = "patch"
-
-
-def get_version(version_part: VersionPart | None = None) -> str:
-    if not version:
-        return ""
-
-    version_parsed = parse(version)
-
-    if not version_part:
-        return version
-
-    if version_part == VersionPart.MAJOR:
-        return str(version_parsed.major)
-
-    if version_part == VersionPart.MINOR:
-        return str(version_parsed.minor)
-
-    if version_part == VersionPart.PATCH:
-        return str(version_parsed.minor)
+def get_version() -> str:
+    """@TODO remove this and use poetry versioning"""
 
     return version
