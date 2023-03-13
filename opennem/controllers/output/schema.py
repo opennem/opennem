@@ -96,7 +96,7 @@ class OpennemExportSeries(BaseConfig):
         """Return an informative stringified object for debugging and exceptions"""
         return (
             f"Network {self.network.code} at interval {self.interval.interval_human} and "
-            f"period {self.period.period_human} between {self.start} and {self.end}"
+            f"period {self.period.period_human if self.period else None} between {self.start} and {self.end}"
         )
 
     def get_range(self) -> ExportDatetimeRange:
