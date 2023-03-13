@@ -1,6 +1,7 @@
 # noqa: F408, F401
 import pytest
 
+from opennem.settings import settings
 from opennem.settings.schema import OpennemSettings
 
 
@@ -34,4 +35,4 @@ def test_opennem_settings() -> None:
 
     assert hasattr(opennem, "settings"), "We have settings"
 
-    assert isinstance(opennem.settings, OpennemSettings), "Settings is an openem settings schema"
+    assert isinstance(settings, OpennemSettings), "Settings is an openem settings schema"

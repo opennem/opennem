@@ -1,8 +1,8 @@
-from opennem.utils.version import VersionPart, get_version
+from opennem.utils.version import get_version
 
 
 # @TODO mock this because obviouuuuusly...
 def test_version() -> None:
-    version = get_version(VersionPart.MAJOR)
+    version = get_version()
 
-    assert version == "3"
+    assert version.startswith("3") is True
