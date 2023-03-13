@@ -78,13 +78,13 @@ class OpennemExportSeries(BaseConfig):
     interval: TimeInterval
 
     # The length of the series to extract
-    period: TimePeriod | None
+    period: TimePeriod | None = None
 
     # extract a particular year
-    year: int | None
+    year: int | None = None
 
     # extract a particular month
-    month: date | None
+    month: date | None = None
 
     # Forecast means the time series goes forward from now
     forecast: bool = False
