@@ -4,7 +4,6 @@ services:
     image: traefik:v2.1
     network_mode: host
     command:
-      # - --log.level=DEBUG
       - --api.insecure=true
       - --providers.docker
       - --entryPoints.web.address=:80
@@ -48,7 +47,7 @@ services:
       - "traefik.docker.network=frontend"
 
   api:
-    image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
+    image: ghcr.io/opennem/opennem/opennem:$VERSION
     command: [
         "wait-for",
         "10.0.0.124:15433",
@@ -82,7 +81,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-secure.entrypoints=websecure"
-      # - "traefik.http.routers.api-secure.rule=Host(`api.opennem.org.au`) || Host(`api.prod.opennem.org.au`)"
       - "traefik.http.routers.api-secure.rule=Host(`api.opennem.org.au`)"
       - "traefik.http.routers.api-secure.tls=true"
       - "traefik.http.routers.api-secure.tls.certresolver=resolver_apex"

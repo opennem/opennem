@@ -82,7 +82,7 @@ services:
 
   api:
     <<: *default-app
-    image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
+    image: ghcr.io/opennem/opennem/opennem:$VERSION
     command:
       [
         "wait-for",
@@ -113,7 +113,7 @@ services:
 
   worker:
     <<: *default-app
-    image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
+    image: ghcr.io/opennem/opennem/opennem:$VERSION
     restart: unless-stopped
     command:
       [
