@@ -112,6 +112,7 @@ postgres = ["psycopg2"]
 
 [tool.poetry.group.dev.dependencies]
 pyright = "^1.1.295"
+bumpver = "^2022.1120"
 
 [tool.ruff]
 target-version = "py311"
@@ -183,3 +184,24 @@ reportMissingTypeStubs = false
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.bumpver]
+current_version = "2023.1001-alpha"
+version_pattern = "YYYY.BUILD[-TAG]"
+commit_message = "bump version {old_version} -> {new_version}"
+commit = true
+tag = true
+push = true
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+]
+"setup.py" = [
+    "{version}",
+    "{pep440_version}",
+]
+"README.md" = [
+    "{version}",
+    "{pep440_version}",
+]
