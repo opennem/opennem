@@ -18,6 +18,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - id: pre-step
+        shell: bash
+        run: echo "release-version=$(echo ${GITHUB_REF:10})" >> $GITHUB_OUTPUT
+
       - name: Install buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
@@ -25,16 +29,16 @@ jobs:
           version: latest
 
       - name: Build the Docker image
-        uses: elgohr/Publish-Docker-Github-Action@v4
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: opennem/opennem/opennem
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
           dockerfile: infra/container/Dockerfile
-          tags: "latest,${{ steps.pre-step.outputs.release-version }}"
+          # tags: "latest,${{ steps.pre-step.outputs.release-version }}"
+          tag_semver: true
           platforms: linux/amd64
-          # tag_semver: true
           cache: ${{ github.event_name != 'schedule' }}
 
       # - name: Configure AWS Credentials
