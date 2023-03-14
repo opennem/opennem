@@ -21,6 +21,7 @@ logger = logging.getLogger("opennem.workers.facility_data_ranges")
 def get_update_seen_query(
     include_first_seen: bool = False,
     facility_codes: list[str] | None = None,
+    interval_window_days: int = 7,
 ) -> str:
     __query = """
     update facility f set
@@ -28,13 +29,14 @@ def get_update_seen_query(
         data_last_seen = seen_query.data_last_seen
     from (
         select
-            f.code as code,
+            fs.facility_code as code,
             {fs}min(fs.trading_interval) as data_first_seen,
             max(fs.trading_interval) as data_last_seen
-            from facility_scada fs
-        left join facility f on fs.facility_code = f.code
-        where fs.generated > 0 or fs.eoi_quantity is not null
-        {facility_codes_query}
+        from facility_scada fs
+        where
+            fs.generated > 0
+            {facility_codes_query}
+            {trading_interval_window}
         group by 1
     ) as seen_query
     where f.code = seen_query.code;
@@ -43,7 +45,11 @@ def get_update_seen_query(
     fs = "" if include_first_seen else "--"
     facility_codes_query = f"and f.code in ({duid_to_case(facility_codes)})" if facility_codes else ""
 
-    query = __query.format(fs=fs, facility_codes_query=facility_codes_query)
+    trading_interval_window = ""
+    if not include_first_seen:
+        trading_interval_window = "and fs.trading_interval > now() - interval '{interval_window_days} days'"
+
+    query = __query.format(fs=fs, facility_codes_query=facility_codes_query, trading_interval_window=trading_interval_window)
 
     return dedent(query)
 
@@ -125,4 +131,4 @@ def get_facility_seen_range(facility_codes: list[str]) -> FacilitySeenRange:
 
 
 if __name__ == "__main__":
-    update_facility_seen_range(True)
+    update_facility_seen_range()
