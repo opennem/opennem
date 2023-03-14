@@ -156,8 +156,12 @@ services:
       - WATCHTOWER_CLEANUP=1
       - WATCHTOWER_LABEL_ENABLE=1
       - WATCHTOWER_POLL_INTERVAL=120
+      - WATCHTOWER_INCLUDE_RESTARTING=1
+      - WATCHTOWER_INCLUDE_STOPPED=1
+      - WATCHTOWER_REVIVE_STOPPED=1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
 
 networks:
   frontend:
