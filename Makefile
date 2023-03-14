@@ -3,7 +3,7 @@ UPGRADE_ARGS ?= --upgrade
 isort = isort opennem tests
 black = black opennem tests
 ruff = ruff opennem tests
-
+pyright = pyright -v $(poetry env info -p) opennem
 
 .PHONY: test
 test:
@@ -17,7 +17,7 @@ format:
 
 .PHONY: pyright
 pyright:
-	pyright
+	$(pyright)
 
 install:
 	pip install -r ./requirements.txt
