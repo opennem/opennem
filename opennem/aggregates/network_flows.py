@@ -385,7 +385,7 @@ def run_and_store_flows_for_range(date_start: datetime, date_end: datetime, netw
     send_slack=True,
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.MONTH,
-    message_fmt="{network}: Ran flow update for interval `{interval}`",
+    message_fmt="`{network.code}`: Ran flow update for interval `{interval}`",
 )
 def run_flow_update_for_interval(
     interval: datetime, network: NetworkSchema | None = None, number_of_intervals: int = 1
@@ -495,4 +495,6 @@ if __name__ == "__main__":
     # run_emission_update_day(days=12)
     # run_flow_updates_all_per_year(2014, 1, network=NetworkNEM)
     # run_flow_update_for_interval(datetime.fromisoformat("2022-11-18T14:40:00+10:00"), network=NetworkNEM)
-    run_flow_update_for_interval(datetime.fromisoformat("2023-03-07T00:00:00+10:00"), network=NetworkNEM, number_of_intervals=1)
+    run_flow_update_for_interval(
+        interval=datetime.fromisoformat("2023-03-07T00:00:00+10:00"), network=NetworkNEM, number_of_intervals=1
+    )
