@@ -32,7 +32,11 @@ build:
 
 .PHONY: bump-dev
 bump-dev:
-	bumpver update --tag-num
+	bumpver update --tag-num --tag-commit --commit --push
+
+.PHONY: bump-patch
+bump-patch:
+	bumpver update --patch --tag-commit --commit --push
 
 .PHONY: requirements
 requirements:
@@ -40,6 +44,8 @@ requirements:
 	poetry export --with dev --format requirements.txt --without-hashes > requirements_dev.txt
 	git add requirements.txt requirements_dev.txt
 
+.PHONY: release-pre
+release-pre: format requirements
 pyclean:
 	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
@@ -49,4 +55,6 @@ cleandist:
 codecov:
 	pytest --cov=./opennem
 
-release: format requirements bump-dev
+release: release-pre bump-dev
+
+release-patch: release-pre bump-dev
