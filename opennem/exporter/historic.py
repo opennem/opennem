@@ -45,7 +45,7 @@ class ExporterHistoricException(Exception):
 
 @profile_task(
     send_slack=False,
-    message_fmt="Exported historic intervals for `{network.code}`, region `{network_region.code}` week num `{week_number}`",
+    message_fmt="Exported historic intervals for `{network.code}`, region `{network_region.code}` week start `{week_start}`",
 )
 def export_network_intervals_for_week(
     week_start: datetime,
