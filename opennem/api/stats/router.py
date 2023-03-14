@@ -411,12 +411,14 @@ def power_network_region_fueltech(
     network_region_code: str = Query(..., description="Network region code"),
     month: date = Query(datetime.now().date(), description="Month to query"),
 ) -> OpennemDataSet:
-
     network = None
 
     try:
         network = network_from_network_code(network_code)
     except Exception:
+        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+
+    if not network:
         raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
 
     interval_obj = network.get_interval()
@@ -443,7 +445,6 @@ def power_network_region_fueltech(
         start=scada_range.start,
         month=month,
         network=network,
-        networks=networks,
         interval=interval_obj,
         period=period_obj,
     )
