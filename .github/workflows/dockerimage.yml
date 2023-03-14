@@ -2,7 +2,7 @@ name: Docker Image CI
 on:
   create:
     tags:
-      - v*
+      - "*"
   schedule:
     - cron: "0 2 * * 0" # Weekly on Sundays at 02:00
 
@@ -25,7 +25,7 @@ jobs:
           version: latest
 
       - name: Build the Docker image
-        uses: elgohr/Publish-Docker-Github-Action@v3
+        uses: elgohr/Publish-Docker-Github-Action@v4
         with:
           name: opennem/opennem/opennem
           username: ${{ github.actor }}
