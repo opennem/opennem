@@ -3,6 +3,7 @@ UPGRADE_ARGS ?= --upgrade
 isort = isort opennem tests
 black = black opennem tests
 ruff = ruff opennem tests
+pyupgrade = pyupgrade --exit-zero-even-if-changed --py311-plus opennem/**/*.py tests/**/*.py
 pyright = pyright -v $(poetry env info -p) opennem
 
 .PHONY: test
@@ -11,6 +12,7 @@ test:
 
 .PHONY: format
 format:
+	$(pyupgrade)
 	$(isort)
 	$(black)
 	$(ruff) --fix --exit-zero
@@ -28,9 +30,9 @@ build:
 	pip install wheel
 	python setup.py sdist bdist_wheel
 
-.PHONY: bump
-bump:
-	bumpver update --${1-patch}
+.PHONY: bump-dev
+bump-dev:
+	bumpver update --tag-num
 
 .PHONY: requirements
 requirements:
@@ -47,4 +49,4 @@ cleandist:
 codecov:
 	pytest --cov=./opennem
 
-release: format requirements bump
+release: format requirements bump-dev
