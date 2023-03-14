@@ -32,9 +32,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
           dockerfile: infra/container/Dockerfile
-          # tags: "latest,${{ steps.pre-step.outputs.release-version }}"
+          tags: "latest,${{ steps.pre-step.outputs.release-version }}"
           platforms: linux/amd64
-          tag_semver: true
+          # tag_semver: true
           cache: ${{ github.event_name != 'schedule' }}
 
       # - name: Configure AWS Credentials
