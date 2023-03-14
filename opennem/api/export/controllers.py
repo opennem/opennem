@@ -381,7 +381,7 @@ def demand_week(
 
 def power_week(
     time_series: OpennemExportSeries,
-    network_region_code: str = None,
+    network_region_code: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
     include_capacities: bool = False,
 ) -> OpennemDataSet | None:  # sourcery skip: use-fstring-for-formatting

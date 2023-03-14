@@ -121,7 +121,7 @@ def export_power(
 
         stat_set = power_week(
             time_series=time_series,
-            network_region_code=power_stat.network_region_query or power_stat.network_region,
+            network_region_code=power_stat.network_region_query or power_stat.network_region or None,
             networks_query=power_stat.networks,
         )
 
