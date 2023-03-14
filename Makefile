@@ -47,14 +47,9 @@ requirements:
 
 .PHONY: release-pre
 release-pre: format requirements
+
 pyclean:
 	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
-
-.PHONE: push
-push:
-	version := $(shell poetry version -s)
-	git tag v$(VERSION)"
-	# git push -u origin master "$VERSION"
 
 cleandist:
 	rm -rf build
