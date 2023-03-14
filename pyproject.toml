@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem-backend"
-version = "3.13.0-rc.0"
+version = "3.13.0-beta0"
 description = "OpenNEM Australian Energy Data Backend"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 license = "MIT"
@@ -186,8 +186,8 @@ requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
 [tool.bumpver]
-current_version = "2023.1001-alpha"
-version_pattern = "YYYY.BUILD[-TAG]"
+current_version = "3.13.0-beta0"
+version_pattern = "MAJOR.MINOR.PATCH[-TAGNUM]"
 commit_message = "bump version {old_version} -> {new_version}"
 commit = true
 tag = true
@@ -197,11 +197,6 @@ push = true
 "pyproject.toml" = [
     'current_version = "{version}"',
 ]
-"setup.py" = [
-    "{version}",
-    "{pep440_version}",
-]
-"README.md" = [
-    "{version}",
-    "{pep440_version}",
+"opennem/__init__.py" = [
+    '__version__ = "{version}"',
 ]

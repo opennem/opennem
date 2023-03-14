@@ -34,13 +34,10 @@ import warnings  # noqa: E402
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="twisted")
 warnings.filterwarnings("ignore", module="openpyxl")
 
-# Core methods we reuire in loading the module
-from opennem.utils.version import get_version  # noqa: E402
 
 # Module variables
-v = "3.11.1"
+__version__ = "3.13.0-beta0"
 __env__ = "prod"
-__version__ = get_version()
 __package__ = "opennem"
 
 
