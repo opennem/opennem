@@ -385,7 +385,7 @@ def run_and_store_flows_for_range(date_start: datetime, date_end: datetime, netw
     send_slack=True,
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.MONTH,
-    message_fmt="Ran flow update for interval {interval}",
+    message_fmt="{network}: Ran flow update for interval `{interval}`",
 )
 def run_flow_update_for_interval(
     interval: datetime, network: NetworkSchema | None = None, number_of_intervals: int = 1
