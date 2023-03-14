@@ -5,6 +5,7 @@ black = black opennem tests
 ruff = ruff opennem tests
 pyupgrade = pyupgrade --exit-zero-even-if-changed --py311-plus opennem/**/*.py tests/**/*.py
 pyright = pyright -v $(poetry env info -p) opennem
+bumpver = bumpver update --no-tag-commit --commit --no-push
 
 .PHONY: test
 test:
@@ -32,11 +33,11 @@ build:
 
 .PHONY: bump-dev
 bump-dev:
-	bumpver update --tag-num --no-tag-commit --commit --push
+	$(bumpver) --tag-num
 
 .PHONY: bump-patch
 bump-patch:
-	bumpver update --patch --no-tag-commit --commit --push
+	bumpver update --patch --no-tag-commit --commit --no-push
 
 .PHONY: requirements
 requirements:
@@ -53,6 +54,7 @@ pyclean:
 push:
 	git tag v$(poetry version s)
 	git push --tags
+	git push -u origin master
 
 cleandist:
 	rm -rf build
