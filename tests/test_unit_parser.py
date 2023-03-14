@@ -1,9 +1,7 @@
-
 from opennem.core.unit_parser import parse_unit_duid, parse_unit_number
 
 
-class TestUnitParser(object):
-
+class TestUnitParser:
     # Simple
 
     def test_returns_string_one(self):
@@ -11,7 +9,7 @@ class TestUnitParser(object):
         assert subj.id == 1, "Returns string 1 as unit number 1"
         assert subj.number == 1, "Unit has one unit"
 
-    def test_returns_string_one(self):
+    def test_returns_string_two(self):
         subj = parse_unit_number("2")
         assert subj.id == 2, "Has unit id of 2"
         assert subj.number == 1, "Unit has one unit"
@@ -57,7 +55,7 @@ class TestUnitParser(object):
         subj = parse_unit_number("50-99")
         assert subj.id == 50, "Unit has an id of 50"
         assert subj.number == 50, "Unit has 50 units"
-        assert subj.alias == None, "Unit has no alias"
+        assert subj.alias is None, "Unit has no alias"
 
     # Aliases
     def test_single_has_alias(self):
@@ -116,19 +114,19 @@ class TestUnitParser(object):
         subj = parse_unit_number("1 & 2")
         assert subj.id == 1, "Unit has an id of 1"
         assert subj.number == 2, "Unit has 2 units"
-        assert subj.alias == None, "Unit has no alias"
+        assert subj.alias is None, "Unit has no alias"
 
     def test_ampersand_three(self):
         subj = parse_unit_number("1 & 2 & 3")
         assert subj.id == 1, "Unit has an id of 1"
         assert subj.number == 3, "Unit has 3 units"
-        assert subj.alias == None, "Unit has no alias"
+        assert subj.alias is None, "Unit has no alias"
 
     def test_comma_separated(self):
         subj = parse_unit_number("1,2")
         assert subj.id == 1, "Unit has an id of 1"
         assert subj.number == 2, "Unit has 2 units"
-        assert subj.alias == None, "Unit has no alias"
+        assert subj.alias is None, "Unit has no alias"
 
     def test_comma_separated_single(self):
         subj = parse_unit_number("GT 1-2,GT 1-4", force_single=True)
@@ -140,10 +138,10 @@ class TestUnitParser(object):
         subj = parse_unit_number("1, 2 & 5,3 & 4")
         assert subj.id == 1, "Unit has an id of 1"
         assert subj.number == 5, "Unit has 5 units"
-        assert subj.alias == None, "Unit has no alias"
+        assert subj.alias is None, "Unit has no alias"
 
 
-class TestUnitDuidParser(object):
+class TestUnitDuidParser:
     def test_unit_duid(self):
         subj = parse_unit_duid("WT1-2", "NONE")
         assert subj.id == 1, "Unit has an id of 1"

@@ -32,9 +32,7 @@ def pad_stat_set(stat_set: OpennemDataSet) -> OpennemDataSet:
     # Find required length
     perfect_data_sets = list(
         filter(
-            lambda x: x.id.endswith("energy")  # type: ignore
-            and x.history.start == min_date
-            and x.history.last == max_date,
+            lambda x: x.id.endswith("energy") and x.history.start == min_date and x.history.last == max_date,  # type: ignore
             stat_set.data,
         )
     )
@@ -47,7 +45,6 @@ def pad_stat_set(stat_set: OpennemDataSet) -> OpennemDataSet:
     length_should_be = len(perfect_data_set.history.data)
 
     for data_set in stat_set.data:
-
         # prepad the min-date
         if data_set.history.start != min_date:
             required_padding = length_should_be - len(data_set.history.data)

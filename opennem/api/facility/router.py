@@ -55,7 +55,6 @@ def facility_update(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facility not found")
 
     if data.modification == FacilityModificationTypes.approve:
-
         if facility.approved is True:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,

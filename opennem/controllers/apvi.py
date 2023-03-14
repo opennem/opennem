@@ -68,7 +68,6 @@ def update_apvi_facility_capacities(forecast_set: APVIForecastSet) -> None:
         return None
 
     for state_capacity in forecast_set.capacities:
-
         state_facility: Facility = session.query(Facility).filter_by(code=state_capacity.facility_code).one_or_none()
 
         if not state_facility:

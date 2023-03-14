@@ -799,6 +799,33 @@ class BalancingSummary(Base, BaseModel):
     )
 
 
+# AEMO Data Tables
+
+# Stores history of REL and GI data
+
+
+class AEMODataSource(enum.Enum):
+    rel = "rel"  # @NOTE registration and exemption list
+    gi = "gi"  # @NOTE general information table
+
+
+class AEMOFacilityData(Base):
+    __tablename__ = "aemo_facility_data"
+
+    aemo_source = Column(Enum(AEMODataSource), primary_key=True)
+    source_date = Column(Date, primary_key=True)
+
+    name = Column(Text, nullable=True)
+    name_network = Column(Text, nullable=True)
+    network_region = Column(Text, primary_key=False)
+    fueltech_id = Column(Text, nullable=True)
+    status_id = Column(Text, nullable=True)
+    duid = Column(Text, nullable=True)
+    units_no = Column(Integer, nullable=True)
+    capacity_registered = Column(Numeric, nullable=True)
+    closure_year_expected = Column(Integer, nullable=True)
+
+
 # Aggregate tables
 
 
@@ -808,22 +835,6 @@ class AggregateFacilityDaily(Base):
     """
 
     __tablename__ = "at_facility_daily"
-
-    # def __str__(self) -> str:
-    #     return "<{}: {} {} {}>".format(
-    #         self.__class__,
-    #         self.trading_interval,
-    #         self.network_id,
-    #         self.facility_code,
-    #     )
-
-    # def __repr__(self) -> str:
-    #     return "{}: {} {} {}".format(
-    #         self.__class__,
-    #         self.trading_interval,
-    #         self.network_id,
-    #         self.facility_code,
-    #     )
 
     trading_day = Column(TIMESTAMP(timezone=True), index=True, primary_key=True, nullable=False)
 

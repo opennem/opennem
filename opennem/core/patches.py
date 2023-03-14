@@ -12,7 +12,6 @@ session = sessionmaker(bind=engine)
 
 
 def patches() -> None:
-
     sqls = [
         # "update facility set capacity_registered = 2.0, unit_capacity = 2.0 where code = 'GOSNELLS'",
         # "update facility set capacity_registered = 1.1, unit_capacity = 1.1  where code = 'ATLAS'",
@@ -27,7 +26,6 @@ def patches() -> None:
     ]
 
     with engine.connect() as c:
-
         for query in sqls:
             c.execute(query)
 

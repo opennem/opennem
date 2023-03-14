@@ -12,9 +12,7 @@ from .controllers import stations_to_geojson
 router = APIRouter()
 
 
-@router.get(
-    "/facilities", name="Facility Geo", response_model=FacilityGeo, include_in_schema=False
-)
+@router.get("/facilities", name="Facility Geo", response_model=FacilityGeo, include_in_schema=False)
 def geo_facilities_api(
     only_approved: bool = Query(True, description="Only show approved stations"),
     session: Session = Depends(get_database_session),

@@ -1,10 +1,6 @@
 import pytest
 
-from opennem.api.auth.utils import (
-    cookie_name_from_auth_name,
-    generate_api_key,
-    header_name_from_auth_name,
-)
+from opennem.api.auth.utils import cookie_name_from_auth_name, generate_api_key, header_name_from_auth_name
 from opennem.core.validators.strings import string_is_urlsafe
 
 

@@ -17,9 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute(
-        "create index if not exists idx_facility_scada_network_id on facility_scada  (network_id)"
-    )
+    op.execute("create index if not exists idx_facility_scada_network_id on facility_scada  (network_id)")
 
 
 def downgrade() -> None:

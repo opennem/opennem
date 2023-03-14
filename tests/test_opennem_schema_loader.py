@@ -1,13 +1,11 @@
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Dict
 
 from opennem.api.stats.loader import load_statset
 
 
-def get_fixture(name: str) -> Dict:
-
+def get_fixture(name: str) -> dict:
     f = Path(__file__).parent / "fixtures" / name
 
     if not f.is_file():

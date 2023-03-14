@@ -15,7 +15,6 @@ def power_facility_query(
     time_series: OpennemExportSeries,
     facility_codes: list[str],
 ) -> str:
-
     __query = """
         select
             t.trading_interval at time zone '{timezone}',
@@ -90,7 +89,6 @@ def energy_facility_query(time_series: OpennemExportSeries, facility_codes: list
 
 
 def emission_factor_region_query(time_series: OpennemExportSeries, network_region_code: str | None = None) -> str:
-
     __query = """
         select
             t.trading_interval at time zone '{timezone}',

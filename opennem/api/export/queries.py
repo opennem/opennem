@@ -228,7 +228,6 @@ def price_network_query(
     network_region: str | None = None,
     networks_query: list[NetworkSchema] | None = None,
 ) -> str:
-
     if not networks_query:
         networks_query = [time_series.network]
 

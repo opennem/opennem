@@ -44,7 +44,6 @@ def ignored_duids(fac_records: list[FacilitySeen]) -> list[FacilitySeen]:
     """Filters out ignored records like dummy generators"""
 
     def fac_is_ignored(fac: FacilitySeen) -> FacilitySeen | None:
-
         # dummy generators for AEMO NEM
         if fac.network_id == "NEM" and fac.code.startswith("DG_"):
             return None

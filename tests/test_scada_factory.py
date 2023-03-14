@@ -13,7 +13,7 @@ def get_power_example() -> OpennemDataSet:
     network = network_from_network_code("NEM")
     interval = human_to_interval("5m")
     units = get_unit("power")
-    period = human_to_period("7d")
+    human_to_period("7d")
     network_region_code = "NSW1"
 
     test_rows = []
@@ -93,7 +93,6 @@ def test_power_data_series() -> None:
     result = get_power_example()
 
     for data_set in result.data:
-
         assert isinstance(data_set, OpennemData), "Data set is a valid data set schema"
         assert hasattr(data_set, "id"), "Has an id"
         assert hasattr(data_set, "type"), "Has a type attribute"

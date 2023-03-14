@@ -1,7 +1,7 @@
 from opennem.core.facility_code import parse_wem_facility_code
 
 
-class TestWemFacilityCode(object):
+class TestWemFacilityCode:
     def test_pinjar(self):
         code = "PINJAR_GT7"
         facility_code = parse_wem_facility_code(code)
@@ -12,17 +12,13 @@ class TestWemFacilityCode(object):
         code = "WEST_KALGOORLIE_GT2"
         facility_code = parse_wem_facility_code(code)
 
-        assert (
-            facility_code == "WEST_KALGOORLIE"
-        ), "Facility code is WEST_KALGOORLIE"
+        assert facility_code == "WEST_KALGOORLIE", "Facility code is WEST_KALGOORLIE"
 
     def test_bridgerown(self):
         code = "BRIDGETOWN_BIOMASS_PLANT"
         facility_code = parse_wem_facility_code(code)
 
-        assert (
-            facility_code == "BRIDGETOWN_BIOMASS_PLANT"
-        ), "Bridgetown remains the same"
+        assert facility_code == "BRIDGETOWN_BIOMASS_PLANT", "Bridgetown remains the same"
 
     def test_gosnells(self):
         code = "GOSNELLS"

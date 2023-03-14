@@ -120,6 +120,6 @@ def test_validate_energy_series(series_id: str, expected_validation: bool) -> No
         test_case_history.last,
     )
 
-    assert series_is_validated == True
+    assert series_is_validated is True
 
     return None

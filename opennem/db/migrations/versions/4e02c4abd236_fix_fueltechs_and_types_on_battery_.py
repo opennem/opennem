@@ -19,9 +19,7 @@ depends_on = None
 def upgrade() -> None:
     op.execute("update facility set dispatch_type='LOAD' where fueltech_id='battery_charging'")
 
-    op.execute(
-        "update facility set dispatch_type='LOAD', fueltech_id='battery_charging' where code ='LBBL1'"
-    )
+    op.execute("update facility set dispatch_type='LOAD', fueltech_id='battery_charging' where code ='LBBL1'")
 
 
 def downgrade() -> None:

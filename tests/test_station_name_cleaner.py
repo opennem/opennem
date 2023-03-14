@@ -76,10 +76,8 @@ def test_station_name_cleaner_hallet_is_three_units() -> None:
         "Hallett 1 Wind Farm",
         "Hallett 2 Wind Farm",
     ]
-    hallet_names_cleaned = list(set([station_name_cleaner(i) for i in hallet_names]))
+    hallet_names_cleaned = list({station_name_cleaner(i) for i in hallet_names})
 
     print(hallet_names_cleaned)
 
-    assert len(hallet_names) == len(
-        hallet_names_cleaned
-    ), "Hallet should have three distinct names"
+    assert len(hallet_names) == len(hallet_names_cleaned), "Hallet should have three distinct names"

@@ -22,7 +22,6 @@ def write_output(
     exclude_unset: bool = True,
     exclude: set = None,
 ) -> int:
-
     if settings.export_local:
         is_local = True
 
@@ -43,9 +42,7 @@ def write_output(
     elif isinstance(stat_set, str):
         byte_count = write_to_s3(stat_set, path)
     elif isinstance(stat_set, OpennemDataSet):
-        byte_count = write_statset_to_s3(
-            stat_set, path, exclude_unset=exclude_unset, exclude=exclude
-        )
+        byte_count = write_statset_to_s3(stat_set, path, exclude_unset=exclude_unset, exclude=exclude)
     elif isinstance(stat_set, BaseModel):
         byte_count = write_to_s3(write_content, path)
     else:

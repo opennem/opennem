@@ -55,7 +55,6 @@ def registry_to_station(registry_station: dict, _id: int) -> StationImportSchema
 
 
 def registry_to_stations(registry, start_id: int = 5000) -> StationSet:
-
     _id = start_id
 
     stations = StationSet()

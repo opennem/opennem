@@ -65,7 +65,7 @@ def setup_network_flow_stations(network: NetworkSchema = NetworkNEM) -> None:
 
         flow_facilities = [(i, generated_flow_station_id(network, network_region, i)) for i in FlowDirection]
 
-        for (flow_direction, flow_facility_id) in flow_facilities:
+        for flow_direction, flow_facility_id in flow_facilities:
             flow_facility_model = (
                 session.query(Facility)
                 .filter_by(code=flow_facility_id)

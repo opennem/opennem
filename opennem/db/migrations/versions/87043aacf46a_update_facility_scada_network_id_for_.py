@@ -17,9 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute(
-        "update facility_scada set network_id='AEMO_ROOFTOP' where facility_code like 'ROOFTOP_NEM_%';"
-    )
+    op.execute("update facility_scada set network_id='AEMO_ROOFTOP' where facility_code like 'ROOFTOP_NEM_%';")
 
 
 def downgrade() -> None:

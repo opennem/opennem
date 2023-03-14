@@ -22,5 +22,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-
     op.drop_column("balancing_summary", "demand")

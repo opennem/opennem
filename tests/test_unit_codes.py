@@ -2,16 +2,14 @@ from opennem.core.unit_codes import duid_is_ocode, get_basecode, get_unit_code
 from opennem.core.unit_parser import UnitSchema
 
 
-class TestUnitCodes(object):
+class TestUnitCodes:
     def test_no_alias(self):
         duid = "TEST1"
         unit = UnitSchema(id=1, number=1)
 
         unit_code = get_unit_code(unit, duid)
 
-        assert (
-            unit_code == "TEST1"
-        ), "No alias means unit code is the same as duid"
+        assert unit_code == "TEST1", "No alias means unit code is the same as duid"
 
     def test_with_alias(self):
         duid = "TEST1"
@@ -51,7 +49,7 @@ class TestUnitCodes(object):
         ocode = "0NPSM"
         subject = duid_is_ocode(ocode)
 
-        assert subject == True, "0NPSM is an ocode"
+        assert subject is True, "0NPSM is an ocode"
 
     def test_basecode_brackets(self):
         subject = get_basecode("Snowy River Scheme (Unit)")

@@ -1,18 +1,17 @@
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Dict
 
 from opennem.core.parsers.aemo.viz import AEMO_5MIN_RESPONSE_KEY, aemo_parse_5min_api
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
 
 
-def load_5min_fixture() -> Dict:
+def load_5min_fixture() -> dict:
     fixture_file_path = FIXTURE_PATH / "aemo_5min_data.json"
 
     if not fixture_file_path.is_file():
-        raise Exception("Fixture {} not found".format(fixture_file_path))
+        raise Exception(f"Fixture {fixture_file_path} not found")
 
     fixture_envelope = None
 

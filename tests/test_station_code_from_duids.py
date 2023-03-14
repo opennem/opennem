@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from opennem.core.stations.station_code_from_duids import station_code_from_duids
@@ -17,7 +15,7 @@ from opennem.core.stations.station_code_from_duids import station_code_from_duid
         (["FNWF1"], "FNWF"),
     ],
 )
-def test_station_code_from_duid(subject: List[str], expected: str) -> None:
+def test_station_code_from_duid(subject: list[str], expected: str) -> None:
     return_val = station_code_from_duids(subject)
 
     assert expected == return_val, "Got correct response"

@@ -1,6 +1,3 @@
-from typing import List, Optional
-
-
-def list_diff() -> Optional[List]:
+def list_diff() -> list | None:
     """Takes a diff between two lists"""
     pass

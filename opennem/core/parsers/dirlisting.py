@@ -235,7 +235,6 @@ def get_dirlisting(url: str, timezone: str | None = None) -> DirectoryListing:
         model = parse_dirlisting_line(html.unescape(i.strip()))
 
         if model:
-
             # append the base URL to the model link
             model.link = urljoin(url, model.link)
 

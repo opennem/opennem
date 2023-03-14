@@ -2,7 +2,7 @@ from opennem.core.dispatch_type import DispatchType
 from opennem.core.fueltechs import lookup_fueltech
 
 
-class TestFueltechMap(object):
+class TestFueltechMap:
     def test_bairnsdale(self):
         subj = lookup_fueltech(
             "Fossil",

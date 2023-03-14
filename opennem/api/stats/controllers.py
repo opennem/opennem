@@ -56,7 +56,6 @@ def stats_factory(
     stats_grouped = []
 
     for group_code in group_codes:
-
         data_grouped: dict[datetime, Any] = {}
 
         for stat in stats:

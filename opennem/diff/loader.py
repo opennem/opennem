@@ -92,7 +92,6 @@ def load_current() -> list[StationSchema]:
         facilities = []
 
         for facility in station.get("duid_data", {}):
-
             facility = FacilitySchema(
                 name=station.get("name"),
                 network_region=facility.get("network_region"),

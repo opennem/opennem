@@ -60,7 +60,6 @@ def parse_comissioned_date(date_str: str | datetime) -> datetime | None:
 
 
 def lookup_station_code(duids: list[str], station_name: str, station_code_map: dict) -> str | None:
-
     station_code = None
     station_name = station_name.strip()
 
@@ -122,7 +121,6 @@ def get_capacities(record) -> dict:
 
 
 def gi_grouper(records, station_code_map):
-
     # filter out records we don't want
     records = list(filter(gi_filter, records))
 
@@ -186,7 +184,6 @@ def gi_grouper(records, station_code_map):
     _id = 3000
 
     for station_code, facilities in groupby(records_parsed, key=lambda x: x["station_code"]):
-
         # station_name = facilities[0]["name"]
         facilities = list(facilities)
 

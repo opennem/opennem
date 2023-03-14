@@ -17,9 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute(
-        "insert into api_keys (keyid, description, revoked) values ('DQwfwdHCzjBmnM5yMgkAVg', 'opennem default', FALSE);"
-    )
+    op.execute("insert into api_keys (keyid, description, revoked) values ('DQwfwdHCzjBmnM5yMgkAVg', 'opennem default', FALSE);")
 
 
 def downgrade() -> None:

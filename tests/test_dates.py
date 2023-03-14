@@ -8,7 +8,7 @@ from opennem.utils.timezone import is_aware
 UTC = timezone.utc
 
 
-class TestUtilDates(object):
+class TestUtilDates:
     def test_date_none(self):
         with pytest.raises(ValueError) as excinfo:
             parse_date(None)

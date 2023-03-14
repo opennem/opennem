@@ -1,6 +1,5 @@
 import csv
 from pathlib import Path
-from typing import List
 
 from opennem.core.energy import energy_sum, shape_energy_dataframe
 from opennem.schema.network import NetworkNEM
@@ -10,11 +9,11 @@ from opennem.schema.network import NetworkNEM
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "energy"
 
 
-def load_energy_fixture_csv(fixture_name: str) -> List:
+def load_energy_fixture_csv(fixture_name: str) -> list:
     fixture_file_path = FIXTURE_PATH / fixture_name
 
     if not fixture_file_path.is_file():
-        raise Exception("Fixture {} not found".format(fixture_name))
+        raise Exception(f"Fixture {fixture_name} not found")
 
     fixture_envelope = None
 

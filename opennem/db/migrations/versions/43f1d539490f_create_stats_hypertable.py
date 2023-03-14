@@ -17,9 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute(
-        "select create_hypertable('stats', 'stat_date', migrate_data=>true, if_not_exists=>true)"
-    )
+    op.execute("select create_hypertable('stats', 'stat_date', migrate_data=>true, if_not_exists=>true)")
 
 
 def downgrade() -> None:

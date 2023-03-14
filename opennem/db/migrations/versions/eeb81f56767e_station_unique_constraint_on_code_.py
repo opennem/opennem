@@ -18,17 +18,13 @@ depends_on = None
 
 def upgrade() -> None:
     # clean up stations + facilities from dupe bug
-    op.execute(
-        "delete from facility where id not in (select min(id) from facility group by network_id, code)"
-    )
+    op.execute("delete from facility where id not in (select min(id) from facility group by network_id, code)")
     op.execute("delete from facility where approved is false")
     op.execute("delete from station where id not in (select min(id) from station group by code)")
 
     # facility table
     op.alter_column("facility", "code", nullable=False)
-    op.create_unique_constraint(
-        "excl_facility_network_id_code", "facility", ["network_id", "code"]
-    )
+    op.create_unique_constraint("excl_facility_network_id_code", "facility", ["network_id", "code"])
 
     # station table constraints
     op.alter_column("station", "code", nullable=False)

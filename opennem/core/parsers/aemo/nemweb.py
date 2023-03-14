@@ -38,11 +38,7 @@ def parse_aemo_url_optimized(
             controller_returns = store_aemo_tableset(table_set)
             cr.inserted_records += controller_returns.inserted_records
 
-            if (
-                cr.last_modified
-                and controller_returns.last_modified
-                and cr.last_modified < controller_returns.last_modified
-            ):
+            if cr.last_modified and controller_returns.last_modified and cr.last_modified < controller_returns.last_modified:
                 cr.last_modified = controller_returns.last_modified
 
     if not persist_to_db:

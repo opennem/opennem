@@ -2,7 +2,7 @@ from opennem.core.units import UNIT_TYPES_SUPPORTED, get_unit
 from opennem.schema.units import UnitDefinition
 
 
-class TestSchemaUnits(object):
+class TestSchemaUnits:
     def test_loading(self):
         schema = UnitDefinition(name="power", unit_type="power", unit="MW")
 
@@ -11,7 +11,6 @@ class TestSchemaUnits(object):
         assert schema.unit == "MW", "Unit def is MW"
 
     def test_fixture_loaded(self):
-
         assert "power" in UNIT_TYPES_SUPPORTED, "We have power unit"
         assert "energy" in UNIT_TYPES_SUPPORTED, "We have energy unit"
 

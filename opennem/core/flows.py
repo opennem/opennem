@@ -117,7 +117,6 @@ def net_flows(
         flow_sum = 0.0
 
         for es in values:
-
             if not es.generated:
                 continue
 
@@ -151,7 +150,6 @@ def net_flows(
 
         # Sum up
         for es in values:
-
             if es.flow_to_energy:
                 flow_sum_imports += es.flow_to_energy
 
@@ -196,7 +194,6 @@ def net_flows_emissions(
 
         # Sum up
         for es in values:
-
             if not es.flow_from:
                 continue
 

@@ -315,9 +315,7 @@ def upgrade():
         sa.Column("approved", sa.Boolean(), nullable=True),
         sa.Column("approved_by", sa.Text(), nullable=True),
         sa.Column("approved_at", sa.DateTime(timezone=True), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["fueltech_id"], ["fueltech.code"], name="fk_facility_fueltech_id"
-        ),
+        sa.ForeignKeyConstraint(["fueltech_id"], ["fueltech.code"], name="fk_facility_fueltech_id"),
         sa.ForeignKeyConstraint(["network_id"], ["network.code"], name="fk_station_network_code"),
         sa.ForeignKeyConstraint(["station_id"], ["station.id"], name="fk_station_status_code"),
         sa.ForeignKeyConstraint(

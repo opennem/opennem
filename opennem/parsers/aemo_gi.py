@@ -13,9 +13,10 @@ ready for manipulation, export into different formats - or, for our primary
 purpose - to import new facilities and updates into the OpenNEM database.
 """
 
+import csv
 import logging
 import re
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from tempfile import mkdtemp
 from typing import Any
@@ -25,6 +26,8 @@ from openpyxl import load_workbook
 from pydantic import validator
 
 from opennem.core.normalizers import clean_float, normalize_duid, station_name_cleaner
+from opennem.db import SessionLocal
+from opennem.db.models.opennem import AEMOFacilityData
 from opennem.schema.core import BaseConfig
 from opennem.settings import settings
 from opennem.utils.dates import get_today_opennem
@@ -35,7 +38,7 @@ logger = logging.getLogger("opennem.parsers.aemo.gi")
 
 AEMO_GI_DOWNLOAD_URL = (
     "https://www.aemo.com.au/-/media/files/electricity/nem/planning_and_forecasting/"
-    "generation_information/2022/nem-generation-information-{month}-{year}.xlsx?la=en"
+    "generation_information/{year}/nem-generation-information-{month}-{year}.xlsx?la=en"
 )
 
 
@@ -84,18 +87,18 @@ AEMO_GI_FUELTECH_MAP = {
 }
 
 AEMO_GI_STATUS_MAP = {
-    "Anticipated": None,
+    "Anticipated": "announced",
     "Committed": "committed",
-    "Publicly Announced Upgrade": None,
+    "Publicly Announced Upgrade": "operating",
     "Committed¹": "committed",
-    "Committed Upgrade": None,
+    "Committed Upgrade": "operating",
     "Withdrawn - Permanent": None,
     "Committed*": "committed",
     "In Service - Announced Withdrawal (Permanent)": "operating",
     "In Commissioning": "commissioning",
     "In Service": "operating",
     "Publicly Announced": "announced",
-    "Anticipated Upgrade": None,
+    "Anticipated Upgrade": "operating",
 }
 
 
@@ -144,18 +147,35 @@ def aemo_gi_capacity_cleaner(cap: str | None) -> float | None:
     return num_extracted_and_clean
 
 
+def _clean_closure_year_expected(input_year: str | int) -> int | None:
+    """ """
+    if isinstance(input_year, int):
+        return input_year
+
+    return int(input_year.strip()) if input_year and input_year.strip() else None
+
+
 class AEMOGIRecord(BaseConfig):
     name: str
-    name_network: str
-    region: str
-    fueltech_id: str | None
-    status_id: str | None
-    duid: str | None
-    units_no: int | None
-    capacity_registered: float | None
+    name_network: str | None = None
+    network_region: str
+    fueltech_id: str | None = None
+    status_id: str | None = None
+    duid: str | None = None
+    units_no: int | None = None
+    capacity_registered: float | None = None
+    closure_year_expected: int | None = None
 
     _clean_duid = validator("duid", pre=True, allow_reuse=True)(normalize_duid)
     _clean_capacity = validator("capacity_registered", pre=True, allow_reuse=True)(aemo_gi_capacity_cleaner)
+    _clean_closure_year_expected = validator("closure_year_expected", pre=True, allow_reuse=True)(_clean_closure_year_expected)
+
+
+class AEMOSourceSet(BaseConfig):
+    source_date: date
+    source_url: str | None = None
+    local_path: Path | None = None
+    records: list[AEMOGIRecord] = []
 
 
 def parse_aemo_general_information(filename: Path) -> list[AEMOGIRecord]:
@@ -196,8 +216,13 @@ def parse_aemo_general_information(filename: Path) -> list[AEMOGIRecord]:
             **{
                 "name": station_name_cleaner(return_dict["StationName"]),
                 "name_network": return_dict["StationName"],
-                "status_id": aemo_gi_status_map(return_dict["UnitStatus"]),
+                "network_region": return_dict["region"].strip().upper(),
                 "fueltech_id": aemo_gi_fueltech_to_fueltech(return_dict["FuelSummary"]),
+                "status_id": aemo_gi_status_map(return_dict["UnitStatus"]),
+                "duid": return_dict["duid"],
+                "units_no": return_dict["units_no"],
+                "capacity_registered": return_dict["capacity_registered"],
+                "closure_year_expected": return_dict["ClosureDateExpected"],
             },
         }
 
@@ -216,10 +241,25 @@ def get_unique_values_for_field(records: list[dict], field_name: str) -> list[An
 
 def get_aemo_gi_download_url(month: date) -> str:
     """Get the AEMO GI download URL for a given month"""
-    return AEMO_GI_DOWNLOAD_URL.format(month=month.strftime("%B").lower(), year=month.strftime("%Y"))
+    return AEMO_GI_DOWNLOAD_URL.format(month=month.strftime("%b").lower(), year=month.strftime("%Y"))
 
 
-def download_latest_aemo_gi_file() -> Path:
+def check_latest_persisted_aemo_source(source_type: str = "gi") -> date | None:
+    """Check what the latest month is that we have in the database"""
+    with SessionLocal() as session:
+        query = (
+            session.query(AEMOFacilityData)
+            .filter(AEMOFacilityData.aemo_source == source_type)
+            .order_by(AEMOFacilityData.source_date.desc())
+        )
+
+        if query.count() > 0:
+            return query.first()
+
+    return None
+
+
+def download_latest_aemo_gi_file(num_months_to_check: int = 3) -> AEMOSourceSet:
     """This will download the latest GI file into a local temp directory
     and return the path to it"""
 
@@ -227,9 +267,12 @@ def download_latest_aemo_gi_file() -> Path:
     dest_dir = Path(mkdtemp(prefix=f"{settings.tmp_file_prefix}"))
 
     this_month = get_today_opennem()
-    last_month = this_month - relativedelta(months=1)
+    months_to_check: list[datetime] = [this_month]
 
-    for download_date in [this_month, last_month]:
+    for i in range(1, num_months_to_check):
+        months_to_check.append(this_month - relativedelta(months=i))
+
+    for download_date in months_to_check:
         download_url = get_aemo_gi_download_url(download_date)
 
         logger.info(f"Downloading AEMO GI file from {download_url}")
@@ -240,28 +283,45 @@ def download_latest_aemo_gi_file() -> Path:
             )
 
             if gi_saved_path:
-                return gi_saved_path
+                source_set = AEMOSourceSet(source_date=download_date, source_url=download_url, local_path=gi_saved_path)
+                return source_set
         except Exception as e:
             logger.error(f"Failed to download AEMO GI file: {e}")
             continue
 
-    if not gi_saved_path:
-        raise OpennemAEMOGIParserException("Failed to download AEMO GI file")
-
-    return gi_saved_path
+    raise OpennemAEMOGIParserException(f"Failed to download AEMO GI file for last {num_months_to_check} months")
 
 
-def download_and_parse_aemo_gi_file() -> list[AEMOGIRecord]:
+def persist_source_set_to_database(source_set: AEMOSourceSet) -> None:
+    """Take an AEMOSourceSet and persist it to the database table AEMOFacilityData"""
+    pass
+
+
+def persist_source_set_to_csv(source_set: AEMOSourceSet, filename: str = "aemo_gi.csv") -> None:
+    """Take an AEMOSourceSet and persist it to a CSV file"""
+
+    with open(filename, "w") as fh:
+        csv_writer = csv.DictWriter(fh, fieldnames=AEMOGIRecord.schema().get("properties").keys())  # type: ignore
+        csv_writer.writeheader()
+
+        for record in source_set.records:
+            csv_writer.writerow(record.dict())
+
+    logger.info(f"Saved {len(source_set.records)} records to {filename}")
+
+
+def download_and_parse_aemo_gi_file() -> AEMOSourceSet:
     """This will download the latest GI file and parse it"""
-    gi_latest_path = download_latest_aemo_gi_file()
-    records = parse_aemo_general_information(gi_latest_path)
+    aemo_source_set = download_latest_aemo_gi_file()
 
-    return records
+    if not aemo_source_set.local_path:
+        raise OpennemAEMOGIParserException("Failed to download AEMO GI file: no local_path")
+
+    aemo_source_set.records = parse_aemo_general_information(aemo_source_set.local_path)
+
+    return aemo_source_set
 
 
 # debug entrypoint
 if __name__ == "__main__":
-    records = download_and_parse_aemo_gi_file()
-
-    for r in records:
-        print(f"{r.name_network} -> {r.capacity_registered}")
+    aemo_source_set = download_and_parse_aemo_gi_file()

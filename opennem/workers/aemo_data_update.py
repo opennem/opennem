@@ -44,7 +44,6 @@ def facility_matcher(records: list[AEMOGIRecord], run_update: bool = False) -> A
     update_result = AEMODataUpdateResult()
 
     with SessionLocal() as sess:
-
         for gi_record in records:
             if not gi_record.duid:
                 update_result.new_facilities.append(gi_record)

@@ -20,8 +20,6 @@ from opennem.core.bom import get_archive_page_for_station_code
         ),
     ],
 )
-def test_get_archive_page_for_station_code(
-    web_code: str, month: date, expected_result: str
-) -> None:
+def test_get_archive_page_for_station_code(web_code: str, month: date, expected_result: str) -> None:
     bom_archive_page = get_archive_page_for_station_code(web_code, month)
     assert bom_archive_page == expected_result, "Returned url matches expected archive page"

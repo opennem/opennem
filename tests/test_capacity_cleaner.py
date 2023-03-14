@@ -7,7 +7,7 @@ def is_none(subject: Any) -> bool:
     return isinstance(subject, type(None))
 
 
-class TestCapacityCleaner(object):
+class TestCapacityCleaner:
     def test_capacity_blank(self) -> None:
         subject = clean_capacity("")
         assert is_none(subject), "Blank string should return None"
