@@ -32,11 +32,11 @@ build:
 
 .PHONY: bump-dev
 bump-dev:
-	bumpver update --tag-num --tag-commit --commit --push
+	bumpver update --tag-num --no-tag-commit --commit --push
 
 .PHONY: bump-patch
 bump-patch:
-	bumpver update --patch --tag-commit --commit --push
+	bumpver update --patch --no-tag-commit --commit --push
 
 .PHONY: requirements
 requirements:
@@ -49,12 +49,17 @@ release-pre: format requirements
 pyclean:
 	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
+.PHONE: push
+push:
+	git tag v$(poetry version s)
+	git push --tags
+
 cleandist:
 	rm -rf build
 
 codecov:
 	pytest --cov=./opennem
 
-release: release-pre bump-dev
+release: release-pre bump-dev push
 
-release-patch: release-pre bump-dev
+release-patch: release-pre bump-dev push
