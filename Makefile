@@ -53,8 +53,8 @@ pyclean:
 .PHONE: push
 push:
 	VERSION=v$(poetry version s)
-	git tag $VERSION
-	git push -u origin master $VERSION
+	git tag "$VERSION"
+	git push -u origin master "$VERSION"
 
 cleandist:
 	rm -rf build
