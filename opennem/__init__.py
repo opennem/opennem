@@ -36,7 +36,7 @@ warnings.filterwarnings("ignore", module="openpyxl")
 
 
 # Module variables
-__version__ = "3.13.0-beta.12"
+__version__ = "3.13.0-beta.13"
 __env__ = "prod"
 __package__ = "opennem"
 
