@@ -1,10 +1,49 @@
 version: "3.8"
+
+x-app: &default-app
+  restart: on-failure
+  depends_on:
+    - redis
+  networks:
+    - frontend
+  volumes:
+      - /var/run/postgresql/.s.PGSQL.5432:/var/run/postgresql/.s.PGSQL.5432
+  environment:
+    - TZ
+    - TIMEZONE
+    - ENV
+    - DATABASE_HOST_URL
+    - REDIS_HOST_URL
+    - GOOGLE_PLACES_API_KEY
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - SENTRY_URL
+    - MONITORING_SLACK_HOOK
+    - S3_DATA_BUCKET_PATH
+    - LOG_LEVEL
+    - CACHE_SCADA_TTL
+    - DB_ENERGY_VIEW
+    - WORKERS_RUN
+    - SLACK_NOTIFICATIONS
+    - NEMWEB_MIGRATE_DB
+    - MONITORING_ALERT_SLACK_USER
+    - MONITORING_ALERT_SMS
+    - APVI_TOKEN
+    - HTTPS_PROXY_URL
+    - SLACK_ADMIN_ALERT
+    - CLOUDFLARE_ACCOUNT_ID
+    - CLOUDFLARE_API_KEY
+    - FLOWS_AND_EMISSIONS_V2
+    - OPENNEM_POWER_FLOWS
+    - GITHUB_FEEDBACK_ACCESS_TOKEN
+    - RUN_CRAWLERS
+    - SLACK_DATA_WEBHOOK
+
 services:
   traefik:
     image: traefik:v2.1
     network_mode: host
     command:
-      # - --log.level=DEBUG
       - --api.insecure=true
       - --providers.docker
       - --entryPoints.web.address=:80
@@ -13,10 +52,6 @@ services:
       - --certificatesResolvers.myresolver.acme.storage=/data/acme.json
       - --certificatesresolvers.myresolver.acme.dnschallenge=true
       - --certificatesresolvers.myresolver.acme.dnschallenge.provider=route53
-      - --certificatesResolvers.resolver_apex.acme.email=nik@infotorch.org
-      - --certificatesResolvers.resolver_apex.acme.storage=/data/acme_apex.json
-      - --certificatesresolvers.resolver_apex.acme.dnschallenge=true
-      - --certificatesresolvers.resolver_apex.acme.dnschallenge.provider=route53
     restart: unless-stopped
     hostname: gw
     environment:
@@ -36,19 +71,11 @@ services:
       - "traefik.http.middlewares.compress.compress=true"
       - "traefik.http.middlewares.security-headers.headers.framedeny=true"
       - "traefik.http.middlewares.security-headers.headers.sslredirect=true"
-      # gw host
-      - "traefik.enable=true"
-      - "traefik.http.routers.gw.entrypoints=websecure"
-      - "traefik.http.routers.gw.rule=Host(`gw.staging.opennem.org.au`)"
-      - "traefik.http.routers.gw.tls=true"
-      - "traefik.http.routers.gw.tls.certresolver=myresolver"
-      # - "traefik.http.routers.gw.service=traefik"
-      - "traefik.http.services.gw.loadbalancer.server.port=8080"
-      - "traefik.http.services.gw.loadbalancer.server.scheme=http"
       - "traefik.docker.network=frontend"
 
   api:
-    image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
+    <<: *default-app
+    image: ghcr.io/opennem/opennem/opennem:$VERSION
     command: [
         # "wait-for",
         # "10.0.0.124:15433",
@@ -62,31 +89,12 @@ services:
         "--error-log",
         "-"
       ]
-    restart: always
-    depends_on:
-      - redis
-    networks:
-      - frontend
-    environment:
-      - TZ
-      - TIMEZONE
-      - DATABASE_HOST_URL
-      - REDIS_HOST_URL
-      - GOOGLE_PLACES_API_KEY
-      - ENV
-      - SENTRY_URL
-      - MONITORING_ALERT_SLACK_USER
-      - MONITORING_ALERT_SMS
-      - MAINTENANCE_MODE
-      - GITHUB_FEEDBACK_ACCESS_TOKEN
-      - FLOWS_AND_EMISSIONS_V2
-      - OPENNEM_POWER_FLOWS
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-secure.entrypoints=websecure"
       - "traefik.http.routers.api-secure.rule=Host(`api.staging.opennem.org.au`)"
       - "traefik.http.routers.api-secure.tls=true"
-      - "traefik.http.routers.api-secure.tls.certresolver=resolver_apex"
+      - "traefik.http.routers.api-secure.tls.certresolver=myresolver"
       - "traefik.http.routers.api-secure.service=api"
       # compress
       - "traefik.http.routers.api-secure.middlewares=compress@docker,security-headers@docker"
@@ -94,6 +102,25 @@ services:
       - "traefik.http.services.api.loadbalancer.server.port=8000"
       - "traefik.http.services.api.loadbalancer.server.scheme=http"
       - "traefik.docker.network=frontend"
+
+  worker:
+    <<: *default-app
+    image: ghcr.io/opennem/opennem/opennem:$VERSION
+    restart: unless-stopped
+    command:
+      [
+        # "wait-for",
+        # "opennem03:15433",
+        # "--",
+        "huey_consumer",
+        "-w8",
+        "-f",
+        "-k",
+        "process",
+        "opennem.workers.scheduler.huey",
+      ]
+    labels:
+      - "traefik.enable=false"
 
   redis:
     image: redis:6-alpine
@@ -104,59 +131,6 @@ services:
       - TZ
     labels:
       - "traefik.enable=false"
-
-  worker:
-    image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
-    restart: unless-stopped
-    command:
-      [
-        # "wait-for",
-        # "10.0.0.124:15433",
-        # "--",
-        "huey_consumer",
-        "-w8",
-        "-f",
-        "-k",
-        "process",
-        "opennem.workers.scheduler.huey",
-      ]
-    depends_on:
-      - redis
-    networks:
-      - frontend
-    environment:
-      - TZ
-      - TIMEZONE
-      - ENV=production
-      - DATABASE_HOST_URL
-      - REDIS_HOST_URL=redis://redis
-      - GOOGLE_PLACES_API_KEY
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-      - SENTRY_URL
-      - SLACK_NOTIFICATIONS=1
-      - MONITORING_SLACK_HOOK
-      - S3_DATA_BUCKET_PATH=data.staging.opennem.org.au
-      - LOG_LEVEL=DEBUG
-      - CACHE_SCADA_TTL
-      - DB_ENERGY_VIEW
-      - WORKERS_RUN=1
-      - LOG_LEVEL=INFO
-      - MONITORING_ALERT_SLACK_USER
-      - MONITORING_ALERT_SMS
-      - APVI_TOKEN
-      - HTTPS_PROXY_URL
-      - SLACK_ADMIN_ALERT
-      - CLOUDFLARE_ACCOUNT_ID
-      - CLOUDFLARE_API_KEY
-      - FLOWS_AND_EMISSIONS_V2
-      - OPENNEM_POWER_FLOWS
-      - GITHUB_FEEDBACK_ACCESS_TOKEN
-      - RUN_CRAWLERS
-    labels:
-      - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=false"
-
 
 networks:
   frontend:
