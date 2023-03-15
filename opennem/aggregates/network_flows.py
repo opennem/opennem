@@ -403,7 +403,7 @@ def run_flow_update_for_interval(
 
 @profile_task(
     send_slack=False,
-    message_fmt="Ran emission update for day {day}",
+    message_fmt="Ran emission update for lasts {days} days",
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.FOREVER,
 )
