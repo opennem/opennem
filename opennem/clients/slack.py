@@ -79,7 +79,7 @@ def slack_message(
     """
 
     if not settings.slack_notifications:
-        logger.info("Slack endpoint not configured in environment")
+        logger.info("Slack endpoint not enabled. See SLACK_NOTIFICATIONS env var")
         return False
 
     if not alert_webhook_url:
