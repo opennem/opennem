@@ -16,10 +16,32 @@ logger = logging.getLogger("opennem.workers.system")
 CLEAN_OLDER_THAN_HOURS = 2
 
 
+def _find_temporary_directory() -> Path | None:
+    """Finds the temporary directory and works around errors in gettempdir"""
+
+    temp_dir: Path | None = None
+
+    try:
+        temp_dir = Path(gettempdir())
+    except FileNotFoundError as e:
+        logger.error(f"Could not get temp dir: {e}")
+
+    for test_dir in [Path("/tmp"), Path("/var/tmp")]:
+        if test_dir.is_dir():
+            temp_dir = test_dir
+            break
+
+    return temp_dir
+
+
 @profile_task(send_slack=False)
 def clean_tmp_dir(dry_run: bool = False) -> None:
     """Cleans up the temp directory for files older than CLEAN_OLDER_THAN_HOURS hours"""
-    tmp_dir = Path(gettempdir())
+    tmp_dir = _find_temporary_directory
+
+    if not tmp_dir:
+        raise Exception("Could not obtain temporary directory in clean_tmp_dir")
+
     now_epoch = time.time()
 
     logger.debug(f"Temp directory: {tmp_dir} running at {now_epoch}")
