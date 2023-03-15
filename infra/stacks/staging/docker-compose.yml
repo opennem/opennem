@@ -62,6 +62,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - traefik_acme:/data
     labels:
+      - "traefik.enable=true"
       # redirect
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
@@ -71,6 +72,14 @@ services:
       - "traefik.http.middlewares.compress.compress=true"
       - "traefik.http.middlewares.security-headers.headers.framedeny=true"
       - "traefik.http.middlewares.security-headers.headers.sslredirect=true"
+      # gw host
+      - "traefik.http.routers.gw.entrypoints=websecure"
+      - "traefik.http.routers.gw.rule=Host(`gw.staging.opennem.org.au`)"
+      - "traefik.http.routers.gw.tls=true"
+      - "traefik.http.routers.gw.tls.certresolver=myresolver"
+      # - "traefik.http.routers.gw.service=traefik"
+      - "traefik.http.services.gw.loadbalancer.server.port=8080"
+      - "traefik.http.services.gw.loadbalancer.server.scheme=http"
       - "traefik.docker.network=frontend"
 
   api:
