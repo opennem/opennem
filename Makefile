@@ -44,6 +44,7 @@ requirements:
 	poetry export --format requirements.txt -E postgres --without-hashes > requirements.txt
 	poetry export --with dev --format requirements.txt --without-hashes > requirements_dev.txt
 	git add requirements.txt requirements_dev.txt
+	git ci -m "META: Update requirement export"
 
 .PHONY: release-pre
 release-pre: format requirements
