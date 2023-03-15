@@ -195,13 +195,13 @@ class OpennemData(BaseConfig):
 
 
 class OpennemDataSet(BaseConfig):
-    type: str | None
+    type: str | None = None
     response_status: ResponseStatus = ResponseStatus.OK
     version: str | None
-    network: str | None
-    code: str | None
-    region: str | None
-    created_at: datetime | None
+    network: str | None = None
+    code: str | None = None
+    region: str | None = None
+    created_at: datetime | None = None
 
     data: list[OpennemData] = []
 
