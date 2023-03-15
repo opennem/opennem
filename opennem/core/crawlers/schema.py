@@ -32,7 +32,7 @@ class CrawlerDefinition(BaseConfig):
 
     version: str = Field(default="2")
     name: str
-    url: str | None
+    url: str | None = None
 
     # These are v3 fields
     urls: list[str] | None = []
