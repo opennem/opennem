@@ -9,8 +9,6 @@ from pathlib import Path
 from pydantic import BaseSettings
 from pydantic.class_validators import validator
 
-from opennem.schema.types import PostgresSqlAlchemyDsn
-
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 
@@ -30,7 +28,7 @@ class OpennemSettings(BaseSettings):
 
     # @NOTE pydantic settings assignment type mismatch from mypy
     # https://github.com/samuelcolvin/pydantic/issues/1490
-    db_url: PostgresSqlAlchemyDsn = "postgresql://user:pass@127.0.0.1:15444/opennem"  # type: ignore
+    db_url: str = "postgresql://user:pass@127.0.0.1:15444/opennem"  # type: ignore
 
     # if we're doing a dry run
     dry_run: bool = False
