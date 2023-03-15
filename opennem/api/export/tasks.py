@@ -46,6 +46,7 @@ from opennem.schema.network import (
     NetworkAEMORooftop,
     NetworkAEMORooftopBackfill,
     NetworkAPVI,
+    NetworkAU,
     NetworkNEM,
     NetworkOpenNEMRooftopBackfill,
     NetworkSchema,
@@ -345,7 +346,7 @@ def export_energy(
 def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: str | None = None) -> None:
     session = get_scoped_session()
 
-    all_monthly = OpennemDataSet(code="au", data=[], version=get_version(), created_at=get_today_nem())
+    all_monthly = OpennemDataSet(code="au", data=[], version=get_version(), created_at=get_today_nem(), network=NetworkAU.code)
 
     cpi = gov_stats_cpi()
     all_monthly.append_set(cpi)
