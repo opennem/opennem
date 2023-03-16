@@ -209,7 +209,7 @@ def export_energy(
         if NetworkNEM in date_range_networks:
             date_range_networks = [NetworkNEM]
 
-        date_range: ScadaDateRange = get_scada_range(network=energy_stat.network, networks=date_range_networks, energy=True)
+        date_range: ScadaDateRange = get_scada_range_optimized(network=energy_stat.network)
 
         if not date_range:
             logger.error(f"Skipping - Could not get date range for energy {energy_stat.network} {date_range_networks}")

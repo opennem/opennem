@@ -11,7 +11,7 @@ from enum import Enum
 
 from pydantic import BaseModel
 
-from opennem.api.stats.controllers import ScadaDateRange, get_scada_range
+from opennem.api.stats.controllers import ScadaDateRange, get_scada_range, get_scada_range_optimized
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.core.network_region_bom_station_map import get_network_region_weather_station
 from opennem.core.networks import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM, network_from_network_code
@@ -295,7 +295,8 @@ def generate_export_map() -> StatMetadata:
 
     for country in countries:
         # @TODO derive this
-        scada_range = get_scada_range(network=NetworkAU, networks=[NetworkNEM, NetworkWEM])
+        # scada_range = get_scada_range(network=NetworkAU, networks=[NetworkNEM, NetworkWEM])
+        scada_range = get_scada_range_optimized(network=NetworkAU)
 
         if not scada_range:
             raise Exception("Require a scada range for NetworkAU")
@@ -363,7 +364,7 @@ def generate_export_map() -> StatMetadata:
 
     for network in networks:
         network_schema = network_from_network_code(network.code)
-        scada_range = get_scada_range(network=network_schema)
+        scada_range = get_scada_range_optimized(network=network_schema)
         bom_station = get_network_region_weather_station(network.code)
 
         export = StatExport(
@@ -440,7 +441,7 @@ def generate_export_map() -> StatMetadata:
             continue
 
         for region in network.regions:
-            scada_range = get_scada_range(network=network_schema, network_region=region.code)
+            # scada_range = get_scada_range_optimized(network=network_schema, network_region=region.code)
             bom_station = get_network_region_weather_station(region.code)
 
             if not scada_range:
