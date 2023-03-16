@@ -806,6 +806,28 @@ def energy_network_fueltech_query(
     order by 1 desc;
     """
 
+    __query = """
+    select
+        date_trunc('{trunc}', t.trading_day) as trading_day,
+        f.network_region,
+        t.fueltech_id,
+        coalesce(sum(t.energy) / 1000,  {coalesce_with}) as fueltech_energy,
+        coalesce(sum(t.market_value),  {coalesce_with}) as fueltech_market_value,
+        coalesce(sum(t.emissions),  {coalesce_with}) as fueltech_emissions
+    from at_facility_daily t
+    left join facility f on t.facility_code = f.code
+    where
+        t.trading_day <= '{date_max}'::date and
+        t.trading_day >= '{date_min}'::date and
+        t.fueltech_id not in ('imports', 'exports', 'interconnector') and
+        {network_query}
+        {network_region_query}
+        1=1
+    group by 1, 2, 3
+    order by 1 desc, 2 asc, 3 asc;
+
+    """
+
     network_region_query = ""
 
     # Get the time range using either the old way or the new v4 way
