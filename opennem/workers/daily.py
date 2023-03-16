@@ -6,7 +6,7 @@ Runs daily export task JSONs for OpenNEM website
 import logging
 from datetime import datetime, timedelta
 
-from opennem.aggregates.facility_daily import run_aggregate_facility_all_by_year, run_aggregates_facility_year
+from opennem.aggregates.facility_daily import run_aggregate_facility_daily_all, run_aggregates_facility_year
 from opennem.aggregates.network_demand import run_aggregates_demand_network
 from opennem.aggregates.network_flows import (
     run_emission_update_day,
@@ -119,8 +119,7 @@ def all_runner() -> None:
     # populates the aggregate tables
     run_flow_updates_all_for_network(network=NetworkNEM)
 
-    for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
-        run_aggregate_facility_all_by_year(network=network)
+    run_aggregate_facility_daily_all()
 
     # run the exports for all
     export_power(latest=False)
