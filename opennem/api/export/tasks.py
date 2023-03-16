@@ -27,7 +27,7 @@ from opennem.api.export.controllers import (
 )
 from opennem.api.export.map import PriorityType, StatExport, StatType, get_export_map, get_weekly_export_map
 from opennem.api.export.utils import write_output
-from opennem.api.stats.controllers import get_scada_range
+from opennem.api.stats.controllers import get_scada_range, get_scada_range_optimized
 from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.controllers.output.flows import (
@@ -356,6 +356,7 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
         networks = [NetworkNEM, NetworkWEM]
 
     for network in networks:
+        # 1. Setup network regions for each network
         network_regions_query = session.query(NetworkRegion).filter(NetworkRegion.network_id == network.code)
 
         if network_region_code:
@@ -367,24 +368,23 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
             logger.error(f"Could not get network regions for {network.code}: {network_region_code}")
             continue
 
+        # 2. sub-networks
+        networks = [network]
+
+        if network.subnetworks:
+            networks += network.subnetworks
+
+        # # @TODO replace this with NetworkSchema->subnetworks
+        # networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
+
+        # if network.code == "WEM":
+        #     networks = [NetworkWEM, NetworkAPVI]
+
+        # @TODO replace with data_first_seen and current date
+        scada_range = get_scada_range_optimized(network=network)
+
         for network_region in network_regions:
-            networks = []
-
-            logging.info(f"Exporting monthly for network {network.code} and region {network_region.code}")
-
-            networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
-
-            if network_region.code == "WEM":
-                networks = [NetworkWEM, NetworkAPVI]
-
-            logger.debug(f"Running monthlies for {network.code} and {network_region.code}")
-
-            scada_range: ScadaDateRange = get_scada_range(network=network, networks=networks, energy=True)
-
-            if not scada_range or not scada_range.start:
-                logger.error(f"Could not get scada range for network {network} and energy True")
-
-                continue
+            logger.info(f"Running monthlies for {network.code} and {network_region.code}")
 
             time_series = OpennemExportSeries(
                 start=scada_range.start,
