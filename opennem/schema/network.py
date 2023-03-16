@@ -78,6 +78,9 @@ class NetworkSchema(BaseConfig):
         """String representation of network schema"""
         return f"NetworkSchema({self.code})"
 
+    def __hash__(self) -> int:
+        return hash((type(self),) + tuple(self.__dict__.values()))
+
     def get_interval(self) -> TimeInterval | None:
         return get_interval_by_size(self.interval_size) if self.interval_size else None
 
