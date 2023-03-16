@@ -51,6 +51,7 @@ class NetworkSchema(BaseConfig):
 
     # support hardcoded first seen
     data_first_seen: datetime | None = Field(None, description="First data seen for this network")
+    data_last_seen: datetime | None = Field(None, description="First data seen for this network")
     price_first_seen: datetime | None = Field(None, description="First price seen for this network")
     interconnector_first_seen: datetime | None = Field(None, description="First interconnector seen for this network")
     rooftop_first_seen: datetime | None = Field(None, description="First rooftop seen for this network")
