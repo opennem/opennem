@@ -186,7 +186,7 @@ requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
 [tool.bumpver]
-current_version = "3.13.0-beta.22"
+current_version = "3.13.0-beta.23"
 version_pattern = "MAJOR.MINOR.PATCH[-TAG][.INC0]"
 commit_message = "bump version {old_version} -> {new_version}"
 commit = true
