@@ -3,6 +3,7 @@ import math
 from collections.abc import Generator
 from datetime import date, datetime, timedelta
 from datetime import timezone as pytimezone
+from functools import lru_cache
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -39,7 +40,10 @@ DATE_YESTERDAY = DATE_CURRENT - timedelta(days=1)
 
 DATE_CURRENT_YEAR = DATE_CURRENT.year
 
+CACHE_MAXSIZE = 12 * 1024
 
+
+@lru_cache(maxsize=CACHE_MAXSIZE)
 def optimized_data_parser(date_str: str) -> datetime | None:
     """
     Turns out that dateutil's date parser is slow since
@@ -61,6 +65,7 @@ def optimized_data_parser(date_str: str) -> datetime | None:
     return dt_return
 
 
+@lru_cache(maxsize=CACHE_MAXSIZE)
 def parse_date(
     date_str: str | datetime,
     date_format: str | None = None,
@@ -68,7 +73,7 @@ def parse_date(
     dayfirst: bool = True,
     yearfirst: bool = False,
     is_utc: bool = False,
-    timezone: pytimezone = None,
+    timezone: pytimezone | None = None,
     use_optimized: bool = True,
 ) -> datetime | None:
     dt_return = None
