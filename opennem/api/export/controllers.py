@@ -700,11 +700,11 @@ def energy_fueltech_daily(
         logger.debug(query)
         row = list(c.execute(query))
 
-    results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row]
+    results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 1 else None) for i in row]
 
-    results_market_value = [DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row]
+    results_market_value = [DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in row]
 
-    results_emissions = [DataQueryResult(interval=i[0], group_by=i[1], result=i[5] if len(i) > 1 else None) for i in row]
+    results_emissions = [DataQueryResult(interval=i[0], group_by=i[2], result=i[5] if len(i) > 1 else None) for i in row]
 
     if not results_energy:
         logger.error(f"No results from query: {query}")
