@@ -204,7 +204,9 @@ def energy_network_interconnector_emissions_query(
     )
 
 
-def get_network_flows_emissions_market_value_query(time_series: OpennemExportSeries, network_region_code: str) -> str:
+def get_network_flows_emissions_market_value_query(
+    time_series: OpennemExportSeries, network_region_code: str | None = None
+) -> str:
     """Gets the flow energy (in GWh) and the market value (in $) and emissions
     for a given network and network region
 
@@ -215,6 +217,7 @@ def get_network_flows_emissions_market_value_query(time_series: OpennemExportSer
     __query = """
         select
             date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_interval,
+            t.network_region,
             sum(t.imports_energy) / 1000 as imports_energy,
             sum(t.exports_energy) / 1000 as exports_energy,
             abs(sum(t.emissions_imports)) as imports_emissions,
@@ -230,7 +233,6 @@ def get_network_flows_emissions_market_value_query(time_series: OpennemExportSer
         from (
             select
                 time_bucket_gapfill('5 min', t.trading_interval) as trading_interval,
-                t.network_id,
                 t.network_region,
                 coalesce(sum(t.energy_imports), 0) as imports_energy,
                 coalesce(sum(t.energy_exports), 0) as exports_energy,
@@ -243,34 +245,53 @@ def get_network_flows_emissions_market_value_query(time_series: OpennemExportSer
                 t.trading_interval < '{date_max}' and
                 t.trading_interval >= '{date_min}' and
                 t.network_id = '{network_id}' and
-                t.network_region = '{network_region_code}'
+                {network_region_query}
             group by 1, 2, 3
         ) as t
         group by 1
         order by 1 desc
     """
 
-    __query_new = """
+    __query_optimized = """
         select
-            date_trunc('{trunc}', time_bucket('5 min', t.trading_interval at time zone '{timezone}')) as trading_interval,
+            date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_interval,
             t.network_id,
             t.network_region,
-            coalesce(sum(t.energy_imports) / 1000, 0) as imports_energy,
-            coalesce(sum(t.energy_exports) / 1000, 0) as exports_energy,
-            coalesce(sum(t.emissions_imports), 0) as emissions_imports,
-            coalesce(sum(t.emissions_exports), 0) as emissions_exports,
+            coalesce(sum(t.energy_imports), 0) / 1000 as imports_energy,
+            coalesce(sum(t.energy_exports), 0) / 1000 as exports_energy,
+            coalesce(abs(sum(t.emissions_imports)), 0) as emissions_imports,
+            coalesce(abs(sum(t.emissions_exports)), 0) as emissions_exports,
             coalesce(sum(t.market_value_imports), 0) as market_value_imports,
-            coalesce(sum(t.market_value_exports), 0) as market_value_exports
+            coalesce(sum(t.market_value_exports), 0) as market_value_exports,
+            case when abs(sum(t.energy_imports)) > 0 then
+                sum(t.emissions_imports) / abs(sum(t.energy_imports))
+            else 0 end as imports_market_value_rrp,
+            case when abs(sum(t.energy_exports)) > 0 then
+                sum(t.emissions_exports) / sum(t.energy_exports)
+            else 0 end as export_emission_factor
         from at_network_flows t
         where
             t.trading_interval < '{date_max}' and
             t.trading_interval >= '{date_min}' and
             t.network_id = '{network_id}' and
-            t.network_region = '{network_region_code}'
+            {network_region_query}
         group by 1, 2, 3
-        order by 1 desc
+        order by 1 desc, 2 asc
     """
+
+    network_region_query = ""
+
+    if network_region_code:
+        network_region_query = f"""
+            t.network_region = '{network_region_code}'
+        """
+
     date_range = time_series.get_range()
+
+    # if we're bucketing by hour or day then we can use the optimized query
+    # @NOTE you can do >= int value here against interval.interval but this is more legible.
+    if date_range.interval.trunc.lower() in ["hour", "day", "month", "year"]:
+        __query = __query_optimized
 
     return dedent(
         __query.format(
@@ -279,6 +300,6 @@ def get_network_flows_emissions_market_value_query(time_series: OpennemExportSer
             network_id=time_series.network.code,
             date_min=date_range.start,
             date_max=date_range.end,
-            network_region_code=network_region_code,
+            network_region_query=network_region_query,
         )
     )
