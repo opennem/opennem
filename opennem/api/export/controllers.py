@@ -114,7 +114,7 @@ def weather_daily(
 def gov_stats_cpi() -> OpennemDataSet | None:
     engine = get_database_engine()
 
-    query = country_stats_query(StatTypes.CPI)
+    query = country_stats_query(stat_type=StatTypes.CPI)
 
     with engine.connect() as c:
         logger.debug(query)
