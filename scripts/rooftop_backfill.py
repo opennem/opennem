@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """ Crates the OPENNEM ROOFTOP BACKFILL network"""
 
 import logging
@@ -39,7 +40,7 @@ def run_import_opennem_rooftop_backfill() -> None:
         from facility_scada fs
         where
             fs.network_id = 'APVI' and
-            fs.trading_interval < '2016-07-31 14:30:00+00'
+            fs.trading_interval < '2018-03-01T00:00:00+10:00'
         ;
 
 
