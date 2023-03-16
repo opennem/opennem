@@ -7,9 +7,16 @@ from typing import Any
 from opennem.aggregates.utils import get_aggregate_year_range
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.schema.network import (
+    NetworkAEMORooftop,
+    NetworkAPVI,
+    NetworkNEM,
+    NetworkOpenNEMRooftopBackfill,
+    NetworkSchema,
+    NetworkWEM,
+)
 from opennem.settings import settings
-from opennem.utils.dates import chop_datetime_microseconds, get_today_opennem
+from opennem.utils.dates import chop_datetime_microseconds, get_last_completed_interval_for_network, get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_daily")
 
@@ -142,7 +149,7 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
             result = c.execute(query)
 
     # @NOTE rooftop fix for double counts
-    if not settings.dry_run:
+    if not settings.dry_run and network is NetworkAEMORooftop:
         run_rooftop_fix()
 
     return result
@@ -197,7 +204,24 @@ def run_aggregate_facility_days(days: int = 1, network: NetworkSchema | None = N
     exec_aggregates_facility_daily_query(date_min, date_max, network)
 
 
+def run_aggregate_facility_daily_all() -> None:
+    """Runs the facility aggregate for all networks for all years in its range"""
+    for network in [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]:
+        if not network.data_first_seen:
+            raise Exception(f"Require data first seen for network {network.code}")
+
+        date_min = network.data_first_seen
+        date_max = get_last_completed_interval_for_network(network=network)
+
+        if network.data_last_seen:
+            date_max = network.data_last_seen
+
+        logger.info(f"Running {network.code} range : {date_min} {date_max}")
+
+        exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
+
+
 # debug entry point
 if __name__ == "__main__":
     # run_aggregate_facility_days(days=1, network=NetworkNEM)
-    run_aggregate_facility_all_by_year(network=NetworkNEM)
+    run_aggregate_facility_daily_all()
