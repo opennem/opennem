@@ -15,9 +15,10 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import aiohttp
+import httpx
 
 NEMWEB_URL = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
-OPENNEM_URL = "http://api.opennem.org.au/v3/series/7d.json"
+OPENNEM_URL = "https://api.opennem.org.au/v3/series/7d.json"
 
 
 def get_now() -> datetime:
@@ -35,17 +36,17 @@ async def check_for_changes(session: aiohttp.ClientSession, url: str, previous_c
     while True:
         current_content = await get_page(session, url)
         if current_content != previous_content:
-            print("Change detected!")
+            print(f"{get_now()} Change detected!")
             return current_content
         await asyncio.sleep(1)
 
 
 async def main() -> None:
     async with aiohttp.ClientSession() as session:
-        url: str = "https://www.example.com"
+        url: str = NEMWEB_URL
         initial_content: str = await get_page(session, url)
         while True:
-            await asyncio.sleep(300)
+            await asyncio.sleep(5)
             previous_content: str = initial_content
             initial_content = await check_for_changes(session, url, previous_content)
 
