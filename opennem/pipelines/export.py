@@ -1,5 +1,11 @@
 """
 Export pipeline
+
+@NOTE these are new optimized version of what was in opennem.api.export.tasks
+that run per-interval and eventually per-day
+
+ie. replace the export sets and export_power and export_energy which was all
+a bit too abstract.
 """
 import logging
 
