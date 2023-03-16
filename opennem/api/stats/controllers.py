@@ -15,6 +15,7 @@ from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfil
 from opennem.schema.time import TimeInterval
 from opennem.schema.units import UnitDefinition
 from opennem.utils.cache import cache_scada_result
+from opennem.utils.dates import get_last_completed_interval_for_network
 from opennem.utils.numbers import cast_trailing_nulls, trim_nulls
 from opennem.utils.timezone import is_aware, make_aware
 from opennem.utils.version import get_version
@@ -262,6 +263,26 @@ def networks_to_in(networks: list[NetworkSchema]) -> str:
     codes = [f"'{n.code}'" for n in networks]
 
     return ", ".join(codes)
+
+
+def get_scada_range_optimized(network: NetworkSchema) -> ScadaDateRange:
+    """Optimized version of get_scada_range"""
+    if not network.data_first_seen:
+        raise Exception(f"No data start for {network.code}. Required for optimized scada range")
+
+    data_start = network.data_first_seen
+    data_end = get_last_completed_interval_for_network(network)
+
+    # find an earlier subnetwork data start
+    if network.subnetworks:
+        for subnetwork in network.subnetworks:
+            if subnetwork.data_first_seen and subnetwork.data_first_seen < data_start:
+                data_start = subnetwork.data_first_seen
+
+    if not data_start:
+        raise Exception(f"No data start for {network.code}")
+
+    return ScadaDateRange(start=data_start, end=data_end, network=network)
 
 
 @cache_scada_result
