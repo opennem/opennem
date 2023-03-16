@@ -230,6 +230,7 @@ def export_energy(
 
         if energy_stat.year:
             if latest and energy_stat.year != CURRENT_YEAR:
+                logger.debug(f"Skipping since we only want latest and this is not the current year {energy_stat.year}")
                 continue
 
             stat_set = energy_fueltech_daily(
@@ -239,7 +240,15 @@ def export_energy(
             )
 
             if not stat_set:
+                logger.error(
+                    f"No result from energy_fueltech_daily for {energy_stat.network} "
+                    "{energy_stat.period} {energy_stat.network_region}"
+                )
                 continue
+
+            logger.debug(
+                f"Got {len(stat_set.data)} sets for {energy_stat.network} {energy_stat.period}{energy_stat.network_region}"
+            )
 
             demand_energy_and_value = demand_network_region_daily(
                 time_series=time_series, network_region_code=energy_stat.network_region, networks=energy_stat.networks
