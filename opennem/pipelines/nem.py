@@ -88,7 +88,7 @@ def nem_rooftop_crawl() -> None:
     send_slack=True,
     message_fmt=(
         "`NEM`: overnight pipeline processed"
-        " `{run_task_output.inserted_records}` new records for day `{run_task_output.server_latest.date()}`"
+        " `{run_task_output.inserted_records}` new records for day `{run_task_output.server_latest}`"
     ),
 )
 def nem_per_day_check() -> ControllerReturn:
