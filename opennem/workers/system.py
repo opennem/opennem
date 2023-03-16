@@ -37,7 +37,7 @@ def _find_temporary_directory() -> Path | None:
 @profile_task(send_slack=False)
 def clean_tmp_dir(dry_run: bool = False) -> None:
     """Cleans up the temp directory for files older than CLEAN_OLDER_THAN_HOURS hours"""
-    tmp_dir = _find_temporary_directory
+    tmp_dir = _find_temporary_directory()
 
     if not tmp_dir:
         raise Exception("Could not obtain temporary directory in clean_tmp_dir")
