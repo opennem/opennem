@@ -204,9 +204,12 @@ def run_aggregate_facility_days(days: int = 1, network: NetworkSchema | None = N
     exec_aggregates_facility_daily_query(date_min, date_max, network)
 
 
-def run_aggregate_facility_daily_all() -> None:
+def run_aggregate_facility_daily_all(networks: list[NetworkSchema]) -> None:
     """Runs the facility aggregate for all networks for all years in its range"""
-    for network in [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]:
+    if not networks:
+        networks = [NetworkNEM, NetworkWEM, NetworkAPVI, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
+
+    for network in networks:
         if not network.data_first_seen:
             raise Exception(f"Require data first seen for network {network.code}")
 
