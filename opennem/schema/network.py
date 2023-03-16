@@ -145,7 +145,7 @@ NetworkAEMORooftop = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=30,
-    data_first_seen=datetime.fromisoformat("2016-08-01T00:30:00+10:00"),
+    data_first_seen=datetime.fromisoformat("2018-03-01T00:00:00+10:00"),
     fueltechs=["solar_rooftop"],
 )
 
@@ -174,6 +174,8 @@ NetworkOpenNEMRooftopBackfill = NetworkSchema(
     offset=600,
     interval_size=30,
     fueltechs=["solar_rooftop"],
+    data_last_seen=datetime.fromisoformat("2018-03-01T00:00:00+10:00"),
+    data_first_seen=datetime.fromisoformat("2013-05-07T00:00:00+10:00"),
 )
 
 NetworkNEM = NetworkSchema(
