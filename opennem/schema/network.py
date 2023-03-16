@@ -36,7 +36,7 @@ class NetworkSchema(BaseConfig):
     country: str
     label: str
 
-    regions: list[NetworkNetworkRegion] | None
+    regions: list[NetworkNetworkRegion] | None = Field(None, description="Regions for this network")
 
     timezone: str = Field(..., description="Network timezone")
 
@@ -50,18 +50,18 @@ class NetworkSchema(BaseConfig):
     interval_shift: int = Field(0, description="Size of reading shift in minutes")
 
     # support hardcoded first seen
-    data_first_seen: datetime | None
-    price_first_seen: datetime | None
-    interconnector_first_seen: datetime | None
-    rooftop_first_seen: datetime | None
+    data_first_seen: datetime | None = Field(None, description="First data seen for this network")
+    price_first_seen: datetime | None = Field(None, description="First price seen for this network")
+    interconnector_first_seen: datetime | None = Field(None, description="First interconnector seen for this network")
+    rooftop_first_seen: datetime | None = Field(None, description="First rooftop seen for this network")
 
     # monitoring settings
     # in minutes, after how long to alert on delays for this network
-    monitor_interval_alert_threshold: int | None
+    monitor_interval_alert_threshold: int | None = Field(None, description="Alert threshold for network interval")
 
     # additional networks that make up this network
     # ex. ROOFTOP, APVI etc.
-    subnetworks: list["NetworkSchema"] | None
+    subnetworks: list["NetworkSchema"] | None = Field(None, description="Subnetworks for this network")
 
     # fueltechs provided by this network
     fueltechs: list[str] | None = Field(None, description="Fueltechs provided by this network")
