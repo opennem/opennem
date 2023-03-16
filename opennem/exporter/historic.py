@@ -175,7 +175,9 @@ def export_historic_intervals(
                     week_end = network_last_complete_day
 
                 try:
-                    export_network_intervals_for_week(week_start, week_end, network=network, network_region=network_region)
+                    export_network_intervals_for_week(
+                        week_start=week_start, week_end=week_end, network=network, network_region=network_region
+                    )
                 except Exception as e:
                     raise ExporterHistoricException(f"export_historic_intervals error: {e}")
 
@@ -204,7 +206,7 @@ def export_historic_for_year_and_week_no(
 
         for network_region in network_regions:
             export_network_intervals_for_week(
-                week_start, week_end, network=network, network_region=network_region, week_number=week_no
+                week_start=week_start, week_end=week_end, network=network, network_region=network_region, week_number=week_no
             )
 
 
