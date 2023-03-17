@@ -227,4 +227,4 @@ def run_aggregate_facility_daily_all(networks: list[NetworkSchema]) -> None:
 # debug entry point
 if __name__ == "__main__":
     # run_aggregate_facility_days(days=1, network=NetworkNEM)
-    run_aggregate_facility_daily_all()
+    run_aggregate_facility_daily_all(networks=[NetworkOpenNEMRooftopBackfill])
