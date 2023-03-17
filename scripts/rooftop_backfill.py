@@ -32,7 +32,7 @@ def run_import_opennem_rooftop_backfill(purge: bool = True) -> None:
             now() as created_at,
             'OPENNEM_ROOFTOP_BACKFILL' as network_id,
             fs.trading_interval as trading_interval,
-            'OPENNEM_ROOFTOP_BACKFILL_' || rtrim(f.network_region, '1') as facility_code,
+            'ROOFTOP_OPENNEM_ROOFTOP_BACKFILL_' || rtrim(f.network_region, '1') as facility_code,
             generated,
             generated / 4 as eoi_quantity,
             is_forecast,
