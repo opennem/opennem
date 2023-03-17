@@ -10,8 +10,6 @@ services:
     restart: on-failure
 
   postgres:
-    # image: opennem/database:dev
-    # image: timescale/timescaledb-ha:pg14-ts2.7-latest
     image: timescale/timescaledb-ha:pg15-latest
     shm_size: "2GB"
     restart: unless-stopped
@@ -25,28 +23,5 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/
 
-  # mysql:
-  #   image: mariadb
-  #   restart: unless-stopped
-  #   env_file: ./.env
-  #   environment:
-  #     - TZ
-  #     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-  #     - MYSQL_DATABASE=${MYSQL_DATABASE}
-  #   ports:
-  #     - ${HOST:-127.0.0.1}:15444:3306
-  #   volumes:
-  #     - mysql_data:/var/lib/mysql
-
-  # proxy:
-  #   image: wildcat/scylla
-  #   ports:
-  #     - ${HOST:-127.0.0.1}:8899:8899
-  #     - ${HOST:-127.0.0.1}:8081:8081
-  #   volumes:
-  #     - proxy_data:/var/www/scylla
-
 volumes:
-  db_data: {}
-  proxy_data: {}
-  mysql_data: {}
+  db_data:
