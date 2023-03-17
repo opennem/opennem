@@ -19,7 +19,7 @@ from opennem.clients.slack import slack_message
 from opennem.core.profiler import profile_task
 from opennem.db.tasks import refresh_material_views
 from opennem.exporter.historic import export_historic_intervals
-from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkWEM
+from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkOpenNEMRooftopBackfill, NetworkWEM
 from opennem.settings import settings
 from opennem.utils.dates import get_today_nem
 from opennem.workers.energy import run_energy_calc
@@ -119,7 +119,9 @@ def all_runner() -> None:
     # populates the aggregate tables
     run_flow_updates_all_for_network(network=NetworkNEM)
 
-    run_aggregate_facility_daily_all()
+    run_aggregate_facility_daily_all(
+        networks=[NetworkNEM, NetworkAEMORooftop, NetworkAPVI, NetworkWEM, NetworkOpenNEMRooftopBackfill]
+    )
 
     # run the exports for all
     export_power(latest=False)
