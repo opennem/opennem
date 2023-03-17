@@ -143,6 +143,7 @@ class OpennemSettings(BaseSettings):
     run_crawlers: bool = True  # do we enable the crawlers
     flows_and_emissions_v2: bool = False  # use the aggregate tables rather than the views
     opennem_power_flows: bool = False  # in the power outputs, use the aggregate flows
+    opennem_flows_v3: bool = False  # use aggregate in opennem.aggregates.network_flows_v3 per-interval
 
     # send daily fueltech summary
     send_daily_fueltech_summary: bool = True

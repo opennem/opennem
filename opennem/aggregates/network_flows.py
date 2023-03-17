@@ -131,26 +131,6 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, 
     return df_gen
 
 
-def calculate_flow_for_interval(df_energy_and_emissions: pd.DataFrame, df_interconnector: pd.DataFrame) -> pd.DataFrame:
-    """Calculate the flow for a given interval
-
-    df_energy_and_emissions:
-        generation and emissions data for each network region
-            - energy (MWh)
-            - emissions (tCO2)
-    df_interconnector:
-        interconnector data for each regional flow direction energy that is
-            - energy (MWh)
-
-    returns
-        a dataframe for each region with the following columns
-            - emissions imported (tCO2)
-            - emissions exported (tCO2)
-
-    """
-    pass
-
-
 def merge_interconnector_and_energy_data(df_energy: pd.DataFrame, df_inter: pd.DataFrame, scale: int) -> pd.DataFrame:
     """Merge the dataframes and break down into simple frame
 
