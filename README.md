@@ -46,7 +46,7 @@ $ ./scripts/init.py
 With pip + venv:
 
 ```sh
-$ pip -m venv .venv
+$ python -m venv .venv
 $ pip install -r requirements.txt
 $ source .venv/bin/activate
 $ alembic upgrade head
