@@ -17,14 +17,14 @@ from opennem.api.export.queries import (
     weather_observation_query,
 )
 from opennem.api.facility.capacities import get_facility_capacities
-from opennem.api.stats.controllers import stats_factory
+from opennem.api.stats.controllers import get_latest_interval_live, stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.api.time import human_to_interval
 from opennem.controllers.output.schema import OpennemExportSeries
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine
 from opennem.queries.flows import get_network_flows_emissions_market_value_query
-from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkSchema
 from opennem.schema.stats import StatTypes
 
 _valid_region = re.compile(r"^\w{1,4}\d?$")
@@ -460,6 +460,7 @@ def power_week(
     # rooftop solar
 
     time_series_rooftop = time_series.copy()
+    time_series_rooftop.end = get_latest_interval_live(network=NetworkAEMORooftop)
     time_series_rooftop.interval = human_to_interval("30m")
 
     logger.debug(time_series_rooftop)
