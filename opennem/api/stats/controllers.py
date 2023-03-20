@@ -6,6 +6,7 @@ from typing import Any
 
 from datetime_truncate import truncate as date_trunc
 from fastapi.exceptions import HTTPException
+from sqlalchemy import text as sql
 from starlette import status
 
 from opennem.api.time import human_to_interval
@@ -263,6 +264,38 @@ def networks_to_in(networks: list[NetworkSchema]) -> str:
     codes = [f"'{n.code}'" for n in networks]
 
     return ", ".join(codes)
+
+
+def get_latest_interval_live(network: NetworkSchema) -> datetime:
+    """Get the latest live interval for a network"""
+    query = sql(
+        """
+        select
+            max(fs.trading_interval) at time zone :timezone
+        from facility_scada fs
+        where
+            fs.network_id = :network_id and
+            fs.trading_interval <= now() and
+            fs.trading_interval > now() - interval '1 day'
+    """
+    )
+
+    engine = get_database_engine()
+
+    with engine.begin() as conn:
+        result = conn.execute(query, {"network_id": network.code, "timezone": network.timezone_database}).fetchone()
+
+        if not result:
+            raise Exception(f"Could not fetch latest live interval for {network.code}")
+
+    dt = result[0]
+
+    try:
+        dt = dt.replace(tzinfo=network.get_fixed_offset())
+    except Exception:
+        raise Exception(f"Could not convert {dt} to timezone {network.timezone_database} for {network.code}")
+
+    return dt
 
 
 def get_scada_range_optimized(network: NetworkSchema) -> ScadaDateRange:
