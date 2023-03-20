@@ -114,7 +114,7 @@ def weather_daily(
 def gov_stats_cpi() -> OpennemDataSet | None:
     engine = get_database_engine()
 
-    query = country_stats_query(stat_type=StatTypes.CPI)
+    query = country_stats_query(StatTypes.CPI)
 
     with engine.connect() as c:
         logger.debug(query)
@@ -700,11 +700,11 @@ def energy_fueltech_daily(
         logger.debug(query)
         row = list(c.execute(query))
 
-    results_energy = [DataQueryResult(interval=i[0], group_by=i[2], result=i[3] if len(i) > 1 else None) for i in row]
+    results_energy = [DataQueryResult(interval=i[0], group_by=i[1], result=i[2] if len(i) > 1 else None) for i in row]
 
-    results_market_value = [DataQueryResult(interval=i[0], group_by=i[2], result=i[4] if len(i) > 1 else None) for i in row]
+    results_market_value = [DataQueryResult(interval=i[0], group_by=i[1], result=i[3] if len(i) > 1 else None) for i in row]
 
-    results_emissions = [DataQueryResult(interval=i[0], group_by=i[2], result=i[5] if len(i) > 1 else None) for i in row]
+    results_emissions = [DataQueryResult(interval=i[0], group_by=i[1], result=i[4] if len(i) > 1 else None) for i in row]
 
     if not results_energy:
         logger.error(f"No results from query: {query}")
@@ -772,14 +772,14 @@ def energy_interconnector_flows_and_emissions_v2(
         )
         return None
 
-    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
-    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
+    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[1]) for i in row]
+    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[2]) for i in row]
 
-    import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[5]) for i in row]
-    export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[6]) for i in row]
+    import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
+    export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
 
-    import_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[7]) for i in row]
-    export_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[8]) for i in row]
+    import_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[5]) for i in row]
+    export_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[6]) for i in row]
 
     result = stats_factory(
         imports,
