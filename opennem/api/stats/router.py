@@ -466,7 +466,7 @@ def power_network_region_fueltech(
 def emission_factor_per_network(  # type: ignore
     engine=Depends(get_database_engine),  # type: ignore
     network_code: str = Query(..., description="Network code"),
-    interval: str = Query("30m", description="Interval size"),
+    interval: str = Query("5m", description="Interval size"),
 ) -> OpennemDataSet | None:
     engine = get_database_engine()
 
@@ -485,7 +485,10 @@ def emission_factor_per_network(  # type: ignore
     if not valid_database_interval(interval_obj):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Not a valid interval size")
 
-    period_obj = human_to_period("7d")
+    period_obj = human_to_period("1d")
+
+    if period_obj.period > 1440:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Not a valid period size. Maximum one day")
 
     if not interval_obj:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid interval size")
@@ -523,7 +526,7 @@ def emission_factor_per_network(  # type: ignore
             detail="No results",
         )
 
-    emission_factors = [DataQueryResult(interval=i[0], result=i[2], group_by=i[1] if len(i) > 1 else None) for i in row]
+    emission_factors = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
 
     result = stats_factory(
         emission_factors,
