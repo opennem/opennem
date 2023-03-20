@@ -55,6 +55,7 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
             db_conn_str,
             json_serializer=opennem_serialize,
             json_deserializer=opennem_deserialize,
+            query_cache_size=1200,
             echo=debug,
             pool_size=30,
             max_overflow=20,
