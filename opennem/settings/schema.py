@@ -180,6 +180,9 @@ class OpennemSettings(BaseSettings):
 
     @property
     def is_prod(self) -> bool:
+        if self.db_url and "opennem03" in self.db_url:
+            return True
+
         return self.env in ("production", "prod")
 
     @property
