@@ -27,6 +27,8 @@ import os
 import sys
 from pathlib import Path
 
+from rich.console import Console
+
 from opennem.utils.security import obfuscate_dsn_password
 from opennem.utils.version import get_version
 
@@ -47,6 +49,9 @@ from opennem.settings.log_config import LOGGING_CONFIG
 from opennem.settings.utils import load_env_file
 
 from .schema import OpennemSettings  # noqa: E402
+
+# console
+console = Console()
 
 # Setup logging - root logger and handlers
 __root_logger = logging.getLogger()
@@ -71,8 +76,11 @@ try:
 except Exception:
     raise Exception("Could not get version")
 
-logging.info(f"Loading OpenNEM ENV {ENV}")
-logging.info(f"OpenNEM Version: {VERSION}. Python version: {PYTHON_VERSION}. System: {SYSTEM_STRING}")
+console.print(f" * Loading OpenNEM ENV: [b magenta]{ENV}[/b magenta]")
+console.print(
+    f" * OpenNEM Version: [b magenta]{VERSION}[/]. Python version: [b magenta]{PYTHON_VERSION}[/]."
+    f" System: [b magenta]{SYSTEM_STRING}[/]"
+)
 
 env_files = load_env_file(ENV)
 
@@ -81,7 +89,7 @@ env_files = load_env_file(ENV)
 # @TODO add logging
 for _env_file in env_files:
     _env_full_path = Path(_env_file).resolve()
-    logging.info(f"Loading env file: {_env_full_path}")
+    console.print(f" * Loading env file: {_env_full_path}")
     load_dotenv(dotenv_path=_env_file, override=True)
 
 # @NOTE don't use pydantics env file support since it doesn't support multiple
@@ -106,9 +114,9 @@ except ValidationError as e:
 
 
 if settings.dry_run:
-    logging.info("Dry run (no database actions)")
+    console.print(" * Dry run (no database actions)")
 else:
-    logging.info(f"Using database connection: {obfuscate_dsn_password(settings.db_url)}")
+    console.print(f" * Using database connection: [red bold encircle]{obfuscate_dsn_password(settings.db_url)}[/]")
 
 # skip if logging not configed
 if LOGGING_CONFIG:

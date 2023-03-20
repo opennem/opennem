@@ -8,9 +8,15 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+# Setup console
+from rich.console import Console  # noqa: E402
+from rich.prompt import Prompt
+
+console = Console()
+
 # Check minimum required Python version
 if sys.version_info < (3, 10):
-    print("OpenNEM %s requires Python 3.10 or greater")
+    console.print(" * [red bold]OpenNEM %s requires Python 3.10 or greater[/]")
     sys.exit(1)
 
 
@@ -52,11 +58,11 @@ DATA_DIR_PATH = MODULE_DIR_PATH / "data"
 PROJECT_PATH = MODULE_DIR_PATH.parent
 
 
-# Setup console
-from rich.console import Console  # noqa: E402
-
-console = Console()
-
 # Log current timezone to console
-print(f" * Current timezone: {datetime.now().astimezone().tzinfo} (settings: {opennem_settings.timezone})")
-print(f" * Running from {PROJECT_PATH}")
+console.print(f" * Current timezone: {datetime.now().astimezone().tzinfo} (settings: {opennem_settings.timezone})")
+console.print(f" * Running from {PROJECT_PATH}")
+
+if opennem_settings.is_prod:
+    if Prompt.ask(" [bold red]* ⛔️ Running in PRODUCTION mode ⛔️ Continue? [/]", default="n", choices=["y", "n"]) == "n":
+        console.print(" * [red]Exiting[/]")
+        sys.exit(-1)
