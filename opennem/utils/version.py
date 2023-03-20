@@ -3,7 +3,7 @@
 @NOTE updated to dynamically update with build scripts
 """
 
-version = "3.13.0-beta.24"
+version = "3.13.0-beta.26"
 
 
 def get_version() -> str:
