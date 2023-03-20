@@ -217,6 +217,7 @@ def get_network_flows_emissions_market_value_query(
     __query = """
         select
             date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_interval,
+            t.network_id,
             t.network_region,
             sum(t.imports_energy) / 1000 as imports_energy,
             sum(t.exports_energy) / 1000 as exports_energy,
@@ -252,6 +253,7 @@ def get_network_flows_emissions_market_value_query(
         order by 1 desc
     """
 
+    #
     __query_optimized = """
         select
             date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_interval,

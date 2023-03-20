@@ -772,14 +772,14 @@ def energy_interconnector_flows_and_emissions_v2(
         )
         return None
 
-    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[1]) for i in row]
-    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[2]) for i in row]
+    imports = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
+    exports = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
 
-    import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[3]) for i in row]
-    export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[4]) for i in row]
+    import_emissions = [DataQueryResult(interval=i[0], group_by="imports", result=i[5]) for i in row]
+    export_emissions = [DataQueryResult(interval=i[0], group_by="exports", result=i[6]) for i in row]
 
-    import_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[5]) for i in row]
-    export_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[6]) for i in row]
+    import_mv = [DataQueryResult(interval=i[0], group_by="imports", result=i[7]) for i in row]
+    export_mv = [DataQueryResult(interval=i[0], group_by="exports", result=i[8]) for i in row]
 
     result = stats_factory(
         imports,
@@ -852,8 +852,8 @@ def energy_interconnector_flows_and_emissions_v2(
     result.append_set(result_export_mv)
 
     if include_emission_factor:
-        import_emission_factor = [DataQueryResult(interval=i[0], group_by="imports", result=i[7]) for i in row]
-        export_emission_factor = [DataQueryResult(interval=i[0], group_by="exports", result=i[8]) for i in row]
+        import_emission_factor = [DataQueryResult(interval=i[0], group_by="imports", result=i[9]) for i in row]
+        export_emission_factor = [DataQueryResult(interval=i[0], group_by="exports", result=i[10]) for i in row]
 
         result_import_emission_factor = stats_factory(
             import_emission_factor,
