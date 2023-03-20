@@ -24,6 +24,7 @@ from sqlalchemy.sql.schema import UniqueConstraint
 
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
+from opennem.parsers.aemo.schemas import AEMODataSource
 from opennem.schema.core import BaseConfig
 
 Base = declarative_base()
@@ -802,11 +803,6 @@ class BalancingSummary(Base, BaseModel):
 # AEMO Data Tables
 
 # Stores history of REL and GI data
-
-
-class AEMODataSource(enum.Enum):
-    rel = "rel"  # @NOTE registration and exemption list
-    gi = "gi"  # @NOTE general information table
 
 
 class AEMOFacilityData(Base):
