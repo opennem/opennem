@@ -31,7 +31,6 @@ logger = logging.getLogger("opennem")
 import warnings  # noqa: E402
 
 # Ignore noisy twisted deprecation warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning, module="twisted")
 warnings.filterwarnings("ignore", module="openpyxl")
 
 
