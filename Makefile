@@ -60,4 +60,4 @@ codecov:
 
 release: release-pre bump-dev
 
-release-patch: release-pre bump-dev
+release-patch: release-pre bump-patch
