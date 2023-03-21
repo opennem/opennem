@@ -79,18 +79,18 @@ def slack_message(
     """
 
     if not settings.slack_notifications:
-        logger.info("Slack endpoint not enabled. See SLACK_NOTIFICATIONS env var")
+        logger.info(f"Slack endpoint not enabled on {settings.env}. See SLACK_NOTIFICATIONS env var")
         return False
 
     if not alert_webhook_url:
         alert_webhook_url = settings.slack_hook_url
 
     if not alert_webhook_url:
-        logger.error("No slack notification endpoint configured")
+        logger.error(f"No slack notification endpoint configured in environment {settings.env}")
         return False
 
     if isinstance(valid_url(alert_webhook_url), ValidationFailure):
-        logger.error("No slack notification endpoint configured bad url")
+        logger.error(f"No slack notification endpoint configured bad url: {alert_webhook_url}")
         return False
 
     tag_list = _slack_tag_list(tag_users) if tag_users else ""
