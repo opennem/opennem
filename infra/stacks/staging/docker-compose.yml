@@ -7,7 +7,7 @@ x-app: &default-app
   networks:
     - frontend
   volumes:
-      - /var/run/postgresql/.s.PGSQL.5432:/var/run/postgresql/.s.PGSQL.5432
+      - /var/run/postgresql/:/var/run/postgresql/
   environment:
     - TZ
     - TIMEZONE
