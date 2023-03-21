@@ -190,3 +190,14 @@ AEMOMMSDispatchScada = CrawlerDefinition(
     bucket_size=AEMODataBucketSize.month,
     processor=run_aemo_mms_crawl,
 )
+
+
+AEMOMMSDispatchScada = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.mms.meterdata_gen_duid",
+    filename_filter=".*_METERDATA_GEN_DUID_.*",
+    network=NetworkNEM,
+    bucket_size=AEMODataBucketSize.month,
+    processor=run_aemo_mms_crawl,
+)
