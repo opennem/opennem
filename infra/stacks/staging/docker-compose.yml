@@ -1,3 +1,4 @@
+# STAGING STACK
 version: "3"
 
 x-app: &default-app
