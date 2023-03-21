@@ -378,16 +378,16 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
             continue
 
         # 2. sub-networks
-        networks = [network]
+        # networks = [network]
 
-        if network.subnetworks:
-            networks += network.subnetworks
+        # if network.subnetworks:
+        #     networks += network.subnetworks
 
         # # @TODO replace this with NetworkSchema->subnetworks
-        # networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
+        networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
-        # if network.code == "WEM":
-        #     networks = [NetworkWEM, NetworkAPVI]
+        if network.code == "WEM":
+            networks = [NetworkWEM, NetworkAPVI]
 
         # @TODO replace with data_first_seen and current date
         scada_range = get_scada_range_optimized(network=network)
