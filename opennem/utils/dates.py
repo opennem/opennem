@@ -101,7 +101,7 @@ def parse_date(
                 raise ValueError("Invalid date string passed")
 
     else:
-        raise ValueError("Require a datetime or string object to parse date")
+        raise ValueError(f"Require a datetime or string object to parse date: {date_str}")
 
     if network:
         tz = network.get_timezone()
