@@ -4,6 +4,7 @@ OpenNEM main module entry
 Setup main module entry point with sanity checks, settings init
 and sentry.
 """
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -62,7 +63,7 @@ PROJECT_PATH = MODULE_DIR_PATH.parent
 console.print(f" * Current timezone: {datetime.now().astimezone().tzinfo} (settings: {opennem_settings.timezone})")
 console.print(f" * Running from {PROJECT_PATH}")
 
-if opennem_settings.is_prod:
+if opennem_settings.is_prod and not os.environ.get("OPENNEM_CONFIRM_PROD", False):
     if Prompt.ask(" [bold red]* ⛔️ Running in PRODUCTION mode ⛔️ Continue? [/]", default="n", choices=["y", "n"]) == "n":
         console.print(" * [red]Exiting[/]")
         sys.exit(-1)
