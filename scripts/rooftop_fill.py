@@ -2,14 +2,15 @@
 """
 Fill AEMO_ROOFTOP_BACKFILL network data with APVI derived data from v2
 
+Monthly calculated data
 
+requires aemo_rooftop_backfill.csv file
 """
 
 import csv
 import logging
 from datetime import date, datetime
 from pathlib import Path
-from typing import Optional
 
 from pydantic import validator
 
@@ -33,9 +34,9 @@ class BackfillRecord(BaseConfig):
     network_id: str = "AEMO_ROOFTOP_BACKFILL"
     fueltech_id: str = "solar_rooftop"
     network_region: str
-    market_value: Optional[float]
-    energy_v2: Optional[float]
-    energy_v3: Optional[float] = None
+    market_value: float | None
+    energy_v2: float | None
+    energy_v3: float | None = None
 
     _validate_energyv3 = validator("energy_v3", pre=True)(clean_float)
 
@@ -49,11 +50,7 @@ class BackfillRecord(BaseConfig):
         if self.energy_v3:
             _value -= self.energy_v3
 
-            logger.debug(
-                "Settings energy to delta: {} {} : {}".format(
-                    self.energy_v2, self.energy_v3, _value
-                )
-            )
+            logger.debug(f"Settings energy to delta: {self.energy_v2} {self.energy_v3} : {_value}")
 
         return round(_value * 1000, 0)
 
@@ -64,18 +61,16 @@ class BackfillRecord(BaseConfig):
 
 def import_rooftop_aemo_backfills() -> None:
     csvrecords = []
-    backfill_file = Path(__file__).parent / "aemo_rooftop_backfill.csv"
+    backfill_file = Path(__file__).parent / "notebooks" / "aemo_rooftop_backfill.csv"
 
     with backfill_file.open() as fh:
         fieldnames = fh.readline().strip().split(",")
         csvreader = csv.DictReader(fh, fieldnames=fieldnames)
         csvrecords = [BackfillRecord(**i) for i in csvreader]
 
-    logger.debug("Loaded {} records".format(len(csvrecords)))
+    logger.debug(f"Loaded {len(csvrecords)} records")
 
-    export_records = [
-        i.dict(exclude={"energy_v2", "energy_v3", "network_region"}) for i in csvrecords
-    ]
+    export_records = [i.dict(exclude={"energy_v2", "energy_v3", "network_region"}) for i in csvrecords]
 
     session = SessionLocal()
 
@@ -102,7 +97,7 @@ def import_rooftop_aemo_backfills() -> None:
         session.add(model)
 
     session.commit()
-    logger.debug("Added {} records and updated {}".format(records_added, records_updated))
+    logger.debug(f"Added {records_added} records and updated {records_updated}")
 
 
 if __name__ == "__main__":
