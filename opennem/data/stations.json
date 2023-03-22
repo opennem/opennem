@@ -30281,5 +30281,57 @@
       "geocode_approved": true,
       "geocode_skip": false
     }
+  },
+  {
+    "code": "WANDSF",
+    "name": "Wandoan Solar Farm",
+    "network_name": "Wandoan Solar Farm 1",
+    "description": "",
+    "wikipedia_link": null,
+    "wikidata_id": null,
+    "website_url": "https://www.venaenergy.com.au/all_projects/wandoan-south-solar-1/",
+    "approved": true,
+    "approved_by": "opennem.init",
+    "facilities": [
+      {
+        "network_id": "NEM",
+        "fueltech_id": "solar_utility",
+        "status_id": "operating",
+        "code": "WANDSF1",
+        "network_code": null,
+        "network_region": "QLD1",
+        "network_name": null,
+        "dispatch_type": "GENERATOR",
+        "interconnector": false,
+        "interconnector_region_to": null,
+        "interconnector_region_from": null,
+        "capacity_registered": 159.0,
+        "expected_closure_date": null,
+        "expected_closure_year": null,
+        "registered": null,
+        "deregistered": null,
+        "unit_id": null,
+        "unit_number": 44,
+        "unit_alias": null,
+        "unit_capacity": 2.84,
+        "emissions_factor_co2": null
+      }
+    ],
+    "location": {
+      "address1": "",
+      "address2": null,
+      "locality": "Woleebee",
+      "state": "QLD",
+      "postcode": "4419",
+      "country": "AU",
+      "geocode_processed_at": null,
+      "lat": -26.263563967767258,
+      "lng": 149.7722434039925,
+      "osm_way_id": null,
+      "place_id": null,
+      "geocode_by": null,
+      "geocode_approved": false,
+      "geocode_skip": false
+    }
   }
 ]
