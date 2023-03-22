@@ -234,6 +234,7 @@ def get_network_flows_emissions_market_value_query(
         from (
             select
                 time_bucket_gapfill('5 min', t.trading_interval) as trading_interval,
+                t.network_id,
                 t.network_region,
                 coalesce(sum(t.energy_imports), 0) as imports_energy,
                 coalesce(sum(t.energy_exports), 0) as exports_energy,
@@ -249,7 +250,7 @@ def get_network_flows_emissions_market_value_query(
                 {network_region_query}
             group by 1, 2, 3
         ) as t
-        group by 1
+        group by 1, 2, 3
         order by 1 desc
     """
 
@@ -292,7 +293,9 @@ def get_network_flows_emissions_market_value_query(
 
     # if we're bucketing by hour or day then we can use the optimized query
     # @NOTE you can do >= int value here against interval.interval but this is more legible.
-    if date_range.interval.trunc.lower() in ["hour", "day", "month", "year"]:
+    run_optimized = False
+
+    if run_optimized and date_range.interval.trunc.lower() in ["hour", "day", "month", "year"]:
         __query = __query_optimized
 
     return dedent(
