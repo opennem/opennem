@@ -11,7 +11,7 @@ require the API
 
 import contextlib
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from opennem.api.export.controllers import (
     NoResults,
@@ -488,7 +488,7 @@ def export_all_daily(networks: list[NetworkSchema] = [], network_region_code: st
             if network_region.code == "WEM":
                 networks = [NetworkWEM, NetworkAPVI]
 
-            last_day = get_last_complete_day_for_network(network=network)
+            last_day = get_last_complete_day_for_network(network=network) - timedelta(days=1)
 
             if not last_day or not network.data_first_seen:
                 logger.error(f"Could not get scada range for network {network} and energy True")
