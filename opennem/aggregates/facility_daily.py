@@ -176,9 +176,9 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema) -> None:
 
 
 @profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
-def run_aggregate_facility_all_by_year(network: NetworkSchema | None = None) -> None:
+def run_aggregate_facility_all_by_year(network: NetworkSchema) -> None:
     """Runs the facility aggregate for a network for all years in its range"""
-    if not network or not network.data_first_seen:
+    if not network.data_first_seen:
         raise AggregateFacilityDailyException(f"Require a network and with data_first_seen: {network.code}")
 
     year_min = network.data_first_seen.year
