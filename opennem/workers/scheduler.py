@@ -12,6 +12,7 @@ Primary scheduler runs:
 import logging
 
 from huey import PriorityRedisHuey, crontab
+from huey.signals import SIGNAL_ERROR, Signal
 
 from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
@@ -25,6 +26,7 @@ from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.pipelines.crontab import network_interval_crontab
 from opennem.pipelines.nem import (
+    NemPipelineNoNewData,
     nem_dispatch_is_crawl,
     nem_dispatch_scada_crawl,
     nem_per_day_check,
@@ -49,9 +51,17 @@ logger = logging.getLogger("openenm.scheduler")
 worker_startup_alert()
 
 
+# signal handler
+@huey.signal(SIGNAL_ERROR)
+def task_not_executed_handler(signal: Signal, task, exc: Exception | None = None) -> None:
+    if signal == SIGNAL_ERROR and exc and isinstance(exc, NemPipelineNoNewData):
+        # supress
+        return None
+
+    logger.error(f"Task {task.id} raised an exception: {exc}")
+
+
 # crawler tasks live per interval for each network
-
-
 @huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=10)
 @huey.lock_task("crawler_run_nem_dispatch_scada_crawl")
 def crawler_run_nem_dispatch_scada_crawl() -> None:
