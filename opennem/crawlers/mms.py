@@ -192,7 +192,7 @@ AEMOMMSDispatchScada = CrawlerDefinition(
 )
 
 
-AEMOMMSDispatchScada = CrawlerDefinition(
+AEMOMMSMeterDataGenDuid = CrawlerDefinition(
     priority=CrawlerPriority.high,
     schedule=CrawlerSchedule.live,
     name="au.mms.meterdata_gen_duid",
