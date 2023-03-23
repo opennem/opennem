@@ -179,7 +179,7 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema) -> None:
 def run_aggregate_facility_all_by_year(network: NetworkSchema | None = None) -> None:
     """Runs the facility aggregate for a network for all years in its range"""
     if not network or not network.data_first_seen:
-        raise AggregateFacilityDailyException("Require a network and with data_first_seen")
+        raise AggregateFacilityDailyException(f"Require a network and with data_first_seen: {network.code}")
 
     year_min = network.data_first_seen.year
     year_max = get_today_opennem().year
