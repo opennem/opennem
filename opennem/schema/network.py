@@ -135,7 +135,7 @@ NetworkAPVI = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=15,
-    # data_first_seen=datetime.fromisoformat("2015-03-20T06:15:00+10:00"),
+    data_first_seen=datetime.fromisoformat("2015-03-19 20:15:00+00"),
     fueltechs=["solar_rooftop"],
 )
 
