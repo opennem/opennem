@@ -25,7 +25,6 @@ def network_interval_crontab(network: NetworkSchema, number_minutes: int = 2) ->
             logging.debug(f"Running crontab for {network.code} at {timestamp}")
             return True
 
-        logging.debug(f"Skipping crontab for {network.code} at {timestamp} {M} {s}")
         return False
 
     return _network_interval_crontab
