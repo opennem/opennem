@@ -4,7 +4,7 @@ from itertools import groupby
 from textwrap import dedent
 
 from opennem import settings
-from opennem.api.stats.controllers import get_scada_range
+from opennem.api.stats.controllers import get_scada_range_optimized
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.controllers.output.schema import ExportDatetimeRange, OpennemExportSeries
 from opennem.core.energy import energy_sum, shape_energy_dataframe
@@ -25,8 +25,6 @@ logger = logging.getLogger("opennem.workers.energy")
 # For debugging queries
 DRY_RUN = settings.dry_run
 YEAR_EARLIEST = 2010
-
-NEMWEB_DISPATCH_OLD_MIN_DATE = datetime.fromisoformat("1998-12-07 01:40:00")
 
 
 def get_generated_query(
@@ -88,46 +86,6 @@ def get_generated_query(
     return dedent(query)
 
 
-def get_clear_query(
-    network_region: str,
-    date_min: datetime,
-    date_max: datetime,
-    network: NetworkSchema,
-    fueltech_id: str | None = None,
-) -> str:
-    """Clear the energies for the range we're about to update"""
-
-    __sql = """
-    update facility_scada fs
-    set
-        eoi_quantity = NULL
-    from facility f
-    where
-        f.code = fs.facility_code
-        and f.network_id='{network_id}'
-        and f.network_region='{network_region}'
-        and fs.trading_interval >= '{date_min}'
-        and fs.trading_interval <= '{date_max}'
-        and fs.is_forecast is False
-        {fueltech_match};
-    """
-
-    fueltech_match = ""
-
-    if fueltech_id:
-        fueltech_match = f"and f.fueltech_id = '{fueltech_id}'"
-
-    query = __sql.format(
-        network_id=network.code,
-        network_region=network_region,
-        date_min=date_min,
-        date_max=date_max,
-        fueltech_match=fueltech_match,
-    )
-
-    return dedent(query)
-
-
 def get_flows_query(
     network_region: str,
     date_min: datetime,
@@ -175,7 +133,6 @@ def get_generated(
     date_min: datetime,
     date_max: datetime,
     network: NetworkSchema,
-    run_clear: bool = False,
     network_region: str | None = None,
     fueltech_id: str | None = None,
     facility_codes: list[str] | None = None,
@@ -193,24 +150,20 @@ def get_generated(
         network_region=network_region,
     )
 
-    query_clear = get_clear_query(network_region, date_min, date_max, network, fueltech_id)
-
     engine = get_database_engine()
 
     results = []
 
     with engine.connect() as c:
-        if run_clear:
-            logger.debug(query_clear)
-            c.execute(query_clear)
-
         logger.debug(query)
 
-        if not DRY_RUN:
-            try:
-                results = list(c.execute(query))
-            except Exception as e:
-                logger.error(e)
+        if settings.dry_run:
+            return []
+
+        try:
+            results = list(c.execute(query))
+        except Exception as e:
+            logger.error(e)
 
     logger.debug(f"Got back {len(results)} rows")
 
@@ -325,7 +278,7 @@ def insert_energies(results: list[dict], network: NetworkSchema) -> int:
 
 
 def get_date_range(network: NetworkSchema) -> ExportDatetimeRange:
-    date_range = get_scada_range(network=NetworkNEM)
+    date_range = get_scada_range_optimized(network=NetworkNEM)
 
     time_series = OpennemExportSeries(
         start=date_range.start,
@@ -345,7 +298,6 @@ def run_energy_calc(
     region: str | None = None,
     fueltech_id: str | None = None,
     facility_codes: list[str] | None = None,
-    run_clear: bool = False,
 ) -> int:
     """Runs the actual energy calc - believe it or not"""
 
@@ -368,12 +320,11 @@ def run_energy_calc(
         generated_results = get_flows(date_min, date_max, network_region=region, network=network, flow=flow)
     else:
         generated_results = get_generated(
-            date_min,
-            date_max,
+            date_min=date_min,
+            date_max=date_max,
             network_region=region,
             network=network,
             fueltech_id=fueltech_id,
-            run_clear=run_clear,
             facility_codes=facility_codes,
         )
 
@@ -407,14 +358,13 @@ def run_energy_update_archive(
     regions: list[str] | None = None,
     fueltech: str | None = None,
     network: NetworkSchema = NetworkNEM,
-    run_clear: bool = False,
 ) -> None:
     date_range = get_date_range(network=network)
 
     years: list[int] = []
 
     if not year:
-        years = [i for i in range(YEAR_EARLIEST, DATE_CURRENT_YEAR + 1)]
+        years = [i for i in range(network.data_first_seen.year, DATE_CURRENT_YEAR + 1)]
     else:
         years = [year]
 
@@ -489,7 +439,6 @@ def run_energy_update_archive(
                         region=region,
                         fueltech_id=fueltech_id,
                         network=network,
-                        run_clear=run_clear,
                     )
 
 
@@ -526,19 +475,18 @@ def run_energy_update_days(
                 date_max,
                 network=network,
                 fueltech_id=fueltech,
-                run_clear=False,
                 region=ri,
             )
 
 
-def run_energy_update_all(network: NetworkSchema = NetworkNEM, fueltech: str | None = None, run_clear: bool = False) -> None:
+def run_energy_update_all(network: NetworkSchema = NetworkNEM, fueltech: str | None = None) -> None:
     """Runs energy update for all regions and all years for one-off
     inserts"""
     if not network.data_first_seen:
         raise Exception(f"Require a data_first_seen attribute for network {network.code}")
 
     for year in range(DATE_CURRENT_YEAR, network.data_first_seen.year, -1):
-        run_energy_update_archive(year=year, fueltech=fueltech, network=network, run_clear=run_clear)
+        run_energy_update_archive(year=year, fueltech=fueltech, network=network)
 
 
 def run_energy_update_facility(facility_codes: list[str], network: NetworkSchema = NetworkNEM) -> None:
@@ -584,7 +532,6 @@ def run_energy_worker_for_year(year: int) -> None:
             date_min,
             date_max,
             network=NetworkNEM,
-            run_clear=False,
         )
 
         date_min += timedelta(days=1)
