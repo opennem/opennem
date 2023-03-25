@@ -3,11 +3,7 @@ from fastapi import HTTPException
 from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
-from opennem.clients.bom import BOMParsingException
-from opennem.pipelines.nem import NemPipelineNoNewData
-from opennem.settings import settings
-
-_SENTRY_IGNORE_EXCEPTION_TYPES = [BOMParsingException, HTTPException, NemPipelineNoNewData]
+_SENTRY_IGNORE_EXCEPTION_TYPES = [HTTPException]
 
 
 def _sentry_before_send(event, hint):
@@ -19,15 +15,14 @@ def _sentry_before_send(event, hint):
     return event
 
 
-def setup_sentry() -> None:
-    if settings.sentry_enabled:
-        sentry_sdk.init(
-            settings.sentry_url,
-            traces_sample_rate=1.0,
-            environment=settings.env,
-            before_send=_sentry_before_send,
-            integrations=[RedisIntegration(), SqlalchemyIntegration()],
-            _experiments={
-                "profiles_sample_rate": 1.0,
-            },
-        )
+def setup_sentry(sentry_url: str, environment: str = "development") -> None:
+    sentry_sdk.init(
+        sentry_url,
+        traces_sample_rate=1.0,
+        environment=environment,
+        before_send=_sentry_before_send,
+        integrations=[RedisIntegration(), SqlalchemyIntegration()],
+        _experiments={
+            "profiles_sample_rate": 1.0,
+        },
+    )

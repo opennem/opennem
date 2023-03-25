@@ -3,8 +3,8 @@ import logging
 import requests
 from pydantic import ValidationError
 
+from opennem import settings
 from opennem.api.export.map import StatMetadata
-from opennem.settings import settings
 from opennem.utils.url import bucket_to_website, urljoin
 
 logger = logging.getLogger(__name__)

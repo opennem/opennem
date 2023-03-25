@@ -6,10 +6,10 @@ import logging
 from datetime import datetime, timedelta
 from textwrap import dedent
 
+from opennem import settings
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.settings import settings
 from opennem.utils.dates import get_today_nem
 
 logger = logging.getLogger("opennem.aggregates.demand")

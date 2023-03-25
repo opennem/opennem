@@ -13,7 +13,7 @@ import logging
 import time
 from typing import Any
 
-from opennem.settings import settings
+from opennem import settings
 from opennem.utils.http import http
 
 logging.basicConfig(level=logging.INFO)

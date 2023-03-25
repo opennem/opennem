@@ -3,7 +3,7 @@ from io import BytesIO, StringIO
 from os import makedirs
 from pathlib import Path
 
-from opennem.settings import settings
+from opennem import settings
 from opennem.utils.mime import decode_bytes
 
 logger = logging.getLogger(__name__)

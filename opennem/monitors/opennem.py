@@ -1,9 +1,9 @@
 import logging
 from datetime import datetime, timedelta
 
+from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.core.networks import network_from_network_code
-from opennem.settings import settings
 from opennem.utils.dates import chop_delta_microseconds, parse_date
 from opennem.utils.http import http
 

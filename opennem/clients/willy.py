@@ -7,9 +7,9 @@ from typing import Any
 
 from sqlalchemy.dialects.postgresql import insert
 
+from opennem import settings
 from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import BomObservation
-from opennem.settings import settings
 from opennem.utils.dates import unix_timestamp_to_aware_datetime
 from opennem.utils.http import http
 

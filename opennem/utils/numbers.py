@@ -6,7 +6,7 @@ from datetime import datetime
 from math import floor, log, pow  # noqa: no-name-module
 from typing import Any
 
-from opennem.settings import settings
+from opennem import settings
 
 logger = logging.getLogger("opennem.utils.numbers")
 
@@ -76,7 +76,7 @@ def sigfig_compact(n: float | int, precision: int = DEFAULT_PRECISION) -> float 
     return n
 
 
-def human2bytes(s: str) -> int:
+def human2bytes(s: str) -> int | None:
     """
     >>> human2bytes('1M')
     1048576

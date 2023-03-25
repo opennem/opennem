@@ -9,6 +9,7 @@ from operator import attrgetter
 
 import matplotlib.pyplot as plt
 
+from opennem import settings
 from opennem.clients.cfimage import save_image_to_cloudflare
 from opennem.clients.slack import slack_message
 from opennem.core.templates import serve_template
@@ -16,7 +17,6 @@ from opennem.db import get_database_engine
 from opennem.queries.summary import get_daily_fueltech_summary_query
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.settings import settings
 from opennem.utils.dates import get_last_complete_day_for_network  # noqa: F401
 
 logger = logging.getLogger("opennem.controllers.summary.daily")

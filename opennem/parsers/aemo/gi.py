@@ -24,12 +24,12 @@ from typing import Any
 from dateutil.relativedelta import relativedelta
 from openpyxl import load_workbook
 
+from opennem import settings
 from opennem.core.normalizers import station_name_cleaner
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import AEMOFacilityData
 from opennem.parsers.aemo.normalisers import aemo_gi_fueltech_to_fueltech, aemo_gi_status_map
 from opennem.parsers.aemo.schemas import AEMODataSource, AEMOGIRecord, AEMOSourceSet
-from opennem.settings import settings
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.http import download_file
 

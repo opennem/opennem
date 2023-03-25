@@ -5,9 +5,9 @@ Module to check AEMO REL and GI sheet updates and produce an update or report on
 import logging
 from dataclasses import dataclass
 
-from opennem.core.parsers.aemo.gi import AEMOGIRecord, download_and_parse_aemo_gi_file
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Facility
+from opennem.parsers.aemo.gi import AEMOGIRecord, download_and_parse_aemo_gi_file
 
 logger = logging.getLogger("opennem.workers.aemo_data_update")
 

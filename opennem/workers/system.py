@@ -8,8 +8,8 @@ from pathlib import Path
 from shutil import rmtree
 from tempfile import gettempdir
 
+from opennem import settings
 from opennem.core.profiler import profile_task
-from opennem.settings import settings
 
 logger = logging.getLogger("opennem.workers.system")
 

@@ -9,7 +9,6 @@ from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScad
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.pipelines.nem import NemPipelineNoNewData
 from opennem.schema.network import NetworkWEM
-from opennem.settings import IS_DEV, settings  # noqa: F401
 
 logger = logging.getLogger("opennem.pipelines.wem")
 

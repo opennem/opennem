@@ -11,6 +11,7 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import urljoin
 
+from opennem import settings
 from opennem.api.export.map import StatType
 from opennem.api.stats.loader import load_statset
 from opennem.api.stats.schema import OpennemData, OpennemDataSet
@@ -21,7 +22,6 @@ from opennem.db.models.opennem import NetworkRegion
 from opennem.exporter.encoders import OpenNEMJSONEncoder
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.settings import settings
 from opennem.utils.http import http
 from opennem.utils.series import series_are_equal, series_joined, series_not_close
 

@@ -10,8 +10,8 @@ from typing import Any
 import boto3
 from botocore.exceptions import ClientError
 
+from opennem import settings
 from opennem.api.stats.schema import OpennemDataSet
-from opennem.settings import settings
 from opennem.utils.url import urljoin
 
 logger = logging.getLogger(__name__)

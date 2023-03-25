@@ -4,6 +4,7 @@ from datetime import date, datetime, timedelta
 from textwrap import dedent
 from typing import Any
 
+from opennem import settings
 from opennem.aggregates.utils import get_aggregate_year_range
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
@@ -15,7 +16,6 @@ from opennem.schema.network import (
     NetworkSchema,
     NetworkWEM,
 )
-from opennem.settings import settings
 from opennem.utils.dates import chop_datetime_microseconds, get_last_completed_interval_for_network, get_today_opennem
 
 logger = logging.getLogger("opennem.aggregates.facility_daily")
@@ -227,4 +227,8 @@ def run_aggregate_facility_daily_all(networks: list[NetworkSchema]) -> None:
 # debug entry point
 if __name__ == "__main__":
     # run_aggregate_facility_days(days=1, network=NetworkNEM)
-    run_aggregate_facility_daily_all(networks=[NetworkOpenNEMRooftopBackfill])
+    # run_aggregate_facility_daily_all(networks=[NetworkOpenNEMRooftopBackfill])
+    date_min = datetime.fromisoformat("2015-01-01T00:00:00+10:00")
+    date_max = datetime.fromisoformat("2015-02-01T00:00:00+10:00")
+    network = NetworkNEM
+    exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)

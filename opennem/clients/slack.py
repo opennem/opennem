@@ -7,7 +7,7 @@ import requests
 from validators import ValidationFailure
 from validators.url import url as valid_url
 
-from opennem.settings import settings
+from opennem import settings
 from opennem.utils.random_agent import get_random_agent
 
 logger = logging.getLogger(__name__)

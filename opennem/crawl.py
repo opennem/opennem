@@ -5,6 +5,7 @@ import logging
 
 from pydantic import ValidationError
 
+from opennem import settings
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.meta import CrawlStatTypes, crawler_set_meta, crawlers_get_all_meta
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerSchedule, CrawlerSet
@@ -39,7 +40,6 @@ from opennem.crawlers.nemweb import (
     AEMONNemwebDispatchScadaArchive,
 )
 from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
-from opennem.settings import settings
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.modules import load_all_crawler_definitions
 

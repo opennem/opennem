@@ -16,7 +16,6 @@ from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.core.profiler import profile_task
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkSchema
-from opennem.settings import IS_DEV, settings  # noqa: F401
 
 logger = logging.getLogger("opennem.pipelines.flows")
 

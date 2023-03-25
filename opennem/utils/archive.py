@@ -11,7 +11,7 @@ from tempfile import mkdtemp
 from typing import IO, Any
 from zipfile import ZipFile
 
-from opennem.settings import settings
+from opennem import settings
 from opennem.utils.url import get_filename_from_url
 
 from .http import http

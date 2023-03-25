@@ -13,8 +13,8 @@ from urllib.parse import urlparse
 
 import boto3
 
+from opennem import settings
 from opennem.db import get_database_engine
-from opennem.settings import settings
 from opennem.utils.dates import TODAY_NEM
 from opennem.utils.security import get_random_string
 

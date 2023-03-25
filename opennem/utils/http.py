@@ -18,7 +18,7 @@ import urllib3
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from opennem.settings import settings
+from opennem import settings
 from opennem.utils.version import get_version
 
 urllib3.disable_warnings()

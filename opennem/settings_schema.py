@@ -162,10 +162,6 @@ class OpennemSettings(BaseSettings):
         return _log_value
 
     @property
-    def sentry_enabled(self) -> bool:
-        return self.sentry_url is not None
-
-    @property
     def static_folder_path(self) -> str:
         static_path: Path = Path(self._static_folder_path)
 

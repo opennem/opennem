@@ -18,13 +18,13 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
+from opennem import settings
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.queries.flows import get_interconnector_intervals_query
 from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.settings import settings
 from opennem.utils.dates import get_last_complete_day_for_network, get_last_completed_interval_for_network, is_aware
 
 logger = logging.getLogger("opennem.aggregates.flows")

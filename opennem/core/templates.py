@@ -7,7 +7,7 @@ from pkgutil import get_loader
 
 from mako.lookup import TemplateLookup
 
-from opennem.settings import settings
+from opennem import settings
 
 
 def _get_template_dir() -> str:

@@ -3,10 +3,10 @@ import logging
 from fastapi import Security
 from fastapi.security.api_key import APIKeyCookie, APIKeyHeader, APIKeyQuery
 
+from opennem import settings
 from opennem.core.validators.security import validate_api_key
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import ApiKeys
-from opennem.settings import settings
 
 from .exceptions import BadCredentials, BadCredentialsKeyNotFound, RevokedCredentials, UnauthorizedRequest
 from .schema import AuthApiKeyRecord

@@ -13,9 +13,9 @@ BASE_DIR = str(Path(__file__).parent.parent.parent.parent)
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
+from opennem import settings  # noqa: E402
 from opennem.db import db_connect  # noqa: E402
 from opennem.db.models import opennem  # noqa: E402
-from opennem.settings import settings  # noqa: E402
 
 config = context.config  # type: ignore
 fileConfig(config.config_file_name)

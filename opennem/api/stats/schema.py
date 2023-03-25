@@ -14,6 +14,7 @@ import requests
 from datedelta import datedelta
 from pydantic import ValidationError, validator
 
+from opennem import settings
 from opennem.core.compat.utils import translate_id_v3_to_v2
 from opennem.core.fueltechs import map_v3_fueltech
 from opennem.core.validators.data import validate_data_outputs
@@ -21,7 +22,6 @@ from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.response import ResponseStatus
 from opennem.schema.time import TimeIntervalAPI, TimePeriodAPI
-from opennem.settings import settings
 from opennem.utils.dates import chop_datetime_microseconds
 from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import sigfig_compact

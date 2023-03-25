@@ -4,7 +4,7 @@ OpenNEM Auth Utils
 """
 import secrets
 
-from opennem.settings import settings
+from opennem import settings
 
 
 def generate_api_key(key_length: int = settings.api_app_auth_key_length) -> str:

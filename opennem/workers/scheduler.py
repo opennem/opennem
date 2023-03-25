@@ -12,8 +12,8 @@ Primary scheduler runs:
 import logging
 
 from huey import PriorityRedisHuey, crontab
-from huey.signals import SIGNAL_ERROR, Signal
 
+from opennem import settings  # noqa: F401
 from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
 from opennem.core.profiler import cleanup_database_task_profiles_basedon_retention
@@ -26,7 +26,6 @@ from opennem.monitors.facility_seen import facility_first_seen_check
 from opennem.monitors.opennem import check_opennem_interval_delays
 from opennem.pipelines.crontab import network_interval_crontab
 from opennem.pipelines.nem import (
-    NemPipelineNoNewData,
     nem_dispatch_is_crawl,
     nem_dispatch_scada_crawl,
     nem_per_day_check,
@@ -35,7 +34,6 @@ from opennem.pipelines.nem import (
 )
 from opennem.pipelines.wem import wem_per_interval_check
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkWEM
-from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import energy_runner_hours
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.facility_data_ranges import update_facility_seen_range
@@ -49,16 +47,6 @@ logger = logging.getLogger("openenm.scheduler")
 
 # send the startup message to slack
 worker_startup_alert()
-
-
-# signal handler
-@huey.signal(SIGNAL_ERROR)
-def task_not_executed_handler(signal: Signal, task, exc: Exception | None = None) -> None:
-    if signal == SIGNAL_ERROR and exc and isinstance(exc, NemPipelineNoNewData):
-        # supress
-        return None
-
-    logger.error(f"Task {task.id} raised an exception: {exc}")
 
 
 # crawler tasks live per interval for each network

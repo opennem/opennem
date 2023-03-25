@@ -6,7 +6,7 @@ from typing import Any
 import requests
 from PIL import Image
 
-from opennem.settings import settings
+from opennem import settings
 from opennem.utils.http import http
 from opennem.utils.url import bucket_to_website
 

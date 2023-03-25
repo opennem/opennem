@@ -14,8 +14,8 @@ from sqlalchemy.engine.base import Engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
+from opennem import settings
 from opennem.exporter.encoders import opennem_deserialize, opennem_serialize
-from opennem.settings import settings
 
 DeclarativeBase = declarative_base()
 

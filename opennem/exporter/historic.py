@@ -11,6 +11,7 @@ This is called from the scheduler in opennem.workers.scheduler to run every morn
 import logging
 from datetime import datetime, timedelta
 
+from opennem import settings
 from opennem.api.export.controllers import (
     demand_week,
     network_flows_for_region,
@@ -26,7 +27,6 @@ from opennem.core.profiler import profile_task
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import NetworkRegion
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.settings import settings
 from opennem.utils.dates import (
     get_last_complete_day_for_network,
     get_week_number_from_datetime,

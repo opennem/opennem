@@ -7,10 +7,10 @@ import logging
 
 from pydantic.main import BaseModel
 
+from opennem import settings
 from opennem.api.stats.schema import OpennemDataSet
 from opennem.exporter.aws import write_statset_to_s3, write_to_s3
 from opennem.exporter.local import write_to_local
-from opennem.settings import settings
 
 logger = logging.getLogger(__name__)
 

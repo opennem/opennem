@@ -8,9 +8,9 @@ from functools import wraps
 
 from cachetools import TTLCache
 
+from opennem import settings
 from opennem.api.stats.schema import ScadaDateRange
 from opennem.schema.network import NetworkSchema
-from opennem.settings import settings
 
 logger = logging.getLogger(__name__)
 

@@ -5,6 +5,8 @@ All the processing pipelines for the NEM network
 """
 import logging
 
+from huey.exceptions import RetryTask
+
 from opennem.aggregates.network_flows import run_flow_update_for_interval
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
@@ -20,7 +22,6 @@ from opennem.crawlers.nemweb import (
 )
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.schema.network import NetworkAU, NetworkNEM
-from opennem.settings import IS_DEV, settings  # noqa: F401
 from opennem.workers.daily import daily_runner
 
 logger = logging.getLogger("opennem.pipelines.nem")
@@ -39,14 +40,14 @@ def nem_dispatch_is_crawl() -> None:
     cr = run_crawl(AEMONemwebDispatchIS)
 
     if not cr or not cr.inserted_records:
-        raise NemPipelineNoNewData("No new dispatch is data")
+        raise RetryTask("No new dispatch is data")
 
 
 def nem_trading_is_crawl() -> None:
     cr = run_crawl(AEMONemwebTradingIS)
 
     if not cr or not cr.inserted_records:
-        raise NemPipelineNoNewData("No new dispatch is data")
+        raise RetryTask("No new dispatch is data")
 
 
 @profile_task(
@@ -61,7 +62,7 @@ def nem_dispatch_scada_crawl() -> ControllerReturn:
     dispatch_scada = run_crawl(AEMONNemwebDispatchScada)
 
     if not dispatch_scada or not dispatch_scada.inserted_records:
-        raise NemPipelineNoNewData("No new dispatch scada data")
+        raise RetryTask("No new dispatch scada data")
 
     if dispatch_scada.server_latest:
         run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
@@ -78,7 +79,7 @@ def nem_rooftop_crawl() -> None:
     _ = run_crawl(AEMONemwebRooftopForecast)
 
     if not rooftop or not rooftop.inserted_records:
-        raise NemPipelineNoNewData("No new rooftop data")
+        raise RetryTask("No new rooftop data")
 
     run_export_power_latest_for_network(network=NetworkNEM)
     run_export_power_latest_for_network(network=NetworkAU)
@@ -97,7 +98,7 @@ def nem_per_day_check() -> ControllerReturn:
     dispatch_gen = run_crawl(AEMONEMNextDayDispatch)
 
     if not dispatch_actuals or not dispatch_actuals.inserted_records:
-        raise NemPipelineNoNewData("No new dispatch actuals data")
+        raise RetryTask("No new dispatch actuals data")
 
     if (dispatch_actuals and dispatch_actuals.inserted_records) or (dispatch_gen and dispatch_gen.inserted_records):
         total_records = dispatch_actuals.inserted_records if dispatch_actuals and dispatch_actuals.inserted_records else 0
@@ -112,4 +113,4 @@ def nem_per_day_check() -> ControllerReturn:
             last_modified=None,
         )
 
-    raise NemPipelineNoNewData("No new dispatch actuals data")
+    raise RetryTask("No new dispatch actuals data")

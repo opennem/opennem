@@ -13,6 +13,7 @@ import contextlib
 import logging
 from datetime import datetime, timedelta
 
+from opennem import settings
 from opennem.api.export.controllers import (
     NoResults,
     demand_network_region_daily,
@@ -52,7 +53,6 @@ from opennem.schema.network import (
     NetworkSchema,
     NetworkWEM,
 )
-from opennem.settings import settings
 from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem
 from opennem.utils.version import get_version
 

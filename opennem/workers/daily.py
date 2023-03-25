@@ -6,6 +6,7 @@ Runs daily export task JSONs for OpenNEM website
 import logging
 from datetime import datetime, timedelta
 
+from opennem import settings
 from opennem.aggregates.facility_daily import run_aggregate_facility_daily_all, run_aggregates_facility_year
 from opennem.aggregates.network_demand import run_aggregates_demand_network
 from opennem.aggregates.network_flows import (
@@ -20,7 +21,6 @@ from opennem.core.profiler import profile_task
 from opennem.db.tasks import refresh_material_views
 from opennem.exporter.historic import export_historic_intervals
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkOpenNEMRooftopBackfill, NetworkWEM
-from opennem.settings import settings
 from opennem.utils.dates import get_today_nem
 from opennem.workers.energy import run_energy_calc
 from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network

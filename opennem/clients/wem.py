@@ -19,9 +19,9 @@ from typing import Any
 import requests
 from pydantic import ValidationError, validator
 
+from opennem import settings
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkWEM
-from opennem.settings import settings
 from opennem.utils.dates import get_date_component, parse_date
 from opennem.utils.random_agent import get_random_agent
 

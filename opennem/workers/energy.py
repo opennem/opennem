@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from itertools import groupby
 from textwrap import dedent
 
+from opennem import settings
 from opennem.api.stats.controllers import get_scada_range
 from opennem.api.time import human_to_interval, human_to_period
 from opennem.controllers.output.schema import ExportDatetimeRange, OpennemExportSeries
@@ -15,7 +16,6 @@ from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_rec
 from opennem.db.models.opennem import FacilityScada
 from opennem.queries.utils import duid_to_case
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.settings import settings
 from opennem.utils.dates import DATE_CURRENT_YEAR, get_last_complete_day_for_network
 from opennem.utils.interval import get_human_interval
 from opennem.workers.facility_data_ranges import get_facility_seen_range

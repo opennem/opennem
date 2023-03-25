@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.requests import Request
 
+from opennem import settings
 from opennem.api.admin.router import router as admin_router
 from opennem.api.auth.router import router as auth_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
@@ -33,7 +34,6 @@ from opennem.db.models.opennem import FuelTech, Network, NetworkRegion
 from opennem.schema.opennem import FueltechSchema, OpennemErrorSchema
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
-from opennem.settings import settings
 from opennem.utils.version import get_version
 
 logger = logging.getLogger(__name__)

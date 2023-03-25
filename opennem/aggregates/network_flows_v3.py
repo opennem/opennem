@@ -14,7 +14,7 @@ import pandas as pd
 # from opennem.db.models.opennem import AggregateNetworkFlows
 # from opennem.queries.flows import get_interconnector_intervals_query
 # from opennem.schema.network import NetworkNEM, NetworkSchema
-# from opennem.settings import settings
+# from opennem import settings
 
 # from datetime import datetime, timedelta
 

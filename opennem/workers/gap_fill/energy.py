@@ -7,11 +7,11 @@ from textwrap import dedent
 
 from datetime_truncate import truncate as date_trunc
 
+from opennem import settings
 from opennem.core.networks import network_from_network_code
 from opennem.db import get_database_engine
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.settings import settings
 from opennem.utils.dates import get_last_complete_day_for_network, get_today_nem
 from opennem.utils.timezone import is_aware
 from opennem.workers.energy import run_energy_calc

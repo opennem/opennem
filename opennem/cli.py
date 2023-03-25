@@ -8,6 +8,7 @@ import logging
 
 import click
 
+from opennem import settings
 from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_all_monthly, export_energy, export_power
 from opennem.core.crawlers.cli import cmd_crawl_cli
@@ -23,7 +24,6 @@ from opennem.importer.db import init as db_init
 from opennem.importer.mms import mms_export
 from opennem.importer.opennem import opennem_import
 from opennem.parsers.aemo.cli import cmd_data_cli
-from opennem.settings import settings
 from opennem.workers.daily import all_runner, daily_runner
 from opennem.workers.energy import run_energy_update_archive, run_energy_update_days
 
