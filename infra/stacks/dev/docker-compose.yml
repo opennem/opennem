@@ -87,9 +87,9 @@ services:
     image: ghcr.io/opennem/opennem/opennem:$VERSION
     command:
       [
-        "wait-for",
-        "opennem06:15432",
-        "--",
+        # "wait-for",
+        # "opennem06:15432",
+        # "--",
         "hypercorn",
         "opennem.api.app:app",
         "--bind",
@@ -120,9 +120,9 @@ services:
     restart: unless-stopped
     command:
       [
-        "wait-for",
-        "opennem06:15432",
-        "--",
+        # "wait-for",
+        # "opennem06:15432",
+        # "--",
         "huey_consumer",
         "-w4",
         "-f",
