@@ -50,7 +50,7 @@ requirements:
 release-pre: format requirements
 
 pyclean:
-	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
+	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete -o -type d -name .mypy_cache -delete
 
 cleandist:
 	rm -rf build
