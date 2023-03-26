@@ -71,7 +71,7 @@ httpx = {extras = ["brotli"], version = "^0.23.3"}
 psycopg2-binary = "^2.9.5"
 
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
 isort = "^5.8.0"
 pylint = "^2.8.2"
@@ -101,18 +101,16 @@ pyupgrade = "^3.1.0"
 flake8 = "^6.0.0"
 pycodestyle = "^2.10.0"
 freezegun = "^1.2.2"
+pyright = "^1.1.299"
+bumpver = "^2022.1120"
+ruff = "^0.0.256"
+uvicorn = "^0.21.0"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
 
 [tool.poetry.extras]
 postgres = ["psycopg2"]
-
-[tool.poetry.group.dev.dependencies]
-pyright = "^1.1.299"
-bumpver = "^2022.1120"
-ruff = "^0.0.256"
-uvicorn = "^0.21.0"
 
 [tool.ruff]
 target-version = "py311"
