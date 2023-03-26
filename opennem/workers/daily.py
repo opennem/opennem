@@ -21,7 +21,7 @@ from opennem.core.profiler import profile_task
 from opennem.db.tasks import refresh_material_views
 from opennem.exporter.historic import export_historic_intervals
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkOpenNEMRooftopBackfill, NetworkWEM
-from opennem.utils.dates import get_today_nem
+from opennem.utils.dates import get_last_completed_interval_for_network
 from opennem.workers.energy import run_energy_calc
 from opennem.workers.gap_fill.energy import run_energy_gapfill_for_network
 
@@ -31,19 +31,23 @@ logger = logging.getLogger("opennem.worker.daily")
 @profile_task(send_slack=False)
 def energy_runner(days: int = 1) -> None:
     """Energy Runner"""
-    dmax = get_today_nem()
-    dmin = (dmax - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
 
-    for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
+    for network in [NetworkNEM]:
+        dmax = get_last_completed_interval_for_network(network=network)
+        dmin = dmax.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        if days > 1:
+            dmin -= timedelta(days=days)
+
         run_energy_calc(dmin, dmax, network=network)
 
 
 def energy_runner_hours(hours: int = 1) -> None:
     """Energy Runner"""
-    dmax = get_today_nem().replace(minute=0, second=0, microsecond=0)
-    dmin = dmax - timedelta(hours=hours)
 
-    for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
+    for network in [NetworkNEM]:
+        dmax = get_last_completed_interval_for_network(network=network)
+        dmin = dmax - timedelta(hours=hours)
         run_energy_calc(dmin, dmax, network=network)
 
 
