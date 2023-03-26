@@ -1,6 +1,6 @@
 from zoneinfo import ZoneInfo
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -44,7 +44,7 @@ def station(
     response_model_exclude={"observations"},
 )
 def station_record(
-    station_code: str = Query(..., description="Station code"),
+    station_code: str,
     session: Session = Depends(get_database_session),
 ) -> WeatherStation:
     """
@@ -66,13 +66,13 @@ def station_record(
     response_model_exclude_unset=True,
 )
 def station_observations_api(
-    station_code: str = Query(None, description="Station code"),
-    interval_human: str = Query("15m", description="Interval"),
-    period_human: str = Query("7d", description="Period"),
+    station_code: str,
+    interval_human: str = "15m",
+    period_human: str = "7d",
     station_codes: list[str] = [],
-    timezone: str = None,
-    offset: str = None,
-    year: int = None,
+    timezone: str | None = None,
+    offset: str | None = None,
+    year: int | None = None,
     engine=Depends(get_database_engine),
 ) -> OpennemDataSet:
     units = get_unit("temperature")
@@ -117,7 +117,6 @@ def station_observations_api(
         stats=stats,
         units=units,
         interval=interval,
-        period=period,
         code="bom",
         group_field="temperature",
     )

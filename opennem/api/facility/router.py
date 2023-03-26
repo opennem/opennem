@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -32,7 +32,7 @@ def facilities(
     response_model=FacilityRecord,
 )
 def facility(
-    facility_code: str = Query(str, description="Facility code"),
+    facility_code: str,
     session: Session = Depends(get_database_session),
 ) -> FacilityRecord:
     facility = session.query(Facility).filter_by(code=facility_code).one_or_none()
@@ -46,9 +46,11 @@ def facility(
 @router.put("/{facility_id}", name="Facility update")
 def facility_update(
     facility_id: int,
-    data: FacilityModification = {},
+    data: FacilityModification,
     session: Session = Depends(get_database_session),
 ) -> dict:
+    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Not implemented")
+
     facility = session.query(Facility).get(facility_id)
 
     if not facility:

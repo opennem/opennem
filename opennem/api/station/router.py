@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import Response
@@ -39,8 +39,8 @@ class StationNoFacilities(OpennemBaseHttpException):
 def stations(
     response: Response,
     session: Session = Depends(get_database_session),
-    facilities_include: bool | None = Query(True, description="Include facilities in records"),
-    only_approved: bool | None = Query(False, description="Only show approved stations not those pending"),
+    facilities_include: bool | None = True,
+    only_approved: bool | None = False,
     name: str | None = None,
     limit: int | None = None,
     page: int = 1,
@@ -111,7 +111,7 @@ def station(
     network_id: str,
     station_code: str,
     session: Session = Depends(get_database_session),
-    only_generators: bool = Query(True, description="Show only generators"),
+    only_generators: bool | None = True,
 ) -> Station:
     station_query = (
         session.query(Station)

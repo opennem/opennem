@@ -1,7 +1,7 @@
 import logging
 from datetime import date, datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import Session
 from starlette import status
@@ -23,7 +23,7 @@ from opennem.schema.network import (
     NetworkNetworkRegion,
     NetworkWEM,
 )
-from opennem.utils.dates import get_last_completed_interval_for_network, is_aware
+from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem, is_aware
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_balancing_range, get_scada_range, stats_factory
@@ -49,16 +49,19 @@ router = APIRouter()
     description="Get the power outputs for a station",
 )
 def power_station(
-    station_code: str = Query(..., description="Station code"),
-    network_code: str = Query(..., description="Network code"),
-    since: datetime = Query(None, description="Since time"),
-    date_min: datetime = Query(None, description="From datetime"),
-    date_max: datetime = Query(None, description="To datetime"),
-    interval_human: str = Query(None, description="Interval"),
-    period_human: str = Query("7d", description="Period"),
+    station_code: str | None = None,
+    network_code: str | None = None,
+    since: datetime | None = None,
+    date_min: datetime | None = None,
+    date_max: datetime | None = None,
+    interval_human: str | None = None,
+    period_human: str | None = None,
     session: Session = Depends(get_database_session),
     engine=Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet:
+    if not network_code:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No network code")
+
     network = network_from_network_code(network_code)
 
     if not network:
@@ -169,17 +172,19 @@ def power_station(
 def energy_station(
     engine=Depends(get_database_engine),  # type: ignore
     session: Session = Depends(get_database_session),
-    date_min: datetime = Query(None, description="From datetime"),
-    date_max: datetime = Query(None, description="To datetime"),
-    network_code: str = Query(..., description="Network code"),
-    station_code: str = Query(..., description="Station Code"),
-    interval: str = Query(None, description="Interval"),
-    period: str = Query("7d", description="Period"),
+    date_min: datetime | None = None,
+    date_max: datetime | None = None,
+    network_code: str | None = None,
+    station_code: str | None = None,
+    interval: str | None = None,
+    period: str | None = None,
 ) -> OpennemDataSet:
     """
     Get energy output for a station (list of facilities)
     over a period
     """
+    if not network_code:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No network code")
 
     network = network_from_network_code(network_code)
 
@@ -329,13 +334,17 @@ Flows endpoints
     response_model_exclude_unset=True,
 )
 def power_flows_network_week(
+    network_code: str,
+    month: date | None = None,
     engine=Depends(get_database_engine),  # type: ignore
-    network_code: str = Query(..., description="Network code"),
-    month: date = Query(datetime.now().date(), description="Month to query"),
 ) -> OpennemDataSet | None:
     engine = get_database_engine()
 
     network = network_from_network_code(network_code)
+
+    if not network:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
+
     interval_obj = network.get_interval()
     period_obj = human_to_period("1M")
 
@@ -407,11 +416,12 @@ def power_flows_network_week(
     response_model_exclude_unset=True,
 )
 def power_network_region_fueltech(
-    network_code: str = Query(..., description="Network code"),
-    network_region_code: str = Query(..., description="Network region code"),
-    month: date = Query(datetime.now().date(), description="Month to query"),
+    network_code: str, network_region_code: str | None = None, month: date | None = None
 ) -> OpennemDataSet:
     network = None
+
+    if not month:
+        month = get_today_nem().date()
 
     try:
         network = network_from_network_code(network_code)
@@ -464,9 +474,9 @@ def power_network_region_fueltech(
     response_model_exclude_unset=True,
 )
 def emission_factor_per_network(  # type: ignore
+    network_code: str,
+    interval: str = "5m",
     engine=Depends(get_database_engine),  # type: ignore
-    network_code: str = Query(..., description="Network code"),
-    interval: str = Query("5m", description="Interval size"),
 ) -> OpennemDataSet | None:
     engine = get_database_engine()
 
@@ -554,8 +564,8 @@ def emission_factor_per_network(  # type: ignore
 #     response_model_exclude_unset=True,
 # )
 def fueltech_demand_mix(
+    network_code: str,
     engine: Engine = Depends(get_database_engine),  # type: ignore
-    network_code: str = Query(..., description="Network code"),
 ) -> OpennemDataSet:
     """Return fueltech proportion of demand for a network
 
@@ -652,10 +662,10 @@ def fueltech_demand_mix(
     response_model_exclude_unset=True,
 )
 def price_network_endpoint(
+    network_code: str,
+    network_region: str | None = None,
+    forecasts: bool = False,
     engine: Engine = Depends(get_database_engine),
-    network_code: str = Path(..., description="Network code"),
-    network_region: str | None = Query(None, description="Network region code"),
-    forecasts: bool = Query(False, description="Include price forecasts"),
 ) -> OpennemDataSet:
     """Returns network and network region price info for interval which defaults to network
     interval size
