@@ -103,7 +103,7 @@ pycodestyle = "^2.10.0"
 freezegun = "^1.2.2"
 pyright = "^1.1.299"
 bumpver = "^2022.1120"
-ruff = "^0.0.256"
+ruff = "^0.0.259"
 uvicorn = "^0.21.0"
 
 [tool.poetry.scripts]
