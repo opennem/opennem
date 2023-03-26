@@ -10,7 +10,7 @@ from pathlib import Path
 
 import uvicorn
 
-from opennem.settings import settings
+from opennem import settings
 
 # from uvicorn import Config as UvicornConfig
 
@@ -50,7 +50,7 @@ def run_server() -> None:
         **ssl_options,
     )
 
-    logger.info("Running server on {} {}".format(settings.server_host, settings.server_port))
+    logger.info(f"Running server on {settings.server_host} {settings.server_port}")
 
 
 if __name__ == "__main__":
