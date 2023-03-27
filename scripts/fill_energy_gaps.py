@@ -61,8 +61,8 @@ def run_fill_days(date_start: datetime, date_end: datetime) -> None:
 
 if __name__ == "__main__":
     run_fill_days(
-        date_start=datetime.fromisoformat("2014-01-01T00:00:00+10:00"),
-        date_end=datetime.fromisoformat("2015-01-01T00:00:00+10:00"),
+        date_start=datetime.fromisoformat("2013-06-01T00:00:00+10:00"),
+        date_end=datetime.fromisoformat("2018-01-01T00:00:00+10:00"),
         # date_end=datetime.fromisoformat("2017-07-31T00:00:00+10:00"),
     )
     # run_fill_days(
