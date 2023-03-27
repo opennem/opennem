@@ -36,3 +36,4 @@ TODO.md
 __pycache__
 build-scrapyd.sh
 facility_map.qgz
+data/
