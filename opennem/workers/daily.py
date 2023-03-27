@@ -7,7 +7,7 @@ import logging
 from datetime import datetime, timedelta
 
 from opennem import settings
-from opennem.aggregates.facility_daily import run_aggregate_facility_daily_all, run_aggregates_facility_year
+from opennem.aggregates.facility_daily import run_aggregate_facility_all_by_year, run_aggregates_facility_year
 from opennem.aggregates.network_demand import run_aggregates_demand_network
 from opennem.aggregates.network_flows import (
     run_emission_update_day,
@@ -123,9 +123,8 @@ def all_runner() -> None:
     # populates the aggregate tables
     run_flow_updates_all_for_network(network=NetworkNEM)
 
-    run_aggregate_facility_daily_all(
-        networks=[NetworkNEM, NetworkAEMORooftop, NetworkAPVI, NetworkWEM, NetworkOpenNEMRooftopBackfill]
-    )
+    for network in [NetworkNEM, NetworkAEMORooftop, NetworkAPVI, NetworkWEM, NetworkOpenNEMRooftopBackfill]:
+        run_aggregate_facility_all_by_year(network=network)
 
     # run the exports for all
     export_power(latest=False)
