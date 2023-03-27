@@ -843,6 +843,8 @@ class AggregateFacilityDaily(Base):
     )
     network = relationship("Network")
 
+    network_region = Column(Text, primary_key=True, nullable=False, index=True)
+
     facility_code = Column(
         Text,
         ForeignKey("facility.code", name="fk_at_facility_daily_facility_code"),
