@@ -32,7 +32,6 @@ fastapi-cache2[redis]==0.1.9 ; python_version >= "3.10" and python_version < "4.
 fastapi==0.95.0 ; python_version >= "3.10" and python_version < "4.0"
 fonttools==4.39.2 ; python_version >= "3.10" and python_version < "4.0"
 geoalchemy2==0.13.1 ; python_version >= "3.10" and python_version < "4.0"
-geoalchemy==0.7.2 ; python_version >= "3.10" and python_version < "4.0"
 geojson-pydantic==0.4.3 ; python_version >= "3.10" and python_version < "4.0"
 geojson==2.5.0 ; python_version >= "3.10" and python_version < "4.0"
 gitignore-parser==0.0.8 ; python_version >= "3.10" and python_version < "4.0"
