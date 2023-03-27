@@ -32,9 +32,11 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
 
     __query = """
     insert into at_facility_daily
+        (trading_day, network_id, network_region, facility_code, fueltech_id, energy, market_value, emissions)
         select
             date_trunc('day', fs.trading_interval at time zone n.timezone_database) as trading_day,
             f.network_id,
+            f.network_region,
             f.code as facility_code,
             f.fueltech_id,
             sum(fs.energy) as energy,
@@ -44,6 +46,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
             select
                 time_bucket_gapfill('{network_interval_size} minutes', fs.trading_interval) as trading_interval,
                 fs.facility_code as code,
+                f.network_region,
                 case
                     when sum(fs.eoi_quantity) > 0 then
                         coalesce(sum(fs.eoi_quantity), 0)
@@ -77,7 +80,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
                 and fs.trading_interval >= '{date_min}'
                 and fs.trading_interval < '{date_max}'
             group by
-                1, 2
+                1, 2, 3
         ) as fs
         left join facility f on fs.code = f.code
         left join network n on f.network_id = n.code
@@ -87,7 +90,8 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
             1,
             f.network_id,
             f.code,
-            f.fueltech_id
+            f.fueltech_id,
+            f.network_region
     on conflict (trading_day, network_id, facility_code) DO UPDATE set
         energy = EXCLUDED.energy,
         market_value = EXCLUDED.market_value,
