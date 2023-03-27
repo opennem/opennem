@@ -18,6 +18,8 @@ depends_on = None
 
 
 def upgrade() -> None:
+    # clear the old aggregate
+    op.execute("delete from at_facility_daily")
     op.add_column(
         "at_facility_daily",
         sa.Column("network_region", sa.Text(), nullable=False),
@@ -28,6 +30,7 @@ def upgrade() -> None:
         ["network_region"],
         unique=False,
     )
+    print("Run aggregate again!")
 
 
 def downgrade() -> None:
