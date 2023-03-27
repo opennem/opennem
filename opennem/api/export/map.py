@@ -17,7 +17,7 @@ from opennem.core.network_region_bom_station_map import get_network_region_weath
 from opennem.core.networks import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM, network_from_network_code
 from opennem.db import get_scoped_session
 from opennem.db.models.opennem import Network
-from opennem.schema.network import NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill
+from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkOpenNEMRooftopBackfill
 from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.utils.dates import week_series
 from opennem.utils.version import get_version
@@ -495,7 +495,7 @@ def generate_export_map() -> StatMetadata:
                 country=network.country,
                 date_range=scada_range,
                 network=network_schema,
-                networks=[NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill],
+                networks=[NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill],
                 network_region=region.code,
                 bom_station=bom_station,
                 period=human_to_period("all"),
