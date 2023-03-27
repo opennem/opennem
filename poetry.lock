@@ -1196,20 +1196,6 @@ files = [
 python-dateutil = ">=2.7"
 
 [[package]]
-name = "geoalchemy"
-version = "0.7.2"
-description = "Using SQLAlchemy with Spatial Databases"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "GeoAlchemy-0.7.2.tar.gz", hash = "sha256:78ce2f57a7982051030ccc9a59eb589bf6e0b3fad93875add4c1f7ef65f91863"},
-]
-
-[package.dependencies]
-SQLAlchemy = ">=0.6.1"
-
-[[package]]
 name = "geoalchemy2"
 version = "0.13.1"
 description = "Using SQLAlchemy with Spatial Databases"
@@ -4121,4 +4107,4 @@ postgres = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "c87c6f001d8cb42553695380366eb0621daa2f8267cfe20750001cf6b135cdb1"
+content-hash = "7ad56027745e03b191a985ae16e6c883c046c19a3df090e9be82a181208f9f1d"
