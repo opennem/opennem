@@ -76,16 +76,16 @@ class StatExport(BaseModel):
     priority: PriorityType = PriorityType.live
     country: str
     network: NetworkSchema
-    networks: list[NetworkSchema] | None
-    network_region: str | None
-    network_region_query: str | None
-    date_range: ScadaDateRange | None
-    bom_station: str | None
-    year: int | None
-    week: int | None
-    period: TimePeriod | None
+    networks: list[NetworkSchema] | None = None
+    network_region: str | None = None
+    network_region_query: str | None = None
+    date_range: ScadaDateRange | None = None
+    bom_station: str | None = None
+    year: int | None = None
+    week: int | None = None
+    period: TimePeriod | None = None
     interval: TimeInterval
-    file_path: str | None
+    file_path: str | None = None
 
     @property
     def path(self) -> str:
@@ -354,7 +354,7 @@ def generate_export_map() -> StatMetadata:
                 NetworkNEM,
                 NetworkWEM,
                 NetworkAEMORooftop,
-                NetworkOpenNEMRooftopBackfill,
+                NetworkAEMORooftopBackfill,
                 NetworkAPVI,
             ],
             interval=human_to_interval("1M"),
