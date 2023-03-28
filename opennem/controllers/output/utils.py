@@ -8,7 +8,7 @@ VERSION_MAJOR = get_version_components().major
 STATS_FOLDER = "stats"
 
 
-def get_export_path(
+def get_export_output_path(
     network: NetworkSchema,
     stat_type: StatType,
     network_region: str | None = None,

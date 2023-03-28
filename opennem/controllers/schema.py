@@ -1,6 +1,13 @@
 from datetime import datetime
+from decimal import Decimal
 
 from opennem.schema.core import BaseConfig
+
+
+class ExportResultRow(BaseConfig):
+    interval: datetime
+    result: float | int | None | Decimal = None
+    group_by: str | None = None
 
 
 class ControllerReturn(BaseConfig):

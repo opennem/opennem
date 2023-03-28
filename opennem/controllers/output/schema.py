@@ -14,6 +14,7 @@ End is the most recent time chronoligally ordered:
 
 from __future__ import annotations
 
+import enum
 from datetime import date, datetime, timedelta
 
 from datetime_truncate import truncate as date_trunc
@@ -30,6 +31,15 @@ from opennem.utils.timezone import is_aware
 def valid_trunc(trunc: str) -> str:
     get_human_interval(trunc)
     return trunc
+
+
+class StatType(enum.Enum):
+    power = "power"
+    energy = "energy"
+    interchange = "interchange"
+    marketvalue = "market_value"
+    emissions = "emissions"
+    gov = "gov"
 
 
 class ExportDatetimeRange(BaseConfig):
