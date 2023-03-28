@@ -68,6 +68,7 @@ fastapi-cache2 = {extras = ["redis"], version = "^0.1.9"}
 PyGithub = "^1.57"
 httpx = {extras = ["brotli"], version = "^0.23.3"}
 psycopg2-binary = "^2.9.5"
+semantic-version = "^2.10.0"
 
 
 [tool.poetry.group.dev.dependencies]
