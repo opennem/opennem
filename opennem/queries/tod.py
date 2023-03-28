@@ -9,7 +9,7 @@ from textwrap import dedent
 from datetime_truncate import truncate as date_trunc
 
 from opennem import settings  # noqa: F401
-from opennem.queries.utils import duid_to_case, list_to_case_statement
+from opennem.queries.utils import duid_to_case, list_to_sql_in_condition
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import DATE_YESTERDAY
 
@@ -84,7 +84,7 @@ def get_time_of_day_query(day: datetime = DATE_YESTERDAY, network: NetworkSchema
         date_min=date_min,
         date_max=date_max,
         tz=network.timezone_database,
-        networks=list_to_case_statement([i.code for i in network.get_networks_query()]),
+        networks=list_to_sql_in_condition([i.code for i in network.get_networks_query()]),
         fueltechs_excluded=duid_to_case(EXCLUDE_FUELTECHS),
     )
 

@@ -12,6 +12,6 @@ def list_to_case(list_: list[str]) -> str:
     return ",".join([f"'{i}'" for i in list_])
 
 
-def list_to_case_statement(codes: list[str]) -> str:
+def list_to_sql_in_condition(codes: list[str]) -> str:
     """Convert a list of strings to a case statement"""
     return ",".join([f"'{i}'" for i in codes])
