@@ -792,7 +792,6 @@ def energy_network_fueltech_query(
             coalesce(sum(t.market_value), {coalesce_with}) as fueltech_market_value,
             coalesce(sum(t.emissions), {coalesce_with}) as fueltech_emissions
         from at_facility_daily t
-        left join facility f on t.facility_code = f.code
         where
             t.trading_day <= '{date_max}'::date and
             t.trading_day >= '{date_min}'::date and
@@ -816,7 +815,7 @@ def energy_network_fueltech_query(
     trunc = time_series_range.interval.trunc
 
     if network_region:
-        network_region_query = f"f.network_region='{network_region}' and"
+        network_region_query = f"t.network_region='{network_region}' and"
 
     # @NOTE special case for WEM to only include APVI data for that network/region
     # and not double-count all of AU
