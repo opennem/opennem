@@ -108,12 +108,12 @@ def daily_runner(days: int = 2) -> None:
     energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
     export_energy(energy_exports.resources)
 
+    export_all_daily()
+    export_all_monthly()
+
     # export historic intervals
     for network in [NetworkNEM, NetworkWEM]:
         export_historic_intervals(limit=2, networks=[network])
-
-    export_all_daily()
-    export_all_monthly()
 
 
 def all_runner() -> None:
@@ -139,4 +139,4 @@ def all_runner() -> None:
 
 if __name__ == "__main__":
     # daily_runner(days=2)
-    energy_runner()
+    daily_runner()
