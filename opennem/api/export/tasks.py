@@ -384,7 +384,7 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
         #     networks += network.subnetworks
 
         # # @TODO replace this with NetworkSchema->subnetworks
-        networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
+        networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
 
         if network.code == "WEM":
             networks = [NetworkWEM, NetworkAPVI]
