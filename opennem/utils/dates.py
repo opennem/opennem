@@ -133,8 +133,8 @@ def parse_date(
 
 
 def date_series(
-    start: datetime | date = None,
-    end: datetime | date = None,
+    start: datetime | date | None = None,
+    end: datetime | date | None = None,
     length: int = 30,
     interval: timedelta | relativedelta = timedelta(days=1),
     reverse: bool = False,
