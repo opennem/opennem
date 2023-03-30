@@ -461,12 +461,15 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
-def export_all_daily(networks: list[NetworkSchema] = [], network_region_code: str | None = None) -> None:
+def export_all_daily(networks: list[NetworkSchema] = None, network_region_code: str | None = None) -> None:
     """Export dailies for all networks and regions"""
 
     # default list of networks
     if networks is None:
         networks = [NetworkNEM, NetworkWEM]
+
+    if not networks:
+        raise Exception("No networks to export for export all daily")
 
     session = get_scoped_session()
 
