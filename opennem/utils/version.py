@@ -4,7 +4,7 @@
 """
 import semantic_version
 
-version = "3.13.2-alpha.11"
+version = "3.13.2-alpha.12"
 
 
 def get_version() -> str:
