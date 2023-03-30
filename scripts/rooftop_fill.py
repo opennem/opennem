@@ -14,11 +14,12 @@ from pathlib import Path
 
 from pydantic import validator
 
+from opennem import settings  # noqa: F401
 from opennem.core.normalizers import clean_float
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import AggregateFacilityDaily
 from opennem.schema.core import BaseConfig
-from opennem.settings import settings  # noqa: F401
+from opennem.utils.dates import parse_date
 
 logger = logging.getLogger("opennem.scripts.rooftop_fill")
 
@@ -27,6 +28,15 @@ NEM_MIN_ROOFTOP_DATE = datetime.fromisoformat("2018-03-01T00:00:00+00")
 
 def _get_aemo_backfill_facility_id(network_region: str) -> str:
     return f"ROOFTOP_AEMO_ROOFTOP_BACKFILL_{network_region[:-1]}".upper()
+
+
+def _parse_import_trading_day(trading_day: str) -> date:
+    parsed_dt = parse_date(trading_day)
+
+    if parsed_dt:
+        return parsed_dt.date()
+
+    raise Exception(f"Could not parse trading day: {trading_day}")
 
 
 class BackfillRecord(BaseConfig):
@@ -39,6 +49,7 @@ class BackfillRecord(BaseConfig):
     energy_v3: float | None = None
 
     _validate_energyv3 = validator("energy_v3", pre=True)(clean_float)
+    _validate_trading_day = validator("trading_day", pre=True)(_parse_import_trading_day)
 
     @property
     def energy(self) -> float:
@@ -61,7 +72,7 @@ class BackfillRecord(BaseConfig):
 
 def import_rooftop_aemo_backfills() -> None:
     csvrecords = []
-    backfill_file = Path(__file__).parent / "notebooks" / "aemo_rooftop_backfill.csv"
+    backfill_file = Path(__file__).parent.parent / "notebooks" / "aemo_rooftop_backfill.csv"
 
     with backfill_file.open() as fh:
         fieldnames = fh.readline().strip().split(",")
@@ -70,7 +81,7 @@ def import_rooftop_aemo_backfills() -> None:
 
     logger.debug(f"Loaded {len(csvrecords)} records")
 
-    export_records = [i.dict(exclude={"energy_v2", "energy_v3", "network_region"}) for i in csvrecords]
+    export_records = [i.dict(exclude={"energy_v2", "energy_v3"}) for i in csvrecords]
 
     session = SessionLocal()
 
