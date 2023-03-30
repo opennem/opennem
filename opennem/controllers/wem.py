@@ -10,7 +10,9 @@ from sqlalchemy.dialects.postgresql import insert
 from opennem.clients.wem import WEMBalancingSummarySet, WEMFacilityIntervalSet
 from opennem.controllers.schema import ControllerReturn
 from opennem.db import get_database_engine, get_scoped_session
+from opennem.db.bulk_insert_csv import bulkinsert_mms_items
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
+from opennem.utils.dates import get_today_nem
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +91,54 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
     return cr
 
 
+def store_wem_balancingsummary_set_bulk(balancing_set: WEMBalancingSummarySet) -> ControllerReturn:
+    """Takes a lits of records and persists them to the database"""
+    primary_keys = []
+    records_to_store = []
+
+    created_at = get_today_nem()
+
+    for record in balancing_set.intervals:
+        if not isinstance(record, dict):
+            continue
+
+        primary_key = {record.trading_day_interval}
+
+        if primary_key in primary_keys:
+            continue
+
+        primary_keys.append(primary_key)
+
+        if "DEMAND_AND_NONSCHEDGEN" not in record:
+            raise Exception("bad value in dispatch_regionsum")
+
+        records_to_store.append(
+            {
+                "created_by": "opennem.loader.dispatch_regionsum",
+                "created_at": created_at,
+                "updated_at": None,
+                "network_id": "NEM",
+                "trading_interval": record["TRADING_INTERVAL"],
+                "forecast_load": None,
+                "generation_scheduled": None,
+                "generation_non_scheduled": None,
+                "generation_total": None,
+                "price": None,
+                "network_region": record["REGIONID"],
+                "is_forecast": False,
+                "net_interchange": record["NETINTERCHANGE"],
+                "demand_total": record["DEMAND_AND_NONSCHEDGEN"],
+                "price_dispatch": None,
+                "net_interchange_trading": None,
+                "demand": record["TOTALDEMAND"],
+            }
+        )
+
+    bulkinsert_mms_items(BalancingSummary, records_to_store, ["net_interchange", "demand", "demand_total"])  # type: ignore
+
+    return None
+
+
 def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> ControllerReturn:
     """Persist WEM facility intervals"""
     engine = get_database_engine()
@@ -112,6 +162,69 @@ def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> Contr
         records_to_store.append(
             {
                 "created_by": "wem.controller",
+                "network_id": "WEM",
+                "trading_interval": _rec.trading_interval,
+                "facility_code": _rec.facility_code,
+                "generated": _rec.generated,
+                "eoi_quantity": _rec.eoi_quantity,
+            }
+        )
+        cr.processed_records += 1
+
+    if len(records_to_store) < 1:
+        return cr
+
+    stmt = insert(FacilityScada).values(records_to_store)
+    stmt.bind = engine
+    stmt = stmt.on_conflict_do_update(
+        index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
+        set_={
+            "generated": stmt.excluded.generated,
+            "eoi_quantity": stmt.excluded.eoi_quantity,
+        },
+    )
+
+    try:
+        session.execute(stmt)
+        session.commit()
+        cr.inserted_records = len(records_to_store)
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        cr.errors = len(records_to_store)
+        cr.error_detail.append(str(e))
+    finally:
+        session.close()
+        engine.dispose()
+
+    return cr
+
+
+def store_wem_facility_intervals_bulk(balancing_set: WEMFacilityIntervalSet) -> ControllerReturn:
+    """Persist WEM facility intervals
+
+    Optimized bulk insert version
+    """
+    engine = get_database_engine()
+    session = get_scoped_session()
+    cr = ControllerReturn()
+
+    records_to_store = []
+
+    if not balancing_set.intervals:
+        return cr
+
+    cr.total_records = len(balancing_set.intervals)
+    cr.server_latest = balancing_set.server_latest
+
+    primary_keys: set(datetime, str) = []
+
+    for _rec in balancing_set.intervals:
+        if (_rec.trading_interval, _rec.facility_code) in primary_keys:
+            continue
+
+        records_to_store.append(
+            {
+                "created_by": "wem.controller.bulk",
                 "network_id": "WEM",
                 "trading_interval": _rec.trading_interval,
                 "facility_code": _rec.facility_code,
