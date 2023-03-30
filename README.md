@@ -30,3 +30,14 @@ Currently supports:
  - File [an issue](https://github.com/opennem/opennem/issues)
  - Start [a discussion](https://github.com/opennem/opennem/discussions)
  - Contact us on Twitter at [@opennem](https://twitter.com/opennem)
+
+## API Access
+
+**IMPORTANT** Starting in April and with our next release the OpenNEM API will be placed behind authorization and will require
+an API key to access. We will be providing a free level of access for researchers.
+
+We plan on gradually and completely deprecating the current API that is open to all.
+
+If you are a current API user, or a potential API user, [please fill in this form](https://docs.google.com/forms/d/e/1FAIpQLSf3yOzyrmYJJLN6NYlc15Kt3IPCNQiF-Gv5e9PwvAyg5tRsAQ/viewform?usp=sf_link) to register for acccess to the API. We will be in touch with you with an email with the various setup steps and access details.
+
+ -
