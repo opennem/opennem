@@ -87,7 +87,7 @@ def power_station(
 
     if not interval_human:
         # @NOTE rooftop data is 15m
-        if station_code.startswith("ROOFTOP"):
+        if station_code and station_code.startswith("ROOFTOP"):
             interval_human = "15m"
         else:
             interval_human = f"{network.interval_size}m"
@@ -199,7 +199,7 @@ def energy_station(
 
     if not interval:
         # @NOTE rooftop data is 15m
-        if station_code.startswith("ROOFTOP"):
+        if station_code and station_code.startswith("ROOFTOP"):
             interval = "15m"
         else:
             interval = f"{network.interval_size}m"
@@ -357,6 +357,9 @@ def power_flows_network_week(
     if not network:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
 
+    if not interval_obj:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Interval not found")
+
     scada_range = get_scada_range(network=network)
 
     if not scada_range:
@@ -447,6 +450,9 @@ def power_network_region_fueltech(
 
     if not network:
         raise Exception("Network not found")
+
+    if not interval_obj:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Interval not found")
 
     networks = [network]
 
