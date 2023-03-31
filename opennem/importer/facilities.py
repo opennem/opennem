@@ -288,6 +288,8 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
 
             if fac.emissions_factor_co2:
                 facility_model.emissions_factor_co2 = fac.emissions_factor_co2
+            else:
+                facility_model.emissions_factor_co2 = 0.0  # type: ignore
 
             if fac.emission_factor_source:
                 facility_model.emission_factor_source = fac.emission_factor_source
@@ -296,9 +298,9 @@ def import_station_set(stations: StationSet, only_insert_facilities: bool = Fals
                 facility_model.approved = fac.approved
 
             if fac.approved:
-                facility_model.approved_by = "opennem.importer"
+                facility_model.approved_by = "opennem.importer"  # type: ignore
             else:
-                facility_model.approved_by = None
+                facility_model.approved_by = None  # type: ignore
 
             if not facility_model.created_by:
                 facility_model.created_by = "opennem.init"
