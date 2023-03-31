@@ -92,6 +92,9 @@ def power_station(
         else:
             interval_human = f"{network.interval_size}m"
 
+    if not period_human:
+        period_human = "1d"
+
     interval = human_to_interval(interval_human)
     period = human_to_period(period_human)
     units = get_unit("power")
