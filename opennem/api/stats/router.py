@@ -215,6 +215,9 @@ def energy_station(
             detail="Interval for energy must be 1 hour or greater",
         )
 
+    if not period:
+        period = "7d"
+
     period_obj = human_to_period(period)
     units = get_unit("energy")
 
