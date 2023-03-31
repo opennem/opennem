@@ -98,7 +98,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
         emissions = EXCLUDED.emissions;
     """
 
-    trading_offset = "- INTERVAL '5 minutes'" if network == NetworkNEM else ""
+    trading_offset = "- INTERVAL '5 minutes'" if network in [] else ""
 
     if date_max <= date_min:
         raise AggregateFacilityDailyException(
