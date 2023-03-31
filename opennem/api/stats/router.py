@@ -26,7 +26,7 @@ from opennem.schema.network import (
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem, is_aware
 from opennem.utils.time import human_to_timedelta
 
-from .controllers import get_balancing_range, get_scada_range, stats_factory
+from .controllers import get_balancing_range, get_scada_range, get_scada_range_optimized, stats_factory
 from .queries import (
     emission_factor_region_query,
     energy_facility_query,
@@ -241,7 +241,7 @@ def energy_station(
     # Start date
     date_start = station.scada_range.date_min
     date_end = station.scada_range.date_max
-    network_range = get_scada_range(network=network)
+    network_range = get_scada_range_optimized(network=network)
 
     if not date_start:
         date_start = network_range.start
