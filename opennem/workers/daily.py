@@ -18,7 +18,6 @@ from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.clients.slack import slack_message
 from opennem.core.profiler import profile_task
-from opennem.db.tasks import refresh_material_views
 from opennem.exporter.historic import export_historic_intervals
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkOpenNEMRooftopBackfill, NetworkWEM
 from opennem.utils.dates import get_last_completed_interval_for_network
@@ -88,13 +87,6 @@ def daily_runner(days: int = 2) -> None:
 
     #  flows and flow emissions
     run_emission_update_day(days=days)
-
-    #  feature flag for emissions
-    #  this will only refresh views on the old version of flows and emissions
-    if not settings.flows_and_emissions_v2:
-        for view_name in ["mv_facility_all", "mv_interchange_energy_nem_region", "mv_region_emissions"]:
-            refresh_material_views(view_name=view_name)
-            slack_message(f"refreshed materizlied views on {settings.env}")
 
     # 4. Run Exports
     #  run exports for latest year
