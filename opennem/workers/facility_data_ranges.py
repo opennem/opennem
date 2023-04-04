@@ -47,7 +47,7 @@ def get_update_seen_query(
 
     trading_interval_window = ""
     if not include_first_seen:
-        trading_interval_window = "and fs.trading_interval > now() - interval '{interval_window_days} days'"
+        trading_interval_window = f"and fs.trading_interval > now() - interval '{interval_window_days} days'"
 
     query = __query.format(fs=fs, facility_codes_query=facility_codes_query, trading_interval_window=trading_interval_window)
 
