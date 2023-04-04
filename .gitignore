@@ -124,3 +124,4 @@ scratch/
 scripts/run_export.py
 scheduler_dev.py
 run_test.py
+terraform.tfvars
