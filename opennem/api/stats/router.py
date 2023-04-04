@@ -202,7 +202,7 @@ def energy_station(
         if station_code and station_code.startswith("ROOFTOP"):
             interval = "15m"
         else:
-            interval = f"{network.interval_size}m"
+            interval = "1d"
 
     interval_obj = human_to_interval(interval)
 
