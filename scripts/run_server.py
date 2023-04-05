@@ -4,10 +4,10 @@
     and prod
 
 """
-
 import logging
 from pathlib import Path
 
+import click
 import uvicorn
 
 from opennem import settings
@@ -51,6 +51,15 @@ def run_server() -> None:
     )
 
     logger.info(f"Running server on {settings.server_host} {settings.server_port}")
+
+
+@click.command()
+@click.option("--host", "-h", default="localhost", help="The host to bind to [default: localhost]")
+@click.option("--port", "-p", default=5432, help="The port to bind to [default: 5432]")
+@click.option("--debug/--no-debug", default=False, help="Set flask to debug mode")
+@click.option("--env", "-e", default=".env", help="Environment file to read into settings schema")
+def run(host, port, debug, env, models):
+    app.run(host=host, port=port, debug=debug)
 
 
 if __name__ == "__main__":
