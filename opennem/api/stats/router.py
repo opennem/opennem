@@ -2,10 +2,12 @@ import logging
 from datetime import date, datetime
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import RedirectResponse
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import Session
 from starlette import status
 
+from opennem import settings
 from opennem.api.export.controllers import power_week
 from opennem.api.export.queries import interconnector_flow_network_regions_query
 from opennem.api.time import human_to_interval, human_to_period, valid_database_interval
@@ -432,8 +434,11 @@ def power_flows_network_week(
 )
 def power_network_region_fueltech(
     network_code: str, network_region_code: str | None = None, month: date | None = None
-) -> OpennemDataSet:
+) -> OpennemDataSet | RedirectResponse:
     network = None
+
+    # redirect to static JSONs
+    redirect_url_format = "https://data.opennem.org.au/v3/stats/au/{network_code_out}/{network_region_out}power/7d.json"
 
     if not month:
         month = get_today_nem().date()
@@ -445,6 +450,20 @@ def power_network_region_fueltech(
 
     if not network:
         raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+
+    network_code_out = network.code.upper()
+    network_region_out = ""
+
+    if network_region_code:
+        network_region_out = network_region_code.upper() + "/"
+
+    redirect_to = redirect_url_format.format(
+        network_code_out=network_code_out,
+        network_region_out=network_region_out,
+    )
+
+    if settings.redirect_api_static:
+        return RedirectResponse(url=redirect_to, status_code=status.HTTP_302_FOUND)
 
     interval_obj = network.get_interval()
     period_obj = human_to_period("1M")
