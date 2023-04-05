@@ -56,6 +56,7 @@ def power_station(
     date_max: datetime | None = None,
     interval_human: str | None = None,
     period_human: str | None = None,
+    period: str | None = None,
     session: Session = Depends(get_database_session),
     engine=Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet:
@@ -94,6 +95,11 @@ def power_station(
 
     if not period_human:
         period_human = "1d"
+
+    # @NOTE alias period to period_human for backwards compatibility and address issue #255
+    # https://github.com/opennem/opennem/issues/255
+    if period:
+        period_human = period
 
     interval = human_to_interval(interval_human)
     period = human_to_period(period_human)
