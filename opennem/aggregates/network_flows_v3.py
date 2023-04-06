@@ -1,4 +1,4 @@
-"""OpenNEM Network Flows v2
+"""OpenNEM Network Flows v3
 
 Creates an aggregate table with network flows (imports/exports), emissions
 and market_value
