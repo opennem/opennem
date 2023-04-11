@@ -5,7 +5,7 @@ from textwrap import dedent
 from typing import Any
 
 from opennem import settings
-from opennem.aggregates.utils import get_aggregate_year_range
+from opennem.aggregates.utils import get_aggregate_month_range, get_aggregate_year_range
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
 from opennem.schema.network import (
@@ -44,7 +44,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
             sum(fs.emissions) as emissions
         from (
             select
-                time_bucket_gapfill('{network_interval_size} minutes', fs.trading_interval) as trading_interval,
+                time_bucket_gapfill('{network_interval_size}', fs.trading_interval) as trading_interval,
                 fs.facility_code as code,
                 f.network_region,
                 case
@@ -55,7 +55,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
                 end as energy,
                 case
                     when sum(fs.eoi_quantity) > 0 then
-                        coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(bs.price_dispatch), max(bs.price), 0)
+                        sum(fs.eoi_quantity) * coalesce(avg(bs.price_dispatch), avg(bs.price), 0)
                     else 0
                     -- coalesce(sum(fs.generated) / {intervals_per_hour}, 0) *
                     -- coalesce(max(bs.price_dispatch), max(bs.price), 0)
@@ -110,7 +110,7 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
         date_max=chop_datetime_microseconds(date_max),
         network_id=network.code,
         trading_offset=trading_offset,
-        network_interval_size=network.interval_size,
+        network_interval_size="1 hour",
         intervals_per_hour=network.intervals_per_hour,
     )
 
@@ -160,7 +160,7 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
 
 
 @profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
-def run_aggregates_facility_year(year: int, network: NetworkSchema) -> None:
+def run_aggregates_facility_year(year: int, network: NetworkSchema, run_by_month: int = True) -> None:
     """Run aggregates for a single year
 
     Args:
@@ -176,12 +176,31 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema) -> None:
     date_min, date_max = get_aggregate_year_range(year, network=network)
     logger.info(f"Running for year {year} - range : {date_min} {date_max}")
 
-    exec_aggregates_facility_daily_query(date_min, date_max, network)
+    if not run_by_month:
+        exec_aggregates_facility_daily_query(date_min, date_max, network)
+        return None
+
+    # Run by month
+    month_min = date_min.month
+    month_max = 12  # @NOTE make this a param so we can run custom ranges
+
+    for month in range(month_min, month_max):
+        date_min, date_max = get_aggregate_month_range(year, month, network=network)
+
+        logger.info(f"Running for month {month} - range : {date_min} {date_max}")
+
+        exec_aggregates_facility_daily_query(date_min, date_max, network)
 
 
 @profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
-def run_aggregate_facility_all_by_year(network: NetworkSchema) -> None:
-    """Runs the facility aggregate for a network for all years in its range"""
+def run_aggregate_facility_all_by_year(network: NetworkSchema, run_by_month: int = False) -> None:
+    """Runs the facility aggregate for a network for all years in its range
+
+    :param network: Network to run for
+    :type network: NetworkSchema
+    :param run_by_month: Run by month, defaults to True
+    :type run_by_month: bool, optional
+    """
     if not network.data_first_seen:
         raise AggregateFacilityDailyException(f"Require a network and with data_first_seen: {network.code}")
 
@@ -189,7 +208,15 @@ def run_aggregate_facility_all_by_year(network: NetworkSchema) -> None:
     year_max = get_today_opennem().year
 
     for year in range(year_max, year_min - 1, -1):
-        run_aggregates_facility_year(year=year, network=network)
+        if not run_by_month:
+            run_aggregates_facility_year(year=year, network=network)
+            continue
+
+        for month in range(1, 13):
+            date_min, date_max = get_aggregate_month_range(year, month, network=network)
+            logger.info(f"Running for year {year} month {month} - range : {date_min} {date_max}")
+
+            exec_aggregates_facility_daily_query(date_min, date_max, network)
 
 
 @profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
@@ -230,9 +257,9 @@ def run_aggregate_facility_daily_all(networks: list[NetworkSchema]) -> None:
 
 # debug entry point
 if __name__ == "__main__":
-    # run_aggregate_facility_days(days=1, network=NetworkNEM)
-    # run_aggregate_facility_daily_all(networks=[NetworkOpenNEMRooftopBackfill])
-    date_min = datetime.fromisoformat("2015-01-01T00:00:00+10:00")
-    date_max = datetime.fromisoformat("2015-02-01T00:00:00+10:00")
-    network = NetworkNEM
-    exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
+    # date_min = datetime.fromisoformat("2015-01-01T00:00:00+10:00")
+    # date_max = datetime.fromisoformat("2015-02-01T00:00:00+10:00")
+    # network = NetworkNEM
+    # exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
+
+    run_aggregates_facility_year(year=2007, network=NetworkNEM, run_by_month=True)
