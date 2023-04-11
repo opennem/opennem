@@ -135,11 +135,10 @@ services:
       - SLACK_NOTIFICATIONS=1
       - MONITORING_SLACK_HOOK
       - S3_DATA_BUCKET_PATH=data.opennem.org.au
-      - LOG_LEVEL=DEBUG
       - CACHE_SCADA_TTL
       - DB_ENERGY_VIEW
-      - WORKERS_RUN=1
-      - LOG_LEVEL=INFO
+      - WORKERS_RUN
+      - LOG_LEVEL
       - MONITORING_ALERT_SLACK_USER
       - MONITORING_ALERT_SMS
       - APVI_TOKEN
