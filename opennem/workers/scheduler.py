@@ -14,7 +14,8 @@ import logging
 from huey import PriorityRedisHuey, crontab
 
 from opennem import settings
-from opennem.aggregates.facility_daily import run_facility_aggregates_for_latest_interval  # noqa: F401
+from opennem.aggregates.facility_daily import run_facility_aggregates_for_latest_interval
+from opennem.aggregates.network_demand import run_demand_aggregates_for_latest_interval  # noqa: F401
 from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
 from opennem.core.profiler import cleanup_database_task_profiles_basedon_retention
@@ -106,8 +107,10 @@ def crawler_run_bom_capitals() -> None:
 def run_hourly_task_runner() -> None:
     if settings.per_interval_aggregate_processing:
         energy_runner_hours(hours=1)
-        run_facility_aggregates_for_latest_interval(network=NetworkNEM)
-        run_facility_aggregates_for_latest_interval(network=NetworkWEM)
+
+        for network in [NetworkNEM, NetworkWEM]:
+            run_facility_aggregates_for_latest_interval(network=network)
+            run_demand_aggregates_for_latest_interval(network=network)
 
 
 # Checks for the overnights from aemo and then runs the daily runner
