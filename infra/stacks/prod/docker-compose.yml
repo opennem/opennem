@@ -151,6 +151,7 @@ services:
       - GITHUB_FEEDBACK_ACCESS_TOKEN
       - SLACK_DATA_WEBHOOK
       - OPENNEM_CONFIRM_PROD
+      - PER_INTERVAL_AGGREGATE_PROCESSING
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=false"

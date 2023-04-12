@@ -38,6 +38,7 @@ x-app: &default-app
     - GITHUB_FEEDBACK_ACCESS_TOKEN
     - RUN_CRAWLERS
     - SLACK_DATA_WEBHOOK
+    - PER_INTERVAL_AGGREGATE_PROCESSING
 
 services:
   traefik:
