@@ -3,6 +3,7 @@ from datetime import date, datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
+from fastapi_cache.decorator import cache
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import Session
 from starlette import status
@@ -43,6 +44,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+@cache(expire=60 * 5)
 @router.get(
     "/power/station/{network_code}/{station_code:path}",
     name="Power by Station",
@@ -174,6 +176,7 @@ def power_station(
 """
 
 
+@cache(expire=60 * 60 * 12)
 @router.get(
     "/energy/station/{network_code}/{station_code:path}",
     name="Energy by Station",
@@ -341,6 +344,7 @@ Flows endpoints
 """
 
 
+@cache(expire=60 * 15)
 @router.get(
     "/flow/network/{network_code}",
     name="Interconnector Flow Network",
@@ -504,6 +508,7 @@ def power_network_region_fueltech(
     return stat_set
 
 
+@cache(expire=60 * 5)
 @router.get(
     "/emissionfactor/network/{network_code}",
     name="Emission Factor per Network Region",
@@ -686,6 +691,7 @@ def fueltech_demand_mix(
 # Price stats endpoints
 
 
+@cache(expire=60 * 5)
 @router.get(
     "/price/{network_code}/{network_region}",
     name="Price history by network and network region",

@@ -64,7 +64,7 @@ Pillow = "^9.1.1"
 boto3 = "^1.23.7"
 pyquery = "^2.0.0"
 seaborn = "^0.12.0"
-fastapi-cache2 = {extras = ["redis"], version = "^0.1.9"}
+fastapi-cache2 = "^0.2.1"
 PyGithub = "^1.57"
 httpx = {extras = ["brotli"], version = "^0.23.3"}
 psycopg2-binary = "^2.9.5"

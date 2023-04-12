@@ -9,6 +9,9 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
 from fastapi.responses import FileResponse
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from redis import asyncio as aioredis
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.requests import Request
@@ -108,6 +111,13 @@ async def http_type_exception_handler(request: Request, exc: HTTPException) -> O
         status_code=exc.status_code,
         response_class=resp_content,
     )
+
+
+# setup caching
+@app.on_event("startup")
+async def startup() -> None:
+    redis = aioredis.from_url(settings.cache_url, encoding="utf8", decode_responses=True)
+    FastAPICache.init(RedisBackend(redis), prefix="api-cache")
 
 
 # sub-routers
