@@ -159,6 +159,24 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
     return result
 
 
+@profile_task(
+    send_slack=True,
+    level=ProfilerLevel.INFO,
+    retention_period=ProfilerRetentionTime.MONTH,
+    message_fmt="`{network.code}`: Ran flow update for interval `{interval}`",
+)
+def run_aggregates_facility_for_interval(interval: datetime, network: NetworkSchema | None = None, offset: int = 1) -> int | None:
+    """Runs and stores emission flows for a particular interval"""
+
+    if not network:
+        network = NetworkNEM
+
+    date_end = interval
+    date_start = interval - timedelta(minutes=network.interval_size) * network.intervals_per_hour * offset
+
+    return exec_aggregates_facility_daily_query(date_start, date_end, network=network)
+
+
 @profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregates_facility_year(year: int, network: NetworkSchema, run_by_month: int = True) -> None:
     """Run aggregates for a single year
