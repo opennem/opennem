@@ -177,6 +177,16 @@ def run_aggregates_facility_for_interval(interval: datetime, network: NetworkSch
     return exec_aggregates_facility_daily_query(date_start, date_end, network=network)
 
 
+def run_facility_aggregates_for_latest_interval(network: NetworkSchema) -> None:
+    """Runs facility aggregates for the latest interval"""
+    interval = get_last_completed_interval_for_network(network=network)
+
+    if not interval:
+        raise Exception("No latest interval found")
+
+    run_aggregates_facility_for_interval(interval, network=network)
+
+
 @profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregates_facility_year(year: int, network: NetworkSchema, run_by_month: int = True) -> None:
     """Run aggregates for a single year
@@ -280,4 +290,5 @@ if __name__ == "__main__":
     # network = NetworkNEM
     # exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
 
-    run_aggregates_facility_year(year=2007, network=NetworkNEM, run_by_month=True)
+    # run_aggregates_facility_year(year=2007, network=NetworkNEM, run_by_month=True)
+    run_facility_aggregates_for_latest_interval(network=NetworkNEM)
