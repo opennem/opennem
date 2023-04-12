@@ -7,7 +7,9 @@ import logging
 
 from huey.exceptions import RetryTask
 
+from opennem import settings
 from opennem.aggregates.network_flows import run_flow_update_for_interval
+from opennem.api.export.tasks import export_all_daily, export_all_monthly
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
 from opennem.crawl import run_crawl
@@ -20,8 +22,9 @@ from opennem.crawlers.nemweb import (
     AEMONemwebTradingIS,
     AEMONNemwebDispatchScada,
 )
-from opennem.pipelines.export import run_export_power_latest_for_network
-from opennem.schema.network import NetworkAU, NetworkNEM
+from opennem.exporter.historic import export_historic_intervals
+from opennem.pipelines.export import run_export_all, run_export_current_year, run_export_power_latest_for_network
+from opennem.schema.network import NetworkAU, NetworkNEM, NetworkWEM
 from opennem.workers.daily import daily_runner
 
 logger = logging.getLogger("opennem.pipelines.nem")
@@ -34,9 +37,8 @@ class NemPipelineNoNewData(Exception):
 
 
 # Crawler tasks
-
-
 def nem_dispatch_is_crawl() -> None:
+    """Runs the dispatch_is crawl"""
     cr = run_crawl(AEMONemwebDispatchIS)
 
     if not cr or not cr.inserted_records:
@@ -44,6 +46,7 @@ def nem_dispatch_is_crawl() -> None:
 
 
 def nem_trading_is_crawl() -> None:
+    """Runs the trading_is crawl"""
     cr = run_crawl(AEMONemwebTradingIS)
 
     if not cr or not cr.inserted_records:
@@ -85,6 +88,7 @@ def nem_rooftop_crawl() -> None:
     run_export_power_latest_for_network(network=NetworkAU)
 
 
+# Output and processing tasks
 @profile_task(
     send_slack=True,
     message_fmt=(
@@ -104,7 +108,18 @@ def nem_per_day_check() -> ControllerReturn:
         total_records = dispatch_actuals.inserted_records if dispatch_actuals and dispatch_actuals.inserted_records else 0
         total_records += dispatch_gen.inserted_records if dispatch_gen and dispatch_gen.inserted_records else 0
 
-        daily_runner()
+        if not settings.per_interval_aggregate_processing:
+            daily_runner()
+        else:
+            run_export_current_year()
+            run_export_all()
+
+            export_all_daily()
+            export_all_monthly()
+
+            # export historic intervals
+            for network in [NetworkNEM, NetworkWEM]:
+                export_historic_intervals(limit=2, networks=[network])
 
         return ControllerReturn(
             server_latest=dispatch_actuals.server_latest,
