@@ -172,7 +172,7 @@ def run_aggregates_facility_for_interval(interval: datetime, network: NetworkSch
         network = NetworkNEM
 
     date_end = interval
-    date_start = interval - timedelta(minutes=network.interval_size) * network.intervals_per_hour * offset
+    date_start = interval.replace(hour=0, minute=0, second=0, microsecond=0)
 
     return exec_aggregates_facility_daily_query(date_start, date_end, network=network)
 
