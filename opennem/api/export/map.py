@@ -335,7 +335,7 @@ def generate_export_map() -> StatMetadata:
                     NetworkNEM,
                     NetworkWEM,
                     NetworkAEMORooftop,
-                    NetworkOpenNEMRooftopBackfill,
+                    NetworkAEMORooftopBackfill,
                     NetworkAPVI,
                 ],
                 year=year,
@@ -412,7 +412,7 @@ def generate_export_map() -> StatMetadata:
                 export.network_region_query = "WEM"
 
             if network.code == "NEM":
-                export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
+                export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             _exmap.append(export)
 
@@ -432,7 +432,7 @@ def generate_export_map() -> StatMetadata:
             export.network_region_query = "WEM"
 
         if network.code == "NEM":
-            export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
+            export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
         _exmap.append(export)
 
@@ -465,7 +465,7 @@ def generate_export_map() -> StatMetadata:
                 export.network_region_query = "WEM"
 
             if network.code == "NEM":
-                export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
+                export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             _exmap.append(export)
 
@@ -507,7 +507,7 @@ def generate_export_map() -> StatMetadata:
                 export.network_region_query = "WEM"
 
             if network.code == "NEM":
-                export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
+                export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             _exmap.append(export)
 
