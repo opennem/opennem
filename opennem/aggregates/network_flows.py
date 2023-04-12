@@ -457,6 +457,29 @@ def run_flow_updates_all_per_year(year_start: int, years: int = 1, network: Netw
             )
 
 
+@profile_task(
+    send_slack=True,
+    message_fmt="Ran flow updated all for last year",
+    level=ProfilerLevel.INFO,
+    retention_period=ProfilerRetentionTime.FOREVER,
+)
+def run_flow_update_for_latest_interval(network: NetworkSchema | None = None, interval_offset: int = 1) -> None:
+    """Run run the flow updates for the last interval"""
+
+    # default to NEM for now with no param
+    if not network:
+        network = NetworkNEM
+
+    date_end = get_last_completed_interval_for_network(network=network)
+    date_start = date_end - timedelta(minutes=network.interval_size) * interval_offset
+
+    if not settings.dry_run:
+        run_and_store_flows_for_range(
+            date_start,
+            date_end,
+        )
+
+
 def run_flow_updates_all_for_network(network: NetworkSchema, to_year: int | None = None) -> None:
     """Run the entire emissions flow for a network"""
     current_year = datetime.now().year
