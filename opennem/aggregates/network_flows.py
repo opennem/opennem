@@ -459,7 +459,7 @@ def run_flow_updates_all_per_year(year_start: int, years: int = 1, network: Netw
 
 @profile_task(
     send_slack=True,
-    message_fmt="Ran flow updated all for last year",
+    message_fmt="Ran flow update for latest interval",
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.FOREVER,
 )
