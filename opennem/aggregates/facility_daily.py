@@ -123,7 +123,7 @@ def run_rooftop_fix() -> None:
 
     engine = get_database_engine()
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
 
         if not settings.dry_run:
@@ -146,7 +146,7 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
 
     query = aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
 
         if not settings.dry_run:

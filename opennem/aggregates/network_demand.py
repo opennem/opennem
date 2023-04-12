@@ -92,7 +92,7 @@ def exec_aggregates_network_demand_query(date_min: datetime, date_max: datetime,
 
     query = aggregates_network_demand_query(date_min=date_min, date_max=date_max, network=network)
 
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
 
         if not settings.dry_run:
