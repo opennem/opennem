@@ -145,6 +145,7 @@ class OpennemSettings(BaseSettings):
     opennem_power_flows: bool = False  # in the power outputs, use the aggregate flows
     opennem_flows_v3: bool = False  # use aggregate in opennem.aggregates.network_flows_v3 per-interval
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
+    per_interval_aggregate_processing: bool = False  # process per interval aggregates
 
     # send daily fueltech summary
     send_daily_fueltech_summary: bool = True
