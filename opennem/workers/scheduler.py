@@ -99,6 +99,14 @@ def crawler_run_bom_capitals() -> None:
     run_crawl(BOMCapitals)
 
 
+# Run energy runner for per-interval processing
+@huey.periodic_task(crontab(minute="7"), priority=1)
+@huey.lock_task("run_energy_runner")
+def run_energy_runner() -> None:
+    if settings.per_interval_aggregate_processing:
+        energy_runner_hours(hours=1)
+
+
 # Checks for the overnights from aemo and then runs the daily runner
 @huey.periodic_task(crontab(hour="5,15", minute="20"), retries=3, retry_delay=60, priority=50)
 @huey.lock_task("nem_overnight_check")
