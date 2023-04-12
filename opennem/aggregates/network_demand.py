@@ -10,7 +10,7 @@ from opennem import settings
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
 from opennem.schema.network import NetworkNEM, NetworkSchema, NetworkWEM
-from opennem.utils.dates import get_today_nem
+from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem
 
 logger = logging.getLogger("opennem.aggregates.demand")
 
@@ -127,6 +127,34 @@ def run_aggregates_demand_network_days(days: int = 3) -> None:
 
     for network in [NetworkNEM, NetworkWEM]:
         exec_aggregates_network_demand_query(date_min=date_min, date_max=date_max, network=network)  # type: ignore
+
+
+@profile_task(
+    send_slack=True,
+    level=ProfilerLevel.INFO,
+    retention_period=ProfilerRetentionTime.MONTH,
+    message_fmt="`{network.code}`: Ran flow update for interval `{interval}`",
+)
+def run_aggregates_demand_for_interval(interval: datetime, network: NetworkSchema | None = None, offset: int = 1) -> int | None:
+    """Runs and stores emission flows for a particular interval"""
+
+    if not network:
+        network = NetworkNEM
+
+    date_end = interval
+    date_start = interval.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    return exec_aggregates_network_demand_query(date_min=date_start, date_max=date_end, network=network)
+
+
+def run_demand_aggregates_for_latest_interval(network: NetworkSchema) -> None:
+    """Runs facility aggregates for the latest interval"""
+    interval = get_last_completed_interval_for_network(network=network)
+
+    if not interval:
+        raise Exception("No latest interval found")
+
+    run_aggregates_demand_for_interval(interval=interval, network=network)
 
 
 # Debug entry point

@@ -14,10 +14,7 @@ import logging
 from huey import PriorityRedisHuey, crontab
 
 from opennem import settings
-from opennem.aggregates.facility_daily import (  # noqa: F401
-    run_aggregates_facility_latest,
-    run_facility_aggregates_for_latest_interval,
-)
+from opennem.aggregates.facility_daily import run_facility_aggregates_for_latest_interval  # noqa: F401
 from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
 from opennem.core.profiler import cleanup_database_task_profiles_basedon_retention
@@ -105,8 +102,8 @@ def crawler_run_bom_capitals() -> None:
 
 # Run energy runner for per-interval processing
 @huey.periodic_task(crontab(minute="7"), priority=1)
-@huey.lock_task("run_energy_runner")
-def run_energy_runner() -> None:
+@huey.lock_task("run_hourly_task_runner")
+def run_hourly_task_runner() -> None:
     if settings.per_interval_aggregate_processing:
         energy_runner_hours(hours=1)
         run_facility_aggregates_for_latest_interval(network=NetworkNEM)
