@@ -1,9 +1,7 @@
 .DEFAULT_GOAL := all
 UPGRADE_ARGS ?= --upgrade
-isort = isort opennem tests
 black = black opennem tests
 ruff = ruff opennem tests
-pyupgrade = pyupgrade --exit-zero-even-if-changed --py311-plus opennem/**/*.py tests/**/*.py
 pyright = pyright -v $(poetry env info -p) opennem
 bumpver = bumpver update
 
@@ -11,10 +9,8 @@ bumpver = bumpver update
 test:
 	pytest tests -v
 
-.PHONY: format
-format:
-	$(pyupgrade)
-	$(isort)
+.PHONY: lint
+lint:
 	$(black)
 	$(ruff) --fix --exit-zero
 
@@ -47,12 +43,12 @@ requirements:
 	git ci --allow-empty -m "META: Update requirement export"
 
 .PHONY: release-pre
-release-pre: format requirements
+release-pre: lint requirements
 
-pyclean:
+.PHONY: clean
+clean:
+	ruff clean
 	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete -o -type d -name .mypy_cache -delete
-
-cleandist:
 	rm -rf build
 
 codecov:

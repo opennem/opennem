@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem-backend"
-version = "3.15.0-alpha.1"
+version = "3.14.1-alpha.1"
 description = "OpenNEM Australian Energy Data Backend"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 license = "MIT"
@@ -64,7 +64,7 @@ Pillow = "^9.1.1"
 boto3 = "^1.23.7"
 pyquery = "^2.0.0"
 seaborn = "^0.12.0"
-fastapi-cache2 = "^0.2.1"
+fastapi-cache2 = {extras = ["redis"], version = "^0.2.1"}
 PyGithub = "^1.57"
 httpx = {extras = ["brotli"], version = "^0.23.3"}
 psycopg2-binary = "^2.9.5"
@@ -74,10 +74,7 @@ semantic-version = "^2.10.0"
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
 isort = "^5.8.0"
-pylint = "^2.8.2"
 rope = "^1.0.0"
-pylint-sqlalchemy = "^0.2.0"
-ipython = "^8.0.1"
 pytest = "^7.0.1"
 pytest-watch = "^4.2.0"
 mypy = "^1.0.0"
@@ -95,11 +92,7 @@ coverage = "^7.1.0"
 pytest-cov = "^4.0.0"
 types-cachetools = "^5.0.0"
 types-PyYAML = "^6.0.4"
-pyflakes = "^3.0.1"
-mccabe = "^0.7.0"
 pyupgrade = "^3.1.0"
-flake8 = "^6.0.0"
-pycodestyle = "^2.10.0"
 freezegun = "^1.2.2"
 pyright = "^1.1.299"
 bumpver = "^2022.1120"
@@ -115,6 +108,19 @@ postgres = ["psycopg2"]
 [tool.ruff]
 target-version = "py311"
 line-length = 130
+select = [
+  "E",  # pycodestyle errors
+  "W",  # pycodestyle warnings
+  "F",  # pyflakes
+  "I",  # isort
+  "C",  # flake8-comprehensions
+  "B",  # flake8-bugbear
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
 exclude = [
   ".git",
   ".venv",
@@ -184,7 +190,7 @@ requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
 [tool.bumpver]
-current_version = "3.15.0-alpha.1"
+current_version = "3.14.1-alpha.1"
 version_pattern = "MAJOR.MINOR.PATCH[-TAG][.INC0]"
 commit_message = "bump version {old_version} -> {new_version}"
 commit = true

@@ -29,7 +29,7 @@ logger = logging.getLogger("opennem")
 warnings.filterwarnings("ignore", module="openpyxl")
 
 # Module variables
-__version__ = "3.15.0-alpha.1"
+__version__ = "3.14.1-alpha.1"
 __env__ = "prod"
 __package__ = "opennem"
 
@@ -103,7 +103,7 @@ try:
 except ValidationError as e:
     logging.error(f"{len(e.errors())} validation errors in settings schema")
 
-    for err_no, _validation_error in enumerate(e.errors()):
+    for _err_no, _validation_error in enumerate(e.errors()):
         logging.error(
             f'{_display_error_loc(_validation_error)}: {_validation_error["msg"]} \
                 ({_display_error_type_and_ctx(_validation_error)})'

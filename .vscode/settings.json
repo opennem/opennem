@@ -7,9 +7,9 @@
     ".idea": true,
     ".benchmarks": true,
     ".ipynb_checkpoints": true,
-    ".mypy_cache": true,
+    "**/.mypy_cache": true,
+    ".ruff_cache": true,
     ".pytest_cache": true,
-    ".scrapy": true,
     ".tox": true
   },
   "editor.formatOnSave": true,
@@ -21,9 +21,9 @@
     }
   },
   "python.linting.enabled": true,
+  "python.linting.lintOnSave": true,
   "python.linting.pylintEnabled": true,
+  "python.linting.pylintPath": "ruff",
   "python.linting.mypyEnabled": true,
-  "python.linting.flake8Enabled": true,
-  "python.testing.unittestEnabled": false,
   "python.analysis.typeshedPaths": ["${workspaceFolder}/opennem/subs"],
 }
