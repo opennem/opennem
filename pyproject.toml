@@ -98,6 +98,7 @@ pyright = "^1.1.299"
 bumpver = "^2022.1120"
 ruff = "^0.0.259"
 uvicorn = "^0.21.0"
+hatch = "^1.7.0"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
