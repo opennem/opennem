@@ -836,23 +836,19 @@ class AggregateFacilityDaily(Base):
 
     network_id = Column(
         Text,
-        ForeignKey("network.code", name="fk_at_facility_daily_network_code"),
         primary_key=True,
         index=True,
         nullable=False,
     )
-    network = relationship("Network")
 
     network_region = Column(Text, primary_key=True, nullable=False, index=True)
 
     facility_code = Column(
         Text,
-        ForeignKey("facility.code", name="fk_at_facility_daily_facility_code"),
         primary_key=True,
         index=True,
         nullable=False,
     )
-    facility = relationship("Facility")
 
     fueltech_id = Column(Text, nullable=True)
 
