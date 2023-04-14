@@ -163,19 +163,29 @@ def interconnector_flow_network_regions_query(time_series: OpennemExportSeries, 
 
     __query = """
     select
-        fs.trading_interval at time zone '{timezone}' as trading_interval,
-        f.network_region || '->' || f.interconnector_region_to as flow_region,
-        f.network_region,
-        f.interconnector_region_to,
-        sum(fs.generated) as flow_power
-    from facility_scada fs
-    left join facility f on fs.facility_code = f.code
-    where
-        f.interconnector is True
-        and f.network_id='{network_id}'
-        and fs.trading_interval <= '{date_end}'
-        and fs.trading_interval >= '{date_start}'
-        {region_query}
+        t.trading_interval at time zone '{timezone}' as trading_interval,
+        t.flow_region,
+        t.network_region,
+        t.interconnector_region_to,
+        sum(t.flow_power) as flow_power
+    from
+    (
+        select
+            time_bucket_gapfill('{interval_size}', fs.trading_interval) as trading_interval,
+            f.network_region || '->' || f.interconnector_region_to as flow_region,
+            f.network_region,
+            f.interconnector_region_to,
+            sum(fs.generated) as flow_power
+        from facility_scada fs
+        left join facility f on fs.facility_code = f.code
+        where
+            f.interconnector is True
+            and f.network_id='{network_id}'
+            and fs.trading_interval <= '{date_end}'
+            and fs.trading_interval >= '{date_start}'
+            {region_query}
+        group by 1, 2, 3, 4
+    ) as t
     group by 1, 2, 3, 4
     order by
         1 desc,
@@ -194,6 +204,7 @@ def interconnector_flow_network_regions_query(time_series: OpennemExportSeries, 
 
     query = __query.format(
         timezone=time_series.network.timezone_database,
+        interval_size=time_series.interval.interval_sql,
         network_id=time_series.network.code,
         region_query=region_query,
         date_start=date_min,
