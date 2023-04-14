@@ -364,7 +364,7 @@ def run_energy_update_archive(
     years: list[int] = []
 
     if not year:
-        years = [i for i in range(network.data_first_seen.year, DATE_CURRENT_YEAR + 1)]
+        years = list(range(network.data_first_seen.year, DATE_CURRENT_YEAR + 1))
     else:
         years = [year]
 

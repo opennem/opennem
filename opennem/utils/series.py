@@ -17,7 +17,7 @@ def add_series(*args) -> list:
 def series_diff(s1, s2):
     s2d = {i[0]: i[1] for i in s2}
     s1d = {i[0]: i[1] for i in s1}
-    d = dict()
+    d = {}
     for k in s1d.keys():
         if k in s2d:
             if isinstance(s2d[k], float) and isinstance(s1d[k], float):
@@ -33,7 +33,7 @@ def series_diff(s1, s2):
 def series_diff_percentage(s1, s2):
     s2d = {i[0]: i[1] for i in s2}
     s1d = {i[0]: i[1] for i in s1}
-    d = dict()
+    d = {}
     for k in s1d.keys():
         if k in s2d:
             if isinstance(s2d[k], float) and isinstance(s1d[k], float):
@@ -70,7 +70,7 @@ def are_approx_equal(actual: float, desired: float) -> bool:
 def series_are_equal(s1: list[tuple[datetime, float]], s2: list[tuple[datetime, float]], full_equality: bool = False) -> dict:
     s2d = {strip_timezone(i[0]): i[1] for i in s2}
     s1d = {strip_timezone(i[0]): i[1] for i in s1}
-    d = dict()
+    d = {}
 
     for k in s1d.keys():
         if k in s2d:
@@ -85,7 +85,7 @@ def series_are_equal(s1: list[tuple[datetime, float]], s2: list[tuple[datetime, 
 def series_joined(s1: list[tuple[datetime, float]], s2: list[tuple[datetime, float]], full_equality: bool = False) -> dict:
     s2d = {strip_timezone(i[0]): i[1] for i in s2}
     s1d = {strip_timezone(i[0]): i[1] for i in s1}
-    d = dict()
+    d = {}
 
     for k in s1d.keys():
         if k in s2d:
@@ -101,7 +101,7 @@ def series_not_close(
 ) -> dict:
     s2d = {strip_timezone(i[0]): i[1] for i in s2}
     s1d = {strip_timezone(i[0]): i[1] for i in s1}
-    d = dict()
+    d = {}
 
     for k in s1d.keys():
         if k in s2d:

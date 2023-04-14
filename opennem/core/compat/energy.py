@@ -41,7 +41,7 @@ def trading_energy_data(df: pd.DataFrame, duids: list[str], sel_day: date) -> pd
     energy_genrecs = []
 
     for duid in duids:
-        energy_genrecs += [d for d in __trading_energy_generator(df, duid, sel_day)]
+        energy_genrecs += list(__trading_energy_generator(df, duid, sel_day))
 
     df = pd.DataFrame(energy_genrecs, columns=["SETTLEMENTDATE", "DUID", "OUTPUT_MWH"])
 

@@ -168,6 +168,6 @@ def load_data_csv(file_path: Path) -> list[dict] | None:
     # leave the encoding in place now todo is to determine it
     with open(file_path, encoding="utf-8-sig") as fh:
         csvreader = csv.DictReader(fh)
-        records = [entry for entry in csvreader]
+        records = list(csvreader)
 
     return records

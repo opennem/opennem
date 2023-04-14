@@ -183,7 +183,7 @@ def _energy_aggregate_compat(df: pd.DataFrame) -> pd.DataFrame:
 
     for day in days:
         for duid in sorted(df.facility_code.unique()):
-            energy_genrecs += [d for d in __trading_energy_generator(df, day, duid)]
+            energy_genrecs += list(__trading_energy_generator(df, day, duid))
 
     df = pd.DataFrame(energy_genrecs, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"])
 
@@ -199,7 +199,7 @@ def _energy_aggregate_hours(df: pd.DataFrame) -> pd.DataFrame:
     for hour in hours:
         logger.info(f"Running for hour: {hour}")
         for duid in sorted(df.facility_code.unique()):
-            energy_genrecs += [d for d in __trading_energy_generator_hour(df, hour, duid)]
+            energy_genrecs += list(__trading_energy_generator_hour(df, hour, duid))
 
     df = pd.DataFrame(energy_genrecs, columns=["trading_interval", "network_id", "facility_code", "eoi_quantity"])
 

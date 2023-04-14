@@ -15,7 +15,7 @@ def stations_to_geojson(stations: list[Station]) -> FacilityGeo:
         if not station.facilities or len(station.facilities) < 1:
             continue
 
-        feature_dict: dict = dict(properties=dict())
+        feature_dict: dict = {"properties": {}}
 
         feature_dict["properties"] = {
             "station_id": station.id,

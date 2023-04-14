@@ -22,7 +22,7 @@ def fueltech_to_flow(fueltech_id: str) -> FlowDirection | None:
 
     ft = fueltech_id.lower()
 
-    flow_directions = [i for i in FlowDirection]
+    flow_directions = list(FlowDirection)
 
     for flow_direction in flow_directions:
         if flow_direction.value == ft:
@@ -103,7 +103,7 @@ def net_flows(
 
     # group regular first for net flows per provided
     # period bucket from query
-    for k, v in groupby(data, attrgetter("interval")):
+    for _k, v in groupby(data, attrgetter("interval")):
         values = list(v)
 
         fr = RegionFlowResult(

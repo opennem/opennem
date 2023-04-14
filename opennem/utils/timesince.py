@@ -82,7 +82,7 @@ def timesince(
     if since <= 0:
         # d is in the future compared to now, stop processing.
         return time_strings["minute"][0] % {"num": 0}
-    for i, (seconds, name) in enumerate(TIMESINCE_CHUNKS):
+    for i, (seconds, _name) in enumerate(TIMESINCE_CHUNKS):  # noqa: B007
         count = since // seconds
         if count != 0:
             break

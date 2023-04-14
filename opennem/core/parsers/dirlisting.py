@@ -150,7 +150,7 @@ class DirectoryListing(BaseConfig):
         return list(filter(lambda x: x.entry_type == DirlistingEntryType.directory, self.entries))
 
     def get_most_recent_files(self, reverse: bool = True, limit: int | None = None) -> list[DirlistingEntry]:
-        _entries = list(sorted(self.get_files(), key=attrgetter("modified_date"), reverse=reverse))
+        _entries = sorted(self.get_files(), key=attrgetter("modified_date"), reverse=reverse)
 
         if not limit:
             return _entries
@@ -171,7 +171,7 @@ class DirectoryListing(BaseConfig):
             try:
                 ZoneInfo(self.timezone)
             except ValueError:
-                raise Exception(f"Invalid dirlisting timezone: {self.timezone}")
+                raise Exception(f"Invalid dirlisting timezone: {self.timezone}") from None
 
             modified_since = list(
                 filter(

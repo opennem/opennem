@@ -235,7 +235,7 @@ def opennem_import() -> list[StationSchema]:
             )
 
     for station_code, station_entry in opennem.items():
-        facilities = [i for i in station_entry["facilities"].values()]
+        facilities = list(station_entry["facilities"].values())
         opennem[station_code]["facilities"] = facilities
 
     with open("data/opennem.json", "w") as fh:

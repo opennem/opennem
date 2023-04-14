@@ -37,12 +37,12 @@ def _build_args_list(
     fueltechs = [fueltech]
 
     if not fueltech:
-        fueltechs = [i for i in load_fueltechs().keys()]
+        fueltechs = list(load_fueltechs().keys())
 
     years = [year]
 
     if not year:
-        years = [i for i in range(CUR_YEAR, YEAR_EARLIEST - 1, -1)]
+        years = list(range(CUR_YEAR, YEAR_EARLIEST - 1, -1))
 
     for year in years:
         for month in range(12, 0, -1):

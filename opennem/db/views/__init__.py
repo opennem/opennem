@@ -119,7 +119,7 @@ def init_database_views() -> None:
 
     engine = get_database_engine()
 
-    views_sorted_by_priority = list(sorted(_VIEW_MAP, key=attrgetter("priority")))
+    views_sorted_by_priority = sorted(_VIEW_MAP, key=attrgetter("priority"))
 
     for view in views_sorted_by_priority:
         logger.info(f"Initializing view {view.name}")
@@ -191,9 +191,9 @@ def init_aggregation_policies() -> None:
 
 def get_materialized_view_names() -> list[str]:
     """Returns a list of material view names in priority order"""
-    return list(v.name for v in filter(lambda x: x.materialized is True and x.aggregation_policy is None, _VIEW_MAP))
+    return [v.name for v in filter(lambda x: x.materialized is True and x.aggregation_policy is None, _VIEW_MAP)]
 
 
 def get_timescale_view_names() -> list[str]:
     """Returns a list of timescale view names in priority order"""
-    return list(v.name for v in filter(lambda x: x.materialized is True and x.aggregation_policy, _VIEW_MAP))
+    return [v.name for v in filter(lambda x: x.materialized is True and x.aggregation_policy, _VIEW_MAP)]

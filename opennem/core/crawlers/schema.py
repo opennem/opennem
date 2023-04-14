@@ -86,9 +86,7 @@ class CrawlerSet(BaseConfig):
         return _crawler_lookup
 
     def get_crawlers_by_schedule(self, schedule: CrawlerSchedule) -> list[CrawlerDefinition]:
-        return list(
-            sorted(
-                filter(lambda x: x.schedule == schedule, self.crawlers),
-                key=lambda x: x.priority.value,
-            )
+        return sorted(
+            filter(lambda x: x.schedule == schedule, self.crawlers),
+            key=lambda x: x.priority.value,
         )
