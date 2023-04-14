@@ -26,6 +26,7 @@ from opennem.schema.network import (
     NetworkNetworkRegion,
     NetworkWEM,
 )
+from opennem.schema.time import TimePeriod
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem, is_aware
 from opennem.utils.time import human_to_timedelta
 
@@ -44,7 +45,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@cache(expire=60 * 5)
 @router.get(
     "/power/station/{network_code}/{station_code:path}",
     name="Power by Station",
@@ -52,7 +52,8 @@ router = APIRouter()
     response_model_exclude_unset=True,
     description="Get the power outputs for a station",
 )
-def power_station(
+@cache(expire=60 * 5)
+async def power_station(
     station_code: str | None = None,
     network_code: str | None = None,
     since: datetime | None = None,
@@ -60,9 +61,9 @@ def power_station(
     date_max: datetime | None = None,
     interval_human: str | None = None,
     period_human: str | None = None,
-    period: str | None = None,
+    period: str | None = None,  # type: ignore
     session: Session = Depends(get_database_session),
-    engine=Depends(get_database_engine),  # type: ignore
+    engine: Engine = Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet:
     if not network_code:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No network code")
@@ -106,7 +107,7 @@ def power_station(
         period_human = period
 
     interval = human_to_interval(interval_human)
-    period = human_to_period(period_human)
+    period_obj: TimePeriod = human_to_period(period_human)
     units = get_unit("power")
 
     station: Station | None = (
@@ -134,7 +135,7 @@ def power_station(
         if facilities_date_range.date_min and date_min < facilities_date_range.date_min:
             date_min = facilities_date_range.date_min
 
-    time_series = OpennemExportSeries(start=date_min, end=date_max, network=network, interval=interval, period=period)
+    time_series = OpennemExportSeries(start=date_min, end=date_max, network=network, interval=interval, period=period_obj)  # type: ignore
 
     logger.debug(time_series)
 
@@ -176,15 +177,15 @@ def power_station(
 """
 
 
-@cache(expire=60 * 60 * 12)
 @router.get(
     "/energy/station/{network_code}/{station_code:path}",
     name="Energy by Station",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
-def energy_station(
-    engine=Depends(get_database_engine),  # type: ignore
+@cache(expire=60 * 60 * 12)
+async def energy_station(
+    engine: Engine = Depends(get_database_engine),  # type: ignore
     session: Session = Depends(get_database_session),
     date_min: datetime | None = None,
     date_max: datetime | None = None,
@@ -344,17 +345,17 @@ Flows endpoints
 """
 
 
-@cache(expire=60 * 15)
 @router.get(
     "/flow/network/{network_code}",
     name="Interconnector Flow Network",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
-def power_flows_network_week(
+@cache(expire=60 * 15)
+async def power_flows_network_week(
     network_code: str,
     month: date | None = None,
-    engine=Depends(get_database_engine),  # type: ignore
+    engine: Engine = Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet | None:
     engine = get_database_engine()
 
@@ -450,10 +451,10 @@ def power_network_region_fueltech(
     try:
         network = network_from_network_code(network_code)
     except Exception:
-        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND) from None
 
     if not network:
-        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND) from None
 
     network_code_out = network.code.upper()
     network_region_out = ""
@@ -508,14 +509,14 @@ def power_network_region_fueltech(
     return stat_set
 
 
-@cache(expire=60 * 5)
 @router.get(
     "/emissionfactor/network/{network_code}",
     name="Emission Factor per Network Region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
-def emission_factor_per_network(  # type: ignore
+@cache(expire=60 * 5)
+async def emission_factor_per_network(  # type: ignore
     network_code: str,
     interval: str = "5m",
     engine=Depends(get_database_engine),  # type: ignore
@@ -527,7 +528,7 @@ def emission_factor_per_network(  # type: ignore
     try:
         network = network_from_network_code(network_code)
     except Exception:
-        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND) from None
 
     if not network:
         raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
@@ -629,7 +630,7 @@ def fueltech_demand_mix(
     try:
         network = network_from_network_code(network_code)
     except Exception:
-        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND) from None
 
     interval_obj = human_to_interval("5m")
     period_obj = human_to_period("1d")
@@ -691,7 +692,6 @@ def fueltech_demand_mix(
 # Price stats endpoints
 
 
-@cache(expire=60 * 5)
 @router.get(
     "/price/{network_code}/{network_region}",
     name="Price history by network and network region",
@@ -704,7 +704,8 @@ def fueltech_demand_mix(
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
-def price_network_endpoint(
+@cache(expire=60 * 5)
+async def price_network_endpoint(
     network_code: str,
     network_region: str | None = None,
     forecasts: bool = False,
@@ -729,7 +730,7 @@ def price_network_endpoint(
     try:
         network = network_from_network_code(network_code)
     except Exception:
-        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND)
+        raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND) from None
 
     interval_obj = human_to_interval("5m")
     period_obj = human_to_period("1d")
