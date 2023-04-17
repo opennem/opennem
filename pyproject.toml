@@ -201,6 +201,3 @@ push = true
 "opennem/__init__.py" = [
     '__version__ = "{version}"',
 ]
-"opennem/utils/version.py" = [
-    'version = "{version}"',
-]

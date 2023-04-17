@@ -4,7 +4,7 @@
 """
 import semantic_version
 
-version = "3.15.0"
+from opennem import __version__ as version
 
 
 def get_version() -> str:
