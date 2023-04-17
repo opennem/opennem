@@ -80,6 +80,9 @@ class OpennemExportSeries(BaseConfig):
     start: datetime
     end: datetime = datetime.now()
 
+    # latest - we want the latest data
+    latest: bool = False
+
     # The network for this date range
     # used for timezone and offsets
     network: NetworkSchema
@@ -157,7 +160,7 @@ class OpennemExportSeries(BaseConfig):
                 start = start.replace(minute=replace_min_start, second=0, microsecond=0)
 
             # if its the same size as the network interval trim to last available interval
-            if self.interval.interval == self.network.interval_size:
+            if self.latest and (self.interval.interval == self.network.interval_size):
                 end = get_last_completed_interval_for_network(network=self.network)
                 start = end - get_human_interval(self.period.period_human)
 

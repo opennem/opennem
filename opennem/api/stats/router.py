@@ -395,6 +395,7 @@ async def power_flows_network_week(
         network=network,
         interval=interval_obj,
         period=period_obj,
+        latest=True,
     )
 
     query = interconnector_flow_network_regions_query(time_series=time_series, network_region=network_region_code)
