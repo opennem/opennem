@@ -23,7 +23,7 @@ from opennem.api.time import human_to_interval, human_to_period
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkSchema
 from opennem.schema.time import TimeInterval, TimePeriod
-from opennem.utils.dates import get_end_of_last_month, get_today_opennem
+from opennem.utils.dates import get_end_of_last_month, get_last_completed_interval_for_network, get_today_opennem
 from opennem.utils.interval import get_human_interval
 from opennem.utils.timezone import is_aware
 
@@ -111,8 +111,8 @@ class OpennemExportSeries(BaseConfig):
 
     def get_range(self) -> ExportDatetimeRange:
         """Return a DatetimeRange from the time series for queries"""
-        start = self.start
-        end = self.end
+        start = self.start.replace(second=0, microsecond=0)
+        end = self.end.replace(second=0, microsecond=0)
 
         # @TODO do a proper time trim method
         if self.interval.interval == 30:
@@ -155,6 +155,11 @@ class OpennemExportSeries(BaseConfig):
             if self.interval.interval == 30:
                 replace_min_start = 30 if start.minute >= 30 else 0
                 start = start.replace(minute=replace_min_start, second=0, microsecond=0)
+
+            # if its the same size as the network interval trim to last available interval
+            if self.interval.interval == self.network.interval_size:
+                end = get_last_completed_interval_for_network(network=self.network)
+                start = end - get_human_interval(self.period.period_human)
 
         if self.year:
             if self.year > end.year:
@@ -204,6 +209,7 @@ class OpennemExportSeries(BaseConfig):
                 hour=0,
                 minute=0,
                 second=0,
+                microsecond=0,
                 tzinfo=self.network.get_fixed_offset(),
             )
 
@@ -213,6 +219,7 @@ class OpennemExportSeries(BaseConfig):
                 hour=23,
                 minute=59,
                 second=59,
+                microsecond=0,
             )
 
         # localize times
