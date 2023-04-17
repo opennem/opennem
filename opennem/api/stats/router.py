@@ -357,6 +357,7 @@ async def power_flows_network_week(
     month: date | None = None,
     engine: Engine = Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet | None:
+    """Get the last day of network flow data"""
     engine = get_database_engine()
 
     network = network_from_network_code(network_code)
@@ -365,7 +366,7 @@ async def power_flows_network_week(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
 
     interval_obj = network.get_interval()
-    period_obj = human_to_period("1M")
+    period_obj = human_to_period("7d")
 
     if not network:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
@@ -383,7 +384,7 @@ async def power_flows_network_week(
 
     time_series = OpennemExportSeries(
         start=scada_range.start,
-        month=month,
+        # month=month,
         network=network,
         interval=interval_obj,
         period=period_obj,
