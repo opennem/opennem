@@ -1,8 +1,8 @@
 # noqa: F408, F401
 import pytest
 
-from opennem.settings import settings
-from opennem.settings.schema import OpennemSettings
+from opennem import settings
+from opennem.settings_schema import OpennemSettings
 
 
 def test_opennem_imports() -> None:
