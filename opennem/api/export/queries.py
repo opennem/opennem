@@ -167,7 +167,7 @@ def interconnector_flow_network_regions_query(time_series: OpennemExportSeries, 
         t.flow_region,
         t.network_region,
         t.interconnector_region_to,
-        sum(t.flow_power) as flow_power
+        coalesce(sum(t.flow_power), NULL) as flow_power
     from
     (
         select
