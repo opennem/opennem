@@ -346,6 +346,12 @@ Flows endpoints
 
 
 @router.get(
+    "/flow/network/{network_code}/{network_region_code}",
+    name="Interconnector Flow Network for network region",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+)
+@router.get(
     "/flow/network/{network_code}",
     name="Interconnector Flow Network",
     response_model=OpennemDataSet,
@@ -354,6 +360,7 @@ Flows endpoints
 @cache(expire=60 * 15)
 async def power_flows_network_week(
     network_code: str,
+    network_region_code: str | None = None,
     month: date | None = None,
     engine: Engine = Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet | None:
@@ -390,14 +397,14 @@ async def power_flows_network_week(
         period=period_obj,
     )
 
-    query = interconnector_flow_network_regions_query(time_series=time_series)
+    query = interconnector_flow_network_regions_query(time_series=time_series, network_region=network_region_code)
 
     with engine.connect() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
     if not row:
-        raise Exception(f"No results from query: {query}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No results")
 
     imports = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
 
@@ -414,7 +421,7 @@ async def power_flows_network_week(
     )
 
     if not result or not result.data:
-        raise Exception("No results")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No results")
 
     INVERT_SETS = ["VIC1->NSW1", "VIC1->SA1"]
 
