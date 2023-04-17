@@ -7,14 +7,10 @@ license = "MIT"
 packages = [
     { include = "opennem" }
 ]
-
 readme = "README.md"
-
 homepage = "https://opennem.org.au"
 repository = "https://github.com/opennem/opennem"
-
 keywords = ["opennem", "analysis", "australia", "energy"]
-
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
@@ -22,10 +18,8 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Topic :: Scientific/Engineering"
 ]
-
 include = [
-  'README.md',
-  'opennem/settings/logging.yml'
+  'README.md'
 ]
 
 [tool.poetry.dependencies]
