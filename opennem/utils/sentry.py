@@ -10,7 +10,7 @@ def _sentry_before_send(event, hint):
     """Hook to sentry sending and excelude some exception types"""
     if "exc_info" in hint:
         _, exc_value, _ = hint["exc_info"]
-        if isinstance(exc_value, _SENTRY_IGNORE_EXCEPTION_TYPES):
+        if isinstance(exc_value, _SENTRY_IGNORE_EXCEPTION_TYPES):  # type: ignore
             return None
     return event
 
