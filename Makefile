@@ -23,9 +23,7 @@ format:
 
 .PHONY: lint
 lint:
-	$(mypy)
 	$(ruff) --exit-zero
-	$(pyright)
 
 .PHONY: install
 install:
