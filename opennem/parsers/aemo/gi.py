@@ -100,7 +100,7 @@ def parse_aemo_general_information(filename: Path) -> list[AEMOGIRecord]:
         # lots of hidden columns in the sheet
         row_collapsed = [row[excel_column_to_column_index(i) - 1] for i in GI_EXISTING_NEW_GEN_KEYS.values()]
 
-        return_dict = dict(zip(GI_EXISTING_NEW_GEN_KEYS, list(row_collapsed)))
+        return_dict = dict(zip(GI_EXISTING_NEW_GEN_KEYS, list(row_collapsed), strict=False))
 
         # break at end of data records
         # GI has a blank line before garbage notes

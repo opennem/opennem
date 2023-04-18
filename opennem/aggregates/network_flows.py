@@ -323,7 +323,7 @@ def run_and_store_emission_flows(day: datetime) -> None:
         emissions_day = calc_flow_for_day(day, network=NetworkNEM)
     except Exception as e:
         logger.exception(f"Flow storage error: {e}")
-        raise Exception("flow storage error")
+        raise Exception("flow storage error") from None
 
     if emissions_day.empty:
         logger.warning(f"No results for {day}")

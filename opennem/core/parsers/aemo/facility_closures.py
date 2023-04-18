@@ -59,7 +59,7 @@ def parse_aemo_closures_xls() -> list[AEMOClosureRecord]:
     for row in generator_ws.iter_rows(min_row=2, values_only=True):
         row_collapsed = row[0:2] + row[3:5]
 
-        return_dict = dict(zip(CLOSURE_SHEET_FIELDS, list(row_collapsed)))
+        return_dict = dict(zip(CLOSURE_SHEET_FIELDS, list(row_collapsed), strict=True))
 
         r = None
 

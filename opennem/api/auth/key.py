@@ -30,7 +30,7 @@ def get_api_key_record(api_key: str) -> AuthApiKeyRecord:
         api_key = validate_api_key(api_key)
     except Exception as e:
         logger.error(f"Bad API key {api_key}: {e}")
-        raise UnauthorizedRequest()
+        raise UnauthorizedRequest() from None
 
     api_key_record: ApiKeys | None = session.query(ApiKeys).filter_by(keyid=api_key).one_or_none()
 

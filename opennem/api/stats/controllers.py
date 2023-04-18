@@ -87,7 +87,7 @@ def stats_factory(
         if (not units.name.startswith("temperature") or (units.cast_nulls is True)) and (cast_nulls is True):
             data_value = cast_trailing_nulls(data_value)
 
-        data_trimmed = dict(zip(data_sorted.keys(), data_value))
+        data_trimmed = dict(zip(data_sorted.keys(), data_value, strict=True))
 
         data_trimmed = trim_nulls(data_trimmed)
 
@@ -293,7 +293,7 @@ def get_latest_interval_live(network: NetworkSchema) -> datetime:
     try:
         dt = dt.replace(tzinfo=network.get_fixed_offset())
     except Exception:
-        raise Exception(f"Could not convert {dt} to timezone {network.timezone_database} for {network.code}")
+        raise Exception(f"Could not convert {dt} to timezone {network.timezone_database} for {network.code}") from None
 
     return dt
 

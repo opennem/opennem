@@ -136,7 +136,7 @@ def get_bom_observations(observation_url: str, station_code: str) -> BOMObservat
     except Exception:
         raise BOMParsingException(
             f"Error parsing BOM response: bad json. Status: {resp.status_code}. Content length: {len(resp.content)}"
-        )
+        ) from None
 
     if "observations" not in resp_object:
         raise BOMParsingException(f"Invalid BOM return for {observation_url}")

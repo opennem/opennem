@@ -142,7 +142,7 @@ def export_network_intervals_for_week(
 
 @profile_task(send_slack=False)
 def export_historic_intervals(
-    limit: int | None = None, networks: list[NetworkSchema] = [], network_region_code: str | None = None
+    limit: int | None = None, networks: list[NetworkSchema] | None = None, network_region_code: str | None = None
 ) -> None:
     """ """
     if networks is None:
@@ -179,7 +179,7 @@ def export_historic_intervals(
                         week_start=week_start, week_end=week_end, network=network, network_region=network_region
                     )
                 except Exception as e:
-                    raise ExporterHistoricException(f"export_historic_intervals error: {e}")
+                    raise ExporterHistoricException(f"export_historic_intervals error: {e}") from None
 
 
 @profile_task(send_slack=False)

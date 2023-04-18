@@ -112,7 +112,7 @@ def load_crawlers(live_load: bool = False) -> CrawlerSet:
             )
         except ValidationError as e:
             logger.error(f"Validation error for crawler {crawler_inst.name}: {e}")
-            raise Exception("Crawler initiation error")
+            raise Exception("Crawler initiation error") from None
 
         if crawler_updated_with_meta:
             crawlers.append(crawler_updated_with_meta)

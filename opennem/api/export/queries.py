@@ -711,7 +711,7 @@ Demand queries
 
 
 def demand_network_region_query(
-    time_series: OpennemExportSeries, network_region: str | None, networks: list[NetworkSchema] = None
+    time_series: OpennemExportSeries, network_region: str | None, networks: list[NetworkSchema] | None = None
 ) -> str:
     """Get the network demand energy and market_value"""
 

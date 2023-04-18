@@ -563,7 +563,7 @@ def price_for_network_interval(
 
 def power_and_emissions_for_network_interval(
     time_series: OpennemExportSeries,
-    network_region_code: str = None,
+    network_region_code: str | None = None,
     include_emission_factors: bool = False,
 ) -> OpennemDataSet | None:
     engine = get_database_engine()
@@ -599,8 +599,8 @@ def power_and_emissions_for_network_interval(
     if not power_result:
         raise Exception(
             f"No power results for {time_series.network.code} in region {network_region_code} and date \
-                range {time_series.time_range.start} => {time_series.time_range.end}"
-        )  # type: ignore
+                range {time_series.get_range().start} => {time_series.get_range().end}"
+        )
 
     emissions_result = stats_factory(
         emission_stats,
@@ -636,8 +636,8 @@ def power_and_emissions_for_network_interval(
 
 def demand_network_region_daily(
     time_series: OpennemExportSeries,
-    network_region_code: str,
-    networks: list[NetworkSchema] = [],
+    network_region_code: str | None = None,
+    networks: list[NetworkSchema] | None = None,
 ) -> OpennemDataSet | None:  # sourcery skip: raise-specific-error
     """Gets demand market_value and energy for a network -> network_region"""
     engine = get_database_engine()

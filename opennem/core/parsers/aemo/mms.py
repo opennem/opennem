@@ -164,7 +164,7 @@ class AEMOTableSchema(BaseConfig):
             csvwriter.writeheader()
 
             for record in self.records:
-                csvwriter.writerow(dict(zip(self.fieldnames, record)))
+                csvwriter.writerow(dict(zip(self.fieldnames, record, strict=True)))
 
         logger.info(f"Wrote records to {self.full_name}")
 
@@ -337,7 +337,7 @@ def parse_aemo_mms_csv(
                     logger.error("Malformed AEMO csv - length mismatch between records and fields")
                     continue
 
-                record = dict(zip(table_current.fieldnames, values))
+                record = dict(zip(table_current.fieldnames, values, strict=True))
 
                 for field, fieldvalue in record.items():
                     if field in MMS_DATE_FIELDS:
@@ -367,7 +367,7 @@ def parse_aemo_url(
     try:
         csv_content = url_downloader(url)
     except Exception as e:
-        raise Exception(f"Could not fetch AEMO url {url}: {e}")
+        raise Exception(f"Could not fetch AEMO url {url}: {e}") from None
 
     if not csv_content:
         raise Exception(f"Could not parse URL: {url}")
@@ -423,8 +423,9 @@ def parse_aemo_file(file: str, table_set: AEMOTableSet | None = None, values_onl
     return table_set
 
 
-def parse_aemo_directory(directory_path: str) -> AEMOTableSet:
-    pass
+def parse_aemo_directory(directory_path: str) -> AEMOTableSet | None:
+    """Parse an entire AEMO directory"""
+    return None
 
 
 # debug entry point

@@ -165,6 +165,7 @@ _ACCENT_REPLACE_MAP = dict(
             ["th"],
             "y",
         ),
+        strict=False,
     )
 )
 

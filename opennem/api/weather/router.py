@@ -69,7 +69,7 @@ def station_observations_api(
     station_code: str,
     interval_human: str = "15m",
     period_human: str = "7d",
-    station_codes: list[str] = [],
+    station_codes: list[str] | None = None,
     timezone: str | None = None,
     offset: str | None = None,
     year: int | None = None,

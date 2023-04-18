@@ -65,7 +65,7 @@ logger = logging.getLogger("opennem.export.tasks")
     retention_period=ProfilerRetentionTime.WEEK,
 )
 def export_power(
-    stats: list[StatExport] = [],
+    stats: list[StatExport] | None = None,
     priority: PriorityType | None = None,
     latest: bool | None = False,
 ) -> None:
@@ -175,7 +175,7 @@ def export_power(
     retention_period=ProfilerRetentionTime.WEEK,
 )
 def export_energy(
-    stats: list[StatExport] = [],
+    stats: list[StatExport] | None = None,
     priority: PriorityType | None = None,
     latest: bool | None = False,
 ) -> None:
@@ -352,7 +352,7 @@ def export_energy(
             write_output(energy_stat.path, stat_set)
 
 
-def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: str | None = None) -> None:
+def export_all_monthly(networks: list[NetworkSchema] | None = None, network_region_code: str | None = None) -> None:
     session = get_scoped_session()
 
     all_monthly = OpennemDataSet(code="au", data=[], version=get_version(), created_at=get_today_nem(), network=NetworkAU.code)
@@ -461,7 +461,7 @@ def export_all_monthly(networks: list[NetworkSchema] = [], network_region_code: 
     level=ProfilerLevel.NOISY,
     retention_period=ProfilerRetentionTime.WEEK,
 )
-def export_all_daily(networks: list[NetworkSchema] = None, network_region_code: str | None = None) -> None:
+def export_all_daily(networks: list[NetworkSchema] | None = None, network_region_code: str | None = None) -> None:
     """Export dailies for all networks and regions"""
 
     # default list of networks
@@ -476,12 +476,12 @@ def export_all_daily(networks: list[NetworkSchema] = None, network_region_code: 
     cpi = gov_stats_cpi()
 
     for network in networks:
-        network_regions = session.query(NetworkRegion).filter_by(export_set=True).filter_by(network_id=network.code)
+        network_regions_query = session.query(NetworkRegion).filter_by(export_set=True).filter_by(network_id=network.code)
 
         if network_region_code:
-            network_regions = network_regions.filter_by(code=network_region_code)
+            network_regions_query = network_regions_query.filter_by(code=network_region_code)
 
-        network_regions = network_regions.all()
+        network_regions = network_regions_query.all()
 
         for network_region in network_regions:
             logging.info(f"Exporting for network {network.code} and region {network_region.code}")

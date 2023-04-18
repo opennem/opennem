@@ -170,10 +170,6 @@ def place_autocomplete(query, region=None, api_key=None, return_full_response=Fa
 def place_search(query: str, api_key: str | None = None, return_full_response=False):
     GOOGLE_PLACES_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
 
-    {}
-
-    {}
-
     url_params = {
         "key": settings.google_places_api_key,
         "input": query,

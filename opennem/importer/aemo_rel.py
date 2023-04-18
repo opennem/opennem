@@ -142,14 +142,7 @@ def load_rel():
     generators = []
 
     for row in generator_ws.iter_rows(min_row=2, values_only=True):
-        generators.append(
-            dict(
-                zip(
-                    FACILITY_KEYS,
-                    list(row[: len(FACILITY_KEYS)]),
-                )
-            )
-        )
+        generators.append(dict(zip(FACILITY_KEYS, list(row[: len(FACILITY_KEYS)]), strict=True)))
 
     return generators
 

@@ -4,7 +4,7 @@ from opennem.core.normalizers import is_single_number
 
 
 def getcommonletters(strlist: list[str]) -> str:
-    _strlist = "".join([x[0] for x in zip(*strlist) if reduce(lambda a, b: (a == b) and a or None, x)])
+    _strlist = "".join([x[0] for x in zip(*strlist, strict=False) if reduce(lambda a, b: (a == b) and a or None, x)])
     return _strlist
 
 

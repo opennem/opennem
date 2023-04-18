@@ -49,7 +49,7 @@ def load_all_crawler_definitions(path: str) -> list[CrawlerDefinition]:
             for crawler_class in iter_crawler_definitions(module):
                 crawler_definitions.append(crawler_class)
     except ImportError as e:
-        raise Exception(f"Error importing: {e}")
+        raise Exception(f"Error importing: {e}") from None
 
     return crawler_definitions
 

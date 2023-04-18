@@ -98,7 +98,7 @@ def parse_date(
             try:
                 dt_return = parse(date_str, dayfirst=dayfirst, yearfirst=yearfirst)
             except ParserError:
-                raise ValueError("Invalid date string passed")
+                raise ValueError("Invalid date string passed") from None
 
     else:
         raise ValueError(f"Require a datetime or string object to parse date: {date_str}")
@@ -312,7 +312,7 @@ def chop_timezone(dt: datetime) -> datetime | None:
     return dt.replace(tzinfo=None)
 
 
-def get_date_component(format_str: str, dt: datetime = None, tz: Any | None = None) -> str:
+def get_date_component(format_str: str, dt: datetime | None = None, tz: Any | None = None) -> str:
     """
     Get the format string part out of a date
 
@@ -327,7 +327,7 @@ def get_date_component(format_str: str, dt: datetime = None, tz: Any | None = No
         try:
             dt = dt.astimezone(tz)
         except Exception:
-            raise Exception(f"Invalid timezone: {tz}")
+            raise Exception(f"Invalid timezone: {tz}") from None
 
     date_str_component = dt.strftime(format_str)
 

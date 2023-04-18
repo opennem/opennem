@@ -158,14 +158,7 @@ def load_rel() -> list[dict[str, Any]]:
     generators = []
 
     for row in generator_ws.iter_rows(min_row=2, values_only=True):
-        generators.append(
-            dict(
-                zip(
-                    FACILITY_KEYS,
-                    list(row[: len(FACILITY_KEYS)]),
-                )
-            )
-        )
+        generators.append(dict(zip(FACILITY_KEYS, list(row[: len(FACILITY_KEYS)]), strict=True)))
 
     return generators
 
@@ -196,7 +189,7 @@ def rel_export() -> None:
 # new
 
 
-def parse_aemo_rel_generators(filename: str | Path | BytesIO) -> StationSet:
+def parse_aemo_rel_generators(filename: str | Path | BytesIO) -> list[AEMORelGeneratorRecord]:
     fh: BytesIO | None = None
 
     if isinstance(filename, str):
@@ -211,17 +204,15 @@ def parse_aemo_rel_generators(filename: str | Path | BytesIO) -> StationSet:
     if isinstance(filename, IO):
         fh = filename
 
+    if not fh or not isinstance(fh, BytesIO):
+        raise Exception("Could not open file")
+
     generators_ws = parse_workbook(fh, worksheet=AEMO_REL_GENERATOR_SHEETNAME)
 
     generator_records = []
 
     for row in generators_ws.iter_rows(min_row=2, values_only=True):
-        _row_dict = dict(
-            zip(
-                FACILITY_KEYS,
-                list(row[: len(FACILITY_KEYS)]),
-            )
-        )
+        _row_dict = dict(zip(FACILITY_KEYS, list(row[: len(FACILITY_KEYS)]), strict=True))
 
         _row_schema = AEMORelGeneratorRecord(**_row_dict)
         generator_records.append(_row_schema)

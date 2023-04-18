@@ -223,7 +223,7 @@ def gi_grouper(records, station_code_map):
     return grouped_records
 
 
-def load_gi():
+def load_gi() -> list[dict]:
     aemo_path = PROJECT_DATA_PATH / "aemo" / "nem_gi_202007.xlsx"
 
     if not aemo_path.is_file():
@@ -238,14 +238,14 @@ def load_gi():
     for row in generator_ws.iter_rows(min_row=3, values_only=True):
         row_collapsed = row[0:10] + (row[11],) + row[12:19] + row[21:]
 
-        return_dict = dict(zip(FACILITY_KEYS, list(row_collapsed)))
+        return_dict = dict(zip(FACILITY_KEYS, list(row_collapsed), strict=False))
 
         records.append(return_dict)
 
     return records
 
 
-def gi_import():
+def gi_import() -> StationSet:
     mms_duid_station_map = load_data("mms_duid_station_map.json", True)
 
     nem_gi = load_gi()
@@ -259,13 +259,15 @@ def gi_import():
     return gi
 
 
-def gi_export():
+def gi_export() -> None:
     nem_gi = gi_import()
 
     with open("data/nem_gi.json", "w") as fh:
         fh.write(nem_gi.json(indent=4))
 
     logger.info(f"Wrote {nem_gi.length} records")
+
+    return None
 
 
 if __name__ == "__main__":
