@@ -163,7 +163,7 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
     send_slack=True,
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.MONTH,
-    message_fmt="`{network.code}`: Ran flow update for interval `{interval}`",
+    message_fmt="`{network.code}`: Ran flow update for interval",
 )
 def run_aggregates_facility_for_interval(interval: datetime, network: NetworkSchema | None = None, offset: int = 1) -> int | None:
     """Runs and stores emission flows for a particular interval"""
