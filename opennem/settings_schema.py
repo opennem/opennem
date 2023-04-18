@@ -153,6 +153,11 @@ class OpennemSettings(BaseSettings):
     # profiler options
     profiler_level: str = "NOISY"
 
+    # feedback
+    feedback_send_to_github: bool = False
+    feedback_send_to_slack: bool = True
+    feedback_slack_hook_url: str | None = None
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> str | None:

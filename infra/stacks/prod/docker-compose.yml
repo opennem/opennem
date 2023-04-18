@@ -79,6 +79,8 @@ services:
       - MAINTENANCE_MODE
       - GITHUB_FEEDBACK_ACCESS_TOKEN
       - OPENNEM_CONFIRM_PROD
+      - FEEDBACK_SEND_TO_SLACK
+      - FEEDBACK_SLACK_HOOK_URL
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-secure.entrypoints=websecure"

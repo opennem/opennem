@@ -39,6 +39,8 @@ x-app: &default-app
     - RUN_CRAWLERS
     - SLACK_DATA_WEBHOOK
     - PER_INTERVAL_AGGREGATE_PROCESSING
+    - FEEDBACK_SEND_TO_SLACK
+    - FEEDBACK_SLACK_HOOK_URL
 
 services:
   traefik:
