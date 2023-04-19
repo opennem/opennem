@@ -30220,7 +30220,7 @@
     "facilities": [
       {
         "network_id": "NEM",
-        "fueltech_id": "battery_charging",
+        "fueltech_id": "battery_discharging",
         "status_id": "operating",
         "code": "HBESSG1",
         "network_code": "NEM",
@@ -30243,7 +30243,7 @@
       },
       {
         "network_id": "NEM",
-        "fueltech_id": "battery_discharging",
+        "fueltech_id": "battery_charging",
         "status_id": "operating",
         "code": "HBESSL1",
         "network_code": "NEM",
