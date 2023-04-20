@@ -57,12 +57,9 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
             demand_market_value = EXCLUDED.demand_market_value;
     """
 
-    date_min_offset = date_min.replace(tzinfo=network.get_fixed_offset(), microsecond=0)
-    date_max_offset = date_max.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    if date_max_offset <= date_min_offset:
+    if date_max <= date_min:
         raise AggregateDemandException(
-            f"aggregates_network_demand_query: date_max ({date_max_offset}) is before date_min ({date_min})"
+            f"aggregates_network_demand_query: date_max ({date_max}) is before or equal to date_min ({date_min})"
         )
 
     network_interval_offset = ""
@@ -72,8 +69,8 @@ def aggregates_network_demand_query(date_max: datetime, date_min: datetime, netw
 
     query = __query.format(
         network_interval_offset=network_interval_offset,
-        date_min=date_min_offset,
-        date_max=date_max_offset,
+        date_min=date_min,
+        date_max=date_max,
         network_id=network.code,
         intervals_per_hour=network.intervals_per_hour * 1000,
     )
@@ -105,7 +102,10 @@ def exec_aggregates_network_demand_query(date_min: datetime, date_max: datetime,
 
 @profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
 def run_aggregates_demand_network(networks: list[NetworkSchema] | None = None) -> None:
-    """Run the demand aggregates for each provided network"""
+    """Run the demand aggregates for each provided network
+
+    @NOTE This runs for the entier range
+    """
 
     if not networks:
         networks = [NetworkNEM, NetworkWEM]
@@ -115,7 +115,10 @@ def run_aggregates_demand_network(networks: list[NetworkSchema] | None = None) -
             logger.error(f"run_aggregates_demand_network: Network {network.code} has no data_first_seen")
             continue
 
-        exec_aggregates_network_demand_query(date_min=network.data_first_seen, date_max=get_today_nem(), network=network)
+        date_min = network.data_first_seen.replace(tzinfo=network.get_fixed_offset(), microsecond=0)
+        date_max = get_today_nem().replace(hour=0, minute=0, second=0, microsecond=0)
+
+        exec_aggregates_network_demand_query(date_min=date_min, date_max=date_max, network=network)
 
 
 @profile_task(send_slack=False, level=ProfilerLevel.INFO, retention_period=ProfilerRetentionTime.FOREVER)
@@ -133,7 +136,7 @@ def run_aggregates_demand_network_days(days: int = 3) -> None:
     send_slack=True,
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.MONTH,
-    message_fmt="`{network.code}`: Ran flow update for interval `{interval}`",
+    message_fmt="`{network.code}`: Ran aggregates demand update for interval `{interval}`",
 )
 def run_aggregates_demand_for_interval(interval: datetime, network: NetworkSchema | None = None, offset: int = 1) -> int | None:
     """Runs and stores emission flows for a particular interval"""
@@ -159,4 +162,4 @@ def run_demand_aggregates_for_latest_interval(network: NetworkSchema) -> None:
 
 # Debug entry point
 if __name__ == "__main__":
-    run_aggregates_demand_network()
+    run_demand_aggregates_for_latest_interval(network=NetworkNEM)
