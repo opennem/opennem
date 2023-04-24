@@ -16,6 +16,7 @@ from pydantic import ValidationError, validator
 
 from opennem import settings
 from opennem.core.compat.utils import translate_id_v3_to_v2
+from opennem.core.feature_flags import get_list_of_enabled_features
 from opennem.core.fueltechs import map_v3_fueltech
 from opennem.core.validators.data import validate_data_outputs
 from opennem.schema.core import BaseConfig
@@ -202,6 +203,8 @@ class OpennemDataSet(BaseConfig):
     code: str | None = None
     region: str | None = None
     created_at: datetime | None = None
+    feature_flags: list[str] = pydantic.Field(default_factory=get_list_of_enabled_features)
+    messages: list[str] | None = None
 
     data: list[OpennemData] = []
 

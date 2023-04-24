@@ -9,7 +9,9 @@ from fastapi.exceptions import HTTPException
 from sqlalchemy import text as sql
 from starlette import status
 
+from opennem import settings
 from opennem.api.time import human_to_interval
+from opennem.core.feature_flags import get_list_of_enabled_features
 from opennem.db import get_database_engine
 from opennem.queries.utils import duid_to_case
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkSchema
@@ -245,7 +247,9 @@ def stats_factory(
         type=units.unit_type,
         data=stats_grouped,
         created_at=dt_now,
+        feature_flags=get_list_of_enabled_features(),
         version=get_version(),
+        messages=settings.api_messages,
     )
 
     if include_code:
