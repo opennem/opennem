@@ -158,6 +158,11 @@ class OpennemSettings(BaseSettings):
     feedback_send_to_slack: bool = True
     feedback_slack_hook_url: str | None = None
 
+    # api messages
+    api_messages: list[str] = [
+        "OpenNEM API will be moving behind a login soon. Please see the discssion at https://github.com/opennem/opennem/discussions/243"
+    ]
+
     # pylint: disable=no-self-argument
     @validator("log_level")
     def validate_log_level(cls, log_value: str) -> str | None:
