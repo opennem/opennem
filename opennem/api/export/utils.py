@@ -20,8 +20,9 @@ def write_output(
     stat_set: BaseModel,
     is_local: bool = False,
     exclude_unset: bool = True,
-    exclude: set = None,
+    exclude: set | None = None,
 ) -> int:
+    """Writes output of stat sets either locally or to s3"""
     if settings.export_local:
         is_local = True
 
