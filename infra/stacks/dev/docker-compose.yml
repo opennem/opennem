@@ -88,11 +88,7 @@ services:
   api:
     <<: *default-app
     image: ghcr.io/opennem/opennem/opennem:$VERSION
-    command:
-      [
-        # "wait-for",
-        # "opennem06:15432",
-        # "--",
+    command: [
         "hypercorn",
         "opennem.api.app:app",
         "--bind",
@@ -100,7 +96,9 @@ services:
         "--access-log",
         "-",
         "--error-log",
-        "-"
+        "-",
+        "--workers",
+        "4"
       ]
     labels:
       - "traefik.enable=true"
@@ -123,9 +121,6 @@ services:
     restart: unless-stopped
     command:
       [
-        # "wait-for",
-        # "opennem06:15432",
-        # "--",
         "huey_consumer",
         "-w4",
         "-f",
