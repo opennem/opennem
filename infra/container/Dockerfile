@@ -33,9 +33,6 @@ COPY . /app
 COPY infra/container/docker-entrypoint.sh /app/entrypoint.sh
 ENV PYTHONPATH "/app"
 
-RUN wget -O /usr/local/bin/wait-for https://raw.githubusercontent.com/eficode/wait-for/master/wait-for && \
-  chmod +x /usr/local/bin/wait-for
-
 EXPOSE 8000
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]
