@@ -51,20 +51,16 @@ def aggregates_facility_daily_query(date_max: datetime, date_min: datetime, netw
                     when sum(fs.eoi_quantity) > 0 then
                         coalesce(sum(fs.eoi_quantity), 0)
                     else 0
-                    -- coalesce(sum(fs.generated) / {intervals_per_hour}, 0)
                 end as energy,
                 case
                     when sum(fs.eoi_quantity) > 0 then
                         sum(fs.eoi_quantity) * coalesce(avg(bs.price_dispatch), avg(bs.price), 0)
                     else 0
-                    -- coalesce(sum(fs.generated) / {intervals_per_hour}, 0) *
-                    -- coalesce(max(bs.price_dispatch), max(bs.price), 0)
                 end as market_value,
                 case
                     when sum(fs.eoi_quantity) > 0 then
                         coalesce(sum(fs.eoi_quantity), 0) * coalesce(max(f.emissions_factor_co2), 0)
                     else 0
-                    -- coalesce(sum(fs.generated) / {intervals_per_hour}, 0) * coalesce(max(f.emissions_factor_co2), 0)
                 end as emissions
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
@@ -291,4 +287,6 @@ if __name__ == "__main__":
     # exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
 
     # run_aggregates_facility_year(year=2007, network=NetworkNEM, run_by_month=True)
-    run_facility_aggregates_for_latest_interval(network=NetworkNEM)
+    from opennem.schema.network import NetworkAEMORooftopBackfill
+
+    run_aggregate_facility_all_by_year(network=NetworkAEMORooftopBackfill)
