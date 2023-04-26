@@ -51,9 +51,12 @@ def feedback_submissions(
         alert_sent=False,
     )
 
-    session.add(feedback)
-    session.commit()
-    session.refresh(feedback)
+    try:
+        session.add(feedback)
+        session.commit()
+        session.refresh(feedback)
+    except Exception as e:
+        logger.error(f"Error saving feedback: {e}")
 
     try:
         slack_message_format = serve_template(template_name="feedback_slack_message.md", **{"feedback": feedback})
