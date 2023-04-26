@@ -359,7 +359,7 @@ def parse_wem_facility_intervals(content: str) -> list[WEMGenerationInterval]:
     return _models
 
 
-def get_wem_live_facility_intervals() -> WEMFacilityIntervalSet:
+def get_wem_live_facility_intervals(trim_intervals: bool = False) -> WEMFacilityIntervalSet:
     """Obtains WEM live facility intervals from infogrphic feeds"""
     content = wem_downloader(_AEMO_WEM_LIVE_SCADA_URL)
     _models = parse_wem_facility_intervals(content)
@@ -370,6 +370,13 @@ def get_wem_live_facility_intervals() -> WEMFacilityIntervalSet:
 
     if all_trading_intervals:
         server_latest = max(all_trading_intervals)
+
+    if trim_intervals and server_latest:
+        _models = [
+            i
+            for i in _models
+            if i.trading_interval == server_latest or (i.trading_interval == server_latest - timedelta(minutes=30))
+        ]
 
     wem_set = WEMFacilityIntervalSet(
         crawled_at=datetime.now(),
