@@ -16,7 +16,7 @@ from pydantic import validator
 
 from opennem import settings  # noqa: F401
 from opennem.core.normalizers import clean_float
-from opennem.db import SessionLocal
+from opennem.db import SessionLocal, get_database_engine
 from opennem.db.models.opennem import AggregateFacilityDaily
 from opennem.schema.core import BaseConfig
 from opennem.utils.dates import parse_date
@@ -70,6 +70,47 @@ class BackfillRecord(BaseConfig):
         return _get_aemo_backfill_facility_id(self.network_region)
 
 
+def update_rooftop_backfill_market_values() -> list:
+    """Updates the market values using a join"""
+
+    engine = get_database_engine()
+
+    query = """
+    insert into at_facility_daily (
+        trading_day,
+        network_id,
+        network_region,
+        facility_code,
+        market_value
+    )
+    select
+        fd.trading_day,
+        fd.network_id,
+        fd.network_region,
+        fd.facility_code,
+        fd.energy * price.dispatch_price as market_value
+    from at_facility_daily fd
+    left join (
+        select
+            date_trunc('month', bs.trading_interval at time zone 'AEST') as trading_month,
+            bs.network_region,
+            round(avg(bs.price), 2) as dispatch_price
+        from balancing_summary bs
+        where
+            bs.network_id = 'NEM'
+        group by 1, 2
+    ) as price on price.trading_month = fd.trading_day and fd.network_region = price.network_region
+    where
+        fd.network_id='AEMO_ROOFTOP_BACKFILL'
+    on conflict (trading_day, network_id, facility_code) do update set market_value = EXCLUDED.market_value;
+    """
+
+    with engine.begin() as cn:
+        results = cn.execute(query)
+
+    logger.info("Updated market values")
+
+
 def import_rooftop_aemo_backfills() -> None:
     csvrecords = []
     backfill_file = Path(__file__).parent.parent / "notebooks" / "aemo_rooftop_backfill.csv"
@@ -113,3 +154,4 @@ def import_rooftop_aemo_backfills() -> None:
 
 if __name__ == "__main__":
     import_rooftop_aemo_backfills()
+    update_rooftop_backfill_market_values()
