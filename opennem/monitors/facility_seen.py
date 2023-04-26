@@ -9,6 +9,8 @@ import logging
 import re
 from datetime import datetime
 
+from sqlalchemy import text
+
 from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
 from opennem.schema.core import BaseConfig
@@ -79,7 +81,7 @@ def ignored_duids(fac_records: list[FacilitySeen]) -> list[FacilitySeen]:
     return fac_filtered
 
 
-def get_facility_first_seen(period: str | None = None) -> list[FacilitySeen]:
+def get_facility_first_seen(period: str) -> list[FacilitySeen]:
     """Run this and it'll check if there are new facilities in
     scada data and let you know which ones
 
@@ -88,23 +90,21 @@ def get_facility_first_seen(period: str | None = None) -> list[FacilitySeen]:
 
     engine = get_database_engine()
 
-    __query = """
+    query = text(
+        """
         select
             distinct fs.facility_code,
             fs.network_id
         from facility_scada fs
         where
             fs.facility_code not in (select distinct code from facility)
-            {period_query}
+            and fs.trading_interval > now() - interval :period
     """
+    )
 
-    period_query = f"and fs.trading_interval > now() - interval '{period}'" if period else ""
-
-    query = __query.format(period_query=period_query)
-
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
-        row = list(c.execute(query))
+        row = list(c.execute(query, {"period": period}))
 
     records: list[FacilitySeen] = [FacilitySeen(code=r[0], network_id=r[1]) for r in row]
 
@@ -130,7 +130,7 @@ def facility_first_seen_check() -> list[FacilitySeen]:
 
 def facility_unmapped_all(filter: bool = True) -> list[FacilitySeen]:
     """Find new DUIDs and alert on them"""
-    facs = get_facility_first_seen()
+    facs = get_facility_first_seen("3 days")
 
     if filter:
         facs = ignored_duids(facs)
