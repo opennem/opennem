@@ -22,7 +22,6 @@ x-app: &default-app
     - S3_DATA_BUCKET_PATH
     - LOG_LEVEL
     - CACHE_SCADA_TTL
-    - DB_ENERGY_VIEW
     - WORKERS_RUN
     - SLACK_NOTIFICATIONS
     - NEMWEB_MIGRATE_DB
@@ -111,9 +110,7 @@ services:
         "--access-log",
         "-",
         "--error-log",
-        "-",
-        "--workers",
-        "4"
+        "-"
       ]
     labels:
       - "traefik.enable=true"
