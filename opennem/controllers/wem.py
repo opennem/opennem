@@ -91,7 +91,7 @@ def store_wem_balancingsummary_set(balancing_set: WEMBalancingSummarySet) -> Con
     return cr
 
 
-def store_wem_balancingsummary_set_bulk(balancing_set: WEMBalancingSummarySet) -> ControllerReturn:
+def store_wem_balancingsummary_set_bulk(balancing_set: WEMBalancingSummarySet) -> None:
     """Takes a lits of records and persists them to the database"""
     primary_keys = []
     records_to_store = []
@@ -199,64 +199,49 @@ def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> Contr
     return cr
 
 
-def store_wem_facility_intervals_bulk(balancing_set: WEMFacilityIntervalSet) -> ControllerReturn:
+def store_wem_facility_intervals_bulk(facility_interval_set: WEMFacilityIntervalSet) -> ControllerReturn:
     """Persist WEM facility intervals
 
     Optimized bulk insert version
     """
-    engine = get_database_engine()
-    session = get_scoped_session()
+
+    created_at = get_today_nem()
     cr = ControllerReturn()
 
     records_to_store = []
 
-    if not balancing_set.intervals:
+    if not facility_interval_set.intervals:
         return cr
 
-    cr.total_records = len(balancing_set.intervals)
-    cr.server_latest = balancing_set.server_latest
+    cr.total_records = len(facility_interval_set.intervals)
+    cr.server_latest = facility_interval_set.server_latest
 
-    primary_keys: set(datetime, str) = []
+    primary_keys: list[{datetime, str}] = []
 
-    for _rec in balancing_set.intervals:
+    for _rec in facility_interval_set.intervals:
         if (_rec.trading_interval, _rec.facility_code) in primary_keys:
             continue
 
         records_to_store.append(
             {
-                "created_by": "wem.controller.bulk",
+                "created_by": "opennem.controller",
+                "created_at": created_at,
+                "updated_at": None,
                 "network_id": "WEM",
                 "trading_interval": _rec.trading_interval,
                 "facility_code": _rec.facility_code,
                 "generated": _rec.generated,
                 "eoi_quantity": _rec.eoi_quantity,
+                "is_forecast": False,
+                "energy_quality_flag": 0,
             }
         )
+
         cr.processed_records += 1
 
     if len(records_to_store) < 1:
         return cr
 
-    stmt = insert(FacilityScada).values(records_to_store)
-    stmt.bind = engine
-    stmt = stmt.on_conflict_do_update(
-        index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
-        set_={
-            "generated": stmt.excluded.generated,
-            "eoi_quantity": stmt.excluded.eoi_quantity,
-        },
-    )
-
-    try:
-        session.execute(stmt)
-        session.commit()
-        cr.inserted_records = len(records_to_store)
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        cr.errors = len(records_to_store)
-        cr.error_detail.append(str(e))
-    finally:
-        session.close()
-        engine.dispose()
+    bulkinsert_mms_items(FacilityScada, records_to_store, ["generated", "eoi_quantity"])  # type: ignore
 
     return cr

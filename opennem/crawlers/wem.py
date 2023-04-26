@@ -9,7 +9,11 @@ from opennem.clients.wem import (
     get_wem_live_facility_intervals,
 )
 from opennem.controllers.schema import ControllerReturn
-from opennem.controllers.wem import store_wem_balancingsummary_set, store_wem_facility_intervals
+from opennem.controllers.wem import (
+    store_wem_balancingsummary_set,
+    store_wem_facility_intervals,
+    store_wem_facility_intervals_bulk,
+)
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
 
 logger = logging.getLogger("opennem.crawlers.wem")
@@ -44,7 +48,7 @@ def run_wem_live_facility_scada_crawl(
 ) -> ControllerReturn:
     generated_set = get_wem_live_facility_intervals()
 
-    cr = store_wem_facility_intervals(generated_set)
+    cr = store_wem_facility_intervals_bulk(generated_set)
     return cr
 
 
