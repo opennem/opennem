@@ -50,7 +50,7 @@ logger = logging.getLogger("opennem")
 warnings.filterwarnings("ignore", module="openpyxl")
 
 # Module variables
-__version__ = "3.15.1-alpha.5"
+__version__ = "3.15.1-alpha.6"
 __env__ = "prod"
 __package__ = "opennem"
 
