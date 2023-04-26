@@ -99,12 +99,6 @@ class OpennemSettings(BaseSettings):
     # prepend the country code in the id
     schema_output_id_country: bool = False
 
-    # db views used
-
-    # energy view used
-    db_energy_view: str = "mv_facility_all"
-    db_energy_view_recent: str = "mv_facility_45d"
-
     # workers
     workers_run: bool = True
     workers_db_run: bool = True
