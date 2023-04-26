@@ -1,4 +1,4 @@
-New Feedback ${feedback.created_at.strftime("%Y-%m-%d %H:%M:%S")}
+New Feedback
 
 _Email:_ ${feedback.email} _Twitter:_ ${feedback.twitter} _IP:_ ${feedback.user_ip}
 
