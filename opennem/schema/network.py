@@ -154,7 +154,8 @@ NetworkAEMORooftop = NetworkSchema(
 
 # This is the network for derived solar_rooftop data
 # that predates AEMORooftop
-# @NOTE deprecated
+# @NOTE only exists in aggregate tables and not facility scada data
+# is imported using scripts/rooftop_fill.py
 NetworkAEMORooftopBackfill = NetworkSchema(
     code="AEMO_ROOFTOP_BACKFILL",
     label="AEMO Rooftop Backfill",
@@ -163,6 +164,7 @@ NetworkAEMORooftopBackfill = NetworkSchema(
     timezone_database="AEST",
     offset=600,
     interval_size=30,
+    data_first_seen=datetime.fromisoformat("2005-04-01T00:00:00+10:00"),
     fueltechs=["solar_rooftop"],
 )
 
