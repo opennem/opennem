@@ -370,30 +370,22 @@ def power_network_fueltech_query(
 
     __query = """
     select
-        t.trading_interval,
-        t.fueltech_code,
-        sum(t.fueltech_power)
-    from (
-        select
-            time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
-            ft.code as fueltech_code,
-            coalesce(avg(fs.generated), 0) as fueltech_power
-        from facility_scada fs
-        join facility f on fs.facility_code = f.code
-        join fueltech ft on f.fueltech_id = ft.code
-        where
-            fs.is_forecast is False and
-            f.fueltech_id is not null and
-            f.fueltech_id not in ({fueltechs_exclude}) and
-            {network_query}
-            {network_region_query}
-            fs.trading_interval <= '{date_max}' and
-            fs.trading_interval >= '{date_min}'
-            {fueltech_filter}
-        group by 1, f.code, 2
-    ) as t
+        time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
+        ft.code as fueltech_code,
+        coalesce(sum(fs.generated), 0) as fueltech_power
+    from facility_scada fs
+    join facility f on fs.facility_code = f.code
+    join fueltech ft on f.fueltech_id = ft.code
+    where
+        fs.is_forecast is False and
+        f.fueltech_id not in ({fueltechs_exclude}) and
+        {network_query}
+        {network_region_query}
+        fs.trading_interval <= '{date_max}' and
+        fs.trading_interval >= '{date_min}'
+        {fueltech_filter}
     group by 1, 2
-    order by 1 desc
+    order by 1 desc, 2
     """
 
     network_region_query: str = ""
