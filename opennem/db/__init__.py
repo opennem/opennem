@@ -91,7 +91,7 @@ SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bi
 
 
 def get_scoped_session() -> Session:
-    return SessionLocal()
+    return scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))()
 
 
 def get_database_session() -> Generator[Session, None, None]:
