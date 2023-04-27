@@ -101,33 +101,36 @@ def station_record(
 
 
 @router.get(
-    "/{country_code}/{network_id}/{station_code:path}",
-    response_model=StationOutputSchema,
+    "/au/{network_id}/{station_code}",
+    name="Get station information",
     description="Get a single station by code",
+    response_model=StationOutputSchema,
     response_model_exclude_none=True,
-    # response_model_exclude={"location": {"lat", "lng"}},
 )
-@cache(expire=60 * 60 * 6)
+@cache(expire=60 * 60 * 1)
 async def station(
-    country_code: str,
     network_id: str,
     station_code: str,
-    session: Session = Depends(get_database_session),
     only_generators: bool | None = True,
+    session: Session = Depends(get_database_session),
 ) -> Station:
+    # quick check for network and early escape before db
+    if network_id.upper() not in ["NEM", "WEM"]:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
+
     station_query = (
         session.query(Station)
+        .join(Facility, Facility.station_id == Station.id)
+        .join(Network, Network.code == Facility.network_id)
         .filter(Station.code == station_code)
-        .filter(Facility.station_id == Station.id)
-        .filter(~Facility.code.endswith("NL1"))
-        .filter(Facility.network_id == network_id)
-        .filter(Network.country == country_code)
+        .filter(Network.code == network_id)
+        .filter(Facility.dispatch_type == DispatchType.GENERATOR)
     )
 
     if only_generators:
         station_query = station_query.filter(Facility.dispatch_type == DispatchType.GENERATOR)
 
-    station = station_query.one_or_none()
+    station: Station | None = station_query.one_or_none()
 
     if not station:
         raise StationNotFound()
