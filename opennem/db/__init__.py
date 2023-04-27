@@ -73,23 +73,25 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
         raise exc
 
 
+engine = db_connect()
+
+
 def get_database_engine() -> Engine:
     """
     Gets a database engine connection
 
     @NOTE deprecate this eventually
     """
-    _engine = db_connect()
-    return _engine
+    global engine
 
+    return engine
 
-engine = get_database_engine()
 
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 
 def get_scoped_session() -> Session:
-    return scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))()
+    return SessionLocal()
 
 
 def get_database_session() -> Generator[Session, None, None]:
