@@ -13,9 +13,6 @@ from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_all_monthly, export_energy, export_power
 from opennem.core.crawlers.cli import cmd_crawl_cli
 from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures, load_fueltechs
-from opennem.db.tasks import refresh_views
-from opennem.db.views import init_aggregation_policies
-from opennem.db.views.init import init_views_cli
 from opennem.exporter.geojson import export_facility_geojson
 from opennem.exporter.historic import export_historic_intervals
 from opennem.importer.all import run_all
@@ -49,22 +46,6 @@ def cmd_db_init() -> None:
 def cmd_db_fixtures() -> None:
     load_fixtures()
     logger.info("Fixtures loaded")
-
-
-@click.command()
-def cmd_db_refresh() -> None:
-    refresh_views()
-
-
-@click.command()
-@click.option("--purge", is_flag=True, help="Purge unmapped views")
-def cmd_db_views(purge: bool) -> None:
-    init_views_cli(purge=purge)
-
-
-@click.command()
-def cmd_db_aggregations() -> None:
-    init_aggregation_policies()
 
 
 @click.group()
@@ -203,9 +184,6 @@ cmd_export.add_command(cmd_export_energy_monthly, name="energy_monthly")
 
 cmd_db.add_command(cmd_db_init, name="init")
 cmd_db.add_command(cmd_db_fixtures, name="fixtures")
-cmd_db.add_command(cmd_db_refresh, name="refresh")
-cmd_db.add_command(cmd_db_views, name="views")
-cmd_db.add_command(cmd_db_aggregations, name="aggregations")
 
 cmd_weather.add_command(cmd_weather_init, name="init")
 
