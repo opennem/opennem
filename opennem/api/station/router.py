@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi_cache.decorator import cache
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import Response
@@ -106,7 +107,8 @@ def station_record(
     response_model_exclude_none=True,
     # response_model_exclude={"location": {"lat", "lng"}},
 )
-def station(
+@cache(expire=60 * 60 * 6)
+async def station(
     country_code: str,
     network_id: str,
     station_code: str,
