@@ -101,7 +101,7 @@ def station_record(
 
 
 @router.get(
-    "/au/{network_id}/{station_code}",
+    "/au/{network_id}/{station_code:path}",
     name="Get station information",
     description="Get a single station by code",
     response_model=StationOutputSchema,
@@ -113,7 +113,7 @@ async def station(
     station_code: str,
     only_generators: bool | None = True,
     session: Session = Depends(get_database_session),
-) -> Station:
+) -> StationOutputSchema:
     # quick check for network and early escape before db
     if network_id.upper() not in ["NEM", "WEM"]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
@@ -144,4 +144,5 @@ async def station(
     if station.facilities:
         station.network = station.facilities[0].network_id  # type: ignore
 
-    return station
+    model = StationOutputSchema.from_orm(station)
+    return model
