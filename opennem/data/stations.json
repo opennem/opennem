@@ -3411,7 +3411,7 @@
       {
         "network_id": "NEM",
         "fueltech_id": "coal_black",
-        "status_id": "operating",
+        "status_id": "retired",
         "code": "LD04",
         "network_code": "NEM",
         "network_region": "NSW1",
@@ -3434,7 +3434,7 @@
       {
         "network_id": "NEM",
         "fueltech_id": "coal_black",
-        "status_id": "operating",
+        "status_id": "retired",
         "code": "LD02",
         "network_code": "NEM",
         "network_region": "NSW1",
@@ -3457,7 +3457,7 @@
       {
         "network_id": "NEM",
         "fueltech_id": "coal_black",
-        "status_id": "operating",
+        "status_id": "retired",
         "code": "LD01",
         "network_code": "NEM",
         "network_region": "NSW1",
@@ -3480,7 +3480,7 @@
       {
         "network_id": "NEM",
         "fueltech_id": "coal_black",
-        "status_id": "operating",
+        "status_id": "retired",
         "code": "LD03",
         "network_code": "NEM",
         "network_region": "NSW1",
