@@ -203,9 +203,7 @@ class LocationSchema(BaseConfig):
     @validator("geom", pre=True, always=True, allow_reuse=True)
     def parse_geom(cls, value: WKBElement) -> Any:
         if value:
-            print(value)
             mapping = geometry.mapping(to_shape(value))
-            print(mapping)
             return mapping
 
     @validator("boundary", pre=True)
