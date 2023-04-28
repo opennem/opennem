@@ -4,9 +4,12 @@
 import logging
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 
+from geoalchemy2.elements import WKBElement
+from geoalchemy2.shape import to_shape
 from pydantic import BaseModel, validator
+from shapely import geometry
 
 from opennem.api.photo.schema import Photo
 from opennem.api.stats.schema import OpennemData
@@ -161,12 +164,12 @@ class LocationSchema(BaseConfig):
 
     # Geo fields
     # place_id: Optional[str]
-    # geocode_approved: bool = False
+    geocode_approved: bool = False
     # geocode_skip: bool = False
-    # geocode_processed_at: datetime | None = None
+    geocode_processed_at: datetime | None = None
     geocode_by: str | None
-    # geom: Any | None = None
-    # boundary: Any | None = None
+    geom: dict[str, str | tuple] | None = None
+    boundary: Any | None = None
 
     lat: float | None = None
     lng: float | None = None
@@ -197,15 +200,18 @@ class LocationSchema(BaseConfig):
 
         return None
 
-    # @validator("geom", pre=True)
-    # def parse_geom(cls, value: WKBElement) -> Any:
-    #     if value:
-    #         return geometry.mapping(to_shape(value))
+    @validator("geom", pre=True, always=True, allow_reuse=True)
+    def parse_geom(cls, value: WKBElement) -> Any:
+        if value:
+            print(value)
+            mapping = geometry.mapping(to_shape(value))
+            print(mapping)
+            return mapping
 
-    # @validator("boundary", pre=True)
-    # def parse_boundary(cls, value: WKBElement) -> Any:
-    #     if value:
-    #         return geometry.mapping(to_shape(value))
+    @validator("boundary", pre=True)
+    def parse_boundary(cls, value: WKBElement) -> Any:
+        if value:
+            return geometry.mapping(to_shape(value))
 
 
 def as_nem_timezone(dt: datetime) -> datetime | None:

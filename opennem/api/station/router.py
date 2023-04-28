@@ -1,7 +1,6 @@
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi_cache.decorator import cache
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import Response
@@ -107,13 +106,15 @@ def station_record(
     response_model=StationOutputSchema,
     response_model_exclude_none=True,
 )
-@cache(expire=60 * 60 * 1)
+# @NOTE this isn't correctly caching the WKB field in location
+# @TODO fix this ;)
+# @cache(expire=60 * 60 * 1)
 async def station(
     network_id: str,
     station_code: str,
     only_generators: bool | None = True,
     session: Session = Depends(get_database_session),
-) -> StationOutputSchema:
+) -> Station:
     # quick check for network and early escape before db
     if network_id.upper() not in ["NEM", "WEM"]:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
@@ -122,6 +123,7 @@ async def station(
         session.query(Station)
         .join(Facility, Facility.station_id == Station.id)
         .join(Network, Network.code == Facility.network_id)
+        .join(Location, Location.id == Station.location_id)
         .filter(Station.code == station_code)
         .filter(Network.code == network_id)
         .filter(Facility.dispatch_type == DispatchType.GENERATOR)
@@ -144,5 +146,4 @@ async def station(
     if station.facilities:
         station.network = station.facilities[0].network_id  # type: ignore
 
-    model = StationOutputSchema.from_orm(station)
-    return model
+    return station
