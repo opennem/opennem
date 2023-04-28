@@ -23372,7 +23372,7 @@
     "facilities": [
       {
         "network_id": "NEM",
-        "fueltech_id": "gas_ccgt",
+        "fueltech_id": "gas_ocgt",
         "status_id": "retired",
         "code": "LYGS1",
         "network_code": null,
@@ -23395,7 +23395,7 @@
       },
       {
         "network_id": "NEM",
-        "fueltech_id": "gas_ccgt",
+        "fueltech_id": "gas_ocgt",
         "status_id": "retired",
         "code": "LYGS3",
         "network_code": null,
@@ -23418,7 +23418,7 @@
       },
       {
         "network_id": "NEM",
-        "fueltech_id": "gas_ccgt",
+        "fueltech_id": "gas_ocgt",
         "status_id": "retired",
         "code": "LYGS6",
         "network_code": null,
@@ -23441,7 +23441,7 @@
       },
       {
         "network_id": "NEM",
-        "fueltech_id": "gas_ccgt",
+        "fueltech_id": "gas_ocgt",
         "status_id": "retired",
         "code": "LYGS5",
         "network_code": null,
@@ -23464,7 +23464,7 @@
       },
       {
         "network_id": "NEM",
-        "fueltech_id": "gas_ccgt",
+        "fueltech_id": "gas_ocgt",
         "status_id": "retired",
         "code": "LYGS4",
         "network_code": null,
@@ -23487,7 +23487,7 @@
       },
       {
         "network_id": "NEM",
-        "fueltech_id": "gas_ccgt",
+        "fueltech_id": "gas_ocgt",
         "status_id": "retired",
         "code": "LYGS2",
         "network_code": null,
@@ -23510,7 +23510,7 @@
       },
       {
         "network_id": "NEM",
-        "fueltech_id": "gas_ccgt",
+        "fueltech_id": "gas_ocgt",
         "status_id": "retired",
         "code": "VPGS",
         "network_code": null,
