@@ -208,7 +208,11 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema, run_by_month
     month_min = date_min.month
     month_max = 12  # @NOTE make this a param so we can run custom ranges
 
-    for month in range(month_min, month_max):
+    if year == today.year:
+        month_min = today.month
+        month_max = today.month
+
+    for month in range(month_min, month_max + 1):
         date_min, date_max = get_aggregate_month_range(year, month, network=network)
 
         logger.info(f"Running for month {month} - range : {date_min} {date_max}")
@@ -285,8 +289,4 @@ if __name__ == "__main__":
     # date_max = datetime.fromisoformat("2015-02-01T00:00:00+10:00")
     # network = NetworkNEM
     # exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
-
-    # run_aggregates_facility_year(year=2007, network=NetworkNEM, run_by_month=True)
-    from opennem.schema.network import NetworkAEMORooftopBackfill
-
-    run_aggregate_facility_all_by_year(network=NetworkAEMORooftopBackfill)
+    run_aggregates_facility_year(network=NetworkAEMORooftop, year=2023)
