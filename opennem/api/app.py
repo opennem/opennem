@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
 from fastapi.responses import FileResponse
 from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
 from sqlalchemy.orm import Session
@@ -120,6 +121,7 @@ async def http_type_exception_handler(request: Request, exc: HTTPException) -> O
 async def startup() -> None:
     if settings.is_dev:
         logger.info("Cache disabled")
+        FastAPICache.init(backend=InMemoryBackend())
         return None
 
     redis = aioredis.from_url(settings.cache_url, encoding="utf8", decode_responses=True)
