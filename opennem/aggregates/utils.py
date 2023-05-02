@@ -27,7 +27,7 @@ def get_aggregate_month_range(year: int, month: int, network: NetworkSchema = Ne
     date_min = datetime(year, month, 1, 0, 0, 0, 0, tzinfo=tz)
     date_max = datetime(year, month + 1, 1, 0, 0, 0, 0, tzinfo=tz)
 
-    if year == today.year and month == today.month:
+    if year == today.year and month == today.month and not date_max.day == 1:
         date_max = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tz)
 
     return date_min, date_max
