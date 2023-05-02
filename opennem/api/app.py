@@ -118,8 +118,13 @@ async def http_type_exception_handler(request: Request, exc: HTTPException) -> O
 # setup caching
 @app.on_event("startup")
 async def startup() -> None:
+    if settings.is_dev:
+        logger.info("Cache disabled")
+        return None
+
     redis = aioredis.from_url(settings.cache_url, encoding="utf8", decode_responses=True)
     FastAPICache.init(RedisBackend(redis), prefix="api-cache")
+    logger.info("Enabled API cache")
 
 
 # sub-routers
