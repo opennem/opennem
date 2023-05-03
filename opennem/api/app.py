@@ -56,7 +56,7 @@ origins = [
     "https://admin.opennem.localhost",
     "https://*.opennem-fe.pages.dev",
     "https://*.pages.dev",
-    "https://*.netflify.app",
+    "https://*.netlify.app",
 ]
 
 app.add_middleware(
