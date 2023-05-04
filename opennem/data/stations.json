@@ -13369,7 +13369,7 @@
       {
         "network_id": "NEM",
         "fueltech_id": "battery_charging",
-        "status_id": "committed",
+        "status_id": "operating",
         "code": "ADPBA1L",
         "network_code": null,
         "network_region": "SA1",
@@ -13392,7 +13392,7 @@
       {
         "network_id": "NEM",
         "fueltech_id": "battery_discharging",
-        "status_id": "committed",
+        "status_id": "operating",
         "code": "ADPBA1G",
         "network_code": null,
         "network_region": "SA1",
