@@ -60,7 +60,9 @@ def feedback_submissions(
 
     try:
         slack_message_format = serve_template(template_name="feedback_slack_message.md", **{"feedback": feedback})
-        slack_message(msg=slack_message_format, alert_webhook_url=settings.feedback_slack_hook_url)
+        slack_message(
+            msg=slack_message_format, alert_webhook_url=settings.feedback_slack_hook_url, tag_users=settings.feedback_tag_users
+        )
     except Exception as e:
         logger.error(f"Error sending slack feedback message: {e}")
 
