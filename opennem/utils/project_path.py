@@ -9,6 +9,6 @@ def get_project_path() -> Path:
         raise Exception(f"Could not find {__package__} module")
 
     if sys.modules[__package__].__file__:
-        return Path(sys.modules[__package__].__file__).parent  # type: ignore
+        return Path(sys.modules[__package__].__file__).parent.parent  # type: ignore
 
     return Path(__file__).parent
