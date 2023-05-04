@@ -153,6 +153,7 @@ class OpennemExportSeries(BaseConfig):
 
         elif self.period:
             start = self.end - get_human_interval(self.period.period_human)
+            start = start.replace(second=0, microsecond=0)
 
             # trim again
             if self.interval.interval == 30:
