@@ -2,6 +2,7 @@
 """ Initialization Python Script """
 import subprocess
 
+from opennem import settings
 from opennem.api.export.tasks import export_energy, export_power
 from opennem.core.crawlers.schema import CrawlerSchedule
 from opennem.crawl import get_crawl_set, run_crawl
@@ -11,7 +12,6 @@ from opennem.importer.db import import_facilities
 from opennem.importer.db import init as db_init
 from opennem.importer.interconnectors import import_nem_interconnects
 from opennem.importer.opennem import opennem_import
-from opennem.settings import settings
 from opennem.workers.daily import all_runner
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.network_data_range import run_network_data_range_update
