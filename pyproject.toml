@@ -113,6 +113,7 @@ select = [
   "I",  # isort
   "C",  # flake8-comprehensions
   "B",  # flake8-bugbear
+  "UP", # pyupgrade
 ]
 ignore = [
     "E501",  # line too long, handled by black
