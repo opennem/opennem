@@ -4,7 +4,7 @@
 import logging
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from geoalchemy2.elements import WKBElement
 from geoalchemy2.shape import to_shape
@@ -88,7 +88,7 @@ class RecordTypes(str, Enum):
     revision = "revision"
 
 
-class ScadaReading(tuple[datetime, Optional[float]]):
+class ScadaReading(tuple[datetime, float | None]):
     pass
 
     id: int | None

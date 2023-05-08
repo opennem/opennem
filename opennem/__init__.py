@@ -55,9 +55,6 @@ __env__ = "prod"
 __package__ = "opennem"
 
 # Check minimum required Python version
-if sys.version_info < (3, 10):
-    print(" * OpenNEM %s requires Python 3.10 or greater")
-    sys.exit(1)
 
 # console
 console = Console()
