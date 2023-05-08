@@ -18,14 +18,7 @@ from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, Station
-from opennem.schema.network import (
-    NetworkAEMORooftop,
-    NetworkAEMORooftopBackfill,
-    NetworkAPVI,
-    NetworkNEM,
-    NetworkNetworkRegion,
-    NetworkWEM,
-)
+from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.schema.time import TimePeriod
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem, is_aware
 from opennem.utils.time import human_to_timedelta
@@ -476,6 +469,7 @@ def power_network_region_fueltech(
     if network_region_code:
         network_region_out = network_region_code.upper() + "/"
 
+    # @NOTE if the feature is enabled since this output is static we can redirect to the static JSON
     redirect_to = redirect_url_format.format(
         network_code_out=network_code_out,
         network_region_out=network_region_out,
@@ -579,7 +573,7 @@ async def emission_factor_per_network(  # type: ignore
             detail="Network has no regions",
         )
 
-    if network_region_code and network_region_code.upper() not in [i.upper() for i in network.regions]:
+    if network_region_code and network.regions and network_region_code.upper() not in [i.upper() for i in network.regions]:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Network region not found",
@@ -718,7 +712,7 @@ def fueltech_demand_mix(
 
 
 @router.get(
-    "/price/{network_code}/{network_region}",
+    "/price/{network_code}/{network_region_code}",
     name="Price history by network and network region",
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
@@ -732,7 +726,7 @@ def fueltech_demand_mix(
 @cache(expire=60 * 5)
 async def price_network_endpoint(
     network_code: str,
-    network_region: str | None = None,
+    network_region_code: str | None = None,
     forecasts: bool = False,
     engine: Engine = Depends(get_database_engine),
 ) -> OpennemDataSet:
@@ -781,10 +775,10 @@ async def price_network_endpoint(
         period=period_obj,
     )
 
-    if network_region:
-        time_series.network.regions = [NetworkNetworkRegion(code=network_region)]
+    if network_region_code:
+        time_series.network.regions = [network_region_code.upper()]
 
-    query = network_region_price_query(time_series=time_series)
+    query = network_region_price_query(time_series=time_series, network_region_code=network_region_code)
 
     with engine.connect() as c:
         logger.debug(query)

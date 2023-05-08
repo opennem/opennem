@@ -21,10 +21,6 @@ class NetworkSchemaException(Exception):
     pass
 
 
-class NetworkNetworkRegion(BaseConfig):
-    code: str
-
-
 class NetworkRegionSchema(BaseConfig):
     network_id: str
     code: str
@@ -35,8 +31,6 @@ class NetworkSchema(BaseConfig):
     code: str
     country: str
     label: str
-
-    regions: list[NetworkNetworkRegion] | None = Field(None, description="Regions for this network")
 
     timezone: str = Field(..., description="Network timezone")
 
@@ -69,6 +63,9 @@ class NetworkSchema(BaseConfig):
 
     # Does the network have flows
     has_interconnectors: bool = Field(False, description="Network has interconnectors")
+
+    # list of network regions
+    regions: list[str] | None = None
 
     def __str__(self) -> str:
         """String representation of network schema"""
@@ -150,6 +147,7 @@ NetworkAEMORooftop = NetworkSchema(
     interval_size=30,
     data_first_seen=datetime.fromisoformat("2018-03-01T00:00:00+10:00"),
     fueltechs=["solar_rooftop"],
+    regions=["NSW1", "QLD1", "SA1", "TAS1", "VIC1"],
 )
 
 # This is the network for derived solar_rooftop data
@@ -166,6 +164,7 @@ NetworkAEMORooftopBackfill = NetworkSchema(
     interval_size=30,
     data_first_seen=datetime.fromisoformat("2005-04-01T00:00:00+10:00"),
     fueltechs=["solar_rooftop"],
+    regions=["NSW1", "QLD1", "SA1", "TAS1", "VIC1"],
 )
 
 # This is the new backfill network derived from APVI data
@@ -181,6 +180,7 @@ NetworkOpenNEMRooftopBackfill = NetworkSchema(
     fueltechs=["solar_rooftop"],
     data_last_seen=datetime.fromisoformat("2018-02-28T00:00:00+10:00"),
     data_first_seen=datetime.fromisoformat("2015-03-19T00:00:00+10:00"),
+    regions=["NSW1", "QLD1", "SA1", "TAS1", "VIC1"],
 )
 
 NetworkNEM = NetworkSchema(
@@ -201,6 +201,7 @@ NetworkNEM = NetworkSchema(
     has_interconnectors=True,
     subnetworks=[NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill],
     fueltechs=all_fueltechs_without_rooftop,
+    regions=["NSW1", "QLD1", "SA1", "TAS1", "VIC1"],
 )
 
 NetworkWEM = NetworkSchema(
@@ -218,6 +219,7 @@ NetworkWEM = NetworkSchema(
     monitor_interval_alert_threshold=60 * 4,
     subnetworks=[NetworkAPVI],
     fueltechs=all_fueltechs_without_rooftop,
+    regions=["WEM"],
 )
 
 

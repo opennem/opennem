@@ -178,7 +178,7 @@ def network_fueltech_demand_query(time_series: OpennemExportSeries) -> str:
     )
 
 
-def network_region_price_query(time_series: OpennemExportSeries) -> str:
+def network_region_price_query(time_series: OpennemExportSeries, network_region_code: str | None = None) -> str:
     __query = """
         select
             time_bucket('{trunc}', bs.trading_interval) as trading_interval,
@@ -201,8 +201,11 @@ def network_region_price_query(time_series: OpennemExportSeries) -> str:
     network_regions_query = ""
 
     if time_series.network.regions:
-        network_regions: str = ",".join([f"'{i.code}'" for i in time_series.network.regions])
+        network_regions: str = ",".join([f"'{i.upper()}'" for i in time_series.network.regions])
         network_regions_query = f"and bs.network_region IN ({network_regions})"
+
+    if network_region_code:
+        network_regions_query = f"and bs.network_region = '{network_region_code.upper()}'"
 
     return dedent(
         __query.format(
