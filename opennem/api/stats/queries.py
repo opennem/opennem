@@ -117,7 +117,7 @@ def emission_factor_region_query(time_series: OpennemExportSeries, network_regio
                 fs.generated > 0 and
                 {network_region_query}
                 fs.trading_interval >= '{date_min}' and
-                fs.trading_interval < nemweb_latest_interval()
+                fs.trading_interval <= '{date_max}'
             group by
                 1, f.code, 2
         ) as t

@@ -529,10 +529,17 @@ def power_network_region_fueltech(
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
+@router.get(
+    "/emissionfactor/network/{network_code}/{network_region_code}",
+    name="Emission Factor for a Network Region",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+)
 @cache(expire=60 * 5)
 async def emission_factor_per_network(  # type: ignore
     network_code: str,
     interval: str = "5m",
+    network_region_code: str | None = None,
     engine=Depends(get_database_engine),  # type: ignore
 ) -> OpennemDataSet | None:
     engine = get_database_engine()
@@ -560,28 +567,32 @@ async def emission_factor_per_network(  # type: ignore
     if not interval_obj:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid interval size")
 
-    scada_range = get_scada_range(network=network)
-
-    if not scada_range:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Could not find a date range",
-        )
-
     if not network:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Network not found",
         )
 
+    if network_region_code and not network.regions:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Network has no regions",
+        )
+
+    if network_region_code and network_region_code.upper() not in [i.upper() for i in network.regions]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Network region not found",
+        )
+
     time_series = OpennemExportSeries(
-        start=scada_range.start,
+        start=get_last_completed_interval_for_network(network=network),
         network=network,
         interval=interval_obj,
         period=period_obj,
     )
 
-    query = emission_factor_region_query(time_series=time_series)
+    query = emission_factor_region_query(time_series=time_series, network_region_code=network_region_code)
 
     with engine.connect() as c:
         logger.debug(query)
