@@ -3,7 +3,7 @@ Timezone-related classes and functions.
 
 Some methods adapted from the Django project
 """
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from datetime import timezone as pytimezone
 
 
@@ -52,7 +52,7 @@ def make_aware(value: datetime, timezone: pytimezone | None = None) -> datetime:
     """Make a naive datetime.datetime in a given time zone aware."""
 
     if timezone is None:
-        timezone = pytimezone.utc
+        timezone = UTC
 
     # Check that we won't overwrite the timezone of an aware datetime.
     if is_aware(value):
@@ -66,7 +66,7 @@ def make_naive(value: datetime, timezone: pytimezone | None = None) -> datetime:
     """Make an aware datetime.datetime naive in a given time zone."""
 
     if timezone is None:
-        timezone = pytimezone.utc
+        timezone = UTC
 
     # Emulate the behavior of astimezone() on Python < 3.6.
     if is_naive(value):

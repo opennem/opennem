@@ -2,7 +2,7 @@
 
 """
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -95,7 +95,7 @@ class BOMObserationSchema(BaseConfig):
 
         tz = ZoneInfo(STATE_TO_TIMEZONE[_state])
 
-        dt_return = dt.replace(tzinfo=timezone.utc).astimezone(tz)
+        dt_return = dt.replace(tzinfo=UTC).astimezone(tz)
 
         return dt_return
 

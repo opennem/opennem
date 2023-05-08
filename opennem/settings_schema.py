@@ -3,6 +3,7 @@ OpenNEM Settings Schema
 
 Everything that can be changed is set here and can be overwritten with ENV settings
 """
+from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path
 
@@ -21,7 +22,7 @@ class OpennemSettings(BaseSettings):
 
     log_level: str = "DEBUG"
 
-    timezone: pytimezone | str = pytimezone.utc
+    timezone: pytimezone | str = UTC
 
     # Set maintenance mode - workers won't run and API will return a MaintenanceMode response
     maintenance_mode: bool = False

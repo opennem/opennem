@@ -1,5 +1,5 @@
 import calendar
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from opennem.utils.timezone import is_aware
 
@@ -62,7 +62,7 @@ def timesince(
     if now and not isinstance(now, datetime):
         now = datetime(now.year, now.month, now.day)
 
-    now = now or datetime.now(timezone.utc if is_aware(d) else None)
+    now = now or datetime.now(UTC if is_aware(d) else None)
 
     if reversed:
         d, now = now, d

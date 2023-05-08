@@ -1,11 +1,9 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
 from opennem.utils.dates import date_series, parse_date
 from opennem.utils.timezone import is_aware
-
-UTC = timezone.utc
 
 
 class TestUtilDates:

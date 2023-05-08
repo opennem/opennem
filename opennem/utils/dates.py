@@ -1,7 +1,7 @@
 import logging
 import math
 from collections.abc import Generator
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from datetime import timezone as pytimezone
 from functools import lru_cache
 from typing import Any
@@ -116,7 +116,7 @@ def parse_date(
                 dt_return = make_aware(dt_return, timezone=tz)
 
     if is_utc:
-        tz = pytimezone.utc
+        tz = UTC
 
         if dt_return and is_aware(dt_return):
             if tz and hasattr(tz, "localize"):
@@ -340,7 +340,7 @@ def subtract_week(subject: datetime) -> datetime:
 
 def subtract_days(subject: datetime | None = None, days: int = 30) -> datetime:
     if not subject:
-        subject = datetime.now(pytimezone.utc)
+        subject = datetime.now(tz=UTC)
 
     return subject - timedelta(days=days)
 
