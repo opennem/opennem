@@ -44,7 +44,6 @@ def power_facility_query(
     query = __query.format(
         facility_codes_parsed=duid_to_case(facility_codes),
         trunc=time_series.interval.interval_sql,
-        period=time_series.period.period_sql,
         timezone=time_series.network.timezone_database,
         date_max=date_range.end,
         date_min=date_range.start,
