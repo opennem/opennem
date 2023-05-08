@@ -369,6 +369,11 @@ async def power_flows_network_week(
 
     network = network_from_network_code(network_code)
 
+    if month:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Month not supported and has been deprecated. Please contact OpenNEM"
+        )
+
     if not network:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Network not found")
 
