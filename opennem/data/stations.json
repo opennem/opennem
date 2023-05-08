@@ -13255,10 +13255,10 @@
     "code": "YARANSF",
     "name": "Yarranlea",
     "network_name": "Yarranlea",
-    "description": null,
+    "description": "Yarranlea Solar is an innovative energy company, which has been established to harness the Earth's abundant natural resources to create carbon-free energy. Using a range of technologies, our aim is to deliver renewable energy to established power grids across a 24 hour period. Yarranlea Solar is named after our flagship project located on sparsely vegetated farmland approximately 50km west of Toowoomba. This project will connect to the power grid using the existing Ergon Energy infrastructure in the area.",
     "wikipedia_link": null,
     "wikidata_id": null,
-    "website_url": null,
+    "website_url": "https://yarranleasolar.com.au/",
     "approved": true,
     "approved_by": "opennem.registry",
     "facilities": [
