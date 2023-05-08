@@ -10323,10 +10323,10 @@
     "code": "MARYRSF",
     "name": "Maryrorough",
     "network_name": "Maryrorough",
-    "description": null,
+    "description": "This facility is situated about 50 kilometres west of Toowoomba, in SE Queensland, and has a generation capacity of 34.5 MWdc (27.3 MWac).",
     "wikipedia_link": null,
     "wikidata_id": null,
-    "website_url": null,
+    "website_url": "https://www.monfordgroup.com/portfolio-items/maryrorough-solar-farm/",
     "approved": true,
     "approved_by": "opennem.registry",
     "facilities": [
