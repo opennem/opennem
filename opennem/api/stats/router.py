@@ -23,7 +23,7 @@ from opennem.schema.time import TimePeriod
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem, is_aware
 from opennem.utils.time import human_to_timedelta
 
-from .controllers import get_balancing_range, get_scada_range, get_scada_range_optimized, stats_factory
+from .controllers import get_scada_range, get_scada_range_optimized, stats_factory
 from .queries import (
     emission_factor_region_query,
     energy_facility_query,
@@ -744,23 +744,30 @@ async def price_network_endpoint(
     """
     engine = get_database_engine()
 
-    network = None
-
     try:
         network = network_from_network_code(network_code)
     except Exception:
         raise HTTPException(detail="Network not found", status_code=status.HTTP_404_NOT_FOUND) from None
 
-    interval_obj = human_to_interval("5m")
-    period_obj = human_to_period("1d")
-
-    scada_range = get_balancing_range(network=network, include_forecasts=forecasts)
-
-    if not scada_range:
+    if not network:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Could not find a date range",
+            detail="Network not found",
         )
+
+    if network_region_code and not network.regions:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Network has no regions",
+        )
+
+    if network_region_code and network.regions and network_region_code.upper() not in [i.upper() for i in network.regions]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Network region not found",
+        )
+
+    period_obj = human_to_period("1d")
 
     if not network:
         raise HTTPException(
@@ -769,9 +776,9 @@ async def price_network_endpoint(
         )
 
     time_series = OpennemExportSeries(
-        start=scada_range.start,
+        start=get_last_completed_interval_for_network(network=network),
         network=network,
-        interval=interval_obj,
+        interval=network.get_interval(),
         period=period_obj,
     )
 

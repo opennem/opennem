@@ -199,10 +199,6 @@ def network_region_price_query(time_series: OpennemExportSeries, network_region_
 
     network_regions_query = ""
 
-    if time_series.network.regions:
-        network_regions: str = ",".join([f"'{i.upper()}'" for i in time_series.network.regions])
-        network_regions_query = f"and bs.network_region IN ({network_regions})"
-
     if network_region_code:
         network_regions_query = f"and bs.network_region = '{network_region_code.upper()}'"
 
