@@ -410,8 +410,6 @@ def get_scada_range(
         )
     )
 
-    logger.debug(scada_range_query)
-
     with engine.connect() as c:
         logger.debug(scada_range_query)
         scada_range_result = list(c.execute(scada_range_query))
