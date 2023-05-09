@@ -252,6 +252,14 @@ class Participant(Base, BaseModel):
 class Photo(Base):
     __tablename__ = "photo"
 
+    __table_args__ = (
+        Index(
+            "idx_photo_station_id",
+            "station_id",
+            postgresql_using="btree",
+        ),
+    )
+
     hash_id = Column(Text, nullable=False, primary_key=True, index=True)
 
     station_id = Column(
