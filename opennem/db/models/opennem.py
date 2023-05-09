@@ -575,8 +575,6 @@ class Station(Base, BaseModel):
 class Facility(Base, BaseModel):
     __tablename__ = "facility"
 
-    __table_args__ = (UniqueConstraint("network_id", "code", name="excl_facility_network_id_code"),)
-
     def __str__(self) -> str:
         return f"{self.code} <{self.fueltech_id}>"
 
@@ -658,6 +656,14 @@ class Facility(Base, BaseModel):
     approved = Column(Boolean, default=False)
     approved_by = Column(Text)
     approved_at = Column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("network_id", "code", name="excl_facility_network_id_code"),
+        Index(
+            "idx_facility_station_id",
+            station_id,
+        ),
+    )
 
     @hybrid_property
     def capacity_aggregate(self) -> float | None:
