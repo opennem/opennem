@@ -59,11 +59,11 @@ def energy_facility_query(time_series: OpennemExportSeries, facility_codes: list
 
     __query = """
     select
-        time_bucket_gapfill('{trunc}', t.trading_day) as trading_day,
+        time_bucket_gapfill('{interval}', t.trading_day) as trading_day,
         t.facility_code,
-        sum(t.energy) as fueltech_energy,
-        sum(t.market_value) as fueltech_market_value,
-        sum(t.emissions) as fueltech_emissions
+        coalesce(sum(t.energy), 0) as fueltech_energy,
+        coalesce(sum(t.market_value), 0) as fueltech_market_value,
+        coalesce(sum(t.emissions), 0) as fueltech_emissions
     from at_facility_daily t
     where
         t.trading_day <= '{date_max}' and
@@ -74,12 +74,31 @@ def energy_facility_query(time_series: OpennemExportSeries, facility_codes: list
         trading_day desc;
     """
 
+    if time_series.interval.interval >= 10080:
+        __query = """
+        select
+            date_trunc('{trunc}', t.trading_day) as trading_day,
+            t.facility_code,
+            sum(t.energy) as fueltech_energy,
+            sum(t.market_value) as fueltech_market_value,
+            sum(t.emissions) as fueltech_emissions
+        from at_facility_daily t
+        where
+            t.trading_day <= '{date_max}' and
+            t.trading_day >= '{date_min}' and
+            t.facility_code in ({facility_codes_parsed})
+        group by 1, 2
+        order by
+            trading_day desc;
+        """
+
     date_range = time_series.get_range()
 
     return dedent(
         __query.format(
             facility_codes_parsed=duid_to_case(facility_codes),
-            trunc=time_series.interval.interval_human,
+            trunc=time_series.interval.trunc,
+            interval=time_series.interval.interval_human,
             date_max=date_range.end.date(),
             date_min=date_range.start.date(),
             timezone=time_series.network.timezone_database,
