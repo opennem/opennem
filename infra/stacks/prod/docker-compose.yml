@@ -103,15 +103,15 @@ services:
     <<: *default-app
     image: ghcr.io/opennem/opennem/opennem:$VERSION
     command: [
-        "hypercorn",
-        "opennem.api.app:app",
-        "--bind",
-        "0.0.0.0:8000",
-        "--access-log",
-        "-",
-        "--error-log",
-        "-"
-      ]
+      "uvicorn",
+      "--host",
+      "0.0.0.0",
+      "--port",
+      "8000",
+      "--workers",
+      "4",
+      "opennem.api.app:app"
+    ]
     healthcheck:
       test: curl --fail http://127.0.0.1:8000/networks || exit 1
       interval: 5s
@@ -160,7 +160,7 @@ services:
       - AUTOHEAL_DEFAULT_STOP_TIMEOUT=10
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    tags:
+    labels:
       - traefik.enable=false
 
 networks:
