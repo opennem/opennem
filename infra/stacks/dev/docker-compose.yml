@@ -180,6 +180,8 @@ services:
       - AUTOHEAL_DEFAULT_STOP_TIMEOUT=10
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    tags:
+      - traefik.enable=false
 
 networks:
   frontend:
