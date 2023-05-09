@@ -851,11 +851,11 @@ class AggregateFacilityDaily(Base):
     network_id = Column(
         Text,
         primary_key=True,
-        index=True,
+        index=False,
         nullable=False,
     )
 
-    network_region = Column(Text, primary_key=True, nullable=False, index=True)
+    network_region = Column(Text, primary_key=True, nullable=False, index=False)
 
     facility_code = Column(
         Text,
@@ -882,6 +882,14 @@ class AggregateFacilityDaily(Base):
         ),
         Index("idx_at_facility_daily_network_id_trading_interval", network_id, trading_day.desc()),
         Index("idx_at_facility_daily_trading_interval_facility_code", trading_day, facility_code),
+        Index(
+            "idx_at_facility_daily_facility_code_network_id_trading_day",
+            network_id,
+            facility_code,
+            trading_day,
+            unique=True,
+            postgresql_using="btree",
+        ),
     )
 
 
