@@ -295,7 +295,14 @@ class Photo(Base):
 class BomStation(Base):
     __tablename__ = "bom_station"
 
-    __table_args__ = (Index("idx_bom_station_geom", "geom", postgresql_using="gist"),)
+    __table_args__ = (
+        Index("idx_bom_station_geom", "geom", postgresql_using="gist"),
+        Index(
+            "idx_bom_station_priority",
+            "priority",
+            postgresql_using="btree",
+        ),
+    )
 
     code = Column(Text, primary_key=True)
     state = Column(Text)
@@ -662,6 +669,7 @@ class Facility(Base, BaseModel):
         Index(
             "idx_facility_station_id",
             station_id,
+            postgresql_using="btree",
         ),
     )
 
