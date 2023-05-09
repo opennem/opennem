@@ -246,7 +246,10 @@ async def energy_station(
     # Start date
     date_start = station.scada_range.date_min
     date_end = station.scada_range.date_max
-    network_range = get_scada_range_optimized(network=network)
+
+    # @NOTE only run get scada range if we don't have a date_min or date_max
+    if not date_start or not date_end:
+        network_range = get_scada_range_optimized(network=network)
 
     if not date_start:
         date_start = network_range.start
