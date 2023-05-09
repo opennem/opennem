@@ -2605,6 +2605,36 @@ dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
+name = "polars"
+version = "0.17.12"
+description = "Blazingly fast DataFrame library"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "polars-0.17.12-cp37-abi3-macosx_10_7_x86_64.whl", hash = "sha256:0e14abda95c572261e4029dc87419179517faf0fb4ea11a2c0bb10c2eca7da4d"},
+    {file = "polars-0.17.12-cp37-abi3-macosx_11_0_arm64.whl", hash = "sha256:7bf7e865c11a151306296f730817ffa0e3df971765e0d5643ada185c627b3599"},
+    {file = "polars-0.17.12-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1958ce4213ca491a5fa3cb307d9a47a1d101a0fe15382648ee87ee4d23cc356b"},
+    {file = "polars-0.17.12-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bfe4b9b0e1c9501bf3ea73522923b757a0b125e6d4fe72d1c943036b2aac0f49"},
+    {file = "polars-0.17.12-cp37-abi3-win_amd64.whl", hash = "sha256:d998917bf3ea1149c33c901f3311a69f0a2bde64b6198635c7d72658ceb898f9"},
+    {file = "polars-0.17.12.tar.gz", hash = "sha256:0d043f1fbcf4efced53b048f76ffd7cf2e203caec635517de2e9cf2e235cb3e5"},
+]
+
+[package.extras]
+all = ["polars[connectorx,deltalake,fsspec,matplotlib,numpy,pandas,pyarrow,sqlalchemy,timezone,xlsx2csv,xlsxwriter]"]
+connectorx = ["connectorx"]
+deltalake = ["deltalake (>=0.8.0)"]
+fsspec = ["fsspec"]
+matplotlib = ["matplotlib"]
+numpy = ["numpy (>=1.16.0)"]
+pandas = ["pandas", "pyarrow (>=7.0.0)"]
+pyarrow = ["pyarrow (>=7.0.0)"]
+sqlalchemy = ["pandas", "sqlalchemy"]
+timezone = ["backports.zoneinfo", "tzdata"]
+xlsx2csv = ["xlsx2csv (>=0.8.0)"]
+xlsxwriter = ["xlsxwriter"]
+
+[[package]]
 name = "psycopg2-binary"
 version = "2.9.6"
 description = "psycopg2 - Python-PostgreSQL Database Adapter"
@@ -4283,4 +4313,4 @@ postgres = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "91bcaff4024bf45c6ffef7192684b6c06fc2b4e64832cf94683c08c69de2d772"
+content-hash = "9eac653ae6a3c01db56262cad1f64a8e36706a90c16260624b45074051bf04ef"
