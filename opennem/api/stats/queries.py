@@ -59,7 +59,7 @@ def energy_facility_query(time_series: OpennemExportSeries, facility_codes: list
 
     __query = """
     select
-        date_trunc('{trunc}', t.trading_day at time zone '{timezone}') as trading_day,
+        time_bucket_gapfill('{trunc}', t.trading_day) as trading_day,
         t.facility_code,
         sum(t.energy) as fueltech_energy,
         sum(t.market_value) as fueltech_market_value,
@@ -79,9 +79,9 @@ def energy_facility_query(time_series: OpennemExportSeries, facility_codes: list
     return dedent(
         __query.format(
             facility_codes_parsed=duid_to_case(facility_codes),
-            trunc=time_series.interval.trunc,
-            date_max=date_range.end,
-            date_min=date_range.start,
+            trunc=time_series.interval.interval_human,
+            date_max=date_range.end.date(),
+            date_min=date_range.start.date(),
             timezone=time_series.network.timezone_database,
         )
     )
