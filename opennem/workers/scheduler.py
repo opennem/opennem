@@ -193,17 +193,12 @@ def schedule_facility_first_seen_check() -> None:
         facility_first_seen_check()
 
 
-@huey.periodic_task(crontab(hour="22", minute="15"))
-@huey.lock_task("db_facility_seen_update")
-def db_facility_seen_update() -> None:
-    update_facility_seen_range()
-
-
 @huey.periodic_task(crontab(hour="*/1", minute="15"))
 @huey.lock_task("run_run_network_data_range_update")
 def run_run_network_data_range_update() -> None:
     """Updates network data_range"""
     run_network_data_range_update()
+    update_facility_seen_range()
 
 
 @huey.periodic_task(crontab(hour="1,12", minute="30"))
