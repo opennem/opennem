@@ -364,6 +364,10 @@ def generate_export_map() -> StatMetadata:
 
     for network in networks:
         network_schema = network_from_network_code(network.code)
+
+        if not network_schema:
+            raise Exception(f"Cant find network schema for {network.code}")
+
         scada_range = get_scada_range_optimized(network=network_schema)
         bom_station = get_network_region_weather_station(network.code)
 
