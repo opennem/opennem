@@ -199,9 +199,10 @@ def db_facility_seen_update() -> None:
     update_facility_seen_range()
 
 
-@huey.periodic_task(crontab(hour="22", minute="45"))
+@huey.periodic_task(crontab(hour="*/1", minute="15"))
 @huey.lock_task("run_run_network_data_range_update")
 def run_run_network_data_range_update() -> None:
+    """Updates network data_range"""
     run_network_data_range_update()
 
 
