@@ -72,38 +72,30 @@ def weather_observation_query(time_series: OpennemExportSeries, station_codes: l
     else:
         __query = """
         select
-            t.ot at time zone '{tz}' as observation_time,
-            t.station_id,
-            t.temp_air,
-            t.temp_min,
-            t.temp_max
-        from (
-            select
-                time_bucket_gapfill('30 minutes', fs.observation_time) as ot,
-                fs.station_id as station_id,
+            time_bucket_gapfill('30 minutes', fs.observation_time) as ot,
+            fs.station_id as station_id,
 
-                case when min(fs.temp_air) is not null
-                    then avg(fs.temp_air)
-                    else NULL
-                end as temp_air,
+            case when min(fs.temp_air) is not null
+                then avg(fs.temp_air)
+                else NULL
+            end as temp_air,
 
-                case when min(fs.temp_min) is not null
-                    then min(fs.temp_min)
-                    else min(fs.temp_air)
-                end as temp_min,
+            case when min(fs.temp_min) is not null
+                then min(fs.temp_min)
+                else min(fs.temp_air)
+            end as temp_min,
 
-                case when max(fs.temp_max) is not null
-                    then max(fs.temp_max)
-                    else max(fs.temp_air)
-                end as temp_max
+            case when max(fs.temp_max) is not null
+                then max(fs.temp_max)
+                else max(fs.temp_air)
+            end as temp_max
 
-            from bom_observation fs
-            where
-                fs.station_id in ({station_codes}) and
-                fs.observation_time <= '{date_end}' and
-                fs.observation_time >= '{date_start}'
-            group by 1, 2
-        ) as t
+        from bom_observation fs
+        where
+            fs.station_id in ({station_codes}) and
+            fs.observation_time <= '{date_end}' and
+            fs.observation_time >= '{date_start}'
+        group by 1, 2
         order by 1 desc;
         """
 
