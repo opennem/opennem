@@ -282,71 +282,49 @@ def generate_export_map() -> StatMetadata:
     Generates a map of all export JSONs
 
     """
-    session = get_scoped_session()
-
-    networks = session.query(Network).filter(Network.export_set.is_(True)).all()
+    networks = [NetworkNEM, NetworkWEM]
 
     if not networks:
         raise Exception("No networks")
 
-    countries = list({network.country for network in networks})
+    country = "AU"
 
     _exmap = []
 
-    for country in countries:
-        # @TODO derive this
-        # scada_range = get_scada_range(network=NetworkAU, networks=[NetworkNEM, NetworkWEM])
-        scada_range = get_scada_range_optimized(network=NetworkAU)
+    # @TODO derive this
+    # scada_range = get_scada_range(network=NetworkAU, networks=[NetworkNEM, NetworkWEM])
+    scada_range = get_scada_range_optimized(network=NetworkAU)
 
-        if not scada_range:
-            raise Exception("Require a scada range for NetworkAU")
+    if not scada_range:
+        raise Exception("Require a scada range for NetworkAU")
 
-        export = StatExport(
-            stat_type=StatType.power,
-            priority=PriorityType.live,
-            country=country,
-            date_range=scada_range,
-            network=NetworkAU,
-            networks=[
-                NetworkNEM,
-                NetworkWEM,
-                NetworkAEMORooftop,
-                NetworkOpenNEMRooftopBackfill,
-                NetworkAPVI,
-            ],
-            interval=NetworkAU.get_interval(),
-            period=human_to_period("7d"),
-        )
+    export = StatExport(
+        stat_type=StatType.power,
+        priority=PriorityType.live,
+        country=country,
+        date_range=scada_range,
+        network=NetworkAU,
+        networks=[
+            NetworkNEM,
+            NetworkWEM,
+            NetworkAEMORooftop,
+            NetworkOpenNEMRooftopBackfill,
+            NetworkAPVI,
+        ],
+        interval=NetworkAU.get_interval(),
+        period=human_to_period("7d"),
+    )
 
-        _exmap.append(export)
+    _exmap.append(export)
 
-        for year in range(
-            datetime.now().year,
-            scada_range.start.year - 1,
-            -1,
-        ):
-            export = StatExport(
-                stat_type=StatType.energy,
-                priority=PriorityType.daily,
-                country=country,
-                date_range=scada_range,
-                network=NetworkAU,
-                networks=[
-                    NetworkNEM,
-                    NetworkWEM,
-                    NetworkAEMORooftop,
-                    NetworkAEMORooftopBackfill,
-                    NetworkAPVI,
-                ],
-                year=year,
-                interval=human_to_interval("1d"),
-                period=human_to_period("1Y"),
-            )
-            _exmap.append(export)
-
+    for year in range(
+        datetime.now().year,
+        scada_range.start.year - 1,
+        -1,
+    ):
         export = StatExport(
             stat_type=StatType.energy,
-            priority=PriorityType.monthly,
+            priority=PriorityType.daily,
             country=country,
             date_range=scada_range,
             network=NetworkAU,
@@ -357,24 +335,39 @@ def generate_export_map() -> StatMetadata:
                 NetworkAEMORooftopBackfill,
                 NetworkAPVI,
             ],
-            interval=human_to_interval("1M"),
-            period=human_to_period("all"),
+            year=year,
+            interval=human_to_interval("1d"),
+            period=human_to_period("1Y"),
         )
         _exmap.append(export)
 
-    for network in networks:
-        network_schema = network_from_network_code(network.code)
+    export = StatExport(
+        stat_type=StatType.energy,
+        priority=PriorityType.monthly,
+        country=country,
+        date_range=scada_range,
+        network=NetworkAU,
+        networks=[
+            NetworkNEM,
+            NetworkWEM,
+            NetworkAEMORooftop,
+            NetworkAEMORooftopBackfill,
+            NetworkAPVI,
+        ],
+        interval=human_to_interval("1M"),
+        period=human_to_period("all"),
+    )
+    _exmap.append(export)
 
-        if not network_schema:
-            raise Exception(f"Cant find network schema for {network.code}")
-
+    # for each network
+    for network_schema in networks:
         scada_range = get_scada_range_optimized(network=network_schema)
-        bom_station = get_network_region_weather_station(network.code)
+        bom_station = get_network_region_weather_station(network_schema.code)
 
         export = StatExport(
             stat_type=StatType.power,
             priority=PriorityType.live,
-            country=network.country,
+            country=network_schema.country,
             date_range=scada_range,
             network=network_schema,
             bom_station=bom_station,
@@ -382,17 +375,17 @@ def generate_export_map() -> StatMetadata:
             period=human_to_period("7d"),
         )
 
-        if network.code == "WEM":
+        if network_schema.code == "WEM":
             export.networks = [NetworkWEM, NetworkAPVI]
             export.network_region_query = "WEM"
 
-        if network.code == "NEM":
+        if network_schema.code == "NEM":
             export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill]
 
         _exmap.append(export)
 
         if not scada_range:
-            raise Exception(f"Require a scada range for network: {network.code}")
+            raise Exception(f"Require a scada range for network: {network_schema.code}")
 
         for year in range(
             datetime.now().year,
@@ -402,7 +395,7 @@ def generate_export_map() -> StatMetadata:
             export = StatExport(
                 stat_type=StatType.energy,
                 priority=PriorityType.daily,
-                country=network.country,
+                country=network_schema.country,
                 date_range=scada_range,
                 network=network_schema,
                 bom_station=bom_station,
@@ -411,11 +404,11 @@ def generate_export_map() -> StatMetadata:
                 interval=human_to_interval("1d"),
             )
 
-            if network.code == "WEM":
+            if network_schema.code == "WEM":
                 export.networks = [NetworkWEM, NetworkAPVI]
                 export.network_region_query = "WEM"
 
-            if network.code == "NEM":
+            if network_schema.code == "NEM":
                 export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             _exmap.append(export)
@@ -423,7 +416,7 @@ def generate_export_map() -> StatMetadata:
         export = StatExport(
             stat_type=StatType.energy,
             priority=PriorityType.monthly,
-            country=network.country,
+            country=network_schema.country,
             date_range=scada_range,
             network=network_schema,
             bom_station=bom_station,
@@ -431,44 +424,47 @@ def generate_export_map() -> StatMetadata:
             period=human_to_period("all"),
         )
 
-        if network.code == "WEM":
+        if network_schema.code == "WEM":
             export.networks = [NetworkWEM, NetworkAPVI]
             export.network_region_query = "WEM"
 
-        if network.code == "NEM":
+        if network_schema.code == "NEM":
             export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
         _exmap.append(export)
 
         # Skip cases like wem/wem where region is supurfelous
-        if len(network.regions) < 2:
+        if network_schema.code == "WEM":
             continue
 
-        for region in network.regions:
+        if not network_schema.regions:
+            continue
+
+        for region in network_schema.regions:
             # scada_range = get_scada_range_optimized(network=network_schema, network_region=region.code)
-            bom_station = get_network_region_weather_station(region.code)
+            bom_station = get_network_region_weather_station(region)
 
             if not scada_range:
-                logger.error(f"Require a scada range for network {network_schema.code} and region {region.code}")
+                logger.error(f"Require a scada range for network {network_schema.code} and region {region}")
                 continue
 
             export = StatExport(
                 stat_type=StatType.power,
                 priority=PriorityType.live,
-                country=network.country,
+                country=network_schema.country,
                 date_range=scada_range,
                 network=network_schema,
-                network_region=region.code,
+                network_region=region,
                 bom_station=bom_station,
                 period=human_to_period("7d"),
                 interval=network_schema.get_interval(),
             )
 
-            if network.code == "WEM":
+            if network_schema.code == "WEM":
                 export.networks = [NetworkWEM, NetworkAPVI]
                 export.network_region_query = "WEM"
 
-            if network.code == "NEM":
+            if network_schema.code == "NEM":
                 export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             _exmap.append(export)
@@ -481,10 +477,10 @@ def generate_export_map() -> StatMetadata:
                 export = StatExport(
                     stat_type=StatType.energy,
                     priority=PriorityType.daily,
-                    country=network.country,
+                    country=network_schema.country,
                     date_range=scada_range,
                     network=network_schema,
-                    network_region=region.code,
+                    network_region=region,
                     networks=[NetworkNEM, NetworkAEMORooftop, NetworkOpenNEMRooftopBackfill],
                     bom_station=bom_station,
                     year=year,
@@ -496,21 +492,21 @@ def generate_export_map() -> StatMetadata:
             export = StatExport(
                 stat_type=StatType.energy,
                 priority=PriorityType.monthly,
-                country=network.country,
+                country=network_schema.country,
                 date_range=scada_range,
                 network=network_schema,
                 networks=[NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill],
-                network_region=region.code,
+                network_region=region,
                 bom_station=bom_station,
                 period=human_to_period("all"),
                 interval=human_to_interval("1M"),
             )
 
-            if network.code == "WEM":
+            if network_schema.code == "WEM":
                 export.networks = [NetworkWEM, NetworkAPVI]
                 export.network_region_query = "WEM"
 
-            if network.code == "NEM":
+            if network_schema.code == "NEM":
                 export.networks = [NetworkNEM, NetworkAEMORooftop, NetworkAEMORooftopBackfill]
 
             _exmap.append(export)
