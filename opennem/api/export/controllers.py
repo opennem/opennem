@@ -460,7 +460,10 @@ def power_week(
     # rooftop solar
 
     time_series_rooftop = time_series.copy()
-    time_series_rooftop.end = get_latest_interval_live(network=NetworkAEMORooftop)
+
+    if time_series.network == NetworkNEM:
+        time_series_rooftop.end = get_latest_interval_live(network=NetworkAEMORooftop)
+
     time_series_rooftop.interval = human_to_interval("30m")
 
     logger.debug(time_series_rooftop)

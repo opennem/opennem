@@ -103,7 +103,10 @@ def export_power(
             date_range_networks = [NetworkNEM]
 
         date_range: ScadaDateRange = get_scada_range_optimized(network=power_stat.network)
-        # date_range: ScadaDateRange = get_scada_range(network=power_stat.network, networks=date_range_networks)
+
+        # @NOTE temp fix as WEM is often delayed by an interval or two
+        if power_stat.network == NetworkWEM:
+            date_range = get_scada_range(network=power_stat.network)
 
         logger.debug(f"Date range for {power_stat.network.code}: {date_range.start} => {date_range.end}")
 
