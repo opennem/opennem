@@ -26,7 +26,7 @@ from opennem.api.export.controllers import (
     power_week,
     weather_daily,
 )
-from opennem.api.export.map import PriorityType, StatExport, StatType, get_export_map, get_weekly_export_map
+from opennem.api.export.map import PriorityType, StatExport, StatType, get_export_map
 from opennem.api.export.utils import write_output
 from opennem.api.stats.controllers import get_scada_range, get_scada_range_optimized
 from opennem.api.stats.schema import OpennemDataSet, ScadaDateRange
@@ -73,13 +73,7 @@ def export_power(
 
     # Not passed a stat map so go and get one
     if not stats:
-        export_map = None
-
-        if priority and priority == PriorityType.history:
-            export_map = get_weekly_export_map()
-
-        else:
-            export_map = get_export_map().get_by_stat_type(StatType.power)
+        export_map = get_export_map().get_by_stat_type(StatType.power)
 
         if priority:
             export_map = export_map.get_by_priority(priority)

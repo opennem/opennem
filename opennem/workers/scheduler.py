@@ -16,7 +16,7 @@ from huey import PriorityRedisHuey, crontab
 from opennem import settings
 from opennem.aggregates.facility_daily import run_facility_aggregates_for_latest_interval
 from opennem.aggregates.network_demand import run_demand_aggregates_for_latest_interval  # noqa: F401
-from opennem.api.export.map import PriorityType, refresh_export_map, refresh_weekly_export_map
+from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_electricitymap, export_flows, export_metadata, export_power
 from opennem.core.profiler import cleanup_database_task_profiles_basedon_retention
 from opennem.core.startup import worker_startup_alert
@@ -199,13 +199,6 @@ def run_run_network_data_range_update() -> None:
     """Updates network data_range"""
     run_network_data_range_update()
     update_facility_seen_range()
-
-
-@huey.periodic_task(crontab(hour="1,12", minute="30"))
-@huey.lock_task("run_refresh_export_maps")
-def run_refresh_export_maps() -> None:
-    refresh_export_map()
-    refresh_weekly_export_map()
 
 
 # energy worker tasks
