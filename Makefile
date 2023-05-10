@@ -9,7 +9,7 @@ mypy = poetry run mypy $(projectname) tests
 isort = poetry run isort $(projectname) tests
 pytest = poetry run pytest tests -v
 pyright = poetry run pyright -v $(poetry env info -p) $(projectname)
-bumpver = poetry run bumpver update
+bumpver = poetry run bumpver update -n
 
 .PHONY: test
 test:
