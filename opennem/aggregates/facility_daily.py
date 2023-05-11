@@ -4,6 +4,8 @@ from datetime import date, datetime, timedelta
 from textwrap import dedent
 from typing import Any
 
+from sqlalchemy import text as sql
+
 from opennem import settings
 from opennem.aggregates.utils import get_aggregate_month_range, get_aggregate_year_range
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
@@ -146,7 +148,7 @@ def exec_aggregates_facility_daily_query(date_min: datetime, date_max: datetime,
         logger.debug(query)
 
         if not settings.dry_run:
-            result = c.execute(query)
+            result = c.execute(sql(query))
 
     # @NOTE rooftop fix for double counts
     if not settings.dry_run and network is NetworkAEMORooftop:
@@ -285,8 +287,8 @@ def run_aggregate_facility_daily_all(networks: list[NetworkSchema]) -> None:
 
 # debug entry point
 if __name__ == "__main__":
-    # date_min = datetime.fromisoformat("2015-01-01T00:00:00+10:00")
-    # date_max = datetime.fromisoformat("2015-02-01T00:00:00+10:00")
-    # network = NetworkNEM
-    # exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
-    run_aggregates_facility_year(network=NetworkAEMORooftop, year=2023)
+    date_min = datetime.fromisoformat("2023-04-29T00:00:00+08:00")
+    date_max = datetime.fromisoformat("2023-05-01T00:00:00+08:00")
+    network = NetworkAPVI
+    exec_aggregates_facility_daily_query(date_min=date_min, date_max=date_max, network=network)
+    # run_aggregates_facility_year(network=NetworkAEMORooftop, year=2023)
