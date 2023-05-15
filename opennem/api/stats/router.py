@@ -1,5 +1,5 @@
 import logging
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
@@ -18,19 +18,14 @@ from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, Station
+from opennem.queries.price import get_network_region_price_query
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.schema.time import TimePeriod
 from opennem.utils.dates import get_last_completed_interval_for_network, get_today_nem, is_aware
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_scada_range, get_scada_range_optimized, stats_factory
-from .queries import (
-    emission_factor_region_query,
-    energy_facility_query,
-    network_fueltech_demand_query,
-    network_region_price_query,
-    power_facility_query,
-)
+from .queries import emission_factor_region_query, energy_facility_query, network_fueltech_demand_query, power_facility_query
 from .schema import DataQueryResult, OpennemDataSet
 
 logger = logging.getLogger(__name__)
@@ -770,7 +765,7 @@ async def price_network_endpoint(
             detail="Network region not found",
         )
 
-    period_obj = human_to_period("1d")
+    human_to_period("1d")
 
     if not network:
         raise HTTPException(
@@ -778,19 +773,24 @@ async def price_network_endpoint(
             detail="Network not found",
         )
 
-    time_series = OpennemExportSeries(
-        start=get_last_completed_interval_for_network(network=network),
-        network=network,
+    last_completed_interval = get_last_completed_interval_for_network(network=network)
+
+    if not network.get_interval():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Network has no interval",
+        )
+
+    query = get_network_region_price_query(
+        date_min=last_completed_interval - timedelta(days=1),
+        date_max=last_completed_interval,
         interval=network.get_interval(),
-        period=period_obj,
+        network=network,
+        network_region_code=network_region_code,
+        forecast=forecasts,
     )
 
-    if network_region_code:
-        time_series.network.regions = [network_region_code.upper()]
-
-    query = network_region_price_query(time_series=time_series, network_region_code=network_region_code)
-
-    with engine.connect() as c:
+    with engine.begin() as c:
         logger.debug(query)
         row = list(c.execute(query))
 
@@ -804,8 +804,8 @@ async def price_network_endpoint(
 
     result = stats_factory(
         result_set,
-        network=time_series.network,
-        interval=time_series.interval,
+        network=network,
+        interval=network.get_interval(),
         units=get_unit("price"),
         group_field="price",
         include_group_code=True,
