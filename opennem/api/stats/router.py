@@ -577,8 +577,10 @@ async def emission_factor_per_network(  # type: ignore
             detail="Network region not found",
         )
 
+    last_completed_interval = get_last_completed_interval_for_network(network=network)
+
     time_series = OpennemExportSeries(
-        start=get_last_completed_interval_for_network(network=network),
+        start=last_completed_interval,
         network=network,
         interval=interval_obj,
         period=period_obj,
