@@ -78,8 +78,8 @@ class NetworkSchema(BaseConfig):
     def __hash__(self) -> int:
         return hash((type(self),) + tuple(self.code))
 
-    def get_interval(self) -> TimeInterval | None:
-        return get_interval_by_size(self.interval_size) if self.interval_size else None
+    def get_interval(self) -> TimeInterval:
+        return get_interval_by_size(self.interval_size)
 
     def get_timezone(self, postgres_format: bool = False) -> ZoneInfo | str:
         """Get the network timezone
