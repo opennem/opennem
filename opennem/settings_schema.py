@@ -117,9 +117,6 @@ class OpennemSettings(BaseSettings):
     api_app_auth_key_length: int = 24
     api_auth_cookie_domain: str = "opennem.org.au"
 
-    # Github API
-    github_feedback_access_token: str | None = None
-
     # willy weather client
     willyweather_api_key: str | None = None
 
