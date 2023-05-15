@@ -71,7 +71,6 @@ polars = "^0.17.12"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
-isort = "^5.8.0"
 rope = "^1.0.0"
 pytest = "^7.0.1"
 pytest-watch = "^4.2.0"
@@ -168,14 +167,6 @@ pretty = true
 show_column_numbers = true
 show_error_codes = true
 show_error_context = true
-
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-line_length = 130
 
 [tool.pyright]
 include = "opennem/**/*.py"

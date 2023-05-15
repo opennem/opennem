@@ -1653,24 +1653,6 @@ files = [
 ]
 
 [[package]]
-name = "isort"
-version = "5.12.0"
-description = "A Python utility / library to sort Python imports."
-category = "dev"
-optional = false
-python-versions = ">=3.8.0"
-files = [
-    {file = "isort-5.12.0-py3-none-any.whl", hash = "sha256:f84c2818376e66cf843d497486ea8fed8700b340f308f076c6fb1229dff318b6"},
-    {file = "isort-5.12.0.tar.gz", hash = "sha256:8bef7dde241278824a6d83f44a544709b065191b95b6e50894bdc722fcba0504"},
-]
-
-[package.extras]
-colors = ["colorama (>=0.4.3)"]
-pipfile-deprecated-finder = ["pip-shims (>=0.5.2)", "pipreqs", "requirementslib"]
-plugins = ["setuptools"]
-requirements-deprecated-finder = ["pip-api", "pipreqs"]
-
-[[package]]
 name = "jaraco-classes"
 version = "3.2.3"
 description = "Utility functions for Python class constructs"
@@ -4313,4 +4295,4 @@ postgres = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "9eac653ae6a3c01db56262cad1f64a8e36706a90c16260624b45074051bf04ef"
+content-hash = "e005e3373581f7b9b64a7acdd4c03b6b4155352f12652e3acbb637afedee34f4"
