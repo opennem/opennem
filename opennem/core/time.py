@@ -32,7 +32,7 @@ PERIODS = load_periods()
 PERIODS_SUPPORTED = [i.period_human for i in PERIODS]
 
 
-def get_interval_by_size(interval_size: int) -> TimeInterval | None:
+def get_interval_by_size(interval_size: int) -> TimeInterval:
     """
     Get an interval by size
 
@@ -42,9 +42,7 @@ def get_interval_by_size(interval_size: int) -> TimeInterval | None:
     if interval_lookup:
         return interval_lookup.pop()
 
-    logger.error(f"Invalid interval {interval_size} not mapped")
-
-    return None
+    raise Exception(f"Invalid interval {interval_size} not mapped")
 
 
 def get_interval(interval_human: str) -> TimeInterval:
