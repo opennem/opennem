@@ -18,6 +18,7 @@ from opennem.core.networks import network_from_network_code
 from opennem.core.units import get_unit
 from opennem.db import get_database_engine, get_database_session
 from opennem.db.models.opennem import Facility, Station
+from opennem.queries.emissions import get_emission_factor_region_query
 from opennem.queries.price import get_network_region_price_query
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkAPVI, NetworkNEM, NetworkWEM
 from opennem.schema.time import TimePeriod
@@ -25,7 +26,7 @@ from opennem.utils.dates import get_last_completed_interval_for_network, get_tod
 from opennem.utils.time import human_to_timedelta
 
 from .controllers import get_scada_range, get_scada_range_optimized, stats_factory
-from .queries import emission_factor_region_query, energy_facility_query, network_fueltech_demand_query, power_facility_query
+from .queries import energy_facility_query, network_fueltech_demand_query, power_facility_query
 from .schema import DataQueryResult, OpennemDataSet
 
 logger = logging.getLogger(__name__)
@@ -579,14 +580,13 @@ async def emission_factor_per_network(  # type: ignore
 
     last_completed_interval = get_last_completed_interval_for_network(network=network)
 
-    time_series = OpennemExportSeries(
-        start=last_completed_interval,
+    query = get_emission_factor_region_query(
+        date_min=last_completed_interval - timedelta(days=1),
+        date_max=last_completed_interval,
         network=network,
+        network_region_code=network_region_code,
         interval=interval_obj,
-        period=period_obj,
     )
-
-    query = emission_factor_region_query(time_series=time_series, network_region_code=network_region_code)
 
     with engine.connect() as c:
         logger.debug(query)
@@ -602,8 +602,8 @@ async def emission_factor_per_network(  # type: ignore
 
     result = stats_factory(
         emission_factors,
-        network=time_series.network,
-        interval=time_series.interval,
+        network=network,
+        interval=interval_obj,
         units=get_unit("emissions_factor"),
         group_field="emission_factor",
         include_group_code=True,
