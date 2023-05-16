@@ -181,12 +181,11 @@ def generate_export_map() -> StatMetadata:
     if not networks:
         raise Exception("No networks")
 
-    country = "AU"
+    country = "au"
 
     _exmap = []
 
     # @TODO derive this
-    # scada_range = get_scada_range(network=NetworkAU, networks=[NetworkNEM, NetworkWEM])
     scada_range = get_scada_range_optimized(network=NetworkAU)
 
     if not scada_range:
