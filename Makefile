@@ -6,7 +6,6 @@ projectname = opennem
 black = poetry run black $(projectname) tests
 ruff = poetry run ruff $(projectname) tests
 mypy = poetry run mypy $(projectname) tests
-isort = poetry run isort $(projectname) tests
 pytest = poetry run pytest tests -v
 pyright = poetry run pyright -v $(poetry env info -p) $(projectname)
 bumpver = poetry run bumpver update -n
@@ -19,7 +18,6 @@ test:
 format:
 	$(black)
 	$(ruff) --fix
-	$(isort)
 
 .PHONY: lint
 lint:
