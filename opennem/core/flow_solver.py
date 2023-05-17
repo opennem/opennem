@@ -13,6 +13,53 @@ import pandas as pd
 logger = logging.getLogger("opennem.core.flow_solver")
 
 
+def calculate_total_import_and_export_per_region_for_interval(interconnector_data: pd.DataFrame) -> pd.DataFrame:
+    """Calculates total import and export energy for a region using the interconnector dataframe
+
+    Args:
+        interconnector_data (pd.DataFrame): _description_
+
+    Returns:
+        pd.DataFrame: _description_
+    """
+
+    dx = interconnector_data.groupby(["interconnector_region_from", "interconnector_region_to"]).energy.sum().reset_index()
+
+    # invert regions
+    dy = dx.rename(
+        columns={
+            "interconnector_region_from": "interconnector_region_to",
+            "interconnector_region_to": "interconnector_region_from",
+        }
+    )
+
+    # set indexes
+    dy.set_index(["interconnector_region_to", "interconnector_region_from"], inplace=True)
+    dx.set_index(["interconnector_region_to", "interconnector_region_from"], inplace=True)
+
+    dy["energy"] *= -1
+
+    dx.loc[dx.energy < 0, "energy"] = 0
+    dy.loc[dy.energy < 0, "energy"] = 0
+
+    f = pd.concat([dx, dy])
+
+    energy_flows = pd.DataFrame(
+        {
+            "energy_imports": f.groupby("interconnector_region_to").energy.sum(),
+            "energy_exports": f.groupby("interconnector_region_from").energy.sum(),
+        }
+    )
+
+    energy_flows["network_id"] = "NEM"
+
+    energy_flows.reset_index(inplace=True)
+    energy_flows.rename(columns={"index": "network_region"}, inplace=True)
+    energy_flows.set_index(["network_id", "network_region"], inplace=True)
+
+    return energy_flows
+
+
 def calculate_flow_for_interval(df_energy_and_emissions: pd.DataFrame, df_interconnector: pd.DataFrame) -> pd.DataFrame:
     """
     Calculate the flow of energy and emissions between network regions for a given interval.
@@ -55,6 +102,11 @@ def calculate_flow_for_interval(df_energy_and_emissions: pd.DataFrame, df_interc
     energy_matrix = np.zeros((len(regions), len(regions)))
     emissions_matrix = np.zeros((len(regions), len(regions)))
 
+    # Populate energy matrix
+
+    # Populate flow matrix
+    calculate_total_import_and_export_per_region_for_interval(interconnector_data=df_interconnector)
+
     for _, row in df_interconnector.iterrows():
         from_region = row["interconnector_region_from"]
         to_region = row["interconnector_region_to"]
@@ -64,6 +116,8 @@ def calculate_flow_for_interval(df_energy_and_emissions: pd.DataFrame, df_interc
             energy_matrix[region_map[from_region]][region_map[to_region]] = energy
         else:  # energy imported
             energy_matrix[region_map[to_region]][region_map[from_region]] = -energy
+
+    return energy_matrix
 
     # Solve for emission flows using emissions intensity and energy flows
     emissions_intensity = np.array(df_energy_and_emissions["emissions"] / df_energy_and_emissions["energy"])
@@ -89,4 +143,19 @@ def calculate_flow_for_interval(df_energy_and_emissions: pd.DataFrame, df_interc
 
 
 if __name__ == "__main__":
-    pass
+    from datetime import datetime
+
+    from tests.core.flow_solver import load_energy_and_emissions, load_interconnector_interval
+
+    interval = datetime.fromisoformat("2023-04-09T10:15:00+10:00")
+
+    interconnector_intervals = load_interconnector_interval(interval=interval)
+    energy_and_emissions = load_energy_and_emissions(interval=interval)
+
+    total_flow = calculate_total_import_and_export_per_region_for_interval(interconnector_intervals).to_numpy()
+
+    # print(interconnector_intervals)
+
+    print(total_flow)
+
+    # print(calculate_flow_for_interval(energy_and_emissions, interconnector_intervals))

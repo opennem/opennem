@@ -5,20 +5,15 @@ and market_value
 
 """
 
-# from opennem.db import get_database_engine
-# from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
-# from opennem.db.models.opennem import AggregateNetworkFlows
-# from opennem.queries.flows import get_interconnector_intervals_query
-# from opennem.schema.network import NetworkNEM, NetworkSchema
-# from opennem import settings
-# from datetime import datetime, timedelta
-# from opennem.utils.dates import get_last_complete_day_for_network, get_last_completed_interval_for_network, is_aware
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 
+from opennem.core.flow_solver import calculate_flow_for_interval
 from opennem.db import get_database_engine
+from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
+from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.queries.flows import get_interconnector_intervals_query
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import is_aware
@@ -125,6 +120,101 @@ def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, 
     df_gen["emission_factor"] = df_gen["emissions"] / df_gen["generated"]
 
     return df_gen
+
+
+def insert_flows(flow_results: pd.DataFrame) -> int:
+    """Takes a list of generation values and calculates energies and bulk-inserts
+    into the database"""
+
+    datetime_now = datetime.now()
+
+    flow_results.reset_index(inplace=True)
+
+    # Add metadata
+    flow_results["created_by"] = "opennem.worker.emissions"
+    flow_results["created_at"] = datetime_now
+    flow_results["updated_at"] = datetime_now
+
+    # # reorder columns
+    columns = [
+        "trading_interval",
+        "network_id",
+        "network_region",
+        "energy_imports",
+        "energy_exports",
+        "emissions_imports",
+        "emissions_exports",
+        "market_value_imports",
+        "market_value_exports",
+        "created_by",
+        "created_at",
+        "updated_at",
+    ]
+    flow_results = flow_results[columns]
+
+    records_to_store: list[dict] = flow_results.to_dict("records")
+
+    if not records_to_store:
+        logger.error("No records returned from energy sum")
+        return 0
+
+    # Build SQL + CSV and bulk-insert
+    sql_query = build_insert_query(
+        AggregateNetworkFlows,  # type: ignore
+        [
+            "energy_imports",
+            "energy_exports",
+            "emissions_imports",
+            "emissions_exports",
+            "market_value_imports",
+            "market_value_exports",
+            "updated_at",
+        ],
+    )
+    conn = get_database_engine().raw_connection()
+    cursor = conn.cursor()
+
+    csv_content = generate_csv_from_records(
+        AggregateNetworkFlows,  # type: ignore
+        records_to_store,
+        column_names=list(records_to_store[0].keys()),
+    )
+
+    try:
+        logger.debug(sql_query)
+        cursor.copy_expert(sql_query, csv_content)
+        conn.commit()
+    except Exception as e:
+        logger.error(f"Error inserting records: {e}")
+        return 0
+
+    logger.info(f"Inserted {len(records_to_store)} records")
+
+    return len(records_to_store)
+
+
+def run_aggregate_flow_for_interval(interval: datetime, network: NetworkSchema) -> None:
+    """This method runs the aggregate for an interval and for a network using flow solver
+
+    Args:
+        interval (datetime): _description_
+        network (NetworkSchema): _description_
+    """
+
+    energy_and_emissions = load_energy_emission_mv_intervals(
+        date_start=interval, date_end=interval + timedelta(minutes=5), network=network
+    )
+
+    interconnector_data = load_interconnector_intervals(
+        date_start=interval, date_end=interval + timedelta(minutes=5), network=network
+    )
+
+    flows_and_emissions = calculate_flow_for_interval(
+        df_energy_and_emissions=energy_and_emissions,
+        df_interconnector=interconnector_data,
+    )
+
+    insert_flows(flows_and_emissions)
 
 
 if __name__ == "__main__":

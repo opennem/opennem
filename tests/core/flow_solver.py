@@ -86,5 +86,5 @@ def test_calculate_flow_for_interval() -> None:
     expected_output.reset_index(drop=True, inplace=True)
     actual_output.reset_index(drop=True, inplace=True)
 
-    # Check if the actual output matches the expected output
+    # Check if the actual output matches the expected output between dataframes (deep compare)
     assert_frame_equal(actual_output, expected_output)
