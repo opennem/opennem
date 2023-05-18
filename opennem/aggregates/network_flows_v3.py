@@ -10,13 +10,12 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
-from opennem.core.flow_solver import calculate_flow_for_interval
+from opennem.core.flow_solver import solve_flows_for_interval
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.queries.flows import get_interconnector_intervals_query
 from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.utils.dates import is_aware
 
 logger = logging.getLogger("opennem.aggregates.flows_v3")
 
@@ -48,68 +47,61 @@ def load_interconnector_intervals(date_start: datetime, date_end: datetime, netw
     return df_gen
 
 
-def load_energy_emission_mv_intervals(date_start: datetime, date_end: datetime, network: NetworkSchema) -> pd.DataFrame:
-    """Fetch all emission, market value and emission intervals by network region"""
+def load_energy_and_emissions_for_intervals(
+    interval_start: datetime, interval_end: datetime, network: NetworkSchema
+) -> pd.DataFrame:
+    """
+    Fetch all energy and emissions for each network region for a netwrok
+
+    @TODO remove pandas dependency
+    """
 
     engine = get_database_engine()
 
-    if not is_aware(date_start):
-        date_start = date_start.astimezone(tz=network.get_fixed_offset())
-
-    if not is_aware(date_end):
-        date_end = date_end.astimezone(tz=network.get_fixed_offset())
-
     query = """
         select
-            t.trading_interval,
-            t.network_region,
-            sum(t.power) as generated,
-            sum(t.market_value) as market_value,
-            sum(t.emissions) as emissions
+            generated_intervals.trading_interval,
+            generated_intervals.network_id,
+            generated_intervals.network_region,
+            sum(generated_intervals.energy) as energy,
+            sum(generated_intervals.emissions) as emissions,
+            case when sum(generated_intervals.emissions) > 0
+                then sum(generated_intervals.emissions) / sum(generated_intervals.energy)
+                else 0
+            end as emission_intensity
         from
         (
             select
-                fs.trading_interval as trading_interval,
-                f.network_region as network_region,
-                sum(fs.generated) as power,
-                coalesce(sum(fs.generated) * max(bsn.price), 0) as market_value,
-                coalesce(sum(fs.generated) * max(f.emissions_factor_co2), 0) as emissions
+                fs.trading_interval at time zone 'AEST' as trading_interval,
+                f.network_id,
+                f.network_region,
+                fs.facility_code,
+                sum(sum(fs.generated)) over (partition by fs.facility_code order by fs.trading_interval asc) / 2 / 12 as energy,
+                case when f.emissions_factor_co2 > 0
+                    then sum(sum(fs.generated)) over (partition by fs.facility_code order by fs.trading_interval asc) / 2 / 12  * f.emissions_factor_co2
+                    else 0
+                end as emissions
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
-            left join network n on f.network_id = n.code
-            left join (
-                select
-                    bs.trading_interval as trading_interval,
-                    bs.network_id,
-                    bs.network_region,
-                    bs.price as price
-                from balancing_summary bs
-                    where bs.network_id='{network_id}'
-            ) as  bsn on
-                bsn.trading_interval = fs.trading_interval
-                and bsn.network_id = n.network_price
-                and bsn.network_region = f.network_region
-                and f.network_id = '{network_id}'
             where
-                fs.is_forecast is False and
-                f.interconnector = False and
-                f.network_id = '{network_id}' and
-                fs.generated > 0
-            group by
-                1, f.code, 2
-        ) as t
+                fs.trading_interval >= '{interval_start}'
+                and fs.trading_interval <= '{interval_end}'
+                and f.network_id IN ('{network_id}')
+                and f.interconnector is False
+                and fs.generated > 0
+            group by fs.trading_interval, fs.facility_code, f.emissions_factor_co2, f.network_region, f.network_id
+        ) as generated_intervals
         where
-            t.trading_interval >= '{date_start}' and
-            t.trading_interval < '{date_end}'
-        group by 1, 2
-        order by 1 asc, 2;
+            generated_intervals.trading_interval = '{interval_end}'
+        group by 1, 2, 3
+        order by 1 asc;
     """.format(
-        date_start=date_start, date_end=date_end, network_id=network.code
+        interval_start=interval_start, interval_end=interval_end, network_id=network.code
     )
 
     logger.debug(query)
 
-    df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
+    df_gen = pd.read_sql(query, con=engine)
 
     if df_gen.empty:
         raise FlowWorkerException("No results from load_interconnector_intervals")
@@ -201,15 +193,15 @@ def run_aggregate_flow_for_interval(interval: datetime, network: NetworkSchema) 
         network (NetworkSchema): _description_
     """
 
-    energy_and_emissions = load_energy_emission_mv_intervals(
-        date_start=interval, date_end=interval + timedelta(minutes=5), network=network
+    energy_and_emissions = load_energy_and_emissions_for_intervals(
+        interval_start=interval, interval_end=interval + timedelta(minutes=5), network=network
     )
 
     interconnector_data = load_interconnector_intervals(
         date_start=interval, date_end=interval + timedelta(minutes=5), network=network
     )
 
-    flows_and_emissions = calculate_flow_for_interval(
+    flows_and_emissions = solve_flows_for_interval(
         energy_and_emissions=energy_and_emissions,
         interconnector=interconnector_data,
     )
