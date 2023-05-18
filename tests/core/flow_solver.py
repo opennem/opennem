@@ -1,9 +1,10 @@
 from datetime import datetime
 
 import pandas as pd
+import pytest
 from pandas.testing import assert_frame_equal
 
-from opennem.core.flow_solver import calculate_flow_for_interval
+from opennem.core.flow_solver import calculate_flow_for_interval, solve_flows_for_interval
 from opennem.schema.network import NetworkNEM, NetworkSchema
 
 
@@ -55,6 +56,79 @@ def flow_solver_test_output() -> pd.DataFrame:
     )
 
     return df
+
+
+@pytest.mark.parametrize(
+    "emissions_dict, power_dict, demand_dict, expected_output",
+    [
+        (
+            {
+                "NSW1": 99876.21579870833,
+                "QLD1": 92799.05102995834,
+                "SA1": 14571.279994583334,
+                "TAS1": 9635.90418625,
+                "VIC1": 68247.643680625,
+                ("QLD1", "NSW1"): 1845378.0125,
+                ("VIC1", "TAS1"): 9345725.368333332,
+                ("NSW1", "VIC1"): 2928083.5116666667,
+                ("SA1", "VIC1"): 2263190.0225,
+                ("NSW1", "QLD1"): 1845378.0125,
+                ("TAS1", "VIC1"): 9345725.368333332,
+                ("VIC1", "NSW1"): 2928083.5116666667,
+                ("VIC1", "SA1"): 2263190.0225,
+            },
+            {
+                "NSW1": 63576.32150005468,
+                "QLD1": 72424.89831325083,
+                "SA1": 1207.01427219245,
+                "TAS1": 0,
+                "VIC1": 55621.219853363276,
+                ("QLD1", "NSW1"): 0.0002745705239764611,
+                ("SA1", "VIC1"): 0.12867995814508557,
+                ("TAS1", "VIC1"): 0,
+            },
+            {
+                "NSW1": 99876.21579870884,
+                "QLD1": 92799.0510299583,
+                "SA1": 14571.279994583223,
+                "TAS1": 9635.904186250642,
+                "VIC1": 68247.6436806256,
+            },
+            pd.DataFrame(
+                {
+                    "region_flow": [
+                        ("NSW1", "QLD1"),
+                        ("VIC1", "NSW1"),
+                        ("NSW1", "VIC1"),
+                        ("VIC1", "SA1"),
+                        ("VIC1", "TAS1"),
+                        ("QLD1", "NSW1"),
+                        ("TAS1", "NSW1"),
+                        ("SA1", "VIC1"),
+                    ],
+                    "emissions": [
+                        24074.331101,
+                        18809.261834,
+                        38199.031024,
+                        14538.155604,
+                        60034.556659,
+                        0.000275,
+                        0.000000,
+                        0.128680,
+                    ],
+                }
+            ),
+        ),
+    ],
+)
+def test_solve_flows_for_interval(
+    emissions_dict: dict, power_dict: dict, demand_dict: dict, expected_output: pd.DataFrame
+) -> None:
+    """
+    Unit test for the solve_flows_for_interval function.
+    """
+    subject_output = solve_flows_for_interval(emissions_dict=emissions_dict, power_dict=power_dict, demand_dict=demand_dict)
+    assert_frame_equal(subject_output, expected_output)
 
 
 def test_calculate_flow_for_interval() -> None:

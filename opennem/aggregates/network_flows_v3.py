@@ -210,8 +210,8 @@ def run_aggregate_flow_for_interval(interval: datetime, network: NetworkSchema) 
     )
 
     flows_and_emissions = calculate_flow_for_interval(
-        df_energy_and_emissions=energy_and_emissions,
-        df_interconnector=interconnector_data,
+        energy_and_emissions=energy_and_emissions,
+        interconnector=interconnector_data,
     )
 
     insert_flows(flows_and_emissions)
