@@ -51,7 +51,27 @@ def load_energy_and_emissions_for_intervals(
     interval_start: datetime, interval_end: datetime, network: NetworkSchema
 ) -> pd.DataFrame:
     """
-    Fetch all energy and emissions for each network region for a netwrok
+    Fetch all energy and emissions for each network region for a network.
+
+    Non-inclusive of interval_end.
+
+    Args:
+        interval_start (datetime): Start of the interval.
+        interval_end (datetime): End of the interval.
+        network (NetworkSchema): Network schema object.
+
+    Returns:
+        pd.DataFrame: DataFrame containing energy and emissions data for each network region.
+            Columns:
+                - trading_interval (datetime): Trading interval.
+                - network_id (str): Network ID.
+                - network_region (str): Network region.
+                - energy (float): Sum of energy.
+                - emissions (float): Sum of emissions.
+                - emission_intensity (float): Emission intensity.
+
+    Raises:
+        FlowWorkerException: If no results are obtained from load_interconnector_intervals.
 
     @TODO remove pandas dependency
     """
