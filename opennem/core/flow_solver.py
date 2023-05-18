@@ -161,7 +161,7 @@ def calculate_flow_for_interval(energy_and_emissions: pd.DataFrame, interconnect
     return df_output
 
 
-def solve_flows_for_interval(emissions_dict=None, power_dict=None, demand_dict=None) -> pd.DataFrame:
+def solve_flows_for_interval(emissions_dict: dict = None, power_dict: dict = None, demand_dict: dict = None) -> pd.DataFrame:
     """_summary_
 
     Args:
@@ -171,6 +171,8 @@ def solve_flows_for_interval(emissions_dict=None, power_dict=None, demand_dict=N
 
     Returns:
         pd.DataFrame: _description_
+
+    @TODO add typed dict params
     """
     a = np.array(
         [
