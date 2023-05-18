@@ -143,7 +143,7 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
     flow_results.reset_index(inplace=True)
 
     # Add metadata
-    flow_results["created_by"] = "opennem.worker.emissions"
+    flow_results["created_by"] = "opennem.worker.network_flows_v3"
     flow_results["created_at"] = datetime_now
     flow_results["updated_at"] = datetime_now
 
