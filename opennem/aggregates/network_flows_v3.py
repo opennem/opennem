@@ -134,6 +134,68 @@ def load_energy_and_emissions_for_intervals(
     return df_gen
 
 
+def calculate_total_import_and_export_per_region_for_interval(interconnector_data: pd.DataFrame) -> pd.DataFrame:
+    """Calculates total import and export energy for a region using the interconnector dataframe
+
+    Args:
+        interconnector_data (pd.DataFrame): _description_
+
+    Returns:
+        pd.DataFrame: total imports and export for each region for each interval
+
+    Example return dataframe:
+
+                                energy_imports  energy_exports
+    network_id  network_region
+    NEM         NSW1                      82.5             0.0
+                QLD1                       0.0            55.0
+                SA1                       22.0             0.0
+                TAS1                       0.0            11.0
+                VIC1                      11.0            49.5
+    """
+
+    dx = interconnector_data.groupby(["interconnector_region_from", "interconnector_region_to"]).energy.sum().reset_index()
+
+    # invert regions
+    dy = dx.rename(
+        columns={
+            "interconnector_region_from": "interconnector_region_to",
+            "interconnector_region_to": "interconnector_region_from",
+        }
+    )
+
+    # set indexes
+    dy.set_index(["interconnector_region_to", "interconnector_region_from"], inplace=True)
+    dx.set_index(["interconnector_region_to", "interconnector_region_from"], inplace=True)
+
+    dy["energy"] *= -1
+
+    dx.loc[dx.energy < 0, "energy"] = 0
+    dy.loc[dy.energy < 0, "energy"] = 0
+
+    f = pd.concat([dx, dy])
+
+    energy_flows = pd.DataFrame(
+        {
+            "energy_imports": f.groupby("interconnector_region_to").energy.sum(),
+            "energy_exports": f.groupby("interconnector_region_from").energy.sum(),
+        }
+    )
+
+    energy_flows["network_id"] = "NEM"
+
+    energy_flows.reset_index(inplace=True)
+    energy_flows.rename(columns={"index": "network_region"}, inplace=True)
+    energy_flows.set_index(["network_id", "network_region"], inplace=True)
+
+    return energy_flows
+
+
+def calculate_demand_region_for_interval() -> pd.DataFrame:
+    """ """
+    pass
+
+
 def insert_flows(flow_results: pd.DataFrame) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
