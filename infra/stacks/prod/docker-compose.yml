@@ -41,6 +41,7 @@ x-app: &default-app
     - FEEDBACK_SEND_TO_SLACK
     - FEEDBACK_SLACK_HOOK_URL
     - OPENNEM_CONFIRM_PROD
+    - PYTHONOPTIMIZE=2
 
 services:
   traefik:
