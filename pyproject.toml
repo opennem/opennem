@@ -66,6 +66,7 @@ psycopg2-binary = "^2.9.5"
 semantic-version = "^2.10.0"
 uvicorn = "^0.22.0"
 polars = "^0.17.12"
+result = "^0.10.0"
 
 
 [tool.poetry.group.dev.dependencies]

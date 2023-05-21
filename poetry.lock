@@ -3155,6 +3155,18 @@ security = ["itsdangerous (>=2.0)"]
 yaml = ["pyyaml (>=5.4)"]
 
 [[package]]
+name = "result"
+version = "0.10.0"
+description = "A Rust-like result type for Python"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "result-0.10.0-py3-none-any.whl", hash = "sha256:a284420d599bd63d6a5bcf60701abf93f479b4aab282379ebadf51b6cafd1ba4"},
+    {file = "result-0.10.0.tar.gz", hash = "sha256:28bc217336c2f1d339b494241ccf3714e36e6bd90abc04df318d65dccb61594f"},
+]
+
+[[package]]
 name = "rfc3986"
 version = "1.5.0"
 description = "Validating URI References per RFC 3986"
@@ -4100,4 +4112,4 @@ postgres = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "51ded189ad5004256514e606a527474daa82a8df8ccdc4b598059337f4549e8c"
+content-hash = "8a1280f6a5ceb82c1ec2f29628c774548be57f23372719b79222504fbefe0c88"
