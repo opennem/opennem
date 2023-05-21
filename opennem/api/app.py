@@ -233,3 +233,9 @@ def periods() -> list[TimePeriod]:
 @app.get("/units", response_model=list[UnitDefinition])
 def units() -> list[UnitDefinition]:
     return UNITS
+
+
+@app.get("/health")
+def health_check() -> str:
+    """Health check"""
+    return "OK"
