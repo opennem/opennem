@@ -99,7 +99,7 @@ def slack_message(
     blocks: list[SlackMessageBlock | SlackMessageBlockImage] = []
 
     if image_url:
-        img_block = SlackMessageBlockImage(image_url=image_url, alt_text=image_alt)
+        img_block = SlackMessageBlockImage(image_url=image_url, alt_text=image_alt or "")
         blocks.append(img_block)
 
     # if we have a text block
