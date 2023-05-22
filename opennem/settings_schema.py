@@ -150,7 +150,7 @@ class OpennemSettings(BaseSettings):
     feedback_send_to_github: bool = False
     feedback_send_to_slack: bool = True
     feedback_slack_hook_url: str | None = None
-    feedback_tag_users: list[str] = ["@gerard"]
+    feedback_tag_users: list[str] = ["U047H1T2JJK", "nik"]
 
     # api messages
     api_messages: list[str] = [
