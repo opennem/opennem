@@ -155,7 +155,7 @@ def test_solve_flows_for_interval(
     """
     Unit test for the solve_flows_for_interval function.
     """
-    subject_output = solve_flows_for_interval(emissions=emissions_dict, power=power_dict, demand=demand_dict)
+    subject_output = solve_flows_for_interval(region_emissions=emissions_dict, power=power_dict, demand=demand_dict)
     assert_frame_equal(subject_output, expected_output)
 
 

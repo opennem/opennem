@@ -14,7 +14,6 @@ from opennem.core.flow_solver import solve_flows_for_interval
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import AggregateNetworkFlows
-from opennem.queries.flows import get_interconnector_intervals_query
 from opennem.schema.network import NetworkNEM, NetworkSchema
 
 logger = logging.getLogger("opennem.aggregates.flows_v3")
@@ -24,25 +23,53 @@ class FlowWorkerException(Exception):
     pass
 
 
-def load_interconnector_intervals(date_start: datetime, date_end: datetime, network: NetworkSchema | None = None) -> pd.DataFrame:
-    """Load interconnector flows for a date range"""
+def load_interconnector_intervals(interval: datetime, network: NetworkSchema) -> pd.DataFrame:
+    """Load interconnector flows for an interval.
+
+    Returns
+        pd.DataFrame: DataFrame containing interconnector flows for an interval.
+
+
+    Example return dataframe:
+
+        trading_interval    interconnector_region_from interconnector_region_to  generated     energy
+        2023-04-09 10:15:00                       NSW1                     QLD1 -669.90010 -55.825008
+        2023-04-09 10:15:00                       TAS1                     VIC1 -399.80002 -33.316668
+        2023-04-09 10:15:00                       VIC1                     NSW1 -261.80997 -21.817498
+        2023-04-09 10:15:00                       VIC1                      SA1  412.31787  34.359822
+    """
     engine = get_database_engine()
 
-    # default to NEM
-    if not network:
-        network = NetworkNEM
+    query = """
+        select
+            fs.trading_interval at time zone '{timezone}' as trading_interval,
+            f.interconnector_region_from,
+            f.interconnector_region_to,
+            coalesce(sum(fs.generated), 0) as generated,
+            coalesce(sum(fs.generated) / 12, 0) as energy
+        from facility_scada fs
+        left join facility f
+            on fs.facility_code = f.code
+        where
+            fs.trading_interval = '{date_start}'
+            and f.interconnector is True
+            and f.network_id = '{network_id}'
+        group by 1, 2, 3
+        order by
+            1 asc;
 
-    if date_start >= date_end:
-        raise FlowWorkerException("load_interconnector_intervals: date_start is more recent than date_end")
+    """.format(
+        date_start=interval,
+        timezone=network.timezone_database,
+        network_id=network.code,
+    )
 
-    query = get_interconnector_intervals_query(date_start=date_start, date_end=date_end, network=network)
+    logger.debug(query)
 
     df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
 
     if df_gen.empty:
         raise FlowWorkerException("No results from load_interconnector_intervals")
-
-    df_gen.index = df_gen.index.tz_convert(tz=network.get_fixed_offset())
 
     return df_gen
 
@@ -73,7 +100,15 @@ def load_energy_and_emissions_for_intervals(
     Raises:
         FlowWorkerException: If no results are obtained from load_interconnector_intervals.
 
-    @TODO remove pandas dependency
+    Example return dataframe:
+
+
+        trading_interval    network_id network_region      energy   emissions  emissions_intensity
+        2023-04-09 10:20:00        NEM           NSW1  468.105472  226.549976             0.483972
+        2023-04-09 10:20:00        NEM           QLD1  459.590348  295.124417             0.642147
+        2023-04-09 10:20:00        NEM            SA1   36.929530    9.063695             0.245432
+        2023-04-09 10:20:00        NEM           TAS1   71.088342    0.000000             0.000000
+        2023-04-09 10:20:00        NEM           VIC1  387.120670  236.121274             0.609942
     """
 
     engine = get_database_engine()
@@ -88,7 +123,7 @@ def load_energy_and_emissions_for_intervals(
             case when sum(generated_intervals.emissions) > 0
                 then sum(generated_intervals.emissions) / sum(generated_intervals.energy)
                 else 0
-            end as emission_intensity
+            end as emissions_intensity
         from
         (
             select
@@ -126,11 +161,6 @@ def load_energy_and_emissions_for_intervals(
     if df_gen.empty:
         raise FlowWorkerException("No results from load_interconnector_intervals")
 
-    df_gen.index = df_gen.index.tz_convert(tz=network.get_fixed_offset())
-
-    df_gen["price"] = df_gen["market_value"] / df_gen["generated"]
-    df_gen["emission_factor"] = df_gen["emissions"] / df_gen["generated"]
-
     return df_gen
 
 
@@ -138,7 +168,7 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
     """Calculates total import and export energy for a region using the interconnector dataframe
 
     Args:
-        interconnector_data (pd.DataFrame): _description_
+        interconnector_data (pd.DataFrame): interconnector dataframe from load_interconnector_intervals
 
     Returns:
         pd.DataFrame: total imports and export for each region for each interval
@@ -186,51 +216,31 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
 
     energy_flows.reset_index(inplace=True)
     energy_flows.rename(columns={"index": "network_region"}, inplace=True)
-    energy_flows.set_index(["network_id", "network_region"], inplace=True)
+    # energy_flows.set_index(["network_id", "network_region"], inplace=True)
 
     return energy_flows
 
 
-def calculate_demand_region_for_interval() -> pd.DataFrame:
-    """ """
-    pass
+def calculate_demand_region_for_interval(energy_and_emissions: pd.DataFrame, imports_and_export: pd.DataFrame) -> pd.DataFrame:
+    """
+    Takes energy and emissions and imports and exports and calculates demand for each region and adds it to a merged
+    total dataframe
+    """
+
+    df_with_demand = pd.merge(energy_and_emissions, imports_and_export)
+    df_with_demand["demand"] = df_with_demand["energy"] + df_with_demand["energy_imports"] - df_with_demand["energy_exports"]
+
+    return df_with_demand
 
 
-def insert_flows(flow_results: pd.DataFrame) -> int:
+def persist_network_flows_and_emissions_for_interval(flow_results: list[dict]) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
 
-    datetime_now = datetime.now()
+    if not flow_results:
+        raise FlowWorkerException("No flow results to persist")
 
-    flow_results.reset_index(inplace=True)
-
-    # Add metadata
-    flow_results["created_by"] = "opennem.worker.network_flows_v3"
-    flow_results["created_at"] = datetime_now
-    flow_results["updated_at"] = datetime_now
-
-    # # reorder columns
-    columns = [
-        "trading_interval",
-        "network_id",
-        "network_region",
-        "energy_imports",
-        "energy_exports",
-        "emissions_imports",
-        "emissions_exports",
-        "market_value_imports",
-        "market_value_exports",
-        "created_by",
-        "created_at",
-        "updated_at",
-    ]
-    flow_results = flow_results[columns]
-
-    records_to_store: list[dict] = flow_results.to_dict("records")
-
-    if not records_to_store:
-        logger.error("No records returned from energy sum")
-        return 0
+    records_to_store = flow_results
 
     # Build SQL + CSV and bulk-insert
     sql_query = build_insert_query(
@@ -270,26 +280,39 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
 def run_aggregate_flow_for_interval(interval: datetime, network: NetworkSchema) -> None:
     """This method runs the aggregate for an interval and for a network using flow solver
 
+    This is version 3 of the method and sits behind the settings.network_flows_v3 feature flag
+
     Args:
         interval (datetime): _description_
         network (NetworkSchema): _description_
     """
 
+    # 1. get
     energy_and_emissions = load_energy_and_emissions_for_intervals(
         interval_start=interval, interval_end=interval + timedelta(minutes=5), network=network
     )
 
-    interconnector_data = load_interconnector_intervals(
-        date_start=interval, date_end=interval + timedelta(minutes=5), network=network
+    # 2. get interconnector data and calculate region imports/exports net
+    interconnector_data = load_interconnector_intervals(interval=interval, network=network)
+
+    region_imports_and_exports = calculate_total_import_and_export_per_region_for_interval(
+        interconnector_data=interconnector_data
     )
 
-    flows_and_emissions = solve_flows_for_interval(
+    # 3. calculate demand for each region and add it to the dataframe
+    calculate_demand_region_for_interval(energy_and_emissions=energy_and_emissions, imports_and_export=region_imports_and_exports)
+
+    # 4. Solve.
+    region_flows_and_emissions = solve_flows_for_interval(
         energy_and_emissions=energy_and_emissions,
         interconnector=interconnector_data,
     )
 
-    insert_flows(flows_and_emissions)
+    # Persist to database aggregate table
+    persist_network_flows_and_emissions_for_interval(region_flows_and_emissions)
 
 
+# debug entry point
 if __name__ == "__main__":
-    pass
+    interval = datetime.fromisoformat("2023-04-09T10:15:00+10:00")
+    run_aggregate_flow_for_interval(interval=interval, network=NetworkNEM)
