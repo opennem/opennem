@@ -213,27 +213,12 @@ def solve_flow_emissions_for_interval(
     # net emissions for each region (region emissions )
     region_emissions = np.array(
         [
-            [
-                region_emissions_and_demand.get_region(Region("NSW1")).emissions
-                - interconnector_emissions_and_generated.get_interconnector(RegionFlow("SA1->VIC1")).emissions
-            ],
-            [
-                region_emissions_and_demand.get_region(Region("QLD1")).emissions
-                - interconnector_emissions_and_generated.get_interconnector(RegionFlow("QLD1->NSW1")).emissions
-            ],
-            [
-                region_emissions_and_demand.get_region(Region("TAS1")).emissions
-                - interconnector_emissions_and_generated.get_interconnector(RegionFlow("TAS1->VIC1")).emissions
-            ],
-            [
-                region_emissions_and_demand.get_region(Region("NSW1")).emissions
-                + interconnector_emissions_and_generated.get_interconnector(RegionFlow("QLD1->NSW1")).emissions
-            ],
-            [
-                region_emissions_and_demand.get_region(Region("VIC1")).emissions
-                + interconnector_emissions_and_generated.get_interconnector(RegionFlow("SA1->VIC1")).emissions
-                + interconnector_emissions_and_generated.get_interconnector(RegionFlow("TAS1->VIC1")).emissions
-            ],
+            # net emissions for each region (region emissions, minus exported, plus imported)
+            [region_emissions_and_demand.get_region(Region("NSW1")).emissions],
+            [region_emissions_and_demand.get_region(Region("QLD1")).emissions],
+            [region_emissions_and_demand.get_region(Region("TAS1")).emissions],
+            [region_emissions_and_demand.get_region(Region("NSW1")).emissions],
+            [region_emissions_and_demand.get_region(Region("VIC1")).emissions],
             [0],
             [0],
             [0],
