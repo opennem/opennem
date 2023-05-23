@@ -120,11 +120,24 @@ def solve_flow_emissions_for_interval(
     """_summary_
 
     Args:
-        interconnector_emissions_and_generated: for each network, contains a list of interconnectors and the emissions and generation for each
-        region_emissions_and_demand: for each region, the emissions and demand
+        interconnector_data: for each network, contains a list of interconnectors and
+            the emissions and generation for each
+        region_data: for each region, the emissions and generation
 
     Returns:
         List of FlowSolverResults for each interconnector with their emissions
+
+    Example arguments:
+
+    interconnector_emissions_and_generated = [
+        InterconnectorNetEmissionsEnergy(region_flow=RegionFlow('NSW1->QLD1'), generated_mwh=0.0, emissions_t=0.0),
+        ...
+    ]
+
+    region_emissions_and_demand = [
+        RegionDemandEmissions(region_code=Region('NSW1'), generated_mwh=0.0, emissions_t=0.0),
+        ...
+    ]
 
     Example return:
 
