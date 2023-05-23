@@ -90,7 +90,7 @@ class InterconnectorNetEmissionsEnergy:
 class NetworkInterconnectorEnergyEmissions:
     """For a network contains a list of interconnectors and the emissions and generation for each"""
 
-    def __init__(self, network: NetworkSchema, data: list[RegionDemandEmissions]):
+    def __init__(self, network: NetworkSchema, data: list[InterconnectorNetEmissionsEnergy]):
         self.data = data
         self.network = network
 
