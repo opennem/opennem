@@ -94,11 +94,14 @@ class NetworkInterconnectorEnergyEmissions:
         self.data = data
         self.network = network
 
-    def get_interconnector(self, region_flow: RegionFlow) -> InterconnectorNetEmissionsEnergy:
+    def get_interconnector(self, region_flow: RegionFlow, default: int = 0) -> InterconnectorNetEmissionsEnergy:
         """Get interconnector by region flow"""
         interconnector_result = next(filter(lambda x: x.region_flow == region_flow, self.data))
 
         if not interconnector_result:
+            if default:
+                return InterconnectorNetEmissionsEnergy(region_flow=region_flow, generated_mwh=default, emissions_t=default)
+
             raise FlowSolverException(f"Interconnector {region_flow} not found in network {self.network.code}")
 
         return interconnector_result
@@ -257,19 +260,19 @@ def solve_flow_emissions_for_interval(
     results.append(
         FlowSolverResult(
             region_flow=RegionFlow("QLD1->NSW1"),
-            emissions=interconnector_data.get_interconnector(RegionFlow("QLD1->NSW1"), 0),
+            emissions=interconnector_data.get_interconnector(RegionFlow("QLD1->NSW1"), default=0).emissions_t,
         )
     )
     results.append(
         FlowSolverResult(
             region_flow=RegionFlow("TAS1->VIC1"),
-            emissions=interconnector_data.get_interconnector(RegionFlow("TAS1->VIC1"), 0),
+            emissions=interconnector_data.get_interconnector(RegionFlow("TAS1->VIC1"), default=0).emissions_t,
         )
     )
     results.append(
         FlowSolverResult(
             region_flow=RegionFlow("SA1->VIC1"),
-            emissions=interconnector_data.get_interconnector(RegionFlow("SA1->VIC1"), 0),
+            emissions=interconnector_data.get_interconnector(RegionFlow("SA1->VIC1"), default=0).emissions_t,
         )
     )
 
