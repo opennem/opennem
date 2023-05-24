@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
-from opennem.core.flow_solver import solve_flows_for_interval
+from opennem.core.flow_solver import solve_flow_emissions_for_interval
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import AggregateNetworkFlows
@@ -303,10 +303,15 @@ def run_aggregate_flow_for_interval(interval: datetime, network: NetworkSchema) 
     calculate_demand_region_for_interval(energy_and_emissions=energy_and_emissions, imports_and_export=region_imports_and_exports)
 
     # 4. Solve.
-    region_flows_and_emissions = solve_flows_for_interval(
+    region_flows_and_emissions = solve_flow_emissions_for_interval(
         energy_and_emissions=energy_and_emissions,
         interconnector=interconnector_data,
     )
+
+    # 5. net out emissions and join with energy and emissions
+
+    # @TODO net out flows
+    region_flows_and_emissions = pd.merge(region_flows_and_emissions, region_imports_and_exports)
 
     # Persist to database aggregate table
     persist_network_flows_and_emissions_for_interval(region_flows_and_emissions)
