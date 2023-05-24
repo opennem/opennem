@@ -2,9 +2,17 @@ from datetime import datetime
 
 import pandas as pd
 import pytest
-from pandas.testing import assert_frame_equal
 
-from opennem.core.flow_solver import calculate_flow_for_interval, solve_flows_for_interval
+from opennem.core.flow_solver import (
+    FlowSolverResult,
+    InterconnectorNetEmissionsEnergy,
+    NetworkInterconnectorEnergyEmissions,
+    NetworkRegionsDemandEmissions,
+    Region,
+    RegionDemandEmissions,
+    RegionFlow,
+    solve_flow_emissions_for_interval,
+)
 from opennem.schema.network import NetworkNEM, NetworkSchema
 
 
@@ -87,106 +95,44 @@ def flow_solver_test_output_spreadsheet() -> pd.DataFrame:
 
 
 @pytest.mark.parametrize(
-    "emissions_dict, power_dict, demand_dict, expected_output",
+    "region_data, interconnector_data, expected_output",
     [
         (
-            {
-                "NSW1": 63576.32150005468,
-                "QLD1": 72424.89831325083,
-                "SA1": 1207.01427219245,
-                "TAS1": 0,
-                "VIC1": 55621.219853363276,
-                ("QLD1", "NSW1"): 0.0002745705239764611,
-                ("SA1", "VIC1"): 0.12867995814508557,
-                ("TAS1", "VIC1"): 0,
-            },
-            {
-                "NSW1": 99876.21579870833,
-                "QLD1": 92799.05102995834,
-                "SA1": 14571.279994583334,
-                "TAS1": 9635.90418625,
-                "VIC1": 68247.643680625,
-                ("QLD1", "NSW1"): 1845378.0125,
-                ("VIC1", "TAS1"): 9345725.368333332,
-                ("NSW1", "VIC1"): 2928083.5116666667,
-                ("SA1", "VIC1"): 2263190.0225,
-                ("NSW1", "QLD1"): 1845378.0125,
-                ("TAS1", "VIC1"): 9345725.368333332,
-                ("VIC1", "NSW1"): 2928083.5116666667,
-                ("VIC1", "SA1"): 2263190.0225,
-            },
-            {
-                "NSW1": 99876.21579870884,
-                "QLD1": 92799.0510299583,
-                "SA1": 14571.279994583223,
-                "TAS1": 9635.904186250642,
-                "VIC1": 68247.6436806256,
-            },
-            pd.DataFrame(
-                {
-                    "region_flow": [
-                        ("NSW1", "QLD1"),
-                        ("VIC1", "NSW1"),
-                        ("NSW1", "VIC1"),
-                        ("VIC1", "SA1"),
-                        ("VIC1", "TAS1"),
-                        ("QLD1", "NSW1"),
-                        ("TAS1", "NSW1"),
-                        ("SA1", "VIC1"),
-                    ],
-                    "emissions": [
-                        24074.331101,
-                        18809.261834,
-                        38199.031024,
-                        14538.155604,
-                        60034.556659,
-                        0.000275,
-                        0.000000,
-                        0.128680,
-                    ],
-                }
+            NetworkRegionsDemandEmissions(
+                network=NetworkNEM,
+                data=[
+                    RegionDemandEmissions(region_code=Region("NSW1"), generated_mwh=99876.21, emissions_t=63576.28),
+                    RegionDemandEmissions(region_code=Region("QLD1"), generated_mwh=92799.05, emissions_t=72424.89),
+                    RegionDemandEmissions(region_code=Region("SA1"), generated_mwh=14571.28, emissions_t=1207.01),
+                    RegionDemandEmissions(region_code=Region("TAS1"), generated_mwh=9635.90, emissions_t=0),
+                    RegionDemandEmissions(region_code=Region("VIC1"), generated_mwh=68247.64, emissions_t=55621.22),
+                ],
             ),
+            NetworkInterconnectorEnergyEmissions(
+                network=NetworkNEM,
+                data=[
+                    InterconnectorNetEmissionsEnergy(
+                        region_flow=RegionFlow("QLD1->NSW1"), generated_mwh=1845378.01, emissions_t=0.0002745705239764611
+                    ),
+                    InterconnectorNetEmissionsEnergy(
+                        region_flow=RegionFlow("TAS1->VIC1"), generated_mwh=9345725.37, emissions_t=0
+                    ),
+                    InterconnectorNetEmissionsEnergy(
+                        region_flow=RegionFlow("SA1->VIC1"), generated_mwh=2263190.02, emissions_t=0.12867995814508557
+                    ),
+                ],
+            ),
+            [
+                FlowSolverResult(region_flow=RegionFlow("NSW1->QLD1"), emissions=0.0002745705239764611),
+            ],
         ),
     ],
 )
 def test_solve_flows_for_interval(
-    emissions_dict: dict, power_dict: dict, demand_dict: dict, expected_output: pd.DataFrame
+    region_data: NetworkRegionsDemandEmissions, interconnector_data: NetworkInterconnectorEnergyEmissions, expected_output: list
 ) -> None:
     """
     Unit test for the solve_flows_for_interval function.
     """
-    subject_output = solve_flows_for_interval(region_emissions=emissions_dict, power=power_dict, demand=demand_dict)
-    assert_frame_equal(subject_output, expected_output)
-
-
-def test_calculate_flow_for_interval() -> None:
-    """
-    Unit test for the calculate_flow_for_interval function.
-
-    This test checks that the function correctly calculates the flow of energy and emissions
-    between network regions for a given interval. It compares the function's output against
-    the expected output generated by the flow_solver_test_output function.
-
-    The function does not accept any arguments and does not return any value. It will raise an
-    AssertionError if the function's output does not match the expected output.
-    """
-    interval = datetime.fromisoformat("2023-04-09T10:15:00+10:00")
-
-    df_energy_and_emissions = load_energy_and_emissions_spreadsheet(interval)
-    df_interconnector = load_interconnector_interval_spreadsheet(interval)
-
-    expected_output = flow_solver_test_output_spreadsheet()
-
-    # Call the function with the test data
-    actual_output = calculate_flow_for_interval(df_energy_and_emissions, df_interconnector)
-
-    # Sort both dataframes by 'network_region' to ensure the same order
-    expected_output.sort_values(by="network_region", inplace=True)
-    actual_output.sort_values(by="network_region", inplace=True)
-
-    # Reset index for both dataframes to ensure equal comparison
-    expected_output.reset_index(drop=True, inplace=True)
-    actual_output.reset_index(drop=True, inplace=True)
-
-    # Check if the actual output matches the expected output between dataframes (deep compare)
-    assert_frame_equal(actual_output, expected_output)
+    subject_output = solve_flow_emissions_for_interval(region_data=region_data, interconnector_data=interconnector_data)
+    assert subject_output == expected_output, "output matches expected output"
