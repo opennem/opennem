@@ -230,7 +230,7 @@ def solve_flow_emissions_for_interval(
     region_emissions = np.array(
         [
             # net emissions for each region (region emissions, minus exported, plus imported)
-            [region_data.get_region(Region("NSW1")).emissions_t],
+            [region_data.get_region(Region("SA1")).emissions_t],
             [region_data.get_region(Region("QLD1")).emissions_t],
             [region_data.get_region(Region("TAS1")).emissions_t],
             [region_data.get_region(Region("NSW1")).emissions_t],
