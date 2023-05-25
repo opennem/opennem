@@ -73,14 +73,6 @@ def crawler_run_nem_trading_is_crawl() -> None:
     nem_trading_is_crawl()
 
 
-@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=30)
-@huey.lock_task("run_per_interval_flows_and_exports")
-def run_per_interval_flows_and_exports() -> None:
-    pass
-    # @note Disabled
-    # per_interval_flows_and_exports()
-
-
 @huey.periodic_task(
     network_interval_crontab(network=NetworkAEMORooftop, number_minutes=1), priority=50, retries=5, retry_delay=15
 )
