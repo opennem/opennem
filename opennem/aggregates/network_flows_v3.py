@@ -175,8 +175,7 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
 
     Example return dataframe:
 
-                                energy_imports  energy_exports
-    network_id  network_region
+    network_id  network_region  energy_imports  energy_exports
     NEM         NSW1                      82.5             0.0
                 QLD1                       0.0            55.0
                 SA1                       22.0             0.0
