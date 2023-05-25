@@ -277,7 +277,7 @@ def persist_network_flows_and_emissions_for_interval(flow_results: list[dict]) -
     return len(records_to_store)
 
 
-def run_aggregate_flow_for_interval(interval: datetime, network: NetworkSchema) -> None:
+def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchema) -> None:
     """This method runs the aggregate for an interval and for a network using flow solver
 
     This is version 3 of the method and sits behind the settings.network_flows_v3 feature flag
@@ -320,4 +320,4 @@ def run_aggregate_flow_for_interval(interval: datetime, network: NetworkSchema) 
 # debug entry point
 if __name__ == "__main__":
     interval = datetime.fromisoformat("2023-04-09T10:15:00+10:00")
-    run_aggregate_flow_for_interval(interval=interval, network=NetworkNEM)
+    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)

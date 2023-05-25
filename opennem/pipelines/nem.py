@@ -9,6 +9,7 @@ from huey.exceptions import RetryTask
 
 from opennem import settings
 from opennem.aggregates.network_flows import run_flow_update_for_interval
+from opennem.aggregates.network_flows_v3 import run_aggregate_flow_for_interval_v3
 from opennem.api.export.tasks import export_all_daily, export_all_monthly
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
@@ -68,7 +69,11 @@ def nem_dispatch_scada_crawl() -> ControllerReturn:
         raise RetryTask("No new dispatch scada data")
 
     if dispatch_scada.server_latest:
-        run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
+        if settings.flows_and_emissions_v3:
+            run_aggregate_flow_for_interval_v3(interval=dispatch_scada.server_latest, network=NetworkNEM)
+        else:
+            # run old flows
+            run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
 
     run_export_power_latest_for_network(network=NetworkNEM)
     run_export_power_latest_for_network(network=NetworkAU)
