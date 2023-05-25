@@ -133,8 +133,8 @@ class OpennemSettings(BaseSettings):
 
     # feature flags
     run_crawlers: bool = True  # do we enable the crawlers
-    flows_and_emissions_v2: bool = True  # use the aggregate tables rather than the views
-    flows_and_emissions_v3: bool = False  # use the aggregate tables rather than the views
+    flows_and_emissions_v2: bool = False  # use the aggregate tables rather than the views
+    flows_and_emissions_v3: bool = False  #
     opennem_power_flows: bool = False  # in the power outputs, use the aggregate flows
     opennem_flows_v3: bool = False  # use aggregate in opennem.aggregates.network_flows_v3 per-interval
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
