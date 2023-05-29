@@ -12578,7 +12578,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "battery_charging",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "WANDBL1",
                 "network_code": null,
                 "network_region": "QLD1",
@@ -12601,7 +12601,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "battery_discharging",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "WANDBG1",
                 "network_code": null,
                 "network_region": "QLD1",
