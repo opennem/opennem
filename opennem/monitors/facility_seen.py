@@ -135,6 +135,8 @@ def facility_unmapped_all(filter: bool = True) -> list[FacilitySeen]:
     if filter:
         facs = ignored_duids(facs)
 
+    facs = sorted(facs, key=lambda x: (x.network_id, x.code))
+
     return facs
 
 
