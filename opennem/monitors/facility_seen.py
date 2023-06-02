@@ -23,6 +23,7 @@ class FacilitySeen(BaseConfig):
     network_id: str
     seen_first: datetime | None
     seen_last: datetime | None
+    generated: float | None
 
 
 # This is a list of NEM VPP's that aren't mapped yet
@@ -93,12 +94,14 @@ def get_facility_first_seen(period: str) -> list[FacilitySeen]:
     query = text(
         """
         select
-            distinct fs.facility_code,
-            fs.network_id
+            fs.facility_code,
+            fs.network_id,
+            sum(fs.generated) as generated
         from facility_scada fs
         where
             fs.facility_code not in (select distinct code from facility)
             and fs.trading_interval > now() - interval :period
+        group by 1, 2
     """
     )
 
@@ -106,21 +109,21 @@ def get_facility_first_seen(period: str) -> list[FacilitySeen]:
         logger.debug(query)
         row = list(c.execute(query, {"period": period}))
 
-    records: list[FacilitySeen] = [FacilitySeen(code=r[0], network_id=r[1]) for r in row]
+    records: list[FacilitySeen] = [FacilitySeen(code=r[0], network_id=r[1], generated=r[2]) for r in row]
 
     return records
 
 
 def facility_first_seen_check() -> list[FacilitySeen]:
     """Find new DUIDs and alert on them"""
-    facs = get_facility_first_seen("3 days")
+    facs = get_facility_first_seen("7 days")
 
     facs_filtered = ignored_duids(facs)
 
     facs_out = []
 
     for fac in facs_filtered:
-        msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}"
+        msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. Generated: {fac.generated}MW"
         slack_message(msg)
         logger.info(msg)
         facs_out.append(fac)
@@ -130,7 +133,7 @@ def facility_first_seen_check() -> list[FacilitySeen]:
 
 def facility_unmapped_all(filter: bool = True) -> list[FacilitySeen]:
     """Find new DUIDs and alert on them"""
-    facs = get_facility_first_seen("3 days")
+    facs = get_facility_first_seen("7 days")
 
     if filter:
         facs = ignored_duids(facs)
@@ -145,4 +148,4 @@ if __name__ == "__main__":
     seen_facilities = facility_unmapped_all()
 
     for f in seen_facilities:
-        logger.info(f"Unmapped: {f.network_id} {f.code}")
+        logger.info(f"Unmapped: {f.network_id} {f.code} {f.generated}")
