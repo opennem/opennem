@@ -5,7 +5,6 @@ from pydantic import Field
 
 from opennem.api.schema import ApiBase
 from opennem.core.dispatch_type import DispatchType
-from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.schema.opennem import OpennemBaseDataSchema
 
 
@@ -23,7 +22,7 @@ class FacilityStatusSchema(ApiBase):
 class FacilitySchema(ApiBase):
     id: int | None
 
-    network: NetworkSchema = NetworkNEM
+    # network: NetworkSchema
 
     fueltech: FueltechSchema | None
 
@@ -90,7 +89,7 @@ class StationRecord(ApiBase):
     name: str | None
 
     # Original network fields
-    network_name: str | None
+    # network_name: str | None
 
     # location: Optional[LocationSchema]
     location_id: int
