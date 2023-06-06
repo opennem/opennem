@@ -5,13 +5,17 @@ from pydantic import Field
 
 from opennem.api.schema import ApiBase
 from opennem.core.dispatch_type import DispatchType
-from opennem.schema.opennem import FacilityStatusSchema, FueltechSchema, NetworkSchema
+from opennem.schema.opennem import FacilityStatusSchema, FueltechSchema
+
+
+class NetworkRecord(ApiBase):
+    code: str
 
 
 class FacilityRecord(ApiBase):
     id: int
 
-    network: NetworkSchema
+    network: NetworkRecord
 
     fueltech: FueltechSchema | None
 

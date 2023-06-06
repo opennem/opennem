@@ -19,10 +19,14 @@ class FacilityStatusSchema(ApiBase):
     label: str | None
 
 
+class NetworkRecord(ApiBase):
+    code: str
+
+
 class FacilitySchema(ApiBase):
     id: int | None
 
-    # network: NetworkSchema
+    network: NetworkRecord
 
     fueltech: FueltechSchema | None
 
