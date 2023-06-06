@@ -1639,7 +1639,7 @@
                 "interconnector": false,
                 "interconnector_region_to": null,
                 "interconnector_region_from": null,
-                "capacity_registered": 96.0,
+                "capacity_registered": 96,
                 "expected_closure_date": null,
                 "expected_closure_year": null,
                 "registered": null,
