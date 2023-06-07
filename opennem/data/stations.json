@@ -30835,57 +30835,5 @@
             "geocode_approved": true,
             "geocode_skip": false
         }
-    },
-    {
-        "code": "WSTWYSF",
-        "name": "Wyalong",
-        "network_name": "Wyalong Solar Farm",
-        "description": "Mytilineos is constructing and managing a solar farm that will produce about 75 Megawatts (MW) of power by converting energy from the sun to electricity through the use of photovoltaic modules (solar panels). Situated 7.5 km north east of West Wyalong in New South Wales and occupying approximately 160 hectares of land, the Wyalong Solar Farm will generate enough electricity to power 27,000 average Australian homes",
-        "wikipedia_link": null,
-        "wikidata_id": null,
-        "website_url": "https://wyalongsolarfarm.com.au/",
-        "approved": true,
-        "approved_by": "opennem.init",
-        "facilities": [
-            {
-                "network_id": "NEM",
-                "fueltech_id": "solar_utility",
-                "status_id": "operating",
-                "code": "WSTWYSF1",
-                "network_code": null,
-                "network_region": "NSW1",
-                "network_name": null,
-                "dispatch_type": "GENERATOR",
-                "interconnector": false,
-                "interconnector_region_to": null,
-                "interconnector_region_from": null,
-                "capacity_registered": 62.32,
-                "expected_closure_date": null,
-                "expected_closure_year": null,
-                "registered": null,
-                "deregistered": null,
-                "unit_id": null,
-                "unit_number": 29,
-                "unit_alias": null,
-                "unit_capacity": 3.103,
-                "emissions_factor_co2": null
-            }
-        ],
-        "location": {
-            "address1": "1409 Newell Highway",
-            "address2": null,
-            "locality": "Wyalong",
-            "state": "NSW",
-            "postcode": "2671",
-            "country": "AU",
-            "geocode_processed_at": null,
-            "lat": -33.86262532561434,
-            "lng": 147.37402777,
-            "osm_way_id": null,
-            "place_id": null,
-            "geocode_by": null,
-            "geocode_approved": false,
-            "geocode_skip": false
-        }
     }
 ]
