@@ -608,6 +608,7 @@ async def emission_factor_per_network(  # type: ignore
         group_field="emission_factor",
         include_group_code=True,
         include_code=True,
+        exclude_nulls=False,
     )
 
     if not result or not result.data:

@@ -43,6 +43,7 @@ def stats_factory(
     localize: bool | None = True,
     cast_nulls: bool | None = True,
     include_code: bool = True,
+    exclude_nulls: bool = True,
 ) -> OpennemDataSet:
     """
     Takes a list of data query results and returns OpennemDataSets
@@ -77,7 +78,7 @@ def stats_factory(
         data_value = list(data_sorted.values())
 
         # Skip null series
-        if not [i for i in data_value if i]:
+        if exclude_nulls and not [i for i in data_value if i]:
             continue
 
         # @TODO possible bring this back
