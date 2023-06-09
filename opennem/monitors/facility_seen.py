@@ -11,6 +11,7 @@ from datetime import datetime
 
 from sqlalchemy import text
 
+from opennem import settings
 from opennem.clients.slack import slack_message
 from opennem.db import get_database_engine
 from opennem.schema.core import BaseConfig
@@ -124,7 +125,7 @@ def facility_first_seen_check() -> list[FacilitySeen]:
 
     for fac in facs_filtered:
         msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. Generated: {fac.generated}MW"
-        slack_message(msg)
+        slack_message(msg, alert_webhook_url=settings.slack_data_webhook)
         logger.info(msg)
         facs_out.append(fac)
 
