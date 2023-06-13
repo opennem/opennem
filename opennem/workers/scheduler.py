@@ -81,7 +81,7 @@ def crawler_run_nem_rooftop_per_interval() -> None:
     nem_rooftop_crawl()
 
 
-@huey.periodic_task(network_interval_crontab(network=NetworkWEM), priority=50, retries=5, retry_delay=15)
+@huey.periodic_task(network_interval_crontab(network=NetworkNEM), priority=50, retries=5, retry_delay=15)
 @huey.lock_task("crawler_run_wem_per_interval")
 def crawler_run_wem_per_interval() -> None:
     wem_per_interval_check()
