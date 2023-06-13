@@ -40,10 +40,17 @@ class NemPipelineNoNewData(Exception):
 # Crawler tasks
 def nem_dispatch_is_crawl() -> None:
     """Runs the dispatch_is crawl"""
-    cr = run_crawl(AEMONemwebDispatchIS)
+    dispatch_is = run_crawl(AEMONemwebDispatchIS)
 
-    if not cr or not cr.inserted_records:
+    if not dispatch_is or not dispatch_is.inserted_records:
         raise RetryTask("No new dispatch is data")
+
+    if dispatch_is and dispatch_is.server_latest:
+        if settings.flows_and_emissions_v3:
+            run_aggregate_flow_for_interval_v3(interval=dispatch_is.server_latest, network=NetworkNEM)
+        else:
+            # run old flows
+            run_flow_update_for_interval(interval=dispatch_is.server_latest, network=NetworkNEM)
 
 
 def nem_trading_is_crawl() -> None:
@@ -67,13 +74,6 @@ def nem_dispatch_scada_crawl() -> ControllerReturn:
 
     if not dispatch_scada or not dispatch_scada.inserted_records:
         raise RetryTask("No new dispatch scada data")
-
-    if dispatch_scada.server_latest:
-        if settings.flows_and_emissions_v3:
-            run_aggregate_flow_for_interval_v3(interval=dispatch_scada.server_latest, network=NetworkNEM)
-        else:
-            # run old flows
-            run_flow_update_for_interval(interval=dispatch_scada.server_latest, network=NetworkNEM)
 
     run_export_power_latest_for_network(network=NetworkNEM)
     run_export_power_latest_for_network(network=NetworkAU)
