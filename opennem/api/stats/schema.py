@@ -287,6 +287,19 @@ class OpennemDataSet(BaseConfig):
 
             raise ValueError(f"OpennemDataSet has duplicate id{'s' if len(_id_duplicates) > 1 else ''}: {_msg}")
 
+        # validate end and start datetimes.
+        # if they are not set, set them to the first and last values
+
+        max_date = max([i.last for i in value if i.last])
+        min_date = min([i.start for i in value if i.start])
+
+        for i in value:
+            if i.last < max_date:
+                raise ValidationError(f"Data set has invalid last date: {i.last}  {max_date}")
+
+            if i.start < min_date:
+                raise ValidationError(f"Data set has invalid start date: {i.start} {min_date}")
+
         return sorted(value, key=sorting_key_method)  # type: ignore
 
     _version_fromstr = validator("created_at", allow_reuse=True, pre=True)(optionally_parse_string_datetime)
