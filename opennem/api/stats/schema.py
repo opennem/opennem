@@ -6,7 +6,7 @@ from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 from zoneinfo import ZoneInfo
 
 import pydantic
@@ -27,7 +27,7 @@ from opennem.utils.dates import chop_datetime_microseconds
 from opennem.utils.interval import get_human_interval
 from opennem.utils.numbers import sigfig_compact
 
-ValidNumber = Union[float, int, None, Decimal]
+ValidNumber = float | int | Decimal | None
 
 
 logger = logging.getLogger("opennem.stats.schema")
@@ -94,6 +94,14 @@ def get_data_id(
     return id_str
 
 
+def validate_datetime_is_aware(value: datetime) -> datetime:
+    """Validate that a datetime is timezone aware"""
+    if not value.tzinfo:
+        raise ValidationError("Datetime is not timezone aware", model=OpennemDataHistory)
+
+    return value
+
+
 class OpennemDataHistory(BaseConfig):
     start: datetime
     last: datetime
@@ -104,6 +112,11 @@ class OpennemDataHistory(BaseConfig):
     # _parent_id: str | None
 
     # validators
+
+    _start_timezone_aware = validator("start", allow_reuse=True, pre=True)(validate_datetime_is_aware)
+    _last_timezone_aware = validator("last", allow_reuse=True, pre=True)(validate_datetime_is_aware)
+
+    # format data numbers
     _data_format = validator("data", allow_reuse=True, pre=True)(format_number_series)
 
     @validator("data", pre=True, always=True)
