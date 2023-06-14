@@ -169,8 +169,8 @@ show_error_context = true
 
 [tool.pyright]
 include = ["opennem/**/*.py"]
+exclude = ["opennem/db/migrations/env.py"]
 python_version = "3.11"
-strict = false
 reportMissingImports = "error"
 reportMissingTypeStubs = false
 
