@@ -23,6 +23,10 @@ format:
 lint:
 	$(ruff) --exit-zero
 
+.PHONY: check
+check:
+	$(pyright)
+
 .PHONY: install
 install:
 	pip install -r ./requirements.txt
