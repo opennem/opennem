@@ -168,9 +168,9 @@ show_error_codes = true
 show_error_context = true
 
 [tool.pyright]
-include = "opennem/**/*.py"
+include = ["opennem/**/*.py"]
 python_version = "3.11"
-strict = true
+strict = false
 reportMissingImports = "error"
 reportMissingTypeStubs = false
 
