@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 from opennem.core.flow_solver import solve_flow_emissions_for_interval
-from opennem.core.profiler import profile_task
+from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
 from opennem.db.models.opennem import AggregateNetworkFlows
@@ -278,7 +278,10 @@ def persist_network_flows_and_emissions_for_interval(flow_results: list[dict]) -
 
 
 @profile_task(
-    task_name="run_aggregate_flow_for_interval_v3", store_trace=True, message_fmt="Running aggregate flow for interval {interval}"
+    send_slack=True,
+    message_fmt="Running aggregate flow for interval {interval}",
+    level=ProfilerLevel.INFO,
+    retention_period=ProfilerRetentionTime.FOREVER,
 )
 def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchema) -> None:
     """This method runs the aggregate for an interval and for a network using flow solver
