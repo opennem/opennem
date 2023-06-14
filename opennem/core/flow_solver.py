@@ -132,12 +132,12 @@ def solve_flow_emissions_for_interval(
 
     Example arguments:
 
-    interconnector_emissions_and_generated = [
+    interconnector_data = [
         InterconnectorNetEmissionsEnergy(region_flow=RegionFlow('NSW1->QLD1'), generated_mwh=10.0, emissions_t=1.0),
         ...
     ]
 
-    region_emissions_and_demand = [
+    region_data = [
         RegionDemandEmissions(region_code=Region('NSW1'), generated_mwh=1000.0, emissions_t=350.0),
         ...
     ]
