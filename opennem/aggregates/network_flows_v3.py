@@ -13,6 +13,8 @@ import pandas as pd
 from opennem.core.flow_solver import (
     InterconnectorNetEmissionsEnergy,
     NetworkInterconnectorEnergyEmissions,
+    NetworkRegionsDemandEmissions,
+    RegionDemandEmissions,
     solve_flow_emissions_for_interval,
 )
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
@@ -291,9 +293,14 @@ def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame)
     return NetworkInterconnectorEnergyEmissions(network=NetworkNEM, data=records)
 
 
-def convert_dataframe_to_energy_and_emissions_format() -> InterconnectorNetEmissionsEnergy:
+def convert_dataframe_to_energy_and_emissions_format(region_demand_emissions_df: pd.DataFrame) -> NetworkRegionsDemandEmissions:
     """ """
-    pass
+    records = [
+        RegionDemandEmissions(region_code=k["region"], emissions_t=k["emissions"], generated_mwh=k["energy"])
+        for k, _ in region_demand_emissions_df.to_dict(orient="records")
+    ]
+
+    return NetworkRegionsDemandEmissions(network=NetworkNEM, data=records)
 
 
 @profile_task(
@@ -331,18 +338,13 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
     # 4. convert to format for solver
     interconnector_data_for_solver = convert_dataframes_to_interconnector_format(region_net_demand)
-    convert_dataframe_to_energy_and_emissions_format(region_net_demand)
+    region_data_for_solver = convert_dataframe_to_energy_and_emissions_format(region_net_demand)
 
     # 5. Solve.
     region_flows_and_emissions = solve_flow_emissions_for_interval(
-        energy_and_emissions=energy_and_emissions,
-        interconnector=interconnector_data_for_solver,
+        interconnector_data=interconnector_data_for_solver,
+        region_data=region_data_for_solver,
     )
-
-    # 5. net out emissions and join with energy and emissions
-
-    # @TODO net out flows
-    region_flows_and_emissions = pd.merge(region_flows_and_emissions, region_imports_and_exports)
 
     # Persist to database aggregate table
     persist_network_flows_and_emissions_for_interval(region_flows_and_emissions)
