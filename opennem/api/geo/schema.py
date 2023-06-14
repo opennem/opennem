@@ -8,13 +8,13 @@ Customisation is that our Facility Schemas have optional geometries
 rather than required.
 """
 from collections.abc import Sequence
-from typing import Any, Union
+from typing import Any
 
 from geojson_pydantic.features import FeatureCollection
 from geojson_pydantic.geometries import GeometryCollection, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon
 from pydantic import BaseModel
 
-Geometry = Union[Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon]
+Geometry = Point | MultiPoint | LineString | MultiLineString | Polygon | MultiPolygon
 
 
 class FacilityGeoBase(BaseModel):
