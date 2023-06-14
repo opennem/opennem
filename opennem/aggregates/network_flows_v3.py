@@ -10,10 +10,14 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
-from opennem.core.flow_solver import solve_flow_emissions_for_interval
+from opennem.core.flow_solver import (
+    InterconnectorNetEmissionsEnergy,
+    NetworkInterconnectorEnergyEmissions,
+    solve_flow_emissions_for_interval,
+)
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine
-from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records
+from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records  # type: ignore
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.schema.network import NetworkNEM, NetworkSchema
 
@@ -277,6 +281,21 @@ def persist_network_flows_and_emissions_for_interval(flow_results: list[dict]) -
     return len(records_to_store)
 
 
+def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame) -> NetworkInterconnectorEnergyEmissions:
+    """ """
+    records = [
+        InterconnectorNetEmissionsEnergy(region_flow=k["region_flow"], emissions_t=k["emissions"], generated_mwh=k["energy"])
+        for k, v in interconnector_df.to_dict(orient="records")
+    ]
+
+    return NetworkInterconnectorEnergyEmissions(network=NetworkNEM, data=records)
+
+
+def convert_dataframe_to_energy_and_emissions_format() -> InterconnectorNetEmissionsEnergy:
+    """ """
+    pass
+
+
 @profile_task(
     send_slack=True,
     message_fmt="Running aggregate flow for interval {interval}",
@@ -306,12 +325,18 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
     )
 
     # 3. calculate demand for each region and add it to the dataframe
-    calculate_demand_region_for_interval(energy_and_emissions=energy_and_emissions, imports_and_export=region_imports_and_exports)
+    region_net_demand = calculate_demand_region_for_interval(
+        energy_and_emissions=energy_and_emissions, imports_and_export=region_imports_and_exports
+    )
 
-    # 4. Solve.
+    # 4. convert to format for solver
+    interconnector_data_for_solver = convert_dataframes_to_interconnector_format(region_net_demand)
+    convert_dataframe_to_energy_and_emissions_format(region_net_demand)
+
+    # 5. Solve.
     region_flows_and_emissions = solve_flow_emissions_for_interval(
         energy_and_emissions=energy_and_emissions,
-        interconnector=interconnector_data,
+        interconnector=interconnector_data_for_solver,
     )
 
     # 5. net out emissions and join with energy and emissions
