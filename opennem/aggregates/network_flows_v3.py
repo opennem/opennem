@@ -15,6 +15,7 @@ from opennem.core.flow_solver import (
     NetworkInterconnectorEnergyEmissions,
     NetworkRegionsDemandEmissions,
     RegionDemandEmissions,
+    RegionFlow,
     solve_flow_emissions_for_interval,
 )
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
@@ -287,8 +288,7 @@ def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame)
     """ """
     records = [
         InterconnectorNetEmissionsEnergy(
-            region_flow=f"{rec['interconnector_region_from']}->{rec['interconnector_region_from']}",
-            emissions_t=rec["emissions"],
+            region_flow=RegionFlow(f"{rec['interconnector_region_from']}->{rec['interconnector_region_from']}"),
             generated_mwh=rec["energy"],
         )
         for rec in interconnector_df.to_dict(orient="records")
@@ -349,6 +349,8 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
         interconnector_data=interconnector_data_for_solver,
         region_data=region_data_for_solver,
     )
+
+    # 6. merge results
 
     # Persist to database aggregate table
     persist_network_flows_and_emissions_for_interval(region_flows_and_emissions)
