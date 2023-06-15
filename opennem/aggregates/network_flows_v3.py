@@ -300,8 +300,8 @@ def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame)
 def convert_dataframe_to_energy_and_emissions_format(region_demand_emissions_df: pd.DataFrame) -> NetworkRegionsDemandEmissions:
     """ """
     records = [
-        RegionDemandEmissions(region_code=k["region"], emissions_t=k["emissions"], generated_mwh=k["energy"])
-        for k, _ in region_demand_emissions_df.to_dict(orient="records")
+        RegionDemandEmissions(region_code=rec["network_region"], emissions_t=rec["emissions"], generated_mwh=rec["energy"])
+        for rec in region_demand_emissions_df.to_dict(orient="records")
     ]
 
     return NetworkRegionsDemandEmissions(network=NetworkNEM, data=records)
