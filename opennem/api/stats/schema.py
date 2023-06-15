@@ -33,6 +33,10 @@ ValidNumber = float | int | Decimal | None
 logger = logging.getLogger("opennem.stats.schema")
 
 
+# flag to validate date ends in schema
+VALIDATE_DATE_ENDS = False
+
+
 def optionaly_lowercase_string(value: str) -> str:
     """Read from settings if we want output schema string
     values to be lowercased or not and perform"""
@@ -256,7 +260,7 @@ class OpennemDataSet(BaseConfig):
     # Validators
     # pylint: disable=no-self-argument
     @validator("data", pre=True, allow_reuse=True)
-    def validate_data_unique(cls, value: list[OpennemData | dict[str, Any]], **kwargs) -> list[OpennemData]:
+    def validate_data_unique(cls, value: list[OpennemData], **kwargs) -> list[OpennemData]:
         """Validate the data being set to make sure there are no duplicate ids"""
 
         # this can be loaded with either a dict or with a model
@@ -289,16 +293,23 @@ class OpennemDataSet(BaseConfig):
 
         # validate end and start datetimes.
         # if they are not set, set them to the first and last values
+        if VALIDATE_DATE_ENDS:
+            max_date = max(
+                [i.history.last for i in value if i.history and i.history.last and isinstance(i.history, OpennemDataHistory)]
+            )
+            min_date = min(
+                [i.history.start for i in value if i.history and i.history.start and isinstance(i.history, OpennemDataHistory)]
+            )
 
-        max_date = max([i.last for i in value if i.last])
-        min_date = min([i.start for i in value if i.start])
+            for i in value:
+                if not isinstance(i.history, OpennemDataHistory):
+                    continue
 
-        for i in value:
-            if i.last < max_date:
-                raise ValidationError(f"Data set has invalid last date: {i.last}  {max_date}")
+                if i.history.last < max_date:
+                    raise ValueError(f"Data set has invalid last date: {i.history.last}  {max_date}")
 
-            if i.start < min_date:
-                raise ValidationError(f"Data set has invalid start date: {i.start} {min_date}")
+                if i.history.start < min_date:
+                    raise ValueError(f"Data set has invalid start date: {i.history.start} {min_date}")
 
         return sorted(value, key=sorting_key_method)  # type: ignore
 
