@@ -26,6 +26,7 @@ from opennem.api.feedback.router import router as feedback_router
 from opennem.api.geo.router import router as geo_router
 from opennem.api.location.router import router as location_router
 from opennem.api.locations import router as locations_router
+from opennem.api.now.router import router as now_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
@@ -141,7 +142,7 @@ app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(admin_router, tags=["Admin"], prefix="/admin", include_in_schema=False)
 app.include_router(tasks_router, tags=["Tasks"], prefix="/tasks", include_in_schema=False)
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
-
+app.include_router(now_router, tags=["Now"], prefix="/v4/now", include_in_schema=False)
 
 try:
     from fastapi.staticfiles import StaticFiles
