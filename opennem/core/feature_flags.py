@@ -9,6 +9,7 @@ FEATURE_FLAG_LIST = [
     "opennem_flows_v3",
     "redirect_api_static",
     "per_interval_aggregate_processing",
+    "show_emissions_in_power_outputs",
 ]
 
 
