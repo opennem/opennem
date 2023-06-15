@@ -111,15 +111,9 @@ def flow_solver_test_output_spreadsheet() -> pd.DataFrame:
             NetworkInterconnectorEnergyEmissions(
                 network=NetworkNEM,
                 data=[
-                    InterconnectorNetEmissionsEnergy(
-                        region_flow=RegionFlow("QLD1->NSW1"), generated_mwh=1845378.01, emissions_t=0.0002745705239764611
-                    ),
-                    InterconnectorNetEmissionsEnergy(
-                        region_flow=RegionFlow("TAS1->VIC1"), generated_mwh=9345725.37, emissions_t=0
-                    ),
-                    InterconnectorNetEmissionsEnergy(
-                        region_flow=RegionFlow("SA1->VIC1"), generated_mwh=2263190.02, emissions_t=0.12867995814508557
-                    ),
+                    InterconnectorNetEmissionsEnergy(region_flow=RegionFlow("QLD1->NSW1"), generated_mwh=1845378.01),
+                    InterconnectorNetEmissionsEnergy(region_flow=RegionFlow("TAS1->VIC1"), generated_mwh=9345725.37),
+                    InterconnectorNetEmissionsEnergy(region_flow=RegionFlow("SA1->VIC1"), generated_mwh=2263190.02),
                 ],
             ),
             [

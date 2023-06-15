@@ -288,7 +288,7 @@ def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame)
     """ """
     records = [
         InterconnectorNetEmissionsEnergy(
-            region_flow=RegionFlow(f"{rec['interconnector_region_from']}->{rec['interconnector_region_from']}"),
+            region_flow=RegionFlow(f"{rec['interconnector_region_from']}->{rec['interconnector_region_to']}"),
             generated_mwh=rec["energy"],
         )
         for rec in interconnector_df.to_dict(orient="records")
