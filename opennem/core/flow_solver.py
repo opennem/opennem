@@ -101,7 +101,11 @@ class NetworkInterconnectorEnergyEmissions:
             if default:
                 return InterconnectorNetEmissionsEnergy(region_flow=region_flow, generated_mwh=default)
 
-            raise FlowSolverException(f"Interconnector {region_flow} not found in network {self.network.code}")
+            avaliable_options = ", ".join([x.region_flow for x in self.data])
+
+            raise FlowSolverException(
+                f"Interconnector {region_flow} not found in network {self.network.code}. Available options: {avaliable_options}"
+            )
 
         return interconnector_result.pop()
 
