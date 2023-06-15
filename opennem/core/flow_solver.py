@@ -84,7 +84,6 @@ class InterconnectorNetEmissionsEnergy:
 
     region_flow: RegionFlow
     generated_mwh: float
-    emissions_t: float
 
 
 class NetworkInterconnectorEnergyEmissions:
@@ -100,7 +99,7 @@ class NetworkInterconnectorEnergyEmissions:
 
         if not interconnector_result:
             if default:
-                return InterconnectorNetEmissionsEnergy(region_flow=region_flow, generated_mwh=default, emissions_t=default)
+                return InterconnectorNetEmissionsEnergy(region_flow=region_flow, generated_mwh=default)
 
             raise FlowSolverException(f"Interconnector {region_flow} not found in network {self.network.code}")
 
