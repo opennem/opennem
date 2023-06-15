@@ -142,7 +142,7 @@ app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(admin_router, tags=["Admin"], prefix="/admin", include_in_schema=False)
 app.include_router(tasks_router, tags=["Tasks"], prefix="/tasks", include_in_schema=False)
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
-app.include_router(now_router, tags=["Now"], prefix="/v4/now", include_in_schema=False)
+app.include_router(now_router, tags=["Dashboard"], prefix="/v4/dash", include_in_schema=False)
 
 try:
     from fastapi.staticfiles import StaticFiles
