@@ -296,7 +296,7 @@
             {
                 "network_id": "NEM",
                 "fueltech_id": "wind",
-                "status_id": "committed",
+                "status_id": "operating",
                 "code": "BANGOWF2",
                 "network_code": null,
                 "network_region": "NSW1",
@@ -305,7 +305,7 @@
                 "interconnector": false,
                 "interconnector_region_to": null,
                 "interconnector_region_from": null,
-                "capacity_registered": null,
+                "capacity_registered": 84.8,
                 "expected_closure_date": null,
                 "expected_closure_year": null,
                 "registered": null,
