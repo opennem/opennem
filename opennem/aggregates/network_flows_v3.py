@@ -352,5 +352,5 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
 # debug entry point
 if __name__ == "__main__":
-    interval = datetime.fromisoformat("2023-04-09T10:15:00+10:00")
+    interval = datetime.fromisoformat("2023-06-16T09:15:00+10:00")
     run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)

@@ -46,6 +46,7 @@ def nem_dispatch_is_crawl() -> None:
         raise RetryTask("No new dispatch is data")
 
     if dispatch_is and dispatch_is.server_latest:
+        # switch between v3 and v2 for flows here
         if settings.flows_and_emissions_v3:
             run_aggregate_flow_for_interval_v3(interval=dispatch_is.server_latest, network=NetworkNEM)
         else:
