@@ -286,8 +286,12 @@ def persist_network_flows_and_emissions_for_interval(flow_results: list[dict]) -
 def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame) -> NetworkInterconnectorEnergyEmissions:
     """ """
     records = [
-        InterconnectorNetEmissionsEnergy(region_flow=k["region_flow"], emissions_t=k["emissions"], generated_mwh=k["energy"])
-        for k, v in interconnector_df.to_dict(orient="records")
+        InterconnectorNetEmissionsEnergy(
+            region_flow=f"{rec['interconnector_region_from']}->{rec['interconnector_region_from']}",
+            emissions_t=rec["emissions"],
+            generated_mwh=rec["energy"],
+        )
+        for rec in interconnector_df.to_dict(orient="records")
     ]
 
     return NetworkInterconnectorEnergyEmissions(network=NetworkNEM, data=records)
@@ -337,7 +341,7 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
     )
 
     # 4. convert to format for solver
-    interconnector_data_for_solver = convert_dataframes_to_interconnector_format(region_net_demand)
+    interconnector_data_for_solver = convert_dataframes_to_interconnector_format(interconnector_data)
     region_data_for_solver = convert_dataframe_to_energy_and_emissions_format(region_net_demand)
 
     # 5. Solve.
@@ -352,5 +356,5 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
 # debug entry point
 if __name__ == "__main__":
-    interval = datetime.fromisoformat("2023-06-16T09:15:00+10:00")
+    interval = datetime.fromisoformat("2023-06-16T08:15:00+10:00")
     run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
