@@ -66,12 +66,12 @@ class NetworkRegionsDemandEmissions:
 
     def get_region(self, region_code: Region) -> RegionDemandEmissions:
         """Get region by code"""
-        region_result = next(filter(lambda x: x.region_code == region_code, self.data))
+        region_result = list(filter(lambda x: x.region_code == region_code, self.data))
 
         if not region_result:
             raise FlowSolverException(f"Region {region_code} not found in network {self.network.code}")
 
-        return region_result
+        return region_result.pop()
 
 
 # Interconnector flow generation and emissions structures
@@ -95,7 +95,7 @@ class NetworkInterconnectorEnergyEmissions:
 
     def get_interconnector(self, region_flow: RegionFlow, default: int = 0) -> InterconnectorNetEmissionsEnergy:
         """Get interconnector by region flow"""
-        interconnector_result = next(filter(lambda x: x.region_flow == region_flow, self.data))
+        interconnector_result = list(filter(lambda x: x.region_flow == region_flow, self.data))
 
         if not interconnector_result:
             if default:
@@ -103,7 +103,7 @@ class NetworkInterconnectorEnergyEmissions:
 
             raise FlowSolverException(f"Interconnector {region_flow} not found in network {self.network.code}")
 
-        return interconnector_result
+        return interconnector_result.pop()
 
 
 # Flow solver return class
