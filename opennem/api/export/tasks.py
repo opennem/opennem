@@ -250,12 +250,11 @@ def export_energy(
             stat_set.append_set(demand_energy_and_value)
 
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
-                if settings.flows_and_emissions_v2:
-                    interconnector_flows = energy_interconnector_flows_and_emissions_v2(
-                        time_series=time_series,
-                        network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                    )
-                    stat_set.append_set(interconnector_flows)
+                interconnector_flows = energy_interconnector_flows_and_emissions_v2(
+                    time_series=time_series,
+                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
+                )
+                stat_set.append_set(interconnector_flows)
 
             if energy_stat.bom_station:
                 try:
@@ -295,12 +294,11 @@ def export_energy(
             stat_set.append_set(demand_energy_and_value)
 
             if energy_stat.network.has_interconnectors and energy_stat.network_region:
-                if settings.flows_and_emissions_v2:
-                    interconnector_flows = energy_interconnector_flows_and_emissions_v2(
-                        time_series=time_series,
-                        network_region_code=energy_stat.network_region_query or energy_stat.network_region,
-                    )
-                    stat_set.append_set(interconnector_flows)
+                interconnector_flows = energy_interconnector_flows_and_emissions_v2(
+                    time_series=time_series,
+                    network_region_code=energy_stat.network_region_query or energy_stat.network_region,
+                )
+                stat_set.append_set(interconnector_flows)
 
             if energy_stat.bom_station:
                 try:
@@ -385,12 +383,11 @@ def export_all_monthly(networks: list[NetworkSchema] | None = None, network_regi
             stat_set.append_set(demand_energy_and_value)
 
             if network.has_interconnectors:
-                if settings.flows_and_emissions_v2:
-                    interconnector_flows = energy_interconnector_flows_and_emissions_v2(
-                        time_series=time_series,
-                        network_region_code=network_region.code,
-                    )
-                    stat_set.append_set(interconnector_flows)
+                interconnector_flows = energy_interconnector_flows_and_emissions_v2(
+                    time_series=time_series,
+                    network_region_code=network_region.code,
+                )
+                stat_set.append_set(interconnector_flows)
 
             all_monthly.append_set(stat_set)
 

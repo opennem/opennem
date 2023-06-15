@@ -3,7 +3,6 @@ from opennem import settings
 
 FEATURE_FLAG_LIST = [
     "run_crawlers",
-    "flows_and_emissions_v2",
     "flows_and_emissions_v3",
     "opennem_power_flows",
     "opennem_flows_v3",

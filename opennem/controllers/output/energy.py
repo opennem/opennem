@@ -78,7 +78,6 @@ def run_export_energy_for_year(network: NetworkSchema, year: int | None = None) 
     # 3. FLOWS
 
     # if network.has_interconnectors and energy_stat.network_region:
-    #     if settings.flows_and_emissions_v2:
     #         interconnector_flows = energy_interconnector_flows_and_emissions_v2(
     #             time_series=time_series,
     #             network_region_code=energy_stat.network_region_query or energy_stat.network_region,
