@@ -228,6 +228,28 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
     return energy_flows
 
 
+def invert_interconnectors_show_all_flows(interconnector_data: pd.DataFrame) -> pd.DataFrame:
+    """ """
+    second_set = interconnector_data.rename(
+        columns={
+            "interconnector_region_from": "interconnector_region_to",
+            "interconnector_region_to": "interconnector_region_from",
+        }
+    )
+
+    second_set["generated"] *= -1
+    second_set["energy"] *= -1
+
+    interconnector_data.loc[interconnector_data.energy < 0, "generated"] = 0
+    second_set.loc[second_set.energy < 0, "generated"] = 0
+    interconnector_data.loc[interconnector_data.energy < 0, "energy"] = 0
+    second_set.loc[second_set.energy < 0, "energy"] = 0
+
+    result = pd.concat([interconnector_data, second_set])
+
+    return result
+
+
 def calculate_demand_region_for_interval(energy_and_emissions: pd.DataFrame, imports_and_export: pd.DataFrame) -> pd.DataFrame:
     """
     Takes energy and emissions and imports and exports and calculates demand for each region and adds it to a merged
@@ -331,6 +353,8 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
     # 2. get interconnector data and calculate region imports/exports net
     interconnector_data = load_interconnector_intervals(interval=interval, network=network)
 
+    interconnector_data_all = invert_interconnectors_show_all_flows(interconnector_data)
+
     region_imports_and_exports = calculate_total_import_and_export_per_region_for_interval(
         interconnector_data=interconnector_data
     )
@@ -341,7 +365,7 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
     )
 
     # 4. convert to format for solver
-    interconnector_data_for_solver = convert_dataframes_to_interconnector_format(interconnector_data)
+    interconnector_data_for_solver = convert_dataframes_to_interconnector_format(interconnector_data_all)
     region_data_for_solver = convert_dataframe_to_energy_and_emissions_format(region_net_demand)
 
     # 5. Solve.
@@ -350,7 +374,7 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
         region_data=region_data_for_solver,
     )
 
-    # 6. merge results
+    # 6. merge results into final records for the interval inserted into at_network_flows
 
     # Persist to database aggregate table
     persist_network_flows_and_emissions_for_interval(region_flows_and_emissions)
