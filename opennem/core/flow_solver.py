@@ -116,7 +116,7 @@ class FlowSolverResult:
     """ """
 
     region_flow: RegionFlow
-    emissions: float
+    emissions_t: float
 
 
 def solve_flow_emissions_for_interval(
@@ -255,28 +255,28 @@ def solve_flow_emissions_for_interval(
     results = []
 
     # transform into emission flows
-    results.append(FlowSolverResult(region_flow=RegionFlow("NSW1->QLD1"), emissions=flow_result[5][0]))
-    results.append(FlowSolverResult(region_flow=RegionFlow("VIC1->NSW1"), emissions=flow_result[6][0]))
-    results.append(FlowSolverResult(region_flow=RegionFlow("NSW1->VIC1"), emissions=flow_result[7][0]))
-    results.append(FlowSolverResult(region_flow=RegionFlow("VIC1->SA1"), emissions=flow_result[8][0]))
-    results.append(FlowSolverResult(region_flow=RegionFlow("VIC1->TAS1"), emissions=flow_result[9][0]))
+    results.append(FlowSolverResult(region_flow=RegionFlow("NSW1->QLD1"), emissions_t=flow_result[5][0]))
+    results.append(FlowSolverResult(region_flow=RegionFlow("VIC1->NSW1"), emissions_t=flow_result[6][0]))
+    results.append(FlowSolverResult(region_flow=RegionFlow("NSW1->VIC1"), emissions_t=flow_result[7][0]))
+    results.append(FlowSolverResult(region_flow=RegionFlow("VIC1->SA1"), emissions_t=flow_result[8][0]))
+    results.append(FlowSolverResult(region_flow=RegionFlow("VIC1->TAS1"), emissions_t=flow_result[9][0]))
     # simple flows
     results.append(
         FlowSolverResult(
             region_flow=RegionFlow("QLD1->NSW1"),
-            emissions=region_data.get_region(Region("QLD1")).emissions_t,
+            emissions_t=region_data.get_region(Region("QLD1")).emissions_t,
         )
     )
     results.append(
         FlowSolverResult(
             region_flow=RegionFlow("TAS1->VIC1"),
-            emissions=region_data.get_region(Region("TAS1")).emissions_t,
+            emissions_t=region_data.get_region(Region("TAS1")).emissions_t,
         )
     )
     results.append(
         FlowSolverResult(
             region_flow=RegionFlow("SA1->VIC1"),
-            emissions=region_data.get_region(Region("SA1")).emissions_t,
+            emissions_t=region_data.get_region(Region("SA1")).emissions_t,
         )
     )
 
