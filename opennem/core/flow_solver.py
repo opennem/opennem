@@ -118,6 +118,16 @@ class FlowSolverResult:
     region_flow: RegionFlow
     emissions_t: float
 
+    @property
+    def interconnector_region_from(self) -> str:
+        """Region code for the interconnector source"""
+        return self.region_flow.split("->")[0]
+
+    @property
+    def interconnector_region_to(self) -> str:
+        """Region code for the interconnector destination"""
+        return self.region_flow.split("->")[1]
+
 
 def solve_flow_emissions_for_interval(
     interconnector_data: NetworkInterconnectorEnergyEmissions,
