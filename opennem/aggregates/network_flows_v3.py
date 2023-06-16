@@ -123,7 +123,7 @@ def load_energy_and_emissions_for_intervals(
 
     query = """
         select
-            generated_intervals.trading_interval,
+            generated_intervals.trading_interval at time zone 'AEST' as trading_interval,
             generated_intervals.network_id,
             generated_intervals.network_region,
             sum(generated_intervals.energy) as energy,
@@ -165,6 +165,10 @@ def load_energy_and_emissions_for_intervals(
     logger.debug(query)
 
     df_gen = pd.read_sql(query, con=engine)
+
+    df_gen["trading_interval"] = pd.to_datetime(df_gen["trading_interval"])
+    # timezone from network
+    df_gen.trading_interval = df_gen.apply(lambda x: pd.Timestamp(x.trading_interval, tz=network.get_fixed_offset()), axis=1)
 
     if df_gen.empty:
         raise FlowWorkerException("No results from load_interconnector_intervals")
