@@ -307,7 +307,7 @@ def persist_network_flows_and_emissions_for_interval(flow_results: list[dict]) -
 
 
 def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame) -> NetworkInterconnectorEnergyEmissions:
-    """ """
+    """Converts pandas data frame of interconnector flows to a format that can be used by the flow solver"""
     records = [
         InterconnectorNetEmissionsEnergy(
             region_flow=RegionFlow(f"{rec['interconnector_region_from']}->{rec['interconnector_region_to']}"),
@@ -320,7 +320,7 @@ def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame)
 
 
 def convert_dataframe_to_energy_and_emissions_format(region_demand_emissions_df: pd.DataFrame) -> NetworkRegionsDemandEmissions:
-    """ """
+    """Converts pandas data frame of region demand and emissions to a format that can be used by the flow solver"""
     records = [
         RegionDemandEmissions(region_code=rec["network_region"], emissions_t=rec["emissions"], generated_mwh=rec["energy"])
         for rec in region_demand_emissions_df.to_dict(orient="records")
