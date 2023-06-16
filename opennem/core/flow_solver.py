@@ -85,6 +85,16 @@ class InterconnectorNetEmissionsEnergy:
     region_flow: RegionFlow
     generated_mwh: float
 
+    @property
+    def interconnector_region_from(self) -> str:
+        """Region code for the interconnector source"""
+        return self.region_flow.split("->")[0]
+
+    @property
+    def interconnector_region_to(self) -> str:
+        """Region code for the interconnector destination"""
+        return self.region_flow.split("->")[1]
+
 
 class NetworkInterconnectorEnergyEmissions:
     """For a network contains a list of interconnectors and the emissions and generation for each"""
