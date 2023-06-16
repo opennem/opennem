@@ -9,6 +9,7 @@ import logging
 from datetime import datetime, timedelta
 
 import pandas as pd
+from sqlalchemy.dialects.postgresql import insert
 
 from opennem.core.flow_solver import (
     FlowSolverResult,
@@ -20,7 +21,7 @@ from opennem.core.flow_solver import (
     solve_flow_emissions_for_interval,
 )
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
-from opennem.db import get_database_engine
+from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records  # type: ignore
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.schema.network import NetworkNEM, NetworkSchema
@@ -273,7 +274,41 @@ def calculate_demand_region_for_interval(energy_and_emissions: pd.DataFrame, imp
     return df_with_demand
 
 
-def persist_network_flows_and_emissions_for_interval(flow_results: list[dict]) -> int:
+def persist_network_flows_and_emissions_for_interval(flow_results: pd.DataFrame) -> int:
+    """persists the records to at_network_flows"""
+    session = get_scoped_session()
+    engine = get_database_engine()
+
+    records_to_store = flow_results.to_dict(orient="records")
+
+    # insert
+    stmt = insert(AggregateNetworkFlows).values(records_to_store)
+    stmt.bind = engine
+    stmt = stmt.on_conflict_do_update(
+        index_elements=["trading_interval", "network_id", "network_region"],
+        set_={
+            "energy_imports": stmt.excluded.energy_imports,
+            "energy_exports": stmt.excluded.energy_exports,
+            "emissions_exports": stmt.excluded.emissions_exports,
+            "emissions_imports": stmt.excluded.emissions_imports,
+        },
+    )
+
+    try:
+        session.execute(stmt)
+        session.commit()
+    except Exception as e:
+        logger.error("Error inserting records")
+        logger.error(e)
+    finally:
+        session.rollback()
+        session.close()
+        engine.dispose()
+
+    return len(records_to_store)
+
+
+def persist_network_flows_and_emissions_for_interval_bulk(flow_results: pd.DataFrame) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
 
@@ -379,6 +414,10 @@ def shape_flow_results_into_records_for_persistance(
     merged_df["market_value_imports"] = 0
 
     merged_df["trading_interval"] = interval
+    merged_df["network_id"] = network.code
+
+    merged_df.reset_index(inplace=True)
+    merged_df.rename(columns={"index": "network_region"}, inplace=True)
 
     return merged_df
 
