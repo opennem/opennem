@@ -423,6 +423,12 @@ def shape_flow_results_into_records_for_persistance(
     return merged_df
 
 
+@profile_task(
+    send_slack=False,
+    message_fmt="Running flow v3 for {interval_number} intervals",
+    level=ProfilerLevel.INFO,
+    retention_period=ProfilerRetentionTime.FOREVER,
+)
 def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema) -> None:
     """ " Run flow processor for last x interval starting from now"""
 
@@ -499,4 +505,4 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 if __name__ == "__main__":
     interval = datetime.fromisoformat("2023-06-16T08:15:00+10:00")
     # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
-    run_flows_for_last_intervals(interval_number=5, network=NetworkNEM)
+    run_flows_for_last_intervals(interval_number=12 * 24, network=NetworkNEM)
