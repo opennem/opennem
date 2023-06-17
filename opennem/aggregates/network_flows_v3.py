@@ -446,7 +446,7 @@ def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema) -
 
 @profile_task(
     send_slack=True,
-    message_fmt="Running aggregate flow for interval {interval}",
+    message_fmt="Running aggregate flow v3 for interval {interval}",
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.FOREVER,
 )
@@ -505,4 +505,4 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 if __name__ == "__main__":
     interval = datetime.fromisoformat("2023-06-16T08:15:00+10:00")
     # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
-    run_flows_for_last_intervals(interval_number=12 * 24, network=NetworkNEM)
+    run_flows_for_last_intervals(interval_number=1, network=NetworkNEM)
