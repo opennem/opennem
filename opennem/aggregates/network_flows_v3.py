@@ -25,6 +25,7 @@ from opennem.db import get_database_engine, get_scoped_session
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records  # type: ignore
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.schema.network import NetworkNEM, NetworkSchema
+from opennem.utils.dates import get_last_completed_interval_for_network
 
 logger = logging.getLogger("opennem.aggregates.flows_v3")
 
@@ -422,6 +423,21 @@ def shape_flow_results_into_records_for_persistance(
     return merged_df
 
 
+def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema) -> None:
+    """ " Run flow processor for last x interval starting from now"""
+
+    logger.info(f"Running flows for last {interval_number} intervals")
+
+    if not network:
+        network = NetworkNEM
+
+    first_interval = get_last_completed_interval_for_network(network=network)
+
+    for interval in [first_interval - timedelta(minutes=5 * i) for i in range(1, interval_number + 1)]:
+        logger.debug(f"Running flow for interval {interval}")
+        run_aggregate_flow_for_interval_v3(interval=interval, network=network)
+
+
 @profile_task(
     send_slack=True,
     message_fmt="Running aggregate flow for interval {interval}",
@@ -482,4 +498,5 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 # debug entry point
 if __name__ == "__main__":
     interval = datetime.fromisoformat("2023-06-16T08:15:00+10:00")
-    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
+    # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
+    run_flows_for_last_intervals(interval_number=5, network=NetworkNEM)
