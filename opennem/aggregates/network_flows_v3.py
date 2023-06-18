@@ -79,6 +79,9 @@ def load_interconnector_intervals(interval: datetime, network: NetworkSchema) ->
 
     df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
 
+    if df_gen.empty:
+        raise FlowWorkerException("No results from load_interconnector_intervals")
+
     # convert index to local timezone
     df_gen.index.tz_localize(network.get_fixed_offset(), ambiguous="infer")
 
