@@ -364,12 +364,18 @@ def power_network_fueltech_query(
     select
         t.trading_interval,
         t.fueltech_code,
-        sum(t.fueltech_power)
+        sum(t.fueltech_power) as fueltech_power,
+        sum(t.fueltech_emissions) as fueltech_emissions,
+        case when
+            sum(t.fueltech_power) > 0 then round(sum(t.fueltech_emissions) / sum(t.fueltech_power), 4)
+            else 0
+        end as fueltech_emissions_intensity
     from (
         select
             time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
             ft.code as fueltech_code,
-            coalesce(avg(fs.generated), 0) as fueltech_power
+            coalesce(avg(fs.generated), 0) as fueltech_power,
+            max(f.emissions_factor_co2) * avg(fs.generated) as fueltech_emissions
         from facility_scada fs
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
@@ -382,7 +388,7 @@ def power_network_fueltech_query(
             fs.trading_interval <= '{date_max}' and
             fs.trading_interval >= '{date_min}'
             {fueltech_filter}
-        group by 1, f.code, 2
+        group by 1, f.code, f.emissions_factor_co2, 2
     ) as t
     group by 1, 2
     order by 1 desc

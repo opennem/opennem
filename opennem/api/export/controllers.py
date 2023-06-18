@@ -1,6 +1,7 @@
 import logging
 import re
 
+from opennem import settings
 from opennem.api.exceptions import OpennemBaseHttpException, OpenNEMInvalidNetworkRegion
 from opennem.api.export.queries import (
     country_stats_query,
@@ -428,8 +429,36 @@ def power_week(
             if ft.fuel_tech in region_fueltech_capacities:
                 ft.x_capacity_at_present = region_fueltech_capacities[ft.fuel_tech]
 
-    # price
+    # emissions and emission factors
+    if settings.show_emissions_in_power_outputs:
+        emissions = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
+        emission_factors = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
 
+        stats_emissions = stats_factory(
+            emissions,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=get_unit("emissions"),
+            region=network_region_code,
+            fueltech_group=True,
+            include_code=True,
+        )
+
+        result.append_set(stats_emissions)
+
+        stats_emission_factors = stats_factory(
+            emission_factors,
+            network=time_series.network,
+            interval=time_series.interval,
+            units=get_unit("emissions_factor"),
+            region=network_region_code,
+            fueltech_group=True,
+            include_code=True,
+        )
+
+        result.append_set(stats_emission_factors)
+
+    # price
     # adjust the interval size
     time_series_price = time_series.copy()
 
