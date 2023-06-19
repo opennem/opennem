@@ -117,8 +117,8 @@ class OpennemDataHistory(BaseConfig):
 
     # validators
 
-    _start_timezone_aware = validator("start", allow_reuse=True, pre=True)(validate_datetime_is_aware)
-    _last_timezone_aware = validator("last", allow_reuse=True, pre=True)(validate_datetime_is_aware)
+    # _start_timezone_aware = validator("start", allow_reuse=True, pre=True)(validate_datetime_is_aware)
+    # _last_timezone_aware = validator("last", allow_reuse=True, pre=True)(validate_datetime_is_aware)
 
     # format data numbers
     _data_format = validator("data", allow_reuse=True, pre=True)(format_number_series)
