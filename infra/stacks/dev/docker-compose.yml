@@ -42,7 +42,6 @@ x-app: &default-app
     - PER_INTERVAL_AGGREGATE_PROCESSING
     - FEEDBACK_SEND_TO_SLACK
     - FEEDBACK_SLACK_HOOK_URL
-    - SHOW_EMISSIONS_IN_POWER_OUTPUTS
 
 services:
   traefik:
