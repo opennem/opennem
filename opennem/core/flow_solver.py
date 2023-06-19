@@ -178,7 +178,7 @@ class FlowSolverResult:
 
         return solver_results
 
-    def get_dataframe(self) -> pd.DataFrame:
+    def to_dataframe(self) -> pd.DataFrame:
         """Get flow solver results as a dataframe"""
         solver_results = self.to_dict()
 
