@@ -383,22 +383,11 @@ def shape_flow_results_into_records_for_persistance(
     interval: datetime,
     network: NetworkSchema,
     interconnector_data: pd.DataFrame,
-    interconnector_emissions: list[FlowSolverResult],
+    interconnector_emissions: FlowSolverResult,
 ) -> list[dict]:
     """shape into import/exports energy and emissions for each region for a given interval"""
 
-    # 1. convert solver results to list of dicts
-    solver_results = [
-        {
-            "trading_interval": interval.replace(tzinfo=None),
-            "interconnector_region_from": i.interconnector_region_from,
-            "interconnector_region_to": i.interconnector_region_to,
-            "emissions": i.emissions_t,
-        }
-        for i in interconnector_emissions
-    ]
-
-    flow_emissions_df = pd.DataFrame.from_records(solver_results)
+    flow_emissions_df = interconnector_emissions.to_dataframe()
 
     flows_with_emissions = interconnector_data.reset_index().merge(
         flow_emissions_df, on=["trading_interval", "interconnector_region_from", "interconnector_region_to"]
@@ -535,5 +524,5 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 # debug entry point
 if __name__ == "__main__":
     interval = datetime.fromisoformat("2023-06-16T08:15:00+10:00")
-    # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
-    run_flows_for_last_intervals(interval_number=1, network=NetworkNEM)
+    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
+    # run_flows_for_last_intervals(interval_number=12 * 24, network=NetworkNEM)
