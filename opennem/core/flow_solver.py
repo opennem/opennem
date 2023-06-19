@@ -190,7 +190,7 @@ class FlowSolverResult:
 def solve_flow_emissions_for_interval(
     interconnector_data: NetworkInterconnectorEnergyEmissions,
     region_data: NetworkRegionsDemandEmissions,
-) -> list[FlowSolverResultRecord]:
+) -> FlowSolverResult:
     """_summary_
 
     Args:
@@ -348,9 +348,9 @@ def solve_flow_emissions_for_interval(
         )
     )
 
-    FlowSolverResult(data=results)
+    response_model = FlowSolverResult(data=results)
 
-    return results
+    return response_model
 
 
 # debugger entry point
