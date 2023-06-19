@@ -374,11 +374,12 @@ def power_network_fueltech_query(
         select
             time_bucket_gapfill('{trunc}', fs.trading_interval) AS trading_interval,
             ft.code as fueltech_code,
-            coalesce(avg(fs.generated), 0) as fueltech_power,
+            coalesce(avg(fs.generated), 0) / (60 / max(n.interval_size)) as fueltech_power,
             max(f.emissions_factor_co2) * avg(fs.generated) as fueltech_emissions
         from facility_scada fs
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
+        join network n on f.network_id = n.code
         where
             fs.is_forecast is False and
             f.fueltech_id is not null and
@@ -388,7 +389,7 @@ def power_network_fueltech_query(
             fs.trading_interval <= '{date_max}' and
             fs.trading_interval >= '{date_min}'
             {fueltech_filter}
-        group by 1, f.code, f.emissions_factor_co2, 2
+        group by 1, f.code, f.emissions_factor_co2, 2, n.interval_size
     ) as t
     group by 1, 2
     order by 1 desc
