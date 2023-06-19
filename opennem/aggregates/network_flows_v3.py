@@ -447,6 +447,34 @@ def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema) -
         run_aggregate_flow_for_interval_v3(interval=interval, network=network)
 
 
+def get_price_for_interval_for_network(network: NetworkSchema, interval: datetime) -> pd.DataFrame:
+    """Get price for interval for network"""
+    __query = """
+        select
+            bs.trading_interval,
+            bs.network_id,
+            bs.network_region,
+            bs.price,
+            bs.price_dispatch
+        from balancing_summary bs
+        where
+            bs.trading_interval = {trading_interval}
+            and bs.network_id = {network_id}
+    """
+
+    query = __query.format(
+        trading_interval=interval,
+        network_id=network.code,
+    )
+
+    price_df = pd.read_sql(query)
+
+    if price_df.empty:
+        raise Exception(f"No price data for interval {interval} and network {network.code}")
+
+    return price_df
+
+
 @profile_task(
     send_slack=True,
     message_fmt="Running aggregate flow v3 for interval {interval}",
