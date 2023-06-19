@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from typing import NewType
 
 import numpy as np
+import pandas as pd
 
 from opennem.schema.network import NetworkSchema
 
@@ -122,7 +123,7 @@ class NetworkInterconnectorEnergyEmissions:
 
 # Flow solver return class
 @dataclass
-class FlowSolverResult:
+class FlowSolverResultRecord:
     """ """
 
     region_flow: RegionFlow
@@ -139,10 +140,57 @@ class FlowSolverResult:
         return self.region_flow.split("->")[1]
 
 
+class FlowSolverResult:
+    """Class to store flow solver results"""
+
+    def __init__(self, data: list[FlowSolverResultRecord], network: NetworkSchema | None = None):
+        self.network = network
+        self.data = data
+
+    def __repr__(self) -> str:
+        return f"<FlowSolver network={self.network.code} results={len(self.data)}>"
+
+    def get_flow(self, region_flow: RegionFlow, default: int = 0) -> FlowSolverResultRecord:
+        """Get flow by region flow"""
+        flow_result = list(filter(lambda x: x.region_flow == region_flow, self.data))
+
+        if not flow_result:
+            if default:
+                return FlowSolverResultRecord(region_flow=region_flow, emissions_t=default)
+
+            avaliable_options = ", ".join([x.region_flow for x in self.data])
+
+            raise FlowSolverException(f"Flow {region_flow} not found. Available options: {avaliable_options}")
+
+        return flow_result.pop()
+
+    def to_dict(self) -> list[dict]:
+        """Return flow results as a dictionary"""
+        solver_results = [
+            {
+                "trading_interval": interval.replace(tzinfo=None),
+                "interconnector_region_from": i.interconnector_region_from,
+                "interconnector_region_to": i.interconnector_region_to,
+                "emissions": i.emissions_t,
+            }
+            for i in self.data
+        ]
+
+        return solver_results
+
+    def get_dataframe(self) -> pd.DataFrame:
+        """Get flow solver results as a dataframe"""
+        solver_results = self.to_dict()
+
+        flow_emissions_df = pd.DataFrame.from_records(solver_results)
+
+        return flow_emissions_df
+
+
 def solve_flow_emissions_for_interval(
     interconnector_data: NetworkInterconnectorEnergyEmissions,
     region_data: NetworkRegionsDemandEmissions,
-) -> list[FlowSolverResult]:
+) -> list[FlowSolverResultRecord]:
     """_summary_
 
     Args:
@@ -275,30 +323,32 @@ def solve_flow_emissions_for_interval(
     results = []
 
     # transform into emission flows
-    results.append(FlowSolverResult(region_flow=RegionFlow("NSW1->QLD1"), emissions_t=flow_result[5][0]))
-    results.append(FlowSolverResult(region_flow=RegionFlow("VIC1->NSW1"), emissions_t=flow_result[6][0]))
-    results.append(FlowSolverResult(region_flow=RegionFlow("NSW1->VIC1"), emissions_t=flow_result[7][0]))
-    results.append(FlowSolverResult(region_flow=RegionFlow("VIC1->SA1"), emissions_t=flow_result[8][0]))
-    results.append(FlowSolverResult(region_flow=RegionFlow("VIC1->TAS1"), emissions_t=flow_result[9][0]))
+    results.append(FlowSolverResultRecord(region_flow=RegionFlow("NSW1->QLD1"), emissions_t=flow_result[5][0]))
+    results.append(FlowSolverResultRecord(region_flow=RegionFlow("VIC1->NSW1"), emissions_t=flow_result[6][0]))
+    results.append(FlowSolverResultRecord(region_flow=RegionFlow("NSW1->VIC1"), emissions_t=flow_result[7][0]))
+    results.append(FlowSolverResultRecord(region_flow=RegionFlow("VIC1->SA1"), emissions_t=flow_result[8][0]))
+    results.append(FlowSolverResultRecord(region_flow=RegionFlow("VIC1->TAS1"), emissions_t=flow_result[9][0]))
     # simple flows
     results.append(
-        FlowSolverResult(
+        FlowSolverResultRecord(
             region_flow=RegionFlow("QLD1->NSW1"),
             emissions_t=region_data.get_region(Region("QLD1")).emissions_t,
         )
     )
     results.append(
-        FlowSolverResult(
+        FlowSolverResultRecord(
             region_flow=RegionFlow("TAS1->VIC1"),
             emissions_t=region_data.get_region(Region("TAS1")).emissions_t,
         )
     )
     results.append(
-        FlowSolverResult(
+        FlowSolverResultRecord(
             region_flow=RegionFlow("SA1->VIC1"),
             emissions_t=region_data.get_region(Region("SA1")).emissions_t,
         )
     )
+
+    FlowSolverResult(data=results)
 
     return results
 
