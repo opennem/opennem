@@ -176,6 +176,9 @@ def load_energy_and_emissions_for_intervals(
 
     df_gen = pd.read_sql(query, con=engine, index_col=["trading_interval"])
 
+    if df_gen.empty:
+        raise FlowWorkerException("No results from load_interconnector_intervals")
+
     # convert index to local timezone
     df_gen.index.tz_localize(network.get_fixed_offset(), ambiguous="infer")
 
