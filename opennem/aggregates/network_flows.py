@@ -319,6 +319,9 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
 def run_and_store_emission_flows(day: datetime) -> None:
     """Runs and stores emission flows into the aggregate table"""
 
+    if settings.flows_and_emissions_v3:
+        raise Exception("Flows and emissions v3 enabled while v2 is being called")
+
     try:
         emissions_day = calc_flow_for_day(day, network=NetworkNEM)
     except Exception as e:
