@@ -446,14 +446,14 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
         )
     except Exception as e:
         logger.error(e)
-        return None
+        return 0
 
     # 2. get interconnector data and calculate region imports/exports net
     try:
         interconnector_data = load_interconnector_intervals(interval=interval, network=network)
     except Exception as e:
         logger.error(e)
-        return None
+        return 0
 
     interconnector_data_all = invert_interconnectors_show_all_flows(interconnector_data)
 
@@ -495,4 +495,4 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 if __name__ == "__main__":
     interval = datetime.fromisoformat("2023-06-20T08:15:00+10:00")
     # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
-    run_flows_for_last_intervals(interval_number=12, network=NetworkNEM)
+    run_flows_for_last_intervals(interval_number=12 * 24 * 7, network=NetworkNEM)
