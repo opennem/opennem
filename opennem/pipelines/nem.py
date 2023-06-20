@@ -9,7 +9,7 @@ from huey.exceptions import RetryTask
 
 from opennem import settings
 from opennem.aggregates.network_flows import run_flow_update_for_interval
-from opennem.aggregates.network_flows_v3 import run_aggregate_flow_for_interval_v3
+from opennem.aggregates.network_flows_v3 import run_flows_for_last_intervals
 from opennem.api.export.tasks import export_all_daily, export_all_monthly
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
@@ -45,10 +45,10 @@ def nem_dispatch_is_crawl() -> None:
     if not dispatch_is or not dispatch_is.inserted_records:
         raise RetryTask("No new dispatch is data")
 
-    if dispatch_is and dispatch_is.server_latest:
+    if dispatch_is and dispatch_is.crawls_run:
         # switch between v3 and v2 for flows here
         if settings.flows_and_emissions_v3:
-            run_aggregate_flow_for_interval_v3(interval=dispatch_is.server_latest, network=NetworkNEM)
+            run_flows_for_last_intervals(interval_number=dispatch_is.crawls_run + 1, network=NetworkNEM)
         else:
             # run old flows
             run_flow_update_for_interval(interval=dispatch_is.server_latest, network=NetworkNEM)
