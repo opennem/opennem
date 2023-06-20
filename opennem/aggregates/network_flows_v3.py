@@ -440,12 +440,20 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
     """
 
     # 1. get
-    energy_and_emissions = load_energy_and_emissions_for_intervals(
-        interval_start=interval, interval_end=interval + timedelta(minutes=5), network=network
-    )
+    try:
+        energy_and_emissions = load_energy_and_emissions_for_intervals(
+            interval_start=interval, interval_end=interval + timedelta(minutes=5), network=network
+        )
+    except Exception as e:
+        logger.error(e)
+        return None
 
     # 2. get interconnector data and calculate region imports/exports net
-    interconnector_data = load_interconnector_intervals(interval=interval, network=network)
+    try:
+        interconnector_data = load_interconnector_intervals(interval=interval, network=network)
+    except Exception as e:
+        logger.error(e)
+        return None
 
     interconnector_data_all = invert_interconnectors_show_all_flows(interconnector_data)
 
