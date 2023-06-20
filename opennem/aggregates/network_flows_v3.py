@@ -429,7 +429,7 @@ def get_price_for_interval_for_network(network: NetworkSchema, interval: datetim
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.FOREVER,
 )
-def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchema) -> None:
+def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchema) -> int:
     """This method runs the aggregate for an interval and for a network using flow solver
 
     This is version 3 of the method and sits behind the settings.network_flows_v3 feature flag
@@ -472,6 +472,7 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
     # 5. Solve.
     interconnector_emissions = solve_flow_emissions_for_interval(
+        interval=interval,
         interconnector_data=interconnector_data_for_solver,
         region_data=region_data_for_solver,
     )
@@ -485,11 +486,13 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
     )
 
     # 7. Persist to database aggregate table
-    persist_network_flows_and_emissions_for_interval(network_flow_records)
+    inserted_records = persist_network_flows_and_emissions_for_interval(network_flow_records)
+
+    return inserted_records
 
 
 # debug entry point
 if __name__ == "__main__":
-    interval = datetime.fromisoformat("2023-06-16T08:15:00+10:00")
-    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
-    # run_flows_for_last_intervals(interval_number=12 * 24, network=NetworkNEM)
+    interval = datetime.fromisoformat("2023-06-20T08:15:00+10:00")
+    # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
+    run_flows_for_last_intervals(interval_number=12, network=NetworkNEM)

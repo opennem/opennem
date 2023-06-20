@@ -13,6 +13,7 @@ Documentation at: https://github.com/opennem/opennem/wiki/Network-Flows
 
 import logging
 from dataclasses import dataclass
+from datetime import datetime
 from typing import NewType
 
 import numpy as np
@@ -126,6 +127,7 @@ class NetworkInterconnectorEnergyEmissions:
 class FlowSolverResultRecord:
     """ """
 
+    interval: datetime
     region_flow: RegionFlow
     emissions_t: float
 
@@ -168,7 +170,7 @@ class FlowSolverResult:
         """Return flow results as a dictionary"""
         solver_results = [
             {
-                "trading_interval": interval.replace(tzinfo=None),
+                "trading_interval": i.interval.replace(tzinfo=None),
                 "interconnector_region_from": i.interconnector_region_from,
                 "interconnector_region_to": i.interconnector_region_to,
                 "emissions": i.emissions_t,
@@ -188,6 +190,7 @@ class FlowSolverResult:
 
 
 def solve_flow_emissions_for_interval(
+    interval: datetime,
     interconnector_data: NetworkInterconnectorEnergyEmissions,
     region_data: NetworkRegionsDemandEmissions,
 ) -> FlowSolverResult:
@@ -323,26 +326,29 @@ def solve_flow_emissions_for_interval(
     results = []
 
     # transform into emission flows
-    results.append(FlowSolverResultRecord(region_flow=RegionFlow("NSW1->QLD1"), emissions_t=flow_result[5][0]))
-    results.append(FlowSolverResultRecord(region_flow=RegionFlow("VIC1->NSW1"), emissions_t=flow_result[6][0]))
-    results.append(FlowSolverResultRecord(region_flow=RegionFlow("NSW1->VIC1"), emissions_t=flow_result[7][0]))
-    results.append(FlowSolverResultRecord(region_flow=RegionFlow("VIC1->SA1"), emissions_t=flow_result[8][0]))
-    results.append(FlowSolverResultRecord(region_flow=RegionFlow("VIC1->TAS1"), emissions_t=flow_result[9][0]))
+    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->QLD1"), emissions_t=flow_result[5][0]))
+    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->NSW1"), emissions_t=flow_result[6][0]))
+    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->VIC1"), emissions_t=flow_result[7][0]))
+    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->SA1"), emissions_t=flow_result[8][0]))
+    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->TAS1"), emissions_t=flow_result[9][0]))
     # simple flows
     results.append(
         FlowSolverResultRecord(
+            interval=interval,
             region_flow=RegionFlow("QLD1->NSW1"),
             emissions_t=region_data.get_region(Region("QLD1")).emissions_t,
         )
     )
     results.append(
         FlowSolverResultRecord(
+            interval=interval,
             region_flow=RegionFlow("TAS1->VIC1"),
             emissions_t=region_data.get_region(Region("TAS1")).emissions_t,
         )
     )
     results.append(
         FlowSolverResultRecord(
+            interval=interval,
             region_flow=RegionFlow("SA1->VIC1"),
             emissions_t=region_data.get_region(Region("SA1")).emissions_t,
         )
@@ -364,4 +370,4 @@ if __name__ == "__main__":
     interconnector_intervals = load_interconnector_interval_spreadsheet(interval=interval)
     energy_and_emissions = load_energy_and_emissions_spreadsheet(interval=interval)
 
-    flows_df = solve_flow_emissions_for_interval(energy_and_emissions, interconnector_intervals)
+    # flows_df = solve_flow_emissions_for_interval(interval=interval, energy_and_emissions, interconnector_intervals)
