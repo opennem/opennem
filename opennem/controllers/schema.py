@@ -18,3 +18,4 @@ class ControllerReturn(BaseConfig):
     processed_records: int = 0
     errors: int = 0
     error_detail: list[str | None] = []
+    crawls_run: int | None = None
