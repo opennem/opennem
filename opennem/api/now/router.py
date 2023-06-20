@@ -2,7 +2,6 @@ import logging
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi_cache.decorator import cache
 from sqlalchemy.engine.base import Engine
 from starlette import status
 
@@ -27,7 +26,7 @@ router = APIRouter()
     response_model_exclude_unset=True,
     include_in_schema=False,
 )
-@cache(expire=60 * 5)
+# @cache(expire=60 * 5)
 async def now_endpoint(
     engine: Engine = Depends(get_database_engine),
 ) -> OpennemDataSet:
