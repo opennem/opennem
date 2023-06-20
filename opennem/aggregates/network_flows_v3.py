@@ -22,7 +22,6 @@ from opennem.core.flow_solver import (
 )
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
 from opennem.db import get_database_engine, get_scoped_session
-from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records  # type: ignore
 from opennem.db.models.opennem import AggregateNetworkFlows
 from opennem.schema.network import NetworkNEM, NetworkSchema
 from opennem.utils.dates import get_last_completed_interval_for_network
@@ -308,50 +307,6 @@ def persist_network_flows_and_emissions_for_interval(flow_results: pd.DataFrame)
         session.rollback()
         session.close()
         engine.dispose()
-
-    return len(records_to_store)
-
-
-def persist_network_flows_and_emissions_for_interval_bulk(flow_results: pd.DataFrame) -> int:
-    """Takes a list of generation values and calculates energies and bulk-inserts
-    into the database"""
-
-    if not flow_results:
-        raise FlowWorkerException("No flow results to persist")
-
-    records_to_store = flow_results
-
-    # Build SQL + CSV and bulk-insert
-    sql_query = build_insert_query(
-        AggregateNetworkFlows,  # type: ignore
-        [
-            "energy_imports",
-            "energy_exports",
-            "emissions_imports",
-            "emissions_exports",
-            "market_value_imports",
-            "market_value_exports",
-            "updated_at",
-        ],
-    )
-    conn = get_database_engine().raw_connection()
-    cursor = conn.cursor()
-
-    csv_content = generate_csv_from_records(
-        AggregateNetworkFlows,  # type: ignore
-        records_to_store,
-        column_names=list(records_to_store[0].keys()),
-    )
-
-    try:
-        logger.debug(sql_query)
-        cursor.copy_expert(sql_query, csv_content)
-        conn.commit()
-    except Exception as e:
-        logger.error(f"Error inserting records: {e}")
-        return 0
-
-    logger.info(f"Inserted {len(records_to_store)} records")
 
     return len(records_to_store)
 
