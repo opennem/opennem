@@ -344,7 +344,7 @@ def shape_flow_results_into_records_for_persistance(
     network: NetworkSchema,
     interconnector_data: pd.DataFrame,
     interconnector_emissions: FlowSolverResult,
-) -> list[dict]:
+) -> pd.DataFrame:
     """shape into import/exports energy and emissions for each region for a given interval"""
 
     flow_emissions_df = interconnector_emissions.to_dataframe()
@@ -425,6 +425,11 @@ def get_price_for_interval_for_network(network: NetworkSchema, interval: datetim
     return price_df
 
 
+def validate_network_flows(flow_records) -> None:
+    """Validate network flows and sanity checking"""
+    pass
+
+
 @profile_task(
     send_slack=True,
     message_fmt="Running aggregate flow v3 for interval {interval}",
@@ -486,6 +491,9 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
         interconnector_data=interconnector_data_net,
         interconnector_emissions=interconnector_emissions,
     )
+
+    # 7. Validate flows
+    validate_network_flows(flow_records=network_flow_records)
 
     # 7. Persist to database aggregate table
     inserted_records = persist_network_flows_and_emissions_for_interval(network_flow_records)
