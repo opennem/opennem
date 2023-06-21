@@ -457,7 +457,7 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
         logger.error(e)
         return 0
 
-    interconnector_data_all = invert_interconnectors_show_all_flows(interconnector_data)
+    interconnector_data_net = invert_interconnectors_show_all_flows(interconnector_data)
 
     region_imports_and_exports = calculate_total_import_and_export_per_region_for_interval(
         interconnector_data=interconnector_data
@@ -469,7 +469,7 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
     )
 
     # 4. convert to format for solver
-    interconnector_data_for_solver = convert_dataframes_to_interconnector_format(interconnector_data_all)
+    interconnector_data_for_solver = convert_dataframes_to_interconnector_format(interconnector_data_net)
     region_data_for_solver = convert_dataframe_to_energy_and_emissions_format(region_net_demand)
 
     # 5. Solve.
@@ -483,7 +483,7 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
     network_flow_records = shape_flow_results_into_records_for_persistance(
         interval=interval,
         network=network,
-        interconnector_data=interconnector_data_all,
+        interconnector_data=interconnector_data_net,
         interconnector_emissions=interconnector_emissions,
     )
 
