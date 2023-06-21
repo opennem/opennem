@@ -247,7 +247,7 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
 
 
 def invert_interconnectors_show_all_flows(interconnector_data: pd.DataFrame) -> pd.DataFrame:
-    """ """
+    """Inverts the flows per interconnector to show net values"""
     second_set = interconnector_data.rename(
         columns={
             "interconnector_region_from": "interconnector_region_to",
@@ -264,6 +264,8 @@ def invert_interconnectors_show_all_flows(interconnector_data: pd.DataFrame) -> 
     second_set.loc[second_set.energy <= 0, "energy"] = 0
 
     result = pd.concat([interconnector_data, second_set])
+
+    result = result.sort_values("interconnector_region_from")
 
     return result
 
