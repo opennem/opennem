@@ -363,8 +363,8 @@ def shape_flow_results_into_records_for_persistance(
     )
 
     # @TODO merge market value
-    merged_df["market_value_exports"] = 0
-    merged_df["market_value_imports"] = 0
+    merged_df["market_value_exports"] = 0.0
+    merged_df["market_value_imports"] = 0.0
 
     merged_df["trading_interval"] = interval
     merged_df["network_id"] = network.code
@@ -425,8 +425,9 @@ def get_price_for_interval_for_network(network: NetworkSchema, interval: datetim
     return price_df
 
 
-def validate_network_flows(flow_records) -> None:
+def validate_network_flows(flow_records: pd.DataFrame) -> None:
     """Validate network flows and sanity checking"""
+
     pass
 
 
