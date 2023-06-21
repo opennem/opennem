@@ -724,6 +724,18 @@ def fueltech_demand_mix(
     response_model=OpennemDataSet,
     response_model_exclude_unset=True,
 )
+@router.get(
+    "/price/network/{network_code}/{network_region_code}",
+    name="Price history by network and network region",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+)
+@router.get(
+    "/price/network/{network_code}",
+    name="Price history by network and network region",
+    response_model=OpennemDataSet,
+    response_model_exclude_unset=True,
+)
 @cache(expire=60 * 5)
 async def price_network_endpoint(
     network_code: str,
