@@ -394,7 +394,7 @@ def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema) -
 
     for interval in [first_interval - timedelta(minutes=5 * i) for i in range(1, interval_number + 1)]:
         logger.debug(f"Running flow for interval {interval}")
-        run_aggregate_flow_for_interval_v3(interval=interval, network=network)
+        run_aggregate_flow_for_interval_v3(interval=interval, network=network, validate_results=False)
 
 
 def get_price_for_interval_for_network(network: NetworkSchema, interval: datetime) -> pd.DataFrame:
@@ -479,7 +479,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.FOREVER,
 )
-def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchema) -> int:
+def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchema, validate_results: bool = True) -> int:
     """This method runs the aggregate for an interval and for a network using flow solver
 
     This is version 3 of the method and sits behind the settings.network_flows_v3 feature flag
@@ -535,8 +535,9 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
         interconnector_emissions=interconnector_emissions,
     )
 
-    # 7. Validate flows
-    validate_network_flows(flow_records=network_flow_records)
+    # 7. Validate flows - this will throw errors on bad values
+    if validate_results:
+        validate_network_flows(flow_records=network_flow_records)
 
     # 7. Persist to database aggregate table
     inserted_records = persist_network_flows_and_emissions_for_interval(network_flow_records)
@@ -547,5 +548,8 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 # debug entry point
 if __name__ == "__main__":
     interval = datetime.fromisoformat("2023-06-20T08:15:00+10:00")
-    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM)
+
+    # debug entry point doesn't validate
+    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=False)
+
     # run_flows_for_last_intervals(interval_number=12 * 24 * 7, network=NetworkNEM)
