@@ -425,7 +425,7 @@ def get_price_for_interval_for_network(network: NetworkSchema, interval: datetim
     return price_df
 
 
-def validate_network_flows(flow_records: pd.DataFrame) -> None:
+def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = True) -> None:
     """Validate network flows and sanity checking"""
     # 1. Check values are positive
     validate_fields = ["energy_exports", "energy_imports", "emissions_exports", "emissions_imports"]
@@ -447,22 +447,28 @@ def validate_network_flows(flow_records: pd.DataFrame) -> None:
         flow_records_validation["emissions_imports"] / flow_records_validation["energy_imports"]
     )
 
-    bad_factors_exports = flow_records_validation.query("0 <= exports_emission_factor < 1.7")
-    bad_factors_imports = flow_records_validation.query("0 <= imports_emission_factor < 1.7")
+    bad_factors_exports = flow_records_validation.query("exports_emission_factor > 1.7")
+    bad_factors_imports = flow_records_validation.query("imports_emission_factor > 1.7")
 
     if not bad_factors_exports.empty:
         for rec in bad_factors_exports.to_dict(orient="records"):
-            logger.error(
-                f"Bad exports emission factor: {rec.trading_interval} {bad_factors_exports.network_region} {bad_factors_exports.exports_emission_factor}"
+            bad_factor_message = (
+                f"Bad exports emission factor: {rec['trading_interval']} {rec['network_region']} {rec['exports_emission_factor']}"
             )
-        raise Exception("Exports emission factor out of range")
+            logger.error(bad_factor_message)
+
+            if raise_exception:
+                raise Exception(bad_factor_message)
 
     if not bad_factors_imports.empty:
         for rec in bad_factors_imports.to_dict(orient="records"):
-            logger.error(
-                f"Bad imports emission factor: {rec.trading_interval} {bad_factors_imports.network_region} {bad_factors_imports.imports_emission_factor}"
+            bad_factor_message = (
+                f"Bad imports emission factor: {rec['trading_interval']} {rec['network_region']} {rec['imports_emission_factor']}"
             )
-        raise Exception("Imports emission factor out of range")
+            logger.error(bad_factor_message)
+
+            if raise_exception:
+                raise Exception(bad_factor_message)
 
     return None
 
