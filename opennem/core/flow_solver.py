@@ -326,8 +326,8 @@ def solve_flow_emissions_for_interval(
     results = []
 
     # transform into emission flows
-    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->QLD1"), emissions_t=flow_result[5][0]))
-    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->NSW1"), emissions_t=flow_result[6][0]))
+    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->NSW1"), emissions_t=flow_result[5][0]))
+    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->QLD1"), emissions_t=flow_result[6][0]))
     results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->VIC1"), emissions_t=flow_result[7][0]))
     results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->SA1"), emissions_t=flow_result[8][0]))
     results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->TAS1"), emissions_t=flow_result[9][0]))
