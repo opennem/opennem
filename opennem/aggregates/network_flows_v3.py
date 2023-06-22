@@ -246,8 +246,10 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
     return energy_flows
 
 
-def invert_interconnectors_show_all_flows(interconnector_data: pd.DataFrame) -> pd.DataFrame:
+def invert_interconnectors_invert_all_flows(interconnector_data: pd.DataFrame) -> pd.DataFrame:
     """Inverts the flows per interconnector to show net values"""
+    original_set = interconnector_data.copy()
+
     inverted_set = interconnector_data.copy().rename(
         columns={
             "interconnector_region_from": "interconnector_region_to",
@@ -258,14 +260,14 @@ def invert_interconnectors_show_all_flows(interconnector_data: pd.DataFrame) -> 
     inverted_set["generated"] *= -1
     inverted_set["energy"] *= -1
 
-    interconnector_data.loc[interconnector_data.energy <= 0, "generated"] = 0
+    original_set.loc[original_set.energy <= 0, "generated"] = 0
     inverted_set.loc[inverted_set.energy <= 0, "generated"] = 0
-    interconnector_data.loc[interconnector_data.energy <= 0, "energy"] = 0
+    original_set.loc[original_set.energy <= 0, "energy"] = 0
     inverted_set.loc[inverted_set.energy <= 0, "energy"] = 0
 
-    result = pd.concat([interconnector_data, inverted_set])
+    result = pd.concat([original_set, inverted_set])
 
-    result = result.sort_values("interconnector_region_from")
+    # result = result.sort_values("interconnector_region_from")
 
     return result
 
@@ -505,7 +507,7 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
         logger.error(e)
         return 0
 
-    interconnector_data_net = invert_interconnectors_show_all_flows(interconnector_data)
+    interconnector_data_net = invert_interconnectors_invert_all_flows(interconnector_data)
 
     region_imports_and_exports = calculate_total_import_and_export_per_region_for_interval(
         interconnector_data=interconnector_data
