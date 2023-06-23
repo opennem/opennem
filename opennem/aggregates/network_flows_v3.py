@@ -544,6 +544,8 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
     # 7. Persist to database aggregate table
     inserted_records = persist_network_flows_and_emissions_for_interval(network_flow_records)
 
+    logger.info(f"Inserted {inserted_records} records for interval {interval} and network {network.code}")
+
     return inserted_records
 
 
