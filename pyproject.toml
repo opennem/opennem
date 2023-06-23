@@ -3,12 +3,12 @@ name = "opennem-backend"
 version = "3.16.0-alpha.31"
 description = "OpenNEM Australian Energy Data Backend"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
-
-[project]
-license = "MIT"
 packages = [
     { include = "opennem" }
 ]
+
+[project]
+license = "MIT"
 readme = "README.md"
 homepage = "https://opennem.org.au"
 repository = "https://github.com/opennem/opennem"
