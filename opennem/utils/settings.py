@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from urllib.parse import urlparse
 
+from opennem.utils.project_path import get_project_path
+
 BASE_ENV_FILE_NAME = ".env"
 
 
@@ -20,16 +22,17 @@ def replace_database_in_url(db_url: str, db_name: str) -> str:
 
 # cache cwd
 _cwd = Path(os.getcwd())
+_project_path = get_project_path()
 
 
 def _is_env_file(env_file_path: str) -> bool:
     """
     Checks if env file exists in current working directory
     """
-    return (_cwd / Path(env_file_path)).is_file()
+    return (_project_path / Path(env_file_path)).is_file()
 
 
-def load_env_file(environment: str | None) -> list[str]:
+def load_env_file(environment: str | None = None) -> list[str]:
     """
     Returns a list of env files to load
     """
