@@ -75,6 +75,9 @@ console.print(
 
 env_files = load_env_file(ENV)
 
+if not env_files:
+    console.print(" * No env files found. Using system environment only.")
+
 for _env_file in env_files:
     _env_full_path = Path(_env_file).resolve()
     console.print(f" * Loading env file: {_env_full_path}")
