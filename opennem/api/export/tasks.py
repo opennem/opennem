@@ -138,6 +138,7 @@ def export_power(
             if settings.opennem_power_flows:
                 if flow_set := power_flows_per_interval(time_series=time_series, network_region_code=power_stat.network_region):
                     stat_set.append_set(flow_set)
+            # this is the old AEMO balancing flows
             else:
                 if flow_set := power_flows_region_week(
                     time_series=time_series,
