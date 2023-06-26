@@ -18,8 +18,6 @@ def power_flows_per_interval(
     """Gets the power flows for the most recent week for a region from the aggregate table
 
     Supports down to a resolution of per-interval
-
-    @NOTE this is behind feature flag settings.opennem_power_flows
     """
     engine = get_database_engine()
     unit_power = get_unit("power")

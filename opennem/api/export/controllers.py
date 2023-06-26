@@ -143,7 +143,10 @@ def power_flows_region_week(
     time_series: OpennemExportSeries,
     network_region_code: str,
 ) -> OpennemDataSet | None:
-    """Gets the power flows for the most recent week for a region. Used in export_power for the JSON export sets"""
+    """Gets the power flows for the most recent week for a region. Used in export_power for the JSON export sets
+
+    from old flows
+    """
     engine = get_database_engine()
     unit_power = get_unit("power")
 

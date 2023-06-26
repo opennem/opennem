@@ -13,7 +13,6 @@ import contextlib
 import logging
 from datetime import datetime, timedelta
 
-from opennem import settings
 from opennem.api.export.controllers import (
     NoResults,
     demand_network_region_daily,
@@ -22,7 +21,6 @@ from opennem.api.export.controllers import (
     energy_interconnector_flows_and_emissions_v2,
     gov_stats_cpi,
     power_flows_network_week,
-    power_flows_region_week,
     power_week,
     weather_daily,
 )
@@ -134,17 +132,8 @@ def export_power(
         stat_set.append_set(demand_set)
 
         if power_stat.network_region:
-            # @NOTE feature flag on flows + emissions + mv from aggregate tables
-            if settings.opennem_power_flows:
-                if flow_set := power_flows_per_interval(time_series=time_series, network_region_code=power_stat.network_region):
-                    stat_set.append_set(flow_set)
-            # this is the old AEMO balancing flows
-            else:
-                if flow_set := power_flows_region_week(
-                    time_series=time_series,
-                    network_region_code=power_stat.network_region,
-                ):
-                    stat_set.append_set(flow_set)
+            if flow_set := power_flows_per_interval(time_series=time_series, network_region_code=power_stat.network_region):
+                stat_set.append_set(flow_set)
 
         time_series_weather = time_series.copy()
         time_series_weather.interval = human_to_interval("30m")

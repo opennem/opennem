@@ -100,10 +100,6 @@ class OpennemSettings(BaseSettings):
     # prepend the country code in the id
     schema_output_id_country: bool = False
 
-    # workers
-    workers_run: bool = True
-    workers_db_run: bool = True
-
     # templates folder relative to opennem module root
     templates_dir: str = "templates"
 
@@ -133,9 +129,8 @@ class OpennemSettings(BaseSettings):
 
     # feature flags
     run_crawlers: bool = True  # do we enable the crawlers
+    workers_run: bool = True
     flows_and_emissions_v3: bool = False  #
-    opennem_power_flows: bool = False  # in the power outputs, use the aggregate flows
-    opennem_flows_v3: bool = False  # use aggregate in opennem.aggregates.network_flows_v3 per-interval
     redirect_api_static: bool = True  # redirect api endpoints to statics where applicable
     per_interval_aggregate_processing: bool = False  # process per interval aggregates
     show_emissions_in_power_outputs: bool = False  # show emissions in power outputs
