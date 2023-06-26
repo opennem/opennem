@@ -237,6 +237,12 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
         }
     )
 
+    # imports sum should equal exports sum always
+    if not round(energy_flows.energy_exports.sum(), 2) == round(energy_flows.energy_imports.sum(), 2):
+        raise FlowWorkerException(
+            f"Energy import and export totals do not match: {energy_flows.energy_exports.sum()} and {energy_flows.energy_imports.sum()}"
+        )
+
     energy_flows["network_id"] = "NEM"
 
     energy_flows.reset_index(inplace=True)
