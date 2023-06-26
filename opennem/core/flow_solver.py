@@ -75,6 +75,27 @@ class NetworkRegionsDemandEmissions:
 
         return region_result.pop()
 
+    def to_dict(self) -> list[dict]:
+        """Return flow results as a dictionary"""
+        region_demand_emissions = [
+            {
+                "region_code": i.region_code,
+                "generated_mwh": i.generated_mwh,
+                "emissions_t": i.emissions_t,
+            }
+            for i in self.data
+        ]
+
+        return region_demand_emissions
+
+    def to_dataframe(self) -> pd.DataFrame:
+        """Get flow solver results as a dataframe"""
+        region_demand_emissions = self.to_dict()
+
+        region_df = pd.DataFrame.from_records(region_demand_emissions)
+
+        return region_df
+
 
 # Interconnector flow generation and emissions structures
 @dataclass
@@ -120,6 +141,27 @@ class NetworkInterconnectorEnergyEmissions:
             )
 
         return interconnector_result.pop()
+
+    def to_dict(self) -> list[dict]:
+        """Return flow results as a dictionary"""
+        solver_results = [
+            {
+                "interconnector_region_from": i.interconnector_region_from,
+                "interconnector_region_to": i.interconnector_region_to,
+                "generated_mwh": i.generated_mwh,
+            }
+            for i in self.data
+        ]
+
+        return solver_results
+
+    def to_dataframe(self) -> pd.DataFrame:
+        """Get flow solver results as a dataframe"""
+        interconnector_data = self.to_dict()
+
+        interconnector_df = pd.DataFrame.from_records(interconnector_data)
+
+        return interconnector_df
 
 
 # Flow solver return class
@@ -237,7 +279,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(RegionFlow("NSW1->QLD1")).generated_mwh
-                / region_data.get_region(Region("NSW1")).generated_mwh,
+                / region_data.get_region(Region("NSW1")).emissions_t,
                 0,
                 0,
                 1,
@@ -250,7 +292,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(RegionFlow("NSW1->VIC1")).generated_mwh
-                / region_data.get_region(Region("NSW1")).generated_mwh,
+                / region_data.get_region(Region("NSW1")).emissions_t,
                 0,
                 0,
                 0,
@@ -263,7 +305,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(RegionFlow("VIC1->TAS1")).generated_mwh
-                / region_data.get_region(Region("VIC1")).generated_mwh,
+                / region_data.get_region(Region("VIC1")).emissions_t,
                 0,
                 0,
                 0,
@@ -276,7 +318,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(RegionFlow("VIC1->SA1")).generated_mwh
-                / region_data.get_region(Region("VIC1")).generated_mwh,
+                / region_data.get_region(Region("VIC1")).emissions_t,
                 0,
                 0,
                 0,
@@ -289,7 +331,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(RegionFlow("VIC1->NSW1")).generated_mwh
-                / region_data.get_region(Region("VIC1")).generated_mwh,
+                / region_data.get_region(Region("VIC1")).emissions_t,
                 1,
                 0,
                 0,
