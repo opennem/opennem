@@ -50,8 +50,8 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
         nf.network_region,
         max(nf.energy_imports) * {unit_scale} as energy_imports,
         max(nf.energy_exports) * {unit_scale} as energy_exports,
-        max(nf.emissions_imports) * 12 as emission_imports,
-        max(nf.emissions_exports) * 12 as emission_exports,
+        max(nf.emissions_imports) as emission_imports,
+        max(nf.emissions_exports) as emission_exports,
         max(nf.market_value_imports) as market_value_imports,
         max(nf.market_value_exports) as market_value_exports,
         case when abs(max(nf.emissions_imports)) > 0
