@@ -53,6 +53,11 @@ class RegionDemandEmissions:
     generated_mwh: float
     emissions_t: float
 
+    @property
+    def emissions_intensity(self) -> float:
+        """Emissions intensity for the region"""
+        return self.emissions_t / self.generated_mwh
+
 
 class NetworkRegionsDemandEmissions:
     """For a network contains a list of regions and the demand and emissions for each
@@ -373,26 +378,30 @@ def solve_flow_emissions_for_interval(
     results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->VIC1"), emissions_t=flow_result[7][0]))
     results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->SA1"), emissions_t=flow_result[8][0]))
     results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->TAS1"), emissions_t=flow_result[9][0]))
+
     # simple flows
     results.append(
         FlowSolverResultRecord(
             interval=interval,
             region_flow=RegionFlow("QLD1->NSW1"),
-            emissions_t=region_data.get_region(Region("QLD1")).emissions_t,
+            emissions_t=interconnector_data.get_interconnector(RegionFlow("QLD1->NSW1")).generated_mwh
+            * region_data.get_region(Region("QLD1")).emissions_intensity,
         )
     )
     results.append(
         FlowSolverResultRecord(
             interval=interval,
             region_flow=RegionFlow("TAS1->VIC1"),
-            emissions_t=region_data.get_region(Region("TAS1")).emissions_t,
+            emissions_t=interconnector_data.get_interconnector(RegionFlow("TAS1->VIC1")).generated_mwh
+            * region_data.get_region(Region("TAS1")).emissions_intensity,
         )
     )
     results.append(
         FlowSolverResultRecord(
             interval=interval,
             region_flow=RegionFlow("SA1->VIC1"),
-            emissions_t=region_data.get_region(Region("SA1")).emissions_t,
+            emissions_t=interconnector_data.get_interconnector(RegionFlow("SA1->VIC1")).generated_mwh
+            * region_data.get_region(Region("SA1")).emissions_intensity,
         )
     )
 
