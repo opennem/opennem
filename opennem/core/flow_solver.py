@@ -284,7 +284,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(RegionFlow("NSW1->QLD1")).generated_mwh
-                / region_data.get_region(Region("NSW1")).emissions_t,
+                / region_data.get_region(Region("NSW1")).generated_mwh,
                 0,
                 0,
                 1,
@@ -297,7 +297,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(RegionFlow("NSW1->VIC1")).generated_mwh
-                / region_data.get_region(Region("NSW1")).emissions_t,
+                / region_data.get_region(Region("NSW1")).generated_mwh,
                 0,
                 0,
                 0,
@@ -310,7 +310,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(RegionFlow("VIC1->TAS1")).generated_mwh
-                / region_data.get_region(Region("VIC1")).emissions_t,
+                / region_data.get_region(Region("VIC1")).generated_mwh,
                 0,
                 0,
                 0,
@@ -323,7 +323,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(RegionFlow("VIC1->SA1")).generated_mwh
-                / region_data.get_region(Region("VIC1")).emissions_t,
+                / region_data.get_region(Region("VIC1")).generated_mwh,
                 0,
                 0,
                 0,
@@ -336,7 +336,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(RegionFlow("VIC1->NSW1")).generated_mwh
-                / region_data.get_region(Region("VIC1")).emissions_t,
+                / region_data.get_region(Region("VIC1")).generated_mwh,
                 1,
                 0,
                 0,
