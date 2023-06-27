@@ -432,10 +432,9 @@ def power_week(
             if ft.fuel_tech in region_fueltech_capacities:
                 ft.x_capacity_at_present = region_fueltech_capacities[ft.fuel_tech]
 
-    # emissions and emission factors
+    # emissions
     if settings.show_emissions_in_power_outputs:
         emissions = [DataQueryResult(interval=i[0], result=i[3], group_by=i[1] if len(i) > 1 else None) for i in row]
-        emission_factors = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
 
         stats_emissions = stats_factory(
             emissions,
@@ -449,6 +448,9 @@ def power_week(
 
         result.append_set(stats_emissions)
 
+    # emission factors
+    if settings.show_emission_factors_in_power_outputs:
+        emission_factors = [DataQueryResult(interval=i[0], result=i[4], group_by=i[1] if len(i) > 1 else None) for i in row]
         stats_emission_factors = stats_factory(
             emission_factors,
             network=time_series.network,
