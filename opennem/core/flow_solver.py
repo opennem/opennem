@@ -368,16 +368,49 @@ def solve_flow_emissions_for_interval(
     region_emissions = np.nan_to_num(region_emissions)
 
     # obtain solution
-    flow_result = np.linalg.solve(a, region_emissions)
+    np.linalg.solve(a, region_emissions)
 
     results = []
 
     # transform into emission flows
-    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->NSW1"), emissions_t=flow_result[5][0]))
-    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->QLD1"), emissions_t=flow_result[6][0]))
-    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->VIC1"), emissions_t=flow_result[7][0]))
-    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->SA1"), emissions_t=flow_result[8][0]))
-    results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->TAS1"), emissions_t=flow_result[9][0]))
+    # results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->NSW1"), emissions_t=flow_result[5][0]))
+    # results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->QLD1"), emissions_t=flow_result[6][0]))
+    # results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->VIC1"), emissions_t=flow_result[7][0]))
+    # results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->SA1"), emissions_t=flow_result[8][0]))
+    # results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->TAS1"), emissions_t=flow_result[9][0]))
+
+    results.append(
+        FlowSolverResultRecord(
+            interval=interval,
+            region_flow=RegionFlow("VIC1->NSW1"),
+            emissions_t=interconnector_data.get_interconnector(RegionFlow("VIC1->NSW1")).generated_mwh
+            * region_data.get_region(Region("QLD1")).emissions_intensity,
+        )
+    )
+    results.append(
+        FlowSolverResultRecord(
+            interval=interval,
+            region_flow=RegionFlow("NSW1->VIC1"),
+            emissions_t=interconnector_data.get_interconnector(RegionFlow("NSW1->VIC1")).generated_mwh
+            * region_data.get_region(Region("NSW1")).emissions_intensity,
+        )
+    )
+    results.append(
+        FlowSolverResultRecord(
+            interval=interval,
+            region_flow=RegionFlow("VIC1->SA1"),
+            emissions_t=interconnector_data.get_interconnector(RegionFlow("VIC1->SA1")).generated_mwh
+            * region_data.get_region(Region("VIC1")).emissions_intensity,
+        )
+    )
+    results.append(
+        FlowSolverResultRecord(
+            interval=interval,
+            region_flow=RegionFlow("VIC1->TAS1"),
+            emissions_t=interconnector_data.get_interconnector(RegionFlow("VIC1->TAS1")).generated_mwh
+            * region_data.get_region(Region("VIC1")).emissions_intensity,
+        )
+    )
 
     # simple flows
     results.append(
