@@ -87,7 +87,7 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
         date_start=date_min,
         date_end=date_max,
         # @NOTE since at_network_flows is calculated as an energy we need to multiple it back out
-        unit_scale=12,
+        unit_scale=1,
         unit_scale_emissions=1,
     )
 
