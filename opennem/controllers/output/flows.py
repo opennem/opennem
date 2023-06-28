@@ -1,5 +1,6 @@
 import logging
 
+from opennem import settings
 from opennem.api.stats.controllers import stats_factory
 from opennem.api.stats.schema import DataQueryResult, OpennemDataSet
 from opennem.controllers.output.schema import OpennemExportSeries
@@ -70,7 +71,7 @@ def power_flows_per_interval(
 
     result.append_set(result_exports)
 
-    if include_emissions_and_factors:
+    if settings.show_emissions_in_power_outputs:
         result_emissions_imports = stats_factory(
             emissions_imports,
             network=time_series.network,
@@ -79,7 +80,6 @@ def power_flows_per_interval(
             region=network_region_code,
             fueltech_group=True,
         )
-
         result.append_set(result_emissions_imports)
 
         result_emissions_exports = stats_factory(
@@ -90,9 +90,9 @@ def power_flows_per_interval(
             region=network_region_code,
             fueltech_group=True,
         )
-
         result.append_set(result_emissions_exports)
 
+    if settings.show_emission_factors_in_power_outputs:
         result_emissions_factor_imports = stats_factory(
             emissions_factor_imports,
             network=time_series.network,
