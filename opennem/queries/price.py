@@ -15,8 +15,8 @@ from .exceptions import TooManyIntervals
 def get_network_region_price_query(
     date_min: datetime,
     date_max: datetime,
-    interval: TimeInterval,
     network: NetworkSchema,
+    interval: TimeInterval | None = None,
     network_region_code: str | None = None,
     forecast: bool = False,
 ) -> TextClause:
@@ -49,6 +49,10 @@ def get_network_region_price_query(
 
     if forecast:
         forecast_clause = "and bs.forecast = true"
+
+    # if not interval provided get the default from the network
+    if not interval:
+        interval = network.get_interval()
 
     num_intervals = num_intervals_between_datetimes(interval.get_timedelta(), date_min, date_max)
 
