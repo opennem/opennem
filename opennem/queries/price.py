@@ -13,9 +13,9 @@ from .exceptions import TooManyIntervals
 
 
 def get_network_region_price_query(
-    date_min: datetime,
-    date_max: datetime,
     network: NetworkSchema,
+    date_min: datetime,
+    date_max: datetime | None = None,
     interval: TimeInterval | None = None,
     network_region_code: str | None = None,
     forecast: bool = False,
@@ -37,6 +37,9 @@ def get_network_region_price_query(
             {network_regions_query}
         group by 1, 2, 3;
     """
+    # if only a single interval with date_min set date_max
+    if not date_max:
+        date_max = date_min
 
     # regions clause
     network_regions_query = ""
