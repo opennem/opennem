@@ -384,7 +384,7 @@ def solve_flow_emissions_for_interval(
             interval=interval,
             region_flow=RegionFlow("VIC1->NSW1"),
             emissions_t=interconnector_data.get_interconnector(RegionFlow("VIC1->NSW1")).generated_mwh
-            * region_data.get_region(Region("QLD1")).emissions_intensity,
+            * region_data.get_region(Region("VIC1")).emissions_intensity,
         )
     )
     results.append(
