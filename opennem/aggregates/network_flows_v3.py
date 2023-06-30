@@ -327,11 +327,13 @@ def persist_network_flows_and_emissions_for_interval(flow_results: pd.DataFrame)
     return len(records_to_store)
 
 
-def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame) -> NetworkInterconnectorEnergyEmissions:
+def convert_dataframes_to_interconnector_format(
+    interconnector_df: pd.DataFrame, network: NetworkSchema
+) -> NetworkInterconnectorEnergyEmissions:
     """Converts pandas data frame of interconnector flows to a format that can be used by the flow solver"""
     records = [
         InterconnectorNetEmissionsEnergy(
-            interval=rec["trading_interval"].to_pydatetime(),
+            interval=rec["trading_interval"].to_pydatetime().replace(tzinfo=network.get_fixed_offset()),
             region_flow=RegionFlow(f"{rec['interconnector_region_from']}->{rec['interconnector_region_to']}"),
             generated_mw=rec["generated"],
             energy_mwh=rec["energy"],
@@ -342,11 +344,13 @@ def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame)
     return NetworkInterconnectorEnergyEmissions(network=NetworkNEM, data=records)
 
 
-def convert_dataframe_to_energy_and_emissions_format(region_demand_emissions_df: pd.DataFrame) -> NetworkRegionsDemandEmissions:
+def convert_dataframe_to_energy_and_emissions_format(
+    region_demand_emissions_df: pd.DataFrame, network: NetworkSchema
+) -> NetworkRegionsDemandEmissions:
     """Converts pandas data frame of region demand and emissions to a format that can be used by the flow solver"""
     records = [
         RegionDemandEmissions(
-            interval=rec["trading_interval"].to_pydatetime(),
+            interval=rec["trading_interval"].to_pydatetime().replace(tzinfo=network.get_fixed_offset()),
             region_code=rec["network_region"],
             emissions_t=rec["emissions"],
             energy_mwh=rec["energy"],
@@ -509,8 +513,12 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
     )
 
     # 4. convert to format for solver
-    interconnector_data_for_solver = convert_dataframes_to_interconnector_format(interconnector_data_net)
-    region_data_for_solver = convert_dataframe_to_energy_and_emissions_format(region_net_demand)
+    interconnector_data_for_solver = convert_dataframes_to_interconnector_format(
+        interconnector_df=interconnector_data_net, network=network
+    )
+    region_data_for_solver = convert_dataframe_to_energy_and_emissions_format(
+        region_demand_emissions_df=region_net_demand, network=network
+    )
 
     # 5. Solve.
     interconnector_emissions = solve_flow_emissions_for_interval(
