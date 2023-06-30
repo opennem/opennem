@@ -284,7 +284,9 @@ def solve_flow_emissions_for_interval(
 
     # these are the results we will return
     results = []
-    # intervals = sorted(set([i.interval for i in region_data.data]))
+    intervals = list({i.interval for i in interconnector_data.data})
+
+    logger.debug(f"Called with {len(intervals)} intervals")
 
     a = np.array(
         [
