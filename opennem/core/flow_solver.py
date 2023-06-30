@@ -184,8 +184,8 @@ class FlowSolverResultRecord:
     interval: datetime
     region_flow: RegionFlow
     emissions_t: float
-    generated_mw: float | None
-    energy_mwh: float | None
+    generated_mw: float | None = None
+    energy_mwh: float | None = None
 
     @property
     def interconnector_region_from(self) -> str:
@@ -442,9 +442,7 @@ def solve_flow_emissions_for_interval(
         FlowSolverResultRecord(
             interval=interval,
             region_flow=RegionFlow("SA1->VIC1"),
-            emissions_t=interconnector_data.get_interconnector(
-                interval=interval, interconnector=RegionFlow("SA1->VIC1")
-            ).energy_mwh
+            emissions_t=interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("SA1->VIC1")).energy_mwh
             * region_data.get_region(interval=interval, region=Region("SA1")).emissions_intensity,
         )
     )
