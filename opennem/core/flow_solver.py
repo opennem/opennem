@@ -111,6 +111,7 @@ class InterconnectorNetEmissionsEnergy:
     Power is the sum of the generation of the source region minus the exports
     """
 
+    interval: datetime
     region_flow: RegionFlow
     generated_mw: float
     energy_mwh: float
@@ -133,18 +134,22 @@ class NetworkInterconnectorEnergyEmissions:
         self.data = data
         self.network = network
 
-    def get_interconnector(self, region_flow: RegionFlow, default: int = 0) -> InterconnectorNetEmissionsEnergy:
+    def get_interconnector(
+        self, interval: datetime, region_flow: RegionFlow, default: int = 0
+    ) -> InterconnectorNetEmissionsEnergy:
         """Get interconnector by region flow"""
-        interconnector_result = list(filter(lambda x: x.region_flow == region_flow, self.data))
+        interconnector_result = list(filter(lambda x: x.interval == interval and x.region_flow == region_flow, self.data))
 
         if not interconnector_result:
             if default:
-                return InterconnectorNetEmissionsEnergy(region_flow=region_flow, energy_mwh=default, generated_mw=default)
+                return InterconnectorNetEmissionsEnergy(
+                    interval=interval, region_flow=region_flow, energy_mwh=default, generated_mw=default
+                )
 
             avaliable_options = ", ".join([x.region_flow for x in self.data])
 
             raise FlowSolverException(
-                f"Interconnector {region_flow} not found in network {self.network.code}. Available options: {avaliable_options}"
+                f"Interconnector {interval} {region_flow} not found in network {self.network.code}. Available options: {avaliable_options}"
             )
 
         return interconnector_result.pop()
@@ -275,6 +280,7 @@ def solve_flow_emissions_for_interval(
 
     # these are the results we will return
     results = []
+    # intervals = sorted(set([i.interval for i in region_data.data]))
 
     a = np.array(
         [
@@ -375,13 +381,6 @@ def solve_flow_emissions_for_interval(
 
     # obtain solution
     np.linalg.solve(a, region_emissions)
-
-    # transform into emission flows
-    # results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->NSW1"), emissions_t=flow_result[5][0]))
-    # results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->QLD1"), emissions_t=flow_result[6][0]))
-    # results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("NSW1->VIC1"), emissions_t=flow_result[7][0]))
-    # results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->SA1"), emissions_t=flow_result[8][0]))
-    # results.append(FlowSolverResultRecord(interval=interval, region_flow=RegionFlow("VIC1->TAS1"), emissions_t=flow_result[9][0]))
 
     results.append(
         FlowSolverResultRecord(
