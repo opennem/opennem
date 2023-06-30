@@ -328,6 +328,7 @@ def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame)
     """Converts pandas data frame of interconnector flows to a format that can be used by the flow solver"""
     records = [
         InterconnectorNetEmissionsEnergy(
+            interval=rec["trading_interval"].to_pydatetime(),
             region_flow=RegionFlow(f"{rec['interconnector_region_from']}->{rec['interconnector_region_to']}"),
             generated_mw=rec["generated"],
             energy_mwh=rec["energy"],
@@ -510,6 +511,7 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
     # 5. Solve.
     interconnector_emissions = solve_flow_emissions_for_interval(
+        interval=interval,
         interconnector_data=interconnector_data_for_solver,
         region_data=region_data_for_solver,
     )
