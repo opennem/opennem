@@ -214,7 +214,9 @@ class FlowSolverResult:
 
         if not flow_result:
             if default:
-                return FlowSolverResultRecord(interval=interval, region_flow=region_flow, emissions_t=default)
+                return FlowSolverResultRecord(
+                    interval=interval, region_flow=region_flow, emissions_t=default, generated_mw=default, energy_mwh=default
+                )
 
             avaliable_options = ", ".join([x.region_flow for x in self.data])
 
