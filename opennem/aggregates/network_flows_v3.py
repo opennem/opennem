@@ -341,7 +341,12 @@ def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame)
 def convert_dataframe_to_energy_and_emissions_format(region_demand_emissions_df: pd.DataFrame) -> NetworkRegionsDemandEmissions:
     """Converts pandas data frame of region demand and emissions to a format that can be used by the flow solver"""
     records = [
-        RegionDemandEmissions(region_code=rec["network_region"], emissions_t=rec["emissions"], energy_mwh=rec["energy"])
+        RegionDemandEmissions(
+            interval=rec["trading_interval"].to_pydatetime(),
+            region_code=rec["network_region"],
+            emissions_t=rec["emissions"],
+            energy_mwh=rec["energy"],
+        )
         for rec in region_demand_emissions_df.to_dict(orient="records")
     ]
 
@@ -505,7 +510,6 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
     # 5. Solve.
     interconnector_emissions = solve_flow_emissions_for_interval(
-        interval=interval,
         interconnector_data=interconnector_data_for_solver,
         region_data=region_data_for_solver,
     )
