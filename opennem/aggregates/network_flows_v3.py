@@ -379,6 +379,8 @@ def shape_flow_results_into_records_for_persistance(
     merged_df["network_id"] = network.code
     merged_df["created_by"] = "opennem.aggregates.network_flows_v3"
 
+    merged_df.fillna(0, inplace=True)
+
     merged_df.reset_index(inplace=True)
     merged_df.rename(columns={"index": "network_region"}, inplace=True)
 
