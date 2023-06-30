@@ -209,7 +209,7 @@ class FlowSolverResult:
         self.data = data
 
     def __repr__(self) -> str:
-        return f"<FlowSolver network={self.network.code} results={len(self.data)}>"
+        return f"<FlowSolver network={self.network.code if self.network else ''} results={len(self.data)}>"
 
     def get_flow(self, interval: datetime, region_flow: RegionFlow, default: int = 0) -> FlowSolverResultRecord:
         """Get flow by region flow"""
