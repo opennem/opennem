@@ -152,6 +152,9 @@ class NetworkInterconnectorEnergyEmissions:
                 f"Interconnector {interval} {region_flow} not found in network {self.network.code}. Available options: {avaliable_options}"
             )
 
+        if len(interconnector_result) > 1:
+            raise FlowSolverException(f"Interconnector {interval} {region_flow} has multiple results")
+
         return interconnector_result.pop()
 
     def to_dict(self) -> list[dict]:
