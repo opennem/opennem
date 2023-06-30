@@ -457,14 +457,4 @@ def solve_flow_emissions_for_interval(
 
 # debugger entry point
 if __name__ == "__main__":
-    from datetime import datetime
-
-    from tests.core.flow_solver import load_energy_and_emissions_spreadsheet, load_interconnector_interval_spreadsheet
-
-    # interval = datetime.fromisoformat("2023-04-09T10:15:00+10:00")
-    interval_notebook = datetime.fromisoformat("2022-03-07T00:00:00+10:00")
-
-    interconnector_intervals = load_interconnector_interval_spreadsheet(interval=interval_notebook)
-    energy_and_emissions = load_energy_and_emissions_spreadsheet(interval=interval_notebook)
-
-    # flows_df = solve_flow_emissions_for_interval(interval=interval, energy_and_emissions, interconnector_intervals)
+    pass
