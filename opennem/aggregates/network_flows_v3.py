@@ -405,34 +405,6 @@ def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema) -
         run_aggregate_flow_for_interval_v3(interval=interval, network=network, validate_results=False)
 
 
-def get_price_for_interval_for_network(network: NetworkSchema, interval: datetime) -> pd.DataFrame:
-    """Get price for interval for network"""
-    __query = """
-        select
-            bs.trading_interval,
-            bs.network_id,
-            bs.network_region,
-            bs.price,
-            bs.price_dispatch
-        from balancing_summary bs
-        where
-            bs.trading_interval = {trading_interval}
-            and bs.network_id = {network_id}
-    """
-
-    query = __query.format(
-        trading_interval=interval,
-        network_id=network.code,
-    )
-
-    price_df = pd.read_sql(query)
-
-    if price_df.empty:
-        raise Exception(f"No price data for interval {interval} and network {network.code}")
-
-    return price_df
-
-
 def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = True) -> None:
     """Validate network flows and sanity checking"""
     # 1. Check values are positive
@@ -557,11 +529,11 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
 # debug entry point
 if __name__ == "__main__":
-    interval = datetime.fromisoformat("2023-06-26T22:00:00+10:00")
+    interval = datetime.fromisoformat("2023-06-29T10:00:00+10:00")
 
     # interval_notebook = datetime.fromisoformat("2022-03-07T00:00:00+10:00")
 
     # debug entry point doesn't validate
-    # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=False)
+    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=True)
 
-    run_flows_for_last_intervals(interval_number=12 * 24 * 7, network=NetworkNEM)
+    # run_flows_for_last_intervals(interval_number=12 * 24 * 7, network=NetworkNEM)
