@@ -93,7 +93,7 @@ def load_interconnector_intervals(interval: datetime, network: NetworkSchema) ->
 
 
 def load_energy_and_emissions_for_intervals(
-    interval_start: datetime, interval_end: datetime, network: NetworkSchema
+    network: NetworkSchema, interval_start: datetime, interval_end: datetime | None = None
 ) -> pd.DataFrame:
     """
     Fetch all energy and emissions for each network region for a network.
@@ -165,7 +165,7 @@ def load_energy_and_emissions_for_intervals(
             group by fs.trading_interval, fs.facility_code, f.emissions_factor_co2, f.network_region, f.network_id
         ) as generated_intervals
         where
-            generated_intervals.trading_interval = '{interval_end}'
+            generated_intervals.trading_interval = '{interval_start}'
         group by 1, 2, 3
         order by 1 asc;
     """.format(
@@ -543,6 +543,6 @@ if __name__ == "__main__":
     # interval_notebook = datetime.fromisoformat("2022-03-07T00:00:00+10:00")
 
     # debug entry point doesn't validate
-    # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=True)
+    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=True)
 
-    run_flows_for_last_intervals(interval_number=12 * 24 * 7, network=NetworkNEM)
+    # run_flows_for_last_intervals(interval_number=12 * 24 * 7, network=NetworkNEM)
