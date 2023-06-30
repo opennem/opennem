@@ -329,7 +329,7 @@ def convert_dataframes_to_interconnector_format(interconnector_df: pd.DataFrame)
     records = [
         InterconnectorNetEmissionsEnergy(
             region_flow=RegionFlow(f"{rec['interconnector_region_from']}->{rec['interconnector_region_to']}"),
-            generated_mwh=rec["energy"],
+            energy_mwh=rec["energy"],
         )
         for rec in interconnector_df.to_dict(orient="records")
     ]
@@ -529,11 +529,11 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
 # debug entry point
 if __name__ == "__main__":
-    interval = datetime.fromisoformat("2023-06-29T10:00:00+10:00")
+    interval = datetime.fromisoformat("2023-06-30T17:00:00+10:00")
 
     # interval_notebook = datetime.fromisoformat("2022-03-07T00:00:00+10:00")
 
     # debug entry point doesn't validate
-    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=True)
+    # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=True)
 
-    # run_flows_for_last_intervals(interval_number=12 * 24 * 7, network=NetworkNEM)
+    run_flows_for_last_intervals(interval_number=12 * 24 * 7, network=NetworkNEM)
