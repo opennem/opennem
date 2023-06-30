@@ -131,6 +131,9 @@ def load_energy_and_emissions_for_intervals(
 
     engine = get_database_engine()
 
+    if not interval_end:
+        interval_end = interval_start + timedelta(minutes=network.interval_size)
+
     query = """
         select
             generated_intervals.trading_interval,
