@@ -184,6 +184,8 @@ class FlowSolverResultRecord:
     interval: datetime
     region_flow: RegionFlow
     emissions_t: float
+    generated_mw: float | None
+    energy_mwh: float | None
 
     @property
     def interconnector_region_from(self) -> str:
@@ -206,17 +208,17 @@ class FlowSolverResult:
     def __repr__(self) -> str:
         return f"<FlowSolver network={self.network.code} results={len(self.data)}>"
 
-    def get_flow(self, region_flow: RegionFlow, default: int = 0) -> FlowSolverResultRecord:
+    def get_flow(self, interval: datetime, region_flow: RegionFlow, default: int = 0) -> FlowSolverResultRecord:
         """Get flow by region flow"""
         flow_result = list(filter(lambda x: x.region_flow == region_flow, self.data))
 
         if not flow_result:
             if default:
-                return FlowSolverResultRecord(region_flow=region_flow, emissions_t=default)
+                return FlowSolverResultRecord(interval=interval, region_flow=region_flow, emissions_t=default)
 
             avaliable_options = ", ".join([x.region_flow for x in self.data])
 
-            raise FlowSolverException(f"Flow {region_flow} not found. Available options: {avaliable_options}")
+            raise FlowSolverException(f"Flow {interval} interval {region_flow} not found. Available options: {avaliable_options}")
 
         return flow_result.pop()
 
