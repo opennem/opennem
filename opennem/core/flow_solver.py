@@ -53,6 +53,7 @@ class RegionDemandEmissions:
     region_code: Region
     energy_mwh: float
     emissions_t: float
+    generated_mw: float | None = None
 
     @property
     def emissions_intensity(self) -> float:
