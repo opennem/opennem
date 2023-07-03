@@ -391,7 +391,6 @@ def shape_flow_results_into_records_for_persistance(
 
     merged_df["trading_interval"] = interval
     merged_df["network_id"] = network.code
-    merged_df["created_by"] = "opennem.aggregates.network_flows_v3"
 
     merged_df.fillna(0, inplace=True)
 
@@ -550,8 +549,8 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
 # debug entry point
 if __name__ == "__main__":
-    interval = datetime.fromisoformat("2023-07-04T06:00:00+10:00")
-    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=True)
+    # interval = datetime.fromisoformat("2023-07-04T06:00:00+10:00")
+    # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=True)
 
-    from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
-    # run_flows_for_last_intervals(interval_number=12 * 24 * 2, network=NetworkNEM)
+    # from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
+    run_flows_for_last_intervals(interval_number=12 * 24 * 14, network=NetworkNEM)
