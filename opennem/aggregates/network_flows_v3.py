@@ -319,7 +319,7 @@ def persist_network_flows_and_emissions_for_interval(flow_results: pd.DataFrame)
         session.commit()
     except Exception as e:
         logger.error("Error inserting records")
-        logger.error(e)
+        raise e
     finally:
         session.rollback()
         session.close()
