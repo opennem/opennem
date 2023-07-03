@@ -15,6 +15,8 @@ from opennem.core.flow_solver import (
 )
 from opennem.schema.network import NetworkNEM, NetworkSchema
 
+TEST_INTERVAL_ONE = datetime.fromisoformat("2023-07-01T00:30:00+10:00")
+
 
 # fixtures for this test adapted from Simons spreadsheet at
 # https://docs.google.com/spreadsheets/d/12eAnLYSdXJ55I06m0sRfrJyVd-1gGsSr/edit#gid=1210585319
@@ -101,19 +103,35 @@ def flow_solver_test_output_spreadsheet() -> pd.DataFrame:
             NetworkRegionsDemandEmissions(
                 network=NetworkNEM,
                 data=[
-                    RegionDemandEmissions(region_code=Region("NSW1"), generated_mwh=99876.21, emissions_t=63576.28),
-                    RegionDemandEmissions(region_code=Region("QLD1"), generated_mwh=92799.05, emissions_t=72424.89),
-                    RegionDemandEmissions(region_code=Region("SA1"), generated_mwh=14571.28, emissions_t=1207.01),
-                    RegionDemandEmissions(region_code=Region("TAS1"), generated_mwh=9635.90, emissions_t=0),
-                    RegionDemandEmissions(region_code=Region("VIC1"), generated_mwh=68247.64, emissions_t=55621.22),
+                    RegionDemandEmissions(
+                        interval=TEST_INTERVAL_ONE, region_code=Region("NSW1"), generated_mw=99876.21, emissions_t=63576.28
+                    ),
+                    RegionDemandEmissions(
+                        interval=TEST_INTERVAL_ONE, region_code=Region("QLD1"), generated_mw=92799.05, emissions_t=72424.89
+                    ),
+                    RegionDemandEmissions(
+                        interval=TEST_INTERVAL_ONE, region_code=Region("SA1"), generated_mw=14571.28, emissions_t=1207.01
+                    ),
+                    RegionDemandEmissions(
+                        interval=TEST_INTERVAL_ONE, region_code=Region("TAS1"), generated_mw=9635.90, emissions_t=0
+                    ),
+                    RegionDemandEmissions(
+                        interval=TEST_INTERVAL_ONE, region_code=Region("VIC1"), generated_mw=68247.64, emissions_t=55621.22
+                    ),
                 ],
             ),
             NetworkInterconnectorEnergyEmissions(
                 network=NetworkNEM,
                 data=[
-                    InterconnectorNetEmissionsEnergy(region_flow=RegionFlow("QLD1->NSW1"), generated_mwh=1845378.01),
-                    InterconnectorNetEmissionsEnergy(region_flow=RegionFlow("TAS1->VIC1"), generated_mwh=9345725.37),
-                    InterconnectorNetEmissionsEnergy(region_flow=RegionFlow("SA1->VIC1"), generated_mwh=2263190.02),
+                    InterconnectorNetEmissionsEnergy(
+                        interval=TEST_INTERVAL_ONE, region_flow=RegionFlow("QLD1->NSW1"), generated_mw=1845378.01
+                    ),
+                    InterconnectorNetEmissionsEnergy(
+                        interval=TEST_INTERVAL_ONE, region_flow=RegionFlow("TAS1->VIC1"), generated_mw=9345725.37
+                    ),
+                    InterconnectorNetEmissionsEnergy(
+                        interval=TEST_INTERVAL_ONE, region_flow=RegionFlow("SA1->VIC1"), generated_mw=2263190.02
+                    ),
                 ],
             ),
             [
@@ -128,5 +146,7 @@ def test_solve_flows_for_interval(
     """
     Unit test for the solve_flows_for_interval function.
     """
-    subject_output = solve_flow_emissions_for_interval(region_data=region_data, interconnector_data=interconnector_data)
+    subject_output = solve_flow_emissions_for_interval(
+        interval=TEST_INTERVAL_ONE, region_data=region_data, interconnector_data=interconnector_data
+    )
     assert subject_output == expected_output, "output matches expected output"
