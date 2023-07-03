@@ -33,6 +33,10 @@ class FlowWorkerException(Exception):
     pass
 
 
+class FlowsValidationError(Exception):
+    pass
+
+
 def load_interconnector_intervals(interval: datetime, network: NetworkSchema) -> pd.DataFrame:
     """Load interconnector flows for an interval.
 
@@ -431,7 +435,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
 
         if not bad_values.empty:
             for rec in bad_values.to_dict(orient="records"):
-                logger.error(f"Bad value: {rec.trading_interval} {rec.network_region} {field} {rec[field]}")
+                raise FlowsValidationError(f"Bad value: {rec.trading_interval} {rec.network_region} {field} {rec[field]}")
 
     # 2. Check emission factors
     flow_records_validation = flow_records.copy()
@@ -454,7 +458,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
             logger.error(bad_factor_message)
 
             if raise_exception:
-                raise Exception(bad_factor_message)
+                raise FlowsValidationError(bad_factor_message)
 
     if not bad_factors_imports.empty:
         for rec in bad_factors_imports.to_dict(orient="records"):
@@ -464,7 +468,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
             logger.error(bad_factor_message)
 
             if raise_exception:
-                raise Exception(bad_factor_message)
+                raise FlowsValidationError(bad_factor_message)
 
     return None
 
