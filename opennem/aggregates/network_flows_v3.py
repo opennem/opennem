@@ -315,6 +315,8 @@ def persist_network_flows_and_emissions_for_interval(flow_results: pd.DataFrame)
             "energy_exports": stmt.excluded.energy_exports,
             "emissions_exports": stmt.excluded.emissions_exports,
             "emissions_imports": stmt.excluded.emissions_imports,
+            "market_value_exports": stmt.excluded.market_value_exports,
+            "market_value_imports": stmt.excluded.market_value_imports,
         },
     )
 
