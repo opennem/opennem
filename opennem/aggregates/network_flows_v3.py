@@ -288,7 +288,8 @@ def calculate_demand_region_for_interval(energy_and_emissions: pd.DataFrame, imp
     """
 
     df_with_demand = pd.merge(energy_and_emissions, imports_and_export)
-    df_with_demand["demand"] = df_with_demand["energy"] + df_with_demand["energy_imports"] - df_with_demand["energy_exports"]
+    df_with_demand["demand"] = df_with_demand["energy"]
+    # + df_with_demand["energy_imports"] - df_with_demand["energy_exports"]
 
     return df_with_demand
 
@@ -549,11 +550,8 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
 # debug entry point
 if __name__ == "__main__":
-    interval = datetime.fromisoformat("2023-06-30T17:00:00+10:00")
-
-    # interval_notebook = datetime.fromisoformat("2022-03-07T00:00:00+10:00")
-
-    # debug entry point doesn't validate
+    interval = datetime.fromisoformat("2023-07-04T06:00:00+10:00")
     run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=True)
 
-    # run_flows_for_last_intervals(interval_number=12 * 24 * 7, network=NetworkNEM)
+    from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
+    # run_flows_for_last_intervals(interval_number=12 * 24 * 2, network=NetworkNEM)
