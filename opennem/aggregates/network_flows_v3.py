@@ -294,8 +294,10 @@ def calculate_demand_region_for_interval(energy_and_emissions: pd.DataFrame, imp
     """
 
     df_with_demand = pd.merge(energy_and_emissions, imports_and_export)
-    df_with_demand["demand"] = df_with_demand["energy"]
-    # + df_with_demand["energy_imports"] - df_with_demand["energy_exports"]
+    df_with_demand["demand"] = df_with_demand["energy"] + df_with_demand["energy_imports"] - df_with_demand["energy_exports"]
+
+    # add emissions intensity for debugging
+    df_with_demand["emissions_intensity"] = df_with_demand["emissions"] / df_with_demand["demand"]
 
     return df_with_demand
 
