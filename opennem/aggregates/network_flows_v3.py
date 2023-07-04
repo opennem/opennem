@@ -439,7 +439,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
 
         if not bad_values.empty:
             for rec in bad_values.to_dict(orient="records"):
-                raise FlowsValidationError(f"Bad value: {rec.trading_interval} {rec.network_region} {field} {rec[field]}")
+                raise FlowsValidationError(f"Bad value: {rec['trading_interval']} {rec['network_region']} {field} {rec[field]}")
 
     # 2. Check emission factors
     flow_records_validation = flow_records.copy()
