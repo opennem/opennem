@@ -19,7 +19,7 @@ from typing import NewType
 import numpy as np
 import pandas as pd
 
-from opennem.schema.network import NetworkSchema
+from opennem.schema.network import NetworkNEM, NetworkSchema
 
 # from result import Err, Ok, Result
 
@@ -39,8 +39,6 @@ RegionFlow = NewType("RegionFlow", str)
 
 
 # Region demand and emissions structures
-
-
 @dataclass
 class RegionDemandEmissions:
     """Emissions for each region
@@ -51,14 +49,26 @@ class RegionDemandEmissions:
 
     interval: datetime
     region_code: Region
-    energy_mwh: float
-    emissions_t: float
+    network: NetworkSchema = NetworkNEM
+    energy_mwh: float | None = None
+    emissions_t: float = 0.0
     generated_mw: float | None = None
+
+    @property
+    def energy(self) -> float:
+        """Energy in MWh"""
+        if self.energy_mwh:
+            return self.energy_mwh
+
+        if self.generated_mw:
+            return self.generated_mw / self.network.intervals_per_hour
+
+        raise Exception(f"Could not get energy for {self.network.code} {self.region_code} at {self.interval}")
 
     @property
     def emissions_intensity(self) -> float:
         """Emissions intensity for the region"""
-        return self.emissions_t / self.energy_mwh
+        return self.emissions_t / self.energy
 
 
 class NetworkRegionsDemandEmissions:
@@ -288,9 +298,6 @@ def solve_flow_emissions_for_interval(
 
     # these are the results we will return
     results = []
-    intervals = list({i.interval for i in interconnector_data.data})
-
-    logger.debug(f"Called with {len(intervals)} intervals")
 
     a = np.array(
         [
@@ -454,6 +461,19 @@ def solve_flow_emissions_for_interval(
     response_model = FlowSolverResult(data=results)
 
     return response_model
+
+
+def solve_flow_emissions_for_interval_range(
+    interconnector_data: NetworkInterconnectorEnergyEmissions,
+    region_data: NetworkRegionsDemandEmissions,
+) -> FlowSolverResult:
+    """
+    Solve flow emissions for interval range
+    """
+
+    intervals = list({i.interval for i in interconnector_data.data})
+
+    logger.debug(f"Called with {len(intervals)} intervals")
 
 
 # debugger entry point
