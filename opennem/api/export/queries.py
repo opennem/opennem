@@ -365,7 +365,10 @@ def power_network_fueltech_query(
         t.trading_interval,
         t.fueltech_code,
         sum(t.fueltech_power) as fueltech_power,
-        sum(t.fueltech_emissions) as fueltech_emissions,
+        case when
+            sum(t.fueltech_power) > 0 then sum(t.fueltech_emissions)
+            else 0
+        end as fueltech_emissions,
         case when
             sum(t.fueltech_power) > 0 then round(sum(t.fueltech_emissions) / sum(t.fueltech_power), 4)
             else 0
