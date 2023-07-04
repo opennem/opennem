@@ -136,13 +136,14 @@ def load_energy_and_emissions_for_intervals(
     engine = get_database_engine()
 
     if not interval_end:
-        interval_end = interval_start + timedelta(minutes=network.interval_size)
+        interval_end = interval_start
 
     query = """
         select
             generated_intervals.trading_interval,
             generated_intervals.network_id,
             generated_intervals.network_region,
+            sum(generated_intervals.generated) as generated,
             sum(generated_intervals.energy) as energy,
             sum(generated_intervals.emissions) as emissions,
             case when sum(generated_intervals.emissions) > 0
@@ -156,23 +157,25 @@ def load_energy_and_emissions_for_intervals(
                 f.network_id,
                 f.network_region,
                 fs.facility_code,
-                sum(sum(fs.generated)) over (partition by fs.facility_code order by fs.trading_interval asc) / 2 / 12 as energy,
-                case when f.emissions_factor_co2 > 0
-                    then sum(sum(fs.generated)) over (partition by fs.facility_code order by fs.trading_interval asc) / 2 / 12  * f.emissions_factor_co2
-                    else 0
-                end as emissions
+                sum(fs.generated) as generated,
+                sum(fs.generated) / 12 as energy,
+                sum(fs.generated) / 12 * f.emissions_factor_co2 as emissions
+                -- sum(sum(fs.generated)) over (partition by fs.facility_code order by fs.trading_interval asc) / 2 / 12 as energy,
+                --case when f.emissions_factor_co2 > 0
+                --    then sum(sum(fs.generated)) over (partition by fs.facility_code order by fs.trading_interval asc) / 2 / 12  * f.emissions_factor_co2
+                --    else 0
+                --end as emissions
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
             where
                 fs.trading_interval >= '{interval_start}'
                 and fs.trading_interval <= '{interval_end}'
-                and f.network_id IN ('{network_id}')
+                and f.network_id IN ('{network_id}', 'AEMO_ROOFTOP', 'OPENNEM_ROOFTOP_BACKFILL')
+                and f.fueltech_id not in ('battery_charging')
                 and f.interconnector is False
                 and fs.generated > 0
             group by fs.trading_interval, fs.facility_code, f.emissions_factor_co2, f.network_region, f.network_id
         ) as generated_intervals
-        where
-            generated_intervals.trading_interval = '{interval_start}'
         group by 1, 2, 3
         order by 1 asc;
     """.format(
