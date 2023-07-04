@@ -367,7 +367,7 @@ def convert_dataframe_to_energy_and_emissions_format(
             interval=rec["trading_interval"].to_pydatetime().replace(tzinfo=network.get_fixed_offset()),
             region_code=rec["network_region"],
             emissions_t=rec["emissions"],
-            energy_mwh=rec["energy"],
+            energy_mwh=rec["demand"],
         )
         for rec in region_demand_emissions_df.to_dict(orient="records")
     ]
@@ -500,9 +500,7 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
     # 1. get
     try:
-        energy_and_emissions = load_energy_and_emissions_for_intervals(
-            interval_start=interval, interval_end=interval + timedelta(minutes=5), network=network
-        )
+        energy_and_emissions = load_energy_and_emissions_for_intervals(interval_start=interval, network=network)
     except Exception as e:
         logger.error(e)
         return 0
