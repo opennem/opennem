@@ -241,6 +241,8 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
         {
             "energy_imports": f.groupby("interconnector_region_to").energy.sum(),
             "energy_exports": f.groupby("interconnector_region_from").energy.sum(),
+            "generated_imports": f.groupby("interconnector_region_to").energy.sum() * 12,
+            "generated_exports": f.groupby("interconnector_region_from").energy.sum() * 12,
         }
     )
 
