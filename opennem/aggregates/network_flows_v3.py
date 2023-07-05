@@ -141,7 +141,7 @@ def load_energy_and_emissions_for_intervals(
     query = """
         select
             generated_intervals.trading_interval,
-            generated_intervals.network_id,
+            '{network_id}' as network_id,
             generated_intervals.network_region,
             sum(generated_intervals.generated) as generated,
             sum(generated_intervals.energy) as energy,
@@ -160,11 +160,6 @@ def load_energy_and_emissions_for_intervals(
                 sum(fs.generated) as generated,
                 sum(fs.generated) / 12 as energy,
                 sum(fs.generated) / 12 * f.emissions_factor_co2 as emissions
-                -- sum(sum(fs.generated)) over (partition by fs.facility_code order by fs.trading_interval asc) / 2 / 12 as energy,
-                --case when f.emissions_factor_co2 > 0
-                --    then sum(sum(fs.generated)) over (partition by fs.facility_code order by fs.trading_interval asc) / 2 / 12  * f.emissions_factor_co2
-                --    else 0
-                --end as emissions
             from facility_scada fs
             left join facility f on fs.facility_code = f.code
             where
@@ -297,7 +292,8 @@ def calculate_demand_region_for_interval(energy_and_emissions: pd.DataFrame, imp
     """
 
     df_with_demand = pd.merge(energy_and_emissions, imports_and_export)
-    df_with_demand["demand"] = df_with_demand["energy"] + df_with_demand["energy_imports"] - df_with_demand["energy_exports"]
+    df_with_demand["demand"] = df_with_demand["energy"]
+    # - df_with_demand["energy_exports"]
 
     # add emissions intensity for debugging
     df_with_demand["emissions_intensity"] = df_with_demand["emissions"] / df_with_demand["demand"]
@@ -560,8 +556,8 @@ def run_aggregate_flow_for_interval_v3(interval: datetime, network: NetworkSchem
 
 # debug entry point
 if __name__ == "__main__":
-    # interval = datetime.fromisoformat("2023-07-04T06:00:00+10:00")
-    # run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=True)
+    interval = datetime.fromisoformat("2023-07-05T07:00:00+10:00")
+    run_aggregate_flow_for_interval_v3(interval=interval, network=NetworkNEM, validate_results=True)
 
     # from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
-    run_flows_for_last_intervals(interval_number=12 * 24 * 14, network=NetworkNEM)
+    # run_flows_for_last_intervals(interval_number=12 * 24 * 1, network=NetworkNEM)
