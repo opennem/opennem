@@ -379,7 +379,7 @@ def power_network_fueltech_query(
             ft.code as fueltech_code,
             coalesce(avg(fs.generated), 0) as fueltech_power,
             coalesce(avg(fs.generated), 0) / (60 / max(n.interval_size)) as fueltech_energy,
-            max(f.emissions_factor_co2) * avg(fs.generated) as fueltech_emissions
+            max(f.emissions_factor_co2) * avg(fs.generated) / 12 as fueltech_emissions
         from facility_scada fs
         join facility f on fs.facility_code = f.code
         join fueltech ft on f.fueltech_id = ft.code
