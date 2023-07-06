@@ -796,7 +796,7 @@ def energy_network_fueltech_query(
         t.fueltech_id,
         sum(t.fueltech_energy),
         sum(t.fueltech_market_value),
-        sum(t.fueltech_emissions)
+        sum(t.fueltech_emissions) / 12
     from
     (
         select
