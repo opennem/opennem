@@ -523,7 +523,7 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
 
 @profile_task(
     send_slack=True,
-    message_fmt="Running aggregate flow v3 for interval {interval_start} to {interval_end} for {network.code}",
+    message_fmt="Running aggregate flow v3 for interval {interval_start} for {network.code}",
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.FOREVER,
 )
