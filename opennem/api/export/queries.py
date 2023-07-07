@@ -794,9 +794,9 @@ def energy_network_fueltech_query(
     select
         date_trunc('{trunc}', t.trading_day) as trading_interval,
         t.fueltech_id,
-        sum(t.fueltech_energy),
-        sum(t.fueltech_market_value),
-        sum(t.fueltech_emissions) / 12
+        sum(t.fueltech_energy) as fueltech_energy_gwh,
+        sum(t.fueltech_market_value) as market_value_dollars,
+        sum(t.fueltech_emissions) as fueltech_emissions_t
     from
     (
         select
