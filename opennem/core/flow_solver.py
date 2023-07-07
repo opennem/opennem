@@ -215,9 +215,17 @@ class FlowSolverResultRecord:
 class FlowSolverResult:
     """Class to store flow solver results"""
 
-    def __init__(self, data: list[FlowSolverResultRecord], network: NetworkSchema | None = None):
+    def __init__(
+        self,
+        network: NetworkSchema,
+        interconnector_data: NetworkInterconnectorEnergyEmissions,
+        region_data: NetworkRegionsDemandEmissions,
+        result_data: list[FlowSolverResultRecord] | None = None,
+    ):
         self.network = network
-        self.data = data
+        self.interconnector_data = interconnector_data
+        self.region_data = region_data
+        self.data = result_data or []
 
     def __repr__(self) -> str:
         return f"<FlowSolver network={self.network.code if self.network else ''} results={len(self.data)}>"
@@ -237,6 +245,29 @@ class FlowSolverResult:
             raise FlowSolverException(f"Flow {interval} interval {region_flow} not found. Available options: {avaliable_options}")
 
         return flow_result.pop()
+
+    def calculate_flow(self, interval: datetime, region_flow: RegionFlow) -> None:
+        """Adds a flow result"""
+        interconnector = self.interconnector_data.get_interconnector(interval=interval, region_flow=region_flow)
+        region_source = self.region_data.get_region(interval=interval, region=Region(interconnector.interconnector_region_from))
+
+        emissions_t = interconnector.energy_mwh * region_source.emissions_intensity
+
+        flow_result = FlowSolverResultRecord(
+            interval=interval,
+            region_flow=region_flow,
+            emissions_t=emissions_t,
+        )
+
+        self.data.append(flow_result)
+
+    def append_flow(self, flow_result: FlowSolverResultRecord) -> None:
+        """Adds a flow result"""
+        self.data.append(flow_result)
+
+    def append_results(self, flow_results: list[FlowSolverResultRecord]) -> None:
+        """Adds a list of flow results"""
+        self.data.extend(flow_results)
 
     def to_dict(self) -> list[dict]:
         """Return flow results as a dictionary"""
@@ -262,6 +293,7 @@ class FlowSolverResult:
 
 
 def solve_flow_emissions_for_interval(
+    network: NetworkSchema,
     interval: datetime,
     interconnector_data: NetworkInterconnectorEnergyEmissions,
     region_data: NetworkRegionsDemandEmissions,
@@ -296,8 +328,19 @@ def solve_flow_emissions_for_interval(
     Emissions
     """
 
-    # these are the results we will return
-    results = []
+    if network.code != "NEM":
+        raise FlowSolverException(f"Flow solver only supports NEM network. {network.code} provided")
+
+    region_flow_set = [
+        RegionFlow("VIC1->NSW1"),
+        RegionFlow("VIC1->TAS1"),
+        RegionFlow("VIC1->SA1"),
+        RegionFlow("NSW1->VIC1"),
+        RegionFlow("NSW1->QLD1"),
+        RegionFlow("QLD1->NSW1"),
+        RegionFlow("TAS1->VIC1"),
+        RegionFlow("SA1->VIC1"),
+    ]
 
     a = np.array(
         [
@@ -313,7 +356,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("NSW1->QLD1")).energy_mwh
-                / region_data.get_region(interval=interval, region=Region("NSW1")).energy_mwh,
+                / region_data.get_region(interval=interval, region=Region("NSW1")).energy,
                 0,
                 0,
                 1,
@@ -326,7 +369,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("NSW1->VIC1")).energy_mwh
-                / region_data.get_region(interval=interval, region=Region("NSW1")).energy_mwh,
+                / region_data.get_region(interval=interval, region=Region("NSW1")).energy,
                 0,
                 0,
                 0,
@@ -339,7 +382,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("VIC1->TAS1")).energy_mwh
-                / region_data.get_region(interval=interval, region=Region("VIC1")).energy_mwh,
+                / region_data.get_region(interval=interval, region=Region("VIC1")).energy,
                 0,
                 0,
                 0,
@@ -352,7 +395,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("VIC1->SA1")).energy_mwh
-                / region_data.get_region(interval=interval, region=Region("VIC1")).energy_mwh,
+                / region_data.get_region(interval=interval, region=Region("VIC1")).energy,
                 0,
                 0,
                 0,
@@ -365,7 +408,7 @@ def solve_flow_emissions_for_interval(
                 0,
                 0,
                 -interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("VIC1->NSW1")).energy_mwh
-                / region_data.get_region(interval=interval, region=Region("VIC1")).energy_mwh,
+                / region_data.get_region(interval=interval, region=Region("VIC1")).energy,
                 1,
                 0,
                 0,
@@ -399,71 +442,17 @@ def solve_flow_emissions_for_interval(
     # obtain solution
     np.linalg.solve(a, region_emissions)
 
-    results.append(
-        FlowSolverResultRecord(
-            interval=interval,
-            region_flow=RegionFlow("VIC1->NSW1"),
-            emissions_t=interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("VIC1->NSW1")).energy_mwh
-            * region_data.get_region(interval=interval, region=Region("VIC1")).emissions_intensity,
-        )
-    )
-    results.append(
-        FlowSolverResultRecord(
-            interval=interval,
-            region_flow=RegionFlow("NSW1->VIC1"),
-            emissions_t=interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("NSW1->VIC1")).energy_mwh
-            * region_data.get_region(interval=interval, region=Region("NSW1")).emissions_intensity,
-        )
-    )
-    results.append(
-        FlowSolverResultRecord(
-            interval=interval,
-            region_flow=RegionFlow("VIC1->SA1"),
-            emissions_t=interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("VIC1->SA1")).energy_mwh
-            * region_data.get_region(interval=interval, region=Region("VIC1")).emissions_intensity,
-        )
-    )
-    results.append(
-        FlowSolverResultRecord(
-            interval=interval,
-            region_flow=RegionFlow("VIC1->TAS1"),
-            emissions_t=interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("VIC1->TAS1")).energy_mwh
-            * region_data.get_region(interval=interval, region=Region("VIC1")).emissions_intensity,
-        )
-    )
+    flow_results = FlowSolverResult(network=network, interconnector_data=interconnector_data, region_data=region_data)
 
     # simple flows
-    results.append(
-        FlowSolverResultRecord(
-            interval=interval,
-            region_flow=RegionFlow("QLD1->NSW1"),
-            emissions_t=interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("QLD1->NSW1")).energy_mwh
-            * region_data.get_region(interval=interval, region=Region("QLD1")).emissions_intensity,
-        )
-    )
-    results.append(
-        FlowSolverResultRecord(
-            interval=interval,
-            region_flow=RegionFlow("TAS1->VIC1"),
-            emissions_t=interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("TAS1->VIC1")).energy_mwh
-            * region_data.get_region(interval=interval, region=Region("TAS1")).emissions_intensity,
-        )
-    )
-    results.append(
-        FlowSolverResultRecord(
-            interval=interval,
-            region_flow=RegionFlow("SA1->VIC1"),
-            emissions_t=interconnector_data.get_interconnector(interval=interval, region_flow=RegionFlow("SA1->VIC1")).energy_mwh
-            * region_data.get_region(interval=interval, region=Region("SA1")).emissions_intensity,
-        )
-    )
+    for region_flow in region_flow_set:
+        flow_results.calculate_flow(interval=interval, region_flow=region_flow)
 
-    response_model = FlowSolverResult(data=results)
-
-    return response_model
+    return flow_results
 
 
 def solve_flow_emissions_for_interval_range(
+    network: NetworkSchema,
     interconnector_data: NetworkInterconnectorEnergyEmissions,
     region_data: NetworkRegionsDemandEmissions,
 ) -> FlowSolverResult:
@@ -471,9 +460,22 @@ def solve_flow_emissions_for_interval_range(
     Solve flow emissions for interval range
     """
 
+    if network.code != "NEM":
+        raise FlowSolverException(f"Flow solver only supports NEM network. {network.code} provided")
+
     intervals = list({i.interval for i in interconnector_data.data})
 
     logger.debug(f"Called with {len(intervals)} intervals")
+
+    flow_results = FlowSolverResult(network=network, interconnector_data=interconnector_data, region_data=region_data)
+
+    for interval in intervals:
+        result_data = solve_flow_emissions_for_interval(
+            network=network, interval=interval, interconnector_data=interconnector_data, region_data=region_data
+        )
+        flow_results.append_results(result_data.data)
+
+    return flow_results
 
 
 # debugger entry point
