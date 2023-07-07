@@ -40,6 +40,7 @@ from opennem.crawlers.nemweb import (
     AEMONNemwebDispatchScadaArchive,
 )
 from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
+from opennem.schema.date_range import CrawlDateRange
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.modules import load_all_crawler_definitions
 
@@ -125,7 +126,11 @@ def load_crawlers(live_load: bool = False) -> CrawlerSet:
 
 
 def run_crawl(
-    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = True
+    crawler: CrawlerDefinition,
+    last_crawled: bool = True,
+    limit: bool = False,
+    latest: bool = True,
+    date_range: CrawlDateRange | None = None,
 ) -> ControllerReturn | None:
     """Runs a crawl from the crawl definition with ability to overwrite last crawled and obey the defined
     limit"""
@@ -147,7 +152,7 @@ def run_crawl(
     crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
 
     cr: ControllerReturn | None = crawler.processor(
-        crawler=crawler, last_crawled=last_crawled, limit=crawler.limit, latest=latest
+        crawler=crawler, last_crawled=last_crawled, limit=crawler.limit, latest=latest, date_range=date_range
     )
 
     if not cr:

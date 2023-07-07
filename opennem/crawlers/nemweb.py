@@ -9,6 +9,7 @@ from opennem.core.parsers.aemo.mms import parse_aemo_url
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized, parse_aemo_url_optimized_bulk
 from opennem.core.parsers.dirlisting import DirlistingEntry, get_dirlisting
 from opennem.core.time import get_interval, get_interval_by_size
+from opennem.schema.date_range import CrawlDateRange
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM
 from opennem.schema.time import TimeInterval
 
@@ -63,6 +64,7 @@ def run_nemweb_aemo_crawl(
     last_crawled: bool = True,
     limit: bool = False,
     latest: bool = True,
+    date_range: CrawlDateRange | None = None,
 ) -> ControllerReturn | None:
     """Runs the AEMO MMS crawlers"""
     if not crawler.url and not crawler.urls:
@@ -79,6 +81,10 @@ def run_nemweb_aemo_crawl(
 
     if crawler.filename_filter:
         dirlisting.apply_filter(crawler.filename_filter)
+
+    if date_range:
+        logger.info(f"Applying date range: {date_range.start} - {date_range.end}")
+        dirlisting.apply_date_range(date_range)
 
     logger.debug(f"Got {dirlisting.count} entries, {dirlisting.file_count} files and {dirlisting.directory_count} directories")
 

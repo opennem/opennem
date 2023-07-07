@@ -28,6 +28,7 @@ from opennem.core.downloader import url_downloader
 from opennem.core.normalizers import is_number, strip_double_spaces
 from opennem.core.parsers.aemo.filenames import parse_aemo_filename
 from opennem.schema.core import BaseConfig
+from opennem.schema.date_range import CrawlDateRange
 
 logger = logging.getLogger("opennem.parsers.dirlisting")
 
@@ -139,6 +140,14 @@ class DirectoryListing(BaseConfig):
     @property
     def directory_count(self) -> int:
         return len(self.get_directories())
+
+    def apply_date_range(self, date_range: CrawlDateRange) -> None:
+        self.entries = list(
+            filter(
+                lambda x: x.modified_date and x.modified_date > date_range.start and x.modified_date < date_range.end,
+                self.entries,
+            )
+        )
 
     def apply_filter(self, pattern: str) -> None:
         self.entries = list(filter(lambda x: re.match(pattern, x.link), self.entries))
