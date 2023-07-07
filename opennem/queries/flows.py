@@ -48,10 +48,10 @@ def power_network_flow_query(time_series: OpennemExportSeries, network_region: s
         time_bucket_gapfill('{interval}', nf.trading_interval) as trading_interval,
         nf.network_id,
         nf.network_region,
-        max(nf.energy_imports) * {unit_scale} as energy_imports,
-        max(nf.energy_exports) * {unit_scale} as energy_exports,
-        max(nf.emissions_imports) * {unit_scale_emissions}  as emission_imports,
-        max(nf.emissions_exports) * {unit_scale_emissions} as emission_exports,
+        max(nf.energy_imports) * {unit_scale} as power_imports_mw,
+        max(nf.energy_exports) * {unit_scale} as power_exports_mw,
+        max(nf.emissions_imports) * {unit_scale_emissions}  as emission_imports_t,
+        max(nf.emissions_exports) * {unit_scale_emissions} as emission_exports_t,
         max(nf.market_value_imports) as market_value_imports,
         max(nf.market_value_exports) as market_value_exports,
         case when abs(max(nf.emissions_imports)) > 0
@@ -109,15 +109,15 @@ def get_network_flows_emissions_market_value_query(
             date_trunc('{trunc}', t.trading_interval at time zone '{timezone}') as trading_interval,
             t.network_id,
             t.network_region,
-            sum(t.imports_energy) / 1000 as imports_energy,
-            sum(t.exports_energy) / 1000 as exports_energy,
-            abs(sum(t.emissions_imports)) as imports_emissions,
-            abs(sum(t.emissions_exports)) as exports_emissions,
+            sum(t.imports_energy) / 1000 as imports_energy_gwh,
+            sum(t.exports_energy) / 1000 as exports_energy_gwh,
+            abs(sum(t.emissions_imports)) as imports_emissions_t,
+            abs(sum(t.emissions_exports)) as exports_emissions_t,
             sum(t.market_value_imports) as imports_market_value,
             sum(t.market_value_exports) as exports_market_value,
             case when abs(sum(t.imports_energy)) > 0 then
                 sum(t.emissions_imports) / abs(sum(t.imports_energy))
-            else 0 end as imports_market_value_rrp,
+            else 0 end as imports_emission_factor,
             case when abs(sum(t.exports_energy)) > 0 then
                 sum(t.emissions_exports) / sum(t.exports_energy)
             else 0 end as export_emission_factor
