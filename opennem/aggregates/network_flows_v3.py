@@ -450,27 +450,31 @@ def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema) -
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.FOREVER,
 )
-def run_flows_for_last_days(days: int, network: NetworkSchema) -> None:
+def run_flows_for_last_days(days: int, network: NetworkSchema, start_date: datetime | None = None) -> None:
     """ " Run flow processor for last x interval starting from now"""
 
     logger.info(f"Running flows for last {days}")
 
     latest_interval = get_last_completed_interval_for_network(network=network)
-    today = datetime.now(NetworkNEM.get_fixed_offset()).replace(hour=0, minute=0, second=0, microsecond=0)
-    end_series = today - timedelta(days=days)
+    series_start_date = datetime.now(NetworkNEM.get_fixed_offset()).replace(hour=0, minute=0, second=0, microsecond=0)
 
-    for day_num in range(0, (today - end_series).days):
-        day = today - timedelta(days=day_num)
+    if start_date:
+        series_start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    series_end_date = series_start_date - timedelta(days=days)
+
+    for day_num in range(0, (series_start_date - series_end_date).days):
+        day = series_start_date - timedelta(days=day_num)
         interval_start = day
         interval_end = interval_start + timedelta(days=1) - timedelta(minutes=5)
 
-        if day_num == 0:
+        if day_num == 0 and not start_date:
             interval_end = latest_interval
 
         logger.debug(f"Running flow for day {day} from {interval_start} to {interval_end}")
-        run_aggregate_flow_for_interval_v3(
-            network=network, interval_start=interval_start, interval_end=interval_end, validate_results=True
-        )
+        # run_aggregate_flow_for_interval_v3(
+        #     network=network, interval_start=interval_start, interval_end=interval_end, validate_results=True
+        # )
 
 
 def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = True) -> None:
