@@ -247,6 +247,16 @@ AEMONNemwebDispatchScadaArchive = CrawlerDefinition(
     processor=run_nemweb_aemo_crawl,
 )
 
+AEMONemwebRooftopArchive = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.live,
+    name="au.nemweb.archive.rooftop",
+    url="http://www.nemweb.com.au/Reports/ARCHIVE/ROOFTOP_PV/ACTUAL/",
+    filename_filter=".*_MEASUREMENT_.*",
+    network=NetworkAEMORooftop,
+    backfill_days=14,
+    processor=run_nemweb_aemo_crawl,
+)
 
 # next day crawlers
 
