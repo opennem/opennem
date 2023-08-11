@@ -22,7 +22,7 @@ class APVICrawlerException(Exception):
 
 
 def crawl_apvi_forecasts(
-    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False
+    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False, date_range: None = None
 ) -> ControllerReturn:
     """Runs the APVI crawl definition"""
     apvi_return = ControllerReturn()

@@ -42,6 +42,7 @@ def run_aemo_mms_crawl(
     last_crawled: bool = True,
     limit: bool = False,
     latest: bool = True,
+    date_range: None = None,
 ) -> ControllerReturn | None:
     """Run the MMS crawl"""
 

@@ -10,12 +10,13 @@ from opennem.controllers.bom import store_bom_observation_intervals
 from opennem.controllers.nem import ControllerReturn
 from opennem.core.bom import get_stations_priority
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
+from opennem.schema.date_range import CrawlDateRange
 
 logger = logging.getLogger("opennem.crawler.bom")
 
 
 def crawl_bom_capitals(
-    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False
+    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False, date_range: None = None,
 ) -> ControllerReturn | None:
     bom_stations = get_stations_priority(limit=crawler.limit)
 
