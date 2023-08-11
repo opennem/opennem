@@ -28,10 +28,14 @@ def fueltech_to_flow(fueltech_id: str) -> FlowDirection | None:
 
 def generated_flow_station_id(
     network: NetworkSchema,
-    network_region: NetworkRegionSchema,
+    network_region: NetworkRegionSchema | str,
     flow_direction: FlowDirection | None = None,
 ) -> str:
-    name_components = [network.code, "flow", network_region.code]
+    region_code = network_region
+    if isinstance(network_region, NetworkRegionSchema):
+        region_code = network_region.code
+
+    name_components = [network.code, "flow", region_code]
 
     if flow_direction:
         name_components.append(flow_direction.value)
