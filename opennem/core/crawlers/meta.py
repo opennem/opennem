@@ -53,19 +53,6 @@ def crawlers_get_all_meta() -> dict[str, Any]:
     return crawler_meta_dict
 
 
-def crawler_get_all_meta(crawler_name: str, session: Session) -> dict[str, Any] | None:
-    """Get crawler metadata by crawler name"""
-    spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
-
-    if not spider_meta:
-        return None
-
-    if not spider_meta.data:
-        return None
-
-    return spider_meta.data
-
-
 def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> str | datetime | None:
     """Crawler get specific stat type from metadata for crawler name"""
     with SessionLocal() as session:
