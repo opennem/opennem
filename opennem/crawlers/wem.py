@@ -40,7 +40,7 @@ def run_wem_live_balancing_crawl(
 
 
 def run_wem_live_facility_scada_crawl(
-    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False
+    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False, date_range: None = None
 ) -> ControllerReturn:
     from_interval = crawler.server_latest if crawler.server_latest else None
     generated_set = get_wem_live_facility_intervals(from_interval=from_interval, trim_intervals=True)
