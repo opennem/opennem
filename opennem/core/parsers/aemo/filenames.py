@@ -10,7 +10,7 @@ from opennem.schema.network import NetworkSchema
 
 logger = logging.getLogger("openne.core.parsers.aemo_filename")
 
-__aemo_filename_re = re.compile(r"(?P<filename>[a-zA-Z\_]+)_(?P<date>\d{6,14})_?(?P<interval>\d{8,16})?\.(zip|csv)")
+__aemo_filename_re = re.compile(r"(?P<filename>[a-zA-Z\_\d]+)_(?<!\d{6}_)(?P<date>\d{6,14})_?(?P<interval>\d{8,16})?\.(zip|csv)")
 
 
 class AEMODataBucketSize(enum.Enum):
