@@ -118,8 +118,7 @@ def run_nemweb_aemo_crawl(
 
     logger.info(f"Fetching {latest=} {len(entries_to_fetch)} entries")
 
-    controller_returns: ControllerReturn | None = None
-
+    cr = ControllerReturn()
     for entry in entries_to_fetch:
         try:
             # @NOTE optimization - if we're dealing with a large file unzip
@@ -135,10 +134,15 @@ def run_nemweb_aemo_crawl(
             if not isinstance(controller_returns, ControllerReturn):
                 raise Exception("Controller returns not a ControllerReturn")
 
+            cr.inserted_records += controller_returns.inserted_records
+
             max_date = max([i.modified_date for i in entries_to_fetch if i.modified_date])
 
             if not controller_returns.last_modified or max_date > controller_returns.last_modified:
                 controller_returns.last_modified = max_date
+
+            if cr.last_modified and controller_returns.last_modified and cr.last_modified < controller_returns.last_modified:
+                cr.last_modified = controller_returns.last_modified
 
             if entry.aemo_interval_date:
                 ch = CrawlHistoryEntry(interval=entry.aemo_interval_date, records=controller_returns.processed_records)
@@ -147,9 +151,9 @@ def run_nemweb_aemo_crawl(
         except Exception as e:
             logger.error(f"Processing error: {e}")
 
-    controller_returns.crawls_run = len(entries_to_fetch)
+    cr.crawls_run = len(entries_to_fetch)
 
-    return controller_returns
+    return cr
 
 
 # TRADING_PRICE

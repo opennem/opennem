@@ -42,6 +42,7 @@ def run_aemo_mms_crawl(
     last_crawled: bool = True,
     limit: bool = False,
     latest: bool = True,
+    date_range: None = None,
 ) -> ControllerReturn | None:
     """Run the MMS crawl"""
 
@@ -98,6 +99,7 @@ def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None:
         logger.error("No entries to fetch")
         return None
 
+    cr = ControllerReturn()
     for entry in entries_to_fetch:
         try:
             # @NOTE optimization - if we're dealing with a large file unzip
@@ -110,10 +112,15 @@ def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None:
                 ts = parse_aemo_url(entry.link)
                 controller_returns = store_aemo_tableset(ts)
 
+            cr.inserted_records += controller_returns.inserted_records
+
             max_date = max(i.modified_date for i in entries_to_fetch if i.modified_date)
 
             if not controller_returns.last_modified or max_date > controller_returns.last_modified:
                 controller_returns.last_modified = max_date
+
+            if cr.last_modified and controller_returns.last_modified and cr.last_modified < controller_returns.last_modified:
+                cr.last_modified = controller_returns.last_modified
 
             if entry.aemo_interval_date:
                 ch = CrawlHistoryEntry(interval=entry.aemo_interval_date, records=controller_returns.processed_records)
@@ -122,7 +129,7 @@ def process_mms_url(crawler: CrawlerDefinition) -> ControllerReturn | None:
         except Exception as e:
             logger.error(f"Processing error: {e}")
 
-    return controller_returns
+    return cr
 
 
 AEMOMMSDispatchInterconnector = CrawlerDefinition(

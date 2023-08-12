@@ -1,7 +1,7 @@
 from enum import Enum
 
 from opennem.api.stats.schema import OpennemData
-from opennem.schema.network import NetworkSchema
+from opennem.schema.network import NetworkRegionSchema, NetworkSchema
 
 
 class FlowDirection(Enum):
@@ -28,10 +28,14 @@ def fueltech_to_flow(fueltech_id: str) -> FlowDirection | None:
 
 def generated_flow_station_id(
     network: NetworkSchema,
-    network_region_code: str,
+    network_region: NetworkRegionSchema | str,
     flow_direction: FlowDirection | None = None,
 ) -> str:
-    name_components = [network.code, "flow", network_region_code]
+    region_code = network_region
+    if isinstance(network_region, NetworkRegionSchema):
+        region_code = network_region.code
+
+    name_components = [network.code, "flow", region_code]
 
     if flow_direction:
         name_components.append(flow_direction.value)

@@ -37,15 +37,12 @@ class CrawlStatTypes(Enum):
     data = "data"
 
 
-def crawlers_get_all_meta() -> dict[str, Any] | None:
+def crawlers_get_all_meta() -> dict[str, Any]:
     """Get all crawler metadata"""
     crawler_meta_dict = {}
 
     with SessionLocal() as session:
         spider_meta = session.query(CrawlMeta).all()
-
-        if not spider_meta:
-            return None
 
         for spider in spider_meta:
             if not spider.data:
@@ -54,19 +51,6 @@ def crawlers_get_all_meta() -> dict[str, Any] | None:
             crawler_meta_dict[spider.spider_name] = spider.data
 
     return crawler_meta_dict
-
-
-def crawler_get_all_meta(crawler_name: str, session: Session) -> dict[str, Any] | None:
-    """Get crawler metadata by crawler name"""
-    spider_meta = session.query(CrawlMeta).filter_by(spider_name=crawler_name).one_or_none()
-
-    if not spider_meta:
-        return None
-
-    if not spider_meta.data:
-        return None
-
-    return spider_meta.data
 
 
 def crawler_get_meta(crawler_name: str, key: CrawlStatTypes) -> str | datetime | None:

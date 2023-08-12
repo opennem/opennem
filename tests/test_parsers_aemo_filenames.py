@@ -66,6 +66,30 @@ def test_parse_aemo_filename_datetimes(dtstring: str, expected: datetime) -> Non
                 "interval": "20211002",
             },
         ),
+        (
+            "PUBLIC_DVD_P5MIN_CONSTRAINTSOLUTION3_20120201.zip",
+            {
+                "filename": "PUBLIC_DVD_P5MIN_CONSTRAINTSOLUTION3",
+                "date": datetime.fromisoformat("2012-02-01T00:00:00"),
+                "interval": None,
+            },
+        ),
+        (
+            "PUBLIC_DVD_P5MIN_CONSTRAINTSOLUTION3_20120201153013.zip",
+            {
+                "filename": "PUBLIC_DVD_P5MIN_CONSTRAINTSOLUTION3",
+                "date": datetime.fromisoformat("2012-02-01T15:30:13"),
+                "interval": None,
+            },
+        ),
+        (
+            "PUBLIC_DVD_P5MIN_CONSTRAINTSOLUTION3_201202010000_20220423040501.zip",
+            {
+                "filename": "PUBLIC_DVD_P5MIN_CONSTRAINTSOLUTION3",
+                "date": datetime.fromisoformat("2012-02-01T00:00:00"),
+                "interval": "20220423040501",
+            },
+        ),
     ],
 )
 def test_parse_aemo_filename(filename: str, components: AEMOMMSFilename) -> None:
