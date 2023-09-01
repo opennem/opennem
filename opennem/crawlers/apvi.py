@@ -9,6 +9,7 @@ from opennem.clients.apvi import APVIForecastSet, get_apvi_rooftop_data
 from opennem.controllers.apvi import store_apvi_forecastset, update_apvi_facility_capacities
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.crawlers.schema import CrawlerDefinition, CrawlerPriority, CrawlerSchedule
+from opennem.schema.date_range import CrawlDateRange
 from opennem.schema.network import NetworkAPVI
 from opennem.utils.dates import date_series, get_today_nem
 
@@ -22,7 +23,11 @@ class APVICrawlerException(Exception):
 
 
 def crawl_apvi_forecasts(
-    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False
+    crawler: CrawlerDefinition,
+    last_crawled: bool = True,
+    limit: bool = False,
+    latest: bool = False,
+    date_range: CrawlDateRange | None = None,
 ) -> ControllerReturn:
     """Runs the APVI crawl definition"""
     apvi_return = ControllerReturn()
@@ -115,7 +120,7 @@ APVIRooftopMonthCrawler = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.daily,
     name="apvi.month.data",
-    limit=30,
+    limit=45,
     url="none",
     latest=False,
     processor=crawl_apvi_forecasts,
