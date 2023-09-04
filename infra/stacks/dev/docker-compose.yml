@@ -8,6 +8,8 @@ x-app: &default-app
     - frontend
   volumes:
     - /var/run/postgresql/:/var/run/postgresql/
+  extra_hosts:
+    - "host.docker.internal:172.17.0.1"
   environment:
     - TZ
     - TIMEZONE
@@ -48,7 +50,9 @@ x-app: &default-app
 services:
   traefik:
     image: traefik:v2.1
-    network_mode: host
+    ports:
+      - "80:80"
+      - "443:443"
     command:
       - --api.insecure=true
       - --providers.docker
@@ -154,35 +158,35 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
-  watchtower:
-    image: containrrr/watchtower
-    restart: unless-stopped
-    networks:
-      - frontend
-    environment:
-      - TZ
-      - WATCHTOWER_CLEANUP=1
-      - WATCHTOWER_LABEL_ENABLE=1
-      - WATCHTOWER_POLL_INTERVAL=120
-      - WATCHTOWER_INCLUDE_RESTARTING=1
-      - WATCHTOWER_INCLUDE_STOPPED=1
-      - WATCHTOWER_REVIVE_STOPPED=1
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /root/.docker/config.json:/config.json
+  # watchtower:
+  #   image: containrrr/watchtower
+  #   restart: unless-stopped
+  #   networks:
+  #     - frontend
+  #   environment:
+  #     - TZ
+  #     - WATCHTOWER_CLEANUP=1
+  #     - WATCHTOWER_LABEL_ENABLE=1
+  #     - WATCHTOWER_POLL_INTERVAL=120
+  #     - WATCHTOWER_INCLUDE_RESTARTING=1
+  #     - WATCHTOWER_INCLUDE_STOPPED=1
+  #     - WATCHTOWER_REVIVE_STOPPED=1
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /root/.docker/config.json:/config.json
 
-  autoheal:
-    image: willfarrell/autoheal:latest
-    tty: true
-    restart: always
-    environment:
-      - AUTOHEAL_INTERVAL=60
-      - AUTOHEAL_START_PERIOD=300
-      - AUTOHEAL_DEFAULT_STOP_TIMEOUT=10
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      - traefik.enable=false
+  # autoheal:
+  #   image: willfarrell/autoheal:latest
+  #   tty: true
+  #   restart: always
+  #   environment:
+  #     - AUTOHEAL_INTERVAL=60
+  #     - AUTOHEAL_START_PERIOD=300
+  #     - AUTOHEAL_DEFAULT_STOP_TIMEOUT=10
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   labels:
+  #     - traefik.enable=false
 
 networks:
   frontend:
