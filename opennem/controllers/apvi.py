@@ -41,6 +41,7 @@ def store_apvi_forecastset(forecast_set: APVIForecastSet) -> ControllerReturn:
         index_elements=["trading_interval", "network_id", "facility_code", "is_forecast"],
         set_={
             "generated": stmt.excluded.generated,
+            "eoi_quantity": stmt.excluded.eoi_quantity,
             "created_by": stmt.excluded.created_by,
         },
     )

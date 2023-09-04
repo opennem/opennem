@@ -218,11 +218,7 @@ def get_apvi_rooftop_data(day: date | None = None) -> APVIForecastSet | None:
     for state, record in grouped_records.items():
         for interval, value in record.items():
             _interval_records.append(
-                APVIForecastInterval(
-                    trading_interval=interval,
-                    state=state,
-                    generated=value,
-                )
+                APVIForecastInterval(trading_interval=interval, state=state, generated=value, eoi_quantity=value / 4)
             )
 
     _state_capacities = {}
