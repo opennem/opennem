@@ -44,13 +44,6 @@ bump-dev:
 bump-patch:
 	$(bumpver) --patch
 
-.PHONY: requirements
-requirements:
-	poetry export --format requirements.txt -E postgres --without-hashes > requirements.txt
-	poetry export --with dev --format requirements.txt --without-hashes > requirements_dev.txt
-	git add requirements.txt requirements_dev.txt
-	git ci --allow-empty -m "META: Update requirement export"
-
 .PHONY: image
 image:
 	docker build \
@@ -60,7 +53,7 @@ image:
 		.
 
 .PHONY: release-pre
-release-pre: format lint requirements
+release-pre: format lint
 
 .PHONY: clean
 clean:
