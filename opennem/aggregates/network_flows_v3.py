@@ -472,9 +472,9 @@ def run_flows_for_last_days(days: int, network: NetworkSchema, start_date: datet
             interval_end = latest_interval
 
         logger.debug(f"Running flow for day {day} from {interval_start} to {interval_end}")
-        # run_aggregate_flow_for_interval_v3(
-        #     network=network, interval_start=interval_start, interval_end=interval_end, validate_results=True
-        # )
+        run_aggregate_flow_for_interval_v3(
+            network=network, interval_start=interval_start, interval_end=interval_end, validate_results=True
+        )
 
 
 def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = True) -> None:
@@ -499,8 +499,8 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
         flow_records_validation["emissions_imports"] / flow_records_validation["energy_imports"]
     )
 
-    bad_factors_exports = flow_records_validation.query("exports_emission_factor > 1.7")
-    bad_factors_imports = flow_records_validation.query("imports_emission_factor > 1.7")
+    bad_factors_exports = flow_records_validation.query("exports_emission_factor > 1.7 or exports_emission_factor < 0")
+    bad_factors_imports = flow_records_validation.query("imports_emission_factor > 1.7 or imports_emission_factor < 0")
 
     if not bad_factors_exports.empty:
         for rec in bad_factors_exports.to_dict(orient="records"):
@@ -620,8 +620,8 @@ def run_aggregate_flow_for_interval_v3(
 
 # debug entry point
 if __name__ == "__main__":
-    interval_end = datetime.fromisoformat("2023-07-07T11:00:00+10:00")
-    interval_start = interval_end - timedelta(hours=12)
+    interval_end = datetime.fromisoformat("2023-09-05T08:00:00+10:00")
+    interval_start = interval_end - timedelta(hours=1)
     run_aggregate_flow_for_interval_v3(
         network=NetworkNEM,
         interval_start=interval_start,
