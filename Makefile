@@ -51,6 +51,14 @@ requirements:
 	git add requirements.txt requirements_dev.txt
 	git ci --allow-empty -m "META: Update requirement export"
 
+.PHONY: image
+image:
+	docker build \
+		--tag opennem/base:latest \
+		--build-arg BUILDKIT_INLINE_CACHE=1 \
+		--cache-from pagecog/base:latest \
+		.
+
 .PHONY: release-pre
 release-pre: format lint requirements
 
