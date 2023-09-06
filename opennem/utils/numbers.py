@@ -4,6 +4,7 @@ import random
 import re
 from datetime import datetime
 from math import floor, log, pow  # noqa: no-name-module
+from re import Match
 from typing import Any
 
 from opennem import settings
@@ -190,3 +191,68 @@ def filesize_from_string(subject: str) -> tuple[float | None, str | None]:
         pass
 
     return size, units
+
+
+def compact_json_output_number_series(json_envelope: str) -> str:
+    """Will take a JSON envelope, find data keys with numerical series and compact them without newline characters
+
+    @NOTE only applies with json output set with indent parameter
+
+    Args:
+        json_str str: a JSON envelope in string form
+
+    Returns:
+        str: the entire compacted output JSON envelope
+    """
+
+    re_compact_json_number_output = r"history\"\:.*\"data\":\ ?\[(?P<number_series>[^\]]+)"
+
+    # catch cases of dicts or objects being passed
+    if not isinstance(json_envelope, str):
+        return json_envelope
+
+    # Groups to replace and their replacements
+    replace_groups = {
+        "\n": "",
+        " ": "",
+        ",": ", ",
+        ".0": "",
+    }
+
+    def number_series_normalizer(match: Match) -> str:
+        if not isinstance(match, Match):
+            logger.error(f"Invalid match object in compact_json_output_number_series: {match}")
+
+        if not match:
+            logger.error("No data series match in output")
+
+        number_series = match.group("number_series")
+
+        logger.debug(number_series)
+
+        compacted_number_series: str = number_series.strip()
+
+        # Replace newline and possible spaces
+        for k, v in replace_groups.items():
+            compacted_number_series = compacted_number_series.replace(k, v)
+
+        return f"data: [{compacted_number_series}]"
+
+    compacted_output = re.sub(re_compact_json_number_output, number_series_normalizer, json_envelope, flags=re.DOTALL)
+
+    return compacted_output
+
+
+# debug entry point
+if __name__ == "__main__":
+    """unit test base for compact_json_output_number_series"""
+    from opennem.utils.project_path import get_project_path
+
+    test_path = get_project_path() / "data" / "nsw_7d.json"
+
+    with open(test_path) as fh:
+        json_str = fh.read()
+
+    compacted_json = compact_json_output_number_series(json_str)
+
+    print(compacted_json)
