@@ -205,7 +205,7 @@ def compact_json_output_number_series(json_envelope: str) -> str:
         str: the entire compacted output JSON envelope
     """
 
-    re_compact_json_number_output = r"history\"\:.*\"data\":\ ?\[(?P<number_series>[^\]]+)"
+    re_compact_json_number_output = r"history\"\:.*\"data\":\ ?\[(?P<number_series>[\ \,\d+^\]]+)"
 
     # catch cases of dicts or objects being passed
     if not isinstance(json_envelope, str):
@@ -226,7 +226,11 @@ def compact_json_output_number_series(json_envelope: str) -> str:
         if not match:
             logger.error("No data series match in output")
 
-        number_series = match.group("number_series")
+        try:
+            number_series = match.group("number_series")
+        except IndexError:
+            logger.error("No number series group in match")
+            return ""
 
         logger.debug(number_series)
 
