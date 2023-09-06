@@ -12,6 +12,7 @@ from botocore.exceptions import ClientError
 
 from opennem import settings
 from opennem.api.stats.schema import OpennemDataSet
+from opennem.utils.numbers import compact_json_output_number_series
 from opennem.utils.url import urljoin
 
 logger = logging.getLogger(__name__)
@@ -42,6 +43,10 @@ class OpennemDataSetSerializeS3:
             indent = 4
 
         stat_set_content = stat_set.json(exclude_unset=self.exclude_unset, indent=indent, exclude=exclude)
+
+        if settings.compact_number_ouput_in_json:
+            logger.debug(f"Applying compact number output to {key}")
+            stat_set_content = compact_json_output_number_series(stat_set_content)
 
         obj = self.bucket.Object(key=key)
         _write_response = obj.put(Body=stat_set_content, ContentType="application/json")
