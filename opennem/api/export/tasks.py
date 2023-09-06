@@ -490,28 +490,31 @@ def export_all_daily(networks: list[NetworkSchema] | None = None, network_region
 def export_flows() -> None:
     date_range = get_scada_range(network=NetworkNEM)
 
-    interchange_stat = StatExport(
-        stat_type=StatType.power,
-        priority=PriorityType.live,
-        country="au",
-        date_range=date_range,
-        network=NetworkNEM,
-        interval=NetworkNEM.get_interval(),
-        period=human_to_period("7d"),
-    )
+    periods = [human_to_period("7d"), human_to_period("30d")]
 
-    time_series = OpennemExportSeries(
-        start=date_range.start,
-        end=date_range.end,
-        network=interchange_stat.network,
-        interval=interchange_stat.interval,
-        period=interchange_stat.period,
-    )
+    for period in periods:
+        interchange_stat = StatExport(
+            stat_type=StatType.power,
+            priority=PriorityType.live,
+            country="au",
+            date_range=date_range,
+            network=NetworkNEM,
+            interval=NetworkNEM.get_interval(),
+            period=period,
+        )
 
-    stat_set = power_flows_network_week(time_series=time_series)
+        time_series = OpennemExportSeries(
+            start=date_range.start,
+            end=date_range.end,
+            network=interchange_stat.network,
+            interval=interchange_stat.interval,
+            period=period,
+        )
 
-    if stat_set:
-        write_output(f"v3/stats/au/{interchange_stat.network.code}/flows/7d.json", stat_set)
+        stat_set = power_flows_network_week(time_series=time_series)
+
+        if stat_set:
+            write_output(f"v3/stats/au/{interchange_stat.network.code}/flows/{period.period_human}.json", stat_set)
 
 
 @profile_task(
