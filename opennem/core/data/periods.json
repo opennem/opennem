@@ -1,47 +1,52 @@
 [
-  {
-    "period": 60,
-    "period_human": "1h",
-    "period_sql": "1 hour"
-  },
-  {
-    "period": 180,
-    "period_human": "3h",
-    "period_sql": "3 hour"
-  },
-  {
-    "period": 1440,
-    "period_human": "1d",
-    "period_sql": "1 days"
-  },
-  {
-    "period": 10080,
-    "period_human": "7d",
-    "period_sql": "7 days"
-  },
-  {
-    "period": 43800,
-    "period_human": "1M",
-    "period_sql": "1 month"
-  },
-  {
-    "period": 525600,
-    "period_human": "1Y",
-    "period_sql": "1 year"
-  },
-  {
-    "period": 2628000,
-    "period_human": "5Y",
-    "period_sql": "5 years"
-  },
-  {
-    "period": 5256000,
-    "period_human": "10Y",
-    "period_sql": "10 years"
-  },
-  {
-    "period": 10512000,
-    "period_human": "all",
-    "period_sql": "20 years"
-  }
+    {
+        "period": 60,
+        "period_human": "1h",
+        "period_sql": "1 hour"
+    },
+    {
+        "period": 180,
+        "period_human": "3h",
+        "period_sql": "3 hour"
+    },
+    {
+        "period": 1440,
+        "period_human": "1d",
+        "period_sql": "1 days"
+    },
+    {
+        "period": 10080,
+        "period_human": "7d",
+        "period_sql": "7 days"
+    },
+    {
+        "period": 43200,
+        "period_human": "30d",
+        "period_sql": "30 days"
+    },
+    {
+        "period": 43800,
+        "period_human": "1M",
+        "period_sql": "1 month"
+    },
+    {
+        "period": 525600,
+        "period_human": "1Y",
+        "period_sql": "1 year"
+    },
+    {
+        "period": 2628000,
+        "period_human": "5Y",
+        "period_sql": "5 years"
+    },
+    {
+        "period": 5256000,
+        "period_human": "10Y",
+        "period_sql": "10 years"
+    },
+    {
+        "period": 10512000,
+        "period_human": "all",
+        "period_sql": "20 years"
+    }
 ]
