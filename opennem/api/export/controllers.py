@@ -316,6 +316,8 @@ def power_flows_network_week(
 
     query = interconnector_flow_network_regions_query(time_series=time_series, network_region=network_region_code)
 
+    logging.info(query)
+
     with engine.connect() as c:
         logger.debug(query)
         row = list(c.execute(query))
