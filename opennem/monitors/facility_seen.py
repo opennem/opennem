@@ -124,17 +124,21 @@ def facility_first_seen_check() -> list[FacilitySeen]:
     facs_out = []
 
     for fac in facs_filtered:
-        msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. Generated: {fac.generated}MW"
-        slack_message(msg, alert_webhook_url=settings.slack_data_webhook)
-        logger.info(msg)
-        facs_out.append(fac)
+        if fac.generated is not None and fac.generated > 0:
+            msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. Generated: {fac.generated}MW"
+
+            # send a slack message and log
+            slack_message(msg, alert_webhook_url=settings.slack_data_webhook, tag_users=["@nik"])
+            logger.info(msg)
+
+            facs_out.append(fac)
 
     return facs_out
 
 
-def facility_unmapped_all(filter: bool = True) -> list[FacilitySeen]:
+def facility_unmapped_all(filter: bool = True, period: str = "7 days") -> list[FacilitySeen]:
     """Find new DUIDs and alert on them"""
-    facs = get_facility_first_seen("7 days")
+    facs = get_facility_first_seen(period)
 
     if filter:
         facs = ignored_duids(facs)
@@ -146,7 +150,7 @@ def facility_unmapped_all(filter: bool = True) -> list[FacilitySeen]:
 
 # debug entry point
 if __name__ == "__main__":
-    seen_facilities = facility_unmapped_all()
+    seen_facilities = facility_first_seen_check()
 
     for f in seen_facilities:
         logger.info(f"Unmapped: {f.network_id} {f.code} {f.generated}")
