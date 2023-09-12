@@ -6,7 +6,6 @@ and alerts about them
 
 """
 import logging
-import re
 from datetime import datetime
 
 from sqlalchemy import text
@@ -41,8 +40,6 @@ NEM_VPPS = [
     "VSQHT1V1",
 ]
 
-_dr_duids_match = re.compile(r"DR[VX]\w{3}\d{2}")
-
 
 def ignored_duids(fac_records: list[FacilitySeen]) -> list[FacilitySeen]:
     """Filters out ignored records like dummy generators"""
@@ -60,20 +57,12 @@ def ignored_duids(fac_records: list[FacilitySeen]) -> list[FacilitySeen]:
         if fac.network_id == "NEM" and fac.code.endswith("V1"):
             return None
 
-        # loads for AEMO NEM
-        if fac.network_id == "NEM" and fac.code.endswith("L1"):
-            return None
-
         # ignore the Point Henry Smelter loads
         if fac.network_id == "NEM" and fac.code.startswith("PTH0"):
             return None
 
         # ignore demo VPPs
         if fac.network_id == "NEM" and fac.code in NEM_VPPS:
-            return None
-
-        # ignore drv/drx duids
-        if fac.network_id == "NEM" and re.match(_dr_duids_match, fac.code):
             return None
 
         return fac
@@ -115,17 +104,25 @@ def get_facility_first_seen(period: str) -> list[FacilitySeen]:
     return records
 
 
-def facility_first_seen_check(filtered: bool = False) -> list[FacilitySeen]:
-    """Find new DUIDs and alert on them"""
+def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids: bool = False) -> list[FacilitySeen]:
+    """Find new DUIDs and alert on them
+
+    Args:
+        only_generation (bool, optional): only return those with generation data in scada. Defaults to True.
+        filter_ignored_duids (bool, optional): use the filter function to filter out supurfulous DUIDs. Defaults to False.
+
+    Returns:
+        list[FacilitySeen]: a list of FacilitySeen models
+    """
     facs = get_facility_first_seen("7 days")
 
-    if filtered:
+    if filter_ignored_duids:
         facs = ignored_duids(facs)
 
     facs_out = []
 
     for fac in facs:
-        if fac.generated is not None and fac.generated > 0:
+        if only_generation and fac.generated is not None and fac.generated > 0:
             msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. Generated: {fac.generated}MW"
 
             # send a slack message and log
@@ -133,20 +130,17 @@ def facility_first_seen_check(filtered: bool = False) -> list[FacilitySeen]:
             logger.info(msg)
 
             facs_out.append(fac)
+        else:
+            msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. No generation data"
+            slack_message(msg, alert_webhook_url=settings.slack_data_webhook, tag_users=["@nik"])
+            logger.info(msg)
+
+    if len(facs_out) == 0:
+        msg = "No new facilities found"
+        slack_message(msg, alert_webhook_url=settings.slack_data_webhook)
+        logger.info(msg)
 
     return facs_out
-
-
-def facility_unmapped_all(filter: bool = True, period: str = "7 days") -> list[FacilitySeen]:
-    """Find new DUIDs and alert on them"""
-    facs = get_facility_first_seen(period)
-
-    if filter:
-        facs = ignored_duids(facs)
-
-    facs = sorted(facs, key=lambda x: (x.network_id, x.code))
-
-    return facs
 
 
 # debug entry point
