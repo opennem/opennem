@@ -92,16 +92,6 @@ services:
       - "traefik.http.services.gw.loadbalancer.server.scheme=http"
       - "traefik.docker.network=frontend"
 
-  redis:
-    image: redis:6-alpine
-    restart: unless-stopped
-    networks:
-      - frontend
-    environment:
-      - TZ
-    labels:
-      - "traefik.enable=false"
-
   api:
     <<: *default-app
     image: ghcr.io/opennem/opennem/opennem:$VERSION
@@ -152,6 +142,16 @@ services:
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=false"
+
+  redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    networks:
+      - frontend
+    environment:
+      - TZ
+    labels:
+      - "traefik.enable=false"
 
   autoheal:
     image: willfarrell/autoheal:latest
