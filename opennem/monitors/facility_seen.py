@@ -115,15 +115,16 @@ def get_facility_first_seen(period: str) -> list[FacilitySeen]:
     return records
 
 
-def facility_first_seen_check() -> list[FacilitySeen]:
+def facility_first_seen_check(filtered: bool = False) -> list[FacilitySeen]:
     """Find new DUIDs and alert on them"""
     facs = get_facility_first_seen("7 days")
 
-    facs_filtered = ignored_duids(facs)
+    if filtered:
+        facs = ignored_duids(facs)
 
     facs_out = []
 
-    for fac in facs_filtered:
+    for fac in facs:
         if fac.generated is not None and fac.generated > 0:
             msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. Generated: {fac.generated}MW"
 
