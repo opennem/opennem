@@ -8,8 +8,6 @@ x-app: &default-app
     - frontend
   volumes:
     - /var/run/postgresql/:/var/run/postgresql/
-  extra_hosts:
-    - "host.docker.internal:172.17.0.1"
   environment:
     - TZ
     - TIMEZONE
@@ -24,7 +22,6 @@ x-app: &default-app
     - S3_DATA_BUCKET_PATH
     - LOG_LEVEL
     - CACHE_SCADA_TTL
-    - DB_ENERGY_VIEW
     - SLACK_NOTIFICATIONS
     - NEMWEB_MIGRATE_DB
     - MONITORING_ALERT_SLACK_USER
@@ -50,9 +47,7 @@ x-app: &default-app
 services:
   traefik:
     image: traefik:v2.1
-    ports:
-      - "80:80"
-      - "443:443"
+    network_mode: host
     command:
       - --api.insecure=true
       - --providers.docker
@@ -124,8 +119,6 @@ services:
       - "traefik.http.services.api.loadbalancer.server.port=8000"
       - "traefik.http.services.api.loadbalancer.server.scheme=http"
       - "traefik.docker.network=frontend"
-      # watchtower
-      - "com.centurylinklabs.watchtower.enable=true"
       # autohead
       - "autoheal=true"
 
