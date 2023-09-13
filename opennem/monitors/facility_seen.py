@@ -132,7 +132,6 @@ def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids
             facs_out.append(fac)
         else:
             msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. No generation data"
-            slack_message(msg, alert_webhook_url=settings.slack_hook_new_facilities)
             logger.info(msg)
 
     if len(facs_out) == 0:
