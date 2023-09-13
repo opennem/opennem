@@ -78,7 +78,7 @@ def slack_message(
     :return: True if sent
     """
 
-    if not settings.slack_notifications:
+    if not settings.slack_notifications and not alert_webhook_url:
         logger.info(f"Slack endpoint not enabled on {settings.env}. See SLACK_NOTIFICATIONS env var")
         return False
 
