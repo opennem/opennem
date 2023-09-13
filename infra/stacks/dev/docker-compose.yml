@@ -35,6 +35,7 @@ x-app: &default-app
     - SLACK_DATA_WEBHOOK
     - FEEDBACK_SEND_TO_SLACK
     - FEEDBACK_SLACK_HOOK_URL
+    - SLACK_HOOK_NEW_FACILITIES
     # feature flags
     - WORKERS_RUN
     - RUN_CRAWLERS
@@ -43,7 +44,6 @@ x-app: &default-app
     - PER_INTERVAL_AGGREGATE_PROCESSING
     - SHOW_EMISSIONS_IN_POWER_OUTPUTS
     - SHOW_EMISSION_FACTORS_IN_POWER_OUTPUTS
-
 services:
   traefik:
     image: traefik:v2.1
