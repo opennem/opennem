@@ -122,7 +122,7 @@ def facility_first_seen_check(only_generation: bool = True, filter_ignored_duids
     facs_out = []
 
     for fac in facs:
-        if only_generation and fac.generated is not None and fac.generated >= 0:
+        if only_generation and fac.generated is not None and fac.generated > 0:
             msg = f"Found new facility on network {fac.network_id} with DUID: {fac.code}. Generated: {fac.generated}MW"
 
             # send a slack message and log
