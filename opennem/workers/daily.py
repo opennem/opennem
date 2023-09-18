@@ -14,7 +14,7 @@ from opennem.aggregates.network_flows import (
     run_flow_updates_all_for_network,
     run_flow_updates_all_per_year,
 )
-from opennem.aggregates.network_flows_v3 import run_flows_for_last_intervals
+from opennem.aggregates.network_flows_v3 import run_aggregate_flow_for_interval_v3
 from opennem.api.export.map import PriorityType, StatType, get_export_map
 from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.clients.slack import slack_message
@@ -73,13 +73,19 @@ def daily_runner(days: int = 2) -> None:
     CURRENT_YEAR = datetime.now().year
 
     # Energy
-    energy_runner(days=days)
+    # energy_runner(days=days)
 
     # aggregates
     # 1. flows
     if settings.flows_and_emissions_v3:
-        # run for 36 hours
-        run_flows_for_last_intervals(interval_number=36 * 12, network=NetworkNEM)
+        # run for days
+        interval_end = get_last_completed_interval_for_network(network=NetworkNEM)
+        interval_start = interval_end - timedelta(days=days, hours=12)
+        run_aggregate_flow_for_interval_v3(
+            network=NetworkNEM,
+            interval_start=interval_start,
+            interval_end=interval_end,
+        )
     else:
         run_flow_updates_all_per_year(CURRENT_YEAR, 1)
 
@@ -91,7 +97,8 @@ def daily_runner(days: int = 2) -> None:
     run_aggregates_demand_network()
 
     #  flows and flow emissions
-    run_emission_update_day(days=days)
+    if not settings.flows_and_emissions_v3:
+        run_emission_update_day(days=days)
 
     # 4. Run Exports
     #  run exports for latest year
