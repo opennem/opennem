@@ -44,6 +44,7 @@ x-app: &default-app
     - PER_INTERVAL_AGGREGATE_PROCESSING
     - SHOW_EMISSIONS_IN_POWER_OUTPUTS
     - SHOW_EMISSION_FACTORS_IN_POWER_OUTPUTS
+    - COMPACT_NUMBER_OUPUT_IN_JSON
 services:
   traefik:
     image: traefik:v2.1
