@@ -17,12 +17,12 @@ from opennem.core.network_region_bom_station_map import get_network_region_weath
 from opennem.core.networks import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkOpenNEMRooftopBackfill
 from opennem.schema.time import TimeInterval, TimePeriod
-from opennem.utils.version import get_version
+from opennem.utils.version import get_version, get_version_components
 
 logger = logging.getLogger(__name__)
 
-VERSION_MAJOR = get_version().split(".")[0]
 STATS_FOLDER = "stats"
+MAJOR_VERSION = get_version_components().major
 
 
 class StatType(Enum):
@@ -87,7 +87,7 @@ class StatExport(BaseModel):
     @property
     def path(self) -> str:
         _path_components = [
-            f"v{VERSION_MAJOR}",
+            f"v{MAJOR_VERSION}",
             STATS_FOLDER,
             self.country,
             self.network.code,
