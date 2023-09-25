@@ -150,6 +150,9 @@ class OpennemSettings(BaseSettings):
     feedback_slack_hook_url: str | None = None
     feedback_tag_users: list[str] = ["U047H1T2JJK", "nik"]
 
+    # clerk API key
+    clerk_api_key: str | None = None
+
     # api messages
     api_messages: list[str] = [
         "OpenNEM API will be moving behind a login soon. Please see the discssion at https://github.com/opennem/opennem/discussions/243"
