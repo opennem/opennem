@@ -15,3 +15,8 @@ def get_version() -> str:
 def get_version_components() -> semantic_version.Version:
     """Gets the version components"""
     return semantic_version.Version(version)
+
+
+if __name__ == "__main__":
+    r = get_version_components()
+    print(r.major)
