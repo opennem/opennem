@@ -128,6 +128,9 @@ class OpennemSettings(BaseSettings):
     # alert threshold level in minutes for interval delay monitoring
     monitor_interval_alert_threshold: int | None = 10
 
+    # network flows table name
+    network_flows_table_name: str = "at_network_flows"
+
     # feature flags
     run_crawlers: bool = True  # do we enable the crawlers
     workers_run: bool = True

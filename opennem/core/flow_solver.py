@@ -292,92 +292,88 @@ class FlowSolverResult:
         return flow_emissions_df
 
 
-def solve_flow_emissions_with_pandas(interconnector_data, region_data):
-    """
-    Replace the original solve_flow_emissions_for_interval method with a pandas-based calculation.
-    This is a simplified example and assumes that interconnector_data and region_data are pandas DataFrames.
-    """
-    # Perform your calculations here using pandas DataFrame operations
-    # For example, let's assume we want to calculate net emissions for each region
-    # Check if 'region' column exists in both DataFrames
-
-    # if "network_region" not in interconnector_data.columns or "network_region" not in region_data.columns:
-    #     raise KeyError("Column 'network_region' not found in one or both DataFrames.")
-
-    # # Check if DataFrames are empty
-    # if interconnector_data.empty or region_data.empty:
-    #     raise ValueError("One or both DataFrames are empty.")
-
+def solve_flow_emissions_with_pandas(interconnector_data, region_data, network: NetworkSchema = NetworkNEM) -> pd.DataFrame:
+    """ """
     region_intensities = region_data[["trading_interval", "network_region", "emissions_intensity"]]
-    result_set = (
-        interconnector_data.merge(
-            region_intensities,
-            how="inner",
-            left_on=["trading_interval", "interconnector_region_to"],
-            right_on=["trading_interval", "network_region"],
-        )
-        .merge(
-            region_intensities,
-            how="inner",
-            left_on=["trading_interval", "interconnector_region_from"],
-            right_on=["trading_interval", "network_region"],
-            suffixes=("_imports", "_exports"),
-        )
-        .drop(["interconnector_region_to", "interconnector_region_from", "generated"], axis=1)
-    )
-    result_set["emissions_import"] = result_set["emissions_intensity_imports"] * result_set["energy"]
-    result_set["emissions_exports"] = result_set["emissions_intensity_exports"] * result_set["energy"]
-    result_set.drop(["emissions_intensity_imports", "emissions_intensity_exports"], axis=1, inplace=True)
-
-    # old
-    exports = pd.DataFrame(
-        interconnector_data.copy()
-        .rename(columns={"interconnector_region_from": "network_region"})
-        .groupby(["trading_interval", "network_region"])["energy"]
-        .sum()
-    ).rename(columns={"energy": "energy_exports"})
-    imports = pd.DataFrame(
-        interconnector_data.copy()
-        .rename(columns={"interconnector_region_to": "network_region"})
-        .groupby(["trading_interval", "network_region"])["energy"]
-        .sum()
-    ).rename(columns={"energy": "energy_imports"})
-    imports_and_exports = exports.merge(imports, left_index=True, right_index=True)
-
-    imports_and_exports.merge(
-        result_set.groupby(["trading_interval", "network_region_imports"])["emissions_import"]
-        .sum()
-        .reset_index()
-        .rename({"network_region_imports": "network_region"}, axis=1),
-        left_index=True,
+    result_set = interconnector_data.merge(
+        region_intensities,
+        how="inner",
+        left_on=["trading_interval", "interconnector_region_to"],
         right_on=["trading_interval", "network_region"],
     ).merge(
-        result_set.groupby(["trading_interval", "network_region_exports"])["emissions_export"]
-        .sum()
-        .reset_index()
-        .rename({"network_region_imports": "network_region"}, axis=1),
-        left_index=True,
+        region_intensities,
+        how="inner",
+        left_on=["trading_interval", "interconnector_region_from"],
         right_on=["trading_interval", "network_region"],
+        suffixes=["_imports", "_exports"],
+    )
+    result_set["flow"] = result_set["interconnector_region_from"] + "->" + result_set["interconnector_region_to"]
+    result_set["emissions"] = result_set["emissions_intensity_exports"] * result_set["energy"]
+    result_set.drop(
+        [
+            # "interconnector_region_to",
+            # "interconnector_region_from",
+            "generated",
+            "network_region_exports",
+            "network_region_imports",
+            "emissions_intensity_imports",
+            "emissions_intensity_exports",
+        ],
+        axis=1,
+        inplace=True,
     )
 
-    all_data = imports_and_exports.merge(
-        region_data.set_index(["trading_interval", "network_region"])["emissions_intensity"], left_index=True, right_index=True
+    # group into import and export dataframes
+    imports = (
+        (
+            result_set.groupby(["trading_interval", "interconnector_region_to"])[["energy", "emissions"]].apply(
+                lambda x: x.astype(float).sum()
+            )
+        )
+        .reset_index()
+        .rename(
+            {
+                "interconnector_region_to": "network_region",
+                "energy": "energy_imports",
+                "emissions": "emissions_imports",
+            },
+            axis=1,
+        )
+        .set_index(["trading_interval", "network_region"])
     )
 
-    # do exports
-    all_data["emissions_exports"] = all_data["emissions_intensity"] * all_data["energy_exports"]
-
-    # do imports
-
-    pd.DataFrame(
-        interconnector_data.copy()
-        .rename({"interconnector_data_to": "network_region"})
-        .groupby(["trading_interval", "network_region"])["energy"]
-        .sum()
+    exports = (
+        (
+            result_set.groupby(["trading_interval", "interconnector_region_from"])[["energy", "emissions"]].apply(
+                lambda x: x.astype(float).sum()
+            )
+        )
+        .reset_index()
+        .rename(
+            {
+                "interconnector_region_from": "network_region",
+                "energy": "energy_exports",
+                "emissions": "emissions_exports",
+            },
+            axis=1,
+        )
+        .set_index(["trading_interval", "network_region"])
     )
 
-    net_emissions = interconnector_data.groupby("region")["emissions"].sum() - region_data.groupby("region")["emissions"].sum()
-    return net_emissions.reset_index()
+    # merge into single dataframe
+    result_data = imports.merge(exports, left_index=True, right_index=True)
+
+    # Clean up the rest of the data
+    result_data["market_value_exports"] = 0.0
+    result_data["market_value_imports"] = 0.0
+    result_data["network_id"] = network.code
+    result_data.fillna(0, inplace=True)
+
+    # fix timezone
+    result_data.index.levels[0].tz_localize(network.get_fixed_offset())
+    result_data.reset_index(inplace=True)
+
+    return result_data
 
 
 def solve_flow_emissions_for_interval(

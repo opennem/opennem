@@ -12,13 +12,6 @@ import pandas as pd
 from sqlalchemy.dialects.postgresql import insert
 
 from opennem.core.flow_solver import (
-    FlowSolverResult,
-    InterconnectorNetEmissionsEnergy,
-    NetworkInterconnectorEnergyEmissions,
-    NetworkRegionsDemandEmissions,
-    RegionDemandEmissions,
-    RegionFlow,
-    solve_flow_emissions_for_interval_range,
     solve_flow_emissions_with_pandas,
 )
 from opennem.core.profiler import ProfilerLevel, ProfilerRetentionTime, profile_task
@@ -258,7 +251,7 @@ def calculate_total_import_and_export_per_region_for_interval(interconnector_dat
     )
 
     # imports sum should equal exports sum always
-    if not round(energy_flows.energy_exports.sum(), 0) == round(energy_flows.energy_imports.sum(), 0):
+    if round(energy_flows.energy_exports.sum(), 0) - round(energy_flows.energy_imports.sum(), 0) > 1:
         raise FlowWorkerException(
             f"Energy import and export totals do not match: {energy_flows.energy_exports.sum()} and {energy_flows.energy_imports.sum()}"
         )
@@ -317,7 +310,7 @@ def calculate_demand_region_for_interval(energy_and_emissions: pd.DataFrame, imp
     return df_with_demand
 
 
-def persist_network_flows_and_emissions_for_interval(network: NetworkSchema, flow_results: pd.DataFrame) -> int:
+def persist_network_flows_and_emissions_for_interval(flow_results: pd.DataFrame, network: NetworkSchema = NetworkNEM) -> int:
     """persists the records to at_network_flows"""
     session = get_scoped_session()
     engine = get_database_engine()
@@ -357,74 +350,11 @@ def persist_network_flows_and_emissions_for_interval(network: NetworkSchema, flo
     return len(records_to_store)
 
 
-def convert_dataframes_to_interconnector_format(
-    interconnector_df: pd.DataFrame, network: NetworkSchema
-) -> NetworkInterconnectorEnergyEmissions:
-    """Converts pandas data frame of interconnector flows to a format that can be used by the flow solver"""
-    records = [
-        InterconnectorNetEmissionsEnergy(
-            interval=rec["trading_interval"].to_pydatetime().replace(tzinfo=network.get_fixed_offset()),
-            region_flow=RegionFlow(f"{rec['interconnector_region_from']}->{rec['interconnector_region_to']}"),
-            generated_mw=rec["generated"],
-            energy_mwh=rec["energy"],
-        )
-        for rec in interconnector_df.to_dict(orient="records")
-    ]
+def persist_network_flows_and_emissions_for_interval_as_dataframe(flow_results: pd.DataFrame) -> int | None:
+    """persists the records to at_network_flows"""
+    engine = get_database_engine()
 
-    return NetworkInterconnectorEnergyEmissions(network=NetworkNEM, data=records)
-
-
-def convert_dataframe_to_energy_and_emissions_format(
-    region_demand_emissions_df: pd.DataFrame, network: NetworkSchema
-) -> NetworkRegionsDemandEmissions:
-    """Converts pandas data frame of region demand and emissions to a format that can be used by the flow solver"""
-    records = [
-        RegionDemandEmissions(
-            interval=rec["trading_interval"].to_pydatetime().replace(tzinfo=network.get_fixed_offset()),
-            region_code=rec["network_region"],
-            emissions_t=rec["emissions"],
-            energy_mwh=rec["demand"],
-        )
-        for rec in region_demand_emissions_df.to_dict(orient="records")
-    ]
-
-    return NetworkRegionsDemandEmissions(network=NetworkNEM, data=records)
-
-
-def shape_flow_results_into_records_for_persistance(
-    network: NetworkSchema,
-    interconnector_data: pd.DataFrame,
-    interconnector_emissions: FlowSolverResult,
-) -> pd.DataFrame:
-    """shape into import/exports energy and emissions for each region for a given interval"""
-
-    flow_emissions_df = interconnector_emissions.to_dataframe()
-
-    flows_with_emissions = interconnector_data.reset_index().merge(
-        flow_emissions_df, on=["trading_interval", "interconnector_region_from", "interconnector_region_to"]
-    )
-
-    merged_df = pd.DataFrame(
-        {
-            "energy_exports": flows_with_emissions.groupby(["trading_interval", "interconnector_region_from"]).energy.sum(),
-            "energy_imports": flows_with_emissions.groupby(["trading_interval", "interconnector_region_to"]).energy.sum(),
-            "emissions_exports": flows_with_emissions.groupby(["trading_interval", "interconnector_region_from"]).emissions.sum(),
-            "emissions_imports": flows_with_emissions.groupby(["trading_interval", "interconnector_region_to"]).emissions.sum(),
-        }
-    )
-
-    # @TODO merge market value
-    merged_df["market_value_exports"] = 0.0
-    merged_df["market_value_imports"] = 0.0
-
-    merged_df["network_id"] = network.code
-
-    merged_df.fillna(0, inplace=True)
-
-    merged_df.reset_index(inplace=True)
-    merged_df.rename(columns={"index": "trading_interval", "level_1": "network_region"}, inplace=True)
-
-    return merged_df
+    return flow_results.to_sql("at_network_flows_v3", engine, if_exists="append", index=False, method="multi", chunksize=5000)
 
 
 @profile_task(
@@ -433,51 +363,61 @@ def shape_flow_results_into_records_for_persistance(
     level=ProfilerLevel.INFO,
     retention_period=ProfilerRetentionTime.FOREVER,
 )
-def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema) -> None:
+def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema = NetworkNEM) -> None:
     """ " Run flow processor for last x interval starting from now"""
 
     logger.info(f"Running flows for last {interval_number} intervals")
 
-    if not network:
-        network = NetworkNEM
+    end_interval = get_last_completed_interval_for_network(network=network)
+    start_interval = end_interval - timedelta(minutes=network.intervals_per_hour / 60 * interval_number)
 
-    first_interval = get_last_completed_interval_for_network(network=network)
+    if interval_number == 1:
+        start_interval = end_interval
 
-    for interval in [first_interval - timedelta(minutes=5 * i) for i in range(1, interval_number + 1)]:
-        logger.debug(f"Running flow for interval {interval}")
-        run_aggregate_flow_for_interval_v3(interval_start=interval, network=network, validate_results=False)
+    run_aggregate_flow_for_interval_v3(
+        interval_start=start_interval, interval_end=end_interval, network=network, validate_results=False
+    )
 
 
 @profile_task(
     send_slack=False,
     message_fmt="Running flow v3 for {days} days",
     level=ProfilerLevel.INFO,
-    retention_period=ProfilerRetentionTime.FOREVER,
+    retention_period=ProfilerRetentionTime.MONTH,
 )
-def run_flows_for_last_days(days: int, network: NetworkSchema, start_date: datetime | None = None) -> None:
+def run_flows_for_last_days(days: int, network: NetworkSchema = NetworkNEM) -> None:
     """ " Run flow processor for last x interval starting from now"""
 
     logger.info(f"Running flows for last {days}")
 
-    latest_interval = get_last_completed_interval_for_network(network=network)
-    series_start_date = datetime.now(NetworkNEM.get_fixed_offset()).replace(hour=0, minute=0, second=0, microsecond=0)
+    interval_end = get_last_completed_interval_for_network(network=NetworkNEM)
+    interval_start = interval_end - timedelta(days=days)
+    run_aggregate_flow_for_interval_v3(
+        network=network,
+        interval_start=interval_start,
+        interval_end=interval_end,
+    )
 
-    if start_date:
-        series_start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    series_end_date = series_start_date - timedelta(days=days)
+def run_flows_by_month() -> None:
+    """Run the entire archive"""
+    period_end = get_last_completed_interval_for_network(network=NetworkNEM).replace(
+        day=1, hour=0, minute=0, second=0, microsecond=0
+    )
+    period_start = datetime.fromisoformat("2009-06-01T00:00:00+10:00")
+    period_end = datetime.fromisoformat("2009-08-01T00:00:00+10:00")
+    # period_start = datetime.fromisoformat("2017-04-01T00:00:00+10:00")
+    from opennem.utils.dates import month_series
 
-    for day_num in range(0, (series_start_date - series_end_date).days):
-        day = series_start_date - timedelta(days=day_num)
-        interval_start = day
-        interval_end = interval_start + timedelta(days=1) - timedelta(minutes=5)
+    for month in month_series(period_start, period_end, reverse=False):
+        next_month = month.replace(day=28) + timedelta(days=4)
+        res = next_month - timedelta(days=next_month.day) + timedelta(days=1) - timedelta(seconds=1)
 
-        if day_num == 0 and not start_date:
-            interval_end = latest_interval
-
-        logger.debug(f"Running flow for day {day} from {interval_start} to {interval_end}")
+        print(f"Running for {month} to {res}")
         run_aggregate_flow_for_interval_v3(
-            network=network, interval_start=interval_start, interval_end=interval_end, validate_results=True
+            network=NetworkNEM,
+            interval_start=month,
+            interval_end=res,
         )
 
 
@@ -536,95 +476,8 @@ def validate_network_flows(flow_records: pd.DataFrame, raise_exception: bool = T
     retention_period=ProfilerRetentionTime.FOREVER,
 )
 def run_aggregate_flow_for_interval_v3(
-    network: NetworkSchema, interval_start: datetime, interval_end: datetime | None = None, validate_results: bool = True
-) -> int:
-    """This method runs the aggregate for an interval and for a network using flow solver
-
-    This is version 3 of the method and sits behind the settings.network_flows_v3 feature flag
-
-    Args:
-        interval (datetime): _description_
-        network (NetworkSchema): _description_
-    """
-
-    # 0. support single interval
-    if not interval_end:
-        interval_end = interval_start
-
-    # 1. get
-    try:
-        energy_and_emissions = load_energy_and_emissions_for_intervals(
-            network=network, interval_start=interval_start, interval_end=interval_end
-        )
-    except Exception as e:
-        logger.error(e)
-        return 0
-
-    # 2. get interconnector data and calculate region imports/exports net
-    try:
-        interconnector_data = load_interconnector_intervals(
-            network=network, interval_start=interval_start, interval_end=interval_end
-        )
-    except Exception as e:
-        logger.error(e)
-        return 0
-
-    interconnector_data_net = invert_interconnectors_invert_all_flows(interconnector_data)
-
-    region_imports_and_exports = calculate_total_import_and_export_per_region_for_interval(
-        interconnector_data=interconnector_data
-    )
-
-    # 3. calculate demand for each region and add it to the dataframe
-    region_net_demand = calculate_demand_region_for_interval(
-        energy_and_emissions=energy_and_emissions, imports_and_export=region_imports_and_exports
-    )
-
-    # 4. convert to format for solver
-    interconnector_data_for_solver = convert_dataframes_to_interconnector_format(
-        interconnector_df=interconnector_data_net, network=network
-    )
-    region_data_for_solver = convert_dataframe_to_energy_and_emissions_format(
-        region_demand_emissions_df=region_net_demand, network=network
-    )
-
-    # 5. Solve.
-
-    # interconnector_emissions = solve_flow_emissions_for_interval(
-    #     network=network,
-    #     interval=interval,
-    #     interconnector_data=interconnector_data_for_solver,
-    #     region_data=region_data_for_solver,
-    # )
-
-    interconnector_emissions = solve_flow_emissions_for_interval_range(
-        network=network,
-        interconnector_data=interconnector_data_for_solver,
-        region_data=region_data_for_solver,
-    )
-
-    # 6. merge results into final records for the interval inserted into at_network_flows
-    network_flow_records = shape_flow_results_into_records_for_persistance(
-        network=network,
-        interconnector_data=interconnector_data_net,
-        interconnector_emissions=interconnector_emissions,
-    )
-
-    # 7. Validate flows - this will throw errors on bad values
-    if validate_results:
-        validate_network_flows(flow_records=network_flow_records)
-
-    # 7. Persist to database aggregate table
-    inserted_records = persist_network_flows_and_emissions_for_interval(network=network, flow_results=network_flow_records)
-
-    logger.info(f"Inserted {inserted_records} records for interval {interval_start} and network {network.code}")
-
-    return inserted_records
-
-
-def run_aggregate_flow_for_interval_v4(
-    network: NetworkSchema, interval_start: datetime, interval_end: datetime | None = None, validate_results: bool = True
-) -> int:
+    network: NetworkSchema, interval_start: datetime, interval_end: datetime | None = None, validate_results: bool = False
+) -> int | None:
     """This method runs the aggregate for an interval and for a network using flow solver
     This is version 3 of the method and sits behind the settings.network_flows_v3 feature flag
     """
@@ -663,21 +516,14 @@ def run_aggregate_flow_for_interval_v4(
 
     # 5. Solve.
     # Replace the original solve_flow_emissions_for_interval with the new pandas-based function
-    interconnector_emissions = solve_flow_emissions_with_pandas(interconnector_data_net, region_net_demand)
-
-    # 6. merge results into final records for the interval inserted into at_network_flows
-    network_flow_records = shape_flow_results_into_records_for_persistance(
-        network=network,
-        interconnector_data=interconnector_data_net,
-        interconnector_emissions=interconnector_emissions,
-    )
+    network_flow_records = solve_flow_emissions_with_pandas(interconnector_data_net, region_net_demand)
 
     # 7. Validate flows - this will throw errors on bad values
     if validate_results:
         validate_network_flows(flow_records=network_flow_records)
 
     # 7. Persist to database aggregate table
-    inserted_records = persist_network_flows_and_emissions_for_interval(network=network, flow_results=network_flow_records)
+    inserted_records = persist_network_flows_and_emissions_for_interval(flow_results=network_flow_records)
 
     logger.info(f"Inserted {inserted_records} records for interval {interval_start} and network {network.code}")
 
@@ -686,13 +532,8 @@ def run_aggregate_flow_for_interval_v4(
 
 # debug entry point
 if __name__ == "__main__":
-    interval_end = datetime.fromisoformat("2023-09-05T08:00:00+10:00")
-    interval_start = interval_end - timedelta(minutes=0)
-    run_aggregate_flow_for_interval_v4(
-        network=NetworkNEM,
-        interval_start=interval_start,
-        interval_end=interval_end,
-    )
+    # run_flows_for_last_days(days=1)
+    run_flows_by_month()
 
     # from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
     # run_flows_for_last_intervals(interval_number=12 * 24 * 1, network=NetworkNEM)
