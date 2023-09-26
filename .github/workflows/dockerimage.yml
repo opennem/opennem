@@ -1,56 +1,47 @@
-name: Docker Image CI
-on:
-  push:
-    branches:
-      - master
-  create:
-    tags:
-      - "*"
-  schedule:
-    - cron: "0 2 * * 0" # Weekly on Sundays at 02:00
+name: Build and Push Docker Image
 
-# permissions:
-#   id-token: write
-#   contents: read
+on:
+    create:
+        tags:
+            - "*"
 
 jobs:
-  buildimage:
-    name: build docker images
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
+    build-and-push:
+        runs-on: ubuntu-latest
+        if: startsWith(github.ref, 'refs/tags/')
 
-      - id: pre-step
-        shell: bash
-        run: echo "release-version=$(echo ${GITHUB_REF:10})" >> $GITHUB_OUTPUT
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
 
-      - name: Install buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          version: latest
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: "3.x"
 
-      - name: Build the Docker image
-        uses: elgohr/Publish-Docker-Github-Action@v5
-        with:
-          name: opennem/opennem/opennem
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: ghcr.io
-          dockerfile: infra/container/Dockerfile
-          # tags: "latest,${{ steps.pre-step.outputs.release-version }}"
-          tag_semver: true
-          platforms: linux/amd64
-          cache: ${{ github.event_name != 'schedule' }}
+            - name: Install Poetry
+              run: |
+                  curl -sSL https://install.python-poetry.org | python3 -
 
-      # - name: Configure AWS Credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-region: ap-southeast-2
-      #     role-to-assume: arn:aws:iam::696911118106:role/github-action-ecr
-      #     role-session-name: GithubActionBuild
+            - name: Get version from poetry
+              id: get_version
+              run: echo "::set-output name=version::$(poetry version -s)"
 
-      # - name: Login to Amazon ECR
-      #   id: login-ecr
-      #   uses: aws-actions/amazon-ecr-login@v1
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v1
+
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build and push Docker image
+              uses: docker/build-push-action@v2
+              with:
+                  context: .
+                  push: true
+                  tags: |
+                      ghcr.io/opennem/opennem:latest
+                      ghcr.io/opennem/opennem:${{ steps.get_version.outputs.version }}
