@@ -1,4 +1,4 @@
-FROM python:3.11-slim as python-base
+FROM python:3.11 as python-base
 
 # python
 ENV PROJECT_NAME="opennem" \
