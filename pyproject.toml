@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem-backend"
-version = "3.16.1a0"
+version = "3.16.2a5"
 description = "OpenNEM Australian Energy Data Backend"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 packages = [
@@ -91,7 +91,6 @@ types-cachetools = "^5.0.0"
 types-PyYAML = "^6.0.4"
 freezegun = "^1.2.2"
 pyright = "^1.1.299"
-bumpver = "^2022.1120"
 ruff = "^0.0.272"
 hatch = "^1.7.0"
 
