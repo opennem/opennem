@@ -1,5 +1,3 @@
-version: "3"
-
 x-app: &default-app
   restart: unless-stopped
   depends_on:
@@ -132,7 +130,7 @@ services:
     image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
     command:
       [
-        "huey_consumer",
+        "./huey_consumer",
         "-w8",
         "-f",
         "-k",

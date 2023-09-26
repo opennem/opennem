@@ -129,7 +129,7 @@ services:
     restart: unless-stopped
     command:
       [
-        "huey_consumer",
+        "./huey_consumer",
         "-w4",
         "-f",
         "-k",
