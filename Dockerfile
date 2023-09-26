@@ -80,7 +80,6 @@ RUN poetry install --no-interaction --no-ansi -v
 
 # will become mountpoint of our code
 WORKDIR /app
-
 EXPOSE 8000
 CMD ["uvicorn", "--reload", "opennem.api.app:app"]
 
@@ -90,5 +89,11 @@ FROM python-base as production
 ENV FASTAPI_ENV=production
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 COPY . /app/
+
+# silly hack to get huey and other bin running running and finding modules
+RUN mkdir bin
+RUN cp -r /opt/pysetup/.venv/bin/ /app/bin
+ENV PATH="/app/bin:$PATH"
+
 EXPOSE 8000
 WORKDIR /app

@@ -37,3 +37,4 @@ __pycache__
 build-scrapyd.sh
 facility_map.qgz
 data/
+notebooks/
