@@ -91,8 +91,7 @@ COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 COPY . /app/
 
 # silly hack to get huey and other bin running running and finding modules
-RUN cp -r /opt/pysetup/.venv/bin /app
-ENV PATH="/app/bin:$PATH"
+RUN cp /opt/pysetup/.venv/bin/huey_consumer /app
 
 EXPOSE 8000
 WORKDIR /app
