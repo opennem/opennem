@@ -90,4 +90,5 @@ FROM python-base as production
 ENV FASTAPI_ENV=production
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 COPY . /app/
+EXPOSE 8000
 WORKDIR /app
