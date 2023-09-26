@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opennem-backend"
-version = "4.0.1-alpha.1"
+version = "4.0.0a0"
 description = "OpenNEM Australian Energy Data Backend"
 authors = ["Dylan McConnell <dylan.mcconnell@unimelb.edu.au>", "Nik Cubrilovic <nik@infotorch.org>"]
 packages = [
@@ -63,7 +63,6 @@ seaborn = "^0.12.0"
 fastapi-cache2 = {extras = ["redis"], version = "^0.2.1"}
 httpx = {extras = ["brotli"], version = "^0.23.3"}
 psycopg2-binary = "^2.9.5"
-semantic-version = "^2.10.0"
 uvicorn = "^0.22.0"
 result = "^0.10.0"
 gunicorn = "^21.2.0"
@@ -91,7 +90,6 @@ types-cachetools = "^5.0.0"
 types-PyYAML = "^6.0.4"
 freezegun = "^1.2.2"
 pyright = "^1.1.299"
-bumpver = "^2022.1120"
 ruff = "^0.0.272"
 hatch = "^1.7.0"
 
@@ -177,21 +175,3 @@ reportMissingTypeStubs = false
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
-
-[tool.bumpver]
-current_version = "4.0.1-alpha.1"
-version_pattern = "MAJOR.MINOR.PATCH[-TAG][.INC0]"
-commit_message = "bump version {old_version} -> {new_version}"
-commit = true
-tag = true
-tag_name = "v{new_version}"
-push = true
-
-[tool.bumpver.file_patterns]
-"pyproject.toml" = [
-    'current_version = "{version}"',
-    'version = "{version}"',
-]
-"opennem/__init__.py" = [
-    '__version__ = "{version}"',
-]

@@ -1,4 +1,5 @@
 .DEFAULT_GOAL := all
+.SHELLFLAGS = -e
 UPGRADE_ARGS ?= --upgrade
 projectname = opennem
 
@@ -8,7 +9,8 @@ ruff = poetry run ruff $(projectname) tests
 mypy = poetry run mypy $(projectname) tests
 pytest = poetry run pytest tests -v
 pyright = poetry run pyright -v $(poetry env info -p) $(projectname)
-bumpver = poetry run bumpver update -n
+version_file = $(projectname)/__init__.py
+bump=prerelease
 
 .PHONY: test
 test:
@@ -36,13 +38,23 @@ build:
 	pip install wheel
 	python setup.py sdist bdist_wheel
 
-.PHONY: bump-dev
-bump-dev:
-	$(bumpver) --tag-num
-
-.PHONY: bump-patch
-bump-patch:
-	$(bumpver) --patch
+.PHONY: version
+version:
+	@git diff --cached --exit-code || (echo "There are staged but uncommitted changes. Please commit or unstage them first." && exit 1)
+	poetry version $(bump)
+	@new_version=$$(poetry version -s); \
+	current_branch=$$(git rev-parse --abbrev-ref HEAD); \
+	echo "Updating $(version_file) to $$new_version"; \
+	if [ "$$(uname)" = "Darwin" ]; then \
+		sed -i '' "s/__version__ = \".*\"/__version__ = \"$$new_version\"/g" $(version_file); \
+	else \
+		sed -i "s/__version__ = \".*\"/__version__ = \"$$new_version\"/g" $(version_file); \
+	fi; \
+	git add $(version_file) pyproject.toml; \
+	git commit -m "Bump version: $$new_version"; \
+	git tag $$new_version; \
+	git push origin $$current_branch; \
+	git push origin $$new_version
 
 .PHONY: image
 image:
@@ -51,9 +63,6 @@ image:
 		--build-arg BUILDKIT_INLINE_CACHE=1 \
 		--cache-from pagecog/base:latest \
 		.
-
-.PHONY: release-pre
-release-pre: format lint
 
 .PHONY: clean
 clean:
@@ -65,6 +74,4 @@ clean:
 codecov:
 	pytest --cov=./$(projectname)
 
-release: release-pre bump-dev
-
-release-patch: release-pre bump-patch
+release: format lint version

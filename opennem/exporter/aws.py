@@ -46,7 +46,9 @@ class OpennemDataSetSerializeS3:
 
         if settings.compact_number_ouput_in_json:
             logger.debug(f"Applying compact number output to {key}")
-            stat_set_content = compact_json_output_number_series(stat_set_content)
+
+            if settings.compact_number_ouput_in_json:
+                stat_set_content = compact_json_output_number_series(stat_set_content)
 
         obj = self.bucket.Object(key=key)
         _write_response = obj.put(Body=stat_set_content, ContentType="application/json")

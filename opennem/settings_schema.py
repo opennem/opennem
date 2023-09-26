@@ -136,7 +136,7 @@ class OpennemSettings(BaseSettings):
     per_interval_aggregate_processing: bool = False  # process per interval aggregates
     show_emissions_in_power_outputs: bool = False  # show emissions in power outputs
     show_emission_factors_in_power_outputs: bool = False  # show emissions in power outputs
-    compact_number_ouput_in_json: bool = True  # compact number output in json
+    compact_number_ouput_in_json: bool = False  # compact number output in json
 
     # send daily fueltech summary
     send_daily_fueltech_summary: bool = True

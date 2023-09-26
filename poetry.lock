@@ -450,25 +450,6 @@ files = [
 cffi = ">=1.0.0"
 
 [[package]]
-name = "bumpver"
-version = "2022.1120"
-description = "Bump version numbers in project files."
-optional = false
-python-versions = ">=2.7"
-files = [
-    {file = "bumpver-2022.1120-py2.py3-none-any.whl", hash = "sha256:9da18a6997ade04c66bec05f5349acc5f2f146b16fb77b307f91ef3370c6aa55"},
-    {file = "bumpver-2022.1120.tar.gz", hash = "sha256:ff8ad562a2ed87e862e07683cb68c4b61046679bf155f7a7ebb20b2ea47775cd"},
-]
-
-[package.dependencies]
-click = {version = "*", markers = "python_version >= \"3.6\""}
-colorama = ">=0.4"
-lexid = "*"
-pathlib2 = "*"
-setuptools = {version = ">=45.0.0", markers = "python_version >= \"3.5\""}
-toml = "*"
-
-[[package]]
 name = "cachetools"
 version = "5.3.1"
 description = "Extensible memoizing collections and decorators"
@@ -1861,17 +1842,6 @@ files = [
 ]
 
 [[package]]
-name = "lexid"
-version = "2021.1006"
-description = "Variable width build numbers with lexical ordering."
-optional = false
-python-versions = ">=2.7"
-files = [
-    {file = "lexid-2021.1006-py2.py3-none-any.whl", hash = "sha256:5526bb5606fd74c7add23320da5f02805bddd7c77916f2dc1943e6bada8605ed"},
-    {file = "lexid-2021.1006.tar.gz", hash = "sha256:509a3a4cc926d3dbf22b203b18a4c66c25e6473fb7c0e0d30374533ac28bafe5"},
-]
-
-[[package]]
 name = "lxml"
 version = "4.9.3"
 description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
@@ -2507,21 +2477,6 @@ spss = ["pyreadstat (>=1.1.5)"]
 sql-other = ["SQLAlchemy (>=1.4.36)"]
 test = ["hypothesis (>=6.46.1)", "pytest (>=7.3.2)", "pytest-asyncio (>=0.17.0)", "pytest-xdist (>=2.2.0)"]
 xml = ["lxml (>=4.8.0)"]
-
-[[package]]
-name = "pathlib2"
-version = "2.3.7.post1"
-description = "Object-oriented filesystem paths"
-optional = false
-python-versions = "*"
-files = [
-    {file = "pathlib2-2.3.7.post1-py2.py3-none-any.whl", hash = "sha256:5266a0fd000452f1b3467d782f079a4343c63aaa119221fbdc4e39577489ca5b"},
-    {file = "pathlib2-2.3.7.post1.tar.gz", hash = "sha256:9fe0edad898b83c0c3e199c842b27ed216645d2e177757b2dd67384d4113c641"},
-]
-
-[package.dependencies]
-six = "*"
-
 [[package]]
 name = "pathspec"
 version = "0.11.2"
@@ -3381,21 +3336,6 @@ cryptography = ">=2.0"
 jeepney = ">=0.6"
 
 [[package]]
-name = "semantic-version"
-version = "2.10.0"
-description = "A library implementing the 'SemVer' scheme."
-optional = false
-python-versions = ">=2.7"
-files = [
-    {file = "semantic_version-2.10.0-py2.py3-none-any.whl", hash = "sha256:de78a3b8e0feda74cabc54aab2da702113e33ac9d9eb9d2389bcf1f58b7d9177"},
-    {file = "semantic_version-2.10.0.tar.gz", hash = "sha256:bdabb6d336998cbb378d4b9db3a4b56a1e3235701dc05ea2690d9a997ed5041c"},
-]
-
-[package.extras]
-dev = ["Django (>=1.11)", "check-manifest", "colorama (<=0.4.1)", "coverage", "flake8", "nose2", "readme-renderer (<25.0)", "tox", "wheel", "zest.releaser[recommended]"]
-doc = ["Sphinx", "sphinx-rtd-theme"]
-
-[[package]]
 name = "sentry-sdk"
 version = "1.31.0"
 description = "Python client for Sentry (https://sentry.io)"
@@ -3705,17 +3645,6 @@ files = [
 
 [package.extras]
 tests = ["pytest", "pytest-cov"]
-
-[[package]]
-name = "toml"
-version = "0.10.2"
-description = "Python Library for Tom's Obvious, Minimal Language"
-optional = false
-python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
-files = [
-    {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
-    {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
-]
 
 [[package]]
 name = "tomli"
@@ -4177,4 +4106,4 @@ postgres = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "dd51cf9578a73e048fc074e102cdb0f89a2e979b31663098607af1f17d601589"
+content-hash = "81f0e59c5a34938ed1808fbc30fee495e954ed45b61a15c225f699005ef40347"
