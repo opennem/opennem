@@ -17,12 +17,12 @@ from opennem.core.network_region_bom_station_map import get_network_region_weath
 from opennem.core.networks import NetworkAPVI, NetworkAU, NetworkNEM, NetworkSchema, NetworkWEM
 from opennem.schema.network import NetworkAEMORooftop, NetworkAEMORooftopBackfill, NetworkOpenNEMRooftopBackfill
 from opennem.schema.time import TimeInterval, TimePeriod
-from opennem.utils.version import get_version, get_version_components
+from opennem.utils.version import get_version, get_version_model
 
 logger = logging.getLogger(__name__)
 
 STATS_FOLDER = "stats"
-MAJOR_VERSION = get_version_components().major
+MAJOR_VERSION = get_version_model().major
 
 
 class StatType(Enum):

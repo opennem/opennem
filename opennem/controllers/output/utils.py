@@ -2,9 +2,9 @@
 
 from opennem.controllers.output.schema import StatType
 from opennem.schema.network import NetworkSchema
-from opennem.utils.version import get_version_components
+from opennem.utils.version import get_version_model
 
-VERSION_MAJOR = get_version_components().major
+VERSION_MAJOR = get_version_model().major
 STATS_FOLDER = "stats"
 
 
