@@ -90,7 +90,7 @@ services:
 
   api:
     <<: *default-app
-    image: ghcr.io/opennem/opennem/opennem:$VERSION
+    image: ghcr.io/opennem/opennem:$VERSION
     command: [
       "uvicorn",
       "--host",
@@ -125,7 +125,7 @@ services:
 
   worker:
     <<: *default-app
-    image: ghcr.io/opennem/opennem/opennem:$VERSION
+    image: ghcr.io/opennem/opennem:$VERSION
     restart: unless-stopped
     command:
       [
