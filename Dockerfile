@@ -87,6 +87,7 @@ CMD ["uvicorn", "--reload", "opennem.api.app:app"]
 # `production` image used for runtime
 FROM python-base as production
 ENV FASTAPI_ENV=production
+ENV PYTHONPATH="$PYTHONPATH:/app"
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 COPY . /app/
 
