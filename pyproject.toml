@@ -176,21 +176,3 @@ reportMissingTypeStubs = false
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
-
-[tool.bumpver]
-current_version = "3.16.0"
-version_pattern = "MAJOR.MINOR.PATCH[-TAG][.INC0]"
-commit_message = "bump version {old_version} -> {new_version}"
-commit = true
-tag = true
-tag_name = "v{new_version}"
-push = true
-
-[tool.bumpver.file_patterns]
-"pyproject.toml" = [
-    'current_version = "{version}"',
-    'version = "{version}"',
-]
-"opennem/__init__.py" = [
-    '__version__ = "{version}"',
-]
