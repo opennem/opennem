@@ -92,7 +92,7 @@ services:
 
   api:
     <<: *default-app
-    image: ghcr.io/opennem/opennem/opennem:$VERSION
+    image: ghcr.io/opennem/opennem:$VERSION
     command: [
       "uvicorn",
       "--host",
@@ -127,11 +127,12 @@ services:
 
   worker:
     <<: *default-app
-    image: docker.pkg.github.com/opennem/opennem/opennem:$VERSION
+    image: ghcr.io/opennem/opennem:$VERSION
+    restart: unless-stopped
     command:
       [
         "./huey_consumer",
-        "-w8",
+        "-w4",
         "-f",
         "-k",
         "process",
@@ -139,7 +140,7 @@ services:
       ]
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.enable=true"
 
   redis:
     image: redis:6-alpine
