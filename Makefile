@@ -41,7 +41,7 @@ build:
 .PHONY: version
 version:
 	@git diff --cached --exit-code || (echo "There are staged but uncommitted changes. Please commit or unstage them first." && exit 1)
-	@poetry version $(bump)
+	poetry version $(bump)
 	@new_version=$$(poetry version -s); \
 	current_branch=$$(git rev-parse --abbrev-ref HEAD); \
 	echo "Updating $(version_file) to $$new_version"; \
