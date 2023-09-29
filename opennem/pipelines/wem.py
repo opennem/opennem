@@ -4,7 +4,7 @@ import logging
 from opennem.controllers.schema import ControllerReturn
 from opennem.core.profiler import profile_task
 from opennem.crawl import run_crawl
-from opennem.crawlers.apvi import APVIRooftopTodayCrawler
+from opennem.crawlers.apvi import APVIRooftopLatestCrawler
 from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
 from opennem.pipelines.export import run_export_power_latest_for_network
 from opennem.pipelines.nem import NemPipelineNoNewData
@@ -22,7 +22,7 @@ logger = logging.getLogger("opennem.pipelines.wem")
 )
 def wem_per_interval_check() -> ControllerReturn:
     """This task runs per interval and checks for new data"""
-    _ = run_crawl(APVIRooftopTodayCrawler)
+    _ = run_crawl(APVIRooftopLatestCrawler)
     _ = run_crawl(WEMBalancingLive)
     wem_scada = run_crawl(WEMFacilityScadaLive)
 
