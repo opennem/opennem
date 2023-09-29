@@ -249,14 +249,9 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
     """Takes a list of generation values and calculates energies and bulk-inserts
     into the database"""
 
-    datetime_now = datetime.now()
+    datetime.now()
 
     flow_results.reset_index(inplace=True)
-
-    # Add metadata
-    flow_results["created_by"] = "opennem.worker.emissions"
-    flow_results["created_at"] = datetime_now
-    flow_results["updated_at"] = datetime_now
 
     # # reorder columns
     columns = [
@@ -269,9 +264,6 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
         "emissions_exports",
         "market_value_imports",
         "market_value_exports",
-        "created_by",
-        "created_at",
-        "updated_at",
     ]
     flow_results = flow_results[columns]
 
@@ -291,7 +283,6 @@ def insert_flows(flow_results: pd.DataFrame) -> int:
             "emissions_exports",
             "market_value_imports",
             "market_value_exports",
-            "updated_at",
         ],
     )
     conn = get_database_engine().raw_connection()
@@ -496,11 +487,5 @@ def run_flow_updates_all_for_network(network: NetworkSchema, to_year: int | None
 
 # debug entry point
 if __name__ == "__main__":
-    logger.info("starting")
-    # run_flow_updates_all_for_network(network=NetworkNEM, to_year=2020)
-    # run_emission_update_day(days=12)
-    # run_flow_updates_all_per_year(2014, 1, network=NetworkNEM)
-    # run_flow_update_for_interval(datetime.fromisoformat("2022-11-18T14:40:00+10:00"), network=NetworkNEM)
-    run_flow_update_for_interval(
-        interval=datetime.fromisoformat("2023-03-07T00:00:00+10:00"), network=NetworkNEM, number_of_intervals=1
-    )
+    latest_interval = get_last_completed_interval_for_network(network=NetworkNEM)
+    run_flow_update_for_interval(interval=latest_interval, network=NetworkNEM, number_of_intervals=12 * 24 * 3)
