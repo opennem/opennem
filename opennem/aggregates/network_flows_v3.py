@@ -369,7 +369,7 @@ def run_flows_for_last_intervals(interval_number: int, network: NetworkSchema = 
     logger.info(f"Running flows for last {interval_number} intervals")
 
     end_interval = get_last_completed_interval_for_network(network=network)
-    start_interval = end_interval - timedelta(minutes=network.intervals_per_hour / 60 * interval_number)
+    start_interval = end_interval - timedelta(minutes=(60 / network.intervals_per_hour) * interval_number)
 
     if interval_number == 1:
         start_interval = end_interval
@@ -533,7 +533,8 @@ def run_aggregate_flow_for_interval_v3(
 # debug entry point
 if __name__ == "__main__":
     # run_flows_for_last_days(days=1)
-    run_flows_by_month()
+    # run_flows_by_month()
+    run_flows_for_last_intervals(interval_number=12 * 24 * 3, network=NetworkNEM)
 
     # from_interval = datetime.fromisoformat("2023-02-05T14:50:00+10:00")
     # run_flows_for_last_intervals(interval_number=12 * 24 * 1, network=NetworkNEM)
