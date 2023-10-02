@@ -56,6 +56,9 @@ version:
 	git push origin $$current_branch; \
 	git push origin $$new_version
 
+.PHONY: release-pre
+release-pre: format lint
+
 .PHONY: image
 image:
 	docker build \
@@ -74,4 +77,4 @@ clean:
 codecov:
 	pytest --cov=./$(projectname)
 
-release: format lint version
+release: release-pre version

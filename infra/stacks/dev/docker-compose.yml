@@ -44,11 +44,14 @@ x-app: &default-app
     - SHOW_EMISSION_FACTORS_IN_POWER_OUTPUTS
     - COMPACT_NUMBER_OUPUT_IN_JSON
 
-
 services:
   traefik:
-    image: traefik:v2.1
-    network_mode: host
+    image: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - frontend
     command:
       - --api.insecure=true
       - --providers.docker
@@ -91,16 +94,17 @@ services:
   api:
     <<: *default-app
     image: ghcr.io/opennem/opennem:$VERSION
-    command: [
-      "uvicorn",
-      "--host",
-      "0.0.0.0",
-      "--port",
-      "8000",
-      "--workers",
-      "4",
-      "opennem.api.app:app"
-    ]
+    command:
+      [
+        "uvicorn",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--workers",
+        "4",
+        "opennem.api.app:app"
+      ]
     healthcheck:
       test: curl --fail http://127.0.0.1:8000/networks || exit 1
       interval: 30s
@@ -119,7 +123,7 @@ services:
       # security headers
       - "traefik.http.services.api.loadbalancer.server.port=8000"
       - "traefik.http.services.api.loadbalancer.server.scheme=http"
-      # - "traefik.docker.network=frontend"
+      - "traefik.docker.network=frontend"
       # autohead
       - "autoheal=true"
 
@@ -129,12 +133,12 @@ services:
     restart: unless-stopped
     command:
       [
-        "./huey_consumer",
+        "huey_consumer",
         "-w4",
         "-f",
         "-k",
         "process",
-        "opennem.workers.scheduler.huey",
+        "opennem.workers.scheduler.huey"
       ]
     labels:
       - "traefik.enable=false"
@@ -152,23 +156,19 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
-  # watchtower:
-  #   image: containrrr/watchtower
-  #   restart: unless-stopped
-  #   networks:
-  #     - frontend
-  #   environment:
-  #     - TZ
-  #     - WATCHTOWER_CLEANUP=1
-  #     - WATCHTOWER_LABEL_ENABLE=1
-  #     - WATCHTOWER_POLL_INTERVAL=120
-  #     - WATCHTOWER_INCLUDE_RESTARTING=1
-  #     - WATCHTOWER_INCLUDE_STOPPED=1
-  #     - WATCHTOWER_REVIVE_STOPPED=1
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - /root/.docker/config.json:/config.json
-
+  watchtower:
+    image: containrrr/watchtower
+    restart: unless-stopped
+    networks:
+      - frontend
+    environment:
+      - TZ
+      - WATCHTOWER_CLEANUP=1
+      - WATCHTOWER_LABEL_ENABLE=1
+      - WATCHTOWER_POLL_INTERVAL=120
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
   # autoheal:
   #   image: willfarrell/autoheal:latest
   #   tty: true
@@ -184,6 +184,7 @@ services:
 
 networks:
   frontend:
+
 
 volumes:
   traefik_acme:

@@ -38,3 +38,5 @@ build-scrapyd.sh
 facility_map.qgz
 data/
 notebooks/
+.ipython/
+.jupyter/
