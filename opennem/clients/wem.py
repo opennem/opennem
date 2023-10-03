@@ -27,7 +27,11 @@ from opennem.utils.random_agent import get_random_agent
 
 logger = logging.getLogger("opennem.client.wem")
 
-_AEMO_WEM_LIVE_SCADA_URL = "https://aemo.com.au/aemo/data/wa/infographic/facility-intervals-last96.csv"
+# Old URL
+# _AEMO_WEM_LIVE_SCADA_URL = "https://aemo.com.au/aemo/data/wa/infographic/facility-intervals-last96.csv"
+
+# New URL
+_AEMO_WEM_LIVE_SCADA_URL = "https://data.wa.aemo.com.au/public/infographic/facility-intervals-last96.csv"
 
 _AEMO_WEM_LIVE_BALANCING_URL = "https://data.wa.aemo.com.au/public/infographic/neartime/pulse.csv"
 
@@ -61,6 +65,8 @@ class WEMBalancingSummaryInterval(BaseConfig):
     forecast_nsg_mw: float | None
     actual_nsg_mw: float | None
     actual_total_generation: float | None
+
+    _validator_forecast_mw = validator("forecast_mw", pre=True, allow_reuse=True)(_empty_string_to_none)
 
     _validator_price = validator("price", pre=True, allow_reuse=True)(_empty_string_to_none)
 
@@ -440,7 +446,7 @@ if __name__ == "__main__":
     # with open("wem.json", "w") as fh:
     #     fh.write(m.json(indent=4))
 
-    m = get_wem_live_facility_intervals()
+    m = get_wem_live_balancing_summary()
 
-    with open("wem-live.json", "w") as fh:
-        fh.write(m.json(indent=4))
+    # with open("wem-live.json", "w") as fh:
+    # fh.write(m.json(indent=4))
