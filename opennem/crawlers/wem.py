@@ -3,6 +3,7 @@
 import logging
 
 from opennem.clients.wem import (
+    get_wem2_live_facility_intervals,
     get_wem_balancing_summary,
     get_wem_facility_intervals,
     get_wem_live_balancing_summary,
@@ -48,6 +49,15 @@ def run_wem_live_facility_scada_crawl(
     return cr
 
 
+def run_wem2_live_facility_scada_crawl(
+    crawler: CrawlerDefinition, last_crawled: bool = True, limit: bool = False, latest: bool = False, **kwargs
+) -> ControllerReturn:
+    from_interval = crawler.server_latest if crawler.server_latest else None
+    generated_set = get_wem2_live_facility_intervals(from_interval=from_interval, trim_intervals=True)
+    cr = store_wem_facility_intervals(generated_set, created_by="wem2.controller")
+    return cr
+
+
 WEMBalancing = CrawlerDefinition(
     priority=CrawlerPriority.medium,
     schedule=CrawlerSchedule.hourly,
@@ -74,6 +84,15 @@ WEMFacilityScadaLive = CrawlerDefinition(
     schedule=CrawlerSchedule.frequent,
     name="au.wem.live.facility_scada",
     processor=run_wem_live_facility_scada_crawl,
+)
+
+# WEM2 Crawlers
+
+WEM2FacilityScadaLive = CrawlerDefinition(
+    priority=CrawlerPriority.high,
+    schedule=CrawlerSchedule.frequent,
+    name="au.wem2.live.facility_scada",
+    processor=run_wem2_live_facility_scada_crawl,
 )
 
 if __name__ == "__main__":

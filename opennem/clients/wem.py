@@ -14,6 +14,7 @@ See the URL constants for sources and unit tests
 import csv
 import logging
 from datetime import datetime, timedelta
+from io import StringIO
 from typing import Any
 
 import requests
@@ -33,13 +34,16 @@ logger = logging.getLogger("opennem.client.wem")
 # New URL
 _AEMO_WEM_LIVE_SCADA_URL = "https://data.wa.aemo.com.au/public/infographic/facility-intervals-last96.csv"
 
-_AEMO_WEM_LIVE_BALANCING_URL = "https://data.wa.aemo.com.au/public/infographic/neartime/pulse.csv"
+# _AEMO_WEM_LIVE_BALANCING_URL = "https://data.wa.aemo.com.au/public/infographic/neartime/pulse.csv"
+_AEMO_WEM_LIVE_BALANCING_URL = "https://aemo.com.au/aemo/data/wa/infographic/neartime/pulse.csv"
 
 _AEMO_WEM_SCADA_URL = "https://data.wa.aemo.com.au/public/public-data/datafiles/facility-scada/facility-scada-{year}-{month}.csv"
 
 _AEMO_WEM_BALANCING_SUMMARY_URL = (
     "http://data.wa.aemo.com.au/public/public-data/datafiles/balancing-summary/balancing-summary-{year}.csv"
 )
+
+_AEMO_WEM2_GENERATION_URL = "https://aemo.com.au/aemo/data/wa/infographic/generation.csv"
 
 
 def _wem_balancing_summary_field_alias(field_name: str) -> str:
@@ -173,7 +177,7 @@ class WEMFileNotFoundException(Exception):
     pass
 
 
-def wem_downloader(url: str, for_date: datetime | None = None) -> str:
+def wem_downloader(url: str, for_date: datetime | None = None, decode_content: bool = True) -> str:
     """Downloads WEM content using the session"""
     url_params = {
         "day": get_date_component("%d", dt=for_date),
@@ -437,6 +441,99 @@ def get_wem_facility_intervals(from_date: datetime | None = None) -> WEMFacility
     return wem_set
 
 
+def get_wem2_live_generation_models() -> list[WEMGenerationInterval]:
+    """Gets the latest WEM live generation CSV"""
+    resp = wem_downloader(_AEMO_WEM2_GENERATION_URL, decode_content=True)
+
+    if not isinstance(resp, str):
+        raise Exception("Invalid response from WEM2 generation - not string")
+
+    models = []
+
+    field_names = ["PARTICIPANT_CODE", "FACILITY_CODE", "MAX_GEN_CAPACITY"]
+    field_names += [f"I{str(i).zfill(2)}" for i in range(1, 49)]
+    field_names += ["AS_AT"]
+
+    facility_reader = csv.DictReader(StringIO(resp), fieldnames=field_names)
+
+    # Skip the header
+    next(facility_reader)
+
+    latest_interval = None
+
+    for facility_record in facility_reader:
+        if facility_record["AS_AT"]:
+            parse_as_at = parse_date(facility_record["AS_AT"], timezone=NetworkWEM.get_fixed_offset())
+
+            if parse_as_at:
+                latest_interval = parse_as_at
+                logger.info(f"Latest interval is {latest_interval} found via AS_AT")
+            else:
+                raise Exception(f"Invalid AS_AT date: {facility_record['AS_AT']}")
+
+        if not latest_interval:
+            raise Exception("No latest interval found")
+
+        facility_code = facility_record["FACILITY_CODE"]
+
+        for interval_number in range(1, 49):
+            interval_field = f"I{str(interval_number).zfill(2)}"
+
+            if interval_field not in facility_record:
+                logger.error(f"Interval {interval_field} not in record for facility {facility_code}")
+                continue
+
+            generation_value = float(facility_record[interval_field]) if facility_record[interval_field] else 0
+            interval_value = latest_interval - timedelta(minutes=5 * (interval_number - 1))
+
+            model_dict = {
+                "trading_interval": interval_value,
+                "facility_code": facility_code,
+                "power": generation_value,
+                "eoi_quantity": generation_value / 12,
+            }
+
+            model = WEMGenerationInterval(**model_dict)
+
+            models.append(model)
+
+    return models
+
+
+def get_wem2_live_facility_intervals(
+    trim_intervals: bool = False, from_interval: datetime | None = None
+) -> WEMFacilityIntervalSet:
+    """Obtains WEM v2 live facility intervals from infogrphic feeds"""
+    _models = get_wem2_live_generation_models()
+
+    server_latest: datetime | None = None
+
+    all_trading_intervals = list({i.trading_interval for i in _models})
+
+    if all_trading_intervals:
+        server_latest = max(all_trading_intervals)
+
+    if trim_intervals and server_latest:
+        _models = [
+            i
+            for i in _models
+            if i.trading_interval == server_latest or (i.trading_interval == server_latest - timedelta(minutes=30))
+        ]
+
+    elif from_interval and server_latest:
+        _models = [i for i in _models if i.trading_interval >= from_interval]
+
+    wem_set = WEMFacilityIntervalSet(
+        crawled_at=datetime.now(),
+        live=True,
+        intervals=_models,
+        source_url=_AEMO_WEM2_GENERATION_URL,
+        server_latest=server_latest,
+    )
+
+    return wem_set
+
+
 # debug entry point
 if __name__ == "__main__":
     # m = get_wem_facility_intervals(live=False)
@@ -446,7 +543,13 @@ if __name__ == "__main__":
     # with open("wem.json", "w") as fh:
     #     fh.write(m.json(indent=4))
 
-    m = get_wem_live_balancing_summary()
+    from pprint import pprint
+
+    balancing_set = get_wem_live_balancing_summary()
+
+    for model in balancing_set.intervals:
+        pprint(dict(model))
+        # print(dict(models[0]))
 
     # with open("wem-live.json", "w") as fh:
     # fh.write(m.json(indent=4))
