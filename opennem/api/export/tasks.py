@@ -89,6 +89,8 @@ def export_power(
         if output_count >= 1 and latest:
             return None
 
+        logger.debug(f"Running export_power for {power_stat.network.code} {power_stat.network_region} {power_stat.period}")
+
         date_range_networks = power_stat.networks or []
 
         if NetworkNEM in date_range_networks:
@@ -100,7 +102,7 @@ def export_power(
         if power_stat.network == NetworkWEM:
             date_range = get_scada_range(network=power_stat.network)
 
-        logger.debug(f"Date range for {power_stat.network.code}: {date_range.start} => {date_range.end}")
+        logger.debug(f"Export power date range for {power_stat.network.code}: {date_range.start} => {date_range.end}")
 
         # Migrate to this time_series
         time_series = OpennemExportSeries(

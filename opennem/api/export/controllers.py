@@ -402,6 +402,8 @@ def power_week(
         network_region=network_region_code,
     )
 
+    logger.debug(query)
+
     with engine.connect() as c:
         logger.debug(query)
         row = list(c.execute(query))
