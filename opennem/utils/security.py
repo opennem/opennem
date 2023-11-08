@@ -21,3 +21,8 @@ def obfuscate_dsn_password(dsn: str) -> str:
     obfuscated_dsn = dsn_parsed.geturl()
 
     return obfuscated_dsn
+
+
+def random_percentage(percent: int) -> bool:
+    """Returns true or false based on a percentage"""
+    return random.randrange(100) < percent
