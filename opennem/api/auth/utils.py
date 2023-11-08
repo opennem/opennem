@@ -4,7 +4,10 @@ OpenNEM Auth Utils
 """
 import secrets
 
+from fastapi import HTTPException
+
 from opennem import settings
+from opennem.utils.security import random_percentage
 
 
 def generate_api_key(key_length: int = settings.api_app_auth_key_length) -> str:
@@ -30,3 +33,13 @@ def header_name_from_auth_name(auth_name: str) -> str:
     header_auth_name = f"X-{auth_name.upper()}"
 
     return header_auth_name
+
+
+def opennem_api_return_deprecation_message() -> HTTPException | None:
+    """Returns a 410 Gone response with a deprecation message"""
+    if random_percentage(settings.api_deprecation_proportion):
+        return HTTPException(
+            status_code=410,
+            detail="This endpoint is deprecatedPlease use the new API.",
+        )
+    return None
