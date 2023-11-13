@@ -39,7 +39,7 @@ from opennem.crawlers.nemweb import (
     AEMONNemwebDispatchScada,
     AEMONNemwebDispatchScadaArchive,
 )
-from opennem.crawlers.wem import WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
+from opennem.crawlers.wem import WEM2FacilityScadaLive, WEMBalancing, WEMBalancingLive, WEMFacilityScada, WEMFacilityScadaLive
 from opennem.schema.date_range import CrawlDateRange
 from opennem.utils.dates import get_today_opennem
 from opennem.utils.modules import load_all_crawler_definitions
@@ -84,6 +84,8 @@ def load_crawlers(live_load: bool = False) -> CrawlerSet:
             WEMBalancingLive,
             WEMFacilityScada,
             WEMFacilityScadaLive,
+            # WEM2
+            WEM2FacilityScadaLive,
             # MMS Crawlers
             AEMOMMSDispatchInterconnector,
             AEMOMMSDispatchRegionsum,

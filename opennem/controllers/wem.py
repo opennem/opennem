@@ -139,7 +139,7 @@ def store_wem_balancingsummary_set_bulk(balancing_set: WEMBalancingSummarySet) -
     return None
 
 
-def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet) -> ControllerReturn:
+def store_wem_facility_intervals(balancing_set: WEMFacilityIntervalSet, created_by: str = "wem.controller") -> ControllerReturn:
     """Persist WEM facility intervals"""
     engine = get_database_engine()
     session = get_scoped_session()
