@@ -14,7 +14,22 @@ from decimal import Decimal
 
 from geoalchemy2 import Geometry
 from shapely import wkb
-from sqlalchemy import Boolean, Column, Date, DateTime, Enum, ForeignKey, Index, Integer, LargeBinary, Numeric, Text, func
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    LargeBinary,
+    Numeric,
+    String,
+    Text,
+    func,
+)
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP, UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -25,6 +40,7 @@ from sqlalchemy.sql.schema import UniqueConstraint
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.oid import get_ocode, get_oid
 from opennem.parsers.aemo.schemas import AEMODataSource
+from opennem.recordreactor.schema import MilestoneType
 from opennem.schema.core import BaseConfig
 
 Base = declarative_base()
@@ -1020,3 +1036,24 @@ class AggregateNetworkDemand(Base):
         Index("idx_at_network_demand_network_id_trading_interval", network_id, trading_day.desc()),
         Index("idx_at_network_demand_trading_interval_network_region", trading_day, network_id, network_region),
     )
+
+
+class Milestones(Base):
+    __tablename__ = "milestones"
+
+    instance_id = Column(UUID(as_uuid=True), primary_key=True)
+    record_id = Column(UUID(as_uuid=True), primary_key=True)
+    dtime = Column(DateTime, nullable=False)
+    record_type = Column(Enum(MilestoneType), nullable=False)
+    significance = Column(Integer, nullable=False)
+    value = Column(Float, nullable=False)
+
+    facility_id = Column(Text, ForeignKey("facility.id"), nullable=True)
+    network_id = Column(Integer, ForeignKey("network.code"), nullable=True)
+    fueltech_id = Column(Integer, ForeignKey("fueltech.code"), nullable=True)
+    description = Column(String, nullable=True)
+
+    # Relationships
+    # unit = relationship("UnitDefinition")
+    # network = relationship("NetworkSchema")
+    # fueltech = relationship("FueltechSchema")
