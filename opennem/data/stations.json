@@ -4762,12 +4762,12 @@
     },
     {
         "code": "QBYNB",
-        "name": "Capital Battery",
+        "name": "Queanbeyan Battery",
         "network_name": "Queanbeyan",
-        "description": "The Capital Battery is a 100MW stand-alone battery capable of storing up to 200MWh of energy with up to 2 hours of power in reserve. 50 MW was committed as part of the ACT Government\u2019s 2020 renewable energy auction, with a further 50 MW yet to be contracted.",
+        "description": null,
         "wikipedia_link": null,
         "wikidata_id": null,
-        "website_url": "https://capitalbattery.com.au/",
+        "website_url": null,
         "approved": true,
         "approved_by": "opennem.init",
         "facilities": [
