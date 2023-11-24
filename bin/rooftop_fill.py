@@ -106,7 +106,7 @@ def update_rooftop_backfill_market_values() -> list:
     """
 
     with engine.begin() as cn:
-        results = cn.execute(query)
+        cn.execute(query)
 
     logger.info("Updated market values")
 

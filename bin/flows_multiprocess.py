@@ -2,13 +2,13 @@
 import logging
 import multiprocessing
 from datetime import datetime, timedelta, timezone
-from opennem.api.export.map import PriorityType, StatType, get_export_map
+
 from opennem import settings
 from opennem.aggregates.network_flows_v3 import (
     run_aggregate_flow_for_interval_v3,
 )
-from opennem.api.export.tasks import export_all_daily, export_all_monthly
-from opennem.api.export.tasks import export_energy, export_power
+from opennem.api.export.map import PriorityType, StatType, get_export_map
+from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_power
 from opennem.schema.network import (
     NetworkNEM,
 )

@@ -10,12 +10,10 @@ series (ie. 7d.json)
 
 
 import asyncio
-import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import aiohttp
-import httpx
 
 NEMWEB_URL = "http://www.nemweb.com.au/Reports/CURRENT/Dispatch_SCADA/"
 OPENNEM_URL = "https://api.opennem.org.au/v3/series/7d.json"

@@ -7,7 +7,6 @@ import logging
 import sys
 
 from opennem.api.export.map import priority_from_name
-from opennem.api.export.tasks import export_all_daily, export_all_monthly, export_energy, export_metadata, export_power
 from opennem.utils.version import get_version
 from opennem.workers.scheduler import huey
 
@@ -28,7 +27,6 @@ def _setup_logger(verbosity: int) -> logging.Logger:
 
 
 def flush_tasks() -> None:
-
     huey.flush()
     print("Flushed all tasks")
 
@@ -83,7 +81,7 @@ def main():
 
     _setup_logger(args.verbosity)
 
-    print("opennem.tasks: v{}".format(get_version()))
+    print(f"opennem.tasks: v{get_version()}")
 
     priority = priority_from_name(args.priority)
 
@@ -93,7 +91,7 @@ def main():
 
     print(args.task, priority)
 
-    task_name = "export_{}".format(args.task)
+    task_name = f"export_{args.task}"
 
     if task_name not in globals():
         logger.error("Task not found")
@@ -101,7 +99,7 @@ def main():
 
     _task = globals()[task_name]
 
-    print("Running {} with priority {} and latest is {}".format(task_name, priority, args.latest))
+    print(f"Running {task_name} with priority {priority} and latest is {args.latest}")
 
     run = _task(priority=priority, latest=args.latest)
 

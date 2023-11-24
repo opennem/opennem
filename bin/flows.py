@@ -1,34 +1,23 @@
 #!/usr/bin/env python
 """ Script to test OpenNEM flows """
-import csv
 import logging
 from collections import namedtuple
-from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from itertools import groupby
 from pathlib import Path
-from pprint import pprint
-from textwrap import dedent, indent
-from typing import Dict
+from textwrap import dedent
 
 import pandas as pd
 import pydantic
 from datetime_truncate import truncate as date_trunc
 
 from opennem.api.stats.schema import ValidNumber, load_opennem_dataset_from_url
-from opennem.controllers.flows import get_network_interconnector_intervals
-from opennem.controllers.nem import store_aemo_tableset
-from opennem.core.parsers.aemo.mms import AEMOTableSet, parse_aemo_url
-from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
+from opennem.core.parsers.aemo.mms import AEMOTableSet
 from opennem.core.time import get_interval
 from opennem.db import get_database_engine
-from opennem.queries.flows import get_interconnector_intervals_query
 from opennem.schema.dates import DatetimeRange, TimeSeries
-from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.schema.time import TimeInterval
-from opennem.utils.chart import Plot, PlotIntegerValues, PlotSeries, PlotValues, chart_line
-from opennem.utils.dates import date_series, get_last_complete_day_for_network
-from opennem.utils.interval import get_human_interval
+from opennem.schema.network import NetworkNEM
+from opennem.utils.chart import Plot, PlotIntegerValues, PlotSeries, chart_line
 from opennem.workers.emissions import (
     calc_flows_for_range,
     load_interconnector_intervals,
@@ -49,7 +38,6 @@ def get_aemo_tableset(tableset_path: Path) -> AEMOTableSet:
 
 
 def dump_tableset_csvs() -> None:
-
     ts = get_aemo_tableset()
 
     csv_path = Path(__file__).parent.parent / "notebooks" / "data"
@@ -124,7 +112,7 @@ def flow_plot(date_start: datetime, date_end: datetime) -> None:
 
 
 # TODO Rename this here and in `flow_plot`
-def db_extract_result_records(conn, derived_table) -> list[Dict[str, ValidNumber]]:
+def db_extract_result_records(conn, derived_table) -> list[dict[str, ValidNumber]]:
     result_proxy = conn.execute(derived_table)
     first_result = result_proxy.fetchone()
 
@@ -140,7 +128,7 @@ def db_extract_result_records(conn, derived_table) -> list[Dict[str, ValidNumber
     return results
 
 
-def plot_emissions_from_fixtures() -> Dict:
+def plot_emissions_from_fixtures() -> dict:
     """ """
     data = {}
 
@@ -174,12 +162,12 @@ def plot_emissions_from_fixtures() -> Dict:
 
 def part_date(ts: pd.Timestamp | datetime) -> datetime:
     """Convert pandas timestamp to parted datetime"""
-    dt = ts if isinstance(ts, (date, datetime)) else ts.to_pydatetime()
+    dt = ts if isinstance(ts, date | datetime) else ts.to_pydatetime()
     dt = dt.replace(year=2022)
     return dt
 
 
-def group_values_by_day(df: pd.DataFrame, field_name: str, bucket_size: str) -> list[Dict]:
+def group_values_by_day(df: pd.DataFrame, field_name: str, bucket_size: str) -> list[dict]:
     """Group values on trading_interval by day"""
     records = df.to_dict("records")
 
@@ -268,9 +256,7 @@ def compare_to_net_intervals() -> None:
     print(value_2015, value_2022)
 
     data = plot_emissions_from_fixtures()
-    print(
-        data[2015]["emissions"]["energy_imports"].sum() / 1000, data[2022]["emissions"]["energy_imports"].sum() / 1000
-    )
+    print(data[2015]["emissions"]["energy_imports"].sum() / 1000, data[2022]["emissions"]["energy_imports"].sum() / 1000)
 
 
 def run_test() -> None:
@@ -289,15 +275,11 @@ def run_test() -> None:
 
     series = [
         PlotSeries(
-            values=[
-                PlotIntegerValues(interval=r["trading_interval"].day, value=r["energy_imports"]) for r in records_new
-            ],
+            values=[PlotIntegerValues(interval=r["trading_interval"].day, value=r["energy_imports"]) for r in records_new],
             label="Imports 2022",
         ),
         PlotSeries(
-            values=[
-                PlotIntegerValues(interval=r["trading_interval"].day, value=r["energy_imports"]) for r in records_old
-            ],
+            values=[PlotIntegerValues(interval=r["trading_interval"].day, value=r["energy_imports"]) for r in records_old],
             label="Imports 2015",
             color="g",
         ),

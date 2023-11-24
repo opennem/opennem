@@ -3,8 +3,6 @@
 
 import logging
 
-from opennem import settings
-from opennem.clients.slack import slack_message
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Feedback
 

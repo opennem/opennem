@@ -2,7 +2,6 @@
 """ Initialization Python Script """
 import subprocess
 
-from opennem import settings
 from opennem.api.export.tasks import export_energy, export_power
 from opennem.core.crawlers.schema import CrawlerSchedule
 from opennem.crawl import get_crawl_set, run_crawl

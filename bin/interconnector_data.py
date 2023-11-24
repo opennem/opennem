@@ -2,42 +2,22 @@
 """ Test interconnector data """
 import csv
 import logging
-from dataclasses import dataclass
-from datetime import date, datetime, timedelta
-from itertools import groupby
+from datetime import date, datetime
 from pathlib import Path
 from pprint import pprint
-from textwrap import dedent, indent
-from typing import Dict
 
 import pandas as pd
-import pydantic
 
-from opennem.api.stats.schema import ValidNumber, load_opennem_dataset_from_url
-from opennem.controllers.flows import get_network_interconnector_intervals
-from opennem.controllers.nem import store_aemo_tableset
-from opennem.core.parsers.aemo.mms import AEMOTableSet, parse_aemo_file, parse_aemo_url
-from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
-from opennem.core.time import get_interval
-from opennem.db import get_database_engine
-from opennem.queries.flows import get_interconnector_intervals_query
-from opennem.schema.dates import DatetimeRange, TimeSeries
-from opennem.schema.network import NetworkNEM, NetworkSchema
-from opennem.schema.time import TimeInterval
-from opennem.utils.chart import Plot, PlotIntegerValues, PlotSeries, PlotValues, chart_line
-from opennem.utils.dates import date_series, get_last_complete_day_for_network
-from opennem.utils.interval import get_human_interval
-from opennem.workers.emissions import (
-    calc_flows_for_range,
-    load_interconnector_intervals,
-    merge_interconnector_and_energy_data,
-)
-from tests.workers.flows import get_flow_fixture_dataframe
+from opennem.core.parsers.aemo.mms import parse_aemo_file
 
 logger = logging.getLogger("opennem.flows")
 
-SRC_2019 = "/var/folders/v7/qpcbq9jx04gf6bgcsdy4tvy80000gn/T/opennem_0fagth98/PUBLIC_DVD_DISPATCHINTERCONNECTORRES_201901010000.CSV"
-SRC_2022 = "/var/folders/v7/qpcbq9jx04gf6bgcsdy4tvy80000gn/T//opennem_t207p2yl/PUBLIC_DVD_DISPATCHINTERCONNECTORRES_202201010000.CSV"
+SRC_2019 = (
+    "/var/folders/v7/qpcbq9jx04gf6bgcsdy4tvy80000gn/T/opennem_0fagth98/PUBLIC_DVD_DISPATCHINTERCONNECTORRES_201901010000.CSV"
+)
+SRC_2022 = (
+    "/var/folders/v7/qpcbq9jx04gf6bgcsdy4tvy80000gn/T//opennem_t207p2yl/PUBLIC_DVD_DISPATCHINTERCONNECTORRES_202201010000.CSV"
+)
 
 
 def compare_and_chart_datasets(subject, comparator) -> None:
@@ -48,7 +28,7 @@ def compare_and_chart_datasets(subject, comparator) -> None:
 
 def part_date(ts: pd.Timestamp | datetime) -> datetime:
     """Convert pandas timestamp to parted datetime"""
-    dt = ts if isinstance(ts, (date, datetime)) else ts.to_pydatetime()
+    dt = ts if isinstance(ts, date | datetime) else ts.to_pydatetime()
     dt = dt.replace(year=2022)
     return dt
 
@@ -76,7 +56,6 @@ def compare_old_and_new_interconnectors(save_plot: bool = True, show: bool = Fal
     records = {}
 
     for idata in [interconnector_new, interconnector_old]:
-
         for record in idata.to_dict("records"):
             dt = part_date(record["settlementdate"])
             if dt not in records:

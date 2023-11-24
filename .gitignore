@@ -92,9 +92,9 @@ TODO.md
 .idea/
 
 # scripts we don't want commited
-scripts/run_query.py
-scripts/run_export.py
-scripts/wind_diff.py
+bin/run_query.py
+bin/run_export.py
+bin/wind_diff.py
 
 # notebooks @NOTE you can force commit anything we want in here
 notebooks/data/
@@ -116,15 +116,8 @@ notebooks/dmc_emissions.py
 .venv_notebook/
 
 # jupyter local config ignores
-.jupyter/migrated
-.jupyter/jupyter_notebook_config.original.py
 .opennem_requests_cache
-scratch/
-.opennem_requests_cache.sqlite
-scripts/run_export.py
+binrun_export.py
 scheduler_dev.py
 run_test.py
-terraform.tfvars
-pyrightconfig.json
-opennem/core/flows_old.py
 notebooks/

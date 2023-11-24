@@ -5,17 +5,14 @@ import logging
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from textwrap import dedent, indent
+from textwrap import dedent
 
 import matplotlib.pyplot as plt
-import pandas as pd
 import pydantic
 
-from opennem.controllers.nem import store_aemo_tableset
-from opennem.core.parsers.aemo.mms import AEMOTableSet, parse_aemo_url
+from opennem.core.parsers.aemo.mms import AEMOTableSet
 from opennem.core.parsers.aemo.nemweb import parse_aemo_url_optimized
 from opennem.db import get_database_engine
-from opennem.schema.network import NetworkSchema
 from opennem.utils.dates import date_series
 
 logger = logging.getLogger("opennem.vwp")
@@ -125,7 +122,6 @@ def get_notebook_vwp() -> list[VWPBucket]:
 
 
 def compare_vwp(fixture_values: list[VWPBucket], server_values: list[VWPBucket]) -> list[VWPBucket]:
-
     delta_models: list[VWPBucket] = []
     matching_intervals = 0
 
@@ -148,9 +144,7 @@ def compare_vwp(fixture_values: list[VWPBucket], server_values: list[VWPBucket])
         else:
             matching_intervals += 1
 
-        delta_model = VWPBucket(
-            interval=fixture_val.interval, value=float(fixture_val.value) - float(server_interval.value or 0)
-        )
+        delta_model = VWPBucket(interval=fixture_val.interval, value=float(fixture_val.value) - float(server_interval.value or 0))
 
         delta_models.append(delta_model)
 
@@ -165,7 +159,7 @@ def plot_deltas(deltas: list[VWPBucket], destination_file: str = "vwp_deltas.png
     x = [i.interval for i in deltas]
     y = [i.value for i in deltas]
 
-    vic1 = ax.bar(x, y, label="vic1")
+    ax.bar(x, y, label="vic1")
     ax.axhline(0, color="grey", linewidth=0.8)
     ax.set_ylabel("delta")
     ax.set_title("OpenNEM VWP Deltas")
@@ -235,7 +229,6 @@ def get_aemo_tableset() -> AEMOTableSet:
 
 
 def dump_tableset_csvs() -> None:
-
     ts = get_aemo_tableset()
 
     csv_path = Path(__file__).parent.parent / "notebooks" / "data"

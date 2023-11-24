@@ -127,7 +127,7 @@ def parse_args_from_settings_file():
         exit()
 
     args = {}
-    with open(SETTINGS_FILE, "r") as settings_file:
+    with open(SETTINGS_FILE) as settings_file:
         content = settings_file.read()
         lines = content.split("\n")
         for line in lines:

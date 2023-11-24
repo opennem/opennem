@@ -4,6 +4,8 @@ This script runs all the upgrade tasks for version 3.14
 
 """
 
+from scripts.load_historic_dispatch_regionsum import import_dispatch_regionsum
+
 from opennem.aggregates.facility_daily import run_aggregate_facility_all_by_year
 from opennem.aggregates.network_demand import run_aggregates_demand_network
 from opennem.aggregates.network_flows import run_flow_updates_all_for_network
@@ -12,7 +14,6 @@ from opennem.crawl import run_crawl
 from opennem.crawlers.mms import AEMOMMSMeterDataGenDuid
 from opennem.importer.db import import_all_facilities
 from opennem.schema.network import NetworkAEMORooftop, NetworkAPVI, NetworkNEM, NetworkOpenNEMRooftopBackfill, NetworkWEM
-from scripts.load_historic_dispatch_regionsum import import_dispatch_regionsum
 
 
 def upgrade_3_14() -> None:

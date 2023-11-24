@@ -15,13 +15,13 @@ from dateutil.relativedelta import relativedelta
 from pydantic import validator
 from sqlalchemy.engine.base import Engine
 
+from opennem import settings  # noqa: F401
 from opennem.core.normalizers import clean_float, string_to_upper
 from opennem.db import db_connect, get_database_engine
 from opennem.db.bulk_insert_csv import build_insert_query, generate_csv_from_records  # type: ignore
 from opennem.db.models.opennem import BalancingSummary, FacilityScada
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkNEM
-from opennem.settings import settings  # noqa: F401
 from opennem.utils.dates import date_series
 
 logger = logging.getLogger("opennem.importer.nemweb")
@@ -158,7 +158,6 @@ def get_trading_price_import_query(limit: int | None = None) -> str:
 
 
 def get_regionsum_import_query(limit: int | None = None) -> str:
-
     __query = """
     select
         trs.SETTLEMENTDATE,

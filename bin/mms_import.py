@@ -12,7 +12,6 @@ import logging
 # import mmap
 import re
 from pathlib import Path
-from typing import List, Optional
 
 import click
 
@@ -29,17 +28,14 @@ logger = logging.getLogger("opennem.mms")
 MMA_PATH = Path(__file__).parent / "data" / "mms"
 
 
-def find_available_mms_sets() -> List[str]:
+def find_available_mms_sets() -> list[str]:
     pass
 
 
-MMS_MODELS = [
-    getattr(mms, item) for item in dir(mms) if hasattr(getattr(mms, item), "__tablename__")
-]
+MMS_MODELS = [getattr(mms, item) for item in dir(mms) if hasattr(getattr(mms, item), "__tablename__")]
 
 
-def get_mms_model(table: AEMOTableSchema) -> Optional[mms.Base]:
-
+def get_mms_model(table: AEMOTableSchema) -> mms.Base | None:
     table_lookup = list(
         filter(
             lambda x: x.__tablename__ == table.full_name or x.__tablename__ == table.name,
@@ -48,23 +44,22 @@ def get_mms_model(table: AEMOTableSchema) -> Optional[mms.Base]:
     )
 
     if not table_lookup:
-        logger.error("Could not find ORM model for table {}".format(table.full_name))
+        logger.error(f"Could not find ORM model for table {table.full_name}")
         return None
 
     return table_lookup.pop()
 
 
 def store_mms_table(table: AEMOTableSchema) -> int:
-
     if not table.name:
-        logger.error("Table has no name!: {}".format(table))
+        logger.error(f"Table has no name!: {table}")
         return 0
 
     # Get the table ORM model
     table_schema = get_mms_model(table)
 
     if not table_schema:
-        logger.error("No table ORM schema for table name {}".format(table.name))
+        logger.error(f"No table ORM schema for table name {table.name}")
         return 0
 
     # update all non-primary key fields. get them dynamically.
@@ -103,12 +98,12 @@ def store_mms_table(table: AEMOTableSchema) -> int:
     cursor.copy_expert(sql_query, csv_content)
     conn.commit()
 
-    logger.info("{}: Inserted {} records".format(table.full_name, len(records_to_store)))
+    logger.info(f"{table.full_name}: Inserted {len(records_to_store)} records")
 
     return len(records_to_store)
 
 
-def import_file(filepath: Path, namespace: Optional[str] = None) -> None:
+def import_file(filepath: Path, namespace: str | None = None) -> None:
     content = None
 
     with open(filepath, mode="r") as fh:
@@ -122,27 +117,26 @@ def import_file(filepath: Path, namespace: Optional[str] = None) -> None:
     else:
         ts = parse_aemo_mms_csv(content)
 
-    logger.debug("Loaded {} tables".format(len(ts.table_names)))
+    logger.debug(f"Loaded {len(ts.table_names)} tables")
 
     for table in ts.tables:
-
         if namespace and table.namespace != namespace:
             continue
 
-        logger.debug("Storing table: {} {}".format(table.namespace, table.full_name))
+        logger.debug(f"Storing table: {table.namespace} {table.full_name}")
 
         try:
             store_mms_table(table)
         except Exception as e:
-            logger.error("Could not store for table: {}: {}".format(table.full_name, e))
+            logger.error(f"Could not store for table: {table.full_name}: {e}")
             raise e
 
 
-def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
+def import_directory(mms_dir: str, namespace: str | None = None) -> None:
     mmsdir = Path(mms_dir)
 
     if not mmsdir.is_dir():
-        raise Exception("Not a directory: {}".format(mms_dir))
+        raise Exception(f"Not a directory: {mms_dir}")
 
     for f in mmsdir.glob("*.zip"):
         import_file(f, namespace=namespace)
@@ -151,18 +145,18 @@ def import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
 @click.command()
 @click.argument("filepath", type=str, required=True)
 @click.option("--namespace", type=str, required=False)
-def cmd_import_file(filepath: Path, namespace: Optional[str] = None) -> None:
+def cmd_import_file(filepath: Path, namespace: str | None = None) -> None:
     import_file(filepath=filepath, namespace=namespace)
 
 
 @click.command()
 @click.argument("mms_dir", type=str, required=True)
 @click.option("--namespace", type=str, required=False)
-def cmd_import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
+def cmd_import_directory(mms_dir: str, namespace: str | None = None) -> None:
     mmsdir = Path(mms_dir)
 
     if not mmsdir.is_dir():
-        raise Exception("Not a directory: {}".format(mms_dir))
+        raise Exception(f"Not a directory: {mms_dir}")
 
     for f in mmsdir.glob("*.zip"):
         import_file(f, namespace=namespace)
@@ -171,24 +165,23 @@ def cmd_import_directory(mms_dir: str, namespace: Optional[str] = None) -> None:
 @click.command()
 @click.option("--namespace", type=str, required=False)
 @click.option("--debug", is_flag=True, default=False)
-def all(namespace: Optional[str] = None, debug: Optional[bool] = False) -> None:
-
+def all(namespace: str | None = None, debug: bool | None = False) -> None:
     logging.getLogger().setLevel(logging.INFO)
     logging.getLogger("opennem.pipelines.bulk_insert").setLevel(logging.INFO)
     logger.setLevel(logging.INFO)
 
     mms_data_dir = Path("data/mms/")
 
-    logger.info("Importing from {}".format(mms_data_dir))
+    logger.info(f"Importing from {mms_data_dir}")
 
     if namespace:
-        logger.info("Filtering to namespace: {}".format(namespace))
+        logger.info(f"Filtering to namespace: {namespace}")
 
     if debug:
         logger.setLevel(logging.DEBUG)
 
     if not mms_data_dir.is_dir():
-        raise Exception("Not a directory: {}".format(mms_data_dir))
+        raise Exception(f"Not a directory: {mms_data_dir}")
 
     for _dir in sorted(mms_data_dir.iterdir()):
         if not re.match(r"^\d{4}$", _dir.name):
@@ -201,10 +194,10 @@ def all(namespace: Optional[str] = None, debug: Optional[bool] = False) -> None:
             mms_path = _dir_month / "MMSDM_Historical_Data_SQLLoader/DATA/"
 
             if not mms_path.is_dir():
-                logger.warn("Have mms folder with no data: {}".format(_dir_month))
+                logger.warn(f"Have mms folder with no data: {_dir_month}")
                 continue
 
-            logger.info("Running import on: {}".format(mms_path))
+            logger.info(f"Running import on: {mms_path}")
 
             import_directory(str(mms_path), namespace=namespace)
 

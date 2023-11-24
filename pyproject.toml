@@ -122,7 +122,7 @@ exclude = [
   ".git",
   ".venv",
   "var",
-  "scripts",
+  "bin",
   "opennem/db/migrations",
   "build",
   "notebooks",

@@ -10,7 +10,6 @@ import csv
 import json
 import logging
 from pathlib import Path
-from typing import Optional
 
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Station
@@ -36,8 +35,7 @@ def get_mms() -> StationSet:
     return mms_ss
 
 
-def find_fac_in_mms(code: str, mms: StationSet) -> Optional[FacilitySchema]:
-
+def find_fac_in_mms(code: str, mms: StationSet) -> FacilitySchema | None:
     for station in mms:
         for fac in station.facilities:
             if fac.code == code:
@@ -46,8 +44,7 @@ def find_fac_in_mms(code: str, mms: StationSet) -> Optional[FacilitySchema]:
     return None
 
 
-def find_station_in_mms(code: str, mms: StationSet) -> Optional[StationSchema]:
-
+def find_station_in_mms(code: str, mms: StationSet) -> StationSchema | None:
     for station in mms:
         for fac in station.facilities:
             if fac.code == code:
@@ -56,7 +53,7 @@ def find_station_in_mms(code: str, mms: StationSet) -> Optional[StationSchema]:
     return None
 
 
-def station_is_in_db(station_code: str) -> Optional[Station]:
+def station_is_in_db(station_code: str) -> Station | None:
     session = SessionLocal()
 
     if station_code in NEM_STATION_REMAP.keys():
@@ -75,11 +72,11 @@ NEM_STATION_REMAP = {"SWANBANK": "SWAN_B", "CALLIDE": "CALL_A"}
 
 
 def list_unmapped() -> None:
-    """ Print out and find the umapped DUIDS """
+    """Print out and find the umapped DUIDS"""
     unmapped_source = Path(__file__).parent.parent / "data" / "unmapped.csv"
 
     if not unmapped_source.is_file():
-        logger.error("File not found: {}".format(unmapped_source))
+        logger.error(f"File not found: {unmapped_source}")
 
     recs = []
 
@@ -108,14 +105,12 @@ def list_unmapped() -> None:
                 "For {} found station {} with {} facilities and db : {}".format(
                     fac_seen.code,
                     found_station.code if found_station else "none",
-                    len(found_station.facilities)
-                    if found_station and found_station.facilities
-                    else 0,
+                    len(found_station.facilities) if found_station and found_station.facilities else 0,
                     station_model.code if station_model else "none",
                 )
             )
         else:
-            logger.info("Cound not find facility for {}".format(fac_seen.code))
+            logger.info(f"Cound not find facility for {fac_seen.code}")
 
 
 if __name__ == "__main__":

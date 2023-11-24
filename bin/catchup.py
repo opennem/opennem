@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import logging
-from datetime import datetime, timedelta
-from opennem import settings
+from datetime import datetime
+
 from opennem.aggregates.facility_daily import (
     run_aggregates_facility_year,
 )

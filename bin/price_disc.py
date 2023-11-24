@@ -5,8 +5,8 @@ Test scripts for determining price discrepency as detailed in issue:
 
 """
 
-from opennem.aggregates.network_demand import run_aggregates_demand_network
 from opennem.aggregates.facility_daily import run_aggregates_facility_year
+from opennem.aggregates.network_demand import run_aggregates_demand_network
 from opennem.schema.network import NetworkNEM
 
 
