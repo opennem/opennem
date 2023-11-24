@@ -66,20 +66,22 @@ def _clean_bom_text_field(field_val: str) -> str | None:
 class BOMObserationSchema(BaseConfig):
     state: str
     aifstime_utc: str
-    observation_time: datetime | None
-    apparent_t: float | None
+    observation_time: datetime | None = None
+    apparent_t: float | None = None
     air_temp: float
-    press_qnh: float | None
-    wind_dir: str | None
-    wind_spd_kmh: float | None
-    gust_kmh: float | None
-    rel_hum: float | None
-    cloud: str | None
-    cloud_type: str | None
+    press_qnh: float | None = None
+    wind_dir: str | None = None
+    wind_spd_kmh: float | None = None
+    gust_kmh: float | None = None
+    rel_hum: float | None = None
+    cloud: str | None = None
+    cloud_type: str | None = None
 
     _validate_cloud = validator("cloud", pre=True, allow_reuse=True)(_clean_bom_text_field)
     _validate_cloud_type = validator("cloud_type", pre=True, allow_reuse=True)(_clean_bom_text_field)
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("observation_time", always=True, pre=True)
     def _validate_observation_time(cls, value: str, values: dict[str, Any]) -> datetime | None:
         _aifstime_utc: str = values["aifstime_utc"]
@@ -101,7 +103,7 @@ class BOMObserationSchema(BaseConfig):
 
 
 class BOMObservationReturn(BaseConfig):
-    station_code: str | None
+    station_code: str | None = None
     state: str
 
     observations: list[BOMObserationSchema]

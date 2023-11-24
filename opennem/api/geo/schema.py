@@ -12,14 +12,13 @@ from typing import Any
 
 from geojson_pydantic.features import FeatureCollection
 from geojson_pydantic.geometries import GeometryCollection, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 Geometry = Point | MultiPoint | LineString | MultiLineString | Polygon | MultiPolygon
 
 
 class FacilityGeoBase(BaseModel):
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class FacilityGeometryCollection(FacilityGeoBase, GeometryCollection):
@@ -32,12 +31,12 @@ class FacilityFeature(BaseModel):
     """
 
     # @TODO - correct schema for GeoJSON that supports both versions
-    bbox: Any | None
-    properties: Any | None
-    geometry: Geometry | None  # type: ignore
+    bbox: Any | None = None
+    properties: Any | None = None
+    geometry: Geometry | None = None  # type: ignore
 
 
 class FacilityGeo(FacilityGeoBase, FeatureCollection):
     name: str = "opennem"
-    crs: dict | None
+    crs: dict | None = None
     features: Sequence[FacilityFeature]  # type: ignore

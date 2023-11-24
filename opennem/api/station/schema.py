@@ -10,13 +10,13 @@ from opennem.schema.opennem import OpennemBaseDataSchema
 
 class FueltechSchema(ApiBase):
     code: str
-    label: str | None
-    renewable: bool | None
+    label: str | None = None
+    renewable: bool | None = None
 
 
 class FacilityStatusSchema(ApiBase):
     code: str
-    label: str | None
+    label: str | None = None
 
 
 class NetworkRecord(ApiBase):
@@ -24,15 +24,15 @@ class NetworkRecord(ApiBase):
 
 
 class FacilitySchema(ApiBase):
-    id: int | None
+    id: int | None = None
 
     network: NetworkRecord
 
-    fueltech: FueltechSchema | None
+    fueltech: FueltechSchema | None = None
 
-    status: FacilityStatusSchema | None
+    status: FacilityStatusSchema | None = None
 
-    station_id: int | None
+    station_id: int | None = None
 
     # @TODO no longer optional
     code: str = ""
@@ -41,29 +41,29 @@ class FacilitySchema(ApiBase):
 
     active: bool = True
 
-    capacity_registered: float | None
+    capacity_registered: float | None = None
 
-    registered: datetime | None
-    deregistered: datetime | None
-    expected_closure_date: datetime | None
-    expected_closure_year: int | None
+    registered: datetime | None = None
+    deregistered: datetime | None = None
+    expected_closure_date: datetime | None = None
+    expected_closure_year: int | None = None
 
-    network_region: str | None
+    network_region: str | None = None
 
-    unit_id: int | None
-    unit_number: int | None
-    unit_alias: str | None
-    unit_capacity: float | None
+    unit_id: int | None = None
+    unit_number: int | None = None
+    unit_alias: str | None = None
+    unit_capacity: float | None = None
 
-    emissions_factor_co2: float | None
+    emissions_factor_co2: float | None = None
 
     approved: bool = False
-    approved_by: str | None
-    approved_at: datetime | None
+    approved_by: str | None = None
+    approved_at: datetime | None = None
 
 
 class LocationSchema(ApiBase):
-    id: int | None
+    id: int | None = None
 
     address1: str | None = ""
     address2: str | None = ""
@@ -81,8 +81,8 @@ class LocationSchema(ApiBase):
     # geom: Optional[Any] = None
     # boundary: Optional[Any]
 
-    lat: float | None
-    lng: float | None
+    lat: float | None = None
+    lng: float | None = None
 
 
 class StationRecord(ApiBase):
@@ -90,7 +90,7 @@ class StationRecord(ApiBase):
 
     code: str
 
-    name: str | None
+    name: str | None = None
 
     # Original network fields
     # network_name: str | None
@@ -104,12 +104,12 @@ class StationRecord(ApiBase):
 
     # network: Optional[NetworkSchema] = None
 
-    description: str | None
-    wikipedia_link: str | None
-    wikidata_id: str | None
+    description: str | None = None
+    wikipedia_link: str | None = None
+    wikidata_id: str | None = None
 
-    created_by: str | None
-    created_at: datetime | None
+    created_by: str | None = None
+    created_at: datetime | None = None
 
 
 class StationResponse(OpennemBaseDataSchema):

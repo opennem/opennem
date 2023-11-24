@@ -33,9 +33,9 @@ def _clean_expected_closure_year(closure_year: str | int) -> int | None:
 
 class AEMOClosureRecord(BaseConfig):
     station_name: str
-    duid: str | None
-    expected_closure_year: int | None
-    expected_closure_date: datetime | None
+    duid: str | None = None
+    expected_closure_year: int | None = None
+    expected_closure_date: datetime | None = None
 
     _validate_closure_year = validator("expected_closure_year", pre=True)(_clean_expected_closure_year)
 

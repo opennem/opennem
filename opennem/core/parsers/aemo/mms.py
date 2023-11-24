@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic.error_wrappers import ValidationError
 from pydantic.fields import PrivateAttr
 
@@ -66,19 +66,22 @@ class AEMOTableSchema(BaseConfig):
 
         return None
 
-    @validator("name")
+    @field_validator("name")
+    @classmethod
     def validate_name(cls, table_name: str) -> str:
         _table_name = table_name.strip().lower()
 
         return _table_name
 
-    @validator("namespace")
+    @field_validator("namespace")
+    @classmethod
     def validate_namespace(cls, namespace_name: str) -> str:
         _namespace_name = namespace_name.strip().lower()
 
         return _namespace_name
 
-    @validator("fieldnames")
+    @field_validator("fieldnames")
+    @classmethod
     def validate_fieldnames(cls, fieldnames: list[str]) -> list[str]:
         if not isinstance(fieldnames, list):
             return []
@@ -168,8 +171,9 @@ class AEMOTableSchema(BaseConfig):
 
         logger.info(f"Wrote records to {self.full_name}")
 
-    class Config:
-        underscore_attrs_are_private = True
+    # TODO[pydantic]: The following keys were removed: `underscore_attrs_are_private`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(underscore_attrs_are_private=True)
 
 
 class AEMOTableSet(BaseModel):

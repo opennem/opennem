@@ -28,8 +28,8 @@ class EnergyGap(BaseConfig):
     network_id: str
     has_power: bool
     has_energy: bool
-    total_generated: float | None
-    total_energy: float | None
+    total_generated: float | None = None
+    total_energy: float | None = None
 
 
 def query_energy_gaps(date_min: datetime, date_max: datetime, network: NetworkSchema = NetworkNEM) -> list[EnergyGap]:

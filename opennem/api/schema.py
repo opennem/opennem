@@ -1,13 +1,14 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ApiBase(BaseModel):
-    class Config:
-        orm_mode = True
-        anystr_strip_whitespace = True
-        use_enum_values = True
-        arbitrary_types_allowed = True
-        validate_assignment = True
+    model_config = ConfigDict(
+        from_attributes=True,
+        str_strip_whitespace=True,
+        use_enum_values=True,
+        arbitrary_types_allowed=True,
+        validate_assignment=True,
+    )
 
 
 class UpdateResponse(BaseModel):
@@ -24,7 +25,7 @@ class FueltechResponse(ApiBase):
 
 class APINetworkRegion(ApiBase):
     code: str
-    timezone: str | None
+    timezone: str | None = None
 
 
 class APINetworkSchema(ApiBase):
@@ -32,6 +33,6 @@ class APINetworkSchema(ApiBase):
     country: str
     label: str
 
-    regions: list[APINetworkRegion] | None
+    regions: list[APINetworkRegion] | None = None
     timezone: str | None = Field(None, description="Network timezone")
     interval_size: int = Field(..., description="Size of network interval in minutes")

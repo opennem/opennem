@@ -3,7 +3,7 @@ from opennem.schema.opennem import OpennemBaseDataSchema
 
 
 class LocationSchema(ApiBase):
-    id: int | None
+    id: int | None = None
 
     address1: str | None = ""
     address2: str | None = ""
@@ -21,8 +21,8 @@ class LocationSchema(ApiBase):
     # geom: Optional[Any] = None
     # boundary: Optional[Any]
 
-    lat: float | None
-    lng: float | None
+    lat: float | None = None
+    lng: float | None = None
 
 
 class LocationResponse(OpennemBaseDataSchema):

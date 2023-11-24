@@ -25,16 +25,16 @@ class AEMORelGeneratorRecord(BaseConfig):
     category: str
     classification: str
     fuel_source_primary: str
-    fuel_source_descriptor: str | None
-    tech_primary: str | None
-    tech_primary_descriptor: str | None
+    fuel_source_descriptor: str | None = None
+    tech_primary: str | None = None
+    tech_primary_descriptor: str | None = None
     unit_no: str
-    unit_size: float | None
+    unit_size: float | None = None
     aggreagation: str
-    duid: str | None
-    reg_cap: float | None
-    max_cap: float | None
-    max_roc: float | None
+    duid: str | None = None
+    reg_cap: float | None = None
+    max_cap: float | None = None
+    max_roc: float | None = None
 
     @property
     def fueltech_id(self) -> str | None:

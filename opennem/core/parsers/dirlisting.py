@@ -21,7 +21,7 @@ from typing import Any
 from urllib.parse import urljoin
 from zoneinfo import ZoneInfo
 
-from pydantic import ValidationError, validator
+from pydantic import ValidationError, field_validator, validator
 from pyquery import PyQuery as pq
 
 from opennem.core.downloader import url_downloader
@@ -79,13 +79,15 @@ class DirlistingEntryType(Enum):
 class DirlistingEntry(BaseConfig):
     filename: Path
     link: str
-    modified_date: datetime | None
-    aemo_interval_date: datetime | None
-    file_size: int | None
+    modified_date: datetime | None = None
+    aemo_interval_date: datetime | None = None
+    file_size: int | None = None
     entry_type: DirlistingEntryType = DirlistingEntryType.file
 
     _validate_modified_date = validator("modified_date", allow_reuse=True, pre=True)(parse_dirlisting_datetime)
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("aemo_interval_date", always=True)
     def _validate_aemo_created_date(cls, value: Any, values: dict[str, Any]) -> datetime | None:
         if value:
@@ -106,13 +108,16 @@ class DirlistingEntry(BaseConfig):
 
         return aemo_dt.date
 
-    @validator("file_size", allow_reuse=True, pre=True)
+    @field_validator("file_size", mode="before")
+    @classmethod
     def _parse_dirlisting_filesize(cls, value: str | int | float) -> int | None:
         if is_number(value):
             return value
 
         return None
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("entry_type", always=True)
     def _validate_entry_type(cls, value: Any, values: dict[str, Any]) -> DirlistingEntryType:
         if not values["file_size"]:
@@ -126,7 +131,7 @@ class DirlistingEntry(BaseConfig):
 
 class DirectoryListing(BaseConfig):
     url: str
-    timezone: str | None
+    timezone: str | None = None
     entries: list[DirlistingEntry] = []
 
     @property

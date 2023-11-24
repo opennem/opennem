@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class PropertyBaseModel(BaseModel):
@@ -19,9 +19,6 @@ class PropertyBaseModel(BaseModel):
 
 
 class BaseConfig(PropertyBaseModel):
-    class Config:
-        orm_mode = True
-        anystr_strip_whitespace = True
-
-        arbitrary_types_allowed = True
-        validate_assignment = True
+    model_config = ConfigDict(
+        from_attributes=True, str_strip_whitespace=True, arbitrary_types_allowed=True, validate_assignment=True
+    )

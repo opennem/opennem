@@ -38,8 +38,8 @@ class DailySummaryResult(BaseConfig):
 class DailySummary(BaseConfig):
     trading_day: datetime
     network: str
-    chart_url: str | None
-    environment: str | None
+    chart_url: str | None = None
+    environment: str | None = None
 
     results: list[DailySummaryResult]
 

@@ -17,34 +17,34 @@ class FacilityRecord(ApiBase):
 
     network: NetworkRecord
 
-    fueltech: FueltechSchema | None
+    fueltech: FueltechSchema | None = None
 
-    status: FacilityStatusSchema | None
+    status: FacilityStatusSchema | None = None
 
-    station_id: int | None
+    station_id: int | None = None
 
     # @TODO no longer optional
     code: str = ""
 
     dispatch_type: DispatchType
-    capacity_registered: float | None
+    capacity_registered: float | None = None
 
-    registered: datetime | None
-    deregistered: datetime | None
+    registered: datetime | None = None
+    deregistered: datetime | None = None
 
-    network_region: str | None
+    network_region: str | None = None
 
-    unit_id: int | None
-    unit_number: int | None
-    unit_alias: str | None
-    unit_capacity: float | None
+    unit_id: int | None = None
+    unit_number: int | None = None
+    unit_alias: str | None = None
+    unit_capacity: float | None = None
 
-    created_by: str | None
-    created_at: datetime | None
+    created_by: str | None = None
+    created_at: datetime | None = None
 
     approved: bool = False
-    approved_by: str | None
-    approved_at: datetime | None
+    approved_by: str | None = None
+    approved_at: datetime | None = None
 
 
 class FacilityUpdateResponse(ApiBase):
@@ -55,7 +55,7 @@ class FacilityUpdateResponse(ApiBase):
 class FacilityResponse(ApiBase):
     success: bool = False
     record_num: int
-    records: list[FacilityRecord] | None
+    records: list[FacilityRecord] | None = None
 
 
 class FacilityModificationTypes(str, Enum):

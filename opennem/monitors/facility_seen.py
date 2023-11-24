@@ -21,9 +21,9 @@ logger = logging.getLogger("opennem.monitors.facility_seen")
 class FacilitySeen(BaseConfig):
     code: str
     network_id: str
-    seen_first: datetime | None
-    seen_last: datetime | None
-    generated: float | None
+    seen_first: datetime | None = None
+    seen_last: datetime | None = None
+    generated: float | None = None
 
 
 # This is a list of NEM VPP's that aren't mapped yet

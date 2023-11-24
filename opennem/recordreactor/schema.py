@@ -29,7 +29,7 @@ class MilestoneRecord(BaseModel):
     unit: UnitDefinition
     network: NetworkSchema
     fueltech: FueltechSchema
-    description: str | None
+    description: str | None = None
 
     @property
     def network_code(self) -> str:

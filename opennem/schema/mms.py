@@ -5,30 +5,30 @@
 OpenNEM MMS Schemas
 """
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from opennem.core.normalizers import normalize_duid, participant_name_filter
 
 
 class MMSBase(BaseModel):
-    class Config:
-        orm_mode = True
-        anystr_strip_whitespace = True
+    model_config = ConfigDict(from_attributes=True, str_strip_whitespace=True)
 
 
 class MMSParticipant(MMSBase):
-    code: str | None
+    code: str | None = None
     name: str
     country: str = "au"
-    abn: str | None
+    abn: str | None = None
 
     @classmethod
-    @validator("code")
+    @field_validator("code")
+    @classmethod
     def code_clean(cls, v):
         return normalize_duid(v)
 
     @classmethod
-    @validator("name")
+    @field_validator("name")
+    @classmethod
     def name_clean(cls, v):
         name = participant_name_filter(v)
 
@@ -41,23 +41,26 @@ class MMSStation(MMSBase):
 
 
 class MMSFacility(MMSBase):
-    code: str | None
+    code: str | None = None
     name: str
 
     @classmethod
-    @validator("code")
+    @field_validator("code")
+    @classmethod
     def code_clean(cls, v):
         return normalize_duid(v)
 
     @classmethod
-    @validator("network_name")
+    @field_validator("network_name")
+    @classmethod
     def network_name_isalpha(cls, v):
         assert type(v) is str, "must be string"
 
         return v
 
     @classmethod
-    @validator("name")
+    @field_validator("name")
+    @classmethod
     def name_clean(cls, v):
         # todo auto-set name based on network_name
         name = participant_name_filter(v)

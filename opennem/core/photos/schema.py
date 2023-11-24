@@ -9,7 +9,7 @@ class PhotoImportSchema(BaseConfig):
     is_primary: bool
     image_url: str
 
-    author: str | None
-    author_link: str | None
-    license: str | None
-    license_link: str | None
+    author: str | None = None
+    author_link: str | None = None
+    license: str | None = None
+    license_link: str | None = None

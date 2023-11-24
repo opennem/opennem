@@ -17,7 +17,7 @@ from io import StringIO
 from typing import Any
 
 import requests
-from pydantic import validator
+from pydantic import ConfigDict, field_validator, validator
 
 from opennem.schema.core import BaseConfig
 from opennem.schema.network import NetworkWEM
@@ -54,12 +54,12 @@ def _empty_string_to_none(field_value: str | float | None) -> str | float | None
 
 class WEMDEBalancingSummaryInterval(BaseConfig):
     trading_day_interval: datetime
-    forecast_eoi_mw: float | None
-    forecast_mw: float | None
-    price: float | None  # some forecasts don't have a price
-    forecast_nsg_mw: float | None
-    actual_nsg_mw: float | None
-    actual_total_generation: float | None
+    forecast_eoi_mw: float | None = None
+    forecast_mw: float | None = None
+    price: float | None = None  # some forecasts don't have a price
+    forecast_nsg_mw: float | None = None
+    actual_nsg_mw: float | None = None
+    actual_total_generation: float | None = None
 
     _validator_forecast_mw = validator("forecast_mw", pre=True, allow_reuse=True)(_empty_string_to_none)
 
@@ -73,7 +73,8 @@ class WEMDEBalancingSummaryInterval(BaseConfig):
 
     _validator_forecast_nsg_mw = validator("forecast_nsg_mw", pre=True, allow_reuse=True)(_empty_string_to_none)
 
-    @validator("trading_day_interval", pre=True)
+    @field_validator("trading_day_interval", mode="before")
+    @classmethod
     def _validate_trading_interval(cls, value: Any) -> datetime:
         interval_time = parse_date(value, network=NetworkWEM)
 
@@ -86,16 +87,15 @@ class WEMDEBalancingSummaryInterval(BaseConfig):
     def is_forecast(self) -> bool:
         return not self.actual_total_generation and not self.actual_nsg_mw
 
-    class Config:
-        alias_generator = _wem_balancing_summary_field_alias
+    model_config = ConfigDict(alias_generator=_wem_balancing_summary_field_alias)
 
 
 class WEMDEBalancingSummarySet(BaseConfig):
     crawled_at: datetime
     live: bool = True
     intervals: list[WEMDEBalancingSummaryInterval]
-    source_url: str | None
-    server_latest: datetime | None
+    source_url: str | None = None
+    server_latest: datetime | None = None
 
     @property
     def count(self) -> int:
@@ -106,10 +106,10 @@ class WEMDEGenerationInterval(BaseConfig):
     trading_interval: datetime
     network_id: str = "WEM"
     facility_code: str
-    power: float | None
-    eoi_quantity: float | None
-    generated_scheduled: float | None
-    generated_non_scheduled: float | None
+    power: float | None = None
+    eoi_quantity: float | None = None
+    generated_scheduled: float | None = None
+    generated_non_scheduled: float | None = None
 
     created_by: str = "controllers.wem"
     created_at: datetime = datetime.now()
@@ -138,7 +138,8 @@ class WEMDEGenerationInterval(BaseConfig):
 
     _validator_generated_non_scheduled = validator("generated_non_scheduled", pre=True, allow_reuse=True)(_empty_string_to_none)
 
-    @validator("trading_interval", pre=True)
+    @field_validator("trading_interval", mode="before")
+    @classmethod
     def _validate_trading_interval(cls, value: Any) -> datetime:
         interval_time = parse_date(value, network=NetworkWEM)
 
@@ -152,8 +153,8 @@ class WEMDEFacilityIntervalSet(BaseConfig):
     crawled_at: datetime
     live: bool = True
     intervals: list[WEMDEGenerationInterval]
-    source_url: str | None
-    server_latest: datetime | None
+    source_url: str | None = None
+    server_latest: datetime | None = None
 
     @property
     def count(self) -> int:

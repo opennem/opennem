@@ -9,23 +9,23 @@ class WeatherObservation(ApiBase):
 
     temp_apparent: float
     temp_air: float
-    press_qnh: float | None
-    wind_dir: str | None
-    wind_spd: float | None
-    wind_gust: float | None
-    humidity: float | None
-    cloud: str | None
-    cloud_type: str | None
+    press_qnh: float | None = None
+    wind_dir: str | None = None
+    wind_spd: float | None = None
+    wind_gust: float | None = None
+    humidity: float | None = None
+    cloud: str | None = None
+    cloud_type: str | None = None
 
 
 class WeatherStation(ApiBase):
     code: str
     state: str
     name_alias: str
-    registered: date | None
+    registered: date | None = None
     website_url: str
     altitude: int
     lat: float
     lng: float
 
-    observations: list[WeatherObservation] | None
+    observations: list[WeatherObservation] | None = None

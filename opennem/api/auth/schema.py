@@ -14,7 +14,7 @@ class AuthApiKeyRecord(BaseConfig):
     """Schema for an API Key database entry or definition"""
 
     keyid: UrlsafeString
-    description: str | None
+    description: str | None = None
     revoked: bool = True
     created_at: datetime
 

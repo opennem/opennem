@@ -23,8 +23,8 @@ logger = logging.getLogger("opennem.compat.energy")
 
 class ScadaResultCompat(BaseConfig):
     interval: datetime
-    code: str | None
-    generated: float | int | None
+    code: str | None = None
+    generated: float | int | None = None
 
 
 def __trapezium_integration(d_ti: pd.Series, power_field: str = "MWH_READING") -> pd.Series:

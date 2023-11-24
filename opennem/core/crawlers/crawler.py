@@ -14,10 +14,10 @@ logger = logging.getLogger("opennem.crawlers.crawler")
 
 class CrawlMetadata(BaseConfig):
     name: str
-    version: float | None
-    last_crawled: datetime | None
-    last_processed: datetime | None
-    server_latest: datetime | None
+    version: float | None = None
+    last_crawled: datetime | None = None
+    last_processed: datetime | None = None
+    server_latest: datetime | None = None
     force_run: bool | None = False
 
 

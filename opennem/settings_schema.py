@@ -7,8 +7,8 @@ from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path
 
-from pydantic import BaseSettings
-from pydantic.class_validators import validator
+from pydantic import ConfigDict, field_validator
+from pydantic_settings import BaseSettings
 
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
@@ -165,7 +165,8 @@ class OpennemSettings(BaseSettings):
     api_deprecation_proportion: int = 0
 
     # pylint: disable=no-self-argument
-    @validator("log_level")
+    @field_validator("log_level")
+    @classmethod
     def validate_log_level(cls, log_value: str) -> str | None:
         _log_value = log_value.upper().strip()
 
@@ -198,8 +199,10 @@ class OpennemSettings(BaseSettings):
     def is_dev(self) -> bool:
         return self.env in ("local", "development", "staging")
 
-    class Config:
-        fields = {
+    # TODO[pydantic]: The following keys were removed: `fields`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(
+        fields={
             "env": {"env": "ENV"},
             "log_level": {"env": "LOG_LEVEL"},
             "_static_folder_path": {"env": "STATIC_PATH"},
@@ -211,3 +214,4 @@ class OpennemSettings(BaseSettings):
             "server_host": {"env": "HOST"},
             "cache_scada_values_ttl_sec": {"env": "CACHE_SCADA_TTL"},
         }
+    )

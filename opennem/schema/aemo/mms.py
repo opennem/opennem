@@ -3,7 +3,7 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, ConfigDict, field_validator, validator
 
 from opennem.core.normalizers import clean_float, normalize_duid
 from opennem.schema.network import NetworkNEM
@@ -37,16 +37,16 @@ def capitalize_string(string_val: str) -> str:
 
 
 class MMSBase(BaseModel):
-    _interval_field: str | None
+    _interval_field: str | None = None
     _primary_keys: list[str] | None = None
-
-    class Config:
-        anystr_strip_whitespace = True
-        use_enum_values = True
-        arbitrary_types_allowed = True
-        validate_assignment = True
-        allow_population_by_field_name = True
-        alias_generator = mms_alias_generator
+    model_config = ConfigDict(
+        str_strip_whitespace=True,
+        use_enum_values=True,
+        arbitrary_types_allowed=True,
+        validate_assignment=True,
+        populate_by_name=True,
+        alias_generator=mms_alias_generator,
+    )
 
     _validate_interval_datetime = validator("interval_datetime", pre=True, allow_reuse=True, check_fields=False)(
         lambda x: parse_date(x, network=NetworkNEM)
@@ -71,20 +71,22 @@ class ParticipantMNSPInterconnector(MMSBase):
     fromregion: str
     toregion: str
     maxcapacity: float
-    tlf: float | None
-    lhsfactor: float | None
-    meterflowconstant: float | None
+    tlf: float | None = None
+    lhsfactor: float | None = None
+    meterflowconstant: float | None = None
     authoriseddate: datetime
     authorisedby: str
-    lastchanged: datetime | None
-    from_region_tlf: float | None
-    to_region_tlf: float | None
+    lastchanged: datetime | None = None
+    from_region_tlf: float | None = None
+    to_region_tlf: float | None = None
 
-    @validator("linkid", pre=True)
+    @field_validator("linkid", mode="before")
+    @classmethod
     def validate_linkid(cls, value: str) -> str | None:
         return normalize_duid(value)
 
-    @validator("effectivedate", pre=True)
+    @field_validator("effectivedate", mode="before")
+    @classmethod
     def validate_effectivedate(cls, value: str) -> datetime:
         dt = parse_date(value)
 
@@ -93,7 +95,8 @@ class ParticipantMNSPInterconnector(MMSBase):
 
         return dt
 
-    @validator("maxcapacity", pre=True)
+    @field_validator("maxcapacity", mode="before")
+    @classmethod
     def validate_maxcapacity(cls, value: str) -> float:
         f = clean_float(value)
 
@@ -102,7 +105,8 @@ class ParticipantMNSPInterconnector(MMSBase):
 
         return f
 
-    @validator("authoriseddate", pre=True)
+    @field_validator("authoriseddate", mode="before")
+    @classmethod
     def validate_authoriseddate(cls, value: str) -> datetime:
         dt = parse_date(value)
 
@@ -112,7 +116,8 @@ class ParticipantMNSPInterconnector(MMSBase):
 
         return dt
 
-    @validator("lastchanged", pre=True)
+    @field_validator("lastchanged", mode="before")
+    @classmethod
     def validate_lastchanged(cls, value: str | None) -> datetime | None:
         if not value or value == "":
             return None
@@ -151,7 +156,7 @@ class DispatchUnitSolutionSchema(MMSBase):
 
     settlementdate: datetime
     duid: str
-    initialmw: float | None
+    initialmw: float | None = None
 
     _validate_duid = validator("duid")(normalize_duid)
     _validate_initialmw = validator("initialmw")(clean_float)

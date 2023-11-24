@@ -50,8 +50,8 @@ metadata = Base.metadata
 
 
 class FacilitySeenRange(BaseConfig):
-    date_min: datetime | None
-    date_max: datetime | None
+    date_min: datetime | None = None
+    date_max: datetime | None = None
 
 
 # db models

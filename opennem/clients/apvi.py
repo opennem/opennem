@@ -8,7 +8,7 @@ from json.decoder import JSONDecodeError
 from typing import Any
 from urllib.parse import urlencode
 
-from pydantic import ValidationError, validator
+from pydantic import ValidationError, field_validator, validator
 
 from opennem import settings
 from opennem.core.normalizers import is_number
@@ -94,14 +94,15 @@ def get_apvi_uri(date: date | None = None) -> str:
 class APVIForecastInterval(BaseConfig):
     trading_interval: datetime
     network_id: str = APVI_NETWORK_CODE
-    state: str | None
-    facility_code: str | None
-    generated: float | None
-    eoi_quantity: float | None
+    state: str | None = None
+    facility_code: str | None = None
+    generated: float | None = None
+    eoi_quantity: float | None = None
 
     _validate_state = validator("state", pre=True, allow_reuse=True)(lambda x: x.strip().upper() if x else None)
 
-    @validator("trading_interval", pre=True)
+    @field_validator("trading_interval", mode="before")
+    @classmethod
     def _validate_trading_interval(cls, value: Any) -> datetime:
         interval_time = parse_date(
             value,
@@ -117,6 +118,8 @@ class APVIForecastInterval(BaseConfig):
 
         return interval_time
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("facility_code", always=True, pre=True)
     def _validate_facility_code(cls, value: Any, values: dict[str, Any]) -> str | None:
         """Generate an OpenNEM derived facility code for APVI facilities"""
@@ -127,6 +130,8 @@ class APVIForecastInterval(BaseConfig):
 
         return f"{ROOFTOP_CODE}_{APVI_NETWORK_CODE}_{state.upper()}"
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("eoi_quantity", always=True, pre=True)
     def _validate_eoi_quantity(cls, value: Any, values: dict[str, Any]) -> float | None:
         """Calculates energy value"""
@@ -142,9 +147,11 @@ class APVIForecastInterval(BaseConfig):
 class APVIStateRooftopCapacity(BaseConfig):
     state: str
     capacity_registered: float
-    facility_code: str | None
-    unit_number: int | None
+    facility_code: str | None = None
+    unit_number: int | None = None
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("facility_code", always=True, pre=True)
     def _validate_facility_code(cls, value: Any, values: dict[str, Any]) -> str:
         """Generate an OpenNEM derived facility code for APVI facilities"""
@@ -154,10 +161,10 @@ class APVIStateRooftopCapacity(BaseConfig):
 
 
 class APVIForecastSet(BaseConfig):
-    crawled_at: datetime | None
+    crawled_at: datetime | None = None
     intervals: list[APVIForecastInterval]
-    server_latest: datetime | None
-    capacities: list[APVIStateRooftopCapacity] | None
+    server_latest: datetime | None = None
+    capacities: list[APVIStateRooftopCapacity] | None = None
 
 
 _apvi_request_session = http

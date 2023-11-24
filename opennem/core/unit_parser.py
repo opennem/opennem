@@ -28,7 +28,7 @@ class UnitSchema(BaseModel):
     # The number of units
     number: int = 1
 
-    capacity: int | None
+    capacity: int | None = None
 
 
 def is_number(v: str) -> bool:

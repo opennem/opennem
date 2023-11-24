@@ -24,7 +24,7 @@ class NetworkSchemaException(Exception):
 class NetworkRegionSchema(BaseConfig):
     network_id: str
     code: str
-    timezone: str | None
+    timezone: str | None = None
 
 
 class NetworkSchema(BaseConfig):

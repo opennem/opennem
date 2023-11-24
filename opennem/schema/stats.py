@@ -6,8 +6,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel
-from pydantic.class_validators import validator
+from pydantic import BaseModel, ConfigDict, field_validator
 from xlrd.xldate import xldate_as_datetime
 
 from opennem.core.normalizers import clean_float
@@ -27,7 +26,8 @@ class StatDatabase(BaseModel):
     stat_type: StatTypes
     value: float
 
-    @validator("value", pre=True)
+    @field_validator("value", mode="before")
+    @classmethod
     def parse_cpi_value(cls, value: Any) -> float:
         v = clean_float(value)
 
@@ -36,10 +36,7 @@ class StatDatabase(BaseModel):
 
         return v
 
-    class Config:
-        orm_mode = True
-        anystr_strip_whitespace = True
-        use_enum_values = True
+    model_config = ConfigDict(from_attributes=True, str_strip_whitespace=True, use_enum_values=True)
 
 
 class StatsSet(BaseModel):
@@ -53,7 +50,8 @@ class AUCpiData(BaseModel):
     quarter_date: datetime
     cpi_value: float
 
-    @validator("quarter_date", pre=True)
+    @field_validator("quarter_date", mode="before")
+    @classmethod
     def parse_quarter_date(cls, value) -> datetime:
         v = xldate_as_datetime(value, 0)
 
@@ -62,7 +60,8 @@ class AUCpiData(BaseModel):
 
         return v
 
-    @validator("cpi_value", pre=True)
+    @field_validator("cpi_value", mode="before")
+    @classmethod
     def parse_cpi_value(cls, value: Any) -> float:
         v = clean_float(value)
 
@@ -76,7 +75,8 @@ class AUInflationData(BaseModel):
     quarter_date: datetime
     inflation_value: float
 
-    @validator("quarter_date", pre=True)
+    @field_validator("quarter_date", mode="before")
+    @classmethod
     def parse_quarter_date(cls, value) -> datetime:
         v = xldate_as_datetime(value, 0)
 
@@ -85,7 +85,8 @@ class AUInflationData(BaseModel):
 
         return v
 
-    @validator("inflation_value", pre=True)
+    @field_validator("inflation_value", mode="before")
+    @classmethod
     def parse_cpi_value(cls, value: Any) -> float:
         v = clean_float(value)
 

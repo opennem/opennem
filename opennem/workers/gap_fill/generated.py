@@ -19,7 +19,7 @@ class GeneratedGap(BaseConfig):
     interval: datetime
     network_id: str
     has_power: bool
-    total_generated: float | None
+    total_generated: float | None = None
 
 
 class GapfillType(enum.Enum):

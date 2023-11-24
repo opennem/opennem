@@ -57,12 +57,12 @@ class OpennemDataHistoryV2(BaseConfig):
 class OpennemDataV2(BaseConfig):
     id: str
     region: str
-    type: str | None
+    type: str | None = None
     units: str
-    fuel_tech: str | None
+    fuel_tech: str | None = None
 
     history: OpennemDataHistoryV2
-    forecast: OpennemDataHistoryV2 | None
+    forecast: OpennemDataHistoryV2 | None = None
 
 
 class OpennemDataSetV2(BaseConfig):

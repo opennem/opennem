@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo
 import pydantic
 import requests
 from datedelta import datedelta
-from pydantic import ValidationError, validator
+from pydantic import ValidationError, field_validator, validator
 
 from opennem import settings
 from opennem.core.compat.utils import translate_id_v3_to_v2
@@ -123,6 +123,8 @@ class OpennemDataHistory(BaseConfig):
     # format data numbers
     _data_format = validator("data", allow_reuse=True, pre=True)(format_number_series)
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("data", pre=True, always=True)
     def validate_data(
         cls, field_value: list[ValidNumber], values: dict[str, datetime | str | list[ValidNumber]]
@@ -184,23 +186,23 @@ class OpennemDataHistory(BaseConfig):
 
 
 class OpennemData(BaseConfig):
-    id: str | None
-    type: str | None
-    fuel_tech: str | None
-    code: str | None
+    id: str | None = None
+    type: str | None = None
+    fuel_tech: str | None = None
+    code: str | None = None
 
-    network: str | None
-    region: str | None
+    network: str | None = None
+    region: str | None = None
     data_type: str
     units: str
 
-    interval: TimeIntervalAPI | None
-    period: TimePeriodAPI | None
+    interval: TimeIntervalAPI | None = None
+    period: TimePeriodAPI | None = None
 
     history: OpennemDataHistory
-    forecast: OpennemDataHistory | None
+    forecast: OpennemDataHistory | None = None
 
-    x_capacity_at_present: float | None
+    x_capacity_at_present: float | None = None
 
     # validators
 
@@ -215,7 +217,7 @@ class OpennemData(BaseConfig):
 class OpennemDataSet(BaseConfig):
     type: str | None = None
     response_status: ResponseStatus = ResponseStatus.OK
-    version: str | None
+    version: str | None = None
     network: str | None = None
     code: str | None = None
     region: str | None = None
@@ -259,7 +261,8 @@ class OpennemDataSet(BaseConfig):
 
     # Validators
     # pylint: disable=no-self-argument
-    @validator("data", pre=True, allow_reuse=True)
+    @field_validator("data", mode="before")
+    @classmethod
     def validate_data_unique(cls, value: list[OpennemData], **kwargs) -> list[OpennemData]:
         """Validate the data being set to make sure there are no duplicate ids"""
 
@@ -323,32 +326,32 @@ class RegionFlowResult(BaseConfig):
     interval: datetime
     flow_from: str
     flow_to: str
-    generated: float | None
-    flow_from_energy: float | None
-    flow_to_energy: float | None
+    generated: float | None = None
+    flow_from_energy: float | None = None
+    flow_to_energy: float | None = None
 
 
 class RegionFlowEmissionsResult(BaseConfig):
     interval: datetime
     flow_from: str
     flow_to: str
-    energy: float | None
-    flow_from_emissions: float | None
-    flow_to_emissions: float | None
-    flow_from_intensity: float | None
-    flow_to_intensity: float | None
+    energy: float | None = None
+    flow_from_emissions: float | None = None
+    flow_to_emissions: float | None = None
+    flow_from_intensity: float | None = None
+    flow_to_intensity: float | None = None
 
 
 class DataQueryResult(BaseConfig):
     interval: datetime
     result: float | int | None | Decimal
-    group_by: str | None
+    group_by: str | None = None
 
 
 class ScadaDateRange(BaseConfig):
     start: datetime
     end: datetime
-    network: NetworkSchema | None
+    network: NetworkSchema | None = None
 
     def _get_value_localized(self, field_name: str = "start") -> Any:
         timezone: ZoneInfo | str = settings.timezone  # type: ignore

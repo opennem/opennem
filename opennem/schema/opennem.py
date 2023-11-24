@@ -8,7 +8,7 @@ from typing import Any
 
 from geoalchemy2.elements import WKBElement
 from geoalchemy2.shape import to_shape
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator, validator
 from shapely import geometry
 
 from opennem.api.photo.schema import Photo
@@ -35,7 +35,7 @@ class OpennemBaseSchema(BaseConfig):
 
 
 class OpennemBaseDataSchema(OpennemBaseSchema):
-    total_records: int | None
+    total_records: int | None = None
 
 
 class OpennemErrorSchema(OpennemBaseSchema):
@@ -45,18 +45,18 @@ class OpennemErrorSchema(OpennemBaseSchema):
 
 class FueltechSchema(BaseConfig):
     code: str
-    label: str | None
-    renewable: bool | None
+    label: str | None = None
+    renewable: bool | None = None
 
 
 class FacilityStatusSchema(BaseConfig):
     code: str
-    label: str | None
+    label: str | None = None
 
 
 class ParticipantSchema(BaseConfig):
     id: int
-    code: str | None
+    code: str | None = None
     name: str
     network_name: str | None = None
     network_code: str | None = None
@@ -128,7 +128,8 @@ class ScadaReading(tuple[datetime, float | None]):
     approved_by: str | None
     approved_at: datetime | None
 
-    @validator("capacity_registered")
+    @field_validator("capacity_registered")
+    @classmethod
     def _clean_capacity_regisered(cls, value: str | int | float) -> float | None:
         _v = clean_capacity(value)
 
@@ -137,7 +138,8 @@ class ScadaReading(tuple[datetime, float | None]):
 
         return _v
 
-    @validator("emissions_factor_co2")
+    @field_validator("emissions_factor_co2")
+    @classmethod
     def _clean_emissions_factor_co2(cls, value: str | int | float) -> float | None:
         _v = clean_capacity(value)
 
@@ -150,7 +152,7 @@ class WeatherStationNearest(BaseModel):
 
 
 class LocationSchema(BaseConfig):
-    id: int | None
+    id: int | None = None
 
     # weather_station: WeatherStation | None
     # weather_nearest: WeatherStationNearest | None
@@ -167,46 +169,54 @@ class LocationSchema(BaseConfig):
     geocode_approved: bool = False
     # geocode_skip: bool = False
     geocode_processed_at: datetime | None = None
-    geocode_by: str | None
+    geocode_by: str | None = None
     geom: dict[str, str | tuple] | None = None
     boundary: Any | None = None
 
     lat: float | None = None
     lng: float | None = None
 
-    @validator("address1")
+    @field_validator("address1")
+    @classmethod
     def clean_address(cls, value: str) -> str:
         return string_to_title(value)
 
-    @validator("address2")
+    @field_validator("address2")
+    @classmethod
     def clean_address2(cls, value: str) -> str:
         return string_to_title(value)
 
-    @validator("locality")
+    @field_validator("locality")
+    @classmethod
     def clean_locality(cls, value: str) -> str:
         return string_to_title(value)
 
-    @validator("state")
+    @field_validator("state")
+    @classmethod
     def state_upper(cls, value: str) -> str | None:
         if value:
             return value.upper()
 
         return None
 
-    @validator("postcode")
+    @field_validator("postcode")
+    @classmethod
     def clean_postcode(cls, value: str) -> str | None:
         if value:
             return value.strip()
 
         return None
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("geom", pre=True, always=True, allow_reuse=True)
     def parse_geom(cls, value: WKBElement) -> Any:
         if value:
             mapping = geometry.mapping(to_shape(value))
             return mapping
 
-    @validator("boundary", pre=True)
+    @field_validator("boundary", mode="before")
+    @classmethod
     def parse_boundary(cls, value: WKBElement) -> Any:
         if value:
             return geometry.mapping(to_shape(value))
@@ -240,43 +250,44 @@ def _flatten_linked_object(value: str | dict | object) -> str:
 
 
 class FacilityOutputSchema(BaseConfig):
-    id: int | None
+    id: int | None = None
 
     network: str = "NEM"
 
-    fueltech: str | None
+    fueltech: str | None = None
 
-    status: str | None
+    status: str | None = None
 
     # @TODO no longer optional
     code: str | None = ""
 
-    scada_power: OpennemData | None
+    scada_power: OpennemData | None = None
 
     dispatch_type: DispatchType = DispatchType.GENERATOR
 
-    capacity_registered: float | None
+    capacity_registered: float | None = None
 
-    registered: datetime | None
-    deregistered: datetime | None
+    registered: datetime | None = None
+    deregistered: datetime | None = None
 
-    network_region: str | None
+    network_region: str | None = None
 
-    unit_id: int | None
-    unit_number: int | None
-    unit_alias: str | None
-    unit_capacity: float | None
+    unit_id: int | None = None
+    unit_number: int | None = None
+    unit_alias: str | None = None
+    unit_capacity: float | None = None
 
-    emissions_factor_co2: float | None
+    emissions_factor_co2: float | None = None
 
-    data_first_seen: datetime | None
-    data_last_seen: datetime | None
+    data_first_seen: datetime | None = None
+    data_last_seen: datetime | None = None
 
     _seen_dates_tz = validator("data_first_seen", "data_last_seen", pre=True, allow_reuse=True)(as_nem_timezone)
 
     _flatten_embedded = validator("network", "fueltech", "status", pre=True, allow_reuse=True)(_flatten_linked_object)
 
-    @validator("capacity_registered")
+    @field_validator("capacity_registered")
+    @classmethod
     def _clean_capacity_regisered(cls, value: str | float | int) -> float | None:
         _v = clean_capacity(value)
 
@@ -285,7 +296,8 @@ class FacilityOutputSchema(BaseConfig):
 
         return _v
 
-    @validator("emissions_factor_co2")
+    @field_validator("emissions_factor_co2")
+    @classmethod
     def _clean_emissions_factor_co2(cls, value: str | float | int) -> float | None:
         _v = clean_capacity(value)
 
@@ -293,20 +305,20 @@ class FacilityOutputSchema(BaseConfig):
 
 
 class FacilitySchema(BaseConfig):
-    id: int | None
+    id: int | None = None
 
     network: NetworkSchema = NetworkNEM
 
-    fueltech: FueltechSchema | None
+    fueltech: FueltechSchema | None = None
 
-    status: FacilityStatusSchema | None
+    status: FacilityStatusSchema | None = None
 
-    station_id: int | None
+    station_id: int | None = None
 
     # @TODO no longer optional
     code: str | None = ""
 
-    scada_power: OpennemData | None
+    scada_power: OpennemData | None = None
 
     # revisions: Optional[List[RevisionSchema]] = []
     # revision_ids: Optional[List[int]] = []
@@ -315,25 +327,26 @@ class FacilitySchema(BaseConfig):
 
     active: bool = True
 
-    capacity_registered: float | None
+    capacity_registered: float | None = None
 
-    registered: datetime | None
-    deregistered: datetime | None
+    registered: datetime | None = None
+    deregistered: datetime | None = None
 
-    network_region: str | None
+    network_region: str | None = None
 
-    unit_id: int | None
-    unit_number: int | None
-    unit_alias: str | None
-    unit_capacity: float | None
+    unit_id: int | None = None
+    unit_number: int | None = None
+    unit_alias: str | None = None
+    unit_capacity: float | None = None
 
-    emissions_factor_co2: float | None
+    emissions_factor_co2: float | None = None
 
     approved: bool = False
-    approved_by: str | None
-    approved_at: datetime | None
+    approved_by: str | None = None
+    approved_at: datetime | None = None
 
-    @validator("capacity_registered")
+    @field_validator("capacity_registered")
+    @classmethod
     def _clean_capacity_regisered(cls, value):
         value = clean_capacity(value)
 
@@ -342,7 +355,8 @@ class FacilitySchema(BaseConfig):
 
         return value
 
-    @validator("emissions_factor_co2")
+    @field_validator("emissions_factor_co2")
+    @classmethod
     def _clean_emissions_factor_co2(cls, value):
         value = clean_capacity(value)
 
@@ -350,48 +364,48 @@ class FacilitySchema(BaseConfig):
 
 
 class FacilityImportSchema(BaseConfig):
-    id: int | None
+    id: int | None = None
 
     network: NetworkSchema = NetworkNEM
-    network_id: str | None
+    network_id: str | None = None
 
-    fueltech: FueltechSchema | None
-    fueltech_id: str | None
+    fueltech: FueltechSchema | None = None
+    fueltech_id: str | None = None
 
-    status: FacilityStatusSchema | None
-    status_id: str | None
+    status: FacilityStatusSchema | None = None
+    status_id: str | None = None
 
     # @TODO no longer optional
     code: str | None = ""
 
-    scada_power: OpennemData | None
+    scada_power: OpennemData | None = None
 
     dispatch_type: DispatchType = DispatchType.GENERATOR
 
     active: bool = True
 
-    capacity_registered: float | None
+    capacity_registered: float | None = None
 
-    registered: datetime | None
-    deregistered: datetime | None
+    registered: datetime | None = None
+    deregistered: datetime | None = None
 
-    network_region: str | None
+    network_region: str | None = None
 
-    unit_id: int | None
-    unit_number: int | None
-    unit_alias: str | None
-    unit_capacity: float | None
+    unit_id: int | None = None
+    unit_number: int | None = None
+    unit_alias: str | None = None
+    unit_capacity: float | None = None
 
-    emissions_factor_co2: float | None
-    emission_factor_source: str | None
+    emissions_factor_co2: float | None = None
+    emission_factor_source: str | None = None
 
     approved: bool = False
-    approved_by: str | None
-    approved_at: datetime | None
+    approved_by: str | None = None
+    approved_at: datetime | None = None
 
 
 class StationImportSchema(BaseConfig):
-    id: int | None
+    id: int | None = None
 
     code: str
 
@@ -399,12 +413,12 @@ class StationImportSchema(BaseConfig):
 
     facilities: list[FacilityImportSchema] | None = []
 
-    photos: list[Photo] | None
+    photos: list[Photo] | None = None
 
-    name: str | None
+    name: str | None = None
 
     # Original network fields
-    network_name: str | None
+    network_name: str | None = None
 
     location: LocationSchema = LocationSchema()
 
@@ -412,14 +426,14 @@ class StationImportSchema(BaseConfig):
 
     approved: bool = True
 
-    description: str | None
-    wikipedia_link: str | None
-    wikidata_id: str | None
-    website_url: str | None
+    description: str | None = None
+    wikipedia_link: str | None = None
+    wikidata_id: str | None = None
+    website_url: str | None = None
 
 
 class StationSchema(BaseConfig):
-    id: int | None
+    id: int | None = None
 
     code: str
 
@@ -427,12 +441,12 @@ class StationSchema(BaseConfig):
 
     facilities: list[FacilitySchema] | None = []
 
-    photos: list[Photo] | None
+    photos: list[Photo] | None = None
 
-    name: str | None
+    name: str | None = None
 
     # Original network fields
-    network_name: str | None
+    network_name: str | None = None
 
     location: LocationSchema = LocationSchema()
 
@@ -443,10 +457,10 @@ class StationSchema(BaseConfig):
     data_first_seen: datetime
     data_last_seen: datetime
 
-    description: str | None
-    wikipedia_link: str | None
-    wikidata_id: str | None
-    website_url: str | None
+    description: str | None = None
+    wikipedia_link: str | None = None
+    wikidata_id: str | None = None
+    website_url: str | None = None
 
 
 class StationOutputSchema(BaseConfig):
@@ -458,18 +472,18 @@ class StationOutputSchema(BaseConfig):
 
     facilities: list[FacilityOutputSchema] | None = []
 
-    photos: list[Photo] | None
+    photos: list[Photo] | None = None
 
-    name: str | None
+    name: str | None = None
 
     # Original network fields
-    network_name: str | None
+    network_name: str | None = None
 
     location: LocationSchema | None = None
 
     network: str | None = None
 
-    description: str | None
-    wikipedia_link: str | None
-    wikidata_id: str | None
-    website_url: str | None
+    description: str | None = None
+    wikipedia_link: str | None = None
+    wikidata_id: str | None = None
+    website_url: str | None = None

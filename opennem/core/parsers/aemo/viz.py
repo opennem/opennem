@@ -9,6 +9,7 @@ from json.decoder import JSONDecodeError
 from typing import Any
 
 import requests
+from pydantic import ConfigDict
 from pydantic.main import BaseModel
 
 from opennem.core.normalizers import blockwords_to_snake_case
@@ -40,10 +41,7 @@ class AEMO5MinAPIResponse(BaseModel):
     def is_forecast(self) -> bool:
         return self.period_type == AEMOPeriodType.scheduled
 
-    class Config:
-        alias_generator = blockwords_to_snake_case
-        orm_mode = True
-        anystr_strip_whitespace = True
+    model_config = ConfigDict(alias_generator=blockwords_to_snake_case, from_attributes=True, str_strip_whitespace=True)
 
 
 def get_aemo_viz_request_headers() -> dict[str, str]:
