@@ -92,6 +92,7 @@ freezegun = "^1.2.2"
 pyright = "^1.1.299"
 ruff = "^0.0.272"
 hatch = "^1.7.0"
+types-redis = "^4.6.0.11"
 
 [tool.poetry.scripts]
 opennem = 'opennem.cli:main'
