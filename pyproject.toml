@@ -68,6 +68,7 @@ result = "^0.10.0"
 gunicorn = "^21.2.0"
 fastapi-versioning = "^0.10.0"
 unkey-py = "^0.4.3"
+authlib = "^1.2.1"
 
 
 [tool.poetry.group.dev.dependencies]
