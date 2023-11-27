@@ -21,7 +21,7 @@ config = context.config  # type: ignore
 fileConfig(config.config_file_name)
 logger = logging.getLogger("alembic.env")
 
-config.set_main_option("sqlalchemy.url", settings.db_url)
+config.set_main_option("sqlalchemy.url", str(settings.db_url))
 
 
 target_metadata = [opennem.metadata]

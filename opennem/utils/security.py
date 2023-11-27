@@ -11,7 +11,7 @@ def get_random_string(length: int = 8) -> str:
 
 def obfuscate_dsn_password(dsn: str) -> str:
     """Takes a DSN string and obfuscates the password"""
-    dsn_parsed = urlparse(dsn)
+    dsn_parsed = urlparse(str(dsn))
 
     if dsn_parsed.password:
         host_info = dsn_parsed.netloc.rpartition("@")[-1]

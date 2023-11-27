@@ -33,7 +33,7 @@ def db_connect(db_conn_str: str | None = None, debug: bool = False, timeout: int
     :param timeout: Database connection timeout
     """
     if not db_conn_str:
-        db_conn_str = settings.db_url
+        db_conn_str = str(settings.db_url)
 
     connect_args = {}
 
