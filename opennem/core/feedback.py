@@ -12,7 +12,6 @@ from opennem.clients.slack import slack_message
 from opennem.core.templates import serve_template
 from opennem.db import SessionLocal
 from opennem.db.models.opennem import Feedback
-from opennem.schema.types import TwitterHandle
 
 logger = logging.getLogger("opennem.core.feedback")
 
@@ -21,7 +20,7 @@ class UserFeedbackSubmission(BaseModel):
     subject: str
     description: str | None = None
     email: EmailStr | None = None
-    twitter: TwitterHandle | None = None
+    twitter: str | None = None
     user_ip: str | None = None
     user_agent: str | None = None
 
