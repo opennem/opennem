@@ -1075,6 +1075,21 @@ memcache = ["aiomcache"]
 redis = ["redis (>=4.2.0rc1,<5.0.0)"]
 
 [[package]]
+name = "fastapi-versioning"
+version = "0.10.0"
+description = "api versioning for fastapi web applications"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "fastapi_versioning-0.10.0-py3-none-any.whl", hash = "sha256:afe0ad7a56383b884c399341260bd3301b40e5a1cf9f6dc4211a349489087e1b"},
+    {file = "fastapi_versioning-0.10.0.tar.gz", hash = "sha256:5c18ea4e9ae1afd39c9e5bed1c240bf1cabdc75217579af78249ccb651c7b5b5"},
+]
+
+[package.dependencies]
+fastapi = ">=0.56.0"
+starlette = "*"
+
+[[package]]
 name = "filelock"
 version = "3.12.4"
 description = "A platform independent file lock."
@@ -4053,4 +4068,4 @@ postgres = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "2f7e92c95817f64310e0f32154e5d0e56d6870a34a0a331c31aedc2dd364aee9"
+content-hash = "b8813ab449659cd9bae7f09aa4ffef90f9f7b8951e2b169f04c444f588e69d22"

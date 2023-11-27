@@ -12,13 +12,13 @@ from fastapi.responses import FileResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
+from fastapi_versioning import VersionedFastAPI
 from redis import asyncio as aioredis
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.requests import Request
 
 from opennem import settings
-from opennem.api.auth.router import router as auth_router
 from opennem.api.dash.router import router as dash_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
 from opennem.api.facility.router import router as facility_router
@@ -43,6 +43,7 @@ logger = logging.getLogger(__name__)
 
 
 app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None)
+app = VersionedFastAPI(app, version_format="{major}", prefix_format="/v{major}", enable_latest=True)
 
 # @TODO put CORS available/permissions in settings
 origins = [
@@ -129,7 +130,6 @@ async def startup() -> None:
 
 
 # sub-routers
-app.include_router(auth_router, tags=["Authentication"], prefix="/auth", include_in_schema=False)
 app.include_router(stats_router, tags=["Stats"], prefix="/stats")
 app.include_router(locations_router, tags=["Locations"], prefix="/locations")
 app.include_router(geo_router, tags=["Geo"], prefix="/geo")
