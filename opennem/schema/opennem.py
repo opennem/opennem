@@ -38,7 +38,7 @@ class OpennemBaseDataSchema(OpennemBaseSchema):
 
 
 class OpennemErrorSchema(OpennemBaseSchema):
-    response_status = ResponseStatus.ERROR
+    response_status: ResponseStatus = ResponseStatus.ERROR
     detail: str
 
 
