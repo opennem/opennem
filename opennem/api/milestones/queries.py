@@ -4,12 +4,14 @@ from opennem.db import SessionLocal
 from opennem.db.models.opennem import Milestones
 
 
-async def get_milestones(limit: int = 100) -> list[dict]:
-    """Get a list of domains"""
-    async with SessionLocal() as session:
-        select_statement = select(Milestones)
+def get_milestones(limit: int = 100, page_number: int = 1) -> list[dict]:
+    """Get a list of all milestones ordered by date with a limit, pagination and optional significance filter"""
+    with SessionLocal() as session:
+        page_number -= 1
 
-        query = await session.scalars(select_statement)
+        select_query = select(Milestones).order_by(Milestones.date.desc()).limit(limit).offset(page_number)
+
+        query = session.scalars(select_query)
         results = query.all()
         records = []
 
@@ -22,6 +24,4 @@ async def get_milestones(limit: int = 100) -> list[dict]:
 
 
 if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(get_milestones())
+    get_milestones()
