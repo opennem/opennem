@@ -11,7 +11,6 @@ from geoalchemy2.shape import to_shape
 from pydantic import BaseModel, field_validator, validator
 from shapely import geometry
 
-from opennem.api.photo.schema import Photo
 from opennem.api.stats.schema import OpennemData
 from opennem.core.dispatch_type import DispatchType
 from opennem.core.networks import datetime_add_network_timezone
@@ -413,8 +412,6 @@ class StationImportSchema(BaseConfig):
 
     facilities: list[FacilityImportSchema] | None = []
 
-    photos: list[Photo] | None = None
-
     name: str | None = None
 
     # Original network fields
@@ -440,8 +437,6 @@ class StationSchema(BaseConfig):
     participant: ParticipantSchema | None = None
 
     facilities: list[FacilitySchema] | None = []
-
-    photos: list[Photo] | None = None
 
     name: str | None = None
 
@@ -471,8 +466,6 @@ class StationOutputSchema(BaseConfig):
     participant: ParticipantSchema | None = None
 
     facilities: list[FacilityOutputSchema] | None = []
-
-    photos: list[Photo] | None = None
 
     name: str | None = None
 
