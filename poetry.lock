@@ -3760,6 +3760,21 @@ files = [
 ]
 
 [[package]]
+name = "unkey-py"
+version = "0.4.3"
+description = "An asynchronous Python SDK for unkey.dev."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "unkey_py-0.4.3-py3-none-any.whl", hash = "sha256:a1521f820df42ef11d9fe28b39f9146430b71e598c507243bce64f6455d6630f"},
+    {file = "unkey_py-0.4.3.tar.gz", hash = "sha256:91603dd8f6f36ea4ef52709f2bb25e328d1cbb931b0f1e6708c88bc12dd52b10"},
+]
+
+[package.dependencies]
+aiohttp = ">3.8.1"
+attrs = ">=22"
+
+[[package]]
 name = "url-normalize"
 version = "1.4.3"
 description = "URL normalization for Python"
@@ -4068,4 +4083,4 @@ postgres = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "b8813ab449659cd9bae7f09aa4ffef90f9f7b8951e2b169f04c444f588e69d22"
+content-hash = "f26aec95fb2c6a9786c6e662ba82cf75094b8397ee06c727c7463fa9dcae84c0"

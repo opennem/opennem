@@ -67,6 +67,7 @@ uvicorn = "^0.22.0"
 result = "^0.10.0"
 gunicorn = "^21.2.0"
 fastapi-versioning = "^0.10.0"
+unkey-py = "^0.4.3"
 
 
 [tool.poetry.group.dev.dependencies]

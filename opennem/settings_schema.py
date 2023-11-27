@@ -157,6 +157,10 @@ class OpennemSettings(BaseSettings):
     # clerk API key
     clerk_api_key: str | None = None
 
+    # unkey.dev
+    unkey_root_key: str | None = None
+    unkey_api_id: str | None = None
+
     # api messages
     api_messages: list[str] = [
         "OpenNEM API will be moving behind a login soon. Please see the discssion at https://github.com/opennem/opennem/discussions/243"
