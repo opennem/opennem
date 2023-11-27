@@ -120,7 +120,7 @@ class StatMetadata(BaseModel):
     """Defines a set of export maps with methods to filter"""
 
     date_created: datetime
-    version: str | None
+    version: str | None = None
     resources: list[StatExport]
 
     def get_by_stat_type(self, stat_type: StatType) -> StatMetadata:
