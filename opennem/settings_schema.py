@@ -28,7 +28,7 @@ class OpennemSettings(BaseSettings):
     maintenance_mode: bool = False
 
     db_url: PostgresDsn = Field(
-        "postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("database_hot_url", "db_url")
+        "postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("DATABASE_HOST_URL")
     )
 
     redis_url: RedisDsn = Field(
@@ -187,18 +187,15 @@ class OpennemSettings(BaseSettings):
 
     @property
     def debug(self) -> bool:
-        return self.env in ("local", "development", "staging")
+        return self.env.lower() in ("local", "dev", "development", "staging")
 
     @property
     def is_prod(self) -> bool:
-        if self.db_url and "opennem03" in self.db_url:
-            return True
-
-        return self.env in ("production", "prod")
+        return self.env.lower() in ("production", "prod")
 
     @property
     def is_dev(self) -> bool:
-        return self.env in ("local", "development", "staging")
+        return self.env.lower() in ("local", "dev", "development", "staging")
 
     # TODO[pydantic]: The following keys were removed: `fields`.
     # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
