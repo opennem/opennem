@@ -25,6 +25,7 @@ from opennem.api.facility.router import router as facility_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.location.router import router as location_router
 from opennem.api.locations import router as locations_router
+from opennem.api.milestones.router import milestones_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
@@ -123,7 +124,7 @@ async def startup() -> None:
         FastAPICache.init(backend=InMemoryBackend())
         return None
 
-    redis = aioredis.from_url(settings.cache_url, encoding="utf8", decode_responses=True)
+    redis = aioredis.from_url(str(settings.cache_url), encoding="utf8", decode_responses=True)
     FastAPICache.init(RedisBackend(redis), prefix="api-cache")
     logger.info("Enabled API cache")
 
@@ -137,6 +138,7 @@ app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(dash_router, tags=["Dashboard"], prefix="/v4/dash", include_in_schema=False)
+app.include_router(milestones_router, tags=["Milestones"], prefix="/v4/milestones", include_in_schema=True)
 
 try:
     from fastapi.staticfiles import StaticFiles

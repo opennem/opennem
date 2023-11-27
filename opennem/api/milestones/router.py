@@ -5,14 +5,14 @@ from opennem.recordreactor.schema import MilestoneRecord
 
 from .queries import get_milestones
 
-domain_router = APIRouter(tags=["Milestones"], include_in_schema=False)
+milestones_router = APIRouter(tags=["Milestones"], include_in_schema=True)
 
 
-@domain_router.get("/")
+@milestones_router.get("/")
 @version(4)
-async def api_get_domains(limit: int = 100) -> list[MilestoneRecord]:
+def api_get_domains(limit: int = 100, page_number: int = 1) -> list[MilestoneRecord]:
     """Get a list of milestones"""
-    db_records = await get_milestones(limit=limit)
+    db_records = get_milestones(limit=limit, page_number=page_number)
 
     milestone_records = [MilestoneRecord(**i) for i in db_records]
 
