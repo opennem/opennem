@@ -7,7 +7,7 @@ from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path
 
-from pydantic import ConfigDict, field_validator
+from pydantic import AliasChoices, Field, PostgresDsn, RedisDsn, field_validator
 from pydantic_settings import BaseSettings
 
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
@@ -27,18 +27,19 @@ class OpennemSettings(BaseSettings):
     # Set maintenance mode - workers won't run and API will return a MaintenanceMode response
     maintenance_mode: bool = False
 
-    # @NOTE pydantic settings assignment type mismatch from mypy
-    # https://github.com/samuelcolvin/pydantic/issues/1490
-    db_url: str = "postgresql://user:pass@127.0.0.1:15444/opennem"  # type: ignore
+    db_url: PostgresDsn = Field(
+        "postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("database_hot_url", "db_url")
+    )
+
+    redis_url: RedisDsn = Field(
+        "redis://127.0.0.1",
+        validation_alias=AliasChoices("service_redis_dsn", "cache_url"),
+    )
 
     # if we're doing a dry run
     dry_run: bool = False
 
-    cache_url: str = "redis://127.0.0.1"
-
     sentry_url: str | None = None
-
-    prometheus_url: str | None = None
 
     # This is the module where crawlers are found
     crawlers_module: str = "opennem.crawlers"
@@ -201,17 +202,17 @@ class OpennemSettings(BaseSettings):
 
     # TODO[pydantic]: The following keys were removed: `fields`.
     # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
-    model_config = ConfigDict(
-        fields={
-            "env": {"env": "ENV"},
-            "log_level": {"env": "LOG_LEVEL"},
-            "_static_folder_path": {"env": "STATIC_PATH"},
-            "db_url": {"env": "DATABASE_HOST_URL"},
-            "cache_url": {"env": "REDIS_HOST_URL"},
-            "slack_hook_url": {"env": "MONITORING_SLACK_HOOK"},
-            "s3_bucket_path": {"env": "S3_DATA_BUCKET_PATH"},
-            "server_port": {"env": "PORT"},
-            "server_host": {"env": "HOST"},
-            "cache_scada_values_ttl_sec": {"env": "CACHE_SCADA_TTL"},
-        }
-    )
+    # model_config = ConfigDict(
+    #     fields={
+    #         "env": {"env": "ENV"},
+    #         "log_level": {"env": "LOG_LEVEL"},
+    #         "_static_folder_path": {"env": "STATIC_PATH"},
+    #         "db_url": {"env": "DATABASE_HOST_URL"},
+    #         "cache_url": {"env": "REDIS_HOST_URL"},
+    #         "slack_hook_url": {"env": "MONITORING_SLACK_HOOK"},
+    #         "s3_bucket_path": {"env": "S3_DATA_BUCKET_PATH"},
+    #         "server_port": {"env": "PORT"},
+    #         "server_host": {"env": "HOST"},
+    #         "cache_scada_values_ttl_sec": {"env": "CACHE_SCADA_TTL"},
+    #     }
+    # )
