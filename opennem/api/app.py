@@ -18,7 +18,6 @@ from starlette import status
 from starlette.requests import Request
 
 from opennem import settings
-from opennem.api.admin.router import router as admin_router
 from opennem.api.auth.router import router as auth_router
 from opennem.api.dash.router import router as dash_router
 from opennem.api.exceptions import OpennemBaseHttpException, OpennemExceptionResponse
@@ -138,7 +137,6 @@ app.include_router(location_router, tags=["Locations"], prefix="/location")
 app.include_router(station_router, tags=["Stations"], prefix="/station")
 app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
-app.include_router(admin_router, tags=["Admin"], prefix="/admin", include_in_schema=False)
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(dash_router, tags=["Dashboard"], prefix="/v4/dash", include_in_schema=False)
 
