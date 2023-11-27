@@ -9,7 +9,6 @@ from typing import Any
 
 from pydantic.networks import AnyUrl
 from pydantic.utils import update_not_none
-from pydantic.validators import str_validator
 
 from opennem.core.normalizers import validate_twitter_handle
 from opennem.core.validators.strings import urlsafe_str_validator
@@ -37,7 +36,6 @@ class TwitterHandle(str):
 
     @classmethod
     def __get_validators__(cls) -> "CallableGenerator":
-        yield str_validator
         yield cls.validate
 
     @classmethod
@@ -64,7 +62,6 @@ class UrlsafeString(str):
 
     @classmethod
     def __get_validators__(cls) -> "CallableGenerator":
-        yield str_validator
         yield cls.validate
         yield urlsafe_str_validator
 
