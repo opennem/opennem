@@ -30,6 +30,9 @@ from sqlalchemy import (
     Text,
     func,
 )
+from sqlalchemy import (
+    text as sql,
+)
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP, UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -1041,14 +1044,14 @@ class AggregateNetworkDemand(Base):
 class Milestones(Base):
     __tablename__ = "milestones"
 
-    instance_id = Column(UUID(as_uuid=True), primary_key=True)
+    instance_id = Column(UUID(as_uuid=True), primary_key=True, server_default=sql("uuid_generate_v4()"))
     record_id = Column(UUID(as_uuid=True), primary_key=True)
     dtime = Column(DateTime, nullable=False)
     record_type = Column(Enum(MilestoneType), nullable=False)
     significance = Column(Integer, nullable=False)
     value = Column(Float, nullable=False)
 
-    facility_id = Column(Text, ForeignKey("facility.id"), nullable=True)
+    facility_id = Column(Integer, ForeignKey("facility.id"), nullable=True)
     network_id = Column(Integer, ForeignKey("network.code"), nullable=True)
     fueltech_id = Column(Integer, ForeignKey("fueltech.code"), nullable=True)
     description = Column(String, nullable=True)
