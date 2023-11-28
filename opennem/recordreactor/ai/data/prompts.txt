@@ -1,0 +1,119 @@
+# prompts data
+# facility training data
+> select the total energy produced today for tallawarra power station
+select
+    s.name,
+    sum(fd.energy) as energy_mwh
+from at_facility_daily fd
+left join facility f on fd.facility_code = f.code
+left join station s on f.station_id = s.id
+where
+    fd.trading_day = current_date
+    and s.name ilike '%tallawarra%'
+group by s.name;
+---
+> how much energy was generated in New South Wales this year
+select
+    f.network_region,
+    sum(fd.energy) as energy_mwh
+from at_facility_daily fd
+left join facility f on fd.facility_code = f.code
+where
+    f.network_region = 'NSW1' and
+    date_part('year', fd.trading_day) = date_part('year', current_date)
+group by f.network_region;
+---
+> how much coal energy was generated in New South Wales this year
+select
+    f.network_region,
+    sum(fd.energy) as energy_mwh
+from at_facility_daily fd
+left join facility f on fd.facility_code = f.code
+left join fueltech ft on f.fueltech_id = ft.code
+left join fueltech_group ftg on ft.fueltech_group_id = ftg.code
+where
+    f.network_region = 'NSW1' and
+    ftg.code = 'coal' and
+    date_part('year', fd.trading_day) = date_part('year', current_date)
+group by f.network_region;
+---
+> List all wind farms in South Australia with capacity greater than 100
+select
+    f.code as facility_code,
+    s.name as facility_name,
+    f.capacity_registered as capacity_mw
+from
+    facility f
+    join station s on f.station_id = s.id
+    join fueltech ft on f.fueltech_id = ft.code
+    join fueltech_group ftg on ft.fueltech_group_id = ftg.code
+where
+    f.network_code = 'NEM' and
+    f.network_region = 'SA1' and
+    ftg.code = 'wind' and
+    f.capacity_registered > 100;
+---
+> proportion of generation in tasmania yesterday that was renewable
+select
+  sum(fd.energy) filter (where ft.renewable = true) / sum(fd.energy) * 100 as renewable_proportion
+from at_facility_daily fd
+left join facility f on fd.facility_code = f.code
+left join fueltech ft on f.fueltech_id = ft.code
+where
+  fd.trading_day = current_date - interval '1 day' and
+  f.network_region = 'TAS1';
+---
+> Current power price in New South Wales
+select
+  bs.trading_interval at time zone 'AEST',
+  bs.network_region,
+  bs.price as current_price
+from balancing_summary bs
+where
+  bs.network_region = 'NSW1'
+order by bs.trading_interval desc
+limit 1;
+---
+> latest total power from new south wales
+select
+    fs.trading_interval at time zone 'AEST',
+    sum(fs.generated) as total_generated
+from facility_scada fs
+left join facility f on f.code = fs.facility_code
+where
+    f.network_region = 'NSW1'
+group by fs.trading_interval
+order by trading_interval desc;
+---
+> total energy yesterday for Australia
+select
+    current_date - interval '1 day' as day,
+    sum(fd.energy) as energy_mwh
+from at_facility_daily fd
+where
+    fd.trading_day = current_date - interval '1 day'
+    and fd.network_id in ('NEM', 'WEM');
+---
+> how many solar farms are there in Australia and what is the total capacity?
+select
+  count(*) as solar_farms,
+  sum(f.capacity_registered) as total_capacity
+from facility f
+left join fueltech ft on f.fueltech_id = ft.code
+left join fueltech_group ftg on ft.fueltech_group_id = ftg.code
+where
+f.network_code in ('NEM', 'WEM') and
+ftg.code = 'solar'
+---
+> south australia renewable proportion every year last 10 years
+select
+  date_part('year', fd.trading_day) as year,
+  sum(fd.energy) filter (where ft.renewable = true) / sum(fd.energy) * 100 as renewable_proportion
+from at_facility_daily fd
+  left join facility f on fd.facility_code = f.code
+  left join fueltech ft on f.fueltech_id = ft.code
+where
+  f.network_region = 'SA1' and
+  date_part('year', fd.trading_day) >= date_part('year', current_date) - 10
+group by year
+order by year;
