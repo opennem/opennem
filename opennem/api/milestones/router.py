@@ -11,7 +11,11 @@ milestones_router = APIRouter(tags=["Milestones"], include_in_schema=True)
 @milestones_router.get("/")
 @version(4)
 def api_get_domains(limit: int = 100, page_number: int = 1) -> list[MilestoneRecord]:
-    """Get a list of milestones"""
+    """Get a list of milestones
+
+    @TODO date filter
+
+    """
     db_records = get_milestones(limit=limit, page_number=page_number)
 
     milestone_records = [MilestoneRecord(**i) for i in db_records]
