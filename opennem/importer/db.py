@@ -6,7 +6,6 @@ from opennem.db.load_fixtures import load_fixtures
 from opennem.importer.facilities import import_facilities
 from opennem.importer.interconnectors import import_nem_interconnects
 from opennem.importer.osm import init_osm
-from opennem.importer.photos import import_photos_from_fixtures
 from opennem.importer.rooftop import rooftop_facilities
 from opennem.importer.wikidata import wikidata_join_mapping, wikidata_photos
 from opennem.workers.facility_data_ranges import update_facility_seen_range
@@ -39,9 +38,6 @@ def init() -> None:
 
     wikidata_photos()
     logger.info("Imported wikidata photos")
-
-    import_photos_from_fixtures()
-    logger.info("Imported photos from wikidata")
 
     init_osm()
     logger.info("Initialized osm")

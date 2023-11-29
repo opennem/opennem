@@ -13,7 +13,6 @@ from opennem.api.export.map import PriorityType
 from opennem.api.export.tasks import export_all_monthly, export_energy, export_power
 from opennem.core.crawlers.cli import cmd_crawl_cli
 from opennem.db.load_fixtures import load_bom_stations_json, load_fixtures, load_fueltechs
-from opennem.exporter.geojson import export_facility_geojson
 from opennem.exporter.historic import export_historic_intervals
 from opennem.importer.all import run_all
 from opennem.importer.db import import_all_facilities
@@ -66,7 +65,6 @@ def cmd_import_opennem() -> None:
 @click.command()
 def cmd_import_facilities() -> None:
     import_all_facilities()
-    export_facility_geojson()
 
 
 @click.command()
