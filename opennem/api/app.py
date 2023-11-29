@@ -124,7 +124,7 @@ async def startup() -> None:
         FastAPICache.init(backend=InMemoryBackend())
         return None
 
-    redis = aioredis.from_url(str(settings.cache_url), encoding="utf8", decode_responses=True)
+    redis = aioredis.from_url(str(settings.redis_url), encoding="utf8", decode_responses=True)
     FastAPICache.init(RedisBackend(redis), prefix="api-cache")
     logger.info("Enabled API cache")
 
@@ -214,7 +214,7 @@ def fueltechs(
     if not fueltechs:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    return [FueltechSchema.from_orm(i) for i in fueltechs]
+    return [FueltechSchema(**i) for i in fueltechs]
 
 
 @app.get("/intervals", response_model=list[TimeInterval])
