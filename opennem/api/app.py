@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None)
-app = VersionedFastAPI(app, version_format="{major}", prefix_format="/v{major}", enable_latest=True)
+app_versioned = VersionedFastAPI(app, version_format="{major}", prefix_format="/v{major}", enable_latest=True)
 
 # @TODO put CORS available/permissions in settings
 origins = [
@@ -135,6 +135,10 @@ app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
 app.include_router(dash_router, tags=["Dashboard"], prefix="/v4/dash", include_in_schema=False)
 app.include_router(milestones_router, tags=["Milestones"], prefix="/v4/milestones", include_in_schema=True)
+
+
+# v4 routers
+app_versioned.include_router(milestones_router, tags=["Milestones"], prefix="/milestones", include_in_schema=True)
 
 try:
     from fastapi.staticfiles import StaticFiles
