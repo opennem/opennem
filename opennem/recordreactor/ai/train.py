@@ -12,14 +12,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-from energychat.utils.encoder import EnhancedJSONEncoder
+from opennem.utils.encoder import EnhancedJSONEncoder
 
-logger = logging.getLogger("energychat.train")
-
-
-def _strip_prompt(prompt: str) -> str:
-    """Strips prompt"""
-    return prompt.strip().replace("\n", "").replace("\t", "").replace("#", "").replace(">", "").strip()
+logger = logging.getLogger("opennem.recordreactor.ai.train")
 
 
 @dataclass
@@ -28,9 +23,19 @@ class PromptCompletion:
     completion: str
 
 
+def strip_prompt(prompt: str) -> str:
+    """Strips prompt of certain characters from response"""
+    STRIP_CHARS = ["\n", "\t", "#", ">"]
+
+    for char in STRIP_CHARS:
+        prompt = prompt.replace(char, "")
+
+    return prompt.strip()
+
+
 def get_training_version() -> str:
     """returns current timestamp as training version"""
-    return "energy-chat-" + datetime.now().strftime("%Y%m%d-%H%M")
+    return "opennem-" + datetime.now().strftime("%Y%m%d-%H%M")
 
 
 def split_prompt(prompt_block: str) -> PromptCompletion:
@@ -122,7 +127,7 @@ def generate_prompt_set(prompt_file: Path) -> list[dict[str, str]]:
 if __name__ == "__main__":
     logger.info("started")
 
-    train_examples = Path(__file__).parent / "train" / "train.txt"
+    train_examples = Path(__file__).parent / "data" / "train.txt"
     training_set_path = write_training_set(train_examples)
-    version = submit_new_finetune(training_set_path, model="gpt-3.5-turbo")
-    print(f"submitted version: {version}")
+    version = submit_new_finetune(training_set_path, model="gpt-4-1106-preview")
+    logger.info(f"submitted version: {version}")
