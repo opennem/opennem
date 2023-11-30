@@ -10,7 +10,7 @@ from pydantic import BaseModel
 class EnhancedJSONEncoder(json.JSONEncoder):
     """Json Encoder that can handle dataclasses and pydantic models"""
 
-    def default(self, o: dataclasses.dataclass | BaseModel) -> dict:
+    def default(self, o: object) -> dict:
         if dataclasses.is_dataclass(o):
             return dataclasses.asdict(o)  # type: ignore
 
