@@ -10,7 +10,6 @@ from opennem.utils.http import http
 
 logger = logging.getLogger("pagecog.api.security")
 
-# old
 token_scheme = security.HTTPBearer()
 
 credentials_exception = HTTPException(
@@ -56,7 +55,7 @@ def decode_token(
     return claims
 
 
-async def get_current_user(token: str = Depends(decode_token)):
+async def get_current_user(token: str = Depends(decode_token)) -> str:
     try:
         pass
     except Exception as e:
@@ -68,7 +67,7 @@ async def get_current_user(token: str = Depends(decode_token)):
     return user
 
 
-async def get_current_active_user(current_user=Depends(get_current_user)):
+async def get_current_active_user(current_user=Depends(get_current_user)) -> str:
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

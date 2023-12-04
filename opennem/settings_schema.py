@@ -156,6 +156,7 @@ class OpennemSettings(BaseSettings):
 
     # clerk API key
     clerk_api_key: str | None = None
+    api_jwks_url: str = "https://clerk.dev/.well-known/jwks.json"
 
     # unkey.dev
     unkey_root_key: str | None = None
