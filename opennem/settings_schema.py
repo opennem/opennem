@@ -170,6 +170,9 @@ class OpennemSettings(BaseSettings):
     # percentage of old API requests to return deprecation messages
     api_deprecation_proportion: int = 0
 
+    # API Dev key
+    api_dev_key: str | None = None
+
     # pylint: disable=no-self-argument
     @field_validator("log_level")
     @classmethod
