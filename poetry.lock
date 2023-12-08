@@ -946,6 +946,17 @@ files = [
 ]
 
 [[package]]
+name = "distro"
+version = "1.8.0"
+description = "Distro - an OS platform information API"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "distro-1.8.0-py3-none-any.whl", hash = "sha256:99522ca3e365cac527b44bde033f64c6945d90eb9f769703caaec52b09bbd3ff"},
+    {file = "distro-1.8.0.tar.gz", hash = "sha256:02e111d1dc6a50abb8eed6bf31c3e48ed8b0830d1ea2a1b78c61765c2513fdd8"},
+]
+
+[[package]]
 name = "docopt"
 version = "0.6.2"
 description = "Pythonic argument parser, that will make you smile"
@@ -1255,24 +1266,6 @@ files = [
     {file = "geojson-2.5.0-py2.py3-none-any.whl", hash = "sha256:ccbd13368dd728f4e4f13ffe6aaf725b6e802c692ba0dde628be475040c534ba"},
     {file = "geojson-2.5.0.tar.gz", hash = "sha256:6e4bb7ace4226a45d9c8c8b1348b3fc43540658359f93c3f7e03efa9f15f658a"},
 ]
-
-[[package]]
-name = "geojson-pydantic"
-version = "0.4.3"
-description = "Pydantic data models for the GeoJSON spec."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "geojson-pydantic-0.4.3.tar.gz", hash = "sha256:34c9e43509012ef6ad7b0f600aa856da23fb13edbf55964dcca4a00a267385e0"},
-    {file = "geojson_pydantic-0.4.3-py3-none-any.whl", hash = "sha256:716cff5bbb2d3abafb7f45f40b22cb74858a4e282126c7a5871fbee3b888924f"},
-]
-
-[package.dependencies]
-pydantic = "*"
-
-[package.extras]
-dev = ["pre-commit"]
-test = ["pytest", "pytest-cov", "shapely"]
 
 [[package]]
 name = "gitdb"
@@ -2203,6 +2196,29 @@ files = [
 ]
 
 [[package]]
+name = "openai"
+version = "1.3.8"
+description = "The official Python library for the openai API"
+optional = false
+python-versions = ">=3.7.1"
+files = [
+    {file = "openai-1.3.8-py3-none-any.whl", hash = "sha256:ac5a17352b96db862390d2e6f51de9f7eb32e733f412467b2f160fbd3d0f2609"},
+    {file = "openai-1.3.8.tar.gz", hash = "sha256:54963ff247abe185aad6ee443820e48ad9f87eb4de970acb2514bc113ced748c"},
+]
+
+[package.dependencies]
+anyio = ">=3.5.0,<5"
+distro = ">=1.7.0,<2"
+httpx = ">=0.23.0,<1"
+pydantic = ">=1.9.0,<3"
+sniffio = "*"
+tqdm = ">4"
+typing-extensions = ">=4.5,<5"
+
+[package.extras]
+datalib = ["numpy (>=1)", "pandas (>=1.2.3)", "pandas-stubs (>=1.1.0.11)"]
+
+[[package]]
 name = "openpyxl"
 version = "3.1.2"
 description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
@@ -2746,6 +2762,21 @@ files = [
 
 [package.dependencies]
 typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
+
+[[package]]
+name = "pydantic-geojson"
+version = "0.1.1"
+description = "Pydantic validation for GeoJson"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "pydantic_geojson-0.1.1-py3-none-any.whl", hash = "sha256:b9ee9455818c413f664a8cf6e8bf0d75154a429fc6a641e24998de62337933aa"},
+    {file = "pydantic_geojson-0.1.1.tar.gz", hash = "sha256:bcb5d6a0ef553d754e7883af2fa2d233bf97a84a1e7b9393ceaa3acabeccd402"},
+]
+
+[package.dependencies]
+mypy = ">=1.4.1,<2.0.0"
+pydantic = ">=1.9,<3.0"
 
 [[package]]
 name = "pygments"
@@ -3589,6 +3620,26 @@ docs = ["furo (>=2023.8.19)", "sphinx (>=7.2.4)", "sphinx-argparse-cli (>=1.11.1
 testing = ["build[virtualenv] (>=0.10)", "covdefaults (>=2.3)", "detect-test-pollution (>=1.1.1)", "devpi-process (>=1)", "diff-cover (>=7.7)", "distlib (>=0.3.7)", "flaky (>=3.7)", "hatch-vcs (>=0.3)", "hatchling (>=1.18)", "psutil (>=5.9.5)", "pytest (>=7.4)", "pytest-cov (>=4.1)", "pytest-mock (>=3.11.1)", "pytest-xdist (>=3.3.1)", "re-assert (>=1.1)", "time-machine (>=2.12)", "wheel (>=0.41.2)"]
 
 [[package]]
+name = "tqdm"
+version = "4.66.1"
+description = "Fast, Extensible Progress Meter"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tqdm-4.66.1-py3-none-any.whl", hash = "sha256:d302b3c5b53d47bce91fea46679d9c3c6508cf6332229aa1e7d8653723793386"},
+    {file = "tqdm-4.66.1.tar.gz", hash = "sha256:d88e651f9db8d8551a62556d3cff9e3034274ca5d66e93197cf2490e2dcb69c7"},
+]
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+dev = ["pytest (>=6)", "pytest-cov", "pytest-timeout", "pytest-xdist"]
+notebook = ["ipywidgets (>=6)"]
+slack = ["slack-sdk"]
+telegram = ["requests"]
+
+[[package]]
 name = "trove-classifiers"
 version = "2023.11.29"
 description = "Canonical source for classifiers on PyPI (pypi.org)."
@@ -4009,4 +4060,4 @@ postgres = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "c33cff9984b961a5f57da28c41012de61ffe19768bcb7eb41e34d0ec9cfd12b2"
+content-hash = "7a0212036da63751b0f009a410404c2194cb0d91bcead5365d5fc53e53b4dbf2"
