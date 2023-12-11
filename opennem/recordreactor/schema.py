@@ -21,15 +21,15 @@ class MilestoneType(Enum):
 
 class MilestoneRecord(BaseModel):
     instance_id: UUID4
-    record_id: UUID4
+    record_id: str
     dtime: datetime
     record_type: MilestoneType
     significance: int
     value: int | float
-    unit: UnitDefinition
-    network: NetworkSchema
+    unit: UnitDefinition | str | None = None
+    network: NetworkSchema | str | None = None
     network_region: str | None = None
-    fueltech: FueltechSchema
+    fueltech: FueltechSchema | str | None = None
     description: str | None = None
 
     @property
@@ -45,5 +45,5 @@ class MilestoneRecord(BaseModel):
         return self.fueltech.code
 
     @property
-    def unit_code(self) -> str:
-        return self.unit.name
+    def unit_code(self) -> str | None:
+        return self.unit.name if self.unit else None

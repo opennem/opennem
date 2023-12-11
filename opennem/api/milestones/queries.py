@@ -9,7 +9,7 @@ def get_milestones(limit: int = 100, page_number: int = 1) -> list[dict]:
     with SessionLocal() as session:
         page_number -= 1
 
-        select_query = select(Milestones).order_by(Milestones.date.desc()).limit(limit).offset(page_number)
+        select_query = select(Milestones).order_by(Milestones.dtime.desc()).limit(limit).offset(page_number)
 
         query = session.scalars(select_query)
         results = query.all()
