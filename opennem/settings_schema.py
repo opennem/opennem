@@ -7,7 +7,7 @@ from datetime import UTC
 from datetime import timezone as pytimezone
 from pathlib import Path
 
-from pydantic import AliasChoices, Field, PostgresDsn, RedisDsn, field_validator
+from pydantic import AliasChoices, Field, RedisDsn, field_validator
 from pydantic_settings import BaseSettings
 
 SUPPORTED_LOG_LEVEL_NAMES = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
@@ -27,9 +27,7 @@ class OpennemSettings(BaseSettings):
     # Set maintenance mode - workers won't run and API will return a MaintenanceMode response
     maintenance_mode: bool = False
 
-    db_url: PostgresDsn = Field(
-        "postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("DATABASE_HOST_URL")
-    )
+    db_url: str = Field("postgresql://user:pass@127.0.0.1:15444/opennem", validation_alias=AliasChoices("DATABASE_HOST_URL"))
 
     redis_url: RedisDsn = Field(
         "redis://127.0.0.1",
