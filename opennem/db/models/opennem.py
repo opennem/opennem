@@ -1045,15 +1045,16 @@ class Milestones(Base):
     __tablename__ = "milestones"
 
     instance_id = Column(UUID(as_uuid=True), primary_key=True, server_default=sql("uuid_generate_v4()"))
-    record_id = Column(UUID(as_uuid=True), primary_key=True)
-    dtime = Column(DateTime, nullable=False)
+    record_id = Column(Text, primary_key=True)
+    dtime = Column(DateTime, nullable=False, index=True)
     record_type = Column(Enum(MilestoneType), nullable=False)
-    significance = Column(Integer, nullable=False)
+    significance = Column(Integer, nullable=False, default=0)
     value = Column(Float, nullable=False)
 
-    facility_id = Column(Integer, ForeignKey("facility.id"), nullable=True)
-    network_id = Column(Integer, ForeignKey("network.code"), nullable=True)
-    fueltech_id = Column(Integer, ForeignKey("fueltech.code"), nullable=True)
+    network_id = Column(Text, ForeignKey("network.code"), nullable=True)
+    network_region = Column(Text, nullable=True)
+    fueltech_id = Column(Text, ForeignKey("fueltech.code"), nullable=True)
+    fueltech_group_id = Column(Text, ForeignKey("fueltech_group.code"), nullable=True)
     description = Column(String, nullable=True)
 
     # Relationships

@@ -28,6 +28,7 @@ class MilestoneRecord(BaseModel):
     value: int | float
     unit: UnitDefinition
     network: NetworkSchema
+    network_region: str | None = None
     fueltech: FueltechSchema
     description: str | None = None
 
