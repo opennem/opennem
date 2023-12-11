@@ -5,7 +5,7 @@ Called from the API to send / store feedback
 
 import logging
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from opennem import settings
 from opennem.clients.slack import slack_message
@@ -19,7 +19,7 @@ logger = logging.getLogger("opennem.core.feedback")
 class UserFeedbackSubmission(BaseModel):
     subject: str
     description: str | None = None
-    email: EmailStr | None = None
+    email: str | None = None
     twitter: str | None = None
     user_ip: str | None = None
     user_agent: str | None = None
