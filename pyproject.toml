@@ -29,7 +29,7 @@ dynamic = ["version"]
 python = "^3.10"
 requests = "^2.23.0"
 sentry-sdk = "^1.15.0"
-pydantic = "^2.5.2"
+pydantic = {extras = ["email"], version = "^2.5.2"}
 alembic = "^1.6.2"
 click = "^8.0.3"
 huey = "^2.2.0"
