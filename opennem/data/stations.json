@@ -31661,5 +31661,56 @@
             "geocode_skip": false
         }
     },
+    {
+        "code": "SHOAL",
+        "name": "Shoalhaven Starches",
+        "network_name": "Shoalhaven Starches Cogeneration Plant",
+        "description": "Manildra Group have built 2x 30MW gas units to replace their old coal units at their Shoalhaven Starches food production site. With a total capacity of 60MW, the power plant reduces the carboon emissions of the site and became operational in December 2023. It is powered by two GE LM2500+ aeroderivative gas turbines—utilitizing same operational concept as jet engines - and two heat recovery steam generators.",
+        "wikipedia_link": null,
+        "wikidata_id": null,
+        "website_url": null,
+        "approved": true,
+        "approved_by": "opennem.registry",
+        "facilities": [
+            {
+                "network_id": "NEM",
+                "fueltech_id": "gas_ocgt",
+                "status_id": "operating",
+                "code": "SHOAL1",
+                "network_code": "NEM",
+                "network_region": "NSW1",
+                "network_name": null,
+                "dispatch_type": "GENERATOR",
+                "interconnector": false,
+                "interconnector_region_to": null,
+                "interconnector_region_from": null,
+                "capacity_registered": 60.0,
+                "expected_closure_date": null,
+                "expected_closure_year": null,
+                "registered": null,
+                "deregistered": null,
+                "unit_id": null,
+                "unit_number": 2,
+                "unit_alias": 30.0,
+                "unit_capacity": null,
+                "emissions_factor_co2": 0.78256
+            }
+        ],
+        "location": {
+            "address1": "160 Bolong Rd",
+            "address2": "",
+            "locality": "Bomaderry",
+            "state": "NSW",
+            "postcode": "2541",
+            "country": "AU",
+            "geocode_processed_at": null,
+            "lat": -34.85486811643706,
+            "lng": 150.6164029846568,
+            "osm_way_id": null,
+            "place_id": null,
+            "geocode_by": "opennem.registry",
+            "geocode_approved": true,
+            "geocode_skip": false
+        }
     }
 ]
