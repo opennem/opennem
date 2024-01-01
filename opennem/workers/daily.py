@@ -70,7 +70,11 @@ def run_export_for_year(year: int, network_region_code: str | None = None) -> No
 @profile_task(send_slack=False)
 def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""
-    CURRENT_YEAR = datetime.now().year
+    current_year = datetime.now().year
+
+    # if it is the first day of the year run the previous year
+    if datetime.now().month == 1 and datetime.now().day == 1:
+        current_year = current_year - 1
 
     # Energy
     energy_runner(days=days)
@@ -87,11 +91,11 @@ def daily_runner(days: int = 2) -> None:
             interval_end=interval_end,
         )
     else:
-        run_flow_updates_all_per_year(CURRENT_YEAR, 1)
+        run_flow_updates_all_per_year(current_year, 1)
 
     # 2. facilities
     for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
-        run_aggregates_facility_year(year=CURRENT_YEAR, network=network)
+        run_aggregates_facility_year(year=current_year, network=network)
 
     # 3. network demand
     run_aggregates_demand_network()
@@ -105,7 +109,7 @@ def daily_runner(days: int = 2) -> None:
     export_energy(latest=True)
 
     #  run exports for last year
-    run_export_for_year(CURRENT_YEAR - 1)
+    run_export_for_year(current_year - 1)
 
     # run exports for all
     export_map = get_export_map()
