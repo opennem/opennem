@@ -211,7 +211,9 @@ def run_aggregates_facility_year(year: int, network: NetworkSchema, run_by_month
     month_max = 12  # @NOTE make this a param so we can run custom ranges
 
     if year == today.year:
-        month_min = today.month - 1
+        if today.month > 1:
+            month_min = today.month - 1
+
         month_max = today.month
 
     for month in range(month_min, month_max + 1):
