@@ -67,6 +67,59 @@ def run_export_for_year(year: int, network_region_code: str | None = None) -> No
 # The actual daily runners
 
 
+def daily_catchup_runner(days: int = 2) -> None:
+    """Daily task runner - runs after success of overnight crawls"""
+    current_year = datetime.now().year
+
+    # if it is the first day of the year run the previous year
+    if datetime.now().month == 1 and datetime.now().day == 1:
+        current_year = current_year - 1
+
+    # aggregates
+    # 1. flows
+    if settings.flows_and_emissions_v3:
+        # run for days
+        interval_end = get_last_completed_interval_for_network(network=NetworkNEM)
+        interval_start = interval_end - timedelta(days=days, hours=12)
+        run_aggregate_flow_for_interval_v3(
+            network=NetworkNEM,
+            interval_start=interval_start,
+            interval_end=interval_end,
+        )
+    else:
+        run_flow_updates_all_per_year(current_year, 1)
+
+    # 2. facilities
+    for network in [NetworkNEM, NetworkWEM, NetworkAEMORooftop, NetworkAPVI]:
+        run_aggregates_facility_year(year=current_year, network=network)
+
+    # 3. network demand
+    run_aggregates_demand_network()
+
+    #  flows and flow emissions
+    if not settings.flows_and_emissions_v3:
+        run_emission_update_day(days=days)
+
+    # 4. Run Exports
+    #  run exports for latest year
+    export_energy(latest=True)
+
+    #  run exports for last year
+    run_export_for_year(current_year - 1)
+
+    # run exports for all
+    export_map = get_export_map()
+    energy_exports = export_map.get_by_stat_type(StatType.energy).get_by_priority(PriorityType.monthly)
+    export_energy(energy_exports.resources)
+
+    export_all_daily()
+    export_all_monthly()
+
+    # export historic intervals
+    for network in [NetworkNEM, NetworkWEM]:
+        export_historic_intervals(limit=2, networks=[network])
+
+
 @profile_task(send_slack=False)
 def daily_runner(days: int = 2) -> None:
     """Daily task runner - runs after success of overnight crawls"""

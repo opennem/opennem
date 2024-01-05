@@ -33,7 +33,7 @@ from opennem.pipelines.nem import (
 )
 from opennem.pipelines.wem import wem_per_interval_check
 from opennem.schema.network import NetworkAEMORooftop, NetworkNEM, NetworkWEM
-from opennem.workers.daily import energy_runner_hours
+from opennem.workers.daily import daily_catchup_runner, energy_runner_hours
 from opennem.workers.daily_summary import run_daily_fueltech_summary
 from opennem.workers.facility_data_ranges import update_facility_seen_range
 from opennem.workers.facility_status import update_opennem_facility_status
@@ -107,6 +107,12 @@ def run_hourly_task_runner() -> None:
 @huey.lock_task("nem_overnight_check")
 def nem_overnight_check() -> None:
     nem_per_day_check()
+
+
+@huey.periodic_task(crontab(hour="20", minute="20"), retries=10, retry_delay=60, priority=50)
+@huey.lock_task("daily_catchup_runner_worker")
+def daily_catchup_runner_worker() -> None:
+    daily_catchup_runner()
 
 
 # run summary
