@@ -1,23 +1,27 @@
 {
-    "files.exclude": {
-        "**/__pycache__/": true,
-        ".venv": true,
-        "**/build": true,
-        "dist": true,
-        ".idea": true,
-        ".benchmarks": true,
-        ".ipynb_checkpoints": true,
-        "**/.mypy_cache": true,
-        ".ruff_cache": true,
-        ".pytest_cache": true,
-        ".tox": true
-    },
-    "editor.formatOnSave": true,
-    "python.testing.pytestEnabled": true,
-    "[python]": {
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit"
-        }
-    },
-    "python.analysis.typeshedPaths": ["${workspaceFolder}/opennem/subs"]
+  "files.exclude": {
+    "**/__pycache__/": true,
+    ".venv": true,
+    "**/build": true,
+    "dist": true,
+    ".idea": true,
+    ".benchmarks": true,
+    ".ipynb_checkpoints": true,
+    "**/.mypy_cache": true,
+    ".ruff_cache": true,
+    ".pytest_cache": true,
+    ".tox": true
+  },
+  "editor.formatOnSave": true,
+  "python.testing.pytestEnabled": true,
+  "python.formatting.provider": "black",
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "python.linting.enabled": true,
+  "python.linting.lintOnSave": true,
+  "python.linting.mypyEnabled": true,
+  "python.analysis.typeshedPaths": ["${workspaceFolder}/opennem/subs"],
 }

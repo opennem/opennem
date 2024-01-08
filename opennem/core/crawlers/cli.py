@@ -26,7 +26,8 @@ def cmd_crawl_cli() -> None:
 @click.command()
 @click.argument("name")
 @click.option("--all", default=False, is_flag=True, help="Run all")
-def crawl_cli_run(name: str, all: bool = False) -> None:
+@click.option("--limit", default=None, type=int, help="Limit to N most recent records")
+def crawl_cli_run(name: str, all: bool = False, limit: int | None = None) -> None:
     test_proxy()
 
     console.log(f"Run crawlers matching: {name}")
@@ -51,7 +52,7 @@ def crawl_cli_run(name: str, all: bool = False) -> None:
                 c.name, c.version, c.last_crawled, c.last_processed, c.server_latest
             )
         )
-        run_crawl(c, latest=not all)
+        run_crawl(c, latest=not all, limit=limit)
 
 
 @click.command()
