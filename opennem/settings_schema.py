@@ -31,7 +31,7 @@ class OpennemSettings(BaseSettings):
 
     redis_url: RedisDsn = Field(
         "redis://127.0.0.1",
-        validation_alias=AliasChoices("service_redis_dsn", "cache_url"),
+        validation_alias=AliasChoices("REDIS_HOST_URL", "cache_url"),
     )
 
     # if we're doing a dry run
