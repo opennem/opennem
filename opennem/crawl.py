@@ -130,7 +130,7 @@ def load_crawlers(live_load: bool = False) -> CrawlerSet:
 def run_crawl(
     crawler: CrawlerDefinition,
     last_crawled: bool = True,
-    limit: bool = False,
+    limit: int | None = None,
     latest: bool = True,
     date_range: CrawlDateRange | None = None,
 ) -> ControllerReturn | None:
@@ -143,7 +143,7 @@ def run_crawl(
 
     logger.info(
         "Crawling: {}. (Last Crawled: {}. Limit: {}. Server latest: {})".format(
-            crawler.name, crawler.last_crawled, crawler.limit, crawler.server_latest
+            crawler.name, crawler.last_crawled, limit or crawler.limit, crawler.server_latest
         )
     )
 
@@ -154,7 +154,7 @@ def run_crawl(
     crawler_set_meta(crawler.name, CrawlStatTypes.last_crawled, now_opennem_time)
 
     cr: ControllerReturn | None = crawler.processor(
-        crawler=crawler, last_crawled=last_crawled, limit=crawler.limit, latest=latest, date_range=date_range
+        crawler=crawler, last_crawled=last_crawled, limit=limit or crawler.limit, latest=latest, date_range=date_range
     )
 
     if not cr:

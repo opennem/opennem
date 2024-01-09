@@ -62,7 +62,7 @@ def run_nemweb_aemo_crawl(
     crawler: CrawlerDefinition,
     run_fill: bool = True,
     last_crawled: bool = True,
-    limit: bool = False,
+    limit: int | None = None,
     latest: bool = True,
     date_range: CrawlDateRange | None = None,
 ) -> ControllerReturn | None:
@@ -86,7 +86,14 @@ def run_nemweb_aemo_crawl(
         logger.info(f"Applying date range: {date_range.start} - {date_range.end}")
         dirlisting.apply_date_range(date_range)
 
+    if limit:
+        logger.info(f"Limiting to {limit}")
+        dirlisting.apply_limit(limit)
+
     logger.debug(f"Got {dirlisting.count} entries, {dirlisting.file_count} files and {dirlisting.directory_count} directories")
+
+    for entry in dirlisting.get_files():
+        logger.debug(f"Got file: {entry.link}")
 
     if not crawler.network or not crawler.network.interval_size:
         raise Exception("Require an interval size for network for this crawler")
