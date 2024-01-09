@@ -156,7 +156,7 @@ class DirectoryListing(BaseConfig):
 
     def apply_limit(self, limit: int) -> None:
         """Limit to most recent files"""
-        self.entries = self.get_files()[:limit]
+        self.entries = list(reversed(self.get_files()))[:limit]
 
     def apply_filter(self, pattern: str) -> None:
         self.entries = list(filter(lambda x: re.match(pattern, x.link), self.entries))
