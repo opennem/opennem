@@ -154,11 +154,15 @@ class DirectoryListing(BaseConfig):
             )
         )
 
+    def apply_limit(self, limit: int) -> None:
+        """Limit to most recent files"""
+        self.entries = self.get_files()[:limit]
+
     def apply_filter(self, pattern: str) -> None:
         self.entries = list(filter(lambda x: re.match(pattern, x.link), self.entries))
 
     def get_files(self) -> list[DirlistingEntry]:
-        return list(filter(lambda x: x.entry_type == DirlistingEntryType.file, self.entries))
+        return list(filter(lambda x: x.entry_type == DirlistingEntryType.file and str(x.filename).endswith(".zip"), self.entries))
 
     def get_directories(self) -> list[DirlistingEntry]:
         return list(filter(lambda x: x.entry_type == DirlistingEntryType.directory, self.entries))
