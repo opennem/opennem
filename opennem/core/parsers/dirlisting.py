@@ -163,7 +163,11 @@ class DirectoryListing(BaseConfig):
 
     def get_files(self) -> list[DirlistingEntry]:
         return list(
-            filter(lambda x: x.entry_type == DirlistingEntryType.file and str(x.filename).lower().endswith(".zip"), self.entries)
+            filter(
+                lambda x: x.entry_type == DirlistingEntryType.file
+                and (str(x.filename).lower().endswith(".zip") or str(x.filename).lower().endswith(".csv")),
+                self.entries,
+            )
         )
 
     def get_directories(self) -> list[DirlistingEntry]:
