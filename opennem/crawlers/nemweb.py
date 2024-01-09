@@ -154,7 +154,8 @@ def run_nemweb_aemo_crawl(
         except Exception as e:
             logger.error(f"Processing error: {e}")
 
-    controller_returns.crawls_run = len(entries_to_fetch)
+    if controller_returns:
+        controller_returns.crawls_run = len(entries_to_fetch)
 
     return controller_returns
 
