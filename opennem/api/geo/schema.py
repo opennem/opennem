@@ -9,7 +9,7 @@ rather than required.
 """
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from pydantic_geojson import (
     # FeatureCollection,
     LineStringModel,
@@ -24,8 +24,7 @@ Geometry = PointModel | MultiPointModel | LineStringModel | MultiLineStringModel
 
 
 class FacilityGeoBase(BaseModel):
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class FacilityFeature(BaseModel):
@@ -34,12 +33,12 @@ class FacilityFeature(BaseModel):
     """
 
     # @TODO - correct schema for GeoJSON that supports both versions
-    bbox: Any | None
-    properties: Any | None
-    geometry: Geometry | None  # type: ignore
+    bbox: Any | None = None
+    properties: Any | None = None
+    geometry: Geometry | None = None  # type: ignore
 
 
 class FacilityGeo(FacilityGeoBase):
     name: str = "opennem"
-    crs: dict | None
+    crs: dict | None = None
     features: list[FacilityFeature]  # type: ignore
