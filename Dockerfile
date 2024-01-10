@@ -49,7 +49,7 @@ RUN apt-get update \
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
 # The --mount will mount the buildx cache directory to where
 # Poetry and Pip store their cache so that they can re-use it
-RUN --mount=type=cache,id=builder-base \
+RUN --mount=type=cache,id=cache-poetry-install,target=/root/.cache \
   curl -sSL https://install.python-poetry.org | python3 -
 
 RUN poetry config installer.max-workers 10
@@ -62,7 +62,7 @@ COPY poetry.lock pyproject.toml ./
 RUN mkdir ${PROJECT_NAME} && touch ${PROJECT_NAME}/__init__.py
 
 # install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
-RUN --mount=type=cache,id=builder-base \
+RUN --mount=type=cache,id=cache-poetry,target=/root/.cache \
   poetry install --without=dev --no-interaction --no-ansi -v
 
 
