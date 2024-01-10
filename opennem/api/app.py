@@ -5,17 +5,16 @@ Primary Router. All the main setup of the API is here.
 """
 import logging
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.param_functions import Query
 from fastapi.responses import FileResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.backends.redis import RedisBackend
-from fastapi_versioning import VersionedFastAPI
+from fastapi_versionizer.versionizer import Versionizer
 from redis import asyncio as aioredis
 from sqlalchemy.orm import Session
-from starlette import status
 from starlette.requests import Request
 
 from opennem import settings
@@ -25,6 +24,7 @@ from opennem.api.facility.router import router as facility_router
 from opennem.api.feedback.router import router as feedback_router
 from opennem.api.milestones.router import milestones_router
 from opennem.api.schema import APINetworkRegion, APINetworkSchema
+from opennem.api.security import api_key_auth
 from opennem.api.station.router import router as station_router
 from opennem.api.stats.router import router as stats_router
 from opennem.api.weather.router import router as weather_router
@@ -37,11 +37,19 @@ from opennem.schema.time import TimeInterval, TimePeriod
 from opennem.schema.units import UnitDefinition
 from opennem.utils.version import get_version
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("opennem.api")
 
 
 app = FastAPI(title="OpenNEM", debug=settings.debug, version=get_version(), redoc_url="/docs", docs_url=None)
-app_versioned = VersionedFastAPI(app, version_format="{major}", prefix_format="/v{major}", enable_latest=True)
+versions = Versionizer(
+    app=app,
+    prefix_format="/v{major}",
+    semantic_version_format="{major}",
+    latest_prefix="/latest",
+    sort_routes=True,
+    # default_version="v{major}",
+).versionize()
+
 
 # @TODO put CORS available/permissions in settings
 origins = [
@@ -133,12 +141,9 @@ app.include_router(station_router, tags=["Stations"], prefix="/station")
 app.include_router(facility_router, tags=["Facilities"], prefix="/facility")
 app.include_router(weather_router, tags=["Weather"], prefix="/weather")
 app.include_router(feedback_router, tags=["Feedback"], prefix="/feedback", include_in_schema=False)
-app.include_router(dash_router, tags=["Dashboard"], prefix="/v4/dash", include_in_schema=False)
-app.include_router(milestones_router, tags=["Milestones"], prefix="/v4/milestones", include_in_schema=True)
+app.include_router(dash_router, tags=["Dashboard"], prefix="/dash", include_in_schema=False)
+app.include_router(milestones_router, tags=["Milestones"], prefix="/milestones", include_in_schema=True)
 
-
-# v4 routers
-app_versioned.include_router(milestones_router, tags=["Milestones"], prefix="/milestones", include_in_schema=True)
 
 try:
     from fastapi.staticfiles import StaticFiles
@@ -173,7 +178,7 @@ def robots_txt() -> str:
 def networks(
     session: Session = Depends(get_database_session),
 ) -> list[APINetworkSchema]:
-    networks = session.query(Network).join(Network.regions).all()
+    networks = session.query(Network).join(NetworkRegion, NetworkRegion.network_id == Network.code).all()
 
     if not networks:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -214,7 +219,19 @@ def fueltechs(
     if not fueltechs:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    return [FueltechSchema(**i) for i in fueltechs]
+    try:
+        models = [
+            FueltechSchema(
+                code=i.code,
+                label=i.label,
+                renewable=i.renewable,
+            )
+            for i in fueltechs
+        ]
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Invalid fueltechs") from e
+
+    return models
 
 
 @app.get("/intervals", response_model=list[TimeInterval])
@@ -236,3 +253,8 @@ def units() -> list[UnitDefinition]:
 def health_check() -> str:
     """Health check"""
     return "OK"
+
+
+@app.get("/protected", dependencies=[Depends(api_key_auth)])
+def add_post() -> dict:
+    return {"data": "You used a valid API key."}
