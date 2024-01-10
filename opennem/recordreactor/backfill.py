@@ -27,8 +27,8 @@ class ReactorBackfillRecord(BaseModel):
     network_region: str | None = None
     fueltech_id: str
     fueltech_label: str
-    highest_output: float | int | None
-    lowest_output: float | int | None
+    highest_output: float | int | None = None
+    lowest_output: float | int | None = None
     highest_output_interval: datetime | None = None
     lowest_output_interval: datetime | None = None
 
